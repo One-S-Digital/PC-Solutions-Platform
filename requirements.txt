@@ -1,0 +1,42 @@
+# PC Solutions Platform v2.0 - System Requirements
+
+# Node.js Runtime
+nodejs>=18.0.0
+
+# Package Manager
+pnpm>=9.0.0
+
+# Database
+postgresql>=14.0
+
+# Docker (for containerization)
+docker>=20.0.0
+docker-compose>=2.0.0
+
+# Development Tools
+git>=2.30.0
+
+# Optional: For production deployment
+nginx>=1.20.0
+
+# Environment Variables Required:
+# - DATABASE_URL
+# - CLERK_SECRET_KEY
+# - STRIPE_SECRET_KEY
+# - CLOUDFLARE_R2_ACCESS_KEY_ID
+# - CLOUDFLARE_R2_SECRET_ACCESS_KEY
+# - CLOUDFLARE_R2_BUCKET_NAME
+# - CLOUDFLARE_R2_ENDPOINT
+# - JWT_SECRET
+# - MAILTRAP_API_TOKEN (for development)
+# - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (for production)
+
+# Installation Instructions:
+# 1. Install Node.js 18+ from https://nodejs.org/
+# 2. Install pnpm: npm install -g pnpm
+# 3. Install PostgreSQL 14+ from https://www.postgresql.org/
+# 4. Install Docker from https://www.docker.com/
+# 5. Clone repository and run: pnpm install
+# 6. Set up environment variables as documented in ENVIRONMENT_SETUP.md
+# 7. Run database migrations: cd build && pnpm prisma migrate dev
+# 8. Start development: pnpm dev
