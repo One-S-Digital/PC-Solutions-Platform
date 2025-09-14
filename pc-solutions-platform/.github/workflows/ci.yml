@@ -1,0 +1,562 @@
+name: PC Solutions Platform v2.0 - CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '9.0.0'
+
+jobs:
+  # Job 1: Lint and Type Check
+  lint-and-typecheck:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm lint
+
+      - name: Run TypeScript type check
+        run: pnpm type-check
+
+  # Job 2: Unit Tests
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm test --coverage
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # Job 3: Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: pc_solutions_ci
+          POSTGRES_USER: pc_solutions_user
+          POSTGRES_PASSWORD: pc_solutions_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      clamav:
+        image: clamav/clamav:latest
+        options: >-
+          --health-cmd "clamdscan --version"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+        ports:
+          - 3310:3310
+
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup test environment
+        run: |
+          cp .env.test .env
+          echo "DATABASE_URL=postgresql://pc_solutions_user:pc_solutions_password@localhost:5432/pc_solutions_ci" >> .env
+          echo "CLAMAV_HOST=localhost" >> .env
+          echo "CLAMAV_PORT=3310" >> .env
+          echo "MAILPIT_API_URL=http://localhost:8025/api/v1" >> .env
+
+      - name: Wait for services
+        run: |
+          sleep 30
+          docker run --rm --network host postgres:15 pg_isready -h localhost -p 5432 -U pc_solutions_user -d pc_solutions_ci
+
+      - name: Run database migrations
+        run: pnpm db:migrate
+
+      - name: Seed test data
+        run: pnpm db:seed
+
+      - name: Run integration tests
+        run: pnpm test:integration
+
+  # Job 4: E2E Tests (Headless)
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: pc_solutions_ci
+          POSTGRES_USER: pc_solutions_user
+          POSTGRES_PASSWORD: pc_solutions_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      clamav:
+        image: clamav/clamav:latest
+        options: >-
+          --health-cmd "clamdscan --version"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+        ports:
+          - 3310:3310
+
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup test environment
+        run: |
+          cp .env.test .env
+          echo "DATABASE_URL=postgresql://pc_solutions_user:pc_solutions_password@localhost:5432/pc_solutions_ci" >> .env
+          echo "CLAMAV_HOST=localhost" >> .env
+          echo "CLAMAV_PORT=3310" >> .env
+          echo "MAILPIT_API_URL=http://localhost:8025/api/v1" >> .env
+
+      - name: Wait for services
+        run: |
+          sleep 30
+          docker run --rm --network host postgres:15 pg_isready -h localhost -p 5432 -U pc_solutions_user -d pc_solutions_ci
+
+      - name: Run database migrations
+        run: pnpm db:migrate
+
+      - name: Seed test data
+        run: pnpm db:seed
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            test-results/
+            reports/
+            logs/
+          retention-days: 7
+
+  # Job 5: Performance Smoke Tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: pc_solutions_ci
+          POSTGRES_USER: pc_solutions_user
+          POSTGRES_PASSWORD: pc_solutions_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      clamav:
+        image: clamav/clamav:latest
+        options: >-
+          --health-cmd "clamdscan --version"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+        ports:
+          - 3310:3310
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Setup test environment
+        run: |
+          cp .env.test .env
+          echo "DATABASE_URL=postgresql://pc_solutions_user:pc_solutions_password@localhost:5432/pc_solutions_ci" >> .env
+          echo "CLAMAV_HOST=localhost" >> .env
+          echo "CLAMAV_PORT=3310" >> .env
+
+      - name: Wait for services
+        run: |
+          sleep 30
+          docker run --rm --network host postgres:15 pg_isready -h localhost -p 5432 -U pc_solutions_user -d pc_solutions_ci
+
+      - name: Run database migrations
+        run: pnpm db:migrate
+
+      - name: Seed test data
+        run: pnpm db:seed
+
+      - name: Start application
+        run: |
+          pnpm start:prod &
+          sleep 10
+
+      - name: Install autocannon
+        run: npm install -g autocannon
+
+      - name: Run performance tests
+        run: |
+          mkdir -p reports
+          pnpm test:performance > reports/perf-summary.md 2>&1 || true
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: performance-results
+          path: reports/perf-summary.md
+          retention-days: 7
+
+  # Job 6: Security Audit
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: performance-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run security audit
+        run: |
+          mkdir -p reports
+          pnpm audit --audit-level=moderate > reports/security-audit.txt 2>&1 || true
+
+      - name: Run ESLint security rules
+        run: |
+          pnpm lint --config .eslintrc.security.js > reports/eslint-security.txt 2>&1 || true
+
+      - name: Upload security results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-results
+          path: reports/
+          retention-days: 7
+
+  # Job 7: Build Verification
+  build-verification:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    needs: security-audit
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Verify build artifacts
+        run: |
+          ls -la dist/
+          test -f dist/main.js
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  # Job 8: Generate Test Report
+  test-report:
+    name: Generate Test Report
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck, unit-tests, integration-tests, e2e-tests, performance-tests, security-audit, build-verification]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Generate comprehensive test report
+        run: |
+          mkdir -p reports
+          cat > reports/ci-test-report.md << EOF
+          # PC Solutions Platform v2.0 - CI Test Report
+          
+          **Build:** ${{ github.run_number }}
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+          **Date:** $(date)
+          
+          ## Test Results Summary
+          
+          | Test Suite | Status | Details |
+          |------------|--------|---------|
+          | Lint & Type Check | ${{ needs.lint-and-typecheck.result }} | Code quality checks |
+          | Unit Tests | ${{ needs.unit-tests.result }} | Component unit tests |
+          | Integration Tests | ${{ needs.integration-tests.result }} | Service integration tests |
+          | E2E Tests | ${{ needs.e2e-tests.result }} | End-to-end user flows |
+          | Performance Tests | ${{ needs.performance-tests.result }} | Load and performance validation |
+          | Security Audit | ${{ needs.security-audit.result }} | Security vulnerability scan |
+          | Build Verification | ${{ needs.build-verification.result }} | Production build validation |
+          
+          ## Overall Status
+          
+          **Result:** ${{ job.status }}
+          
+          ## Artifacts
+          
+          - E2E Test Results: e2e-test-results/
+          - Performance Results: performance-results/
+          - Security Results: security-results/
+          - Build Artifacts: build-artifacts/
+          
+          ## Next Steps
+          
+          ${{ job.status == 'success' && '✅ All tests passed - Ready for production deployment' || '❌ Tests failed - Review failures before deployment' }}
+          
+          EOF
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: reports/ci-test-report.md
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('reports/ci-test-report.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });

@@ -1,0 +1,273 @@
+# Performance Testing Configuration
+# artillery-config.yml
+
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warm-up phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm-up"
+    
+    # Normal load phase
+    - duration: 300
+      arrivalRate: 20
+      name: "Normal Load"
+    
+    # Peak load phase
+    - duration: 180
+      arrivalRate: 50
+      name: "Peak Load"
+    
+    # Stress test phase
+    - duration: 120
+      arrivalRate: 100
+      name: "Stress Test"
+    
+    # Cool-down phase
+    - duration: 60
+      arrivalRate: 10
+      name: "Cool-down"
+
+  # Global settings
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+      User-Agent: 'Artillery Load Test'
+
+  # Environment variables
+  variables:
+    baseUrl: 'http://localhost:3000'
+    adminEmail: 'admin@test.com'
+    adminPassword: 'testpassword'
+
+scenarios:
+  # User Management Load Test
+  - name: "User Management Operations"
+    weight: 30
+    flow:
+      # Login as admin
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ adminEmail }}"
+            password: "{{ adminPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Get users list
+      - get:
+          url: "/api/admin/user-management/users"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Create a new user
+      - post:
+          url: "/api/admin/user-management/users"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            firstName: "Load Test User"
+            lastName: "{{ $randomString() }}"
+            email: "loadtest{{ $randomString() }}@test.com"
+            role: "FOUNDATION"
+      
+      # Update user (if creation was successful)
+      - put:
+          url: "/api/admin/user-management/users/{{ userId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            firstName: "Updated Load Test User"
+      
+      # Get user activity
+      - get:
+          url: "/api/admin/user-management/users/{{ userId }}/activity"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # Analytics Load Test
+  - name: "Analytics Operations"
+    weight: 25
+    flow:
+      # Login as admin
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ adminEmail }}"
+            password: "{{ adminPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Get analytics data
+      - get:
+          url: "/api/admin/analytics"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get user analytics
+      - get:
+          url: "/api/admin/analytics/users"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get organization analytics
+      - get:
+          url: "/api/admin/analytics/organizations"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get revenue analytics
+      - get:
+          url: "/api/admin/analytics/revenue"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # Content Moderation Load Test
+  - name: "Content Moderation Operations"
+    weight: 20
+    flow:
+      # Login as admin
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ adminEmail }}"
+            password: "{{ adminPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Get moderation queue
+      - get:
+          url: "/api/admin/content-moderation/queue"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get flagged content
+      - get:
+          url: "/api/admin/content-moderation/flagged"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Approve content
+      - post:
+          url: "/api/admin/content-moderation/{{ contentId }}/approve"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            notes: "Approved via load test"
+
+  # Subscription Management Load Test
+  - name: "Subscription Management Operations"
+    weight: 15
+    flow:
+      # Login as admin
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ adminEmail }}"
+            password: "{{ adminPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Get subscription plans
+      - get:
+          url: "/api/admin/subscription-management/plans"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get subscriptions
+      - get:
+          url: "/api/admin/subscription-management/subscriptions"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get subscription analytics
+      - get:
+          url: "/api/admin/subscription-management/analytics"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get billing transactions
+      - get:
+          url: "/api/admin/subscription-management/billing/transactions"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # System Monitoring Load Test
+  - name: "System Monitoring Operations"
+    weight: 10
+    flow:
+      # Login as admin
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ adminEmail }}"
+            password: "{{ adminPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Get system health
+      - get:
+          url: "/api/admin/system-monitoring/health"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get system metrics
+      - get:
+          url: "/api/admin/system-monitoring/metrics"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get system logs
+      - get:
+          url: "/api/admin/system-monitoring/logs"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Get alerts
+      - get:
+          url: "/api/admin/system-monitoring/alerts"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+# Custom metrics and expectations
+expect:
+  # Response time expectations
+  - p95: 200  # 95% of requests should complete within 200ms
+  - p99: 500  # 99% of requests should complete within 500ms
+  
+  # Error rate expectations
+  - maxErrorRate: 1  # Maximum 1% error rate
+  
+  # Throughput expectations
+  - minRps: 10  # Minimum 10 requests per second
+
+# Custom plugins
+plugins:
+  - artillery-plugin-metrics-by-endpoint
+  - artillery-plugin-cloudwatch
+
+# Custom functions
+functions:
+  # Generate random string for unique identifiers
+  randomString: |
+    function() {
+      return Math.random().toString(36).substring(2, 15);
+    }
+  
+  # Generate random user ID
+  randomUserId: |
+    function() {
+      return 'user-' + Math.random().toString(36).substring(2, 15);
+    }
+  
+  # Generate random content ID
+  randomContentId: |
+    function() {
+      return 'content-' + Math.random().toString(36).substring(2, 15);
+    }

@@ -1,0 +1,33 @@
+{
+  "unlockFeature": "Diese Funktion freischalten",
+  "upgradeNow": "Jetzt upgraden",
+  "clickToUpgrade": "Klicken Sie, um zu upgraden und diese Funktion freizuschalten",
+  "availableOn": "Verfügbar auf",
+  "upgradeToAccess": "Upgraden, um auf diese Funktion zuzugreifen",
+  "unlocked": "Freigeschaltet",
+  "locked": "Gesperrt",
+  "lockedContent": "Gesperrter Inhalt",
+  "growFaster": "Wachsen Sie schneller mit Professional",
+  "maybeLater": "Vielleicht später",
+  "startingAt": "Ab",
+  "perMonth": "/Monat",
+  "readMore": "Weiterlesen",
+  "testimonial": "Der Wechsel zu Pro hat uns jede Woche Stunden gespart.",
+  "benefits": {
+    "advancedAnalytics": "Erweiterte Analysen und Einblicke",
+    "customReports": "Benutzerdefinierte Berichtserstellung",
+    "dataExport": "Daten nach Excel/PDF exportieren",
+    "bulkOperations": "Massenoperationen",
+    "timeSaving": "Sparen Sie Stunden manueller Arbeit",
+    "batchProcessing": "Mehrere Elemente gleichzeitig verarbeiten",
+    "prioritySupport": "Prioritätskundensupport",
+    "fasterResponse": "Schnellere Antwortzeiten",
+    "dedicatedHelp": "Dedizierter Support-Kanal",
+    "unlimitedMessages": "Unbegrenzte Nachrichten",
+    "directContact": "Direkter Kontakt mit Eltern",
+    "messageHistory": "Vollständiger Nachrichtenverlauf",
+    "general1": "Zugang zu Premium-Funktionen",
+    "general2": "Erweiterte Funktionalität",
+    "general3": "Prioritätssupport"
+  }
+}

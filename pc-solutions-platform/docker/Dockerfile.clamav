@@ -1,0 +1,30 @@
+FROM debian:stable-slim
+
+# Install ClamAV and required packages
+RUN apt-get update && apt-get install -y \
+    clamav \
+    clamav-daemon \
+    curl \
+    ca-certificates \
+    sed \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure ClamAV
+RUN sed -i 's/^Example/#Example/' /etc/clamav/freshclam.conf
+
+# Create supervisor configuration directory
+RUN mkdir -p /var/log/supervisor
+
+# Copy supervisor configuration
+COPY supervisor-clamav.conf /etc/supervisor/conf.d/clamav.conf
+
+# Create necessary directories
+RUN mkdir -p /var/run/clamav
+RUN chown clamav:clamav /var/run/clamav
+
+# Expose ClamAV daemon port
+EXPOSE 3310
+
+# Start supervisor to manage ClamAV services
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/clamav.conf"]

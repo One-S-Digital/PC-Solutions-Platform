@@ -1,0 +1,285 @@
+/* Swiss Platform Theme v2 - Admin Dashboard Variants */
+
+:root {
+  /* Admin-specific color variants */
+  --admin-accent: #DC2626;        /* Admin Red - more authoritative */
+  --admin-accent-light: #FEE2E2;  /* Light admin red */
+  --admin-accent-dark: #991B1B;   /* Dark admin red */
+  --admin-surface: #F8FAFC;       /* Slightly cooler admin background */
+  --admin-border: #E2E8F0;        /* Cooler admin borders */
+  --admin-text: #1E293B;          /* Darker admin text */
+  --admin-muted: #64748B;          /* Admin muted text */
+  
+  /* Admin semantic colors */
+  --admin-danger: #DC2626;        /* Admin danger (red) */
+  --admin-warning: #D97706;        /* Admin warning (amber) */
+  --admin-success: #059669;        /* Admin success (emerald) */
+  --admin-info: #0284C7;           /* Admin info (sky) */
+  
+  /* Admin status colors */
+  --admin-critical: #B91C1C;      /* Critical alerts */
+  --admin-high: #DC2626;          /* High priority */
+  --admin-medium: #D97706;         /* Medium priority */
+  --admin-low: #059669;           /* Low priority */
+}
+
+/* Admin dark mode variants */
+:root.dark {
+  --admin-accent: #EF4444;        /* Brighter admin red for dark mode */
+  --admin-accent-light: #7F1D1D;  /* Dark admin red background */
+  --admin-accent-dark: #FEE2E2;   /* Light admin red text */
+  --admin-surface: #0F172A;       /* Dark admin surface */
+  --admin-border: #334155;        /* Dark admin borders */
+  --admin-text: #F1F5F9;          /* Light admin text */
+  --admin-muted: #94A3B8;          /* Light admin muted */
+  
+  --admin-danger: #EF4444;
+  --admin-warning: #F59E0B;
+  --admin-success: #10B981;
+  --admin-info: #0EA5E9;
+  
+  --admin-critical: #FEE2E2;
+  --admin-high: #FECACA;
+  --admin-medium: #FED7AA;
+  --admin-low: #A7F3D0;
+}
+
+/* Admin-specific utility classes */
+.admin-accent-stripe::before {
+  background: var(--admin-accent) !important;
+}
+
+.admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-card-accent {
+  position: relative;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-card-accent::before {
+  content: "";
+  position: absolute; 
+  inset: 0 auto 0 0; 
+  width: 3px;
+  background: var(--admin-accent);
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+}
+
+.admin-button-primary {
+  background: var(--admin-accent);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-button-primary:hover {
+  background: var(--admin-accent-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-float);
+}
+
+.admin-button-secondary {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-button-secondary:hover {
+  background: var(--admin-border);
+}
+
+.admin-status-critical {
+  background: color-mix(in oklab, var(--admin-critical) 15%, var(--admin-surface) 85%);
+  border: 1px solid color-mix(in oklab, var(--admin-critical) 30%, var(--admin-surface) 70%);
+  color: var(--admin-text);
+}
+
+.admin-status-high {
+  background: color-mix(in oklab, var(--admin-high) 15%, var(--admin-surface) 85%);
+  border: 1px solid color-mix(in oklab, var(--admin-high) 30%, var(--admin-surface) 70%);
+  color: var(--admin-text);
+}
+
+.admin-status-medium {
+  background: color-mix(in oklab, var(--admin-medium) 15%, var(--admin-surface) 85%);
+  border: 1px solid color-mix(in oklab, var(--admin-medium) 30%, var(--admin-surface) 70%);
+  color: var(--admin-text);
+}
+
+.admin-status-low {
+  background: color-mix(in oklab, var(--admin-low) 15%, var(--admin-surface) 85%);
+  border: 1px solid color-mix(in oklab, var(--admin-low) 30%, var(--admin-surface) 70%);
+  color: var(--admin-text);
+}
+
+.admin-badge-critical {
+  background: color-mix(in oklab, var(--admin-critical) 20%, var(--admin-surface) 80%);
+  color: var(--admin-text);
+}
+
+.admin-badge-high {
+  background: color-mix(in oklab, var(--admin-high) 20%, var(--admin-surface) 80%);
+  color: var(--admin-text);
+}
+
+.admin-badge-medium {
+  background: color-mix(in oklab, var(--admin-medium) 20%, var(--admin-surface) 80%);
+  color: var(--admin-text);
+}
+
+.admin-badge-low {
+  background: color-mix(in oklab, var(--admin-low) 20%, var(--admin-surface) 80%);
+  color: var(--admin-text);
+}
+
+/* Admin dashboard specific styles */
+.admin-dashboard {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+}
+
+.admin-sidebar {
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+}
+
+.admin-header {
+  background: var(--admin-surface);
+  border-bottom: 1px solid var(--admin-border);
+  backdrop-filter: blur(8px);
+}
+
+.admin-nav-item {
+  color: var(--admin-muted);
+  transition: color var(--dur-150) var(--ease-standard);
+}
+
+.admin-nav-item:hover {
+  color: var(--admin-accent);
+}
+
+.admin-nav-item.active {
+  color: var(--admin-accent);
+  background: color-mix(in oklab, var(--admin-accent) 10%, var(--admin-surface) 90%);
+}
+
+/* Admin form elements */
+.admin-input {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.admin-input:focus {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--admin-accent) 20%, transparent 80%);
+}
+
+.admin-select {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.admin-select:focus {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--admin-accent) 20%, transparent 80%);
+}
+
+/* Admin table styles */
+.admin-table {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-table th {
+  background: color-mix(in oklab, var(--admin-accent) 5%, var(--admin-surface) 95%);
+  color: var(--admin-text);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table td {
+  border-bottom: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.admin-table tr:hover {
+  background: color-mix(in oklab, var(--admin-accent) 3%, var(--admin-surface) 97%);
+}
+
+/* Admin metrics cards */
+.admin-metric-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+}
+
+.admin-metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--admin-accent);
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+}
+
+.admin-metric-value {
+  color: var(--admin-accent);
+  font-weight: 700;
+}
+
+.admin-metric-label {
+  color: var(--admin-muted);
+  font-size: 0.875rem;
+}
+
+/* Admin alert styles */
+.admin-alert-critical {
+  background: color-mix(in oklab, var(--admin-critical) 10%, var(--admin-surface) 90%);
+  border: 1px solid var(--admin-critical);
+  border-left: 4px solid var(--admin-critical);
+}
+
+.admin-alert-high {
+  background: color-mix(in oklab, var(--admin-high) 10%, var(--admin-surface) 90%);
+  border: 1px solid var(--admin-high);
+  border-left: 4px solid var(--admin-high);
+}
+
+.admin-alert-medium {
+  background: color-mix(in oklab, var(--admin-medium) 10%, var(--admin-surface) 90%);
+  border: 1px solid var(--admin-medium);
+  border-left: 4px solid var(--admin-medium);
+}
+
+.admin-alert-low {
+  background: color-mix(in oklab, var(--admin-low) 10%, var(--admin-surface) 90%);
+  border: 1px solid var(--admin-low);
+  border-left: 4px solid var(--admin-low);
+}
+
+/* Admin theme toggle */
+.admin-theme-toggle {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.admin-theme-toggle:hover {
+  background: var(--admin-border);
+  border-color: var(--admin-accent);
+}

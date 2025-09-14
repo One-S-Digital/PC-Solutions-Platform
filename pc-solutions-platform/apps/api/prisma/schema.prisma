@@ -1,0 +1,1216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  FOUNDATION
+  PRODUCT_SUPPLIER
+  SERVICE_PROVIDER
+  EDUCATOR
+  PARENT
+}
+
+enum OrganizationType {
+  FOUNDATION
+  PRODUCT_SUPPLIER
+  SERVICE_PROVIDER
+}
+
+enum AssetKind {
+  AVATAR
+  LOGO
+  COVER_IMAGE
+  PRODUCT_IMAGE
+  DOCUMENT
+  CV
+  CATALOG_PDF
+  CATALOG_CSV
+  FRONTEND_LOGO
+  FRONTEND_FAVICON
+  FRONTEND_OG_IMAGE
+  ADMIN_LOGO
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  PAST_DUE
+}
+
+enum SubscriptionTier {
+  BASIC
+  ESSENTIAL
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  FILLED
+}
+
+enum ServiceCategory {
+  CLEANING
+  IT_SUPPORT
+  MAINTENANCE
+  CONSULTING
+  TRAINING
+  OTHER
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ContentType {
+  VIDEO
+  DOCUMENT
+  QUIZ
+  TEXT
+  IMAGE
+}
+
+enum LessonStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuizType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  ESSAY
+  MATCHING
+}
+
+enum MessageType {
+  TEXT
+  FILE
+  IMAGE
+  SYSTEM
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+  SUPPORT
+}
+
+// Core Models
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String
+  lastName  String
+  role      UserRole
+
+  // Additional fields for educators from onboarding guide
+  phoneNumber    String?
+  workExperience String? // JSON string or text field
+  education      String? // JSON string or text field
+  certifications String[] // Array of certifications
+  skills         String[] // Array of skills
+  availability   String? // Availability information
+  cvUrl          String? // URL to CV document
+
+  // Stripe integration
+  stripeCustomerId String? @unique
+
+  // Activity tracking
+  lastActiveAt DateTime?
+  isActive     Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organizations UserOrganization[]
+  assets        Asset[]
+  applications  JobApplication[]
+  subscriptions UserSubscription[]
+  licenses      License[]
+
+  // E-Learning relations
+  courseEnrollments CourseEnrollment[]
+  certificates      Certificate[]
+  courseDiscussions CourseDiscussion[]
+  discussionReplies DiscussionReply[]
+  createdCourses    Course[]           @relation("CourseCreator")
+
+  // Enhanced messaging relations
+  conversations    ConversationParticipant[]
+  sentMessages     Message[]                 @relation("MessageSender")
+  receivedMessages Message[]                 @relation("MessageReceiver")
+
+  // User activity tracking
+  activities UserActivity[] @relation("UserActivity")
+
+  // Content moderation relations
+  reportedContent   ContentModeration[] @relation("ContentReporter")
+  moderatedContent  ContentModeration[] @relation("ContentModerator")
+  moderationActions ModerationAction[]  @relation("ModerationActions")
+
+  // Email notification relations
+  emailLogs               EmailLog[]                   @relation("EmailLogs")
+  notificationPreferences UserNotificationPreferences? @relation("NotificationPreferences")
+
+  @@map("users")
+}
+
+model Organization {
+  id          String           @id @default(uuid())
+  name        String
+  type        OrganizationType
+  region      String?
+  description String?
+  vatNumber   String?
+
+  // Additional fields from onboarding guide
+  contactPerson        String?
+  phoneNumber          String?
+  canton               String?
+  languages            String[] // Languages spoken/offered
+  capacity             Int? // For foundations - number of children
+  pedagogy             String[] // Educational approaches for foundations
+  productCategory      String? // For suppliers
+  serviceType          String? // For service providers
+  minimumOrderQuantity Int? // For suppliers
+  directOrderLink      String? // For suppliers
+  catalogUrl           String? // For suppliers
+  serviceCategories    String[] // For service providers
+  deliveryType         String? // On-site, Remote, Hybrid for service providers
+  bookingLink          String? // For service providers
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Asset relations
+  logoAssetId  String?
+  logoAsset    Asset?  @relation("OrganizationLogo", fields: [logoAssetId], references: [id])
+  coverAssetId String?
+  coverAsset   Asset?  @relation("OrganizationCover", fields: [coverAssetId], references: [id])
+
+  // Relations
+  members          UserOrganization[]
+  products         Product[]
+  catalogs         Catalog[]
+  serviceProviders ServiceProvider[]
+  jobListings      JobListing[]
+  subscriptions    Subscription[]
+  orders           Order[]
+  serviceRequests  ServiceRequest[]
+
+  @@map("organizations")
+}
+
+model UserOrganization {
+  userId         String
+  organizationId String
+  role           UserRole
+  createdAt      DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, organizationId])
+  @@map("user_organizations")
+}
+
+model Asset {
+  id         String    @id @default(uuid())
+  kind       AssetKind
+  filename   String
+  publicUrl  String
+  storageKey String
+  mimeType   String?
+  size       Int?
+  uploadedBy String
+  createdAt  DateTime  @default(now())
+
+  // Relations
+  uploader User @relation(fields: [uploadedBy], references: [id])
+
+  // Organization asset relations
+  organizationLogos  Organization[] @relation("OrganizationLogo")
+  organizationCovers Organization[] @relation("OrganizationCover")
+
+  // Product relations
+  products Product[]
+
+  // Catalog relations
+  catalogPdfs Catalog[] @relation("CatalogPdf")
+  catalogCsvs Catalog[] @relation("CatalogCsv")
+
+  // Frontend customization relations
+  frontendLogos    FrontendSettings[] @relation("FrontendLogo")
+  frontendFavicons FrontendSettings[] @relation("FrontendFavicon")
+  frontendOgImages FrontendSettings[] @relation("FrontendOgImage")
+  adminLogos       FrontendSettings[] @relation("AdminLogo")
+
+  @@map("assets")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       Float?
+  category    String?
+  tags        String[]
+  status      String   @default("ACTIVE") // ACTIVE, INACTIVE, PENDING, REJECTED
+  isActive    Boolean  @default(true)
+  supplierId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Asset relations
+  imageAssetId String?
+  imageAsset   Asset?  @relation(fields: [imageAssetId], references: [id])
+
+  // Relations
+  supplier Organization @relation(fields: [supplierId], references: [id])
+  orders   OrderItem[]
+
+  @@map("products")
+}
+
+model Catalog {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  supplierId  String
+  pdfAssetId  String?
+  csvAssetId  String?
+  isActive    Boolean  @default(true)
+  uploadedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Asset relations
+  pdfAsset Asset? @relation("CatalogPdf", fields: [pdfAssetId], references: [id])
+  csvAsset Asset? @relation("CatalogCsv", fields: [csvAssetId], references: [id])
+
+  // Relations
+  supplier Organization @relation(fields: [supplierId], references: [id])
+
+  @@map("catalogs")
+}
+
+model Service {
+  id          String          @id @default(uuid())
+  title       String
+  description String?
+  category    ServiceCategory
+  price       Float?
+  isActive    Boolean         @default(true)
+  providerId  String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  provider ServiceProvider  @relation(fields: [providerId], references: [id])
+  requests ServiceRequest[]
+
+  @@map("services")
+}
+
+model ServiceProvider {
+  id             String   @id @default(uuid())
+  organizationId String   @unique
+  deliveryType   String? // "On-site", "Remote", "Hybrid"
+  bookingLink    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id])
+  services     Service[]
+
+  @@map("service_providers")
+}
+
+model JobListing {
+  id           String    @id @default(uuid())
+  title        String
+  description  String?
+  requirements String[]
+  benefits     String[]
+  location     String?
+  salary       String?
+  status       JobStatus @default(DRAFT)
+  foundationId String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  foundation   Organization     @relation(fields: [foundationId], references: [id])
+  applications JobApplication[]
+
+  @@map("job_listings")
+}
+
+model JobApplication {
+  id           String            @id @default(uuid())
+  jobListingId String
+  candidateId  String
+  coverLetter  String?
+  status       ApplicationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  // Relations
+  jobListing JobListing @relation(fields: [jobListingId], references: [id])
+  candidate  User       @relation(fields: [candidateId], references: [id])
+
+  @@unique([jobListingId, candidateId])
+  @@map("job_applications")
+}
+
+model Subscription {
+  id                   String             @id @default(uuid())
+  organizationId       String             @unique
+  planId               String // Add planId field
+  stripeSubscriptionId String?            @unique
+  tier                 SubscriptionTier
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  // Relations
+  organization Organization         @relation(fields: [organizationId], references: [id])
+  plan         SubscriptionPlan     @relation(fields: [planId], references: [id])
+  transactions BillingTransaction[]
+
+  @@map("subscriptions")
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  organizationId String
+  totalAmount    Float
+  status         String   @default("PENDING")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id])
+  items        OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model ServiceRequest {
+  id             String    @id @default(uuid())
+  organizationId String
+  serviceId      String
+  description    String?
+  status         String    @default("PENDING")
+  requestedAt    DateTime  @default(now())
+  scheduledAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id])
+  service      Service      @relation(fields: [serviceId], references: [id])
+
+  @@map("service_requests")
+}
+
+model ParentLead {
+  id           String  @id @default(uuid())
+  parentName   String
+  parentEmail  String
+  parentPhone  String?
+  childName    String
+  childAge     Int
+  message      String?
+  foundationId String?
+
+  // Additional fields from onboarding guide
+  preferredLocation   String? // Preferred canton/location
+  preferredLanguages  String[] // Preferred languages
+  specialRequirements String? // Special needs or requirements
+
+  // Additional fields for lead management
+  source String? // Source of the lead (website, referral, etc.)
+
+  status    String   @default("NEW")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("parent_leads")
+}
+
+// Translation tables for i18n
+model EntitySource {
+  entityType String
+  entityId   String
+  sourceLang String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@id([entityType, entityId])
+  @@map("entity_sources")
+}
+
+model EntityTranslation {
+  entityType String
+  entityId   String
+  lang       String
+  field      String
+  text       String
+  origin     String   @default("machine")
+  verified   Boolean  @default(false)
+  sourceHash String
+  updatedAt  DateTime @default(now())
+
+  @@id([entityType, entityId, lang, field])
+  @@map("entity_translations")
+}
+
+// Subscription System Models
+model Plan {
+  id          String   @id @default(uuid())
+  code        String   @unique // BASIC, ESSENTIAL, PROFESSIONAL, ENTERPRISE
+  name        String
+  description String?
+  features    String[] // Array of feature codes
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  subscriptions UserSubscription[]
+  licenses      License[]
+  planPrices    PlanPrice[]
+
+  @@map("plans")
+}
+
+model PlanPrice {
+  id            String   @id @default(uuid())
+  planId        String
+  cadence       String // monthly, annual
+  kind          String // recurring, one_time
+  stripePriceId String   @unique
+  amount        Int // Amount in cents (CHF)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  plan Plan @relation(fields: [planId], references: [id])
+
+  @@map("plan_prices")
+}
+
+model UserSubscription {
+  id                   String    @id @default(uuid())
+  userId               String
+  planId               String
+  cadence              String // monthly, annual
+  stripeSubscriptionId String    @unique
+  status               String // active, trialing, past_due, canceled, incomplete
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  trialStart           DateTime?
+  trialEnd             DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  canceledAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+  plan Plan @relation(fields: [planId], references: [id])
+
+  @@map("user_subscriptions")
+}
+
+model License {
+  id                    String   @id @default(uuid())
+  userId                String
+  planId                String
+  stripePaymentIntentId String   @unique
+  status                String // active, revoked, expired
+  accessExpiresAt       DateTime
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+  plan Plan @relation(fields: [planId], references: [id])
+
+  @@map("licenses")
+}
+
+// E-Learning Platform Models
+model CourseCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  parentId    String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  parent   CourseCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children CourseCategory[] @relation("CategoryHierarchy")
+  courses  Course[]
+
+  @@map("course_categories")
+}
+
+model Course {
+  id                String       @id @default(uuid())
+  title             String
+  description       String?
+  shortDescription  String?
+  categoryId        String?
+  difficultyLevel   String // beginner, intermediate, advanced
+  estimatedDuration Int // minutes
+  thumbnailUrl      String?
+  status            CourseStatus @default(DRAFT)
+  createdBy         String
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  // Relations
+  category     CourseCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  creator      User               @relation("CourseCreator", fields: [createdBy], references: [id])
+  modules      CourseModule[]
+  enrollments  CourseEnrollment[]
+  discussions  CourseDiscussion[]
+  certificates Certificate[]
+
+  @@map("courses")
+}
+
+model CourseModule {
+  id          String   @id @default(uuid())
+  courseId    String
+  title       String
+  description String?
+  sortOrder   Int      @default(0)
+  isRequired  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons CourseLesson[]
+
+  @@map("course_modules")
+}
+
+model CourseLesson {
+  id          String      @id @default(uuid())
+  moduleId    String
+  title       String
+  contentType ContentType
+  contentUrl  String?
+  contentText String?
+  duration    Int? // minutes
+  sortOrder   Int         @default(0)
+  isRequired  Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  // Relations
+  module   CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+  quizzes  CourseQuiz[]
+
+  @@map("course_lessons")
+}
+
+model CourseEnrollment {
+  id                 String    @id @default(uuid())
+  userId             String
+  courseId           String
+  enrolledAt         DateTime  @default(now())
+  completedAt        DateTime?
+  progressPercentage Decimal   @default(0) @db.Decimal(5, 2)
+  lastAccessedAt     DateTime  @default(now())
+
+  // Relations
+  user         User             @relation(fields: [userId], references: [id])
+  course       Course           @relation(fields: [courseId], references: [id])
+  progress     LessonProgress[]
+  quizAttempts QuizAttempt[]
+
+  @@unique([userId, courseId])
+  @@map("course_enrollments")
+}
+
+model LessonProgress {
+  id           String       @id @default(uuid())
+  enrollmentId String
+  lessonId     String
+  completedAt  DateTime?
+  timeSpent    Int          @default(0) // seconds
+  status       LessonStatus @default(NOT_STARTED)
+
+  // Relations
+  enrollment CourseEnrollment @relation(fields: [enrollmentId], references: [id])
+  lesson     CourseLesson     @relation(fields: [lessonId], references: [id])
+
+  @@unique([enrollmentId, lessonId])
+  @@map("lesson_progress")
+}
+
+model CourseQuiz {
+  id              String   @id @default(uuid())
+  lessonId        String
+  title           String
+  instructions    String?
+  passingScore    Int      @default(70)
+  timeLimit       Int? // minutes
+  attemptsAllowed Int      @default(3)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  lesson    CourseLesson   @relation(fields: [lessonId], references: [id])
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@map("course_quizzes")
+}
+
+model QuizQuestion {
+  id           String   @id @default(uuid())
+  quizId       String
+  questionText String
+  questionType QuizType
+  points       Int      @default(1)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  // Relations
+  quiz    CourseQuiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@map("quiz_questions")
+}
+
+model QuizAnswer {
+  id         String   @id @default(uuid())
+  questionId String
+  answerText String
+  isCorrect  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  // Relations
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_answers")
+}
+
+model QuizAttempt {
+  id            String   @id @default(uuid())
+  enrollmentId  String
+  quizId        String
+  score         Decimal? @db.Decimal(5, 2)
+  passed        Boolean  @default(false)
+  completedAt   DateTime @default(now())
+  timeTaken     Int? // seconds
+  attemptNumber Int      @default(1)
+
+  // Relations
+  enrollment CourseEnrollment @relation(fields: [enrollmentId], references: [id])
+  quiz       CourseQuiz       @relation(fields: [quizId], references: [id])
+
+  @@map("quiz_attempts")
+}
+
+model Certificate {
+  id                String    @id @default(uuid())
+  userId            String
+  courseId          String
+  certificateNumber String    @unique
+  issuedAt          DateTime  @default(now())
+  expiresAt         DateTime?
+  pdfUrl            String?
+  verificationCode  String    @unique
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@map("certificates")
+}
+
+model CourseDiscussion {
+  id         String   @id @default(uuid())
+  courseId   String
+  userId     String
+  title      String
+  content    String
+  isPinned   Boolean  @default(false)
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  course  Course            @relation(fields: [courseId], references: [id])
+  user    User              @relation(fields: [userId], references: [id])
+  replies DiscussionReply[]
+
+  @@map("course_discussions")
+}
+
+model DiscussionReply {
+  id           String   @id @default(uuid())
+  discussionId String
+  userId       String
+  content      String
+  isSolution   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  discussion CourseDiscussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user       User             @relation(fields: [userId], references: [id])
+
+  @@map("discussion_replies")
+}
+
+// Enhanced Messaging System Models
+model Conversation {
+  id            String           @id @default(uuid())
+  type          ConversationType @default(DIRECT)
+  title         String?
+  lastMessageAt DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Relations
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String    @id @default(uuid())
+  conversationId String
+  userId         String
+  joinedAt       DateTime  @default(now())
+  lastReadAt     DateTime?
+  isActive       Boolean   @default(true)
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+  @@map("conversation_participants")
+}
+
+// Update Message model for enhanced messaging
+model Message {
+  id             String      @id @default(uuid())
+  conversationId String?
+  senderId       String
+  receiverId     String? // For direct messages
+  content        String
+  messageType    MessageType @default(TEXT)
+  isRead         Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+
+  // Relations
+  conversation Conversation? @relation(fields: [conversationId], references: [id])
+  sender       User          @relation("MessageSender", fields: [senderId], references: [id])
+  receiver     User?         @relation("MessageReceiver", fields: [receiverId], references: [id])
+
+  @@map("messages")
+}
+
+// Frontend Customization Settings
+model FrontendSettings {
+  id              String  @id @default(uuid())
+  siteName        String  @default("Pro Crèche Solutions")
+  siteDescription String? @default("Leading childcare solutions platform in Switzerland")
+  siteKeywords    String? @default("childcare, daycare, switzerland, education")
+
+  // Branding - Main Application
+  logoAssetId    String?
+  faviconAssetId String?
+  primaryColor   String  @default("#3B82F6")
+  secondaryColor String  @default("#1E40AF")
+
+  // Admin Dashboard Branding
+  adminLogoAssetId    String?
+  adminPrimaryColor   String  @default("#1F2937")
+  adminSecondaryColor String  @default("#374151")
+  adminAccentColor    String  @default("#3B82F6")
+
+  // Contact Information
+  contactEmail   String?
+  contactPhone   String?
+  contactAddress String?
+
+  // Social Media
+  facebookUrl  String?
+  twitterUrl   String?
+  linkedinUrl  String?
+  instagramUrl String?
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  ogImageAssetId  String?
+
+  // Analytics
+  googleAnalyticsId  String?
+  googleTagManagerId String?
+
+  // Legal
+  privacyPolicyUrl  String?
+  termsOfServiceUrl String?
+  cookiePolicyUrl   String?
+
+  // Theme Settings
+  enableDarkMode Boolean @default(true)
+  defaultTheme   String  @default("light") // light, dark, auto
+
+  // Main Application Customization
+  mainAppCustomization Json? // Store custom CSS, custom components config
+
+  // Admin Dashboard Customization
+  adminCustomization Json? // Store admin-specific customizations
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  logoAsset      Asset? @relation("FrontendLogo", fields: [logoAssetId], references: [id])
+  faviconAsset   Asset? @relation("FrontendFavicon", fields: [faviconAssetId], references: [id])
+  ogImageAsset   Asset? @relation("FrontendOgImage", fields: [ogImageAssetId], references: [id])
+  adminLogoAsset Asset? @relation("AdminLogo", fields: [adminLogoAssetId], references: [id])
+
+  @@map("frontend_settings")
+}
+
+// User Activity Tracking
+model UserActivity {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String // e.g., "LOGIN", "PROFILE_UPDATE", "PASSWORD_CHANGE"
+  details   Json? // Additional context about the action
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation("UserActivity", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_activities")
+}
+
+// Content Moderation System
+model ContentModeration {
+  id          String  @id @default(uuid())
+  contentId   String // ID of the content being moderated
+  contentType String // PRODUCT, JOB_LISTING, SERVICE, ORGANIZATION, USER_PROFILE
+  status      String  @default("PENDING") // PENDING, APPROVED, REJECTED, FLAGGED
+  priority    String  @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  reason      String? // Reason for moderation/flagging
+  notes       String? // Additional notes from moderator
+
+  // User tracking
+  reporterId  String? // User who reported/flagged the content
+  moderatorId String? // Admin who moderated the content
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  flaggedAt   DateTime?
+  moderatedAt DateTime?
+
+  // Relations
+  reporter  User?              @relation("ContentReporter", fields: [reporterId], references: [id])
+  moderator User?              @relation("ContentModerator", fields: [moderatorId], references: [id])
+  actions   ModerationAction[]
+
+  @@unique([contentId])
+  @@map("content_moderation")
+}
+
+model ModerationAction {
+  id          String   @id @default(uuid())
+  contentId   String
+  contentType String
+  action      String // APPROVE, REJECT, FLAG, REQUEST_CHANGES
+  reason      String?
+  notes       String?
+  moderatorId String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  moderator  User              @relation("ModerationActions", fields: [moderatorId], references: [id])
+  moderation ContentModeration @relation(fields: [contentId], references: [contentId])
+
+  @@map("moderation_actions")
+}
+
+// Email Notification System
+model EmailTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  event       String   @unique // Event identifier (e.g., 'account_verification')
+  subject     String
+  htmlContent String
+  textContent String
+  variables   String[] // Template variables
+  category    String // Category for grouping templates
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("email_templates")
+}
+
+model EmailLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  event      String
+  recipient  String
+  templateId String?
+  messageId  String? // SendGrid message ID
+  status     String // sent, delivered, opened, clicked, bounced, failed
+  payload    Json? // Template variables used
+  error      String? // Error message if failed
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user User? @relation("EmailLogs", fields: [userId], references: [id])
+
+  @@map("email_logs")
+}
+
+model ScheduledEmail {
+  id          String   @id @default(uuid())
+  event       String
+  recipient   String
+  payload     Json
+  scheduledAt DateTime
+  status      String   @default("pending") // pending, sent, failed
+  createdAt   DateTime @default(now())
+
+  @@map("scheduled_emails")
+}
+
+model UserNotificationPreferences {
+  id                 String  @id @default(uuid())
+  userId             String  @unique
+  emailNotifications Boolean @default(true)
+
+  // Category preferences
+  authentication    Boolean @default(true)
+  userManagement    Boolean @default(true)
+  jobRecruitment    Boolean @default(true)
+  messaging         Boolean @default(true)
+  marketplace       Boolean @default(true)
+  leadManagement    Boolean @default(true)
+  subscription      Boolean @default(true)
+  contentModeration Boolean @default(true)
+  systemAdmin       Boolean @default(true)
+  marketing         Boolean @default(true)
+
+  // Frequency settings
+  frequency String @default("immediate") // immediate, daily, weekly
+
+  // Quiet hours
+  quietHoursEnabled Boolean @default(false)
+  quietHoursStart   String? // HH:MM format
+  quietHoursEnd     String? // HH:MM format
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation("NotificationPreferences", fields: [userId], references: [id])
+
+  @@map("user_notification_preferences")
+}
+
+// Subscription Management System
+model SubscriptionPlan {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  price         Float
+  currency      String   @default("CHF")
+  billingPeriod String   @default("monthly") // monthly, yearly
+  features      String[] // Array of feature names
+  limits        Json // Usage limits as JSON
+  isActive      Boolean  @default(true)
+  isPopular     Boolean  @default(false)
+  stripePriceId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  subscriptions Subscription[]
+
+  @@map("subscription_plans")
+}
+
+model PricingTier {
+  id            String   @id @default(uuid())
+  name          String
+  basePrice     Float
+  currency      String   @default("CHF")
+  billingPeriod String   @default("monthly") // monthly, yearly
+  discounts     Json // Discount configuration as JSON
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("pricing_tiers")
+}
+
+model DynamicPricingRule {
+  id                 String    @id @default(uuid())
+  name               String
+  conditions         Json // Rule conditions as JSON
+  pricingAdjustments Json // Pricing adjustments as JSON
+  isActive           Boolean   @default(true)
+  validFrom          DateTime  @default(now())
+  validUntil         DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("dynamic_pricing_rules")
+}
+
+model FeatureFlag {
+  id                String   @id @default(uuid())
+  name              String
+  description       String
+  key               String   @unique // Unique feature identifier
+  isActive          Boolean  @default(true)
+  rolloutPercentage Int      @default(0) // 0-100
+  targetSegments    String[] // User segments
+  conditions        Json // Feature conditions as JSON
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("feature_flags")
+}
+
+model BillingTransaction {
+  id                    String   @id @default(uuid())
+  subscriptionId        String
+  amount                Float
+  currency              String   @default("CHF")
+  status                String   @default("pending") // pending, succeeded, failed, refunded
+  stripePaymentIntentId String?
+  stripeChargeId        String?
+  description           String
+  metadata              Json? // Additional transaction data
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@map("billing_transactions")
+}
+
+// System Configuration Management
+model SystemSettings {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String
+  category    String   @default("general")
+  isEncrypted Boolean  @default(false)
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+model IntegrationConfig {
+  id            String    @id @default(uuid())
+  name          String
+  type          String // auth, payment, email, storage, analytics, other
+  provider      String
+  isActive      Boolean   @default(true)
+  configuration Json // Integration-specific configuration
+  credentials   Json // Encrypted credentials
+  webhookUrl    String?
+  lastSyncAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("integration_configs")
+}
+
+model MaintenanceMode {
+  id               String    @id @default(uuid())
+  isEnabled        Boolean   @default(false)
+  message          String
+  allowedPaths     String[] // Paths that remain accessible during maintenance
+  allowedRoles     String[] // User roles that remain accessible during maintenance
+  estimatedEndTime DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@map("maintenance_mode")
+}
+
+model MaintenanceSchedule {
+  id               String   @id @default(uuid())
+  name             String
+  description      String
+  scheduledStart   DateTime
+  scheduledEnd     DateTime
+  isActive         Boolean  @default(true)
+  notificationSent Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("maintenance_schedules")
+}

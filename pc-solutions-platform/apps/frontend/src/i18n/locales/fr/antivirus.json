@@ -1,0 +1,15 @@
+{
+  "scanning": "Analyse antivirus en cours...",
+  "scanningDescription": "Veuillez patienter pendant que nous vérifions votre fichier contre les logiciels malveillants",
+  "infected": "Téléchargement bloqué",
+  "infectedDescription": "Le fichier contient du code nuisible. Essayez d'exporter un PDF/image propre et de le télécharger à nouveau.",
+  "scannerDown": "Scanner antivirus temporairement indisponible",
+  "scannerDownDescription": "Veuillez réessayer dans un moment.",
+  "clean": "Fichier analysé avec succès",
+  "cleanDescription": "Votre fichier est propre et sûr à utiliser",
+  "uploadBlocked": "Téléchargement bloqué — le fichier contient du code nuisible",
+  "scannerUnavailable": "Scanner antivirus temporairement indisponible. Veuillez réessayer dans un moment.",
+  "invalidFileType": "Type de fichier invalide",
+  "fileSizeExceeded": "La taille du fichier dépasse la taille maximale autorisée",
+  "uploadFailed": "Échec du téléchargement. Veuillez réessayer."
+}

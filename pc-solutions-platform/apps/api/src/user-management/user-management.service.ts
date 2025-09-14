@@ -1,0 +1,338 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { UserRole, UserStatus } from '@prisma/client';
+
+export interface UserFilters {
+  role?: UserRole;
+  status?: UserStatus;
+  search?: string;
+  dateFrom?: Date;
+  dateTo?: Date;
+  lastActiveFrom?: Date;
+  lastActiveTo?: Date;
+}
+
+export interface BulkUserOperation {
+  userIds: string[];
+  operation: 'activate' | 'deactivate' | 'suspend' | 'delete' | 'changeRole';
+  newRole?: UserRole;
+}
+
+export interface UserActivity {
+  id: string;
+  userId: string;
+  action: string;
+  details: any;
+  ipAddress?: string;
+  userAgent?: string;
+  createdAt: Date;
+}
+
+@Injectable()
+export class UserManagementService {
+  constructor(private prisma: PrismaService) {}
+
+  async getUsers(
+    page: number = 1,
+    limit: number = 20,
+    filters: UserFilters = {},
+    sortBy: string = 'createdAt',
+    sortOrder: 'asc' | 'desc' = 'desc'
+  ) {
+    const skip = (page - 1) * limit;
+    
+    const where: any = {};
+
+    if (filters.role) {
+      where.role = filters.role;
+    }
+
+    if (filters.status) {
+      where.status = filters.status;
+    }
+
+    if (filters.search) {
+      where.OR = [
+        { firstName: { contains: filters.search, mode: 'insensitive' } },
+        { lastName: { contains: filters.search, mode: 'insensitive' } },
+        { email: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (filters.dateFrom || filters.dateTo) {
+      where.createdAt = {};
+      if (filters.dateFrom) {
+        where.createdAt.gte = filters.dateFrom;
+      }
+      if (filters.dateTo) {
+        where.createdAt.lte = filters.dateTo;
+      }
+    }
+
+    if (filters.lastActiveFrom || filters.lastActiveTo) {
+      where.lastActiveAt = {};
+      if (filters.lastActiveFrom) {
+        where.lastActiveAt.gte = filters.lastActiveFrom;
+      }
+      if (filters.lastActiveTo) {
+        where.lastActiveAt.lte = filters.lastActiveTo;
+      }
+    }
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
+        include: {
+          profile: true,
+          organization: true,
+        },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    return {
+      users,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async getUserById(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: true,
+        organization: true,
+        subscriptions: {
+          include: {
+            plan: true,
+          },
+        },
+      },
+    });
+  }
+
+  async updateUser(userId: string, updateData: any) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      include: {
+        profile: true,
+        organization: true,
+      },
+    });
+  }
+
+  async bulkUpdateUsers(operation: BulkUserOperation) {
+    const { userIds, operation: op, newRole } = operation;
+
+    switch (op) {
+      case 'activate':
+        return this.prisma.user.updateMany({
+          where: { id: { in: userIds } },
+          data: { status: 'ACTIVE' },
+        });
+
+      case 'deactivate':
+        return this.prisma.user.updateMany({
+          where: { id: { in: userIds } },
+          data: { status: 'INACTIVE' },
+        });
+
+      case 'suspend':
+        return this.prisma.user.updateMany({
+          where: { id: { in: userIds } },
+          data: { status: 'SUSPENDED' },
+        });
+
+      case 'delete':
+        return this.prisma.user.deleteMany({
+          where: { id: { in: userIds } },
+        });
+
+      case 'changeRole':
+        if (!newRole) {
+          throw new Error('New role is required for changeRole operation');
+        }
+        return this.prisma.user.updateMany({
+          where: { id: { in: userIds } },
+          data: { role: newRole },
+        });
+
+      default:
+        throw new Error(`Unknown operation: ${op}`);
+    }
+  }
+
+  async getUserActivity(userId: string, page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+
+    const [activities, total] = await Promise.all([
+      this.prisma.userActivity.findMany({
+        where: { userId },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.userActivity.count({ where: { userId } }),
+    ]);
+
+    return {
+      activities,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async logUserActivity(userId: string, action: string, details: any, ipAddress?: string, userAgent?: string) {
+    return this.prisma.userActivity.create({
+      data: {
+        userId,
+        action,
+        details,
+        ipAddress,
+        userAgent,
+      },
+    });
+  }
+
+  async getUserStats() {
+    const [
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      suspendedUsers,
+      usersByRole,
+      recentRegistrations,
+    ] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.user.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.user.count({ where: { status: 'INACTIVE' } }),
+      this.prisma.user.count({ where: { status: 'SUSPENDED' } }),
+      this.prisma.user.groupBy({
+        by: ['role'],
+        _count: { id: true },
+      }),
+      this.prisma.user.count({
+        where: {
+          createdAt: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
+          },
+        },
+      }),
+    ]);
+
+    return {
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      suspendedUsers,
+      usersByRole: usersByRole.map(r => ({
+        role: r.role,
+        count: r._count.id,
+      })),
+      recentRegistrations,
+    };
+  }
+
+  async sendEmailNotification(userIds: string[], subject: string, content: string) {
+    // This would integrate with your email service (e.g., SendGrid, AWS SES)
+    // For now, we'll just log the notification
+    console.log(`Sending email notification to ${userIds.length} users:`, {
+      subject,
+      content,
+      userIds,
+    });
+
+    // In a real implementation, you would:
+    // 1. Get user emails from the database
+    // 2. Send emails via your email service
+    // 3. Log the notification in the database
+    
+    return {
+      success: true,
+      message: `Email notification queued for ${userIds.length} users`,
+    };
+  }
+
+  async exportUsers(filters: UserFilters = {}) {
+    const where: any = {};
+
+    if (filters.role) {
+      where.role = filters.role;
+    }
+
+    if (filters.status) {
+      where.status = filters.status;
+    }
+
+    if (filters.search) {
+      where.OR = [
+        { firstName: { contains: filters.search, mode: 'insensitive' } },
+        { lastName: { contains: filters.search, mode: 'insensitive' } },
+        { email: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (filters.dateFrom || filters.dateTo) {
+      where.createdAt = {};
+      if (filters.dateFrom) {
+        where.createdAt.gte = filters.dateFrom;
+      }
+      if (filters.dateTo) {
+        where.createdAt.lte = filters.dateTo;
+      }
+    }
+
+    const users = await this.prisma.user.findMany({
+      where,
+      include: {
+        profile: true,
+        organization: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Convert to CSV format
+    const csvHeaders = [
+      'ID',
+      'Email',
+      'First Name',
+      'Last Name',
+      'Role',
+      'Status',
+      'Created At',
+      'Last Active',
+      'Organization',
+    ];
+
+    const csvRows = users.map(user => [
+      user.id,
+      user.email,
+      user.firstName || '',
+      user.lastName || '',
+      user.role,
+      user.status,
+      user.createdAt.toISOString(),
+      user.lastActiveAt?.toISOString() || '',
+      user.organization?.name || '',
+    ]);
+
+    const csvContent = [csvHeaders, ...csvRows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+
+    return {
+      csvContent,
+      filename: `users_export_${new Date().toISOString().split('T')[0]}.csv`,
+      count: users.length,
+    };
+  }
+}

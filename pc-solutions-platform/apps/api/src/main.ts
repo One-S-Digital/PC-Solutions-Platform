@@ -1,0 +1,58 @@
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import helmet from 'helmet';
+import compression from 'compression';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { AppLoggerService } from './common/logger.service';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const logger = app.get(AppLoggerService);
+
+  // Security middleware
+  app.use(helmet());
+  app.use(compression());
+
+  // Global pipes
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  // Global exception filter
+  app.useGlobalFilters(new GlobalExceptionFilter(logger));
+
+  // CORS
+  app.enableCors({
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://procrechesolutions.com', 'https://dash.procrechesolutions.com', 'https://admin.procrechesolutions.com']
+      : true,
+    credentials: true,
+  });
+
+  // Swagger documentation
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('PC Solutions API')
+      .setDescription('API for the PC Solutions platform')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
+
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  
+  logger.log(`Application is running on: http://localhost:${port}`, 'Bootstrap');
+  if (process.env.NODE_ENV !== 'production') {
+    logger.log(`Swagger documentation: http://localhost:${port}/api/docs`, 'Bootstrap');
+  }
+}
+bootstrap();

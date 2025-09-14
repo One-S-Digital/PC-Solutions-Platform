@@ -1,0 +1,677 @@
+pro-creche-admin-dashboard@1.0.0 /app/admin-dashboard
+├─┬ @clerk/clerk-react@4.32.5
+│ ├─┬ @clerk/shared@1.4.2
+│ │ ├── glob-to-regexp@0.4.1
+│ │ ├── js-cookie@3.0.1
+│ │ ├── react@18.3.1 deduped
+│ │ └─┬ swr@2.2.0
+│ │   ├── react@18.3.1 deduped
+│ │   └── use-sync-external-store@1.5.0 deduped
+│ ├─┬ @clerk/types@3.65.5
+│ │ └── csstype@3.1.1 deduped
+│ ├── react@18.3.1 deduped
+│ └── tslib@2.4.1
+├─┬ @headlessui/react@2.2.7
+│ ├─┬ @floating-ui/react@0.26.28
+│ │ ├─┬ @floating-ui/react-dom@2.1.6
+│ │ │ ├─┬ @floating-ui/dom@1.7.4
+│ │ │ │ ├─┬ @floating-ui/core@1.7.3
+│ │ │ │ │ └── @floating-ui/utils@0.2.10 deduped
+│ │ │ │ └── @floating-ui/utils@0.2.10 deduped
+│ │ │ ├── react-dom@18.3.1 deduped
+│ │ │ └── react@18.3.1 deduped
+│ │ ├── @floating-ui/utils@0.2.10
+│ │ ├── react-dom@18.3.1 deduped
+│ │ ├── react@18.3.1 deduped
+│ │ └── tabbable@6.2.0
+│ ├─┬ @react-aria/focus@3.21.1
+│ │ ├── @react-aria/interactions@3.25.5 deduped
+│ │ ├─┬ @react-aria/utils@3.30.1
+│ │ │ ├── @react-aria/ssr@3.9.10 deduped
+│ │ │ ├── @react-stately/flags@3.1.2 deduped
+│ │ │ ├─┬ @react-stately/utils@3.10.8
+│ │ │ │ ├── @swc/helpers@0.5.17 deduped
+│ │ │ │ └── react@18.3.1 deduped
+│ │ │ ├── @react-types/shared@3.32.0 deduped
+│ │ │ ├── @swc/helpers@0.5.17 deduped
+│ │ │ ├── clsx@2.1.1 deduped
+│ │ │ ├── react-dom@18.3.1 deduped
+│ │ │ └── react@18.3.1 deduped
+│ │ ├─┬ @react-types/shared@3.32.0
+│ │ │ └── react@18.3.1 deduped
+│ │ ├─┬ @swc/helpers@0.5.17
+│ │ │ └── tslib@2.8.1
+│ │ ├── clsx@2.1.1 deduped
+│ │ ├── react-dom@18.3.1 deduped
+│ │ └── react@18.3.1 deduped
+│ ├─┬ @react-aria/interactions@3.25.5
+│ │ ├─┬ @react-aria/ssr@3.9.10
+│ │ │ ├── @swc/helpers@0.5.17 deduped
+│ │ │ └── react@18.3.1 deduped
+│ │ ├── @react-aria/utils@3.30.1 deduped
+│ │ ├─┬ @react-stately/flags@3.1.2
+│ │ │ └── @swc/helpers@0.5.17 deduped
+│ │ ├── @react-types/shared@3.32.0 deduped
+│ │ ├── @swc/helpers@0.5.17 deduped
+│ │ ├── react-dom@18.3.1 deduped
+│ │ └── react@18.3.1 deduped
+│ ├─┬ @tanstack/react-virtual@3.13.12
+│ │ ├── @tanstack/virtual-core@3.13.12
+│ │ ├── react-dom@18.3.1 deduped
+│ │ └── react@18.3.1 deduped
+│ ├── react-dom@18.3.1 deduped
+│ ├── react@18.3.1 deduped
+│ └─┬ use-sync-external-store@1.5.0
+│   └── react@18.3.1 deduped
+├─┬ @hookform/resolvers@3.10.0
+│ └── react-hook-form@7.62.0 deduped
+├─┬ @tanstack/react-query-devtools@5.85.9
+│ ├── @tanstack/query-devtools@5.84.0
+│ ├── @tanstack/react-query@5.85.9 deduped
+│ └── react@18.3.1 deduped
+├─┬ @tanstack/react-query@5.85.9
+│ ├── @tanstack/query-core@5.85.9
+│ └── react@18.3.1 deduped
+├─┬ @types/react-dom@18.3.7
+│ └── @types/react@18.3.24 deduped
+├─┬ @types/react@18.3.24
+│ ├── @types/prop-types@15.7.15
+│ └── csstype@3.1.1
+├─┬ @typescript-eslint/eslint-plugin@6.21.0
+│ ├── @eslint-community/regexpp@4.12.1
+│ ├── @typescript-eslint/parser@6.21.0 deduped
+│ ├─┬ @typescript-eslint/scope-manager@6.21.0
+│ │ ├── @typescript-eslint/types@6.21.0 deduped
+│ │ └── @typescript-eslint/visitor-keys@6.21.0 deduped
+│ ├─┬ @typescript-eslint/type-utils@6.21.0
+│ │ ├── @typescript-eslint/typescript-estree@6.21.0 deduped
+│ │ ├── @typescript-eslint/utils@6.21.0 deduped
+│ │ ├── debug@4.4.1 deduped
+│ │ ├── eslint@8.57.1 deduped
+│ │ └── ts-api-utils@1.4.3 deduped
+│ ├─┬ @typescript-eslint/utils@6.21.0
+│ │ ├── @eslint-community/eslint-utils@4.7.0 deduped
+│ │ ├── @types/json-schema@7.0.15
+│ │ ├── @types/semver@7.7.0
+│ │ ├── @typescript-eslint/scope-manager@6.21.0 deduped
+│ │ ├── @typescript-eslint/types@6.21.0 deduped
+│ │ ├── @typescript-eslint/typescript-estree@6.21.0 deduped
+│ │ ├── eslint@8.57.1 deduped
+│ │ └── semver@7.7.2 deduped
+│ ├─┬ @typescript-eslint/visitor-keys@6.21.0
+│ │ ├── @typescript-eslint/types@6.21.0 deduped
+│ │ └── eslint-visitor-keys@3.4.3 deduped
+│ ├─┬ debug@4.4.1
+│ │ └── ms@2.1.3
+│ ├── eslint@8.57.1 deduped
+│ ├── graphemer@1.4.0
+│ ├── ignore@5.3.2
+│ ├── natural-compare@1.4.0
+│ ├── semver@7.7.2
+│ └─┬ ts-api-utils@1.4.3
+│   └── typescript@5.9.2 deduped
+├─┬ @typescript-eslint/parser@6.21.0
+│ ├── @typescript-eslint/scope-manager@6.21.0 deduped
+│ ├── @typescript-eslint/types@6.21.0
+│ ├─┬ @typescript-eslint/typescript-estree@6.21.0
+│ │ ├── @typescript-eslint/types@6.21.0 deduped
+│ │ ├── @typescript-eslint/visitor-keys@6.21.0 deduped
+│ │ ├── debug@4.4.1 deduped
+│ │ ├─┬ globby@11.1.0
+│ │ │ ├── array-union@2.1.0
+│ │ │ ├─┬ dir-glob@3.0.1
+│ │ │ │ └── path-type@4.0.0
+│ │ │ ├── fast-glob@3.3.3 deduped
+│ │ │ ├── ignore@5.3.2 deduped
+│ │ │ ├── merge2@1.4.1 deduped
+│ │ │ └── slash@3.0.0
+│ │ ├── is-glob@4.0.3 deduped
+│ │ ├─┬ minimatch@9.0.3
+│ │ │ └─┬ brace-expansion@2.0.2
+│ │ │   └── balanced-match@1.0.2 deduped
+│ │ ├── semver@7.7.2 deduped
+│ │ └── ts-api-utils@1.4.3 deduped
+│ ├── @typescript-eslint/visitor-keys@6.21.0 deduped
+│ ├── debug@4.4.1 deduped
+│ └── eslint@8.57.1 deduped
+├─┬ @vitejs/plugin-react@4.7.0
+│ ├─┬ @babel/core@7.28.3
+│ │ ├─┬ @ampproject/remapping@2.3.0
+│ │ │ ├── @jridgewell/gen-mapping@0.3.13 deduped
+│ │ │ └─┬ @jridgewell/trace-mapping@0.3.30
+│ │ │   ├── @jridgewell/resolve-uri@3.1.2
+│ │ │   └── @jridgewell/sourcemap-codec@1.5.5 deduped
+│ │ ├─┬ @babel/code-frame@7.27.1
+│ │ │ ├── @babel/helper-validator-identifier@7.27.1
+│ │ │ ├── js-tokens@4.0.0 deduped
+│ │ │ └── picocolors@1.1.1 deduped
+│ │ ├─┬ @babel/generator@7.28.3
+│ │ │ ├── @babel/parser@7.28.3 deduped
+│ │ │ ├── @babel/types@7.28.2 deduped
+│ │ │ ├── @jridgewell/gen-mapping@0.3.13 deduped
+│ │ │ ├── @jridgewell/trace-mapping@0.3.30 deduped
+│ │ │ └── jsesc@3.1.0
+│ │ ├─┬ @babel/helper-compilation-targets@7.27.2
+│ │ │ ├── @babel/compat-data@7.28.0
+│ │ │ ├── @babel/helper-validator-option@7.27.1
+│ │ │ ├── browserslist@4.25.4 deduped
+│ │ │ ├─┬ lru-cache@5.1.1
+│ │ │ │ └── yallist@3.1.1
+│ │ │ └── semver@6.3.1
+│ │ ├─┬ @babel/helper-module-transforms@7.28.3
+│ │ │ ├── @babel/core@7.28.3 deduped
+│ │ │ ├─┬ @babel/helper-module-imports@7.27.1
+│ │ │ │ ├── @babel/traverse@7.28.3 deduped
+│ │ │ │ └── @babel/types@7.28.2 deduped
+│ │ │ ├── @babel/helper-validator-identifier@7.27.1 deduped
+│ │ │ └── @babel/traverse@7.28.3 deduped
+│ │ ├─┬ @babel/helpers@7.28.3
+│ │ │ ├── @babel/template@7.27.2 deduped
+│ │ │ └── @babel/types@7.28.2 deduped
+│ │ ├─┬ @babel/parser@7.28.3
+│ │ │ └── @babel/types@7.28.2 deduped
+│ │ ├─┬ @babel/template@7.27.2
+│ │ │ ├── @babel/code-frame@7.27.1 deduped
+│ │ │ ├── @babel/parser@7.28.3 deduped
+│ │ │ └── @babel/types@7.28.2 deduped
+│ │ ├─┬ @babel/traverse@7.28.3
+│ │ │ ├── @babel/code-frame@7.27.1 deduped
+│ │ │ ├── @babel/generator@7.28.3 deduped
+│ │ │ ├── @babel/helper-globals@7.28.0
+│ │ │ ├── @babel/parser@7.28.3 deduped
+│ │ │ ├── @babel/template@7.27.2 deduped
+│ │ │ ├── @babel/types@7.28.2 deduped
+│ │ │ └── debug@4.4.1 deduped
+│ │ ├─┬ @babel/types@7.28.2
+│ │ │ ├── @babel/helper-string-parser@7.27.1
+│ │ │ └── @babel/helper-validator-identifier@7.27.1 deduped
+│ │ ├── convert-source-map@2.0.0
+│ │ ├── debug@4.4.1 deduped
+│ │ ├── gensync@1.0.0-beta.2
+│ │ ├── json5@2.2.3
+│ │ └── semver@6.3.1
+│ ├─┬ @babel/plugin-transform-react-jsx-self@7.27.1
+│ │ ├── @babel/core@7.28.3 deduped
+│ │ └── @babel/helper-plugin-utils@7.27.1
+│ ├─┬ @babel/plugin-transform-react-jsx-source@7.27.1
+│ │ ├── @babel/core@7.28.3 deduped
+│ │ └── @babel/helper-plugin-utils@7.27.1 deduped
+│ ├── @rolldown/pluginutils@1.0.0-beta.27
+│ ├─┬ @types/babel__core@7.20.5
+│ │ ├── @babel/parser@7.28.3 deduped
+│ │ ├── @babel/types@7.28.2 deduped
+│ │ ├─┬ @types/babel__generator@7.27.0
+│ │ │ └── @babel/types@7.28.2 deduped
+│ │ ├─┬ @types/babel__template@7.4.4
+│ │ │ ├── @babel/parser@7.28.3 deduped
+│ │ │ └── @babel/types@7.28.2 deduped
+│ │ └─┬ @types/babel__traverse@7.28.0
+│ │   └── @babel/types@7.28.2 deduped
+│ ├── react-refresh@0.17.0
+│ └── vite@5.4.19 deduped
+├─┬ autoprefixer@10.4.21
+│ ├─┬ browserslist@4.25.4
+│ │ ├── caniuse-lite@1.0.30001739 deduped
+│ │ ├── electron-to-chromium@1.5.212
+│ │ ├── node-releases@2.0.19
+│ │ └─┬ update-browserslist-db@1.1.3
+│ │   ├── browserslist@4.25.4 deduped
+│ │   ├── escalade@3.2.0
+│ │   └── picocolors@1.1.1 deduped
+│ ├── caniuse-lite@1.0.30001739
+│ ├── fraction.js@4.3.7
+│ ├── normalize-range@0.1.2
+│ ├── picocolors@1.1.1
+│ ├── postcss-value-parser@4.2.0
+│ └── postcss@8.5.6 deduped
+├─┬ axios-retry@4.5.0
+│ ├── axios@1.11.0 deduped
+│ └── is-retry-allowed@2.2.0
+├─┬ axios@1.11.0
+│ ├── follow-redirects@1.15.11
+│ ├─┬ form-data@4.0.4
+│ │ ├── asynckit@0.4.0
+│ │ ├─┬ combined-stream@1.0.8
+│ │ │ └── delayed-stream@1.0.0
+│ │ ├─┬ es-set-tostringtag@2.1.0
+│ │ │ ├── es-errors@1.3.0
+│ │ │ ├─┬ get-intrinsic@1.3.0
+│ │ │ │ ├─┬ call-bind-apply-helpers@1.0.2
+│ │ │ │ │ ├── es-errors@1.3.0 deduped
+│ │ │ │ │ └── function-bind@1.1.2 deduped
+│ │ │ │ ├── es-define-property@1.0.1
+│ │ │ │ ├── es-errors@1.3.0 deduped
+│ │ │ │ ├─┬ es-object-atoms@1.1.1
+│ │ │ │ │ └── es-errors@1.3.0 deduped
+│ │ │ │ ├── function-bind@1.1.2 deduped
+│ │ │ │ ├─┬ get-proto@1.0.1
+│ │ │ │ │ ├─┬ dunder-proto@1.0.1
+│ │ │ │ │ │ ├── call-bind-apply-helpers@1.0.2 deduped
+│ │ │ │ │ │ ├── es-errors@1.3.0 deduped
+│ │ │ │ │ │ └── gopd@1.2.0 deduped
+│ │ │ │ │ └── es-object-atoms@1.1.1 deduped
+│ │ │ │ ├── gopd@1.2.0
+│ │ │ │ ├── has-symbols@1.1.0
+│ │ │ │ ├── hasown@2.0.2 deduped
+│ │ │ │ └── math-intrinsics@1.1.0
+│ │ │ ├─┬ has-tostringtag@1.0.2
+│ │ │ │ └── has-symbols@1.1.0 deduped
+│ │ │ └── hasown@2.0.2 deduped
+│ │ ├─┬ hasown@2.0.2
+│ │ │ └── function-bind@1.1.2
+│ │ └─┬ mime-types@2.1.35
+│ │   └── mime-db@1.52.0
+│ └── proxy-from-env@1.1.0
+├── clsx@2.1.1
+├── date-fns@3.6.0
+├─┬ eslint-plugin-react-hooks@4.6.2
+│ └── eslint@8.57.1 deduped
+├─┬ eslint-plugin-react-refresh@0.4.20
+│ └── eslint@8.57.1 deduped
+├─┬ eslint@8.57.1
+│ ├─┬ @eslint-community/eslint-utils@4.7.0
+│ │ ├── eslint-visitor-keys@3.4.3 deduped
+│ │ └── eslint@8.57.1 deduped
+│ ├── @eslint-community/regexpp@4.12.1 deduped
+│ ├─┬ @eslint/eslintrc@2.1.4
+│ │ ├── ajv@6.12.6 deduped
+│ │ ├── debug@4.4.1 deduped
+│ │ ├── espree@9.6.1 deduped
+│ │ ├── globals@13.24.0 deduped
+│ │ ├── ignore@5.3.2 deduped
+│ │ ├─┬ import-fresh@3.3.1
+│ │ │ ├─┬ parent-module@1.0.1
+│ │ │ │ └── callsites@3.1.0
+│ │ │ └── resolve-from@4.0.0
+│ │ ├── js-yaml@4.1.0 deduped
+│ │ ├─┬ minimatch@3.1.2
+│ │ │ └─┬ brace-expansion@1.1.12
+│ │ │   ├── balanced-match@1.0.2 deduped
+│ │ │   └── concat-map@0.0.1 deduped
+│ │ └── strip-json-comments@3.1.1
+│ ├── @eslint/js@8.57.1
+│ ├─┬ @humanwhocodes/config-array@0.13.0
+│ │ ├── @humanwhocodes/object-schema@2.0.3
+│ │ ├── debug@4.4.1 deduped
+│ │ └─┬ minimatch@3.1.2
+│ │   └─┬ brace-expansion@1.1.12
+│ │     ├── balanced-match@1.0.2 deduped
+│ │     └── concat-map@0.0.1 deduped
+│ ├── @humanwhocodes/module-importer@1.0.1
+│ ├─┬ @nodelib/fs.walk@1.2.8
+│ │ ├─┬ @nodelib/fs.scandir@2.1.5
+│ │ │ ├── @nodelib/fs.stat@2.0.5 deduped
+│ │ │ └─┬ run-parallel@1.2.0
+│ │ │   └── queue-microtask@1.2.3
+│ │ └─┬ fastq@1.19.1
+│ │   └── reusify@1.1.0
+│ ├── @ungap/structured-clone@1.3.0
+│ ├─┬ ajv@6.12.6
+│ │ ├── fast-deep-equal@3.1.3 deduped
+│ │ ├── fast-json-stable-stringify@2.1.0
+│ │ ├── json-schema-traverse@0.4.1
+│ │ └─┬ uri-js@4.4.1
+│ │   └── punycode@2.3.1
+│ ├─┬ chalk@4.1.2
+│ │ ├─┬ ansi-styles@4.3.0
+│ │ │ └─┬ color-convert@2.0.1
+│ │ │   └── color-name@1.1.4
+│ │ └─┬ supports-color@7.2.0
+│ │   └── has-flag@4.0.0
+│ ├─┬ cross-spawn@7.0.6
+│ │ ├── path-key@3.1.1
+│ │ ├─┬ shebang-command@2.0.0
+│ │ │ └── shebang-regex@3.0.0
+│ │ └─┬ which@2.0.2
+│ │   └── isexe@2.0.0
+│ ├── debug@4.4.1 deduped
+│ ├─┬ doctrine@3.0.0
+│ │ └── esutils@2.0.3 deduped
+│ ├── escape-string-regexp@4.0.0
+│ ├─┬ eslint-scope@7.2.2
+│ │ ├─┬ esrecurse@4.3.0
+│ │ │ └── estraverse@5.3.0 deduped
+│ │ └── estraverse@5.3.0
+│ ├── eslint-visitor-keys@3.4.3
+│ ├─┬ espree@9.6.1
+│ │ ├─┬ acorn-jsx@5.3.2
+│ │ │ └── acorn@8.15.0 deduped
+│ │ ├── acorn@8.15.0
+│ │ └── eslint-visitor-keys@3.4.3 deduped
+│ ├─┬ esquery@1.6.0
+│ │ └── estraverse@5.3.0 deduped
+│ ├── esutils@2.0.3
+│ ├── fast-deep-equal@3.1.3
+│ ├─┬ file-entry-cache@6.0.1
+│ │ └─┬ flat-cache@3.2.0
+│ │   ├── flatted@3.3.3
+│ │   ├─┬ keyv@4.5.4
+│ │   │ └── json-buffer@3.0.1
+│ │   └─┬ rimraf@3.0.2
+│ │     └─┬ glob@7.2.3
+│ │       ├── fs.realpath@1.0.0
+│ │       ├─┬ inflight@1.0.6
+│ │       │ ├── once@1.4.0 deduped
+│ │       │ └── wrappy@1.0.2
+│ │       ├── inherits@2.0.4
+│ │       ├─┬ minimatch@3.1.2
+│ │       │ └─┬ brace-expansion@1.1.12
+│ │       │   ├── balanced-match@1.0.2 deduped
+│ │       │   └── concat-map@0.0.1 deduped
+│ │       ├─┬ once@1.4.0
+│ │       │ └── wrappy@1.0.2 deduped
+│ │       └── path-is-absolute@1.0.1
+│ ├─┬ find-up@5.0.0
+│ │ ├─┬ locate-path@6.0.0
+│ │ │ └─┬ p-locate@5.0.0
+│ │ │   └─┬ p-limit@3.1.0
+│ │ │     └── yocto-queue@0.1.0
+│ │ └── path-exists@4.0.0
+│ ├─┬ glob-parent@6.0.2
+│ │ └── is-glob@4.0.3 deduped
+│ ├─┬ globals@13.24.0
+│ │ └── type-fest@0.20.2
+│ ├── graphemer@1.4.0 deduped
+│ ├── ignore@5.3.2 deduped
+│ ├── imurmurhash@0.1.4
+│ ├─┬ is-glob@4.0.3
+│ │ └── is-extglob@2.1.1
+│ ├── is-path-inside@3.0.3
+│ ├─┬ js-yaml@4.1.0
+│ │ └── argparse@2.0.1
+│ ├── json-stable-stringify-without-jsonify@1.0.1
+│ ├─┬ levn@0.4.1
+│ │ ├── prelude-ls@1.2.1
+│ │ └─┬ type-check@0.4.0
+│ │   └── prelude-ls@1.2.1 deduped
+│ ├── lodash.merge@4.6.2
+│ ├─┬ minimatch@3.1.2
+│ │ └─┬ brace-expansion@1.1.12
+│ │   ├── balanced-match@1.0.2
+│ │   └── concat-map@0.0.1
+│ ├── natural-compare@1.4.0 deduped
+│ ├─┬ optionator@0.9.4
+│ │ ├── deep-is@0.1.4
+│ │ ├── fast-levenshtein@2.0.6
+│ │ ├── levn@0.4.1 deduped
+│ │ ├── prelude-ls@1.2.1 deduped
+│ │ ├── type-check@0.4.0 deduped
+│ │ └── word-wrap@1.2.5
+│ ├─┬ strip-ansi@6.0.1
+│ │ └── ansi-regex@5.0.1
+│ └── text-table@0.2.0
+├─┬ i18next@25.5.2
+│ ├── @babel/runtime@7.28.3
+│ └── typescript@5.9.2 deduped
+├─┬ lucide-react@0.323.0
+│ └── react@18.3.1 deduped
+├─┬ postcss@8.5.6
+│ ├── nanoid@3.3.11
+│ ├── picocolors@1.1.1 deduped
+│ └── source-map-js@1.2.1
+├─┬ react-dom@18.3.1
+│ ├─┬ loose-envify@1.4.0
+│ │ └── js-tokens@4.0.0
+│ ├── react@18.3.1 deduped
+│ └─┬ scheduler@0.23.2
+│   └── loose-envify@1.4.0 deduped
+├─┬ react-hook-form@7.62.0
+│ └── react@18.3.1 deduped
+├─┬ react-hot-toast@2.6.0
+│ ├── csstype@3.1.3
+│ ├─┬ goober@2.1.16
+│ │ └── csstype@3.1.1 deduped
+│ ├── react-dom@18.3.1 deduped
+│ └── react@18.3.1 deduped
+├─┬ react-i18next@15.7.3
+│ ├── @babel/runtime@7.28.3 deduped
+│ ├─┬ html-parse-stringify@3.0.1
+│ │ └── void-elements@3.1.0
+│ ├── i18next@25.5.2 deduped
+│ ├── react@18.3.1 deduped
+│ └── typescript@5.9.2 deduped
+├─┬ react-router-dom@7.8.2
+│ ├── react-dom@18.3.1 deduped
+│ ├─┬ react-router@7.8.2
+│ │ ├── cookie@1.0.2
+│ │ ├── react-dom@18.3.1 deduped
+│ │ ├── react@18.3.1 deduped
+│ │ └── set-cookie-parser@2.7.1
+│ └── react@18.3.1 deduped
+├─┬ react@18.3.1
+│ └── loose-envify@1.4.0 deduped
+├─┬ recharts@2.15.4
+│ ├── clsx@2.1.1 deduped
+│ ├── eventemitter3@4.0.7
+│ ├── lodash@4.17.21
+│ ├── react-dom@18.3.1 deduped
+│ ├── react-is@18.3.1
+│ ├─┬ react-smooth@4.0.4
+│ │ ├── fast-equals@5.2.2
+│ │ ├─┬ prop-types@15.8.1
+│ │ │ ├── loose-envify@1.4.0 deduped
+│ │ │ ├── object-assign@4.1.1
+│ │ │ └── react-is@16.13.1
+│ │ ├── react-dom@18.3.1 deduped
+│ │ ├─┬ react-transition-group@4.4.5
+│ │ │ ├── @babel/runtime@7.28.3 deduped
+│ │ │ ├─┬ dom-helpers@5.2.1
+│ │ │ │ ├── @babel/runtime@7.28.3 deduped
+│ │ │ │ └── csstype@3.1.1 deduped
+│ │ │ ├── loose-envify@1.4.0 deduped
+│ │ │ ├── prop-types@15.8.1 deduped
+│ │ │ ├── react-dom@18.3.1 deduped
+│ │ │ └── react@18.3.1 deduped
+│ │ └── react@18.3.1 deduped
+│ ├── react@18.3.1 deduped
+│ ├─┬ recharts-scale@0.4.5
+│ │ └── decimal.js-light@2.5.1
+│ ├── tiny-invariant@1.3.3
+│ └─┬ victory-vendor@36.9.2
+│   ├── @types/d3-array@3.2.1
+│   ├── @types/d3-ease@3.0.2
+│   ├─┬ @types/d3-interpolate@3.0.4
+│   │ └── @types/d3-color@3.1.3
+│   ├─┬ @types/d3-scale@4.0.9
+│   │ └── @types/d3-time@3.0.4 deduped
+│   ├─┬ @types/d3-shape@3.1.7
+│   │ └── @types/d3-path@3.1.1
+│   ├── @types/d3-time@3.0.4
+│   ├── @types/d3-timer@3.0.2
+│   ├─┬ d3-array@3.2.4
+│   │ └── internmap@2.0.3
+│   ├── d3-ease@3.0.1
+│   ├─┬ d3-interpolate@3.0.1
+│   │ └── d3-color@3.1.0
+│   ├─┬ d3-scale@4.0.2
+│   │ ├── d3-array@3.2.4 deduped
+│   │ ├── d3-format@3.1.0
+│   │ ├── d3-interpolate@3.0.1 deduped
+│   │ ├─┬ d3-time-format@4.1.0
+│   │ │ └── d3-time@3.1.0 deduped
+│   │ └── d3-time@3.1.0 deduped
+│   ├─┬ d3-shape@3.2.0
+│   │ └── d3-path@3.1.0
+│   ├─┬ d3-time@3.1.0
+│   │ └── d3-array@3.2.4 deduped
+│   └── d3-timer@3.0.1
+├── tailwind-merge@2.6.0
+├─┬ tailwindcss@3.4.17
+│ ├── @alloc/quick-lru@5.2.0
+│ ├── arg@5.0.2
+│ ├─┬ chokidar@3.6.0
+│ │ ├─┬ anymatch@3.1.3
+│ │ │ ├── normalize-path@3.0.0 deduped
+│ │ │ └── picomatch@2.3.1 deduped
+│ │ ├─┬ braces@3.0.3
+│ │ │ └─┬ fill-range@7.1.1
+│ │ │   └─┬ to-regex-range@5.0.1
+│ │ │     └── is-number@7.0.0
+│ │ ├── fsevents@2.3.3 deduped
+│ │ ├─┬ glob-parent@5.1.2
+│ │ │ └── is-glob@4.0.3 deduped
+│ │ ├─┬ is-binary-path@2.1.0
+│ │ │ └── binary-extensions@2.3.0
+│ │ ├── is-glob@4.0.3 deduped
+│ │ ├── normalize-path@3.0.0 deduped
+│ │ └─┬ readdirp@3.6.0
+│ │   └── picomatch@2.3.1 deduped
+│ ├── didyoumean@1.2.2
+│ ├── dlv@1.1.3
+│ ├─┬ fast-glob@3.3.3
+│ │ ├── @nodelib/fs.stat@2.0.5
+│ │ ├── @nodelib/fs.walk@1.2.8 deduped
+│ │ ├─┬ glob-parent@5.1.2
+│ │ │ └── is-glob@4.0.3 deduped
+│ │ ├── merge2@1.4.1
+│ │ └── micromatch@4.0.8 deduped
+│ ├── glob-parent@6.0.2 deduped
+│ ├── is-glob@4.0.3 deduped
+│ ├── jiti@1.21.7
+│ ├── lilconfig@3.1.3
+│ ├─┬ micromatch@4.0.8
+│ │ ├── braces@3.0.3 deduped
+│ │ └── picomatch@2.3.1
+│ ├── normalize-path@3.0.0
+│ ├── object-hash@3.0.0
+│ ├── picocolors@1.1.1 deduped
+│ ├─┬ postcss-import@15.1.0
+│ │ ├── postcss-value-parser@4.2.0 deduped
+│ │ ├── postcss@8.5.6 deduped
+│ │ ├─┬ read-cache@1.0.0
+│ │ │ └── pify@2.3.0
+│ │ └── resolve@1.22.10 deduped
+│ ├─┬ postcss-js@4.0.1
+│ │ ├── camelcase-css@2.0.1
+│ │ └── postcss@8.5.6 deduped
+│ ├─┬ postcss-load-config@4.0.2
+│ │ ├── lilconfig@3.1.3 deduped
+│ │ ├── postcss@8.5.6 deduped
+│ │ ├── UNMET OPTIONAL DEPENDENCY ts-node@>=9.0.0
+│ │ └── yaml@2.8.1
+│ ├─┬ postcss-nested@6.2.0
+│ │ ├── postcss-selector-parser@6.1.2 deduped
+│ │ └── postcss@8.5.6 deduped
+│ ├─┬ postcss-selector-parser@6.1.2
+│ │ ├── cssesc@3.0.0
+│ │ └── util-deprecate@1.0.2
+│ ├── postcss@8.5.6 deduped
+│ ├─┬ resolve@1.22.10
+│ │ ├─┬ is-core-module@2.16.1
+│ │ │ └── hasown@2.0.2 deduped
+│ │ ├── path-parse@1.0.7
+│ │ └── supports-preserve-symlinks-flag@1.0.0
+│ └─┬ sucrase@3.35.0
+│   ├─┬ @jridgewell/gen-mapping@0.3.13
+│   │ ├── @jridgewell/sourcemap-codec@1.5.5
+│   │ └── @jridgewell/trace-mapping@0.3.30 deduped
+│   ├── commander@4.1.1
+│   ├─┬ glob@10.4.5
+│   │ ├─┬ foreground-child@3.3.1
+│   │ │ ├── cross-spawn@7.0.6 deduped
+│   │ │ └── signal-exit@4.1.0
+│   │ ├─┬ jackspeak@3.4.3
+│   │ │ ├─┬ @isaacs/cliui@8.0.2
+│   │ │ │ ├─┬ string-width-cjs@npm:string-width@4.2.3
+│   │ │ │ │ ├── emoji-regex@8.0.0
+│   │ │ │ │ ├── is-fullwidth-code-point@3.0.0
+│   │ │ │ │ └── strip-ansi@6.0.1 deduped
+│   │ │ │ ├─┬ string-width@5.1.2
+│   │ │ │ │ ├── eastasianwidth@0.2.0
+│   │ │ │ │ ├── emoji-regex@9.2.2
+│   │ │ │ │ └─┬ strip-ansi@7.1.0
+│   │ │ │ │   └── ansi-regex@6.2.0
+│   │ │ │ ├─┬ strip-ansi-cjs@npm:strip-ansi@6.0.1
+│   │ │ │ │ └── ansi-regex@5.0.1 deduped
+│   │ │ │ ├─┬ strip-ansi@7.1.0
+│   │ │ │ │ └── ansi-regex@6.2.0
+│   │ │ │ ├─┬ wrap-ansi-cjs@npm:wrap-ansi@7.0.0
+│   │ │ │ │ ├── ansi-styles@4.3.0 deduped
+│   │ │ │ │ ├─┬ string-width@4.2.3
+│   │ │ │ │ │ ├── emoji-regex@8.0.0
+│   │ │ │ │ │ ├── is-fullwidth-code-point@3.0.0 deduped
+│   │ │ │ │ │ └── strip-ansi@6.0.1 deduped
+│   │ │ │ │ └── strip-ansi@6.0.1 deduped
+│   │ │ │ └─┬ wrap-ansi@8.1.0
+│   │ │ │   ├── ansi-styles@6.2.1
+│   │ │ │   ├── string-width@5.1.2 deduped
+│   │ │ │   └─┬ strip-ansi@7.1.0
+│   │ │ │     └── ansi-regex@6.2.0
+│   │ │ └── @pkgjs/parseargs@0.11.0
+│   │ ├─┬ minimatch@9.0.5
+│   │ │ └── brace-expansion@2.0.2 deduped
+│   │ ├── minipass@7.1.2
+│   │ ├── package-json-from-dist@1.0.1
+│   │ └─┬ path-scurry@1.11.1
+│   │   ├── lru-cache@10.4.3
+│   │   └── minipass@7.1.2 deduped
+│   ├── lines-and-columns@1.2.4
+│   ├─┬ mz@2.7.0
+│   │ ├── any-promise@1.3.0
+│   │ ├── object-assign@4.1.1 deduped
+│   │ └─┬ thenify-all@1.6.0
+│   │   └─┬ thenify@3.3.1
+│   │     └── any-promise@1.3.0 deduped
+│   ├── pirates@4.0.7
+│   └── ts-interface-checker@0.1.13
+├── typescript@5.9.2
+├─┬ vite@5.4.19
+│ ├── UNMET OPTIONAL DEPENDENCY @types/node@^18.0.0 || >=20.0.0
+│ ├─┬ esbuild@0.21.5
+│ │ ├── @esbuild/aix-ppc64@0.21.5
+│ │ ├── @esbuild/android-arm@0.21.5
+│ │ ├── @esbuild/android-arm64@0.21.5
+│ │ ├── @esbuild/android-x64@0.21.5
+│ │ ├── @esbuild/darwin-arm64@0.21.5
+│ │ ├── @esbuild/darwin-x64@0.21.5
+│ │ ├── @esbuild/freebsd-arm64@0.21.5
+│ │ ├── @esbuild/freebsd-x64@0.21.5
+│ │ ├── @esbuild/linux-arm@0.21.5
+│ │ ├── @esbuild/linux-arm64@0.21.5
+│ │ ├── @esbuild/linux-ia32@0.21.5
+│ │ ├── @esbuild/linux-loong64@0.21.5
+│ │ ├── @esbuild/linux-mips64el@0.21.5
+│ │ ├── @esbuild/linux-ppc64@0.21.5
+│ │ ├── @esbuild/linux-riscv64@0.21.5
+│ │ ├── @esbuild/linux-s390x@0.21.5
+│ │ ├── @esbuild/linux-x64@0.21.5
+│ │ ├── @esbuild/netbsd-x64@0.21.5
+│ │ ├── @esbuild/openbsd-x64@0.21.5
+│ │ ├── @esbuild/sunos-x64@0.21.5
+│ │ ├── @esbuild/win32-arm64@0.21.5
+│ │ ├── @esbuild/win32-ia32@0.21.5
+│ │ └── @esbuild/win32-x64@0.21.5
+│ ├── fsevents@2.3.3
+│ ├── UNMET OPTIONAL DEPENDENCY less@*
+│ ├── UNMET OPTIONAL DEPENDENCY lightningcss@^1.21.0
+│ ├── postcss@8.5.6 deduped
+│ ├─┬ rollup@4.50.0
+│ │ ├── @rollup/rollup-android-arm-eabi@4.50.0
+│ │ ├── @rollup/rollup-android-arm64@4.50.0
+│ │ ├── @rollup/rollup-darwin-arm64@4.50.0
+│ │ ├── @rollup/rollup-darwin-x64@4.50.0
+│ │ ├── @rollup/rollup-freebsd-arm64@4.50.0
+│ │ ├── @rollup/rollup-freebsd-x64@4.50.0
+│ │ ├── @rollup/rollup-linux-arm-gnueabihf@4.50.0
+│ │ ├── @rollup/rollup-linux-arm-musleabihf@4.50.0
+│ │ ├── @rollup/rollup-linux-arm64-gnu@4.50.0
+│ │ ├── @rollup/rollup-linux-arm64-musl@4.50.0
+│ │ ├── @rollup/rollup-linux-loongarch64-gnu@4.50.0
+│ │ ├── @rollup/rollup-linux-ppc64-gnu@4.50.0
+│ │ ├── @rollup/rollup-linux-riscv64-gnu@4.50.0
+│ │ ├── @rollup/rollup-linux-riscv64-musl@4.50.0
+│ │ ├── @rollup/rollup-linux-s390x-gnu@4.50.0
+│ │ ├── @rollup/rollup-linux-x64-gnu@4.50.0
+│ │ ├── @rollup/rollup-linux-x64-musl@4.50.0
+│ │ ├── @rollup/rollup-openharmony-arm64@4.50.0
+│ │ ├── @rollup/rollup-win32-arm64-msvc@4.50.0
+│ │ ├── @rollup/rollup-win32-ia32-msvc@4.50.0
+│ │ ├── @rollup/rollup-win32-x64-msvc@4.50.0
+│ │ ├── @types/estree@1.0.8
+│ │ └── fsevents@2.3.3 deduped
+│ ├── UNMET OPTIONAL DEPENDENCY sass-embedded@*
+│ ├── UNMET OPTIONAL DEPENDENCY sass@*
+│ ├── UNMET OPTIONAL DEPENDENCY stylus@*
+│ ├── UNMET OPTIONAL DEPENDENCY sugarss@*
+│ └── UNMET OPTIONAL DEPENDENCY terser@^5.4.0
+└── zod@3.25.76
