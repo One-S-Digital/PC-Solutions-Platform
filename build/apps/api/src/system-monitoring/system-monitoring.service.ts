@@ -305,7 +305,11 @@ export class SystemMonitoringService {
     return {
       status: overallStatus,
       score,
-      components,
+      components: components as Array<{
+        name: string;
+        status: 'HEALTHY' | 'CRITICAL' | 'WARNING';
+        message: string;
+      }>,
     };
   }
 

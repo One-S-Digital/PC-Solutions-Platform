@@ -118,7 +118,7 @@ export class FrontendSettingsService {
     const settings = await this.getSettings();
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
-      data: { logoAssetId: uploadResult.id },
+      data: { logoAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;
@@ -132,7 +132,7 @@ export class FrontendSettingsService {
     const settings = await this.getSettings();
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
-      data: { faviconAssetId: uploadResult.id },
+      data: { faviconAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;
@@ -146,7 +146,7 @@ export class FrontendSettingsService {
     const settings = await this.getSettings();
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
-      data: { ogImageAssetId: uploadResult.id },
+      data: { ogImageAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;
@@ -160,7 +160,7 @@ export class FrontendSettingsService {
     const settings = await this.getSettings();
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
-      data: { adminLogoAssetId: uploadResult.id },
+      data: { adminLogoAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;

@@ -13,6 +13,7 @@ import { SubscriptionManagementService, SubscriptionPlan, Subscription } from '.
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
+import { SubscriptionTier } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -31,7 +32,17 @@ export class SubscriptionManagementController {
 
   // Subscription Plan Management
   @Post('plans')
-  async createSubscriptionPlan(@Body() planData: Partial<SubscriptionPlan>) {
+  async createSubscriptionPlan(@Body() planData: {
+    name: string;
+    description: string;
+    price: number;
+    currency?: string;
+    billingPeriod?: string;
+    features: string[];
+    limits: any;
+    isPopular?: boolean;
+    stripePriceId?: string;
+  }) {
     return this.subscriptionService.createSubscriptionPlan(planData);
   }
 
@@ -65,15 +76,17 @@ export class SubscriptionManagementController {
       organizationId?: string;
       stripeSubscriptionId?: string;
       stripeCustomerId?: string;
+      tier?: string;
     }
   ) {
-    return this.subscriptionService.createSubscription(
-      body.userId,
-      body.planId,
-      body.organizationId,
-      body.stripeSubscriptionId,
-      body.stripeCustomerId,
-    );
+    return this.subscriptionService.createSubscription({
+      userId: body.userId,
+      organizationId: body.organizationId,
+      planId: body.planId,
+      stripeSubscriptionId: body.stripeSubscriptionId,
+      stripeCustomerId: body.stripeCustomerId,
+      tier: (body.tier || 'BASIC') as SubscriptionTier,
+    });
   }
 
   @Get('subscriptions')
@@ -88,7 +101,6 @@ export class SubscriptionManagementController {
     return this.subscriptionService.getAllSubscriptions(
       parseInt(page),
       parseInt(limit),
-      { status, planId, userId, organizationId },
     );
   }
 
@@ -110,7 +122,6 @@ export class SubscriptionManagementController {
     return this.subscriptionService.updateSubscriptionStatus(
       id,
       body.status,
-      body.cancelAtPeriodEnd,
     );
   }
 

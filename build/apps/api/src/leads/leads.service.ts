@@ -247,7 +247,7 @@ export class LeadsService {
           });
         }
       } catch (error) {
-        this.logger.error(`Error processing lead ${lead.id}`, error.stack, 'LeadsService', { leadId: lead.id });
+        this.logger.error(`Error processing lead ${lead.id}`, (error as Error).stack, 'LeadsService', { leadId: lead.id });
       }
     }
 

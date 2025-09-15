@@ -26,7 +26,7 @@ export class UserManagementController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
     @Query('role') role?: string,
-    @Query('status') status?: string,
+    @Query('isActive') isActive?: string,
     @Query('search') search?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
@@ -101,7 +101,7 @@ export class UserManagementController {
   @Get('export/csv')
   async exportUsers(
     @Query('role') role?: string,
-    @Query('status') status?: string,
+    @Query('isActive') isActive?: string,
     @Query('search') search?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,

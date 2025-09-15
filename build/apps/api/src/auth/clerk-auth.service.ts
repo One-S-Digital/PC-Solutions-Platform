@@ -38,7 +38,7 @@ export class ClerkAuthService {
         throw new UnauthorizedException('Invalid token format');
       }
 
-      const { header, payload } = decoded as { header: any; payload: ClerkJwtPayload };
+      const { header, payload } = decoded as unknown as { header: any; payload: ClerkJwtPayload };
 
       // Verify the token signature using Clerk's public key
       const publicKey = await this.getClerkPublicKey(header.kid);

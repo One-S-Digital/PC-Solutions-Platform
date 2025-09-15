@@ -147,8 +147,11 @@ export class ContentModerationService {
         return this.prisma.user.findUnique({
           where: { id: contentId },
           include: {
-            profile: true,
-            organization: true,
+            organizations: {
+              include: {
+                organization: true,
+              },
+            },
           },
         });
       
@@ -219,7 +222,7 @@ export class ContentModerationService {
       case 'USER_PROFILE':
         await this.prisma.user.update({
           where: { id: contentId },
-          data: { status: 'ACTIVE' },
+          data: { isActive: true },
         });
         break;
     }
@@ -237,7 +240,7 @@ export class ContentModerationService {
       case 'JOB_LISTING':
         await this.prisma.jobListing.update({
           where: { id: contentId },
-          data: { status: 'REJECTED' },
+          data: { status: 'CLOSED' },
         });
         break;
       
@@ -258,7 +261,7 @@ export class ContentModerationService {
       case 'USER_PROFILE':
         await this.prisma.user.update({
           where: { id: contentId },
-          data: { status: 'SUSPENDED' },
+          data: { isActive: false },
         });
         break;
     }

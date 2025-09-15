@@ -58,7 +58,7 @@ export class PricingService {
       });
 
       this.logger.log(`Created pricing tier: ${tier.name}`);
-      return tier as PricingTier;
+      return tier as unknown as PricingTier;
     } catch (error) {
       this.logger.error(`Failed to create pricing tier: ${(error as Error).message}`);
       throw error;
@@ -76,7 +76,7 @@ export class PricingService {
       });
 
       this.logger.log(`Updated pricing tier: ${tier.name}`);
-      return tier as PricingTier;
+      return tier as unknown as PricingTier;
     } catch (error) {
       this.logger.error(`Failed to update pricing tier: ${(error as Error).message}`);
       throw error;
@@ -87,7 +87,7 @@ export class PricingService {
     return this.prisma.pricingTier.findMany({
       where: { isActive: true },
       orderBy: { basePrice: 'asc' },
-    }) as Promise<PricingTier[]>;
+    }) as unknown as Promise<PricingTier[]>;
   }
 
   async calculatePrice(
@@ -120,18 +120,18 @@ export class PricingService {
       const appliedRules: string[] = [];
 
       // Apply yearly discount
-      if (billingPeriod === 'yearly' && tier.discounts.yearlyDiscount > 0) {
-        const yearlyDiscountAmount = (finalPrice * tier.discounts.yearlyDiscount) / 100;
+      if (billingPeriod === 'yearly' && (tier.discounts as any).yearlyDiscount > 0) {
+        const yearlyDiscountAmount = (finalPrice * (tier.discounts as any).yearlyDiscount) / 100;
         finalPrice -= yearlyDiscountAmount;
         discounts.push({
           type: 'Yearly Billing',
           amount: yearlyDiscountAmount,
-          percentage: tier.discounts.yearlyDiscount,
+          percentage: (tier.discounts as any).yearlyDiscount,
         });
       }
 
       // Apply volume discounts
-      const volumeDiscount = tier.discounts.volumeDiscounts.find(
+      const volumeDiscount = (tier.discounts as any).volumeDiscounts.find(
         discount => quantity >= discount.minQuantity
       );
       if (volumeDiscount) {
@@ -159,27 +159,27 @@ export class PricingService {
 
         for (const rule of dynamicRules) {
           if (this.matchesRuleConditions(rule, userContext)) {
-            if (rule.pricingAdjustments.priceMultiplier !== 1.0) {
+            if ((rule.pricingAdjustments as any).priceMultiplier !== 1.0) {
               const originalPrice = finalPrice;
-              finalPrice *= rule.pricingAdjustments.priceMultiplier;
+              finalPrice *= (rule.pricingAdjustments as any).priceMultiplier;
               const adjustmentAmount = finalPrice - originalPrice;
               
               discounts.push({
                 type: `Dynamic Pricing (${rule.name})`,
                 amount: adjustmentAmount,
-                percentage: ((rule.pricingAdjustments.priceMultiplier - 1) * 100),
+                percentage: (((rule.pricingAdjustments as any).priceMultiplier - 1) * 100),
               });
               
               appliedRules.push(rule.name);
             }
 
-            if (rule.pricingAdjustments.discountPercentage) {
-              const discountAmount = (finalPrice * rule.pricingAdjustments.discountPercentage) / 100;
+            if ((rule.pricingAdjustments as any).discountPercentage) {
+              const discountAmount = (finalPrice * (rule.pricingAdjustments as any).discountPercentage) / 100;
               finalPrice -= discountAmount;
               discounts.push({
                 type: `Rule Discount (${rule.name})`,
                 amount: discountAmount,
-                percentage: rule.pricingAdjustments.discountPercentage,
+                percentage: (rule.pricingAdjustments as any).discountPercentage,
               });
             }
           }
@@ -214,7 +214,7 @@ export class PricingService {
       });
 
       this.logger.log(`Created dynamic pricing rule: ${rule.name}`);
-      return rule as DynamicPricingRule;
+      return rule as unknown as DynamicPricingRule;
     } catch (error) {
       this.logger.error(`Failed to create dynamic pricing rule: ${(error as Error).message}`);
       throw error;
@@ -232,7 +232,7 @@ export class PricingService {
       });
 
       this.logger.log(`Updated dynamic pricing rule: ${rule.name}`);
-      return rule as DynamicPricingRule;
+      return rule as unknown as DynamicPricingRule;
     } catch (error) {
       this.logger.error(`Failed to update dynamic pricing rule: ${(error as Error).message}`);
       throw error;
@@ -243,7 +243,7 @@ export class PricingService {
     return this.prisma.dynamicPricingRule.findMany({
       where: { isActive: true },
       orderBy: { createdAt: 'desc' },
-    }) as Promise<DynamicPricingRule[]>;
+    }) as unknown as Promise<DynamicPricingRule[]>;
   }
 
   async deleteDynamicPricingRule(ruleId: string): Promise<void> {

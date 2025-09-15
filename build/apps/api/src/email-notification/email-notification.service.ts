@@ -62,9 +62,12 @@ export class EmailNotificationService {
   }
 
   async sendNotification(notification: EmailNotification): Promise<boolean> {
+    let user: any = null;
+    let template: any = null;
+    
     try {
       // Check if user has email notifications enabled
-      const user = await this.prisma.user.findUnique({
+      user = await this.prisma.user.findUnique({
         where: { email: notification.recipient },
         include: { notificationPreferences: true },
       });
@@ -81,7 +84,7 @@ export class EmailNotificationService {
       }
 
       // Get email template
-      const template = await this.emailTemplateService.getTemplate(notification.event);
+      template = await this.emailTemplateService.getTemplate(notification.event);
       if (!template) {
         this.logger.error(`No template found for event: ${notification.event}`);
         return false;
@@ -123,18 +126,18 @@ export class EmailNotificationService {
       return true;
 
     } catch (error) {
-      this.logger.error(`Failed to send email notification: ${error.message}`, error.stack);
+      this.logger.error(`Failed to send email notification: ${(error as Error).message}`, (error as Error).stack);
       
       // Log failed email
       await this.logEmail({
-        userId: user?.id,
+        userId: user?.id || null,
         event: notification.event,
         recipient: notification.recipient,
-        templateId: template?.id,
+        templateId: template?.id || null,
         messageId: null,
         status: 'failed',
         payload: notification.payload,
-        error: error.message,
+        error: (error as Error).message,
       });
 
       return false;
@@ -251,7 +254,7 @@ export class EmailNotificationService {
       };
     }
 
-    return preferences as NotificationPreferences;
+    return preferences as unknown as NotificationPreferences;
   }
 
   async getEmailAnalytics(timeRange: '7d' | '30d' | '90d' = '30d'): Promise<any> {

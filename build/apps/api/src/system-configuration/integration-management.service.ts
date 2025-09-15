@@ -54,7 +54,7 @@ export class IntegrationManagementService {
       this.logger.log(`Created integration: ${integration.name}`);
       return integration as IntegrationConfig;
     } catch (error) {
-      this.logger.error(`Failed to create integration: ${error.message}`);
+      this.logger.error(`Failed to create integration: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -75,7 +75,7 @@ export class IntegrationManagementService {
       this.logger.log(`Updated integration: ${integration.name}`);
       return integration as IntegrationConfig;
     } catch (error) {
-      this.logger.error(`Failed to update integration: ${error.message}`);
+      this.logger.error(`Failed to update integration: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -108,7 +108,7 @@ export class IntegrationManagementService {
 
       this.logger.log(`Deleted integration: ${integrationId}`);
     } catch (error) {
-      this.logger.error(`Failed to delete integration: ${error.message}`);
+      this.logger.error(`Failed to delete integration: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -134,7 +134,7 @@ export class IntegrationManagementService {
       this.logger.log(`Toggled integration: ${integration.name} to ${updatedIntegration.isActive ? 'active' : 'inactive'}`);
       return updatedIntegration as IntegrationConfig;
     } catch (error) {
-      this.logger.error(`Failed to toggle integration: ${error.message}`);
+      this.logger.error(`Failed to toggle integration: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -169,10 +169,10 @@ export class IntegrationManagementService {
         responseTime,
       };
     } catch (error) {
-      this.logger.error(`Failed to test integration: ${error.message}`);
+      this.logger.error(`Failed to test integration: ${(error as Error).message}`);
       return {
         success: false,
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }
@@ -197,9 +197,9 @@ export class IntegrationManagementService {
         })
       );
 
-      return statuses;
+      return statuses as IntegrationStatus[];
     } catch (error) {
-      this.logger.error(`Failed to get integration statuses: ${error.message}`);
+      this.logger.error(`Failed to get integration statuses: ${(error as Error).message}`);
       return [];
     }
   }
@@ -229,10 +229,10 @@ export class IntegrationManagementService {
       this.logger.log(`Synced integration: ${integration.name}`);
       return syncResult;
     } catch (error) {
-      this.logger.error(`Failed to sync integration: ${error.message}`);
+      this.logger.error(`Failed to sync integration: ${(error as Error).message}`);
       return {
         success: false,
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }
@@ -310,7 +310,7 @@ export class IntegrationManagementService {
           return { success: false, message: 'Unknown integration type' };
       }
     } catch (error) {
-      return { success: false, message: error.message };
+      return { success: false, message: (error as Error).message };
     }
   }
 
@@ -333,7 +333,7 @@ export class IntegrationManagementService {
       
       return { success: false, message: 'Unsupported auth provider' };
     } catch (error) {
-      return { success: false, message: `Auth test failed: ${error.message}` };
+      return { success: false, message: `Auth test failed: ${(error as Error).message}` };
     }
   }
 
@@ -356,7 +356,7 @@ export class IntegrationManagementService {
       
       return { success: false, message: 'Unsupported payment provider' };
     } catch (error) {
-      return { success: false, message: `Payment test failed: ${error.message}` };
+      return { success: false, message: `Payment test failed: ${(error as Error).message}` };
     }
   }
 
@@ -379,7 +379,7 @@ export class IntegrationManagementService {
       
       return { success: false, message: 'Unsupported email provider' };
     } catch (error) {
-      return { success: false, message: `Email test failed: ${error.message}` };
+      return { success: false, message: `Email test failed: ${(error as Error).message}` };
     }
   }
 
@@ -402,7 +402,7 @@ export class IntegrationManagementService {
       
       return { success: false, message: 'Unsupported storage provider' };
     } catch (error) {
-      return { success: false, message: `Storage test failed: ${error.message}` };
+      return { success: false, message: `Storage test failed: ${(error as Error).message}` };
     }
   }
 
@@ -415,7 +415,7 @@ export class IntegrationManagementService {
       
       return { success: false, message: 'Unsupported analytics provider' };
     } catch (error) {
-      return { success: false, message: `Analytics test failed: ${error.message}` };
+      return { success: false, message: `Analytics test failed: ${(error as Error).message}` };
     }
   }
 
@@ -441,7 +441,7 @@ export class IntegrationManagementService {
     } catch (error) {
       return {
         success: false,
-        message: `Sync failed: ${error.message}`,
+        message: `Sync failed: ${(error as Error).message}`,
       };
     }
   }

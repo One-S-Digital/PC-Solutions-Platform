@@ -15,7 +15,7 @@ export class BillingService {
   ) {
     const stripeApiVersion = this.configService.get<string>('STRIPE_API_VERSION') || '2025-08-27.basil';
     this.stripe = new Stripe(this.configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: stripeApiVersion,
+      apiVersion: stripeApiVersion as any,
     });
   }
 
