@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { BillingService } from './billing.service';
 import { ConfigService } from '@nestjs/config';
+import { AppLoggerService } from '../common/logger.service';
 import Stripe from 'stripe';
 
 @ApiTags('webhooks')
@@ -13,9 +14,11 @@ export class WebhookController {
   constructor(
     private readonly billingService: BillingService,
     private readonly configService: ConfigService,
+    private readonly logger: AppLoggerService,
   ) {
+    const stripeApiVersion = this.configService.get<string>('STRIPE_API_VERSION') || '2025-08-27.basil';
     this.stripe = new Stripe(this.configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: '2025-08-27.basil',
+      apiVersion: stripeApiVersion,
     });
   }
 
@@ -35,7 +38,9 @@ export class WebhookController {
     try {
       event = this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
     } catch (err) {
-      console.error('Webhook signature verification failed:', (err as Error).message);
+      this.logger.error('Webhook signature verification failed', (err as Error).stack, 'WebhookController', { 
+        error: (err as Error).message 
+      });
       return res.status(400).send('Webhook signature verification failed');
     }
 
@@ -68,16 +73,18 @@ export class WebhookController {
 
         case 'charge.refunded':
           // Handle refunds for licenses
-          // TODO: Implement license revocation logic
+          await this.billingService.handleChargeRefunded(event.data.object as Stripe.Charge);
           break;
 
         default:
-          console.log(`Unhandled event type: ${event.type}`);
+          this.logger.log(`Unhandled event type: ${event.type}`, 'WebhookController', { eventType: event.type });
       }
 
       res.status(200).json({ received: true });
     } catch (error) {
-      console.error('Error processing webhook:', error);
+      this.logger.error('Error processing webhook', (error as Error).stack, 'WebhookController', { 
+        error: (error as Error).message 
+      });
       res.status(500).json({ error: 'Webhook processing failed' });
     }
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole, UserStatus } from '@prisma/client';
+import { AppLoggerService } from '../common/logger.service';
 
 export interface UserFilters {
   role?: UserRole;
@@ -30,7 +31,10 @@ export interface UserActivity {
 
 @Injectable()
 export class UserManagementService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: AppLoggerService,
+  ) {}
 
   async getUsers(
     page: number = 1,
@@ -245,7 +249,7 @@ export class UserManagementService {
   async sendEmailNotification(userIds: string[], subject: string, content: string) {
     // This would integrate with your email service (e.g., SendGrid, AWS SES)
     // For now, we'll just log the notification
-    console.log(`Sending email notification to ${userIds.length} users:`, {
+    this.logger.log(`Sending email notification to ${userIds.length} users`, 'UserManagementService', {
       subject,
       content,
       userIds,

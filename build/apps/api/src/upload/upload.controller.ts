@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole, AssetKind } from '@prisma/client';
+import { UploadThrottle } from '../common/decorators/throttle.decorator';
 
 export class PresignedUploadDto {
   filename: string;
@@ -40,6 +41,7 @@ export class UploadController {
   ) {}
 
   @Post('presigned')
+  @UploadThrottle()
   @ApiOperation({ summary: 'Generate presigned URL for direct upload' })
   @ApiResponse({ status: 200, description: 'Presigned URL generated successfully' })
   async generatePresignedUpload(
@@ -62,6 +64,7 @@ export class UploadController {
   }
 
   @Post('file')
+  @UploadThrottle()
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Upload file directly to server' })
   @ApiConsumes('multipart/form-data')
