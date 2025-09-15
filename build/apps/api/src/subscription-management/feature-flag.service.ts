@@ -49,7 +49,7 @@ export class FeatureFlagService {
       this.logger.log(`Created feature flag: ${flag.name}`);
       return flag as FeatureFlag;
     } catch (error) {
-      this.logger.error(`Failed to create feature flag: ${error.message}`);
+      this.logger.error(`Failed to create feature flag: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -67,7 +67,7 @@ export class FeatureFlagService {
       this.logger.log(`Updated feature flag: ${flag.name}`);
       return flag as FeatureFlag;
     } catch (error) {
-      this.logger.error(`Failed to update feature flag: ${error.message}`);
+      this.logger.error(`Failed to update feature flag: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -93,7 +93,7 @@ export class FeatureFlagService {
 
       this.logger.log(`Deleted feature flag: ${flagId}`);
     } catch (error) {
-      this.logger.error(`Failed to delete feature flag: ${error.message}`);
+      this.logger.error(`Failed to delete feature flag: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -112,8 +112,8 @@ export class FeatureFlagService {
       }
 
       // Check if the subscription plan has access to this feature
-      if (flag.conditions.subscriptionPlans && flag.conditions.subscriptionPlans.length > 0) {
-        return flag.conditions.subscriptionPlans.includes(planId);
+      if ((flag.conditions as any).subscriptionPlans && (flag.conditions as any).subscriptionPlans.length > 0) {
+        return (flag.conditions as any).subscriptionPlans.includes(planId);
       }
 
       // If no specific plan restrictions, check rollout percentage
@@ -125,7 +125,7 @@ export class FeatureFlagService {
 
       return true;
     } catch (error) {
-      this.logger.error(`Failed to check feature access: ${error.message}`);
+      this.logger.error(`Failed to check feature access: ${(error as Error).message}`);
       return false;
     }
   }
@@ -156,8 +156,8 @@ export class FeatureFlagService {
       }
 
       // Check subscription plan access
-      if (flag.conditions.subscriptionPlans && flag.conditions.subscriptionPlans.length > 0) {
-        if (!userContext?.subscriptionPlanId || !flag.conditions.subscriptionPlans.includes(userContext.subscriptionPlanId)) {
+      if ((flag.conditions as any).subscriptionPlans && (flag.conditions as any).subscriptionPlans.length > 0) {
+        if (!userContext?.subscriptionPlanId || !(flag.conditions as any).subscriptionPlans.includes(userContext.subscriptionPlanId)) {
           return {
             hasAccess: false,
             reason: 'Subscription plan does not have access to this feature',
@@ -167,8 +167,8 @@ export class FeatureFlagService {
       }
 
       // Check user role access
-      if (flag.conditions.userRoles && flag.conditions.userRoles.length > 0) {
-        if (!userContext?.userRole || !flag.conditions.userRoles.includes(userContext.userRole)) {
+      if ((flag.conditions as any).userRoles && (flag.conditions as any).userRoles.length > 0) {
+        if (!userContext?.userRole || !(flag.conditions as any).userRoles.includes(userContext.userRole)) {
           return {
             hasAccess: false,
             reason: 'User role does not have access to this feature',
@@ -178,8 +178,8 @@ export class FeatureFlagService {
       }
 
       // Check region access
-      if (flag.conditions.regions && flag.conditions.regions.length > 0) {
-        if (!userContext?.region || !flag.conditions.regions.includes(userContext.region)) {
+      if ((flag.conditions as any).regions && (flag.conditions as any).regions.length > 0) {
+        if (!userContext?.region || !(flag.conditions as any).regions.includes(userContext.region)) {
           return {
             hasAccess: false,
             reason: 'Region does not have access to this feature',
@@ -210,7 +210,7 @@ export class FeatureFlagService {
         conditions: flag.conditions,
       };
     } catch (error) {
-      this.logger.error(`Failed to check detailed feature access: ${error.message}`);
+      this.logger.error(`Failed to check detailed feature access: ${(error as Error).message}`);
       return {
         hasAccess: false,
         reason: 'Error checking feature access',
@@ -242,7 +242,7 @@ export class FeatureFlagService {
 
       return userFlags;
     } catch (error) {
-      this.logger.error(`Failed to get user feature flags: ${error.message}`);
+      this.logger.error(`Failed to get user feature flags: ${(error as Error).message}`);
       return [];
     }
   }
@@ -260,7 +260,7 @@ export class FeatureFlagService {
       this.logger.log(`Updated feature flag rollout: ${flag.name} to ${rolloutPercentage}%`);
       return flag as FeatureFlag;
     } catch (error) {
-      this.logger.error(`Failed to update feature flag rollout: ${error.message}`);
+      this.logger.error(`Failed to update feature flag rollout: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -330,7 +330,7 @@ export class FeatureFlagService {
       this.logger.log(`Toggled feature flag: ${flag.name} to ${updatedFlag.isActive ? 'active' : 'inactive'}`);
       return updatedFlag as FeatureFlag;
     } catch (error) {
-      this.logger.error(`Failed to toggle feature flag: ${error.message}`);
+      this.logger.error(`Failed to toggle feature flag: ${(error as Error).message}`);
       throw error;
     }
   }

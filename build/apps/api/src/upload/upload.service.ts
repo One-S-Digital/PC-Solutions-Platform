@@ -269,6 +269,35 @@ export class UploadService {
   }
 
   /**
+   * Upload file and create asset record
+   */
+  async uploadFile(file: Express.Multer.File, uploadedBy: string, kind: AssetKind) {
+    try {
+      // Upload to R2
+      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedBy);
+      
+      // Create asset record
+      const asset = await this.createAsset({
+        kind,
+        filename: file.originalname,
+        publicUrl: uploadResult.url,
+        storageKey: uploadResult.key,
+        mimeType: file.mimetype,
+        size: file.size,
+        uploadedBy,
+      });
+
+      return {
+        asset,
+        publicUrl: uploadResult.url,
+      };
+    } catch (error) {
+      this.logger.error('File upload failed', error);
+      throw error;
+    }
+  }
+
+  /**
    * Associate asset with organization
    */
   async associateAssetWithOrganization(

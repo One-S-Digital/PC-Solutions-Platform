@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateParentLeadDto } from './dto/create-parent-lead.dto';
 import { UpdateParentLeadDto } from './dto/update-parent-lead.dto';
+import { AppLoggerService } from '../common/logger.service';
 
 @Injectable()
 export class LeadsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: AppLoggerService,
+  ) {}
 
   // Parent Lead Management
   async createParentLead(createParentLeadDto: CreateParentLeadDto) {
@@ -243,7 +247,7 @@ export class LeadsService {
           });
         }
       } catch (error) {
-        console.error(`Error processing lead ${lead.id}:`, error);
+        this.logger.error(`Error processing lead ${lead.id}`, (error as Error).stack, 'LeadsService', { leadId: lead.id });
       }
     }
 
@@ -254,7 +258,10 @@ export class LeadsService {
   async notifyFoundationOfNewLead(foundationId: string, leadId: string) {
     // This would integrate with a notification service
     // For now, we'll just log it
-    console.log(`Notifying foundation ${foundationId} of new lead ${leadId}`);
+    this.logger.log(`Notifying foundation ${foundationId} of new lead ${leadId}`, 'LeadsService', { 
+      foundationId, 
+      leadId 
+    });
     
     // In a real implementation, this would:
     // 1. Send email notification

@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
+import { AppLoggerService } from '../common/logger.service';
 import Stripe from 'stripe';
 
 @Injectable()
@@ -10,9 +11,11 @@ export class BillingService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+    private readonly logger: AppLoggerService,
   ) {
+    const stripeApiVersion = this.configService.get<string>('STRIPE_API_VERSION') || '2025-08-27.basil';
     this.stripe = new Stripe(this.configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: '2025-08-27.basil',
+      apiVersion: stripeApiVersion as any,
     });
   }
 
@@ -323,6 +326,56 @@ export class BillingService {
           canceledAt: new Date(),
         },
       });
+    }
+  }
+
+  async handleChargeRefunded(charge: Stripe.Charge) {
+    try {
+      // Find the license associated with this payment intent
+      const license = await this.prisma.license.findUnique({
+        where: { stripePaymentIntentId: charge.payment_intent as string },
+        include: {
+          user: true,
+          plan: true,
+        },
+      });
+
+      if (!license) {
+        // Log that no license was found for this refund
+        this.logger.warn(`No license found for refunded charge: ${charge.id}`, 'BillingService', { 
+          chargeId: charge.id 
+        });
+        return;
+      }
+
+      // Revoke the license
+      await this.prisma.license.update({
+        where: { id: license.id },
+        data: {
+          status: 'revoked',
+          updatedAt: new Date(),
+        },
+      });
+
+      // Log the license revocation
+      this.logger.log(`License ${license.id} revoked due to refund for user ${license.user.email}`, 'BillingService', {
+        licenseId: license.id,
+        userId: license.userId,
+        userEmail: license.user.email,
+        chargeId: charge.id,
+      });
+
+      // Optionally, you could also:
+      // 1. Send an email notification to the user
+      // 2. Log this event in an audit trail
+      // 3. Update user access permissions immediately
+      
+    } catch (error) {
+      this.logger.error('Error handling charge refund', (error as Error).stack, 'BillingService', { 
+        chargeId: charge.id,
+        error: (error as Error).message 
+      });
+      throw error;
     }
   }
 }

@@ -152,6 +152,7 @@ model User {
   assets        Asset[]
   applications  JobApplication[]
   subscriptions UserSubscription[]
+  mainSubscriptions Subscription[] // Main subscription model
   licenses      License[]
 
   // E-Learning relations
@@ -207,6 +208,7 @@ model Organization {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isActive   Boolean  @default(true)
 
   // Asset relations
   logoAssetId  String?
@@ -392,18 +394,23 @@ model JobApplication {
 
 model Subscription {
   id                   String             @id @default(uuid())
-  organizationId       String             @unique
-  planId               String // Add planId field
+  userId               String?            // Optional user ID for user-based subscriptions
+  organizationId       String?            // Optional organization ID for org-based subscriptions
+  planId               String
   stripeSubscriptionId String?            @unique
+  stripeCustomerId     String?            // Stripe customer ID
   tier                 SubscriptionTier
   status               SubscriptionStatus @default(ACTIVE)
   currentPeriodStart   DateTime?
   currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean           @default(false)
+  canceledAt           DateTime?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
 
   // Relations
-  organization Organization         @relation(fields: [organizationId], references: [id])
+  user         User?                @relation(fields: [userId], references: [id])
+  organization Organization?        @relation(fields: [organizationId], references: [id])
   plan         SubscriptionPlan     @relation(fields: [planId], references: [id])
   transactions BillingTransaction[]
 

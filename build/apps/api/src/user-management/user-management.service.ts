@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, UserStatus } from '@prisma/client';
+import { UserRole } from '@prisma/client';
+import { AppLoggerService } from '../common/logger.service';
 
 export interface UserFilters {
   role?: UserRole;
-  status?: UserStatus;
+  isActive?: boolean;
   search?: string;
   dateFrom?: Date;
   dateTo?: Date;
@@ -30,7 +31,10 @@ export interface UserActivity {
 
 @Injectable()
 export class UserManagementService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: AppLoggerService,
+  ) {}
 
   async getUsers(
     page: number = 1,
@@ -47,8 +51,8 @@ export class UserManagementService {
       where.role = filters.role;
     }
 
-    if (filters.status) {
-      where.status = filters.status;
+    if (filters.isActive !== undefined) {
+      where.isActive = filters.isActive;
     }
 
     if (filters.search) {
@@ -86,8 +90,11 @@ export class UserManagementService {
         take: limit,
         orderBy: { [sortBy]: sortOrder },
         include: {
-          profile: true,
-          organization: true,
+          organizations: {
+            include: {
+              organization: true,
+            },
+          },
         },
       }),
       this.prisma.user.count({ where }),
@@ -106,8 +113,11 @@ export class UserManagementService {
     return this.prisma.user.findUnique({
       where: { id: userId },
       include: {
-        profile: true,
-        organization: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
         subscriptions: {
           include: {
             plan: true,
@@ -122,8 +132,11 @@ export class UserManagementService {
       where: { id: userId },
       data: updateData,
       include: {
-        profile: true,
-        organization: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -135,19 +148,19 @@ export class UserManagementService {
       case 'activate':
         return this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { status: 'ACTIVE' },
+          data: { isActive: true },
         });
 
       case 'deactivate':
         return this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { status: 'INACTIVE' },
+          data: { isActive: false },
         });
 
       case 'suspend':
         return this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { status: 'SUSPENDED' },
+          data: { isActive: false },
         });
 
       case 'delete':
@@ -208,14 +221,12 @@ export class UserManagementService {
       totalUsers,
       activeUsers,
       inactiveUsers,
-      suspendedUsers,
       usersByRole,
       recentRegistrations,
     ] = await Promise.all([
       this.prisma.user.count(),
-      this.prisma.user.count({ where: { status: 'ACTIVE' } }),
-      this.prisma.user.count({ where: { status: 'INACTIVE' } }),
-      this.prisma.user.count({ where: { status: 'SUSPENDED' } }),
+      this.prisma.user.count({ where: { isActive: true } }),
+      this.prisma.user.count({ where: { isActive: false } }),
       this.prisma.user.groupBy({
         by: ['role'],
         _count: { id: true },
@@ -233,7 +244,6 @@ export class UserManagementService {
       totalUsers,
       activeUsers,
       inactiveUsers,
-      suspendedUsers,
       usersByRole: usersByRole.map(r => ({
         role: r.role,
         count: r._count.id,
@@ -245,7 +255,7 @@ export class UserManagementService {
   async sendEmailNotification(userIds: string[], subject: string, content: string) {
     // This would integrate with your email service (e.g., SendGrid, AWS SES)
     // For now, we'll just log the notification
-    console.log(`Sending email notification to ${userIds.length} users:`, {
+    this.logger.log(`Sending email notification to ${userIds.length} users`, 'UserManagementService', {
       subject,
       content,
       userIds,
@@ -269,8 +279,8 @@ export class UserManagementService {
       where.role = filters.role;
     }
 
-    if (filters.status) {
-      where.status = filters.status;
+    if (filters.isActive !== undefined) {
+      where.isActive = filters.isActive;
     }
 
     if (filters.search) {
@@ -294,8 +304,11 @@ export class UserManagementService {
     const users = await this.prisma.user.findMany({
       where,
       include: {
-        profile: true,
-        organization: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -307,7 +320,7 @@ export class UserManagementService {
       'First Name',
       'Last Name',
       'Role',
-      'Status',
+      'Is Active',
       'Created At',
       'Last Active',
       'Organization',
@@ -319,10 +332,10 @@ export class UserManagementService {
       user.firstName || '',
       user.lastName || '',
       user.role,
-      user.status,
+      user.isActive,
       user.createdAt.toISOString(),
       user.lastActiveAt?.toISOString() || '',
-      user.organization?.name || '',
+      user.organizations[0]?.organization?.name || '',
     ]);
 
     const csvContent = [csvHeaders, ...csvRows]

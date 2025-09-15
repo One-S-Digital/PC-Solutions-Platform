@@ -4,6 +4,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 import { UserRole } from '@prisma/client';
+import { UpdateFoundationSettingsDto } from './dto/foundation-settings.dto';
+import { UpdateEducatorSettingsDto } from './dto/educator-settings.dto';
+import { UpdateSupplierSettingsDto } from './dto/supplier-settings.dto';
+import { UpdateServiceProviderSettingsDto } from './dto/service-provider-settings.dto';
+import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -65,7 +70,7 @@ export class SettingsController {
   @Roles(UserRole.FOUNDATION)
   @ApiOperation({ summary: 'Update foundation settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
-  async updateFoundationSettings(@Request() req, @Body() settings: any) {
+  async updateFoundationSettings(@Request() req, @Body() settings: UpdateFoundationSettingsDto) {
     const userId = req.user.id;
     
     // Update user and organization data
@@ -151,7 +156,7 @@ export class SettingsController {
   @Roles(UserRole.EDUCATOR)
   @ApiOperation({ summary: 'Update educator settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
-  async updateEducatorSettings(@Request() req, @Body() settings: any) {
+  async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
     const userId = req.user.id;
     
     await this.prisma.user.update({
@@ -230,7 +235,7 @@ export class SettingsController {
   @Roles(UserRole.PRODUCT_SUPPLIER)
   @ApiOperation({ summary: 'Update supplier settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
-  async updateSupplierSettings(@Request() req, @Body() settings: any) {
+  async updateSupplierSettings(@Request() req, @Body() settings: UpdateSupplierSettingsDto) {
     const userId = req.user.id;
     
     await this.prisma.$transaction(async (tx) => {
@@ -322,7 +327,7 @@ export class SettingsController {
   @Roles(UserRole.SERVICE_PROVIDER)
   @ApiOperation({ summary: 'Update service provider settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
-  async updateServiceProviderSettings(@Request() req, @Body() settings: any) {
+  async updateServiceProviderSettings(@Request() req, @Body() settings: UpdateServiceProviderSettingsDto) {
     const userId = req.user.id;
     
     await this.prisma.$transaction(async (tx) => {
@@ -404,7 +409,7 @@ export class SettingsController {
   @Roles(UserRole.PARENT)
   @ApiOperation({ summary: 'Update parent settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
-  async updateParentSettings(@Request() req, @Body() settings: any) {
+  async updateParentSettings(@Request() req, @Body() settings: UpdateParentSettingsDto) {
     const userId = req.user.id;
     
     // For now, only update basic user data since ParentLead doesn't have userId relation

@@ -76,7 +76,7 @@ export class BillingService {
         return false;
       }
     } catch (error) {
-      this.logger.error(`Failed to process payment: ${error.message}`);
+      this.logger.error(`Failed to process payment: ${(error as Error).message}`);
       return false;
     }
   }
@@ -103,7 +103,7 @@ export class BillingService {
       this.logger.log(`Created payment intent: ${transaction.id}`);
       return transaction as BillingTransaction;
     } catch (error) {
-      this.logger.error(`Failed to create payment intent: ${error.message}`);
+      this.logger.error(`Failed to create payment intent: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -140,7 +140,7 @@ export class BillingService {
       this.logger.log(`Updated payment status: ${transaction.id} to ${status}`);
       return transaction as BillingTransaction;
     } catch (error) {
-      this.logger.error(`Failed to update payment status: ${error.message}`);
+      this.logger.error(`Failed to update payment status: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -266,7 +266,7 @@ export class BillingService {
       this.logger.log(`Processed refund for transaction ${transactionId}: CHF ${refundAmount}`);
       return refundTransaction as BillingTransaction;
     } catch (error) {
-      this.logger.error(`Failed to process refund: ${error.message}`);
+      this.logger.error(`Failed to process refund: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -373,7 +373,7 @@ export class BillingService {
 
       this.logger.log(`Sent payment reminder for subscription ${subscriptionId}`);
     } catch (error) {
-      this.logger.error(`Failed to send payment reminder: ${error.message}`);
+      this.logger.error(`Failed to send payment reminder: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -382,7 +382,7 @@ export class BillingService {
     try {
       const failedSubscriptions = await this.prisma.subscription.findMany({
         where: {
-          status: 'past_due',
+          status: 'PAST_DUE',
           currentPeriodEnd: { lte: new Date() },
         },
         include: {
@@ -415,7 +415,7 @@ export class BillingService {
 
       this.logger.log(`Processed failed payments for ${failedSubscriptions.length} subscriptions`);
     } catch (error) {
-      this.logger.error(`Failed to process failed payments: ${error.message}`);
+      this.logger.error(`Failed to process failed payments: ${(error as Error).message}`);
       throw error;
     }
   }

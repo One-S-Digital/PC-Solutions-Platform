@@ -5,6 +5,7 @@ import { RolesGuard, Roles } from '../auth/roles.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserRole, OrganizationType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthThrottle } from '../common/decorators/throttle.decorator';
 
 export class SignupDataDto {
   role: string;
@@ -44,6 +45,7 @@ export class AuthController {
   ) {}
 
   @Post('signup-data')
+  @AuthThrottle()
   @ApiOperation({ summary: 'Store signup data for user creation' })
   @ApiResponse({ status: 201, description: 'Signup data stored successfully' })
   async storeSignupData(@Body() signupData: SignupDataDto) {

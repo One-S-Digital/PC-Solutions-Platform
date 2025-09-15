@@ -71,7 +71,7 @@ export class MaintenanceModeService {
       this.logger.warn(`Maintenance mode enabled: ${maintenance.message}`);
       return maintenance as MaintenanceMode;
     } catch (error) {
-      this.logger.error(`Failed to enable maintenance mode: ${error.message}`);
+      this.logger.error(`Failed to enable maintenance mode: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -98,7 +98,7 @@ export class MaintenanceModeService {
       this.logger.log('Maintenance mode disabled');
       return updatedMaintenance as MaintenanceMode;
     } catch (error) {
-      this.logger.error(`Failed to disable maintenance mode: ${error.message}`);
+      this.logger.error(`Failed to disable maintenance mode: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -124,7 +124,7 @@ export class MaintenanceModeService {
       this.logger.log(`Updated maintenance mode: ${maintenance.id}`);
       return maintenance as MaintenanceMode;
     } catch (error) {
-      this.logger.error(`Failed to update maintenance mode: ${error.message}`);
+      this.logger.error(`Failed to update maintenance mode: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -192,7 +192,7 @@ export class MaintenanceModeService {
       this.logger.log(`Created maintenance schedule: ${schedule.name}`);
       return schedule as MaintenanceSchedule;
     } catch (error) {
-      this.logger.error(`Failed to create maintenance schedule: ${error.message}`);
+      this.logger.error(`Failed to create maintenance schedule: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -230,7 +230,7 @@ export class MaintenanceModeService {
       this.logger.log(`Updated maintenance schedule: ${schedule.name}`);
       return schedule as MaintenanceSchedule;
     } catch (error) {
-      this.logger.error(`Failed to update maintenance schedule: ${error.message}`);
+      this.logger.error(`Failed to update maintenance schedule: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -243,7 +243,7 @@ export class MaintenanceModeService {
 
       this.logger.log(`Deleted maintenance schedule: ${scheduleId}`);
     } catch (error) {
-      this.logger.error(`Failed to delete maintenance schedule: ${error.message}`);
+      this.logger.error(`Failed to delete maintenance schedule: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -298,7 +298,7 @@ export class MaintenanceModeService {
         this.logger.log(`Completed scheduled maintenance: ${schedule.name}`);
       }
     } catch (error) {
-      this.logger.error(`Failed to process scheduled maintenance: ${error.message}`);
+      this.logger.error(`Failed to process scheduled maintenance: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -322,7 +322,7 @@ export class MaintenanceModeService {
         }
       }
     } catch (error) {
-      this.logger.error(`Failed to send maintenance notifications: ${error.message}`);
+      this.logger.error(`Failed to send maintenance notifications: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -355,7 +355,7 @@ export class MaintenanceModeService {
 
       this.logger.log(`Sent maintenance notifications to ${users.length} users`);
     } catch (error) {
-      this.logger.error(`Failed to send maintenance notifications: ${error.message}`);
+      this.logger.error(`Failed to send maintenance notifications: ${(error as Error).message}`);
     }
   }
 
@@ -383,7 +383,7 @@ export class MaintenanceModeService {
 
       this.logger.log(`Sent maintenance end notifications to ${users.length} users`);
     } catch (error) {
-      this.logger.error(`Failed to send maintenance end notifications: ${error.message}`);
+      this.logger.error(`Failed to send maintenance end notifications: ${(error as Error).message}`);
     }
   }
 
@@ -412,7 +412,7 @@ export class MaintenanceModeService {
 
       this.logger.log(`Sent maintenance schedule notifications to ${users.length} users`);
     } catch (error) {
-      this.logger.error(`Failed to send maintenance schedule notifications: ${error.message}`);
+      this.logger.error(`Failed to send maintenance schedule notifications: ${(error as Error).message}`);
     }
   }
 

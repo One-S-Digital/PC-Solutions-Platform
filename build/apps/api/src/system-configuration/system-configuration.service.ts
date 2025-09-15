@@ -108,7 +108,7 @@ export class SystemConfigurationService {
       this.logger.log(`Updated system setting: ${key}`);
       return setting as SystemSettings;
     } catch (error) {
-      this.logger.error(`Failed to update system setting: ${error.message}`);
+      this.logger.error(`Failed to update system setting: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -136,7 +136,7 @@ export class SystemConfigurationService {
       this.logger.log(`Created system setting: ${setting.key}`);
       return setting as SystemSettings;
     } catch (error) {
-      this.logger.error(`Failed to create system setting: ${error.message}`);
+      this.logger.error(`Failed to create system setting: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -149,7 +149,7 @@ export class SystemConfigurationService {
 
       this.logger.log(`Deleted system setting: ${key}`);
     } catch (error) {
-      this.logger.error(`Failed to delete system setting: ${error.message}`);
+      this.logger.error(`Failed to delete system setting: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -195,7 +195,7 @@ export class SystemConfigurationService {
       this.logger.log(`Updated email template: ${template.name}`);
       return template;
     } catch (error) {
-      this.logger.error(`Failed to update email template: ${error.message}`);
+      this.logger.error(`Failed to update email template: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -227,7 +227,7 @@ export class SystemConfigurationService {
       this.logger.log(`Created email template: ${template.name}`);
       return template;
     } catch (error) {
-      this.logger.error(`Failed to create email template: ${error.message}`);
+      this.logger.error(`Failed to create email template: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -240,7 +240,7 @@ export class SystemConfigurationService {
 
       this.logger.log(`Deleted email template: ${templateId}`);
     } catch (error) {
-      this.logger.error(`Failed to delete email template: ${error.message}`);
+      this.logger.error(`Failed to delete email template: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -282,7 +282,7 @@ export class SystemConfigurationService {
         lastChecked: new Date(),
       };
     } catch (error) {
-      this.logger.error(`Failed to get system health: ${error.message}`);
+      this.logger.error(`Failed to get system health: ${(error as Error).message}`);
       return {
         status: 'critical',
         services: [],
@@ -349,7 +349,7 @@ export class SystemConfigurationService {
           lastCheck: new Date(),
         };
       }
-    });
+    }) as Array<{ name: string; status: 'up' | 'down' | 'degraded'; responseTime?: number; lastCheck: Date }>;
   }
 
   private async checkStorage(): Promise<{
@@ -428,7 +428,7 @@ export class SystemConfigurationService {
 
       this.logger.log(`Updated ${settings.length} system settings`);
     } catch (error) {
-      this.logger.error(`Failed to update bulk settings: ${error.message}`);
+      this.logger.error(`Failed to update bulk settings: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -447,7 +447,7 @@ export class SystemConfigurationService {
 
       this.logger.warn('System settings reset completed');
     } catch (error) {
-      this.logger.error(`Failed to reset system settings: ${error.message}`);
+      this.logger.error(`Failed to reset system settings: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -473,7 +473,7 @@ export class SystemConfigurationService {
       this.logger.log('Configuration backup created');
       return backup;
     } catch (error) {
-      this.logger.error(`Failed to create configuration backup: ${error.message}`);
+      this.logger.error(`Failed to create configuration backup: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -518,7 +518,7 @@ export class SystemConfigurationService {
 
       this.logger.log('Configuration restored successfully');
     } catch (error) {
-      this.logger.error(`Failed to restore configuration: ${error.message}`);
+      this.logger.error(`Failed to restore configuration: ${(error as Error).message}`);
       throw error;
     }
   }

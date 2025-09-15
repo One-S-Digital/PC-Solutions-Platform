@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AppLoggerService } from '../common/logger.service';
 
 export interface HostMetrics {
   cpuUsage: number;
@@ -62,7 +63,10 @@ export interface LogEntry {
 
 @Injectable()
 export class SystemMonitoringService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: AppLoggerService,
+  ) {}
 
   async getHostMetrics(): Promise<HostMetrics> {
     // In a real implementation, this would collect actual system metrics
@@ -301,13 +305,17 @@ export class SystemMonitoringService {
     return {
       status: overallStatus,
       score,
-      components,
+      components: components as Array<{
+        name: string;
+        status: 'HEALTHY' | 'CRITICAL' | 'WARNING';
+        message: string;
+      }>,
     };
   }
 
   async resolveAlert(alertId: string): Promise<void> {
     // In a real implementation, this would update the alert status in storage
-    console.log(`Resolving alert: ${alertId}`);
+    this.logger.log(`Resolving alert: ${alertId}`, 'SystemMonitoringService', { alertId });
   }
 
   async getMetricsHistory(
