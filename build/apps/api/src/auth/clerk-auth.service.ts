@@ -81,7 +81,9 @@ export class ClerkAuthService {
       }
 
       // Extract the instance ID from the publishable key
-      const instanceId = clerkPublishableKey.split('_')[1];
+      // Format: pk_test_<instanceId> or pk_live_<instanceId>
+      const keyParts = clerkPublishableKey.split('_');
+      const instanceId = keyParts[2]; // Third segment is the instance ID
       const jwksUrl = `https://${instanceId}.clerk.accounts.dev/.well-known/jwks.json`;
 
       const response = await fetch(jwksUrl);
