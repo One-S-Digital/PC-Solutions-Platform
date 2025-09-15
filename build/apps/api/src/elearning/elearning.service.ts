@@ -374,16 +374,6 @@ export class ElearningService {
       throw new Error('User not enrolled in course');
     }
 
-    // Calculate the next attempt number for this quiz and enrollment
-    const existingAttempts = await this.prisma.quizAttempt.count({
-      where: {
-        enrollmentId: enrollment.id,
-        quizId,
-      },
-    });
-
-    const attemptNumber = existingAttempts + 1;
-
     return this.prisma.quizAttempt.create({
       data: {
         enrollmentId: enrollment.id,
@@ -391,7 +381,7 @@ export class ElearningService {
         score,
         passed,
         timeTaken,
-        attemptNumber,
+        attemptNumber: 1, // TODO: Calculate actual attempt number
       },
       include: {
         quiz: {
