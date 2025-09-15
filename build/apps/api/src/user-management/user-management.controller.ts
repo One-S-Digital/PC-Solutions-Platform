@@ -37,7 +37,7 @@ export class UserManagementController {
   ) {
     const filters: UserFilters = {
       role: role as UserRole,
-      status: status as any,
+      isActive: isActive as any,
       search,
       dateFrom: dateFrom ? new Date(dateFrom) : undefined,
       dateTo: dateTo ? new Date(dateTo) : undefined,
@@ -108,7 +108,7 @@ export class UserManagementController {
   ) {
     const filters: UserFilters = {
       role: role as UserRole,
-      status: status as any,
+      isActive: isActive as any,
       search,
       dateFrom: dateFrom ? new Date(dateFrom) : undefined,
       dateTo: dateTo ? new Date(dateTo) : undefined,

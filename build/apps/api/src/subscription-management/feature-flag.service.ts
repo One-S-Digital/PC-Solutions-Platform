@@ -210,7 +210,7 @@ export class FeatureFlagService {
         conditions: flag.conditions,
       };
     } catch (error) {
-      this.logger.error(`Failed to check detailed feature access: ${error.message}`);
+      this.logger.error(`Failed to check detailed feature access: ${(error as Error).message}`);
       return {
         hasAccess: false,
         reason: 'Error checking feature access',
@@ -242,7 +242,7 @@ export class FeatureFlagService {
 
       return userFlags;
     } catch (error) {
-      this.logger.error(`Failed to get user feature flags: ${error.message}`);
+      this.logger.error(`Failed to get user feature flags: ${(error as Error).message}`);
       return [];
     }
   }
@@ -260,7 +260,7 @@ export class FeatureFlagService {
       this.logger.log(`Updated feature flag rollout: ${flag.name} to ${rolloutPercentage}%`);
       return flag as FeatureFlag;
     } catch (error) {
-      this.logger.error(`Failed to update feature flag rollout: ${error.message}`);
+      this.logger.error(`Failed to update feature flag rollout: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -330,7 +330,7 @@ export class FeatureFlagService {
       this.logger.log(`Toggled feature flag: ${flag.name} to ${updatedFlag.isActive ? 'active' : 'inactive'}`);
       return updatedFlag as FeatureFlag;
     } catch (error) {
-      this.logger.error(`Failed to toggle feature flag: ${error.message}`);
+      this.logger.error(`Failed to toggle feature flag: ${(error as Error).message}`);
       throw error;
     }
   }

@@ -60,7 +60,7 @@ export class PricingService {
       this.logger.log(`Created pricing tier: ${tier.name}`);
       return tier as PricingTier;
     } catch (error) {
-      this.logger.error(`Failed to create pricing tier: ${error.message}`);
+      this.logger.error(`Failed to create pricing tier: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -78,7 +78,7 @@ export class PricingService {
       this.logger.log(`Updated pricing tier: ${tier.name}`);
       return tier as PricingTier;
     } catch (error) {
-      this.logger.error(`Failed to update pricing tier: ${error.message}`);
+      this.logger.error(`Failed to update pricing tier: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -193,7 +193,7 @@ export class PricingService {
         appliedRules,
       };
     } catch (error) {
-      this.logger.error(`Failed to calculate price: ${error.message}`);
+      this.logger.error(`Failed to calculate price: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -216,7 +216,7 @@ export class PricingService {
       this.logger.log(`Created dynamic pricing rule: ${rule.name}`);
       return rule as DynamicPricingRule;
     } catch (error) {
-      this.logger.error(`Failed to create dynamic pricing rule: ${error.message}`);
+      this.logger.error(`Failed to create dynamic pricing rule: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -234,7 +234,7 @@ export class PricingService {
       this.logger.log(`Updated dynamic pricing rule: ${rule.name}`);
       return rule as DynamicPricingRule;
     } catch (error) {
-      this.logger.error(`Failed to update dynamic pricing rule: ${error.message}`);
+      this.logger.error(`Failed to update dynamic pricing rule: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -254,7 +254,7 @@ export class PricingService {
 
       this.logger.log(`Deleted dynamic pricing rule: ${ruleId}`);
     } catch (error) {
-      this.logger.error(`Failed to delete dynamic pricing rule: ${error.message}`);
+      this.logger.error(`Failed to delete dynamic pricing rule: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -277,7 +277,7 @@ export class PricingService {
     const subscriptions = await this.prisma.subscription.findMany({
       where: {
         createdAt: { gte: startDate },
-        status: 'active',
+        status: 'ACTIVE',
       },
       include: {
         plan: true,
