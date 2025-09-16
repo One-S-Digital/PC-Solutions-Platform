@@ -15,7 +15,6 @@ import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
 import { ThemeToggle, LanguageSwitcher } from '@repo/ui';
-import { checkNetworkHealth } from './utils/networkLogger';
 
 function App() {
   useEffect(() => {
@@ -31,7 +30,31 @@ function App() {
       },
     });
 
-    // Check network health after component mounts
+    // Simple network health check
+    const checkNetworkHealth = async () => {
+      console.log('🔍 Checking network health...', {
+        timestamp: new Date().toISOString(),
+        online: navigator.onLine,
+        connectionType: (navigator as any).connection?.effectiveType || 'unknown',
+      });
+
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      try {
+        const response = await fetch(`${apiUrl}/health`, { 
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('✅ API Health check:', {
+          status: response.status,
+          ok: response.ok,
+        });
+      } catch (error) {
+        console.error('❌ API Health check failed:', {
+          error: error instanceof Error ? error.message : error,
+        });
+      }
+    };
+
     checkNetworkHealth();
 
     // Log route changes
