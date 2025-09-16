@@ -4,7 +4,7 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: cd apps/api && pnpm install && pnpm build
+    buildCommand: cd apps/api && pnpm install --prod=false && pnpm build
     startCommand: cd apps/api && pnpm start:prod
     envVars:
       - key: NODE_ENV
