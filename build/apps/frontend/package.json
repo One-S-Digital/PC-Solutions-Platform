@@ -21,6 +21,7 @@
     "react-dom": "^19.1.1",
     "@repo/ui": "workspace:*",
     "@repo/types": "workspace:*",
+    "i18next": "^25.5.2",
     "@clerk/clerk-react": "^5.0.0",
     "@clerk/clerk-js": "^5.0.0",
     "react-router-dom": "^6.28.0",
