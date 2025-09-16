@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
-import { ConversationType, MessageType } from '@prisma/client';
+import { ConversationType, MessageType } from '@repo/types';
 
 export class CreateConversationDto {
   @IsEnum(ConversationType)

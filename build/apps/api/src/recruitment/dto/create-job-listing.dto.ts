@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
-import { JobStatus } from '@prisma/client';
+import { JobStatus } from '@repo/types';
 
 export class CreateJobListingDto {
   @IsString()

@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
-import { ServiceCategory } from '@prisma/client';
+import { ServiceCategory } from '@repo/types';
 
 export class UpdateServiceDto {
   @IsOptional()

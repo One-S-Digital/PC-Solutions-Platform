@@ -6,6 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
+    "start": "vite preview --port 4173",
     "extract-i18n": "i18next-parser",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -19,7 +20,11 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "@repo/ui": "workspace:*",
+
     "i18next": "^25.5.2",
+
+    "@repo/types": "workspace:*",
+
     "@clerk/clerk-react": "^5.0.0",
     "@clerk/clerk-js": "^5.0.0",
     "react-router-dom": "^6.28.0",

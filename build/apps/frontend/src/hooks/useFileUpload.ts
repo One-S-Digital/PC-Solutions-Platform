@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { AssetKind } from '@prisma/client';
+import { AssetKind } from '@repo/types';
 
 export interface Asset {
   id: string;

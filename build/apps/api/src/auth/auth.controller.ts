@@ -2,39 +2,10 @@ import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { RolesGuard, Roles } from '../auth/roles.guard';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { UserRole, OrganizationType } from '@prisma/client';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
+import { UserRole, OrganizationType, SignupDataDto } from '@repo/types';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthThrottle } from '../common/decorators/throttle.decorator';
-
-export class SignupDataDto {
-  role: string;
-  // Foundation fields
-  organizationName?: string;
-  contactPerson?: string;
-  phoneNumber?: string;
-  canton?: string;
-  languages?: string[];
-  capacity?: number;
-  // Product Supplier fields
-  productCategory?: string;
-  // Service Provider fields
-  serviceType?: string;
-  // Educator fields
-  workExperience?: string;
-  education?: string;
-  certifications?: string[];
-  skills?: string[];
-  availability?: string;
-  // Parent fields
-  childAge?: number;
-  preferredLocation?: string;
-  // Common fields
-  email?: string;
-  password?: string;
-  firstName?: string;
-  lastName?: string;
-}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -116,7 +87,7 @@ export class AuthController {
   }
 
   @Post('complete-signup')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ClerkAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Complete user signup with additional data' })
   @ApiResponse({ status: 200, description: 'User signup completed successfully' })
