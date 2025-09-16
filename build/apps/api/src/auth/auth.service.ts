@@ -5,6 +5,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserRole, OrganizationType, ClerkUser } from '@repo/types';
 import { ClerkAuthService } from './clerk-auth.service';
 
+// Re-export ClerkUser for compatibility
+export type { ClerkUser } from '@repo/types';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,7 +46,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role,
+        role: user.role as UserRole,
         organizationId: primaryOrg?.organizationId,
       };
     } catch (error) {
