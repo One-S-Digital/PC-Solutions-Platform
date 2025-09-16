@@ -5,6 +5,133 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <script>
+      // Enhanced environment and configuration logging
+      console.log('🌍 Environment Configuration Check:', {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        languages: navigator.languages,
+        platform: navigator.platform,
+        cookieEnabled: navigator.cookieEnabled,
+        onLine: navigator.onLine,
+        connection: navigator.connection ? {
+          effectiveType: navigator.connection.effectiveType,
+          downlink: navigator.connection.downlink,
+          rtt: navigator.connection.rtt,
+        } : 'not available',
+        screen: {
+          width: screen.width,
+          height: screen.height,
+          colorDepth: screen.colorDepth,
+          pixelDepth: screen.pixelDepth,
+        },
+        window: {
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight,
+          outerWidth: window.outerWidth,
+          outerHeight: window.outerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+        },
+        location: {
+          href: window.location.href,
+          protocol: window.location.protocol,
+          host: window.location.host,
+          hostname: window.location.hostname,
+          port: window.location.port,
+          pathname: window.location.pathname,
+          search: window.location.search,
+          hash: window.location.hash,
+        },
+        document: {
+          readyState: document.readyState,
+          title: document.title,
+          charset: document.characterSet,
+          referrer: document.referrer,
+        },
+        performance: {
+          timing: performance.timing ? {
+            navigationStart: performance.timing.navigationStart,
+            loadEventEnd: performance.timing.loadEventEnd,
+            domContentLoadedEventEnd: performance.timing.domContentLoadedEventEnd,
+          } : 'not available',
+          memory: performance.memory ? {
+            usedJSHeapSize: performance.memory.usedJSHeapSize,
+            totalJSHeapSize: performance.memory.totalJSHeapSize,
+            jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
+          } : 'not available',
+        },
+      });
+
+      // Check for critical browser features
+      const criticalFeatures = {
+        fetch: typeof fetch !== 'undefined',
+        Promise: typeof Promise !== 'undefined',
+        localStorage: typeof localStorage !== 'undefined',
+        sessionStorage: typeof sessionStorage !== 'undefined',
+        WebSocket: typeof WebSocket !== 'undefined',
+        URL: typeof URL !== 'undefined',
+        FormData: typeof FormData !== 'undefined',
+        Headers: typeof Headers !== 'undefined',
+        Request: typeof Request !== 'undefined',
+        Response: typeof Response !== 'undefined',
+      };
+
+      console.log('🔧 Browser Feature Support:', {
+        timestamp: new Date().toISOString(),
+        features: criticalFeatures,
+        missingFeatures: Object.entries(criticalFeatures)
+          .filter(([_, supported]) => !supported)
+          .map(([feature]) => feature),
+      });
+
+      // Log any missing critical features
+      const missingFeatures = Object.entries(criticalFeatures)
+        .filter(([_, supported]) => !supported)
+        .map(([feature]) => feature);
+
+      if (missingFeatures.length > 0) {
+        console.error('🚨 Missing Critical Browser Features:', {
+          timestamp: new Date().toISOString(),
+          missingFeatures,
+          userAgent: navigator.userAgent,
+        });
+      }
+
+      // Enhanced error logging for script loading
+      window.addEventListener('error', function(event) {
+        console.error('🚨 Script Loading Error:', {
+          timestamp: new Date().toISOString(),
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          error: event.error,
+          type: event.type,
+        });
+      });
+
+      // Log when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 DOM Content Loaded:', {
+          timestamp: new Date().toISOString(),
+          readyState: document.readyState,
+          rootElement: document.getElementById('root') ? 'FOUND' : 'MISSING',
+        });
+      });
+
+      // Log when window is fully loaded
+      window.addEventListener('load', function() {
+        console.log('🪟 Window Loaded:', {
+          timestamp: new Date().toISOString(),
+          readyState: document.readyState,
+          performanceTiming: performance.timing ? {
+            loadTime: performance.timing.loadEventEnd - performance.timing.navigationStart,
+            domContentLoadedTime: performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
+          } : 'not available',
+        });
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

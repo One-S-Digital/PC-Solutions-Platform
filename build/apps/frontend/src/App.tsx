@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
@@ -15,8 +15,50 @@ import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
 import { ThemeToggle, LanguageSwitcher } from '@repo/ui';
+import { checkNetworkHealth } from './utils/networkLogger';
 
 function App() {
+  useEffect(() => {
+    console.log('📱 App Component Mounted:', {
+      timestamp: new Date().toISOString(),
+      pathname: window.location.pathname,
+      search: window.location.search,
+      hash: window.location.hash,
+      userAgent: navigator.userAgent,
+      viewport: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      },
+    });
+
+    // Check network health after component mounts
+    checkNetworkHealth();
+
+    // Log route changes
+    const handleRouteChange = () => {
+      console.log('🛣️ Route Change:', {
+        timestamp: new Date().toISOString(),
+        pathname: window.location.pathname,
+        search: window.location.search,
+        hash: window.location.hash,
+      });
+    };
+
+    window.addEventListener('popstate', handleRouteChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      console.log('📱 App Component Unmounted:', {
+        timestamp: new Date().toISOString(),
+      });
+    };
+  }, []);
+
+  console.log('📱 App Component Rendering:', {
+    timestamp: new Date().toISOString(),
+    currentPath: window.location.pathname,
+  });
+
   return (
     <div className="min-h-screen frontend-page">
       <AuthProvider>
