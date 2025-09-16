@@ -4,8 +4,8 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: cd apps/api && pnpm install --prod=false && pnpm build
-    startCommand: cd apps/api && pnpm start:prod
+    buildCommand: npm install -g pnpm && cd build && pnpm install --prod=false && cd apps/api && pnpm build
+    startCommand: cd build/apps/api && pnpm start:prod
     envVars:
       - key: NODE_ENV
         value: production
@@ -41,8 +41,8 @@ services:
     name: pc-solutions-frontend
     env: node
     plan: starter
-    buildCommand: cd apps/frontend && pnpm install && pnpm build
-    startCommand: cd apps/frontend && pnpm preview
+    buildCommand: npm install -g pnpm && cd build && pnpm install && cd apps/frontend && pnpm build
+    startCommand: cd build/apps/frontend && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
         value: production
@@ -56,8 +56,8 @@ services:
     name: pc-solutions-admin
     env: node
     plan: starter
-    buildCommand: cd apps/admin && pnpm install && pnpm build
-    startCommand: cd apps/admin && pnpm preview
+    buildCommand: npm install -g pnpm && cd build && pnpm install && cd apps/admin && pnpm build
+    startCommand: cd build/apps/admin && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
         value: production

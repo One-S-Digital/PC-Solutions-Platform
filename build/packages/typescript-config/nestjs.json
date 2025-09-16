@@ -20,7 +20,8 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "noEmit": false
   },
   "exclude": ["node_modules", "dist"]
 }
