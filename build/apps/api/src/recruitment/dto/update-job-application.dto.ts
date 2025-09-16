@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus } from '@repo/types';
 
 export class UpdateJobApplicationDto {
   @IsOptional()

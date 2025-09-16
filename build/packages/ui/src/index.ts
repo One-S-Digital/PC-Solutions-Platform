@@ -27,5 +27,5 @@ export {
   AdminTableHeaderCell
 } from './components/AdminComponents';
 
-// Types
-export * from './types/auth';
+// Types - Re-export from centralized types package
+export * from '@repo/types';

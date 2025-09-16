@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AssetKind } from '@prisma/client';
+import { AssetKind } from '@repo/types';
 import { UploadModal } from '@repo/ui';
 import { useFileUpload, Asset } from '../hooks/useFileUpload';
 

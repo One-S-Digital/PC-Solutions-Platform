@@ -1,25 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-
-// Define types locally for now
-enum UserRole {
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  ADMIN = 'ADMIN',
-  FOUNDATION = 'FOUNDATION',
-  PRODUCT_SUPPLIER = 'PRODUCT_SUPPLIER',
-  SERVICE_PROVIDER = 'SERVICE_PROVIDER',
-  EDUCATOR = 'EDUCATOR',
-  PARENT = 'PARENT',
-}
-
-interface AuthUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
-  organizationId?: string;
-}
+import { UserRole, AuthUser } from '@repo/types';
 
 interface AuthContextType {
   user: AuthUser | null;

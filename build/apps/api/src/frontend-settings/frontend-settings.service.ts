@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateFrontendSettingsDto } from './dto/update-frontend-settings.dto';
 import { UploadService } from '../upload/upload.service';
+import { AssetKind } from '@repo/types';
 
 @Injectable()
 export class FrontendSettingsService {
@@ -112,7 +113,7 @@ export class FrontendSettingsService {
 
   async uploadLogo(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, 'FRONTEND_LOGO');
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_LOGO);
 
     // Update frontend settings with new logo
     const settings = await this.getSettings();
@@ -126,7 +127,7 @@ export class FrontendSettingsService {
 
   async uploadFavicon(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, 'FRONTEND_FAVICON');
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_FAVICON);
 
     // Update frontend settings with new favicon
     const settings = await this.getSettings();
@@ -140,7 +141,7 @@ export class FrontendSettingsService {
 
   async uploadOgImage(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, 'FRONTEND_OG_IMAGE');
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_OG_IMAGE);
 
     // Update frontend settings with new OG image
     const settings = await this.getSettings();
@@ -154,7 +155,7 @@ export class FrontendSettingsService {
 
   async uploadAdminLogo(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, 'ADMIN_LOGO');
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.ADMIN_LOGO);
 
     // Update frontend settings with new admin logo
     const settings = await this.getSettings();

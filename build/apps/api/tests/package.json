@@ -16,6 +16,7 @@
     "test:ci": "npm run test:coverage && npm run test:security && npm run test:performance",
     "lint": "eslint src tests --ext .ts,.tsx",
     "lint:fix": "eslint src tests --ext .ts,.tsx --fix",
+    "clean": "rm -rf coverage cypress/videos cypress/screenshots",
     "security:audit": "npm audit --audit-level moderate",
     "security:scan": "npm audit --audit-level high",
     "db:test:setup": "prisma migrate deploy --schema=prisma/schema.prisma",
