@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "build": "vite build",
     "dev": "vite",
+    "start": "vite preview --port 4174",
     "extract-i18n": "i18next-parser",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
