@@ -182,4 +182,23 @@ export class ClerkAuthService {
       throw new UnauthorizedException('Invalid token');
     }
   }
+
+  // Method expected by the guards and middleware
+  async validateClerkToken(token: string): Promise<any> {
+    try {
+      const payload = await this.verifyToken(token);
+      return {
+        id: payload.sub,
+        email: payload.email,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        role: payload.role,
+        organizationId: payload.orgId,
+        createdAt: payload.iat * 1000, // Convert to milliseconds
+        updatedAt: payload.iat * 1000,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
 }

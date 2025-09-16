@@ -3,7 +3,9 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@repo/types": ["../../packages/types"],
+      "@repo/types/*": ["../../packages/types/*"]
     }
   },
   "include": ["src/**/*"],

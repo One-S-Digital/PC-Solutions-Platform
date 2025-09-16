@@ -44,10 +44,13 @@ export class AuthService {
       return {
         id: user.id,
         email: user.email,
+        emailAddresses: [{ emailAddress: user.email, id: user.id }],
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role as UserRole,
         organizationId: primaryOrg?.organizationId,
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
       };
     } catch (error) {
       throw new UnauthorizedException('Token validation failed');

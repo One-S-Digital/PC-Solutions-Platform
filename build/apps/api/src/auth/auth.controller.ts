@@ -101,7 +101,7 @@ export class AuthController {
         phoneNumber: additionalData.phoneNumber,
         workExperience: additionalData.workExperience,
         education: additionalData.education,
-        certifications: additionalData.certifications,
+        certifications: additionalData.certifications ? [additionalData.certifications] : [],
         skills: additionalData.skills,
         availability: additionalData.availability,
       },
