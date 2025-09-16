@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { Navigate } from 'react-router-dom';
+import { UserRole } from '@repo/types';
 import AdminCustomLoginForm from './AdminCustomLoginForm';
 import AdminCustomSignupForm from './AdminCustomSignupForm';
 
@@ -30,7 +31,7 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
 
   // Check if user has admin role
   const userRole = user?.publicMetadata?.role as string;
-  if (userRole !== 'SUPER_ADMIN' && userRole !== 'ADMIN') {
+  if (userRole !== UserRole.SUPER_ADMIN && userRole !== UserRole.ADMIN) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">

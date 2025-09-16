@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsArray, ValidateNested, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CourseStatus, ContentType, QuizType } from '@prisma/client';
+import { CourseStatus, ContentType, QuizType } from '@repo/types';
 
 export class CreateCourseDto {
   @IsString()
