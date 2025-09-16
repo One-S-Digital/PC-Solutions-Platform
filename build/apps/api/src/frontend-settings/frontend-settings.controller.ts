@@ -12,14 +12,14 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FrontendSettingsService } from './frontend-settings.service';
 import { UpdateFrontendSettingsDto } from './dto/update-frontend-settings.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 import { Public } from '../auth/public.decorator';
 
 @Controller('admin/frontend-settings')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class FrontendSettingsController {
   constructor(private readonly frontendSettingsService: FrontendSettingsService) {}

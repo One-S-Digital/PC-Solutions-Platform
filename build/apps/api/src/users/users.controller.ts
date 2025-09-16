@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { RolesGuard, Roles } from '../auth/roles.guard';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { UserRole } from '@repo/types';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -15,7 +15,7 @@ export class UsersController {
   ) {}
 
   @Get('me')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ClerkAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'User profile retrieved successfully' })
@@ -49,7 +49,7 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(ClerkAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users (Admin only)' })

@@ -15,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { CloudflareR2Service, PresignedUploadData } from './cloudflare-r2.service';
 import { UploadService } from './upload.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole, AssetKind } from '@repo/types';
@@ -33,7 +33,7 @@ export class UploadFileDto {
 
 @ApiTags('Upload')
 @Controller('upload')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class UploadController {
   constructor(
     private readonly r2Service: CloudflareR2Service,

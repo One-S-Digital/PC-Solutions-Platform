@@ -13,13 +13,13 @@ import {
 import { RecruitmentService } from './recruitment.service';
 import { CreateJobListingDto, UpdateJobListingDto } from './dto/create-job-listing.dto';
 import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-job-application.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('recruitment')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class RecruitmentController {
   constructor(private readonly recruitmentService: RecruitmentService) {}
 

@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Request, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 import { UserRole } from '@repo/types';
 import { BillingService } from './billing.service';
@@ -9,7 +9,7 @@ import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 
 @ApiTags('billing')
 @Controller('billing')
-@UseGuards(JwtAuthGuard)
+@UseGuards(ClerkAuthGuard)
 @ApiBearerAuth()
 export class BillingController {
   constructor(

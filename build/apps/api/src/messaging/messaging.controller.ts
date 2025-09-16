@@ -13,13 +13,13 @@ import {
 import { MessagingService } from './messaging.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('messaging')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class MessagingController {
   constructor(private readonly messagingService: MessagingService) {}
 

@@ -9,13 +9,13 @@ import {
   UseGuards 
 } from '@nestjs/common';
 import { ContentModerationService, ContentModerationFilters, ModerationAction, ContentFlag } from './content-moderation.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('admin/content-moderation')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class ContentModerationController {
   constructor(private readonly contentModerationService: ContentModerationService) {}

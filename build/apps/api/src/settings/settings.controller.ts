@@ -1,7 +1,7 @@
 import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 import { UserRole } from '@repo/types';
 import { UpdateFoundationSettingsDto } from './dto/foundation-settings.dto';
@@ -12,7 +12,7 @@ import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
 
 @ApiTags('settings')
 @Controller('settings')
-@UseGuards(JwtAuthGuard)
+@UseGuards(ClerkAuthGuard)
 @ApiBearerAuth()
 export class SettingsController {
   constructor(private readonly prisma: PrismaService) {}

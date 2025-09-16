@@ -16,13 +16,13 @@ import { CreateCourseModuleDto } from './dto/create-course-module.dto';
 import { CreateCourseLessonDto } from './dto/create-course-lesson.dto';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { CreateQuizAttemptDto } from './dto/create-quiz-attempt.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('elearning')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class ElearningController {
   constructor(private readonly elearningService: ElearningService) {}
 
