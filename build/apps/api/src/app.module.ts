@@ -31,6 +31,7 @@ import { SubscriptionManagementModule } from './subscription-management/subscrip
 import { SystemConfigurationModule } from './system-configuration/system-configuration.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { ClerkAuthMiddleware } from './auth/clerk-auth.middleware';
 import {
   AUTH_REQUESTS_LIMIT,
   AUTH_THROTTLE_KEY,
@@ -111,6 +112,19 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RequestIdMiddleware, RequestLoggerMiddleware)
+      .forRoutes('*');
+    
+    // Apply ClerkAuthMiddleware to all routes except public ones
+    consumer
+      .apply(ClerkAuthMiddleware)
+      .exclude(
+        'auth/signup-data',
+        'auth/signup-fields/(.*)',
+        'health',
+        'metrics',
+        'api/health',
+        'api/metrics'
+      )
       .forRoutes('*');
   }
 }

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole, OrganizationType } from '@prisma/client';
+import { ClerkAuthService } from './clerk-auth.service';
 
 export interface ClerkUser {
   id: string;
@@ -19,21 +20,17 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly clerkAuthService: ClerkAuthService,
   ) {}
 
   async validateClerkToken(token: string): Promise<ClerkUser> {
     try {
-      // In production, you would verify the JWT with Clerk's public key
-      // For now, we'll decode it and trust it (in production, use Clerk's verification)
-      const decoded = this.jwtService.decode(token) as any;
+      // Use the secure ClerkAuthService to verify the token
+      const verifiedPayload = await this.clerkAuthService.verifyToken(token);
       
-      if (!decoded || !decoded.sub) {
-        throw new UnauthorizedException('Invalid token');
-      }
-
-      // Get user from database
+      // Get user from database using the verified Clerk user ID
       const user = await this.prisma.user.findUnique({
-        where: { clerkId: decoded.sub },
+        where: { clerkId: verifiedPayload.sub },
         include: {
           organizations: {
             include: {

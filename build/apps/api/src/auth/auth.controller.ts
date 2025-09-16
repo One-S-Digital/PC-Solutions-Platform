@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { RolesGuard, Roles } from '../auth/roles.guard';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { UserRole, OrganizationType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthThrottle } from '../common/decorators/throttle.decorator';
@@ -116,7 +116,7 @@ export class AuthController {
   }
 
   @Post('complete-signup')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ClerkAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Complete user signup with additional data' })
   @ApiResponse({ status: 200, description: 'User signup completed successfully' })
