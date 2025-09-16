@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@repo/types';
 import { ClerkJwtPayload } from './clerk-auth.service';
 
 export interface CreateUserDto {
