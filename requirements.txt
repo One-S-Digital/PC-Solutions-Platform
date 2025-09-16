@@ -1,23 +1,26 @@
 # PC Solutions Platform v2.0 - System Requirements
+# NOTE: Deployment platforms like Render treat this as a Python requirements file.
+# Keep the contents comment-only so pip install succeeds without trying to fetch
+# non-Python tooling such as Node.js or pnpm.
 
 # Node.js Runtime
-nodejs>=18.0.0
+# Node.js >= 18.0.0
 
 # Package Manager
-pnpm>=9.0.0
+# pnpm >= 9.0.0
 
 # Database
-postgresql>=14.0
+# PostgreSQL >= 14.0
 
 # Docker (for containerization)
-docker>=20.0.0
-docker-compose>=2.0.0
+# Docker >= 20.0.0
+# Docker Compose >= 2.0.0
 
 # Development Tools
-git>=2.30.0
+# Git >= 2.30.0
 
 # Optional: For production deployment
-nginx>=1.20.0
+# Nginx >= 1.20.0
 
 # Environment Variables Required:
 # - DATABASE_URL
