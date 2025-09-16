@@ -13,11 +13,7 @@ import { SubscriptionManagementService, SubscriptionPlan, Subscription } from '.
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
-import { SubscriptionTier } from '@prisma/client';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { SubscriptionTier, UserRole } from '@repo/types';
 
 @Controller('admin/subscription-management')
 @UseGuards(JwtAuthGuard, RolesGuard)
