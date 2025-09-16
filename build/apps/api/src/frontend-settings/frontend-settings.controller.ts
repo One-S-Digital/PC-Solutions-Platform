@@ -15,7 +15,7 @@ import { UpdateFrontendSettingsDto } from './dto/update-frontend-settings.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@repo/types';
 import { Public } from '../auth/public.decorator';
 
 @Controller('admin/frontend-settings')

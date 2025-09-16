@@ -16,7 +16,7 @@ import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-j
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@repo/types';
 
 @Controller('recruitment')
 @UseGuards(JwtAuthGuard, RolesGuard)

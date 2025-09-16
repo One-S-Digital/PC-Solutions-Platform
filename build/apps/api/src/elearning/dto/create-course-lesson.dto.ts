@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
-import { ContentType } from '@prisma/client';
+import { ContentType } from '@repo/types';
 
 export class CreateCourseLessonDto {
   @IsString()

@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudflareR2Service } from './cloudflare-r2.service';
-import { AssetKind } from '@prisma/client';
+import { AssetKind } from '@repo/types';
 
 export interface CreateAssetData {
   kind: AssetKind;
