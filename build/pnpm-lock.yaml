@@ -443,8 +443,6 @@ importers:
 
   packages/typescript-config: {}
 
-  packages/types: {}
-
   packages/ui:
     dependencies:
       '@prisma/client':
