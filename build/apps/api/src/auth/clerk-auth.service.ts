@@ -58,9 +58,13 @@ export class ClerkAuthService {
 
       return verifiedPayload;
     } catch (error) {
-      this.logger.error('Token verification failed', error);
+      const trace = error instanceof Error ? error.stack : undefined;
+      this.logger.error('Token verification failed', trace);
       if (error instanceof jwt.JsonWebTokenError) {
         throw new UnauthorizedException(`Token verification failed: ${error.message}`);
+      }
+      if (error instanceof Error) {
+        throw new UnauthorizedException(`Invalid token: ${error.message}`);
       }
       throw new UnauthorizedException('Invalid token');
     }
@@ -109,7 +113,8 @@ export class ClerkAuthService {
 
       return publicKey;
     } catch (error) {
-      this.logger.error('Failed to fetch Clerk public key', error);
+      const trace = error instanceof Error ? error.stack : undefined;
+      this.logger.error('Failed to fetch Clerk public key', trace);
       return null;
     }
   }

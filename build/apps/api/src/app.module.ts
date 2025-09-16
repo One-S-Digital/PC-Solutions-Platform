@@ -31,6 +31,14 @@ import { SubscriptionManagementModule } from './subscription-management/subscrip
 import { SystemConfigurationModule } from './system-configuration/system-configuration.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import {
+  AUTH_REQUESTS_LIMIT,
+  AUTH_THROTTLE_KEY,
+  AUTH_TTL_SECONDS,
+  UPLOAD_REQUESTS_LIMIT,
+  UPLOAD_THROTTLE_KEY,
+  UPLOAD_TTL_SECONDS,
+} from './common/decorators/throttle.decorator';
 
 @Module({
   imports: [
@@ -52,6 +60,16 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
         name: 'long',
         ttl: 60, // 1 minute
         limit: 100, // 100 requests per minute
+      },
+      {
+        name: AUTH_THROTTLE_KEY,
+        ttl: AUTH_TTL_SECONDS,
+        limit: AUTH_REQUESTS_LIMIT,
+      },
+      {
+        name: UPLOAD_THROTTLE_KEY,
+        ttl: UPLOAD_TTL_SECONDS,
+        limit: UPLOAD_REQUESTS_LIMIT,
       },
     ]),
     PrismaModule,
