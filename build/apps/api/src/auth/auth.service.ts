@@ -2,17 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType } from '@prisma/client';
+import { UserRole, OrganizationType, ClerkUser } from '@repo/types';
 import { ClerkAuthService } from './clerk-auth.service';
-
-export interface ClerkUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
-  organizationId?: string;
-}
 
 @Injectable()
 export class AuthService {

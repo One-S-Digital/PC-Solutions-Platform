@@ -3,38 +3,9 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { AuthService } from '../auth/auth.service';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { UserRole, OrganizationType } from '@prisma/client';
+import { UserRole, OrganizationType, SignupDataDto } from '@repo/types';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthThrottle } from '../common/decorators/throttle.decorator';
-
-export class SignupDataDto {
-  role: string;
-  // Foundation fields
-  organizationName?: string;
-  contactPerson?: string;
-  phoneNumber?: string;
-  canton?: string;
-  languages?: string[];
-  capacity?: number;
-  // Product Supplier fields
-  productCategory?: string;
-  // Service Provider fields
-  serviceType?: string;
-  // Educator fields
-  workExperience?: string;
-  education?: string;
-  certifications?: string[];
-  skills?: string[];
-  availability?: string;
-  // Parent fields
-  childAge?: number;
-  preferredLocation?: string;
-  // Common fields
-  email?: string;
-  password?: string;
-  firstName?: string;
-  lastName?: string;
-}
 
 @ApiTags('auth')
 @Controller('auth')
