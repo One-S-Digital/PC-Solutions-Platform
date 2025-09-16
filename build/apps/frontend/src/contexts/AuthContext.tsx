@@ -77,6 +77,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           hasToken: !!token,
         });
 
+        // Only try API call if we have a valid API URL (not just '/api')
+        if (apiUrl === '/api') {
+          console.log('⏭️ Skipping API call - no API URL configured');
+          setUser(null);
+          return;
+        }
+
         const response = await fetch(fullUrl, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -103,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(data.data);
         } else {
           const errorText = await response.text();
-          console.error('🚨 Failed to fetch user data:', {
+          console.log('ℹ️ Failed to fetch user data (expected if API not running):', {
             timestamp: new Date().toISOString(),
             status: response.status,
             statusText: response.statusText,
@@ -113,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(null);
         }
       } catch (error) {
-        console.error('🚨 Error fetching user data:', {
+        console.log('ℹ️ Error fetching user data (expected if API not running):', {
           error: error instanceof Error ? {
             name: error.name,
             message: error.message,

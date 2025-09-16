@@ -39,16 +39,21 @@ function App() {
 
       const apiUrl = import.meta.env.VITE_API_URL || '/api';
       try {
-        const response = await fetch(`${apiUrl}/health`, { 
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        console.log('✅ API Health check:', {
-          status: response.status,
-          ok: response.ok,
-        });
+        // Only check if we're online and have a valid API URL
+        if (navigator.onLine && apiUrl !== '/api') {
+          const response = await fetch(`${apiUrl}/health`, { 
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          console.log('✅ API Health check:', {
+            status: response.status,
+            ok: response.ok,
+          });
+        } else {
+          console.log('⏭️ Skipping API health check - offline or no API URL');
+        }
       } catch (error) {
-        console.error('❌ API Health check failed:', {
+        console.log('ℹ️ API Health check failed (expected if API not running):', {
           error: error instanceof Error ? error.message : error,
         });
       }
