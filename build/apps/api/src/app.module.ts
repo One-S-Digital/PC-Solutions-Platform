@@ -31,7 +31,7 @@ import { SubscriptionManagementModule } from './subscription-management/subscrip
 import { SystemConfigurationModule } from './system-configuration/system-configuration.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
-import { ClerkAuthMiddleware } from './auth/clerk-auth.middleware';
+
 import {
   AUTH_REQUESTS_LIMIT,
   AUTH_THROTTLE_KEY,
