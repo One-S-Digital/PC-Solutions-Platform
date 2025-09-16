@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
-import { SwissCard, SwissButton, Input, Badge, Alert } from '@repo/ui';
+import { useUser, useAuth } from '@clerk/clerk-react';
+import { SwissCard, SwissButton, Input, Badge } from '@repo/ui';
 import { useTranslation } from 'react-i18next';
 
 interface Catalog {
@@ -33,6 +33,7 @@ interface CatalogFormData {
 
 export function CatalogManagementPage() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { t } = useTranslation();
   const [catalogs, setCatalogs] = useState<Catalog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +59,7 @@ export function CatalogManagementPage() {
     try {
       const response = await fetch('/api/marketplace/catalogs', {
         headers: {
-          'Authorization': `Bearer ${await user?.getToken()}`,
+          'Authorization': `Bearer ${await getToken()}`,
         },
       });
       const data = await response.json();
@@ -88,7 +89,7 @@ export function CatalogManagementPage() {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${await user?.getToken()}`,
+            'Authorization': `Bearer ${await getToken()}`,
           },
           body: JSON.stringify(catalogData),
         });
@@ -98,7 +99,7 @@ export function CatalogManagementPage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${await user?.getToken()}`,
+            'Authorization': `Bearer ${await getToken()}`,
           },
           body: JSON.stringify(catalogData),
         });
@@ -118,7 +119,7 @@ export function CatalogManagementPage() {
             fetch('/api/upload/file', {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${await user?.getToken()}`,
+                'Authorization': `Bearer ${await getToken()}`,
               },
               body: pdfFormData,
             }).then(response => response.json())
@@ -134,7 +135,7 @@ export function CatalogManagementPage() {
             fetch('/api/upload/file', {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${await user?.getToken()}`,
+                'Authorization': `Bearer ${await getToken()}`,
               },
               body: csvFormData,
             }).then(response => response.json())
@@ -153,7 +154,7 @@ export function CatalogManagementPage() {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${await user?.getToken()}`,
+            'Authorization': `Bearer ${await getToken()}`,
           },
           body: JSON.stringify(assetIds),
         });
@@ -190,7 +191,7 @@ export function CatalogManagementPage() {
       await fetch(`/api/marketplace/catalogs/${catalogId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${await user?.getToken()}`,
+          'Authorization': `Bearer ${await getToken()}`,
         },
       });
       setAlert({ type: 'success', message: 'Catalog deleted successfully' });
@@ -207,7 +208,7 @@ export function CatalogManagementPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user?.getToken()}`,
+          'Authorization': `Bearer ${await getToken()}`,
         },
         body: JSON.stringify({ csvAssetId }),
       });
@@ -235,7 +236,7 @@ export function CatalogManagementPage() {
     try {
       const response = await fetch('/api/marketplace/catalogs/csv-template', {
         headers: {
-          'Authorization': `Bearer ${await user?.getToken()}`,
+          'Authorization': `Bearer ${await getToken()}`,
         },
       });
       const data = await response.json();
@@ -268,13 +269,21 @@ export function CatalogManagementPage() {
 
         {/* Alert */}
         {alert && (
-          <Alert
-            type={alert.type}
-            onClose={() => setAlert(null)}
-            className="mb-6"
-          >
-            {alert.message}
-          </Alert>
+          <div className={`p-4 rounded-lg mb-4 ${
+            alert.type === 'success' 
+              ? 'bg-green-100 text-green-800 border border-green-200' 
+              : 'bg-red-100 text-red-800 border border-red-200'
+          }`}>
+            <div className="flex justify-between items-center">
+              <span>{alert.message}</span>
+              <button 
+                onClick={() => setAlert(null)}
+                className="ml-4 text-lg font-bold hover:opacity-70"
+              >
+                ×
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Actions */}
@@ -410,7 +419,7 @@ export function CatalogManagementPage() {
                   <h3 className="text-lg font-semibold text-text-default">
                     {catalog.title}
                   </h3>
-                  <Badge variant={catalog.isActive ? 'success' : 'secondary'}>
+                  <Badge variant={catalog.isActive ? 'success' : 'info'}>
                     {catalog.isActive ? t('common.active', 'Active') : t('common.inactive', 'Inactive')}
                   </Badge>
                 </div>

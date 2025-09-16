@@ -30,7 +30,7 @@ export function ProductForm({ product, onSave, onClose }: ProductFormProps) {
         price: product.price?.toString() || '',
         category: product.category || '',
         tags: product.tags || [],
-        imageAssetId: product.imageAssetId || '',
+        imageAssetId: product.imageAsset?.id || '',
       });
     }
   }, [product]);
@@ -197,7 +197,7 @@ export function ProductForm({ product, onSave, onClose }: ProductFormProps) {
                 {formData.tags.map(tag => (
                   <Badge
                     key={tag}
-                    variant="secondary"
+                    variant="info"
                     className="cursor-pointer"
                     onClick={() => handleRemoveTag(tag)}
                   >

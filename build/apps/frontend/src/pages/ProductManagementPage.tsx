@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import { marketplaceService, Product, CreateProductData, UpdateProductData } from '../services/marketplaceService';
 import { SwissCard, SwissButton, Input, Badge, Status } from '@repo/ui';
 import { ProductForm } from '../components/marketplace/ProductForm';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function ProductManagementPage() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ export default function ProductManagementPage() {
 
   const handleCreateProduct = async (data: CreateProductData) => {
     try {
-      await marketplaceService.createProduct(data);
+      await marketplaceService.createProduct(data, getToken);
       await loadProducts();
       setShowForm(false);
     } catch (error) {
@@ -42,7 +43,7 @@ export default function ProductManagementPage() {
 
   const handleUpdateProduct = async (id: string, data: UpdateProductData) => {
     try {
-      await marketplaceService.updateProduct(id, data);
+      await marketplaceService.updateProduct(id, data, getToken);
       await loadProducts();
       setEditingProduct(null);
     } catch (error) {
@@ -53,7 +54,7 @@ export default function ProductManagementPage() {
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm(t('marketplace.confirmDelete', 'Are you sure you want to delete this product?'))) {
       try {
-        await marketplaceService.deleteProduct(id);
+        await marketplaceService.deleteProduct(id, getToken);
         await loadProducts();
       } catch (error) {
         console.error('Error deleting product:', error);
@@ -65,7 +66,7 @@ export default function ProductManagementPage() {
     try {
       await marketplaceService.updateProduct(product.id, {
         isActive: !product.isActive,
-      });
+      }, getToken);
       await loadProducts();
     } catch (error) {
       console.error('Error updating product status:', error);
@@ -250,7 +251,7 @@ export default function ProductManagementPage() {
                       </td>
                       <td className="py-4 px-4">
                         {product.category && (
-                          <Badge variant="secondary">
+                          <Badge variant="info">
                             {product.category}
                           </Badge>
                         )}
@@ -262,7 +263,7 @@ export default function ProductManagementPage() {
                       </td>
                       <td className="py-4 px-4">
                         <Status
-                          variant={product.isActive ? 'success' : 'danger'}
+                          variant={product.isActive ? 'success' : 'error'}
                         >
                           {product.isActive 
                             ? t('marketplace.active', 'Active')
@@ -314,8 +315,8 @@ export default function ProductManagementPage() {
         <ProductForm
           product={editingProduct}
           onSave={editingProduct 
-            ? (data) => handleUpdateProduct(editingProduct.id, data)
-            : handleCreateProduct
+            ? (data) => handleUpdateProduct(editingProduct.id, data as UpdateProductData)
+            : (data) => handleCreateProduct(data as CreateProductData)
           }
           onClose={() => {
             setShowForm(false);

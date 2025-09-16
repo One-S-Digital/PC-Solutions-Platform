@@ -46,7 +46,7 @@ export function ServiceCard({ service, onRequestService }: ServiceCardProps) {
             {service.title}
           </h3>
           <Badge 
-            variant="secondary" 
+            variant="info" 
             className={`mt-1 ${getCategoryColor(service.category)}`}
           >
             {t(`marketplace.serviceCategory.${service.category}`, service.category)}
@@ -73,7 +73,7 @@ export function ServiceCard({ service, onRequestService }: ServiceCardProps) {
               {formatPrice(service.price)}
             </span>
             {!service.isActive && (
-              <Badge variant="danger">
+              <Badge variant="error">
                 {t('marketplace.inactive', 'Inactive')}
               </Badge>
             )}

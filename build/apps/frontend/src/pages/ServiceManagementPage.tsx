@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import { marketplaceService, Service, CreateServiceData, UpdateServiceData } from '../services/marketplaceService';
 import { SwissCard, SwissButton, Input, Badge, Status } from '@repo/ui';
 import { ServiceForm } from '../components/marketplace/ServiceForm';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function ServiceManagementPage() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { t } = useTranslation();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ export default function ServiceManagementPage() {
 
   const handleCreateService = async (data: CreateServiceData) => {
     try {
-      await marketplaceService.createService(data);
+      await marketplaceService.createService(data, getToken);
       await loadServices();
       setShowForm(false);
     } catch (error) {
@@ -42,7 +43,7 @@ export default function ServiceManagementPage() {
 
   const handleUpdateService = async (id: string, data: UpdateServiceData) => {
     try {
-      await marketplaceService.updateService(id, data);
+      await marketplaceService.updateService(id, data, getToken);
       await loadServices();
       setEditingService(null);
     } catch (error) {
@@ -53,7 +54,7 @@ export default function ServiceManagementPage() {
   const handleDeleteService = async (id: string) => {
     if (window.confirm(t('marketplace.confirmDelete', 'Are you sure you want to delete this service?'))) {
       try {
-        await marketplaceService.deleteService(id);
+        await marketplaceService.deleteService(id, getToken);
         await loadServices();
       } catch (error) {
         console.error('Error deleting service:', error);
@@ -65,7 +66,7 @@ export default function ServiceManagementPage() {
     try {
       await marketplaceService.updateService(service.id, {
         isActive: !service.isActive,
-      });
+      }, getToken);
       await loadServices();
     } catch (error) {
       console.error('Error updating service status:', error);
@@ -252,7 +253,7 @@ export default function ServiceManagementPage() {
                       </td>
                       <td className="py-4 px-4">
                         <Badge 
-                          variant="secondary" 
+                          variant="info" 
                           className={getCategoryColor(service.category)}
                         >
                           {t(`marketplace.serviceCategory.${service.category}`, service.category)}
@@ -265,7 +266,7 @@ export default function ServiceManagementPage() {
                       </td>
                       <td className="py-4 px-4">
                         <Status
-                          variant={service.isActive ? 'success' : 'danger'}
+                          variant={service.isActive ? 'success' : 'error'}
                         >
                           {service.isActive 
                             ? t('marketplace.active', 'Active')
@@ -317,8 +318,8 @@ export default function ServiceManagementPage() {
         <ServiceForm
           service={editingService}
           onSave={editingService 
-            ? (data) => handleUpdateService(editingService.id, data)
-            : handleCreateService
+            ? (data) => handleUpdateService(editingService.id, data as UpdateServiceData)
+            : (data) => handleCreateService(data as CreateServiceData)
           }
           onClose={() => {
             setShowForm(false);

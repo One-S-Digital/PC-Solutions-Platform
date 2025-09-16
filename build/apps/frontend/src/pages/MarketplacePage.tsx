@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import { marketplaceService, Product, Service, MarketplaceFilters } from '../services/marketplaceService';
 import { SwissCard, SwissButton, Input, Badge } from '@repo/ui';
 import { ProductCard } from '../components/marketplace/ProductCard';
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function MarketplacePage() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
   const [products, setProducts] = useState<Product[]>([]);
@@ -74,7 +75,7 @@ export default function MarketplacePage() {
       await marketplaceService.createOrder({
         items: cart,
         notes: 'Order from marketplace',
-      });
+      }, getToken);
       setCart([]);
       setShowCart(false);
       // Show success message
@@ -105,7 +106,7 @@ export default function MarketplacePage() {
             onClick={() => setActiveTab('products')}
           >
             {t('marketplace.products', 'Products')}
-            <Badge variant="secondary" className="ml-2">
+            <Badge variant="info" className="ml-2">
               {products.length}
             </Badge>
           </SwissButton>
@@ -114,7 +115,7 @@ export default function MarketplacePage() {
             onClick={() => setActiveTab('services')}
           >
             {t('marketplace.services', 'Services')}
-            <Badge variant="secondary" className="ml-2">
+            <Badge variant="info" className="ml-2">
               {services.length}
             </Badge>
           </SwissButton>
@@ -135,7 +136,7 @@ export default function MarketplacePage() {
               className="relative"
             >
               {t('marketplace.cart', 'Cart')}
-              <Badge variant="danger" className="ml-2">
+              <Badge variant="error" className="ml-2">
                 {cartItemCount}
               </Badge>
             </SwissButton>

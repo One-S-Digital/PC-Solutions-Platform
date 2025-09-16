@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { SwissButton, Input } from '@repo/ui';
-import { MarketplaceFilters } from '../../services/marketplaceService';
+import type { MarketplaceFilters as MarketplaceFiltersType } from '../../services/marketplaceService';
 import { useTranslation } from 'react-i18next';
 
 interface MarketplaceFiltersProps {
-  filters: MarketplaceFilters;
-  onFiltersChange: (filters: MarketplaceFilters) => void;
+  filters: MarketplaceFiltersType;
+  onFiltersChange: (filters: MarketplaceFiltersType) => void;
   type: 'products' | 'services';
 }
 
@@ -13,7 +13,7 @@ export function MarketplaceFilters({ filters, onFiltersChange, type }: Marketpla
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const handleFilterChange = (key: keyof MarketplaceFilters, value: any) => {
+  const handleFilterChange = (key: keyof MarketplaceFiltersType, value: any) => {
     onFiltersChange({
       ...filters,
       [key]: value,

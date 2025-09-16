@@ -42,7 +42,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
             {product.title}
           </h3>
           {product.category && (
-            <Badge variant="secondary" className="mt-1">
+            <Badge variant="info" className="mt-1">
               {product.category}
             </Badge>
           )}
@@ -58,12 +58,12 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         {product.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-4">
             {product.tags.slice(0, 3).map(tag => (
-              <Badge key={tag} variant="outline" className="text-xs">
+              <Badge key={tag} variant="info" className="text-xs">
                 {tag}
               </Badge>
             ))}
             {product.tags.length > 3 && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="info" className="text-xs">
                 +{product.tags.length - 3}
               </Badge>
             )}
@@ -84,7 +84,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
               {formatPrice(product.price)}
             </span>
             {!product.isActive && (
-              <Badge variant="danger">
+              <Badge variant="error">
                 {t('marketplace.inactive', 'Inactive')}
               </Badge>
             )}

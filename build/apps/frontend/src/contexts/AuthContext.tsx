@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import { UserRole, AuthUser } from '@repo/types';
+import { UserRole } from '@repo/types';
+
+// Define AuthUser interface locally since it's not exported from @repo/types
+interface AuthUser {
+  id: string;
+  email: string;
+  role: UserRole;
+  firstName?: string;
+  lastName?: string;
+}
 
 interface AuthContextType {
   user: AuthUser | null;
