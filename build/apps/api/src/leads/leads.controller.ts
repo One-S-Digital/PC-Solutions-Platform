@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateParentLeadDto, UpdateParentLeadDto } from './dto/create-parent-lead.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('leads')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
 

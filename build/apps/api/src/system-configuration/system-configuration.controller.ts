@@ -12,13 +12,13 @@ import {
 import { SystemConfigurationService } from './system-configuration.service';
 import { IntegrationManagementService } from './integration-management.service';
 import { MaintenanceModeService } from './maintenance-mode.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('admin/system-configuration')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class SystemConfigurationController {
   constructor(

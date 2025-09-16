@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { EmailNotificationService, EmailNotification, NotificationPreferences } from './email-notification.service';
 import { EmailTemplateService } from './email-template.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
 
 @Controller('admin/email-notifications')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class EmailNotificationController {
   constructor(

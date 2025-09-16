@@ -14,7 +14,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestj
 import { ClamAVService } from './clamav.service';
 import { MimeValidationService } from './mime-validation.service';
 import { QuarantineStorageService } from './quarantine-storage.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@repo/types';
@@ -32,7 +32,7 @@ export interface AntivirusUploadResult {
 
 @ApiTags('Antivirus Upload')
 @Controller('antivirus-upload')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class AntivirusUploadController {
   private readonly logger = new Logger(AntivirusUploadController.name);
 

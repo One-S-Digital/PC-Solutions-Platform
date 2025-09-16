@@ -44,13 +44,52 @@ export class AuthService {
       return {
         id: user.id,
         email: user.email,
+        emailAddresses: [{ emailAddress: user.email, id: user.id }],
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role as UserRole,
         organizationId: primaryOrg?.organizationId,
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
       };
     } catch (error) {
       throw new UnauthorizedException('Token validation failed');
+    }
+  }
+
+  async getUserByClerkId(clerkId: string): Promise<ClerkUser | null> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { clerkId },
+        include: {
+          organizations: {
+            include: {
+              organization: true,
+            },
+          },
+        },
+      });
+
+      if (!user) {
+        return null;
+      }
+
+      // Get the primary organization for the user
+      const primaryOrg = user.organizations.find(org => org.role === user.role);
+
+      return {
+        id: user.id,
+        email: user.email,
+        emailAddresses: [{ emailAddress: user.email, id: user.id }],
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role as UserRole,
+        organizationId: primaryOrg?.organizationId,
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
+      };
+    } catch (error) {
+      return null;
     }
   }
 
