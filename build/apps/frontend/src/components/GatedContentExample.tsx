@@ -10,7 +10,7 @@ import {
 } from '@repo/ui';
 import { useFeatureAccess } from '../hooks/useFeatureAccess';
 
-export function GatedContentExample() {
+export default function GatedContentExample() {
   const { t } = useTranslation();
   const { featureAccess, isFeatureLocked, getFeatureBenefit } = useFeatureAccess();
 
