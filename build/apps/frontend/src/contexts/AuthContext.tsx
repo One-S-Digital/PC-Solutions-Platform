@@ -175,10 +175,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuthContext() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    console.error('🚨 useAuthContext used outside AuthProvider');
-    throw new Error('useAuthContext must be used within an AuthProvider');
+  try {
+    console.log('🔐 useAuthContext called:', {
+      timestamp: new Date().toISOString(),
+      authContextExists: !!AuthContext,
+    });
+    
+    const context = useContext(AuthContext);
+    
+    console.log('🔐 useContext result:', {
+      timestamp: new Date().toISOString(),
+      context: context ? 'DEFINED' : 'UNDEFINED',
+      isLoading: context?.isLoading,
+      isAuthenticated: context?.isAuthenticated,
+    });
+    
+    if (context === undefined) {
+      console.error('🚨 useAuthContext used outside AuthProvider');
+      throw new Error('useAuthContext must be used within an AuthProvider');
+    }
+    return context;
+  } catch (error) {
+    console.error('🚨 Error in useAuthContext:', {
+      error: error instanceof Error ? {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      } : error,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
   }
-  return context;
 }

@@ -14,7 +14,6 @@ import MarketplacePage from './pages/MarketplacePage';
 import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
-import { ThemeToggle, LanguageSwitcher } from '@repo/ui';
 
 function App() {
   useEffect(() => {
@@ -101,12 +100,6 @@ function App() {
           <Route path="/gated-example" element={<GatedContentExample />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-        
-        {/* Theme toggle and language switcher for frontend */}
-        <div className="fixed bottom-4 right-4 flex flex-col gap-2">
-          <LanguageSwitcher />
-          <ThemeToggle />
-        </div>
       </AuthProvider>
     </div>
   );
