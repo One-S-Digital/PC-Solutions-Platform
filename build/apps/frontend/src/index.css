@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Swiss Theme */
-@import '@repo/ui/styles/swiss-theme.css';
-
 /* Frontend-specific overrides */
 :root {
   /* Frontend uses the default Swiss theme colors */

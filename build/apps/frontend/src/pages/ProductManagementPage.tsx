@@ -5,7 +5,7 @@ import { SwissCard, SwissButton, Input, Badge, Status } from '@repo/ui';
 import { ProductForm } from '../components/marketplace/ProductForm';
 import { useTranslation } from 'react-i18next';
 
-export function ProductManagementPage() {
+export default function ProductManagementPage() {
   const { user } = useUser();
   const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);

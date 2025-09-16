@@ -5,7 +5,7 @@ import { SwissCard, SwissButton, Input, Badge, Status } from '@repo/ui';
 import { ServiceForm } from '../components/marketplace/ServiceForm';
 import { useTranslation } from 'react-i18next';
 
-export function ServiceManagementPage() {
+export default function ServiceManagementPage() {
   const { user } = useUser();
   const { t } = useTranslation();
   const [services, setServices] = useState<Service[]>([]);

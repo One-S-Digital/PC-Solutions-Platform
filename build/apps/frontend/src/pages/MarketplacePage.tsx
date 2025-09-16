@@ -8,7 +8,7 @@ import { MarketplaceFilters as FiltersComponent } from '../components/marketplac
 import { CartModal } from '../components/marketplace/CartModal';
 import { useTranslation } from 'react-i18next';
 
-export function MarketplacePage() {
+export default function MarketplacePage() {
   const { user } = useUser();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
