@@ -5,7 +5,6 @@ import './index.css'
 import './i18n'
 import App from './App'
 import { AppProvider } from './providers/AppProvider'
-import ErrorBoundary from './components/ErrorBoundary'
 
 // Enhanced error logging for main entry point
 console.log('🚀 Frontend Application Starting...', {
@@ -52,11 +51,9 @@ try {
   
   createRoot(rootElement).render(
     <StrictMode>
-      <ErrorBoundary>
-        <AppProvider>
-          <App />
-        </AppProvider>
-      </ErrorBoundary>
+      <AppProvider>
+        <App />
+      </AppProvider>
     </StrictMode>,
   );
   
