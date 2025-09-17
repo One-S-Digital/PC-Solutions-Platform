@@ -23,8 +23,8 @@ export function AdminButton({
   const variantClasses = {
     primary: 'bg-admin-mint text-white hover:bg-admin-mint-dark focus:ring-admin-mint',
     secondary: 'bg-admin-teal text-white hover:bg-admin-teal-dark focus:ring-admin-teal',
-    outline: 'border border-admin-mint text-admin-mint-light hover:bg-admin-mint/10 focus:ring-admin-mint',
-    ghost: 'text-admin-teal-light hover:bg-admin-teal/10 focus:ring-admin-teal shadow-none hover:shadow-none',
+    outline: 'border border-admin-mint text-admin-mint hover:bg-admin-mint/10 focus:ring-admin-mint',
+    ghost: 'text-admin-teal hover:bg-admin-teal/10 focus:ring-admin-teal shadow-none hover:shadow-none',
     danger: 'bg-admin-coral text-white hover:bg-admin-coral-dark focus:ring-admin-coral',
     critical: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
   };
@@ -68,7 +68,7 @@ export function AdminCard({
   onClick,
   ...props 
 }: AdminCardProps) {
-  const baseClasses = 'bg-admin-charcoal rounded-card shadow-soft';
+  const baseClasses = 'bg-white rounded-card shadow-soft';
   const hoverClasses = hoverEffect ? 'hover:shadow-xl hover:scale-[1.015] transition-all duration-300 ease-in-out' : '';
   
   const variantClasses = {
@@ -110,14 +110,14 @@ export function AdminStatus({
   const baseClasses = 'flex items-center gap-2 p-3 rounded-card border';
   
   const variantClasses = {
-    critical: 'bg-red-900/20 border-red-500 text-red-300',
-    high: 'bg-orange-900/20 border-orange-500 text-orange-300',
-    medium: 'bg-yellow-900/20 border-yellow-500 text-yellow-300',
-    low: 'bg-green-900/20 border-green-500 text-green-300',
-    mint: 'bg-admin-mint-light/20 border-admin-mint text-admin-mint-light',
-    teal: 'bg-admin-teal-light/20 border-admin-teal text-admin-teal-light',
-    coral: 'bg-admin-coral-light/20 border-admin-coral text-admin-coral-light',
-    sand: 'bg-admin-sand-light/20 border-admin-sand text-admin-sand-light'
+    critical: 'bg-red-50 border-red-200 text-red-700',
+    high: 'bg-orange-50 border-orange-200 text-orange-700',
+    medium: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+    low: 'bg-green-50 border-green-200 text-green-700',
+    mint: 'bg-admin-mint-light border-admin-mint text-admin-mint-dark',
+    teal: 'bg-admin-teal-light border-admin-teal text-admin-teal-dark',
+    coral: 'bg-admin-coral-light border-admin-coral text-admin-coral-dark',
+    sand: 'bg-admin-sand-light border-admin-sand text-admin-sand-dark'
   };
 
   return (
@@ -148,10 +148,10 @@ export function AdminBadge({
   const baseClasses = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
   
   const variantClasses = {
-    critical: 'bg-red-900 text-red-300',
-    high: 'bg-orange-900 text-orange-300',
-    medium: 'bg-yellow-900 text-yellow-300',
-    low: 'bg-green-900 text-green-300',
+    critical: 'bg-red-100 text-red-700',
+    high: 'bg-orange-100 text-orange-700',
+    medium: 'bg-yellow-100 text-yellow-700',
+    low: 'bg-green-100 text-green-700',
     mint: 'bg-admin-mint-light text-admin-mint-dark',
     teal: 'bg-admin-teal-light text-admin-teal-dark',
     coral: 'bg-admin-coral-light text-admin-coral-dark',
@@ -188,11 +188,11 @@ export function AdminMetric({ label, value, change, icon }: AdminMetricProps) {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-admin-gray mb-1">{label}</p>
-          <p className="text-2xl font-bold text-admin-light">{value}</p>
+          <p className="text-2xl font-bold text-admin-charcoal">{value}</p>
           {change && (
             <p className={clsx(
               'text-sm mt-1',
-              change.type === 'increase' ? 'text-green-400' : 'text-red-400'
+              change.type === 'increase' ? 'text-green-600' : 'text-red-600'
             )}>
               {change.type === 'increase' ? '↗' : '↘'} {Math.abs(change.value)}%
             </p>
@@ -224,10 +224,10 @@ export function AdminAlert({
   const baseClasses = 'p-4 rounded-card border';
   
   const variantClasses = {
-    critical: 'bg-red-900/20 border-red-500 text-red-300',
-    high: 'bg-orange-900/20 border-orange-500 text-orange-300',
-    medium: 'bg-yellow-900/20 border-yellow-500 text-yellow-300',
-    low: 'bg-green-900/20 border-green-500 text-green-300'
+    critical: 'bg-red-50 border-red-200 text-red-700',
+    high: 'bg-orange-50 border-orange-200 text-orange-700',
+    medium: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+    low: 'bg-green-50 border-green-200 text-green-700'
   };
 
   return (
@@ -240,7 +240,7 @@ export function AdminAlert({
       {...props}
     >
       {title && (
-        <h4 className="font-semibold text-admin-light mb-2">{title}</h4>
+        <h4 className="font-semibold text-admin-charcoal mb-2">{title}</h4>
       )}
       <div className="text-admin-gray">{children}</div>
     </div>
@@ -253,7 +253,7 @@ interface AdminTableProps extends React.HTMLAttributes<HTMLTableElement> {
 
 export function AdminTable({ className = '', children, ...props }: AdminTableProps) {
   return (
-    <div className="overflow-hidden rounded-card border border-admin-gray">
+    <div className="overflow-hidden rounded-card border border-gray-200">
       <table className={clsx('w-full', className)} {...props}>
         {children}
       </table>
@@ -291,7 +291,7 @@ interface AdminTableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
 
 export function AdminTableRow({ children, ...props }: AdminTableRowProps) {
   return (
-    <tr className="border-b border-admin-gray hover:bg-admin-gray/20 transition-colors" {...props}>
+    <tr className="border-b border-gray-200 hover:bg-gray-50 transition-colors" {...props}>
       {children}
     </tr>
   );
@@ -303,7 +303,7 @@ interface AdminTableCellProps extends React.ThHTMLAttributes<HTMLTableCellElemen
 
 export function AdminTableCell({ children, ...props }: AdminTableCellProps) {
   return (
-    <td className="px-4 py-3 text-admin-light" {...props}>
+    <td className="px-4 py-3 text-admin-charcoal" {...props}>
       {children}
     </td>
   );
@@ -315,7 +315,7 @@ interface AdminTableHeaderCellProps extends React.ThHTMLAttributes<HTMLTableCell
 
 export function AdminTableHeaderCell({ children, ...props }: AdminTableHeaderCellProps) {
   return (
-    <th className="px-4 py-3 text-left text-sm font-medium text-admin-light bg-admin-gray/30" {...props}>
+    <th className="px-4 py-3 text-left text-sm font-medium text-admin-charcoal bg-gray-50" {...props}>
       {children}
     </th>
   );

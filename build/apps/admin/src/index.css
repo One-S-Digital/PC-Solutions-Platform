@@ -2,27 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Swiss Modern Design System - Admin (Dark Theme) */
+/* Swiss Modern Design System - Admin (Light Theme with Different Shades) */
 :root {
-  /* Admin Color Palette - Darker Variations */
-  --admin-mint: #059669;
-  --admin-teal: #0D9488;
-  --admin-coral: #EA580C;
-  --admin-sand: #D97706;
-  --admin-charcoal: #1F2937;
-  --admin-gray: #4B5563;
-  --admin-dark: #111827;
-  --admin-light: #F3F4F6;
+  /* Admin Color Palette - Different Shades of Swiss Colors */
+  --admin-mint: #0D9488;
+  --admin-teal: #0891B2;
+  --admin-coral: #DC2626;
+  --admin-sand: #CA8A04;
+  --admin-charcoal: #475569;
+  --admin-gray: #64748B;
+  --admin-light: #F8FAFC;
+  --admin-white: #FFFFFF;
   
   /* Admin Color Variations */
-  --admin-mint-light: #A7F3D0;
-  --admin-mint-dark: #047857;
-  --admin-teal-light: #99F6E4;
-  --admin-teal-dark: #0F766E;
-  --admin-coral-light: #FDBA74;
-  --admin-coral-dark: #C2410C;
-  --admin-sand-light: #FCD34D;
-  --admin-sand-dark: #B45309;
+  --admin-mint-light: #CCFBF1;
+  --admin-mint-dark: #0F766E;
+  --admin-teal-light: #CFFAFE;
+  --admin-teal-dark: #0E7490;
+  --admin-coral-light: #FEE2E2;
+  --admin-coral-dark: #B91C1C;
+  --admin-sand-light: #FEF3C7;
+  --admin-sand-dark: #A16207;
   
   /* Typography */
   --font-swiss: 'Inter', system-ui, sans-serif;
@@ -34,10 +34,10 @@
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   
-  /* Shadows - Darker for admin */
-  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-  --shadow-interactive: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-minimal: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  /* Shadows */
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-interactive: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-minimal: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   
   /* Border Radius */
   --radius-button: 0.5rem;
@@ -59,19 +59,19 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--admin-dark);
-  color: var(--admin-light);
+  background-color: var(--admin-light);
+  color: var(--admin-charcoal);
   min-height: 100vh;
 }
 
 /* Admin App Background */
 .admin-app {
-  background-color: var(--admin-dark);
+  background-color: var(--admin-light);
   min-height: 100vh;
 }
 
 .admin-page {
-  background-color: var(--admin-dark);
+  background-color: var(--admin-light);
   min-height: 100vh;
 }
 
@@ -80,7 +80,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-swiss);
   font-weight: 600;
   line-height: 1.2;
-  color: var(--admin-light);
+  color: var(--admin-charcoal);
 }
 
 h1 { font-size: 2.5rem; }
@@ -92,13 +92,13 @@ h6 { font-size: 1rem; }
 
 /* Links */
 a {
-  color: var(--admin-teal-light);
+  color: var(--admin-teal);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--admin-mint-light);
+  color: var(--admin-mint);
   text-decoration: underline;
 }
 
@@ -116,21 +116,21 @@ button {
 input, textarea, select {
   font-family: var(--font-swiss);
   border-radius: var(--radius-input);
-  border: 1px solid var(--admin-gray);
-  background-color: var(--admin-charcoal);
-  color: var(--admin-light);
+  border: 1px solid #D1D5DB;
+  background-color: var(--admin-white);
+  color: var(--admin-charcoal);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--admin-mint);
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
 }
 
 /* Cards */
 .card {
-  background-color: var(--admin-charcoal);
+  background-color: var(--admin-white);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -152,22 +152,22 @@ input:focus, textarea:focus, select:focus {
   }
   
   .btn-outline {
-    @apply border border-admin-mint text-admin-mint-light hover:bg-admin-mint hover:text-white focus:ring-2 focus:ring-admin-mint focus:ring-offset-2;
+    @apply border border-admin-mint text-admin-mint hover:bg-admin-mint/10 focus:ring-2 focus:ring-admin-mint focus:ring-offset-2;
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-admin-gray rounded-input bg-admin-charcoal text-admin-light focus:ring-2 focus:ring-admin-mint focus:border-admin-mint;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-input bg-white text-admin-charcoal focus:ring-2 focus:ring-admin-mint focus:border-admin-mint;
   }
   
   .card-swiss {
-    @apply bg-admin-charcoal rounded-card shadow-soft hover:shadow-interactive transition-all duration-200;
+    @apply bg-white rounded-card shadow-soft hover:shadow-interactive transition-all duration-200;
   }
   
   .admin-sidebar {
-    @apply bg-admin-charcoal border-r border-admin-gray;
+    @apply bg-white border-r border-gray-200;
   }
   
   .admin-header {
-    @apply bg-admin-dark border-b border-admin-gray;
+    @apply bg-white/80 border-b border-gray-200;
   }
 }
