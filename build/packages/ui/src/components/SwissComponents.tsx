@@ -2,9 +2,11 @@ import React from 'react';
 import { clsx } from 'clsx';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'light';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   children: React.ReactNode;
+  leftIcon?: React.ElementType;
+  rightIcon?: React.ElementType;
 }
 
 export function Button({ 
@@ -12,21 +14,25 @@ export function Button({
   size = 'md', 
   className = '', 
   children, 
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
   ...props 
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all duration-150 ease-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-minimal hover:shadow-interactive';
   
   const variantClasses = {
-    primary: 'bg-accent text-accent-contrast shadow-soft hover:opacity-95 hover:-translate-y-0.5 hover:shadow-float active:translate-y-0 active:shadow-inset',
-    secondary: 'bg-surface-1 text-text-strong border border-border shadow-soft hover:bg-surface-2',
-    outline: 'bg-transparent text-text-strong border border-border hover:bg-surface-1 hover:border-border-strong',
-    ghost: 'bg-transparent text-text-strong hover:bg-surface-2',
-    danger: 'bg-danger text-white shadow-soft hover:opacity-95 hover:-translate-y-0.5 hover:shadow-float active:translate-y-0 active:shadow-inset'
+    primary: 'bg-swiss-mint text-white hover:bg-swiss-mint-dark focus:ring-swiss-mint',
+    secondary: 'bg-swiss-teal text-white hover:bg-swiss-teal-dark focus:ring-swiss-teal',
+    outline: 'border border-swiss-mint text-swiss-mint hover:bg-swiss-mint/10 focus:ring-swiss-mint',
+    ghost: 'text-swiss-teal hover:bg-swiss-teal/10 focus:ring-swiss-teal shadow-none hover:shadow-none',
+    danger: 'bg-swiss-coral text-white hover:bg-swiss-coral-dark focus:ring-swiss-coral',
+    light: 'bg-gray-100 text-swiss-charcoal hover:bg-gray-200 focus:ring-gray-300 border border-gray-200'
   };
   
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-sm',
+    xs: 'px-2.5 py-1 text-xs',
+    sm: 'px-3.5 py-2 text-sm',
+    md: 'px-5 py-2.5 text-sm',
     lg: 'px-6 py-3 text-base'
   };
 
@@ -40,7 +46,9 @@ export function Button({
       )}
       {...props}
     >
+      {LeftIcon && <LeftIcon className={`h-4 w-4 ${children ? (size === 'xs' ? 'mr-1' : 'mr-2') : ''}`} />}
       {children}
+      {RightIcon && <RightIcon className={`h-4 w-4 ${children ? (size === 'xs' ? 'ml-1' : 'ml-2') : ''}`} />}
     </button>
   );
 }
@@ -48,29 +56,39 @@ export function Button({
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'accent' | 'notch';
   children: React.ReactNode;
+  hoverEffect?: boolean;
+  onClick?: () => void;
 }
 
 export function Card({ 
   variant = 'default', 
   className = '', 
   children, 
+  hoverEffect = false,
+  onClick,
   ...props 
 }: CardProps) {
-  const baseClasses = 'bg-surface-1 border border-border rounded-md shadow-soft';
+  const baseClasses = 'bg-white rounded-card shadow-soft';
+  const hoverClasses = hoverEffect ? 'hover:shadow-xl hover:scale-[1.015] transition-all duration-300 ease-in-out' : '';
   
   const variantClasses = {
     default: '',
-    accent: 'card-accent',
-    notch: 'notch-tr'
+    accent: 'border-l-4 border-swiss-mint',
+    notch: 'relative before:absolute before:top-0 before:right-0 before:w-2 before:h-2 before:bg-swiss-mint before:rounded-bl-md'
   };
 
   return (
     <div
       className={clsx(
         baseClasses,
+        hoverClasses,
         variantClasses[variant],
         className
       )}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
       {...props}
     >
       {children}
@@ -94,30 +112,30 @@ export function Input({
   return (
     <div className="space-y-1">
       {label && (
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-swiss-charcoal">
           {label}
         </label>
       )}
       <input
         className={clsx(
-          'w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-all duration-150 ease-standard',
-          error && 'border-danger focus-visible:ring-danger',
+          'w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150 ease-in-out',
+          error && 'border-swiss-coral focus:ring-swiss-coral focus:border-swiss-coral',
           className
         )}
         {...props}
       />
       {error && (
-        <p className="text-sm text-danger">{error}</p>
+        <p className="text-sm text-swiss-coral">{error}</p>
       )}
       {help && !error && (
-        <p className="text-sm text-text-subtle">{help}</p>
+        <p className="text-sm text-gray-500">{help}</p>
       )}
     </div>
   );
 }
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'success' | 'warning' | 'error' | 'info';
+  variant?: 'success' | 'warning' | 'error' | 'info' | 'mint' | 'teal' | 'coral' | 'sand';
   children: React.ReactNode;
 }
 
@@ -130,10 +148,14 @@ export function Badge({
   const baseClasses = 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium';
   
   const variantClasses = {
-    success: 'bg-[color-mix(in_oklab,var(--success)_15%,white_85%)] text-text-strong',
-    warning: 'bg-[color-mix(in_oklab,var(--warn)_15%,white_85%)] text-text-strong',
-    error: 'bg-[color-mix(in_oklab,var(--danger)_15%,white_85%)] text-text-strong',
-    info: 'bg-[color-mix(in_oklab,var(--accent)_15%,white_85%)] text-text-strong'
+    success: 'bg-green-100 text-green-700',
+    warning: 'bg-yellow-100 text-yellow-700',
+    error: 'bg-red-100 text-red-700',
+    info: 'bg-blue-100 text-blue-700',
+    mint: 'bg-swiss-mint-light text-swiss-mint-dark',
+    teal: 'bg-swiss-teal-light text-swiss-teal-dark',
+    coral: 'bg-swiss-coral-light text-swiss-coral-dark',
+    sand: 'bg-swiss-sand-light text-swiss-sand-dark'
   };
 
   return (
@@ -151,7 +173,7 @@ export function Badge({
 }
 
 interface StatusProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'success' | 'warning' | 'error' | 'info';
+  variant?: 'success' | 'warning' | 'error' | 'info' | 'mint' | 'teal' | 'coral' | 'sand';
   children: React.ReactNode;
 }
 
@@ -161,13 +183,17 @@ export function Status({
   children, 
   ...props 
 }: StatusProps) {
-  const baseClasses = 'flex items-center gap-2 p-3 rounded-md border';
+  const baseClasses = 'flex items-center gap-2 p-3 rounded-card border';
   
   const variantClasses = {
-    success: 'bg-[color-mix(in_oklab,var(--success)_15%,white_85%)] border-[color-mix(in_oklab,var(--success)_30%,white_70%)] text-text-strong',
-    warning: 'bg-[color-mix(in_oklab,var(--warn)_15%,white_85%)] border-[color-mix(in_oklab,var(--warn)_30%,white_70%)] text-text-strong',
-    error: 'bg-[color-mix(in_oklab,var(--danger)_15%,white_85%)] border-[color-mix(in_oklab,var(--danger)_30%,white_70%)] text-text-strong',
-    info: 'bg-[color-mix(in_oklab,var(--accent)_15%,white_85%)] border-[color-mix(in_oklab,var(--accent)_30%,white_70%)] text-text-strong'
+    success: 'bg-green-50 border-green-200 text-green-700',
+    warning: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+    error: 'bg-red-50 border-red-200 text-red-700',
+    info: 'bg-blue-50 border-blue-200 text-blue-700',
+    mint: 'bg-swiss-mint-light border-swiss-mint text-swiss-mint-dark',
+    teal: 'bg-swiss-teal-light border-swiss-teal text-swiss-teal-dark',
+    coral: 'bg-swiss-coral-light border-swiss-coral text-swiss-coral-dark',
+    sand: 'bg-swiss-sand-light border-swiss-sand text-swiss-sand-dark'
   };
 
   return (

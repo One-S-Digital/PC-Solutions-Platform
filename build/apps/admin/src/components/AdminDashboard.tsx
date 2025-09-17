@@ -17,6 +17,20 @@ import {
   ThemeToggle,
   LanguageSwitcher
 } from '@repo/ui';
+import { 
+  UsersIcon, 
+  ChartBarIcon, 
+  CpuChipIcon, 
+  ExclamationTriangleIcon,
+  CogIcon,
+  ShieldCheckIcon,
+  BellIcon,
+  CreditCardIcon,
+  ServerIcon,
+  WrenchScrewdriverIcon,
+  EnvelopeIcon,
+  RocketLaunchIcon
+} from '@heroicons/react/24/outline';
 
 export function AdminDashboard() {
   const { user } = useUser();
@@ -25,12 +39,12 @@ export function AdminDashboard() {
   return (
     <div className="min-h-screen admin-app">
       {/* Header */}
-      <header className="admin-header sticky top-0 z-40 backdrop-blur bg-admin-surface/80 border-b border-admin-border">
+      <header className="admin-header sticky top-0 z-40 backdrop-blur bg-admin-dark/80 border-b border-admin-gray">
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
-          <div className="h-6 w-1.5 rounded-full bg-admin-accent"></div>
-          <h1 className="text-admin-text font-semibold tracking-tight">PC Solutions Admin</h1>
+          <div className="h-6 w-1.5 rounded-full bg-admin-mint"></div>
+          <h1 className="text-admin-light font-semibold tracking-tight">PC Solutions Admin</h1>
           <div className="ml-auto flex items-center gap-2">
-            <AdminBadge variant="high">Admin</AdminBadge>
+            <AdminBadge variant="mint">Admin</AdminBadge>
             <UserButton 
               appearance={{
                 elements: {
@@ -48,71 +62,126 @@ export function AdminDashboard() {
       <main className="mx-auto max-w-7xl px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-admin-text">Welcome back, {user?.firstName}!</h1>
-          <p className="text-admin-muted mt-2">Here's what's happening on your platform today.</p>
+          <h1 className="text-3xl font-bold text-admin-light">Welcome back, {user?.firstName}!</h1>
+          <p className="text-admin-gray mt-2">Here's what's happening on your platform today.</p>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <AdminMetric
-            label="Total Users"
-            value="1,234"
-            change={{ value: 12, type: 'increase' }}
-            icon="👥"
-          />
-          <AdminMetric
-            label="Active Sessions"
-            value="89"
-            change={{ value: 5, type: 'decrease' }}
-            icon="🔗"
-          />
-          <AdminMetric
-            label="System Load"
-            value="67%"
-            change={{ value: 8, type: 'increase' }}
-            icon="⚡"
-          />
-          <AdminMetric
-            label="Error Rate"
-            value="0.2%"
-            change={{ value: 15, type: 'decrease' }}
-            icon="📊"
-          />
+          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
+            <div className="p-5">
+              <div className="flex justify-between items-start">
+                <div className="p-2.5 inline-flex rounded-lg bg-admin-teal-light/20">
+                  <UsersIcon className="h-6 w-6 text-admin-teal-light" />
+                </div>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-900 text-green-300">
+                  +12%
+                </span>
+              </div>
+              <h3 className="text-3xl font-semibold text-admin-light mt-3">1,234</h3>
+              <p className="text-sm text-admin-gray">Total Users</p>
+            </div>
+            <div className="px-5 py-2.5 text-xs text-center bg-admin-teal-light/10">
+              <button className="font-medium text-admin-teal-light hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-teal-light rounded">
+                View Details &rarr;
+              </button>
+            </div>
+          </AdminCard>
+
+          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
+            <div className="p-5">
+              <div className="flex justify-between items-start">
+                <div className="p-2.5 inline-flex rounded-lg bg-admin-mint-light/20">
+                  <ChartBarIcon className="h-6 w-6 text-admin-mint-light" />
+                </div>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-900 text-red-300">
+                  -5%
+                </span>
+              </div>
+              <h3 className="text-3xl font-semibold text-admin-light mt-3">89</h3>
+              <p className="text-sm text-admin-gray">Active Sessions</p>
+            </div>
+            <div className="px-5 py-2.5 text-xs text-center bg-admin-mint-light/10">
+              <button className="font-medium text-admin-mint-light hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-mint-light rounded">
+                View Details &rarr;
+              </button>
+            </div>
+          </AdminCard>
+
+          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
+            <div className="p-5">
+              <div className="flex justify-between items-start">
+                <div className="p-2.5 inline-flex rounded-lg bg-admin-coral-light/20">
+                  <CpuChipIcon className="h-6 w-6 text-admin-coral-light" />
+                </div>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-900 text-yellow-300">
+                  +8%
+                </span>
+              </div>
+              <h3 className="text-3xl font-semibold text-admin-light mt-3">67%</h3>
+              <p className="text-sm text-admin-gray">System Load</p>
+            </div>
+            <div className="px-5 py-2.5 text-xs text-center bg-admin-coral-light/10">
+              <button className="font-medium text-admin-coral-light hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-coral-light rounded">
+                View Details &rarr;
+              </button>
+            </div>
+          </AdminCard>
+
+          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
+            <div className="p-5">
+              <div className="flex justify-between items-start">
+                <div className="p-2.5 inline-flex rounded-lg bg-admin-sand-light/20">
+                  <ExclamationTriangleIcon className="h-6 w-6 text-admin-sand-light" />
+                </div>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-900 text-green-300">
+                  -15%
+                </span>
+              </div>
+              <h3 className="text-3xl font-semibold text-admin-light mt-3">0.2%</h3>
+              <p className="text-sm text-admin-gray">Error Rate</p>
+            </div>
+            <div className="px-5 py-2.5 text-xs text-center bg-admin-sand-light/10">
+              <button className="font-medium text-admin-sand-light hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-sand-light rounded">
+                View Details &rarr;
+              </button>
+            </div>
+          </AdminCard>
         </div>
 
         {/* Alerts and Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <AdminCard variant="accent" className="p-6">
-            <h2 className="text-xl font-semibold text-admin-text mb-4">System Alerts</h2>
+            <h2 className="text-xl font-semibold text-admin-light mb-4">System Alerts</h2>
             <div className="space-y-3">
               <AdminStatus variant="critical">
-                <span>🚨</span>
+                <ExclamationTriangleIcon className="h-5 w-5" />
                 <span>High CPU usage detected on server-01</span>
               </AdminStatus>
               <AdminStatus variant="medium">
-                <span>⚠️</span>
+                <CogIcon className="h-5 w-5" />
                 <span>Database backup scheduled for tonight</span>
               </AdminStatus>
               <AdminStatus variant="low">
-                <span>ℹ️</span>
+                <UsersIcon className="h-5 w-5" />
                 <span>New user registration: 15 today</span>
               </AdminStatus>
             </div>
           </AdminCard>
 
           <AdminCard variant="accent" className="p-6">
-            <h2 className="text-xl font-semibold text-admin-text mb-4">Recent Activity</h2>
+            <h2 className="text-xl font-semibold text-admin-light mb-4">Recent Activity</h2>
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-2 border-b border-admin-border">
-                <span className="text-admin-text">User john.doe@example.com signed up</span>
+              <div className="flex items-center justify-between py-2 border-b border-admin-gray">
+                <span className="text-admin-light">User john.doe@example.com signed up</span>
                 <AdminBadge variant="low">New</AdminBadge>
               </div>
-              <div className="flex items-center justify-between py-2 border-b border-admin-border">
-                <span className="text-admin-text">Foundation "ABC Daycare" updated profile</span>
+              <div className="flex items-center justify-between py-2 border-b border-admin-gray">
+                <span className="text-admin-light">Foundation "ABC Daycare" updated profile</span>
                 <AdminBadge variant="medium">Updated</AdminBadge>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span className="text-admin-text">System maintenance completed</span>
+                <span className="text-admin-light">System maintenance completed</span>
                 <AdminBadge variant="low">System</AdminBadge>
               </div>
             </div>
@@ -121,10 +190,12 @@ export function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Analytics</h3>
-            <p className="text-admin-muted mb-4">View platform analytics and insights</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-teal-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <ChartBarIcon className="h-6 w-6 text-admin-teal-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Analytics</h3>
+            <p className="text-admin-gray mb-4">View platform analytics and insights</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -134,10 +205,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">👥</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">User Management</h3>
-            <p className="text-admin-muted mb-4">Manage platform users and permissions</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-mint-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <UsersIcon className="h-6 w-6 text-admin-mint-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">User Management</h3>
+            <p className="text-admin-gray mb-4">Manage platform users and permissions</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -147,10 +220,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">🛡️</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Content Moderation</h3>
-            <p className="text-admin-muted mb-4">Review and moderate platform content</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-coral-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <ShieldCheckIcon className="h-6 w-6 text-admin-coral-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Content Moderation</h3>
+            <p className="text-admin-gray mb-4">Review and moderate platform content</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -160,10 +235,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">⚙️</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Platform Settings</h3>
-            <p className="text-admin-muted mb-4">Configure platform settings</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-sand-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <CogIcon className="h-6 w-6 text-admin-sand-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Platform Settings</h3>
+            <p className="text-admin-gray mb-4">Configure platform settings</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -176,10 +253,12 @@ export function AdminDashboard() {
 
         {/* Phase 3 Features */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">💳</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Subscription Management</h3>
-            <p className="text-admin-muted mb-4">Manage subscription plans and billing</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-teal-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <CreditCardIcon className="h-6 w-6 text-admin-teal-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Subscription Management</h3>
+            <p className="text-admin-gray mb-4">Manage subscription plans and billing</p>
             <AdminButton 
               variant="secondary" 
               className="w-full"
@@ -189,10 +268,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">📈</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">System Monitoring</h3>
-            <p className="text-admin-muted mb-4">Monitor system health and performance</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-mint-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <ServerIcon className="h-6 w-6 text-admin-mint-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">System Monitoring</h3>
+            <p className="text-admin-gray mb-4">Monitor system health and performance</p>
             <AdminButton 
               variant="secondary" 
               className="w-full"
@@ -202,10 +283,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">🔧</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">System Configuration</h3>
-            <p className="text-admin-muted mb-4">Manage platform settings and integrations</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-coral-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <WrenchScrewdriverIcon className="h-6 w-6 text-admin-coral-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">System Configuration</h3>
+            <p className="text-admin-gray mb-4">Manage platform settings and integrations</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -218,10 +301,12 @@ export function AdminDashboard() {
 
         {/* Email Notification System */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">📧</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Email Notifications</h3>
-            <p className="text-admin-muted mb-4">Manage email templates and notifications</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-sand-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <EnvelopeIcon className="h-6 w-6 text-admin-sand-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Email Notifications</h3>
+            <p className="text-admin-gray mb-4">Manage email templates and notifications</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -231,10 +316,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">⚙️</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Notification Preferences</h3>
-            <p className="text-admin-muted mb-4">Configure your notification settings</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-teal-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <BellIcon className="h-6 w-6 text-admin-teal-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Notification Preferences</h3>
+            <p className="text-admin-gray mb-4">Configure your notification settings</p>
             <AdminButton 
               variant="secondary" 
               className="w-full"
@@ -247,10 +334,12 @@ export function AdminDashboard() {
 
         {/* Subscription Management */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">💳</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Subscription Management</h3>
-            <p className="text-admin-muted mb-4">Manage plans, billing, and feature flags</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-mint-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <CreditCardIcon className="h-6 w-6 text-admin-mint-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Subscription Management</h3>
+            <p className="text-admin-gray mb-4">Manage plans, billing, and feature flags</p>
             <AdminButton 
               variant="primary" 
               className="w-full"
@@ -260,10 +349,12 @@ export function AdminDashboard() {
             </AdminButton>
           </AdminCard>
           
-          <AdminCard className="p-6 text-center">
-            <div className="text-4xl mb-4">🚀</div>
-            <h3 className="text-lg font-semibold text-admin-text mb-2">Feature Flags</h3>
-            <p className="text-admin-muted mb-4">Control feature rollouts and access</p>
+          <AdminCard className="p-6 text-center" hoverEffect>
+            <div className="w-12 h-12 bg-admin-coral-light/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <RocketLaunchIcon className="h-6 w-6 text-admin-coral-light" />
+            </div>
+            <h3 className="text-lg font-semibold text-admin-light mb-2">Feature Flags</h3>
+            <p className="text-admin-gray mb-4">Control feature rollouts and access</p>
             <AdminButton 
               variant="secondary" 
               className="w-full"
@@ -277,7 +368,7 @@ export function AdminDashboard() {
         {/* Users Table */}
         <AdminCard className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-admin-text">Recent Users</h2>
+            <h2 className="text-xl font-semibold text-admin-light">Recent Users</h2>
             <AdminButton variant="primary">Export Data</AdminButton>
           </div>
           
