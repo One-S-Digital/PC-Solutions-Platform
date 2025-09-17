@@ -129,32 +129,52 @@ export default function AdminCustomSignupForm() {
   };
 
   const renderRoleSelection = () => (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen admin-page flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Swiss Modern Admin Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Admin Portal Access
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Choose your administrative role
-        </p>
+        <div className="text-center">
+          {/* Swiss accent stripe - Admin version */}
+          <div className="mx-auto h-1 w-16 bg-admin-mint rounded-full mb-6"></div>
+          
+          {/* Admin Logo */}
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-card bg-admin-light border border-admin-mint/20 mb-6">
+            <span className="text-2xl">🛡️</span>
+          </div>
+          
+          <h1 className="text-3xl font-bold text-admin-charcoal font-swiss">
+            Admin Portal Access
+          </h1>
+          <p className="mt-3 text-admin-gray font-medium">
+            Choose your administrative role
+          </p>
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Swiss Modern Admin Role Selection */}
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {ADMIN_ROLE_OPTIONS.map((role) => (
             <button
               key={role.value}
               onClick={() => handleRoleSelection(role.value)}
-              className="relative rounded-lg border border-gray-300 bg-white px-6 py-8 text-left shadow-sm hover:border-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+              className="card-swiss p-8 text-center hover:shadow-interactive hover:scale-[1.02] transition-all duration-200 group border-l-4 border-admin-mint"
             >
-              <div className="flex flex-col items-center text-center">
-                <span className="text-4xl mb-4">{role.icon}</span>
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 bg-admin-mint-light rounded-card flex items-center justify-center mb-6 group-hover:bg-admin-mint group-hover:text-white transition-all duration-200">
+                  <span className="text-3xl">{role.icon}</span>
+                </div>
+                <h3 className="text-xl font-semibold text-admin-charcoal mb-3">
                   {t(role.labelKey)}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-admin-gray mb-4">
                   {t(role.descriptionKey)}
                 </p>
+                <div className="flex items-center text-admin-teal font-medium text-sm group-hover:text-admin-mint transition-colors">
+                  Select Role
+                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               </div>
             </button>
           ))}
@@ -164,28 +184,43 @@ export default function AdminCustomSignupForm() {
   );
 
   const renderBasicInfoForm = () => (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen admin-page flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Swiss Modern Admin Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create Admin Account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Role: {t(ADMIN_ROLE_OPTIONS.find(r => r.value === formData.role)?.labelKey || '')}
-        </p>
+        <div className="text-center">
+          {/* Swiss accent stripe - Admin version */}
+          <div className="mx-auto h-1 w-16 bg-admin-mint rounded-full mb-6"></div>
+          
+          {/* Admin Logo */}
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-card bg-admin-light border border-admin-mint/20 mb-6">
+            <span className="text-2xl">🛡️</span>
+          </div>
+          
+          <h1 className="text-3xl font-bold text-admin-charcoal font-swiss">
+            Create Admin Account
+          </h1>
+          <p className="mt-3 text-admin-gray font-medium">
+            Role: {t(ADMIN_ROLE_OPTIONS.find(r => r.value === formData.role)?.labelKey || '')}
+          </p>
+        </div>
       </div>
 
+      {/* Swiss Modern Admin Form Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="card-swiss py-8 px-6 sm:px-10 relative border-l-4 border-admin-mint">
+          {/* Swiss corner notch - Admin version */}
+          <div className="absolute top-0 right-0 w-3 h-3 bg-admin-mint rounded-bl-md"></div>
+          
           <form className="space-y-6" onSubmit={handleBasicInfoSubmit}>
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{error}</div>
+              <div className="rounded-card bg-red-50 border border-red-200 p-4">
+                <div className="text-sm text-red-700 font-medium">{error}</div>
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="firstName" className="block text-sm font-semibold text-admin-charcoal mb-2">
                   {t('auth:signupPage.firstName')}
                 </label>
                 <input
@@ -195,11 +230,12 @@ export default function AdminCustomSignupForm() {
                   required
                   value={formData.firstName}
                   onChange={(e) => updateFormData('firstName', e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                  className="input-field"
+                  placeholder="First name"
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="lastName" className="block text-sm font-semibold text-admin-charcoal mb-2">
                   {t('auth:signupPage.lastName')}
                 </label>
                 <input
@@ -209,13 +245,14 @@ export default function AdminCustomSignupForm() {
                   required
                   value={formData.lastName}
                   onChange={(e) => updateFormData('lastName', e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                  className="input-field"
+                  placeholder="Last name"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 {t('auth:signupPage.email')}
               </label>
               <input
@@ -225,12 +262,13 @@ export default function AdminCustomSignupForm() {
                 required
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field"
+                placeholder="admin@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 {t('auth:signupPage.password')}
               </label>
               <input
@@ -240,12 +278,13 @@ export default function AdminCustomSignupForm() {
                 required
                 value={formData.password}
                 onChange={(e) => updateFormData('password', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field"
+                placeholder="Create a secure password"
               />
             </div>
 
             <div>
-              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="phoneNumber" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 {t('auth:signupPage.phoneNumber')}
               </label>
               <input
@@ -254,12 +293,13 @@ export default function AdminCustomSignupForm() {
                 type="tel"
                 value={formData.phoneNumber || ''}
                 onChange={(e) => updateFormData('phoneNumber', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field"
+                placeholder="+1 (555) 123-4567"
               />
             </div>
 
             <div>
-              <label htmlFor="department" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="department" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 Department
               </label>
               <select
@@ -267,7 +307,7 @@ export default function AdminCustomSignupForm() {
                 name="department"
                 value={formData.department || ''}
                 onChange={(e) => updateFormData('department', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field"
               >
                 <option value="">Select Department</option>
                 <option value="operations">Operations</option>
@@ -281,10 +321,10 @@ export default function AdminCustomSignupForm() {
 
             {formData.role === UserRole.SUPER_ADMIN && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-admin-charcoal mb-3">
                   System Permissions
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {[
                     'user_management',
                     'system_settings',
@@ -293,10 +333,10 @@ export default function AdminCustomSignupForm() {
                     'monitoring_access',
                     'data_export',
                   ].map((permission) => (
-                    <label key={permission} className="flex items-center">
+                    <label key={permission} className="flex items-center p-3 rounded-card bg-admin-light border border-gray-200 hover:border-admin-mint transition-colors">
                       <input
                         type="checkbox"
-                        className="rounded border-gray-300 text-red-600 shadow-sm focus:border-red-500 focus:ring-red-500"
+                        className="rounded border-gray-300 text-admin-mint shadow-sm focus:border-admin-mint focus:ring-admin-mint"
                         checked={formData.permissions?.includes(permission) || false}
                         onChange={(e) => {
                           const permissions = formData.permissions || [];
@@ -307,7 +347,7 @@ export default function AdminCustomSignupForm() {
                           }
                         }}
                       />
-                      <span className="ml-2 text-sm text-gray-700 capitalize">
+                      <span className="ml-3 text-sm text-admin-charcoal capitalize font-medium">
                         {permission.replace('_', ' ')}
                       </span>
                     </label>
@@ -316,20 +356,27 @@ export default function AdminCustomSignupForm() {
               </div>
             )}
 
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-4">
               <button
                 type="button"
                 onClick={() => setCurrentStep(1)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="btn-outline px-6 py-2"
               >
                 {t('common:back')}
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                className="btn-primary px-6 py-2"
               >
-                {isLoading ? t('common:loading') : 'Create Admin Account'}
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {t('common:loading')}
+                  </div>
+                ) : (
+                  'Create Admin Account'
+                )}
               </button>
             </div>
           </form>
@@ -339,18 +386,33 @@ export default function AdminCustomSignupForm() {
   );
 
   const renderEmailVerification = () => (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen admin-page flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Swiss Modern Admin Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {t('auth:signupPage.verifyEmail')}
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          {t('auth:signupPage.verifyEmailDescription')}
-        </p>
+        <div className="text-center">
+          {/* Swiss accent stripe - Admin version */}
+          <div className="mx-auto h-1 w-16 bg-admin-mint rounded-full mb-6"></div>
+          
+          {/* Admin Logo */}
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-card bg-admin-light border border-admin-mint/20 mb-6">
+            <span className="text-2xl">🛡️</span>
+          </div>
+          
+          <h1 className="text-3xl font-bold text-admin-charcoal font-swiss">
+            {t('auth:signupPage.verifyEmail')}
+          </h1>
+          <p className="mt-3 text-admin-gray font-medium">
+            {t('auth:signupPage.verifyEmailDescription')}
+          </p>
+        </div>
       </div>
 
+      {/* Swiss Modern Admin Form Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="card-swiss py-8 px-6 sm:px-10 relative border-l-4 border-admin-mint">
+          {/* Swiss corner notch - Admin version */}
+          <div className="absolute top-0 right-0 w-3 h-3 bg-admin-mint rounded-bl-md"></div>
+          
           <form className="space-y-6" onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
@@ -358,13 +420,13 @@ export default function AdminCustomSignupForm() {
             handleEmailVerification(code);
           }}>
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{error}</div>
+              <div className="rounded-card bg-red-50 border border-red-200 p-4">
+                <div className="text-sm text-red-700 font-medium">{error}</div>
               </div>
             )}
 
             <div>
-              <label htmlFor="code" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="code" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 {t('auth:signupPage.verificationCode')}
               </label>
               <input
@@ -372,16 +434,24 @@ export default function AdminCustomSignupForm() {
                 name="code"
                 type="text"
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field text-center text-lg tracking-widest"
+                placeholder="Enter verification code"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+              className="btn-primary w-full py-3 text-base font-semibold"
             >
-              {isLoading ? t('common:loading') : 'Verify & Access Admin Portal'}
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  {t('common:loading')}
+                </div>
+              ) : (
+                'Verify & Access Admin Portal'
+              )}
             </button>
           </form>
         </div>

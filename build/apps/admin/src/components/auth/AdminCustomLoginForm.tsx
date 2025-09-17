@@ -65,32 +65,42 @@ export default function AdminCustomLoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen admin-page flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Swiss Modern Admin Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-red-100">
+          {/* Swiss accent stripe - Admin version */}
+          <div className="mx-auto h-1 w-16 bg-admin-mint rounded-full mb-6"></div>
+          
+          {/* Admin Logo */}
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-card bg-admin-light border border-admin-mint/20 mb-6">
             <span className="text-2xl">🛡️</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          
+          <h1 className="text-3xl font-bold text-admin-charcoal font-swiss">
             Admin Portal Login
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          </h1>
+          <p className="mt-3 text-admin-gray font-medium">
             Sign in to access the admin dashboard
           </p>
         </div>
       </div>
 
+      {/* Swiss Modern Admin Form Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border-l-4 border-red-500">
+        <div className="card-swiss py-8 px-6 sm:px-10 relative border-l-4 border-admin-mint">
+          {/* Swiss corner notch - Admin version */}
+          <div className="absolute top-0 right-0 w-3 h-3 bg-admin-mint rounded-bl-md"></div>
+          
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{error}</div>
+              <div className="rounded-card bg-red-50 border border-red-200 p-4">
+                <div className="text-sm text-red-700 font-medium">{error}</div>
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 {t('auth:loginPage.email')}
               </label>
               <input
@@ -100,12 +110,13 @@ export default function AdminCustomLoginForm() {
                 required
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field"
+                placeholder="Enter your admin email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-admin-charcoal mb-2">
                 {t('auth:loginPage.password')}
               </label>
               <input
@@ -115,13 +126,14 @@ export default function AdminCustomLoginForm() {
                 required
                 value={formData.password}
                 onChange={(e) => updateFormData('password', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                className="input-field"
+                placeholder="Enter your password"
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <a href="/admin/forgot-password" className="font-medium text-red-600 hover:text-red-500">
+                <a href="/admin/forgot-password" className="font-medium text-admin-teal hover:text-admin-mint transition-colors">
                   {t('auth:loginPage.forgotPassword')}
                 </a>
               </div>
@@ -131,16 +143,23 @@ export default function AdminCustomLoginForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                className="btn-primary w-full py-3 text-base font-semibold"
               >
-                {isLoading ? t('common:loading') : 'Sign In to Admin Portal'}
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    {t('common:loading')}
+                  </div>
+                ) : (
+                  'Sign In to Admin Portal'
+                )}
               </button>
             </div>
 
             <div className="text-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-admin-gray">
                 {t('auth:loginPage.noAccount')}{' '}
-                <a href="/admin/signup" className="font-medium text-red-600 hover:text-red-500">
+                <a href="/admin/signup" className="font-semibold text-admin-teal hover:text-admin-mint transition-colors">
                   {t('auth:loginPage.signUp')}
                 </a>
               </span>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
-import { SwissCard, SwissButton, Input, Badge } from '@repo/ui';
+import { Card, Button, Input, Badge } from '@repo/ui';
 
 interface ProfileData {
   id: string;
@@ -118,11 +118,11 @@ export default function ProfilePage() {
         return (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Work Experience
               </label>
               <textarea
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150"
                 rows={4}
                 value={formData.workExperience || ''}
                 onChange={(e) => updateFormData('workExperience', e.target.value)}
@@ -131,11 +131,11 @@ export default function ProfilePage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Education
               </label>
               <textarea
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150"
                 rows={3}
                 value={formData.education || ''}
                 onChange={(e) => updateFormData('education', e.target.value)}
@@ -144,12 +144,12 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Skills
               </label>
               <input
                 type="text"
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.skills?.join(', ') || ''}
                 onChange={(e) => updateFormData('skills', e.target.value.split(', ').filter(s => s.trim()))}
                 placeholder="Enter skills separated by commas"
@@ -157,12 +157,12 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Availability
               </label>
               <input
                 type="text"
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.availability || ''}
                 onChange={(e) => updateFormData('availability', e.target.value)}
                 placeholder="e.g., Monday-Friday, 8AM-5PM"
@@ -170,12 +170,12 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 CV URL
               </label>
               <input
                 type="url"
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.cvUrl || ''}
                 onChange={(e) => updateFormData('cvUrl', e.target.value)}
                 placeholder="https://example.com/cv.pdf"
@@ -190,12 +190,12 @@ export default function ProfilePage() {
         return (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Organization Name
               </label>
               <input
                 type="text"
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.organizationName || profileData.organization?.name || ''}
                 onChange={(e) => updateFormData('organizationName', e.target.value)}
                 placeholder="Your organization name"
@@ -203,12 +203,12 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Contact Person
               </label>
               <input
                 type="text"
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.contactPerson || profileData.organization?.contactPerson || ''}
                 onChange={(e) => updateFormData('contactPerson', e.target.value)}
                 placeholder="Contact person name"
@@ -216,11 +216,11 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Canton
               </label>
               <select
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.canton || profileData.organization?.canton || ''}
                 onChange={(e) => updateFormData('canton', e.target.value)}
               >
@@ -255,12 +255,12 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-1">
+              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 Languages
               </label>
               <input
                 type="text"
-                className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="input-field"
                 value={formData.languages?.join(', ') || profileData.organization?.languages?.join(', ') || ''}
                 onChange={(e) => updateFormData('languages', e.target.value.split(', ').filter(s => s.trim()))}
                 placeholder="German, French, Italian, English"
@@ -270,12 +270,12 @@ export default function ProfilePage() {
             {profileData.role === 'FOUNDATION' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                     Capacity (Number of Children)
                   </label>
                   <input
                     type="number"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="input-field"
                     value={formData.capacity || profileData.organization?.capacity || ''}
                     onChange={(e) => updateFormData('capacity', parseInt(e.target.value) || null)}
                     placeholder="50"
@@ -283,12 +283,12 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
                     Pedagogy Approaches
                   </label>
                   <input
                     type="text"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="input-field"
                     value={formData.pedagogy?.join(', ') || profileData.organization?.pedagogy?.join(', ') || ''}
                     onChange={(e) => updateFormData('pedagogy', e.target.value.split(', ').filter(s => s.trim()))}
                     placeholder="Montessori, Reggio Emilia, Forest School"
@@ -423,8 +423,8 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen frontend-page flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-accent mx-auto"></div>
-          <p className="mt-4 text-text-muted">Loading profile...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-swiss-mint mx-auto"></div>
+          <p className="mt-4 text-swiss-gray">Loading profile...</p>
         </div>
       </div>
     );
@@ -433,15 +433,15 @@ export default function ProfilePage() {
   if (error) {
     return (
       <div className="min-h-screen frontend-page flex items-center justify-center">
-        <SwissCard className="p-6 max-w-md">
+        <Card className="p-6 max-w-md">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-text-strong mb-4">Error</h2>
-            <p className="text-text-muted mb-4">{error}</p>
-            <SwissButton variant="primary" onClick={fetchProfile}>
+            <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">Error</h2>
+            <p className="text-swiss-gray mb-4">{error}</p>
+            <Button variant="primary" onClick={fetchProfile}>
               Try Again
-            </SwissButton>
+            </Button>
           </div>
-        </SwissCard>
+        </Card>
       </div>
     );
   }
@@ -450,35 +450,35 @@ export default function ProfilePage() {
     <div className="min-h-screen frontend-page">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-text-strong">Profile Management</h1>
-          <p className="text-text-muted mt-2">Manage your personal and professional information</p>
+          <h1 className="text-3xl font-bold text-swiss-charcoal">Profile Management</h1>
+          <p className="text-swiss-gray mt-2">Manage your personal and professional information</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Overview */}
           <div className="lg:col-span-1">
-            <SwissCard variant="accent" className="p-6">
+            <Card variant="accent" className="p-6">
               <div className="text-center">
-                <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl text-accent-contrast">
+                <div className="w-20 h-20 bg-swiss-mint rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl text-white">
                     {profileData?.firstName?.[0]}{profileData?.lastName?.[0]}
                   </span>
                 </div>
-                <h2 className="text-xl font-semibold text-text-strong">
+                <h2 className="text-xl font-semibold text-swiss-charcoal">
                   {profileData?.firstName} {profileData?.lastName}
                 </h2>
-                <p className="text-text-muted">{profileData?.email}</p>
-                <Badge variant="info" className="mt-2">
+                <p className="text-swiss-gray">{profileData?.email}</p>
+                <Badge variant="mint" className="mt-2">
                   {profileData?.role}
                 </Badge>
               </div>
-            </SwissCard>
+            </Card>
           </div>
 
           {/* Profile Form */}
           <div className="lg:col-span-2">
-            <SwissCard className="p-6">
-              <h3 className="text-lg font-semibold text-text-strong mb-6">Profile Information</h3>
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-swiss-charcoal mb-6">Profile Information</h3>
               
               <div className="space-y-6">
                 {/* Basic Information */}
@@ -514,16 +514,16 @@ export default function ProfilePage() {
 
                 {/* Save button */}
                 <div className="flex justify-end">
-                  <SwissButton
+                  <Button
                     variant="primary"
                     onClick={handleSave}
                     disabled={isSaving}
                   >
                     {isSaving ? 'Saving...' : 'Save Changes'}
-                  </SwissButton>
+                  </Button>
                 </div>
               </div>
-            </SwissCard>
+            </Card>
           </div>
         </div>
       </div>

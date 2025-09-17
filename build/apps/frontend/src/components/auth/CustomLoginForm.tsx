@@ -65,27 +65,42 @@ export default function CustomLoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen frontend-page flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Swiss Modern Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {t('auth:loginPage.title')}
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          {t('auth:loginPage.subtitle')}
-        </p>
+        <div className="text-center">
+          {/* Swiss accent stripe */}
+          <div className="mx-auto h-1 w-16 bg-swiss-mint rounded-full mb-6"></div>
+          
+          {/* Logo placeholder */}
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-card bg-swiss-light border border-swiss-mint/20 mb-6">
+            <span className="text-2xl font-bold text-swiss-mint">PC</span>
+          </div>
+          
+          <h1 className="text-3xl font-bold text-swiss-charcoal font-swiss">
+            {t('auth:loginPage.title')}
+          </h1>
+          <p className="mt-3 text-swiss-gray font-medium">
+            {t('auth:loginPage.subtitle')}
+          </p>
+        </div>
       </div>
 
+      {/* Swiss Modern Form Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="card-swiss py-8 px-6 sm:px-10 relative">
+          {/* Swiss corner notch */}
+          <div className="absolute top-0 right-0 w-3 h-3 bg-swiss-mint rounded-bl-md"></div>
+          
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{error}</div>
+              <div className="rounded-card bg-red-50 border border-red-200 p-4">
+                <div className="text-sm text-red-700 font-medium">{error}</div>
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 {t('auth:loginPage.email')}
               </label>
               <input
@@ -95,12 +110,13 @@ export default function CustomLoginForm() {
                 required
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="input-field"
+                placeholder="Enter your email address"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-swiss-charcoal mb-2">
                 {t('auth:loginPage.password')}
               </label>
               <input
@@ -110,13 +126,14 @@ export default function CustomLoginForm() {
                 required
                 value={formData.password}
                 onChange={(e) => updateFormData('password', e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="input-field"
+                placeholder="Enter your password"
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <a href="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
+                <a href="/forgot-password" className="font-medium text-swiss-teal hover:text-swiss-mint transition-colors">
                   {t('auth:loginPage.forgotPassword')}
                 </a>
               </div>
@@ -126,16 +143,23 @@ export default function CustomLoginForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="btn-primary w-full py-3 text-base font-semibold"
               >
-                {isLoading ? t('common:loading') : t('auth:loginPage.signIn')}
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    {t('common:loading')}
+                  </div>
+                ) : (
+                  t('auth:loginPage.signIn')
+                )}
               </button>
             </div>
 
             <div className="text-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-swiss-gray">
                 {t('auth:loginPage.noAccount')}{' '}
-                <a href="/signup" className="font-medium text-primary-600 hover:text-primary-500">
+                <a href="/signup" className="font-semibold text-swiss-teal hover:text-swiss-mint transition-colors">
                   {t('auth:loginPage.signUp')}
                 </a>
               </span>

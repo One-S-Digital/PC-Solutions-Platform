@@ -168,55 +168,58 @@ export default function AdminProfilePage() {
   const renderProfileTab = () => (
     <div className="space-y-6">
       <AdminCard variant="accent" className="p-6">
-        <h3 className="text-lg font-semibold text-admin-text mb-4">Admin Profile</h3>
+        <h3 className="text-lg font-semibold text-admin-charcoal mb-4">Admin Profile</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-admin-text mb-1">
+            <label className="block text-sm font-semibold text-admin-charcoal mb-2">
               First Name
             </label>
             <input
               type="text"
-              className="admin-input w-full px-3 py-2"
+              className="input-field"
               value={formData.firstName || ''}
               onChange={(e) => updateFormData('firstName', e.target.value)}
+              placeholder="Enter your first name"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-admin-text mb-1">
+            <label className="block text-sm font-semibold text-admin-charcoal mb-2">
               Last Name
             </label>
             <input
               type="text"
-              className="admin-input w-full px-3 py-2"
+              className="input-field"
               value={formData.lastName || ''}
               onChange={(e) => updateFormData('lastName', e.target.value)}
+              placeholder="Enter your last name"
             />
           </div>
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-admin-text mb-1">
+          <label className="block text-sm font-semibold text-admin-charcoal mb-2">
             Phone Number
           </label>
           <input
             type="tel"
-            className="admin-input w-full px-3 py-2"
+            className="input-field"
             value={formData.phoneNumber || ''}
             onChange={(e) => updateFormData('phoneNumber', e.target.value)}
+            placeholder="+1 (555) 123-4567"
           />
         </div>
 
         {profileData?.role === 'SUPER_ADMIN' && (
           <>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-admin-text mb-1">
+              <label className="block text-sm font-semibold text-admin-charcoal mb-2">
                 Department
               </label>
               <input
                 type="text"
-                className="admin-input w-full px-3 py-2"
+                className="input-field"
                 value={formData.department || ''}
                 onChange={(e) => updateFormData('department', e.target.value)}
                 placeholder="IT, Operations, Management"
@@ -224,11 +227,11 @@ export default function AdminProfilePage() {
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium text-admin-text mb-1">
+              <label className="block text-sm font-semibold text-admin-charcoal mb-2">
                 Access Level
               </label>
               <select
-                className="admin-select w-full px-3 py-2"
+                className="input-field"
                 value={formData.accessLevel || ''}
                 onChange={(e) => updateFormData('accessLevel', e.target.value)}
               >

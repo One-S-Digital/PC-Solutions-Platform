@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { FrontendLayout } from './components/FrontendLayout';
 import LoginPage from './pages/LoginPage';
 import EnhancedSignupPage from './pages/EnhancedSignupPage';
 import DashboardPage from './pages/DashboardPage';
@@ -14,36 +15,29 @@ import MarketplacePage from './pages/MarketplacePage';
 import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
-import { ThemeToggle, LanguageSwitcher } from '@repo/ui';
 
 function App() {
   return (
-    <div className="min-h-screen frontend-page">
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<EnhancedSignupPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/billing/success" element={<BillingSuccessPage />} />
-          <Route path="/billing/cancel" element={<BillingCancelPage />} />
-          <Route path="/billing/settings" element={<BillingSettingsPage />} />
-          <Route path="/marketplace" element={<MarketplacePage />} />
-          <Route path="/marketplace/products" element={<ProductManagementPage />} />
-          <Route path="/marketplace/services" element={<ServiceManagementPage />} />
-          <Route path="/gated-example" element={<GatedContentExample />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </AuthProvider>
-      
-      {/* Theme toggle and language switcher for frontend */}
-      <div className="fixed bottom-4 right-4 flex flex-col gap-2">
-        <LanguageSwitcher />
-        <ThemeToggle />
-      </div>
-    </div>
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<EnhancedSignupPage />} />
+        <Route path="/" element={<FrontendLayout />}>
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="billing/success" element={<BillingSuccessPage />} />
+          <Route path="billing/cancel" element={<BillingCancelPage />} />
+          <Route path="billing/settings" element={<BillingSettingsPage />} />
+          <Route path="marketplace" element={<MarketplacePage />} />
+          <Route path="marketplace/products" element={<ProductManagementPage />} />
+          <Route path="marketplace/services" element={<ServiceManagementPage />} />
+          <Route path="gated-example" element={<GatedContentExample />} />
+          <Route path="" element={<Navigate to="/dashboard" replace />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 

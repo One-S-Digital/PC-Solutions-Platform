@@ -107,37 +107,37 @@ export default function FileUploadComponent({
     <div className="space-y-4">
       {/* Current File Display */}
       {currentFile && (
-        <div className="flex items-center gap-4 p-4 bg-admin-bg rounded-lg border border-admin-border">
+        <div className="flex items-center gap-4 p-4 bg-white rounded-card border border-gray-200 shadow-soft">
           <div className="flex-shrink-0">
             {currentFile.publicUrl ? (
               <img
                 src={currentFile.publicUrl}
                 alt="Current file"
-                className="rounded border border-admin-border"
+                className="rounded-card border border-gray-200"
                 style={{ width: previewWidth, height: previewHeight, objectFit: 'contain' }}
               />
             ) : (
               <div
-                className="bg-admin-muted rounded border border-admin-border flex items-center justify-center"
+                className="bg-admin-light rounded-card border border-gray-200 flex items-center justify-center"
                 style={{ width: previewWidth, height: previewHeight }}
               >
-                <span className="text-admin-text text-sm">No preview</span>
+                <span className="text-admin-charcoal text-sm">No preview</span>
               </div>
             )}
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-admin-text">{currentFile.filename}</p>
-            <p className="text-xs text-admin-muted">Current file</p>
+            <p className="text-sm font-semibold text-admin-charcoal">{currentFile.filename}</p>
+            <p className="text-xs text-admin-gray">Current file</p>
           </div>
         </div>
       )}
 
       {/* Upload Area */}
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+        className={`relative border-2 border-dashed rounded-card p-6 transition-colors ${
           isDragOver
-            ? 'border-admin-accent bg-admin-accent/10'
-            : 'border-admin-border hover:border-admin-accent/50'
+            ? 'border-admin-mint bg-admin-mint-light'
+            : 'border-gray-300 hover:border-admin-mint/50'
         } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -154,14 +154,14 @@ export default function FileUploadComponent({
         <div className="text-center">
           {isUploading ? (
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-admin-accent mb-2"></div>
-              <p className="text-sm text-admin-text">Uploading...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-admin-mint mb-2"></div>
+              <p className="text-sm text-admin-charcoal">Uploading...</p>
             </div>
           ) : (
             <>
-              <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center rounded-full bg-admin-accent/10">
+              <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center rounded-card bg-admin-mint-light">
                 <svg
-                  className="w-6 h-6 text-admin-accent"
+                  className="w-6 h-6 text-admin-mint"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -174,7 +174,7 @@ export default function FileUploadComponent({
                   />
                 </svg>
               </div>
-              <p className="text-sm text-admin-text mb-2">
+              <p className="text-sm text-admin-charcoal mb-2">
                 {isDragOver ? 'Drop file here' : 'Drag and drop a file here, or'}
               </p>
               <AdminButton
@@ -185,7 +185,7 @@ export default function FileUploadComponent({
               >
                 Choose File
               </AdminButton>
-              <p className="text-xs text-admin-muted">
+              <p className="text-xs text-admin-gray">
                 Max size: {Math.round(maxSize / 1024 / 1024)}MB
               </p>
             </>

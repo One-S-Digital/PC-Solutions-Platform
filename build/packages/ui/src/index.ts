@@ -12,6 +12,10 @@ export { FeatureLock, FeatureAccessBadge, UpgradeCTA } from './components/Featur
 export { AntivirusUploadStatus, useAntivirusUpload } from './components/AntivirusUploadStatus';
 export { Button as SwissButton, Card as SwissCard, Input, Badge, Status } from './components/SwissComponents';
 
+// Navigation Components
+export { SwissNavigation, SwissSidebar } from './components/SwissNavigation';
+export { AdminNavigation, AdminSidebar } from './components/AdminNavigation';
+
 // Admin Components
 export { 
   AdminButton, 

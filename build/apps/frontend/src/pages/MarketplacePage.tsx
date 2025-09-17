@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { marketplaceService, Product, Service, MarketplaceFilters } from '../services/marketplaceService';
-import { SwissCard, SwissButton, Input, Badge } from '@repo/ui';
+import { Card, Button, Input, Badge } from '@repo/ui';
 import { ProductCard } from '../components/marketplace/ProductCard';
 import { ServiceCard } from '../components/marketplace/ServiceCard';
 import { MarketplaceFilters as FiltersComponent } from '../components/marketplace/MarketplaceFilters';
@@ -86,42 +86,47 @@ export default function MarketplacePage() {
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-surface-1">
+    <div className="min-h-screen frontend-page">
       <div className="mx-auto max-w-7xl px-4 py-8">
-        {/* Header */}
+        {/* Swiss Modern Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-text-default mb-2">
-            {t('marketplace.title', 'Marketplace')}
-          </h1>
-          <p className="text-text-secondary">
+          <div className="flex items-center mb-6">
+            <div className="h-1 w-16 bg-swiss-mint rounded-full mr-4"></div>
+            <h1 className="text-3xl font-bold text-swiss-charcoal">
+              {t('marketplace.title', 'Marketplace')}
+            </h1>
+          </div>
+          <p className="text-swiss-gray font-medium">
             {t('marketplace.subtitle', 'Discover products and services for your childcare facility')}
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-1 mb-6">
-          <SwissButton
+        {/* Swiss Modern Tabs */}
+        <div className="flex space-x-2 mb-8">
+          <Button
             variant={activeTab === 'products' ? 'primary' : 'outline'}
             onClick={() => setActiveTab('products')}
+            className="flex items-center"
           >
             {t('marketplace.products', 'Products')}
-            <Badge variant="secondary" className="ml-2">
+            <Badge variant="mint" className="ml-2">
               {products.length}
             </Badge>
-          </SwissButton>
-          <SwissButton
+          </Button>
+          <Button
             variant={activeTab === 'services' ? 'primary' : 'outline'}
             onClick={() => setActiveTab('services')}
+            className="flex items-center"
           >
             {t('marketplace.services', 'Services')}
-            <Badge variant="secondary" className="ml-2">
+            <Badge variant="teal" className="ml-2">
               {services.length}
             </Badge>
-          </SwissButton>
+          </Button>
         </div>
 
         {/* Filters and Cart */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-8">
           <FiltersComponent
             filters={filters}
             onFiltersChange={setFilters}
@@ -129,16 +134,16 @@ export default function MarketplacePage() {
           />
           
           {activeTab === 'products' && cartItemCount > 0 && (
-            <SwissButton
+            <Button
               variant="primary"
               onClick={() => setShowCart(true)}
               className="relative"
             >
               {t('marketplace.cart', 'Cart')}
-              <Badge variant="danger" className="ml-2">
+              <Badge variant="coral" className="ml-2">
                 {cartItemCount}
               </Badge>
-            </SwissButton>
+            </Button>
           )}
         </div>
 
@@ -146,12 +151,12 @@ export default function MarketplacePage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <SwissCard key={i} className="animate-pulse">
-                <div className="h-48 bg-surface-2 rounded-lg mb-4"></div>
-                <div className="h-4 bg-surface-2 rounded mb-2"></div>
-                <div className="h-3 bg-surface-2 rounded mb-4"></div>
-                <div className="h-8 bg-surface-2 rounded"></div>
-              </SwissCard>
+              <Card key={i} className="animate-pulse">
+                <div className="h-48 bg-swiss-light rounded-card mb-4"></div>
+                <div className="h-4 bg-swiss-light rounded mb-2"></div>
+                <div className="h-3 bg-swiss-light rounded mb-4"></div>
+                <div className="h-8 bg-swiss-light rounded"></div>
+              </Card>
             ))}
           </div>
         ) : (
@@ -179,17 +184,17 @@ export default function MarketplacePage() {
         {!loading && (
           activeTab === 'products' ? products.length === 0 : services.length === 0
         ) && (
-          <SwissCard className="text-center py-12">
-            <div className="text-text-secondary mb-4">
+          <Card className="text-center py-12">
+            <div className="text-swiss-gray mb-4">
               {t('marketplace.noItems', 'No items found matching your criteria')}
             </div>
-            <SwissButton
+            <Button
               variant="outline"
               onClick={() => setFilters({})}
             >
               {t('marketplace.clearFilters', 'Clear Filters')}
-            </SwissButton>
-          </SwissCard>
+            </Button>
+          </Card>
         )}
       </div>
 
