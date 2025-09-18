@@ -40,7 +40,7 @@ export default function AdminCustomLoginForm() {
 
       if (result.status === 'complete') {
         // User signed in successfully, redirect to admin dashboard
-        navigate('/admin/dashboard');
+        navigate('/dashboard');
       } else if (result.status === 'needs_first_factor') {
         // Handle 2FA if needed
         setError('Two-factor authentication required');
@@ -62,8 +62,8 @@ export default function AdminCustomLoginForm() {
     try {
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
-        redirectUrl: '/',
-        redirectUrlComplete: '/',
+        redirectUrl: '/dashboard',
+        redirectUrlComplete: '/dashboard',
       });
     } catch (error: unknown) {
       console.error('Google sign in error:', error);

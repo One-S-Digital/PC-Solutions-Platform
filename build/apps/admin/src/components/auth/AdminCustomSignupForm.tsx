@@ -94,7 +94,7 @@ export default function AdminCustomSignupForm() {
 
       if (result.status === 'complete') {
         // User created successfully, redirect to admin dashboard
-        navigate('/admin/dashboard');
+        navigate('/dashboard');
       } else if (result.status === 'missing_requirements') {
         // Handle verification if needed
         await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
@@ -119,7 +119,7 @@ export default function AdminCustomSignupForm() {
       const result = await signUp.attemptEmailAddressVerification({ code });
       
       if (result.status === 'complete') {
-        navigate('/admin/dashboard');
+        navigate('/dashboard');
       }
     } catch (err: any) {
       setError(err.message || 'Verification failed');

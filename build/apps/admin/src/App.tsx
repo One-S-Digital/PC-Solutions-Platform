@@ -31,36 +31,37 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<AdminLoginPage />} />
-          <Route path="/signup" element={<AdminSignupPage />} />
-          <Route path="/access-denied" element={<AccessDeniedPage />} />
-          <Route 
-            path="/" 
-            element={
-              <AdminProtectedRoute>
-                <AdminLayout />
-              </AdminProtectedRoute>
-            }
-          >
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="organizations" element={<OrganizationsPage />} />
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="services" element={<ServicesPage />} />
-            <Route path="job-listings" element={<JobListingsPage />} />
-            <Route path="candidates" element={<CandidatesPage />} />
-            <Route path="parent-leads" element={<ParentLeadsPage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="content" element={<ContentPage />} />
-            <Route path="messaging" element={<MessagingPage />} />
-            <Route path="system" element={<SystemMonitorPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="" element={<Navigate to="/dashboard" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+
+      <Routes>
+        <Route path="/login" element={<AdminLoginPage />} />
+        <Route path="/signup" element={<AdminSignupPage />} />
+        <Route path="/access-denied" element={<AccessDeniedPage />} />
+        <Route
+          path="/"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout />
+            </AdminProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="organizations" element={<OrganizationsPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="job-listings" element={<JobListingsPage />} />
+          <Route path="candidates" element={<CandidatesPage />} />
+          <Route path="parent-leads" element={<ParentLeadsPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="content" element={<ContentPage />} />
+          <Route path="messaging" element={<MessagingPage />} />
+          <Route path="system" element={<SystemMonitorPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route index element={<Navigate to="/dashboard" replace />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+
     </QueryClientProvider>
   );
 }
