@@ -32,7 +32,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
-        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/admin/signup" element={<AdminSignupPage />} />
         <Route path="/admin/access-denied" element={<AccessDeniedPage />} />
         <Route 
@@ -56,9 +56,9 @@ function App() {
           <Route path="messaging" element={<MessagingPage />} />
         <Route path="system" element={<SystemMonitorPage />} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="" element={<Navigate to="/admin/login" replace />} />
+        <Route path="" element={<Navigate to="/login" replace />} />
       </Route>
-      <Route path="/" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </QueryClientProvider>
   );
