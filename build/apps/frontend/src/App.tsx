@@ -1,20 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { FrontendLayout } from './components/FrontendLayout';
-import { 
-  ProtectedRoute, 
-  AdminRoute, 
-  SuperAdminRoute, 
-  FoundationRoute, 
-  SupplierRoute, 
-  ServiceProviderRoute, 
-  EducatorRoute, 
-  ParentRoute,
-  PermissionRoute,
-  ProfileCompleteRoute
-} from './components/auth/ProtectedRoute';
-import { RootRedirect } from './components/auth/RootRedirect';
+import { ProtectedRoute } from './components/auth/AuthComponents';
 import { Card, Button } from '@repo/ui';
 import { 
   CogIcon, 
@@ -35,7 +22,6 @@ import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
 // import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ELearningPage from './pages/ELearningPage';
 import ParentLeadFormPage from './pages/ParentLeadFormPage';
 import RecruitmentPage from './pages/RecruitmentPage';
@@ -49,15 +35,14 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<EnhancedSignupPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         
         {/* Root Redirect */}
-        <Route path="/" element={<RootRedirect />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         
         {/* Protected Routes */}
-        <Route path="/" element={<FrontendLayout />}>
+        <Route path="/" element={<React.Fragment />}>
           {/* General Dashboard */}
           <Route path="dashboard" element={
             <ProtectedRoute>
@@ -96,26 +81,26 @@ function App() {
           
           {/* Marketplace Routes */}
           <Route path="marketplace" element={
-            <PermissionRoute permissions={['orders.place', 'products.manage', 'services.manage']}>
+            <ProtectedRoute>
               <MarketplacePage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           <Route path="marketplace/products" element={
-            <PermissionRoute permissions={['products.manage']}>
+            <ProtectedRoute>
               <ProductManagementPage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           <Route path="marketplace/services" element={
-            <PermissionRoute permissions={['services.manage']}>
+            <ProtectedRoute>
               <ServiceManagementPage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           
           {/* Foundation Routes */}
           <Route path="foundation/dashboard" element={
-            <FoundationRoute>
+            <ProtectedRoute>
               <DashboardPage />
-            </FoundationRoute>
+            </ProtectedRoute>
           } />
           <Route path="foundation/leads" element={
             <FoundationRoute>
