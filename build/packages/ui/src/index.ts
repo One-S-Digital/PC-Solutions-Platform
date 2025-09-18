@@ -19,8 +19,8 @@ export { SwissNavigation, SwissSidebar } from './components/SwissNavigation';
 export { AdminNavigation, AdminSidebar } from './components/AdminNavigation';
 
 // Alert and Messaging Components
-export { Alert, Notification, NotificationContainer, useNotifications } from './components/SwissAlerts';
-export { MessagingSystem, useMessaging } from './components/SwissMessaging';
+export { Notification, NotificationContainer, useNotifications } from './components/SwissAlerts';
+export { MessagingSystem, useMessaging, MessageInput, MessageBubble } from './components/SwissMessaging';
 
 // Admin Components
 export { 
@@ -39,8 +39,8 @@ export {
 } from './components/AdminComponents';
 
 // Admin Alert and Messaging Components
-export { AdminAlert as AdminAlertComponent, AdminNotification, AdminNotificationContainer, useAdminNotifications } from './components/AdminAlerts';
-export { AdminMessagingSystem, useAdminMessaging } from './components/AdminMessaging';
+export { AdminNotification, AdminNotificationContainer, useAdminNotifications } from './components/AdminAlerts';
+export { AdminMessagingSystem, useAdminMessaging, AdminMessageInput, AdminMessageBubble } from './components/AdminMessaging';
 
 // Responsive Utilities
 export { 
