@@ -57,6 +57,7 @@ function App() {
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="settings" element={<SettingsPage />} />
+
           <Route index element={<Navigate to="/dashboard" replace />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
