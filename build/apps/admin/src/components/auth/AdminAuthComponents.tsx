@@ -23,8 +23,11 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -36,14 +39,7 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
   // Check if user has admin role
   const userRole = user?.publicMetadata?.role as string;
   if (userRole !== UserRole.SUPER_ADMIN && userRole !== UserRole.ADMIN) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600">You don't have permission to access the admin dashboard.</p>
-        </div>
-      </div>
-    );
+    return <Navigate to="/admin/access-denied" replace />;
   }
 
   return <>{children}</>;

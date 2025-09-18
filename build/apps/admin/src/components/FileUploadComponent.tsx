@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { AdminButton } from '@repo/ui';
+import { Upload, X } from 'lucide-react';
 
 interface FileUploadComponentProps {
   currentFile?: {
@@ -118,16 +118,16 @@ export default function FileUploadComponent({
               />
             ) : (
               <div
-                className="bg-admin-light rounded-card border border-gray-200 flex items-center justify-center"
+                className="bg-gray-50 rounded-card border border-gray-200 flex items-center justify-center"
                 style={{ width: previewWidth, height: previewHeight }}
               >
-                <span className="text-admin-charcoal text-sm">No preview</span>
+                <span className="text-gray-600 text-sm">No preview</span>
               </div>
             )}
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-admin-charcoal">{currentFile.filename}</p>
-            <p className="text-xs text-admin-gray">Current file</p>
+            <p className="text-sm font-semibold text-swiss-charcoal">{currentFile.filename}</p>
+            <p className="text-xs text-gray-500">Current file</p>
           </div>
         </div>
       )}
@@ -136,8 +136,8 @@ export default function FileUploadComponent({
       <div
         className={`relative border-2 border-dashed rounded-card p-6 transition-colors ${
           isDragOver
-            ? 'border-admin-mint bg-admin-mint-light'
-            : 'border-gray-300 hover:border-admin-mint/50'
+            ? 'border-swiss-mint bg-swiss-mint/10'
+            : 'border-gray-300 hover:border-swiss-mint/50'
         } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -154,38 +154,25 @@ export default function FileUploadComponent({
         <div className="text-center">
           {isUploading ? (
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-admin-mint mb-2"></div>
-              <p className="text-sm text-admin-charcoal">Uploading...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-swiss-mint mb-2"></div>
+              <p className="text-sm text-swiss-charcoal">Uploading...</p>
             </div>
           ) : (
             <>
-              <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center rounded-card bg-admin-mint-light">
-                <svg
-                  className="w-6 h-6 text-admin-mint"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
+              <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center rounded-card bg-swiss-mint/10">
+                <Upload className="w-6 h-6 text-swiss-mint" />
               </div>
-              <p className="text-sm text-admin-charcoal mb-2">
+              <p className="text-sm text-swiss-charcoal mb-2">
                 {isDragOver ? 'Drop file here' : 'Drag and drop a file here, or'}
               </p>
-              <AdminButton
-                variant="outline"
-                size="sm"
+              <button
+                type="button"
                 onClick={openFileDialog}
-                className="mb-2"
+                className="btn-secondary mb-2"
               >
                 Choose File
-              </AdminButton>
-              <p className="text-xs text-admin-gray">
+              </button>
+              <p className="text-xs text-gray-500">
                 Max size: {Math.round(maxSize / 1024 / 1024)}MB
               </p>
             </>
@@ -196,21 +183,22 @@ export default function FileUploadComponent({
       {/* Preview */}
       {preview && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-admin-text">Preview:</p>
-          <div className="flex items-center gap-4 p-4 bg-admin-bg rounded-lg border border-admin-border">
+          <p className="text-sm font-medium text-swiss-charcoal">Preview:</p>
+          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <img
               src={preview}
               alt="Preview"
-              className="rounded border border-admin-border"
+              className="rounded border border-gray-200"
               style={{ width: previewWidth, height: previewHeight, objectFit: 'contain' }}
             />
-            <AdminButton
-              variant="danger"
-              size="sm"
+            <button
+              type="button"
               onClick={removeFile}
+              className="btn-danger"
             >
+              <X className="h-4 w-4 mr-1" />
               Remove
-            </AdminButton>
+            </button>
           </div>
         </div>
       )}
