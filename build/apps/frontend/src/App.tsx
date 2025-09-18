@@ -103,149 +103,149 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="foundation/leads" element={
-            <FoundationRoute>
+            <ProtectedRoute>
               <div>Foundation Leads Page</div>
-            </FoundationRoute>
+            </ProtectedRoute>
           } />
           <Route path="foundation/orders-appointments" element={
-            <FoundationRoute>
+            <ProtectedRoute>
               <div>Foundation Orders & Appointments Page</div>
-            </FoundationRoute>
+            </ProtectedRoute>
           } />
           <Route path="foundation/analytics" element={
-            <FoundationRoute>
+            <ProtectedRoute>
               <div>Foundation Analytics Page</div>
-            </FoundationRoute>
+            </ProtectedRoute>
           } />
           <Route path="foundation/organisation-profile" element={
-            <FoundationRoute>
+            <ProtectedRoute>
               <div>Foundation Organisation Profile Page</div>
-            </FoundationRoute>
+            </ProtectedRoute>
           } />
           <Route path="foundation/support" element={
-            <FoundationRoute>
+            <ProtectedRoute>
               <div>Foundation Support Page</div>
-            </FoundationRoute>
+            </ProtectedRoute>
           } />
           
           {/* Supplier Routes */}
           <Route path="supplier/dashboard" element={
-            <SupplierRoute>
+            <ProtectedRoute>
               <DashboardPage />
-            </SupplierRoute>
+            </ProtectedRoute>
           } />
           <Route path="supplier/orders" element={
-            <SupplierRoute>
+            <ProtectedRoute>
               <div>Supplier Orders Page</div>
-            </SupplierRoute>
+            </ProtectedRoute>
           } />
           <Route path="supplier/product-listings" element={
-            <SupplierRoute>
+            <ProtectedRoute>
               <div>Supplier Product Listings Page</div>
-            </SupplierRoute>
+            </ProtectedRoute>
           } />
           <Route path="supplier/analytics" element={
-            <SupplierRoute>
+            <ProtectedRoute>
               <div>Supplier Analytics Page</div>
-            </SupplierRoute>
+            </ProtectedRoute>
           } />
           <Route path="supplier/support" element={
-            <SupplierRoute>
+            <ProtectedRoute>
               <div>Supplier Support Page</div>
-            </SupplierRoute>
+            </ProtectedRoute>
           } />
           
           {/* Service Provider Routes */}
           <Route path="service-provider/dashboard" element={
-            <ServiceProviderRoute>
+            <ProtectedRoute>
               <DashboardPage />
-            </ServiceProviderRoute>
+            </ProtectedRoute>
           } />
           <Route path="service-provider/requests" element={
-            <ServiceProviderRoute>
+            <ProtectedRoute>
               <div>Service Provider Requests Page</div>
-            </ServiceProviderRoute>
+            </ProtectedRoute>
           } />
           <Route path="service-provider/service-listings" element={
-            <ServiceProviderRoute>
+            <ProtectedRoute>
               <div>Service Provider Service Listings Page</div>
-            </ServiceProviderRoute>
+            </ProtectedRoute>
           } />
           <Route path="service-provider/analytics" element={
-            <ServiceProviderRoute>
+            <ProtectedRoute>
               <div>Service Provider Analytics Page</div>
-            </ServiceProviderRoute>
+            </ProtectedRoute>
           } />
           <Route path="service-provider/support" element={
-            <ServiceProviderRoute>
+            <ProtectedRoute>
               <div>Service Provider Support Page</div>
-            </ServiceProviderRoute>
+            </ProtectedRoute>
           } />
           
           {/* Educator Routes */}
           <Route path="educator/dashboard" element={
-            <EducatorRoute>
+            <ProtectedRoute>
               <DashboardPage />
-            </EducatorRoute>
+            </ProtectedRoute>
           } />
           <Route path="educator/job-board" element={
-            <EducatorRoute>
+            <ProtectedRoute>
               <div>Educator Job Board Page</div>
-            </EducatorRoute>
+            </ProtectedRoute>
           } />
           <Route path="educator/profile" element={
-            <EducatorRoute>
+            <ProtectedRoute>
               <div>Educator Profile Page</div>
-            </EducatorRoute>
+            </ProtectedRoute>
           } />
           <Route path="educator/applications" element={
-            <EducatorRoute>
+            <ProtectedRoute>
               <div>Educator Applications Page</div>
-            </EducatorRoute>
+            </ProtectedRoute>
           } />
           <Route path="educator/support" element={
-            <EducatorRoute>
+            <ProtectedRoute>
               <div>Educator Support Page</div>
-            </EducatorRoute>
+            </ProtectedRoute>
           } />
           
           {/* Parent Routes */}
           <Route path="parent/enquiries" element={
-            <ParentRoute>
+            <ProtectedRoute>
               <div>Parent Enquiries Page</div>
-            </ParentRoute>
+            </ProtectedRoute>
           } />
           <Route path="parent/support" element={
-            <ParentRoute>
+            <ProtectedRoute>
               <div>Parent Support Page</div>
-            </ParentRoute>
+            </ProtectedRoute>
           } />
           
           {/* Shared Content Routes */}
           <Route path="e-learning" element={
-            <PermissionRoute permissions={['content.view']}>
+            <ProtectedRoute>
               <ELearningPage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           <Route path="recruitment" element={
-            <PermissionRoute permissions={['educators.recruit', 'jobs.apply']}>
+            <ProtectedRoute>
               <RecruitmentPage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           <Route path="hr-procedures" element={
-            <PermissionRoute permissions={['content.view']}>
+            <ProtectedRoute>
               <HRProceduresPage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           <Route path="state-policies" element={
-            <PermissionRoute permissions={['content.view']}>
+            <ProtectedRoute>
               <StatePoliciesPage />
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           <Route path="file-gallery" element={
-            <PermissionRoute permissions={['files.upload', 'files.view']}>
+            <ProtectedRoute>
               <div>File Gallery Page</div>
-            </PermissionRoute>
+            </ProtectedRoute>
           } />
           
           {/* Admin Access Routes - Full Platform Access */}
