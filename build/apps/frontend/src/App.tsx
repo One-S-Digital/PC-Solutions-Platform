@@ -17,6 +17,7 @@ import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
 import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ELearningPage from './pages/ELearningPage';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="marketplace/services" element={<ServiceManagementPage />} />
           <Route path="gated-example" element={<GatedContentExample />} />
           <Route path="alerts-messaging-demo" element={<AlertsMessagingDemo />} />
+          <Route path="e-learning" element={<ELearningPage />} />
           <Route path="" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
