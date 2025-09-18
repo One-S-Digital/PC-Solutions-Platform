@@ -465,6 +465,11 @@ Enable debug mode to see CSS variable values:
 
 ## 📚 Additional Documentation
 
+### Core Platform Architecture
+- [Frontend Architecture Guide](./FRONTEND_ARCHITECTURE.md) - Comprehensive frontend platform architecture
+- [Admin Access Strategy](./ADMIN_ACCESS_STRATEGY.md) - Admin user access and integration strategy
+- [Phase 3 Implementation Summary](./PHASE3_IMPLEMENTATION_SUMMARY.md) - Core business pages implementation
+
 ### Phase 3 Features
 - [Email Notification System Guide](./email-notification-system-guide.md) - Complete email management system with SendGrid integration
 - [Frontend Customization Guide](./frontend-customization-guide.md) - Admin-controlled frontend settings
