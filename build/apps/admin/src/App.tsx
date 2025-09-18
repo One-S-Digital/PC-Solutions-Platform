@@ -34,10 +34,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<AdminLoginPage />} />
-          <Route path="/admin/signup" element={<AdminSignupPage />} />
-          <Route path="/admin/access-denied" element={<AccessDeniedPage />} />
+          <Route path="/signup" element={<AdminSignupPage />} />
+          <Route path="/access-denied" element={<AccessDeniedPage />} />
           <Route 
-            path="/admin" 
+            path="/" 
             element={
               <AdminProtectedRoute>
                 <AdminLayout />
@@ -55,11 +55,10 @@ function App() {
             <Route path="orders" element={<OrdersPage />} />
             <Route path="content" element={<ContentPage />} />
             <Route path="messaging" element={<MessagingPage />} />
-          <Route path="system" element={<SystemMonitorPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="" element={<Navigate to="/login" replace />} />
-        </Route>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="system" element={<SystemMonitorPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="" element={<Navigate to="/dashboard" replace />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
