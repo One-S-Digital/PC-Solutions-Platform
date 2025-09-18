@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { UserRole, AuthUser } from '@repo/types';
 
@@ -7,6 +7,13 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   signOut: () => Promise<void>;
+  refreshUser: () => Promise<void>;
+  updateUserProfile: (updates: Partial<AuthUser>) => Promise<boolean>;
+  hasRole: (role: UserRole) => boolean;
+  hasAnyRole: (roles: UserRole[]) => boolean;
+  hasPermission: (permission: string) => boolean;
+  isProfileComplete: boolean;
+  profileCompletionPercentage: number;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,6 +24,194 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Calculate profile completion
+  const calculateProfileCompletion = useCallback((userData: AuthUser): number => {
+    const requiredFields = [
+      'name',
+      'email',
+      'role',
+      'phone',
+      'address',
+      'organizationName',
+      'avatarUrl'
+    ];
+    
+    const completedFields = requiredFields.filter(field => {
+      const value = userData[field as keyof AuthUser];
+      return value && value.toString().trim() !== '';
+    });
+    
+    return Math.round((completedFields.length / requiredFields.length) * 100);
+  }, []);
+
+  // Check if profile is complete
+  const isProfileComplete = user ? calculateProfileCompletion(user) >= 80 : false;
+  const profileCompletionPercentage = user ? calculateProfileCompletion(user) : 0;
+
+  // Role and permission checks
+  const hasRole = useCallback((role: UserRole): boolean => {
+    return user?.role === role;
+  }, [user]);
+
+  const hasAnyRole = useCallback((roles: UserRole[]): boolean => {
+    return user ? roles.includes(user.role) : false;
+  }, [user]);
+
+  const hasPermission = useCallback((permission: string): boolean => {
+    if (!user) return false;
+    
+    // Define role-based permissions
+    const rolePermissions: Record<UserRole, string[]> = {
+      [UserRole.SUPER_ADMIN]: ['*'], // All permissions
+      [UserRole.ADMIN]: [
+        'users.manage',
+        'content.manage',
+        'analytics.view',
+        'system.monitor',
+        'subscriptions.manage'
+      ],
+      [UserRole.FOUNDATION]: [
+        'children.manage',
+        'educators.recruit',
+        'orders.place',
+        'leads.view',
+        'analytics.view'
+      ],
+      [UserRole.PRODUCT_SUPPLIER]: [
+        'products.manage',
+        'orders.process',
+        'inventory.manage',
+        'analytics.view'
+      ],
+      [UserRole.SERVICE_PROVIDER]: [
+        'services.manage',
+        'requests.process',
+        'bookings.manage',
+        'analytics.view'
+      ],
+      [UserRole.EDUCATOR]: [
+        'profile.manage',
+        'jobs.apply',
+        'applications.view',
+        'files.upload'
+      ],
+      [UserRole.PARENT]: [
+        'enquiries.submit',
+        'enquiries.view',
+        'support.access'
+      ]
+    };
+
+    const userPermissions = rolePermissions[user.role] || [];
+    return userPermissions.includes('*') || userPermissions.includes(permission);
+  }, [user]);
+
+  // Fetch user data from API
+  const fetchUserData = useCallback(async () => {
+    if (!clerkUser || !clerkLoaded) return;
+
+    try {
+      setIsLoading(true);
+      const token = await getToken();
+      
+      const response = await fetch('/api/users/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.data);
+      } else if (response.status === 404) {
+        // User doesn't exist in our system, create from Clerk data
+        await createUserFromClerk();
+      } else {
+        console.error('Failed to fetch user data:', response.statusText);
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [clerkUser, clerkLoaded, getToken]);
+
+  // Create user from Clerk data
+  const createUserFromClerk = useCallback(async () => {
+    if (!clerkUser) return;
+
+    try {
+      const token = await getToken();
+      const userData = {
+        clerkId: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        name: clerkUser.fullName || clerkUser.firstName + ' ' + clerkUser.lastName,
+        avatarUrl: clerkUser.imageUrl,
+        role: clerkUser.publicMetadata?.role || UserRole.PARENT,
+        phone: clerkUser.phoneNumbers[0]?.phoneNumber,
+        // Add other fields from Clerk metadata
+        ...clerkUser.publicMetadata
+      };
+
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.data);
+      } else {
+        console.error('Failed to create user:', response.statusText);
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error creating user:', error);
+      setUser(null);
+    }
+  }, [clerkUser, getToken]);
+
+  // Refresh user data
+  const refreshUser = useCallback(async () => {
+    await fetchUserData();
+  }, [fetchUserData]);
+
+  // Update user profile
+  const updateUserProfile = useCallback(async (updates: Partial<AuthUser>): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const token = await getToken();
+      const response = await fetch(`/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.data);
+        return true;
+      } else {
+        console.error('Failed to update user profile:', response.statusText);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      return false;
+    }
+  }, [user, getToken]);
+
   useEffect(() => {
     if (!clerkLoaded) return;
 
@@ -26,37 +221,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Fetch user data from our API
-    const fetchUserData = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch('/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.data);
-        } else {
-          console.error('Failed to fetch user data');
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchUserData();
-  }, [clerkUser, clerkLoaded]);
+  }, [clerkUser, clerkLoaded, fetchUserData]);
 
   const signOut = async () => {
-    await clerkSignOut();
-    setUser(null);
+    try {
+      await clerkSignOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   return (
@@ -66,6 +240,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         signOut,
+        refreshUser,
+        updateUserProfile,
+        hasRole,
+        hasAnyRole,
+        hasPermission,
+        isProfileComplete,
+        profileCompletionPercentage,
       }}
     >
       {children}
