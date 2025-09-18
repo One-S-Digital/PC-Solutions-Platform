@@ -16,6 +16,10 @@ export { Button as SwissButton, Card as SwissCard, Input, Badge, Status } from '
 export { SwissNavigation, SwissSidebar } from './components/SwissNavigation';
 export { AdminNavigation, AdminSidebar } from './components/AdminNavigation';
 
+// Alert and Messaging Components
+export { Alert, Notification, NotificationContainer, useNotifications } from './components/SwissAlerts';
+export { MessagingSystem, useMessaging } from './components/SwissMessaging';
+
 // Admin Components
 export { 
   AdminButton, 
@@ -31,6 +35,25 @@ export {
   AdminTableCell,
   AdminTableHeaderCell
 } from './components/AdminComponents';
+
+// Admin Alert and Messaging Components
+export { AdminAlert as AdminAlertComponent, AdminNotification, AdminNotificationContainer, useAdminNotifications } from './components/AdminAlerts';
+export { AdminMessagingSystem, useAdminMessaging } from './components/AdminMessaging';
+
+// Responsive Utilities
+export { 
+  ResponsiveWrapper, 
+  ResponsiveContainer, 
+  ResponsiveGrid, 
+  ResponsiveText,
+  responsiveSpacing,
+  responsiveText,
+  responsiveGrid,
+  responsiveFlex,
+  responsiveVisibility,
+  responsiveWidth,
+  responsiveHeight
+} from './components/ResponsiveUtils';
 
 // Types - Re-export from centralized types package
 export * from '@repo/types';

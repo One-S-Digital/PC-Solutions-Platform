@@ -15,6 +15,7 @@ import MarketplacePage from './pages/MarketplacePage';
 import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
+import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="marketplace/products" element={<ProductManagementPage />} />
           <Route path="marketplace/services" element={<ServiceManagementPage />} />
           <Route path="gated-example" element={<GatedContentExample />} />
+          <Route path="alerts-messaging-demo" element={<AlertsMessagingDemo />} />
           <Route path="" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>

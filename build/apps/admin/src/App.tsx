@@ -5,6 +5,7 @@ import { AdminLoginPage, AdminSignupPage, AdminProtectedRoute } from './componen
 import { AdminDashboard } from './components/AdminDashboard';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
+import AdminAlertsMessagingDemo from './pages/AdminAlertsMessagingDemo';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="profile" element={<AdminProfilePage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
+        <Route path="alerts-messaging-demo" element={<AdminAlertsMessagingDemo />} />
         <Route path="" element={<Navigate to="/admin/dashboard" replace />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
