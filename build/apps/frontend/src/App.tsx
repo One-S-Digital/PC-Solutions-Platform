@@ -18,6 +18,11 @@ import GatedContentExample from './components/GatedContentExample';
 import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ELearningPage from './pages/ELearningPage';
+import ParentLeadFormPage from './pages/ParentLeadFormPage';
+import RecruitmentPage from './pages/RecruitmentPage';
+import HRProceduresPage from './pages/HRProceduresPage';
+import StatePoliciesPage from './pages/StatePoliciesPage';
+import ContentManagementDashboardPage from './pages/admin/ContentManagementDashboardPage';
 
 function App() {
   return (
@@ -26,6 +31,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<EnhancedSignupPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
         <Route path="/" element={<FrontendLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
@@ -40,6 +46,10 @@ function App() {
           <Route path="gated-example" element={<GatedContentExample />} />
           <Route path="alerts-messaging-demo" element={<AlertsMessagingDemo />} />
           <Route path="e-learning" element={<ELearningPage />} />
+          <Route path="recruitment" element={<RecruitmentPage />} />
+          <Route path="hr-procedures" element={<HRProceduresPage />} />
+          <Route path="state-policies" element={<StatePoliciesPage />} />
+          <Route path="content-management" element={<ContentManagementDashboardPage />} />
           <Route path="" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
