@@ -56,9 +56,9 @@ function App() {
           <Route path="messaging" element={<MessagingPage />} />
         <Route path="system" element={<SystemMonitorPage />} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="" element={<Navigate to="/admin/dashboard" replace />} />
-        </Route>
-        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="" element={<Navigate to="/admin/login" replace />} />
+      </Route>
+      <Route path="/" element={<Navigate to="/admin/login" replace />} />
       </Routes>
     </QueryClientProvider>
   );
