@@ -6,6 +6,12 @@ import { AdminDashboard } from './components/AdminDashboard';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminAlertsMessagingDemo from './pages/AdminAlertsMessagingDemo';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
+import AdminModerationPage from './pages/AdminModerationPage';
+import AdminMonitoringPage from './pages/AdminMonitoringPage';
+import AdminSubscriptionsPage from './pages/AdminSubscriptionsPage';
+import AdminSystemConfigurationPage from './pages/AdminSystemConfigurationPage';
 
 function App() {
   return (
@@ -21,6 +27,12 @@ function App() {
         }
       >
         <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsersPage />} />
+        <Route path="analytics" element={<AdminAnalyticsPage />} />
+        <Route path="moderation" element={<AdminModerationPage />} />
+        <Route path="monitoring" element={<AdminMonitoringPage />} />
+        <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
+        <Route path="system-configuration" element={<AdminSystemConfigurationPage />} />
         <Route path="profile" element={<AdminProfilePage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
         <Route path="alerts-messaging-demo" element={<AdminAlertsMessagingDemo />} />

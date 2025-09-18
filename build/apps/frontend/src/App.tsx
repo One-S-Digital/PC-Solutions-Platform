@@ -16,6 +16,7 @@ import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
 import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<EnhancedSignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/" element={<FrontendLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
