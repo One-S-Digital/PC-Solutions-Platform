@@ -43,3 +43,11 @@ Key Minimal Fixes Applied (pushed)
 Screenshots
 - Admin signup: ![/home/ubuntu/screenshots/localhost_5174_admin_143323.png](/home/ubuntu/screenshots/localhost_5174_admin_143323.png)
 - API Swagger: ![/home/ubuntu/screenshots/user_143435.png](/home/ubuntu/screenshots/user_143435.png)
+Updated Public URLs (current)
+- Frontend (Login): https://user:f1a1db6b72cd6022fd115b798dd131d6@repo-test-reports-tunnel-p8418k71.devinapps.com/login
+- Admin (Login): https://user:af7a4684c6a976de9b8740cb34ac1c4f@repo-test-reports-tunnel-se3o6gjm.devinapps.com/admin/login
+- API Swagger: https://user:b55e562c9b17be64c9b2db64678ed6ea@repo-test-reports-tunnel-2wo70z6s.devinapps.com/api/docs
+
+New Evidence
+- Frontend login screenshot: ![/home/ubuntu/screenshots/user_145235.png](/home/ubuntu/screenshots/user_145235.png)
+- API Swagger endpoints screenshot: ![/home/ubuntu/screenshots/user_145214.png](/home/ubuntu/screenshots/user_145214.png)

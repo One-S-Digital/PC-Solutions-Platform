@@ -40,3 +40,29 @@ Screenshots
 - Admin login: ![/home/ubuntu/screenshots/localhost_5174_admin_143220.png](/home/ubuntu/screenshots/localhost_5174_admin_143220.png)
 - Admin signup (step 2): ![/home/ubuntu/screenshots/localhost_5174_admin_143323.png](/home/ubuntu/screenshots/localhost_5174_admin_143323.png)
 - API Swagger: ![/home/ubuntu/screenshots/user_143435.png](/home/ubuntu/screenshots/user_143435.png)
+# E2E Feature Testing — 2025-09-18 (continued)
+
+Public Tunnels (current)
+- Frontend Login: https://user:f1a1db6b72cd6022fd115b798dd131d6@repo-test-reports-tunnel-p8418k71.devinapps.com/login
+- Admin Login: https://user:af7a4684c6a976de9b8740cb34ac1c4f@repo-test-reports-tunnel-se3o6gjm.devinapps.com/admin/login
+- API Swagger: https://user:b55e562c9b17be64c9b2db64678ed6ea@repo-test-reports-tunnel-2wo70z6s.devinapps.com/api/docs
+
+Frontend (App)
+- /login: Renders successfully (labels via i18n keys). Screenshot: ![/home/ubuntu/screenshots/user_145235.png](/home/ubuntu/screenshots/user_145235.png)
+- Protected routes (unauthenticated): Redirect behavior OK.
+- Marketplace pages: Components render where stubs exist; no data ops performed (auth not wired to API).
+- Profile/Settings: Render with placeholders; no blocking runtime errors observed.
+- Console/network: No fatal exceptions on navigation; API calls not executed for guarded pages.
+
+Admin
+- /admin/login and /admin/signup: Render via Clerk; inputs and CTAs visible.
+- Dashboard + modules (Users, Analytics, Monitoring, Subscriptions, Configuration, Moderation): Pages render with mock metrics/data; navigation OK.
+- Console/network: Clean during navigation; expected 404s not observed for mocked data.
+
+API
+- Swagger loads and lists marketplace endpoints (orders, services, catalogs, etc.). Screenshot: ![/home/ubuntu/screenshots/user_145214.png](/home/ubuntu/screenshots/user_145214.png)
+- Safe GET endpoints verified manually (via Swagger where possible); server healthy.
+
+Notes
+- Auth flows depend on Clerk backend/org setup; current tests focused on UI rendering and guarded-route behavior.
+- Tunnels are temporary; refresh as needed.
