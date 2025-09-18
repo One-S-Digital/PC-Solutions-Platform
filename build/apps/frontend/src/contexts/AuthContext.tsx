@@ -1,6 +1,28 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import * as React from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import { UserRole, AuthUser } from '@repo/types';
+type AuthUser = {
+  id: string;
+  name?: string;
+  email?: string;
+  role: UserRole;
+  phone?: string;
+  address?: string;
+  organizationName?: string;
+  avatarUrl?: string;
+  [key: string]: any;
+};
+
+const UserRole = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  FOUNDATION: 'FOUNDATION',
+  PRODUCT_SUPPLIER: 'PRODUCT_SUPPLIER',
+  SERVICE_PROVIDER: 'SERVICE_PROVIDER',
+  EDUCATOR: 'EDUCATOR',
+  PARENT: 'PARENT',
+} as const;
+type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 interface AuthContextType {
   user: AuthUser | null;

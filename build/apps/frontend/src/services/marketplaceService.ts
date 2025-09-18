@@ -105,7 +105,7 @@ export interface Booking {
 }
 
 class MarketplaceService {
-  private baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+  private baseUrl = (typeof import.meta !== 'undefined' && (import.meta as any)?.env?.VITE_API_URL) || 'http://localhost:3001/api';
 
   // Product Management
   async getProducts(filters?: {

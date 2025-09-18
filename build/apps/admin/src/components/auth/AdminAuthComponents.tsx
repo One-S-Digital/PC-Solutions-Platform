@@ -1,7 +1,11 @@
 import React from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { Navigate } from 'react-router-dom';
-import { UserRole } from '@repo/types';
+enum UserRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ADMIN = 'ADMIN',
+  FOUNDATION = 'FOUNDATION',
+}
 import AdminCustomLoginForm from './AdminCustomLoginForm';
 import AdminCustomSignupForm from './AdminCustomSignupForm';
 

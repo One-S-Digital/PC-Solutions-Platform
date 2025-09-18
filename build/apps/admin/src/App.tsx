@@ -6,12 +6,12 @@ import { AdminDashboard } from './components/AdminDashboard';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 // import AdminAlertsMessagingDemo from './pages/AdminAlertsMessagingDemo';
-import AdminUsersPage from './pages/AdminUsersPage';
-import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
-import AdminModerationPage from './pages/AdminModerationPage';
-import AdminMonitoringPage from './pages/AdminMonitoringPage';
-import AdminSubscriptionsPage from './pages/AdminSubscriptionsPage';
-import AdminSystemConfigurationPage from './pages/AdminSystemConfigurationPage';
+import AdminUsersPage from './pages/UserManagementPage';
+import AdminAnalyticsPage from './pages/AnalyticsPage';
+import AdminModerationPage from './pages/ContentModerationPage';
+import AdminMonitoringPage from './pages/SystemMonitoringPage';
+import AdminSubscriptionsPage from './pages/SubscriptionManagementPage';
+import AdminSystemConfigurationPage from './pages/SystemConfigurationPage';
 
 function App() {
   return (

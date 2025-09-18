@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input, Select, Textarea, NotificationContainer, useNotifications } from '@repo/ui';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { Card, Button, Badge, Input, Select, Textarea } from '@repo/ui';
 import { useAuthContext } from '../contexts/AuthContext';
 import { 
   ShoppingBagIcon, 
@@ -73,7 +74,6 @@ interface ProductSubcategory {
 
 const ProductManagementPage: React.FC = () => {
   const { user, hasPermission } = useAuthContext();
-  const { addNotification } = useNotifications();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
@@ -116,7 +116,7 @@ const ProductManagementPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      addNotification({
+      console.log('notification', {
         type: 'error',
         title: 'Error Loading Products',
         message: 'Failed to load products. Please try again.',
@@ -211,7 +211,7 @@ const ProductManagementPage: React.FC = () => {
       });
 
       if (response.ok) {
-        addNotification({
+        console.log('notification', {
           type: 'success',
           title: 'Product Deleted',
           message: 'Product has been deleted successfully.',
@@ -223,7 +223,7 @@ const ProductManagementPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      addNotification({
+      console.log('notification', {
         type: 'error',
         title: 'Delete Failed',
         message: 'Failed to delete product. Please try again.',
@@ -244,7 +244,7 @@ const ProductManagementPage: React.FC = () => {
       });
 
       if (response.ok) {
-        addNotification({
+        console.log('notification', {
           type: 'success',
           title: 'Product Updated',
           message: `Product status updated to ${newStatus.replace('_', ' ')}.`,
@@ -256,7 +256,7 @@ const ProductManagementPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error updating product:', error);
-      addNotification({
+      console.log('notification', {
         type: 'error',
         title: 'Update Failed',
         message: 'Failed to update product. Please try again.',
@@ -555,7 +555,6 @@ const ProductManagementPage: React.FC = () => {
         )}
       </div>
 
-      <NotificationContainer />
     </div>
   );
 };

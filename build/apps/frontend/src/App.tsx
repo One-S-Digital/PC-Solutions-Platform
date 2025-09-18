@@ -109,7 +109,7 @@ function App() {
           } />
           <Route path="foundation/orders-appointments" element={
             <ProtectedRoute>
-              <div>Foundation Orders & Appointments Page</div>
+              <div>Foundation Orders and Appointments Page</div>
             </ProtectedRoute>
           } />
           <Route path="foundation/analytics" element={
@@ -250,92 +250,80 @@ function App() {
           
           {/* Admin Access Routes - Full Platform Access */}
           <Route path="admin/*" element={
-            <AdminRoute>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <Card className="max-w-md w-full mx-4 p-8 text-center">
-                  <div className="w-16 h-16 bg-swiss-mint rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CogIcon className="h-8 w-8 text-white" />
-                  </div>
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8 text-center">
+                <div className="max-w-md w-full">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
                   <p className="text-gray-600 mb-6">
                     Access the full admin dashboard for comprehensive platform management.
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => window.location.href = '/admin'}
+                  <div
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
+                    onClick={() => (window.location.href = '/admin')}
                   >
                     Go to Admin Dashboard
-                  </Button>
-                </Card>
+                  </div>
+                </div>
               </div>
-            </AdminRoute>
+            </ProtectedRoute>
           } />
           
           {/* Admin-Only Features - Full Access */}
           <Route path="users" element={
-            <AdminRoute>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <Card className="max-w-md w-full mx-4 p-8 text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <UserGroupIcon className="h-8 w-8 text-blue-600" />
-                  </div>
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8 text-center">
+                <div className="max-w-md w-full">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">User Management</h1>
                   <p className="text-gray-600 mb-6">
                     Access comprehensive user management in the admin dashboard.
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => window.location.href = '/admin/users'}
+                  <div
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
+                    onClick={() => (window.location.href = '/admin/users')}
                   >
                     Manage Users
-                  </Button>
-                </Card>
+                  </div>
+                </div>
               </div>
-            </AdminRoute>
+            </ProtectedRoute>
           } />
           
           <Route path="analytics" element={
-            <AdminRoute>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <Card className="max-w-md w-full mx-4 p-8 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ChartBarIcon className="h-8 w-8 text-green-600" />
-                  </div>
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8 text-center">
+                <div className="max-w-md w-full">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
                   <p className="text-gray-600 mb-6">
                     Access detailed analytics and reporting in the admin dashboard.
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => window.location.href = '/admin/analytics'}
+                  <div
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
+                    onClick={() => (window.location.href = '/admin/analytics')}
                   >
                     View Analytics
-                  </Button>
-                </Card>
+                  </div>
+                </div>
               </div>
-            </AdminRoute>
+            </ProtectedRoute>
           } />
           
           <Route path="system" element={
-            <AdminRoute>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <Card className="max-w-md w-full mx-4 p-8 text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CogIcon className="h-8 w-8 text-purple-600" />
-                  </div>
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8 text-center">
+                <div className="max-w-md w-full">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">System Management</h1>
                   <p className="text-gray-600 mb-6">
                     Access system monitoring and configuration in the admin dashboard.
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => window.location.href = '/admin/system'}
+                  <div
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
+                    onClick={() => (window.location.href = '/admin/system')}
                   >
                     System Settings
-                  </Button>
-                </Card>
+                  </div>
+                </div>
               </div>
-            </AdminRoute>
+            </ProtectedRoute>
           } />
           
           {/* Demo Routes */}
@@ -346,7 +334,7 @@ function App() {
           } />
           <Route path="alerts-messaging-demo" element={
             <ProtectedRoute>
-              {/* <AlertsMessagingDemo /> */}
+              <div>Alerts & Messaging demo coming soon.</div>
             </ProtectedRoute>
           } />
           

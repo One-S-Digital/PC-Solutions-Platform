@@ -1,3 +1,38 @@
+import * as React from 'react';
+
+export const FeatureAccessBadge: React.FC<any> = (props: any) => {
+  const label = props?.label ?? 'Feature';
+  const className = props?.className ?? '';
+  return React.createElement(
+    'span',
+    { className: `inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 ${className}` },
+    label
+  );
+};
+
+export const UpgradeCTA: React.FC<any> = (props: any) => {
+  const featureKey = props?.featureKey ?? 'feature';
+  const upgradeBenefit = props?.upgradeBenefit ?? 'Unlock more features by upgrading your plan.';
+  const variant: 'banner' | 'inline' | 'button' = props?.variant ?? 'inline';
+  const className = props?.className ?? '';
+  const onClick = props?.onClick;
+
+  const base = 'rounded-md border border-gray-200 bg-white text-gray-700 cursor-pointer';
+  const styles =
+    variant === 'banner'
+      ? 'p-4 flex items-center justify-between'
+      : variant === 'button'
+      ? 'px-3 py-1 inline-flex items-center'
+      : 'px-2 py-1 inline-flex items-center';
+
+  return React.createElement(
+    'div',
+    { className: `${base} ${styles} ${className}`, onClick },
+    `Upgrade required for ${featureKey}. ${upgradeBenefit}`
+  );
+};
+
+
 export { Button } from './button';
 export { Card } from './card';
 export { Code } from './code';
@@ -35,6 +70,3 @@ export {
 // Admin Alert and Messaging Components
 
 // Responsive Utilities
-
-// Types - Re-export from centralized types package
-export * from '@repo/types';
