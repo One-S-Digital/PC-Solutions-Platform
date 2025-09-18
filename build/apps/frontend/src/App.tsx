@@ -34,7 +34,7 @@ import MarketplacePage from './pages/MarketplacePage';
 import ProductManagementPage from './pages/ProductManagementPage';
 import ServiceManagementPage from './pages/ServiceManagementPage';
 import GatedContentExample from './components/GatedContentExample';
-import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
+// import AlertsMessagingDemo from './pages/AlertsMessagingDemo';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ELearningPage from './pages/ELearningPage';
 import ParentLeadFormPage from './pages/ParentLeadFormPage';
@@ -361,7 +361,7 @@ function App() {
           } />
           <Route path="alerts-messaging-demo" element={
             <ProtectedRoute>
-              <AlertsMessagingDemo />
+              {/* <AlertsMessagingDemo /> */}
             </ProtectedRoute>
           } />
           
