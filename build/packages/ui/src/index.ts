@@ -8,7 +8,9 @@ export { LanguageSwitcher } from './components/LanguageSwitcher';
 export { UploadModal } from './components/UploadModal';
 export { GatedContent } from './components/GatedContent';
 export { PreviewContent, GatedCard, GatedList } from './components/PreviewContent';
-export { FeatureLock, FeatureAccessBadge, UpgradeCTA } from './components/FeatureLock';
+export { FeatureLock } from './components/FeatureLock';
+export { FeatureAccessBadge } from './components/FeatureAccessBadge';
+export { UpgradeCTA } from './components/UpgradeCTA';
 export { AntivirusUploadStatus, useAntivirusUpload } from './components/AntivirusUploadStatus';
 export { Button as SwissButton, Card as SwissCard, Input, Badge, Status } from './components/SwissComponents';
 

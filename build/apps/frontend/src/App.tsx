@@ -23,6 +23,12 @@ import RecruitmentPage from './pages/RecruitmentPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
 import ContentManagementDashboardPage from './pages/admin/ContentManagementDashboardPage';
+import SLATrackingPage from './pages/admin/SLATrackingPage';
+import PromotionManagementPage from './pages/admin/PromotionManagementPage';
+import ProfileStrengthPage from './pages/admin/ProfileStrengthPage';
+import EnhancedAnalyticsPage from './pages/admin/EnhancedAnalyticsPage';
+import AdvancedReportingPage from './pages/admin/AdvancedReportingPage';
+import PerformanceTestingPage from './pages/admin/PerformanceTestingPage';
 
 function App() {
   return (
@@ -50,6 +56,12 @@ function App() {
           <Route path="hr-procedures" element={<HRProceduresPage />} />
           <Route path="state-policies" element={<StatePoliciesPage />} />
           <Route path="content-management" element={<ContentManagementDashboardPage />} />
+          <Route path="sla-tracking" element={<SLATrackingPage />} />
+          <Route path="promotion-management" element={<PromotionManagementPage />} />
+          <Route path="profile-strength" element={<ProfileStrengthPage />} />
+          <Route path="enhanced-analytics" element={<EnhancedAnalyticsPage />} />
+          <Route path="advanced-reporting" element={<AdvancedReportingPage />} />
+          <Route path="performance-testing" element={<PerformanceTestingPage />} />
           <Route path="" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
