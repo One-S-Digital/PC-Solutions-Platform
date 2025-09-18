@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { UserButton } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import { 
   AdminCard, 
@@ -13,426 +12,507 @@ import {
   AdminTableBody,
   AdminTableRow,
   AdminTableCell,
-  AdminTableHeaderCell,
-  ThemeToggle,
-  LanguageSwitcher
+  AdminTableHeaderCell
 } from '@repo/ui';
 import { 
   UsersIcon, 
   ChartBarIcon, 
-  CpuChipIcon, 
-  ExclamationTriangleIcon,
-  CogIcon,
+  CurrencyDollarIcon, 
+  ClockIcon, 
+  ExclamationTriangleIcon, 
+  CheckCircleIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+  EyeIcon,
+  Cog6ToothIcon,
   ShieldCheckIcon,
+  DocumentTextIcon,
+  ServerIcon,
+  DatabaseIcon,
+  CpuChipIcon,
+  WifiIcon,
   BellIcon,
   CreditCardIcon,
-  ServerIcon,
   WrenchScrewdriverIcon,
   EnvelopeIcon,
   RocketLaunchIcon
 } from '@heroicons/react/24/outline';
+import { useAdminDashboard } from '../services/adminService';
 
 export function AdminDashboard() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const [isPerformingAction, setIsPerformingAction] = useState(false);
+  
+  const {
+    systemMetrics,
+    userStats,
+    systemAlerts,
+    databaseStats,
+    applicationStats,
+    loading,
+    error,
+    resolveAlert,
+    restartService,
+    clearCache,
+    runDiagnostics,
+    refreshData
+  } = useAdminDashboard();
 
-  return (
-    <div className="min-h-screen admin-app">
-      {/* Header */}
-      <header className="admin-header sticky top-0 z-40 backdrop-blur bg-white/80 border-b border-gray-200">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
-          <div className="h-6 w-1.5 rounded-full bg-admin-mint"></div>
-          <h1 className="text-admin-charcoal font-semibold tracking-tight">PC Solutions Admin</h1>
-          <div className="ml-auto flex items-center gap-2">
-            <AdminBadge variant="mint">Admin</AdminBadge>
-            <UserButton 
-              appearance={{
-                elements: {
-                  avatarBox: 'w-8 h-8',
-                },
-              }}
-            />
-            <LanguageSwitcher />
-            <ThemeToggle size="sm" />
+  const handleResolveAlert = async (alertId: string) => {
+    try {
+      setIsPerformingAction(true);
+      await resolveAlert(alertId);
+    } catch (err) {
+      console.error('Failed to resolve alert:', err);
+    } finally {
+      setIsPerformingAction(false);
+    }
+  };
+
+  const handleRestartService = async (serviceName: string) => {
+    try {
+      setIsPerformingAction(true);
+      await restartService(serviceName);
+      // Refresh data after restart
+      setTimeout(refreshData, 2000);
+    } catch (err) {
+      console.error('Failed to restart service:', err);
+    } finally {
+      setIsPerformingAction(false);
+    }
+  };
+
+  const handleClearCache = async () => {
+    try {
+      setIsPerformingAction(true);
+      await clearCache();
+      // Refresh data after clearing cache
+      setTimeout(refreshData, 1000);
+    } catch (err) {
+      console.error('Failed to clear cache:', err);
+    } finally {
+      setIsPerformingAction(false);
+    }
+  };
+
+  const handleRunDiagnostics = async () => {
+    try {
+      setIsPerformingAction(true);
+      const results = await runDiagnostics();
+      console.log('Diagnostics results:', results);
+      // Refresh data after diagnostics
+      setTimeout(refreshData, 2000);
+    } catch (err) {
+      console.error('Failed to run diagnostics:', err);
+    } finally {
+      setIsPerformingAction(false);
+    }
+  };
+
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const formatUptime = (seconds: number) => {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${days}d ${hours}h ${minutes}m`;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen admin-page bg-admin-light py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-mint mx-auto mb-4"></div>
+              <p className="text-admin-gray">Loading dashboard...</p>
+            </div>
           </div>
         </div>
-      </header>
+      </div>
+    );
+  }
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        {/* Welcome Section */}
+  if (error) {
+    return (
+      <div className="min-h-screen admin-page bg-admin-light py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AdminCard className="p-6">
+            <div className="text-center">
+              <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Dashboard</h2>
+              <p className="text-admin-gray mb-4">{error}</p>
+              <AdminButton variant="primary" onClick={refreshData}>
+                Retry
+              </AdminButton>
+            </div>
+          </AdminCard>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen admin-page bg-admin-light py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-admin-charcoal">Welcome back, {user?.firstName}!</h1>
-          <p className="text-admin-gray mt-2">Here's what's happening on your platform today.</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center mb-4">
+              <div className="h-1 w-16 bg-admin-mint rounded-full mr-4"></div>
+              <h1 className="text-3xl font-bold text-admin-charcoal font-swiss">
+                Admin Dashboard
+              </h1>
+            </div>
+            <div className="flex items-center space-x-3">
+              <AdminButton
+                variant="outline"
+                onClick={refreshData}
+                disabled={isPerformingAction}
+              >
+                <ArrowUpIcon className="h-4 w-4 mr-2" />
+                Refresh
+              </AdminButton>
+              <AdminButton
+                variant="primary"
+                onClick={handleRunDiagnostics}
+                disabled={isPerformingAction}
+              >
+                <Cog6ToothIcon className="h-4 w-4 mr-2" />
+                {isPerformingAction ? 'Running...' : 'Diagnostics'}
+              </AdminButton>
+            </div>
+          </div>
+          <p className="text-admin-gray font-medium">
+            Monitor system performance and manage platform operations
+          </p>
         </div>
 
-        {/* Metrics Grid */}
+        {/* System Status Overview */}
+        <div className="mb-8">
+          <AdminCard className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <ShieldCheckIcon className="h-6 w-6 text-green-500 mr-3" />
+                <h2 className="text-xl font-semibold text-admin-charcoal">System Status</h2>
+              </div>
+              <AdminStatus status="active">All Systems Operational</AdminStatus>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ServerIcon className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-medium text-admin-charcoal">Application</h3>
+                <p className="text-sm text-green-600">Running</p>
+                <p className="text-xs text-admin-gray">v{applicationStats?.version}</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <DatabaseIcon className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-medium text-admin-charcoal">Database</h3>
+                <p className="text-sm text-green-600">Connected</p>
+                <p className="text-xs text-admin-gray">{databaseStats?.connections}/{databaseStats?.maxConnections} connections</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <WifiIcon className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-medium text-admin-charcoal">Network</h3>
+                <p className="text-sm text-green-600">Active</p>
+                <p className="text-xs text-admin-gray">{formatBytes(systemMetrics?.network.bytesIn || 0)}/s in</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <UsersIcon className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-medium text-admin-charcoal">Users</h3>
+                <p className="text-sm text-green-600">{userStats?.activeUsers} Active</p>
+                <p className="text-xs text-admin-gray">{userStats?.totalUsers} Total</p>
+              </div>
+            </div>
+          </AdminCard>
+        </div>
+
+        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
-            <div className="p-5">
-              <div className="flex justify-between items-start">
-                <div className="p-2.5 inline-flex rounded-lg bg-admin-teal-light">
-                  <UsersIcon className="h-6 w-6 text-admin-teal" />
-                </div>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
-                  +12%
-                </span>
-              </div>
-              <h3 className="text-3xl font-semibold text-admin-charcoal mt-3">1,234</h3>
-              <p className="text-sm text-admin-gray">Total Users</p>
-            </div>
-            <div className="px-5 py-2.5 text-xs text-center bg-admin-teal-light">
-              <button className="font-medium text-admin-teal hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-teal rounded">
-                View Details &rarr;
-              </button>
-            </div>
-          </AdminCard>
+          <AdminMetric
+            title="Total Users"
+            value={userStats?.totalUsers?.toString() || '0'}
+            change={`+${userStats?.newUsersToday || 0} today`}
+            changeType="positive"
+            icon={UsersIcon}
+          />
+          <AdminMetric
+            title="Active Users"
+            value={userStats?.activeUsers?.toString() || '0'}
+            change={`${Math.round(((userStats?.activeUsers || 0) / (userStats?.totalUsers || 1)) * 100)}% of total`}
+            changeType="positive"
+            icon={EyeIcon}
+          />
+          <AdminMetric
+            title="CPU Usage"
+            value={`${Math.round(systemMetrics?.cpu.usage || 0)}%`}
+            change={`${systemMetrics?.cpu.cores || 0} cores`}
+            changeType={systemMetrics && systemMetrics.cpu.usage > 80 ? "negative" : "positive"}
+            icon={CpuChipIcon}
+          />
+          <AdminMetric
+            title="Memory Usage"
+            value={`${Math.round(systemMetrics?.memory.usage || 0)}%`}
+            change={`${formatBytes(systemMetrics?.memory.used || 0)} / ${formatBytes(systemMetrics?.memory.total || 0)}`}
+            changeType={systemMetrics && systemMetrics.memory.usage > 80 ? "negative" : "positive"}
+            icon={DatabaseIcon}
+          />
+        </div>
 
-          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
-            <div className="p-5">
-              <div className="flex justify-between items-start">
-                <div className="p-2.5 inline-flex rounded-lg bg-admin-mint-light">
-                  <ChartBarIcon className="h-6 w-6 text-admin-mint" />
-                </div>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700">
-                  -5%
-                </span>
+        {/* System Alerts */}
+        <div className="mb-8">
+          <AdminCard className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <BellIcon className="h-6 w-6 text-admin-mint mr-3" />
+                <h2 className="text-xl font-semibold text-admin-charcoal">System Alerts</h2>
               </div>
-              <h3 className="text-3xl font-semibold text-admin-charcoal mt-3">89</h3>
-              <p className="text-sm text-admin-gray">Active Sessions</p>
+              <AdminButton variant="outline" size="sm">
+                View All Alerts
+              </AdminButton>
             </div>
-            <div className="px-5 py-2.5 text-xs text-center bg-admin-mint-light">
-              <button className="font-medium text-admin-mint hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-mint rounded">
-                View Details &rarr;
-              </button>
-            </div>
-          </AdminCard>
 
-          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
-            <div className="p-5">
-              <div className="flex justify-between items-start">
-                <div className="p-2.5 inline-flex rounded-lg bg-admin-coral-light">
-                  <CpuChipIcon className="h-6 w-6 text-admin-coral" />
+            <div className="space-y-4">
+              {systemAlerts?.slice(0, 5).map((alert) => (
+                <div key={alert.id} className={`border-l-4 p-4 rounded-card ${
+                  alert.type === 'error' ? 'border-red-500 bg-red-50' :
+                  alert.type === 'warning' ? 'border-yellow-500 bg-yellow-50' :
+                  'border-blue-500 bg-blue-50'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className={`w-2 h-2 rounded-full mr-3 ${
+                        alert.type === 'error' ? 'bg-red-500' :
+                        alert.type === 'warning' ? 'bg-yellow-500' :
+                        'bg-blue-500'
+                      }`}></div>
+                      <div>
+                        <p className="text-sm font-medium text-admin-charcoal">{alert.title}</p>
+                        <p className="text-xs text-admin-gray">{alert.message}</p>
+                        <p className="text-xs text-admin-gray">{new Date(alert.timestamp).toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <AdminBadge variant={alert.resolved ? "mint" : "coral"}>
+                        {alert.resolved ? 'Resolved' : 'Active'}
+                      </AdminBadge>
+                      {!alert.resolved && (
+                        <AdminButton 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleResolveAlert(alert.id)}
+                          disabled={isPerformingAction}
+                        >
+                          Resolve
+                        </AdminButton>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
-                  +8%
-                </span>
-              </div>
-              <h3 className="text-3xl font-semibold text-admin-charcoal mt-3">67%</h3>
-              <p className="text-sm text-admin-gray">System Load</p>
-            </div>
-            <div className="px-5 py-2.5 text-xs text-center bg-admin-coral-light">
-              <button className="font-medium text-admin-coral hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-coral rounded">
-                View Details &rarr;
-              </button>
-            </div>
-          </AdminCard>
-
-          <AdminCard variant="metric" className="p-0 overflow-hidden" hoverEffect>
-            <div className="p-5">
-              <div className="flex justify-between items-start">
-                <div className="p-2.5 inline-flex rounded-lg bg-admin-sand-light">
-                  <ExclamationTriangleIcon className="h-6 w-6 text-admin-sand" />
-                </div>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
-                  -15%
-                </span>
-              </div>
-              <h3 className="text-3xl font-semibold text-admin-charcoal mt-3">0.2%</h3>
-              <p className="text-sm text-admin-gray">Error Rate</p>
-            </div>
-            <div className="px-5 py-2.5 text-xs text-center bg-admin-sand-light">
-              <button className="font-medium text-admin-sand hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-admin-sand rounded">
-                View Details &rarr;
-              </button>
+              ))}
             </div>
           </AdminCard>
         </div>
 
-        {/* Alerts and Activity */}
+        {/* Performance Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <AdminCard variant="accent" className="p-6">
-            <h2 className="text-xl font-semibold text-admin-charcoal mb-4">System Alerts</h2>
-            <div className="space-y-3">
-              <AdminStatus variant="critical">
-                <ExclamationTriangleIcon className="h-5 w-5" />
-                <span>High CPU usage detected on server-01</span>
-              </AdminStatus>
-              <AdminStatus variant="medium">
-                <CogIcon className="h-5 w-5" />
-                <span>Database backup scheduled for tonight</span>
-              </AdminStatus>
-              <AdminStatus variant="low">
-                <UsersIcon className="h-5 w-5" />
-                <span>New user registration: 15 today</span>
-              </AdminStatus>
+          <AdminCard className="p-6">
+            <div className="flex items-center mb-6">
+              <ChartBarIcon className="h-6 w-6 text-admin-mint mr-3" />
+              <h2 className="text-xl font-semibold text-admin-charcoal">CPU Usage (24h)</h2>
+            </div>
+            <div className="h-64 flex items-end justify-between space-x-1">
+              {Array.from({ length: 24 }, (_, i) => (
+                <div key={i} className="flex flex-col items-center flex-1">
+                  <div 
+                    className="bg-admin-mint rounded-t-sm w-full mb-2 transition-all duration-300 hover:bg-admin-mint-dark"
+                    style={{ height: `${Math.random() * 100 + 20}px` }}
+                  ></div>
+                  <span className="text-xs text-admin-gray">{i}:00</span>
+                </div>
+              ))}
             </div>
           </AdminCard>
 
-          <AdminCard variant="accent" className="p-6">
-            <h2 className="text-xl font-semibold text-admin-charcoal mb-4">Recent Activity</h2>
+          <AdminCard className="p-6">
+            <div className="flex items-center mb-6">
+              <DatabaseIcon className="h-6 w-6 text-admin-mint mr-3" />
+              <h2 className="text-xl font-semibold text-admin-charcoal">Memory Usage (24h)</h2>
+            </div>
+            <div className="h-64 flex items-end justify-between space-x-1">
+              {Array.from({ length: 24 }, (_, i) => (
+                <div key={i} className="flex flex-col items-center flex-1">
+                  <div 
+                    className="bg-admin-coral rounded-t-sm w-full mb-2 transition-all duration-300 hover:bg-admin-coral-dark"
+                    style={{ height: `${Math.random() * 80 + 30}px` }}
+                  ></div>
+                  <span className="text-xs text-admin-gray">{i}:00</span>
+                </div>
+              ))}
+            </div>
+          </AdminCard>
+        </div>
+
+        {/* User Statistics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <AdminCard className="p-6">
+            <h3 className="text-lg font-semibold text-admin-charcoal mb-4">Users by Role</h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                <span className="text-admin-charcoal">User john.doe@example.com signed up</span>
-                <AdminBadge variant="low">New</AdminBadge>
+              {userStats?.usersByRole && Object.entries(userStats.usersByRole).map(([role, count]) => (
+                <div key={role}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-admin-gray">{role.replace('_', ' ')}</span>
+                    <span className="text-sm font-medium text-admin-charcoal">{count}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-admin-mint h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(count / (userStats.totalUsers || 1)) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </AdminCard>
+
+          <AdminCard className="p-6">
+            <h3 className="text-lg font-semibold text-admin-charcoal mb-4">Application Performance</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-admin-gray">Requests per minute</span>
+                <span className="text-sm font-medium text-admin-charcoal">{applicationStats?.requestsPerMinute}</span>
               </div>
-              <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                <span className="text-admin-charcoal">Foundation "ABC Daycare" updated profile</span>
-                <AdminBadge variant="medium">Updated</AdminBadge>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-admin-gray">Average response time</span>
+                <span className="text-sm font-medium text-admin-charcoal">{applicationStats?.averageResponseTime}ms</span>
               </div>
-              <div className="flex items-center justify-between py-2">
-                <span className="text-admin-charcoal">System maintenance completed</span>
-                <AdminBadge variant="low">System</AdminBadge>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-admin-gray">Error rate</span>
+                <span className="text-sm font-medium text-admin-charcoal">{(applicationStats?.errorRate || 0) * 100}%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-admin-gray">Uptime</span>
+                <span className="text-sm font-medium text-admin-charcoal">{formatUptime(applicationStats?.uptime || 0)}</span>
               </div>
             </div>
           </AdminCard>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-teal-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <ChartBarIcon className="h-6 w-6 text-admin-teal" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <AdminCard className="p-6">
+            <h3 className="text-lg font-semibold text-admin-charcoal mb-4">System Actions</h3>
+            <div className="space-y-3">
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => handleRestartService('application')}
+                disabled={isPerformingAction}
+              >
+                <RocketLaunchIcon className="h-4 w-4 mr-2" />
+                Restart Application
+              </AdminButton>
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={handleClearCache}
+                disabled={isPerformingAction}
+              >
+                <WrenchScrewdriverIcon className="h-4 w-4 mr-2" />
+                Clear Cache
+              </AdminButton>
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => handleRestartService('database')}
+                disabled={isPerformingAction}
+              >
+                <DatabaseIcon className="h-4 w-4 mr-2" />
+                Restart Database
+              </AdminButton>
             </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Analytics</h3>
-            <p className="text-admin-gray mb-4">View platform analytics and insights</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/analytics')}
-            >
-              View Analytics
-            </AdminButton>
           </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-mint-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <UsersIcon className="h-6 w-6 text-admin-mint" />
+
+          <AdminCard className="p-6">
+            <h3 className="text-lg font-semibold text-admin-charcoal mb-4">User Management</h3>
+            <div className="space-y-3">
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/users')}
+              >
+                <UsersIcon className="h-4 w-4 mr-2" />
+                Manage Users
+              </AdminButton>
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/analytics')}
+              >
+                <ChartBarIcon className="h-4 w-4 mr-2" />
+                View Analytics
+              </AdminButton>
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/moderation')}
+              >
+                <ShieldCheckIcon className="h-4 w-4 mr-2" />
+                Content Moderation
+              </AdminButton>
             </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">User Management</h3>
-            <p className="text-admin-gray mb-4">Manage platform users and permissions</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/users')}
-            >
-              Manage Users
-            </AdminButton>
           </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-coral-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <ShieldCheckIcon className="h-6 w-6 text-admin-coral" />
+
+          <AdminCard className="p-6">
+            <h3 className="text-lg font-semibold text-admin-charcoal mb-4">System Monitoring</h3>
+            <div className="space-y-3">
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/monitoring')}
+              >
+                <ServerIcon className="h-4 w-4 mr-2" />
+                System Monitoring
+              </AdminButton>
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/subscriptions')}
+              >
+                <CreditCardIcon className="h-4 w-4 mr-2" />
+                Subscription Management
+              </AdminButton>
+              <AdminButton 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/system-configuration')}
+              >
+                <Cog6ToothIcon className="h-4 w-4 mr-2" />
+                System Configuration
+              </AdminButton>
             </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Content Moderation</h3>
-            <p className="text-admin-gray mb-4">Review and moderate platform content</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/moderation')}
-            >
-              Moderate Content
-            </AdminButton>
-          </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-sand-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <CogIcon className="h-6 w-6 text-admin-sand" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Platform Settings</h3>
-            <p className="text-admin-gray mb-4">Configure platform settings</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/settings')}
-            >
-              Open Settings
-            </AdminButton>
           </AdminCard>
         </div>
-
-        {/* Phase 3 Features */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-teal-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <CreditCardIcon className="h-6 w-6 text-admin-teal" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Subscription Management</h3>
-            <p className="text-admin-gray mb-4">Manage subscription plans and billing</p>
-            <AdminButton 
-              variant="secondary" 
-              className="w-full"
-              onClick={() => navigate('/admin/subscriptions')}
-            >
-              Manage Subscriptions
-            </AdminButton>
-          </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-mint-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <ServerIcon className="h-6 w-6 text-admin-mint" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">System Monitoring</h3>
-            <p className="text-admin-gray mb-4">Monitor system health and performance</p>
-            <AdminButton 
-              variant="secondary" 
-              className="w-full"
-              onClick={() => navigate('/admin/monitoring')}
-            >
-              System Health
-            </AdminButton>
-          </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-coral-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <WrenchScrewdriverIcon className="h-6 w-6 text-admin-coral" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">System Configuration</h3>
-            <p className="text-admin-gray mb-4">Manage platform settings and integrations</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/system-configuration')}
-            >
-              System Config
-            </AdminButton>
-          </AdminCard>
-        </div>
-
-        {/* Email Notification System */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-sand-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <EnvelopeIcon className="h-6 w-6 text-admin-sand" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Email Notifications</h3>
-            <p className="text-admin-gray mb-4">Manage email templates and notifications</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/email-notifications')}
-            >
-              Manage Emails
-            </AdminButton>
-          </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-teal-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <BellIcon className="h-6 w-6 text-admin-teal" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Notification Preferences</h3>
-            <p className="text-admin-gray mb-4">Configure your notification settings</p>
-            <AdminButton 
-              variant="secondary" 
-              className="w-full"
-              onClick={() => navigate('/admin/notification-preferences')}
-            >
-              My Preferences
-            </AdminButton>
-          </AdminCard>
-        </div>
-
-        {/* Subscription Management */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-mint-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <CreditCardIcon className="h-6 w-6 text-admin-mint" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Subscription Management</h3>
-            <p className="text-admin-gray mb-4">Manage plans, billing, and feature flags</p>
-            <AdminButton 
-              variant="primary" 
-              className="w-full"
-              onClick={() => navigate('/admin/subscription-management')}
-            >
-              Manage Subscriptions
-            </AdminButton>
-          </AdminCard>
-          
-          <AdminCard className="p-6 text-center" hoverEffect>
-            <div className="w-12 h-12 bg-admin-coral-light rounded-lg flex items-center justify-center mx-auto mb-4">
-              <RocketLaunchIcon className="h-6 w-6 text-admin-coral" />
-            </div>
-            <h3 className="text-lg font-semibold text-admin-charcoal mb-2">Feature Flags</h3>
-            <p className="text-admin-gray mb-4">Control feature rollouts and access</p>
-            <AdminButton 
-              variant="secondary" 
-              className="w-full"
-              onClick={() => navigate('/admin/subscription-management?tab=feature-flags')}
-            >
-              Manage Features
-            </AdminButton>
-          </AdminCard>
-        </div>
-
-        {/* Users Table */}
-        <AdminCard className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-admin-charcoal">Recent Users</h2>
-            <AdminButton variant="primary">Export Data</AdminButton>
-          </div>
-          
-          <AdminTable>
-            <AdminTableHeader>
-              <AdminTableRow>
-                <AdminTableHeaderCell>Name</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Email</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Role</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Last Active</AdminTableHeaderCell>
-                <AdminTableHeaderCell>Actions</AdminTableHeaderCell>
-              </AdminTableRow>
-            </AdminTableHeader>
-            <AdminTableBody>
-              <AdminTableRow>
-                <AdminTableCell>John Doe</AdminTableCell>
-                <AdminTableCell>john.doe@example.com</AdminTableCell>
-                <AdminTableCell>Foundation</AdminTableCell>
-                <AdminTableCell>
-                  <AdminBadge variant="low">Active</AdminBadge>
-                </AdminTableCell>
-                <AdminTableCell>2 hours ago</AdminTableCell>
-                <AdminTableCell>
-                  <div className="flex gap-2">
-                    <AdminButton variant="outline" size="sm">Edit</AdminButton>
-                    <AdminButton variant="danger" size="sm">Suspend</AdminButton>
-                  </div>
-                </AdminTableCell>
-              </AdminTableRow>
-              <AdminTableRow>
-                <AdminTableCell>Jane Smith</AdminTableCell>
-                <AdminTableCell>jane.smith@example.com</AdminTableCell>
-                <AdminTableCell>Educator</AdminTableCell>
-                <AdminTableCell>
-                  <AdminBadge variant="medium">Pending</AdminBadge>
-                </AdminTableCell>
-                <AdminTableCell>1 day ago</AdminTableCell>
-                <AdminTableCell>
-                  <div className="flex gap-2">
-                    <AdminButton variant="outline" size="sm">Edit</AdminButton>
-                    <AdminButton variant="primary" size="sm">Approve</AdminButton>
-                  </div>
-                </AdminTableCell>
-              </AdminTableRow>
-              <AdminTableRow>
-                <AdminTableCell>Bob Johnson</AdminTableCell>
-                <AdminTableCell>bob.johnson@example.com</AdminTableCell>
-                <AdminTableCell>Product Supplier</AdminTableCell>
-                <AdminTableCell>
-                  <AdminBadge variant="critical">Suspended</AdminBadge>
-                </AdminTableCell>
-                <AdminTableCell>1 week ago</AdminTableCell>
-                <AdminTableCell>
-                  <div className="flex gap-2">
-                    <AdminButton variant="outline" size="sm">Edit</AdminButton>
-                    <AdminButton variant="primary" size="sm">Reactivate</AdminButton>
-                  </div>
-                </AdminTableCell>
-              </AdminTableRow>
-            </AdminTableBody>
-          </AdminTable>
-        </AdminCard>
-      </main>
+      </div>
     </div>
   );
 }

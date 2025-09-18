@@ -1,430 +1,172 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { Card, Button, Input, Badge } from '@repo/ui';
-
-interface ProfileData {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  role: string;
-  workExperience?: string;
-  education?: string;
-  certifications?: string[];
-  skills?: string[];
-  availability?: string;
-  cvUrl?: string;
-  organization?: {
-    id: string;
-    name: string;
-    type: string;
-    contactPerson?: string;
-    phoneNumber?: string;
-    canton?: string;
-    languages?: string[];
-    capacity?: number;
-    pedagogy?: string[];
-    productCategory?: string;
-    serviceType?: string;
-    minimumOrderQuantity?: number;
-    directOrderLink?: string;
-    catalogUrl?: string;
-    serviceCategories?: string[];
-    deliveryType?: string;
-    bookingLink?: string;
-  };
-}
+import { UserIcon, CameraIcon, PencilIcon, TrashIcon, ShieldCheckIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { useUserProfile, UserRole, ProfileUpdateData } from '../services/userProfileService';
 
 export default function ProfilePage() {
   const { t } = useTranslation();
-  const { getToken } = useAuth();
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useUser();
+  const { 
+    profile, 
+    loading, 
+    error, 
+    updateProfile, 
+    uploadAvatar, 
+    deleteAccount, 
+    updateRole 
+  } = useUserProfile();
+  
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState<any>({});
-  const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [formData, setFormData] = useState<ProfileUpdateData>({});
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
-    try {
-      setIsLoading(true);
-      const token = await getToken();
-      
-      const response = await fetch('/api/profiles/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+    if (profile) {
+      setFormData({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phone: profile.phone,
+        organization: profile.organization,
+        bio: profile.bio,
+        location: profile.location,
+        website: profile.website,
+        socialLinks: profile.socialLinks,
+        preferences: profile.preferences,
       });
+    }
+  }, [profile]);
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch profile');
+  const handleInputChange = (field: keyof ProfileUpdateData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSocialLinkChange = (platform: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      socialLinks: {
+        ...prev.socialLinks,
+        [platform]: value
       }
+    }));
+  };
 
-      const result = await response.json();
-      setProfileData(result.data);
-      setFormData(result.data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+  const handlePreferenceChange = (preference: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        [preference]: value
+      }
+    }));
+  };
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleSave = async () => {
+    if (!profile) return;
+
     try {
       setIsSaving(true);
-      setError(null);
       
-      const token = await getToken();
-      
-      const response = await fetch('/api/profiles/me', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
+      // Upload avatar if changed
+      if (avatarFile) {
+        await uploadAvatar(avatarFile);
       }
-
-      const result = await response.json();
-      setProfileData(result.data);
-      alert('Profile updated successfully!');
+      
+      // Update profile data
+      await updateProfile(formData);
+      
+      setIsEditing(false);
+      setAvatarFile(null);
+      setAvatarPreview(null);
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error saving profile:', err);
     } finally {
       setIsSaving(false);
     }
   };
 
-  const updateFormData = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const handleCancel = () => {
+    if (profile) {
+      setFormData({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phone: profile.phone,
+        organization: profile.organization,
+        bio: profile.bio,
+        location: profile.location,
+        website: profile.website,
+        socialLinks: profile.socialLinks,
+        preferences: profile.preferences,
+      });
+    }
+    setIsEditing(false);
+    setAvatarFile(null);
+    setAvatarPreview(null);
   };
 
-  const renderRoleSpecificFields = () => {
-    if (!profileData) return null;
-
-    switch (profileData.role) {
-      case 'EDUCATOR':
-        return (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Work Experience
-              </label>
-              <textarea
-                className="input-field w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150"
-                rows={4}
-                value={formData.workExperience || ''}
-                onChange={(e) => updateFormData('workExperience', e.target.value)}
-                placeholder="Describe your work experience..."
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Education
-              </label>
-              <textarea
-                className="input-field w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150"
-                rows={3}
-                value={formData.education || ''}
-                onChange={(e) => updateFormData('education', e.target.value)}
-                placeholder="Your educational background..."
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Skills
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                value={formData.skills?.join(', ') || ''}
-                onChange={(e) => updateFormData('skills', e.target.value.split(', ').filter(s => s.trim()))}
-                placeholder="Enter skills separated by commas"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Availability
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                value={formData.availability || ''}
-                onChange={(e) => updateFormData('availability', e.target.value)}
-                placeholder="e.g., Monday-Friday, 8AM-5PM"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                CV URL
-              </label>
-              <input
-                type="url"
-                className="input-field"
-                value={formData.cvUrl || ''}
-                onChange={(e) => updateFormData('cvUrl', e.target.value)}
-                placeholder="https://example.com/cv.pdf"
-              />
-            </div>
-          </div>
-        );
-
-      case 'FOUNDATION':
-      case 'PRODUCT_SUPPLIER':
-      case 'SERVICE_PROVIDER':
-        return (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Organization Name
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                value={formData.organizationName || profileData.organization?.name || ''}
-                onChange={(e) => updateFormData('organizationName', e.target.value)}
-                placeholder="Your organization name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Contact Person
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                value={formData.contactPerson || profileData.organization?.contactPerson || ''}
-                onChange={(e) => updateFormData('contactPerson', e.target.value)}
-                placeholder="Contact person name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Canton
-              </label>
-              <select
-                className="input-field"
-                value={formData.canton || profileData.organization?.canton || ''}
-                onChange={(e) => updateFormData('canton', e.target.value)}
-              >
-                <option value="">Select Canton</option>
-                <option value="ZH">Zurich</option>
-                <option value="BE">Bern</option>
-                <option value="LU">Lucerne</option>
-                <option value="UR">Uri</option>
-                <option value="SZ">Schwyz</option>
-                <option value="OW">Obwalden</option>
-                <option value="NW">Nidwalden</option>
-                <option value="GL">Glarus</option>
-                <option value="ZG">Zug</option>
-                <option value="FR">Fribourg</option>
-                <option value="SO">Solothurn</option>
-                <option value="BS">Basel-Stadt</option>
-                <option value="BL">Basel-Landschaft</option>
-                <option value="SH">Schaffhausen</option>
-                <option value="AR">Appenzell Ausserrhoden</option>
-                <option value="AI">Appenzell Innerrhoden</option>
-                <option value="SG">St. Gallen</option>
-                <option value="GR">Graubünden</option>
-                <option value="AG">Aargau</option>
-                <option value="TG">Thurgau</option>
-                <option value="TI">Ticino</option>
-                <option value="VD">Vaud</option>
-                <option value="VS">Valais</option>
-                <option value="NE">Neuchâtel</option>
-                <option value="GE">Geneva</option>
-                <option value="JU">Jura</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                Languages
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                value={formData.languages?.join(', ') || profileData.organization?.languages?.join(', ') || ''}
-                onChange={(e) => updateFormData('languages', e.target.value.split(', ').filter(s => s.trim()))}
-                placeholder="German, French, Italian, English"
-              />
-            </div>
-
-            {profileData.role === 'FOUNDATION' && (
-              <>
-                <div>
-                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                    Capacity (Number of Children)
-                  </label>
-                  <input
-                    type="number"
-                    className="input-field"
-                    value={formData.capacity || profileData.organization?.capacity || ''}
-                    onChange={(e) => updateFormData('capacity', parseInt(e.target.value) || null)}
-                    placeholder="50"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
-                    Pedagogy Approaches
-                  </label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    value={formData.pedagogy?.join(', ') || profileData.organization?.pedagogy?.join(', ') || ''}
-                    onChange={(e) => updateFormData('pedagogy', e.target.value.split(', ').filter(s => s.trim()))}
-                    placeholder="Montessori, Reggio Emilia, Forest School"
-                  />
-                </div>
-              </>
-            )}
-
-            {profileData.role === 'PRODUCT_SUPPLIER' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Product Category
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.productCategory || profileData.organization?.productCategory || ''}
-                    onChange={(e) => updateFormData('productCategory', e.target.value)}
-                    placeholder="Educational Toys, Furniture, Books"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Minimum Order Quantity
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.minimumOrderQuantity || profileData.organization?.minimumOrderQuantity || ''}
-                    onChange={(e) => updateFormData('minimumOrderQuantity', parseInt(e.target.value) || null)}
-                    placeholder="10"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Direct Order Link
-                  </label>
-                  <input
-                    type="url"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.directOrderLink || profileData.organization?.directOrderLink || ''}
-                    onChange={(e) => updateFormData('directOrderLink', e.target.value)}
-                    placeholder="https://example.com/order"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Catalog URL
-                  </label>
-                  <input
-                    type="url"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.catalogUrl || profileData.organization?.catalogUrl || ''}
-                    onChange={(e) => updateFormData('catalogUrl', e.target.value)}
-                    placeholder="https://example.com/catalog"
-                  />
-                </div>
-              </>
-            )}
-
-            {profileData.role === 'SERVICE_PROVIDER' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Service Type
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.serviceType || profileData.organization?.serviceType || ''}
-                    onChange={(e) => updateFormData('serviceType', e.target.value)}
-                    placeholder="Cleaning, Maintenance, Catering"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Service Categories
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.serviceCategories?.join(', ') || profileData.organization?.serviceCategories?.join(', ') || ''}
-                    onChange={(e) => updateFormData('serviceCategories', e.target.value.split(', ').filter(s => s.trim()))}
-                    placeholder="Cleaning, Maintenance, Security"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Delivery Type
-                  </label>
-                  <select
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.deliveryType || profileData.organization?.deliveryType || ''}
-                    onChange={(e) => updateFormData('deliveryType', e.target.value)}
-                  >
-                    <option value="">Select Delivery Type</option>
-                    <option value="ON_SITE">On-site</option>
-                    <option value="REMOTE">Remote</option>
-                    <option value="HYBRID">Hybrid</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-muted mb-1">
-                    Booking Link
-                  </label>
-                  <input
-                    type="url"
-                    className="w-full rounded-md border border-border bg-surface-1 px-3 py-2 text-text-default placeholder:text-text-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    value={formData.bookingLink || profileData.organization?.bookingLink || ''}
-                    onChange={(e) => updateFormData('bookingLink', e.target.value)}
-                    placeholder="https://example.com/booking"
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        );
-
-      default:
-        return null;
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+    } catch (err: any) {
+      console.error('Error deleting account:', err);
     }
   };
 
-  if (isLoading) {
+  const getRoleColor = (role: UserRole) => {
+    switch (role) {
+      case UserRole.FOUNDATION: return 'mint';
+      case UserRole.EDUCATOR: return 'teal';
+      case UserRole.PRODUCT_SUPPLIER: return 'coral';
+      case UserRole.SERVICE_PROVIDER: return 'sand';
+      case UserRole.PARENT: return 'mint';
+      case UserRole.ADMIN: return 'coral';
+      case UserRole.SUPER_ADMIN: return 'coral';
+      default: return 'mint';
+    }
+  };
+
+  const getRoleDisplayName = (role: UserRole) => {
+    switch (role) {
+      case UserRole.FOUNDATION: return 'Foundation (Daycare)';
+      case UserRole.EDUCATOR: return 'Educator';
+      case UserRole.PRODUCT_SUPPLIER: return 'Product Supplier';
+      case UserRole.SERVICE_PROVIDER: return 'Service Provider';
+      case UserRole.PARENT: return 'Parent';
+      case UserRole.ADMIN: return 'Administrator';
+      case UserRole.SUPER_ADMIN: return 'Super Administrator';
+      default: return role;
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen frontend-page flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-swiss-mint mx-auto"></div>
-          <p className="mt-4 text-swiss-gray">Loading profile...</p>
+      <div className="min-h-screen frontend-page bg-swiss-light py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
+              <p className="text-swiss-gray">Loading profile...</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -432,100 +174,360 @@ export default function ProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen frontend-page flex items-center justify-center">
-        <Card className="p-6 max-w-md">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">Error</h2>
+      <div className="min-h-screen frontend-page bg-swiss-light py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="p-6">
+            <div className="flex items-center text-red-600 mb-4">
+              <ExclamationTriangleIcon className="h-6 w-6 mr-3" />
+              <h2 className="text-xl font-semibold">Error Loading Profile</h2>
+            </div>
             <p className="text-swiss-gray mb-4">{error}</p>
-            <Button variant="primary" onClick={fetchProfile}>
-              Try Again
+            <Button variant="primary" onClick={() => window.location.reload()}>
+              Retry
             </Button>
-          </div>
-        </Card>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen frontend-page bg-swiss-light py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="p-6">
+            <div className="text-center">
+              <UserIcon className="h-12 w-12 text-swiss-gray mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">No Profile Found</h2>
+              <p className="text-swiss-gray">Unable to load your profile information.</p>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen frontend-page">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen frontend-page bg-swiss-light py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-swiss-charcoal">Profile Management</h1>
-          <p className="text-swiss-gray mt-2">Manage your personal and professional information</p>
+          <div className="flex items-center mb-4">
+            <div className="h-1 w-16 bg-swiss-mint rounded-full mr-4"></div>
+            <h1 className="text-3xl font-bold text-swiss-charcoal font-swiss">
+              Profile Settings
+            </h1>
+          </div>
+          <p className="text-swiss-gray font-medium">
+            Manage your account information and preferences
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Overview */}
           <div className="lg:col-span-1">
-            <Card variant="accent" className="p-6">
+            <Card className="p-6">
               <div className="text-center">
-                <div className="w-20 h-20 bg-swiss-mint rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl text-white">
-                    {profileData?.firstName?.[0]}{profileData?.lastName?.[0]}
-                  </span>
+                {/* Avatar */}
+                <div className="relative inline-block mb-4">
+                  <div className="h-24 w-24 rounded-full overflow-hidden bg-swiss-light border-4 border-swiss-mint">
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt="Avatar preview" className="h-full w-full object-cover" />
+                    ) : profile.avatar ? (
+                      <img src={profile.avatar} alt="Profile avatar" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center">
+                        <UserIcon className="h-12 w-12 text-swiss-mint" />
+                      </div>
+                    )}
+                  </div>
+                  {isEditing && (
+                    <label className="absolute bottom-0 right-0 bg-swiss-mint text-white rounded-full p-2 cursor-pointer hover:bg-swiss-mint-dark transition-colors">
+                      <CameraIcon className="h-4 w-4" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
                 </div>
-                <h2 className="text-xl font-semibold text-swiss-charcoal">
-                  {profileData?.firstName} {profileData?.lastName}
+
+                <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">
+                  {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-swiss-gray">{profileData?.email}</p>
-                <Badge variant="mint" className="mt-2">
-                  {profileData?.role}
+                <p className="text-swiss-gray mb-3">{profile.email}</p>
+                
+                <Badge variant={getRoleColor(profile.role) as any} className="mb-4">
+                  {getRoleDisplayName(profile.role)}
                 </Badge>
+
+                {profile.bio && (
+                  <p className="text-sm text-swiss-gray mb-4">{profile.bio}</p>
+                )}
+
+                <div className="flex justify-center space-x-2">
+                  {!isEditing ? (
+                    <Button
+                      variant="primary"
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center"
+                    >
+                      <PencilIcon className="h-4 w-4 mr-2" />
+                      Edit Profile
+                    </Button>
+                  ) : (
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="primary"
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="flex items-center"
+                      >
+                        {isSaving ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        ) : (
+                          <PencilIcon className="h-4 w-4 mr-2" />
+                        )}
+                        {isSaving ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleCancel}
+                        className="flex items-center"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+
+            {/* Account Actions */}
+            <Card className="p-6 mt-6">
+              <h3 className="text-lg font-semibold text-swiss-charcoal mb-4">Account Actions</h3>
+              <div className="space-y-3">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => {/* TODO: Implement change password */}}
+                >
+                  <ShieldCheckIcon className="h-4 w-4 mr-2" />
+                  Change Password
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <TrashIcon className="h-4 w-4 mr-2" />
+                  Delete Account
+                </Button>
               </div>
             </Card>
           </div>
 
-          {/* Profile Form */}
+          {/* Profile Details */}
           <div className="lg:col-span-2">
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-swiss-charcoal mb-6">Profile Information</h3>
               
-              <div className="space-y-6">
-                {/* Basic Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                    First Name
+                  </label>
                   <Input
-                    label="First Name"
                     value={formData.firstName || ''}
-                    onChange={(e) => updateFormData('firstName', e.target.value)}
-                  />
-                  <Input
-                    label="Last Name"
-                    value={formData.lastName || ''}
-                    onChange={(e) => updateFormData('lastName', e.target.value)}
+                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Enter your first name"
                   />
                 </div>
 
-                <Input
-                  label="Phone Number"
-                  type="tel"
-                  value={formData.phoneNumber || ''}
-                  onChange={(e) => updateFormData('phoneNumber', e.target.value)}
+                <div>
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                    Last Name
+                  </label>
+                  <Input
+                    value={formData.lastName || ''}
+                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Enter your last name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                    Phone Number
+                  </label>
+                  <Input
+                    value={formData.phone || ''}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                    Organization
+                  </label>
+                  <Input
+                    value={formData.organization || ''}
+                    onChange={(e) => handleInputChange('organization', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Enter your organization"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                    Location
+                  </label>
+                  <Input
+                    value={formData.location || ''}
+                    onChange={(e) => handleInputChange('location', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Enter your location"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                    Website
+                  </label>
+                  <Input
+                    value={formData.website || ''}
+                    onChange={(e) => handleInputChange('website', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Enter your website URL"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                  Bio
+                </label>
+                <textarea
+                  value={formData.bio || ''}
+                  onChange={(e) => handleInputChange('bio', e.target.value)}
+                  disabled={!isEditing}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-input bg-white text-swiss-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint disabled:bg-gray-50 disabled:text-gray-500"
+                  placeholder="Tell us about yourself..."
                 />
+              </div>
 
-                {/* Role-specific fields */}
-                {renderRoleSpecificFields()}
-
-                {/* Error message */}
-                {error && (
-                  <div className="rounded-md bg-red-50 p-4">
-                    <div className="text-sm text-red-700">{error}</div>
+              {/* Social Links */}
+              <div className="mt-6">
+                <h4 className="text-md font-semibold text-swiss-charcoal mb-4">Social Links</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                      LinkedIn
+                    </label>
+                    <Input
+                      value={formData.socialLinks?.linkedin || ''}
+                      onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
+                      disabled={!isEditing}
+                      placeholder="LinkedIn profile URL"
+                    />
                   </div>
-                )}
+                  <div>
+                    <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                      Twitter
+                    </label>
+                    <Input
+                      value={formData.socialLinks?.twitter || ''}
+                      onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
+                      disabled={!isEditing}
+                      placeholder="Twitter profile URL"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-swiss-charcoal mb-2">
+                      Facebook
+                    </label>
+                    <Input
+                      value={formData.socialLinks?.facebook || ''}
+                      onChange={(e) => handleSocialLinkChange('facebook', e.target.value)}
+                      disabled={!isEditing}
+                      placeholder="Facebook profile URL"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                {/* Save button */}
-                <div className="flex justify-end">
-                  <Button
-                    variant="primary"
-                    onClick={handleSave}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? 'Saving...' : 'Save Changes'}
-                  </Button>
+              {/* Preferences */}
+              <div className="mt-6">
+                <h4 className="text-md font-semibold text-swiss-charcoal mb-4">Preferences</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-sm font-medium text-swiss-charcoal">Email Notifications</label>
+                      <p className="text-xs text-swiss-gray">Receive email updates about your account</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={formData.preferences?.emailUpdates || false}
+                      onChange={(e) => handlePreferenceChange('emailUpdates', e.target.checked)}
+                      disabled={!isEditing}
+                      className="h-4 w-4 text-swiss-mint focus:ring-swiss-mint border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-sm font-medium text-swiss-charcoal">SMS Notifications</label>
+                      <p className="text-xs text-swiss-gray">Receive SMS updates about important events</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={formData.preferences?.smsUpdates || false}
+                      onChange={(e) => handlePreferenceChange('smsUpdates', e.target.checked)}
+                      disabled={!isEditing}
+                      className="h-4 w-4 text-swiss-mint focus:ring-swiss-mint border-gray-300 rounded"
+                    />
+                  </div>
                 </div>
               </div>
             </Card>
           </div>
         </div>
+
+        {/* Delete Account Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="p-6 max-w-md mx-4">
+              <div className="text-center">
+                <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-swiss-charcoal mb-2">Delete Account</h3>
+                <p className="text-swiss-gray mb-6">
+                  Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.
+                </p>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={handleDeleteAccount}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    Delete Account
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
