@@ -26,19 +26,19 @@ interface SidebarProps {
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: BarChart3 },
-  { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Organizations', href: '/admin/organizations', icon: Building2 },
-  { name: 'Products', href: '/admin/products', icon: Package },
-  { name: 'Services', href: '/admin/services', icon: Wrench },
-  { name: 'Job Listings', href: '/admin/job-listings', icon: Briefcase },
-  { name: 'Candidates', href: '/admin/candidates', icon: UserCheck },
-  { name: 'Parent Leads', href: '/admin/parent-leads', icon: Heart },
-  { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-  { name: 'Content', href: '/admin/content', icon: FileText },
-  { name: 'Messaging', href: '/admin/messaging', icon: MessageSquare },
-  { name: 'System Monitor', href: '/admin/system', icon: Monitor },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+  { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+  { name: 'Users', href: '/users', icon: Users },
+  { name: 'Organizations', href: '/organizations', icon: Building2 },
+  { name: 'Products', href: '/products', icon: Package },
+  { name: 'Services', href: '/services', icon: Wrench },
+  { name: 'Job Listings', href: '/job-listings', icon: Briefcase },
+  { name: 'Candidates', href: '/candidates', icon: UserCheck },
+  { name: 'Parent Leads', href: '/parent-leads', icon: Heart },
+  { name: 'Orders', href: '/orders', icon: ShoppingCart },
+  { name: 'Content', href: '/content', icon: FileText },
+  { name: 'Messaging', href: '/messaging', icon: MessageSquare },
+  { name: 'System Monitor', href: '/system', icon: Monitor },
+  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {

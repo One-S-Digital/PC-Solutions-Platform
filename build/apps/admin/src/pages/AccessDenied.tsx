@@ -35,7 +35,7 @@ const AccessDeniedPage: React.FC = () => {
 
             <div className="space-y-3">
               <button
-                onClick={() => navigate('/admin/dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
               >
                 <Home className="h-4 w-4 mr-2" />

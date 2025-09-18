@@ -33,13 +33,13 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
   }
 
   if (!isSignedIn) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // Check if user has admin role
   const userRole = user?.publicMetadata?.role as string;
   if (userRole !== UserRole.SUPER_ADMIN && userRole !== UserRole.ADMIN) {
-    return <Navigate to="/admin/access-denied" replace />;
+    return <Navigate to="/access-denied" replace />;
   }
 
   return <>{children}</>;
