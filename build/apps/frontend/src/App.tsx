@@ -15,6 +15,12 @@ import {
   ProfileCompleteRoute
 } from './components/auth/ProtectedRoute';
 import { RootRedirect } from './components/auth/RootRedirect';
+import { Card, Button } from '@repo/ui';
+import { 
+  CogIcon, 
+  UserGroupIcon, 
+  ChartBarIcon 
+} from '@heroicons/react/24/outline';
 import LoginPage from './pages/LoginPage';
 import EnhancedSignupPage from './pages/EnhancedSignupPage';
 import DashboardPage from './pages/DashboardPage';
@@ -35,13 +41,6 @@ import ParentLeadFormPage from './pages/ParentLeadFormPage';
 import RecruitmentPage from './pages/RecruitmentPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
-import ContentManagementDashboardPage from './pages/admin/ContentManagementDashboardPage';
-import SLATrackingPage from './pages/admin/SLATrackingPage';
-import PromotionManagementPage from './pages/admin/PromotionManagementPage';
-import ProfileStrengthPage from './pages/admin/ProfileStrengthPage';
-import EnhancedAnalyticsPage from './pages/admin/EnhancedAnalyticsPage';
-import AdvancedReportingPage from './pages/admin/AdvancedReportingPage';
-import PerformanceTestingPage from './pages/admin/PerformanceTestingPage';
 
 function App() {
   return (
@@ -264,94 +263,93 @@ function App() {
             </PermissionRoute>
           } />
           
-          {/* Admin Routes */}
-          <Route path="admin/content-dashboard" element={
+          {/* Admin Access Routes - Full Platform Access */}
+          <Route path="admin/*" element={
             <AdminRoute>
-              <ContentManagementDashboardPage />
-            </AdminRoute>
-          } />
-          <Route path="admin/sla-tracking" element={
-            <AdminRoute>
-              <SLATrackingPage />
-            </AdminRoute>
-          } />
-          <Route path="admin/promotion-management" element={
-            <AdminRoute>
-              <PromotionManagementPage />
-            </AdminRoute>
-          } />
-          <Route path="admin/profile-strength" element={
-            <AdminRoute>
-              <ProfileStrengthPage />
-            </AdminRoute>
-          } />
-          <Route path="admin/enhanced-analytics" element={
-            <AdminRoute>
-              <EnhancedAnalyticsPage />
-            </AdminRoute>
-          } />
-          <Route path="admin/advanced-reporting" element={
-            <AdminRoute>
-              <AdvancedReportingPage />
-            </AdminRoute>
-          } />
-          <Route path="admin/performance-testing" element={
-            <AdminRoute>
-              <PerformanceTestingPage />
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <Card className="max-w-md w-full mx-4 p-8 text-center">
+                  <div className="w-16 h-16 bg-swiss-mint rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CogIcon className="h-8 w-8 text-white" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+                  <p className="text-gray-600 mb-6">
+                    Access the full admin dashboard for comprehensive platform management.
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={() => window.location.href = '/admin'}
+                  >
+                    Go to Admin Dashboard
+                  </Button>
+                </Card>
+              </div>
             </AdminRoute>
           } />
           
-          {/* User Management Routes */}
+          {/* Admin-Only Features - Full Access */}
           <Route path="users" element={
             <AdminRoute>
-              <div>User Management Page</div>
-            </AdminRoute>
-          } />
-          <Route path="users/all" element={
-            <AdminRoute>
-              <div>All Users Page</div>
-            </AdminRoute>
-          } />
-          <Route path="users/admins" element={
-            <SuperAdminRoute>
-              <div>Admin Users Page</div>
-            </SuperAdminRoute>
-          } />
-          <Route path="users/foundations" element={
-            <AdminRoute>
-              <div>Foundation Users Page</div>
-            </AdminRoute>
-          } />
-          <Route path="users/suppliers" element={
-            <AdminRoute>
-              <div>Supplier Users Page</div>
-            </AdminRoute>
-          } />
-          <Route path="users/service-providers" element={
-            <AdminRoute>
-              <div>Service Provider Users Page</div>
-            </AdminRoute>
-          } />
-          <Route path="users/parents" element={
-            <AdminRoute>
-              <div>Parent Users Page</div>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <Card className="max-w-md w-full mx-4 p-8 text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <UserGroupIcon className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">User Management</h1>
+                  <p className="text-gray-600 mb-6">
+                    Access comprehensive user management in the admin dashboard.
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={() => window.location.href = '/admin/users'}
+                  >
+                    Manage Users
+                  </Button>
+                </Card>
+              </div>
             </AdminRoute>
           } />
           
-          {/* System Routes */}
-          <Route path="admin/system-monitoring" element={
+          <Route path="analytics" element={
             <AdminRoute>
-              <div>System Monitoring Page</div>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <Card className="max-w-md w-full mx-4 p-8 text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ChartBarIcon className="h-8 w-8 text-green-600" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+                  <p className="text-gray-600 mb-6">
+                    Access detailed analytics and reporting in the admin dashboard.
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={() => window.location.href = '/admin/analytics'}
+                  >
+                    View Analytics
+                  </Button>
+                </Card>
+              </div>
             </AdminRoute>
           } />
-          <Route path="partners" element={
+          
+          <Route path="system" element={
             <AdminRoute>
-              <div>Partners Page</div>
-            </AdminRoute>
-          } />
-          <Route path="admin/platform-settings" element={
-            <AdminRoute>
-              <div>Platform Settings Page</div>
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <Card className="max-w-md w-full mx-4 p-8 text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CogIcon className="h-8 w-8 text-purple-600" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">System Management</h1>
+                  <p className="text-gray-600 mb-6">
+                    Access system monitoring and configuration in the admin dashboard.
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={() => window.location.href = '/admin/system'}
+                  >
+                    System Settings
+                  </Button>
+                </Card>
+              </div>
             </AdminRoute>
           } />
           
