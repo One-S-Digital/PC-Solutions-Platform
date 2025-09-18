@@ -66,3 +66,19 @@ API
 Notes
 - Auth flows depend on Clerk backend/org setup; current tests focused on UI rendering and guarded-route behavior.
 - Tunnels are temporary; refresh as needed.
+Frontend — Signup flow result (CAPTCHA)
+- Attempted role: Foundation (Daycare)
+- Result: Blocked by CAPTCHA not loading; Clerk falls back to invisible CAPTCHA; Cloudflare Turnstile error 600010; Clerk sign_ups returned 400.
+- Evidence: ![/home/ubuntu/screenshots/user_145743.png](/home/ubuntu/screenshots/user_145743.png)
+- Console excerpt: Turnstile 600010; Smart CAPTCHA widget container not found; using development Clerk keys (expected for local).
+Admin — Signup flow result (CAPTCHA)
+- Role: Super Admin
+- Result: Blocked by CAPTCHA not loading; Cloudflare Turnstile error; form shows banner and stays on page.
+- Evidence: ![/home/ubuntu/screenshots/user_150130.png](/home/ubuntu/screenshots/user_150130.png)
+- Behavior: Protected routes should remain inaccessible without auth; will verify redirect.
+Frontend — Protected routes behavior (unauthenticated)
+- /dashboard: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150247.png](/home/ubuntu/screenshots/user_150247.png)
+- /profile: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150327.png](/home/ubuntu/screenshots/user_150327.png)
+- /login renders successfully (non-blocking warnings only).
