@@ -12,7 +12,7 @@ export { FeatureLock } from './components/FeatureLock';
 export { FeatureAccessBadge } from './components/FeatureAccessBadge';
 export { UpgradeCTA } from './components/UpgradeCTA';
 export { AntivirusUploadStatus, useAntivirusUpload } from './components/AntivirusUploadStatus';
-export { Button as SwissButton, Card as SwissCard, Input, Badge, Status } from './components/SwissComponents';
+export { Button as SwissButton, Card as SwissCard, Input, Select, Textarea, Badge, Status } from './components/SwissComponents';
 
 // Navigation Components
 export { SwissNavigation, SwissSidebar } from './components/SwissNavigation';

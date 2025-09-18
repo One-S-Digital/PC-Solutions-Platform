@@ -100,12 +100,16 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   help?: string;
+  leftIcon?: React.ElementType;
+  rightIcon?: React.ElementType;
 }
 
 export function Input({ 
   label, 
   error, 
   help, 
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
   className = '', 
   ...props 
 }: InputProps) {
@@ -116,7 +120,107 @@ export function Input({
           {label}
         </label>
       )}
-      <input
+      <div className="relative">
+        {LeftIcon && (
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <LeftIcon className="h-4 w-4 text-gray-400" />
+          </div>
+        )}
+        <input
+          className={clsx(
+            'w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150 ease-in-out',
+            LeftIcon && 'pl-10',
+            RightIcon && 'pr-10',
+            error && 'border-swiss-coral focus:ring-swiss-coral focus:border-swiss-coral',
+            className
+          )}
+          {...props}
+        />
+        {RightIcon && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <RightIcon className="h-4 w-4 text-gray-400" />
+          </div>
+        )}
+      </div>
+      {error && (
+        <p className="text-sm text-swiss-coral">{error}</p>
+      )}
+      {help && !error && (
+        <p className="text-sm text-gray-500">{help}</p>
+      )}
+    </div>
+  );
+}
+
+// Select Component
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string;
+  error?: string;
+  help?: string;
+  options: Array<{ value: string; label: string }>;
+}
+
+export function Select({
+  label,
+  error,
+  help,
+  options,
+  className = '',
+  ...props
+}: SelectProps) {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-swiss-charcoal">
+          {label}
+        </label>
+      )}
+      <select
+        className={clsx(
+          'w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150 ease-in-out',
+          error && 'border-swiss-coral focus:ring-swiss-coral focus:border-swiss-coral',
+          className
+        )}
+        {...props}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {error && (
+        <p className="text-sm text-swiss-coral">{error}</p>
+      )}
+      {help && !error && (
+        <p className="text-sm text-gray-500">{help}</p>
+      )}
+    </div>
+  );
+}
+
+// Textarea Component
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label?: string;
+  error?: string;
+  help?: string;
+}
+
+export function Textarea({
+  label,
+  error,
+  help,
+  className = '',
+  ...props
+}: TextareaProps) {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-swiss-charcoal">
+          {label}
+        </label>
+      )}
+      <textarea
         className={clsx(
           'w-full rounded-input border border-gray-300 bg-white px-3 py-2 text-swiss-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint transition-all duration-150 ease-in-out',
           error && 'border-swiss-coral focus:ring-swiss-coral focus:border-swiss-coral',
