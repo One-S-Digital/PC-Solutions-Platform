@@ -1,0 +1,71 @@
+services:
+  # API Service
+  - type: web
+    name: pc-solutions-api
+    env: node
+    plan: starter
+    buildCommand: cd build && cd apps/api && pnpm install --prod=false && pnpm build
+    startCommand: cd build && cd apps/api && pnpm start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pc-solutions-db
+          property: connectionString
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: R2_ENDPOINT
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: DEEPL_API_KEY
+        sync: false
+      - key: PROMETHEUS_SCRAPE_TOKEN
+        sync: false
+
+  # Frontend Service
+  - type: web
+    name: pc-solutions-frontend
+    env: node
+    plan: starter
+    buildCommand: cd build && cd apps/frontend && pnpm install && pnpm build
+    startCommand: cd build && cd apps/frontend && pnpm preview
+    envVars:
+      - key: VITE_NODE_ENV
+        value: production
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_API_URL
+        value: https://pc-solutions-api.onrender.com/api
+
+  # Admin Service
+  - type: web
+    name: pc-solutions-admin
+    env: node
+    plan: starter
+    buildCommand: cd build && cd apps/admin && pnpm install && pnpm build
+    startCommand: cd build && cd apps/admin && pnpm preview
+    envVars:
+      - key: VITE_NODE_ENV
+        value: production
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_API_URL
+        value: https://pc-solutions-api.onrender.com/api
+
+databases:
+  - name: pc-solutions-db
+    plan: starter
