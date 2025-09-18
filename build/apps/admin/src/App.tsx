@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AdminLayout } from './components/AdminLayout';
 import { AdminLoginPage, AdminSignupPage, AdminProtectedRoute } from './components/auth/AdminAuthComponents';
@@ -31,35 +31,37 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Routes>
-        <Route path="/login" element={<AdminLoginPage />} />
-        <Route path="/admin/signup" element={<AdminSignupPage />} />
-        <Route path="/admin/access-denied" element={<AccessDeniedPage />} />
-        <Route 
-          path="/admin" 
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout />
-            </AdminProtectedRoute>
-          }
-        >
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="organizations" element={<OrganizationsPage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="services" element={<ServicesPage />} />
-          <Route path="job-listings" element={<JobListingsPage />} />
-          <Route path="candidates" element={<CandidatesPage />} />
-          <Route path="parent-leads" element={<ParentLeadsPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="content" element={<ContentPage />} />
-          <Route path="messaging" element={<MessagingPage />} />
-        <Route path="system" element={<SystemMonitorPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="" element={<Navigate to="/login" replace />} />
-      </Route>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      </Routes>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<AdminLoginPage />} />
+          <Route path="/admin/signup" element={<AdminSignupPage />} />
+          <Route path="/admin/access-denied" element={<AccessDeniedPage />} />
+          <Route 
+            path="/admin" 
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout />
+              </AdminProtectedRoute>
+            }
+          >
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="organizations" element={<OrganizationsPage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="services" element={<ServicesPage />} />
+            <Route path="job-listings" element={<JobListingsPage />} />
+            <Route path="candidates" element={<CandidatesPage />} />
+            <Route path="parent-leads" element={<ParentLeadsPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="content" element={<ContentPage />} />
+            <Route path="messaging" element={<MessagingPage />} />
+          <Route path="system" element={<SystemMonitorPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="" element={<Navigate to="/login" replace />} />
+        </Route>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
