@@ -31,6 +31,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
@@ -56,9 +57,12 @@ function App() {
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="" element={<Navigate to="/dashboard" replace />} />
+
+          <Route index element={<Navigate to="/dashboard" replace />} />
         </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+
     </QueryClientProvider>
   );
 }
