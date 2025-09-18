@@ -51,3 +51,10 @@ Updated Public URLs (current)
 New Evidence
 - Frontend login screenshot: ![/home/ubuntu/screenshots/user_145235.png](/home/ubuntu/screenshots/user_145235.png)
 - API Swagger endpoints screenshot: ![/home/ubuntu/screenshots/user_145214.png](/home/ubuntu/screenshots/user_145214.png)
+Updated tunnels (later 2025-09-18)
+- Frontend: https://user:c6e8b82a8761db76d12aa9ce99ca60b8@repo-test-reports-tunnel-owg9x1hn.devinapps.com
+- Admin: https://user:67dcb80635fb525f07a4dad34e3afd92@repo-test-reports-tunnel-b5gqe1hi.devinapps.com
+- API: https://user:ec85d844a69dd978b67f2b3869cec6e0@repo-test-reports-tunnel-tw6wcfs0.devinapps.com
+Notes
+- Frontend/App.tsx adjusted to use <Outlet /> for nested protected routes; unauthenticated redirect behavior now observed consistently.
+- API dev run encountered MODULE_NOT_FOUND for @repo/typescript-config; Swagger not serving at /api/docs during this pass; left as-is per “minimal unblocks only”.

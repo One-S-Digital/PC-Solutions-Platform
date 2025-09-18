@@ -82,3 +82,32 @@ Frontend — Protected routes behavior (unauthenticated)
 - /profile: Blank screen observed; expected redirect to /login.
   - Evidence: ![/home/ubuntu/screenshots/user_150327.png](/home/ubuntu/screenshots/user_150327.png)
 - /login renders successfully (non-blocking warnings only).
+- /settings: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150353.png](/home/ubuntu/screenshots/user_150353.png)
+- /marketplace: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150421.png](/home/ubuntu/screenshots/user_150421.png)
+Frontend — Public/placeholder routes
+- /parent-lead-form: Renders placeholder content.
+  - Evidence: ![/home/ubuntu/screenshots/user_150444.png](/home/ubuntu/screenshots/user_150444.png)
+- /e-learning: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150503.png](/home/ubuntu/screenshots/user_150503.png)
+- /recruitment: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150523.png](/home/ubuntu/screenshots/user_150523.png)
+- /hr-procedures: Blank screen observed; expected redirect to /login.
+  - Evidence: ![/home/ubuntu/screenshots/user_150545.png](/home/ubuntu/screenshots/user_150545.png)
+# Update — Protected Routes and Current Availability (later 2025-09-18)
+Frontend
+- Verified redirects now work for unauthenticated users (after Outlet wrapper fix in App.tsx):
+  - /profile -> redirected to /login. Screenshot: ![/home/ubuntu/screenshots/user_152324.png](/home/ubuntu/screenshots/user_152324.png)
+  - /settings -> redirected to /login. Screenshot: ![/home/ubuntu/screenshots/user_152426.png](/home/ubuntu/screenshots/user_152426.png)
+- /login renders. Screenshot: ![/home/ubuntu/screenshots/user_152013.png](/home/ubuntu/screenshots/user_152013.png)
+Admin
+- /admin/login renders. Screenshot: ![/home/ubuntu/screenshots/user_152251.png](/home/ubuntu/screenshots/user_152251.png)
+- Direct-nav /admin/dashboard redirects to /admin/login. Screenshot: ![/home/ubuntu/screenshots/user_152304.png](/home/ubuntu/screenshots/user_152304.png)
+API
+- Swagger currently unavailable via tunnel; FRP “not found” page shown. Screenshot: ![/home/ubuntu/screenshots/user_152537.png](/home/ubuntu/screenshots/user_152537.png)
+- Dev shell shows MODULE_NOT_FOUND for @repo/typescript-config when running nest start:dev; no further changes applied (documenting only).
+Current tunnels
+- Frontend: https://user:c6e8b82a8761db76d12aa9ce99ca60b8@repo-test-reports-tunnel-owg9x1hn.devinapps.com/login
+- Admin: https://user:67dcb80635fb525f07a4dad34e3afd92@repo-test-reports-tunnel-b5gqe1hi.devinapps.com/admin/login
+- API (attempted Swagger): https://user:ec85d844a69dd978b67f2b3869cec6e0@repo-test-reports-tunnel-tw6wcfs0.devinapps.com/api/docs
