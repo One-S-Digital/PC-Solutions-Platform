@@ -60,8 +60,8 @@ services:
     name: pc-solutions-admin
     env: node
     plan: starter
-    buildCommand: cd build && cd apps/admin && pnpm install && pnpm build
-    startCommand: cd build && cd apps/admin && pnpm preview
+    buildCommand: cd build && pnpm install --frozen-lockfile && pnpm --filter admin build
+    startCommand: cd build/apps/admin && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
         value: production
