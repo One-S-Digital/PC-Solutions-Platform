@@ -19,6 +19,8 @@ services:
         sync: false
       - key: CLERK_PUBLISHABLE_KEY
         sync: false
+      - key: CLERK_WEBHOOK_SECRET
+        sync: false
       - key: R2_ACCESS_KEY_ID
         sync: false
       - key: R2_SECRET_ACCESS_KEY
@@ -41,8 +43,11 @@ services:
     name: pc-solutions-frontend
     env: node
     plan: starter
-    buildCommand: cd apps/frontend && pnpm install && pnpm build
-    startCommand: cd apps/frontend && pnpm start
+
+
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter frontend build
+    startCommand: cd build/apps/frontend && pnpm preview
+
     envVars:
       - key: VITE_NODE_ENV
         value: production
@@ -61,7 +66,9 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm --filter admin build
-    startCommand: cd apps/admin && pnpm start
+
+    startCommand: cd build/apps/admin && pnpm preview
+
     envVars:
       - key: VITE_NODE_ENV
         value: production
