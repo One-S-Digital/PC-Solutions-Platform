@@ -1,8 +1,8 @@
-# Swiss Platform Theme v2 - PC Solutions Platform
+# PC Solutions Platform - Dual Design System
 
-**Design System & Styling Guide**
+**Comprehensive Design System & Styling Guide**
 
-A comprehensive design system for the PC Solutions Platform, featuring Swiss Modern Minimalism with signature accent stripes, corner notches, and refined micro-interactions.
+A complete design system for the PC Solutions Platform featuring dual applications: **Frontend (Swiss Modern)** and **Admin Dashboard (Darker Swiss Modern)** with signature accent stripes, corner notches, and refined micro-interactions.
 
 ---
 
@@ -10,6 +10,7 @@ A comprehensive design system for the PC Solutions Platform, featuring Swiss Mod
 
 ### Core Principles
 - **Swiss Modern Minimalism:** Clean typography, precise grid, generous white space
+- **Dual Application Architecture:** Frontend (lighter) + Admin Dashboard (darker shades)
 - **Signature Accent Stripe:** 2-4px left accent stripe on key surfaces using Swiss Teal
 - **Corner Notch Detail:** Subtle 6-8px notch on hero cards/modals for premium touch
 - **Soft Elevation:** Thin borders with soft shadows, never heavy at once
@@ -18,67 +19,90 @@ A comprehensive design system for the PC Solutions Platform, featuring Swiss Mod
 
 ---
 
-## 🎯 Color Palette
+## 🎯 Dual Color Palette
 
-### Brand Colors
+### Frontend Colors (Swiss Modern - Lighter)
 ```css
-/* Primary Brand Colors */
---brand-primary-50:  #eff6ff;  /* Light Blue */
---brand-primary-100: #dbeafe;
---brand-primary-200: #bfdbfe;
---brand-primary-300: #93c5fd;
---brand-primary-400: #60a5fa;
---brand-primary-500: #3b82f6;  /* Main Blue */
---brand-primary-600: #2563eb;
---brand-primary-700: #1d4ed8;
---brand-primary-800: #1e40af;
---brand-primary-900: #1e3a8a;
+/* Frontend Application Colors */
+--swiss-mint:      #10B981;  /* Emerald 500 - Success/Positive */
+--swiss-teal:      #14B8A6;  /* Teal 500 - Primary Accent */
+--swiss-coral:     #F97316;  /* Orange 500 - Danger/Error */
+--swiss-sand:      #F59E0B;  /* Amber 500 - Warning */
+--swiss-charcoal:  #374151;  /* Gray 700 - Dark Text */
+--swiss-gray:      #6B7280;  /* Gray 500 - Muted Text */
+--swiss-light:     #F9FAFB;  /* Gray 50 - Light Background */
+--swiss-white:     #FFFFFF;  /* Pure White */
 
-/* Swiss Accent Colors */
---swiss-mint:      #48CFAE;  /* Success/Positive */
---swiss-sand:      #F3D29E;  /* Warning */
---swiss-coral:     #FE6D73;  /* Danger/Error */
---swiss-teal:      #227C9D;  /* Primary Accent */
---swiss-light:     #F3F4F6;  /* Light Background */
---swiss-charcoal:  #2B2B2B;  /* Dark Text */
+/* Frontend Color Variations */
+--swiss-mint-light:  #D1FAE5;  /* Emerald 100 */
+--swiss-mint-dark:   #059669;  /* Emerald 600 */
+--swiss-teal-light:  #CCFBF1;  /* Teal 100 */
+--swiss-teal-dark:   #0D9488;  /* Teal 600 */
+--swiss-coral-light: #FED7AA;  /* Orange 100 */
+--swiss-coral-dark:  #EA580C;  /* Orange 600 */
+--swiss-sand-light:  #FEF3C7;  /* Amber 100 */
+--swiss-sand-dark:   #D97706;  /* Amber 600 */
+```
 
-/* Neutral Grays */
---gray-50:  #f9fafb;  /* Page Background */
---gray-100: #f3f4f6; /* Swiss Light Gray */
---gray-200: #e5e7eb; /* Borders */
---gray-300: #d1d5db; /* Strong Borders */
---gray-400: #9ca3af; /* Subtle Text */
---gray-500: #6b7280; /* Muted Text */
---gray-600: #4b5563; /* Default Text */
---gray-700: #374151; /* Strong Text */
---gray-800: #1f2937; /* Very Strong Text */
---gray-900: #111827; /* Near Swiss Charcoal */
+### Admin Dashboard Colors (Darker Shades)
+```css
+/* Admin Application Colors - Darker than Frontend */
+--admin-mint:      #0D9488;  /* Teal 600 - Darker than frontend */
+--admin-teal:      #0891B2;  /* Cyan 600 - Darker than frontend */
+--admin-coral:     #DC2626;  /* Red 600 - Darker than frontend */
+--admin-sand:      #CA8A04;  /* Amber 600 - Darker than frontend */
+--admin-charcoal:  #475569;  /* Slate 600 - Darker than frontend */
+--admin-gray:      #64748B;  /* Slate 500 - Darker than frontend */
+--admin-light:     #F8FAFC;  /* Slate 50 - Very light background */
+--admin-white:     #FFFFFF;  /* Pure White */
+
+/* Admin Color Variations (Lighter shades) */
+--admin-mint-light:  #CCFBF1;  /* Teal 100 */
+--admin-mint-dark:   #0F766E;  /* Teal 700 */
+--admin-teal-light:  #CFFAFE;  /* Cyan 100 */
+--admin-teal-dark:   #0E7490;  /* Cyan 700 */
+--admin-coral-light: #FEE2E2;  /* Red 100 */
+--admin-coral-dark:  #B91C1C;  /* Red 700 */
+--admin-sand-light:  #FEF3C7;  /* Amber 100 */
+--admin-sand-dark:   #A16207;  /* Amber 700 */
 ```
 
 ### Semantic Color Mapping
 ```css
-/* Semantic Roles */
---accent:           var(--swiss-teal);      /* Primary accent */
---accent-contrast:  white;                 /* Text on accent */
---danger:           var(--swiss-coral);     /* Errors, destructive actions */
---warn:             var(--swiss-sand);      /* Warnings */
---success:          var(--swiss-mint);      /* Success states */
---info:             var(--brand-primary-500); /* Information */
+/* Frontend Semantic Roles */
+--frontend-accent:           var(--swiss-teal);      /* Primary accent */
+--frontend-accent-contrast:  white;                 /* Text on accent */
+--frontend-danger:           var(--swiss-coral);     /* Errors, destructive actions */
+--frontend-warn:             var(--swiss-sand);      /* Warnings */
+--frontend-success:          var(--swiss-mint);      /* Success states */
 
-/* Text Colors */
+/* Admin Semantic Roles */
+--admin-accent:              var(--admin-teal);      /* Primary accent */
+--admin-accent-contrast:     white;                  /* Text on accent */
+--admin-danger:              var(--admin-coral);     /* Errors, destructive actions */
+--admin-warn:                var(--admin-sand);      /* Warnings */
+--admin-success:             var(--admin-mint);        /* Success states */
+```
+
+### Text Colors (Both Applications)
+```css
 --text-strong:      var(--gray-900);        /* Headings, important text */
 --text-default:     var(--gray-800);        /* Body text */
 --text-muted:       var(--gray-600);        /* Secondary text */
---text-subtle:      var(--gray-500);        /* Placeholder, captions */
+--text-subtle:       var(--gray-500);       /* Placeholder, captions */
 --text-on-dark:     white;                  /* Text on dark backgrounds */
+```
 
-/* Surface Colors */
+### Surface Colors (Both Applications)
+```css
 --surface-0:        var(--gray-50);         /* Page background */
 --surface-1:        white;                  /* Cards, modals */
 --surface-2:        var(--gray-50);         /* Subtle backgrounds */
 --surface-3:        var(--gray-100);        /* Hover states */
+```
 
-/* Border Colors */
+### Border Colors (Both Applications)
+```css
 --border:           var(--gray-200);        /* Default borders */
 --border-strong:    var(--gray-300);       /* Strong borders */
 ```
@@ -110,6 +134,33 @@ A comprehensive design system for the PC Solutions Platform, featuring Swiss Mod
   --ring:             color-mix(in oklab, var(--accent) 65%, black 35%);
   --ring-muted:       color-mix(in oklab, var(--accent) 25%, white 75%);
 }
+```
+
+---
+
+## 🏗️ Dual Application Architecture
+
+### Frontend Application (`/apps/frontend`)
+- **Target Users:** End users (Foundations, Educators, Suppliers, Service Providers, Parents)
+- **Color Scheme:** Swiss Modern (lighter shades)
+- **Primary Colors:** `swiss-mint`, `swiss-teal`, `swiss-coral`
+- **Design Focus:** User-friendly, accessible, welcoming
+- **Components:** SwissComponents, SwissNavigation, SwissAlerts, SwissMessaging
+
+### Admin Dashboard (`/apps/admin`)
+- **Target Users:** Platform administrators and super admins
+- **Color Scheme:** Admin Modern (darker shades)
+- **Primary Colors:** `admin-mint`, `admin-teal`, `admin-coral`
+- **Design Focus:** Professional, efficient, data-dense
+- **Components:** AdminComponents, AdminNavigation, AdminAlerts, AdminMessaging
+
+### Color Relationship
+```css
+/* Admin colors are consistently darker than frontend */
+Frontend:  #10B981 (swiss-mint)    → Admin:  #0D9488 (admin-mint)
+Frontend:  #14B8A6 (swiss-teal)    → Admin:  #0891B2 (admin-teal)
+Frontend:  #F97316 (swiss-coral)   → Admin:  #DC2626 (admin-coral)
+Frontend:  #374151 (swiss-charcoal) → Admin:  #475569 (admin-charcoal)
 ```
 
 ---
@@ -518,29 +569,41 @@ initTheme();
 
 ## 🚀 Implementation Checklist
 
-### Phase 1: Foundation
-- [ ] Add CSS variables to `globals.css`
-- [ ] Update Tailwind config with custom tokens
-- [ ] Implement theme toggle functionality
-- [ ] Add utility classes for signature patterns
+### Phase 1: Foundation ✅ COMPLETED
+- [x] Add CSS variables to `globals.css`
+- [x] Update Tailwind config with custom tokens for both applications
+- [x] Implement theme toggle functionality
+- [x] Add utility classes for signature patterns
+- [x] Create dual color system (frontend + admin)
 
-### Phase 2: Components
-- [ ] Create button component variants
-- [ ] Implement form element styles
-- [ ] Build card component patterns
-- [ ] Add navigation components
+### Phase 2: Components ✅ COMPLETED
+- [x] Create button component variants for both applications
+- [x] Implement form element styles
+- [x] Build card component patterns
+- [x] Add navigation components (Swiss + Admin)
+- [x] Create alert and messaging systems
 
-### Phase 3: Layout
-- [ ] Implement app shell structure
-- [ ] Create responsive grid layouts
-- [ ] Add sidebar and header components
-- [ ] Implement mobile navigation
+### Phase 3: Layout ✅ COMPLETED
+- [x] Implement app shell structure for both applications
+- [x] Create responsive grid layouts
+- [x] Add sidebar and header components
+- [x] Implement mobile navigation
+- [x] Build admin dashboard layout
 
-### Phase 4: Polish
-- [ ] Add micro-interactions and animations
-- [ ] Implement status and feedback patterns
-- [ ] Test accessibility compliance
-- [ ] Optimize for performance
+### Phase 4: Polish ✅ COMPLETED
+- [x] Add micro-interactions and animations
+- [x] Implement status and feedback patterns
+- [x] Test accessibility compliance
+- [x] Optimize for performance
+- [x] Create production-ready admin pages
+
+### Current Status: 🎉 **PRODUCTION READY**
+Both frontend and admin applications are fully implemented with:
+- Complete dual design system
+- All production pages created
+- Responsive design implemented
+- Accessibility compliance
+- Performance optimization
 
 ---
 
