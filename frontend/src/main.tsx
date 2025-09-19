@@ -9,10 +9,10 @@ import { AppProvider } from './providers/AppProvider'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AppProvider>
         <App />
-      </BrowserRouter>
-    </AppProvider>
+      </AppProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

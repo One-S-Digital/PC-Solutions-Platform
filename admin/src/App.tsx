@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AdminLayout } from './components/AdminLayout';
 import { AdminLoginPage, AdminSignupPage, AdminProtectedRoute } from './components/auth/AdminAuthComponents';
@@ -31,8 +31,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
+      <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
         <Route path="/access-denied" element={<AccessDeniedPage />} />
@@ -64,7 +63,6 @@ function App() {
         {/* Catch-all route for SPA routing */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-      </BrowserRouter>
     </QueryClientProvider>
   );
 }
