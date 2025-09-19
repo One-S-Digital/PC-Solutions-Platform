@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "echo 'Build-time Clerk key check:' && echo 'VITE_CLERK_PUBLISHABLE_KEY length: ${#VITE_CLERK_PUBLISHABLE_KEY}' && echo 'Key starts with: ${VITE_CLERK_PUBLISHABLE_KEY:0:10}...' && vite build",
+    "build": "echo 'Build-time Clerk key check:' && echo 'VITE_CLERK_PUBLISHABLE_KEY length:' $(echo -n \"$VITE_CLERK_PUBLISHABLE_KEY\" | wc -c) && echo 'Key starts with:' $(echo \"$VITE_CLERK_PUBLISHABLE_KEY\" | cut -c1-10) && vite build",
     "dev": "vite",
     "start": "vite preview --port 4173",
     "extract-i18n": "i18next-parser",
