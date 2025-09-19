@@ -345,6 +345,9 @@ function App() {
             </ProtectedRoute>
           } />
         </Route>
+        
+        {/* Catch-all route for SPA routing */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </AuthProvider>
   );

@@ -31,8 +31,8 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-
-      <Routes>
+      <BrowserRouter>
+        <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
         <Route path="/access-denied" element={<AccessDeniedPage />} />
@@ -60,9 +60,11 @@ function App() {
 
           <Route index element={<Navigate to="/dashboard" replace />} />
         </Route>
+        
+        {/* Catch-all route for SPA routing */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }

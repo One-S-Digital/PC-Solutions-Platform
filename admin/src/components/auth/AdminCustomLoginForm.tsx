@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSignIn } from '@clerk/clerk-react';
+import React, { useState, useEffect } from 'react';
+import { useSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Database, Users, Settings, Eye, EyeOff, Mail, Lock } from 'lucide-react';
@@ -14,6 +14,8 @@ export default function AdminCustomLoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { signIn, isLoaded } = useSignIn();
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { user } = useUser();
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +24,13 @@ export default function AdminCustomLoginForm() {
     email: '',
     password: '',
   });
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (authLoaded && isSignedIn && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [authLoaded, isSignedIn, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +55,46 @@ export default function AdminCustomLoginForm() {
         setError('Two-factor authentication required');
       }
     } catch (err: any) {
-      setError(err.message || 'Invalid email or password');
+      console.error('Admin login error:', err);
+      
+      // Parse Clerk error messages for better user experience
+      let errorMessage = 'An error occurred during login';
+      
+      if (err.errors && err.errors.length > 0) {
+        const error = err.errors[0];
+        switch (error.code) {
+          case 'form_password_incorrect':
+            errorMessage = 'Incorrect password. Please try again.';
+            break;
+          case 'form_identifier_not_found':
+            errorMessage = 'No admin account found with this email address.';
+            break;
+          case 'form_identifier_exists':
+            errorMessage = 'An account with this email already exists.';
+            break;
+          case 'form_password_pwned':
+            errorMessage = 'This password has been found in a data breach. Please choose a different password.';
+            break;
+          case 'form_password_not_strong_enough':
+            errorMessage = 'Password is not strong enough.';
+            break;
+          case 'form_password_validation_failed':
+            errorMessage = 'Password does not meet requirements.';
+            break;
+          case 'form_identifier_invalid':
+            errorMessage = 'Please enter a valid email address.';
+            break;
+          case 'session_exists':
+            errorMessage = 'You are already signed in. Redirecting...';
+            break;
+          default:
+            errorMessage = error.message || 'Invalid email or password';
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -76,12 +124,41 @@ export default function AdminCustomLoginForm() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!isLoaded) {
+  if (!isLoaded || !authLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">{t('common:loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if user is already authenticated but not redirected yet
+  if (isSignedIn && user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="text-center">
+            <div className="mx-auto h-16 w-16 bg-indigo-600 rounded-full flex items-center justify-center mb-6">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+              Already Logged In
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
+            </p>
+            <div className="mt-6">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+              >
+                Go to Admin Dashboard
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
