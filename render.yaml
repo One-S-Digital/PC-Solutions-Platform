@@ -60,7 +60,7 @@ services:
     name: pc-solutions-admin
     env: node
     plan: starter
-    buildCommand: cd build && pnpm install && pnpm build --filter=admin
+    buildCommand: cd build/apps/admin && npm install --legacy-peer-deps && npm run build
     startCommand: cd build/apps/admin && pnpm preview
     envVars:
       - key: VITE_NODE_ENV

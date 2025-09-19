@@ -41,7 +41,7 @@ services:
     name: pc-solutions-frontend
     env: node
     plan: starter
-    buildCommand: cd apps/frontend && pnpm install && pnpm build
+    buildCommand: cd apps/frontend && npm install --legacy-peer-deps && npm run build
     startCommand: cd apps/frontend && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
@@ -56,7 +56,7 @@ services:
     name: pc-solutions-admin
     env: node
     plan: starter
-    buildCommand: cd apps/admin && pnpm install && pnpm build
+    buildCommand: cd apps/admin && npm install --legacy-peer-deps && npm run build
     startCommand: cd apps/admin && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
