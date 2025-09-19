@@ -1,12 +1,12 @@
 import React from 'react';
 import { ClerkProvider } from '@clerk/clerk-react';
-import { BrowserRouter } from 'react-router-dom';
-
 // Get the publishable key from environment variables
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!clerkPubKey) {
-  throw new Error('Missing Clerk Publishable Key');
+  console.error('Clerk Publishable Key is missing. Please set VITE_CLERK_PUBLISHABLE_KEY in your environment.');
+} else {
+  console.log('Clerk Publishable Key loaded successfully.');
 }
 
 interface AppProviderProps {
@@ -14,11 +14,13 @@ interface AppProviderProps {
 }
 
 export function AppProvider({ children }: AppProviderProps) {
+  if (!clerkPubKey) {
+    return <div>Error: Clerk configuration is missing.</div>;
+  }
+
   return (
     <ClerkProvider publishableKey={clerkPubKey}>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
+      {children}
     </ClerkProvider>
   );
 }

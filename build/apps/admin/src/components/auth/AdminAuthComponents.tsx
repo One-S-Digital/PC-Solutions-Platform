@@ -10,6 +10,12 @@ import AdminCustomLoginForm from './AdminCustomLoginForm';
 import AdminCustomSignupForm from './AdminCustomSignupForm';
 
 export function AdminLoginPage() {
+  const { isSignedIn } = useAuth();
+
+  if (isSignedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return <AdminCustomLoginForm />;
 }
 

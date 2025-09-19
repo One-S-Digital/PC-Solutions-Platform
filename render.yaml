@@ -61,7 +61,7 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm --filter admin build
-    startCommand: cd build/apps/admin && pnpm preview
+    startCommand: cd build/apps/admin && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
         value: production
