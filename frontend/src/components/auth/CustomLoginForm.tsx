@@ -134,7 +134,7 @@ export default function CustomLoginForm() {
                 onClick={() => navigate('/dashboard')}
                 className="btn-primary w-full py-3 text-base font-semibold"
               >
-                Go to Dashboard
+                Login
               </button>
             </div>
           </div>
