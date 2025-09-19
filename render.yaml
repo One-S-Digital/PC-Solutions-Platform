@@ -41,7 +41,7 @@ services:
     name: pc-solutions-frontend
     env: node
     plan: starter
-    buildCommand: cd build/apps/frontend && npm install --legacy-peer-deps && npm run build
+    buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length: ${#VITE_CLERK_PUBLISHABLE_KEY}" && echo "Key starts with: ${VITE_CLERK_PUBLISHABLE_KEY:0:10}..." && echo "Key format check: $(echo $VITE_CLERK_PUBLISHABLE_KEY | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT')" && echo "=== END DEBUG ===" && cd build/apps/frontend && npm install --legacy-peer-deps && npm run build
     startCommand: cd build/apps/frontend && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
