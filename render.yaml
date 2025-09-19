@@ -44,7 +44,7 @@ services:
     env: node
     plan: starter
     buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length:" $(echo -n "$VITE_CLERK_PUBLISHABLE_KEY" | wc -c) && echo "Key starts with:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | cut -c1-10) && echo "Key format check:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT') && echo "=== END DEBUG ===" && pnpm install --frozen-lockfile && pnpm run build --filter=frontend
-    startCommand: cd frontend && pnpm preview
+    startCommand: cd frontend && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
         value: production
@@ -63,7 +63,7 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=admin
-    startCommand: cd admin && pnpm preview
+    startCommand: cd admin && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
         value: production
