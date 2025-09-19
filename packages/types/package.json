@@ -6,7 +6,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "echo 'Types package - no build needed'",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
