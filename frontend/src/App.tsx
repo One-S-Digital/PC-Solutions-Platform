@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/AuthComponents';
-import { Card, Button } from '@repo/ui';
 import { 
   CogIcon, 
   UserGroupIcon, 

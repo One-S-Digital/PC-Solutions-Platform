@@ -136,26 +136,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       const token = await getToken();
       
+      // Add error handling for API calls
       const response = await fetch('/api/users/me', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+      }).catch((fetchError) => {
+        console.warn('API not available, using Clerk data only:', fetchError);
+        return null;
       });
 
-      if (response.ok) {
+      if (response && response.ok) {
         const data = await response.json();
         setUser(data.data);
-      } else if (response.status === 404) {
+      } else if (response && response.status === 404) {
         // User doesn't exist in our system, create from Clerk data
         await createUserFromClerk();
       } else {
-        console.error('Failed to fetch user data:', response.statusText);
-        setUser(null);
+        // API not available or error, use Clerk data directly
+        console.warn('API not available, using Clerk data only');
+        setUser({
+          id: clerkUser.id,
+          name: clerkUser.fullName || clerkUser.firstName + ' ' + clerkUser.lastName,
+          email: clerkUser.emailAddresses[0]?.emailAddress,
+          role: (clerkUser.publicMetadata?.role as UserRole) || UserRole.PARENT,
+          phone: clerkUser.phoneNumbers[0]?.phoneNumber,
+          avatarUrl: clerkUser.imageUrl,
+          ...clerkUser.publicMetadata
+        });
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      setUser(null);
+      // Fallback to Clerk data
+      setUser({
+        id: clerkUser.id,
+        name: clerkUser.fullName || clerkUser.firstName + ' ' + clerkUser.lastName,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        role: (clerkUser.publicMetadata?.role as UserRole) || UserRole.PARENT,
+        phone: clerkUser.phoneNumbers[0]?.phoneNumber,
+        avatarUrl: clerkUser.imageUrl,
+        ...clerkUser.publicMetadata
+      });
     } finally {
       setIsLoading(false);
     }
@@ -185,18 +207,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
+      }).catch((fetchError) => {
+        console.warn('API not available for user creation:', fetchError);
+        return null;
       });
 
-      if (response.ok) {
+      if (response && response.ok) {
         const data = await response.json();
         setUser(data.data);
       } else {
-        console.error('Failed to create user:', response.statusText);
-        setUser(null);
+        console.warn('Failed to create user, using Clerk data directly');
+        // Fallback to Clerk data
+        setUser({
+          id: clerkUser.id,
+          name: clerkUser.fullName || clerkUser.firstName + ' ' + clerkUser.lastName,
+          email: clerkUser.emailAddresses[0]?.emailAddress,
+          role: (clerkUser.publicMetadata?.role as UserRole) || UserRole.PARENT,
+          phone: clerkUser.phoneNumbers[0]?.phoneNumber,
+          avatarUrl: clerkUser.imageUrl,
+          ...clerkUser.publicMetadata
+        });
       }
     } catch (error) {
       console.error('Error creating user:', error);
-      setUser(null);
+      // Fallback to Clerk data
+      setUser({
+        id: clerkUser.id,
+        name: clerkUser.fullName || clerkUser.firstName + ' ' + clerkUser.lastName,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        role: (clerkUser.publicMetadata?.role as UserRole) || UserRole.PARENT,
+        phone: clerkUser.phoneNumbers[0]?.phoneNumber,
+        avatarUrl: clerkUser.imageUrl,
+        ...clerkUser.publicMetadata
+      });
     }
   }, [clerkUser, getToken]);
 
