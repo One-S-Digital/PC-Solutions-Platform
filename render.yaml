@@ -4,8 +4,8 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: cd apps/api && pnpm install --prod=false && pnpm build
-    startCommand: cd apps/api && pnpm start:prod
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
+    startCommand: cd api && pnpm start:prod
     envVars:
       - key: NODE_ENV
         value: production
@@ -44,7 +44,7 @@ services:
     env: node
     plan: starter
     buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length:" $(echo -n "$VITE_CLERK_PUBLISHABLE_KEY" | wc -c) && echo "Key starts with:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | cut -c1-10) && echo "Key format check:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT') && echo "=== END DEBUG ===" && pnpm install --frozen-lockfile && pnpm --filter frontend build
-    startCommand: cd build/apps/frontend && pnpm preview
+    startCommand: cd frontend && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
         value: production
@@ -63,7 +63,7 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm --filter admin build
-    startCommand: cd build/apps/admin && pnpm preview
+    startCommand: cd admin && pnpm preview
     envVars:
       - key: VITE_NODE_ENV
         value: production
