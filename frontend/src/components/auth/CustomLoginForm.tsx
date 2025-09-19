@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSignIn, useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../../contexts/AuthContext';
 
 interface LoginFormData {
   email: string;
@@ -13,8 +12,7 @@ export default function CustomLoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { signIn, isLoaded } = useSignIn();
-  const { isSignedIn, isLoaded: authLoaded } = useAuth();
-  const { user, isAuthenticated } = useAuthContext();
+  const { isSignedIn, isLoaded: authLoaded, user } = useAuth();
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,10 +23,10 @@ export default function CustomLoginForm() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (authLoaded && isSignedIn && isAuthenticated && user) {
+    if (authLoaded && isSignedIn && user) {
       navigate('/dashboard', { replace: true });
     }
-  }, [authLoaded, isSignedIn, isAuthenticated, user, navigate]);
+  }, [authLoaded, isSignedIn, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +125,7 @@ export default function CustomLoginForm() {
               Already Logged In
             </h1>
             <p className="mt-3 text-swiss-gray font-medium">
-              Welcome back, {user.name || user.email}!
+              Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
             </p>
             <div className="mt-6">
               <button
