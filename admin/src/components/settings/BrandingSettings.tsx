@@ -13,6 +13,13 @@ const BrandingSettings: React.FC = () => {
   const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
   const [uploadedAssets, setUploadedAssets] = useState<Record<string, string>>({})
 
+  // Log API client configuration for debugging
+  console.log('🔧 BrandingSettings API client config:', {
+    baseURL: apiClient.defaults.baseURL,
+    timeout: apiClient.defaults.timeout,
+    headers: apiClient.defaults.headers
+  })
+
   const handleUploadAndUpdate = async (assetType: string, file: File) => {
     setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
     

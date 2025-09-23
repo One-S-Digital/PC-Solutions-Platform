@@ -11,6 +11,14 @@ import { AxiosInstance } from 'axios'
 // Use environment variable for API base URL, fallback to '/api' for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
+// Log the API base URL for debugging
+console.log('🔧 API Base URL configured:', {
+  VITE_API_URL: import.meta.env.VITE_API_URL,
+  API_BASE_URL: API_BASE_URL,
+  NODE_ENV: import.meta.env.NODE_ENV,
+  MODE: import.meta.env.MODE
+})
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -42,6 +50,8 @@ const isDevelopmentMode = () => {
 
 // Development API client (no auth required)
 const createDevApiClient = () => {
+  console.log('🔧 Creating development API client with baseURL:', API_BASE_URL)
+  
   const devApi = axios.create({
     baseURL: API_BASE_URL,
     timeout: 60000, // Increased timeout for development mode
@@ -114,6 +124,8 @@ export const useApiClient = () => {
         'Content-Type': 'application/json',
       },
     })
+
+    console.log('🔧 Creating production API client with baseURL:', API_BASE_URL)
 
     axiosRetry(apiWithAuth, {
       retries: 0,
@@ -315,7 +327,8 @@ export const apiService = {
 
   // Logo and Favicon Uploads
   uploadLogo: (apiClient: AxiosInstance, formData: FormData) => {
-    console.log('🔄 API: uploadLogo called with baseURL:', apiClient.defaults.baseURL)
+    const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/logo`
+    console.log('🔄 API: uploadLogo called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -324,7 +337,8 @@ export const apiService = {
   },
 
   uploadFavicon: (apiClient: AxiosInstance, formData: FormData) => {
-    console.log('🔄 API: uploadFavicon called with baseURL:', apiClient.defaults.baseURL)
+    const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/favicon`
+    console.log('🔄 API: uploadFavicon called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -333,7 +347,8 @@ export const apiService = {
   },
 
   uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData) => {
-    console.log('🔄 API: uploadAdminLogo called with baseURL:', apiClient.defaults.baseURL)
+    const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-logo`
+    console.log('🔄 API: uploadAdminLogo called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -342,7 +357,8 @@ export const apiService = {
   },
 
   uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData) => {
-    console.log('🔄 API: uploadAdminFavicon called with baseURL:', apiClient.defaults.baseURL)
+    const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-favicon`
+    console.log('🔄 API: uploadAdminFavicon called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
