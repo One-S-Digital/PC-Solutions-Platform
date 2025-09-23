@@ -136,9 +136,9 @@ export default function AdminCustomLoginForm() {
 
   if (!isLoaded || !authLoaded) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">{t('common:loading')}</p>
         </div>
       </div>
@@ -148,10 +148,48 @@ export default function AdminCustomLoginForm() {
   // Show message if user is already authenticated but not redirected yet
   if (isSignedIn && user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="text-center">
-            <div className="mx-auto h-16 w-16 bg-purple-600 rounded-full flex items-center justify-center mb-6">
+          <div className="bg-white py-8 px-4 shadow-xl rounded-xl sm:px-10">
+            <div className="text-center">
+              <div className="mx-auto h-16 w-16 bg-indigo-600 rounded-full flex items-center justify-center mb-6">
+                {getAdminLogo() ? (
+                  <img 
+                    src={getAdminLogo()} 
+                    alt="Admin Logo" 
+                    className="h-8 w-8 object-contain"
+                  />
+                ) : (
+                  <Shield className="h-8 w-8 text-white" />
+                )}
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+                Already Logged In
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
+              </p>
+              <div className="mt-6">
+                <Link
+                  to="/dashboard"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                >
+                  Go to Dashboard
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow-xl rounded-xl sm:px-10">
+          <div className="text-center mb-8">
+            <div className="mx-auto h-16 w-16 bg-indigo-600 rounded-full flex items-center justify-center">
               {getAdminLogo() ? (
                 <img 
                   src={getAdminLogo()} 
@@ -162,52 +200,14 @@ export default function AdminCustomLoginForm() {
                 <Shield className="h-8 w-8 text-white" />
               )}
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Already Logged In
+            <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
+              Admin Dashboard
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
+              Pro Crèche Solutions Management Portal
             </p>
-            <div className="mt-6">
-              <Link
-                to="/dashboard"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200"
-              >
-                Go to Dashboard
-              </Link>
-            </div>
           </div>
-        </div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-purple-600 rounded-full flex items-center justify-center">
-            {getAdminLogo() ? (
-              <img 
-                src={getAdminLogo()} 
-                alt="Admin Logo" 
-                className="h-8 w-8 object-contain"
-              />
-            ) : (
-              <Shield className="h-8 w-8 text-white" />
-            )}
-          </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
-            Admin Dashboard
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Pro Crèche Solutions Management Portal
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl rounded-xl sm:px-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="rounded-lg bg-red-50 border border-red-200 p-4">
@@ -231,7 +231,7 @@ export default function AdminCustomLoginForm() {
                   required
                   value={formData.email}
                   onChange={(e) => updateFormData('email', e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="admin@procreche.com"
                 />
               </div>
@@ -253,7 +253,7 @@ export default function AdminCustomLoginForm() {
                   required
                   value={formData.password}
                   onChange={(e) => updateFormData('password', e.target.value)}
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Enter your password"
                 />
                 <button
@@ -273,7 +273,7 @@ export default function AdminCustomLoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -292,7 +292,7 @@ export default function AdminCustomLoginForm() {
             <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="mt-6 w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-6 w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
