@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/AuthComponents';
 import { 
@@ -256,12 +256,12 @@ function App() {
                   <p className="text-gray-600 mb-6">
                     Access the full admin dashboard for comprehensive platform management.
                   </p>
-                  <div
-                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
-                    onClick={() => (window.location.href = '/admin')}
+                  <Link
+                    to="/admin"
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
                   >
                     Go to Admin Dashboard
-                  </div>
+                  </Link>
                 </div>
               </div>
             </ProtectedRoute>
@@ -276,12 +276,12 @@ function App() {
                   <p className="text-gray-600 mb-6">
                     Access comprehensive user management in the admin dashboard.
                   </p>
-                  <div
-                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
-                    onClick={() => (window.location.href = '/admin/users')}
+                  <Link
+                    to="/admin/users"
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
                   >
                     Manage Users
-                  </div>
+                  </Link>
                 </div>
               </div>
             </ProtectedRoute>
@@ -295,12 +295,12 @@ function App() {
                   <p className="text-gray-600 mb-6">
                     Access detailed analytics and reporting in the admin dashboard.
                   </p>
-                  <div
-                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
-                    onClick={() => (window.location.href = '/admin/analytics')}
+                  <Link
+                    to="/admin/analytics"
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
                   >
                     View Analytics
-                  </div>
+                  </Link>
                 </div>
               </div>
             </ProtectedRoute>
@@ -314,12 +314,12 @@ function App() {
                   <p className="text-gray-600 mb-6">
                     Access system monitoring and configuration in the admin dashboard.
                   </p>
-                  <div
-                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white cursor-pointer"
-                    onClick={() => (window.location.href = '/admin/system')}
+                  <Link
+                    to="/admin/system"
+                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
                   >
                     System Settings
-                  </div>
+                  </Link>
                 </div>
               </div>
             </ProtectedRoute>

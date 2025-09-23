@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Shield, Database, Users, Settings, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -151,12 +151,12 @@ export default function AdminCustomLoginForm() {
               Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
             </p>
             <div className="mt-6">
-              <button
-                onClick={() => navigate('/dashboard')}
+              <Link
+                to="/dashboard"
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
               >
                 Login
-              </button>
+              </Link>
             </div>
           </div>
         </div>

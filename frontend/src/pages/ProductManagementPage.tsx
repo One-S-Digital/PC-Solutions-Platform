@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input, Select, Textarea } from '@repo/ui';
 import { useAuthContext } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { 
   ShoppingBagIcon, 
   PlusIcon, 
@@ -476,12 +477,12 @@ const ProductManagementPage: React.FC = () => {
           <p className="text-gray-600 mb-6">
             You don't have permission to manage products.
           </p>
-          <Button
-            variant="primary"
-            onClick={() => window.location.href = '/dashboard'}
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
           >
             Go to Dashboard
-          </Button>
+          </Link>
         </Card>
       </div>
     );

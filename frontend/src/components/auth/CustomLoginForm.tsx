@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSignIn, useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface LoginFormData {
   email: string;
@@ -129,12 +129,12 @@ export default function CustomLoginForm() {
               Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
             </p>
             <div className="mt-6">
-              <button
-                onClick={() => navigate('/dashboard')}
+              <Link
+                to="/dashboard"
                 className="btn-primary w-full py-3 text-base font-semibold"
               >
                 Login
-              </button>
+              </Link>
             </div>
           </div>
         </div>
