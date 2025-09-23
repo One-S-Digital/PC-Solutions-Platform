@@ -45,7 +45,7 @@ const ADMIN_ROLE_OPTIONS = [
 export default function AdminCustomSignupForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signUp, isLoaded } = useSignUp();
+  const { signUp, isLoaded, setActive } = useSignUp();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +93,8 @@ export default function AdminCustomSignupForm() {
       });
 
       if (result.status === 'complete') {
-        // User created successfully, redirect to admin dashboard
+        // User created successfully, activate session and redirect to admin dashboard
+        await setActive({ session: result.createdSessionId });
         navigate('/dashboard');
       } else if (result.status === 'missing_requirements') {
         // Handle verification if needed
@@ -119,6 +120,7 @@ export default function AdminCustomSignupForm() {
       const result = await signUp.attemptEmailAddressVerification({ code });
       
       if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
         navigate('/dashboard');
       }
     } catch (err: any) {

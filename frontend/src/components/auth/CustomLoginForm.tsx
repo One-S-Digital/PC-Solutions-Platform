@@ -11,7 +11,7 @@ interface LoginFormData {
 export default function CustomLoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn, isLoaded } = useSignIn();
+  const { signIn, isLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: authLoaded, user } = useAuth();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +45,8 @@ export default function CustomLoginForm() {
       });
 
       if (result.status === 'complete') {
-        // User signed in successfully, redirect to dashboard
+        // User signed in successfully, activate session and redirect to dashboard
+        await setActive({ session: result.createdSessionId });
         navigate('/dashboard');
       } else if (result.status === 'needs_first_factor') {
         // Handle 2FA if needed

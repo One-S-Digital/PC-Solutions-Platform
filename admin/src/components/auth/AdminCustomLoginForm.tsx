@@ -14,7 +14,7 @@ interface AdminLoginFormData {
 export default function AdminCustomLoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn, isLoaded } = useSignIn();
+  const { signIn, isLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { user } = useUser();
   const { settings } = useSettings();
@@ -50,7 +50,8 @@ export default function AdminCustomLoginForm() {
       });
 
       if (result.status === 'complete') {
-        // User signed in successfully, redirect to admin dashboard
+        // User signed in successfully, activate session and redirect to admin dashboard
+        await setActive({ session: result.createdSessionId });
         navigate('/dashboard');
       } else if (result.status === 'needs_first_factor') {
         // Handle 2FA if needed

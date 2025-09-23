@@ -83,7 +83,7 @@ const ROLE_OPTIONS = [
 export default function CustomSignupForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signUp, isLoaded } = useSignUp();
+  const { signUp, isLoaded, setActive } = useSignUp();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,7 +152,8 @@ export default function CustomSignupForm() {
       });
 
       if (result.status === 'complete') {
-        // User created successfully, redirect to dashboard
+        // User created successfully, activate session and redirect to dashboard
+        await setActive({ session: result.createdSessionId });
         navigate('/dashboard');
       } else if (result.status === 'missing_requirements') {
         // Handle verification if needed
@@ -178,6 +179,7 @@ export default function CustomSignupForm() {
       const result = await signUp.attemptEmailAddressVerification({ code });
       
       if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
         navigate('/dashboard');
       }
     } catch (err: any) {
