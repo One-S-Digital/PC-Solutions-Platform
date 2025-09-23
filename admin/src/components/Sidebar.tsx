@@ -16,9 +16,11 @@ import {
   Settings,
   Monitor,
   Mail,
-  X
+  X,
+  Shield
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import { useSettings } from '../hooks/useSettings'
 
 interface SidebarProps {
   sidebarOpen: boolean
@@ -43,11 +45,29 @@ const navigation = [
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation()
+  const { settings } = useSettings()
+
+  const getAdminLogo = () => {
+    if (settings?.adminLogoAsset?.url) {
+      return settings.adminLogoAsset.url
+    }
+    return null
+  }
 
   const SidebarContent = () => (
     <div className="w-full bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full">
       <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80">
-        <div className="h-9 w-9 bg-swiss-mint mr-2.5"></div>
+        {getAdminLogo() ? (
+          <img
+            src={getAdminLogo()}
+            alt="Admin Logo"
+            className="h-9 w-9 object-contain mr-2.5"
+          />
+        ) : (
+          <div className="h-9 w-9 bg-swiss-mint mr-2.5 flex items-center justify-center rounded">
+            <Shield className="h-5 w-5 text-white" />
+          </div>
+        )}
         <h1 className="text-2xl font-bold text-swiss-charcoal">Admin</h1>
       </div>
 
