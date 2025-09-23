@@ -25,7 +25,7 @@ export default function CustomLoginForm() {
   useEffect(() => {
     if (authLoaded && isSignedIn && user) {
       console.log('User already authenticated, redirecting to dashboard');
-      navigate('/dashboard', { replace: true });
+      navigate('/dashboard');
     }
   }, [authLoaded, isSignedIn, user, navigate]);
 

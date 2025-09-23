@@ -38,7 +38,7 @@ function App() {
         <Route path="/pricing" element={<PricingPage />} />
         
         {/* Root Redirect */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         
         {/* Protected Routes */}
         <Route path="/" element={<React.Fragment />}>
@@ -346,7 +346,7 @@ function App() {
         </Route>
         
         {/* Catch-all route for SPA routing */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </AuthProvider>
   );

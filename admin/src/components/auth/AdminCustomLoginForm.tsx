@@ -28,7 +28,7 @@ export default function AdminCustomLoginForm() {
   // Redirect if already authenticated
   useEffect(() => {
     if (authLoaded && isSignedIn && user) {
-      navigate('/dashboard', { replace: true });
+      navigate('/dashboard');
     }
   }, [authLoaded, isSignedIn, user, navigate]);
 

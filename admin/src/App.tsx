@@ -57,11 +57,11 @@ function App() {
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="settings" element={<SettingsPage />} />
 
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/dashboard" />} />
         </Route>
         
         {/* Catch-all route for SPA routing */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
     </QueryClientProvider>
   );
