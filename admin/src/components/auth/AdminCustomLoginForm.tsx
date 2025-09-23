@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { Shield, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useSettings } from '../../hooks/useSettings';
 
 interface AdminLoginFormData {
   email: string;
@@ -16,6 +17,7 @@ export default function AdminCustomLoginForm() {
   const { signIn, isLoaded } = useSignIn();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { user } = useUser();
+  const { settings } = useSettings();
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -124,6 +126,14 @@ export default function AdminCustomLoginForm() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Get the admin logo URL or fallback to shield icon
+  const getAdminLogo = () => {
+    if (settings?.adminLogoAsset?.url) {
+      return settings.adminLogoAsset.url;
+    }
+    return null;
+  };
+
   if (!isLoaded || !authLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
@@ -142,7 +152,15 @@ export default function AdminCustomLoginForm() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
             <div className="mx-auto h-16 w-16 bg-purple-600 rounded-full flex items-center justify-center mb-6">
-              <Shield className="h-8 w-8 text-white" />
+              {getAdminLogo() ? (
+                <img 
+                  src={getAdminLogo()} 
+                  alt="Admin Logo" 
+                  className="h-8 w-8 object-contain"
+                />
+              ) : (
+                <Shield className="h-8 w-8 text-white" />
+              )}
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
               Already Logged In
@@ -169,7 +187,15 @@ export default function AdminCustomLoginForm() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-purple-600 rounded-full flex items-center justify-center">
-            <Shield className="h-8 w-8 text-white" />
+            {getAdminLogo() ? (
+              <img 
+                src={getAdminLogo()} 
+                alt="Admin Logo" 
+                className="h-8 w-8 object-contain"
+              />
+            ) : (
+              <Shield className="h-8 w-8 text-white" />
+            )}
           </div>
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
             Admin Dashboard
