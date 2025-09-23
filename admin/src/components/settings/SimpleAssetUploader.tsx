@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 interface SimpleAssetUploaderProps {
   currentAssetId?: string
@@ -9,6 +9,7 @@ interface SimpleAssetUploaderProps {
 }
 
 const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
+  currentAssetId,
   onUpload,
   accept = 'image/*',
   maxSize = 5 * 1024 * 1024,
@@ -18,7 +19,25 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   const [error, setError] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [currentAsset, setCurrentAsset] = useState<any>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Fetch current asset if currentAssetId exists
+  useEffect(() => {
+    if (currentAssetId) {
+      fetch(`/api/assets/${currentAssetId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data) {
+            setCurrentAsset(data.data)
+            setPreviewUrl(data.data.url)
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch current asset:', err)
+        })
+    }
+  }, [currentAssetId])
 
   const handleFileSelect = async (file: File) => {
     setError(null)
@@ -51,6 +70,8 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
     setIsUploading(true)
     try {
       await onUpload(file)
+      // Clear the preview URL after successful upload to show the new asset
+      setPreviewUrl(null)
     } catch (err) {
       setError('Upload failed. Please try again.')
       setPreviewUrl(null)
@@ -78,6 +99,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
 
   const handleRemove = () => {
     setPreviewUrl(null)
+    setCurrentAsset(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -85,10 +107,10 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {previewUrl && (
+      {(previewUrl || currentAsset) && (
         <div className="relative inline-block">
           <img
-            src={previewUrl}
+            src={previewUrl || currentAsset?.url}
             alt="Preview"
             className="h-20 w-20 object-cover rounded-lg border border-gray-300"
           />
@@ -107,7 +129,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
       <div
         className={`
           relative border-2 border-dashed rounded-lg p-6 text-center
-          ${dragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'}
+          ${dragOver ? 'border-swiss-teal bg-swiss-teal/10' : 'border-gray-300'}
           ${isUploading ? 'opacity-50 pointer-events-none' : 'hover:border-gray-400'}
         `}
         onDrop={handleDrop}
@@ -137,7 +159,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
               <span>Uploading...</span>
             ) : (
               <>
-                <span className="font-medium text-blue-600 hover:text-blue-500">
+                <span className="font-medium text-swiss-teal hover:text-swiss-teal/80">
                   Click to upload
                 </span>
                 {' or drag and drop'}
@@ -151,7 +173,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
 
         {isUploading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-swiss-teal"></div>
           </div>
         )}
       </div>

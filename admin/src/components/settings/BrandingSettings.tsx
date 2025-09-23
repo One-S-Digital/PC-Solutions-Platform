@@ -1,25 +1,72 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import { useAssetUpload } from '../../hooks/useAssetUpload'
 import SimpleAssetUploader from './SimpleAssetUploader'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import logger from '../../utils/logger'
+import toast from 'react-hot-toast'
 
 const BrandingSettings: React.FC = () => {
-  const { settings, updateSettings, loading, error, saving } = useSettings()
-
+  const { settings, updateSettings, refreshSettings, loading, error, saving } = useSettings()
   const { uploadAsset } = useAssetUpload()
+  const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
 
   const handleUploadAndUpdate = async (assetType: string, file: File) => {
+    setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
+    
     try {
-      const asset = await uploadAsset(file, assetType)
-      if (asset) {
-        await updateSettings({ [`${assetType}AssetId`]: asset.id })
+      // Use the correct API endpoint for each asset type
+      let endpoint = ''
+      switch (assetType) {
+        case 'logo':
+          endpoint = '/admin/frontend-settings/upload-logo'
+          break
+        case 'adminLogo':
+          endpoint = '/admin/frontend-settings/upload-admin-logo'
+          break
+        case 'favicon':
+          endpoint = '/admin/frontend-settings/upload-favicon'
+          break
+        case 'adminFavicon':
+          endpoint = '/admin/frontend-settings/upload-admin-favicon'
+          break
+        default:
+          throw new Error(`Unknown asset type: ${assetType}`)
+      }
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const result = await response.json()
+      
+      if (result.success) {
+        // Update the settings with the new asset ID
+        const assetIdField = `${assetType}AssetId`
+        await updateSettings({ [assetIdField]: result.data.asset.id })
+        
+        // Refresh settings to get the updated asset data
+        await refreshSettings()
+        
+        toast.success(`${assetType} uploaded successfully!`)
+        logger.log(`✅ ${assetType} uploaded and saved successfully`)
+      } else {
+        throw new Error(result.message || 'Upload failed')
       }
     } catch (e) {
       logger.error('Failed to upload and update asset:', assetType, e)
-      // You might want to show an error to the user here
-
+      toast.error(`Failed to upload ${assetType}. Please try again.`)
+      throw e
+    } finally {
+      setUploadingAssets(prev => ({ ...prev, [assetType]: false }))
     }
   }
 
@@ -38,9 +85,11 @@ const BrandingSettings: React.FC = () => {
     
     try {
       await updateSettings(updates)
+      toast.success('Brand colors saved successfully!')
       logger.log('✅ Branding settings saved successfully!')
     } catch (error) {
       logger.error('❌ Error saving branding settings:', error)
+      toast.error('Failed to save brand colors. Please try again.')
     }
   }
 
@@ -232,6 +281,9 @@ const BrandingSettings: React.FC = () => {
                 accept="image/*"
                 maxSize={5 * 1024 * 1024}
               />
+              {uploadingAssets.logo && (
+                <div className="mt-2 text-sm text-swiss-teal">Uploading logo...</div>
+              )}
             </div>
 
             <div>
@@ -244,6 +296,9 @@ const BrandingSettings: React.FC = () => {
                 accept="image/*"
                 maxSize={5 * 1024 * 1024}
               />
+              {uploadingAssets.adminLogo && (
+                <div className="mt-2 text-sm text-swiss-teal">Uploading admin logo...</div>
+              )}
             </div>
 
             <div>
@@ -256,6 +311,9 @@ const BrandingSettings: React.FC = () => {
                 accept="image/x-icon,image/png"
                 maxSize={1 * 1024 * 1024}
               />
+              {uploadingAssets.favicon && (
+                <div className="mt-2 text-sm text-swiss-teal">Uploading favicon...</div>
+              )}
             </div>
 
             <div>
@@ -268,6 +326,9 @@ const BrandingSettings: React.FC = () => {
                 accept="image/x-icon,image/png"
                 maxSize={1 * 1024 * 1024}
               />
+              {uploadingAssets.adminFavicon && (
+                <div className="mt-2 text-sm text-swiss-teal">Uploading admin favicon...</div>
+              )}
             </div>
           </div>
         </div>

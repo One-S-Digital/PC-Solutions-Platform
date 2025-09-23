@@ -8,9 +8,96 @@ import {
   ParentLead as BaseParentLead,
   Order as BaseOrder,
   OrderRequest as BaseOrderRequest,
-  FrontendSettings,
   LineItem,
 } from '../../../types';
+
+// Add FrontendSettings interface
+export interface FrontendSettings {
+  id: string;
+  siteName: string;
+  siteDescription?: string;
+  siteKeywords?: string;
+  logoAssetId?: string;
+  faviconAssetId?: string;
+  primaryColor: string;
+  secondaryColor: string;
+  adminLogoAssetId?: string;
+  adminPrimaryColor: string;
+  adminSecondaryColor: string;
+  adminAccentColor: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  instagramUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImageAssetId?: string;
+  googleAnalyticsId?: string;
+  googleTagManagerId?: string;
+  privacyPolicyUrl?: string;
+  termsOfServiceUrl?: string;
+  cookiePolicyUrl?: string;
+  enableDarkMode: boolean;
+  defaultTheme: string;
+  mainAppCustomization?: any;
+  adminCustomization?: any;
+  createdAt: Date;
+  updatedAt: Date;
+  // Asset relations
+  logoAsset?: {
+    id: string;
+    url: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+  faviconAsset?: {
+    id: string;
+    url: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+  adminLogoAsset?: {
+    id: string;
+    url: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+  adminFaviconAsset?: {
+    id: string;
+    url: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+  ogImageAsset?: {
+    id: string;
+    url: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+}
 
 export interface UserEmail {
   id: string;

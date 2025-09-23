@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react'
 import { apiService, useApiClient } from '../services/api'
-
-
 import { FrontendSettings } from '../types/api'
-
-
 
 export const useSettings = () => {
   const [settings, setSettings] = useState<FrontendSettings | null>(null)
@@ -39,18 +35,15 @@ export const useSettings = () => {
         }
       }
 
-
     } catch (err: unknown) {
       console.error('Failed to fetch settings:', err)
       const error = err as { message?: string }
       setError(error.message || 'An unknown error occurred while fetching settings.')
 
-
     } finally {
       setLoading(false)
     }
   }
-
 
   const updateSettings = async (updates: Partial<FrontendSettings>) => {
     setSaving(true)
@@ -81,7 +74,6 @@ export const useSettings = () => {
         console.log('⚠️ API update failed, using local state:', apiErr)
       }
 
-
       setSettings(updatedSettings)
       console.log('✅ Settings updated successfully in local state')
     } catch (err) {
@@ -94,6 +86,10 @@ export const useSettings = () => {
     }
   }
 
+  const refreshSettings = async () => {
+    await fetchSettings()
+  }
+
   useEffect(() => {
     fetchSettings()
   }, [])
@@ -101,6 +97,7 @@ export const useSettings = () => {
   return {
     settings,
     updateSettings,
+    refreshSettings,
     loading,
     saving,
     error,
