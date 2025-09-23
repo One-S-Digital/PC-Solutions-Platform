@@ -8,7 +8,8 @@ import { User, Organization, Product, Service, ApiResponse } from '../types/api'
 import { AxiosInstance } from 'axios'
 
 
-const API_BASE_URL = '/api'
+// Use environment variable for API base URL, fallback to '/api' for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 // Create axios instance
 const api = axios.create({
@@ -313,29 +314,41 @@ export const apiService = {
   }),
 
   // Logo and Favicon Uploads
-  uploadLogo: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }),
+  uploadLogo: (apiClient: AxiosInstance, formData: FormData) => {
+    console.log('🔄 API: uploadLogo called with baseURL:', apiClient.defaults.baseURL)
+    return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
 
-  uploadFavicon: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }),
+  uploadFavicon: (apiClient: AxiosInstance, formData: FormData) => {
+    console.log('🔄 API: uploadFavicon called with baseURL:', apiClient.defaults.baseURL)
+    return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
 
-  uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }),
+  uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData) => {
+    console.log('🔄 API: uploadAdminLogo called with baseURL:', apiClient.defaults.baseURL)
+    return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
 
-  uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }),
+  uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData) => {
+    console.log('🔄 API: uploadAdminFavicon called with baseURL:', apiClient.defaults.baseURL)
+    return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
 
   // Health Check
 

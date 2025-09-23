@@ -42,8 +42,18 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   const handleFileSelect = async (file: File) => {
     setError(null)
 
+    console.log('📁 File selected:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      maxSize: maxSize,
+      accept: accept
+    })
+
     if (file.size > maxSize) {
-      setError(`File size must be less than ${Math.round(maxSize / 1024 / 1024)}MB`)
+      const errorMsg = `File size must be less than ${Math.round(maxSize / 1024 / 1024)}MB`
+      console.error('❌ File too large:', errorMsg)
+      setError(errorMsg)
       return
     }
 
@@ -58,7 +68,9 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
     })
 
     if (!isValidType) {
-      setError(`File type not supported. Accepted types: ${accept}`)
+      const errorMsg = `File type not supported. Accepted types: ${accept}`
+      console.error('❌ Invalid file type:', errorMsg)
+      setError(errorMsg)
       return
     }
 
@@ -67,12 +79,14 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
       setPreviewUrl(url)
     }
 
+    console.log('✅ File validation passed, starting upload...')
     setIsUploading(true)
     try {
       await onUpload(file)
       // Clear the preview URL after successful upload to show the new asset
       setPreviewUrl(null)
     } catch (err) {
+      console.error('❌ Upload failed in SimpleAssetUploader:', err)
       setError('Upload failed. Please try again.')
       setPreviewUrl(null)
     } finally {

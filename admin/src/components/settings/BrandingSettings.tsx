@@ -17,6 +17,13 @@ const BrandingSettings: React.FC = () => {
     setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
     
     try {
+      console.log('🔄 Starting upload for:', assetType, {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        apiBaseUrl: import.meta.env.VITE_API_URL || '/api'
+      })
+
       const formData = new FormData()
       formData.append('file', file)
 
@@ -38,6 +45,8 @@ const BrandingSettings: React.FC = () => {
           throw new Error(`Unknown asset type: ${assetType}`)
       }
 
+      console.log('✅ Upload response for', assetType, ':', response)
+
       if (response.data && response.data.success) {
         // Store the uploaded asset ID for the save button
         setUploadedAssets(prev => ({ ...prev, [assetType]: response.data.data.id }))
@@ -48,6 +57,7 @@ const BrandingSettings: React.FC = () => {
         throw new Error(response.data?.message || 'Upload failed')
       }
     } catch (e) {
+      console.error('❌ Upload error for', assetType, ':', e)
       logger.error('Failed to upload asset:', assetType, e)
       toast.error(`Failed to upload ${assetType}. Please try again.`)
       throw e
