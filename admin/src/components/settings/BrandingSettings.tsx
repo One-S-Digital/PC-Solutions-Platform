@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import { useApiClient } from '../../services/api'
 import { apiService } from '../../services/api'
+import { useUser } from '@clerk/clerk-react'
 import SimpleAssetUploader from './SimpleAssetUploader'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import logger from '../../utils/logger'
@@ -10,6 +11,7 @@ import toast from 'react-hot-toast'
 const BrandingSettings: React.FC = () => {
   const { settings, updateSettings, refreshSettings, loading, error, saving } = useSettings()
   const apiClient = useApiClient()
+  const { user } = useUser()
   const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
   const [uploadedAssets, setUploadedAssets] = useState<Record<string, string>>({})
 
@@ -18,6 +20,14 @@ const BrandingSettings: React.FC = () => {
     baseURL: apiClient.defaults.baseURL,
     timeout: apiClient.defaults.timeout,
     headers: apiClient.defaults.headers
+  })
+
+  // Log user authentication status
+  console.log('🔧 BrandingSettings user auth status:', {
+    isSignedIn: user ? true : false,
+    userId: user?.id,
+    userRole: user?.publicMetadata?.role,
+    userEmail: user?.emailAddresses?.[0]?.emailAddress
   })
 
   const handleUploadAndUpdate = async (assetType: string, file: File) => {

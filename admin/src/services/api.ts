@@ -135,25 +135,22 @@ export const useApiClient = () => {
 
     apiWithAuth.interceptors.request.use(
       async (config) => {
-        if (config.url?.includes('/users') || config.url?.includes('/debug')) {
-          logger.log('[REQ]', {
-            url: config.url,
-            method: config.method,
-            origin: window.location.origin,
-          });
-        }
+        // Log all requests for debugging
+        logger.log('[REQ]', {
+          url: config.url,
+          method: config.method,
+          origin: window.location.origin,
+        });
 
         try {
           const token = await getToken()
           if (token) {
             config.headers.Authorization = `Bearer ${token}`
-            if (config.url?.includes('/users') || config.url?.includes('/debug')) {
-              logger.log('✅ Admin Dashboard API token added:', {
-                url: config.url,
-                tokenLength: token.length,
-                hasAuth: true
-              });
-            }
+            logger.log('✅ Admin Dashboard API token added:', {
+              url: config.url,
+              tokenLength: token.length,
+              hasAuth: true
+            });
           } else {
             logger.warn('⚠️ Admin Dashboard API no token available:', {
               url: config.url,
@@ -164,9 +161,7 @@ export const useApiClient = () => {
           logger.error('❌ Admin Dashboard API token error:', {
             url: config.url,
             error: error,
-
             errorMessage: (error as Error)?.message
-
           });
         }
         return config
@@ -179,14 +174,12 @@ export const useApiClient = () => {
 
     apiWithAuth.interceptors.response.use(
       (response) => {
-        if (response.config.url?.includes('/users') || response.config.url?.includes('/debug')) {
-          logger.log('✅ Admin Dashboard API Response Success:', {
-            url: response.config.url,
-            status: response.status,
-            statusText: response.statusText,
-            dataKeys: response.data ? Object.keys(response.data) : 'no data'
-          });
-        }
+        logger.log('✅ Admin Dashboard API Response Success:', {
+          url: response.config.url,
+          status: response.status,
+          statusText: response.statusText,
+          dataKeys: response.data ? Object.keys(response.data) : 'no data'
+        });
         return response;
       },
       (error) => {
