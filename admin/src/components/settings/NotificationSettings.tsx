@@ -27,27 +27,28 @@ const NotificationSettings: React.FC = () => {
   if (loading) return <LoadingSpinner />
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Notification Settings</h3>
-        <p className="mt-1 text-sm text-gray-600">
+        <h3 className="text-xl font-semibold text-swiss-charcoal">Notification Settings</h3>
+        <p className="mt-1 text-gray-500">
           Configure email notifications and SMTP settings
         </p>
       </div>
 
       {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="text-sm text-red-700">{error}</div>
+        <div className="rounded-card bg-red-50 border border-red-200 p-4">
+          <div className="text-sm text-red-700 font-medium">{error}</div>
         </div>
       )}
 
       <div className="space-y-6">
-        <div>
-          <h4 className="text-md font-medium text-gray-900 mb-4">Email Notifications</h4>
+        {/* Email Notifications */}
+        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Email Notifications</h4>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-swiss-charcoal">
                   New User Registrations
                 </label>
                 <p className="text-sm text-gray-500">
@@ -58,8 +59,8 @@ const NotificationSettings: React.FC = () => {
                 type="button"
                 onClick={() => handleToggle('notifyNewUsers', !settings?.notifyNewUsers)}
                 className={`${
-                  settings?.notifyNewUsers ? 'bg-blue-600' : 'bg-gray-200'
-                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                  settings?.notifyNewUsers ? 'bg-swiss-teal' : 'bg-gray-200'
+                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2`}
               >
                 <span
                   className={`${
@@ -71,7 +72,7 @@ const NotificationSettings: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-swiss-charcoal">
                   Application Submissions
                 </label>
                 <p className="text-sm text-gray-500">
@@ -82,8 +83,8 @@ const NotificationSettings: React.FC = () => {
                 type="button"
                 onClick={() => handleToggle('notifyApplications', !settings?.notifyApplications)}
                 className={`${
-                  settings?.notifyApplications ? 'bg-blue-600' : 'bg-gray-200'
-                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                  settings?.notifyApplications ? 'bg-swiss-teal' : 'bg-gray-200'
+                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2`}
               >
                 <span
                   className={`${
@@ -95,12 +96,13 @@ const NotificationSettings: React.FC = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <h4 className="text-md font-medium text-gray-900 mb-4">SMTP Configuration</h4>
+        {/* SMTP Configuration */}
+        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">SMTP Configuration</h4>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label htmlFor="notificationEmail" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="notificationEmail" className="block text-sm font-medium text-swiss-charcoal mb-2">
                   Notification Email
                 </label>
                 <input
@@ -108,12 +110,13 @@ const NotificationSettings: React.FC = () => {
                   name="notificationEmail"
                   id="notificationEmail"
                   defaultValue={settings?.notificationEmail || ''}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  placeholder="notifications@example.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="smtpHost" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="smtpHost" className="block text-sm font-medium text-swiss-charcoal mb-2">
                   SMTP Host
                 </label>
                 <input
@@ -121,12 +124,13 @@ const NotificationSettings: React.FC = () => {
                   name="smtpHost"
                   id="smtpHost"
                   defaultValue={settings?.smtpHost || ''}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  placeholder="smtp.gmail.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="smtpPort" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="smtpPort" className="block text-sm font-medium text-swiss-charcoal mb-2">
                   SMTP Port
                 </label>
                 <input
@@ -134,12 +138,13 @@ const NotificationSettings: React.FC = () => {
                   name="smtpPort"
                   id="smtpPort"
                   defaultValue={settings?.smtpPort || 587}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  placeholder="587"
                 />
               </div>
 
               <div>
-                <label htmlFor="smtpUser" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="smtpUser" className="block text-sm font-medium text-swiss-charcoal mb-2">
                   SMTP Username
                 </label>
                 <input
@@ -147,12 +152,13 @@ const NotificationSettings: React.FC = () => {
                   name="smtpUser"
                   id="smtpUser"
                   defaultValue={settings?.smtpUser || ''}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  placeholder="your-email@gmail.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="smtpPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="smtpPassword" className="block text-sm font-medium text-swiss-charcoal mb-2">
                   SMTP Password
                 </label>
                 <input
@@ -160,22 +166,23 @@ const NotificationSettings: React.FC = () => {
                   name="smtpPassword"
                   id="smtpPassword"
                   defaultValue={settings?.smtpPassword || ''}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  placeholder="••••••••"
                 />
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-end pt-4 border-t border-gray-200">
+              <button
+                type="submit"
+                disabled={saving}
+                className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                {saving ? 'Saving...' : 'Save SMTP Settings'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )
