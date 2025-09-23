@@ -98,7 +98,7 @@ const createDevApiClient = () => {
 
 // Request interceptor to add auth token
 export const useApiClient = () => {
-  const { getToken } = useAuthSafe()
+  const { getToken } = useAuth()
 
   return useMemo(() => {
     if (isDevelopmentMode()) {
