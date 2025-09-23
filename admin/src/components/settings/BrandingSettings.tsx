@@ -76,13 +76,13 @@ const BrandingSettings: React.FC = () => {
                     type="color"
                     name="primaryColor"
                     defaultValue={settings?.primaryColor || '#3B82F6'}
-                    className="h-10 w-20 rounded-input border border-gray-300"
+                    className="h-10 w-20 rounded-lg border border-gray-300"
                   />
                   <input
                     type="text"
                     name="primaryColor"
                     defaultValue={settings?.primaryColor || '#3B82F6'}
-                    className="flex-1 rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   />
                 </div>
               </div>
@@ -96,13 +96,13 @@ const BrandingSettings: React.FC = () => {
                     type="color"
                     name="secondaryColor"
                     defaultValue={settings?.secondaryColor || '#10B981'}
-                    className="h-10 w-20 rounded-input border border-gray-300"
+                    className="h-10 w-20 rounded-lg border border-gray-300"
                   />
                   <input
                     type="text"
                     name="secondaryColor"
                     defaultValue={settings?.secondaryColor || '#10B981'}
-                    className="flex-1 rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   />
                 </div>
               </div>
@@ -116,13 +116,13 @@ const BrandingSettings: React.FC = () => {
                     type="color"
                     name="accentColor"
                     defaultValue={settings?.accentColor || '#F59E0B'}
-                    className="h-10 w-20 rounded-input border border-gray-300"
+                    className="h-10 w-20 rounded-lg border border-gray-300"
                   />
                   <input
                     type="text"
                     name="accentColor"
                     defaultValue={settings?.accentColor || '#F59E0B'}
-                    className="flex-1 rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   />
                 </div>
               </div>
@@ -154,13 +154,13 @@ const BrandingSettings: React.FC = () => {
                     type="color"
                     name="adminPrimaryColor"
                     defaultValue={settings?.adminPrimaryColor || '#1F2937'}
-                    className="h-10 w-20 rounded-input border border-gray-300"
+                    className="h-10 w-20 rounded-lg border border-gray-300"
                   />
                   <input
                     type="text"
                     name="adminPrimaryColor"
                     defaultValue={settings?.adminPrimaryColor || '#1F2937'}
-                    className="flex-1 rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   />
                 </div>
               </div>
@@ -174,13 +174,13 @@ const BrandingSettings: React.FC = () => {
                     type="color"
                     name="adminSecondaryColor"
                     defaultValue={settings?.adminSecondaryColor || '#374151'}
-                    className="h-10 w-20 rounded-input border border-gray-300"
+                    className="h-10 w-20 rounded-lg border border-gray-300"
                   />
                   <input
                     type="text"
                     name="adminSecondaryColor"
                     defaultValue={settings?.adminSecondaryColor || '#374151'}
-                    className="flex-1 rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   />
                 </div>
               </div>
@@ -194,13 +194,13 @@ const BrandingSettings: React.FC = () => {
                     type="color"
                     name="adminAccentColor"
                     defaultValue={settings?.adminAccentColor || '#3B82F6'}
-                    className="h-10 w-20 rounded-input border border-gray-300"
+                    className="h-10 w-20 rounded-lg border border-gray-300"
                   />
                   <input
                     type="text"
                     name="adminAccentColor"
                     defaultValue={settings?.adminAccentColor || '#3B82F6'}
-                    className="flex-1 rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   />
                 </div>
               </div>

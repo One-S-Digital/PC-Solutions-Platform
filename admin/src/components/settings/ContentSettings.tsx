@@ -71,7 +71,7 @@ const ContentSettings: React.FC = () => {
                 name="heroTitle"
                 id="heroTitle"
                 defaultValue={settings?.heroTitle || ''}
-                className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="Enter hero title"
               />
             </div>
@@ -85,7 +85,7 @@ const ContentSettings: React.FC = () => {
                 id="heroSubtitle"
                 rows={3}
                 defaultValue={settings?.heroSubtitle || ''}
-                className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="Enter hero subtitle"
               />
             </div>
@@ -100,7 +100,7 @@ const ContentSettings: React.FC = () => {
                   name="heroButtonText"
                   id="heroButtonText"
                   defaultValue={settings?.heroButtonText || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="Get Started"
                 />
               </div>
@@ -114,7 +114,7 @@ const ContentSettings: React.FC = () => {
                   name="heroButtonLink"
                   id="heroButtonLink"
                   defaultValue={settings?.heroButtonLink || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="https://example.com"
                 />
               </div>

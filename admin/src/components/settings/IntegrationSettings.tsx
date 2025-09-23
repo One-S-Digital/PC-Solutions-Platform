@@ -49,7 +49,7 @@ const IntegrationSettings: React.FC = () => {
                   name="clerkPublishableKey"
                   id="clerkPublishableKey"
                   defaultValue={settings?.clerkPublishableKey || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="pk_test_..."
                 />
               </div>
@@ -63,7 +63,7 @@ const IntegrationSettings: React.FC = () => {
                   name="clerkSecretKey"
                   id="clerkSecretKey"
                   defaultValue={settings?.clerkSecretKey || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="sk_test_..."
                 />
               </div>
@@ -83,7 +83,7 @@ const IntegrationSettings: React.FC = () => {
                   name="googleAnalyticsId"
                   id="googleAnalyticsId"
                   defaultValue={settings?.googleAnalyticsId || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="GA-XXXXXXXXX-X"
                 />
               </div>
@@ -97,7 +97,7 @@ const IntegrationSettings: React.FC = () => {
                   name="facebookPixelId"
                   id="facebookPixelId"
                   defaultValue={settings?.facebookPixelId || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="123456789012345"
                 />
               </div>

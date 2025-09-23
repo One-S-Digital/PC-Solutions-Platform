@@ -110,7 +110,7 @@ const NotificationSettings: React.FC = () => {
                   name="notificationEmail"
                   id="notificationEmail"
                   defaultValue={settings?.notificationEmail || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="notifications@example.com"
                 />
               </div>
@@ -124,7 +124,7 @@ const NotificationSettings: React.FC = () => {
                   name="smtpHost"
                   id="smtpHost"
                   defaultValue={settings?.smtpHost || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="smtp.gmail.com"
                 />
               </div>
@@ -138,7 +138,7 @@ const NotificationSettings: React.FC = () => {
                   name="smtpPort"
                   id="smtpPort"
                   defaultValue={settings?.smtpPort || 587}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="587"
                 />
               </div>
@@ -152,7 +152,7 @@ const NotificationSettings: React.FC = () => {
                   name="smtpUser"
                   id="smtpUser"
                   defaultValue={settings?.smtpUser || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="your-email@gmail.com"
                 />
               </div>
@@ -166,7 +166,7 @@ const NotificationSettings: React.FC = () => {
                   name="smtpPassword"
                   id="smtpPassword"
                   defaultValue={settings?.smtpPassword || ''}
-                  className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                   placeholder="••••••••"
                 />
               </div>

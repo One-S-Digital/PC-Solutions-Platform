@@ -57,7 +57,7 @@ const GeneralSettings: React.FC = () => {
                 name="siteName"
                 id="siteName"
                 defaultValue={settings?.siteName || ''}
-                className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="Enter site name"
               />
             </div>
@@ -71,7 +71,7 @@ const GeneralSettings: React.FC = () => {
                 name="contactEmail"
                 id="contactEmail"
                 defaultValue={settings?.contactEmail || ''}
-                className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="contact@example.com"
               />
             </div>
@@ -86,7 +86,7 @@ const GeneralSettings: React.FC = () => {
               id="siteDescription"
               rows={3}
               defaultValue={settings?.siteDescription || ''}
-              className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
               placeholder="Enter site description"
             />
           </div>
@@ -100,7 +100,7 @@ const GeneralSettings: React.FC = () => {
               name="contactPhone"
               id="contactPhone"
               defaultValue={settings?.contactPhone || ''}
-              className="block w-full rounded-input border-gray-300 shadow-sm focus:border-swiss-teal focus:ring-swiss-teal sm:text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
               placeholder="+41 XX XXX XX XX"
             />
           </div>
