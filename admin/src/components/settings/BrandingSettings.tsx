@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
-import { useAssetUpload } from '../../hooks/useAssetUpload'
+import { useApiClient } from '../../services/api'
+import { apiService } from '../../services/api'
 import SimpleAssetUploader from './SimpleAssetUploader'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import logger from '../../utils/logger'
@@ -8,65 +9,75 @@ import toast from 'react-hot-toast'
 
 const BrandingSettings: React.FC = () => {
   const { settings, updateSettings, refreshSettings, loading, error, saving } = useSettings()
-  const { uploadAsset } = useAssetUpload()
+  const apiClient = useApiClient()
   const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
+  const [uploadedAssets, setUploadedAssets] = useState<Record<string, string>>({})
 
   const handleUploadAndUpdate = async (assetType: string, file: File) => {
     setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
     
     try {
-      // Use the correct API endpoint for each asset type
-      let endpoint = ''
+      const formData = new FormData()
+      formData.append('file', file)
+
+      let response
       switch (assetType) {
         case 'logo':
-          endpoint = '/admin/frontend-settings/upload-logo'
+          response = await apiService.uploadLogo(apiClient, formData)
           break
         case 'adminLogo':
-          endpoint = '/admin/frontend-settings/upload-admin-logo'
+          response = await apiService.uploadAdminLogo(apiClient, formData)
           break
         case 'favicon':
-          endpoint = '/admin/frontend-settings/upload-favicon'
+          response = await apiService.uploadFavicon(apiClient, formData)
           break
         case 'adminFavicon':
-          endpoint = '/admin/frontend-settings/upload-admin-favicon'
+          response = await apiService.uploadAdminFavicon(apiClient, formData)
           break
         default:
           throw new Error(`Unknown asset type: ${assetType}`)
       }
 
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) {
-        throw new Error('Upload failed')
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        // Update the settings with the new asset ID
-        const assetIdField = `${assetType}AssetId`
-        await updateSettings({ [assetIdField]: result.data.asset.id })
-        
-        // Refresh settings to get the updated asset data
-        await refreshSettings()
+      if (response.data && response.data.success) {
+        // Store the uploaded asset ID for the save button
+        setUploadedAssets(prev => ({ ...prev, [assetType]: response.data.data.id }))
         
         toast.success(`${assetType} uploaded successfully!`)
-        logger.log(`✅ ${assetType} uploaded and saved successfully`)
+        logger.log(`✅ ${assetType} uploaded successfully`)
       } else {
-        throw new Error(result.message || 'Upload failed')
+        throw new Error(response.data?.message || 'Upload failed')
       }
     } catch (e) {
-      logger.error('Failed to upload and update asset:', assetType, e)
+      logger.error('Failed to upload asset:', assetType, e)
       toast.error(`Failed to upload ${assetType}. Please try again.`)
       throw e
     } finally {
       setUploadingAssets(prev => ({ ...prev, [assetType]: false }))
+    }
+  }
+
+  const handleSaveAsset = async (assetType: string) => {
+    const assetId = uploadedAssets[assetType]
+    if (!assetId) {
+      toast.error('No asset to save. Please upload a file first.')
+      return
+    }
+
+    try {
+      const assetIdField = `${assetType}AssetId`
+      await updateSettings({ [assetIdField]: assetId })
+      
+      // Refresh settings to get the updated asset data
+      await refreshSettings()
+      
+      // Clear the uploaded asset from state
+      setUploadedAssets(prev => ({ ...prev, [assetType]: '' }))
+      
+      toast.success(`${assetType} saved successfully!`)
+      logger.log(`✅ ${assetType} saved successfully`)
+    } catch (e) {
+      logger.error('Failed to save asset:', assetType, e)
+      toast.error(`Failed to save ${assetType}. Please try again.`)
     }
   }
 
@@ -284,6 +295,17 @@ const BrandingSettings: React.FC = () => {
               {uploadingAssets.logo && (
                 <div className="mt-2 text-sm text-swiss-teal">Uploading logo...</div>
               )}
+              {uploadedAssets.logo && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSaveAsset('logo')}
+                    disabled={saving}
+                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  >
+                    {saving ? 'Saving...' : 'Save Logo'}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div>
@@ -298,6 +320,17 @@ const BrandingSettings: React.FC = () => {
               />
               {uploadingAssets.adminLogo && (
                 <div className="mt-2 text-sm text-swiss-teal">Uploading admin logo...</div>
+              )}
+              {uploadedAssets.adminLogo && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSaveAsset('adminLogo')}
+                    disabled={saving}
+                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  >
+                    {saving ? 'Saving...' : 'Save Admin Logo'}
+                  </button>
+                </div>
               )}
             </div>
 
@@ -314,6 +347,17 @@ const BrandingSettings: React.FC = () => {
               {uploadingAssets.favicon && (
                 <div className="mt-2 text-sm text-swiss-teal">Uploading favicon...</div>
               )}
+              {uploadedAssets.favicon && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSaveAsset('favicon')}
+                    disabled={saving}
+                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  >
+                    {saving ? 'Saving...' : 'Save Favicon'}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div>
@@ -328,6 +372,17 @@ const BrandingSettings: React.FC = () => {
               />
               {uploadingAssets.adminFavicon && (
                 <div className="mt-2 text-sm text-swiss-teal">Uploading admin favicon...</div>
+              )}
+              {uploadedAssets.adminFavicon && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSaveAsset('adminFavicon')}
+                    disabled={saving}
+                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  >
+                    {saving ? 'Saving...' : 'Save Admin Favicon'}
+                  </button>
+                </div>
               )}
             </div>
           </div>

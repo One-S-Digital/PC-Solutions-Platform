@@ -312,6 +312,31 @@ export const apiService = {
     },
   }),
 
+  // Logo and Favicon Uploads
+  uploadLogo: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+
+  uploadFavicon: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+
+  uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+
+  uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+
   // Health Check
 
   getSettingsHealth: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<SettingsHealth>>('/admin/settings/health'),
