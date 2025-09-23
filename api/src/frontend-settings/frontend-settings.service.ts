@@ -50,6 +50,7 @@ export class FrontendSettingsService {
         faviconAsset: true,
         ogImageAsset: true,
         adminLogoAsset: true,
+        adminFaviconAsset: true,
       },
     });
     
@@ -73,6 +74,7 @@ export class FrontendSettingsService {
           faviconAsset: true,
           ogImageAsset: true,
           adminLogoAsset: true,
+          adminFaviconAsset: true,
         },
       });
     }
@@ -92,6 +94,7 @@ export class FrontendSettingsService {
           faviconAsset: true,
           ogImageAsset: true,
           adminLogoAsset: true,
+          adminFaviconAsset: true,
         },
       });
     } else {
@@ -104,6 +107,7 @@ export class FrontendSettingsService {
           faviconAsset: true,
           ogImageAsset: true,
           adminLogoAsset: true,
+          adminFaviconAsset: true,
         },
       });
     }
@@ -162,6 +166,20 @@ export class FrontendSettingsService {
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
       data: { adminLogoAssetId: uploadResult.asset.id },
+    });
+
+    return uploadResult;
+  }
+
+  async uploadAdminFavicon(file: Express.Multer.File, uploadedBy: string) {
+    // Use the existing upload service
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.ADMIN_FAVICON);
+
+    // Update frontend settings with new admin favicon
+    const settings = await this.getSettings();
+    await this.prisma.frontendSettings.update({
+      where: { id: settings.id },
+      data: { adminFaviconAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;

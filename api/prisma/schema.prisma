@@ -272,6 +272,7 @@ model Asset {
   frontendFavicons FrontendSettings[] @relation("FrontendFavicon")
   frontendOgImages FrontendSettings[] @relation("FrontendOgImage")
   adminLogos       FrontendSettings[] @relation("AdminLogo")
+  adminFavicons    FrontendSettings[] @relation("AdminFavicon")
 
   @@map("assets")
 }
@@ -887,6 +888,7 @@ model FrontendSettings {
 
   // Admin Dashboard Branding
   adminLogoAssetId    String?
+  adminFaviconAssetId String?
   adminPrimaryColor   String  @default("#1F2937")
   adminSecondaryColor String  @default("#374151")
   adminAccentColor    String  @default("#3B82F6")
@@ -934,6 +936,7 @@ model FrontendSettings {
   faviconAsset   Asset? @relation("FrontendFavicon", fields: [faviconAssetId], references: [id])
   ogImageAsset   Asset? @relation("FrontendOgImage", fields: [ogImageAssetId], references: [id])
   adminLogoAsset Asset? @relation("AdminLogo", fields: [adminLogoAssetId], references: [id])
+  adminFaviconAsset Asset? @relation("AdminFavicon", fields: [adminFaviconAssetId], references: [id])
 
   @@map("frontend_settings")
 }

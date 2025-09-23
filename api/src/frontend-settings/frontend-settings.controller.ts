@@ -63,4 +63,10 @@ export class FrontendSettingsController {
   uploadAdminLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
     return this.frontendSettingsService.uploadAdminLogo(file, req.user.id);
   }
+
+  @Post('admin-favicon')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadAdminFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    return this.frontendSettingsService.uploadAdminFavicon(file, req.user.id);
+  }
 }
