@@ -3,30 +3,17 @@ import { ClerkProvider } from '@clerk/clerk-react';
 
 // Get the publishable key from environment variables
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-const isSatellite = import.meta.env.VITE_CLERK_IS_SATELLITE === 'true';
-const clerkDomain = import.meta.env.VITE_CLERK_DOMAIN;
-const signInUrl = import.meta.env.VITE_CLERK_SIGN_IN_URL;
-const signUpUrl = import.meta.env.VITE_CLERK_SIGN_UP_URL;
 
 // Debug logging for environment variables
 console.log('🔧 Admin Clerk Environment Variables:', {
   VITE_CLERK_PUBLISHABLE_KEY: clerkPubKey ? 'SET' : 'NOT SET',
-  VITE_CLERK_IS_SATELLITE: import.meta.env.VITE_CLERK_IS_SATELLITE,
-  isSatellite: isSatellite,
-  VITE_CLERK_DOMAIN: clerkDomain,
-  VITE_CLERK_SIGN_IN_URL: signInUrl,
-  VITE_CLERK_SIGN_UP_URL: signUpUrl,
 });
 
 if (!clerkPubKey) {
   console.error('Clerk Publishable Key is missing. Please set VITE_CLERK_PUBLISHABLE_KEY in your environment.');
 } else {
   console.log('Clerk Publishable Key loaded successfully.');
-  if (isSatellite) {
-    console.log('Running as Clerk Satellite with domain:', clerkDomain);
-  } else {
-    console.log('Running as Clerk Primary');
-  }
+  console.log('Running as Admin App with custom login pages');
 }
 
 interface AppProviderProps {
@@ -46,26 +33,11 @@ export function AppProvider({ children }: AppProviderProps) {
     );
   }
 
-  // Primary configuration (Frontend)
-  if (!isSatellite) {
-    return (
-      <ClerkProvider 
-        publishableKey={clerkPubKey}
-        allowedRedirectOrigins={['https://admin.procrechesolutions.com']}
-      >
-        {children}
-      </ClerkProvider>
-    );
-  }
-
-  // Satellite configuration (Admin)
   return (
-    <ClerkProvider
+    <ClerkProvider 
       publishableKey={clerkPubKey}
-      isSatellite
-      domain={clerkDomain}
-      signInUrl={signInUrl}
-      signUpUrl={signUpUrl}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
     >
       {children}
     </ClerkProvider>
