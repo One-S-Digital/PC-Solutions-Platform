@@ -56,10 +56,6 @@ services:
         value: /sign-in
       - key: VITE_CLERK_SIGN_UP_URL
         value: /sign-up
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
 
   # Admin Service (Satellite)
   - type: web
@@ -83,10 +79,6 @@ services:
         value: https://app.procrechesolutions.com/sign-in
       - key: VITE_CLERK_SIGN_UP_URL
         value: https://app.procrechesolutions.com/sign-up
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
 
 databases:
   - name: pc-solutions-db
