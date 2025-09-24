@@ -61,7 +61,7 @@ services:
         source: /*
         destination: /index.html
 
-  # Admin Service
+  # Admin Service (Satellite)
   - type: web
     name: pc-solutions-admin
     env: node
@@ -75,10 +75,14 @@ services:
         sync: false
       - key: VITE_API_URL
         value: https://pc-solutions-v2.onrender.com/api
+      - key: VITE_CLERK_IS_SATELLITE
+        value: "true"
+      - key: VITE_CLERK_DOMAIN
+        value: admin.procrechesolutions.com
       - key: VITE_CLERK_SIGN_IN_URL
-        value: /sign-in
+        value: https://app.procrechesolutions.com/sign-in
       - key: VITE_CLERK_SIGN_UP_URL
-        value: /sign-up
+        value: https://app.procrechesolutions.com/sign-up
     routes:
       - type: rewrite
         source: /*
