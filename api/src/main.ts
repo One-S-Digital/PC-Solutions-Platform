@@ -27,6 +27,9 @@ async function bootstrap() {
   // Global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter(logger));
 
+  // Set global prefix
+  app.setGlobalPrefix('api');
+
   // CORS
   app.enableCors({
     origin: process.env.NODE_ENV === 'production' 

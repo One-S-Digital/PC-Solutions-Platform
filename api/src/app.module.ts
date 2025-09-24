@@ -119,12 +119,11 @@ export class AppModule implements NestModule {
     consumer
       .apply(ClerkAuthMiddleware)
       .exclude(
-        'auth/signup-data',
-        'auth/signup-fields/(.*)',
-        'health',
-        'metrics',
+        'api/auth/signup-data',
+        'api/auth/signup-fields/(.*)',
         'api/health',
-        'api/metrics'
+        'api/metrics',
+        'api/users/sync'
       )
       .forRoutes('*');
   }
