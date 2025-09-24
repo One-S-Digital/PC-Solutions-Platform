@@ -5,10 +5,10 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=api
-    startCommand: cd build/apps/api && pnpm start:dev
+    startCommand: cd build/apps/api && pnpm start:prod
     envVars:
       - key: NODE_ENV
-        value: development
+        value: production
       - key: PORT
         value: 3000
       - key: DATABASE_URL
@@ -47,7 +47,7 @@ services:
     startCommand: cd frontend && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
-        value: development
+        value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false
       - key: VITE_API_URL
@@ -70,7 +70,7 @@ services:
     startCommand: cd admin && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
-        value: development
+        value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false
       - key: VITE_API_URL
