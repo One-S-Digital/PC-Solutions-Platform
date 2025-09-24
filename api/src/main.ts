@@ -43,6 +43,19 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
+  // CORS debugging middleware
+  app.use((req, res, next) => {
+    console.log('🔧 CORS Debug:', {
+      origin: req.headers.origin,
+      method: req.method,
+      url: req.url,
+      allowedOrigins: process.env.NODE_ENV === 'production' 
+        ? ['https://app.procrechesolutions.com', 'https://admin.procrechesolutions.com']
+        : 'all'
+    });
+    next();
+  });
+
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
