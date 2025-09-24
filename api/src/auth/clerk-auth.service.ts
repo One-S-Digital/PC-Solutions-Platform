@@ -246,47 +246,71 @@ export class ClerkAuthService {
     try {
       const payload = await this.verifyToken(token);
       
-      // Fetch user from database to get the role
-      const user = await this.userSyncService.findUserByClerkId(payload.sub);
-      
-      if (!user) {
-        console.log('🔧 User not found in database, syncing from Clerk...');
-        // If user doesn't exist, sync from Clerk (will use default role)
-        const syncedUser = await this.userSyncService.syncUserFromClerk(payload);
-        console.log('✅ User synced:', {
-          userId: syncedUser.id,
-          email: syncedUser.email,
-          role: syncedUser.role
+      try {
+        // Fetch user from database to get the role
+        const user = await this.userSyncService.findUserByClerkId(payload.sub);
+        
+        if (!user) {
+          console.log('🔧 User not found in database, syncing from Clerk...');
+          // If user doesn't exist, sync from Clerk (will use default role)
+          const syncedUser = await this.userSyncService.syncUserFromClerk(payload);
+          console.log('✅ User synced:', {
+            userId: syncedUser.id,
+            email: syncedUser.email,
+            role: syncedUser.role
+          });
+          
+          return {
+            id: syncedUser.clerkId,
+            email: syncedUser.email,
+            firstName: syncedUser.firstName,
+            lastName: syncedUser.lastName,
+            role: syncedUser.role,
+            organizationId: payload.orgId,
+            createdAt: syncedUser.createdAt,
+            updatedAt: syncedUser.updatedAt,
+          };
+        }
+        
+        console.log('✅ User found in database:', {
+          userId: user.id,
+          email: user.email,
+          role: user.role
         });
         
         return {
-          id: syncedUser.clerkId,
-          email: syncedUser.email,
-          firstName: syncedUser.firstName,
-          lastName: syncedUser.lastName,
-          role: syncedUser.role,
+          id: user.clerkId,
+          email: user.email || payload.email,
+          firstName: user.firstName || payload.firstName,
+          lastName: user.lastName || payload.lastName,
+          role: user.role, // Use role from database
           organizationId: payload.orgId,
-          createdAt: syncedUser.createdAt,
-          updatedAt: syncedUser.updatedAt,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         };
+      } catch (dbError) {
+        // Handle database errors gracefully
+        if (dbError instanceof Error && dbError.message.includes('does not exist in the current database')) {
+          console.error('⚠️ Database not initialized. Using token data with default role.');
+          console.error('Run migrations: npx prisma migrate deploy');
+          
+          // Return user data from token with a default role
+          // This allows the app to function while database is being set up
+          return {
+            id: payload.sub,
+            email: payload.email || 'unknown@email.com',
+            firstName: payload.firstName || 'Unknown',
+            lastName: payload.lastName || 'User',
+            role: UserRole.PARENT, // Default role for safety
+            organizationId: payload.orgId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+        }
+        
+        // Re-throw other database errors
+        throw dbError;
       }
-      
-      console.log('✅ User found in database:', {
-        userId: user.id,
-        email: user.email,
-        role: user.role
-      });
-      
-      return {
-        id: user.clerkId,
-        email: user.email || payload.email,
-        firstName: user.firstName || payload.firstName,
-        lastName: user.lastName || payload.lastName,
-        role: user.role, // Use role from database
-        organizationId: payload.orgId,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
     } catch (error) {
       console.error('❌ validateClerkToken error:', {
         error: error instanceof Error ? error.message : String(error),

@@ -30,6 +30,7 @@ import { SystemMonitoringModule } from './system-monitoring/system-monitoring.mo
 import { EmailNotificationModule } from './email-notification/email-notification.module';
 import { SubscriptionManagementModule } from './subscription-management/subscription-management.module';
 import { SystemConfigurationModule } from './system-configuration/system-configuration.module';
+import { HealthModule } from './health/health.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -99,6 +100,7 @@ import {
     EmailNotificationModule,
     SubscriptionManagementModule,
     SystemConfigurationModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
