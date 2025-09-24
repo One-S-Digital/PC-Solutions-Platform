@@ -7,7 +7,7 @@ import { MimeValidationService } from './mime-validation.service';
 import { QuarantineStorageService } from './quarantine-storage.service';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, AuthModule],
   controllers: [AntivirusUploadController, HealthController],
   providers: [ClamAVService, MimeValidationService, QuarantineStorageService],
   exports: [ClamAVService, MimeValidationService, QuarantineStorageService],

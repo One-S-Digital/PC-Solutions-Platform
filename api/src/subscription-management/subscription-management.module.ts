@@ -5,10 +5,12 @@ import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
 import { EmailNotificationModule } from '../email-notification/email-notification.module';
 
 @Module({
-  imports: [PrismaModule, EmailNotificationModule],
+  imports: [PrismaModule, EmailNotificationModule, AuthModule],
+import { AuthModule } from '../auth/auth.module';
   controllers: [SubscriptionManagementController],
   providers: [
     SubscriptionManagementService,
