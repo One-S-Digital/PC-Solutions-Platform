@@ -25,6 +25,22 @@ export class ClerkAuthGuard extends AuthGuard('clerk') {
       throw new UnauthorizedException('No token provided');
     }
 
+    // Debug token claims to identify issuer mismatch
+    try {
+      const [header, payload] = token.split('.');
+      const decodedPayload = JSON.parse(Buffer.from(payload, 'base64url').toString());
+      const decodedHeader = JSON.parse(Buffer.from(header, 'base64url').toString());
+      
+      console.log('🔧 Token Claims Debug:', {
+        iss: decodedPayload.iss,
+        aud: decodedPayload.aud,
+        kid: decodedHeader.kid,
+        expectedJWKS: `${decodedPayload.iss}/.well-known/jwks.json`
+      });
+    } catch (e) {
+      console.error('❌ Token decode error:', e);
+    }
+
     try {
       const user = await this.clerkAuthService.validateClerkToken(token);
       console.log('✅ Token validated successfully:', {

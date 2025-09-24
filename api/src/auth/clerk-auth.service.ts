@@ -70,7 +70,7 @@ export class ClerkAuthService {
     }
   }
 
-  private async getClerkPublicKey(kid: string): Promise<string | null> {
+  private   async getClerkPublicKey(kid: string): Promise<string | null> {
     try {
       // Check cache first
       const cached = this.keyCache.get(kid);
@@ -88,14 +88,37 @@ export class ClerkAuthService {
       // Format: pk_test_<instanceId> or pk_live_<instanceId>
       const keyParts = clerkPublishableKey.split('_');
       const instanceId = keyParts[2]; // Third segment is the instance ID
-      const jwksUrl = `https://${instanceId}.clerk.accounts.dev/.well-known/jwks.json`;
+      
+      // Try both possible JWKS URLs
+      const possibleUrls = [
+        `https://${instanceId}.clerk.accounts.dev/.well-known/jwks.json`,
+        `https://clerk.${instanceId}.lcl.dev/.well-known/jwks.json`, // For custom domains
+      ];
 
-      const response = await fetch(jwksUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch JWKS: ${response.statusText}`);
+      let jwksUrl = '';
+      let jwks = null;
+
+      for (const url of possibleUrls) {
+        console.log('🔧 Trying JWKS URL:', url);
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            jwksUrl = url;
+            jwks = await response.json();
+            console.log('✅ JWKS fetch successful:', url);
+            break;
+          } else {
+            console.log('❌ JWKS fetch failed:', url, response.status, response.statusText);
+          }
+        } catch (e) {
+          console.log('❌ JWKS fetch error:', url, e);
+        }
       }
 
-      const jwks = await response.json();
+      if (!jwks) {
+        throw new Error('Failed to fetch JWKS from any URL');
+      }
+
       const key = jwks.keys.find((k: any) => k.kid === kid);
 
       if (!key) {
