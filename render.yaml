@@ -5,7 +5,7 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=api
-    startCommand: cd api && pnpm start:dev
+    startCommand: cd build/apps/api && pnpm start:dev
     envVars:
       - key: NODE_ENV
         value: development
