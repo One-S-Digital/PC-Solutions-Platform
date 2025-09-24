@@ -3,11 +3,20 @@ import { ClerkProvider } from '@clerk/clerk-react';
 
 // Get the publishable key from environment variables
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const isSatellite = import.meta.env.VITE_CLERK_IS_SATELLITE === 'true';
+const clerkDomain = import.meta.env.VITE_CLERK_DOMAIN;
+const signInUrl = import.meta.env.VITE_CLERK_SIGN_IN_URL;
+const signUpUrl = import.meta.env.VITE_CLERK_SIGN_UP_URL;
 
 if (!clerkPubKey) {
   console.error('Clerk Publishable Key is missing. Please set VITE_CLERK_PUBLISHABLE_KEY in your environment.');
 } else {
   console.log('Clerk Publishable Key loaded successfully.');
+  if (isSatellite) {
+    console.log('Running as Clerk Satellite with domain:', clerkDomain);
+  } else {
+    console.log('Running as Clerk Primary');
+  }
 }
 
 interface AppProviderProps {
@@ -27,8 +36,27 @@ export function AppProvider({ children }: AppProviderProps) {
     );
   }
 
+  // Primary configuration
+  if (!isSatellite) {
+    return (
+      <ClerkProvider 
+        publishableKey={clerkPubKey}
+        allowedRedirectOrigins={['https://dash.procrechesolutions.com']}
+      >
+        {children}
+      </ClerkProvider>
+    );
+  }
+
+  // Satellite configuration
   return (
-    <ClerkProvider publishableKey={clerkPubKey}>
+    <ClerkProvider
+      publishableKey={clerkPubKey}
+      isSatellite
+      domain={clerkDomain}
+      signInUrl={signInUrl}
+      signUpUrl={signUpUrl}
+    >
       {children}
     </ClerkProvider>
   );

@@ -30,9 +30,15 @@ async function bootstrap() {
   // CORS
   app.enableCors({
     origin: process.env.NODE_ENV === 'production' 
-      ? ['https://procrechesolutions.com', 'https://dash.procrechesolutions.com', 'https://admin.procrechesolutions.com']
+      ? [
+          'https://app.procrechesolutions.com', 
+          'https://dash.procrechesolutions.com', 
+          'https://admin.procrechesolutions.com'
+        ]
       : true,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
   // Swagger documentation

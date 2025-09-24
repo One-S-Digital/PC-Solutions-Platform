@@ -1,14 +1,14 @@
 services:
-  # API Service - Development
+  # API Service
   - type: web
-    name: pc-solutions-api-dev
+    name: pc-solutions-api
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=api
-    startCommand: cd build/apps/api && pnpm start:dev
+    startCommand: cd build/apps/api && pnpm start:prod
     envVars:
       - key: NODE_ENV
-        value: development
+        value: production
       - key: PORT
         value: 3000
       - key: DATABASE_URL
@@ -38,39 +38,51 @@ services:
       - key: PROMETHEUS_SCRAPE_TOKEN
         sync: false
 
-  # Frontend Service - Development
+  # Frontend Service (Primary)
   - type: web
-    name: pc-solutions-frontend-dev
+    name: pc-solutions-frontend
     env: node
     plan: starter
     buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length:" $(echo -n "$VITE_CLERK_PUBLISHABLE_KEY" | wc -c) && echo "Key starts with:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | cut -c1-10) && echo "Key format check:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT') && echo "=== END DEBUG ===" && pnpm install --frozen-lockfile && pnpm run build --filter=frontend
     startCommand: cd frontend && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
-        value: development
+        value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false
       - key: VITE_API_URL
         value: https://pc-solutions-v2.onrender.com/api
+      - key: VITE_CLERK_SIGN_IN_URL
+        value: /sign-in
+      - key: VITE_CLERK_SIGN_UP_URL
+        value: /sign-up
     routes:
       - type: rewrite
         source: /*
         destination: /index.html
 
-  # Admin Service - Development
+  # Admin Service (Satellite)
   - type: web
-    name: pc-solutions-admin-dev
+    name: pc-solutions-admin
     env: node
     plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=admin
     startCommand: cd admin && npx serve -s dist
     envVars:
       - key: VITE_NODE_ENV
-        value: development
+        value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false
       - key: VITE_API_URL
         value: https://pc-solutions-v2.onrender.com/api
+      - key: VITE_CLERK_IS_SATELLITE
+        value: "true"
+      - key: VITE_CLERK_DOMAIN
+        value: dash.procrechesolutions.com
+      - key: VITE_CLERK_SIGN_IN_URL
+        value: https://app.procrechesolutions.com/sign-in
+      - key: VITE_CLERK_SIGN_UP_URL
+        value: https://app.procrechesolutions.com/sign-up
     routes:
       - type: rewrite
         source: /*

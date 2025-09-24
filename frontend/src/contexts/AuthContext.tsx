@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
+import { apiCall } from '../utils/api';
 type AuthUser = {
   id: string;
   name?: string;
@@ -137,10 +138,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const token = await getToken();
       
       // Add error handling for API calls
-      const response = await fetch('/api/users/me', {
+      const response = await apiCall('/users/me', {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
       }).catch((fetchError) => {
         console.warn('API not available, using Clerk data only:', fetchError);
@@ -200,11 +200,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ...clerkUser.publicMetadata
       };
 
-      const response = await fetch('/api/users', {
+      const response = await apiCall('/users', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
       }).catch((fetchError) => {
@@ -254,11 +253,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const token = await getToken();
-      const response = await fetch(`/api/users/${user.id}`, {
+      const response = await apiCall(`/users/${user.id}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updates),
       });
