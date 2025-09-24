@@ -32,7 +32,6 @@ async function bootstrap() {
     origin: process.env.NODE_ENV === 'production' 
       ? [
           'https://app.procrechesolutions.com', 
-          'https://dash.procrechesolutions.com', 
           'https://admin.procrechesolutions.com'
         ]
       : true,
