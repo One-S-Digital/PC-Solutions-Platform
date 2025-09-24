@@ -185,14 +185,17 @@ export class ClerkAuthService {
       throw new UnauthorizedException('Token missing required field: sub');
     }
 
-    if (!payload.email) {
-      throw new UnauthorizedException('Token missing required field: email');
-    }
+    // Email is optional in JWT - we'll get it from Clerk's user data if needed
+    // if (!payload.email) {
+    //   throw new UnauthorizedException('Token missing required field: email');
+    // }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(payload.email)) {
-      throw new UnauthorizedException('Invalid email format in token');
+    // Validate email format if present
+    if (payload.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(payload.email)) {
+        throw new UnauthorizedException('Invalid email format in token');
+      }
     }
   }
 
