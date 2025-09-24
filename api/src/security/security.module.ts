@@ -5,6 +5,7 @@ import { HealthController } from './health.controller';
 import { ClamAVService } from './clamav.service';
 import { MimeValidationService } from './mime-validation.service';
 import { QuarantineStorageService } from './quarantine-storage.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [ConfigModule, AuthModule],
