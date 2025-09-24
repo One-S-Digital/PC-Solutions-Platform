@@ -41,7 +41,7 @@ export class ClerkAuthService {
       const { header, payload } = decoded as unknown as { header: any; payload: ClerkJwtPayload };
 
       // Verify the token signature using Clerk's public key
-      const publicKey = await this.getClerkPublicKey(header.kid);
+      const publicKey = await this.getClerkPublicKey(header.kid, payload.iss);
       if (!publicKey) {
         throw new UnauthorizedException('Unable to verify token signature');
       }
@@ -70,7 +70,7 @@ export class ClerkAuthService {
     }
   }
 
-  private   async getClerkPublicKey(kid: string): Promise<string | null> {
+  private   async getClerkPublicKey(kid: string, issuer?: string): Promise<string | null> {
     try {
       // Check cache first
       const cached = this.keyCache.get(kid);
@@ -78,47 +78,59 @@ export class ClerkAuthService {
         return cached.key;
       }
 
-      // Fetch public key from Clerk
-      const clerkPublishableKey = this.configService.get<string>('CLERK_PUBLISHABLE_KEY');
-      if (!clerkPublishableKey) {
-        throw new UnauthorizedException('Clerk publishable key not configured');
-      }
-
-      // Extract the instance ID from the publishable key
-      // Format: pk_test_<instanceId> or pk_live_<instanceId>
-      const keyParts = clerkPublishableKey.split('_');
-      const instanceId = keyParts[2]; // Third segment is the instance ID
-      
-      // Try both possible JWKS URLs
-      const possibleUrls = [
-        `https://${instanceId}.clerk.accounts.dev/.well-known/jwks.json`,
-        `https://clerk.${instanceId}.lcl.dev/.well-known/jwks.json`, // For custom domains
-      ];
-
+      // Use the issuer from the token if provided, otherwise fall back to publishable key extraction
       let jwksUrl = '';
-      let jwks = null;
+      
+      if (issuer) {
+        // Use the exact issuer from the token
+        jwksUrl = `${issuer}/.well-known/jwks.json`;
+        console.log('🔧 Using token issuer for JWKS:', jwksUrl);
+      } else {
+        // Fallback to publishable key extraction
+        const clerkPublishableKey = this.configService.get<string>('CLERK_PUBLISHABLE_KEY');
+        if (!clerkPublishableKey) {
+          throw new UnauthorizedException('Clerk publishable key not configured');
+        }
 
-      for (const url of possibleUrls) {
-        console.log('🔧 Trying JWKS URL:', url);
-        try {
-          const response = await fetch(url);
-          if (response.ok) {
-            jwksUrl = url;
-            jwks = await response.json();
-            console.log('✅ JWKS fetch successful:', url);
-            break;
-          } else {
-            console.log('❌ JWKS fetch failed:', url, response.status, response.statusText);
+        // Extract the instance ID from the publishable key
+        // Format: pk_test_<instanceId> or pk_live_<instanceId>
+        const keyParts = clerkPublishableKey.split('_');
+        const instanceId = keyParts[2]; // Third segment is the instance ID
+        
+        // Try both possible JWKS URLs
+        const possibleUrls = [
+          `https://${instanceId}.clerk.accounts.dev/.well-known/jwks.json`,
+          `https://clerk.${instanceId}.lcl.dev/.well-known/jwks.json`, // For custom domains
+        ];
+
+        for (const url of possibleUrls) {
+          console.log('🔧 Trying JWKS URL:', url);
+          try {
+            const response = await fetch(url);
+            if (response.ok) {
+              jwksUrl = url;
+              console.log('✅ JWKS fetch successful:', url);
+              break;
+            } else {
+              console.log('❌ JWKS fetch failed:', url, response.status, response.statusText);
+            }
+          } catch (e) {
+            console.log('❌ JWKS fetch error:', url, e);
           }
-        } catch (e) {
-          console.log('❌ JWKS fetch error:', url, e);
+        }
+
+        if (!jwksUrl) {
+          throw new Error('Failed to fetch JWKS from any URL');
         }
       }
 
-      if (!jwks) {
-        throw new Error('Failed to fetch JWKS from any URL');
+      // Fetch the JWKS
+      const response = await fetch(jwksUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch JWKS: ${response.statusText}`);
       }
 
+      const jwks = await response.json();
       const key = jwks.keys.find((k: any) => k.kid === kid);
 
       if (!key) {
