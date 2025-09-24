@@ -144,6 +144,13 @@ export const useApiClient = () => {
 
         try {
           const token = await getToken()
+          console.log('🔧 Token Debug:', {
+            hasToken: !!token,
+            tokenLength: token?.length || 0,
+            tokenStart: token?.substring(0, 20) || 'none',
+            url: config.url
+          });
+          
           if (token) {
             config.headers.Authorization = `Bearer ${token}`
             logger.log('✅ Admin Dashboard API token added:', {
@@ -158,6 +165,7 @@ export const useApiClient = () => {
             });
           }
         } catch (error) {
+          console.error('❌ Token Error:', error);
           logger.error('❌ Admin Dashboard API token error:', {
             url: config.url,
             error: error,
