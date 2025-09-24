@@ -8,8 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import { EmailNotificationModule } from '../email-notification/email-notification.module';
 
 @Module({
-  imports: [PrismaModule, EmailNotificationModule],
-import { AuthModule } from '../auth/auth.module';
+  imports: [PrismaModule, EmailNotificationModule, AuthModule],
   controllers: [SystemConfigurationController],
   providers: [
     SystemConfigurationService,

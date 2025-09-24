@@ -6,7 +6,6 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [PrismaModule, AuthModule],
-import { AuthModule } from '../auth/auth.module';
   controllers: [AnalyticsController],
   providers: [AnalyticsService],
   exports: [AnalyticsService],

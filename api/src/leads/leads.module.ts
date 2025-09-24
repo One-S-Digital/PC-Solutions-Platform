@@ -6,7 +6,6 @@ import { LeadsService } from './leads.service';
 
 @Module({
   imports: [PrismaModule, AuthModule],
-import { AuthModule } from '../auth/auth.module';
   controllers: [LeadsController],
   providers: [LeadsService],
   exports: [LeadsService],

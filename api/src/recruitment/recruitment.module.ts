@@ -6,7 +6,6 @@ import { RecruitmentService } from './recruitment.service';
 
 @Module({
   imports: [PrismaModule, AuthModule],
-import { AuthModule } from '../auth/auth.module';
   controllers: [RecruitmentController],
   providers: [RecruitmentService],
   exports: [RecruitmentService],
