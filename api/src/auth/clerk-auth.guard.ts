@@ -17,7 +17,9 @@ export class ClerkAuthGuard extends AuthGuard('clerk') {
       tokenLength: token?.length || 0,
       tokenStart: token?.substring(0, 20) || 'none',
       url: request.url,
-      method: request.method
+      method: request.method,
+      hasService: !!this.clerkAuthService,
+      serviceMethods: this.clerkAuthService ? Object.getOwnPropertyNames(Object.getPrototypeOf(this.clerkAuthService)) : 'undefined'
     });
     
     if (!token) {
@@ -39,6 +41,11 @@ export class ClerkAuthGuard extends AuthGuard('clerk') {
       });
     } catch (e) {
       console.error('❌ Token decode error:', e);
+    }
+
+    if (!this.clerkAuthService) {
+      console.error('❌ ClerkAuthService not injected');
+      throw new UnauthorizedException('Authentication service not available');
     }
 
     try {
