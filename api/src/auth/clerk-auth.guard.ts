@@ -36,7 +36,7 @@ export class ClerkAuthGuard extends AuthGuard('clerk') {
       return true;
     } catch (error) {
       console.error('❌ Token validation failed:', {
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         tokenStart: token.substring(0, 20)
       });
       throw new UnauthorizedException('Invalid token');
