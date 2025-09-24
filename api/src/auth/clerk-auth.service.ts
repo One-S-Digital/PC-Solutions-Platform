@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRole } from '@repo/types';
+import { UserSyncService } from './user-sync.service';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
 
@@ -28,6 +29,7 @@ export class ClerkAuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly userSyncService: UserSyncService,
   ) {}
 
   async verifyToken(token: string): Promise<ClerkJwtPayload> {
@@ -243,15 +245,47 @@ export class ClerkAuthService {
   async validateClerkToken(token: string): Promise<any> {
     try {
       const payload = await this.verifyToken(token);
+      
+      // Fetch user from database to get the role
+      const user = await this.userSyncService.findUserByClerkId(payload.sub);
+      
+      if (!user) {
+        console.log('🔧 User not found in database, syncing from Clerk...');
+        // If user doesn't exist, sync from Clerk (will use default role)
+        const syncedUser = await this.userSyncService.syncUserFromClerk(payload);
+        console.log('✅ User synced:', {
+          userId: syncedUser.id,
+          email: syncedUser.email,
+          role: syncedUser.role
+        });
+        
+        return {
+          id: syncedUser.clerkId,
+          email: syncedUser.email,
+          firstName: syncedUser.firstName,
+          lastName: syncedUser.lastName,
+          role: syncedUser.role,
+          organizationId: payload.orgId,
+          createdAt: syncedUser.createdAt,
+          updatedAt: syncedUser.updatedAt,
+        };
+      }
+      
+      console.log('✅ User found in database:', {
+        userId: user.id,
+        email: user.email,
+        role: user.role
+      });
+      
       return {
-        id: payload.sub,
-        email: payload.email,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        role: payload.role,
+        id: user.clerkId,
+        email: user.email || payload.email,
+        firstName: user.firstName || payload.firstName,
+        lastName: user.lastName || payload.lastName,
+        role: user.role, // Use role from database
         organizationId: payload.orgId,
-        createdAt: payload.iat * 1000, // Convert to milliseconds
-        updatedAt: payload.iat * 1000,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       };
     } catch (error) {
       console.error('❌ validateClerkToken error:', {
