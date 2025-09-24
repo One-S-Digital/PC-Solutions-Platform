@@ -4,10 +4,12 @@ import { SystemConfigurationService } from './system-configuration.service';
 import { IntegrationManagementService } from './integration-management.service';
 import { MaintenanceModeService } from './maintenance-mode.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
 import { EmailNotificationModule } from '../email-notification/email-notification.module';
 
 @Module({
   imports: [PrismaModule, EmailNotificationModule],
+import { AuthModule } from '../auth/auth.module';
   controllers: [SystemConfigurationController],
   providers: [
     SystemConfigurationService,
