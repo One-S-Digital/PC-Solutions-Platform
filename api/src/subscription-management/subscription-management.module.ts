@@ -10,7 +10,6 @@ import { EmailNotificationModule } from '../email-notification/email-notificatio
 
 @Module({
   imports: [PrismaModule, EmailNotificationModule, AuthModule],
-import { AuthModule } from '../auth/auth.module';
   controllers: [SubscriptionManagementController],
   providers: [
     SubscriptionManagementService,
