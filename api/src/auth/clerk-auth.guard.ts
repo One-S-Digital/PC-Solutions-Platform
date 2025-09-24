@@ -1,12 +1,9 @@
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Injectable, ExecutionContext, UnauthorizedException, CanActivate } from '@nestjs/common';
 import { ClerkAuthService } from './clerk-auth.service';
 
 @Injectable()
-export class ClerkAuthGuard extends AuthGuard('clerk') {
-  constructor(private clerkAuthService: ClerkAuthService) {
-    super();
-  }
+export class ClerkAuthGuard implements CanActivate {
+  constructor(private clerkAuthService: ClerkAuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
