@@ -12,15 +12,33 @@ export class ClerkAuthGuard extends AuthGuard('clerk') {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     
+    console.log('🔧 ClerkAuthGuard Debug:', {
+      hasToken: !!token,
+      tokenLength: token?.length || 0,
+      tokenStart: token?.substring(0, 20) || 'none',
+      url: request.url,
+      method: request.method
+    });
+    
     if (!token) {
+      console.log('❌ No token provided');
       throw new UnauthorizedException('No token provided');
     }
 
     try {
       const user = await this.clerkAuthService.validateClerkToken(token);
+      console.log('✅ Token validated successfully:', {
+        userId: user.id,
+        email: user.email,
+        role: user.role
+      });
       request.user = user;
       return true;
     } catch (error) {
+      console.error('❌ Token validation failed:', {
+        error: error.message,
+        tokenStart: token.substring(0, 20)
+      });
       throw new UnauthorizedException('Invalid token');
     }
   }
