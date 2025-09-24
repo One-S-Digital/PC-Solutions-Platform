@@ -60,8 +60,8 @@ export class ClerkAuthService {
       console.log('🔧 Verifying token signature...');
       const verifiedPayload = jwt.verify(token, publicKey, {
         algorithms: ['RS256'],
-        issuer: this.configService.get<string>('CLERK_JWT_ISSUER'),
-        audience: this.configService.get<string>('CLERK_JWT_AUDIENCE'),
+        issuer: payload.iss,  // Use token's issuer
+        audience: payload.aud, // Use token's audience
       }) as ClerkJwtPayload;
       console.log('✅ Token signature verified');
 
