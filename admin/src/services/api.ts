@@ -288,7 +288,7 @@ export const apiService = {
   markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messages/${id}/read`),
 
   // System
-  getCurrentUser: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User>>('/auth/me'),
+  getCurrentUser: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User>>('/users/me'),
 
   // File Management
   uploadUniversalFile: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<FileUploadResult>>('/files/upload', formData, {
