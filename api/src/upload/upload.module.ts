@@ -3,9 +3,10 @@ import { UploadController } from './upload.controller';
 import { UploadService } from './upload.service';
 import { CloudflareR2Service } from './cloudflare-r2.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, AuthModule],
   controllers: [UploadController],
   providers: [UploadService, CloudflareR2Service],
   exports: [UploadService, CloudflareR2Service],
