@@ -32,6 +32,8 @@ export class ClerkAuthService {
 
   async verifyToken(token: string): Promise<ClerkJwtPayload> {
     try {
+      console.log('🔧 Starting token verification...');
+      
       // First decode the token to get the header and payload without verification
       const decoded = jwt.decode(token, { complete: true });
       if (!decoded || typeof decoded === 'string') {
@@ -39,27 +41,43 @@ export class ClerkAuthService {
       }
 
       const { header, payload } = decoded as unknown as { header: any; payload: ClerkJwtPayload };
+      console.log('🔧 Token decoded successfully:', {
+        kid: header.kid,
+        iss: payload.iss,
+        sub: payload.sub,
+        exp: payload.exp
+      });
 
       // Verify the token signature using Clerk's public key
+      console.log('🔧 Getting public key...');
       const publicKey = await this.getClerkPublicKey(header.kid, payload.iss);
       if (!publicKey) {
         throw new UnauthorizedException('Unable to verify token signature');
       }
+      console.log('✅ Public key obtained');
 
       // Verify the token signature
+      console.log('🔧 Verifying token signature...');
       const verifiedPayload = jwt.verify(token, publicKey, {
         algorithms: ['RS256'],
         issuer: this.configService.get<string>('CLERK_JWT_ISSUER'),
         audience: this.configService.get<string>('CLERK_JWT_AUDIENCE'),
       }) as ClerkJwtPayload;
+      console.log('✅ Token signature verified');
 
       // Additional validation
+      console.log('🔧 Validating token payload...');
       this.validateTokenPayload(verifiedPayload);
+      console.log('✅ Token payload validated');
 
       return verifiedPayload;
     } catch (error) {
       const trace = error instanceof Error ? error.stack : undefined;
       this.logger.error('Token verification failed', trace);
+      console.error('❌ verifyToken error:', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       if (error instanceof jwt.JsonWebTokenError) {
         throw new UnauthorizedException(`Token verification failed: ${error.message}`);
       }
@@ -236,7 +254,11 @@ export class ClerkAuthService {
         updatedAt: payload.iat * 1000,
       };
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      console.error('❌ validateClerkToken error:', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      throw new UnauthorizedException(`Invalid token: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }
