@@ -10,6 +10,9 @@ import {
   Request,
   Body,
   BadRequestException,
+  Logger,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -35,6 +38,8 @@ export class UploadFileDto {
 @Controller('upload')
 @UseGuards(RolesGuard)
 export class UploadController {
+  private readonly logger = new Logger(UploadController.name);
+
   constructor(
     private readonly r2Service: CloudflareR2Service,
     private readonly uploadService: UploadService,
@@ -44,6 +49,8 @@ export class UploadController {
   @UploadThrottle()
   @ApiOperation({ summary: 'Generate presigned URL for direct upload' })
   @ApiResponse({ status: 200, description: 'Presigned URL generated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid request or file type' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async generatePresignedUpload(
     @Body() presignedUploadDto: PresignedUploadDto,
     @Request() req,
@@ -51,16 +58,29 @@ export class UploadController {
     const { filename, mimeType, assetKind } = presignedUploadDto;
     const userId = req.context.userId;
 
-    // Validate file type and size
-    const mockFile = {
-      originalname: filename,
-      mimetype: mimeType,
-      size: 0, // We'll validate size on client side
-    } as Express.Multer.File;
+    this.logger.log(`Generating presigned URL for user ${userId}: ${filename} (${assetKind})`);
 
-    this.r2Service.validateFile(mockFile, assetKind);
+    try {
+      // Validate file type and size
+      const mockFile = {
+        originalname: filename,
+        mimetype: mimeType,
+        size: 0, // We'll validate size on client side
+      } as Express.Multer.File;
 
-    return this.r2Service.generatePresignedUpload(filename, mimeType, assetKind, userId);
+      this.r2Service.validateFile(mockFile, assetKind);
+
+      const result = await this.r2Service.generatePresignedUpload(filename, mimeType, assetKind, userId);
+      
+      this.logger.log(`Presigned URL generated successfully for ${filename}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Failed to generate presigned URL for ${filename}:`, error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new HttpException('Failed to generate upload URL', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Post('file')
@@ -84,6 +104,8 @@ export class UploadController {
     },
   })
   @ApiResponse({ status: 201, description: 'File uploaded successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid file or request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadFileDto: UploadFileDto,
@@ -96,61 +118,91 @@ export class UploadController {
     const { assetKind } = uploadFileDto;
     const userId = req.context.userId;
 
-    // Validate file
-    this.r2Service.validateFile(file, assetKind);
+    this.logger.log(`Uploading file for user ${userId}: ${file.originalname} (${assetKind}, ${file.size} bytes)`);
 
-    // Upload to R2
-    const uploadResult = await this.r2Service.uploadFile(file, assetKind, userId);
+    try {
+      // Validate file
+      this.r2Service.validateFile(file, assetKind);
 
-    // Save to database
-    const asset = await this.uploadService.createAsset({
-      kind: assetKind,
-      filename: uploadResult.filename,
-      publicUrl: uploadResult.url,
-      storageKey: uploadResult.key,
-      mimeType: uploadResult.mimeType,
-      size: uploadResult.size,
-      uploadedBy: userId,
-    });
+      // Check if R2 is configured
+      if (!this.r2Service.isConfigured()) {
+        this.logger.error('R2 service is not properly configured');
+        throw new HttpException('Storage service is not available', HttpStatus.SERVICE_UNAVAILABLE);
+      }
 
-    return {
-      success: true,
-      asset: {
-        id: asset.id,
-        kind: asset.kind,
-        filename: asset.filename,
-        publicUrl: asset.publicUrl,
-        mimeType: asset.mimeType,
-        size: asset.size,
-        createdAt: asset.createdAt,
-      },
-    };
+      // Upload to R2
+      const uploadResult = await this.r2Service.uploadFile(file, assetKind, userId);
+
+      // Save to database
+      const asset = await this.uploadService.createAsset({
+        kind: assetKind,
+        filename: uploadResult.filename,
+        publicUrl: uploadResult.url,
+        storageKey: uploadResult.key,
+        mimeType: uploadResult.mimeType,
+        size: uploadResult.size,
+        uploadedBy: userId,
+      });
+
+      this.logger.log(`File uploaded successfully: ${asset.id} (${uploadResult.key})`);
+
+      return {
+        success: true,
+        message: 'File uploaded successfully',
+        asset: {
+          id: asset.id,
+          kind: asset.kind,
+          filename: asset.filename,
+          publicUrl: asset.publicUrl,
+          mimeType: asset.mimeType,
+          size: asset.size,
+          createdAt: asset.createdAt,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Failed to upload file ${file.originalname}:`, error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new HttpException('Failed to upload file', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get('asset/:id')
   @ApiOperation({ summary: 'Get asset information' })
   @ApiResponse({ status: 200, description: 'Asset information retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'Asset not found' })
+  @ApiResponse({ status: 403, description: 'Access denied' })
   async getAsset(@Param('id') id: string, @Request() req) {
     const userId = req.context.userId;
-    const asset = await this.uploadService.getAsset(id, userId);
 
-    return {
-      success: true,
-      asset: {
-        id: asset.id,
-        kind: asset.kind,
-        filename: asset.filename,
-        publicUrl: asset.publicUrl,
-        mimeType: asset.mimeType,
-        size: asset.size,
-        createdAt: asset.createdAt,
-      },
-    };
+    this.logger.log(`Getting asset ${id} for user ${userId}`);
+
+    try {
+      const asset = await this.uploadService.getAsset(id, userId);
+
+      return {
+        success: true,
+        asset: {
+          id: asset.id,
+          kind: asset.kind,
+          filename: asset.filename,
+          publicUrl: asset.publicUrl,
+          mimeType: asset.mimeType,
+          size: asset.size,
+          createdAt: asset.createdAt,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get asset ${id}:`, error);
+      throw error;
+    }
   }
 
   @Get('assets')
   @ApiOperation({ summary: 'Get user assets' })
   @ApiResponse({ status: 200, description: 'Assets retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getUserAssets(
     @Request() req,
     @Body() query: { kind?: AssetKind; limit?: number; offset?: number } = {},
@@ -158,74 +210,142 @@ export class UploadController {
     const userId = req.context.userId;
     const { kind, limit = 50, offset = 0 } = query;
 
-    const assets = await this.uploadService.getUserAssets(userId, { kind, limit, offset });
+    this.logger.log(`Getting assets for user ${userId} (kind: ${kind}, limit: ${limit}, offset: ${offset})`);
 
-    return {
-      success: true,
-      assets: assets.map(asset => ({
-        id: asset.id,
-        kind: asset.kind,
-        filename: asset.filename,
-        publicUrl: asset.publicUrl,
-        mimeType: asset.mimeType,
-        size: asset.size,
-        createdAt: asset.createdAt,
-      })),
-    };
+    try {
+      const assets = await this.uploadService.getUserAssets(userId, { kind, limit, offset });
+
+      return {
+        success: true,
+        assets: assets.map(asset => ({
+          id: asset.id,
+          kind: asset.kind,
+          filename: asset.filename,
+          publicUrl: asset.publicUrl,
+          mimeType: asset.mimeType,
+          size: asset.size,
+          createdAt: asset.createdAt,
+        })),
+        total: assets.length,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get assets for user ${userId}:`, error);
+      throw new HttpException('Failed to retrieve assets', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete('asset/:id')
   @ApiOperation({ summary: 'Delete asset' })
   @ApiResponse({ status: 200, description: 'Asset deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Asset not found' })
+  @ApiResponse({ status: 403, description: 'Access denied' })
   async deleteAsset(@Param('id') id: string, @Request() req) {
     const userId = req.context.userId;
-    
-    // Get asset to verify ownership and get storage key
-    const asset = await this.uploadService.getAsset(id, userId);
-    
-    // Delete from R2
-    await this.r2Service.deleteFile(asset.storageKey);
-    
-    // Delete from database
-    await this.uploadService.deleteAsset(id, userId);
 
-    return {
-      success: true,
-      message: 'Asset deleted successfully',
-    };
+    this.logger.log(`Deleting asset ${id} for user ${userId}`);
+
+    try {
+      // Get asset to verify ownership and get storage key
+      const asset = await this.uploadService.getAsset(id, userId);
+      
+      // Delete from R2
+      await this.r2Service.deleteFile(asset.storageKey);
+      
+      // Delete from database
+      await this.uploadService.deleteAsset(id, userId);
+
+      this.logger.log(`Asset deleted successfully: ${id}`);
+
+      return {
+        success: true,
+        message: 'Asset deleted successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to delete asset ${id}:`, error);
+      throw error;
+    }
   }
 
   @Get('download/:id')
   @ApiOperation({ summary: 'Generate download URL for asset' })
   @ApiResponse({ status: 200, description: 'Download URL generated successfully' })
+  @ApiResponse({ status: 404, description: 'Asset not found' })
+  @ApiResponse({ status: 403, description: 'Access denied' })
   async generateDownloadUrl(@Param('id') id: string, @Request() req) {
     const userId = req.context.userId;
-    
-    // Get asset to verify ownership
-    const asset = await this.uploadService.getAsset(id, userId);
-    
-    // Generate presigned download URL
-    const downloadUrl = await this.r2Service.generatePresignedDownloadUrl(asset.storageKey);
 
-    return {
-      success: true,
-      downloadUrl,
-      expiresIn: 3600, // 1 hour
-    };
+    this.logger.log(`Generating download URL for asset ${id} (user: ${userId})`);
+
+    try {
+      // Get asset to verify ownership
+      const asset = await this.uploadService.getAsset(id, userId);
+      
+      // Generate presigned download URL
+      const downloadUrl = await this.r2Service.generatePresignedDownloadUrl(asset.storageKey);
+
+      return {
+        success: true,
+        downloadUrl,
+        expiresIn: 3600, // 1 hour
+      };
+    } catch (error) {
+      this.logger.error(`Failed to generate download URL for asset ${id}:`, error);
+      throw error;
+    }
   }
 
   @Post('admin/cleanup')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiOperation({ summary: 'Clean up orphaned files (Admin only)' })
   @ApiResponse({ status: 200, description: 'Cleanup completed successfully' })
+  @ApiResponse({ status: 403, description: 'Access denied' })
   async cleanupOrphanedFiles(@Request() req) {
-    const result = await this.uploadService.cleanupOrphanedFiles();
+    const userId = req.context.userId;
 
-    return {
-      success: true,
-      message: 'Cleanup completed',
-      deletedCount: result.deletedCount,
-      errors: result.errors,
-    };
+    this.logger.log(`Starting orphaned files cleanup (initiated by user: ${userId})`);
+
+    try {
+      const result = await this.uploadService.cleanupOrphanedFiles();
+
+      this.logger.log(`Cleanup completed: ${result.deletedCount} files deleted, ${result.errors.length} errors`);
+
+      return {
+        success: true,
+        message: 'Cleanup completed',
+        deletedCount: result.deletedCount,
+        errors: result.errors,
+      };
+    } catch (error) {
+      this.logger.error('Failed to cleanup orphaned files:', error);
+      throw new HttpException('Failed to cleanup orphaned files', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('health')
+  @ApiOperation({ summary: 'Check upload service health' })
+  @ApiResponse({ status: 200, description: 'Service health status' })
+  async getHealth() {
+    try {
+      const isConfigured = this.r2Service.isConfigured();
+      const connectionTest = isConfigured ? await this.r2Service.testConnection() : false;
+
+      return {
+        success: true,
+        status: 'healthy',
+        r2: {
+          configured: isConfigured,
+          connected: connectionTest,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      this.logger.error('Health check failed:', error);
+      return {
+        success: false,
+        status: 'unhealthy',
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 }

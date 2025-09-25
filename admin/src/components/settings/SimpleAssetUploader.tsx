@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useApiClient } from '../../services/api'
 
 interface SimpleAssetUploaderProps {
   currentAssetId?: string
@@ -20,24 +21,40 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [currentAsset, setCurrentAsset] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const apiClient = useApiClient()
 
   // Fetch current asset if currentAssetId exists
   useEffect(() => {
     if (currentAssetId) {
-      fetch(`/api/assets/${currentAssetId}`)
-        .then(res => res.json())
+      setLoading(true)
+      fetch(`/api/upload/asset/${currentAssetId}`, {
+        headers: {
+          'Authorization': `Bearer ${apiClient.defaults.headers.common['Authorization']}`,
+        },
+      })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch asset: ${res.status}`)
+          }
+          return res.json()
+        })
         .then(data => {
           if (data.success && data.data) {
             setCurrentAsset(data.data)
-            setPreviewUrl(data.data.url)
+            setPreviewUrl(data.data.publicUrl)
           }
         })
         .catch(err => {
           console.error('Failed to fetch current asset:', err)
+          setError('Failed to load current asset')
+        })
+        .finally(() => {
+          setLoading(false)
         })
     }
-  }, [currentAssetId])
+  }, [currentAssetId, apiClient])
 
   const handleFileSelect = async (file: File) => {
     setError(null)
@@ -114,9 +131,21 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   const handleRemove = () => {
     setPreviewUrl(null)
     setCurrentAsset(null)
+    setError(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+  }
+
+  if (loading) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="flex items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-swiss-teal"></div>
+          <span className="ml-2 text-sm text-gray-600">Loading current asset...</span>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -124,7 +153,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
       {(previewUrl || currentAsset) && (
         <div className="relative inline-block">
           <img
-            src={previewUrl || currentAsset?.url}
+            src={previewUrl || currentAsset?.publicUrl}
             alt="Preview"
             className="h-20 w-20 object-cover rounded-lg border border-gray-300"
           />

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { AssetKind } from '@repo/types';
+import { useAuth } from '@clerk/clerk-react';
 
 export interface Asset {
   id: string;
@@ -26,6 +27,17 @@ export interface UploadResult {
 export function useFileUpload() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { getToken } = useAuth();
+
+  const getAuthToken = useCallback(async (): Promise<string> => {
+    try {
+      const token = await getToken();
+      return token || '';
+    } catch (error) {
+      console.error('Failed to get auth token:', error);
+      return '';
+    }
+  }, [getToken]);
 
   const uploadFile = useCallback(async (
     file: File,
@@ -35,6 +47,11 @@ export function useFileUpload() {
     setProgress(0);
 
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
       formData.append('assetKind', options.assetKind);
@@ -43,13 +60,13 @@ export function useFileUpload() {
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Upload failed');
+        throw new Error(errorData.message || `Upload failed with status ${response.status}`);
       }
 
       const result = await response.json();
@@ -58,6 +75,7 @@ export function useFileUpload() {
         asset: result.asset,
       };
     } catch (error) {
+      console.error('Upload failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Upload failed',
@@ -66,7 +84,7 @@ export function useFileUpload() {
       setUploading(false);
       setProgress(0);
     }
-  }, []);
+  }, [getAuthToken]);
 
   const generatePresignedUpload = useCallback(async (
     filename: string,
@@ -74,11 +92,16 @@ export function useFileUpload() {
     assetKind: AssetKind
   ) => {
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch('/api/upload/presigned', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           filename,
@@ -89,14 +112,15 @@ export function useFileUpload() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate upload URL');
+        throw new Error(errorData.message || `Failed to generate upload URL with status ${response.status}`);
       }
 
       return await response.json();
     } catch (error) {
+      console.error('Failed to generate presigned URL:', error);
       throw new Error(error instanceof Error ? error.message : 'Failed to generate upload URL');
     }
-  }, []);
+  }, [getAuthToken]);
 
   const uploadWithPresignedUrl = useCallback(async (
     file: File,
@@ -106,6 +130,11 @@ export function useFileUpload() {
     setProgress(0);
 
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       // Upload to R2 using presigned URL
       const formData = new FormData();
       Object.entries(presignedData.fields).forEach(([key, value]) => {
@@ -119,7 +148,7 @@ export function useFileUpload() {
       });
 
       if (!uploadResponse.ok) {
-        throw new Error('Failed to upload to storage');
+        throw new Error(`Failed to upload to storage with status ${uploadResponse.status}`);
       }
 
       // Create asset record in database
@@ -127,7 +156,7 @@ export function useFileUpload() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           storageKey: presignedData.key,
@@ -140,7 +169,7 @@ export function useFileUpload() {
 
       if (!assetResponse.ok) {
         const errorData = await assetResponse.json();
-        throw new Error(errorData.message || 'Failed to create asset record');
+        throw new Error(errorData.message || `Failed to create asset record with status ${assetResponse.status}`);
       }
 
       const result = await assetResponse.json();
@@ -149,6 +178,7 @@ export function useFileUpload() {
         asset: result.asset,
       };
     } catch (error) {
+      console.error('Presigned upload failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Upload failed',
@@ -157,14 +187,19 @@ export function useFileUpload() {
       setUploading(false);
       setProgress(0);
     }
-  }, []);
+  }, [getAuthToken]);
 
   const deleteAsset = useCallback(async (assetId: string): Promise<boolean> => {
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`/api/upload/asset/${assetId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
@@ -173,7 +208,7 @@ export function useFileUpload() {
       console.error('Failed to delete asset:', error);
       return false;
     }
-  }, []);
+  }, [getAuthToken]);
 
   const getAssets = useCallback(async (options?: {
     kind?: AssetKind;
@@ -181,6 +216,11 @@ export function useFileUpload() {
     offset?: number;
   }): Promise<Asset[]> => {
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const params = new URLSearchParams();
       if (options?.kind) params.append('kind', options.kind);
       if (options?.limit) params.append('limit', options.limit.toString());
@@ -188,32 +228,37 @@ export function useFileUpload() {
 
       const response = await fetch(`/api/upload/assets?${params}`, {
         headers: {
-          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch assets');
+        throw new Error(`Failed to fetch assets with status ${response.status}`);
       }
 
       const result = await response.json();
-      return result.assets;
+      return result.assets || [];
     } catch (error) {
       console.error('Failed to fetch assets:', error);
       return [];
     }
-  }, []);
+  }, [getAuthToken]);
 
   const getDownloadUrl = useCallback(async (assetId: string): Promise<string | null> => {
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`/api/upload/download/${assetId}`, {
         headers: {
-          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate download URL');
+        throw new Error(`Failed to generate download URL with status ${response.status}`);
       }
 
       const result = await response.json();
@@ -222,7 +267,32 @@ export function useFileUpload() {
       console.error('Failed to get download URL:', error);
       return null;
     }
-  }, []);
+  }, [getAuthToken]);
+
+  const getAsset = useCallback(async (assetId: string): Promise<Asset | null> => {
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`/api/upload/asset/${assetId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get asset with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result.asset;
+    } catch (error) {
+      console.error('Failed to get asset:', error);
+      return null;
+    }
+  }, [getAuthToken]);
 
   return {
     uploadFile,
@@ -230,14 +300,9 @@ export function useFileUpload() {
     uploadWithPresignedUrl,
     deleteAsset,
     getAssets,
+    getAsset,
     getDownloadUrl,
     uploading,
     progress,
   };
-}
-
-async function getAuthToken(): Promise<string> {
-  // This would be implemented based on your auth setup
-  // For now, return empty string
-  return '';
 }

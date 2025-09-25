@@ -29,12 +29,20 @@ export class CloudflareR2Service {
     this.bucketName = this.configService.get<string>('R2_BUCKET_NAME') || 'pc-solutions-assets';
     this.publicUrl = this.configService.get<string>('R2_PUBLIC_URL') || 'https://assets.pc-solutions.com';
 
+    const endpoint = this.configService.get<string>('R2_ENDPOINT');
+    const accessKeyId = this.configService.get<string>('R2_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.get<string>('R2_SECRET_ACCESS_KEY');
+
+    if (!endpoint || !accessKeyId || !secretAccessKey) {
+      this.logger.warn('R2 configuration incomplete. Upload functionality may not work properly.');
+    }
+
     this.s3Client = new S3Client({
       region: 'auto',
-      endpoint: this.configService.get<string>('R2_ENDPOINT'),
+      endpoint,
       credentials: {
-        accessKeyId: this.configService.get<string>('R2_ACCESS_KEY_ID') || '',
-        secretAccessKey: this.configService.get<string>('R2_SECRET_ACCESS_KEY') || '',
+        accessKeyId: accessKeyId || '',
+        secretAccessKey: secretAccessKey || '',
       },
     });
   }
@@ -104,6 +112,8 @@ export class CloudflareR2Service {
       
       const publicUrl = `${this.publicUrl}/${key}`;
       
+      this.logger.log(`File uploaded successfully: ${key}`);
+      
       return {
         key,
         url: publicUrl,
@@ -113,7 +123,7 @@ export class CloudflareR2Service {
       };
     } catch (error) {
       this.logger.error('Failed to upload file', error);
-      throw new BadRequestException('Failed to upload file');
+      throw new BadRequestException('Failed to upload file to storage');
     }
   }
 
@@ -131,7 +141,7 @@ export class CloudflareR2Service {
       this.logger.log(`File deleted: ${key}`);
     } catch (error) {
       this.logger.error('Failed to delete file', error);
-      throw new BadRequestException('Failed to delete file');
+      throw new BadRequestException('Failed to delete file from storage');
     }
   }
 
@@ -200,8 +210,10 @@ export class CloudflareR2Service {
     }
 
     if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException(`File type ${file.mimetype} is not allowed for ${assetKind}`);
+      throw new BadRequestException(`File type ${file.mimetype} is not allowed for ${assetKind}. Allowed types: ${allowedMimeTypes.join(', ')}`);
     }
+
+    this.logger.log(`File validation passed for ${assetKind}: ${file.originalname} (${file.mimetype}, ${file.size} bytes)`);
   }
 
   /**
@@ -269,6 +281,41 @@ export class CloudflareR2Service {
     } catch (error) {
       this.logger.error('Failed to get file info', error);
       return null;
+    }
+  }
+
+  /**
+   * Check if R2 service is properly configured
+   */
+  isConfigured(): boolean {
+    const endpoint = this.configService.get<string>('R2_ENDPOINT');
+    const accessKeyId = this.configService.get<string>('R2_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.get<string>('R2_SECRET_ACCESS_KEY');
+    
+    return !!(endpoint && accessKeyId && secretAccessKey);
+  }
+
+  /**
+   * Test R2 connection
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      // Try to list objects in the bucket to test connection
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: 'test-connection-key-that-does-not-exist',
+      });
+      
+      await this.s3Client.send(command);
+      return true;
+    } catch (error) {
+      // If we get a "NoSuchKey" error, the connection is working
+      if (error.name === 'NoSuchKey') {
+        return true;
+      }
+      
+      this.logger.error('R2 connection test failed', error);
+      return false;
     }
   }
 }
