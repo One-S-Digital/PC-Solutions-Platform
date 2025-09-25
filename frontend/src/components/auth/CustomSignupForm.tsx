@@ -116,13 +116,15 @@ export default function CustomSignupForm() {
       }
 
       // Create user with Clerk
+      // Note: publicMetadata cannot be set during signup directly
+      // We'll need to update it after user creation via backend
       const result = await signUp.create({
         emailAddress: formData.email,
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
         unsafeMetadata: {
-          role: formData.role,
+          role: formData.role, // Store temporarily, will sync to publicMetadata via webhook
           phoneNumber: formData.phoneNumber,
           organizationName: formData.organizationName,
           contactPerson: formData.contactPerson,
