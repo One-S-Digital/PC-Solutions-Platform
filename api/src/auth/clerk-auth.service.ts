@@ -14,6 +14,10 @@ export interface ClerkJwtPayload {
   role?: UserRole;
   orgId?: string;
   orgRole?: UserRole;
+  publicMetadata?: {
+    role?: UserRole;
+    [key: string]: any;
+  };
   iat: number;
   exp: number;
   iss?: string; // Issuer
@@ -291,26 +295,32 @@ export class ClerkAuthService {
       } catch (dbError) {
         // Handle database errors gracefully
         if (dbError instanceof Error && dbError.message.includes('does not exist in the current database')) {
-          console.error('⚠️ Database not initialized. Using token data with temporary admin role.');
+          console.error('⚠️ Database not initialized. Using Clerk metadata for role.');
           console.error('Run migrations: npx prisma migrate deploy');
           
-          // For development/initial setup, check if this is a known admin user
-          // Get admin Clerk IDs from environment or use defaults
-          const adminClerkIdsEnv = this.configService.get<string>('ADMIN_CLERK_IDS', '');
-          const adminClerkIds = adminClerkIdsEnv ? adminClerkIdsEnv.split(',') : [
-            'user_326OW0kp2tTae6lkVA7Vqosx72D', // Your Clerk ID from the logs
-            // Add other admin Clerk IDs here
-          ];
+          // Use role from Clerk's public metadata if available
+          let userRole = UserRole.PARENT; // Default role
           
-          const isAdmin = adminClerkIds.includes(payload.sub);
+          // Check publicMetadata for role
+          if (payload.publicMetadata?.role) {
+            // Validate that the role is a valid UserRole
+            if (Object.values(UserRole).includes(payload.publicMetadata.role)) {
+              userRole = payload.publicMetadata.role;
+              console.log('✅ Using role from Clerk public metadata:', userRole);
+            } else {
+              console.warn('⚠️ Invalid role in public metadata:', payload.publicMetadata.role);
+            }
+          } else {
+            console.log('ℹ️ No role in public metadata, using default PARENT role');
+          }
           
-          // Return user data from token with appropriate role
+          // Return user data from token with role from metadata
           return {
             id: payload.sub,
             email: payload.email || 'unknown@email.com',
             firstName: payload.firstName || 'Unknown',
             lastName: payload.lastName || 'User',
-            role: isAdmin ? UserRole.SUPER_ADMIN : UserRole.PARENT,
+            role: userRole,
             organizationId: payload.orgId,
             createdAt: new Date(),
             updatedAt: new Date(),

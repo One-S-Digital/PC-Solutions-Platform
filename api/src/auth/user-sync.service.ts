@@ -89,13 +89,16 @@ export class UserSyncService {
     try {
       const existingUser = await this.findUserByClerkId(payload.sub);
       
+      // Determine role from public metadata or payload
+      const role = payload.publicMetadata?.role || payload.role || UserRole.PARENT;
+      
       if (existingUser) {
         // Update existing user
         return this.updateUser(payload.sub, {
           email: payload.email,
           firstName: payload.firstName,
           lastName: payload.lastName,
-          role: payload.role,
+          role: role,
         });
       } else {
         // Create new user
@@ -104,7 +107,7 @@ export class UserSyncService {
           email: payload.email,
           firstName: payload.firstName || '',
           lastName: payload.lastName || '',
-          role: payload.role || UserRole.PARENT, // Default role
+          role: role,
         });
       }
     } catch (error) {
