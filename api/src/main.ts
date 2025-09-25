@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-import * as compression from 'compression';
 import * as express from 'express';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
@@ -23,7 +22,18 @@ async function bootstrap() {
 
   // Security middleware
   app.use(helmet());
-  app.use(compression());
+  // Resolve compression middleware across CJS/ESM export shapes
+  let compressionFn: any;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require('compression');
+    compressionFn = (mod && mod.default) ? mod.default : mod;
+  } catch (err) {
+    const mod = await import('compression');
+    // @ts-ignore - runtime shape detection
+    compressionFn = (mod && (mod as any).default) ? (mod as any).default : (mod as any);
+  }
+  app.use(compressionFn());
 
   // Global pipes
   app.useGlobalPipes(
