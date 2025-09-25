@@ -42,9 +42,19 @@ PRISMA_STATUS_OUTPUT=$(npx prisma migrate status 2>&1 || true)
 echo "$PRISMA_STATUS_OUTPUT"
 
 # If there is a failed migration, resolve it as rolled back so deploy can proceed
-if echo "$PRISMA_STATUS_OUTPUT" | grep -q "Following migration have failed:"; then
+if echo "$PRISMA_STATUS_OUTPUT" | grep -Eq "Following migration[s]? have failed:"; then
   echo "⚠️  Detected failed Prisma migration. Attempting automatic resolve..."
-  FAILED_MIGRATION=$(echo "$PRISMA_STATUS_OUTPUT" | awk '/Following migration have failed:/{flag=1; next} flag && $0 ~ /^[0-9]{8}/ {print; exit}')
+  # Try to grab the first non-empty line after the marker
+  FAILED_MIGRATION=$(printf "%s\n" "$PRISMA_STATUS_OUTPUT" | awk '/Following migration/ {getline; while ($0 ~ /^\s*$/) { getline } gsub(/^\s+|\s+$/, ""); print; exit}')
+  # Trim to first token in case extra info is appended
+  FAILED_MIGRATION=$(printf "%s\n" "$FAILED_MIGRATION" | awk '{print $1}')
+  # Fallback to last migration directory if parsing failed
+  if [ -z "$FAILED_MIGRATION" ]; then
+    if [ -d "prisma/migrations" ]; then
+      FAILED_MIGRATION=$(ls -1 prisma/migrations | sort | tail -n 1)
+      echo "ℹ️  Falling back to latest migration directory: $FAILED_MIGRATION"
+    fi
+  fi
   if [ -n "$FAILED_MIGRATION" ]; then
     echo "🧹 Marking failed migration as rolled back: $FAILED_MIGRATION"
     npx prisma migrate resolve --rolled-back "$FAILED_MIGRATION" || {
@@ -52,7 +62,7 @@ if echo "$PRISMA_STATUS_OUTPUT" | grep -q "Following migration have failed:"; th
       exit 1
     }
   else
-    echo "⚠️  Could not parse failed migration name from status output. Please resolve manually."
+    echo "⚠️  Could not determine failed migration name. Please resolve manually."
     exit 1
   fi
 fi
