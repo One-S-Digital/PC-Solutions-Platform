@@ -4,8 +4,8 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: pnpm install --frozen-lockfile && cd api && npx prisma generate && npx prisma migrate deploy && cd .. && pnpm run build --filter=api
-    startCommand: cd api && pnpm start:prod
+    buildCommand: pnpm install --frozen-lockfile && cd api && npm run build:render
+    startCommand: cd api && npm run start:prod
     envVars:
       - key: NODE_ENV
         value: production

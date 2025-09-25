@@ -78,10 +78,11 @@ async function bootstrap() {
     SwaggerModule.setup('api/docs', app, document);
   }
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  const port = parseInt(process.env.PORT || '3000', 10);
+  await app.listen(port, '0.0.0.0'); // Bind to all interfaces for Render
   
-  logger.log(`Application is running on: http://localhost:${port}`, 'Bootstrap');
+  logger.log(`Application is running on port ${port}`, 'Bootstrap');
+  console.log(`Server started on port ${port}`);
   if (process.env.NODE_ENV !== 'production') {
     logger.log(`Swagger documentation: http://localhost:${port}/api/docs`, 'Bootstrap');
   }

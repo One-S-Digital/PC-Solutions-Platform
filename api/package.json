@@ -6,8 +6,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist && ./scripts/render-build.sh",
+    "prebuild": "rimraf dist",
     "build": "nest build",
+    "build:render": "./scripts/render-build.sh && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
