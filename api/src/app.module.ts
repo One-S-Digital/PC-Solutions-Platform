@@ -130,10 +130,10 @@ export class AppModule implements NestModule {
       .apply(RoleContextMiddleware)
       .exclude(
         'api/auth/signup-data',
-        'api/auth/signup-fields/(.*)',
+        'api/auth/signup-fields/*rest',
         'api/health',
-        'api/health/(.*)',
-        'api/webhooks/(.*)',
+        'api/health/*rest',
+        'api/webhooks/*rest',
       )
       .forRoutes('*');
   }
