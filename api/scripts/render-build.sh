@@ -36,9 +36,26 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
     }
 fi
 
-# Show current migration status
+# Show current migration status and detect failed migrations
 echo "📋 Checking migration status..."
-npx prisma migrate status || true
+PRISMA_STATUS_OUTPUT=$(npx prisma migrate status 2>&1 || true)
+echo "$PRISMA_STATUS_OUTPUT"
+
+# If there is a failed migration, resolve it as rolled back so deploy can proceed
+if echo "$PRISMA_STATUS_OUTPUT" | grep -q "Following migration have failed:"; then
+  echo "⚠️  Detected failed Prisma migration. Attempting automatic resolve..."
+  FAILED_MIGRATION=$(echo "$PRISMA_STATUS_OUTPUT" | awk '/Following migration have failed:/{flag=1; next} flag && $0 ~ /^[0-9]{8}/ {print; exit}')
+  if [ -n "$FAILED_MIGRATION" ]; then
+    echo "🧹 Marking failed migration as rolled back: $FAILED_MIGRATION"
+    npx prisma migrate resolve --rolled-back "$FAILED_MIGRATION" || {
+      echo "❌ Failed to resolve migration $FAILED_MIGRATION"
+      exit 1
+    }
+  else
+    echo "⚠️  Could not parse failed migration name from status output. Please resolve manually."
+    exit 1
+  fi
+fi
 
 # Run database migrations
 echo "🔄 Running database migrations..."
