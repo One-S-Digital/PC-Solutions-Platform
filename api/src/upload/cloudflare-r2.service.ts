@@ -163,6 +163,13 @@ export class CloudflareR2Service {
       PRODUCT_IMAGE: 10 * 1024 * 1024, // 10MB
       DOCUMENT: 50 * 1024 * 1024, // 50MB
       CV: 10 * 1024 * 1024, // 10MB
+      CATALOG_PDF: 50 * 1024 * 1024, // 50MB
+      CATALOG_CSV: 10 * 1024 * 1024, // 10MB
+      FRONTEND_LOGO: 5 * 1024 * 1024, // 5MB
+      FRONTEND_FAVICON: 1 * 1024 * 1024, // 1MB
+      FRONTEND_OG_IMAGE: 5 * 1024 * 1024, // 5MB
+      ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
+      ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
     };
 
     const allowedTypes = {
@@ -172,10 +179,21 @@ export class CloudflareR2Service {
       PRODUCT_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
       DOCUMENT: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
       CV: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      CATALOG_PDF: ['application/pdf'],
+      CATALOG_CSV: ['text/csv', 'application/csv'],
+      FRONTEND_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
+      FRONTEND_FAVICON: ['image/x-icon', 'image/png', 'image/jpeg'],
+      FRONTEND_OG_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
+      ADMIN_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
+      ADMIN_FAVICON: ['image/x-icon', 'image/png', 'image/jpeg'],
     };
 
     const maxSize = maxSizes[assetKind];
     const allowedMimeTypes = allowedTypes[assetKind];
+
+    if (!maxSize) {
+      throw new BadRequestException(`Unsupported asset kind: ${assetKind}`);
+    }
 
     if (file.size > maxSize) {
       throw new BadRequestException(`File size exceeds maximum allowed size of ${maxSize / (1024 * 1024)}MB`);
