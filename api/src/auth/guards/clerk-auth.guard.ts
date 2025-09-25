@@ -7,6 +7,7 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
   private readonly issuer: string;
+  private readonly authorizedParties: string[];
 
   constructor(
     private configService: ConfigService,
@@ -22,6 +23,22 @@ export class ClerkAuthGuard implements CanActivate {
       // Production or custom domain
       this.issuer = this.configService.get<string>('CLERK_ISSUER', 'https://clerk.yourdomain.com');
     }
+
+    // Authorized parties are the frontend origins that will mint tokens (azp)
+    const adminOrigin = this.configService.get<string>('ADMIN_ORIGIN');
+    const appOrigin = this.configService.get<string>('APP_ORIGIN');
+    const extraAzp = this.configService.get<string>('AUTHORIZED_PARTIES'); // comma-separated
+    const azpList = [adminOrigin, appOrigin]
+      .filter((v): v is string => !!v && v.trim().length > 0);
+    if (extraAzp) {
+      azpList.push(
+        ...extraAzp
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean),
+      );
+    }
+    this.authorizedParties = azpList;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -46,7 +63,8 @@ export class ClerkAuthGuard implements CanActivate {
     
     try {
       const payload = await verifyToken(token, {
-        authorizedParties: [this.issuer],
+        // Accept tokens minted by our frontends (azp matches origins)
+        authorizedParties: this.authorizedParties.length > 0 ? this.authorizedParties : undefined,
         clockSkewInMs: 60_000, // 1 minute clock skew tolerance
       });
       
