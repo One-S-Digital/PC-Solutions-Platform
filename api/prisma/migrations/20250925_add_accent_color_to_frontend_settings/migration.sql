@@ -37,55 +37,32 @@ CREATE TABLE IF NOT EXISTS "public"."frontend_settings" (
   CONSTRAINT "frontend_settings_pkey" PRIMARY KEY ("id")
 );
 
--- Add foreign keys if table was just created
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'frontend_settings_logoAssetId_fkey'
-      AND table_name = 'frontend_settings'
-      AND table_schema = 'public'
-  ) THEN
-    ALTER TABLE "public"."frontend_settings"
-      ADD CONSTRAINT "frontend_settings_logoAssetId_fkey" FOREIGN KEY ("logoAssetId") REFERENCES "public"."assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'frontend_settings_faviconAssetId_fkey'
-      AND table_name = 'frontend_settings'
-      AND table_schema = 'public'
-  ) THEN
-    ALTER TABLE "public"."frontend_settings"
-      ADD CONSTRAINT "frontend_settings_faviconAssetId_fkey" FOREIGN KEY ("faviconAssetId") REFERENCES "public"."assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'frontend_settings_ogImageAssetId_fkey'
-      AND table_name = 'frontend_settings'
-      AND table_schema = 'public'
-  ) THEN
-    ALTER TABLE "public"."frontend_settings"
-      ADD CONSTRAINT "frontend_settings_ogImageAssetId_fkey" FOREIGN KEY ("ogImageAssetId") REFERENCES "public"."assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'frontend_settings_adminLogoAssetId_fkey'
-      AND table_name = 'frontend_settings'
-      AND table_schema = 'public'
-  ) THEN
-    ALTER TABLE "public"."frontend_settings"
-      ADD CONSTRAINT "frontend_settings_adminLogoAssetId_fkey" FOREIGN KEY ("adminLogoAssetId") REFERENCES "public"."assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'frontend_settings_adminFaviconAssetId_fkey'
-      AND table_name = 'frontend_settings'
-      AND table_schema = 'public'
-  ) THEN
-    ALTER TABLE "public"."frontend_settings"
-      ADD CONSTRAINT "frontend_settings_adminFaviconAssetId_fkey" FOREIGN KEY ("adminFaviconAssetId") REFERENCES "public"."assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-END $$;
+-- Clean up orphaned asset references before adding column (no FKs added here)
+UPDATE "public"."frontend_settings" fs
+SET "logoAssetId" = NULL
+WHERE "logoAssetId" IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM "public"."assets" a WHERE a."id" = fs."logoAssetId"
+);
+UPDATE "public"."frontend_settings" fs
+SET "faviconAssetId" = NULL
+WHERE "faviconAssetId" IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM "public"."assets" a WHERE a."id" = fs."faviconAssetId"
+);
+UPDATE "public"."frontend_settings" fs
+SET "ogImageAssetId" = NULL
+WHERE "ogImageAssetId" IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM "public"."assets" a WHERE a."id" = fs."ogImageAssetId"
+);
+UPDATE "public"."frontend_settings" fs
+SET "adminLogoAssetId" = NULL
+WHERE "adminLogoAssetId" IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM "public"."assets" a WHERE a."id" = fs."adminLogoAssetId"
+);
+UPDATE "public"."frontend_settings" fs
+SET "adminFaviconAssetId" = NULL
+WHERE "adminFaviconAssetId" IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM "public"."assets" a WHERE a."id" = fs."adminFaviconAssetId"
+);
 
 -- Add accentColor column (idempotent)
 ALTER TABLE "public"."frontend_settings"
