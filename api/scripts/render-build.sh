@@ -44,10 +44,20 @@ echo "$PRISMA_STATUS_OUTPUT"
 # If there is a failed migration, resolve it as rolled back so deploy can proceed
 if echo "$PRISMA_STATUS_OUTPUT" | grep -Eq "Following migration[s]? have failed:"; then
   echo "⚠️  Detected failed Prisma migration. Attempting automatic resolve..."
-  # Try to grab the first non-empty line after the marker
-  FAILED_MIGRATION=$(printf "%s\n" "$PRISMA_STATUS_OUTPUT" | awk '/Following migration/ {getline; while ($0 ~ /^\s*$/) { getline } gsub(/^\s+|\s+$/, ""); print; exit}')
-  # Trim to first token in case extra info is appended
-  FAILED_MIGRATION=$(printf "%s\n" "$FAILED_MIGRATION" | awk '{print $1}')
+  # Extract candidate migration names from status output
+  CANDIDATES=$(printf "%s\n" "$PRISMA_STATUS_OUTPUT" | grep -Eo '[0-9]{8}_[A-Za-z0-9_]+' | sort -u)
+  FAILED_MIGRATION=""
+  # Prefer a candidate that exists as a migrations directory
+  if [ -n "$CANDIDATES" ]; then
+    while IFS= read -r cand; do
+      if [ -d "prisma/migrations/$cand" ]; then
+        FAILED_MIGRATION="$cand"
+        break
+      fi
+    done <<EOF
+$CANDIDATES
+EOF
+  fi
   # Fallback to last migration directory if parsing failed
   if [ -z "$FAILED_MIGRATION" ]; then
     if [ -d "prisma/migrations" ]; then
