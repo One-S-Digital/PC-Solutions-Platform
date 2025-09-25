@@ -8,6 +8,8 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 export class ClerkAuthGuard implements CanActivate {
   private readonly issuer: string;
   private readonly authorizedParties: string[];
+  private readonly jwtKey?: string;
+  private readonly authDebug: boolean;
 
   constructor(
     private configService: ConfigService,
@@ -39,6 +41,12 @@ export class ClerkAuthGuard implements CanActivate {
       );
     }
     this.authorizedParties = azpList;
+
+    // Optional static JWT verification key (PEM) for offline verification
+    this.jwtKey = this.configService.get<string>('CLERK_JWT_KEY');
+
+    // Enable verbose logging when diagnosing auth
+    this.authDebug = (this.configService.get<string>('AUTH_DEBUG') || '').toLowerCase() === 'true';
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -60,19 +68,62 @@ export class ClerkAuthGuard implements CanActivate {
     }
 
     const token = authHeader.slice(7);
+
+    // Decode token header/payload without verifying for diagnostics
+    const decodeBase64Url = (s: string) => Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
+    const [rawHeader, rawPayload] = token.split('.');
+    let decodedHeader: any = undefined;
+    let decodedPayload: any = undefined;
+    try {
+      decodedHeader = JSON.parse(decodeBase64Url(rawHeader));
+      decodedPayload = JSON.parse(decodeBase64Url(rawPayload));
+    } catch {}
     
     try {
-      const payload = await verifyToken(token, {
-        // Accept tokens minted by our frontends (azp matches origins)
+      const options: any = {
         authorizedParties: this.authorizedParties.length > 0 ? this.authorizedParties : undefined,
-        clockSkewInMs: 60_000, // 1 minute clock skew tolerance
-      });
+        clockSkewInMs: 60_000,
+      };
+      // Prefer issuer from token if present, else fall back
+      if (decodedPayload?.iss) {
+        options.issuer = decodedPayload.iss;
+      } else if (this.issuer) {
+        options.issuer = this.issuer;
+      }
+      if (this.jwtKey) {
+        options.jwtKey = this.jwtKey;
+      }
+
+      if (this.authDebug) {
+        const req = context.switchToHttp().getRequest();
+        // eslint-disable-next-line no-console
+        console.log('🔐 Auth Debug:', {
+          path: req.url,
+          method: req.method,
+          hasJwtKey: !!this.jwtKey,
+          configuredIssuer: this.issuer,
+          tokenIssuer: decodedPayload?.iss,
+          tokenAzp: decodedPayload?.azp,
+          tokenAud: decodedPayload?.aud,
+          tokenKid: decodedHeader?.kid,
+          authorizedParties: this.authorizedParties,
+        });
+      }
+
+      const payload = await verifyToken(token, options);
       
       // Store minimal info - just the Clerk user ID
       request.clerk = { userId: payload.sub };
       return true;
-    } catch (error) {
-      console.error('Token verification failed:', error);
+    } catch (error: any) {
+      const reason = error?.reason || error?.message || 'unknown';
+      const action = error?.action;
+      // eslint-disable-next-line no-console
+      console.error('Token verification failed:', { reason, action });
+      if (reason === 'jwk-failed-to-resolve' && !this.jwtKey) {
+        // eslint-disable-next-line no-console
+        console.error('Clerk JWK fetch failed. Set CLERK_JWT_KEY env with your instance JWT public key to enable offline verification.');
+      }
       throw new UnauthorizedException('Invalid token');
     }
   }
