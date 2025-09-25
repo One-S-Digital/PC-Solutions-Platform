@@ -103,4 +103,96 @@ export class HealthController {
       };
     }
   }
+
+  @Get('snapshot')
+  @Public()
+  @ApiOperation({ summary: 'Database snapshot (sanitized)' })
+  @ApiResponse({ status: 200, description: 'Returns counts and sample data' })
+  async snapshot() {
+    try {
+      const [
+        userCount,
+        appUserCount,
+        orgCount,
+        assetCount,
+        settingsCount,
+      ] = await Promise.all([
+        this.prisma.user.count().catch(() => 0),
+        // @ts-ignore - model exists in schema
+        this.prisma.appUser.count().catch(() => 0),
+        this.prisma.organization.count().catch(() => 0),
+        this.prisma.asset.count().catch(() => 0),
+        this.prisma.frontendSettings.count().catch(() => 0),
+      ]);
+
+      const [
+        users,
+        appUsers,
+        settings,
+      ] = await Promise.all([
+        this.prisma.user.findMany({
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          select: { id: true, clerkId: true, email: true, role: true, createdAt: true },
+        }).catch(() => []),
+        // @ts-ignore - model exists in schema
+        this.prisma.appUser.findMany({
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          select: { id: true, clerkUserId: true, role: true, createdAt: true },
+        }).catch(() => []),
+        this.prisma.frontendSettings.findFirst({
+          include: {
+            logoAsset: { select: { id: true, publicUrl: true } },
+            faviconAsset: { select: { id: true, publicUrl: true } },
+            ogImageAsset: { select: { id: true, publicUrl: true } },
+            adminLogoAsset: { select: { id: true, publicUrl: true } },
+            adminFaviconAsset: { select: { id: true, publicUrl: true } },
+          },
+        }).catch(() => null),
+      ]);
+
+      return {
+        success: true,
+        message: 'Database snapshot',
+        data: {
+          counts: {
+            users: userCount,
+            appUsers: appUserCount,
+            organizations: orgCount,
+            assets: assetCount,
+            frontendSettings: settingsCount,
+          },
+          samples: {
+            users,
+            appUsers,
+            frontendSettings: settings
+              ? {
+                  id: settings.id,
+                  primaryColor: settings.primaryColor,
+                  secondaryColor: settings.secondaryColor,
+                  accentColor: (settings as any).accentColor ?? undefined,
+                  adminPrimaryColor: settings.adminPrimaryColor,
+                  adminSecondaryColor: settings.adminSecondaryColor,
+                  adminAccentColor: settings.adminAccentColor,
+                  hasLogo: !!settings.logoAssetId,
+                  hasFavicon: !!settings.faviconAssetId,
+                  hasOgImage: !!settings.ogImageAssetId,
+                  hasAdminLogo: !!settings.adminLogoAssetId,
+                  hasAdminFavicon: !!settings.adminFaviconAssetId,
+                }
+              : null,
+          },
+          timestamp: new Date().toISOString(),
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Snapshot failed',
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
 }
