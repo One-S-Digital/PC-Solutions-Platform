@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { verifyToken } from '@clerk/backend';
 import { ConfigService } from '@nestjs/config';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
@@ -14,6 +15,7 @@ export class ClerkAuthGuard implements CanActivate {
   constructor(
     private configService: ConfigService,
     private reflector: Reflector,
+    private prisma: PrismaService,
   ) {
     // Determine issuer based on Clerk instance
     const publishableKey = this.configService.get<string>('CLERK_PUBLISHABLE_KEY', '');
@@ -112,8 +114,22 @@ export class ClerkAuthGuard implements CanActivate {
 
       const payload = await verifyToken(token, options);
       
-      // Store minimal info - just the Clerk user ID
+      // Store minimal info - Clerk user ID
       request.clerk = { userId: payload.sub };
+
+      // Populate request.context (user role from AppUser), so RolesGuard can authorize
+      try {
+        const appUser = await this.prisma.appUser.findUnique({ where: { clerkUserId: payload.sub } });
+        if (appUser) {
+          request.context = {
+            userId: payload.sub,
+            role: appUser.role,
+            appUserId: appUser.id,
+          };
+        }
+      } catch (e) {
+        // non-fatal; RolesGuard will handle missing context
+      }
       return true;
     } catch (error: any) {
       const reason = error?.reason || error?.message || 'unknown';
