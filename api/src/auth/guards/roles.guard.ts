@@ -19,6 +19,14 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const userContext = request.context;
+    // Debug
+    // eslint-disable-next-line no-console
+    console.log('🔐 RolesGuard Debug:', {
+      url: request.url,
+      requiredRoles,
+      hasContext: !!userContext,
+      context: userContext,
+    });
 
     if (!userContext) {
       throw new ForbiddenException('User context not found');
