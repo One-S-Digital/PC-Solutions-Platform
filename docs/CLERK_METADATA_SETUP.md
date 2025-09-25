@@ -1,6 +1,6 @@
 # Setting Up User Roles in Clerk
 
-To grant admin access to users when the database is not initialized, you need to set the user's role in their Clerk public metadata.
+**IMPORTANT**: User roles MUST be set in Clerk metadata. Without a valid role, users will be denied access to the system. There is no default role.
 
 ## Steps to Set Public Metadata in Clerk Dashboard
 
@@ -56,9 +56,13 @@ await clerkClient.users.updateUserMetadata(userId, {
 ## How It Works
 
 1. When a user signs in, their JWT token includes the public metadata
-2. If the database is not initialized, the API uses the role from public metadata
-3. Once the database is initialized, the role is synced to the database
-4. The database role takes precedence when available
+2. The system checks for roles in this order:
+   - `publicMetadata.role` (highest priority)
+   - `role` claim in JWT
+   - `orgRole` (organization role)
+3. If NO valid role is found, the user is denied access
+4. There is NO default role - users without roles cannot access the system
+5. Once the database is available, roles are synced from Clerk metadata
 
 ## Testing
 
@@ -71,3 +75,20 @@ After setting the metadata:
 ## Security Note
 
 Public metadata is included in the JWT token and visible to the client. Only store non-sensitive information like roles. Never store secrets or sensitive data in public metadata.
+
+## Troubleshooting
+
+### "No role assigned" Error
+
+If you see this error:
+1. Check that the user has a role in Clerk public metadata
+2. Ensure the role is spelled correctly (case-sensitive)
+3. Verify the role is one of the valid roles listed above
+4. Sign out and sign back in to get a new token with updated metadata
+
+### Admin Access Not Working
+
+1. Verify the role in Clerk Dashboard is set to `SUPER_ADMIN` or `ADMIN`
+2. Check the browser console for role validation messages
+3. Ensure you've signed out and back in after updating metadata
+4. Check the API logs for role derivation details

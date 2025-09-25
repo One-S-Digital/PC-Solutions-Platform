@@ -89,8 +89,14 @@ export class UserSyncService {
     try {
       const existingUser = await this.findUserByClerkId(payload.sub);
       
-      // Determine role from public metadata or payload
-      const role = payload.publicMetadata?.role || payload.role || UserRole.PARENT;
+      // Determine role from Clerk metadata - NO DEFAULT
+      const role = this.deriveRoleFromClerkPayload(payload);
+      
+      if (!role) {
+        // If no role can be determined, we cannot create/update the user
+        this.logger.error(`Cannot sync user ${payload.sub}: No valid role in Clerk metadata`);
+        throw new Error('No valid role assigned in Clerk. User sync aborted.');
+      }
       
       if (existingUser) {
         // Update existing user
@@ -114,5 +120,33 @@ export class UserSyncService {
       this.logger.error(`Failed to sync user from Clerk: ${error instanceof Error ? error.message : 'Unknown error'}`, error instanceof Error ? error.stack : undefined);
       throw error;
     }
+  }
+
+  /**
+   * Derive user role from Clerk payload using the same logic as ClerkAuthService
+   * This ensures consistency across the application
+   */
+  private deriveRoleFromClerkPayload(payload: ClerkJwtPayload): UserRole | null {
+    // Check publicMetadata first (most authoritative)
+    if (payload.publicMetadata?.role && this.isValidUserRole(payload.publicMetadata.role)) {
+      return payload.publicMetadata.role;
+    }
+    
+    // Check direct role claim
+    if (payload.role && this.isValidUserRole(payload.role)) {
+      return payload.role;
+    }
+    
+    // Check organization role
+    if (payload.orgRole && this.isValidUserRole(payload.orgRole)) {
+      return payload.orgRole;
+    }
+    
+    // No valid role found
+    return null;
+  }
+
+  private isValidUserRole(role: any): role is UserRole {
+    return Object.values(UserRole).includes(role);
   }
 }

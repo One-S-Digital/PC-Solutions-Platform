@@ -230,6 +230,59 @@ export class ClerkAuthService {
     return authHeader.substring(7);
   }
 
+  /**
+   * Centralized method to derive user role from Clerk payload
+   * Returns null if no valid role can be determined
+   */
+  private deriveRoleFromClerkPayload(payload: ClerkJwtPayload): UserRole | null {
+    // Priority order for role sources:
+    // 1. publicMetadata.role
+    // 2. role claim in JWT
+    // 3. orgRole (if applicable)
+    
+    // Check publicMetadata first (most authoritative)
+    if (payload.publicMetadata?.role) {
+      const metadataRole = payload.publicMetadata.role;
+      if (this.isValidUserRole(metadataRole)) {
+        console.log('🔍 Role found in publicMetadata:', metadataRole);
+        return metadataRole;
+      } else {
+        console.warn('⚠️ Invalid role in publicMetadata:', metadataRole);
+      }
+    }
+    
+    // Check direct role claim
+    if (payload.role) {
+      if (this.isValidUserRole(payload.role)) {
+        console.log('🔍 Role found in JWT claims:', payload.role);
+        return payload.role;
+      } else {
+        console.warn('⚠️ Invalid role in JWT claims:', payload.role);
+      }
+    }
+    
+    // Check organization role (if applicable)
+    if (payload.orgRole) {
+      if (this.isValidUserRole(payload.orgRole)) {
+        console.log('🔍 Role found in orgRole:', payload.orgRole);
+        return payload.orgRole;
+      } else {
+        console.warn('⚠️ Invalid orgRole:', payload.orgRole);
+      }
+    }
+    
+    // No valid role found - DO NOT default to PARENT
+    console.warn('⚠️ No valid role found in Clerk payload');
+    return null;
+  }
+
+  /**
+   * Validate if a value is a valid UserRole
+   */
+  private isValidUserRole(role: any): role is UserRole {
+    return Object.values(UserRole).includes(role);
+  }
+
   // Fallback method for backward compatibility (uses secret key)
   async verifyTokenWithSecret(token: string): Promise<ClerkJwtPayload> {
     try {
@@ -256,24 +309,49 @@ export class ClerkAuthService {
         
         if (!user) {
           console.log('🔧 User not found in database, syncing from Clerk...');
-          // If user doesn't exist, sync from Clerk (will use default role)
-          const syncedUser = await this.userSyncService.syncUserFromClerk(payload);
-          console.log('✅ User synced:', {
-            userId: syncedUser.id,
-            email: syncedUser.email,
-            role: syncedUser.role
-          });
           
-          return {
-            id: syncedUser.clerkId,
-            email: syncedUser.email,
-            firstName: syncedUser.firstName,
-            lastName: syncedUser.lastName,
-            role: syncedUser.role,
-            organizationId: payload.orgId,
-            createdAt: syncedUser.createdAt,
-            updatedAt: syncedUser.updatedAt,
-          };
+          try {
+            // Try to sync user from Clerk
+            const syncedUser = await this.userSyncService.syncUserFromClerk(payload);
+            console.log('✅ User synced:', {
+              userId: syncedUser.id,
+              email: syncedUser.email,
+              role: syncedUser.role
+            });
+            
+            return {
+              id: syncedUser.clerkId,
+              email: syncedUser.email,
+              firstName: syncedUser.firstName,
+              lastName: syncedUser.lastName,
+              role: syncedUser.role,
+              organizationId: payload.orgId,
+              createdAt: syncedUser.createdAt,
+              updatedAt: syncedUser.updatedAt,
+            };
+          } catch (syncError) {
+            // If sync fails due to no role, try to derive role from payload
+            console.error('❌ User sync failed:', syncError);
+            
+            const derivedRole = this.deriveRoleFromClerkPayload(payload);
+            if (!derivedRole) {
+              throw new UnauthorizedException('No role assigned. Please contact an administrator.');
+            }
+            
+            // Return temporary user object with derived role
+            // The user will be created on next successful sync
+            console.warn('⚠️ Returning temporary user with derived role:', derivedRole);
+            return {
+              id: payload.sub,
+              email: payload.email || 'unknown@email.com',
+              firstName: payload.firstName || 'Unknown',
+              lastName: payload.lastName || 'User',
+              role: derivedRole,
+              organizationId: payload.orgId,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+          }
         }
         
         console.log('✅ User found in database:', {
@@ -295,24 +373,18 @@ export class ClerkAuthService {
       } catch (dbError) {
         // Handle database errors gracefully
         if (dbError instanceof Error && dbError.message.includes('does not exist in the current database')) {
-          console.error('⚠️ Database not initialized. Using Clerk metadata for role.');
+          console.error('⚠️ Database not initialized. Attempting to derive role from Clerk metadata.');
           console.error('Run migrations: npx prisma migrate deploy');
           
-          // Use role from Clerk's public metadata if available
-          let userRole = UserRole.PARENT; // Default role
+          // Derive role from Clerk metadata - DO NOT default to PARENT
+          const derivedRole = this.deriveRoleFromClerkPayload(payload);
           
-          // Check publicMetadata for role
-          if (payload.publicMetadata?.role) {
-            // Validate that the role is a valid UserRole
-            if (Object.values(UserRole).includes(payload.publicMetadata.role)) {
-              userRole = payload.publicMetadata.role;
-              console.log('✅ Using role from Clerk public metadata:', userRole);
-            } else {
-              console.warn('⚠️ Invalid role in public metadata:', payload.publicMetadata.role);
-            }
-          } else {
-            console.log('ℹ️ No role in public metadata, using default PARENT role');
+          if (!derivedRole) {
+            console.error('❌ No valid role found in Clerk metadata. Access denied.');
+            throw new UnauthorizedException('No role assigned. Please contact an administrator.');
           }
+          
+          console.log('✅ Using role from Clerk metadata:', derivedRole);
           
           // Return user data from token with role from metadata
           return {
@@ -320,7 +392,7 @@ export class ClerkAuthService {
             email: payload.email || 'unknown@email.com',
             firstName: payload.firstName || 'Unknown',
             lastName: payload.lastName || 'User',
-            role: userRole,
+            role: derivedRole,
             organizationId: payload.orgId,
             createdAt: new Date(),
             updatedAt: new Date(),
