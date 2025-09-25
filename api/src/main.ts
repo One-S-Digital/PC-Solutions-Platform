@@ -63,18 +63,20 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
-  // CORS debugging middleware
-  app.use((req, res, next) => {
-    console.log('🔧 CORS Debug:', {
-      origin: req.headers.origin,
-      method: req.method,
-      url: req.url,
-      allowedOrigins: process.env.NODE_ENV === 'production' 
-        ? ['https://app.procrechesolutions.com', 'https://admin.procrechesolutions.com']
-        : 'all'
+  // CORS debugging middleware (development only)
+  if (process.env.NODE_ENV !== 'production') {
+    app.use((req, res, next) => {
+      console.log('🔧 CORS Debug:', {
+        origin: req.headers.origin,
+        method: req.method,
+        url: req.url,
+        allowedOrigins: process.env.NODE_ENV === 'production' 
+          ? ['https://app.procrechesolutions.com', 'https://admin.procrechesolutions.com']
+          : 'all'
+      });
+      next();
     });
-    next();
-  });
+  }
 
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
@@ -87,6 +89,11 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
   }
+
+  // Root handlers for Render's default probes
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.head('/', (_req, res) => res.sendStatus(204));
+  expressApp.get('/', (_req, res) => res.sendStatus(204));
 
   const port = parseInt(process.env.PORT || '3000', 10);
   await app.listen(port, '0.0.0.0'); // Bind to all interfaces for Render
