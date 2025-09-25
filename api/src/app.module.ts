@@ -35,6 +35,7 @@ import { HealthModule } from './health/health.module';
 import { RoleManagementModule } from './admin/role-management/role-management.module';
 import { SyncModule } from './sync/sync.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { CompatModule } from './compat/compat.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -109,6 +110,7 @@ import {
     RoleManagementModule,
     SyncModule,
     WebhooksModule,
+    CompatModule,
   ],
   controllers: [AppController],
   providers: [
