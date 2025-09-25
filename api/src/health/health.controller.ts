@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
@@ -194,5 +194,48 @@ export class HealthController {
         timestamp: new Date().toISOString(),
       };
     }
+  }
+
+  @Get('users')
+  @Public()
+  @ApiOperation({ summary: 'List users (sanitized, queryable)' })
+  @ApiResponse({ status: 200, description: 'Returns users' })
+  async listUsers(
+    @Query('email') email?: string,
+    @Query('clerkId') clerkId?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const take = Math.min(Math.max(parseInt(limit || '20', 10) || 20, 1), 100);
+    const users = await this.prisma.user.findMany({
+      where: {
+        AND: [
+          email ? { email: { contains: email, mode: 'insensitive' } } : {},
+          clerkId ? { clerkId } : {},
+        ],
+      },
+      take,
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, clerkId: true, email: true, role: true, createdAt: true },
+    });
+    return { success: true, data: users, count: users.length, timestamp: new Date().toISOString() };
+  }
+
+  @Get('app-users')
+  @Public()
+  @ApiOperation({ summary: 'List AppUsers (sanitized, queryable)' })
+  @ApiResponse({ status: 200, description: 'Returns app users' })
+  async listAppUsers(
+    @Query('clerkUserId') clerkUserId?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const take = Math.min(Math.max(parseInt(limit || '20', 10) || 20, 1), 100);
+    // @ts-ignore - model exists
+    const appUsers = await this.prisma.appUser.findMany({
+      where: clerkUserId ? { clerkUserId } : {},
+      take,
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, clerkUserId: true, role: true, createdAt: true },
+    });
+    return { success: true, data: appUsers, count: appUsers.length, timestamp: new Date().toISOString() };
   }
 }
