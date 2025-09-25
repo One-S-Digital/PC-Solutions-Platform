@@ -27,12 +27,14 @@ fi
 MIGRATION_COUNT=$(find ./prisma/migrations -maxdepth 1 -type d -name "*_*" | wc -l)
 echo "📊 Found $MIGRATION_COUNT migration(s)"
 
-# Generate Prisma client
-echo "📦 Generating Prisma client..."
-npx prisma generate || {
-    echo "❌ Failed to generate Prisma client"
-    exit 1
-}
+# Prisma client is generated via postinstall, just verify it exists
+if [ ! -d "../node_modules/@prisma/client" ]; then
+    echo "⚠️  Prisma client not found, generating..."
+    npx prisma generate || {
+        echo "❌ Failed to generate Prisma client"
+        exit 1
+    }
+fi
 
 # Show current migration status
 echo "📋 Checking migration status..."
