@@ -886,6 +886,7 @@ model FrontendSettings {
   faviconAssetId String?
   primaryColor   String  @default("#3B82F6")
   secondaryColor String  @default("#1E40AF")
+  accentColor    String  @default("#F59E0B")
 
   // Admin Dashboard Branding
   adminLogoAssetId    String?

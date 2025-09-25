@@ -21,6 +21,11 @@ export class UpdateFrontendSettingsDto {
   @IsHexColor()
   secondaryColor?: string;
 
+  // Brand Accent Color (main application)
+  @IsOptional()
+  @IsHexColor()
+  accentColor?: string;
+
   // Admin Dashboard Branding
   @IsOptional()
   @IsHexColor()

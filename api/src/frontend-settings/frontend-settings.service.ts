@@ -63,6 +63,7 @@ export class FrontendSettingsService {
           siteKeywords: 'childcare, daycare, switzerland, education',
           primaryColor: '#3B82F6',
           secondaryColor: '#1E40AF',
+          accentColor: '#F59E0B',
           adminPrimaryColor: '#1F2937',
           adminSecondaryColor: '#374151',
           adminAccentColor: '#3B82F6',

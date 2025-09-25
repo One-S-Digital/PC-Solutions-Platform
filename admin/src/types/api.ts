@@ -21,6 +21,7 @@ export interface FrontendSettings {
   faviconAssetId?: string;
   primaryColor: string;
   secondaryColor: string;
+  accentColor?: string;
   adminLogoAssetId?: string;
   adminPrimaryColor: string;
   adminSecondaryColor: string;
