@@ -1,0 +1,192 @@
+{
+  "info": {
+    "name": "PC Solutions Role System Tests",
+    "description": "Test collection for the new role management system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{clerk_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "clerk_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication Tests",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          }
+        },
+        {
+          "name": "Test No Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Role Management",
+      "item": [
+        {
+          "name": "Get User Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/role-management/users/{{test_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "role-management", "users", "{{test_user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Change User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\",\n  \"reason\": \"Promotion test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/role-management/users/{{test_user_id}}/role",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "role-management", "users", "{{test_user_id}}", "role"]
+            }
+          }
+        },
+        {
+          "name": "Get Role History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/role-management/history?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "role-management", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authorization Tests",
+      "item": [
+        {
+          "name": "Admin Endpoint (Should Pass)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/frontend-settings",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "frontend-settings"]
+            }
+          }
+        },
+        {
+          "name": "Public Endpoint (No Auth)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhook Tests",
+      "item": [
+        {
+          "name": "Simulate User Created",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "svix-id",
+                "value": "msg_test_{{$timestamp}}"
+              },
+              {
+                "key": "svix-timestamp",
+                "value": "{{$timestamp}}"
+              },
+              {
+                "key": "svix-signature",
+                "value": "{{webhook_signature}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"user.created\",\n  \"data\": {\n    \"id\": \"user_test_{{$timestamp}}\",\n    \"unsafe_metadata\": {\n      \"role\": \"EDUCATOR\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/clerk",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "clerk"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
