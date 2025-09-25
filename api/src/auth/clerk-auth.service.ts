@@ -291,17 +291,26 @@ export class ClerkAuthService {
       } catch (dbError) {
         // Handle database errors gracefully
         if (dbError instanceof Error && dbError.message.includes('does not exist in the current database')) {
-          console.error('⚠️ Database not initialized. Using token data with default role.');
+          console.error('⚠️ Database not initialized. Using token data with temporary admin role.');
           console.error('Run migrations: npx prisma migrate deploy');
           
-          // Return user data from token with a default role
-          // This allows the app to function while database is being set up
+          // For development/initial setup, check if this is a known admin user
+          // Get admin Clerk IDs from environment or use defaults
+          const adminClerkIdsEnv = this.configService.get<string>('ADMIN_CLERK_IDS', '');
+          const adminClerkIds = adminClerkIdsEnv ? adminClerkIdsEnv.split(',') : [
+            'user_326OW0kp2tTae6lkVA7Vqosx72D', // Your Clerk ID from the logs
+            // Add other admin Clerk IDs here
+          ];
+          
+          const isAdmin = adminClerkIds.includes(payload.sub);
+          
+          // Return user data from token with appropriate role
           return {
             id: payload.sub,
             email: payload.email || 'unknown@email.com',
             firstName: payload.firstName || 'Unknown',
             lastName: payload.lastName || 'User',
-            role: UserRole.PARENT, // Default role for safety
+            role: isAdmin ? UserRole.SUPER_ADMIN : UserRole.PARENT,
             organizationId: payload.orgId,
             createdAt: new Date(),
             updatedAt: new Date(),
