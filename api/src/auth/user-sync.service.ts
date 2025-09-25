@@ -149,4 +149,20 @@ export class UserSyncService {
   private isValidUserRole(role: any): role is UserRole {
     return Object.values(UserRole).includes(role);
   }
+
+  async deleteUser(clerkId: string) {
+    try {
+      // Soft delete by setting deletedAt
+      const user = await this.prisma.user.update({
+        where: { clerkId },
+        data: { deletedAt: new Date() },
+      });
+
+      this.logger.log(`User soft deleted: ${user.email} (${user.id})`);
+      return user;
+    } catch (error) {
+      this.logger.error(`Failed to delete user: ${error instanceof Error ? error.message : 'Unknown error'}`, error instanceof Error ? error.stack : undefined);
+      throw error;
+    }
+  }
 }
