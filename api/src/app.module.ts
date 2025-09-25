@@ -1,13 +1,14 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
-import { ClerkAuthMiddleware } from './auth/clerk-auth.middleware';
+import { RoleContextMiddleware } from './auth/middleware/role-context.middleware';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { AdminModule } from './admin/admin.module';
@@ -31,6 +32,9 @@ import { EmailNotificationModule } from './email-notification/email-notification
 import { SubscriptionManagementModule } from './subscription-management/subscription-management.module';
 import { SystemConfigurationModule } from './system-configuration/system-configuration.module';
 import { HealthModule } from './health/health.module';
+import { RoleManagementModule } from './admin/role-management/role-management.module';
+import { SyncModule } from './sync/sync.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -48,6 +52,7 @@ import {
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         name: 'short',
@@ -101,6 +106,9 @@ import {
     SubscriptionManagementModule,
     SystemConfigurationModule,
     HealthModule,
+    RoleManagementModule,
+    SyncModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [
@@ -117,15 +125,15 @@ export class AppModule implements NestModule {
       .apply(RequestIdMiddleware, RequestLoggerMiddleware)
       .forRoutes('*');
     
-    // Apply ClerkAuthMiddleware to all routes except public ones
+    // Apply RoleContextMiddleware to all routes after auth
     consumer
-      .apply(ClerkAuthMiddleware)
+      .apply(RoleContextMiddleware)
       .exclude(
         'api/auth/signup-data',
         'api/auth/signup-fields/(.*)',
         'api/health',
-        'api/metrics',
-        'api/users/sync'
+        'api/health/(.*)',
+        'api/webhooks/(.*)',
       )
       .forRoutes('*');
   }

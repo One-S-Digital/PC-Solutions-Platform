@@ -12,14 +12,13 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FrontendSettingsService } from './frontend-settings.service';
 import { UpdateFrontendSettingsDto } from './dto/update-frontend-settings.dto';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
-import { Public } from '../auth/public.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('admin/frontend-settings')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class FrontendSettingsController {
   constructor(private readonly frontendSettingsService: FrontendSettingsService) {}
@@ -43,30 +42,30 @@ export class FrontendSettingsController {
   @Post('logo')
   @UseInterceptors(FileInterceptor('file'))
   uploadLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadLogo(file, req.user.id);
+    return this.frontendSettingsService.uploadLogo(file, req.context.userId);
   }
 
   @Post('favicon')
   @UseInterceptors(FileInterceptor('file'))
   uploadFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadFavicon(file, req.user.id);
+    return this.frontendSettingsService.uploadFavicon(file, req.context.userId);
   }
 
   @Post('og-image')
   @UseInterceptors(FileInterceptor('file'))
   uploadOgImage(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadOgImage(file, req.user.id);
+    return this.frontendSettingsService.uploadOgImage(file, req.context.userId);
   }
 
   @Post('admin-logo')
   @UseInterceptors(FileInterceptor('file'))
   uploadAdminLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadAdminLogo(file, req.user.id);
+    return this.frontendSettingsService.uploadAdminLogo(file, req.context.userId);
   }
 
   @Post('admin-favicon')
   @UseInterceptors(FileInterceptor('file'))
   uploadAdminFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadAdminFavicon(file, req.user.id);
+    return this.frontendSettingsService.uploadAdminFavicon(file, req.context.userId);
   }
 }

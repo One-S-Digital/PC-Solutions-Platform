@@ -1225,3 +1225,40 @@ model MaintenanceSchedule {
 
   @@map("maintenance_schedules")
 }
+
+// New Role Management Tables
+model AppUser {
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique
+  role        UserRole @default(PARENT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roleHistory AppUserRoleHistory[]
+}
+
+model AppUserRoleHistory {
+  id           BigInt    @id @default(autoincrement())
+  userId       String
+  previousRole UserRole?
+  newRole      UserRole
+  changedBy    String // clerkUserId of actor OR 'system/webhook'
+  reason       String?
+  changedAt    DateTime  @default(now())
+
+  user AppUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Outbox {
+  id        BigInt   @id @default(autoincrement())
+  topic     String
+  payload   Json
+  attempts  Int      @default(0)
+  nextRunAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  lastError String?
+
+  @@index([nextRunAt])
+}

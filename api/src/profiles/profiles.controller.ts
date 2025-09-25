@@ -1,9 +1,10 @@
 import { Controller, Get, Put, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard, Roles } from '../auth/roles.guard';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 export class UpdateProfileDto {
   firstName?: string;
@@ -58,7 +59,7 @@ export class CreateOrganizationDto {
 
 @ApiTags('profiles')
 @Controller('profiles')
-@UseGuards(ClerkAuthGuard)
+@UseGuards()
 @ApiBearerAuth()
 export class ProfileController {
   constructor(private readonly prisma: PrismaService) {}
@@ -67,7 +68,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   async getMyProfile(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -94,7 +95,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   async updateMyProfile(@Request() req, @Body() updateData: UpdateProfileDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Update user basic info
     const updatedUser = await this.prisma.user.update({
@@ -113,7 +114,7 @@ export class ProfileController {
     });
 
     // If user has organizations, update them too
-    if (this.isOrganizationRole(req.user.role)) {
+    if (this.isOrganizationRole(req.context.role)) {
       const userOrganizations = await this.prisma.userOrganization.findMany({
         where: { userId },
         include: { organization: true }
@@ -154,7 +155,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get user organizations' })
   @ApiResponse({ status: 200, description: 'Organizations retrieved successfully' })
   async getMyOrganizations(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     const organizations = await this.prisma.userOrganization.findMany({
       where: { userId },
@@ -173,7 +174,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'Create new organization for user' })
   @ApiResponse({ status: 201, description: 'Organization created successfully' })
   async createOrganization(@Request() req, @Body() organizationData: CreateOrganizationDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Create organization
     const organization = await this.prisma.organization.create({
@@ -202,7 +203,7 @@ export class ProfileController {
       data: {
         userId,
         organizationId: organization.id,
-        role: req.user.role,
+        role: req.context.role,
       }
     });
 
@@ -218,7 +219,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get parent leads for foundation' })
   @ApiResponse({ status: 200, description: 'Parent leads retrieved successfully' })
   async getMyParentLeads(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -247,7 +248,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'Update parent lead status' })
   @ApiResponse({ status: 200, description: 'Parent lead updated successfully' })
   async updateParentLead(@Request() req, @Param('leadId') leadId: string, @Body() updateData: { status: string }) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Verify user has access to this lead
     const userOrganizations = await this.prisma.userOrganization.findMany({

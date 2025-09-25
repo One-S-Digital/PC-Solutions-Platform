@@ -13,13 +13,13 @@ import {
 import { RecruitmentService } from './recruitment.service';
 import { CreateJobListingDto, UpdateJobListingDto } from './dto/create-job-listing.dto';
 import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-job-application.dto';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('recruitment')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 export class RecruitmentController {
   constructor(private readonly recruitmentService: RecruitmentService) {}
 
@@ -67,7 +67,7 @@ export class RecruitmentController {
   @Post('applications')
   @Roles(UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   createJobApplication(@Body() createJobApplicationDto: CreateJobApplicationDto, @Request() req) {
-    const candidateId = req.user.id;
+    const candidateId = req.context.userId;
     return this.recruitmentService.createJobApplication(createJobApplicationDto, candidateId);
   }
 

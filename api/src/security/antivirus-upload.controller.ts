@@ -14,10 +14,10 @@ import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestj
 import { ClamAVService } from './clamav.service';
 import { MimeValidationService } from './mime-validation.service';
 import { QuarantineStorageService } from './quarantine-storage.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 export interface AntivirusUploadResult {
   success: boolean;
@@ -32,7 +32,7 @@ export interface AntivirusUploadResult {
 
 @ApiTags('Antivirus Upload')
 @Controller('antivirus-upload')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 export class AntivirusUploadController {
   private readonly logger = new Logger(AntivirusUploadController.name);
 
@@ -67,7 +67,7 @@ export class AntivirusUploadController {
       throw new BadRequestException('No file provided');
     }
 
-    const userId = req.user.id;
+    const userId = req.context.userId;
     const originalName = file.originalname;
     const buffer = file.buffer;
 

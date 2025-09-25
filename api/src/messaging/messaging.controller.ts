@@ -13,39 +13,39 @@ import {
 import { MessagingService } from './messaging.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('messaging')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 export class MessagingController {
   constructor(private readonly messagingService: MessagingService) {}
 
   // Conversation Management
   @Post('conversations')
   createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
-    const creatorId = req.user.id;
+    const creatorId = req.context.userId;
     return this.messagingService.createConversation(createConversationDto, creatorId);
   }
 
   @Get('conversations')
   getUserConversations(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.messagingService.getUserConversations(userId);
   }
 
   @Get('conversations/:id')
   findConversationById(@Param('id') id: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.messagingService.findConversationById(id, userId);
   }
 
   // Message Management
   @Post('messages')
   createMessage(@Body() createMessageDto: CreateMessageDto, @Request() req) {
-    const senderId = req.user.id;
+    const senderId = req.context.userId;
     return this.messagingService.createMessage(createMessageDto, senderId);
   }
 
@@ -56,7 +56,7 @@ export class MessagingController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 50;
     return this.messagingService.getConversationMessages(conversationId, userId, pageNum, limitNum);
@@ -64,13 +64,13 @@ export class MessagingController {
 
   @Post('conversations/:id/read')
   markMessagesAsRead(@Param('id') conversationId: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.messagingService.markMessagesAsRead(conversationId, userId);
   }
 
   @Get('unread-count')
   getUnreadMessageCount(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.messagingService.getUnreadMessageCount(userId);
   }
 
@@ -81,7 +81,7 @@ export class MessagingController {
     @Body('content') content: string,
     @Request() req,
   ) {
-    const senderId = req.user.id;
+    const senderId = req.context.userId;
     return this.messagingService.createDirectMessage(senderId, receiverId, content);
   }
 
@@ -92,7 +92,7 @@ export class MessagingController {
     @Body('userId') userId: string,
     @Request() req,
   ) {
-    const addedBy = req.user.id;
+    const addedBy = req.context.userId;
     return this.messagingService.addParticipantToConversation(conversationId, userId, addedBy);
   }
 
@@ -102,7 +102,7 @@ export class MessagingController {
     @Param('userId') userId: string,
     @Request() req,
   ) {
-    const removedBy = req.user.id;
+    const removedBy = req.context.userId;
     return this.messagingService.removeParticipantFromConversation(conversationId, userId, removedBy);
   }
 
@@ -113,7 +113,7 @@ export class MessagingController {
     @Query('q') query: string,
     @Query('conversationId') conversationId?: string,
   ) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.messagingService.searchMessages(userId, query, conversationId);
   }
 

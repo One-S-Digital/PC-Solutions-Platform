@@ -1,9 +1,10 @@
 import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard, Roles } from '../auth/roles.guard';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 import { UpdateFoundationSettingsDto } from './dto/foundation-settings.dto';
 import { UpdateEducatorSettingsDto } from './dto/educator-settings.dto';
 import { UpdateSupplierSettingsDto } from './dto/supplier-settings.dto';
@@ -12,7 +13,7 @@ import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
 
 @ApiTags('settings')
 @Controller('settings')
-@UseGuards(ClerkAuthGuard)
+@UseGuards()
 @ApiBearerAuth()
 export class SettingsController {
   constructor(private readonly prisma: PrismaService) {}
@@ -22,7 +23,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get foundation settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getFoundationSettings(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user and organization data
     const user = await this.prisma.user.findUnique({
@@ -71,7 +72,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update foundation settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateFoundationSettings(@Request() req, @Body() settings: UpdateFoundationSettingsDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Update user and organization data
     await this.prisma.$transaction(async (tx) => {
@@ -116,7 +117,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get educator settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getEducatorSettings(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     const user = await this.prisma.user.findUnique({
       where: { id: userId }
@@ -157,7 +158,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update educator settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     await this.prisma.user.update({
       where: { id: userId },
@@ -186,7 +187,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get supplier settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getSupplierSettings(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -236,7 +237,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update supplier settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateSupplierSettings(@Request() req, @Body() settings: UpdateSupplierSettingsDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
@@ -280,7 +281,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get service provider settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getServiceProviderSettings(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -328,7 +329,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update service provider settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateServiceProviderSettings(@Request() req, @Body() settings: UpdateServiceProviderSettingsDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
@@ -370,7 +371,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get parent settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getParentSettings(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     const user = await this.prisma.user.findUnique({
       where: { id: userId }
@@ -410,7 +411,7 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update parent settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateParentSettings(@Request() req, @Body() settings: UpdateParentSettingsDto) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // For now, only update basic user data since ParentLead doesn't have userId relation
     await this.prisma.user.update({

@@ -1,13 +1,14 @@
 import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard, Roles } from '../auth/roles.guard';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('dashboard')
 @Controller('dashboard')
-@UseGuards(ClerkAuthGuard)
+@UseGuards()
 @ApiBearerAuth()
 export class DashboardController {
   constructor(private readonly prisma: PrismaService) {}
@@ -17,7 +18,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get foundation dashboard stats' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getFoundationStats(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -93,7 +94,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get foundation recent activities' })
   @ApiResponse({ status: 200, description: 'Activities retrieved successfully' })
   async getFoundationActivities(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -210,7 +211,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get educator dashboard stats' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getEducatorStats(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Calculate real stats from database
     const [
@@ -267,7 +268,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get educator job opportunities' })
   @ApiResponse({ status: 200, description: 'Jobs retrieved successfully' })
   async getEducatorJobs(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's applications to determine status
     const userApplications = await this.prisma.jobApplication.findMany({
@@ -315,7 +316,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get supplier dashboard stats' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getSupplierStats(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -411,7 +412,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get supplier recent orders' })
   @ApiResponse({ status: 200, description: 'Orders retrieved successfully' })
   async getSupplierOrders(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -473,7 +474,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get service provider dashboard stats' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getServiceProviderStats(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -567,7 +568,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get service provider recent bookings' })
   @ApiResponse({ status: 200, description: 'Bookings retrieved successfully' })
   async getServiceProviderBookings(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
@@ -623,7 +624,7 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get parent dashboard stats' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getParentStats(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Calculate real stats from database
     const [

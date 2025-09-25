@@ -1,33 +1,19 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { ClerkStrategy } from './clerk.strategy';
-import { RolesGuard } from './roles.guard';
-import { ClerkAuthGuard } from './clerk-auth.guard';
-import { ClerkAuthMiddleware } from './clerk-auth.middleware';
-import { ClerkAuthService } from './clerk-auth.service';
-import { UserSyncService } from './user-sync.service';
-import { ClerkWebhookController } from './clerk-webhook.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { Module, Global } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ClerkAuthGuard } from './guards/clerk-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { ConfigModule } from '@nestjs/config';
 
+@Global()
 @Module({
-  imports: [
-    PassportModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('CLERK_SECRET_KEY'),
-        signOptions: { expiresIn: '1h' },
-      }),
-      inject: [ConfigService],
-    }),
-    PrismaModule,
+  imports: [ConfigModule],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ClerkAuthGuard,
+    },
+    RolesGuard,
   ],
-  controllers: [AuthController, ClerkWebhookController],
-  providers: [AuthService, ClerkStrategy, RolesGuard, ClerkAuthGuard, ClerkAuthMiddleware, ClerkAuthService, UserSyncService],
-  exports: [AuthService, RolesGuard, ClerkAuthGuard, ClerkAuthMiddleware, ClerkAuthService, UserSyncService],
+  exports: [RolesGuard],
 })
 export class AuthModule {}

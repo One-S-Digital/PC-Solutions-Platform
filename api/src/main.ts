@@ -3,13 +3,23 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
+import * as express from 'express';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { AppLoggerService } from './common/logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bodyParser: false, // We'll handle body parsing manually
+  });
   const logger = app.get(AppLoggerService);
+  
+  // Raw body for webhook route
+  app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
+  
+  // JSON parser for all other routes
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   // Security middleware
   app.use(helmet());

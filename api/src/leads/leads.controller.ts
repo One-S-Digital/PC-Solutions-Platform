@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateParentLeadDto, UpdateParentLeadDto } from './dto/create-parent-lead.dto';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('leads')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
 

@@ -16,13 +16,13 @@ import { CreateCourseModuleDto } from './dto/create-course-module.dto';
 import { CreateCourseLessonDto } from './dto/create-course-lesson.dto';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { CreateQuizAttemptDto } from './dto/create-quiz-attempt.dto';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('elearning')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 export class ElearningController {
   constructor(private readonly elearningService: ElearningService) {}
 
@@ -30,7 +30,7 @@ export class ElearningController {
   @Post('courses')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR)
   createCourse(@Body() createCourseDto: CreateCourseDto, @Request() req) {
-    const createdBy = req.user.id;
+    const createdBy = req.context.userId;
     return this.elearningService.createCourse(createCourseDto, createdBy);
   }
 
@@ -107,13 +107,13 @@ export class ElearningController {
   // Course Enrollment
   @Post('courses/:id/enroll')
   async enrollInCourse(@Param('id') courseId: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.elearningService.enrollInCourse(userId, courseId);
   }
 
   @Get('my-enrollments')
   getUserEnrollments(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.elearningService.getUserEnrollments(userId);
   }
 
@@ -124,7 +124,7 @@ export class ElearningController {
     @Body('status') status: string,
     @Request() req,
   ) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     // Get enrollment for this lesson
     // This is a simplified implementation - in practice, you'd need to find the enrollment
     return this.elearningService.updateLessonProgress('enrollment-id', lessonId, timeSpent, status);
@@ -139,14 +139,14 @@ export class ElearningController {
 
   @Post('quizzes/:id/attempt')
   submitQuizAttempt(@Param('id') quizId: string, @Body() createQuizAttemptDto: CreateQuizAttemptDto, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.elearningService.submitQuizAttempt(createQuizAttemptDto, userId);
   }
 
   // Certificate Management
   @Post('courses/:id/certificate')
   generateCertificate(@Param('id') courseId: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.elearningService.generateCertificate(userId, courseId);
   }
 
@@ -158,7 +158,7 @@ export class ElearningController {
     @Body('content') content: string,
     @Request() req,
   ) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.elearningService.createDiscussion(courseId, userId, title, content);
   }
 
@@ -169,7 +169,7 @@ export class ElearningController {
     @Body('isSolution') isSolution: boolean,
     @Request() req,
   ) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     return this.elearningService.createDiscussionReply(discussionId, userId, content, isSolution);
   }
 

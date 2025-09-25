@@ -15,9 +15,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { CloudflareR2Service, PresignedUploadData } from './cloudflare-r2.service';
 import { UploadService } from './upload.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole, AssetKind } from '@repo/types';
 import { UploadThrottle } from '../common/decorators/throttle.decorator';
 
@@ -33,7 +33,7 @@ export class UploadFileDto {
 
 @ApiTags('Upload')
 @Controller('upload')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 export class UploadController {
   constructor(
     private readonly r2Service: CloudflareR2Service,
@@ -49,7 +49,7 @@ export class UploadController {
     @Request() req,
   ): Promise<PresignedUploadData> {
     const { filename, mimeType, assetKind } = presignedUploadDto;
-    const userId = req.user.id;
+    const userId = req.context.userId;
 
     // Validate file type and size
     const mockFile = {
@@ -94,7 +94,7 @@ export class UploadController {
     }
 
     const { assetKind } = uploadFileDto;
-    const userId = req.user.id;
+    const userId = req.context.userId;
 
     // Validate file
     this.r2Service.validateFile(file, assetKind);
@@ -131,7 +131,7 @@ export class UploadController {
   @ApiOperation({ summary: 'Get asset information' })
   @ApiResponse({ status: 200, description: 'Asset information retrieved successfully' })
   async getAsset(@Param('id') id: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     const asset = await this.uploadService.getAsset(id, userId);
 
     return {
@@ -155,7 +155,7 @@ export class UploadController {
     @Request() req,
     @Body() query: { kind?: AssetKind; limit?: number; offset?: number } = {},
   ) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     const { kind, limit = 50, offset = 0 } = query;
 
     const assets = await this.uploadService.getUserAssets(userId, { kind, limit, offset });
@@ -178,7 +178,7 @@ export class UploadController {
   @ApiOperation({ summary: 'Delete asset' })
   @ApiResponse({ status: 200, description: 'Asset deleted successfully' })
   async deleteAsset(@Param('id') id: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get asset to verify ownership and get storage key
     const asset = await this.uploadService.getAsset(id, userId);
@@ -199,7 +199,7 @@ export class UploadController {
   @ApiOperation({ summary: 'Generate download URL for asset' })
   @ApiResponse({ status: 200, description: 'Download URL generated successfully' })
   async generateDownloadUrl(@Param('id') id: string, @Request() req) {
-    const userId = req.user.id;
+    const userId = req.context.userId;
     
     // Get asset to verify ownership
     const asset = await this.uploadService.getAsset(id, userId);

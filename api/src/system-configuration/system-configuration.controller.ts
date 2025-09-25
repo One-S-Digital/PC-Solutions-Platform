@@ -12,13 +12,13 @@ import {
 import { SystemConfigurationService } from './system-configuration.service';
 import { IntegrationManagementService } from './integration-management.service';
 import { MaintenanceModeService } from './maintenance-mode.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('admin/system-configuration')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class SystemConfigurationController {
   constructor(

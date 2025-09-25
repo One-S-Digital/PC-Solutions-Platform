@@ -1,9 +1,10 @@
 import { Controller, Get, Put, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { RolesGuard, Roles } from '../auth/roles.guard';
-import { UserRole } from '@repo/types';
+
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 export class SystemSettingsDto {
   maintenanceMode: boolean;
@@ -40,7 +41,7 @@ export class SubscriptionTierDto {
 
 @ApiTags('admin')
 @Controller('admin')
-@UseGuards(ClerkAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 @ApiBearerAuth()
 export class AdminController {
@@ -229,7 +230,7 @@ export class AdminController {
         timestamp: new Date().toISOString(),
         level: 'INFO',
         message: 'User login successful',
-        userId: req.user.id,
+        userId: req.context.userId,
         ip: '192.168.1.1'
       },
       {
