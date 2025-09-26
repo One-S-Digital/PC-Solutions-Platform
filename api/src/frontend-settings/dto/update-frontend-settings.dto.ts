@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUrl, IsHexColor, IsBoolean, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsUrl, IsHexColor, IsBoolean, IsObject, IsUUID } from 'class-validator';
 
 export class UpdateFrontendSettingsDto {
   @IsOptional()
@@ -13,6 +13,28 @@ export class UpdateFrontendSettingsDto {
   @IsString()
   siteKeywords?: string;
 
+  // Asset IDs for file uploads
+  @IsOptional()
+  @IsUUID()
+  logoAssetId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  faviconAssetId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  ogImageAssetId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  adminLogoAssetId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  adminFaviconAssetId?: string;
+
+  // Branding Colors
   @IsOptional()
   @IsHexColor()
   primaryColor?: string;
@@ -21,7 +43,6 @@ export class UpdateFrontendSettingsDto {
   @IsHexColor()
   secondaryColor?: string;
 
-  // Brand Accent Color (main application)
   @IsOptional()
   @IsHexColor()
   accentColor?: string;
@@ -39,6 +60,7 @@ export class UpdateFrontendSettingsDto {
   @IsHexColor()
   adminAccentColor?: string;
 
+  // Contact Information
   @IsOptional()
   @IsString()
   contactEmail?: string;
@@ -51,6 +73,7 @@ export class UpdateFrontendSettingsDto {
   @IsString()
   contactAddress?: string;
 
+  // Social Media URLs
   @IsOptional()
   @IsUrl()
   facebookUrl?: string;
@@ -67,6 +90,7 @@ export class UpdateFrontendSettingsDto {
   @IsUrl()
   instagramUrl?: string;
 
+  // SEO
   @IsOptional()
   @IsString()
   metaTitle?: string;
@@ -75,6 +99,7 @@ export class UpdateFrontendSettingsDto {
   @IsString()
   metaDescription?: string;
 
+  // Analytics
   @IsOptional()
   @IsString()
   googleAnalyticsId?: string;
@@ -83,6 +108,7 @@ export class UpdateFrontendSettingsDto {
   @IsString()
   googleTagManagerId?: string;
 
+  // Legal URLs
   @IsOptional()
   @IsUrl()
   privacyPolicyUrl?: string;
