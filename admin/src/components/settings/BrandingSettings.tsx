@@ -5,6 +5,9 @@ import { apiService } from '../../services/api'
 import { useUser } from '@clerk/clerk-react'
 import SimpleAssetUploader from './SimpleAssetUploader'
 import LoadingSpinner from '../ui/LoadingSpinner'
+import Card from '../design-system/Card'
+import Button from '../design-system/Button'
+import { STANDARD_INPUT_FIELD } from '../../constants/design-system'
 import logger from '../../utils/logger'
 import toast from 'react-hot-toast'
 
@@ -143,14 +146,14 @@ const BrandingSettings: React.FC = () => {
       </div>
 
       {error && (
-        <div className="rounded-card bg-red-50 border border-red-200 p-4">
+        <Card className="bg-red-50 border border-red-200 p-4">
           <div className="text-sm text-red-700 font-medium">{error}</div>
-        </div>
+        </Card>
       )}
 
       <div className="space-y-6">
         {/* Brand Colors */}
-        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+        <Card className="p-6">
           <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Brand Colors</h4>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -169,7 +172,7 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="primaryColor"
                     defaultValue={settings?.primaryColor || '#3B82F6'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
@@ -189,7 +192,7 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="secondaryColor"
                     defaultValue={settings?.secondaryColor || '#10B981'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
@@ -209,26 +212,26 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="accentColor"
                     defaultValue={settings?.accentColor || '#F59E0B'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end pt-4 border-t border-gray-200">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
                 disabled={saving}
-                className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {saving ? 'Saving...' : 'Save Colors'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
 
         {/* Admin Dashboard Colors */}
-        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+        <Card className="p-6">
           <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Admin Dashboard Colors</h4>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -247,7 +250,7 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="adminPrimaryColor"
                     defaultValue={settings?.adminPrimaryColor || '#1F2937'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
@@ -267,7 +270,7 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="adminSecondaryColor"
                     defaultValue={settings?.adminSecondaryColor || '#374151'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
@@ -287,26 +290,26 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="adminAccentColor"
                     defaultValue={settings?.adminAccentColor || '#3B82F6'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end pt-4 border-t border-gray-200">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
                 disabled={saving}
-                className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {saving ? 'Saving...' : 'Save Admin Colors'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
 
         {/* Logos & Assets */}
-        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+        <Card className="p-6">
           <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Logos & Assets</h4>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
@@ -324,13 +327,13 @@ const BrandingSettings: React.FC = () => {
               )}
               {uploadedAssets.logo && (
                 <div className="mt-2 flex justify-end">
-                  <button
+                  <Button
                     onClick={() => handleSaveAsset('logo')}
+                    variant="primary"
                     disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                   >
                     {saving ? 'Saving...' : 'Save Logo'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -350,13 +353,13 @@ const BrandingSettings: React.FC = () => {
               )}
               {uploadedAssets.adminLogo && (
                 <div className="mt-2 flex justify-end">
-                  <button
+                  <Button
                     onClick={() => handleSaveAsset('adminLogo')}
+                    variant="primary"
                     disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                   >
                     {saving ? 'Saving...' : 'Save Admin Logo'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -376,13 +379,13 @@ const BrandingSettings: React.FC = () => {
               )}
               {uploadedAssets.favicon && (
                 <div className="mt-2 flex justify-end">
-                  <button
+                  <Button
                     onClick={() => handleSaveAsset('favicon')}
+                    variant="primary"
                     disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                   >
                     {saving ? 'Saving...' : 'Save Favicon'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -402,13 +405,13 @@ const BrandingSettings: React.FC = () => {
               )}
               {uploadedAssets.adminFavicon && (
                 <div className="mt-2 flex justify-end">
-                  <button
+                  <Button
                     onClick={() => handleSaveAsset('adminFavicon')}
+                    variant="primary"
                     disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                   >
                     {saving ? 'Saving...' : 'Save Admin Favicon'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

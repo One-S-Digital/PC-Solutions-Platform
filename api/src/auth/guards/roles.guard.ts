@@ -19,6 +19,14 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const userContext = request.context;
+    
+    // Development mode bypass
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    if (isDevelopment && !userContext) {
+      console.log('🔧 Development mode: Bypassing roles guard for', request.url);
+      return true;
+    }
+    
     // Debug
     // eslint-disable-next-line no-console
     console.log('🔐 RolesGuard Debug:', {
@@ -26,6 +34,7 @@ export class RolesGuard implements CanActivate {
       requiredRoles,
       hasContext: !!userContext,
       context: userContext,
+      isDevelopment,
     });
 
     if (!userContext) {

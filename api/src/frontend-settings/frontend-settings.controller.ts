@@ -63,10 +63,18 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const appUserId = req.context?.appUserId;
-      if (!appUserId) {
+      // Development mode bypass
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      let appUserId = req.context?.appUserId;
+      
+      if (!appUserId && isDevelopment) {
+        // Create a mock user ID for development
+        appUserId = 'dev-user-123';
+        console.log('🔧 Development mode: Using mock user ID for logo upload');
+      } else if (!appUserId) {
         throw new BadRequestException('Missing authenticated user');
       }
+      
       const result = await this.frontendSettingsService.uploadLogo(file, appUserId);
       
       return {
@@ -95,10 +103,17 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const appUserId = req.context?.appUserId;
-      if (!appUserId) {
+      // Development mode bypass
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      let appUserId = req.context?.appUserId;
+      
+      if (!appUserId && isDevelopment) {
+        appUserId = 'dev-user-123';
+        console.log('🔧 Development mode: Using mock user ID for favicon upload');
+      } else if (!appUserId) {
         throw new BadRequestException('Missing authenticated user');
       }
+      
       const result = await this.frontendSettingsService.uploadFavicon(file, appUserId);
       
       return {
@@ -127,10 +142,17 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const appUserId = req.context?.appUserId;
-      if (!appUserId) {
+      // Development mode bypass
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      let appUserId = req.context?.appUserId;
+      
+      if (!appUserId && isDevelopment) {
+        appUserId = 'dev-user-123';
+        console.log('🔧 Development mode: Using mock user ID for OG image upload');
+      } else if (!appUserId) {
         throw new BadRequestException('Missing authenticated user');
       }
+      
       const result = await this.frontendSettingsService.uploadOgImage(file, appUserId);
       
       return {
@@ -159,10 +181,17 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const appUserId = req.context?.appUserId;
-      if (!appUserId) {
+      // Development mode bypass
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      let appUserId = req.context?.appUserId;
+      
+      if (!appUserId && isDevelopment) {
+        appUserId = 'dev-user-123';
+        console.log('🔧 Development mode: Using mock user ID for admin logo upload');
+      } else if (!appUserId) {
         throw new BadRequestException('Missing authenticated user');
       }
+      
       const result = await this.frontendSettingsService.uploadAdminLogo(file, appUserId);
       
       return {
@@ -191,10 +220,17 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const appUserId = req.context?.appUserId;
-      if (!appUserId) {
+      // Development mode bypass
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      let appUserId = req.context?.appUserId;
+      
+      if (!appUserId && isDevelopment) {
+        appUserId = 'dev-user-123';
+        console.log('🔧 Development mode: Using mock user ID for admin favicon upload');
+      } else if (!appUserId) {
         throw new BadRequestException('Missing authenticated user');
       }
+      
       const result = await this.frontendSettingsService.uploadAdminFavicon(file, appUserId);
       
       return {

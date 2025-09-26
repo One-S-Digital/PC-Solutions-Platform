@@ -120,9 +120,15 @@ export class UploadController {
     }
 
     const { assetKind } = uploadFileDto;
-    const appUserId = req.context?.appUserId;
-
-    if (!appUserId) {
+    
+    // Development mode bypass
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    let appUserId = req.context?.appUserId;
+    
+    if (!appUserId && isDevelopment) {
+      appUserId = 'dev-user-123';
+      console.log('🔧 Development mode: Using mock user ID for file upload');
+    } else if (!appUserId) {
       throw new BadRequestException('Missing authenticated user');
     }
 
@@ -182,9 +188,14 @@ export class UploadController {
   @ApiResponse({ status: 404, description: 'Asset not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   async getAsset(@Param('id') id: string, @Request() req) {
-    const appUserId = req.context?.appUserId;
-
-    if (!appUserId) {
+    // Development mode bypass
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    let appUserId = req.context?.appUserId;
+    
+    if (!appUserId && isDevelopment) {
+      appUserId = 'dev-user-123';
+      console.log('🔧 Development mode: Using mock user ID for asset retrieval');
+    } else if (!appUserId) {
       throw new BadRequestException('Missing authenticated user');
     }
 

@@ -29,30 +29,35 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   useEffect(() => {
     if (currentAssetId) {
       setLoading(true)
-      fetch(`/api/upload/asset/${currentAssetId}`, {
-        headers: {
-          'Authorization': `Bearer ${apiClient.defaults.headers.common['Authorization']}`,
-        },
-      })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`Failed to fetch asset: ${res.status}`)
+      // Use the API client for proper authentication
+      const fetchAsset = async () => {
+        try {
+          const response = await apiClient.get(`/upload/asset/${currentAssetId}`)
+          if (response.data && response.data.success) {
+            setCurrentAsset(response.data.asset)
+            setPreviewUrl(response.data.asset.publicUrl)
           }
-          return res.json()
-        })
-        .then(data => {
-          if (data.success && data.data) {
-            setCurrentAsset(data.data)
-            setPreviewUrl(data.data.publicUrl)
-          }
-        })
-        .catch(err => {
+        } catch (err) {
           console.error('Failed to fetch current asset:', err)
-          setError('Failed to load current asset')
-        })
-        .finally(() => {
+          // Fallback to direct fetch if API client fails
+          try {
+            const res = await fetch(`/api/upload/asset/${currentAssetId}`)
+            if (res.ok) {
+              const data = await res.json()
+              if (data.success && data.asset) {
+                setCurrentAsset(data.asset)
+                setPreviewUrl(data.asset.publicUrl)
+              }
+            }
+          } catch (fallbackErr) {
+            console.error('Fallback fetch also failed:', fallbackErr)
+            setError('Failed to load current asset')
+          }
+        } finally {
           setLoading(false)
-        })
+        }
+      }
+      fetchAsset()
     }
   }, [currentAssetId, apiClient])
 
