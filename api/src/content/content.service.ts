@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudflareR2Service } from '../upload/cloudflare-r2.service';
-import { AssetKind } from '@prisma/client';
+import { AssetKind, ContentType } from '@prisma/client';
 
 @Injectable()
 export class ContentService {
@@ -52,7 +52,7 @@ export class ContentService {
           moduleId: module.id,
           title: file.originalname.replace(/\.[^/.]+$/, ''),
           contentType: this.getContentTypeFromFile(file.mimetype),
-          contentUrl: uploadResult.publicUrl,
+          contentUrl: uploadResult.url,
           contentText: body.description || null,
           duration: parseInt(body.estimatedDuration) || 60,
           sortOrder: 0,
@@ -64,8 +64,7 @@ export class ContentService {
         course,
         module,
         lesson,
-        asset: uploadResult.asset,
-        publicUrl: uploadResult.publicUrl,
+        publicUrl: uploadResult.url,
       };
     } catch (error) {
       console.error('Error uploading e-learning content:', error);
@@ -92,8 +91,8 @@ export class ContentService {
         data: {
           kind: AssetKind.DOCUMENT,
           filename: file.originalname,
-          publicUrl: uploadResult.publicUrl,
-          storageKey: uploadResult.asset.storageKey,
+          publicUrl: uploadResult.url,
+          storageKey: uploadResult.key,
           mimeType: file.mimetype,
           size: file.size,
           uploadedBy: userId,
@@ -106,7 +105,7 @@ export class ContentService {
         category: body.category || 'HR_PROCEDURE',
         description: body.description || `HR Procedure: ${file.originalname}`,
         filename: file.originalname,
-        publicUrl: uploadResult.publicUrl,
+        publicUrl: uploadResult.url,
         size: file.size,
         mimeType: file.mimetype,
         uploadedAt: new Date(),
@@ -136,8 +135,8 @@ export class ContentService {
         data: {
           kind: AssetKind.DOCUMENT,
           filename: file.originalname,
-          publicUrl: uploadResult.publicUrl,
-          storageKey: uploadResult.asset.storageKey,
+          publicUrl: uploadResult.url,
+          storageKey: uploadResult.key,
           mimeType: file.mimetype,
           size: file.size,
           uploadedBy: userId,
@@ -151,7 +150,7 @@ export class ContentService {
         description: body.description || `State Policy Update: ${file.originalname}`,
         effectiveDate: body.effectiveDate ? new Date(body.effectiveDate) : new Date(),
         filename: file.originalname,
-        publicUrl: uploadResult.publicUrl,
+        publicUrl: uploadResult.url,
         size: file.size,
         mimeType: file.mimetype,
         uploadedAt: new Date(),
@@ -310,11 +309,11 @@ export class ContentService {
     }
   }
 
-  private getContentTypeFromFile(mimetype: string): string {
-    if (mimetype.startsWith('video/')) return 'VIDEO';
-    if (mimetype.startsWith('image/')) return 'IMAGE';
-    if (mimetype.includes('pdf') || mimetype.includes('document')) return 'DOCUMENT';
-    if (mimetype.includes('text/')) return 'TEXT';
-    return 'DOCUMENT';
+  private getContentTypeFromFile(mimetype: string): ContentType {
+    if (mimetype.startsWith('video/')) return ContentType.VIDEO;
+    if (mimetype.startsWith('image/')) return ContentType.IMAGE;
+    if (mimetype.includes('pdf') || mimetype.includes('document')) return ContentType.DOCUMENT;
+    if (mimetype.includes('text/')) return ContentType.TEXT;
+    return ContentType.DOCUMENT;
   }
 }
