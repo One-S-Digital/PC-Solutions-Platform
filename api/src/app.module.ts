@@ -24,6 +24,7 @@ import { ElearningModule } from './elearning/elearning.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { LeadsModule } from './leads/leads.module';
 import { FrontendSettingsModule } from './frontend-settings/frontend-settings.module';
+import { MockModule } from './mock.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { UserManagementModule } from './user-management/user-management.module';
 import { ContentModerationModule } from './content-moderation/content-moderation.module';
@@ -99,6 +100,7 @@ import {
     MessagingModule,
     LeadsModule,
     FrontendSettingsModule,
+    MockModule,
     AnalyticsModule,
     UserManagementModule,
     ContentModerationModule,
