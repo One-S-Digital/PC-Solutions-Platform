@@ -150,7 +150,6 @@ model User {
 
   // Relations
   organizations UserOrganization[]
-  assets        Asset[]
   applications  JobApplication[]
   subscriptions UserSubscription[]
   mainSubscriptions Subscription[] // Main subscription model
@@ -244,18 +243,18 @@ model UserOrganization {
 }
 
 model Asset {
-  id         String    @id @default(uuid())
-  kind       AssetKind
-  filename   String
-  publicUrl  String
-  storageKey String
-  mimeType   String?
-  size       Int?
-  uploadedBy String
-  createdAt  DateTime  @default(now())
+  id           String   @id @default(uuid())
+  kind         AssetKind
+  filename     String
+  publicUrl    String
+  storageKey   String
+  mimeType     String?
+  size         Int?
+  uploadedById String
+  createdAt    DateTime @default(now())
 
   // Relations
-  uploader User @relation(fields: [uploadedBy], references: [id])
+  uploader AppUser @relation("AssetUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
 
   // Organization asset relations
   organizationLogos  Organization[] @relation("OrganizationLogo")
@@ -1229,12 +1228,14 @@ model MaintenanceSchedule {
 
 // New Role Management Tables
 model AppUser {
-  id          String   @id @default(uuid())
-  clerkUserId String   @unique
-  role        UserRole @default(PARENT)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String    @id @default(uuid())
+  clerkId     String    @unique
+  email       String?   @unique
+  role        UserRole  @default(PARENT)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
+  assets      Asset[]   @relation("AssetUploadedBy")
   roleHistory AppUserRoleHistory[]
 }
 
@@ -1243,7 +1244,7 @@ model AppUserRoleHistory {
   userId       String
   previousRole UserRole?
   newRole      UserRole
-  changedBy    String // clerkUserId of actor OR 'system/webhook'
+  changedBy    String // clerkId of actor OR 'system/webhook'
   reason       String?
   changedAt    DateTime  @default(now())
 

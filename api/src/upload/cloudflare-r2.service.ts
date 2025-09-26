@@ -59,16 +59,16 @@ export class CloudflareR2Service {
     filename: string,
     mimeType: string,
     assetKind: AssetKind,
-    userId: string,
+    appUserId: string,
   ): Promise<PresignedUploadData> {
-    const key = this.generateStorageKey(filename, assetKind, userId);
+    const key = this.generateStorageKey(filename, assetKind, appUserId);
     
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
       ContentType: mimeType,
       Metadata: {
-        'uploaded-by': userId,
+        'uploaded-by': appUserId,
         'asset-kind': assetKind,
         'original-filename': filename,
       },
@@ -96,7 +96,7 @@ export class CloudflareR2Service {
   async uploadFile(
     file: Express.Multer.File,
     assetKind: AssetKind,
-    userId: string,
+    appUserId: string,
   ): Promise<UploadResult> {
     try {
       // Validate file first
@@ -107,7 +107,7 @@ export class CloudflareR2Service {
         throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
       }
 
-      const key = this.generateStorageKey(file.originalname, assetKind, userId);
+      const key = this.generateStorageKey(file.originalname, assetKind, appUserId);
       
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
@@ -115,7 +115,7 @@ export class CloudflareR2Service {
         Body: file.buffer,
         ContentType: file.mimetype,
         Metadata: {
-          'uploaded-by': userId,
+          'uploaded-by': appUserId,
           'asset-kind': assetKind,
           'original-filename': file.originalname,
         },
@@ -141,7 +141,7 @@ export class CloudflareR2Service {
         error: error.message,
         filename: file?.originalname,
         assetKind,
-        userId,
+        userId: appUserId,
         stack: error.stack,
       });
       
@@ -245,12 +245,11 @@ export class CloudflareR2Service {
   /**
    * Generate storage key for file organization
    */
-  private generateStorageKey(filename: string, assetKind: AssetKind, userId: string): string {
+  private generateStorageKey(filename: string, assetKind: AssetKind, appUserId: string): string {
     const timestamp = Date.now();
-    const extension = filename.split('.').pop()?.toLowerCase() || '';
     const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
-    
-    return `${assetKind.toLowerCase()}/${userId}/${timestamp}-${sanitizedFilename}`;
+
+    return `${assetKind.toLowerCase()}/${appUserId}/${timestamp}-${sanitizedFilename}`;
   }
 
   /**

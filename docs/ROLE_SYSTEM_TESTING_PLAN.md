@@ -75,8 +75,8 @@ NODE_ENV=test
 ### Phase 4: Admin API Testing
 
 #### 4.1 Role Management Endpoints
-- [ ] Test GET /admin/role-management/users/:clerkUserId
-- [ ] Test PATCH /admin/role-management/users/:clerkUserId/role
+- [ ] Test GET /admin/role-management/users/:clerkId
+- [ ] Test PATCH /admin/role-management/users/:clerkId/role
 - [ ] Test GET /admin/role-management/history
 - [ ] Verify audit logging
 

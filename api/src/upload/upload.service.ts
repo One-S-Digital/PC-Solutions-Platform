@@ -10,7 +10,7 @@ export interface CreateAssetData {
   storageKey: string;
   mimeType: string;
   size: number;
-  uploadedBy: string;
+  uploadedById: string;
 }
 
 export interface GetAssetsOptions {
@@ -46,15 +46,15 @@ export class UploadService {
           storageKey: data.storageKey,
           mimeType: data.mimeType,
           size: data.size,
-          uploadedBy: data.uploadedBy,
+          uploadedById: data.uploadedById,
         },
         include: {
           uploader: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
               email: true,
+              clerkId: true,
+              role: true,
             },
           },
         },
@@ -71,16 +71,16 @@ export class UploadService {
   /**
    * Get asset by ID with ownership verification
    */
-  async getAsset(assetId: string, userId: string) {
+  async getAsset(assetId: string, appUserId: string) {
     const asset = await this.prisma.asset.findUnique({
       where: { id: assetId },
       include: {
         uploader: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
             email: true,
+            clerkId: true,
+            role: true,
           },
         },
       },
@@ -91,7 +91,7 @@ export class UploadService {
     }
 
     // Check ownership (user can only access their own assets unless admin)
-    if (asset.uploadedBy !== userId) {
+    if (asset.uploadedById !== appUserId) {
       // In a real implementation, you might want to check if user is admin here
       throw new ForbiddenException('Access denied');
     }
@@ -102,11 +102,11 @@ export class UploadService {
   /**
    * Get user's assets with optional filtering
    */
-  async getUserAssets(userId: string, options: GetAssetsOptions = {}) {
+  async getUserAssets(appUserId: string, options: GetAssetsOptions = {}) {
     const { kind, limit = 50, offset = 0 } = options;
 
     const where = {
-      uploadedBy: userId,
+      uploadedById: appUserId,
       ...(kind && { kind }),
     };
 
@@ -119,9 +119,9 @@ export class UploadService {
         uploader: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
             email: true,
+            clerkId: true,
+            role: true,
           },
         },
       },
@@ -133,9 +133,9 @@ export class UploadService {
   /**
    * Delete asset from database and R2
    */
-  async deleteAsset(assetId: string, userId: string) {
+  async deleteAsset(assetId: string, appUserId: string) {
     // Get asset to verify ownership
-    const asset = await this.getAsset(assetId, userId);
+    const asset = await this.getAsset(assetId, appUserId);
 
     try {
       // Delete from database first
@@ -156,16 +156,16 @@ export class UploadService {
   /**
    * Update asset metadata
    */
-  async updateAsset(assetId: string, userId: string, updates: Partial<CreateAssetData>) {
+  async updateAsset(assetId: string, appUserId: string, updates: Partial<CreateAssetData>) {
     // Verify ownership
-    await this.getAsset(assetId, userId);
+    await this.getAsset(assetId, appUserId);
 
     const asset = await this.prisma.asset.update({
       where: { id: assetId },
       data: {
         ...updates,
         // Don't allow changing uploadedBy
-        uploadedBy: undefined,
+        uploadedById: undefined,
       },
     });
 
@@ -176,16 +176,16 @@ export class UploadService {
   /**
    * Get asset statistics for user
    */
-  async getAssetStats(userId: string) {
+  async getAssetStats(appUserId: string) {
     const stats = await this.prisma.asset.groupBy({
       by: ['kind'],
-      where: { uploadedBy: userId },
+      where: { uploadedById: appUserId },
       _count: { id: true },
       _sum: { size: true },
     });
 
     const totalSize = await this.prisma.asset.aggregate({
-      where: { uploadedBy: userId },
+      where: { uploadedById: appUserId },
       _sum: { size: true },
       _count: { id: true },
     });
@@ -271,11 +271,11 @@ export class UploadService {
   /**
    * Upload file and create asset record
    */
-  async uploadFile(file: Express.Multer.File, uploadedBy: string, kind: AssetKind) {
+  async uploadFile(file: Express.Multer.File, uploadedById: string, kind: AssetKind) {
     try {
       // Upload to R2
-      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedBy);
-      
+      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedById);
+
       // Create asset record
       const asset = await this.createAsset({
         kind,
@@ -284,7 +284,7 @@ export class UploadService {
         storageKey: uploadResult.key,
         mimeType: file.mimetype,
         size: file.size,
-        uploadedBy,
+        uploadedById,
       });
 
       return {
@@ -307,7 +307,7 @@ export class UploadService {
     userId: string,
   ) {
     // Verify asset ownership
-    const asset = await this.getAsset(assetId, userId);
+    await this.getAsset(assetId, userId);
 
     // Verify organization access (user should be part of the organization)
     const organization = await this.prisma.organization.findUnique({

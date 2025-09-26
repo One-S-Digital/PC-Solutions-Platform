@@ -8,6 +8,7 @@ import {
   Request,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FrontendSettingsService } from './frontend-settings.service';
@@ -62,11 +63,11 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
-        throw new Error('User not authenticated');
+      const appUserId = req.context?.appUserId;
+      if (!appUserId) {
+        throw new BadRequestException('Missing authenticated user');
       }
-
-      const result = await this.frontendSettingsService.uploadLogo(file, req.context.userId);
+      const result = await this.frontendSettingsService.uploadLogo(file, appUserId);
       
       return {
         success: true,
@@ -94,11 +95,11 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
-        throw new Error('User not authenticated');
+      const appUserId = req.context?.appUserId;
+      if (!appUserId) {
+        throw new BadRequestException('Missing authenticated user');
       }
-
-      const result = await this.frontendSettingsService.uploadFavicon(file, req.context.userId);
+      const result = await this.frontendSettingsService.uploadFavicon(file, appUserId);
       
       return {
         success: true,
@@ -126,11 +127,11 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
-        throw new Error('User not authenticated');
+      const appUserId = req.context?.appUserId;
+      if (!appUserId) {
+        throw new BadRequestException('Missing authenticated user');
       }
-
-      const result = await this.frontendSettingsService.uploadOgImage(file, req.context.userId);
+      const result = await this.frontendSettingsService.uploadOgImage(file, appUserId);
       
       return {
         success: true,
@@ -158,11 +159,11 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
-        throw new Error('User not authenticated');
+      const appUserId = req.context?.appUserId;
+      if (!appUserId) {
+        throw new BadRequestException('Missing authenticated user');
       }
-
-      const result = await this.frontendSettingsService.uploadAdminLogo(file, req.context.userId);
+      const result = await this.frontendSettingsService.uploadAdminLogo(file, appUserId);
       
       return {
         success: true,
@@ -190,11 +191,11 @@ export class FrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
-        throw new Error('User not authenticated');
+      const appUserId = req.context?.appUserId;
+      if (!appUserId) {
+        throw new BadRequestException('Missing authenticated user');
       }
-
-      const result = await this.frontendSettingsService.uploadAdminFavicon(file, req.context.userId);
+      const result = await this.frontendSettingsService.uploadAdminFavicon(file, appUserId);
       
       return {
         success: true,

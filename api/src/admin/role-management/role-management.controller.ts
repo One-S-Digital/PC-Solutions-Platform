@@ -23,11 +23,11 @@ interface ChangeRoleDto {
 export class RoleManagementController {
   constructor(private prisma: PrismaService) {}
 
-  @Get('users/:clerkUserId')
+  @Get('users/:clerkId')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
-  async getUserRole(@Param('clerkUserId') clerkUserId: string) {
+  async getUserRole(@Param('clerkId') clerkId: string) {
     const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkUserId },
+      where: { clerkId },
       include: {
         roleHistory: {
           orderBy: { changedAt: 'desc' },
@@ -46,11 +46,11 @@ export class RoleManagementController {
     };
   }
 
-  @Patch('users/:clerkUserId/role')
+  @Patch('users/:clerkId/role')
   @HttpCode(204)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   async changeUserRole(
-    @Param('clerkUserId') targetClerkId: string,
+    @Param('clerkId') targetClerkId: string,
     @Body() dto: ChangeRoleDto,
     @Req() req: any
   ) {
@@ -68,14 +68,14 @@ export class RoleManagementController {
     await this.prisma.$transaction(async (tx) => {
       // Get or create user
       let appUser = await tx.appUser.findUnique({
-        where: { clerkUserId: targetClerkId },
+        where: { clerkId: targetClerkId },
       });
 
       if (!appUser) {
         // Create user if doesn't exist
         appUser = await tx.appUser.create({
           data: {
-            clerkUserId: targetClerkId,
+            clerkId: targetClerkId,
             role: dto.role,
           },
         });
@@ -96,7 +96,7 @@ export class RoleManagementController {
             userId: appUser.id,
             previousRole,
             newRole: dto.role,
-            changedBy: req.context.userId,
+            changedBy: req.context.clerkUserId ?? req.context.userId,
             reason: dto.reason || 'Admin role change',
           },
         });
@@ -131,7 +131,7 @@ export class RoleManagementController {
         include: {
           user: {
             select: {
-              clerkUserId: true,
+              clerkId: true,
             },
           },
         },

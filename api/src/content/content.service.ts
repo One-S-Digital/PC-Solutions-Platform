@@ -13,14 +13,14 @@ export class ContentService {
   async uploadElearningContent(
     file: Express.Multer.File,
     body: any,
-    userId: string,
+    appUserId: string,
   ) {
     try {
       // Upload file to R2
       const uploadResult = await this.r2Service.uploadFile(
         file,
         AssetKind.DOCUMENT,
-        userId,
+        appUserId,
       );
 
       // Create course record
@@ -31,7 +31,7 @@ export class ContentService {
           difficultyLevel: body.difficultyLevel || 'beginner',
           estimatedDuration: parseInt(body.estimatedDuration) || 60,
           status: 'DRAFT',
-          createdBy: userId,
+          createdBy: appUserId,
         },
       });
 
@@ -75,14 +75,14 @@ export class ContentService {
   async uploadHrDocument(
     file: Express.Multer.File,
     body: any,
-    userId: string,
+    appUserId: string,
   ) {
     try {
       // Upload file to R2
       const uploadResult = await this.r2Service.uploadFile(
         file,
         AssetKind.DOCUMENT,
-        userId,
+        appUserId,
       );
 
       // Create HR document record (using a generic content table or extending existing)
@@ -95,7 +95,7 @@ export class ContentService {
           storageKey: uploadResult.key,
           mimeType: file.mimetype,
           size: file.size,
-          uploadedBy: userId,
+          uploadedById: appUserId,
         },
       });
 
@@ -120,14 +120,14 @@ export class ContentService {
   async uploadStatePolicy(
     file: Express.Multer.File,
     body: any,
-    userId: string,
+    appUserId: string,
   ) {
     try {
       // Upload file to R2
       const uploadResult = await this.r2Service.uploadFile(
         file,
         AssetKind.DOCUMENT,
-        userId,
+        appUserId,
       );
 
       // Create state policy record
@@ -139,7 +139,7 @@ export class ContentService {
           storageKey: uploadResult.key,
           mimeType: file.mimetype,
           size: file.size,
-          uploadedBy: userId,
+          uploadedById: appUserId,
         },
       });
 
