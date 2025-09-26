@@ -36,14 +36,14 @@ export class ContentController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
+      if (!req.context?.appUserId) {
         throw new Error('User not authenticated');
       }
 
       const result = await this.contentService.uploadElearningContent(
         file,
         body,
-        req.context.userId,
+        req.context.appUserId,
       );
       
       return {
@@ -72,14 +72,14 @@ export class ContentController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
+      if (!req.context?.appUserId) {
         throw new Error('User not authenticated');
       }
 
       const result = await this.contentService.uploadHrDocument(
         file,
         body,
-        req.context.userId,
+        req.context.appUserId,
       );
       
       return {
@@ -108,14 +108,14 @@ export class ContentController {
         throw new Error('No file provided');
       }
       
-      if (!req.context?.userId) {
+      if (!req.context?.appUserId) {
         throw new Error('User not authenticated');
       }
 
       const result = await this.contentService.uploadStatePolicy(
         file,
         body,
-        req.context.userId,
+        req.context.appUserId,
       );
       
       return {

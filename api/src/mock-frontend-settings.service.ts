@@ -24,7 +24,7 @@ export interface UploadResult {
     mimeType: string;
     size: number;
     kind: string;
-    uploadedBy: string;
+    uploadedById: string;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -63,7 +63,7 @@ export class MockFrontendSettingsService {
     return await this.mockDb.updateFrontendSettings(updates);
   }
 
-  async uploadLogo(file: Express.Multer.File, uploadedBy: string): Promise<UploadResult> {
+  async uploadLogo(file: Express.Multer.File, uploadedById: string): Promise<UploadResult> {
     this.logger.log('Uploading logo', { filename: file.originalname, size: file.size });
     
     const asset = await this.mockDb.createAsset({
@@ -72,7 +72,7 @@ export class MockFrontendSettingsService {
       mimeType: file.mimetype,
       size: file.size,
       kind: 'FRONTEND_LOGO',
-      uploadedBy,
+      uploadedById,
     });
 
     const publicUrl = `https://mock-assets.pc-solutions.com/${asset.filename}`;
@@ -83,7 +83,7 @@ export class MockFrontendSettingsService {
     return { asset, publicUrl };
   }
 
-  async uploadFavicon(file: Express.Multer.File, uploadedBy: string): Promise<UploadResult> {
+  async uploadFavicon(file: Express.Multer.File, uploadedById: string): Promise<UploadResult> {
     this.logger.log('Uploading favicon', { filename: file.originalname, size: file.size });
     
     const asset = await this.mockDb.createAsset({
@@ -92,7 +92,7 @@ export class MockFrontendSettingsService {
       mimeType: file.mimetype,
       size: file.size,
       kind: 'FRONTEND_FAVICON',
-      uploadedBy,
+      uploadedById,
     });
 
     const publicUrl = `https://mock-assets.pc-solutions.com/${asset.filename}`;
@@ -103,7 +103,7 @@ export class MockFrontendSettingsService {
     return { asset, publicUrl };
   }
 
-  async uploadOgImage(file: Express.Multer.File, uploadedBy: string): Promise<UploadResult> {
+  async uploadOgImage(file: Express.Multer.File, uploadedById: string): Promise<UploadResult> {
     this.logger.log('Uploading OG image', { filename: file.originalname, size: file.size });
     
     const asset = await this.mockDb.createAsset({
@@ -112,7 +112,7 @@ export class MockFrontendSettingsService {
       mimeType: file.mimetype,
       size: file.size,
       kind: 'FRONTEND_OG_IMAGE',
-      uploadedBy,
+      uploadedById,
     });
 
     const publicUrl = `https://mock-assets.pc-solutions.com/${asset.filename}`;
@@ -123,7 +123,7 @@ export class MockFrontendSettingsService {
     return { asset, publicUrl };
   }
 
-  async uploadAdminLogo(file: Express.Multer.File, uploadedBy: string): Promise<UploadResult> {
+  async uploadAdminLogo(file: Express.Multer.File, uploadedById: string): Promise<UploadResult> {
     this.logger.log('Uploading admin logo', { filename: file.originalname, size: file.size });
     
     const asset = await this.mockDb.createAsset({
@@ -132,7 +132,7 @@ export class MockFrontendSettingsService {
       mimeType: file.mimetype,
       size: file.size,
       kind: 'ADMIN_LOGO',
-      uploadedBy,
+      uploadedById,
     });
 
     const publicUrl = `https://mock-assets.pc-solutions.com/${asset.filename}`;
@@ -143,7 +143,7 @@ export class MockFrontendSettingsService {
     return { asset, publicUrl };
   }
 
-  async uploadAdminFavicon(file: Express.Multer.File, uploadedBy: string): Promise<UploadResult> {
+  async uploadAdminFavicon(file: Express.Multer.File, uploadedById: string): Promise<UploadResult> {
     this.logger.log('Uploading admin favicon', { filename: file.originalname, size: file.size });
     
     const asset = await this.mockDb.createAsset({
@@ -152,7 +152,7 @@ export class MockFrontendSettingsService {
       mimeType: file.mimetype,
       size: file.size,
       kind: 'ADMIN_FAVICON',
-      uploadedBy,
+      uploadedById,
     });
 
     const publicUrl = `https://mock-assets.pc-solutions.com/${asset.filename}`;

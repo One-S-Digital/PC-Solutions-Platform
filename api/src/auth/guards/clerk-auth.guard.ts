@@ -98,7 +98,7 @@ export class ClerkAuthGuard implements CanActivate {
 
       if (this.authDebug) {
         const req = context.switchToHttp().getRequest();
-        // eslint-disable-next-line no-console
+         
         console.log('🔐 Auth Debug:', {
           path: req.url,
           method: req.method,
@@ -119,29 +119,30 @@ export class ClerkAuthGuard implements CanActivate {
 
       // Populate request.context (user role from AppUser), so RolesGuard can authorize
       try {
-        let appUser = await this.prisma.appUser.findUnique({ where: { clerkUserId: payload.sub } });
+        let appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
         if (!appUser) {
           if (this.authDebug) {
-            // eslint-disable-next-line no-console
+             
             console.log('🔐 Auth Debug: AppUser missing, creating baseline user with PARENT role', { userId: payload.sub });
           }
           // Create a baseline user; admins can later promote via role management
           appUser = await this.prisma.appUser.create({
-            data: { clerkUserId: payload.sub, role: 'PARENT' },
+            data: { clerkId: payload.sub, role: 'PARENT' },
           });
         }
         request.context = {
           userId: payload.sub,
           role: appUser.role,
           appUserId: appUser.id,
+          clerkUserId: payload.sub,
         };
         if (this.authDebug) {
-          // eslint-disable-next-line no-console
+           
           console.log('🔐 Auth Debug: request.context populated', request.context);
         }
       } catch (e) {
         if (this.authDebug) {
-          // eslint-disable-next-line no-console
+           
           console.error('🔐 Auth Debug: failed to load/create AppUser', e);
         }
         // non-fatal; RolesGuard will handle missing context
@@ -150,10 +151,10 @@ export class ClerkAuthGuard implements CanActivate {
     } catch (error: any) {
       const reason = error?.reason || error?.message || 'unknown';
       const action = error?.action;
-      // eslint-disable-next-line no-console
+       
       console.error('Token verification failed:', { reason, action });
       if (reason === 'jwk-failed-to-resolve' && !this.jwtKey) {
-        // eslint-disable-next-line no-console
+         
         console.error('Clerk JWK fetch failed. Set CLERK_JWT_KEY env with your instance JWT public key to enable offline verification.');
       }
       throw new UnauthorizedException('Invalid token');

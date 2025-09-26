@@ -36,8 +36,8 @@ async function main() {
     // 2) Seed SUPER_ADMIN AppUser if SEED_CLERK_USER_ID provided
     if (seedClerkUserId) {
       await prisma.appUser.upsert({
-        where: { clerkUserId: seedClerkUserId },
-        create: { clerkUserId: seedClerkUserId, role: 'SUPER_ADMIN' },
+        where: { clerkId: seedClerkUserId },
+        create: { clerkId: seedClerkUserId, role: 'SUPER_ADMIN' },
         update: { role: 'SUPER_ADMIN' },
       });
       console.log('🌱 Seed: AppUser upserted to SUPER_ADMIN for', seedClerkUserId);

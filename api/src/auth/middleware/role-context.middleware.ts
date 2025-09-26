@@ -35,14 +35,14 @@ export class RoleContextMiddleware implements NestMiddleware {
     try {
       // Fetch user from AppUser table
       let appUser = await this.prisma.appUser.findUnique({
-        where: { clerkUserId },
+        where: { clerkId: clerkUserId },
       });
 
       if (!appUser) {
         // Self-heal: create baseline user
         appUser = await this.prisma.appUser.create({
-          data: { 
-            clerkUserId,
+          data: {
+            clerkId: clerkUserId,
             role: 'PARENT', // Safe default
           },
         });
@@ -61,6 +61,7 @@ export class RoleContextMiddleware implements NestMiddleware {
         userId: clerkUserId,
         role: appUser.role,
         appUserId: appUser.id,
+        clerkUserId,
       };
 
       next();

@@ -3,44 +3,44 @@ import { PrismaClient, UserRole } from '@prisma/client';
 const prisma = new PrismaClient();
 
 interface TestUser {
-  clerkUserId: string;
+  clerkId: string;
   role: UserRole;
   email: string;
 }
 
 const testUsers: TestUser[] = [
   {
-    clerkUserId: 'user_test_super_admin',
+    clerkId: 'user_test_super_admin',
     role: UserRole.SUPER_ADMIN,
     email: 'super.admin@test.com',
   },
   {
-    clerkUserId: 'user_test_admin',
+    clerkId: 'user_test_admin',
     role: UserRole.ADMIN,
     email: 'admin@test.com',
   },
   {
-    clerkUserId: 'user_test_foundation',
+    clerkId: 'user_test_foundation',
     role: UserRole.FOUNDATION,
     email: 'foundation@test.com',
   },
   {
-    clerkUserId: 'user_test_supplier',
+    clerkId: 'user_test_supplier',
     role: UserRole.PRODUCT_SUPPLIER,
     email: 'supplier@test.com',
   },
   {
-    clerkUserId: 'user_test_service',
+    clerkId: 'user_test_service',
     role: UserRole.SERVICE_PROVIDER,
     email: 'service@test.com',
   },
   {
-    clerkUserId: 'user_test_educator',
+    clerkId: 'user_test_educator',
     role: UserRole.EDUCATOR,
     email: 'educator@test.com',
   },
   {
-    clerkUserId: 'user_test_parent',
+    clerkId: 'user_test_parent',
     role: UserRole.PARENT,
     email: 'parent@test.com',
   },
@@ -53,16 +53,24 @@ async function seedTestData() {
   await prisma.appUserRoleHistory.deleteMany({
     where: {
       user: {
-        clerkUserId: {
+        clerkId: {
           startsWith: 'user_test_',
         },
       },
     },
   });
 
+  await prisma.user.deleteMany({
+    where: {
+      clerkId: {
+        startsWith: 'user_test_',
+      },
+    },
+  });
+
   await prisma.appUser.deleteMany({
     where: {
-      clerkUserId: {
+      clerkId: {
         startsWith: 'user_test_',
       },
     },
@@ -72,7 +80,26 @@ async function seedTestData() {
   for (const testUser of testUsers) {
     const user = await prisma.appUser.create({
       data: {
-        clerkUserId: testUser.clerkUserId,
+        clerkId: testUser.clerkId,
+        role: testUser.role,
+        email: testUser.email,
+      },
+    });
+
+    await prisma.user.upsert({
+      where: { clerkId: testUser.clerkId },
+      update: {
+        email: testUser.email,
+        firstName: 'Test',
+        lastName: 'User',
+        role: testUser.role,
+      },
+      create: {
+        id: user.id,
+        clerkId: testUser.clerkId,
+        email: testUser.email,
+        firstName: 'Test',
+        lastName: 'User',
         role: testUser.role,
       },
     });
@@ -105,7 +132,7 @@ async function seedTestData() {
 
   // Create a role change history for testing
   const adminUser = await prisma.appUser.findUnique({
-    where: { clerkUserId: 'user_test_admin' },
+    where: { clerkId: 'user_test_admin' },
   });
 
   if (adminUser) {

@@ -1,11 +1,10 @@
-import { 
-  Controller, 
-  Post, 
-  Req, 
-  Res, 
-  HttpCode, 
+import {
+  Controller,
+  Post,
+  Req,
+  Res,
+  HttpCode,
   Logger,
-  BadRequestException 
 } from '@nestjs/common';
 import { Webhook } from 'svix';
 import { Request, Response } from 'express';
@@ -117,7 +116,7 @@ export class ClerkWebhookController {
   }
 
   private async handleUserCreated(data: any) {
-    const clerkUserId: string = data.id;
+    const clerkId: string = data.id;
     
     // Check for intended role in private metadata (from invitation flow)
     // or unsafe metadata (from signup flow)
@@ -130,21 +129,48 @@ export class ClerkWebhookController {
     const validRole = this.isValidRole(intendedRole) ? intendedRole : 'PARENT';
     
     // Create user in our database
+    const primaryEmail = data.email_addresses?.[0]?.email_address || `${clerkId}@missing-email.local`;
+    const firstName = data.first_name || 'Unknown';
+    const lastName = data.last_name || 'User';
+
     const appUser = await this.prisma.appUser.upsert({
-      where: { clerkUserId },
-      create: { 
-        clerkUserId, 
+      where: { clerkId },
+      create: {
+        clerkId,
+        email: primaryEmail,
         role: validRole as UserRole,
       },
-      update: {}, // No-op if exists
+      update: {
+        role: validRole as UserRole,
+        email: primaryEmail,
+      },
+      select: { id: true, role: true },
+    });
+
+    await this.prisma.user.upsert({
+      where: { clerkId },
+      create: {
+        id: appUser.id,
+        clerkId,
+        email: primaryEmail,
+        firstName,
+        lastName,
+        role: validRole as UserRole,
+      },
+      update: {
+        email: primaryEmail,
+        firstName,
+        lastName,
+        role: validRole as UserRole,
+      },
     });
     
     // Sync role to Clerk public metadata
-    const clerkUser = await this.clerk.users.getUser(clerkUserId);
+    const clerkUser = await this.clerk.users.getUser(clerkId);
     const currentPublicRole = (clerkUser.publicMetadata as any)?.role;
     
     if (currentPublicRole !== appUser.role) {
-      await this.clerk.users.updateUser(clerkUserId, {
+      await this.clerk.users.updateUser(clerkId, {
         publicMetadata: { 
           ...(clerkUser.publicMetadata as any), 
           role: appUser.role 
@@ -156,58 +182,86 @@ export class ClerkWebhookController {
       });
     }
     
-    this.logger.log(`User created: ${clerkUserId} with role ${appUser.role}`);
+    this.logger.log(`User created: ${clerkId} with role ${appUser.role}`);
   }
 
   private async handleUserUpdated(data: any) {
-    const clerkUserId: string = data.id;
+    const clerkId: string = data.id;
     const unsafeRole = data.unsafe_metadata?.role;
     const publicRole = data.public_metadata?.role;
-    
+    const primaryEmail = data.email_addresses?.[0]?.email_address || `${clerkId}@missing-email.local`;
+    const firstName = data.first_name || 'Unknown';
+    const lastName = data.last_name || 'User';
+
     // Get user from our database (source of truth)
     const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkUserId },
+      where: { clerkId },
     });
-    
+
     if (!appUser) {
       // User doesn't exist in our DB, create it
       await this.handleUserCreated(data);
       return;
     }
-    
+
+    await this.prisma.appUser.update({
+      where: { id: appUser.id },
+      data: { email: primaryEmail },
+    });
+
+    await this.prisma.user.update({
+      where: { clerkId },
+      data: {
+        email: primaryEmail,
+        firstName,
+        lastName,
+      },
+    }).catch(async () => {
+      await this.prisma.user.create({
+        data: {
+          id: appUser.id,
+          clerkId,
+          email: primaryEmail,
+          firstName,
+          lastName,
+          role: appUser.role,
+        },
+      });
+    });
+
     // If someone changed Clerk metadata outside our system, revert to DB truth
     if (publicRole && publicRole !== appUser.role) {
       this.logger.warn(
-        `Reverting unauthorized role change for ${clerkUserId}: ` +
+        `Reverting unauthorized role change for ${clerkId}: ` +
         `${publicRole} -> ${appUser.role}`
       );
-      
-      await this.clerk.users.updateUser(clerkUserId, {
-        publicMetadata: { 
-          ...(data.public_metadata ?? {}), 
-          role: appUser.role 
+
+      await this.clerk.users.updateUser(clerkId, {
+        publicMetadata: {
+          ...(data.public_metadata ?? {}),
+          role: appUser.role
         },
       });
     }
-    
+
     // Always scrub unsafe metadata role
     if (typeof unsafeRole !== 'undefined') {
-      await this.clerk.users.updateUser(clerkUserId, {
-        unsafeMetadata: { 
-          ...(data.unsafe_metadata ?? {}), 
-          role: undefined 
+      await this.clerk.users.updateUser(clerkId, {
+        unsafeMetadata: {
+          ...(data.unsafe_metadata ?? {}),
+          role: undefined
         },
       });
     }
   }
 
   private async handleUserDeleted(data: any) {
-    const clerkUserId: string = data.id;
+    const clerkId: string = data.id;
     
     // Soft delete or hard delete based on your requirements
     // For now, we'll keep the user but mark as deleted
     const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkUserId },
+      where: { clerkId },
     });
     
     if (appUser) {
@@ -223,7 +277,7 @@ export class ClerkWebhookController {
       });
     }
     
-    this.logger.log(`User deleted: ${clerkUserId}`);
+    this.logger.log(`User deleted: ${clerkId}`);
   }
 
   private isValidRole(role: any): boolean {

@@ -136,7 +136,7 @@ curl -H "Authorization: Bearer ADMIN_TOKEN" \
 ### Migrate Existing Users:
 ```sql
 -- Insert missing users from users table to AppUser
-INSERT INTO "AppUser" ("id", "clerkUserId", "role", "createdAt", "updatedAt")
+INSERT INTO "AppUser" ("id", "clerkId", "role", "createdAt", "updatedAt")
 SELECT 
   gen_random_uuid(),
   u."clerkId",
@@ -144,7 +144,7 @@ SELECT
   u."createdAt",
   u."updatedAt"
 FROM users u
-LEFT JOIN "AppUser" au ON au."clerkUserId" = u."clerkId"
+LEFT JOIN "AppUser" au ON au."clerkId" = u."clerkId"
 WHERE au.id IS NULL;
 ```
 
@@ -154,7 +154,7 @@ WHERE au.id IS NULL;
 INSERT INTO "Outbox" ("topic", "payload", "createdAt")
 SELECT 
   'mirror.role',
-  jsonb_build_object('clerkUserId', "clerkUserId", 'role', "role"),
+  jsonb_build_object('clerkId', "clerkId", 'role', "role"),
   NOW()
 FROM "AppUser";
 ```
@@ -173,7 +173,7 @@ LIMIT 10;
 ```sql
 SELECT 
   h.*,
-  au."clerkUserId"
+  au."clerkId"
 FROM "AppUserRoleHistory" h
 JOIN "AppUser" au ON au.id = h."userId"
 ORDER BY h."changedAt" DESC
@@ -185,7 +185,7 @@ LIMIT 10;
 -- Users in old table not in new
 SELECT COUNT(*) as missing_migrations
 FROM users u
-LEFT JOIN "AppUser" au ON au."clerkUserId" = u."clerkId"
+LEFT JOIN "AppUser" au ON au."clerkId" = u."clerkId"
 WHERE au.id IS NULL;
 ```
 
@@ -204,7 +204,7 @@ SELECT 'Role Changes', COUNT(*)::text FROM "AppUserRoleHistory"
 UNION ALL
 SELECT 'Missing Migrations', COUNT(*)::text FROM (
   SELECT 1 FROM users u 
-  LEFT JOIN "AppUser" au ON au."clerkUserId" = u."clerkId" 
+  LEFT JOIN "AppUser" au ON au."clerkId" = u."clerkId"
   WHERE au.id IS NULL
 ) as missing;
 ```

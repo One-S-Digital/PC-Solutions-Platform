@@ -139,7 +139,7 @@ export class HealthController {
         this.prisma.appUser.findMany({
           take: 5,
           orderBy: { createdAt: 'desc' },
-          select: { id: true, clerkUserId: true, role: true, createdAt: true },
+          select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
         }).catch(() => []),
         this.prisma.frontendSettings.findFirst({
           include: {
@@ -225,16 +225,16 @@ export class HealthController {
   @ApiOperation({ summary: 'List AppUsers (sanitized, queryable)' })
   @ApiResponse({ status: 200, description: 'Returns app users' })
   async listAppUsers(
-    @Query('clerkUserId') clerkUserId?: string,
+    @Query('clerkId') clerkId?: string,
     @Query('limit') limit?: string,
   ) {
     const take = Math.min(Math.max(parseInt(limit || '20', 10) || 20, 1), 100);
     // @ts-ignore - model exists
     const appUsers = await this.prisma.appUser.findMany({
-      where: clerkUserId ? { clerkUserId } : {},
+      where: clerkId ? { clerkId } : {},
       take,
       orderBy: { createdAt: 'desc' },
-      select: { id: true, clerkUserId: true, role: true, createdAt: true },
+      select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
     });
     return { success: true, data: appUsers, count: appUsers.length, timestamp: new Date().toISOString() };
   }

@@ -56,9 +56,13 @@ export class UploadController {
     @Request() req,
   ): Promise<PresignedUploadData> {
     const { filename, mimeType, assetKind } = presignedUploadDto;
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
 
-    this.logger.log(`Generating presigned URL for user ${userId}: ${filename} (${assetKind})`);
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
+
+    this.logger.log(`Generating presigned URL for user ${appUserId}: ${filename} (${assetKind})`);
 
     try {
       // Validate file type and size
@@ -70,7 +74,7 @@ export class UploadController {
 
       this.r2Service.validateFile(mockFile, assetKind);
 
-      const result = await this.r2Service.generatePresignedUpload(filename, mimeType, assetKind, userId);
+      const result = await this.r2Service.generatePresignedUpload(filename, mimeType, assetKind, appUserId);
       
       this.logger.log(`Presigned URL generated successfully for ${filename}`);
       return result;
@@ -116,9 +120,13 @@ export class UploadController {
     }
 
     const { assetKind } = uploadFileDto;
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
 
-    this.logger.log(`Uploading file for user ${userId}: ${file.originalname} (${assetKind}, ${file.size} bytes)`);
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
+
+    this.logger.log(`Uploading file for user ${appUserId}: ${file.originalname} (${assetKind}, ${file.size} bytes)`);
 
     try {
       // Validate file
@@ -131,7 +139,7 @@ export class UploadController {
       }
 
       // Upload to R2
-      const uploadResult = await this.r2Service.uploadFile(file, assetKind, userId);
+      const uploadResult = await this.r2Service.uploadFile(file, assetKind, appUserId);
 
       // Save to database
       const asset = await this.uploadService.createAsset({
@@ -141,7 +149,7 @@ export class UploadController {
         storageKey: uploadResult.key,
         mimeType: uploadResult.mimeType,
         size: uploadResult.size,
-        uploadedBy: userId,
+        uploadedById: appUserId,
       });
 
       this.logger.log(`File uploaded successfully: ${asset.id} (${uploadResult.key})`);
@@ -174,12 +182,16 @@ export class UploadController {
   @ApiResponse({ status: 404, description: 'Asset not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   async getAsset(@Param('id') id: string, @Request() req) {
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
 
-    this.logger.log(`Getting asset ${id} for user ${userId}`);
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
+
+    this.logger.log(`Getting asset ${id} for user ${appUserId}`);
 
     try {
-      const asset = await this.uploadService.getAsset(id, userId);
+      const asset = await this.uploadService.getAsset(id, appUserId);
 
       return {
         success: true,
@@ -207,13 +219,16 @@ export class UploadController {
     @Request() req,
     @Body() query: { kind?: AssetKind; limit?: number; offset?: number } = {},
   ) {
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
     const { kind, limit = 50, offset = 0 } = query;
 
-    this.logger.log(`Getting assets for user ${userId} (kind: ${kind}, limit: ${limit}, offset: ${offset})`);
+    this.logger.log(`Getting assets for user ${appUserId} (kind: ${kind}, limit: ${limit}, offset: ${offset})`);
 
     try {
-      const assets = await this.uploadService.getUserAssets(userId, { kind, limit, offset });
+      const assets = await this.uploadService.getUserAssets(appUserId, { kind, limit, offset });
 
       return {
         success: true,
@@ -229,7 +244,7 @@ export class UploadController {
         total: assets.length,
       };
     } catch (error) {
-      this.logger.error(`Failed to get assets for user ${userId}:`, error);
+      this.logger.error(`Failed to get assets for user ${appUserId}:`, error);
       throw new HttpException('Failed to retrieve assets', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -240,19 +255,23 @@ export class UploadController {
   @ApiResponse({ status: 404, description: 'Asset not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   async deleteAsset(@Param('id') id: string, @Request() req) {
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
 
-    this.logger.log(`Deleting asset ${id} for user ${userId}`);
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
+
+    this.logger.log(`Deleting asset ${id} for user ${appUserId}`);
 
     try {
       // Get asset to verify ownership and get storage key
-      const asset = await this.uploadService.getAsset(id, userId);
+      const asset = await this.uploadService.getAsset(id, appUserId);
       
       // Delete from R2
       await this.r2Service.deleteFile(asset.storageKey);
       
       // Delete from database
-      await this.uploadService.deleteAsset(id, userId);
+      await this.uploadService.deleteAsset(id, appUserId);
 
       this.logger.log(`Asset deleted successfully: ${id}`);
 
@@ -272,13 +291,17 @@ export class UploadController {
   @ApiResponse({ status: 404, description: 'Asset not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   async generateDownloadUrl(@Param('id') id: string, @Request() req) {
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
 
-    this.logger.log(`Generating download URL for asset ${id} (user: ${userId})`);
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
+
+    this.logger.log(`Generating download URL for asset ${id} (user: ${appUserId})`);
 
     try {
       // Get asset to verify ownership
-      const asset = await this.uploadService.getAsset(id, userId);
+      const asset = await this.uploadService.getAsset(id, appUserId);
       
       // Generate presigned download URL
       const downloadUrl = await this.r2Service.generatePresignedDownloadUrl(asset.storageKey);
@@ -300,9 +323,13 @@ export class UploadController {
   @ApiResponse({ status: 200, description: 'Cleanup completed successfully' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   async cleanupOrphanedFiles(@Request() req) {
-    const userId = req.context.userId;
+    const appUserId = req.context?.appUserId;
 
-    this.logger.log(`Starting orphaned files cleanup (initiated by user: ${userId})`);
+    if (!appUserId) {
+      throw new BadRequestException('Missing authenticated user');
+    }
+
+    this.logger.log(`Starting orphaned files cleanup (initiated by user: ${appUserId})`);
 
     try {
       const result = await this.uploadService.cleanupOrphanedFiles();

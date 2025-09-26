@@ -117,7 +117,7 @@ describe('Role System Integration Tests', () => {
       
       // Verify role changed in database
       const appUser = await prisma.appUser.findUnique({
-        where: { clerkUserId: targetUserId },
+        where: { clerkId: targetUserId },
         include: { roleHistory: { orderBy: { changedAt: 'desc' }, take: 1 } }
       });
       
@@ -178,7 +178,7 @@ describe('Role System Integration Tests', () => {
       
       // Simulate what the middleware would do
       let appUser = await prisma.appUser.findUnique({
-        where: { clerkUserId: newClerkUserId }
+        where: { clerkId: newClerkUserId }
       });
       
       expect(appUser).toBeNull();
@@ -186,7 +186,7 @@ describe('Role System Integration Tests', () => {
       // Create user
       appUser = await prisma.appUser.create({
         data: {
-          clerkUserId: newClerkUserId,
+          clerkId: newClerkUserId,
           role: UserRole.PARENT
         }
       });
