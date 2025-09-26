@@ -39,7 +39,7 @@ const ELearningUploadTab: React.FC = () => {
     title: '',
     description: '',
     difficultyLevel: 'beginner',
-    estimatedDuration: '',
+    estimatedDuration: '60',
     category: '',
     tags: '',
     objectives: '',
@@ -105,7 +105,7 @@ const ELearningUploadTab: React.FC = () => {
       title: '',
       description: '',
       difficultyLevel: 'beginner',
-      estimatedDuration: '',
+      estimatedDuration: '60',
       category: '',
       tags: '',
       objectives: '',
@@ -135,7 +135,8 @@ const ELearningUploadTab: React.FC = () => {
       uploadFormData.append('title', formData.title)
       uploadFormData.append('description', formData.description)
       uploadFormData.append('difficultyLevel', formData.difficultyLevel)
-      uploadFormData.append('estimatedDuration', formData.estimatedDuration)
+      const durationMinutes = Math.max(1, parseInt(formData.estimatedDuration, 10) || 0)
+      uploadFormData.append('estimatedDuration', durationMinutes.toString())
       uploadFormData.append('category', formData.category)
       uploadFormData.append('tags', selectedRoles.join(',') || formData.tags)
       uploadFormData.append('objectives', formData.objectives)
@@ -264,17 +265,20 @@ const ELearningUploadTab: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label htmlFor="estimatedDuration" className="block text-sm font-medium text-gray-700">Duration *</label>
+              <label htmlFor="estimatedDuration" className="block text-sm font-medium text-gray-700">Duration (minutes) *</label>
               <input
-                type="text"
+                type="number"
                 id="estimatedDuration"
                 name="estimatedDuration"
                 value={formData.estimatedDuration}
                 onChange={handleInputChange}
                 required
-                placeholder="e.g., 30m, 1h 15m"
+                min={1}
+                step={1}
+                placeholder="Enter the total minutes, e.g., 60"
                 className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
+              <p className="text-xs text-gray-500">Provide the total estimated duration in whole minutes.</p>
             </div>
             <div className="space-y-2">
               <label htmlFor="lessons" className="block text-sm font-medium text-gray-700">Number of Lessons</label>
