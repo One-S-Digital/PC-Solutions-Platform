@@ -16,6 +16,7 @@ import ContentPage from './pages/Content';
 import MessagingPage from './pages/Messaging';
 import SystemMonitorPage from './pages/SystemMonitor';
 import SettingsPage from './pages/Settings';
+import DesignSystemPage from './pages/DesignSystem';
 import AccessDeniedPage from './pages/AccessDenied';
 
 // Create a client
@@ -56,6 +57,7 @@ function App() {
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="design-system" element={<DesignSystemPage />} />
 
           <Route index element={<Navigate to="/dashboard" />} />
         </Route>

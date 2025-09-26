@@ -17,7 +17,8 @@ import {
   Monitor,
   Mail,
   X,
-  Shield
+  Shield,
+  Palette
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -40,6 +41,7 @@ const navigation = [
   { name: 'Content', href: '/content', icon: FileText },
   { name: 'Messaging', href: '/messaging', icon: MessageSquare },
   { name: 'System Monitor', href: '/system', icon: Monitor },
+  { name: 'Design System', href: '/design-system', icon: Palette },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 

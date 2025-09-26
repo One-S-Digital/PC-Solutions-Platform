@@ -6,8 +6,8 @@ enum UserRole {
   ADMIN = 'ADMIN',
   FOUNDATION = 'FOUNDATION',
 }
-import AdminCustomLoginForm from './AdminCustomLoginForm';
-import AdminCustomSignupForm from './AdminCustomSignupForm';
+import AdminCustomLoginForm from './AdminCustomLoginFormNew';
+import AdminCustomSignupForm from './AdminCustomSignupFormNew';
 
 export function AdminLoginPage() {
   const { isSignedIn, isLoaded } = useAuth();

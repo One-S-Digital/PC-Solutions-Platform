@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import { publicApi } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import Card from '../components/design-system/Card'
+import Button from '../components/design-system/Button'
 
 const Dashboard: React.FC = () => {
   const user = {
@@ -79,7 +81,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* System Status */}
-      <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+      <Card className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className={`w-3 h-3 rounded-full ${systemStatus ? 'bg-swiss-mint' : 'bg-red-500'} animate-pulse`}></div>
@@ -113,12 +115,12 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.name} className="bg-white rounded-card shadow-soft p-0 overflow-hidden border border-gray-200">
+          <Card key={stat.name} className="p-0 overflow-hidden" hoverEffect>
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className={`p-3 rounded-lg ${stat.bgColor}`}>
@@ -132,42 +134,42 @@ const Dashboard: React.FC = () => {
               </div>
               <p className="mt-4 text-sm text-gray-500">{stat.name}</p>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="p-4 text-left border border-gray-200 rounded-card hover:bg-gray-50 transition-colors">
+          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <Users className="h-6 w-6 text-swiss-teal mb-2" />
             <h3 className="font-medium text-swiss-charcoal">Manage Users</h3>
             <p className="text-sm text-gray-600">Add, edit, or remove users</p>
-          </button>
+          </Card>
 
-          <button className="p-4 text-left border border-gray-200 rounded-card hover:bg-gray-50 transition-colors">
+          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <Building2 className="h-6 w-6 text-swiss-mint mb-2" />
             <h3 className="font-medium text-swiss-charcoal">Organizations</h3>
             <p className="text-sm text-gray-600">Manage daycare centers</p>
-          </button>
+          </Card>
 
-          <button className="p-4 text-left border border-gray-200 rounded-card hover:bg-gray-50 transition-colors">
+          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <ShoppingCart className="h-6 w-6 text-swiss-coral mb-2" />
             <h3 className="font-medium text-swiss-charcoal">Orders</h3>
             <p className="text-sm text-gray-600">View recent orders</p>
-          </button>
+          </Card>
 
-          <button className="p-4 text-left border border-gray-200 rounded-card hover:bg-gray-50 transition-colors">
+          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <TrendingUp className="h-6 w-6 text-swiss-sand mb-2" />
             <h3 className="font-medium text-swiss-charcoal">Analytics</h3>
             <p className="text-sm text-gray-600">View platform metrics</p>
-          </button>
+          </Card>
         </div>
-      </div>
+      </Card>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">Recent Activity</h2>
         <div className="space-y-4">
           <div className="flex items-center space-x-3 text-sm">
@@ -186,7 +188,7 @@ const Dashboard: React.FC = () => {
             <span className="text-gray-400">• 30 seconds ago</span>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }

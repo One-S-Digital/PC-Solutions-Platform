@@ -13,7 +13,7 @@ export const AdminLayout: React.FC<Props> = ({ children }) => {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col lg:pl-72">
         <Header setSidebarOpen={setSidebarOpen} />
-        <main className="flex-1 bg-gray-50 p-4">{children ?? <Outlet />}</main>
+        <main className="flex-1 bg-page-bg p-4">{children ?? <Outlet />}</main>
       </div>
     </div>
   );

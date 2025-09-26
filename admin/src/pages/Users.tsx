@@ -18,6 +18,9 @@ import logger from '../utils/logger'
 import { User } from '../types/api'
 import { UserRole } from '../types'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import Card from '../components/design-system/Card'
+import Button from '../components/design-system/Button'
+import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 
@@ -45,11 +48,11 @@ const Users: React.FC = () => {
   const roleColors: Record<UserRole, string> = {
     [UserRole.SUPER_ADMIN]: 'bg-red-100 text-red-800',
     [UserRole.ADMIN]: 'bg-orange-100 text-orange-800',
-    [UserRole.FOUNDATION]: 'bg-blue-100 text-blue-800',
-    [UserRole.PRODUCT_SUPPLIER]: 'bg-green-100 text-green-800',
-    [UserRole.SERVICE_PROVIDER]: 'bg-purple-100 text-purple-800',
+    [UserRole.FOUNDATION]: 'bg-swiss-teal/10 text-swiss-teal',
+    [UserRole.PRODUCT_SUPPLIER]: 'bg-swiss-mint/10 text-swiss-mint',
+    [UserRole.SERVICE_PROVIDER]: 'bg-swiss-sand/20 text-swiss-sand',
     [UserRole.EDUCATOR]: 'bg-indigo-100 text-indigo-800',
-    [UserRole.PARENT]: 'bg-pink-100 text-pink-800',
+    [UserRole.PARENT]: 'bg-swiss-coral/10 text-swiss-coral',
   }
 
   const filteredUsers = users.filter((user) => {
@@ -94,7 +97,7 @@ const Users: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
             <UsersIcon className="h-8 w-8 mr-3 text-swiss-teal" />
             Users Management
           </h1>
@@ -102,14 +105,13 @@ const Users: React.FC = () => {
             Manage all users across the platform ({users.length} total)
           </p>
         </div>
-        <button className="btn-primary flex items-center">
-          <Plus className="h-4 w-4 mr-2" />
+        <Button variant="primary" leftIcon={Plus}>
           Add User
-        </button>
+        </Button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <Card className="p-6">
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
@@ -117,7 +119,7 @@ const Users: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search users by name or email..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+                className={`${STANDARD_INPUT_FIELD} pl-10`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -125,7 +127,7 @@ const Users: React.FC = () => {
           </div>
           <div className="sm:w-48">
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              className={STANDARD_INPUT_FIELD}
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
             >
@@ -140,10 +142,10 @@ const Users: React.FC = () => {
             </select>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
