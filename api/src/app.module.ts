@@ -26,6 +26,7 @@ import { LeadsModule } from './leads/leads.module';
 import { FrontendSettingsModule } from './frontend-settings/frontend-settings.module';
 import { MockModule } from './mock.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ContentModule } from './content/content.module';
 import { UserManagementModule } from './user-management/user-management.module';
 import { ContentModerationModule } from './content-moderation/content-moderation.module';
 import { SystemMonitoringModule } from './system-monitoring/system-monitoring.module';
@@ -102,6 +103,7 @@ import {
     FrontendSettingsModule,
     MockModule,
     AnalyticsModule,
+    ContentModule,
     UserManagementModule,
     ContentModerationModule,
     SystemMonitoringModule,

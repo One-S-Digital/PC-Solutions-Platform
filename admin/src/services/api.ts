@@ -255,23 +255,41 @@ export const apiService = {
 
 
   // Content
-  getHrDocuments: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<HrDocument[]>>('/hr-documents'),
+  getHrDocuments: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<HrDocument[]>>('/content/hr-documents'),
   getHrDocument: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<HrDocument>>(`/hr-documents/${id}`),
   createHrDocument: (apiClient: AxiosInstance, data: Omit<HrDocument, 'id' | 'updatedAt'>) => apiClient.post<ApiResponse<HrDocument>>('/hr-documents', data),
   updateHrDocument: (apiClient: AxiosInstance, id: string, data: Partial<HrDocument>) => apiClient.put<ApiResponse<HrDocument>>(`/hr-documents/${id}`, data),
   deleteHrDocument: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/hr-documents/${id}`),
+  uploadHrDocument: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<HrDocument>>('/content/hr-documents/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
 
-  getCourses: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Course[]>>('/courses'),
-  getCourse: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Course>>(`/courses/${id}`),
-  createCourse: (apiClient: AxiosInstance, data: Omit<Course, 'id' | 'updatedDate'>) => apiClient.post<ApiResponse<Course>>('/courses', data),
-  updateCourse: (apiClient: AxiosInstance, id: string, data: Partial<Course>) => apiClient.put<ApiResponse<Course>>(`/courses/${id}`, data),
-  deleteCourse: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/courses/${id}`),
+  getCourses: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Course[]>>('/content/elearning'),
+  getCourse: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Course>>(`/elearning/courses/${id}`),
+  createCourse: (apiClient: AxiosInstance, data: Omit<Course, 'id' | 'updatedDate'>) => apiClient.post<ApiResponse<Course>>('/elearning/courses', data),
+  updateCourse: (apiClient: AxiosInstance, id: string, data: Partial<Course>) => apiClient.put<ApiResponse<Course>>(`/elearning/courses/${id}`, data),
+  deleteCourse: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/elearning/courses/${id}`),
+  uploadCourseContent: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<Course>>('/content/elearning/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
 
   getPolicyDocuments: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<PolicyDocument[]>>('/policy-documents'),
   getPolicyDocument: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<PolicyDocument>>(`/policy-documents/${id}`),
   createPolicyDocument: (apiClient: AxiosInstance, data: Omit<PolicyDocument, 'id' | 'lastUpdatedDate'>) => apiClient.post<ApiResponse<PolicyDocument>>('/policy-documents', data),
   updatePolicyDocument: (apiClient: AxiosInstance, id: string, data: Partial<PolicyDocument>) => apiClient.put<ApiResponse<PolicyDocument>>(`/policy-documents/${id}`, data),
   deletePolicyDocument: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/policy-documents/${id}`),
+  
+  // State Policies
+  getStatePolicies: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<PolicyDocument[]>>('/content/state-policies'),
+  uploadStatePolicy: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<PolicyDocument>>('/content/state-policies/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
 
   getPolicyAlerts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<PolicyAlert[]>>('/policy-alerts'),
   getPolicyAlert: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<PolicyAlert>>(`/policy-alerts/${id}`),
