@@ -26,7 +26,7 @@ import { Menu, Transition, Tab } from '@headlessui/react'
 import { useApiClient, apiService } from '../services/api'
 import { HrDocument } from '../types/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
-import SimpleAssetUploader from '../components/settings/SimpleAssetUploader'
+import FileDropZone from '../components/forms/FileDropZone'
 
 // E-learning Content Upload Component
 const ELearningUploadTab: React.FC = () => {
@@ -39,11 +39,16 @@ const ELearningUploadTab: React.FC = () => {
     title: '',
     description: '',
     difficultyLevel: 'beginner',
-    estimatedDuration: '60',
+    estimatedDuration: '',
     category: '',
     tags: '',
-    objectives: ''
+    objectives: '',
+    lessons: ''
   })
+  const [contentType, setContentType] = useState('COURSE')
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['EN'])
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['FOUNDATION'])
+  const [status, setStatus] = useState('DRAFT')
 
   const { data: coursesResponse, isLoading } = useQuery({
     queryKey: ['courses'],
@@ -53,11 +58,63 @@ const ELearningUploadTab: React.FC = () => {
 
   const courses = coursesResponse?.data?.data || []
 
+  const contentTypeOptions = [
+    { label: 'Video', value: 'VIDEO' },
+    { label: 'PDF', value: 'PDF' },
+    { label: 'Link', value: 'LINK' },
+    { label: 'Course', value: 'COURSE' }
+  ]
+
+  const languageOptions = ['EN', 'FR', 'DE']
+
+  const accessRoleOptions = [
+    { label: 'Admin', value: 'ADMIN' },
+    { label: 'Foundation (Daycare)', value: 'FOUNDATION' },
+    { label: 'Educator / Candidate', value: 'EDUCATOR' },
+    { label: 'Parent', value: 'PARENT' }
+  ]
+
+  const statusOptions = [
+    { label: 'Draft', value: 'DRAFT' },
+    { label: 'Published', value: 'PUBLISHED' },
+    { label: 'Archived', value: 'ARCHIVED' }
+  ]
+
   const handleFileSelect = (file: File) => {
     setSelectedFile(file)
     if (!formData.title) {
       setFormData(prev => ({ ...prev, title: file.name.replace(/\.[^/.]+$/, '') }))
     }
+  }
+
+  const toggleLanguage = (lang: string) => {
+    setSelectedLanguages(prev =>
+      prev.includes(lang) ? prev.filter(item => item !== lang) : [...prev, lang]
+    )
+  }
+
+  const toggleRole = (role: string) => {
+    setSelectedRoles(prev =>
+      prev.includes(role) ? prev.filter(item => item !== role) : [...prev, role]
+    )
+  }
+
+  const resetForm = () => {
+    setSelectedFile(null)
+    setFormData({
+      title: '',
+      description: '',
+      difficultyLevel: 'beginner',
+      estimatedDuration: '',
+      category: '',
+      tags: '',
+      objectives: '',
+      lessons: ''
+    })
+    setContentType('COURSE')
+    setSelectedLanguages(['EN'])
+    setSelectedRoles(['FOUNDATION'])
+    setStatus('DRAFT')
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -80,25 +137,19 @@ const ELearningUploadTab: React.FC = () => {
       uploadFormData.append('difficultyLevel', formData.difficultyLevel)
       uploadFormData.append('estimatedDuration', formData.estimatedDuration)
       uploadFormData.append('category', formData.category)
-      uploadFormData.append('tags', formData.tags)
+      uploadFormData.append('tags', selectedRoles.join(',') || formData.tags)
       uploadFormData.append('objectives', formData.objectives)
+      uploadFormData.append('lessons', formData.lessons)
+      uploadFormData.append('contentType', contentType)
+      uploadFormData.append('languages', selectedLanguages.join(','))
+      uploadFormData.append('status', status)
 
       const response = await apiService.uploadCourseContent(apiClient, uploadFormData)
-      
+
       if (response.success) {
         setUploadStatus({ type: 'success', message: 'E-learning content uploaded successfully!' })
         queryClient.invalidateQueries({ queryKey: ['courses'] })
-        // Reset form
-        setSelectedFile(null)
-        setFormData({
-          title: '',
-          description: '',
-          difficultyLevel: 'beginner',
-          estimatedDuration: '60',
-          category: '',
-          tags: '',
-          objectives: ''
-        })
+        resetForm()
       } else {
         setUploadStatus({ type: 'error', message: 'Failed to upload content' })
       }
@@ -114,62 +165,21 @@ const ELearningUploadTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Upload Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center mb-6">
-          <BookOpen className="h-6 w-6 text-swiss-teal mr-3" />
-          <h3 className="text-lg font-semibold text-gray-900">Upload E-learning Content</h3>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* File Upload Section */}
-          <div className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Course Content File *
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-swiss-teal transition-colors">
-              {selectedFile ? (
-                <div className="space-y-2">
-                  <File className="h-12 w-12 text-swiss-teal mx-auto" />
-                  <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
-                  <p className="text-xs text-gray-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFile(null)}
-                    className="text-sm text-red-600 hover:text-red-500"
-                  >
-                    Remove file
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto" />
-                  <div className="text-sm text-gray-600">
-                    <label className="relative cursor-pointer">
-                      <span className="font-medium text-swiss-teal hover:text-swiss-mint">
-                        Click to upload
-                      </span>
-                      <input
-                        type="file"
-                        className="sr-only"
-                        accept=".pdf,.doc,.docx,.mp4,.avi,.mov,.ppt,.pptx"
-                        onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-                      />
-                    </label>
-                    <p className="text-gray-500">or drag and drop</p>
-                    <p className="text-xs text-gray-400">PDF, DOC, DOCX, MP4, AVI, MOV, PPT, PPTX (max 100MB)</p>
-                  </div>
-                </div>
-              )}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="flex items-start justify-between mb-8">
+          <div className="flex items-center">
+            <BookOpen className="h-6 w-6 text-swiss-teal mr-3" />
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Add E-Learning Content</h3>
+              <p className="text-sm text-gray-500">Upload course material and define who should have access.</p>
             </div>
           </div>
+        </div>
 
-          {/* Course Information */}
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                Course Title *
-              </label>
+            <div className="space-y-2">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title *</label>
               <input
                 type="text"
                 id="title"
@@ -177,124 +187,191 @@ const ELearningUploadTab: React.FC = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="Enter course title"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
-
-            <div>
-              <label htmlFor="difficultyLevel" className="block text-sm font-medium text-gray-700 mb-2">
-                Difficulty Level *
-              </label>
-              <select
-                id="difficultyLevel"
-                name="difficultyLevel"
-                value={formData.difficultyLevel}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="estimatedDuration" className="block text-sm font-medium text-gray-700 mb-2">
-                Estimated Duration (minutes) *
-              </label>
-              <input
-                type="number"
-                id="estimatedDuration"
-                name="estimatedDuration"
-                value={formData.estimatedDuration}
-                onChange={handleInputChange}
-                required
-                min="1"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="60"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
+            <div className="space-y-2">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category *</label>
               <input
                 type="text"
                 id="category"
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="e.g., Child Development, Safety"
+                placeholder="e.g., Child Safety"
+                required
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
           </div>
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Course Description *
-            </label>
+          <div className="space-y-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description *</label>
             <textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
+              rows={3}
               required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="Describe what this course covers and what learners will gain"
+              placeholder="Provide a short description of the course"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
             />
           </div>
 
-          <div>
-            <label htmlFor="objectives" className="block text-sm font-medium text-gray-700 mb-2">
-              Learning Objectives
-            </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <span className="block text-sm font-medium text-gray-700">Content Type</span>
+              <div className="flex flex-wrap gap-2">
+                {contentTypeOptions.map(option => (
+                  <button
+                    type="button"
+                    key={option.value}
+                    onClick={() => setContentType(option.value)}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                      contentType === option.value
+                        ? 'border-transparent bg-swiss-teal text-white shadow-sm'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-swiss-teal'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <span className="block text-sm font-medium text-gray-700">Language</span>
+              <div className="flex flex-wrap gap-2">
+                {languageOptions.map(lang => (
+                  <button
+                    type="button"
+                    key={lang}
+                    onClick={() => toggleLanguage(lang)}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                      selectedLanguages.includes(lang)
+                        ? 'border-transparent bg-swiss-teal text-white shadow-sm'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-swiss-teal'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="estimatedDuration" className="block text-sm font-medium text-gray-700">Duration *</label>
+              <input
+                type="text"
+                id="estimatedDuration"
+                name="estimatedDuration"
+                value={formData.estimatedDuration}
+                onChange={handleInputChange}
+                required
+                placeholder="e.g., 30m, 1h 15m"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="lessons" className="block text-sm font-medium text-gray-700">Number of Lessons</label>
+              <input
+                type="number"
+                id="lessons"
+                name="lessons"
+                min="0"
+                value={formData.lessons}
+                onChange={handleInputChange}
+                placeholder="e.g., 8"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <span className="block text-sm font-medium text-gray-700">Access Roles</span>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {accessRoleOptions.map(role => (
+                  <label key={role.value} className="flex items-center space-x-3 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-swiss-teal focus:ring-swiss-teal"
+                      checked={selectedRoles.includes(role.value)}
+                      onChange={() => toggleRole(role.value)}
+                    />
+                    <span className="text-gray-700">{role.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+              <select
+                id="status"
+                value={status}
+                onChange={event => setStatus(event.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="objectives" className="block text-sm font-medium text-gray-700">Content Preview</label>
             <textarea
               id="objectives"
               name="objectives"
               value={formData.objectives}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="List the key learning objectives (one per line)"
+              placeholder="Outline the key objectives or provide a brief summary"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
             />
           </div>
 
-          <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
-              Tags
-            </label>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="Enter tags separated by commas"
-            />
-          </div>
+          <FileDropZone
+            label="Upload File"
+            helperText="MP4, PDF, DOCX (Max 50MB)"
+            accept=".pdf,.doc,.docx,.mp4,.avi,.mov,.ppt,.pptx"
+            maxSizeMB={50}
+            selectedFile={selectedFile}
+            onFileSelect={handleFileSelect}
+            onFileRemove={() => setSelectedFile(null)}
+            disabled={isUploading}
+          />
 
-          {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
               disabled={!selectedFile || isUploading}
-              className="bg-swiss-teal hover:bg-swiss-mint disabled:bg-gray-300 text-white px-6 py-2 rounded-lg flex items-center transition-colors"
+              className="inline-flex items-center rounded-lg bg-swiss-teal px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-swiss-mint disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               {isUploading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Uploading...
                 </>
               ) : (
                 <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Course
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload
                 </>
               )}
             </button>
@@ -302,61 +379,55 @@ const ELearningUploadTab: React.FC = () => {
         </form>
 
         {uploadStatus.type && (
-          <div className={`flex items-center p-3 rounded-lg mt-4 ${
-            uploadStatus.type === 'success' 
-              ? 'bg-green-50 text-green-800 border border-green-200' 
-              : 'bg-red-50 text-red-800 border border-red-200'
+          <div className={`mt-6 flex items-center rounded-lg border px-4 py-3 text-sm ${
+            uploadStatus.type === 'success'
+              ? 'border-green-200 bg-green-50 text-green-700'
+              : 'border-red-200 bg-red-50 text-red-700'
           }`}>
             {uploadStatus.type === 'success' ? (
-              <CheckCircle className="h-5 w-5 mr-2" />
+              <CheckCircle className="mr-2 h-5 w-5" />
             ) : (
-              <AlertCircle className="h-5 w-5 mr-2" />
+              <AlertCircle className="mr-2 h-5 w-5" />
             )}
-            <span className="text-sm">{uploadStatus.message}</span>
-            <button
-              onClick={() => setUploadStatus({ type: null, message: '' })}
-              className="ml-auto"
-            >
+            <span>{uploadStatus.message}</span>
+            <button onClick={() => setUploadStatus({ type: null, message: '' })} className="ml-auto text-gray-500 hover:text-gray-700">
               <X className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
 
-      {/* Existing Courses */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Existing E-learning Courses</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Recent Uploads</h3>
+          <p className="text-sm text-gray-500">Track the latest content that has been added to the library.</p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Updated</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Format</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 bg-white">
               {courses.map((course: any) => (
                 <tr key={course.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.title}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      course.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {course.status}
+                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{course.title}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{course.category || '—'}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{course.updatedAt ? new Date(course.updatedAt).toLocaleDateString() : '—'}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{course.contentType || contentType}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm">
+                    <span className="inline-flex items-center rounded-full bg-swiss-teal/10 px-3 py-1 text-xs font-medium text-swiss-teal">
+                      {course.status || 'Draft'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.estimatedDuration} min</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(course.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-swiss-teal hover:text-swiss-mint mr-3">Edit</button>
-                    <button className="text-red-600 hover:text-red-500">Delete</button>
+                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <button className="text-swiss-teal hover:text-swiss-mint">View</button>
                   </td>
                 </tr>
               ))}
@@ -378,13 +449,17 @@ const HrProceduresUploadTab: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: 'HR_PROCEDURE',
+    category: 'Staff Management',
     department: '',
     effectiveDate: '',
     reviewDate: '',
     version: '1.0',
     tags: ''
   })
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['EN'])
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['FOUNDATION'])
+  const [fileType, setFileType] = useState('PDF')
+  const [status, setStatus] = useState('DRAFT')
 
   const { data: hrDocumentsResponse, isLoading } = useQuery({
     queryKey: ['hrDocuments'],
@@ -394,6 +469,23 @@ const HrProceduresUploadTab: React.FC = () => {
 
   const documents: HrDocument[] = hrDocumentsResponse?.data?.data || []
 
+  const languageOptions = ['EN', 'FR', 'DE']
+
+  const accessRoleOptions = [
+    { label: 'Admin', value: 'ADMIN' },
+    { label: 'Foundation (Daycare)', value: 'FOUNDATION' },
+    { label: 'Educator / Candidate', value: 'EDUCATOR' },
+    { label: 'Parent', value: 'PARENT' }
+  ]
+
+  const statusOptions = [
+    { label: 'Draft', value: 'DRAFT' },
+    { label: 'Published', value: 'PUBLISHED' },
+    { label: 'Archived', value: 'ARCHIVED' }
+  ]
+
+  const fileTypeOptions = ['PDF', 'DOCX', 'XLSX']
+
   const handleFileSelect = (file: File) => {
     setSelectedFile(file)
     if (!formData.title) {
@@ -401,9 +493,39 @@ const HrProceduresUploadTab: React.FC = () => {
     }
   }
 
+  const toggleLanguage = (lang: string) => {
+    setSelectedLanguages(prev =>
+      prev.includes(lang) ? prev.filter(item => item !== lang) : [...prev, lang]
+    )
+  }
+
+  const toggleRole = (role: string) => {
+    setSelectedRoles(prev =>
+      prev.includes(role) ? prev.filter(item => item !== role) : [...prev, role]
+    )
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const resetForm = () => {
+    setSelectedFile(null)
+    setFormData({
+      title: '',
+      description: '',
+      category: 'Staff Management',
+      department: '',
+      effectiveDate: '',
+      reviewDate: '',
+      version: '1.0',
+      tags: ''
+    })
+    setSelectedLanguages(['EN'])
+    setSelectedRoles(['FOUNDATION'])
+    setFileType('PDF')
+    setStatus('DRAFT')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -423,25 +545,17 @@ const HrProceduresUploadTab: React.FC = () => {
       uploadFormData.append('effectiveDate', formData.effectiveDate)
       uploadFormData.append('reviewDate', formData.reviewDate)
       uploadFormData.append('version', formData.version)
-      uploadFormData.append('tags', formData.tags)
+      uploadFormData.append('tags', selectedRoles.join(',') || formData.tags)
+      uploadFormData.append('languages', selectedLanguages.join(','))
+      uploadFormData.append('fileType', fileType)
+      uploadFormData.append('status', status)
 
       const response = await apiService.uploadHrDocument(apiClient, uploadFormData)
-      
+
       if (response.success) {
         setUploadStatus({ type: 'success', message: 'HR procedure uploaded successfully!' })
         queryClient.invalidateQueries({ queryKey: ['hrDocuments'] })
-        // Reset form
-        setSelectedFile(null)
-        setFormData({
-          title: '',
-          description: '',
-          category: 'HR_PROCEDURE',
-          department: '',
-          effectiveDate: '',
-          reviewDate: '',
-          version: '1.0',
-          tags: ''
-        })
+        resetForm()
       } else {
         setUploadStatus({ type: 'error', message: 'Failed to upload HR procedure' })
       }
@@ -457,62 +571,21 @@ const HrProceduresUploadTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Upload Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center mb-6">
-          <Users className="h-6 w-6 text-swiss-teal mr-3" />
-          <h3 className="text-lg font-semibold text-gray-900">Upload HR Procedures</h3>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* File Upload Section */}
-          <div className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">
-              HR Document File *
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-swiss-teal transition-colors">
-              {selectedFile ? (
-                <div className="space-y-2">
-                  <File className="h-12 w-12 text-swiss-teal mx-auto" />
-                  <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
-                  <p className="text-xs text-gray-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFile(null)}
-                    className="text-sm text-red-600 hover:text-red-500"
-                  >
-                    Remove file
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto" />
-                  <div className="text-sm text-gray-600">
-                    <label className="relative cursor-pointer">
-                      <span className="font-medium text-swiss-teal hover:text-swiss-mint">
-                        Click to upload
-                      </span>
-                      <input
-                        type="file"
-                        className="sr-only"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-                      />
-                    </label>
-                    <p className="text-gray-500">or drag and drop</p>
-                    <p className="text-xs text-gray-400">PDF, DOC, DOCX (max 50MB)</p>
-                  </div>
-                </div>
-              )}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="flex items-start justify-between mb-8">
+          <div className="flex items-center">
+            <Users className="h-6 w-6 text-swiss-teal mr-3" />
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Upload HR Document</h3>
+              <p className="text-sm text-gray-500">Share updated procedures with the right teams and keep everyone aligned.</p>
             </div>
           </div>
+        </div>
 
-          {/* Document Information */}
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                Document Title *
-              </label>
+            <div className="space-y-2">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Document Title *</label>
               <input
                 type="text"
                 id="title"
@@ -520,137 +593,180 @@ const HrProceduresUploadTab: React.FC = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="Enter document title"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
-
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                Category *
-              </label>
-              <select
+            <div className="space-y-2">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category *</label>
+              <input
+                type="text"
                 id="category"
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
+                placeholder="e.g., Staff Management"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              >
-                <option value="HR_PROCEDURE">HR Procedure</option>
-                <option value="POLICY">Policy</option>
-                <option value="GUIDELINE">Guideline</option>
-                <option value="FORM">Form</option>
-                <option value="TEMPLATE">Template</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-2">
-                Department
-              </label>
-              <input
-                type="text"
-                id="department"
-                name="department"
-                value={formData.department}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="e.g., Human Resources, Operations"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="version" className="block text-sm font-medium text-gray-700 mb-2">
-                Version
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <span className="block text-sm font-medium text-gray-700">Language</span>
+              <div className="flex flex-wrap gap-2">
+                {languageOptions.map(lang => (
+                  <button
+                    type="button"
+                    key={lang}
+                    onClick={() => toggleLanguage(lang)}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                      selectedLanguages.includes(lang)
+                        ? 'border-transparent bg-swiss-teal text-white shadow-sm'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-swiss-teal'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="fileType" className="block text-sm font-medium text-gray-700">File Type</label>
+              <select
+                id="fileType"
+                value={fileType}
+                onChange={event => setFileType(event.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              >
+                {fileTypeOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="version" className="block text-sm font-medium text-gray-700">Version</label>
               <input
                 type="text"
                 id="version"
                 name="version"
                 value={formData.version}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="1.0"
+                placeholder="e.g., v1.2"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
+            <div className="space-y-2">
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+              <select
+                id="status"
+                value={status}
+                onChange={event => setStatus(event.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-            <div>
-              <label htmlFor="effectiveDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Effective Date
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="effectiveDate" className="block text-sm font-medium text-gray-700">Effective Date</label>
               <input
                 type="date"
                 id="effectiveDate"
                 name="effectiveDate"
                 value={formData.effectiveDate}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
-
-            <div>
-              <label htmlFor="reviewDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Review Date
-              </label>
+            <div className="space-y-2">
+              <label htmlFor="reviewDate" className="block text-sm font-medium text-gray-700">Review Date</label>
               <input
                 type="date"
                 id="reviewDate"
                 name="reviewDate"
                 value={formData.reviewDate}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
           </div>
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
-            </label>
+          <div className="space-y-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description / Content Preview</label>
             <textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="Describe the purpose and scope of this HR document"
+              rows={3}
+              placeholder="Provide a short overview for employees"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
             />
           </div>
 
-          <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
-              Tags
-            </label>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="Enter tags separated by commas"
-            />
+          <div className="space-y-3">
+            <span className="block text-sm font-medium text-gray-700">Access Roles</span>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {accessRoleOptions.map(role => (
+                <label key={role.value} className="flex items-center space-x-3 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-swiss-teal focus:ring-swiss-teal"
+                    checked={selectedRoles.includes(role.value)}
+                    onChange={() => toggleRole(role.value)}
+                  />
+                  <span className="text-gray-700">{role.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end">
+          <FileDropZone
+            label="Upload File"
+            helperText="PDF, DOCX (Max 10MB)"
+            accept=".pdf,.doc,.docx,.xlsx"
+            maxSizeMB={10}
+            selectedFile={selectedFile}
+            onFileSelect={handleFileSelect}
+            onFileRemove={() => setSelectedFile(null)}
+            disabled={isUploading}
+          />
+
+          <div className="flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
               disabled={!selectedFile || isUploading}
-              className="bg-swiss-teal hover:bg-swiss-mint disabled:bg-gray-300 text-white px-6 py-2 rounded-lg flex items-center transition-colors"
+              className="inline-flex items-center rounded-lg bg-swiss-teal px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-swiss-mint disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               {isUploading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Uploading...
                 </>
               ) : (
                 <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Document
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload
                 </>
               )}
             </button>
@@ -658,39 +774,36 @@ const HrProceduresUploadTab: React.FC = () => {
         </form>
 
         {uploadStatus.type && (
-          <div className={`flex items-center p-3 rounded-lg mt-4 ${
-            uploadStatus.type === 'success' 
-              ? 'bg-green-50 text-green-800 border border-green-200' 
-              : 'bg-red-50 text-red-800 border border-red-200'
+          <div className={`mt-6 flex items-center rounded-lg border px-4 py-3 text-sm ${
+            uploadStatus.type === 'success'
+              ? 'border-green-200 bg-green-50 text-green-700'
+              : 'border-red-200 bg-red-50 text-red-700'
           }`}>
             {uploadStatus.type === 'success' ? (
-              <CheckCircle className="h-5 w-5 mr-2" />
+              <CheckCircle className="mr-2 h-5 w-5" />
             ) : (
-              <AlertCircle className="h-5 w-5 mr-2" />
+              <AlertCircle className="mr-2 h-5 w-5" />
             )}
-            <span className="text-sm">{uploadStatus.message}</span>
-            <button
-              onClick={() => setUploadStatus({ type: null, message: '' })}
-              className="ml-auto"
-            >
+            <span>{uploadStatus.message}</span>
+            <button onClick={() => setUploadStatus({ type: null, message: '' })} className="ml-auto text-gray-500 hover:text-gray-700">
               <X className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
 
-      {/* Existing HR Documents */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Existing HR Procedures</h3>
+          <p className="text-sm text-gray-500">Review previously uploaded documents and keep them up to date.</p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Last Updated</th>
                 <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
@@ -733,6 +846,11 @@ const StatePolicyUploadTab: React.FC = () => {
     referenceNumber: '',
     tags: ''
   })
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['EN'])
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['FOUNDATION'])
+  const [status, setStatus] = useState('DRAFT')
+  const [criticality, setCriticality] = useState<'NORMAL' | 'ELEVATED'>('NORMAL')
+  const [country, setCountry] = useState('Switzerland')
 
   const { data: policiesResponse, isLoading } = useQuery({
     queryKey: ['statePolicies'],
@@ -742,6 +860,24 @@ const StatePolicyUploadTab: React.FC = () => {
 
   const policies = policiesResponse?.data?.data || []
 
+  const languageOptions = ['EN', 'FR', 'DE']
+
+  const accessRoleOptions = [
+    { label: 'Admin', value: 'ADMIN' },
+    { label: 'Foundation (Daycare)', value: 'FOUNDATION' },
+    { label: 'Educator / Candidate', value: 'EDUCATOR' },
+    { label: 'Parent', value: 'PARENT' }
+  ]
+
+  const statusOptions = [
+    { label: 'Draft', value: 'DRAFT' },
+    { label: 'Published', value: 'PUBLISHED' },
+    { label: 'Archived', value: 'ARCHIVED' }
+  ]
+
+  const policyTypeOptions = ['Regulation', 'Guideline', 'Advisory', 'Update']
+  const cantonOptions = ['All Cantons', 'Zurich', 'Geneva', 'Vaud', 'Bern']
+
   const handleFileSelect = (file: File) => {
     setSelectedFile(file)
     if (!formData.title) {
@@ -749,9 +885,42 @@ const StatePolicyUploadTab: React.FC = () => {
     }
   }
 
+  const toggleLanguage = (lang: string) => {
+    setSelectedLanguages(prev =>
+      prev.includes(lang) ? prev.filter(item => item !== lang) : [...prev, lang]
+    )
+  }
+
+  const toggleRole = (role: string) => {
+    setSelectedRoles(prev =>
+      prev.includes(role) ? prev.filter(item => item !== role) : [...prev, role]
+    )
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const resetForm = () => {
+    setSelectedFile(null)
+    setFormData({
+      title: '',
+      description: '',
+      category: 'STATE_POLICY',
+      policyType: '',
+      jurisdiction: '',
+      effectiveDate: '',
+      expirationDate: '',
+      version: '1.0',
+      referenceNumber: '',
+      tags: ''
+    })
+    setSelectedLanguages(['EN'])
+    setSelectedRoles(['FOUNDATION'])
+    setStatus('DRAFT')
+    setCriticality('NORMAL')
+    setCountry('Switzerland')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -773,27 +942,18 @@ const StatePolicyUploadTab: React.FC = () => {
       uploadFormData.append('expirationDate', formData.expirationDate)
       uploadFormData.append('version', formData.version)
       uploadFormData.append('referenceNumber', formData.referenceNumber)
-      uploadFormData.append('tags', formData.tags)
+      uploadFormData.append('tags', selectedRoles.join(',') || formData.tags)
+      uploadFormData.append('languages', selectedLanguages.join(','))
+      uploadFormData.append('status', status)
+      uploadFormData.append('criticality', criticality)
+      uploadFormData.append('country', country)
 
       const response = await apiService.uploadStatePolicy(apiClient, uploadFormData)
-      
+
       if (response.success) {
         setUploadStatus({ type: 'success', message: 'State policy uploaded successfully!' })
         queryClient.invalidateQueries({ queryKey: ['statePolicies'] })
-        // Reset form
-        setSelectedFile(null)
-        setFormData({
-          title: '',
-          description: '',
-          category: 'STATE_POLICY',
-          policyType: '',
-          jurisdiction: '',
-          effectiveDate: '',
-          expirationDate: '',
-          version: '1.0',
-          referenceNumber: '',
-          tags: ''
-        })
+        resetForm()
       } else {
         setUploadStatus({ type: 'error', message: 'Failed to upload state policy' })
       }
@@ -809,62 +969,21 @@ const StatePolicyUploadTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Upload Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center mb-6">
-          <Shield className="h-6 w-6 text-swiss-teal mr-3" />
-          <h3 className="text-lg font-semibold text-gray-900">Upload State Policy Updates</h3>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* File Upload Section */}
-          <div className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Policy Document File *
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-swiss-teal transition-colors">
-              {selectedFile ? (
-                <div className="space-y-2">
-                  <File className="h-12 w-12 text-swiss-teal mx-auto" />
-                  <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
-                  <p className="text-xs text-gray-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFile(null)}
-                    className="text-sm text-red-600 hover:text-red-500"
-                  >
-                    Remove file
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto" />
-                  <div className="text-sm text-gray-600">
-                    <label className="relative cursor-pointer">
-                      <span className="font-medium text-swiss-teal hover:text-swiss-mint">
-                        Click to upload
-                      </span>
-                      <input
-                        type="file"
-                        className="sr-only"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-                      />
-                    </label>
-                    <p className="text-gray-500">or drag and drop</p>
-                    <p className="text-xs text-gray-400">PDF, DOC, DOCX (max 50MB)</p>
-                  </div>
-                </div>
-              )}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="flex items-start justify-between mb-8">
+          <div className="flex items-center">
+            <Shield className="h-6 w-6 text-swiss-teal mr-3" />
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Upload State Policy</h3>
+              <p className="text-sm text-gray-500">Distribute regulatory updates to the right audience across regions.</p>
             </div>
           </div>
+        </div>
 
-          {/* Policy Information */}
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                Policy Title *
-              </label>
+            <div className="space-y-2">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title *</label>
               <input
                 type="text"
                 id="title"
@@ -872,158 +991,255 @@ const StatePolicyUploadTab: React.FC = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
                 placeholder="Enter policy title"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
+            <div className="space-y-2">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category *</label>
+              <input
+                type="text"
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                placeholder="e.g., Cantonal Policies"
+                required
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              />
+            </div>
+          </div>
 
-            <div>
-              <label htmlFor="policyType" className="block text-sm font-medium text-gray-700 mb-2">
-                Policy Type *
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <span className="block text-sm font-medium text-gray-700">Language</span>
+              <div className="flex flex-wrap gap-2">
+                {languageOptions.map(lang => (
+                  <button
+                    type="button"
+                    key={lang}
+                    onClick={() => toggleLanguage(lang)}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                      selectedLanguages.includes(lang)
+                        ? 'border-transparent bg-swiss-teal text-white shadow-sm'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-swiss-teal'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="policyType" className="block text-sm font-medium text-gray-700">Policy Type *</label>
               <select
                 id="policyType"
                 name="policyType"
                 value={formData.policyType}
                 onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               >
-                <option value="">Select policy type</option>
-                <option value="CHILD_SAFETY">Child Safety</option>
-                <option value="HEALTH_REGULATIONS">Health Regulations</option>
-                <option value="EDUCATION_STANDARDS">Education Standards</option>
-                <option value="STAFF_QUALIFICATIONS">Staff Qualifications</option>
-                <option value="FACILITY_REQUIREMENTS">Facility Requirements</option>
-                <option value="LICENSING">Licensing</option>
-                <option value="COMPLIANCE">Compliance</option>
-                <option value="OTHER">Other</option>
+                <option value="" disabled>Select policy type</option>
+                {policyTypeOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="jurisdiction" className="block text-sm font-medium text-gray-700 mb-2">
-                Jurisdiction *
-              </label>
-              <input
-                type="text"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
+              <select
+                id="country"
+                value={country}
+                onChange={event => setCountry(event.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              >
+                <option value="Switzerland">Switzerland</option>
+                <option value="Liechtenstein">Liechtenstein</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="jurisdiction" className="block text-sm font-medium text-gray-700">Region / Canton</label>
+              <select
                 id="jurisdiction"
                 name="jurisdiction"
                 value={formData.jurisdiction}
                 onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="e.g., State of California, Federal"
-              />
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              >
+                {cantonOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="referenceNumber" className="block text-sm font-medium text-gray-700 mb-2">
-                Reference Number
-              </label>
-              <input
-                type="text"
-                id="referenceNumber"
-                name="referenceNumber"
-                value={formData.referenceNumber}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="e.g., CA-2024-001"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="version" className="block text-sm font-medium text-gray-700 mb-2">
-                Version
-              </label>
-              <input
-                type="text"
-                id="version"
-                name="version"
-                value={formData.version}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="1.0"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="effectiveDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Effective Date *
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="effectiveDate" className="block text-sm font-medium text-gray-700">Effective Date</label>
               <input
                 type="date"
                 id="effectiveDate"
                 name="effectiveDate"
                 value={formData.effectiveDate}
                 onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
-
-            <div>
-              <label htmlFor="expirationDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Expiration Date
-              </label>
+            <div className="space-y-2">
+              <label htmlFor="expirationDate" className="block text-sm font-medium text-gray-700">Expiration Date</label>
               <input
                 type="date"
                 id="expirationDate"
                 name="expirationDate"
                 value={formData.expirationDate}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
               />
             </div>
           </div>
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Policy Description *
-            </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">Criticality</label>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCriticality('NORMAL')}
+                  className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                    criticality === 'NORMAL'
+                      ? 'border-transparent bg-swiss-teal text-white shadow-sm'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-swiss-teal'
+                  }`}
+                >
+                  Normal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCriticality('ELEVATED')}
+                  className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                    criticality === 'ELEVATED'
+                      ? 'border-transparent bg-swiss-teal text-white shadow-sm'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-swiss-teal'
+                  }`}
+                >
+                  Elevated
+                </button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+              <select
+                id="status"
+                value={status}
+                onChange={event => setStatus(event.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="referenceNumber" className="block text-sm font-medium text-gray-700">Link to Official Policy (optional)</label>
+              <input
+                type="url"
+                id="referenceNumber"
+                name="referenceNumber"
+                value={formData.referenceNumber}
+                onChange={handleInputChange}
+                placeholder="https://example.gov/policy-doc"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="version" className="block text-sm font-medium text-gray-700">Version</label>
+              <input
+                type="text"
+                id="version"
+                name="version"
+                value={formData.version}
+                onChange={handleInputChange}
+                placeholder="e.g., v1.0"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description / Content Preview</label>
             <textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="Describe the policy requirements, scope, and impact on childcare operations"
+              rows={3}
+              placeholder="Add notes or an executive summary for this policy"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-swiss-teal focus:ring-2 focus:ring-swiss-teal/40"
             />
           </div>
 
-          <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
-              Tags
-            </label>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-              placeholder="Enter tags separated by commas"
-            />
+          <div className="space-y-3">
+            <span className="block text-sm font-medium text-gray-700">Access Roles</span>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {accessRoleOptions.map(role => (
+                <label key={role.value} className="flex items-center space-x-3 rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-swiss-teal focus:ring-swiss-teal"
+                    checked={selectedRoles.includes(role.value)}
+                    onChange={() => toggleRole(role.value)}
+                  />
+                  <span className="text-gray-700">{role.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end">
+          <FileDropZone
+            label="Upload File"
+            helperText="PDF, DOCX (Max 50MB)"
+            accept=".pdf,.doc,.docx"
+            maxSizeMB={50}
+            selectedFile={selectedFile}
+            onFileSelect={handleFileSelect}
+            onFileRemove={() => setSelectedFile(null)}
+            disabled={isUploading}
+          />
+
+          <div className="flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
               disabled={!selectedFile || isUploading}
-              className="bg-swiss-teal hover:bg-swiss-mint disabled:bg-gray-300 text-white px-6 py-2 rounded-lg flex items-center transition-colors"
+              className="inline-flex items-center rounded-lg bg-swiss-teal px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-swiss-mint disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               {isUploading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Uploading...
                 </>
               ) : (
                 <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Policy
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload
                 </>
               )}
             </button>
@@ -1031,39 +1247,36 @@ const StatePolicyUploadTab: React.FC = () => {
         </form>
 
         {uploadStatus.type && (
-          <div className={`flex items-center p-3 rounded-lg mt-4 ${
-            uploadStatus.type === 'success' 
-              ? 'bg-green-50 text-green-800 border border-green-200' 
-              : 'bg-red-50 text-red-800 border border-red-200'
+          <div className={`mt-6 flex items-center rounded-lg border px-4 py-3 text-sm ${
+            uploadStatus.type === 'success'
+              ? 'border-green-200 bg-green-50 text-green-700'
+              : 'border-red-200 bg-red-50 text-red-700'
           }`}>
             {uploadStatus.type === 'success' ? (
-              <CheckCircle className="h-5 w-5 mr-2" />
+              <CheckCircle className="mr-2 h-5 w-5" />
             ) : (
-              <AlertCircle className="h-5 w-5 mr-2" />
+              <AlertCircle className="mr-2 h-5 w-5" />
             )}
-            <span className="text-sm">{uploadStatus.message}</span>
-            <button
-              onClick={() => setUploadStatus({ type: null, message: '' })}
-              className="ml-auto"
-            >
+            <span>{uploadStatus.message}</span>
+            <button onClick={() => setUploadStatus({ type: null, message: '' })} className="ml-auto text-gray-500 hover:text-gray-700">
               <X className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
 
-      {/* Existing State Policies */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Existing State Policies</h3>
+          <p className="text-sm text-gray-500">Keep track of policy updates shared with your network.</p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effective Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Effective Date</th>
                 <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
@@ -1088,8 +1301,6 @@ const StatePolicyUploadTab: React.FC = () => {
     </div>
   )
 }
-
-
 
 const Content: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState(0)
