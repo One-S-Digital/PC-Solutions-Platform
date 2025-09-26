@@ -57,21 +57,37 @@ export const useSettings = () => {
       const updatedSettings = { ...settings, ...updates }
       console.log('📝 Updated settings object:', updatedSettings)
 
+      // Filter out non-updatable fields to prevent validation errors
+      const { 
+        id, 
+        createdAt, 
+        updatedAt, 
+        logoAsset, 
+        faviconAsset, 
+        ogImageAsset, 
+        adminLogoAsset, 
+        adminFaviconAsset,
+        ...allowedUpdates 
+      } = updatedSettings
+
+      console.log('🔧 Filtered updates for API:', allowedUpdates)
+
       try {
         console.log('🌐 Making API call to update settings...')
         if (apiClient) {
-          const response = await apiService.updateFrontendSettings(apiClient, updatedSettings)
+          const response = await apiService.updateFrontendSettings(apiClient, allowedUpdates)
           console.log('✅ API update successful:', response)
         } else {
           await fetch('/api/admin/frontend-settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedSettings),
+            body: JSON.stringify(allowedUpdates),
           })
           console.log('✅ Settings updated via fetch (no auth)')
         }
       } catch (apiErr) {
         console.log('⚠️ API update failed, using local state:', apiErr)
+        // Don't throw here - we'll update local state anyway
       }
 
       setSettings(updatedSettings)

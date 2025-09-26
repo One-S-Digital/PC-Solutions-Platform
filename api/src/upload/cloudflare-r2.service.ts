@@ -34,7 +34,12 @@ export class CloudflareR2Service {
     const secretAccessKey = this.configService.get<string>('R2_SECRET_ACCESS_KEY');
 
     if (!endpoint || !accessKeyId || !secretAccessKey) {
-      this.logger.warn('R2 configuration incomplete. Upload functionality may not work properly.');
+      this.logger.error('R2 configuration incomplete. Upload functionality will not work.');
+      this.logger.error('Missing environment variables:', {
+        R2_ENDPOINT: !!endpoint,
+        R2_ACCESS_KEY_ID: !!accessKeyId,
+        R2_SECRET_ACCESS_KEY: !!secretAccessKey,
+      });
     }
 
     this.s3Client = new S3Client({
@@ -93,21 +98,31 @@ export class CloudflareR2Service {
     assetKind: AssetKind,
     userId: string,
   ): Promise<UploadResult> {
-    const key = this.generateStorageKey(file.originalname, assetKind, userId);
-    
-    const command = new PutObjectCommand({
-      Bucket: this.bucketName,
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-      Metadata: {
-        'uploaded-by': userId,
-        'asset-kind': assetKind,
-        'original-filename': file.originalname,
-      },
-    });
-
     try {
+      // Validate file first
+      this.validateFile(file, assetKind);
+      
+      // Check if R2 is properly configured
+      if (!this.isConfigured()) {
+        throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
+      }
+
+      const key = this.generateStorageKey(file.originalname, assetKind, userId);
+      
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        Metadata: {
+          'uploaded-by': userId,
+          'asset-kind': assetKind,
+          'original-filename': file.originalname,
+        },
+      });
+
+      this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key}`);
+      
       await this.s3Client.send(command);
       
       const publicUrl = `${this.publicUrl}/${key}`;
@@ -122,8 +137,19 @@ export class CloudflareR2Service {
         size: file.size,
       };
     } catch (error) {
-      this.logger.error('Failed to upload file', error);
-      throw new BadRequestException('Failed to upload file to storage');
+      this.logger.error('Failed to upload file', {
+        error: error.message,
+        filename: file?.originalname,
+        assetKind,
+        userId,
+        stack: error.stack,
+      });
+      
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      throw new BadRequestException(`Failed to upload file: ${error.message}`);
     }
   }
 

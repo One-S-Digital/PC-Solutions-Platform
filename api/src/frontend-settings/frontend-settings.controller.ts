@@ -56,86 +56,161 @@ export class FrontendSettingsController {
 
   @Post('logo')
   @UseInterceptors(FileInterceptor('file'))
-  uploadLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadLogo(file, req.context.userId).then((result) => ({
-      success: true,
-      message: 'Logo uploaded',
-      data: {
-        id: result.asset.id,
-        url: result.publicUrl,
-        filename: result.asset.filename,
-        size: result.asset.size,
-        mimeType: result.asset.mimeType,
-      },
-      timestamp: new Date().toISOString(),
-    }));
+  async uploadLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    try {
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      if (!req.context?.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const result = await this.frontendSettingsService.uploadLogo(file, req.context.userId);
+      
+      return {
+        success: true,
+        message: 'Logo uploaded',
+        data: {
+          id: result.asset.id,
+          url: result.publicUrl,
+          filename: result.asset.filename,
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Logo upload error:', error);
+      throw error;
+    }
   }
 
   @Post('favicon')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadFavicon(file, req.context.userId).then((result) => ({
-      success: true,
-      message: 'Favicon uploaded',
-      data: {
-        id: result.asset.id,
-        url: result.publicUrl,
-        filename: result.asset.filename,
-        size: result.asset.size,
-        mimeType: result.asset.mimeType,
-      },
-      timestamp: new Date().toISOString(),
-    }));
+  async uploadFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    try {
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      if (!req.context?.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const result = await this.frontendSettingsService.uploadFavicon(file, req.context.userId);
+      
+      return {
+        success: true,
+        message: 'Favicon uploaded',
+        data: {
+          id: result.asset.id,
+          url: result.publicUrl,
+          filename: result.asset.filename,
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Favicon upload error:', error);
+      throw error;
+    }
   }
 
   @Post('og-image')
   @UseInterceptors(FileInterceptor('file'))
-  uploadOgImage(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadOgImage(file, req.context.userId).then((result) => ({
-      success: true,
-      message: 'OpenGraph image uploaded',
-      data: {
-        id: result.asset.id,
-        url: result.publicUrl,
-        filename: result.asset.filename,
-        size: result.asset.size,
-        mimeType: result.asset.mimeType,
-      },
-      timestamp: new Date().toISOString(),
-    }));
+  async uploadOgImage(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    try {
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      if (!req.context?.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const result = await this.frontendSettingsService.uploadOgImage(file, req.context.userId);
+      
+      return {
+        success: true,
+        message: 'OpenGraph image uploaded',
+        data: {
+          id: result.asset.id,
+          url: result.publicUrl,
+          filename: result.asset.filename,
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('OG image upload error:', error);
+      throw error;
+    }
   }
 
   @Post('admin-logo')
   @UseInterceptors(FileInterceptor('file'))
-  uploadAdminLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadAdminLogo(file, req.context.userId).then((result) => ({
-      success: true,
-      message: 'Admin logo uploaded',
-      data: {
-        id: result.asset.id,
-        url: result.publicUrl,
-        filename: result.asset.filename,
-        size: result.asset.size,
-        mimeType: result.asset.mimeType,
-      },
-      timestamp: new Date().toISOString(),
-    }));
+  async uploadAdminLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    try {
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      if (!req.context?.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const result = await this.frontendSettingsService.uploadAdminLogo(file, req.context.userId);
+      
+      return {
+        success: true,
+        message: 'Admin logo uploaded',
+        data: {
+          id: result.asset.id,
+          url: result.publicUrl,
+          filename: result.asset.filename,
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Admin logo upload error:', error);
+      throw error;
+    }
   }
 
   @Post('admin-favicon')
   @UseInterceptors(FileInterceptor('file'))
-  uploadAdminFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
-    return this.frontendSettingsService.uploadAdminFavicon(file, req.context.userId).then((result) => ({
-      success: true,
-      message: 'Admin favicon uploaded',
-      data: {
-        id: result.asset.id,
-        url: result.publicUrl,
-        filename: result.asset.filename,
-        size: result.asset.size,
-        mimeType: result.asset.mimeType,
-      },
-      timestamp: new Date().toISOString(),
-    }));
+  async uploadAdminFavicon(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    try {
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      if (!req.context?.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const result = await this.frontendSettingsService.uploadAdminFavicon(file, req.context.userId);
+      
+      return {
+        success: true,
+        message: 'Admin favicon uploaded',
+        data: {
+          id: result.asset.id,
+          url: result.publicUrl,
+          filename: result.asset.filename,
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Admin favicon upload error:', error);
+      throw error;
+    }
   }
 }
