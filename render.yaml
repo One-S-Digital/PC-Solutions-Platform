@@ -4,7 +4,7 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: pnpm install --frozen-lockfile && cd api && pnpm run build:render
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=api
     startCommand: cd api && pnpm run start:prod
     healthCheckPath: /api/health/ready
     envVars:
@@ -44,12 +44,9 @@ services:
         sync: false
 
   # Frontend Service (Primary)
-  - type: web
+  - type: static
     name: pc-solutions-frontend
-    env: node
-    plan: starter
     buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length:" $(echo -n "$VITE_CLERK_PUBLISHABLE_KEY" | wc -c) && echo "Key starts with:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | cut -c1-10) && echo "Key format check:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT') && echo "=== END DEBUG ===" && pnpm install --frozen-lockfile && pnpm run build --filter=frontend
-    startCommand: cd frontend && npx serve -s dist
     publishDirectory: frontend/dist
     envVars:
       - key: VITE_NODE_ENV
@@ -64,12 +61,9 @@ services:
         value: /sign-up
 
   # Admin Service (Satellite)
-  - type: web
+  - type: static
     name: pc-solutions-admin
-    env: node
-    plan: starter
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=admin
-    startCommand: cd admin && npx serve -s dist
     publishDirectory: admin/dist
     envVars:
       - key: VITE_NODE_ENV
