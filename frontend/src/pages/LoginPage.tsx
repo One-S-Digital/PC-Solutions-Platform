@@ -96,6 +96,11 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+      {/* Language Switcher - Top Right */}
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+      
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
           {/* Logo */}
@@ -245,11 +250,6 @@ const LoginPage: React.FC = () => {
             {t('auth:loginPage.findCrecheHere')}
           </Link>
         </p>
-        
-        {/* Language Switcher */}
-        <div className="mt-8 flex justify-center">
-          <LanguageSwitcher />
-        </div>
       </Card>
     </div>
   );

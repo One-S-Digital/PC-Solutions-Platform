@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import { ChartBarIcon, UsersIcon, ShoppingCartIcon, BriefcaseIcon, CogIcon as SettingsIcon } from '@heroicons/react/24/outline';
 import Card from '../components/ui/Card';
+import DashboardTopBar from '../components/ui/DashboardTopBar';
 import { useTranslation } from 'react-i18next';
 import { APP_NAME } from '../constants';
 
@@ -67,13 +68,16 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-swiss-charcoal">
-          Welcome, {user?.fullName?.split(' ')[0] || user?.emailAddresses?.[0]?.emailAddress || 'User'}!
-        </h1>
-        <p className="text-gray-500 mt-1">Overview of your {APP_NAME} dashboard</p>
-      </div>
+    <div className="min-h-screen bg-page-bg">
+      <DashboardTopBar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-bold text-swiss-charcoal">
+              Welcome, {user?.fullName?.split(' ')[0] || user?.emailAddresses?.[0]?.emailAddress || 'User'}!
+            </h1>
+            <p className="text-gray-500 mt-1">Overview of your {APP_NAME} dashboard</p>
+          </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
@@ -143,6 +147,8 @@ const DashboardPage: React.FC = () => {
             })}
           </ul>
         </Card>
+      </div>
+        </div>
       </div>
     </div>
   );

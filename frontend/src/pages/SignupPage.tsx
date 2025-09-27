@@ -354,6 +354,11 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4">
+      {/* Language Switcher - Top Right */}
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+      
       <Card className="w-full max-w-2xl p-8 shadow-xl">
         <div className="text-center mb-2">
           <div className="flex justify-center mb-4">
@@ -525,11 +530,6 @@ const SignupPage: React.FC = () => {
             {t('auth:loginPage.signIn')}
           </Link>
         </p>
-        
-        {/* Language Switcher */}
-        <div className="mt-8 flex justify-center">
-          <LanguageSwitcher />
-        </div>
       </Card>
     </div>
   );
