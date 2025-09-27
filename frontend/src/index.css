@@ -2,17 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Swiss Modern Design System - Frontend (Light Theme) */
+/* Swiss Modern Design System - Matching Reference Design */
 :root {
-  /* Swiss Color Palette */
-  --swiss-mint: #10B981;
-  --swiss-teal: #14B8A6;
-  --swiss-coral: #F97316;
-  --swiss-sand: #F59E0B;
-  --swiss-charcoal: #374151;
+  /* Swiss Color Palette - Matching Reference */
+  --swiss-mint: #48CFAE;
+  --swiss-teal: #227C9D;
+  --swiss-coral: #FE6D73;
+  --swiss-sand: #F3D29E;
+  --swiss-charcoal: #2B2B2B;
   --swiss-gray: #6B7280;
-  --swiss-light: #F9FAFB;
+  --swiss-light-gray: #F3F4F6;
   --swiss-white: #FFFFFF;
+  --page-bg: #F9FAFB;
   
   /* Swiss Color Variations */
   --swiss-mint-light: #D1FAE5;
@@ -25,7 +26,7 @@
   --swiss-sand-dark: #D97706;
   
   /* Typography */
-  --font-swiss: 'Inter', system-ui, sans-serif;
+  --font-swiss: 'Nunito', 'Inter', system-ui, sans-serif;
   
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -35,14 +36,27 @@
   --spacing-xl: 2rem;
   
   /* Shadows */
-  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-interactive: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-minimal: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 4px 12px 0 rgba(0, 0, 0, 0.07);
+  --shadow-interactive: 0 2px 8px 0 rgba(0, 0, 0, 0.05);
+  --shadow-minimal: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   
   /* Border Radius */
   --radius-button: 0.5rem;
   --radius-card: 0.75rem;
   --radius-input: 0.5rem;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #227c9d; /* swiss-teal */
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f3f4f6; /* swiss-light-gray */
 }
 
 /* Base Styles */
@@ -59,15 +73,33 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--swiss-light);
+  background-color: var(--page-bg);
   color: var(--swiss-charcoal);
   min-height: 100vh;
 }
 
 /* Frontend Page Background */
 .frontend-page {
-  background-color: var(--swiss-light);
+  background-color: var(--page-bg);
   min-height: 100vh;
+}
+
+/* Hide number input arrows */
+.no-spinners::-webkit-outer-spin-button,
+.no-spinners::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinners {
+  -moz-appearance: textfield;
+}
+
+/* Global styles for settings form layout */
+.form-label {
+  @apply text-sm font-medium text-gray-700;
+}
+.form-input-container {
+  @apply mt-1 md:mt-0; /* Stack on mobile, align on desktop */
 }
 
 /* Typography */
@@ -118,7 +150,7 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--swiss-mint);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 3px rgba(72, 207, 174, 0.1);
 }
 
 /* Cards */
@@ -137,22 +169,34 @@ input:focus, textarea:focus, select:focus {
 /* Swiss Modern Components */
 @layer components {
   .btn-primary {
-    @apply bg-swiss-mint text-white hover:bg-swiss-mint-dark focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2;
+    @apply bg-swiss-mint text-white hover:bg-opacity-90 focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2 font-semibold rounded-button shadow-minimal hover:shadow-interactive transition-all duration-150 ease-in-out;
   }
   
   .btn-secondary {
-    @apply bg-swiss-teal text-white hover:bg-swiss-teal-dark focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2;
+    @apply bg-swiss-teal text-white hover:bg-opacity-90 focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 font-semibold rounded-button shadow-minimal hover:shadow-interactive transition-all duration-150 ease-in-out;
   }
   
   .btn-outline {
-    @apply border border-swiss-mint text-swiss-mint hover:bg-swiss-mint hover:text-white focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2;
+    @apply border border-swiss-mint text-swiss-mint hover:bg-swiss-mint/10 focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2 font-semibold rounded-button shadow-minimal hover:shadow-interactive transition-all duration-150 ease-in-out;
+  }
+  
+  .btn-danger {
+    @apply bg-swiss-coral text-white hover:bg-opacity-90 focus:ring-2 focus:ring-swiss-coral focus:ring-offset-2 font-semibold rounded-button shadow-minimal hover:shadow-interactive transition-all duration-150 ease-in-out;
+  }
+  
+  .btn-ghost {
+    @apply text-swiss-teal hover:bg-swiss-teal/10 focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 font-semibold rounded-button shadow-none hover:shadow-none transition-all duration-150 ease-in-out;
+  }
+  
+  .btn-light {
+    @apply bg-gray-100 text-swiss-charcoal hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 border border-gray-200 font-semibold rounded-button shadow-minimal hover:shadow-interactive transition-all duration-150 ease-in-out;
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-input focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-input focus:ring-1 focus:ring-swiss-mint focus:border-swiss-mint bg-white placeholder-gray-400 shadow-sm;
   }
   
   .card-swiss {
-    @apply bg-white rounded-card shadow-soft hover:shadow-interactive transition-all duration-200;
+    @apply bg-white rounded-card shadow-soft hover:shadow-xl hover:scale-[1.015] transition-all duration-300 ease-in-out;
   }
 }

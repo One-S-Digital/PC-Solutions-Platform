@@ -7,15 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Swiss Modern Color Palette - Frontend (Light Theme)
-        'swiss-mint': '#10B981',
-        'swiss-teal': '#14B8A6', 
-        'swiss-coral': '#F97316',
-        'swiss-sand': '#F59E0B',
-        'swiss-charcoal': '#374151',
+        // Swiss Modern Color Palette - Matching Reference Design
+        'swiss-mint': '#48CFAE',
+        'swiss-teal': '#227C9D', 
+        'swiss-coral': '#FE6D73',
+        'swiss-sand': '#F3D29E',
+        'swiss-charcoal': '#2B2B2B',
         'swiss-gray': '#6B7280',
-        'swiss-light': '#F9FAFB',
+        'swiss-light-gray': '#F3F4F6',
         'swiss-white': '#FFFFFF',
+        'page-bg': '#F9FAFB',
         
         // Swiss Color Variations
         'swiss-mint-light': '#D1FAE5',
@@ -42,7 +43,8 @@ export default {
         },
       },
       fontFamily: {
-        'swiss': ['Inter', 'system-ui', 'sans-serif'],
+        'swiss': ['Nunito', 'Inter', 'system-ui', 'sans-serif'],
+        'sans': ['Nunito', 'Inter', 'sans-serif'],
       },
       borderRadius: {
         'button': '0.5rem',
@@ -50,14 +52,29 @@ export default {
         'input': '0.5rem',
       },
       boxShadow: {
-        'soft': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        'interactive': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'minimal': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'soft': '0 4px 12px 0 rgba(0, 0, 0, 0.07)',
+        'interactive': '0 2px 8px 0 rgba(0, 0, 0, 0.05)',
+        'minimal': '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
       },
       spacing: {
         '18': '4.5rem',
         '88': '22rem',
       },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'pulse-slow': 'pulse 2s infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        }
+      }
     },
   },
   plugins: [],
