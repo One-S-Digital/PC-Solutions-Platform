@@ -253,7 +253,7 @@ model Asset {
   uploadedById String
   createdAt    DateTime @default(now())
 
-  // Relations
+  // Relations - after migration, points to AppUser
   uploader AppUser @relation("AssetUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
 
   // Organization asset relations
