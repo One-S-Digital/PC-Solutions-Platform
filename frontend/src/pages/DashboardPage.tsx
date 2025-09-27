@@ -16,7 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import DashboardLayout from '../components/dashboard/DashboardLayout';
+import DashboardTopBar from '../components/ui/DashboardTopBar';
 import { apiCall } from '../utils/api';
 
 type FoundationStats = {
@@ -717,9 +717,19 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Dashboard" subtitle={`Welcome, ${firstName}!`}>
-      {renderContent()}
-    </DashboardLayout>
+    <div className="min-h-screen bg-page-bg">
+      <DashboardTopBar />
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-col gap-2">
+          <p className="text-sm font-medium uppercase tracking-wide text-gray-500">Dashboard</p>
+          <h1 className="text-3xl font-bold text-swiss-charcoal">Welcome, {firstName}!</h1>
+          {organization?.name && (
+            <p className="text-sm text-gray-500">{organization.name}</p>
+          )}
+        </div>
+        {renderContent()}
+      </div>
+    </div>
   );
 };
 
