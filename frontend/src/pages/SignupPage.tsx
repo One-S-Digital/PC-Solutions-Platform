@@ -131,41 +131,41 @@ const SignupPage: React.FC = () => {
     if (!selectedRole) return false;
 
     if (selectedRole !== SignupRole.PARENT && !formData.organisationName)
-      newErrors.organisationName = 'Organization name is required';
+      newErrors.organisationName = t('auth:signupPage.organizationNameRequired');
     if (!formData.contactPerson)
-      newErrors.contactPerson = 'Contact person is required';
-    if (!formData.email) newErrors.email = 'Email is required';
+      newErrors.contactPerson = t('auth:signupPage.contactPersonRequired');
+    if (!formData.email) newErrors.email = t('auth:signupPage.emailRequired');
     else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = 'Invalid email address';
-    if (!formData.password) newErrors.password = 'Password is required';
+      newErrors.email = t('auth:signupPage.emailInvalid');
+    if (!formData.password) newErrors.password = t('auth:signupPage.passwordRequired');
     else if (formData.password.length < 6)
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('auth:signupPage.passwordTooShort');
     if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('auth:signupPage.passwordsDoNotMatch');
 
     if (selectedRole !== SignupRole.PARENT && !formData.phone)
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = t('auth:signupPage.phoneRequired');
     if (selectedRole !== SignupRole.PARENT && !formData.canton)
-      newErrors.canton = 'Canton is required';
+      newErrors.canton = t('auth:signupPage.cantonRequired');
 
     if (
       selectedRole === SignupRole.FOUNDATION &&
       (formData.capacity === undefined || formData.capacity <= 0)
     )
-      newErrors.capacity = 'Capacity is required';
+      newErrors.capacity = t('auth:signupPage.capacityRequired');
     if (selectedRole === SignupRole.SUPPLIER && !formData.category)
-      newErrors.category = 'Category is required';
+      newErrors.category = t('auth:signupPage.categoryRequired');
     if (selectedRole === SignupRole.SERVICE_PROVIDER && !formData.serviceType)
-      newErrors.serviceType = 'Service type is required';
+      newErrors.serviceType = t('auth:signupPage.serviceTypeRequired');
 
     if (selectedRole === SignupRole.PARENT) {
       if (formData.childAge === undefined || formData.childAge <= 0)
-        newErrors.childAge = 'Child age is required';
+        newErrors.childAge = t('auth:signupPage.childAgeRequired');
       if (!formData.childStartDate)
-        newErrors.childStartDate = 'Child start date is required';
+        newErrors.childStartDate = t('auth:signupPage.childStartDateRequired');
     }
 
-    if (!formData.termsAccepted) newErrors.termsAccepted = 'You must accept the terms';
+    if (!formData.termsAccepted) newErrors.termsAccepted = t('auth:signupPage.termsRequired');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -201,7 +201,7 @@ const SignupPage: React.FC = () => {
       const result = await signUp.create({
         emailAddress: updatedFormData.email,
         password: updatedFormData.password,
-        publicMetadata: {
+        unsafeMetadata: {
           firstName: updatedFormData.contactPerson.split(' ')[0] || updatedFormData.contactPerson,
           lastName: updatedFormData.contactPerson.split(' ').slice(1).join(' ') || '',
           role: getBackendRole(selectedRole),
@@ -219,24 +219,23 @@ const SignupPage: React.FC = () => {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        alert('Account created successfully!');
+        alert(t('auth:signupPage.accountCreatedSuccessfully'));
         navigate('/dashboard');
       } else if (result.status === 'missing_requirements') {
         // Handle email verification
         await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
         const code = window.prompt('Enter the verification code sent to your email:');
         if (!code) {
-          alert('Verification code is required to complete signup.');
+          alert(t('auth:signupPage.verificationCodeRequired'));
           return;
         }
         const verificationResult = await signUp.attemptEmailAddressVerification({
-          strategy: 'email_code',
           code,
         });
 
         if (verificationResult.status === 'complete' && verificationResult.createdUserId) {
           await setActive({ session: verificationResult.createdSessionId });
-          alert('Account created successfully!');
+          alert(t('auth:signupPage.accountCreatedSuccessfully'));
           navigate('/dashboard');
         } else {
           throw new Error('Email verification failed.');
@@ -244,7 +243,7 @@ const SignupPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Signup failed', err);
-      alert('Signup failed. Please try again.');
+      alert(t('auth:signupPage.signupFailed'));
       return;
     }
   };
@@ -282,7 +281,7 @@ const SignupPage: React.FC = () => {
           }
           className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}
         >
-          <option value="">Select...</option>
+          <option value="">{t('auth:signupPage.selectOption')}</option>
           {options.map(opt => (
             <option key={opt} value={opt}>
               {opt}
@@ -347,11 +346,11 @@ const SignupPage: React.FC = () => {
   );
 
   const progressText =
-    currentStep === 1 ? 'Step 1: Choose your role' : 'Step 2: Complete your profile';
+    currentStep === 1 ? t('auth:signupPage.step1Title') : t('auth:signupPage.step2Title');
   const formTitle =
     currentStep === 1
-      ? 'Join PC Solutions Platform'
-      : `Create your ${selectedRole ? rolesConfig.find(rc => rc.role === selectedRole)!.nameKey : ''} account`;
+      ? t('auth:signupPage.title', { appName: APP_NAME })
+      : t('auth:signupPage.createAccountTitle', { role: selectedRole ? rolesConfig.find(rc => rc.role === selectedRole)!.nameKey : '' });
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4">
@@ -399,84 +398,84 @@ const SignupPage: React.FC = () => {
             {selectedRole !== SignupRole.PARENT &&
               renderField(
                 'organisationName',
-                'Organization Name',
+                t('auth:signupPage.organizationName'),
                 'text',
                 true,
-                'Enter organization name'
+                t('auth:signupPage.organizationNamePlaceholder')
               )}
             {renderField(
               'contactPerson',
-              selectedRole === SignupRole.PARENT ? 'Your Name' : 'Contact Person',
+              selectedRole === SignupRole.PARENT ? t('auth:signupPage.yourName') : t('auth:signupPage.contactPerson'),
               'text',
               true,
-              'Enter full name'
+              t('auth:signupPage.contactPersonPlaceholder')
             )}
             {renderField(
               'email',
-              'Email Address',
+              t('auth:signupPage.emailAddress'),
               'email',
               true,
-              'Enter email address'
+              t('auth:signupPage.emailAddressPlaceholder')
             )}
             {renderField(
               'password',
-              'Password',
+              t('auth:signupPage.password'),
               'password',
               true,
-              'Enter password'
+              t('auth:signupPage.passwordPlaceholder')
             )}
             {renderField(
               'confirmPassword',
-              'Confirm Password',
+              t('auth:signupPage.confirmPassword'),
               'password',
               true,
-              'Confirm password'
+              t('auth:signupPage.confirmPasswordPlaceholder')
             )}
 
             {selectedRole !== SignupRole.PARENT &&
               renderField(
                 'phone',
-                'Phone Number',
+                t('auth:signupPage.phoneNumber'),
                 'tel',
                 true,
-                'Enter phone number'
+                t('auth:signupPage.phoneNumberPlaceholder')
               )}
             {selectedRole !== SignupRole.PARENT &&
-              renderField('canton', 'Canton', 'select', true, undefined, [
+              renderField('canton', t('auth:signupPage.canton'), 'select', true, undefined, [
                 ...SWISS_CANTONS,
               ])}
 
             {(selectedRole === SignupRole.FOUNDATION || selectedRole === SignupRole.SUPPLIER) &&
               renderField(
                 'languagesSpoken',
-                'Languages Spoken',
+                t('auth:signupPage.languagesSpoken'),
                 'text',
                 false,
-                'Enter languages (e.g., French, English)'
+                t('auth:signupPage.languagesSpokenPlaceholder')
               )}
             {selectedRole === SignupRole.FOUNDATION &&
-              renderField('capacity', 'Capacity', 'number', true)}
+              renderField('capacity', t('auth:signupPage.capacity'), 'number', true)}
             {selectedRole === SignupRole.SUPPLIER &&
               renderField(
                 'category',
-                'Product Category',
+                t('auth:signupPage.category'),
                 'text',
                 true,
-                'Enter product category'
+                t('auth:signupPage.selectCategory')
               )}
             {selectedRole === SignupRole.SERVICE_PROVIDER &&
               renderField(
                 'serviceType',
-                'Service Type',
+                t('auth:signupPage.serviceType'),
                 'text',
                 true,
-                'Enter service type'
+                t('auth:signupPage.serviceTypePlaceholder')
               )}
 
             {selectedRole === SignupRole.PARENT && (
               <>
-                {renderField('childAge', 'Child Age', 'number', true)}
-                {renderField('childStartDate', 'Desired Start Date', 'date', true)}
+                {renderField('childAge', t('auth:signupPage.childAge'), 'number', true)}
+                {renderField('childStartDate', t('auth:signupPage.childStartDate'), 'date', true)}
               </>
             )}
 
@@ -491,16 +490,7 @@ const SignupPage: React.FC = () => {
                   className={`h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint ${errors.termsAccepted ? 'border-swiss-coral' : ''}`}
                 />
                 <span className="ml-2 text-sm text-gray-600">
-                  I accept the{' '}
-                  <a
-                    href="#/terms"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-swiss-mint hover:underline"
-                  >
-                    Terms of Service
-                  </a>
-                  .
+                  {t('auth:signupPage.termsAccepted')}
                 </span>
               </label>
               {errors.termsAccepted && (
@@ -516,7 +506,7 @@ const SignupPage: React.FC = () => {
                 leftIcon={ArrowLeftIcon}
                 className="w-full sm:w-auto"
               >
-                Go Back
+                {t('auth:signupPage.back')}
               </Button>
               <Button
                 type="submit"
@@ -524,15 +514,15 @@ const SignupPage: React.FC = () => {
                 size="lg"
                 className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90"
               >
-                Create Account
+                {t('auth:signupPage.createAccount')}
               </Button>
             </div>
           </form>
         )}
         <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{' '}
+          {t('auth:loginPage.noAccount')}{' '}
           <Link to="/login" className="font-medium text-swiss-mint hover:underline">
-            Sign In
+            {t('auth:loginPage.signIn')}
           </Link>
         </p>
         
