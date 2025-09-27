@@ -275,7 +275,7 @@ const Users: React.FC = () => {
             <p className="text-gray-600">Try adjusting your search criteria or add a new user.</p>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   )
 }
