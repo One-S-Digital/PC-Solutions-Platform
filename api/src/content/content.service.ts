@@ -170,8 +170,9 @@ export class ContentService {
           creator: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              clerkId: true,
+              email: true,
+              role: true,
             },
           },
           modules: {

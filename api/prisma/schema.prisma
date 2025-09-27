@@ -160,7 +160,6 @@ model User {
   certificates      Certificate[]
   courseDiscussions CourseDiscussion[]
   discussionReplies DiscussionReply[]
-  createdCourses    Course[]           @relation("CourseCreator")
 
   // Enhanced messaging relations
   conversations    ConversationParticipant[]
@@ -625,7 +624,7 @@ model Course {
 
   // Relations
   category     CourseCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  creator      User               @relation("CourseCreator", fields: [createdBy], references: [id])
+  creator      AppUser            @relation("CourseCreator", fields: [createdBy], references: [id])
   modules      CourseModule[]
   enrollments  CourseEnrollment[]
   discussions  CourseDiscussion[]
@@ -1237,6 +1236,7 @@ model AppUser {
 
   assets      Asset[]   @relation("AssetUploadedBy")
   roleHistory AppUserRoleHistory[]
+  createdCourses Course[] @relation("CourseCreator")
 }
 
 model AppUserRoleHistory {
