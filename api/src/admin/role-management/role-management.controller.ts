@@ -27,7 +27,7 @@ export class RoleManagementController {
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   async getUserRole(@Param('clerkId') clerkId: string) {
     const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkId },
+      where: { clerkUserId: clerkId },
       include: {
         roleHistory: {
           orderBy: { changedAt: 'desc' },
@@ -40,9 +40,19 @@ export class RoleManagementController {
       throw new BadRequestException('User not found');
     }
 
+    const normalizedHistory = appUser.roleHistory.map((history: any) => ({
+      ...history,
+      user: history.user
+        ? {
+            ...history.user,
+            clerkId: (history.user as any).clerkUserId,
+          }
+        : history.user,
+    }));
+
     return {
       currentRole: appUser.role,
-      roleHistory: appUser.roleHistory,
+      roleHistory: normalizedHistory,
     };
   }
 
@@ -68,14 +78,14 @@ export class RoleManagementController {
     await this.prisma.$transaction(async (tx) => {
       // Get or create user
       let appUser = await tx.appUser.findUnique({
-        where: { clerkId: targetClerkId },
+        where: { clerkUserId: targetClerkId },
       });
 
       if (!appUser) {
         // Create user if doesn't exist
         appUser = await tx.appUser.create({
           data: {
-            clerkId: targetClerkId,
+            clerkUserId: targetClerkId,
             role: dto.role,
           },
         });
@@ -131,7 +141,7 @@ export class RoleManagementController {
         include: {
           user: {
             select: {
-              clerkId: true,
+              clerkUserId: true,
             },
           },
         },
@@ -139,8 +149,18 @@ export class RoleManagementController {
       this.prisma.appUserRoleHistory.count(),
     ]);
 
+    const normalized = history.map((entry: any) => ({
+      ...entry,
+      user: entry.user
+        ? {
+            ...entry.user,
+            clerkId: entry.user.clerkUserId,
+          }
+        : entry.user,
+    }));
+
     return {
-      data: history,
+      data: normalized,
       total,
       limit: take,
       offset: skip,
