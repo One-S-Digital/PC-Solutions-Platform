@@ -64,7 +64,6 @@ services:
   # Admin Service (Satellite)
   - type: static
     name: pc-solutions-admin
-    rootDirectory: /
     buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=admin
     publishDirectory: admin/dist
     envVars:
