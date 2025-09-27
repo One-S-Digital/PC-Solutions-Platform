@@ -8,7 +8,7 @@ import {
   ChartBarIcon 
 } from '@heroicons/react/24/outline';
 import LoginPage from './pages/LoginPage';
-import EnhancedSignupPage from './pages/EnhancedSignupPage';
+import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
@@ -33,7 +33,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<EnhancedSignupPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         

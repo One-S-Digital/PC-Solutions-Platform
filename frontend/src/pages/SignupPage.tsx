@@ -16,30 +16,7 @@ import {
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
 
-// Define types locally for now
-enum SignupRole {
-  FOUNDATION = 'FOUNDATION',
-  SUPPLIER = 'SUPPLIER',
-  SERVICE_PROVIDER = 'SERVICE_PROVIDER',
-  PARENT = 'PARENT',
-}
-
-interface SignupFormData {
-  organisationName: string;
-  contactPerson: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  phone: string;
-  canton: string;
-  languagesSpoken: string[];
-  capacity?: number;
-  category: string;
-  serviceType: string;
-  childAge?: number;
-  childStartDate: string;
-  termsAccepted: boolean;
-}
+import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage } from '../types';
 
 const SignupPage: React.FC = () => {
   const { t } = useTranslation();
