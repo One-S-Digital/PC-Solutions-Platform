@@ -116,9 +116,9 @@ export class FrontendSettingsService {
     return settings;
   }
 
-  async uploadLogo(file: Express.Multer.File, uploadedById: string) {
+  async uploadLogo(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.FRONTEND_LOGO);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_LOGO);
 
     // Update frontend settings with new logo
     const settings = await this.getSettings();
@@ -130,9 +130,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadFavicon(file: Express.Multer.File, uploadedById: string) {
+  async uploadFavicon(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.FRONTEND_FAVICON);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_FAVICON);
 
     // Update frontend settings with new favicon
     const settings = await this.getSettings();
@@ -144,9 +144,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadOgImage(file: Express.Multer.File, uploadedById: string) {
+  async uploadOgImage(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.FRONTEND_OG_IMAGE);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_OG_IMAGE);
 
     // Update frontend settings with new OG image
     const settings = await this.getSettings();
@@ -158,9 +158,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadAdminLogo(file: Express.Multer.File, uploadedById: string) {
+  async uploadAdminLogo(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.ADMIN_LOGO);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.ADMIN_LOGO);
 
     // Update frontend settings with new admin logo
     const settings = await this.getSettings();
@@ -172,9 +172,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadAdminFavicon(file: Express.Multer.File, uploadedById: string) {
+  async uploadAdminFavicon(file: Express.Multer.File, uploadedBy: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.ADMIN_FAVICON);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.ADMIN_FAVICON);
 
     // Update frontend settings with new admin favicon
     const settings = await this.getSettings();

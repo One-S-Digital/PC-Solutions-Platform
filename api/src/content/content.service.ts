@@ -95,7 +95,7 @@ export class ContentService {
           storageKey: uploadResult.key,
           mimeType: file.mimetype,
           size: file.size,
-          uploadedById: appUserId,
+          uploadedBy: appUserId,
         },
       });
 
@@ -139,7 +139,7 @@ export class ContentService {
           storageKey: uploadResult.key,
           mimeType: file.mimetype,
           size: file.size,
-          uploadedById: appUserId,
+          uploadedBy: appUserId,
         },
       });
 

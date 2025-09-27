@@ -69,21 +69,9 @@ export class ProfileController {
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   async getMyProfile(@Request() req) {
     const userId = req.context.userId;
-    
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        organizations: {
-          include: {
-            organization: true
-          }
-        }
-      }
-    });
+    const clerkUserId = req.context?.clerkUserId;
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const user = await this.ensureDomainUser(userId, clerkUserId, req.context?.role);
 
     return {
       success: true,
@@ -91,12 +79,67 @@ export class ProfileController {
     };
   }
 
+  private async ensureDomainUser(
+    userId: string,
+    clerkUserId?: string,
+    role?: UserRole,
+  ) {
+    const include = {
+      organizations: {
+        include: {
+          organization: {
+            include: {
+              members: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    } as const;
+
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include,
+    });
+
+    if (!user && clerkUserId) {
+      user = await this.prisma.user.findUnique({
+        where: { clerkId: clerkUserId },
+        include,
+      });
+    }
+
+    if (!user && clerkUserId) {
+      user = await this.prisma.user.create({
+        data: {
+          id: userId,
+          clerkId: clerkUserId,
+          email: `${clerkUserId}@pending.local`,
+          firstName: 'Unknown',
+          lastName: 'User',
+          role: role ?? UserRole.PARENT,
+        },
+        include,
+      });
+    }
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  }
+
   @Put('me')
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   async updateMyProfile(@Request() req, @Body() updateData: UpdateProfileDto) {
     const userId = req.context.userId;
-    
+    await this.ensureDomainUser(userId, req.context?.clerkUserId, req.context?.role);
+
     // Update user basic info
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
@@ -156,12 +199,21 @@ export class ProfileController {
   @ApiResponse({ status: 200, description: 'Organizations retrieved successfully' })
   async getMyOrganizations(@Request() req) {
     const userId = req.context.userId;
-    
+    await this.ensureDomainUser(userId, req.context?.clerkUserId, req.context?.role);
+
     const organizations = await this.prisma.userOrganization.findMany({
       where: { userId },
       include: {
-        organization: true
-      }
+        organization: {
+          include: {
+            members: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return {
@@ -170,12 +222,38 @@ export class ProfileController {
     };
   }
 
+  @Get('support/contacts')
+  @ApiOperation({ summary: 'List admin and super admin contacts for support' })
+  @ApiResponse({ status: 200, description: 'Support contacts retrieved successfully' })
+  async getSupportContacts() {
+    const admins = await this.prisma.user.findMany({
+      where: {
+        role: {
+          in: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
+        },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+      orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
+    });
+
+    return {
+      success: true,
+      data: admins,
+    };
+  }
+
   @Post('me/organizations')
   @ApiOperation({ summary: 'Create new organization for user' })
   @ApiResponse({ status: 201, description: 'Organization created successfully' })
   async createOrganization(@Request() req, @Body() organizationData: CreateOrganizationDto) {
     const userId = req.context.userId;
-    
+    await this.ensureDomainUser(userId, req.context?.clerkUserId, req.context?.role);
+
     // Create organization
     const organization = await this.prisma.organization.create({
       data: {
@@ -220,7 +298,8 @@ export class ProfileController {
   @ApiResponse({ status: 200, description: 'Parent leads retrieved successfully' })
   async getMyParentLeads(@Request() req) {
     const userId = req.context.userId;
-    
+    await this.ensureDomainUser(userId, req.context?.clerkUserId, req.context?.role);
+
     // Get user's organizations
     const userOrganizations = await this.prisma.userOrganization.findMany({
       where: { userId },
@@ -249,6 +328,7 @@ export class ProfileController {
   @ApiResponse({ status: 200, description: 'Parent lead updated successfully' })
   async updateParentLead(@Request() req, @Param('leadId') leadId: string, @Body() updateData: { status: string }) {
     const userId = req.context.userId;
+    await this.ensureDomainUser(userId, req.context?.clerkUserId, req.context?.role);
     
     // Verify user has access to this lead
     const userOrganizations = await this.prisma.userOrganization.findMany({

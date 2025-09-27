@@ -19,6 +19,11 @@ import ParentLeadFormPage from './pages/ParentLeadFormPage';
 import RecruitmentPage from './pages/RecruitmentPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
+import FoundationLeadsPage from './pages/foundation/FoundationLeadsPage';
+import FoundationAppointmentsPage from './pages/foundation/FoundationAppointmentsPage';
+import FoundationAnalyticsPage from './pages/foundation/FoundationAnalyticsPage';
+import FoundationOrganisationProfilePage from './pages/foundation/FoundationOrganisationProfilePage';
+import FoundationSupportPage from './pages/foundation/FoundationSupportPage';
 
 function App() {
   console.log('App component rendering');
@@ -87,116 +92,71 @@ function App() {
         </ProtectedRoute>
       } />
       
-      {/* Foundation Routes */}
-      <Route path="/foundation/dashboard" element={
+      {/* Dashboard Suite */}
+      <Route path="/dashboard" element={
         <ProtectedRoute>
           <DashboardPage />
         </ProtectedRoute>
       } />
-      <Route path="/foundation/leads" element={
+      <Route path="/leads" element={
         <ProtectedRoute>
-          <div>Foundation Leads Page</div>
+          <FoundationLeadsPage />
         </ProtectedRoute>
       } />
-      <Route path="/foundation/orders-appointments" element={
+      <Route path="/orders-appointments" element={
         <ProtectedRoute>
-          <div>Foundation Orders and Appointments Page</div>
+          <FoundationAppointmentsPage />
         </ProtectedRoute>
       } />
-      <Route path="/foundation/analytics" element={
+      <Route path="/analytics" element={
         <ProtectedRoute>
-          <div>Foundation Analytics Page</div>
+          <FoundationAnalyticsPage />
         </ProtectedRoute>
       } />
-      <Route path="/foundation/organisation-profile" element={
+      <Route path="/organisation-profile" element={
         <ProtectedRoute>
-          <div>Foundation Organisation Profile Page</div>
+          <FoundationOrganisationProfilePage />
         </ProtectedRoute>
       } />
-      <Route path="/foundation/support" element={
+      <Route path="/support" element={
         <ProtectedRoute>
-          <div>Foundation Support Page</div>
+          <FoundationSupportPage />
         </ProtectedRoute>
       } />
-      
-      {/* Supplier Routes */}
-      <Route path="/supplier/dashboard" element={
-        <ProtectedRoute>
-          <DashboardPage />
-        </ProtectedRoute>
-      } />
-      <Route path="/supplier/orders" element={
+
+      {/* Supplier Views */}
+      <Route path="/orders" element={
         <ProtectedRoute>
           <div>Supplier Orders Page</div>
         </ProtectedRoute>
       } />
-      <Route path="/supplier/product-listings" element={
+      <Route path="/product-listings" element={
         <ProtectedRoute>
           <div>Supplier Product Listings Page</div>
         </ProtectedRoute>
       } />
-      <Route path="/supplier/analytics" element={
-        <ProtectedRoute>
-          <div>Supplier Analytics Page</div>
-        </ProtectedRoute>
-      } />
-      <Route path="/supplier/support" element={
-        <ProtectedRoute>
-          <div>Supplier Support Page</div>
-        </ProtectedRoute>
-      } />
-      
-      {/* Service Provider Routes */}
-      <Route path="/service-provider/dashboard" element={
-        <ProtectedRoute>
-          <DashboardPage />
-        </ProtectedRoute>
-      } />
-      <Route path="/service-provider/requests" element={
+
+      {/* Service Provider Views */}
+      <Route path="/requests" element={
         <ProtectedRoute>
           <div>Service Provider Requests Page</div>
         </ProtectedRoute>
       } />
-      <Route path="/service-provider/service-listings" element={
+      <Route path="/service-listings" element={
         <ProtectedRoute>
           <div>Service Provider Service Listings Page</div>
         </ProtectedRoute>
       } />
-      <Route path="/service-provider/analytics" element={
-        <ProtectedRoute>
-          <div>Service Provider Analytics Page</div>
-        </ProtectedRoute>
-      } />
-      <Route path="/service-provider/support" element={
-        <ProtectedRoute>
-          <div>Service Provider Support Page</div>
-        </ProtectedRoute>
-      } />
-      
-      {/* Educator Routes */}
-      <Route path="/educator/dashboard" element={
-        <ProtectedRoute>
-          <DashboardPage />
-        </ProtectedRoute>
-      } />
-      <Route path="/educator/job-board" element={
+
+      {/* Educator Views */}
+      <Route path="/job-board" element={
         <ProtectedRoute>
           <div>Educator Job Board Page</div>
         </ProtectedRoute>
       } />
-      <Route path="/educator/profile" element={
-        <ProtectedRoute>
-          <div>Educator Profile Page</div>
-        </ProtectedRoute>
-      } />
-      <Route path="/educator/applications" element={
+      <Route path="/applications" element={
         <ProtectedRoute>
           <div>Educator Applications Page</div>
-        </ProtectedRoute>
-      } />
-      <Route path="/educator/support" element={
-        <ProtectedRoute>
-          <div>Educator Support Page</div>
         </ProtectedRoute>
       } />
       
@@ -273,25 +233,6 @@ function App() {
                 className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
               >
                 Manage Users
-              </a>
-            </div>
-          </div>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/analytics" element={
-        <ProtectedRoute>
-          <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8 text-center">
-            <div className="max-w-md w-full">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
-              <p className="text-gray-600 mb-6">
-                Access detailed analytics and reporting in the admin dashboard.
-              </p>
-              <a
-                href="/admin/analytics"
-                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
-              >
-                View Analytics
               </a>
             </div>
           </div>

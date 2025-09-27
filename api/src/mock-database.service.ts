@@ -25,7 +25,7 @@ export interface MockAsset {
   mimeType: string;
   size: number;
   kind: string;
-  uploadedById: string;
+  uploadedBy: string;
   createdAt: Date;
   updatedAt: Date;
 }

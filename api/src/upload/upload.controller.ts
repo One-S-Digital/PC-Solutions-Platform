@@ -155,7 +155,7 @@ export class UploadController {
         storageKey: uploadResult.key,
         mimeType: uploadResult.mimeType,
         size: uploadResult.size,
-        uploadedById: appUserId,
+        uploadedBy: appUserId,
       });
 
       this.logger.log(`File uploaded successfully: ${asset.id} (${uploadResult.key})`);
