@@ -16,7 +16,21 @@ BEGIN
     END IF;
 END $$;
 
--- Step 2: Migrate assets from users.id to AppUser.id
+-- Step 2: Ensure organizations table has isActive column
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'organizations' 
+        AND column_name = 'isActive'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "organizations" ADD COLUMN "isActive" BOOLEAN NOT NULL DEFAULT true;
+    END IF;
+END $$;
+
+-- Step 3: Migrate assets from users.id to AppUser.id
 DO $$
 BEGIN
     -- Check if assets table has uploadedBy column (production state)
@@ -76,7 +90,7 @@ BEGIN
     END IF;
 END $$;
 
--- Step 3: Rename clerkUserId to clerkId for consistency
+-- Step 4: Rename clerkUserId to clerkId for consistency
 DO $$
 BEGIN
     IF EXISTS (

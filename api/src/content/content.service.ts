@@ -212,8 +212,9 @@ export class ContentService {
           uploader: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              clerkId: true,
+              email: true,
+              role: true,
             },
           },
         },
@@ -273,8 +274,9 @@ export class ContentService {
           uploader: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              clerkId: true,
+              email: true,
+              role: true,
             },
           },
         },

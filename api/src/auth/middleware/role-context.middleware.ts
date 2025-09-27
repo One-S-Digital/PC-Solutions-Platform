@@ -61,7 +61,6 @@ export class RoleContextMiddleware implements NestMiddleware {
         userId: clerkUserId,
         role: appUser.role,
         appUserId: appUser.id,
-        clerkUserId,
       };
 
       next();
