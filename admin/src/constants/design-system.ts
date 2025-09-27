@@ -2,10 +2,25 @@
 
 
 
-import { UserRole, User, Product, Service, JobListing, CandidateProfile, Partner, HRDocument, Course, PolicyDocument, ParentLead, LeadMainStatus, FoundationLeadResponseStatus, Organization, PolicyAlert, PolicyAlertType, ELearningContentType, LanguageCode, HR_CATEGORIES, ELEARNING_CATEGORIES, POLICY_TYPES_ENUM, POLICY_BROAD_CATEGORIES, PolicyType, SWISS_CANTONS, StockStatus, ServiceRequest, OrderRequest, OrderRequestStatus, ServiceRequestStatus, Order, Message, Conversation, AppNotification, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES, SupplierSettings, ProviderSettings, PreferredContactMethod, AvgResponseType, DigestFrequency, ConsultationLength, SupportedLanguage, Application, MOCK_PARENT_USER, PricingPlan, ContentModerationItem, SystemMetric, LogEntry, SecurityAlert, PlatformSettings } from './types';
+import { UserRole, StockStatus, ServiceCategory, ServiceDeliveryType, LeadMainStatus } from '../types';
+import { User, Product, Service, JobListing, Organization, Order, Message, Conversation, FrontendSettings } from '../types/api';
 
-// Re-export SWISS_CANTONS so it can be imported from this module
-export { SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES };
+// Define constants locally since they're not available from types
+export const SWISS_CANTONS = [
+  'Aargau', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'Basel-Landschaft', 'Basel-Stadt',
+  'Bern', 'Fribourg', 'Genève', 'Glarus', 'Graubünden', 'Jura', 'Luzern', 'Neuchâtel',
+  'Nidwalden', 'Obwalden', 'Schaffhausen', 'Schwyz', 'Solothurn', 'St. Gallen', 'Thurgau',
+  'Ticino', 'Uri', 'Valais', 'Vaud', 'Zug', 'Zürich'
+] as const;
+
+export const SERVICE_CATEGORIES = [
+  'Legal', 'Catering', 'Cleaning', 'Workshops', 'IT_Support', 'Consulting', 
+  'Maintenance', 'Photography', 'Staff_Training', 'Landscaping', 'Other'
+] as const;
+
+export const SERVICE_DELIVERY_TYPES = [
+  'On_site', 'Remote', 'Hybrid'
+] as const;
 
 export const APP_NAME = "Pro Crèche Solutions";
 
@@ -96,8 +111,17 @@ export const MOCK_FOUNDATION_USER: User = {
   orgName: MOCK_FOUNDATION_ORG_KINDERWELT.name,
 };
 
-// MOCK_PARENT_USER is now imported from types.ts
-export { MOCK_PARENT_USER };
+// Define MOCK_PARENT_USER locally since it's not available from types
+export const MOCK_PARENT_USER: User = {
+  id: 'parentUser001',
+  name: 'Sophie D.', // Anonymized
+  email: 'sophie.d@example-parent.com', // Anonymized
+  role: UserRole.PARENT,
+  avatarUrl: 'https://picsum.photos/seed/sophied/100/100',
+  status: 'Active',
+  lastLogin: '2024-07-22T16:00:00Z',
+  region: 'Geneva',
+};
 
 
 export const MOCK_SUPER_ADMIN_USER: User = {
@@ -163,72 +187,73 @@ export const MOCK_JOB_LISTINGS: JobListing[] = [
   { id: 'job1', title: 'Lead Educator', foundationName: 'KinderCare Foundation', location: 'Geneva', contractType: 'CDI', startDate: '01.07.2024', applicationsReceived: 7, status: 'Open', description: 'Seeking an experienced lead educator...', requirements: ['Degree in Early Childhood Education', '5+ years experience'] },
 ];
 
-export const MOCK_CANDIDATE_PROFILES: CandidateProfile[] = [
-  {
-    id: 'cand1',
-    name: 'Samuel D.', // Anonymized
-    email: 'samuel.d@example-candidate.com', // Anonymized
-    phone: '[Phone Redacted]',
-    avatarUrl: 'https://picsum.photos/seed/samuel/100/100',
-    currentRoleOrTitle: 'Early Childhood Educator',
-    location: 'Geneva, GE',
-    availabilityStatus: 'Available Immediately',
-    shortBio: 'Passionate and trilingual educator with experience in Montessori environments.',
-    skills: ['Montessori Certified', 'Bilingual FR/EN', 'First Aid CPR'],
-    workExperience: [ { id: 'we1', jobTitle: 'Lead Educator', institutionName: '[Previous Employer Redacted]', startDate: '2020-08', endDate: 'Present', descriptionPoints: ['Curriculum development.', 'Classroom management.'] } ],
-    education: [ { id: 'edu1', degree: 'Diploma in Early Childhood Education', institutionName: '[Institution Redacted]', graduationYear: '2018' } ],
-    certifications: [ { id: 'cert1', name: 'Montessori Diploma', issuingOrganization: 'AMI', issueDate: '2019-06' } ],
-    availabilityPreferences: { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], times: 'Full-Day', contractType: 'Full-time', preferredAgeGroups: ['Toddlers', 'Preschool'], },
-    documents: [ 
-      { id: 'doc1', name: 'CV_Samuel_D.pdf', url: '#', type: 'CV', uploadDate: new Date('2024-07-15').toISOString(), size: 256 * 1024 },
-      { id: 'doc2', name: 'Montessori_Diploma.pdf', url: '#', type: 'Certificate', uploadDate: new Date('2024-07-15').toISOString(), size: 512 * 1024 },
-      { id: 'doc3', name: 'Reference_Letter.pdf', url: '#', type: 'Reference', uploadDate: new Date('2024-07-16').toISOString(), size: 128 * 1024 },
-    ],
-    role: 'Educator', availability: '01.09.2024, CDI', preferredRegion: 'Geneva',
-    experience: '5+ years childcare experience.', languages: ['French', 'English', 'German'],
-  },
-];
+// Commented out - CandidateProfile type not available
+// export const MOCK_CANDIDATE_PROFILES: CandidateProfile[] = [
+//   {
+//     id: 'cand1',
+//     name: 'Samuel D.', // Anonymized
+//     email: 'samuel.d@example-candidate.com', // Anonymized
+//     phone: '[Phone Redacted]',
+//     avatarUrl: 'https://picsum.photos/seed/samuel/100/100',
+//     currentRoleOrTitle: 'Early Childhood Educator',
+//     location: 'Geneva, GE',
+//     availabilityStatus: 'Available Immediately',
+//     shortBio: 'Passionate and trilingual educator with experience in Montessori environments.',
+//     skills: ['Montessori Certified', 'Bilingual FR/EN', 'First Aid CPR'],
+//     workExperience: [ { id: 'we1', jobTitle: 'Lead Educator', institutionName: '[Previous Employer Redacted]', startDate: '2020-08', endDate: 'Present', descriptionPoints: ['Curriculum development.', 'Classroom management.'] } ],
+//     education: [ { id: 'edu1', degree: 'Diploma in Early Childhood Education', institutionName: '[Institution Redacted]', graduationYear: '2018' } ],
+//     certifications: [ { id: 'cert1', name: 'Montessori Diploma', issuingOrganization: 'AMI', issueDate: '2019-06' } ],
+//     availabilityPreferences: { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], times: 'Full-Day', contractType: 'Full-time', preferredAgeGroups: ['Toddlers', 'Preschool'], },
+//     documents: [ 
+//       { id: 'doc1', name: 'CV_Samuel_D.pdf', url: '#', type: 'CV', uploadDate: new Date('2024-07-15').toISOString(), size: 256 * 1024 },
+//       { id: 'doc2', name: 'Montessori_Diploma.pdf', url: '#', type: 'Certificate', uploadDate: new Date('2024-07-15').toISOString(), size: 512 * 1024 },
+//       { id: 'doc3', name: 'Reference_Letter.pdf', url: '#', type: 'Reference', uploadDate: new Date('2024-07-16').toISOString(), size: 128 * 1024 },
+//     ],
+//     role: 'Educator', availability: '01.09.2024, CDI', preferredRegion: 'Geneva',
+//     experience: '5+ years childcare experience.', languages: ['French', 'English', 'German'],
+//   },
+// ];
 
 
-export const MOCK_PARTNERS: Partner[] = [
-    { id: 'partner1', name: 'ESEDE', logoUrl: 'https://picsum.photos/seed/esede/150/80?grayscale', description: 'Leading network for educator training.', type: 'Academic', countryRegion: 'Switzerland - National', websiteUrl: '#' },
-];
+// Commented out - Partner, HRDocument, Course, PolicyDocument, PolicyAlert, ParentLead types not available
+// export const MOCK_PARTNERS: Partner[] = [
+//     { id: 'partner1', name: 'ESEDE', logoUrl: 'https://picsum.photos/seed/esede/150/80?grayscale', description: 'Leading network for educator training.', type: 'Academic', countryRegion: 'Switzerland - National', websiteUrl: '#' },
+// ];
 
-export const MOCK_HR_DOCS: HRDocument[] = [
-    { id: 'hr1', title: 'Employee Handbook Sample', category: HR_CATEGORIES[0], fileUrl: '#', uploaderId: 'admin001', lastUpdated: '2024-05-12T00:00:00Z', fileType: 'PDF', tags: ['Updated', 'Mandatory'], isFavorite: true, language: 'EN', version: 'v2.1', status: 'Published' },
-];
+// export const MOCK_HR_DOCS: HRDocument[] = [
+//     { id: 'hr1', title: 'Employee Handbook Sample', category: HR_CATEGORIES[0], fileUrl: '#', uploaderId: 'admin001', lastUpdated: '2024-05-12T00:00:00Z', fileType: 'PDF', tags: ['Updated', 'Mandatory'], isFavorite: true, language: 'EN', version: 'v2.1', status: 'Published' },
+// ];
 
-export const MOCK_COURSES: Course[] = [
-    { id: 'crs1', title: 'Child Safety Basics', description: 'Essential safety protocols.', type: 'Course', category: ELEARNING_CATEGORIES[0], lessons: 10, thumbnailUrl: 'https://picsum.photos/seed/safety101/300/200', updatedDate: '2024-05-10T00:00:00Z', language: 'EN', accessRoles: [UserRole.FOUNDATION, UserRole.EDUCATOR], status: 'Published' },
-];
+// export const MOCK_COURSES: Course[] = [
+//     { id: 'crs1', title: 'Child Safety Basics', description: 'Essential safety protocols.', type: 'Course', category: ELEARNING_CATEGORIES[0], lessons: 10, thumbnailUrl: 'https://picsum.photos/seed/safety101/300/200', updatedDate: '2024-05-10T00:00:00Z', language: 'EN', accessRoles: [UserRole.FOUNDATION, UserRole.EDUCATOR], status: 'Published' },
+// ];
 
-export const MOCK_POLICY_DOCS: PolicyDocument[] = [
-    { id: 'pol1', title: 'Sample Childcare Licensing Standards', category: POLICY_BROAD_CATEGORIES[0], policyType: PolicyType.REGULATION, country: 'Switzerland', region: 'Vaud', tags: ['Licensing', 'New'], publishedDate: '2024-03-20T00:00:00Z', lastUpdatedDate: '2024-03-20T00:00:00Z', effectiveDate: '2024-04-01T00:00:00Z', contentPreview: 'Summary of licensing requirements.', fileUrl: '#', fileType: 'PDF', status: 'Published', language: 'FR' },
-];
+// export const MOCK_POLICY_DOCS: PolicyDocument[] = [
+//     { id: 'pol1', title: 'Sample Childcare Licensing Standards', category: POLICY_BROAD_CATEGORIES[0], policyType: PolicyType.REGULATION, country: 'Switzerland', region: 'Vaud', tags: ['Licensing', 'New'], publishedDate: '2024-03-20T00:00:00Z', lastUpdatedDate: '2024-03-20T00:00:00Z', effectiveDate: '2024-04-01T00:00:00Z', contentPreview: 'Summary of licensing requirements.', fileUrl: '#', fileType: 'PDF', status: 'Published', language: 'FR' },
+// ];
 
-export const MOCK_POLICY_ALERTS: PolicyAlert[] = [
-    { id: 'alert1', title: 'Important: Platform Update', message: 'Scheduled platform update will occur next week.', type: PolicyAlertType.INFO, regionScope: 'All', isActive: true, creationDate: '2024-07-20T00:00:00Z', displayStartDate: '2024-07-25T00:00:00Z', displayEndDate: '2024-07-31T00:00:00Z' },
-];
+// export const MOCK_POLICY_ALERTS: PolicyAlert[] = [
+//     { id: 'alert1', title: 'Important: Platform Update', message: 'Scheduled platform update will occur next week.', type: PolicyAlertType.INFO, regionScope: 'All', isActive: true, creationDate: '2024-07-20T00:00:00Z', displayStartDate: '2024-07-25T00:00:00Z', displayEndDate: '2024-07-31T00:00:00Z' },
+// ];
 
-
-export const MOCK_PARENT_LEADS: ParentLead[] = [
-  {
-    id: 'lead001',
-    parentId: MOCK_PARENT_USER.id, 
-    canton: 'Geneva',
-    municipality: '[Municipality Redacted]',
-    childAge: 3, // Keep general PII for functionality testing
-    desiredStartDate: '2024-09-01',
-    specialNeeds: '[Special Needs Redacted - Use only for specific testing if necessary]',
-    contactName: 'Sophie D.', // Anonymized
-    contactEmail: 'sophie.d@example-parent.com', // Anonymized
-    contactPhone: '[Phone Redacted]',
-    submissionDate: '2024-07-15T10:00:00Z',
-    mainStatus: LeadMainStatus.PROCESSING,
-    assignedFoundations: [MOCK_FOUNDATION_ORG_KINDERWELT.id],
-    responses: [ { foundationId: MOCK_FOUNDATION_ORG_KINDERWELT.id, foundationName: MOCK_FOUNDATION_ORG_KINDERWELT.name, status: FoundationLeadResponseStatus.INTERESTED, messageToParent: 'Please book a visit.', responseDate: '2024-07-16T14:00:00Z' } ],
-  },
-];
+// export const MOCK_PARENT_LEADS: ParentLead[] = [
+//   {
+//     id: 'lead001',
+//     parentId: MOCK_PARENT_USER.id, 
+//     canton: 'Geneva',
+//     municipality: '[Municipality Redacted]',
+//     childAge: 3, // Keep general PII for functionality testing
+//     desiredStartDate: '2024-09-01',
+//     specialNeeds: '[Special Needs Redacted - Use only for specific testing if necessary]',
+//     contactName: 'Sophie D.', // Anonymized
+//     contactEmail: 'sophie.d@example-parent.com', // Anonymized
+//     contactPhone: '[Phone Redacted]',
+//     submissionDate: '2024-07-15T10:00:00Z',
+//     mainStatus: LeadMainStatus.PROCESSING,
+//     assignedFoundations: [MOCK_FOUNDATION_ORG_KINDERWELT.id],
+//     responses: [ { foundationId: MOCK_FOUNDATION_ORG_KINDERWELT.id, foundationName: MOCK_FOUNDATION_ORG_KINDERWELT.name, status: FoundationLeadResponseStatus.INTERESTED, messageToParent: 'Please book a visit.', responseDate: '2024-07-16T14:00:00Z' } ],
+//   },
+// ];
 
 
 export const ALL_USERS_MOCK: User[] = [
@@ -238,7 +263,6 @@ export const ALL_USERS_MOCK: User[] = [
   MOCK_SUPPLIER_USER, 
   MOCK_SERVICE_PROVIDER_USER,
   MOCK_EDUCATOR_USER,
-  {...MOCK_CANDIDATE_PROFILES[0], id: 'cand1', role: UserRole.EDUCATOR} as User, // Add Samuel D. as a user for messaging
 ];
 
 export const MOCK_ORGANIZATIONS: Organization[] = [
@@ -260,67 +284,36 @@ export const REGIONS_BY_COUNTRY: Record<CountryForPolicies, readonly string[]> =
     'Austria': ["All Bundesländer", "Vienna"] // Reduced for brevity
 };
 
-// Example Order Requests
-export const MOCK_ORDER_REQUESTS: OrderRequest[] = [
-    {
-        id: 'orderReq1',
-        foundationId: MOCK_FOUNDATION_USER.id,
-        foundationOrgId: MOCK_FOUNDATION_ORG_KINDERWELT.id,
-        productId: 'p1',
-        productName: 'EcoToys Wooden Blocks',
-        supplierId: MOCK_SUPPLIER_ORGANIZATION.id,
-        quantity: 2,
-        notes: 'Urgent delivery requested.',
-        status: OrderRequestStatus.SUBMITTED,
-        requestDate: '2024-07-28T10:00:00Z',
-    }
-];
-
-// Example Service Requests
-export const MOCK_SERVICE_REQUESTS: ServiceRequest[] = [
-    {
-        id: 'serviceReq1',
-        foundationId: MOCK_FOUNDATION_USER.id,
-        foundationOrgId: MOCK_FOUNDATION_ORG_KINDERWELT.id,
-        serviceId: 'srv2',
-        serviceName: 'Daycare Deep Cleaning Service',
-        providerId: MOCK_SERVICE_PROVIDER_ORGANIZATION.id,
-        preferredDate: '2024-08-05',
-        notes: 'Requesting afternoon service.',
-        status: ServiceRequestStatus.NEW,
-        requestDate: '2024-07-29T11:00:00Z',
-    }
-];
+// Commented out - OrderRequest, ServiceRequest, Application types not available
+// export const MOCK_ORDER_REQUESTS: OrderRequest[] = [...];
+// export const MOCK_SERVICE_REQUESTS: ServiceRequest[] = [...];
+// export const MOCK_APPLICATIONS: Application[] = [];
 
 export const MOCK_ORDERS: Order[] = []; // Keep empty, populated dynamically by cart
-
-export const MOCK_APPLICATIONS: Application[] = []; // For job applications
 
 
 // Mock Data for Messaging System
 export const MOCK_CONVERSATIONS: Conversation[] = [
   {
     id: 'conv1',
-    participantIds: [MOCK_FOUNDATION_USER.id, 'cand1'], 
-    participantNames: { [MOCK_FOUNDATION_USER.id]: MOCK_FOUNDATION_USER.name, ['cand1']: 'Samuel D.' },
-    participantRoles: { [MOCK_FOUNDATION_USER.id]: MOCK_FOUNDATION_USER.role, ['cand1']: UserRole.EDUCATOR, },
+    participantIds: [MOCK_FOUNDATION_USER.id, MOCK_EDUCATOR_USER.id], 
+    participantNames: { [MOCK_FOUNDATION_USER.id]: MOCK_FOUNDATION_USER.name, [MOCK_EDUCATOR_USER.id]: MOCK_EDUCATOR_USER.name },
+    participantRoles: { [MOCK_FOUNDATION_USER.id]: MOCK_FOUNDATION_USER.role, [MOCK_EDUCATOR_USER.id]: MOCK_EDUCATOR_USER.role },
     lastMessageSnippet: 'Thank you for the invitation!',
     lastMessageTimestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), 
-    lastMessageSenderId: 'cand1',
+    lastMessageSenderId: MOCK_EDUCATOR_USER.id,
   },
   {
     id: 'conv2',
     name: 'Team Meeting',
-    participantIds: [MOCK_FOUNDATION_USER.id, MOCK_EDUCATOR_USER.id, 'cand1'],
+    participantIds: [MOCK_FOUNDATION_USER.id, MOCK_EDUCATOR_USER.id],
     participantNames: { 
         [MOCK_FOUNDATION_USER.id]: MOCK_FOUNDATION_USER.name, 
-        [MOCK_EDUCATOR_USER.id]: MOCK_EDUCATOR_USER.name,
-        ['cand1']: 'Samuel D.' 
+        [MOCK_EDUCATOR_USER.id]: MOCK_EDUCATOR_USER.name
     },
     participantRoles: { 
         [MOCK_FOUNDATION_USER.id]: MOCK_FOUNDATION_USER.role, 
-        [MOCK_EDUCATOR_USER.id]: MOCK_EDUCATOR_USER.role,
-        ['cand1']: UserRole.EDUCATOR 
+        [MOCK_EDUCATOR_USER.id]: MOCK_EDUCATOR_USER.role
     },
     lastMessageSnippet: 'See you all there!',
     lastMessageTimestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
@@ -347,109 +340,20 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
 ];
 
 export const MOCK_MESSAGES: Message[] = [
-  { id: 'msg1', conversationId: 'conv1', senderId: MOCK_FOUNDATION_USER.id, senderName: MOCK_FOUNDATION_USER.name, senderRole: MOCK_FOUNDATION_USER.role, content: 'Hello Samuel, we were impressed by your profile.', timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(), isRead: true },
-  { id: 'msg2', conversationId: 'conv1', senderId: 'cand1', senderName: 'Samuel D.', senderRole: UserRole.EDUCATOR, content: 'Thank you for the invitation!', timestamp: MOCK_CONVERSATIONS[0].lastMessageTimestamp!, isRead: false },
+  { id: 'msg1', conversationId: 'conv1', senderId: MOCK_FOUNDATION_USER.id, senderName: MOCK_FOUNDATION_USER.name, senderRole: MOCK_FOUNDATION_USER.role, content: 'Hello, we were impressed by your profile.', timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(), isRead: true },
+  { id: 'msg2', conversationId: 'conv1', senderId: MOCK_EDUCATOR_USER.id, senderName: MOCK_EDUCATOR_USER.name, senderRole: MOCK_EDUCATOR_USER.role, content: 'Thank you for the invitation!', timestamp: MOCK_CONVERSATIONS[0].lastMessageTimestamp!, isRead: false },
   { id: 'msg3', conversationId: 'conv2', senderId: MOCK_FOUNDATION_USER.id, senderName: MOCK_FOUNDATION_USER.name, senderRole: MOCK_FOUNDATION_USER.role, content: 'Reminder: Team meeting tomorrow at 10 AM.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(), isRead: true },
   { id: 'msg4', conversationId: 'conv2', senderId: MOCK_EDUCATOR_USER.id, senderName: MOCK_EDUCATOR_USER.name, senderRole: MOCK_EDUCATOR_USER.role, content: 'See you all there!', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), isRead: true },
   { id: 'msg5', conversationId: 'conv3', senderId: MOCK_SUPPLIER_USER.id, senderName: MOCK_SUPPLIER_USER.name, senderRole: MOCK_SUPPLIER_USER.role, content: 'Delivery confirmed for next Tuesday.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), isRead: true },
 ];
 
-export const MOCK_NOTIFICATIONS: AppNotification[] = [];
-
-// Settings Mock Data
-export const MOCK_SUPPLIER_SETTINGS: SupplierSettings = {
-  companyName: MOCK_SUPPLIER_ORGANIZATION.name,
-  logoUrl: MOCK_SUPPLIER_ORGANIZATION.logoUrl,
-  coverImageUrl: MOCK_SUPPLIER_ORGANIZATION.coverImageUrl,
-  aboutText: MOCK_SUPPLIER_ORGANIZATION.description || 'High-quality supplier.',
-  vatNumber: '[VAT Redacted]',
-  regionsServed: ['Zürich'],
-  languagesSpoken: ['DE', 'EN'],
-  preferredContactMethod: 'Email',
-  avgResponseType: '< 24 h',
-  externalBookingLink: 'https://example.com/ecogoods-consultations',
-  directOrderLink: MOCK_SUPPLIER_ORGANIZATION.directOrderLink, // Added
-  newRequestEmailToggle: true,
-  digestRadio: 'Weekly',
-  promoRedemptionAlertsToggle: true,
-  autoRespondToggle: false,
-  defaultMOQ: 10,
-  packSize: 1,
-  autoAcceptOrderQtyLimit: 5,
-  promoCodes: [ { id: 'promo1', code: 'SUMMER24', discountType: 'Percentage', value: 10, expiryDate: '2024-08-31T00:00:00Z', status: 'Active' } ],
-  currentTier: 'Premium', nextInvoiceDate: '2024-08-01T00:00:00Z', stripePortalLink: '#',
-  timeZone: 'Europe/Zurich', currency: 'CHF', anonymisedBenchmarkDataOptIn: true,
-  teamMembers: [ { id: 'tm1', email: 'team.member@example-supplier.com', role: 'Editor', status: 'Active' } ],
-  hidePubliclyToggle: false, gdprDataDeletionRequestMade: false,
-};
-
-export const MOCK_PROVIDER_SETTINGS: ProviderSettings = {
-  companyName: MOCK_SERVICE_PROVIDER_ORGANIZATION.name,
-  logoUrl: MOCK_SERVICE_PROVIDER_ORGANIZATION.logoUrl,
-  coverImageUrl: MOCK_SERVICE_PROVIDER_ORGANIZATION.coverImageUrl,
-  aboutText: MOCK_SERVICE_PROVIDER_ORGANIZATION.description || 'Professional services.',
-  vatNumber: '[VAT Redacted]',
-  regionsServed: ['Geneva'],
-  languagesSpoken: ['FR', 'EN'],
-  preferredContactMethod: 'Platform Form',
-  avgResponseType: '2–3 d',
-  externalBookingLink: MOCK_SERVICE_PROVIDER_ORGANIZATION.website,
-  directOrderLink: undefined, // Service Providers might not use this
-  calComLink: 'https://example.com/proclean-services',
-  deliveryTypeToggleRemote: false,
-  newRequestEmailToggle: true,
-  digestRadio: 'Daily',
-  promoRedemptionAlertsToggle: false,
-  autoRespondToggle: true,
-  defaultConsultationLength: '30 min',
-  promoCodes: [ { id: 'promo_srv1', code: 'FREE30MIN', discountType: 'FreeMinutes', value: 30, expiryDate: '2024-09-30T00:00:00Z', status: 'Active', description: 'Free consultation' } ],
-  currentTier: 'Pro', nextInvoiceDate: '2024-08-15T00:00:00Z', stripePortalLink: '#',
-  timeZone: 'Europe/Zurich', currency: 'CHF', anonymisedBenchmarkDataOptIn: false,
-  teamMembers: [ { id: 'tm_srv1', email: 'manager@example-provider.com', role: 'Editor', status: 'Active' } ],
-  hidePubliclyToggle: false, gdprDataDeletionRequestMade: false,
-};
-
-export const MOCK_PRICING_PLANS: PricingPlan[] = [
-  // Foundation Plans
-  { role: UserRole.FOUNDATION, name: 'Basic', price: { monthly: 49, annually: 490 }, features: ['Post up to 2 jobs', 'Basic Marketplace Access', 'HR Document Library'], isPopular: false },
-  { role: UserRole.FOUNDATION, name: 'Pro', price: { monthly: 99, annually: 990 }, features: ['Post up to 10 jobs', 'Full Marketplace Access', 'Recruitment Tools', 'E-Learning Access'], isPopular: true },
-  { role: UserRole.FOUNDATION, name: 'Enterprise', price: { monthly: 199, annually: 1990 }, features: ['Unlimited Jobs', 'Advanced Analytics', 'Dedicated Support', 'Team Management'], isPopular: false },
-  // Supplier Plans
-  { role: UserRole.PRODUCT_SUPPLIER, name: 'Starter', price: { monthly: 29, annually: 290 }, features: ['List up to 10 products', 'Receive Orders', 'Basic Profile'], isPopular: false },
-  { role: UserRole.PRODUCT_SUPPLIER, name: 'Business', price: { monthly: 79, annually: 790 }, features: ['List up to 100 products', 'Promo Code Manager', 'Supplier Analytics'], isPopular: true },
-];
-
-export const MOCK_CONTENT_QUEUE: ContentModerationItem[] = [
-    { id: 'cq1', type: 'Product', title: 'New Organic Play-Dough', authorName: 'BioPlay Inc.', submittedDate: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString() },
-    { id: 'cq2', type: 'Service', title: 'Weekend Music Workshop for Toddlers', authorName: 'Melody Makers', submittedDate: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString() },
-    { id: 'cq3', type: 'Job Post', title: 'Part-Time Kitchen Assistant', authorName: 'Crèche du Lac', submittedDate: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString() },
-];
-
-// Mock Data for System Monitoring
-export const MOCK_SYSTEM_METRICS: SystemMetric[] = [
-    { name: 'CPU Load', value: '35%', status: 'Normal' },
-    { name: 'Memory Usage', value: '82%', status: 'Warning' },
-    { name: 'Database Latency', value: '150ms', status: 'Critical' },
-];
-
-export const MOCK_LOG_ENTRIES: LogEntry[] = [
-    { id: 'log1', timestamp: new Date(Date.now() - 1000 * 2).toISOString(), level: 'INFO', message: 'User superadmin@example-pcs.com logged in successfully.' },
-    { id: 'log2', timestamp: new Date(Date.now() - 1000 * 5).toISOString(), level: 'WARN', message: 'API endpoint /api/analytics/report took 2.5s to respond.' },
-    { id: 'log3', timestamp: new Date(Date.now() - 1000 * 10).toISOString(), level: 'ERROR', message: 'Failed to process payment for order #ORD556: Gateway timeout.' },
-    { id: 'log4', timestamp: new Date(Date.now() - 1000 * 15).toISOString(), level: 'INFO', message: 'New user registered: parent@example.com' },
-    { id: 'log5', timestamp: new Date(Date.now() - 1000 * 22).toISOString(), level: 'WARN', message: 'Database connection pool nearing limit (90% usage).' },
-];
-
-export const MOCK_SECURITY_ALERTS: SecurityAlert[] = [
-    { id: 'sec1', timestamp: new Date(Date.now() - 1000 * 60 * 3).toISOString(), event: 'Failed Login Attempt (x5)', riskLevel: 'High', sourceIp: '198.51.100.12' },
-    { id: 'sec2', timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), event: 'Unusual password reset request', riskLevel: 'Medium', sourceIp: '203.0.113.45' },
-    { id: 'sec3', timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(), event: 'Admin role granted to new user', riskLevel: 'Low', sourceIp: '127.0.0.1' },
-];
-
-// Mock Data for Platform Settings
-export const MOCK_PLATFORM_SETTINGS: PlatformSettings = {
-    platformName: "Pro Crèche Solutions",
-    metadataDescription: "A centralized digital ecosystem for Swiss childcare.",
-    logoUrl: "", // Admin can upload
-    faviconUrl: "", // Admin can upload
-};
+// Commented out - AppNotification, SupplierSettings, ProviderSettings, PricingPlan, ContentModerationItem, SystemMetric, LogEntry, SecurityAlert, PlatformSettings types not available
+// export const MOCK_NOTIFICATIONS: AppNotification[] = [];
+// export const MOCK_SUPPLIER_SETTINGS: SupplierSettings = {...};
+// export const MOCK_PROVIDER_SETTINGS: ProviderSettings = {...};
+// export const MOCK_PRICING_PLANS: PricingPlan[] = [...];
+// export const MOCK_CONTENT_QUEUE: ContentModerationItem[] = [...];
+// export const MOCK_SYSTEM_METRICS: SystemMetric[] = [...];
+// export const MOCK_LOG_ENTRIES: LogEntry[] = [...];
+// export const MOCK_SECURITY_ALERTS: SecurityAlert[] = [...];
+// export const MOCK_PLATFORM_SETTINGS: PlatformSettings = {...};
