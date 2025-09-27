@@ -105,8 +105,58 @@ BEGIN
     END IF;
 END $$;
 
--- Step 11: Update AppUser table structure
-ALTER TABLE "AppUser" RENAME COLUMN "clerkUserId" TO "clerkId";
-ALTER INDEX IF EXISTS "AppUser_clerkUserId_key" RENAME TO "AppUser_clerkId_key";
-ALTER TABLE "AppUser" ADD COLUMN IF NOT EXISTS "email" TEXT;
-CREATE UNIQUE INDEX IF NOT EXISTS "AppUser_email_key" ON "AppUser"("email");
+-- Step 11: Update AppUser table structure safely
+DO $$
+BEGIN
+    -- Check if clerkUserId column exists and rename it to clerkId
+    IF EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'AppUser' 
+        AND column_name = 'clerkUserId'
+        AND table_schema = 'public'
+    ) THEN
+        -- Rename the column
+        ALTER TABLE "AppUser" RENAME COLUMN "clerkUserId" TO "clerkId";
+        
+        -- Rename the index if it exists
+        ALTER INDEX IF EXISTS "AppUser_clerkUserId_key" RENAME TO "AppUser_clerkId_key";
+    END IF;
+    
+    -- Add email column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'AppUser' 
+        AND column_name = 'email'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "AppUser" ADD COLUMN "email" TEXT;
+    END IF;
+    
+    -- Create unique index for email if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM pg_indexes 
+        WHERE tablename = 'AppUser' 
+        AND indexname = 'AppUser_email_key'
+    ) THEN
+        CREATE UNIQUE INDEX "AppUser_email_key" ON "AppUser"("email");
+    END IF;
+    
+    -- Handle existing AppUser records that might not have clerkId
+    -- This addresses the production error about adding clerkId without default value
+    IF EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'AppUser' 
+        AND column_name = 'clerkId'
+        AND table_schema = 'public'
+        AND is_nullable = 'NO'
+    ) THEN
+        -- Update any NULL clerkId values with a system value
+        UPDATE "AppUser" 
+        SET "clerkId" = 'system-migrated-user-' || "id"
+        WHERE "clerkId" IS NULL;
+    END IF;
+END $$;

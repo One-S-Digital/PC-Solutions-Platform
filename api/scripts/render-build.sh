@@ -44,36 +44,46 @@ echo "$PRISMA_STATUS_OUTPUT"
 # If there is a failed migration, resolve it as rolled back so deploy can proceed
 if echo "$PRISMA_STATUS_OUTPUT" | grep -Eq "Following migration[s]? have failed:"; then
   echo "⚠️  Detected failed Prisma migration. Attempting automatic resolve..."
-  # Extract candidate migration names from status output
-  CANDIDATES=$(printf "%s\n" "$PRISMA_STATUS_OUTPUT" | grep -Eo '[0-9]{8}_[A-Za-z0-9_]+' | sort -u)
-  FAILED_MIGRATION=""
-  # Prefer a candidate that exists as a migrations directory
-  if [ -n "$CANDIDATES" ]; then
-    while IFS= read -r cand; do
-      if [ -d "prisma/migrations/$cand" ]; then
-        FAILED_MIGRATION="$cand"
-        break
-      fi
-    done <<EOF
-$CANDIDATES
-EOF
-  fi
-  # Fallback to last migration directory if parsing failed
-  if [ -z "$FAILED_MIGRATION" ]; then
-    if [ -d "prisma/migrations" ]; then
-      FAILED_MIGRATION=$(ls -1 prisma/migrations | sort | tail -n 1)
-      echo "ℹ️  Falling back to latest migration directory: $FAILED_MIGRATION"
-    fi
-  fi
-  if [ -n "$FAILED_MIGRATION" ]; then
-    echo "🧹 Marking failed migration as rolled back: $FAILED_MIGRATION"
-    npx prisma migrate resolve --rolled-back "$FAILED_MIGRATION" || {
-      echo "❌ Failed to resolve migration $FAILED_MIGRATION"
+  
+  # Handle specific known failed migration
+  if echo "$PRISMA_STATUS_OUTPUT" | grep -q "20250926_unify_asset_appuser"; then
+    echo "🧹 Resolving known failed migration: 20250926_unify_asset_appuser"
+    npx prisma migrate resolve --rolled-back "20250926_unify_asset_appuser" || {
+      echo "❌ Failed to resolve migration 20250926_unify_asset_appuser"
       exit 1
     }
   else
-    echo "⚠️  Could not determine failed migration name. Please resolve manually."
-    exit 1
+    # Extract candidate migration names from status output
+    CANDIDATES=$(printf "%s\n" "$PRISMA_STATUS_OUTPUT" | grep -Eo '[0-9]{8}_[A-Za-z0-9_]+' | sort -u)
+    FAILED_MIGRATION=""
+    # Prefer a candidate that exists as a migrations directory
+    if [ -n "$CANDIDATES" ]; then
+      while IFS= read -r cand; do
+        if [ -d "prisma/migrations/$cand" ]; then
+          FAILED_MIGRATION="$cand"
+          break
+        fi
+      done <<EOF
+$CANDIDATES
+EOF
+    fi
+    # Fallback to last migration directory if parsing failed
+    if [ -z "$FAILED_MIGRATION" ]; then
+      if [ -d "prisma/migrations" ]; then
+        FAILED_MIGRATION=$(ls -1 prisma/migrations | sort | tail -n 1)
+        echo "ℹ️  Falling back to latest migration directory: $FAILED_MIGRATION"
+      fi
+    fi
+    if [ -n "$FAILED_MIGRATION" ]; then
+      echo "🧹 Marking failed migration as rolled back: $FAILED_MIGRATION"
+      npx prisma migrate resolve --rolled-back "$FAILED_MIGRATION" || {
+        echo "❌ Failed to resolve migration $FAILED_MIGRATION"
+        exit 1
+      }
+    else
+      echo "⚠️  Could not determine failed migration name. Please resolve manually."
+      exit 1
+    fi
   fi
 fi
 
