@@ -19,6 +19,11 @@ import ParentLeadFormPage from './pages/ParentLeadFormPage';
 import RecruitmentPage from './pages/RecruitmentPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
+import FoundationLeadsPage from './pages/foundation/FoundationLeadsPage';
+import FoundationAppointmentsPage from './pages/foundation/FoundationAppointmentsPage';
+import FoundationAnalyticsPage from './pages/foundation/FoundationAnalyticsPage';
+import FoundationOrganisationProfilePage from './pages/foundation/FoundationOrganisationProfilePage';
+import FoundationSupportPage from './pages/foundation/FoundationSupportPage';
 
 function App() {
   console.log('App component rendering');
@@ -95,27 +100,27 @@ function App() {
       } />
       <Route path="/leads" element={
         <ProtectedRoute>
-          <div>Foundation Leads Page</div>
+          <FoundationLeadsPage />
         </ProtectedRoute>
       } />
       <Route path="/orders-appointments" element={
         <ProtectedRoute>
-          <div>Foundation Orders and Appointments Page</div>
+          <FoundationAppointmentsPage />
         </ProtectedRoute>
       } />
       <Route path="/analytics" element={
         <ProtectedRoute>
-          <div>Foundation Analytics Page</div>
+          <FoundationAnalyticsPage />
         </ProtectedRoute>
       } />
       <Route path="/organisation-profile" element={
         <ProtectedRoute>
-          <div>Foundation Organisation Profile Page</div>
+          <FoundationOrganisationProfilePage />
         </ProtectedRoute>
       } />
       <Route path="/support" element={
         <ProtectedRoute>
-          <div>Foundation Support Page</div>
+          <FoundationSupportPage />
         </ProtectedRoute>
       } />
 

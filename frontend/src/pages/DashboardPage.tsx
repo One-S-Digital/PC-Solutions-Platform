@@ -16,7 +16,9 @@ import {
 } from '@heroicons/react/24/outline';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+
 import DashboardTopBar from '../components/ui/DashboardTopBar';
+
 import { apiCall } from '../utils/api';
 
 type FoundationStats = {
@@ -407,6 +409,7 @@ const DashboardPage: React.FC = () => {
       );
     }
 
+
     if (error) {
       return (
         <Card className="border border-rose-100 bg-rose-50 p-6 text-rose-700">
@@ -449,6 +452,7 @@ const DashboardPage: React.FC = () => {
           })}
         </section>
 
+
         <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="space-y-6 xl:col-span-2">
             <Card className="p-6">
@@ -461,7 +465,9 @@ const DashboardPage: React.FC = () => {
                   variant="ghost"
                   size="sm"
                   className="text-swiss-teal hover:text-swiss-mint"
+
                   onClick={() => navigate('/analytics')}
+
                 >
                   View analytics
                 </Button>
@@ -578,7 +584,9 @@ const DashboardPage: React.FC = () => {
                   {
                     label: 'Review Analytics',
                     description: 'Monitor enrolment and staffing performance.',
+
                     onClick: () => navigate('/analytics'),
+
                     icon: ChartBarIcon,
                   },
                 ].map((action) => {
@@ -652,7 +660,9 @@ const DashboardPage: React.FC = () => {
             </Card>
 
             <Card className="p-6">
+
               <h2 className="text-xl font-semibold text-swiss-charcoal">Organisation Snapshot</h2>
+
               <p className="mt-1 text-sm text-gray-500">Key details from your organisation profile.</p>
               <dl className="mt-4 space-y-3 text-sm text-gray-600">
                 <div className="flex items-start justify-between gap-4">
@@ -683,7 +693,9 @@ const DashboardPage: React.FC = () => {
               <Button
                 variant="light"
                 className="mt-4 w-full"
+
                 onClick={() => navigate('/organisation-profile')}
+
               >
                 Manage organisation profile
               </Button>
@@ -717,6 +729,7 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
+
     <div className="min-h-screen bg-page-bg">
       <DashboardTopBar />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -730,6 +743,7 @@ const DashboardPage: React.FC = () => {
         {renderContent()}
       </div>
     </div>
+
   );
 };
 
