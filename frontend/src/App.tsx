@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/AuthComponents';
 import { 
   CogIcon, 
@@ -29,8 +28,7 @@ import StatePoliciesPage from './pages/StatePoliciesPage';
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
+    <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -348,7 +346,6 @@ function App() {
         {/* Catch-all route for SPA routing */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
-    </AuthProvider>
   );
 }
 

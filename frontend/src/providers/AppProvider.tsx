@@ -31,8 +31,8 @@ export function AppProvider({ children }: AppProviderProps) {
   return (
     <ClerkProvider 
       publishableKey={clerkPubKey}
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
+      signInUrl="/login"
+      signUpUrl="/signup"
     >
       {children}
     </ClerkProvider>

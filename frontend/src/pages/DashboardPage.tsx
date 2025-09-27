@@ -11,6 +11,9 @@ const DashboardPage: React.FC = () => {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
 
+  // Debug logging
+  console.log('DashboardPage render:', { user, isLoaded });
+
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
@@ -20,6 +23,7 @@ const DashboardPage: React.FC = () => {
   }
 
   if (!user) {
+    console.log('DashboardPage: No user found, redirecting to login');
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
@@ -30,8 +34,11 @@ const DashboardPage: React.FC = () => {
     );
   }
 
+  console.log('DashboardPage: User found:', user);
+
   // Get user role from Clerk metadata
   const userRole = user?.publicMetadata?.role as string;
+  console.log('DashboardPage: User role:', userRole);
 
   const stats = [
     { name: 'Active Users', value: '1,234', icon: UsersIcon, color: 'text-swiss-mint', bgColor: 'bg-swiss-mint/10', trend: '+5%' },
@@ -63,7 +70,7 @@ const DashboardPage: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-swiss-charcoal">
-          Welcome, {user.fullName?.split(' ')[0] || user.emailAddresses[0]?.emailAddress || 'User'}!
+          Welcome, {user?.fullName?.split(' ')[0] || user?.emailAddresses?.[0]?.emailAddress || 'User'}!
         </h1>
         <p className="text-gray-500 mt-1">Overview of your {APP_NAME} dashboard</p>
       </div>
