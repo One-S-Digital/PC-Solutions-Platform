@@ -119,23 +119,40 @@ export class ClerkAuthGuard implements CanActivate {
 
       // Populate request.context (user role from AppUser), so RolesGuard can authorize
       try {
-        let appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
+        let appUser = await this.prisma.appUser.findUnique({ where: { clerkUserId: payload.sub } });
         if (!appUser) {
           if (this.authDebug) {
-             
+
             console.log('🔐 Auth Debug: AppUser missing, creating baseline user with PARENT role', { userId: payload.sub });
           }
           // Create a baseline user; admins can later promote via role management
           appUser = await this.prisma.appUser.create({
-            data: { clerkId: payload.sub, role: 'PARENT' },
+            data: { clerkUserId: payload.sub, role: 'PARENT' },
           });
         }
+        const domainUser = await this.prisma.user.upsert({
+          where: { clerkId: payload.sub },
+          create: {
+            id: appUser.id,
+            clerkId: payload.sub,
+            email: `${payload.sub}@pending.local`,
+            firstName: 'Unknown',
+            lastName: 'User',
+            role: appUser.role,
+          },
+          update: {
+            role: appUser.role,
+          },
+        });
+
         request.context = {
-          userId: payload.sub,
+          userId: domainUser.id,
           role: appUser.role,
           appUserId: appUser.id,
-          clerkUserId: payload.sub,
         };
+        if (payload.sub) {
+          (request.context as any).clerkUserId = payload.sub;
+        }
         if (this.authDebug) {
            
           console.log('🔐 Auth Debug: request.context populated', request.context);
