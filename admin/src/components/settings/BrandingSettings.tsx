@@ -228,7 +228,7 @@ const BrandingSettings: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
+        </Card>
 
         {/* Admin Dashboard Colors */}
         <Card className="p-6">
@@ -306,7 +306,7 @@ const BrandingSettings: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
+        </Card>
 
         {/* Logos & Assets */}
         <Card className="p-6">
@@ -416,7 +416,7 @@ const BrandingSettings: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )
