@@ -134,17 +134,15 @@ export class ClerkWebhookController {
     const lastName = data.last_name || 'User';
 
     const appUser = await this.prisma.appUser.upsert({
-      where: { clerkId },
+      where: { clerkUserId: clerkId },
       create: {
-        clerkId,
-        email: primaryEmail,
+        clerkUserId: clerkId,
         role: validRole as UserRole,
       },
       update: {
         role: validRole as UserRole,
-        email: primaryEmail,
       },
-      select: { id: true, role: true },
+      select: { id: true, role: true, clerkUserId: true },
     });
 
     await this.prisma.user.upsert({
@@ -195,7 +193,7 @@ export class ClerkWebhookController {
 
     // Get user from our database (source of truth)
     const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkId },
+      where: { clerkUserId: clerkId },
     });
 
     if (!appUser) {
@@ -203,11 +201,6 @@ export class ClerkWebhookController {
       await this.handleUserCreated(data);
       return;
     }
-
-    await this.prisma.appUser.update({
-      where: { id: appUser.id },
-      data: { email: primaryEmail },
-    });
 
     await this.prisma.user.update({
       where: { clerkId },
@@ -261,7 +254,7 @@ export class ClerkWebhookController {
     // Soft delete or hard delete based on your requirements
     // For now, we'll keep the user but mark as deleted
     const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkId },
+      where: { clerkUserId: clerkId },
     });
     
     if (appUser) {

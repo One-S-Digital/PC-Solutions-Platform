@@ -206,6 +206,81 @@ export class DashboardController {
     };
   }
 
+  @Get('foundation/appointments')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Get service requests and orders relevant to the foundation' })
+  @ApiResponse({ status: 200, description: 'Appointments retrieved successfully' })
+  async getFoundationAppointments(@Request() req) {
+    const userId = req.context.userId;
+
+    const userOrganizations = await this.prisma.userOrganization.findMany({
+      where: { userId },
+      include: { organization: true },
+    });
+
+    const organizationIds = userOrganizations.map((uo) => uo.organizationId);
+
+    if (organizationIds.length === 0) {
+      return {
+        success: true,
+        data: {
+          serviceRequests: [],
+          orders: [],
+        },
+      };
+    }
+
+    const [serviceRequests, orders] = await Promise.all([
+      this.prisma.serviceRequest.findMany({
+        where: {
+          organizationId: { in: organizationIds },
+        },
+        include: {
+          organization: true,
+          service: {
+            include: {
+              provider: {
+                include: {
+                  organization: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { scheduledAt: 'asc' },
+          { createdAt: 'desc' },
+        ],
+      }),
+      this.prisma.order.findMany({
+        where: {
+          organizationId: { in: organizationIds },
+        },
+        include: {
+          organization: true,
+          items: {
+            include: {
+              product: {
+                include: {
+                  supplier: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        serviceRequests,
+        orders,
+      },
+    };
+  }
+
   @Get('educator/stats')
   @Roles(UserRole.EDUCATOR)
   @ApiOperation({ summary: 'Get educator dashboard stats' })

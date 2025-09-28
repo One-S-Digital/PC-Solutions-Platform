@@ -10,7 +10,7 @@ export interface CreateAssetData {
   storageKey: string;
   mimeType: string;
   size: number;
-  uploadedById: string;
+  uploadedBy: string;
 }
 
 export interface GetAssetsOptions {
@@ -46,14 +46,14 @@ export class UploadService {
           storageKey: data.storageKey,
           mimeType: data.mimeType,
           size: data.size,
-          uploadedById: data.uploadedById,
+          uploadedBy: data.uploadedBy,
         },
         include: {
           uploader: {
             select: {
               id: true,
-              email: true,
               clerkId: true,
+              email: true,
               role: true,
             },
           },
@@ -78,8 +78,8 @@ export class UploadService {
         uploader: {
           select: {
             id: true,
-            email: true,
             clerkId: true,
+            email: true,
             role: true,
           },
         },
@@ -91,7 +91,7 @@ export class UploadService {
     }
 
     // Check ownership (user can only access their own assets unless admin)
-    if (asset.uploadedById !== appUserId) {
+    if (asset.uploadedBy !== appUserId) {
       // In a real implementation, you might want to check if user is admin here
       throw new ForbiddenException('Access denied');
     }
@@ -106,7 +106,7 @@ export class UploadService {
     const { kind, limit = 50, offset = 0 } = options;
 
     const where = {
-      uploadedById: appUserId,
+      uploadedBy: appUserId,
       ...(kind && { kind }),
     };
 
@@ -119,8 +119,8 @@ export class UploadService {
         uploader: {
           select: {
             id: true,
-            email: true,
             clerkId: true,
+            email: true,
             role: true,
           },
         },
@@ -165,7 +165,7 @@ export class UploadService {
       data: {
         ...updates,
         // Don't allow changing uploadedBy
-        uploadedById: undefined,
+        uploadedBy: undefined,
       },
     });
 
@@ -179,13 +179,13 @@ export class UploadService {
   async getAssetStats(appUserId: string) {
     const stats = await this.prisma.asset.groupBy({
       by: ['kind'],
-      where: { uploadedById: appUserId },
+      where: { uploadedBy: appUserId },
       _count: { id: true },
       _sum: { size: true },
     });
 
     const totalSize = await this.prisma.asset.aggregate({
-      where: { uploadedById: appUserId },
+      where: { uploadedBy: appUserId },
       _sum: { size: true },
       _count: { id: true },
     });
@@ -271,10 +271,10 @@ export class UploadService {
   /**
    * Upload file and create asset record
    */
-  async uploadFile(file: Express.Multer.File, uploadedById: string, kind: AssetKind) {
+  async uploadFile(file: Express.Multer.File, uploadedBy: string, kind: AssetKind) {
     try {
       // Upload to R2
-      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedById);
+      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedBy);
 
       // Create asset record
       const asset = await this.createAsset({
@@ -284,7 +284,7 @@ export class UploadService {
         storageKey: uploadResult.key,
         mimeType: file.mimetype,
         size: file.size,
-        uploadedById,
+        uploadedBy,
       });
 
       return {

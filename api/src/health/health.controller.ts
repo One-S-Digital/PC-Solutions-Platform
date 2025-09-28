@@ -139,7 +139,7 @@ export class HealthController {
         this.prisma.appUser.findMany({
           take: 5,
           orderBy: { createdAt: 'desc' },
-          select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
+          select: { id: true, clerkUserId: true, role: true, createdAt: true },
         }).catch(() => []),
         this.prisma.frontendSettings.findFirst({
           include: {
@@ -165,7 +165,10 @@ export class HealthController {
           },
           samples: {
             users,
-            appUsers,
+            appUsers: appUsers.map(appUser => ({
+              ...appUser,
+              clerkId: (appUser as any).clerkUserId,
+            })),
             frontendSettings: settings
               ? {
                   id: settings.id,
@@ -231,11 +234,15 @@ export class HealthController {
     const take = Math.min(Math.max(parseInt(limit || '20', 10) || 20, 1), 100);
     // @ts-ignore - model exists
     const appUsers = await this.prisma.appUser.findMany({
-      where: clerkId ? { clerkId } : {},
+      where: clerkId ? { clerkUserId: clerkId } : {},
       take,
       orderBy: { createdAt: 'desc' },
-      select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
+      select: { id: true, clerkUserId: true, role: true, createdAt: true },
     });
-    return { success: true, data: appUsers, count: appUsers.length, timestamp: new Date().toISOString() };
+    const transformed = appUsers.map(user => ({
+      ...user,
+      clerkId: user.clerkUserId,
+    }));
+    return { success: true, data: transformed, count: transformed.length, timestamp: new Date().toISOString() };
   }
 }

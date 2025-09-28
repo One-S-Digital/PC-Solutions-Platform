@@ -35,14 +35,14 @@ export class RoleContextMiddleware implements NestMiddleware {
     try {
       // Fetch user from AppUser table
       let appUser = await this.prisma.appUser.findUnique({
-        where: { clerkId: clerkUserId },
+        where: { clerkUserId },
       });
 
       if (!appUser) {
         // Self-heal: create baseline user
         appUser = await this.prisma.appUser.create({
           data: {
-            clerkId: clerkUserId,
+            clerkUserId,
             role: 'PARENT', // Safe default
           },
         });
@@ -56,12 +56,31 @@ export class RoleContextMiddleware implements NestMiddleware {
         });
       }
 
+      // Ensure domain user exists
+      const userRecord = await this.prisma.user.upsert({
+        where: { clerkId: clerkUserId },
+        create: {
+          id: appUser.id,
+          clerkId: clerkUserId,
+          email: `${clerkUserId}@pending.local`,
+          firstName: 'Unknown',
+          lastName: 'User',
+          role: appUser.role,
+        },
+        update: {
+          role: appUser.role,
+        },
+      });
+
       // Attach context to request
       req.context = {
-        userId: clerkUserId,
+        userId: userRecord.id,
         role: appUser.role,
         appUserId: appUser.id,
       };
+      if (clerkUserId) {
+        (req.context as any).clerkUserId = clerkUserId;
+      }
 
       next();
     } catch (error) {
