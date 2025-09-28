@@ -6,6 +6,11 @@ import Card from '../components/ui/Card';
 import { useTranslation } from 'react-i18next';
 import { APP_NAME } from '../constants';
 import { FoundationDashboard } from '../components/dashboard/FoundationDashboard';
+import { SupplierDashboard } from '../components/dashboard/SupplierDashboard';
+import { ServiceProviderDashboard } from '../components/dashboard/ServiceProviderDashboard';
+import { EducatorDashboard } from '../components/dashboard/EducatorDashboard';
+import { ParentDashboard } from '../components/dashboard/ParentDashboard';
+import { AdminDashboard } from '../components/dashboard/AdminDashboard';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 
 const DashboardPage: React.FC = () => {
@@ -41,16 +46,16 @@ const DashboardPage: React.FC = () => {
       case 'FOUNDATION':
         return <FoundationDashboard />;
       case 'PRODUCT_SUPPLIER':
-        return <div>Supplier Dashboard - Coming Soon</div>;
+        return <SupplierDashboard />;
       case 'SERVICE_PROVIDER':
-        return <div>Service Provider Dashboard - Coming Soon</div>;
+        return <ServiceProviderDashboard />;
       case 'EDUCATOR':
-        return <div>Educator Dashboard - Coming Soon</div>;
+        return <EducatorDashboard />;
       case 'PARENT':
-        return <div>Parent Dashboard - Coming Soon</div>;
+        return <ParentDashboard />;
       case 'ADMIN':
       case 'SUPER_ADMIN':
-        return <div>Admin Dashboard - Coming Soon</div>;
+        return <AdminDashboard />;
       default:
         return <FoundationDashboard />;
     }

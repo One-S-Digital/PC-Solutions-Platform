@@ -9,9 +9,11 @@ import enSidebar from './locales/en/sidebar.json';
 import frCommon from './locales/fr/common.json';
 import frAuth from './locales/fr/auth.json';
 import frDashboard from './locales/fr/dashboard.json';
+import frSidebar from './locales/fr/sidebar.json';
 import deCommon from './locales/de/common.json';
 import deAuth from './locales/de/auth.json';
 import deDashboard from './locales/de/dashboard.json';
+import deSidebar from './locales/de/sidebar.json';
 import enGated from './locales/en/gated.json';
 import frGated from './locales/fr/gated.json';
 import deGated from './locales/de/gated.json';
@@ -43,6 +45,7 @@ i18n
         common: frCommon,
         auth: frAuth,
         dashboard: frDashboard,
+        sidebar: frSidebar,
         gated: frGated,
         antivirus: frAntivirus,
       },
@@ -50,6 +53,7 @@ i18n
         common: deCommon,
         auth: deAuth,
         dashboard: deDashboard,
+        sidebar: deSidebar,
         gated: deGated,
         antivirus: deAntivirus,
       },
