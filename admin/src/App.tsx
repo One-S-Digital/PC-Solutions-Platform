@@ -45,19 +45,53 @@ function App() {
           }
         >
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="organizations" element={<OrganizationsPage />} />
+          
+          {/* Marketplace routes */}
           <Route path="products" element={<ProductsPage />} />
           <Route path="services" element={<ServicesPage />} />
+          
+          {/* Recruitment routes */}
           <Route path="job-listings" element={<JobListingsPage />} />
           <Route path="candidates" element={<CandidatesPage />} />
-          <Route path="parent-leads" element={<ParentLeadsPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="content" element={<ContentPage />} />
+          
+          {/* E-Learning route */}
+          <Route path="e-learning" element={<ContentPage />} />
+          
+          {/* Messages route */}
           <Route path="messaging" element={<MessagingPage />} />
+          
+          {/* Users routes */}
+          <Route path="users" element={<UsersPage />} />
+          <Route path="admins" element={<UsersPage />} />
+          <Route path="organizations" element={<OrganizationsPage />} />
+          
+          {/* Suppliers and Providers routes */}
+          <Route path="suppliers" element={<ProductsPage />} />
+          <Route path="providers" element={<ServicesPage />} />
+          
+          {/* Parents route */}
+          <Route path="parent-leads" element={<ParentLeadsPage />} />
+          
+          {/* Content routes */}
+          <Route path="content" element={<ContentPage />} />
+          <Route path="content/e-learning" element={<ContentPage />} />
+          <Route path="content/hr" element={<ContentPage />} />
+          <Route path="content/policies" element={<ContentPage />} />
+          
+          {/* System Monitoring route */}
           <Route path="system" element={<SystemMonitorPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          
+          {/* Partners route */}
+          <Route path="partners" element={<OrganizationsPage />} />
+          
+          {/* Platform Settings route */}
+          <Route path="platform-settings" element={<SettingsPage />} />
+          
+          {/* Design System route */}
           <Route path="design-system" element={<DesignSystemPage />} />
+          
+          {/* Settings route */}
+          <Route path="settings" element={<SettingsPage />} />
 
           <Route index element={<Navigate to="/dashboard" />} />
         </Route>
