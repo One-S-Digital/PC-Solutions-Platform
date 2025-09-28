@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import enCommon from './locales/en/common.json';
 import enAuth from './locales/en/auth.json';
 import enDashboard from './locales/en/dashboard.json';
+import enSidebar from './locales/en/sidebar.json';
 import frCommon from './locales/fr/common.json';
 import frAuth from './locales/fr/auth.json';
 import frDashboard from './locales/fr/dashboard.json';
@@ -22,7 +23,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    ns: ['common', 'auth', 'dashboard', 'gated', 'antivirus'],
+    ns: ['common', 'auth', 'dashboard', 'sidebar', 'gated', 'antivirus'],
     defaultNS: 'common',
     interpolation: { 
       escapeValue: false 
@@ -34,6 +35,7 @@ i18n
         common: enCommon,
         auth: enAuth,
         dashboard: enDashboard,
+        sidebar: enSidebar,
         gated: enGated,
         antivirus: enAntivirus,
       },
