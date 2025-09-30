@@ -41,6 +41,10 @@ const navigation = [
   { name: 'Content', href: '/content', icon: FileText },
   { name: 'Messaging', href: '/messaging', icon: MessageSquare },
   { name: 'System Monitor', href: '/system', icon: Monitor },
+  { name: 'Content Management', href: '/content-management', icon: FileText, superAdmin: true },
+  { name: 'Advanced Monitoring', href: '/advanced-monitoring', icon: Monitor, superAdmin: true },
+  { name: 'Platform Settings', href: '/platform-settings', icon: Settings, superAdmin: true },
+  { name: 'Audit & Compliance', href: '/audit-compliance', icon: Shield, superAdmin: true },
   { name: 'Design System', href: '/design-system', icon: Palette },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
@@ -76,6 +80,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
         {navigation.map((item) => {
           const isActive = location.pathname === item.href
+          // TODO: Add proper RBAC check for superAdmin items
+          // For now, show all items but mark super-admin ones
+          const isSuperAdmin = item.superAdmin
           return (
             <NavLink
               key={item.name}
@@ -84,7 +91,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 'group flex items-center px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
                 isActive
                   ? 'bg-swiss-mint/10 text-swiss-mint font-medium'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal',
+                isSuperAdmin && 'border-l-2 border-swiss-mint/30'
               )}
             >
               <item.icon
@@ -94,6 +102,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 )}
               />
               {item.name}
+              {isSuperAdmin && (
+                <span className="ml-auto text-xs text-swiss-mint font-medium">SUPER</span>
+              )}
             </NavLink>
           )
         })}

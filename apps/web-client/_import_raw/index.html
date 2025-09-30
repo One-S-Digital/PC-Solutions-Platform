@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" id="html-tag">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title> {/* Title will be set dynamically by React */}
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'swiss-mint': '#48CFAE',
+            'swiss-sand': '#F3D29E',
+            'swiss-coral': '#FE6D73',
+            'swiss-teal': '#227C9D',
+            'swiss-light-gray': '#F3F4F6', // Lighter gray
+            'swiss-charcoal': '#2B2B2B',
+            'page-bg': '#F9FAFB', // Very light background for main content area
+          },
+          fontFamily: {
+            sans: ['Nunito', 'Inter', 'sans-serif'], // Prioritize Nunito
+          },
+          borderRadius: {
+            'card': '0.75rem', // Default 12px
+            'button': '0.5rem', // Default 8px
+          },
+          boxShadow: {
+            'soft': '0 4px 12px 0 rgba(0, 0, 0, 0.07)',
+            'interactive': '0 2px 8px 0 rgba(0, 0, 0, 0.05)',
+            'minimal': '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+          },
+          gridTemplateColumns: {
+            'form-layout': '3fr 7fr', // For settings page: labels 30%, inputs 70%
+          }
+        },
+      },
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #227C9D; /* swiss-teal */
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: #F3F4F6; /* new swiss-light-gray */
+    }
+    body {
+      font-family: 'Nunito', 'Inter', sans-serif;
+      background-color: #F3F4F6; /* Base background for the entire page */
+    }
+    /* Hide number input arrows */
+    .no-spinners::-webkit-outer-spin-button,
+    .no-spinners::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .no-spinners {
+      -moz-appearance: textfield;
+    }
+    /* Global styles for settings form layout */
+    .form-label {
+        @apply text-sm font-medium text-gray-700;
+    }
+    .form-input-container {
+        @apply mt-1 md:mt-0; /* Stack on mobile, align on desktop */
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.2",
+    "react-i18next": "https://esm.sh/react-i18next@^15.5.3",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@heroicons/react/": "https://esm.sh/@heroicons/react@^2.2.0/",
+    "i18next": "https://esm.sh/i18next@^25.2.1",
+    "i18next-http-backend": "https://esm.sh/i18next-http-backend@^3.0.2",
+    "i18next-browser-languagedetector": "https://esm.sh/i18next-browser-languagedetector@^8.2.0"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

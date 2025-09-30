@@ -1,130 +1,389 @@
-# PC-Solutions Platform
+# PC Solutions Monorepo
 
-A modern, secure, and scalable platform for childcare solutions in Switzerland, built from the ground up with TypeScript, React, NestJS, and PostgreSQL.
+A comprehensive daycare management platform built with modern web technologies.
 
-## Architecture
+## 🏗️ Architecture
 
-This is a monorepo containing three main applications:
+This monorepo contains multiple applications and shared packages:
 
-- **Frontend** (`apps/frontend`): Main user-facing application for all non-admin roles (Parents, Educators, Foundations, etc.)
-- **Admin** (`apps/admin`): Protected admin dashboard for administrative users
-- **API** (`apps/api`): Centralized NestJS backend API server
+### Applications
+- **`apps/web-client`** - Main user-facing application (React + Vite + TypeScript)
+- **`admin/`** - Admin dashboard for platform management
+- **`api/`** - Backend API (NestJS + Prisma + PostgreSQL)
 
-## Tech Stack
+### Packages
+- **`packages/api-client`** - Typed API client with authentication
+- **`packages/api-types`** - Shared TypeScript types
+- **`packages/ui`** - Shared UI components
+- **`packages/typescript-config`** - Shared TypeScript configurations
+- **`packages/eslint-config`** - Shared ESLint configurations
 
-- **Monorepo**: Turborepo + pnpm
-- **Frontend**: React + Vite + TypeScript + Tailwind CSS
-- **Backend**: NestJS + TypeScript + Prisma + PostgreSQL
-- **Authentication**: Clerk with JWT validation and RBAC
-- **Storage**: Cloudflare R2
-- **Deployment**: Docker + Render
-
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
-
-- Node.js 18+
-- pnpm 9+
+- Node.js 18+ 
+- pnpm 8+
 - PostgreSQL 14+
-- Clerk account (for authentication)
 
 ### Installation
+```bash
+# Install dependencies
+pnpm install
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
 
-3. Set up environment variables:
-   - Copy `.env.example` files in each app directory
-   - See [Environment Setup Guide](./ENVIRONMENT_SETUP.md) for detailed instructions
-   - See [Authentication Setup Guide](./AUTHENTICATION_SETUP.md) for Clerk configuration
-
-4. Set up the database:
-   ```bash
-   cd apps/api
-   pnpm prisma migrate dev
-   pnpm prisma generate
-   ```
-
-5. Start the development servers:
-   ```bash
-   pnpm dev
-   ```
-
-This will start all three applications:
-- Frontend: http://localhost:5173
-- Admin: http://localhost:5174
-- API: http://localhost:3000
-
-## Authentication System
-
-The platform uses Clerk for authentication with comprehensive role-based access control:
-
-- **User Roles**: SUPER_ADMIN, ADMIN, FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, EDUCATOR, PARENT
-- **JWT Validation**: Secure token validation on the backend
-- **RBAC**: Role-based access control for all endpoints
-- **User Sync**: Automatic user synchronization from Clerk
-
-See [Authentication Setup Guide](./AUTHENTICATION_SETUP.md) for detailed setup instructions.
-
-## Available Scripts
-
-- `pnpm dev` - Start all applications in development mode
-- `pnpm build` - Build all applications
-- `pnpm lint` - Lint all applications
-- `pnpm lint:fix` - Fix linting issues
-- `pnpm type-check` - Run TypeScript type checking
-- `pnpm test` - Run all tests
-- `pnpm test:watch` - Run tests in watch mode
-- `pnpm clean` - Clean all build artifacts
-
-## Project Structure
-
-```
-├── apps/
-│   ├── frontend/          # Main React application
-│   ├── admin/             # Admin dashboard
-│   └── api/               # NestJS backend
-├── packages/
-│   ├── eslint-config/     # Shared ESLint configuration
-│   ├── typescript-config/ # Shared TypeScript configuration
-│   └── ui/                # Shared UI components and types
-├── docs/                  # Documentation
-├── ENVIRONMENT_SETUP.md   # Environment variables guide
-├── AUTHENTICATION_SETUP.md # Authentication setup guide
-└── render.yaml           # Render deployment configuration
+# Start development servers
+pnpm dev
 ```
 
-## Development Guidelines
+### Development Commands
+```bash
+# Start all applications
+pnpm dev
 
-- Follow TypeScript strict mode
-- Use ESLint and Prettier for code formatting
-- Write tests for all new features
-- Follow the established architecture patterns
-- Use conventional commits for git messages
-- Implement proper error handling and logging
-- Use the shared UI package for consistent components
+# Start specific application
+pnpm -F web-client dev
+pnpm -F admin dev
+pnpm -F api dev
 
-## Deployment
+# Build all applications
+pnpm build
 
-The platform is designed for deployment on Render with the following services:
+# Run tests
+pnpm test
 
-- **API Service**: NestJS backend with PostgreSQL database
-- **Frontend Service**: React application
-- **Admin Service**: Admin dashboard
+# Run linting
+pnpm lint
+```
 
-See [Environment Setup Guide](./ENVIRONMENT_SETUP.md) for production deployment instructions.
+## 📱 Applications
 
-## Documentation
+### Web Client (`apps/web-client`)
+The main user-facing application for daycare centers, parents, and service providers.
 
-- [Environment Setup Guide](./ENVIRONMENT_SETUP.md) - Complete guide for environment variables
-- [Authentication Setup Guide](./AUTHENTICATION_SETUP.md) - Clerk authentication setup
-- [Rebuild Specification](./docs/rebuild-specification.md) - Technical requirements
-- [UI Guide](./docs/ui-guide.md) - User interface specifications
-- [i18n Specification](./docs/i18n-specification.md) - Internationalization guide
+**Features:**
+- Role-based dashboards
+- Marketplace for products and services
+- Recruitment and job management
+- Real-time messaging
+- User settings and organization management
 
-## License
+**Tech Stack:**
+- React 18 + TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- React Router for navigation
+- TanStack Query for data fetching
+- Clerk for authentication
 
-Private - All rights reserved
+**Routes:**
+- `/login` - Authentication
+- `/dashboard` - Role-based dashboard
+- `/marketplace` - Products and services
+- `/recruitment` - Job listings and candidates
+- `/messages` - Real-time messaging
+- `/settings` - User and organization settings
+- `/pricing` - Subscription plans
+
+### Admin Dashboard (`admin/`)
+Administrative interface for platform management and super-admin features.
+
+**Features:**
+- User and organization management
+- Content moderation
+- System monitoring
+- Platform settings
+- Audit and compliance
+- Analytics and reporting
+
+**Tech Stack:**
+- React 18 + TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- React Router for navigation
+- TanStack Query for data fetching
+
+**Routes:**
+- `/dashboard` - Admin overview
+- `/users` - User management
+- `/organizations` - Organization management
+- `/content-management` - Content moderation (Super Admin)
+- `/advanced-monitoring` - System monitoring (Super Admin)
+- `/platform-settings` - Platform configuration (Super Admin)
+- `/audit-compliance` - Audit logs and compliance (Super Admin)
+
+### API (`api/`)
+Backend API providing REST endpoints and business logic.
+
+**Features:**
+- User authentication and authorization
+- Organization management
+- Marketplace functionality
+- Recruitment system
+- Messaging system
+- File upload and management
+- Analytics and reporting
+
+**Tech Stack:**
+- NestJS framework
+- Prisma ORM
+- PostgreSQL database
+- Swagger for API documentation
+- JWT authentication
+- File upload handling
+
+## 🔧 Configuration
+
+### Environment Variables
+
+#### Web Client (`apps/web-client/.env.local`)
+```env
+VITE_API_URL=http://localhost:3000
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+VITE_SKIP_AUTH=false
+```
+
+#### Admin (`admin/.env.local`)
+```env
+VITE_API_URL=http://localhost:3000
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+```
+
+#### API (`api/.env`)
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/pc_solutions
+JWT_SECRET=your_jwt_secret
+CLERK_SECRET_KEY=your_clerk_secret
+PORT=3000
+```
+
+### Database Setup
+```bash
+# Generate Prisma client
+cd api
+pnpm prisma generate
+
+# Run database migrations
+pnpm prisma migrate dev
+
+# Seed database (optional)
+pnpm prisma db seed
+```
+
+## 🎨 Design System
+
+The platform uses a consistent design system with Swiss-themed colors:
+
+- **Swiss Mint** (`#00C896`) - Primary brand color
+- **Swiss Teal** (`#008B8B`) - Secondary color
+- **Swiss Sand** (`#F4E4C1`) - Accent color
+- **Swiss Coral** (`#FF6B6B`) - Alert color
+- **Swiss Charcoal** (`#2C3E50`) - Text color
+
+## 🔐 Authentication
+
+The platform uses Clerk for authentication with role-based access control:
+
+### User Roles
+- **SUPER_ADMIN** - Full platform access
+- **ADMIN** - Administrative access
+- **FOUNDATION** - Daycare center management
+- **PRODUCT_SUPPLIER** - Product marketplace
+- **SERVICE_PROVIDER** - Service marketplace
+- **EDUCATOR** - Job board and applications
+- **PARENT** - Parent portal access
+
+### Authentication Flow
+1. User signs in with Clerk
+2. JWT token obtained from Clerk
+3. Token sent to API for user resolution
+4. User role and permissions loaded
+5. Role-based UI and access control applied
+
+## 📊 Data Flow
+
+### API Client Architecture
+- **Typed API Client** (`packages/api-client`) - HTTP client with authentication
+- **Data Adapters** - Transform API DTOs to UI models
+- **React Query Hooks** - Data fetching and caching
+- **Component State** - UI state management
+
+### Data Sources
+- **PostgreSQL** - Primary database
+- **Clerk** - User authentication and profiles
+- **File Storage** - Document and image uploads
+- **External APIs** - Third-party integrations
+
+## 🧪 Testing
+
+### Test Structure
+- **Unit Tests** - Component and utility testing
+- **Integration Tests** - API and data flow testing
+- **E2E Tests** - Full user journey testing
+- **Visual Regression** - UI consistency testing
+
+### Running Tests
+```bash
+# Run all tests
+pnpm test
+
+# Run specific test suite
+pnpm -F web-client test
+pnpm -F admin test
+pnpm -F api test
+
+# Run E2E tests
+pnpm e2e
+
+# Run visual regression tests
+pnpm test:visual
+```
+
+## 🚀 Deployment
+
+### Production Build
+```bash
+# Build all applications
+pnpm build
+
+# Build specific application
+pnpm -F web-client build
+pnpm -F admin build
+pnpm -F api build
+```
+
+### Docker Deployment
+```bash
+# Build Docker images
+docker-compose build
+
+# Start production environment
+docker-compose up -d
+```
+
+### Environment-Specific Configuration
+- **Development** - Local development with hot reload
+- **Staging** - Pre-production testing environment
+- **Production** - Live production environment
+
+## 📚 Documentation
+
+### Key Documents
+- **`docs/design-inventory.md`** - Design system inventory
+- **`docs/transplant-plan.md`** - Implementation plan
+- **`docs/admin-feature-gap.md`** - Admin feature analysis
+- **`docs/ui-data-map.md`** - UI data mapping documentation
+
+### API Documentation
+- **Swagger UI** - Available at `/api/docs` when API is running
+- **OpenAPI Spec** - Generated from NestJS decorators
+- **Type Definitions** - Available in `packages/api-types`
+
+## 🔧 Development Guidelines
+
+### Code Style
+- **TypeScript** - Strict type checking enabled
+- **ESLint** - Code quality and consistency
+- **Prettier** - Code formatting
+- **Husky** - Git hooks for quality gates
+
+### Git Workflow
+- **Feature Branches** - Develop features in isolated branches
+- **Pull Requests** - Code review and testing
+- **Conventional Commits** - Standardized commit messages
+- **Semantic Versioning** - Version management
+
+### Performance Guidelines
+- **Code Splitting** - Lazy load routes and components
+- **Image Optimization** - Optimize and lazy load images
+- **Bundle Analysis** - Monitor bundle sizes
+- **Caching Strategy** - Implement effective caching
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Build Errors
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules
+pnpm install
+
+# Clear build cache
+pnpm clean
+pnpm build
+```
+
+#### Database Issues
+```bash
+# Reset database
+cd api
+pnpm prisma migrate reset
+
+# Regenerate Prisma client
+pnpm prisma generate
+```
+
+#### Authentication Issues
+- Verify Clerk configuration
+- Check environment variables
+- Ensure JWT tokens are valid
+- Verify API endpoints are accessible
+
+### Debug Mode
+```bash
+# Enable debug logging
+DEBUG=* pnpm dev
+
+# Enable specific debug namespaces
+DEBUG=api:*,web-client:* pnpm dev
+```
+
+## 🤝 Contributing
+
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
+
+### Code Review Process
+1. Automated checks (linting, testing)
+2. Code review by team members
+3. Manual testing in staging
+4. Approval and merge
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+### Getting Help
+- **Documentation** - Check this README and docs folder
+- **Issues** - Create GitHub issues for bugs
+- **Discussions** - Use GitHub discussions for questions
+- **Email** - Contact the development team
+
+### Reporting Bugs
+When reporting bugs, please include:
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Environment details
+- Screenshots or logs
+
+### Feature Requests
+When requesting features, please include:
+- Use case description
+- Expected functionality
+- Potential implementation approach
+- Priority level
+
+---
+
+**Built with ❤️ for the daycare community**

@@ -1,0 +1,4 @@
+{
+  "assets": ["public/img/**", "public/svg/**", "public/fonts/**"],
+  "styles": ["src/styles/imported/**"]
+}
