@@ -1,10 +1,10 @@
-# PC Solutions Monorepo
+# PC Solutions Platform
 
 A comprehensive daycare management platform built with modern web technologies.
 
 ## 🏗️ Architecture
 
-This monorepo contains multiple applications and shared packages:
+This monorepo contains:
 
 ### Applications
 - **`apps/web-client`** - Main user-facing application (React + Vite + TypeScript)
@@ -21,7 +21,7 @@ This monorepo contains multiple applications and shared packages:
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - pnpm 8+
 - PostgreSQL 14+
 
@@ -78,15 +78,6 @@ The main user-facing application for daycare centers, parents, and service provi
 - TanStack Query for data fetching
 - Clerk for authentication
 
-**Routes:**
-- `/login` - Authentication
-- `/dashboard` - Role-based dashboard
-- `/marketplace` - Products and services
-- `/recruitment` - Job listings and candidates
-- `/messages` - Real-time messaging
-- `/settings` - User and organization settings
-- `/pricing` - Subscription plans
-
 ### Admin Dashboard (`admin/`)
 Administrative interface for platform management and super-admin features.
 
@@ -104,15 +95,6 @@ Administrative interface for platform management and super-admin features.
 - Tailwind CSS for styling
 - React Router for navigation
 - TanStack Query for data fetching
-
-**Routes:**
-- `/dashboard` - Admin overview
-- `/users` - User management
-- `/organizations` - Organization management
-- `/content-management` - Content moderation (Super Admin)
-- `/advanced-monitoring` - System monitoring (Super Admin)
-- `/platform-settings` - Platform configuration (Super Admin)
-- `/audit-compliance` - Audit logs and compliance (Super Admin)
 
 ### API (`api/`)
 Backend API providing REST endpoints and business logic.
@@ -252,15 +234,6 @@ pnpm build
 pnpm -F web-client build
 pnpm -F admin build
 pnpm -F api build
-```
-
-### Docker Deployment
-```bash
-# Build Docker images
-docker-compose build
-
-# Start production environment
-docker-compose up -d
 ```
 
 ### Environment-Specific Configuration
