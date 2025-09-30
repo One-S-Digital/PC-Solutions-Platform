@@ -22,7 +22,7 @@ export class ApiClient {
     // Request interceptor to add auth token
     this.client.interceptors.request.use(
       (config) => {
-        const token = config.getAuthToken?.()
+        const token = (config as any).getAuthToken?.()
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
@@ -83,7 +83,7 @@ export class ApiClient {
 
 // Create default client instance
 export const apiClient = new ApiClient({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000/api',
   getAuthToken: () => {
     // This will be set by the auth hook
     return null
@@ -93,7 +93,7 @@ export const apiClient = new ApiClient({
 // Function to create a new client instance with auth token
 export const createApiClient = (getAuthToken: () => string | null) => {
   return new ApiClient({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+    baseURL: (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000/api',
     getAuthToken,
   })
 }

@@ -65,45 +65,48 @@
   },
   {
     "id": "supplier",
-    "name": "Product Supplier",
-    "emoji": "📦",
+    "name": "Suppliers",
+    "emoji": "💼",
     "role": "PRODUCT_SUPPLIER",
     "price": {
-      "monthly": 199,
-      "annually": 2149
+      "monthly": 450,
+      "annually": 5000
     },
-    "monthlyPriceText": "💰 CHF 199 / month",
-    "annualPlanText": "CHF 2,149 / year (save 10%)",
-    "tagline": "Perfect for: Product suppliers who want to reach Swiss daycares directly.",
-    "description": "✨ List your products, manage orders, and grow your business in the Swiss childcare market.",
+    "monthlyPriceText": "CHF 450 / month",
+    "annualPlanText": "CHF 5'000 / year (save 10%)",
+    "tagline": "Perfect for: Food, equipment, and product suppliers who want direct access to Swiss daycares—without middlemen or wasted outreach.",
+    "description": "✨ Get your products in front of decision-makers, generate recurring bulk orders, and build long-term contracts.",
     "features": [
-      "Product listing management",
-      "Order management system",
-      "Analytics dashboard",
-      "Direct communication with daycares",
-      "Priority support"
+      "Profile + unlimited product listings",
+      "Structured order requests & status tracking",
+      "Analytics (views, clicks, orders)",
+      "Promo codes & redemption tracking",
+      "Full visibility across all daycares",
+      "Email support & guided onboarding"
     ],
     "isPopular": false
   },
   {
     "id": "service-provider",
-    "name": "Service Provider",
-    "emoji": "🔧",
+    "name": "Service Providers",
+    "emoji": "⚙️",
     "role": "SERVICE_PROVIDER",
     "price": {
-      "monthly": 149,
-      "annually": 1609
+      "monthly": 270,
+      "annually": 3000
     },
-    "monthlyPriceText": "💰 CHF 149 / month",
-    "annualPlanText": "CHF 1,609 / year (save 10%)",
-    "tagline": "Perfect for: Service providers offering cleaning, workshops, legal, or IT support to daycares.",
-    "description": "✨ Showcase your services, manage requests, and build lasting relationships with daycare centers.",
+    "monthlyPriceText": "CHF 270 / month",
+    "annualPlanText": "CHF 3'000 / year (save 10%)",
+    "tagline": "Perfect for: Legal, accounting, IT, coaching, training, and other professionals who want to secure recurring daycare clients at scale.",
+    "description": "✨ Fill your pipeline with high-trust contracts and appointments—without cold outreach or endless networking.",
     "features": [
-      "Service listing management",
-      "Request management system",
-      "Client communication tools",
-      "Service delivery tracking",
-      "Priority support"
+      "Profile + multi-service listings",
+      "Appointment & quote requests",
+      "Scheduling link integration (Calendly/Cal.com)",
+      "Pipeline management tools",
+      "Analytics (requests, regions, promo codes)",
+      "Promo code options",
+      "Email support & guided onboarding"
     ],
     "isPopular": false
   }
