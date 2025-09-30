@@ -1,61 +1,85 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { SquaresPlusIcon, CheckCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { usePricingPlans } from '../hooks/usePricingPlans'
+import { pricingAdapter } from '../adapters/pricing.adapter'
+import LoadingSpinner from '../components/ui/LoadingSpinner'
 
 const PricingPage: React.FC = () => {
-  const plans = [
-    {
-      name: 'Basic',
-      emoji: '🟢',
-      price: { monthly: 69, annually: 745 },
-      monthlyPriceText: '💰 CHF 69 / month',
-      annualPlanText: 'CHF 745 / year (save 10%)',
-      tagline: 'Perfect for: Small daycares who want essential tools without complexity.',
-      description: '✨ Get immediate access to suppliers, compliance info, and support—everything you need to operate smoothly at a low cost.',
-      features: [
-        'Supplier & service provider marketplace',
-        'State policy hub (by canton)',
-        'Multilingual interface (EN/FR/DE)',
-        'Email support',
-      ],
-      isPopular: false,
-    },
-    {
-      name: 'Essential',
-      emoji: '🔵',
-      price: { monthly: 129, annually: 1390 },
-      monthlyPriceText: '💰 CHF 129 / month',
-      annualPlanText: 'CHF 1,390 / year (save 10%)',
-      tagline: 'Perfect for: Single-site daycares who want to save time with parent leads and compliant HR tools.',
-      description: '✨ Win parents faster, stay compliant, and manage enquiries with ease—all from one simple dashboard.',
-      features: [
-        'Everything in Basic',
-        'Parent leads inbox + auto-matching system',
-        'HR & compliance document library (Swiss-validated)',
-        'Parent enquiry tracker with quick replies',
-      ],
-      isPopular: true,
-    },
-    {
-      name: 'Professional',
-      emoji: '🔴',
-      price: { monthly: 259, annually: 2790 },
-      monthlyPriceText: '💰 CHF 259 / month',
-      annualPlanText: 'CHF 2,790 / year (save 10%)',
-      tagline: 'Perfect for: Medium-sized daycares ready to grow and professionalize operations.',
-      description: '✨ Recruit and train staff, handle unlimited parent enquiries, and deliver excellence without adding admin burden.',
-      features: [
-        'Everything in Essential',
-        'Recruitment module',
-        'Unlimited parent enquiries',
-        'E-learning for staff',
-        'Phone support',
-      ],
-      isPopular: false,
-    },
-  ]
+  const { data: plans, isLoading, error } = usePricingPlans()
 
-  const PlanCard: React.FC<{ plan: typeof plans[0] }> = ({ plan }) => (
+  // Set SEO meta tags
+  useEffect(() => {
+    document.title = 'Pricing Plans - Pro Crèche Solutions'
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]')
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Choose the perfect plan for your daycare, supplier, or service provider business. Transparent pricing with no hidden fees.')
+    }
+
+    // Add Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]') || document.createElement('meta')
+    ogTitle.setAttribute('property', 'og:title')
+    ogTitle.setAttribute('content', 'Pricing Plans - Pro Crèche Solutions')
+    if (!document.querySelector('meta[property="og:title"]')) {
+      document.head.appendChild(ogTitle)
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]') || document.createElement('meta')
+    ogDescription.setAttribute('property', 'og:description')
+    ogDescription.setAttribute('content', 'Choose the perfect plan for your daycare, supplier, or service provider business. Transparent pricing with no hidden fees.')
+    if (!document.querySelector('meta[property="og:description"]')) {
+      document.head.appendChild(ogDescription)
+    }
+
+    const ogUrl = document.querySelector('meta[property="og:url"]') || document.createElement('meta')
+    ogUrl.setAttribute('property', 'og:url')
+    ogUrl.setAttribute('content', window.location.href)
+    if (!document.querySelector('meta[property="og:url"]')) {
+      document.head.appendChild(ogUrl)
+    }
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Plans</h1>
+          <p className="text-gray-600">Failed to load pricing plans. Please try again later.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!plans) {
+    return (
+      <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-600 mb-4">No Plans Available</h1>
+          <p className="text-gray-600">Pricing plans are not currently available.</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Transform plans using adapter
+  const uiPlans = plans.map(plan => pricingAdapter.toUI(plan))
+  
+  // Group plans by role
+  const foundationPlans = uiPlans.filter(plan => plan.role === 'FOUNDATION')
+  const supplierPlans = uiPlans.filter(plan => plan.role === 'PRODUCT_SUPPLIER')
+  const serviceProviderPlans = uiPlans.filter(plan => plan.role === 'SERVICE_PROVIDER')
+
+  const PlanCard: React.FC<{ plan: typeof uiPlans[0] }> = ({ plan }) => (
     <div className={`flex flex-col p-6 border-2 ${plan.isPopular ? 'border-swiss-mint' : 'border-gray-200'} rounded-lg relative bg-white`}>
       {plan.isPopular && (
         <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
@@ -116,11 +140,30 @@ const PricingPage: React.FC = () => {
           </p>
         </div>
         
-        <div className="mt-12">
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {plans.map(plan => <PlanCard key={plan.name} plan={plan} />)}
+        {/* Foundation Plans */}
+        {foundationPlans.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-3xl font-semibold text-center text-swiss-charcoal mb-8">
+              ProCrèche Solutions – Pricing for Daycares
+            </h2>
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {foundationPlans.map(plan => <PlanCard key={plan.id} plan={plan} />)}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Supplier and Service Provider Plans */}
+        {(supplierPlans.length > 0 || serviceProviderPlans.length > 0) && (
+          <div className="mt-16">
+            <h2 className="text-3xl font-semibold text-center text-swiss-charcoal mb-8">
+              ProCrèche Solutions – Pricing for Suppliers & Service Providers
+            </h2>
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {supplierPlans.map(plan => <PlanCard key={plan.id} plan={plan} />)}
+              {serviceProviderPlans.map(plan => <PlanCard key={plan.id} plan={plan} />)}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

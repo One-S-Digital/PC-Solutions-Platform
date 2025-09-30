@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useApiClient } from './useApiClient'
+import { marketplaceApi } from '@pc-solutions/api-client'
 import { productAdapter, UIProduct } from '../adapters'
 
 export const useProducts = (query?: {
@@ -10,8 +10,6 @@ export const useProducts = (query?: {
   status?: string
   search?: string
 }) => {
-  const apiClient = useApiClient()
-
   const {
     data,
     isLoading,
@@ -20,18 +18,10 @@ export const useProducts = (query?: {
   } = useQuery({
     queryKey: ['products', query],
     queryFn: async () => {
-      const params = new URLSearchParams()
-      if (query?.page) params.append('page', query.page.toString())
-      if (query?.limit) params.append('limit', query.limit.toString())
-      if (query?.category) params.append('category', query.category)
-      if (query?.supplierId) params.append('supplierId', query.supplierId)
-      if (query?.status) params.append('status', query.status)
-      if (query?.search) params.append('search', query.search)
-      
-      const response = await apiClient.get(`/products?${params.toString()}`)
+      const response = await marketplaceApi.getProducts(query)
       return {
-        ...response.data,
-        data: response.data.data.map((product: unknown) => productAdapter.toUI(product))
+        ...response,
+        data: response.data.map((product) => productAdapter.toUI(product))
       }
     },
     staleTime: 1000 * 60 * 5, // 5 minutes

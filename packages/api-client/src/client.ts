@@ -89,3 +89,11 @@ export const apiClient = new ApiClient({
     return null
   },
 })
+
+// Function to create a new client instance with auth token
+export const createApiClient = (getAuthToken: () => string | null) => {
+  return new ApiClient({
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+    getAuthToken,
+  })
+}

@@ -1,5 +1,54 @@
 /* Imported mock styles - DO NOT MODIFY */
 /* These styles are imported from the design mock to preserve pixel-perfect fidelity */
 
-/* Add any additional mock-specific styles here if needed */
-/* The main mock styles will be imported from the _import_raw directory */
+/* Mock-specific color overrides to match the design */
+:root {
+  --swiss-mint: #48CFAE;
+  --swiss-sand: #F3D29E;
+  --swiss-coral: #FE6D73;
+  --swiss-teal: #227C9D;
+  --swiss-light-gray: #F3F4F6;
+  --swiss-charcoal: #2B2B2B;
+  --page-bg: #F9FAFB;
+}
+
+/* Font family override to match mock */
+body {
+  font-family: 'Nunito', 'Inter', sans-serif !important;
+  background-color: #F3F4F6 !important;
+}
+
+/* Scrollbar styling from mock */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #227C9D; /* swiss-teal */
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #F3F4F6; /* swiss-light-gray */
+}
+
+/* Hide number input arrows */
+.no-spinners::-webkit-outer-spin-button,
+.no-spinners::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinners {
+  -moz-appearance: textfield;
+}
+
+/* Global styles for settings form layout */
+.form-label {
+  @apply text-sm font-medium text-gray-700;
+}
+
+.form-input-container {
+  @apply mt-1 md:mt-0; /* Stack on mobile, align on desktop */
+}

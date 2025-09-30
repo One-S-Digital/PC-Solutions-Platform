@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from './useAuth'
-import { useApiClient } from './useApiClient'
+import { usersApi } from '@pc-solutions/api-client'
+import { userAdapter } from '../adapters'
 
 export const useCurrentUser = () => {
   const { isSignedIn, isLoaded } = useAuth()
-  const apiClient = useApiClient()
 
   const {
     data: user,
@@ -14,8 +14,8 @@ export const useCurrentUser = () => {
   } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      const response = await apiClient.get('/users/me')
-      return response.data
+      const response = await usersApi.getMe()
+      return userAdapter.toUI(response.data)
     },
     enabled: isSignedIn && isLoaded,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -23,7 +23,7 @@ export const useCurrentUser = () => {
   })
 
   return {
-    user: user?.user,
+    user,
     isLoading: isLoading || !isLoaded,
     error,
     refetch,

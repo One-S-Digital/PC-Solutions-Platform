@@ -104,17 +104,29 @@ const LoginPage: React.FC = () => {
           </div>
         </form>
 
-        <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
+        {/* Prominent CTA to pricing plans */}
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              Ready to get started?
+            </h3>
+            <p className="text-sm text-blue-700 mb-3">
+              Choose the perfect plan for your daycare, supplier, or service provider business.
+            </p>
+            <Link 
+              to="/pricing" 
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+            >
+              View Pricing Plans
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center text-sm text-gray-600 space-y-2">
           <p>
             Don't have an account?{' '}
             <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
               Sign up
-            </Link>
-          </p>
-          <p>
-            Want to see our plans?{' '}
-            <Link to="/pricing" className="font-medium text-swiss-mint hover:underline">
-              View pricing
             </Link>
           </p>
           <p className="text-xs text-gray-500 pt-1">

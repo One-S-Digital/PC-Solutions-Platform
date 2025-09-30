@@ -41,6 +41,11 @@ export interface UsersQuery {
 }
 
 export const usersApi = {
+  // Get current user
+  getMe: (): Promise<{ data: User }> => {
+    return apiClient.get<{ data: User }>('/users/me')
+  },
+
   // List users (admin only)
   getUsers: (query?: UsersQuery): Promise<PaginatedResponse<User>> => {
     const params = new URLSearchParams()

@@ -15,7 +15,8 @@
     "test:coverage": "vitest --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "e2e:visual": "playwright test --grep @visual"
+    "e2e:visual": "playwright test --grep @visual",
+    "prepare": "husky"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.0.0",
@@ -40,8 +41,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1",
-    "tailwindcss": "^3.4.0",
+    "@playwright/test": "^1.55.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
@@ -56,8 +56,10 @@
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
+    "husky": "^9.1.7",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.0",
     "typescript": "~5.6.2",
     "vite": "^6.0.1",
     "vitest": "^2.1.8"

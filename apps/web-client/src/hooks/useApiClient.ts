@@ -1,11 +1,11 @@
-import { useCallback } from 'react'
+import { useMemo } from 'react'
 import { useAuth } from './useAuth'
 import axios, { AxiosInstance } from 'axios'
 
 export const useApiClient = (): AxiosInstance => {
   const { getAuthToken } = useAuth()
 
-  const apiClient = useCallback(() => {
+  const apiClient = useMemo(() => {
     const client = axios.create({
       baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
       headers: {
@@ -44,5 +44,5 @@ export const useApiClient = (): AxiosInstance => {
     return client
   }, [getAuthToken])
 
-  return apiClient()
+  return apiClient
 }
