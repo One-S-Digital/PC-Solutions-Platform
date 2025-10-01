@@ -4,7 +4,7 @@ services:
   - type: web
     name: procreche-frontend
     env: static
-    buildCommand: npm ci && npm run build:production
+    buildCommand: npm install && npm run build:production
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: true
     autoDeploy: true
@@ -54,7 +54,7 @@ services:
   - type: web
     name: procreche-api
     env: node
-    buildCommand: npm ci && npm run build
+    buildCommand: npm install && npm run build
     startCommand: npm run start:prod
     plan: starter
     pullRequestPreviewsEnabled: true
