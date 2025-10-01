@@ -7,6 +7,7 @@ import { BuildingStorefrontIcon, StarIcon, EyeIcon, TagIcon } from '@heroicons/r
 import { useNavigate } from 'react-router-dom';
 import { MOCK_PRODUCTS } from '../../constants'; // To derive categories
 import { useTranslation } from 'react-i18next';
+import { useCart } from '../../contexts/CartContext';
 
 interface SupplierCardProps {
   supplier: Organization;
@@ -16,6 +17,7 @@ interface SupplierCardProps {
 const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const renderRatingStars = (rating?: number) => {
     const totalStars = 5;

@@ -1,6 +1,8 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { CartItem, Product, Organization, StockStatus } from '../types';
+import { marketplaceService } from '../src/services/marketplace';
+import { toast } from 'react-hot-toast';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -11,6 +13,8 @@ interface CartContextType {
   clearCart: () => void;
   getCartTotal: () => number;
   getCartItemCount: () => number;
+  checkout: () => Promise<{ success: boolean; orderId?: string; message?: string }>;
+  isCheckingOut: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -18,6 +22,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartSupplierInfo, setCartSupplierInfo] = useState<{ id: string; name: string } | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // Load cart from localStorage on initial render
   useEffect(() => {
@@ -112,6 +117,44 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
 
+  const checkout = async (): Promise<{ success: boolean; orderId?: string; message?: string }> => {
+    if (cartItems.length === 0) {
+      return { success: false, message: 'Cart is empty' };
+    }
+
+    setIsCheckingOut(true);
+
+    try {
+      const orderData = {
+        items: cartItems.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        notes: `Order from ${cartSupplierInfo?.name || 'Unknown Supplier'}`,
+      };
+
+      const order = await marketplaceService.createOrder(orderData);
+      
+      // Clear cart after successful order
+      clearCart();
+      
+      toast.success('Order placed successfully!');
+      
+      return { 
+        success: true, 
+        orderId: order.id,
+        message: 'Order placed successfully' 
+      };
+    } catch (error: any) {
+      const message = error.message || 'Failed to place order';
+      toast.error(message);
+      return { success: false, message };
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
+
   return (
     <CartContext.Provider value={{ 
         cartItems, 
@@ -121,7 +164,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         removeFromCart, 
         clearCart, 
         getCartTotal, 
-        getCartItemCount 
+        getCartItemCount,
+        checkout,
+        isCheckingOut
     }}>
       {children}
     </CartContext.Provider>

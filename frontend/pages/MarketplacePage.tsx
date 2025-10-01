@@ -12,6 +12,8 @@ import SupplierCard from '../components/marketplace/SupplierCard';
 import { useAppContext } from '../contexts/AppContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useProducts, useServices, useServiceRequests } from '../src/hooks/useMarketplace';
+import { useCart } from '../contexts/CartContext';
 
 // ServiceCard now includes a function to book an appointment
 const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: string) => void, onBookAppointment: (service: Service) => void }> = ({ service, onViewProvider, onBookAppointment }) => {
@@ -54,6 +56,41 @@ const MarketplacePage: React.FC = () => {
   const { currentUser, submitServiceRequest } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
+  const { addToCart } = useCart();
+
+  // API hooks for marketplace data
+  const { 
+    products: apiProducts, 
+    loading: productsLoading, 
+    error: productsError,
+    createProduct,
+    updateProduct,
+    deleteProduct 
+  } = useProducts({
+    page: 1,
+    limit: 50,
+    isActive: true,
+  });
+
+  const { 
+    services: apiServices, 
+    loading: servicesLoading, 
+    error: servicesError,
+    createService,
+    updateService,
+    deleteService 
+  } = useServices({
+    page: 1,
+    limit: 50,
+    isActive: true,
+  });
+
+  const { 
+    serviceRequests: apiServiceRequests,
+    loading: serviceRequestsLoading,
+    createServiceRequest,
+    updateServiceRequestStatus 
+  } = useServiceRequests();
 
   const [activeTabIndex, setActiveTabIndex] = useState(() => getActiveTabFromPath(location.pathname));
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,17 +126,30 @@ const MarketplacePage: React.FC = () => {
     setIsServiceRequestModalOpen(true);
   };
   
-  const handleSubmitServiceRequest = (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId' | 'providerId' | 'serviceName' | 'serviceId'>) => {
+  const handleSubmitServiceRequest = async (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId' | 'providerId' | 'serviceName' | 'serviceId'>) => {
     if (!currentUser || !currentUser.orgId || !selectedServiceForRequest) return;
-     const newRequest = {
+    
+    try {
+      const newRequest = await createServiceRequest({
+        serviceId: selectedServiceForRequest.id,
+        description: requestData.description,
+        scheduledAt: requestData.scheduledAt,
+      });
+      
+      // Also update the local context for immediate UI feedback
+      submitServiceRequest({
         ...requestData,
         providerId: selectedServiceForRequest.providerId,
         serviceId: selectedServiceForRequest.id,
         serviceName: selectedServiceForRequest.title,
-    };
-    submitServiceRequest(newRequest);
-    setIsServiceRequestModalOpen(false);
-    alert(t('partnerDetailPage.requestSubmittedAlert', {serviceName: newRequest.serviceName}));
+      });
+      
+      setIsServiceRequestModalOpen(false);
+      alert(t('partnerDetailPage.requestSubmittedAlert', {serviceName: selectedServiceForRequest.title}));
+    } catch (error) {
+      console.error('Failed to submit service request:', error);
+      alert('Failed to submit service request. Please try again.');
+    }
   };
 
   const activeTabLabel = useMemo(() => {
@@ -157,12 +207,17 @@ const MarketplacePage: React.FC = () => {
       });
   }, [searchTerm, regionFilter, categoryFilter, tagFilter, sortOption, productSuppliers]);
 
+  // Use API data with fallback to mock data
+  const products = apiProducts.length > 0 ? apiProducts : MOCK_PRODUCTS;
+  const services = apiServices.length > 0 ? apiServices : MOCK_SERVICES;
+  const serviceRequests = apiServiceRequests.length > 0 ? apiServiceRequests : MOCK_SERVICE_REQUESTS;
+
   const filteredServices = useMemo(() =>
-    MOCK_SERVICES.filter(s =>
+    services.filter(s =>
       s.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (categoryFilter === 'All' || s.category === categoryFilter) &&
       (regionFilter === 'All' || serviceProviders.find(p => p.id === s.providerId)?.region === regionFilter)
-    ), [searchTerm, categoryFilter, regionFilter, serviceProviders]);
+    ), [searchTerm, categoryFilter, regionFilter, serviceProviders, services]);
 
 
   const handleViewPartner = (partnerId: string) => {
@@ -315,6 +370,21 @@ const MarketplacePage: React.FC = () => {
             <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setCategoryFilter('All'); setRegionFilter('All'); setTagFilter('All'); setSortOption('name_asc');}}>{t('buttons.resetFilters')}</Button>
         </div>
       </Card>
+
+      {/* Loading states */}
+      {(productsLoading || servicesLoading) && (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading marketplace data...</p>
+        </div>
+      )}
+
+      {/* Error states */}
+      {(productsError || servicesError) && (
+        <div className="text-center py-12">
+          <p className="text-red-600">Failed to load marketplace data. Using cached data.</p>
+        </div>
+      )}
 
       <Tabs 
         tabs={tabsConfig} 

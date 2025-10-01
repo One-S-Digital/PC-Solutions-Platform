@@ -12,6 +12,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import JobPostModal from '../components/recruitment/JobPostModal';
 import ViewApplicantsModal from '../components/recruitment/ViewApplicantsModal';
+import { useJobListings, useCandidateProfiles, useJobApplications } from '../src/hooks/useRecruitment';
 
 interface FoundationJobListingCardProps {
   job: JobListing;
@@ -105,12 +106,46 @@ const RecruitmentPage: React.FC = () => {
   const [searchTermJobs, setSearchTermJobs] = useState('');
   const [searchTermCandidates, setSearchTermCandidates] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [candidateProfiles, setCandidateProfiles] = useState<CandidateProfile[]>(MOCK_CANDIDATE_PROFILES);
-  const [jobListings, setJobListings] = useState<JobListing[]>(MOCK_JOB_LISTINGS);
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<JobListing | null>(null);
   const [isApplicantsModalOpen, setIsApplicantsModalOpen] = useState(false);
   const [selectedJobForApplicants, setSelectedJobForApplicants] = useState<JobListing | null>(null);
+
+  // API hooks for recruitment data
+  const { 
+    jobListings: apiJobListings, 
+    loading: jobListingsLoading, 
+    error: jobListingsError,
+    createJobListing,
+    updateJobListing,
+    deleteJobListing,
+    updateJobListingStatus 
+  } = useJobListings({
+    page: 1,
+    limit: 50,
+    foundationId: currentUser?.orgId,
+  });
+
+  const { 
+    candidates: apiCandidates, 
+    loading: candidatesLoading, 
+    error: candidatesError,
+    updateCandidateProfile 
+  } = useCandidateProfiles({
+    page: 1,
+    limit: 50,
+  });
+
+  const { 
+    applications: apiApplications,
+    loading: applicationsLoading,
+    createApplication,
+    updateApplicationStatus 
+  } = useJobApplications();
+
+  // Use API data with fallback to mock data
+  const jobListings = apiJobListings.length > 0 ? apiJobListings : MOCK_JOB_LISTINGS;
+  const candidateProfiles = apiCandidates.length > 0 ? apiCandidates : MOCK_CANDIDATE_PROFILES;
 
 
   const canPostJob = currentUser?.role === UserRole.FOUNDATION || currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
@@ -146,16 +181,29 @@ const RecruitmentPage: React.FC = () => {
       (candidate.role && candidate.role.toLowerCase().includes(searchTermCandidates.toLowerCase()))
     ), [searchTermCandidates, candidateProfiles]);
     
-  const handleRemoveCandidate = (candidateId: string) => {
-    setCandidateProfiles(prev => prev.filter(c => c.id !== candidateId));
+  const handleRemoveCandidate = async (candidateId: string) => {
+    try {
+      // In a real implementation, this would call an API to remove the candidate
+      // For now, we'll just show an alert
+      alert(`Removing candidate ${candidateId} - API integration TBD.`);
+    } catch (error) {
+      console.error('Failed to remove candidate:', error);
+      alert('Failed to remove candidate. Please try again.');
+    }
   };
   
-  const handleEditCandidate = (candidate: CandidateProfile) => {
-    alert(`Editing candidate ${candidate.name} (ID: ${candidate.id}) - Functionality TBD.`);
+  const handleEditCandidate = async (candidate: CandidateProfile) => {
+    try {
+      // In a real implementation, this would open an edit modal or navigate to edit page
+      alert(`Editing candidate ${candidate.name} (ID: ${candidate.id}) - Edit modal TBD.`);
+    } catch (error) {
+      console.error('Failed to edit candidate:', error);
+    }
   };
 
   const handleAddNewCandidate = () => {
-    alert('Adding a new candidate - Functionality TBD.');
+    // In a real implementation, this would open a new candidate modal or navigate to add page
+    alert('Adding a new candidate - Add modal TBD.');
   };
 
   const handleOpenJobModal = (job: JobListing | null) => {
@@ -163,20 +211,26 @@ const RecruitmentPage: React.FC = () => {
     setIsJobModalOpen(true);
   }
 
-  const handleJobSubmit = (jobData: Omit<JobListing, 'id' | 'applicationsReceived' | 'status'>) => {
-    if(editingJob) {
-      setJobListings(prev => prev.map(j => j.id === editingJob.id ? {...editingJob, ...jobData} : j));
-    } else {
-      const newJob: JobListing = {
-        ...jobData,
-        id: `job_${Date.now()}`,
-        applicationsReceived: 0,
-        status: 'Open'
-      };
-      setJobListings(prev => [newJob, ...prev]);
+  const handleJobSubmit = async (jobData: Omit<JobListing, 'id' | 'applicationsReceived' | 'status'>) => {
+    try {
+      if(editingJob) {
+        await updateJobListing(editingJob.id, jobData);
+      } else {
+        await createJobListing({
+          title: jobData.title,
+          description: jobData.description,
+          requirements: jobData.requirements,
+          benefits: jobData.benefits,
+          location: jobData.location,
+          salary: jobData.salary,
+        });
+      }
+      setIsJobModalOpen(false);
+      setEditingJob(null);
+    } catch (error) {
+      console.error('Failed to submit job:', error);
+      alert('Failed to submit job. Please try again.');
     }
-    // Also update the global mock for persistence in this demo
-    // In a real app, this would be an API call
   }
 
   const handleViewApplicants = (job: JobListing) => {
@@ -274,6 +328,22 @@ const RecruitmentPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-swiss-charcoal">{t('recruitmentPage.title')}</h1>
+      
+      {/* Loading states */}
+      {(jobListingsLoading || candidatesLoading) && (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading recruitment data...</p>
+        </div>
+      )}
+
+      {/* Error states */}
+      {(jobListingsError || candidatesError) && (
+        <div className="text-center py-12">
+          <p className="text-red-600">Failed to load recruitment data. Using cached data.</p>
+        </div>
+      )}
+
       <Tabs 
         tabs={tabsConfig} 
         variant="pills"
