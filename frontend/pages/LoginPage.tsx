@@ -7,8 +7,6 @@ import Button from '../components/ui/Button';
 import { SquaresPlusIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import { ALL_USERS_MOCK } from '../constants';
-import { UserRole } from '../types';
 
 // Mock social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -28,20 +26,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Demo user quick login buttons - now includes Educator and Super Admin
-  const demoUsers = ALL_USERS_MOCK.filter(u => 
-    [
-        UserRole.FOUNDATION, 
-        UserRole.PRODUCT_SUPPLIER, 
-        UserRole.SERVICE_PROVIDER, 
-        UserRole.PARENT, 
-        UserRole.EDUCATOR,
-        UserRole.SUPER_ADMIN
-    ].includes(u.role)
-  ).filter(
-    // De-duplicate roles, keeping the first encountered
-    (user, index, self) => index === self.findIndex((u) => u.role === user.role)
-  );
   
   // Redirect if user is already logged in
   useEffect(() => {
@@ -71,16 +55,6 @@ const LoginPage: React.FC = () => {
     setIsLoading(false);
   };
   
-  const handleDemoLogin = async (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('password123'); // Mock password
-    setIsLoading(true);
-    const result = await login(demoEmail, 'password123');
-    if (!result.success) {
-        setError(result.message || t('errors.unknown'));
-    }
-    setIsLoading(false);
-  };
 
   const handleSocialLogin = (provider: string) => {
     alert(t('loginPage.socialLoginTBD', { provider }));
@@ -152,22 +126,6 @@ const LoginPage: React.FC = () => {
           </div>
         </form>
 
-        <div className="mt-4">
-            <p className="text-xs text-center text-gray-500">{t('loginPage.demoLoginPrompt')}</p>
-            <div className="flex flex-wrap justify-center gap-2 mt-2">
-                {demoUsers.map(user => (
-                    <Button 
-                      key={user.id} 
-                      onClick={() => handleDemoLogin(user.email)} 
-                      variant="light" 
-                      size="xs"
-                      className="font-normal"
-                    >
-                      {t(`userRoles.${user.role}`, user.role)}
-                    </Button>
-                ))}
-            </div>
-        </div>
 
         <div className="mt-6">
           <div className="relative">
@@ -202,12 +160,20 @@ const LoginPage: React.FC = () => {
                 {t('loginPage.viewPlans')}
             </Link>
             </p>
-            <p className="text-xs text-gray-500 pt-1">
-            {t('loginPage.parentLookingForCreche')}{' '}
-            <Link to="/parent-lead-form" className="font-medium text-swiss-teal hover:underline">
-                {t('loginPage.findCrecheHere')}
-            </Link>
-            </p>
+            <div className="bg-gradient-to-r from-swiss-teal/10 to-swiss-mint/10 rounded-lg p-4 mt-4">
+              <p className="text-lg font-semibold text-swiss-charcoal text-center mb-2">
+                {t('loginPage.parentLookingForCreche')}
+              </p>
+              <div className="text-center">
+                <Link 
+                  to="/parent-lead-form" 
+                  className="inline-flex items-center px-6 py-3 bg-swiss-teal text-white font-medium rounded-lg hover:bg-swiss-teal/90 transition-colors duration-200 shadow-md hover:shadow-lg"
+                >
+                  <span className="mr-2">🏠</span>
+                  {t('loginPage.findCrecheHere')}
+                </Link>
+              </div>
+            </div>
         </div>
 
         <div className="mt-6 flex justify-center">
