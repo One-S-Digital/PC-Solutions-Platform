@@ -76,11 +76,11 @@ const AdminPlatformSettingsPage: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('adminPlatformSettings.branding.logoLabel')}</label>
-              <input type="file" id="logoUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
+              <input type="file" id="logoUrl" accept="image/*" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
             </div>
             <div>
               <label htmlFor="faviconUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('adminPlatformSettings.branding.faviconLabel')}</label>
-              <input type="file" id="faviconUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
+              <input type="file" id="faviconUrl" accept="image/*" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
             </div>
           </div>
           

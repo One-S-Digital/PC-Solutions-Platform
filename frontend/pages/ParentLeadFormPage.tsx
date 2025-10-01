@@ -17,11 +17,11 @@ const ParentLeadFormPage: React.FC = () => {
     canton: '',
     municipality: '',
     childAge: '',
-    desiredStartDate: '',
-    specialNeeds: '',
-    contactName: '', 
-    contactEmail: '', 
-    contactPhone: '',
+    preferredStartDate: '',
+    specialRequirements: '',
+    parentName: '', 
+    parentEmail: '', 
+    parentPhone: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [unauthenticatedSuccess, setUnauthenticatedSuccess] = useState(false); // New state
@@ -32,8 +32,8 @@ const ParentLeadFormPage: React.FC = () => {
     } else if (currentUser && currentUser.role === UserRole.PARENT) {
       setFormData(prev => ({
         ...prev,
-        contactName: currentUser.name,
-        contactEmail: currentUser.email,
+        parentName: currentUser.name,
+        parentEmail: currentUser.email,
       }));
     }
   }, [currentUser, navigate]);
@@ -44,7 +44,7 @@ const ParentLeadFormPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.canton || !formData.childAge || !formData.desiredStartDate || !formData.contactName || !formData.contactEmail) {
+    if (!formData.canton || !formData.childAge || !formData.preferredStartDate || !formData.parentName || !formData.parentEmail) {
         alert(t('parentLeadFormPage.errorAllFields'));
         return;
     }
@@ -54,11 +54,11 @@ const ParentLeadFormPage: React.FC = () => {
       canton: formData.canton,
       municipality: formData.municipality,
       childAge: parseInt(formData.childAge, 10),
-      desiredStartDate: formData.desiredStartDate,
-      specialNeeds: formData.specialNeeds,
-      contactName: formData.contactName,
-      contactEmail: formData.contactEmail,
-      contactPhone: formData.contactPhone,
+      preferredStartDate: formData.preferredStartDate,
+      specialRequirements: formData.specialRequirements,
+      parentName: formData.parentName,
+      parentEmail: formData.parentEmail,
+      parentPhone: formData.parentPhone,
     });
 
     if (wasUnauthenticated) {
@@ -103,17 +103,17 @@ const ParentLeadFormPage: React.FC = () => {
       <Card className="w-full max-w-2xl p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.yourFullName')}</label>
-            <input type="text" name="contactName" id="contactName" value={formData.contactName} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
+            <label htmlFor="parentName" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.yourFullName')}</label>
+            <input type="text" name="parentName" id="parentName" value={formData.parentName} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.yourEmail')}</label>
-              <input type="email" name="contactEmail" id="contactEmail" value={formData.contactEmail} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
+              <label htmlFor="parentEmail" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.yourEmail')}</label>
+              <input type="email" name="parentEmail" id="parentEmail" value={formData.parentEmail} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
             </div>
             <div>
-              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.yourPhone')}</label>
-              <input type="tel" name="contactPhone" id="contactPhone" value={formData.contactPhone} onChange={handleChange} className={STANDARD_INPUT_FIELD} />
+              <label htmlFor="parentPhone" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.yourPhone')}</label>
+              <input type="tel" name="parentPhone" id="parentPhone" value={formData.parentPhone} onChange={handleChange} className={STANDARD_INPUT_FIELD} />
             </div>
           </div>
           
@@ -140,14 +140,14 @@ const ParentLeadFormPage: React.FC = () => {
               <input type="number" name="childAge" id="childAge" value={formData.childAge} onChange={handleChange} required min="0" max="6" className={STANDARD_INPUT_FIELD} />
             </div>
             <div>
-              <label htmlFor="desiredStartDate" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.desiredStartDate')}</label>
-              <input type="date" name="desiredStartDate" id="desiredStartDate" value={formData.desiredStartDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
+              <label htmlFor="preferredStartDate" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.desiredStartDate')}</label>
+              <input type="date" name="preferredStartDate" id="preferredStartDate" value={formData.preferredStartDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
             </div>
           </div>
 
           <div>
-            <label htmlFor="specialNeeds" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.specialNeeds')}</label>
-            <textarea name="specialNeeds" id="specialNeeds" value={formData.specialNeeds} onChange={handleChange} rows={3} className={STANDARD_INPUT_FIELD}></textarea>
+            <label htmlFor="specialRequirements" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadFormPage.labels.specialNeeds')}</label>
+            <textarea name="specialRequirements" id="specialRequirements" value={formData.specialRequirements} onChange={handleChange} rows={3} className={STANDARD_INPUT_FIELD}></textarea>
             <p className="text-xs text-gray-500 mt-1">{t('parentLeadFormPage.helpText.specialNeeds')}</p>
           </div>
 

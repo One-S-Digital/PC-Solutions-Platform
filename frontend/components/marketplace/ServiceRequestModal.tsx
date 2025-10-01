@@ -14,13 +14,13 @@ interface ServiceRequestModalProps {
 }
 
 const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOpen, onClose, onSubmitRequest }) => {
-  const [preferredDate, setPreferredDate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [scheduledAt, setScheduledAt] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      setPreferredDate('');
-      setNotes('');
+      setScheduledAt('');
+      setDescription('');
     }
   }, [isOpen]);
 
@@ -29,8 +29,8 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmitRequest({
-      preferredDate: preferredDate || undefined,
-      notes: notes || undefined,
+      scheduledAt: scheduledAt || undefined,
+      description: description || undefined,
     });
   };
 
@@ -67,24 +67,24 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
               />
             </div>
             <div>
-              <label htmlFor="preferredDateModal" className="block text-sm font-medium text-gray-700 mb-1">Preferred Date (Optional)</label>
+              <label htmlFor="scheduledAtModal" className="block text-sm font-medium text-gray-700 mb-1">Preferred Date (Optional)</label>
               <div className="relative">
                 <input
                     type="date"
-                    id="preferredDateModal"
-                    value={preferredDate}
-                    onChange={(e) => setPreferredDate(e.target.value)}
+                    id="scheduledAtModal"
+                    value={scheduledAt}
+                    onChange={(e) => setScheduledAt(e.target.value)}
                     className={`${STANDARD_INPUT_FIELD} pr-10`} // Add padding for icon
                 />
                 <CalendarDaysIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
               </div>
             </div>
             <div>
-              <label htmlFor="notesModal" className="block text-sm font-medium text-gray-700 mb-1">Notes / Specific Requirements (Optional)</label>
+              <label htmlFor="descriptionModal" className="block text-sm font-medium text-gray-700 mb-1">Notes / Specific Requirements (Optional)</label>
               <textarea
-                id="notesModal"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                id="descriptionModal"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 className={STANDARD_INPUT_FIELD}
                 placeholder="e.g., Number of children for workshop, specific areas for cleaning..."

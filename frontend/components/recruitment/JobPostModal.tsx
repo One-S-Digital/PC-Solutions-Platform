@@ -27,10 +27,8 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
     startDate: new Date().toISOString().split('T')[0],
     description: '',
     requirements: [''],
-    responsibilities: [''],
-    qualifications: [''],
     benefits: [''],
-    salaryRange: '',
+    salary: '',
   };
 
   const [formData, setFormData] = useState<JobFormData>(initialFormState);
@@ -41,8 +39,7 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
         setFormData({
           ...existingJob,
           startDate: existingJob.startDate ? new Date(existingJob.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-          responsibilities: existingJob.responsibilities?.length ? existingJob.responsibilities : [''],
-          qualifications: existingJob.qualifications?.length ? existingJob.qualifications : [''],
+          requirements: existingJob.requirements?.length ? existingJob.requirements : [''],
           benefits: existingJob.benefits?.length ? existingJob.benefits : [''],
         });
       } else {
@@ -146,18 +143,16 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
               </div>
             </div>
             <div>
-              <label htmlFor="salaryRange" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.salaryRange')}</label>
-              <input type="text" name="salaryRange" id="salaryRange" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitmentPage.jobPostModal.salaryRangePlaceholder')}/>
+              <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.salaryRange')}</label>
+              <input type="text" name="salary" id="salary" value={formData.salary || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitmentPage.jobPostModal.salaryRangePlaceholder')}/>
             </div>
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.description')} *</label>
               <textarea name="description" id="description" value={formData.description} onChange={handleChange} required rows={5} className={STANDARD_INPUT_FIELD}></textarea>
             </div>
             
-            {renderDynamicList('responsibilities', 'recruitmentPage.jobPostModal.responsibilities', 'recruitmentPage.jobPostModal.responsibilityPlaceholder', 'recruitmentPage.jobPostModal.addResponsibility')}
-            {renderDynamicList('qualifications', 'recruitmentPage.jobPostModal.qualifications', 'recruitmentPage.jobPostModal.qualificationPlaceholder', 'recruitmentPage.jobPostModal.addQualification')}
-            {renderDynamicList('benefits', 'recruitmentPage.jobPostModal.benefits', 'recruitmentPage.jobPostModal.benefitPlaceholder', 'recruitmentPage.jobPostModal.addBenefit')}
             {renderDynamicList('requirements', 'recruitmentPage.jobPostModal.requirements', 'recruitmentPage.jobPostModal.requirementPlaceholder', 'recruitmentPage.jobPostModal.addRequirement')}
+            {renderDynamicList('benefits', 'recruitmentPage.jobPostModal.benefits', 'recruitmentPage.jobPostModal.benefitPlaceholder', 'recruitmentPage.jobPostModal.addBenefit')}
 
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">

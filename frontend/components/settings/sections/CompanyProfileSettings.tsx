@@ -56,17 +56,17 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
         </div>
 
         {/* Logo Upload - Placeholder */}
-        <label className="form-label">{t('settingsCompanyProfile.logo')}</label>
+        <label htmlFor="logoUrl" className="form-label">{t('settingsCompanyProfile.logo')}</label>
         <div className="form-input-container">
           {/* <FileUploadZone onFileUpload={(file) => onChange('logoUrl', 'mock-logo-url.png')} /> Placeholder */}
-           <input type="file" id="logoUrl" name="logoUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
+           <input type="file" id="logoUrl" name="logoUrl" accept="image/*" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
         </div>
         
         {/* Cover Image Upload - Placeholder */}
-        <label className="form-label">{t('settingsCompanyProfile.coverImage')}</label>
+        <label htmlFor="coverImageUrl" className="form-label">{t('settingsCompanyProfile.coverImage')}</label>
         <div className="form-input-container">
           {/* <FileUploadZone onFileUpload={(file) => onChange('coverImageUrl', 'mock-cover-url.png')} /> Placeholder */}
-          <input type="file" id="coverImageUrl" name="coverImageUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
+          <input type="file" id="coverImageUrl" name="coverImageUrl" accept="image/*" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
         </div>
 
         {/* About Text */}
