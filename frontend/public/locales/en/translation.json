@@ -861,5 +861,27 @@
       "deleteAccountButton": "Delete Account",
       "finalConfirmation": "FINAL CONFIRMATION: Are you absolutely sure you want to delete your account? Type 'DELETE' to confirm."
     }
+  },
+  "parentLeadFormPage": {
+    "title": "Find a Crèche",
+    "subtitle": "Tell us about your child's needs and we'll help you find the perfect crèche",
+    "sectionTitleChildNeeds": "Child's Needs",
+    "thankYouTitle": "Thank You!",
+    "authenticatedSuccessMessage": "Your enquiry has been submitted successfully. You can view and manage your enquiries from your dashboard.",
+    "unauthenticatedSuccessMessage": "Your enquiry has been submitted successfully. We've sent a confirmation email to {{email}}. You can also create an account to track your enquiries.",
+    "errorAllFields": "Please fill in all required fields.",
+    "labels": {
+      "yourFullName": "Your Full Name",
+      "yourEmail": "Your Email",
+      "yourPhone": "Your Phone Number",
+      "canton": "Canton",
+      "municipality": "Municipality",
+      "childAge": "Child's Age (Years)",
+      "desiredStartDate": "Desired Start Date",
+      "specialNeeds": "Special Needs or Requirements"
+    },
+    "helpText": {
+      "specialNeeds": "Please describe any special needs, dietary requirements, or other important information about your child."
+    }
   }
 }

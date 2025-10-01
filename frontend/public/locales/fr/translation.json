@@ -779,5 +779,27 @@
       "deleteAccountButton": "Supprimer le Compte",
       "finalConfirmation": "CONFIRMATION FINALE : Êtes-vous absolument sûr de vouloir supprimer votre compte ? Tapez 'SUPPRIMER' pour confirmer."
     }
+  },
+  "parentLeadFormPage": {
+    "title": "Trouver une Crèche",
+    "subtitle": "Dites-nous quels sont les besoins de votre enfant et nous vous aiderons à trouver la crèche parfaite",
+    "sectionTitleChildNeeds": "Besoins de l'Enfant",
+    "thankYouTitle": "Merci !",
+    "authenticatedSuccessMessage": "Votre demande a été soumise avec succès. Vous pouvez consulter et gérer vos demandes depuis votre tableau de bord.",
+    "unauthenticatedSuccessMessage": "Votre demande a été soumise avec succès. Nous avons envoyé un e-mail de confirmation à {{email}}. Vous pouvez également créer un compte pour suivre vos demandes.",
+    "errorAllFields": "Veuillez remplir tous les champs obligatoires.",
+    "labels": {
+      "yourFullName": "Votre Nom Complet",
+      "yourEmail": "Votre E-mail",
+      "yourPhone": "Votre Numéro de Téléphone",
+      "canton": "Canton",
+      "municipality": "Municipalité",
+      "childAge": "Âge de l'Enfant (Années)",
+      "desiredStartDate": "Date de Début Souhaitée",
+      "specialNeeds": "Besoins Spéciaux ou Exigences"
+    },
+    "helpText": {
+      "specialNeeds": "Veuillez décrire tous besoins spéciaux, exigences alimentaires ou autres informations importantes concernant votre enfant."
+    }
   }
 }

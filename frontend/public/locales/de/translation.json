@@ -815,5 +815,27 @@
       "deleteAccountButton": "Konto löschen",
       "finalConfirmation": "ENDGÜLTIGE BESTÄTIGUNG: Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Geben Sie 'LÖSCHEN' ein, um zu bestätigen."
     }
+  },
+  "parentLeadFormPage": {
+    "title": "Kita Finden",
+    "subtitle": "Erzählen Sie uns von den Bedürfnissen Ihres Kindes und wir helfen Ihnen, die perfekte Kita zu finden",
+    "sectionTitleChildNeeds": "Bedürfnisse des Kindes",
+    "thankYouTitle": "Vielen Dank!",
+    "authenticatedSuccessMessage": "Ihre Anfrage wurde erfolgreich übermittelt. Sie können Ihre Anfragen in Ihrem Dashboard einsehen und verwalten.",
+    "unauthenticatedSuccessMessage": "Ihre Anfrage wurde erfolgreich übermittelt. Wir haben eine Bestätigungs-E-Mail an {{email}} gesendet. Sie können auch ein Konto erstellen, um Ihre Anfragen zu verfolgen.",
+    "errorAllFields": "Bitte füllen Sie alle Pflichtfelder aus.",
+    "labels": {
+      "yourFullName": "Ihr Vollständiger Name",
+      "yourEmail": "Ihre E-Mail",
+      "yourPhone": "Ihre Telefonnummer",
+      "canton": "Kanton",
+      "municipality": "Gemeinde",
+      "childAge": "Alter des Kindes (Jahre)",
+      "desiredStartDate": "Gewünschtes Startdatum",
+      "specialNeeds": "Besondere Bedürfnisse oder Anforderungen"
+    },
+    "helpText": {
+      "specialNeeds": "Bitte beschreiben Sie alle besonderen Bedürfnisse, Ernährungsanforderungen oder andere wichtige Informationen über Ihr Kind."
+    }
   }
 }
