@@ -1,0 +1,24 @@
+# Robots.txt for Pro Crèche Solutions
+# https://app.procrechesolutions.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages for SEO
+Allow: /login
+Allow: /signup
+Allow: /pricing
+Allow: /marketplace
+Allow: /recruitment
+
+# Sitemap location
+Sitemap: https://app.procrechesolutions.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

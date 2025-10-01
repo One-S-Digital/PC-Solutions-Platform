@@ -3,7 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProCrèche Solutions Suisse</title>
+  <title>Pro Crèche Solutions - Swiss Childcare Platform</title>
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Pro Crèche Solutions - Swiss Childcare Platform" />
+  <meta name="description" content="Comprehensive platform for Swiss childcare solutions, marketplace, and recruitment. Connect foundations, suppliers, and educators." />
+  <meta name="keywords" content="childcare, Switzerland, crèche, daycare, marketplace, recruitment, education" />
+  <meta name="author" content="Pro Crèche Solutions" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://app.procrechesolutions.com/" />
+  <meta property="og:title" content="Pro Crèche Solutions - Swiss Childcare Platform" />
+  <meta property="og:description" content="Comprehensive platform for Swiss childcare solutions, marketplace, and recruitment." />
+  <meta property="og:image" content="https://app.procrechesolutions.com/og-image.png" />
+  <meta property="og:site_name" content="Pro Crèche Solutions" />
+  <meta property="og:locale" content="en_US" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://app.procrechesolutions.com/" />
+  <meta property="twitter:title" content="Pro Crèche Solutions - Swiss Childcare Platform" />
+  <meta property="twitter:description" content="Comprehensive platform for Swiss childcare solutions, marketplace, and recruitment." />
+  <meta property="twitter:image" content="https://app.procrechesolutions.com/og-image.png" />
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#10B981" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Pro Crèche Solutions" />
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+  
+  <!-- Security -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://api.procrechesolutions.com" />
+  <link rel="preconnect" href="https://cdn.procrechesolutions.com" />
+  
+  <!-- DNS Prefetch -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//www.google-analytics.com" />
   <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script>
@@ -91,5 +135,20 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator && import.meta.env.PROD) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
