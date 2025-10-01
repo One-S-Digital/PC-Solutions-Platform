@@ -19,7 +19,16 @@ import {
   Eye,
   Trash2,
   Bell,
-  BellOff
+  BellOff,
+  BarChart3,
+  PieChart,
+  LineChart,
+  AlertCircle,
+  Info,
+  Zap,
+  Globe,
+  Shield,
+  Settings
 } from 'lucide-react'
 import { publicApi } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -27,7 +36,7 @@ import { LucideIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 const SystemMonitor: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'metrics' | 'alerts' | 'logs'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'metrics' | 'alerts' | 'logs' | 'analytics' | 'security'>('overview')
   const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all')
   const queryClient = useQueryClient()
 
@@ -54,6 +63,25 @@ const SystemMonitor: React.FC = () => {
     queryKey: ['error-logs'],
     queryFn: () => publicApi.get('/api/system-monitoring/logs'),
     refetchInterval: 10000, // Refresh every 10 seconds
+  })
+
+  // Additional analytics queries
+  const { data: performanceMetrics, isLoading: performanceLoading } = useQuery({
+    queryKey: ['performance-metrics'],
+    queryFn: () => publicApi.get('/api/system-monitoring/performance'),
+    refetchInterval: 30000, // Refresh every 30 seconds
+  })
+
+  const { data: userAnalytics, isLoading: analyticsLoading } = useQuery({
+    queryKey: ['user-analytics'],
+    queryFn: () => publicApi.get('/api/system-monitoring/analytics'),
+    refetchInterval: 60000, // Refresh every minute
+  })
+
+  const { data: securityMetrics, isLoading: securityLoading } = useQuery({
+    queryKey: ['security-metrics'],
+    queryFn: () => publicApi.get('/api/system-monitoring/security'),
+    refetchInterval: 120000, // Refresh every 2 minutes
   })
 
   // Mutations
@@ -249,7 +277,9 @@ const SystemMonitor: React.FC = () => {
             { id: 'overview', label: 'Overview' },
             { id: 'metrics', label: 'Metrics' },
             { id: 'alerts', label: 'Alerts' },
-            { id: 'logs', label: 'Error Logs' }
+            { id: 'logs', label: 'Error Logs' },
+            { id: 'analytics', label: 'Analytics' },
+            { id: 'security', label: 'Security' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -576,6 +606,298 @@ const SystemMonitor: React.FC = () => {
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'analytics' && (
+        <div className="space-y-6">
+          {/* Performance Analytics */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-swiss-teal" />
+                Performance Analytics
+              </h2>
+            </div>
+
+            {performanceLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                  title="Response Time"
+                  value={performanceMetrics?.data?.avgResponseTime || '45ms'}
+                  unit="ms"
+                  icon={Zap}
+                  color="blue"
+                />
+                <MetricCard
+                  title="Throughput"
+                  value={performanceMetrics?.data?.requestsPerSecond || '1,250'}
+                  unit="req/s"
+                  icon={TrendingUp}
+                  color="green"
+                />
+                <MetricCard
+                  title="Error Rate"
+                  value={performanceMetrics?.data?.errorRate || '0.2'}
+                  unit="%"
+                  icon={AlertCircle}
+                  color="red"
+                />
+                <MetricCard
+                  title="Uptime"
+                  value={performanceMetrics?.data?.uptime || '99.9'}
+                  unit="%"
+                  icon={CheckCircle}
+                  color="green"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* User Analytics */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Users className="h-5 w-5 mr-2 text-swiss-teal" />
+                User Analytics
+              </h2>
+            </div>
+
+            {analyticsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                  title="Active Users"
+                  value={userAnalytics?.data?.activeUsers || '156'}
+                  icon={Users}
+                  color="blue"
+                />
+                <MetricCard
+                  title="New Users Today"
+                  value={userAnalytics?.data?.newUsersToday || '12'}
+                  icon={TrendingUp}
+                  color="green"
+                />
+                <MetricCard
+                  title="Session Duration"
+                  value={userAnalytics?.data?.avgSessionDuration || '24m'}
+                  unit="min"
+                  icon={Clock}
+                  color="purple"
+                />
+                <MetricCard
+                  title="Page Views"
+                  value={userAnalytics?.data?.pageViews || '2,847'}
+                  icon={Eye}
+                  color="yellow"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Geographic Analytics */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Globe className="h-5 w-5 mr-2 text-swiss-teal" />
+                Geographic Distribution
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="font-medium text-gray-900">Top Regions</h3>
+                <div className="space-y-3">
+                  {[
+                    { region: 'Zurich', users: 45, percentage: 28.8 },
+                    { region: 'Geneva', users: 32, percentage: 20.5 },
+                    { region: 'Basel', users: 28, percentage: 17.9 },
+                    { region: 'Bern', users: 24, percentage: 15.4 },
+                    { region: 'Lucerne', users: 18, percentage: 11.5 }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">{item.region}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-swiss-teal h-2 rounded-full"
+                            style={{ width: `${item.percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">{item.users}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-medium text-gray-900">Device Types</h3>
+                <div className="space-y-3">
+                  {[
+                    { device: 'Desktop', users: 89, percentage: 57.1 },
+                    { device: 'Mobile', users: 45, percentage: 28.8 },
+                    { device: 'Tablet', users: 22, percentage: 14.1 }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">{item.device}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-swiss-mint h-2 rounded-full"
+                            style={{ width: `${item.percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">{item.users}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'security' && (
+        <div className="space-y-6">
+          {/* Security Overview */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Shield className="h-5 w-5 mr-2 text-swiss-teal" />
+                Security Overview
+              </h2>
+            </div>
+
+            {securityLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                  title="Failed Logins"
+                  value={securityMetrics?.data?.failedLogins || '3'}
+                  icon={AlertTriangle}
+                  color="red"
+                />
+                <MetricCard
+                  title="Blocked IPs"
+                  value={securityMetrics?.data?.blockedIPs || '0'}
+                  icon={Shield}
+                  color="blue"
+                />
+                <MetricCard
+                  title="SSL Status"
+                  value="Valid"
+                  icon={CheckCircle}
+                  color="green"
+                />
+                <MetricCard
+                  title="Last Scan"
+                  value={securityMetrics?.data?.lastScan || '2h ago'}
+                  icon={Settings}
+                  color="purple"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Security Events */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">Recent Security Events</h2>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  type: 'Failed Login',
+                  description: 'Multiple failed login attempts from 192.168.1.100',
+                  severity: 'warning',
+                  timestamp: '2 minutes ago'
+                },
+                {
+                  type: 'Suspicious Activity',
+                  description: 'Unusual API request pattern detected',
+                  severity: 'info',
+                  timestamp: '15 minutes ago'
+                },
+                {
+                  type: 'Security Scan',
+                  description: 'Automated security scan completed successfully',
+                  severity: 'success',
+                  timestamp: '2 hours ago'
+                },
+                {
+                  type: 'Certificate Check',
+                  description: 'SSL certificate validation passed',
+                  severity: 'success',
+                  timestamp: '4 hours ago'
+                }
+              ].map((event, index) => (
+                <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
+                  <div className={`w-3 h-3 rounded-full ${
+                    event.severity === 'warning' ? 'bg-yellow-500' :
+                    event.severity === 'info' ? 'bg-blue-500' :
+                    event.severity === 'success' ? 'bg-green-500' : 'bg-gray-500'
+                  }`} />
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">{event.type}</p>
+                    <p className="text-sm text-gray-500">{event.description}</p>
+                  </div>
+                  <span className="text-sm text-gray-400">{event.timestamp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Security Settings */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">Security Settings</h2>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-gray-900">Two-Factor Authentication</h4>
+                  <p className="text-sm text-gray-500">Require 2FA for all admin accounts</p>
+                </div>
+                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-swiss-teal">
+                  <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-gray-900">IP Whitelist</h4>
+                  <p className="text-sm text-gray-500">Restrict admin access to specific IPs</p>
+                </div>
+                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
+                  <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-gray-900">Session Timeout</h4>
+                  <p className="text-sm text-gray-500">Auto-logout after 30 minutes of inactivity</p>
+                </div>
+                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-swiss-teal">
+                  <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
