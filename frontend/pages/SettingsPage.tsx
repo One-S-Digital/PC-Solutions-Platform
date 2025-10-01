@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../components/ui/Tabs';
+import { useUserProfile, useOrganizationSettings, useNotificationSettings, useSecuritySettings } from '../src/hooks/useSettings';
 
 // Section specific components
 import CompanyProfileSettings from '../components/settings/sections/CompanyProfileSettings';
@@ -47,6 +48,41 @@ const SettingsPage: React.FC = () => {
   const [isDirty, setIsDirty] = useState(false);
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // API hooks for settings
+  const { 
+    profile: userProfile, 
+    loading: profileLoading, 
+    error: profileError,
+    updateProfile,
+    updatePreferences,
+    changePassword,
+    updateAvatar 
+  } = useUserProfile(currentUser?.id || '');
+
+  const { 
+    organization, 
+    loading: organizationLoading, 
+    error: organizationError,
+    updateOrganization,
+    updateLogo 
+  } = useOrganizationSettings(currentUser?.orgId || '');
+
+  const { 
+    settings: notificationSettings, 
+    loading: notificationLoading, 
+    error: notificationError,
+    updateSettings: updateNotificationSettings 
+  } = useNotificationSettings(currentUser?.id || '');
+
+  const { 
+    settings: securitySettings, 
+    loading: securityLoading, 
+    error: securityError,
+    enableTwoFactor,
+    disableTwoFactor,
+    revokeSession 
+  } = useSecuritySettings(currentUser?.id || '');
 
   useEffect(() => {
     if (currentUser) {
@@ -94,15 +130,66 @@ const SettingsPage: React.FC = () => {
   }, [availableSections, activeSectionId]);
 
 
-  const handleFormChange = (field: keyof SettingsFormData, value: any) => {
+  const handleFormChange = async (field: keyof SettingsFormData, value: any) => {
     setFormData(prev => prev ? { ...prev, [field]: value } : null);
+    
+    // Auto-save certain fields to API
+    try {
+      if (field === 'language' && currentUser) {
+        await updatePreferences({ language: value });
+      } else if (field === 'timezone' && currentUser) {
+        await updatePreferences({ timezone: value });
+      } else if (field === 'notifications' && currentUser) {
+        await updateNotificationSettings(value);
+      }
+    } catch (error) {
+      console.error('Failed to auto-save setting:', error);
+      addNotification({
+        type: 'error',
+        title: 'Save Failed',
+        message: 'Failed to save setting. Please try again.',
+      });
+    }
   };
 
-  const handleSave = () => {
-    console.log('Saving settings:', formData);
-    setInitialFormData(JSON.parse(JSON.stringify(formData)));
-    addNotification({ title: t('notifications.successTitle'), message: t('notifications.settingsUpdated'), type: 'success' });
-    setIsDirty(false);
+  const handleSave = async () => {
+    if (!currentUser || !formData) return;
+
+    try {
+      // Save user profile data
+      if (userProfile) {
+        await updateProfile({
+          name: formData.name || userProfile.name,
+          email: formData.email || userProfile.email,
+          phone: formData.phone || userProfile.phone,
+        });
+      }
+
+      // Save organization data if applicable
+      if (organization && currentUser.orgId) {
+        await updateOrganization({
+          name: formData.companyName || organization.name,
+          description: formData.description || organization.description,
+          website: formData.website || organization.website,
+          address: formData.address || organization.address,
+        });
+      }
+
+      setInitialFormData(JSON.parse(JSON.stringify(formData)));
+      addNotification({ 
+        title: t('notifications.successTitle'), 
+        message: t('notifications.settingsUpdated'), 
+        type: 'success' 
+      });
+      setIsDirty(false);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      addNotification({
+        type: 'error',
+        title: 'Save Failed',
+        message: 'Failed to save settings. Please try again.',
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -122,8 +209,24 @@ const SettingsPage: React.FC = () => {
     sectionRefs.current[sectionId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  if (!currentUser || !formData) {
-    return <div className="p-6 text-center">{t('settingsPage.loading')}</div>;
+  // Show loading state while fetching data
+  if (!currentUser || !formData || profileLoading || organizationLoading) {
+    return (
+      <div className="p-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">{t('settingsPage.loading')}</p>
+      </div>
+    );
+  }
+
+  // Show error state if there are critical errors
+  if (profileError || organizationError) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-red-600">Failed to load settings. Using cached data.</p>
+        <p className="text-sm text-gray-500 mt-2">Some features may not work properly.</p>
+      </div>
+    );
   }
   
   const userRole = currentUser.role;
