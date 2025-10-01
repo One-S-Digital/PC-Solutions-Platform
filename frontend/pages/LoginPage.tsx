@@ -160,16 +160,16 @@ const LoginPage: React.FC = () => {
                 {t('loginPage.viewPlans')}
             </Link>
             </p>
-            <div className="bg-gradient-to-r from-swiss-teal/10 to-swiss-mint/10 rounded-lg p-4 mt-4">
-              <p className="text-lg font-semibold text-swiss-charcoal text-center mb-2">
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <p className="text-sm text-gray-600 text-center mb-3">
                 {t('loginPage.parentLookingForCreche')}
               </p>
               <div className="text-center">
                 <Link 
                   to="/parent-lead-form" 
-                  className="inline-flex items-center px-6 py-3 bg-swiss-teal text-white font-medium rounded-lg hover:bg-swiss-teal/90 transition-colors duration-200 shadow-md hover:shadow-lg"
+                  className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
                 >
-                  <span className="mr-2">🏠</span>
+                  <span className="mr-1">🏠</span>
                   {t('loginPage.findCrecheHere')}
                 </Link>
               </div>
