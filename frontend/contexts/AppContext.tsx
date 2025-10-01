@@ -15,6 +15,8 @@ import {
   MOCK_VENDOR_CLIENTS
 } from '../constants';
 import i18n from '../i18n'; // Import i18n instance
+import { useAuth } from '../src/hooks/useAuth';
+import { useCurrentUser } from '../src/hooks/useUser';
 
 interface AppContextType {
   currentUser: User | null;
@@ -52,6 +54,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const mockUserStore = [...ALL_USERS_MOCK];
 
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  const { user: apiUser, organization, loading: userLoading } = useCurrentUser();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [leads, setLeads] = useState<ParentLead[]>(MOCK_PARENT_LEADS);
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(MOCK_SERVICE_REQUESTS);
@@ -78,6 +82,30 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
       i18n.changeLanguage(newLangCode);
     }
   }, [language]);
+
+  // Sync API user with current user state
+  useEffect(() => {
+    if (apiUser) {
+      // Convert backend user to frontend user format
+      const frontendUser: User = {
+        id: apiUser.id,
+        name: `${apiUser.firstName} ${apiUser.lastName}`,
+        email: apiUser.email,
+        role: apiUser.role as any, // Type conversion for compatibility
+        orgId: organization?.id,
+        orgName: organization?.name,
+        avatarUrl: undefined, // Will be populated from asset data
+        status: apiUser.isActive ? 'Active' : 'Inactive',
+        lastLogin: apiUser.lastActiveAt,
+        region: organization?.region,
+        plan: 'Basic', // Default plan
+        memberSince: apiUser.createdAt,
+      };
+      setCurrentUser(frontendUser);
+    } else if (!userLoading) {
+      setCurrentUser(null);
+    }
+  }, [apiUser, organization, userLoading]);
 
   useEffect(() => {
     if(currentUser?.role === UserRole.EDUCATOR) {
@@ -124,59 +152,21 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   }, [language]);
 
   const login = async (email: string): Promise<{ success: boolean; message?: string }> => {
-    return new Promise(resolve => {
-      setTimeout(() => { // Simulate network delay
-        const user = mockUserStore.find(u => u.email.toLowerCase() === email.toLowerCase());
-        if (user) {
-          setCurrentUser(user);
-          resolve({ success: true });
-        } else {
-          resolve({ success: false, message: 'Invalid credentials. Please try again.' });
-        }
-      }, 500);
-    });
+    // This is now handled by Clerk authentication
+    // Keep for backward compatibility but redirect to Clerk
+    return { success: false, message: 'Please use the login form above.' };
   };
 
   const logout = () => {
+    // This is now handled by Clerk authentication
+    // Keep for backward compatibility
     setCurrentUser(null);
   };
 
   const signup = async (formData: SignupFormData, role: SignupRole): Promise<{ success: boolean; message?: string, redirectTo?: string }> => {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            if (mockUserStore.some(u => u.email.toLowerCase() === formData.email.toLowerCase())) {
-                resolve({ success: false, message: 'An account with this email already exists.' });
-                return;
-            }
-
-            const newUser: User = {
-                id: `user_${Date.now()}`,
-                name: formData.contactPerson,
-                email: formData.email,
-                role: role as unknown as UserRole, // Map SignupRole to UserRole
-                orgName: formData.organisationName,
-                orgId: formData.organisationName ? `org_${Date.now()}` : undefined,
-                avatarUrl: `https://ui-avatars.com/api/?name=${formData.contactPerson.replace(' ', '+')}&background=random`,
-                status: 'Active',
-                lastLogin: new Date().toISOString(),
-                region: formData.canton || undefined,
-                memberSince: new Date().toISOString(),
-                plan: 'Basic', // Default to basic plan on signup
-            };
-            
-            mockUserStore.push(newUser);
-
-            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role)) {
-                // For professional roles, don't log in immediately. Redirect to pricing.
-                // In a real app, you'd probably mark the account as pending verification/subscription.
-                resolve({ success: true, redirectTo: '/pricing' });
-            } else {
-                // For other roles like Parent, log them in directly.
-                setCurrentUser(newUser);
-                resolve({ success: true });
-            }
-        }, 500);
-    });
+    // This is now handled by Clerk authentication
+    // Keep for backward compatibility but redirect to Clerk
+    return { success: false, message: 'Please use the signup form above.' };
   };
 
 
