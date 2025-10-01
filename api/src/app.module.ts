@@ -38,6 +38,9 @@ import { RoleManagementModule } from './admin/role-management/role-management.mo
 import { SyncModule } from './sync/sync.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { CompatModule } from './compat/compat.module';
+import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
+import { ContentManagementModule } from './content-management/content-management.module';
+import { PolicyAlertsModule } from './policy-alerts/policy-alerts.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -115,6 +118,9 @@ import {
     SyncModule,
     WebhooksModule,
     CompatModule,
+    PlatformSettingsModule,
+    ContentManagementModule,
+    PolicyAlertsModule,
   ],
   controllers: [AppController],
   providers: [

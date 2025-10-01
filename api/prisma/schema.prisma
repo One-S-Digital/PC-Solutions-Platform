@@ -178,6 +178,13 @@ model User {
   emailLogs               EmailLog[]                   @relation("EmailLogs")
   notificationPreferences UserNotificationPreferences? @relation("NotificationPreferences")
 
+  // New admin features relations
+  contentItems            ContentItem[]                @relation("ContentUploader")
+  policyAlerts            PolicyAlert[]                @relation("PolicyAlertCreator")
+  auditLogs               AuditLog[]                   @relation("AuditLogUser")
+  apiKeys                 ApiKey[]                     @relation("ApiKeyCreator")
+  webhooks                Webhook[]                    @relation("WebhookCreator")
+
   @@map("users")
 }
 
@@ -1263,4 +1270,207 @@ model Outbox {
   lastError String?
 
   @@index([nextRunAt])
+}
+
+// Platform Settings and Configuration
+model PlatformSettings {
+  id                    String   @id @default(uuid())
+  platformName          String   @default("ProCrèche Solutions Suisse")
+  platformDescription   String?
+  platformVersion       String   @default("1.0.0")
+  maintenanceMode       Boolean  @default(false)
+  registrationEnabled   Boolean  @default(true)
+  emailVerificationRequired Boolean @default(true)
+  maxFileUploadSize     Int      @default(10485760) // 10MB in bytes
+  allowedFileTypes      String[] @default(["jpg", "jpeg", "png", "pdf", "doc", "docx"])
+  sessionTimeout        Int      @default(3600) // 1 hour in seconds
+  passwordMinLength     Int      @default(8)
+  passwordRequireSpecial Boolean @default(true)
+  twoFactorRequired     Boolean  @default(false)
+  apiRateLimit          Int      @default(1000) // requests per hour
+  backupFrequency       String   @default("daily") // daily, weekly, monthly
+  logRetentionDays      Int      @default(90)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("platform_settings")
+}
+
+// System Monitoring and Health Checks
+model SystemHealthCheck {
+  id          String   @id @default(uuid())
+  serviceName String
+  status      String   // healthy, degraded, down
+  responseTime Int?    // milliseconds
+  lastChecked DateTime @default(now())
+  errorMessage String?
+  metadata    Json?    // Additional health check data
+  createdAt   DateTime @default(now())
+
+  @@map("system_health_checks")
+}
+
+model SystemMetrics {
+  id          String   @id @default(uuid())
+  metricName  String
+  metricValue Float
+  unit        String?  // bytes, seconds, count, etc.
+  timestamp   DateTime @default(now())
+  metadata    Json?    // Additional metric data
+  createdAt   DateTime @default(now())
+
+  @@map("system_metrics")
+}
+
+model SystemAlert {
+  id          String   @id @default(uuid())
+  alertType   String   // error, warning, info
+  title       String
+  message     String
+  severity    String   // low, medium, high, critical
+  isResolved  Boolean  @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  metadata    Json?    // Additional alert data
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_alerts")
+}
+
+// Content Management System
+model ContentItem {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  contentType String   // document, image, video, audio, other
+  fileUrl     String?
+  fileSize    Int?
+  mimeType    String?
+  category    String?
+  tags        String[]
+  status      String   @default("draft") // draft, published, archived
+  isPublic    Boolean  @default(false)
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  uploader User @relation("ContentUploader", fields: [uploadedBy], references: [id])
+
+  @@map("content_items")
+}
+
+model ContentCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  parentId    String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  parent   ContentCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children ContentCategory[] @relation("CategoryHierarchy")
+
+  @@map("content_categories")
+}
+
+// Policy Alert System
+model PolicyAlert {
+  id          String   @id @default(uuid())
+  title       String
+  message     String
+  alertType   String   // info, warning, critical
+  regions     String[] // Array of region codes (CH, DE, FR, etc.)
+  isActive    Boolean  @default(true)
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator User @relation("PolicyAlertCreator", fields: [createdBy], references: [id])
+
+  @@map("policy_alerts")
+}
+
+// Audit Logging System
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  action      String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
+  resource    String   // User, Organization, Product, etc.
+  resourceId  String?
+  oldValues   Json?    // Previous values
+  newValues   Json?    // New values
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?    // Additional context
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User? @relation("AuditLogUser", fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+// API Key Management
+model ApiKey {
+  id          String   @id @default(uuid())
+  name        String
+  keyHash     String   @unique
+  permissions String[] // Array of permission strings
+  isActive    Boolean  @default(true)
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator User @relation("ApiKeyCreator", fields: [createdBy], references: [id])
+
+  @@map("api_keys")
+}
+
+// Webhook Management
+model Webhook {
+  id          String   @id @default(uuid())
+  name        String
+  url         String
+  events      String[] // Array of event types
+  secret      String?  // Webhook secret for verification
+  isActive    Boolean  @default(true)
+  lastTriggered DateTime?
+  failureCount Int     @default(0)
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator User @relation("WebhookCreator", fields: [createdBy], references: [id])
+  logs    WebhookLog[]
+
+  @@map("webhooks")
+}
+
+model WebhookLog {
+  id          String   @id @default(uuid())
+  webhookId   String
+  event       String
+  payload     Json
+  response    Json?
+  statusCode  Int?
+  success     Boolean
+  errorMessage String?
+  triggeredAt DateTime @default(now())
+
+  // Relations
+  webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_logs")
 }
