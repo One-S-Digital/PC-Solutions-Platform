@@ -4,8 +4,8 @@ services:
   - type: web
     name: procreche-frontend
     env: static
-    buildCommand: npm install && npm run build:production
-    staticPublishPath: ./dist
+    buildCommand: pnpm install --frozen-lockfile && cd frontend && npx vite build --mode production
+    staticPublishPath: ./frontend/dist
     pullRequestPreviewsEnabled: true
     autoDeploy: true
     branch: main
@@ -54,7 +54,7 @@ services:
   - type: web
     name: procreche-api
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build:render
     startCommand: npm run start:prod
     plan: starter
     pullRequestPreviewsEnabled: true

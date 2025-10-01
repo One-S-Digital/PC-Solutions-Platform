@@ -4,21 +4,33 @@
 Render is using pnpm but the lockfile is outdated, causing deployment failures.
 
 ## Solution
-Use npm instead of pnpm for deployment.
+Update the pnpm lockfile to match the current package.json dependencies.
 
 ## Quick Fix Steps
 
-### 1. Update Render Service Configuration
+### 1. Update pnpm Lockfile (Recommended)
+
+**In your local environment:**
+```bash
+cd frontend
+rm pnpm-lock.yaml
+pnpm install
+git add pnpm-lock.yaml
+git commit -m "Update pnpm lockfile for frontend"
+git push
+```
+
+### 2. Update Render Service Configuration
 
 **In Render Dashboard:**
 1. Go to your service settings
 2. Change **Build Command** to:
    ```bash
-   npm install && npm run build:production
+   pnpm install --frozen-lockfile && cd frontend && npx vite build --mode production
    ```
 3. Save changes
 
-### 2. Environment Variables
+### 3. Environment Variables
 Make sure these are set in Render:
 
 ```bash
@@ -30,7 +42,7 @@ VITE_APP_NAME="Pro Crèche Solutions"
 VITE_APP_VERSION="1.0.0"
 ```
 
-### 3. Deploy
+### 4. Deploy
 - Click **Manual Deploy** → **Deploy latest commit**
 - Or push a new commit to trigger auto-deploy
 
@@ -47,15 +59,14 @@ If you prefer to use the render.yaml file:
 ## Expected Result
 
 After the fix, you should see:
-- ✅ npm install completes successfully
-- ✅ npm run build:production completes successfully  
-- ✅ Static files generated in dist/ directory
+- ✅ pnpm install --frozen-lockfile completes successfully
+- ✅ cd frontend && npx vite build --mode production completes successfully  
+- ✅ Static files generated in frontend/dist/ directory
 - ✅ Application deployed and accessible
 
 ## Files Created for Render
 
-- `render.yaml` - Render configuration
-- `.npmrc` - Forces npm usage
+- `render.yaml` - Render configuration (updated for pnpm)
 - `_redirects` - SPA routing support
 - `RENDER_DEPLOYMENT.md` - Complete deployment guide
 - `RENDER_TROUBLESHOOTING.md` - Troubleshooting guide
@@ -63,4 +74,4 @@ After the fix, you should see:
 ## Status
 🟢 **READY FOR RENDER DEPLOYMENT**
 
-The build works locally with npm, so it should work on Render too.
+The build works locally with pnpm, so it should work on Render too once the lockfile is updated.
