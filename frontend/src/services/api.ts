@@ -10,9 +10,23 @@ export interface ApiResponse<T = any> {
 
 export interface ApiError {
   message: string;
-  status: number;
+  status?: number;
   code?: string;
   details?: any;
+  timestamp: string;
+}
+
+export interface ValidationError {
+  field: string;
+  message: string;
+  code: string;
+}
+
+export interface ApiErrorResponse {
+  message: string;
+  code?: string;
+  details?: any;
+  validationErrors?: ValidationError[];
 }
 
 // API Client Configuration
@@ -72,18 +86,53 @@ class ApiClient {
     const status = error.response?.status;
     const message = this.getErrorMessage(error);
 
-    // Don't show toast for 401 (unauthorized) - handled by auth flow
-    if (status !== 401) {
-      toast.error(message);
-    }
-
     // Log error for debugging
     console.error('API Error:', {
       status,
       message,
       url: error.config?.url,
       method: error.config?.method,
+      data: error.response?.data,
+      timestamp: new Date().toISOString(),
     });
+
+    // Handle specific error cases
+    if (status === 401) {
+      // Unauthorized - clear token and redirect to login
+      this.clearAuthToken();
+      window.location.href = '/login';
+      toast.error('Session expired. Please log in again.');
+    } else if (status === 403) {
+      toast.error('Access denied. You do not have permission to perform this action.');
+    } else if (status === 404) {
+      toast.error('Resource not found.');
+    } else if (status === 409) {
+      toast.error('Conflict. The resource already exists.');
+    } else if (status === 422) {
+      // Validation errors
+      const errorData = error.response?.data as ApiErrorResponse;
+      if (errorData?.validationErrors) {
+        const validationMessages = errorData.validationErrors.map(err => err.message);
+        toast.error(`Validation failed: ${validationMessages.join(', ')}`);
+      } else {
+        toast.error(errorData?.message || 'Validation failed. Please check your input.');
+      }
+    } else if (status === 429) {
+      toast.error('Too many requests. Please try again later.');
+    } else if (status === 500) {
+      toast.error('Server error. Please try again later.');
+    } else if (status === 502 || status === 503 || status === 504) {
+      toast.error('Service temporarily unavailable. Please try again later.');
+    } else if (status && status >= 400) {
+      // Other client/server errors
+      toast.error(message);
+    } else if (error.request) {
+      // Network error
+      toast.error('Network error. Please check your connection.');
+    } else {
+      // Other error
+      toast.error('An unexpected error occurred.');
+    }
   }
 
   private getErrorMessage(error: AxiosError): string {
@@ -100,7 +149,7 @@ class ApiClient {
   }
 
   private transformError(error: AxiosError): ApiError {
-    const status = error.response?.status || 500;
+    const status = error.response?.status;
     const message = this.getErrorMessage(error);
     
     return {
@@ -108,7 +157,14 @@ class ApiClient {
       status,
       code: error.code,
       details: error.response?.data,
+      timestamp: new Date().toISOString(),
     };
+  }
+
+  private clearAuthToken() {
+    // TODO: Implement Clerk token clearing
+    // For now, just clear localStorage
+    localStorage.removeItem('auth_token');
   }
 
   // HTTP Methods
@@ -161,6 +217,79 @@ class ApiClient {
   // Get raw response (for cases where we need the full response)
   async getRaw<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.get<T>(url, config);
+  }
+
+  // Batch upload for multiple files
+  async uploadFiles<T = any>(url: string, files: File[], onProgress?: (progress: number) => void): Promise<T> {
+    const formData = new FormData();
+    files.forEach((file, index) => {
+      formData.append(`files[${index}]`, file);
+    });
+
+    const config: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
+    };
+
+    const response = await this.client.post<ApiResponse<T>>(url, formData, config);
+    return response.data.data;
+  }
+
+  // Download file
+  async downloadFile(url: string, filename?: string): Promise<void> {
+    const response = await this.client.get(url, { responseType: 'blob' });
+    const blob = new Blob([response.data]);
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = filename || 'download';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  }
+
+  // Health check
+  async healthCheck(): Promise<boolean> {
+    try {
+      await this.get('/health');
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Retry mechanism for failed requests
+  async retryRequest<T>(
+    requestFn: () => Promise<T>,
+    maxRetries: number = 3,
+    delay: number = 1000
+  ): Promise<T> {
+    let lastError: any;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await requestFn();
+      } catch (error) {
+        lastError = error;
+        
+        if (attempt === maxRetries) {
+          throw lastError;
+        }
+        
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, delay * attempt));
+      }
+    }
+    
+    throw lastError;
   }
 
   // Update auth token (for Clerk integration)

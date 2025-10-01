@@ -17,6 +17,7 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { ToastProvider } from './src/components/providers/ToastProvider';
 import { ClerkProvider } from './src/components/providers/ClerkProvider';
+import ErrorBoundary from './src/components/ErrorBoundary';
 import { UserRole } from './types';
 
 // New Pages
@@ -304,25 +305,27 @@ const ProtectedLayout: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ClerkProvider>
-      <ToastProvider>
-        <AppContextProvider>
-          <CartProvider>
-            <MessagingProvider>
-              <NotificationProvider>
-                <Routes>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/signup" element={<SignupPage />} />
-                  <Route path="/pricing" element={<PricingPage />} />
-                  <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
-                  <Route path="/*" element={<ProtectedLayout />} />
-                </Routes>
-              </NotificationProvider>
-            </MessagingProvider>
-          </CartProvider>
-        </AppContextProvider>
-      </ToastProvider>
-    </ClerkProvider>
+    <ErrorBoundary>
+      <ClerkProvider>
+        <ToastProvider>
+          <AppContextProvider>
+            <CartProvider>
+              <MessagingProvider>
+                <NotificationProvider>
+                  <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
+                    <Route path="/pricing" element={<PricingPage />} />
+                    <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
+                    <Route path="/*" element={<ProtectedLayout />} />
+                  </Routes>
+                </NotificationProvider>
+              </MessagingProvider>
+            </CartProvider>
+          </AppContextProvider>
+        </ToastProvider>
+      </ClerkProvider>
+    </ErrorBoundary>
   );
 };
 
