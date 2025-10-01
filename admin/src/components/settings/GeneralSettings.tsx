@@ -1,10 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import logger from '../../utils/logger'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { publicApi } from '../../services/api'
+import { toast } from 'sonner'
+import { AlertTriangle, CheckCircle, Settings as SettingsIcon } from 'lucide-react'
 
 const GeneralSettings: React.FC = () => {
   const { settings, updateSettings, loading, error, saving } = useSettings()
+  const [maintenanceMode, setMaintenanceMode] = useState(false)
+  const [maintenanceMessage, setMaintenanceMessage] = useState('')
+  const queryClient = useQueryClient()
+
+  // Platform settings queries
+  const { data: platformSettings, isLoading: platformLoading } = useQuery({
+    queryKey: ['platform-settings'],
+    queryFn: () => publicApi.get('/api/platform-settings'),
+  })
+
+  // Maintenance mode mutation
+  const updateMaintenanceMutation = useMutation({
+    mutationFn: (data: { maintenanceMode: boolean; maintenanceMessage?: string }) => 
+      publicApi.put('/api/platform-settings', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['platform-settings'] })
+      toast.success('Maintenance mode updated successfully')
+    },
+    onError: () => {
+      toast.error('Failed to update maintenance mode')
+    }
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,6 +52,23 @@ const GeneralSettings: React.FC = () => {
     } catch (error) {
       logger.error('❌ Error saving settings:', error)
     }
+  }
+
+  const handleMaintenanceToggle = async () => {
+    const newMaintenanceMode = !maintenanceMode
+    setMaintenanceMode(newMaintenanceMode)
+    
+    updateMaintenanceMutation.mutate({
+      maintenanceMode: newMaintenanceMode,
+      maintenanceMessage: newMaintenanceMode ? maintenanceMessage : undefined
+    })
+  }
+
+  const handleMaintenanceMessageUpdate = async () => {
+    updateMaintenanceMutation.mutate({
+      maintenanceMode,
+      maintenanceMessage
+    })
   }
 
   if (loading) return <LoadingSpinner />
@@ -115,6 +158,72 @@ const GeneralSettings: React.FC = () => {
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Platform Settings Section */}
+      <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+        <div className="flex items-center space-x-2 mb-6">
+          <SettingsIcon className="h-5 w-5 text-swiss-teal" />
+          <h3 className="text-xl font-semibold text-swiss-charcoal">Platform Settings</h3>
+        </div>
+
+        {/* Maintenance Mode */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+            <div className="flex items-center space-x-3">
+              {maintenanceMode ? (
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+              ) : (
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              )}
+              <div>
+                <h4 className="font-medium text-gray-900">Maintenance Mode</h4>
+                <p className="text-sm text-gray-500">
+                  {maintenanceMode 
+                    ? 'Platform is currently in maintenance mode' 
+                    : 'Platform is operational'
+                  }
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleMaintenanceToggle}
+              disabled={updateMaintenanceMutation.isPending}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 ${
+                maintenanceMode ? 'bg-red-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  maintenanceMode ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+
+          {maintenanceMode && (
+            <div className="space-y-3">
+              <label htmlFor="maintenanceMessage" className="block text-sm font-medium text-gray-700">
+                Maintenance Message
+              </label>
+              <textarea
+                id="maintenanceMessage"
+                value={maintenanceMessage}
+                onChange={(e) => setMaintenanceMessage(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                placeholder="Enter maintenance message for users..."
+              />
+              <button
+                onClick={handleMaintenanceMessageUpdate}
+                disabled={updateMaintenanceMutation.isPending}
+                className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                {updateMaintenanceMutation.isPending ? 'Updating...' : 'Update Message'}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

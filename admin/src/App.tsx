@@ -18,10 +18,6 @@ import SystemMonitorPage from './pages/SystemMonitor';
 import SettingsPage from './pages/Settings';
 import DesignSystemPage from './pages/DesignSystem';
 import AccessDeniedPage from './pages/AccessDenied';
-import PlatformSettingsPage from './pages/PlatformSettingsPage';
-import SystemMonitoringPage from './pages/SystemMonitoringPage';
-import ContentManagementPage from './pages/ContentManagementPage';
-import PolicyAlertsPage from './pages/PolicyAlertsPage';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -62,10 +58,6 @@ function App() {
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="design-system" element={<DesignSystemPage />} />
-          <Route path="platform-settings" element={<PlatformSettingsPage />} />
-          <Route path="system-monitoring" element={<SystemMonitoringPage />} />
-          <Route path="content-management" element={<ContentManagementPage />} />
-          <Route path="policy-alerts" element={<PolicyAlertsPage />} />
 
           <Route index element={<Navigate to="/dashboard" />} />
         </Route>

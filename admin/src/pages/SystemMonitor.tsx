@@ -1,5 +1,5 @@
-import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import React, { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { 
   Monitor, 
   Server,
@@ -12,17 +12,71 @@ import {
   HardDrive,
   Wifi,
   Users,
-  TrendingUp
+  TrendingUp,
+  RefreshCw,
+  Filter,
+  Download,
+  Eye,
+  Trash2,
+  Bell,
+  BellOff
 } from 'lucide-react'
 import { publicApi } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { LucideIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 const SystemMonitor: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'metrics' | 'alerts' | 'logs'>('overview')
+  const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all')
+  const queryClient = useQueryClient()
+
   const { data: healthData, isLoading, error } = useQuery({
     queryKey: ['system-health'],
     queryFn: () => publicApi.getSystemHealth(),
     refetchInterval: 300000, // Refresh every 5 minutes instead of 5 seconds
+  })
+
+  // System monitoring queries
+  const { data: systemMetrics, isLoading: metricsLoading } = useQuery({
+    queryKey: ['system-metrics'],
+    queryFn: () => publicApi.get('/api/system-monitoring/metrics'),
+    refetchInterval: 60000, // Refresh every minute
+  })
+
+  const { data: systemAlerts, isLoading: alertsLoading } = useQuery({
+    queryKey: ['system-alerts'],
+    queryFn: () => publicApi.get('/api/system-monitoring/alerts'),
+    refetchInterval: 30000, // Refresh every 30 seconds
+  })
+
+  const { data: errorLogs, isLoading: logsLoading } = useQuery({
+    queryKey: ['error-logs'],
+    queryFn: () => publicApi.get('/api/system-monitoring/logs'),
+    refetchInterval: 10000, // Refresh every 10 seconds
+  })
+
+  // Mutations
+  const createAlertMutation = useMutation({
+    mutationFn: (alertData: any) => publicApi.post('/api/system-monitoring/alerts', alertData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['system-alerts'] })
+      toast.success('Alert created successfully')
+    },
+    onError: () => {
+      toast.error('Failed to create alert')
+    }
+  })
+
+  const deleteAlertMutation = useMutation({
+    mutationFn: (alertId: string) => publicApi.delete(`/api/system-monitoring/alerts/${alertId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['system-alerts'] })
+      toast.success('Alert deleted successfully')
+    },
+    onError: () => {
+      toast.error('Failed to delete alert')
+    }
   })
 
   // Mock system metrics data
@@ -129,196 +183,403 @@ const SystemMonitor: React.FC = () => {
     )
   }
 
+  const filteredLogs = errorLogs?.data?.filter((log: any) => 
+    logFilter === 'all' || log.level === logFilter
+  ) || []
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['system-health'] })
+    queryClient.invalidateQueries({ queryKey: ['system-metrics'] })
+    queryClient.invalidateQueries({ queryKey: ['system-alerts'] })
+    queryClient.invalidateQueries({ queryKey: ['error-logs'] })
+    toast.success('Data refreshed')
+  }
+
+  const handleCreateAlert = (alertData: any) => {
+    createAlertMutation.mutate(alertData)
+  }
+
+  const handleDeleteAlert = (alertId: string) => {
+    deleteAlertMutation.mutate(alertId)
+  }
+
+  const handleExportLogs = () => {
+    const csvContent = "data:text/csv;charset=utf-8," + 
+      "Timestamp,Level,Message,Source\n" +
+      filteredLogs.map((log: any) => 
+        `${log.timestamp},${log.level},${log.message},${log.source}`
+      ).join("\n")
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "system_logs.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    toast.success('Logs exported successfully')
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <Monitor className="h-8 w-8 mr-3 text-swiss-teal" />
-          System Monitor
-        </h1>
-        <p className="mt-2 text-gray-600">
-          Real-time system health and performance monitoring
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+            <Monitor className="h-8 w-8 mr-3 text-swiss-teal" />
+            System Monitor
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Real-time system health and performance monitoring
+          </p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          className="flex items-center space-x-2 px-4 py-2 bg-swiss-teal text-white rounded-lg hover:bg-swiss-teal/90 transition-colors"
+        >
+          <RefreshCw className="h-4 w-4" />
+          <span>Refresh</span>
+        </button>
       </div>
 
-      {/* System Status Overview */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">System Status</h2>
-          <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${
-            systemStatus ? 'bg-green-100' : 'bg-red-100'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${
-              systemStatus ? 'bg-green-500' : 'bg-red-500'
-            } animate-pulse`} />
-            <span className={`text-sm font-medium ${
-              systemStatus ? 'text-green-700' : 'text-red-700'
-            }`}>
-              {systemStatus ? 'All Systems Operational' : 'System Issues Detected'}
-            </span>
-          </div>
-        </div>
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          {[
+            { id: 'overview', label: 'Overview' },
+            { id: 'metrics', label: 'Metrics' },
+            { id: 'alerts', label: 'Alerts' },
+            { id: 'logs', label: 'Error Logs' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === tab.id
+                  ? 'border-swiss-teal text-swiss-teal'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatusIndicator status={systemStatus} label="Backend API" />
-          <StatusIndicator status={true} label="Database" />
-          <StatusIndicator status={true} label="Authentication Service" />
-        </div>
-
-        {healthData?.data && (
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">Environment:</span>
-              <span className="ml-2 font-medium">{healthData.data.environment}</span>
+      {/* Tab Content */}
+      {activeTab === 'overview' && (
+        <>
+          {/* System Status Overview */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">System Status</h2>
+              <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${
+                systemStatus ? 'bg-green-100' : 'bg-red-100'
+              }`}>
+                <div className={`w-2 h-2 rounded-full ${
+                  systemStatus ? 'bg-green-500' : 'bg-red-500'
+                } animate-pulse`} />
+                <span className={`text-sm font-medium ${
+                  systemStatus ? 'text-green-700' : 'text-red-700'
+                }`}>
+                  {systemStatus ? 'All Systems Operational' : 'System Issues Detected'}
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-500">Uptime:</span>
-              <span className="ml-2 font-medium">{Math.floor(healthData.data.uptime / 60)}m</span>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatusIndicator status={systemStatus} label="Backend API" />
+              <StatusIndicator status={true} label="Database" />
+              <StatusIndicator status={true} label="Authentication Service" />
             </div>
-            <div>
-              <span className="text-gray-500">Version:</span>
-              <span className="ml-2 font-medium">{healthData.data.version || '1.0.0'}</span>
+
+            {healthData?.data && (
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Environment:</span>
+                  <span className="ml-2 font-medium">{healthData.data.environment}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Uptime:</span>
+                  <span className="ml-2 font-medium">{Math.floor(healthData.data.uptime / 60)}m</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Version:</span>
+                  <span className="ml-2 font-medium">{healthData.data.version || '1.0.0'}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Last Check:</span>
+                  <span className="ml-2 font-medium">Just now</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Quick Metrics Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <MetricCard
+              title="CPU Usage"
+              value={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
+              unit="%"
+              icon={Cpu}
+              color="blue"
+              percentage={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
+            />
+            <MetricCard
+              title="Memory Usage"
+              value={systemMetrics?.data?.memory || mockMetrics.server.memory}
+              unit="%"
+              icon={Activity}
+              color="green"
+              percentage={systemMetrics?.data?.memory || mockMetrics.server.memory}
+            />
+            <MetricCard
+              title="Active Alerts"
+              value={systemAlerts?.data?.filter((alert: any) => alert.status === 'active').length || 0}
+              icon={AlertTriangle}
+              color="red"
+            />
+            <MetricCard
+              title="Error Rate"
+              value={systemMetrics?.data?.errorRate || mockMetrics.application.errorRate}
+              unit="%"
+              icon={TrendingUp}
+              color="yellow"
+            />
+          </div>
+        </>
+      )}
+
+      {activeTab === 'metrics' && (
+        <>
+          {/* Server Metrics */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Server Performance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                title="CPU Usage"
+                value={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
+                unit="%"
+                icon={Cpu}
+                color="blue"
+                percentage={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
+              />
+              <MetricCard
+                title="Memory Usage"
+                value={systemMetrics?.data?.memory || mockMetrics.server.memory}
+                unit="%"
+                icon={Activity}
+                color="green"
+                percentage={systemMetrics?.data?.memory || mockMetrics.server.memory}
+              />
+              <MetricCard
+                title="Disk Usage"
+                value={systemMetrics?.data?.disk || mockMetrics.server.disk}
+                unit="%"
+                icon={HardDrive}
+                color="yellow"
+                percentage={systemMetrics?.data?.disk || mockMetrics.server.disk}
+              />
+              <MetricCard
+                title="Uptime"
+                value={systemMetrics?.data?.uptime || mockMetrics.server.uptime}
+                icon={Clock}
+                color="purple"
+              />
             </div>
-            <div>
-              <span className="text-gray-500">Last Check:</span>
-              <span className="ml-2 font-medium">Just now</span>
+          </div>
+
+          {/* Database Metrics */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Database Performance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                title="Active Connections"
+                value={`${systemMetrics?.data?.dbConnections || mockMetrics.database.connections}/${systemMetrics?.data?.maxConnections || mockMetrics.database.maxConnections}`}
+                icon={Database}
+                color="blue"
+                percentage={((systemMetrics?.data?.dbConnections || mockMetrics.database.connections) / (systemMetrics?.data?.maxConnections || mockMetrics.database.maxConnections)) * 100}
+              />
+              <MetricCard
+                title="Avg Query Time"
+                value={systemMetrics?.data?.queryTime || mockMetrics.database.queryTime}
+                unit="ms"
+                icon={Activity}
+                color="green"
+              />
+              <MetricCard
+                title="Storage Used"
+                value={systemMetrics?.data?.storage || mockMetrics.database.storage}
+                unit="%"
+                icon={HardDrive}
+                color="yellow"
+                percentage={systemMetrics?.data?.storage || mockMetrics.database.storage}
+              />
+              <MetricCard
+                title="Connection Health"
+                value="Healthy"
+                icon={CheckCircle}
+                color="green"
+              />
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Server Metrics */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Server Performance</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="CPU Usage"
-            value={mockMetrics.server.cpu}
-            unit="%"
-            icon={Cpu}
-            color="blue"
-            percentage={mockMetrics.server.cpu}
-          />
-          <MetricCard
-            title="Memory Usage"
-            value={mockMetrics.server.memory}
-            unit="%"
-            icon={Activity}
-            color="green"
-            percentage={mockMetrics.server.memory}
-          />
-          <MetricCard
-            title="Disk Usage"
-            value={mockMetrics.server.disk}
-            unit="%"
-            icon={HardDrive}
-            color="yellow"
-            percentage={mockMetrics.server.disk}
-          />
-          <MetricCard
-            title="Uptime"
-            value={mockMetrics.server.uptime}
-            icon={Clock}
-            color="purple"
-          />
-        </div>
-      </div>
-
-      {/* Database Metrics */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Database Performance</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="Active Connections"
-            value={`${mockMetrics.database.connections}/${mockMetrics.database.maxConnections}`}
-            icon={Database}
-            color="blue"
-            percentage={(mockMetrics.database.connections / mockMetrics.database.maxConnections) * 100}
-          />
-          <MetricCard
-            title="Avg Query Time"
-            value={mockMetrics.database.queryTime}
-            unit="ms"
-            icon={Activity}
-            color="green"
-          />
-          <MetricCard
-            title="Storage Used"
-            value={mockMetrics.database.storage}
-            unit="%"
-            icon={HardDrive}
-            color="yellow"
-            percentage={mockMetrics.database.storage}
-          />
-          <MetricCard
-            title="Connection Health"
-            value="Healthy"
-            icon={CheckCircle}
-            color="green"
-          />
-        </div>
-      </div>
-
-      {/* Application Metrics */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Application Performance</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="Active Users"
-            value={mockMetrics.application.activeUsers}
-            icon={Users}
-            color="blue"
-          />
-          <MetricCard
-            title="Requests/min"
-            value={mockMetrics.application.requestsPerMinute}
-            icon={TrendingUp}
-            color="green"
-          />
-          <MetricCard
-            title="Response Time"
-            value={mockMetrics.application.responseTime}
-            unit="ms"
-            icon={Wifi}
-            color="yellow"
-          />
-          <MetricCard
-            title="Error Rate"
-            value={mockMetrics.application.errorRate}
-            unit="%"
-            icon={AlertTriangle}
-            color="red"
-          />
-        </div>
-      </div>
-
-      {/* Recent System Events */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent System Events</h2>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-gray-600">System health check completed successfully</span>
-            <span className="text-gray-400">• 30 seconds ago</span>
+          {/* Application Metrics */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Application Performance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                title="Active Users"
+                value={systemMetrics?.data?.activeUsers || mockMetrics.application.activeUsers}
+                icon={Users}
+                color="blue"
+              />
+              <MetricCard
+                title="Requests/min"
+                value={systemMetrics?.data?.requestsPerMinute || mockMetrics.application.requestsPerMinute}
+                icon={TrendingUp}
+                color="green"
+              />
+              <MetricCard
+                title="Response Time"
+                value={systemMetrics?.data?.responseTime || mockMetrics.application.responseTime}
+                unit="ms"
+                icon={Wifi}
+                color="yellow"
+              />
+              <MetricCard
+                title="Error Rate"
+                value={systemMetrics?.data?.errorRate || mockMetrics.application.errorRate}
+                unit="%"
+                icon={AlertTriangle}
+                color="red"
+              />
+            </div>
           </div>
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-gray-600">Database backup completed</span>
-            <span className="text-gray-400">• 2 minutes ago</span>
-          </div>
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-            <span className="text-gray-600">High memory usage detected (resolved)</span>
-            <span className="text-gray-400">• 5 minutes ago</span>
-          </div>
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-gray-600">API endpoint response time improved</span>
-            <span className="text-gray-400">• 10 minutes ago</span>
+        </>
+      )}
+
+      {activeTab === 'alerts' && (
+        <div className="space-y-6">
+          {/* Alerts Management */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">System Alerts</h2>
+              <button
+                onClick={() => handleCreateAlert({
+                  type: 'performance',
+                  severity: 'warning',
+                  message: 'High CPU usage detected',
+                  threshold: 80
+                })}
+                className="flex items-center space-x-2 px-4 py-2 bg-swiss-teal text-white rounded-lg hover:bg-swiss-teal/90 transition-colors"
+              >
+                <Bell className="h-4 w-4" />
+                <span>Create Alert</span>
+              </button>
+            </div>
+
+            {alertsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {systemAlerts?.data?.map((alert: any) => (
+                  <div key={alert.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        alert.severity === 'critical' ? 'bg-red-500' :
+                        alert.severity === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+                      }`} />
+                      <div>
+                        <p className="font-medium text-gray-900">{alert.message}</p>
+                        <p className="text-sm text-gray-500">
+                          {alert.type} • {new Date(alert.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        alert.status === 'active' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                      }`}>
+                        {alert.status}
+                      </span>
+                      <button
+                        onClick={() => handleDeleteAlert(alert.id)}
+                        className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
+
+      {activeTab === 'logs' && (
+        <div className="space-y-6">
+          {/* Error Logs Console */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">Error Logs Console</h2>
+              <div className="flex items-center space-x-4">
+                <select
+                  value={logFilter}
+                  onChange={(e) => setLogFilter(e.target.value as any)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                >
+                  <option value="all">All Logs</option>
+                  <option value="error">Errors</option>
+                  <option value="warning">Warnings</option>
+                  <option value="info">Info</option>
+                </select>
+                <button
+                  onClick={handleExportLogs}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Export</span>
+                </button>
+              </div>
+            </div>
+
+            {logsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : (
+              <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm max-h-96 overflow-y-auto">
+                {filteredLogs.length === 0 ? (
+                  <div className="text-gray-500">No logs found</div>
+                ) : (
+                  filteredLogs.map((log: any, index: number) => (
+                    <div key={index} className="mb-2">
+                      <span className="text-gray-400">
+                        [{new Date(log.timestamp).toLocaleString()}]
+                      </span>
+                      <span className={`ml-2 ${
+                        log.level === 'error' ? 'text-red-400' :
+                        log.level === 'warning' ? 'text-yellow-400' : 'text-blue-400'
+                      }`}>
+                        [{log.level.toUpperCase()}]
+                      </span>
+                      <span className="ml-2">{log.message}</span>
+                      {log.source && (
+                        <span className="ml-2 text-gray-500">({log.source})</span>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
