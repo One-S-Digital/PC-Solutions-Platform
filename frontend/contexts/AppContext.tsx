@@ -17,6 +17,7 @@ import {
 import i18n from '../i18n'; // Import i18n instance
 import { useAuth } from '../src/hooks/useAuth';
 import { useCurrentUser } from '../src/hooks/useUser';
+import { useFileManagement } from '../src/hooks/useUpload';
 
 interface AppContextType {
   currentUser: User | null;
@@ -56,6 +57,7 @@ const mockUserStore = [...ALL_USERS_MOCK];
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const { user: apiUser, organization, loading: userLoading } = useCurrentUser();
+  const { files: apiUserFiles, fetchFiles, deleteFile } = useFileManagement();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [leads, setLeads] = useState<ParentLead[]>(MOCK_PARENT_LEADS);
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(MOCK_SERVICE_REQUESTS);
@@ -118,6 +120,13 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
         setUserFiles([]);
     }
   }, [currentUser]);
+
+  // Load user files when user changes
+  useEffect(() => {
+    if (currentUser) {
+      fetchFiles({ page: 1, limit: 50 });
+    }
+  }, [currentUser, fetchFiles]);
 
 
   useEffect(() => {

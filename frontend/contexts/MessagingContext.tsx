@@ -4,6 +4,8 @@ import React, { createContext, useState, useContext, ReactNode, useEffect, useCa
 import { Message, Conversation, UserRole, User } from '../types';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES, ALL_USERS_MOCK } from '../constants';
 import { useAppContext } from './AppContext';
+import { useConversations, useMessages, useRealTimeMessaging, useUnreadCount } from '../src/hooks/useMessaging';
+import { MessageType, ConversationType } from '../src/services/types';
 
 interface MessagingContextType {
   conversations: Conversation[];
@@ -16,6 +18,15 @@ interface MessagingContextType {
   startOrGetConversation: (recipientId: string, recipientName: string, recipientRole: UserRole) => string; // Returns conversationId
   startConversation: (participants: {id: string, name: string, role: UserRole}[], groupName?: string) => string;
   getUnreadCountForConversation: (conversationId: string) => number;
+  // API integration
+  apiConversations: Conversation[];
+  apiMessages: Message[];
+  loading: boolean;
+  error: string | null;
+  unreadCount: number;
+  isConnected: boolean;
+  typingUsers: string[];
+  sendTypingIndicator: (isTyping: boolean) => void;
 }
 
 const MessagingContext = createContext<MessagingContextType | undefined>(undefined);
@@ -26,10 +37,55 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [messagesByConversation, setMessagesByConversation] = useState<Record<string, Message[]>>({});
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
+  // API hooks for messaging
+  const { 
+    conversations: apiConversations, 
+    loading: conversationsLoading, 
+    error: conversationsError,
+    createConversation,
+    updateConversation,
+    deleteConversation 
+  } = useConversations({
+    page: 1,
+    limit: 50,
+  });
+
+  const { 
+    messages: apiMessages, 
+    loading: messagesLoading, 
+    error: messagesError,
+    sendMessage: apiSendMessage,
+    updateMessage,
+    deleteMessage,
+    markAsRead 
+  } = useMessages(activeConversationId || '', {
+    page: 1,
+    limit: 100,
+  });
+
+  const { 
+    unreadCount, 
+    loading: unreadLoading, 
+    error: unreadError 
+  } = useUnreadCount();
+
+  const { 
+    isConnected, 
+    newMessages, 
+    typingUsers, 
+    sendTypingIndicator 
+  } = useRealTimeMessaging(activeConversationId || '');
+
+  // Combine loading and error states
+  const loading = conversationsLoading || messagesLoading || unreadLoading;
+  const error = conversationsError || messagesError || unreadError;
+
   const loadUserConversations = useCallback(() => {
     if (currentUser) {
-      const userConvs = MOCK_CONVERSATIONS.filter(conv => conv.participantIds.includes(currentUser.id));
+      // Use API conversations with fallback to mock data
+      const userConvs = apiConversations.length > 0 ? apiConversations : MOCK_CONVERSATIONS.filter(conv => conv.participantIds.includes(currentUser.id));
       setConversations(userConvs);
+      
       // Preload messages for these conversations
       userConvs.forEach(conv => {
         const convMessages = MOCK_MESSAGES.filter(msg => msg.conversationId === conv.id).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -39,7 +95,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       setConversations([]);
       setMessagesByConversation({});
     }
-  }, [currentUser]);
+  }, [currentUser, apiConversations]);
 
   useEffect(() => {
     loadUserConversations();
@@ -47,7 +103,8 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const loadMessagesForConversation = (conversationId: string) => {
     if (!messagesByConversation[conversationId]) {
-      const convMessages = MOCK_MESSAGES.filter(msg => msg.conversationId === conversationId).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      // Use API messages with fallback to mock data
+      const convMessages = apiMessages.length > 0 ? apiMessages : MOCK_MESSAGES.filter(msg => msg.conversationId === conversationId).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
       setMessagesByConversation(prev => ({ ...prev, [conversationId]: convMessages }));
     }
     setActiveConversationId(conversationId);
@@ -87,82 +144,65 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
 
 
-  const sendMessage = (conversationId: string, content: string) => {
+  const sendMessage = async (conversationId: string, content: string) => {
     if (!currentUser) return;
 
-    const newMessage: Message = {
-      id: `msg${Date.now()}`,
-      conversationId,
-      senderId: currentUser.id,
-      senderName: currentUser.name,
-      senderRole: currentUser.role,
-      content,
-      timestamp: new Date().toISOString(),
-      isRead: true, // Sent by current user, so "read" by them
-    };
+    try {
+      // Use API to send message
+      const newMessage = await apiSendMessage({
+        content,
+        messageType: MessageType.TEXT,
+      });
 
-    MOCK_MESSAGES.push(newMessage);
-    setMessagesByConversation(prev => ({
-      ...prev,
-      [conversationId]: [...(prev[conversationId] || []), newMessage].sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()),
-    }));
+      // Update local state
+      setMessagesByConversation(prev => ({
+        ...prev,
+        [conversationId]: [...(prev[conversationId] || []), newMessage]
+      }));
 
-    // Update conversation's last message
-    const updatedConversations = conversations.map(conv =>
-      conv.id === conversationId
-        ? { ...conv, lastMessageSnippet: content, lastMessageTimestamp: newMessage.timestamp, lastMessageSenderId: currentUser.id }
-        : conv
-    );
-     const mockConvIndex = MOCK_CONVERSATIONS.findIndex(c => c.id === conversationId);
-     if (mockConvIndex !== -1) {
-         MOCK_CONVERSATIONS[mockConvIndex] = {
-             ...MOCK_CONVERSATIONS[mockConvIndex],
-             lastMessageSnippet: content,
-             lastMessageTimestamp: newMessage.timestamp,
-             lastMessageSenderId: currentUser.id,
-         };
-     }
-    setConversations(updatedConversations);
+      // Update conversation last message time
+      setConversations(prev => prev.map(conv => 
+        conv.id === conversationId 
+          ? { ...conv, lastMessageAt: newMessage.createdAt }
+          : conv
+      ));
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Fallback to mock implementation
+      const newMessage: Message = {
+        id: `msg${Date.now()}`,
+        conversationId,
+        senderId: currentUser.id,
+        senderName: currentUser.name,
+        senderRole: currentUser.role,
+        content,
+        timestamp: new Date().toISOString(),
+        isRead: true, // Sent by current user, so "read" by them
+      };
 
-    // Simulate a reply after a short delay
-    setTimeout(() => {
-      const conversation = MOCK_CONVERSATIONS.find(c => c.id === conversationId);
-      if (!conversation) return;
-      const otherParticipants = conversation.participantIds.filter(id => id !== currentUser.id);
-      if (otherParticipants.length > 0) {
-        const replierId = otherParticipants[0]; // Just pick the first other person to reply
-        const replier = ALL_USERS_MOCK.find(u => u.id === replierId);
-        if (replier) {
-            const replyContent = `This is a simulated reply to: "${content}"`;
-            const replyMessage: Message = {
-                id: `msg${Date.now() + 1}`,
-                conversationId,
-                senderId: replier.id,
-                senderName: replier.name,
-                senderRole: replier.role,
-                content: replyContent,
-                timestamp: new Date().toISOString(),
-                isRead: conversationId === activeConversationId, // Mark as read if user is watching
-            };
-            MOCK_MESSAGES.push(replyMessage);
-            setMessagesByConversation(prev => ({
-                ...prev,
-                [conversationId]: [...(prev[conversationId] || []), replyMessage].sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()),
-            }));
-            
-            // Also update conversation list with new last message
-            const updatedConvsWithReply = MOCK_CONVERSATIONS.map(conv =>
-              conv.id === conversationId
-                ? { ...conv, lastMessageSnippet: replyContent, lastMessageTimestamp: replyMessage.timestamp, lastMessageSenderId: replier.id }
-                : conv
-            );
-            setConversations(updatedConvsWithReply);
-             if (mockConvIndex !== -1) {
-                 MOCK_CONVERSATIONS[mockConvIndex] = updatedConvsWithReply.find(c => c.id === conversationId)!;
-             }
-        }
+      MOCK_MESSAGES.push(newMessage);
+      setMessagesByConversation(prev => ({
+        ...prev,
+        [conversationId]: [...(prev[conversationId] || []), newMessage].sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()),
+      }));
+
+      // Update conversation's last message
+      const updatedConversations = conversations.map(conv =>
+        conv.id === conversationId
+          ? { ...conv, lastMessageSnippet: content, lastMessageTimestamp: newMessage.timestamp, lastMessageSenderId: currentUser.id }
+          : conv
+      );
+      const mockConvIndex = MOCK_CONVERSATIONS.findIndex(c => c.id === conversationId);
+      if (mockConvIndex !== -1) {
+        MOCK_CONVERSATIONS[mockConvIndex] = {
+          ...MOCK_CONVERSATIONS[mockConvIndex],
+          lastMessageSnippet: content,
+          lastMessageTimestamp: newMessage.timestamp,
+          lastMessageSenderId: currentUser.id,
+        };
       }
-    }, 2000 + Math.random() * 1500); // Wait 2-3.5 seconds
+      setConversations(updatedConversations);
+    }
   };
 
   const startOrGetConversation = (recipientId: string, recipientName: string, recipientRole: UserRole): string => {
@@ -174,7 +214,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
     return startConversation(participants);
   };
   
-  const startConversation = (participants: {id: string, name: string, role: UserRole}[], groupName?: string): string => {
+  const startConversation = async (participants: {id: string, name: string, role: UserRole}[], groupName?: string): Promise<string> => {
     if (!currentUser) throw new Error("User not logged in");
 
     // Ensure current user is part of the participants
@@ -185,38 +225,54 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
     const participantIds = participants.map(p => p.id).sort();
     let conversation: Conversation | undefined;
 
-    if (participantIds.length > 2) { // It's a group chat, create new one
-      // Group chat creation logic
-    } else { // It's a 1-on-1 chat, check if it exists
+    try {
+      // Try to create conversation via API
+      const newConversation = await createConversation({
+        type: participantIds.length > 2 ? ConversationType.GROUP : ConversationType.DIRECT,
+        title: groupName,
+        participantIds,
+      });
+
+      setConversations(prev => [newConversation, ...prev]);
+      setMessagesByConversation(prev => ({ ...prev, [newConversation.id]: [] }));
+      setActiveConversationId(newConversation.id);
+      return newConversation.id;
+    } catch (error) {
+      console.error('Failed to create conversation via API, falling back to mock:', error);
+      
+      // Fallback to mock implementation
+      if (participantIds.length > 2) { // It's a group chat, create new one
+        // Group chat creation logic
+      } else { // It's a 1-on-1 chat, check if it exists
         conversation = MOCK_CONVERSATIONS.find(
           conv => conv.participantIds.length === 2 && 
                   conv.participantIds.every(pid => participantIds.includes(pid))
         );
-    }
-    
+      }
 
-    if (!conversation) {
-      const newConversationId = `conv${Date.now()}`;
-      const participantNames = participants.reduce((acc, p) => ({ ...acc, [p.id]: p.name }), {});
-      const participantRoles = participants.reduce((acc, p) => ({ ...acc, [p.id]: p.role }), {});
+      if (!conversation) {
+        const newConversationId = `conv${Date.now()}`;
+        const participantNames = participants.reduce((acc, p) => ({ ...acc, [p.id]: p.name }), {});
+        const participantRoles = participants.reduce((acc, p) => ({ ...acc, [p.id]: p.role }), {});
+        
+        conversation = {
+          id: newConversationId,
+          name: groupName,
+          participantIds,
+          participantNames,
+          participantRoles,
+          lastMessageSnippet: 'Conversation started.',
+          lastMessageTimestamp: new Date().toISOString(),
+          lastMessageSenderId: currentUser.id,
+        };
+        MOCK_CONVERSATIONS.push(conversation);
+        setConversations(prev => [...prev, conversation!]);
+        setMessagesByConversation(prev => ({ ...prev, [newConversationId]: [] }));
+      }
       
-      conversation = {
-        id: newConversationId,
-        name: groupName,
-        participantIds,
-        participantNames,
-        participantRoles,
-        lastMessageSnippet: 'Conversation started.',
-        lastMessageTimestamp: new Date().toISOString(),
-        lastMessageSenderId: currentUser.id,
-      };
-      MOCK_CONVERSATIONS.push(conversation);
-      setConversations(prev => [...prev, conversation!]);
-      setMessagesByConversation(prev => ({ ...prev, [newConversationId]: [] }));
+      setActiveConversationId(conversation.id);
+      return conversation.id;
     }
-    
-    setActiveConversationId(conversation.id);
-    return conversation.id;
   };
 
 
@@ -231,7 +287,16 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         sendMessage,
         startOrGetConversation,
         startConversation,
-        getUnreadCountForConversation
+        getUnreadCountForConversation,
+        // API integration
+        apiConversations,
+        apiMessages,
+        loading,
+        error,
+        unreadCount,
+        isConnected,
+        typingUsers,
+        sendTypingIndicator
     }}>
       {children}
     </MessagingContext.Provider>
