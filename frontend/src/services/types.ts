@@ -410,3 +410,50 @@ export interface ApiResponse<T = any> {
   message?: string;
   success: boolean;
 }
+
+// Additional types for frontend services
+export interface PlatformSettings {
+  id: string;
+  key: string;
+  value: any;
+  description?: string;
+  category?: string;
+  isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Catalog {
+  id: string;
+  name: string;
+  description?: string;
+  organizationId: string;
+  products: Product[];
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CandidateProfile {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  location?: string;
+  experience: number;
+  skills: string[];
+  education: string[];
+  certifications: string[];
+  languages: string[];
+  availability: 'Immediate' | '1-2 weeks' | '1 month' | 'Negotiable';
+  expectedSalary?: number;
+  currency: string;
+  cvUrl?: string;
+  portfolioUrl?: string;
+  linkedinUrl?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}

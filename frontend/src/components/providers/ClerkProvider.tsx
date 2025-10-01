@@ -85,7 +85,7 @@ const AuthSync: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 export const ClerkProvider: React.FC<ClerkProviderProps> = ({ children }) => {
-  const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  const publishableKey = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
 
   if (!publishableKey) {
     console.error('VITE_CLERK_PUBLISHABLE_KEY is not set');

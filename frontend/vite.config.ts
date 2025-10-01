@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        historyApiFallback: true,
       },
       plugins: [react()],
       define: {
@@ -18,6 +19,18 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      }
+      },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              vendor: ['react', 'react-dom'],
+              router: ['react-router-dom'],
+              ui: ['@heroicons/react'],
+              i18n: ['react-i18next', 'i18next'],
+            },
+          },
+        },
+      },
     };
 });

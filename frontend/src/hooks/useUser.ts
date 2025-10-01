@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { userService } from '../services/user';
 import { organizationService } from '../services/organization';
-import { User, Organization } from '../services/types';
+import { User, Organization, UserRole } from '../services/types';
 
 // Hook for current user data
 export const useCurrentUser = () => {
@@ -118,7 +118,10 @@ export const useUserManagement = () => {
     setError(null);
 
     try {
-      const response = await userService.getAllUsers(params);
+      const response = await userService.getAllUsers({
+        ...params,
+        role: params.role as UserRole
+      });
       setUsers(response.data);
       setPagination({
         page: response.page,

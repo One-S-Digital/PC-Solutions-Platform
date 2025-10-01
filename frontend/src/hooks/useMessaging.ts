@@ -449,7 +449,7 @@ export const useMessagingSearch = () => {
       const [messages, conversations] = await Promise.all([
         messagingService.searchMessages(query, filters),
         messagingService.searchConversations(query, {
-          type: filters?.conversationId ? undefined : 'DIRECT', // Default to direct conversations
+          type: filters?.conversationId ? undefined : 'DIRECT' as any, // Default to direct conversations
         }),
       ]);
 

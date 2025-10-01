@@ -211,8 +211,8 @@ export const useMultipleLoadingStates = (keys: string[]) => {
     }
   }, [keys]);
 
-  const isAnyLoading = Object.values(states).some(state => state.isLoading);
-  const hasAnyError = Object.values(states).some(state => state.error);
+  const isAnyLoading = Object.values(states).some((state: any) => state.isLoading);
+  const hasAnyError = Object.values(states).some((state: any) => state.error);
 
   return {
     states,
