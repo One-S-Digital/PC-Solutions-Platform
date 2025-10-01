@@ -1,0 +1,14 @@
+# Netlify-style redirects for Render
+# This file ensures that all routes are handled by the React app
+
+# Redirect all routes to index.html for client-side routing
+/*    /index.html   200
+
+# Optional: Redirect old hash routes to clean URLs
+# /#/*    /:splat   301
+
+# Optional: Force HTTPS
+# http://app.procrechesolutions.com/*    https://app.procrechesolutions.com/:splat    301!
+
+# Optional: Redirect www to non-www
+# https://www.procrechesolutions.com/*    https://app.procrechesolutions.com/:splat    301!
