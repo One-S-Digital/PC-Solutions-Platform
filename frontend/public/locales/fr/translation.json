@@ -6,7 +6,8 @@
     "frShort": "FR", 
     "frLong": "Français",
     "deShort": "DE",
-    "deLong": "Deutsch"
+    "deLong": "Deutsch",
+    "selectLanguage": "Sélectionner la Langue"
   },
   "loading": "Chargement...",
   "errors": {
@@ -948,6 +949,12 @@
     "helpText": {
       "specialNeeds": "Veuillez décrire tous besoins spéciaux, exigences alimentaires ou autres informations importantes concernant votre enfant."
     }
+  },
+  "stockStatus": {
+    "instock": "En Stock",
+    "outofstock": "Rupture de Stock",
+    "lowstock": "Stock Faible",
+    "discontinued": "Discontinué"
   },
   "common": {
     "perMonth": "/mois",

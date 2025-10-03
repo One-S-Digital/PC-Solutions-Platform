@@ -6,7 +6,8 @@
     "frShort": "FR", 
     "frLong": "Français",
     "deShort": "DE",
-    "deLong": "Deutsch"
+    "deLong": "Deutsch",
+    "selectLanguage": "Select Language"
   },
   "buttons": {
     "save": "Save",
@@ -318,6 +319,12 @@
       "settings": "Settings",
       "logout": "Sign Out"
     }
+  },
+  "stockStatus": {
+    "instock": "In Stock",
+    "outofstock": "Out of Stock",
+    "lowstock": "Low Stock",
+    "discontinued": "Discontinued"
   },
   "common": {
     "loading": "Loading...",

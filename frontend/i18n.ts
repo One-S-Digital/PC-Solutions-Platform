@@ -10,7 +10,7 @@ i18n
   .init({
     supportedLngs: ['en', 'fr', 'de'],
     fallbackLng: 'en',
-    debug: true, 
+    debug: false, // Disable debug mode to prevent console spam
     ns: ['translation'], 
     defaultNS: 'translation',
     backend: {
@@ -20,8 +20,12 @@ i18n
       escapeValue: false, 
     },
     react: {
-      useSuspense: true, 
+      useSuspense: false, // Disable suspense to prevent hanging
     },
+    // Add missing options to ensure proper loading
+    load: 'languageOnly',
+    cleanCode: true,
+    preload: ['en'], // Preload English translations
   });
 
 export default i18n; // Export the configured instance

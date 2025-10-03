@@ -6,7 +6,8 @@
     "frShort": "FR", 
     "frLong": "Français",
     "deShort": "DE",
-    "deLong": "Deutsch"
+    "deLong": "Deutsch",
+    "selectLanguage": "Sprache Auswählen"
   },
   "loading": "Lädt...",
   "errors": {
@@ -985,9 +986,15 @@
       "specialNeeds": "Bitte beschreiben Sie alle besonderen Bedürfnisse, Ernährungsanforderungen oder andere wichtige Informationen über Ihr Kind."
     }
   },
+  "stockStatus": {
+    "instock": "Auf Lager",
+    "outofstock": "Nicht Verfügbar",
+    "lowstock": "Wenig Vorrat",
+    "discontinued": "Eingestellt"
+  },
   "common": {
     "perMonth": "/Monat",
-    "perYear": "/Jahr", 
+    "perYear": "/Jahr",
     "save10Percent": "10% sparen"
   }
 }
