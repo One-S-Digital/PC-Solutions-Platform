@@ -96,11 +96,10 @@ export class WebhooksService {
       this.logger.log(`Deleting user: ${userData.id}`);
       
       // Find user by Clerk ID and mark as inactive instead of deleting
-      const user = await this.usersService.findByClerskId(userData.id);
+      const user = await this.usersService.findByClerkId(userData.id);
       if (user) {
         await this.usersService.update(user.id, { 
           status: 'Inactive' as any,
-          updatedAt: new Date(),
         });
         this.logger.log(`User deactivated successfully: ${userData.id}`);
       }

@@ -31,7 +31,7 @@ export class UsersService {
         role: createUserDto.role as UserRole,
       },
       include: {
-        organization: true,
+        organizations: true,
       },
     });
   }
@@ -60,7 +60,7 @@ export class UsersService {
         skip,
         take: limit,
         include: {
-          organization: true,
+          organizations: true,
         },
         orderBy: {
           createdAt: 'desc',
@@ -84,7 +84,7 @@ export class UsersService {
     return this.prisma.user.findUnique({
       where: { clerkId },
       include: {
-        organization: true,
+        organizations: true,
       },
     });
   }
@@ -93,7 +93,7 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        organization: true,
+        organizations: true,
       },
     });
 
@@ -108,16 +108,22 @@ export class UsersService {
     return this.prisma.user.findUnique({
       where: { email },
       include: {
-        organization: true,
+        organizations: true,
       },
     });
   }
 
   async findByOrganization(orgId: string) {
     return this.prisma.user.findMany({
-      where: { orgId },
+      where: {
+        organizations: {
+          some: {
+            organizationId: orgId,
+          },
+        },
+      },
       include: {
-        organization: true,
+        organizations: true,
       },
     });
   }
@@ -132,7 +138,7 @@ export class UsersService {
       where: { id: user.id },
       data: updateUserDto,
       include: {
-        organization: true,
+        organizations: true,
       },
     });
   }
@@ -147,7 +153,7 @@ export class UsersService {
       where: { id },
       data: updateUserDto,
       include: {
-        organization: true,
+        organizations: true,
       },
     });
   }
@@ -205,7 +211,7 @@ export class UsersService {
           updatedAt: new Date(clerkData.updated_at),
         },
         include: {
-          organization: true,
+          organizations: true,
         },
       });
     } else {
@@ -221,7 +227,7 @@ export class UsersService {
           updatedAt: new Date(clerkData.updated_at),
         },
         include: {
-          organization: true,
+          organizations: true,
         },
       });
     }

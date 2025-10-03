@@ -9,24 +9,24 @@ import {
   UseGuards,
   Query,
   ParseUUIDPipe,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '../auth/guards/auth.guard';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { RequireAuth } from '../auth/decorators/require-auth.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('users')
-@RequireAuth()
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @Roles(UserCell.SUPER_ADMIN)
+  @Roles(UserRole.SUPER_ADMIN)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -48,7 +48,7 @@ export class UsersController {
   }
 
   @Get('me')
-  getCurrentUser(@RequireAuth() request) {
+  getCurrentUser(@Request() request) {
     return this.usersService.findByClerkId(request.user.clerkId);
   }
 
@@ -59,7 +59,7 @@ export class UsersController {
   }
 
   @Patch('me')
-  updateCurrentUser(@RequireAuth() request, @Body() updateUserDto: UpdateUserDto) {
+  updateCurrentUser(@Request() request, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateByClerkId(request.user.clerkId, updateUserDto);
   }
 
