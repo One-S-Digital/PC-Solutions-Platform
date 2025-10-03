@@ -29,6 +29,23 @@ i18n
     load: 'languageOnly', // Load only language, not region
     cleanCode: true, // Clean language codes
     preload: ['en'], // Preload English translations
+  })
+  .then(() => {
+    console.log('🌍 i18n initialized successfully');
+    console.log('🌍 Current language:', i18n.language);
+    console.log('🌍 Available languages:', i18n.languages);
+    console.log('🌍 Has resource bundle:', i18n.hasResourceBundle(i18n.language, 'translation'));
+    
+    // Test a translation
+    const testTranslation = i18n.t('appName');
+    console.log('🌍 Test translation (appName):', testTranslation);
+    
+    if (testTranslation === 'appName') {
+      console.warn('⚠️ Translation key returned as-is, translations may not be loading properly');
+    }
+  })
+  .catch((error) => {
+    console.error('❌ i18n initialization failed:', error);
   });
 
 export default i18n; // Export the configured instance

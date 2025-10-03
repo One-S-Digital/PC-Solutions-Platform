@@ -36,6 +36,7 @@ import NotificationsPage from './pages/NotificationsPage';
 import FileGalleryPage from './pages/FileGalleryPage';
 import DesignSystemPage from './pages/DesignSystemPage'; // New Design System Page
 import DiscountTerminationsPage from './pages/admin/DiscountTerminationsPage'; // New Admin Page
+import TranslationDebugger from './components/debug/TranslationDebugger'; // Debug component
 
 
 // Product Supplier Pages
@@ -313,6 +314,8 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
+            {/* Debug component - only show in development */}
+            <TranslationDebugger enabled={process.env.NODE_ENV === 'development'} />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
