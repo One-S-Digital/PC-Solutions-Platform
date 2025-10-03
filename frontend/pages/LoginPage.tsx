@@ -151,7 +151,7 @@ const LoginPage: React.FC = () => {
             <p>
             {t('loginPage.noAccount')}{' '}
             <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
-                {t('buttons.signUp')}
+                {t('buttons.signup')}
             </Link>
             </p>
             <p>
