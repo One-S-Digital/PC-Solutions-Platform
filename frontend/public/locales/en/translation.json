@@ -326,6 +326,32 @@
     "lowstock": "Low Stock",
     "discontinued": "Discontinued"
   },
+  "loginPage": {
+    "title": "Welcome to {{appName}}",
+    "subtitle": "Sign in to your account to continue",
+    "errorBothFields": "Please enter both email and password",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loggingIn": "Signing in...",
+    "orContinueWith": "Or continue with",
+    "google": "Google",
+    "facebook": "Facebook",
+    "noAccount": "Don't have an account?",
+    "viewPlansPrompt": "Want to see our plans?",
+    "viewPlans": "View Plans",
+    "parentLookingForCreche": "Are you a parent looking for a crèche?",
+    "findCrecheHere": "Find a Crèche Here",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordTBD": "Password reset functionality coming soon!",
+    "socialLoginTBD": "{{provider}} login coming soon!"
+  },
+  "errors": {
+    "unknown": "An unknown error occurred. Please try again."
+  },
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

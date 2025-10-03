@@ -10,6 +10,27 @@
     "selectLanguage": "Sélectionner la Langue"
   },
   "loading": "Chargement...",
+  "loginPage": {
+    "title": "Bienvenue sur {{appName}}",
+    "subtitle": "Connectez-vous à votre compte pour continuer",
+    "errorBothFields": "Veuillez saisir l'email et le mot de passe",
+    "emailLabel": "Adresse Email",
+    "emailPlaceholder": "Saisissez votre email",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Saisissez votre mot de passe",
+    "loggingIn": "Connexion en cours...",
+    "orContinueWith": "Ou continuer avec",
+    "google": "Google",
+    "facebook": "Facebook",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "viewPlansPrompt": "Vous voulez voir nos plans ?",
+    "viewPlans": "Voir les Plans",
+    "parentLookingForCreche": "Êtes-vous un parent à la recherche d'une crèche ?",
+    "findCrecheHere": "Trouver une Crèche Ici",
+    "forgotPassword": "Mot de passe oublié ?",
+    "forgotPasswordTBD": "La fonctionnalité de réinitialisation du mot de passe arrive bientôt !",
+    "socialLoginTBD": "Connexion {{provider}} arrive bientôt !"
+  },
   "errors": {
     "unknown": "Une erreur inconnue est survenue."
   },

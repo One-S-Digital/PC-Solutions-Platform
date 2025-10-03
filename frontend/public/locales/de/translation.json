@@ -10,6 +10,27 @@
     "selectLanguage": "Sprache Auswählen"
   },
   "loading": "Lädt...",
+  "loginPage": {
+    "title": "Willkommen bei {{appName}}",
+    "subtitle": "Melden Sie sich in Ihrem Konto an, um fortzufahren",
+    "errorBothFields": "Bitte geben Sie sowohl E-Mail als auch Passwort ein",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
+    "passwordLabel": "Passwort",
+    "passwordPlaceholder": "Geben Sie Ihr Passwort ein",
+    "loggingIn": "Anmeldung läuft...",
+    "orContinueWith": "Oder fortfahren mit",
+    "google": "Google",
+    "facebook": "Facebook",
+    "noAccount": "Haben Sie noch kein Konto?",
+    "viewPlansPrompt": "Möchten Sie unsere Pläne sehen?",
+    "viewPlans": "Pläne Anzeigen",
+    "parentLookingForCreche": "Sind Sie ein Elternteil auf der Suche nach einer Krippe?",
+    "findCrecheHere": "Hier eine Krippe Finden",
+    "forgotPassword": "Passwort vergessen?",
+    "forgotPasswordTBD": "Passwort-Zurücksetzung kommt bald!",
+    "socialLoginTBD": "{{provider}} Anmeldung kommt bald!"
+  },
   "errors": {
     "unknown": "Ein unbekannter Fehler ist aufgetreten."
   },
