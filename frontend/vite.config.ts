@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
       server: {
-        port: 5173,
+        port: 3000,
         host: '0.0.0.0',
       },
       plugins: [react()],
@@ -18,6 +18,16 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      }
+      },
+      // Ensure static assets are properly copied
+      publicDir: 'public',
+      build: {
+        // Ensure locales are included in build
+        assetsDir: 'assets',
+        rollupOptions: {
+          // Make sure locales are accessible
+          external: [],
+        },
+      },
     };
 });

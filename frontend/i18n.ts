@@ -10,18 +10,23 @@ i18n
   .init({
     supportedLngs: ['en', 'fr', 'de'],
     fallbackLng: 'en',
-    debug: true, 
+    debug: process.env.NODE_ENV === 'development', 
     ns: ['translation'], 
     defaultNS: 'translation',
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json', 
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      allowMultiLoading: false,
     },
     interpolation: {
       escapeValue: false, 
     },
     react: {
-      useSuspense: true, 
+      useSuspense: false, // Disable Suspense for production stability
     },
+    saveMissing: false, // As per specification
+    returnEmptyString: false, // As per specification
+    initImmediate: false, // Ensure translations load before render
+    load: 'languageOnly', // Load only language, not region
   });
 
 export default i18n; // Export the configured instance
