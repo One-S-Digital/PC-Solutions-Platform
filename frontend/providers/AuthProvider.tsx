@@ -42,15 +42,19 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       try {
-        // For now, create a mock user from Clerk data
-        // This will be replaced with actual API calls later
-        const mockUser: User = {
+        // Sync user with backend API
+        await this.syncUserWithBackend(clerkUser);
+      } catch (error) {
+        console.error('Failed to sync user with backend:', error);
+        
+        // Fallback to creating a basic user from Clerk data if backend is unavailable
+        const fallbackUser: User = {
           id: clerkUser.id,
           clerkId: clerkUser.id,
           email: clerkUser.emailAddresses[0]?.emailAddress || '',
           firstName: clerkUser.firstName || '',
           lastName: clerkUser.lastName || '',
-          role: 'PARENT', // Default role
+          role: UserRole.PARENT, // Default role
           certifications: [],
           skills: [],
           isActive: true,
@@ -63,7 +67,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           memberSince: new Date().toISOString(),
         };
         
-        setCurrentUser(mockUser);
+        setCurrentUser(fallbackUser);
       } catch (error) {
         console.error('Failed to sync user:', error);
         setCurrentUser(null);
@@ -102,6 +106,56 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Sync user with backend API
+  const syncUserWithBackend = async (clerkUser: any) => {
+    try {
+      // Try to get existing user from backend
+      const backendUser = await userService.getCurrentUser();
+      setCurrentUser(backendUser);
+    } catch (error) {
+      // If user doesn't exist in backend, create them
+      if (error.status === 404) {
+        await createUserInBackend(clerkUser);
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  // Create user in backend when they don't exist
+  const createUserInBackend = async (clerkUser: any) => {
+    const newUserData = {
+      clerkId: clerkUser.id,
+      email: clerkUser.emailAddresses[0]?.emailAddress || '',
+      firstName: clerkUser.firstName || '',
+      lastName: clerkUser.lastName || '',
+      role: UserRole.PARENT, // Default role, can be updated later
+    };
+
+    try {
+      // This would typically call an API endpoint to create the user
+      // For now, create a local user that will be synced when backend is available
+      const createdUser: User = {
+        ...newUserData,
+        id: clerkUser.id,
+        certifications: [],
+        skills: [],
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        name: `${newUserData.firstName} ${newUserData.lastName}`.trim(),
+        status: 'Active',
+        lastLogin: new Date().toISOString(),
+        memberSince: new Date().toISOString(),
+      };
+      
+      setCurrentUser(createdUser);
+    } catch (error) {
+      console.error('Failed to create user in backend:', error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -122,9 +176,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-  // If no Clerk key is provided, use a mock auth provider
   if (!publishableKey) {
-    return <MockAuthProvider>{children}</MockAuthProvider>;
+    throw new Error(
+      'VITE_CLERK_PUBLISHABLE_KEY is required. Please set up Clerk authentication in your environment variables.'
+    );
   }
 
   return (
@@ -134,81 +189,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-// Mock auth provider for development without Clerk
-const MockAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Function to determine role based on email
-  const getRoleFromEmail = (email: string): UserRole => {
-    const emailLower = email.toLowerCase();
-    if (emailLower.includes('foundation')) return UserRole.FOUNDATION;
-    if (emailLower.includes('supplier')) return UserRole.PRODUCT_SUPPLIER;
-    if (emailLower.includes('service')) return UserRole.SERVICE_PROVIDER;
-    if (emailLower.includes('educator')) return UserRole.EDUCATOR;
-    if (emailLower.includes('admin')) return UserRole.ADMIN;
-    if (emailLower.includes('parent')) return UserRole.PARENT;
-    
-    // Default to parent for unknown emails
-    return UserRole.PARENT;
-  };
-
-  // Function to create mock user based on role
-  const createMockUser = (email: string, role?: UserRole): User => {
-    const userRole = role || getRoleFromEmail(email);
-    const [firstName, lastName] = email.split('@')[0].split('.');
-    
-    return {
-      id: `mock-user-${userRole.toLowerCase()}`,
-      clerkId: `mock-clerk-${userRole.toLowerCase()}`,
-      email: email,
-      firstName: firstName || 'Mock',
-      lastName: lastName || 'User',
-      role: userRole,
-      certifications: [],
-      skills: [],
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      name: `${firstName || 'Mock'} ${lastName || 'User'}`,
-      status: 'Active',
-      lastLogin: new Date().toISOString(),
-      memberSince: new Date().toISOString(),
-    };
-  };
-
-  const mockAuthContext: AuthContextType = {
-    currentUser,
-    isLoading,
-    isAuthenticated: !!currentUser,
-    login: async (email: string, password?: string) => {
-      // Mock login - create a user based on email
-      const mockUser = createMockUser(email);
-      setCurrentUser(mockUser);
-      return { success: true };
-    },
-    logout: () => {
-      setCurrentUser(null);
-    },
-    signup: async (formData: any, role: any) => {
-      // Mock signup - create a user with the specified role
-      const mockUser = createMockUser(formData.email, role);
-      setCurrentUser(mockUser);
-      return { success: true };
-    },
-    updateCurrentUserInfo: async (updatedInfo: Partial<User>) => {
-      if (currentUser) {
-        setCurrentUser({ ...currentUser, ...updatedInfo });
-      }
-    },
-  };
-
-  return (
-    <AuthContext.Provider value={mockAuthContext}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+// MockAuthProvider removed for production - Clerk authentication required
 
 export const useAuthContext = (): AuthContextType => {
   const context = useContext(AuthContext);

@@ -7,7 +7,7 @@ import Button from '../../components/ui/Button';
 import { ShoppingCartIcon, CalendarDaysIcon, InboxIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { Order, ServiceRequest, OrderRequestStatus, ServiceRequestStatus, UserRole } from '../../types';
-import { MOCK_ORDERS, MOCK_ORGANIZATIONS, ALL_USERS_MOCK } from '../../constants';
+import { MOCK_ORDERS, MOCK_ORGANIZATIONS } from '../../constants';
 import { useTranslation } from 'react-i18next';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useNavigate } from 'react-router-dom';
@@ -61,7 +61,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
   };
   
   const handleSendMessageToPartner = (partnerOrgId: string, partnerName: string, partnerRole: UserRole) => {
-    const partnerUser = ALL_USERS_MOCK.find(u => u.orgId === partnerOrgId);
+    const partnerUser = null; // Production: Fetch partner user from API
     if (!partnerUser) {
         alert(`Could not find a user to message for ${partnerName}.`);
         return;

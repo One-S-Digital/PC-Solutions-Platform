@@ -1,5 +1,13 @@
 {
   "appName": "Pro Crèche Solutions",
+  "languageSwitcher": {
+    "enShort": "EN",
+    "enLong": "English",
+    "frShort": "FR", 
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Deutsch"
+  },
   "loading": "Chargement...",
   "errors": {
     "unknown": "Une erreur inconnue est survenue."
@@ -222,7 +230,6 @@
     "errorBothFields": "Veuillez saisir l'e-mail et le mot de passe.",
     "alreadyAccount": "Vous avez déjà un compte ?",
     "loggingIn": "Connexion en cours...",
-    "demoLoginPrompt": "Pour la démo, connectez-vous en tant que :",
     "forgotPasswordTBD": "La fonctionnalité 'Mot de passe oublié' n'est pas encore implémentée.",
     "socialLoginTBD": "La connexion sociale avec {{provider}} est une fonctionnalité future.",
     "viewPlansPrompt": "Intéressé(e) par nos fonctionnalités ?",
@@ -327,6 +334,146 @@
       "location": "Lieu",
       "contractType": "Type de contrat",
       "startDate": "Date de début"
+    }
+  },
+  "pricingPage": {
+    "title": "ProCrèche Solutions – Guide de Tarification",
+    "titleSignup": "Choisissez Votre Plan",
+    "subtitle": "Sélectionnez le plan parfait pour votre organisation",
+    "subtitleSignup": "Sélectionnez le plan qui correspond le mieux à vos besoins",
+    "popular": "Plus Populaire",
+    "whatYouGet": "Ce que vous obtenez",
+    "choosePlan": "Choisir le Plan",
+    "selectAndContinue": "Sélectionner et Continuer",
+    "suppliersAndProvidersTitle": "ProCrèche Solutions – Tarification pour Fournisseurs et Prestataires de Services",
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "saveUpTo10": "(Économiser jusqu'à 10%)",
+    "starterPlan": {
+      "name": "Starter",
+      "price": "49 CHF",
+      "period": "/mois",
+      "description": "Parfait pour les petites crèches",
+      "features": [
+        "Jusqu'à 15 enfants",
+        "Annonces d'emploi de base",
+        "Support essentiel",
+        "Accès à l'application mobile"
+      ]
+    },
+    "essentialPlan": {
+      "name": "Essential",
+      "price": "89 CHF",
+      "period": "/mois",
+      "description": "Idéal pour les crèches en croissance",
+      "features": [
+        "Jusqu'à 50 enfants",
+        "Annonces d'emploi avancées",
+        "Support prioritaire",
+        "Outils RH",
+        "Tableau de bord analytique",
+        "Accès à l'application mobile"
+      ]
+    },
+    "professionalPlan": {
+      "name": "Professional",
+      "price": "179 CHF",
+      "period": "/mois",
+      "description": "Pour les organisations établies",
+      "features": [
+        "Enfants illimités",
+        "Accès complet au marketplace",
+        "Support 24/7",
+        "Suite RH complète",
+        "Analyses avancées",
+        "Intégrations personnalisées",
+        "Accès à l'application mobile"
+      ]
+    },
+    "supplierPlan": {
+      "name": "Fournisseur",
+      "price": "69 CHF",
+      "period": "/mois",
+      "description": "Pour les fournisseurs de produits",
+      "features": [
+        "Listes de produits",
+        "Gestion des commandes",
+        "Analyses clients",
+        "Support inclus"
+      ]
+    },
+    "serviceProviderPlan": {
+      "name": "Prestataire de Service",
+      "price": "89 CHF",
+      "period": "/mois",
+      "description": "Pour les prestataires de services",
+      "features": [
+        "Listes de services",
+        "Gestion des réservations",
+        "Analyses clients",
+        "Support premium"
+      ]
+    },
+    "basicPlan": {
+      "name": "Basic",
+      "tagline": "Parfait pour: Petites crèches qui veulent des outils essentiels sans complexité.",
+      "description": "Accès immédiat aux fournisseurs, informations de conformité et support—tout ce dont vous avez besoin pour fonctionner en douceur à faible coût.",
+      "features": {
+        "marketplace": "Marketplace fournisseurs et prestataires",
+        "policyhub": "Centre de politiques cantonales",
+        "multilingual": "Interface multilingue (EN/FR/DE)",
+        "emailSupport": "Support par e-mail"
+      }
+    },
+    "essentialPlan": {
+      "name": "Essential",
+      "tagline": "Parfait pour: Crèches à site unique qui veulent gagner du temps avec les pistes parents et outils RH conformes.",
+      "description": "Gagnez des parents plus rapidement, restez conforme et gérez les demandes avec facilité—tout depuis un tableau de bord simple.",
+      "features": {
+        "everythingBasic": "Tout dans Basic",
+        "leadInbox": "Boîte de pistes parents + système d'appariement automatique",
+        "hrCompliance": "Bibliothèque de documents RH et conformité (validés par la Suisse)",
+        "enquiryTracker": "Suivi des demandes parents avec réponses rapides"
+      }
+    },
+    "professionalPlan": {
+      "name": "Professional",
+      "tagline": "Parfait pour: Crèches de taille moyenne prêtes à grandir et professionnaliser les opérations.",
+      "description": "Recrutez et formez le personnel, gérez les demandes parents illimitées et livrez l'excellence sans ajouter de fardeau administratif.",
+      "features": {
+        "everythingEssential": "Tout dans Essential",
+        "recruitment": "Module de recrutement",
+        "unlimitedEnquiries": "Demandes parents illimitées",
+        "elearning": "E-learning pour le personnel",
+        "phoneSupport": "Support téléphonique"
+      }
+    },
+    "suppliersPlan": {
+      "name": "Fournisseurs",
+      "tagline": "Parfait pour: Fournisseurs de nourriture, équipement et produits qui veulent un accès direct aux crèches suisses—sans intermédiaires ou prospection gaspillée.",
+      "description": "Mettez vos produits devant les décideurs, générez des commandes en vrac récurrentes et construisez des contrats à long terme.",
+      "features": {
+        "profileListings": "Profil + listes de produits illimitées",
+        "orderRequests": "Demandes de commandes structurées et suivi du statut",
+        "analytics": "Analytiques (vues, clics, commandes)",
+        "promoCodes": "Codes promo et suivi d'utilisation",
+        "fullVisibility": "Visibilité complète à travers toutes les crèches",
+        "emailSupportOnboarding": "Support par e-mail et intégration guidée"
+      }
+    },
+    "serviceProviderPlan": {
+      "name": "Prestataire de Service",
+      "tagline": "Parfait pour: Professionnels juridiques, comptables, IT, coaching, formation et autres qui veulent sécuriser des clients crèches récurrents à grande échelle.",
+      "description": "Remplissez votre pipeline avec des contrats hautement fiables et des rendez-vous—sans prospection froide ou réseautage infini.",
+      "features": {
+        "profileServices": "Profil + listes multi-services",
+        "appointmentRequests": "Demandes de rendez-vous et devis",
+        "scheduling": "Intégration de liens de planification (Calendly/Cal.com)",
+        "pipelineTools": "Outils de gestion de pipeline",
+        "analytics": "Analytiques (demandes, régions, codes promo)",
+        "promoOptions": "Options de codes promo",
+        "emailSupportOnboarding": "Support par e-mail et intégration guidée"
+      }
     }
   },
   "settingsBillingSubscription": {
@@ -801,5 +948,10 @@
     "helpText": {
       "specialNeeds": "Veuillez décrire tous besoins spéciaux, exigences alimentaires ou autres informations importantes concernant votre enfant."
     }
+  },
+  "common": {
+    "perMonth": "/mois",
+    "perYear": "/année",
+    "save10Percent": "économiser 10%"
   }
 }

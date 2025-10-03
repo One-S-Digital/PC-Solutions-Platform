@@ -1,83 +1,64 @@
 services:
-  # API Service
+  # Frontend Web Service
+  - type: web
+    name: pc-solutions-frontend
+    env: node
+    plan: starter
+    buildCommand: cd frontend && pnpm install && pnpm run build
+    startCommand: cd frontend && pnpm run preview
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false  # Must be set manually in Render dashboard
+      - key: VITE_API_URL
+        value: https://pc-solutions-api.onrender.com
+      - key: VITE_SKIP_AUTH
+        value: false
+      - key: VITE_DEVELOPMENT_MODE
+        value: false
+
+  # API Backend Service
   - type: web
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=api
+    buildCommand: cd api && pnpm install && pnpm run build
     startCommand: cd api && pnpm run start:prod
-    healthCheckPath: /api/health/ready
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3000
+        value: 10000
+      - key: CLERK_SECRET_KEY
+        sync: false  # Must be set manually in Render dashboard
+      - key: CLERK_WEBHOOK_SECRET
+        sync: false  # Must be set manually in Render dashboard
       - key: DATABASE_URL
         fromDatabase:
           name: pc-solutions-db
           property: connectionString
-      - key: CLERK_SECRET_KEY
-        sync: false
-      - key: CLERK_PUBLISHABLE_KEY
-        sync: false
-      - key: CLERK_WEBHOOK_SECRET
-        sync: false
-      - key: R2_ACCESS_KEY_ID
-        sync: false
-      - key: R2_SECRET_ACCESS_KEY
-        sync: false
-      - key: R2_BUCKET_NAME
-        sync: false
-      - key: R2_ENDPOINT
-        sync: false
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: ADMIN_ORIGIN
-        value: https://admin.procrechesolutions.com
-      - key: APP_ORIGIN
-        value: https://app.procrechesolutions.com
-      - key: DEEPL_API_KEY
-        sync: false
-      - key: PROMETHEUS_SCRAPE_TOKEN
-        sync: false
 
-  # Frontend Service (Primary)
-  - type: static
-    name: pc-solutions-frontend
-    rootDirectory: /
-    buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length:" $(echo -n "$VITE_CLERK_PUBLISHABLE_KEY" | wc -c) && echo "Key starts with:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | cut -c1-10) && echo "Key format check:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT') && echo "=== END DEBUG ===" && pnpm install --frozen-lockfile && pnpm run build --filter=frontend
-    publishDirectory: frontend/dist
-    envVars:
-      - key: VITE_NODE_ENV
-        value: production
-      - key: VITE_CLERK_PUBLISHABLE_KEY
-        sync: false
-      - key: VITE_API_URL
-        value: https://pc-solutions-v2.onrender.com/api
-      - key: VITE_CLERK_SIGN_IN_URL
-        value: /sign-in
-      - key: VITE_CLERK_SIGN_UP_URL
-        value: /sign-up
-
-  # Admin Service (Satellite)
-  - type: static
+  # Admin Panel Service
+  - type: web
     name: pc-solutions-admin
-    buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=admin
-    publishDirectory: admin/dist
+    env: node
+    plan: starter
+    buildCommand: cd admin && pnpm install && pnpm run build
+    startCommand: cd admin && pnpm run preview
     envVars:
-      - key: VITE_NODE_ENV
+      - key: NODE_ENV
         value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
-        sync: false
+        sync: false  # Must be set manually in Render dashboard
       - key: VITE_API_URL
-        value: https://pc-solutions-v2.onrender.com/api
-      - key: VITE_CLERK_SIGN_IN_URL
-        value: /sign-in
-      - key: VITE_CLERK_SIGN_UP_URL
-        value: /sign-up
+        value: https://pc-solutions-api.onrender.com
+      - key: VITE_SKIP_AUTH
+        value: false
 
 databases:
+  # PostgreSQL Database
   - name: pc-solutions-db
     plan: starter
+    databaseName: pc_solutions_prod
+    user: pc_solutions_user

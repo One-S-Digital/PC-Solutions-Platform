@@ -1,5 +1,6 @@
 import { apiService, ApiResponse } from './api';
 import { User } from '../types';
+import { API_ENDPOINTS } from './api-endpoints';
 
 export interface UserUpdateData {
   firstName?: string;
@@ -24,7 +25,7 @@ export interface UserCreateData {
 class UserService {
   // Get current user profile
   async getCurrentUser(): Promise<User> {
-    const response = await apiService.get<User>('/users/me');
+    const response = await apiService.get<User>(API_ENDPOINTS.users.me);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch user profile');
     }
@@ -33,11 +34,20 @@ class UserService {
 
   // Update current user profile
   async updateCurrentUser(data: UserUpdateData): Promise<User> {
-    const response = await apiService.put<User>('/users/me', data);
+    const response = await apiService.put<User>(API_ENDPOINTS.users.update, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update user profile');
     }
     return this.transformUser(response.data);
+  }
+
+  // Get user organization data
+  async getUserOrganization(): Promise<any> {
+    const response = await apiService.get(API_ENDPOINTS.users.organization);
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to fetch organization data');
+    }
+    return response.data;
   }
 
   // Get all users (admin only)

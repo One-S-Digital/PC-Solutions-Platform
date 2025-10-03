@@ -1,28 +1,48 @@
 
 
 export enum UserRole {
-  SUPER_ADMIN = 'Super Admin',
-  ADMIN = 'Admin',
-  FOUNDATION = 'Foundation (Daycare)',
-  PRODUCT_SUPPLIER = 'Product Supplier', // Updated
-  SERVICE_PROVIDER = 'Service Provider', // New
-  EDUCATOR = 'Educator / Candidate',
-  PARENT = 'Parent',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ADMIN = 'ADMIN',
+  FOUNDATION = 'FOUNDATION',
+  PRODUCT_SUPPLIER = 'PRODUCT_SUPPLIER',
+  SERVICE_PROVIDER = 'SERVICE_PROVIDER',
+  EDUCATOR = 'EDUCATOR',
+  PARENT = 'PARENT',
 }
 
 export interface User {
+  // Core Prisma User fields
   id: string;
-  name: string;
+  clerkId: string;
   email: string;
+  firstName: string;
+  lastName: string;
   role: UserRole;
-  orgId?: string;
-  orgName?: string; // Added for convenience
-  avatarUrl?: string; // Corrected from 'avatar' to 'avatarUrl'
+  
+  // Optional fields
+  phoneNumber?: string;
+  workExperience?: string;
+  education?: string;
+  certifications?: string[];
+  skills?: string[];
+  availability?: string;
+  cvUrl?: string;
+  stripeCustomerId?: string;
+  lastActiveAt?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  
+  // Legacy frontend fields for compatibility
+  name: string;
   status?: 'Active' | 'Pending' | 'Inactive';
   lastLogin?: string;
-  region?: SwissCanton | string; // Can be a specific canton or a general string region
-  plan?: 'Basic' | 'Essential' | 'Professional' | 'Suppliers' | 'Service Providers'; // UPDATED to match new plans
-  memberSince?: string; // Added for settings page
+  memberSince?: string;
+  avatarUrl?: string;
+  orgId?: string;
+  orgName?: string;
+  region?: SwissCanton | string;
+  plan?: string;
 }
 
 // ... other existing types
@@ -35,59 +55,107 @@ export const SWISS_CANTONS = [
 ] as const;
 
 
+export enum OrganizationType {
+  FOUNDATION = 'FOUNDATION',
+  PRODUCT_SUPPLIER = 'PRODUCT_SUPPLIER',
+  SERVICE_PROVIDER = 'SERVICE_PROVIDER',
+}
+
 export interface Organization {
-    id: string;
-    name: string;
-    type: 'foundation' | 'supplier' | 'service_provider';
-    region: SwissCanton | string;
-    logoUrl?: string;
-    coverImageUrl?: string;
-    email?: string;
-    phone?: string;
-    website?: string;
-    address?: string;
-    description?: string;
-    tags?: string[];
-    capacity?: number;
-    pedagogy?: string[];
-    languagesSpoken?: string[];
-    rating?: number;
-    badges?: string[];
-    directOrderLink?: string; // For suppliers
+  // Core Prisma Organization fields
+  id: string;
+  name: string;
+  type: OrganizationType;
+  region?: string;
+  description?: string;
+  vatNumber?: string;
+  
+  // Additional organization fields
+  contactPerson?: string;
+  phoneNumber?: string;
+  canton?: string;
+  languages?: string[];
+  capacity?: number;
+  pedagogy?: string[];
+  productCategory?: string;
+  serviceType?: string;
+  minimumOrderQuantity?: number;
+  directOrderLink?: string;
+  catalogUrl?: string;
+  serviceCategories?: string[];
+  deliveryType?: string;
+  bookingLink?: string;
+  
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  
+  // Asset relations
+  logoAssetId?: string;
+  coverAssetId?: string;
+  
+  // Legacy field compatibility
+  logoUrl?: string;
+  coverImageUrl?: string;
 }
 
 
 export interface Product {
-    id: string;
-    title: string;
-    supplierId: string;
-    supplierName: string;
-    supplierLogo?: string;
-    description: string;
-    category: string;
-    tags: string[];
-    imageUrl?: string;
-    price?: number;
-    stockStatus: StockStatus;
+  // Core Prisma Product fields
+  id: string;
+  title: string;
+  description?: string;
+  price?: number;
+  category?: string;
+  tags: string[];
+  status: string; // ACTIVE, INACTIVE, PENDING, REJECTED
+  isActive: boolean;
+  supplierId: string;
+  createdAt: string;
+  updatedAt: string;
+  
+  // Asset relation
+  imageAssetId?: string;
+  
+  // Legacy frontend fields for compatibility
+  supplierName?: string;
+  supplierLogo?: string;
+  imageUrl?: string;
+  stockStatus?: string;
 }
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock' | 'On Demand';
 
-export interface Service {
-    id: string;
-    title: string;
-    providerId: string;
-    providerName: string;
-    providerLogo?: string;
-    description: string;
-    category: ServiceCategory;
-    availability: string;
-    tags: string[];
-    imageUrl?: string;
-    deliveryType?: ServiceDeliveryType;
-    priceInfo?: string; // e.g., "From CHF 100", "CHF 50/hour"
+export enum ServiceCategory {
+  CLEANING = 'CLEANING',
+  IT_SUPPORT = 'IT_SUPPORT',
+  MAINTENANCE = 'MAINTENANCE',
+  CONSULTING = 'CONSULTING',
+  TRAINING = 'TRAINING',
+  OTHER = 'OTHER',
 }
-export type ServiceCategory = 'Cleaning' | 'Workshops' | 'Legal' | 'IT Support' | 'Pedagogy' | 'Other';
-export const SERVICE_CATEGORIES: ServiceCategory[] = ['Cleaning', 'Workshops', 'Legal', 'IT Support', 'Pedagogy', 'Other'];
+
+export interface Service {
+  // Core Prisma Service fields
+  id: string;
+  title: string;
+  description?: string;
+  category: ServiceCategory;
+  price?: number;
+  isActive: boolean;
+  providerId: string;
+  createdAt: string;
+  updatedAt: string;
+  
+  // Legacy frontend fields for compatibility
+  providerName?: string;
+  providerLogo?: string;
+  availability?: string;
+  tags?: string[];
+  imageUrl?: string;
+  deliveryType?: string;
+  priceInfo?: string;
+}
+export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, ServiceCategory.IT_SUPPORT, ServiceCategory.MAINTENANCE, ServiceCategory.CONSULTING, ServiceCategory.TRAINING, ServiceCategory.OTHER];
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
@@ -578,6 +646,7 @@ export interface PricingPlan {
     price: {
         monthly: number;
         annually: number;
+        annualEquivalent: number;
     };
     features: string[];
     isPopular: boolean;

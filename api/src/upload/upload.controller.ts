@@ -121,7 +121,7 @@ export class UploadController {
 
     const { assetKind } = uploadFileDto;
     
-    // Development mode bypass
+    // Development mode bypass (keeping for now)
     const isDevelopment = process.env.NODE_ENV !== 'production';
     let appUserId = req.context?.appUserId;
     

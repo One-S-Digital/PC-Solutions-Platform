@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useAppContext } from '../../contexts/AppContext';
-import { ALL_USERS_MOCK, STANDARD_INPUT_FIELD } from '../../constants';
+import { STANDARD_INPUT_FIELD } from '../../constants';
 import { User } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon } from '@heroicons/react/24/outline';
@@ -20,7 +20,8 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [groupName, setGroupName] = useState('');
 
-  const availableUsers = ALL_USERS_MOCK.filter(u => u.id !== currentUser?.id);
+  // Production: Fetch users from API
+  const availableUsers = []; // TODO: Replace with API call to fetch users
 
   const handleUserToggle = (user: User) => {
     setSelectedUsers(prev => 

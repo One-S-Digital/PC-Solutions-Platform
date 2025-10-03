@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
-import { MOCK_ORGANIZATIONS, MOCK_FOUNDATION_ORG_KINDERWELT, STANDARD_INPUT_FIELD } from '../../constants'; // Use MOCK_ORGANIZATIONS for lookup, Import STANDARD_INPUT_FIELD
+import { MOCK_ORGANIZATIONS, STANDARD_INPUT_FIELD } from '../../constants'; // Organization data managed via APICK_ORGANIZATIONS for lookup, Import STANDARD_INPUT_FIELD
 import { Organization } from '../../types';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
@@ -18,9 +18,8 @@ const OrganizationProfileForm: React.FC = () => {
 
   useEffect(() => {
     if (currentUser && currentUser.orgId) {
-      // Find the organization from MOCK_ORGANIZATIONS or use MOCK_FOUNDATION_ORG_KINDERWELT if it matches
-      const orgData = MOCK_ORGANIZATIONS.find(org => org.id === currentUser.orgId) || 
-                      (currentUser.orgId === MOCK_FOUNDATION_ORG_KINDERWELT.id ? MOCK_FOUNDATION_ORG_KINDERWELT : undefined);
+      // Find the organization from MOCK_ORGANIZATIONS (API data in production)
+      const orgData = MOCK_ORGANIZATIONS.find(org => org.id === currentUser.orgId);
       if (orgData) {
         setProfile({
           capacity: orgData.capacity || undefined,

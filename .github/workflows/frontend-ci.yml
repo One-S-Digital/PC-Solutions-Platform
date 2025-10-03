@@ -1,0 +1,64 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'packages/**'
+      - '.github/workflows/frontend-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_BASE_URL: http://localhost:5173
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run linting
+        working-directory: frontend
+        run: pnpm add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+      
+      - name: Check no raw imports
+        run: pnpm run precommit:guard
+      
+      - name: Build frontend
+        working-directory: frontend
+        run: pnpm run build
+      
+      - name: Run unit tests
+        working-directory: frontend
+        run: pnpm run test:unit -- --run
+      
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps
+      
+      - name: Start development server
+        working-directory: frontend
+        run: pnpm run dev &
+        env:
+          PORT: 5173
+      
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:5173 --timeout 30000
+      
+      - name: Run Playwright tests
+        working-directory: frontend
+        run: pnpm run test:e2e
+      
+      - name: Upload Playwright report
+        if: failure()
+        working-directory: frontend
+        run: npx playwright show-report

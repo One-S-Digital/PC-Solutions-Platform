@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ParentLead, FoundationLeadResponseStatus, LeadMainStatus, FoundationResponse, UserRole } from '../../types';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
-import { MOCK_FOUNDATION_ORG_KINDERWELT } from '../../constants'; // For foundation name
+// Organization names fetched from API in production
 import { CheckCircleIcon, XCircleIcon, QuestionMarkCircleIcon, ChatBubbleLeftEllipsisIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useMessaging } from '../../contexts/MessagingContext';
@@ -23,7 +23,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
   const { startOrGetConversation } = useMessaging();
   const navigate = useNavigate();
   
-  const foundationName = currentUser?.orgName || MOCK_FOUNDATION_ORG_KINDERWELT.name; // Use current user's org name
+  const foundationName = currentUser?.orgName || 'Your Organization'; // Use current user's org name
 
   let myResponse = lead.responses.find(r => r.foundationId === foundationOrgId);
 

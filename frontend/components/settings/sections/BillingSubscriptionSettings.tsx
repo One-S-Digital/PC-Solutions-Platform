@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { SettingsFormData, UserRole, PricingPlan } from '../../../types';
-import { MOCK_PRICING_PLANS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
 import { WalletIcon, CreditCardIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { pricingService } from '../../../services/pricingService';
+import { usePricingTranslations } from '../../../hooks/usePricingTranslations';
 
 interface BillingSubscriptionSettingsProps {
   settings: SettingsFormData;
@@ -16,6 +17,8 @@ interface BillingSubscriptionSettingsProps {
 
 const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelectPlan: (planName: string) => void }> = ({ plan, currentPlanName, onSelectPlan }) => {
     const { t } = useTranslation();
+    const { translatePlan } = usePricingTranslations();
+    const translatedPlan = translatePlan(plan);
     const isCurrentPlan = plan.name === currentPlanName;
     const planOrder = { 'Basic': 1, 'Essential': 2, 'Professional': 3 };
     const currentPlanOrder = planOrder[currentPlanName as keyof typeof planOrder] || 0;
@@ -37,13 +40,13 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
                     <span className="px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase bg-swiss-mint rounded-full">{t('settingsBillingSubscription.yourCurrentPlan')}</span>
                 </div>
             )}
-            <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {plan.name}</h3>
+            <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {translatedPlan.name}</h3>
             <div className="my-4 text-center space-y-1">
-                <p className="text-xl font-semibold text-gray-800">{plan.monthlyPriceText}</p>
-                <p className="text-sm text-gray-600">{plan.annualPlanText}</p>
+                <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
+                <p className="text-sm text-gray-600">{translatedPlan.annualPlanText}</p>
             </div>
             <ul className="space-y-3 text-sm text-gray-600 flex-grow mb-6">
-                {plan.features.map(feature => (
+                {translatedPlan.features.map(feature => (
                     <li key={feature} className="flex items-start">
                         <CheckCircleIcon className="w-5 h-5 text-swiss-mint mr-2 flex-shrink-0 mt-0.5" />
                         <span className={`${feature.toLowerCase().includes('everything in') ? 'font-bold text-gray-800' : ''}`}>{feature}</span>
@@ -67,7 +70,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
       alert(`Plan selected: ${planName}. This would typically lead to a payment confirmation flow.`);
   };
 
-  const foundationPlans = MOCK_PRICING_PLANS.filter(p => p.role === UserRole.FOUNDATION);
+  const foundationPlans = pricingService.getFoundationPlans();
 
   if (userRole !== UserRole.FOUNDATION) {
     // Render simplified version for other roles

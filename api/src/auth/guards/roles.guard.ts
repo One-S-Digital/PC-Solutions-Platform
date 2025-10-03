@@ -20,7 +20,7 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const userContext = request.context;
     
-    // Development mode bypass
+    // Development mode bypass (keeping for now)
     const isDevelopment = process.env.NODE_ENV !== 'production';
     if (isDevelopment && !userContext) {
       console.log('🔧 Development mode: Bypassing roles guard for', request.url);

@@ -9,9 +9,7 @@ async function main() {
   console.log('📋 Creating plans and prices...');
   await seedPlansAndPrices();
 
-  // 2. Create Test Users
-  console.log('👥 Creating test users...');
-  await seedTestUsers();
+  // 2. Test users removed for production
 
   // 3. Create Enterprise Tenant Structure
   console.log('🏢 Creating enterprise tenant structure...');
@@ -169,67 +167,7 @@ async function seedPlansAndPrices() {
   }
 }
 
-async function seedTestUsers() {
-  const testUsers = [
-    {
-      clerkId: 'user_superadmin_demo',
-      email: 'superadmin@demo.ch',
-      firstName: 'Super',
-      lastName: 'Admin',
-      role: 'SUPER_ADMIN' as const,
-    },
-    {
-      clerkId: 'user_admin_foundationA',
-      email: 'admin@foundationA.ch',
-      firstName: 'Foundation',
-      lastName: 'Admin',
-      role: 'ADMIN' as const,
-    },
-    {
-      clerkId: 'user_manager_branchA',
-      email: 'manager@branchA.ch',
-      firstName: 'Branch',
-      lastName: 'Manager',
-      role: 'FOUNDATION' as const,
-    },
-    {
-      clerkId: 'user_educator_branchA',
-      email: 'educator@branchA.ch',
-      firstName: 'Educator',
-      lastName: 'Alice',
-      role: 'EDUCATOR' as const,
-    },
-    {
-      clerkId: 'user_supplier_vendor',
-      email: 'supplier@vendor.ch',
-      firstName: 'Product',
-      lastName: 'Supplier',
-      role: 'PRODUCT_SUPPLIER' as const,
-    },
-    {
-      clerkId: 'user_service_vendor',
-      email: 'service@vendor.ch',
-      firstName: 'Service',
-      lastName: 'Provider',
-      role: 'SERVICE_PROVIDER' as const,
-    },
-    {
-      clerkId: 'user_parent_demo',
-      email: 'parent@demo.ch',
-      firstName: 'Parent',
-      lastName: 'User',
-      role: 'PARENT' as const,
-    },
-  ];
-
-  for (const userData of testUsers) {
-    await prisma.user.upsert({
-      where: { email: userData.email },
-      update: {},
-      create: userData,
-    });
-  }
-}
+// Test users seeding removed for production - users should be created through Clerk authentication
 
 async function seedEnterpriseStructure() {
   // Create Sunrise Group enterprise

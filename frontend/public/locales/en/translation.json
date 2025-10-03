@@ -1,56 +1,208 @@
 {
-  "appName": "Pro Crèche Solutions",
-  "loading": "Loading...",
-  "errors": {
-    "unknown": "An unknown error occurred."
+  "appName": "ProCrèche Solutions Suisse",
+  "languageSwitcher": {
+    "enShort": "EN",
+    "enLong": "English",
+    "frShort": "FR", 
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Deutsch"
   },
-  "showPassword": "Show password",
-  "hidePassword": "Hide password",
   "buttons": {
     "save": "Save",
-    "saveChanges": "Save Changes",
     "cancel": "Cancel",
-    "submit": "Submit",
-    "add": "Add",
     "edit": "Edit",
     "delete": "Delete",
-    "viewDetails": "View Details",
-    "goBack": "Go Back",
-    "login": "Login",
-    "signUp": "Sign Up",
-    "applyNow": "Apply Now",
-    "confirmApply": "Confirm Apply",
-    "sendMessage": "Send Message",
-    "inviteToApply": "Invite to Apply",
-    "inviteToInterview": "Invite to Interview",
-    "addToFavorites": "Add to Favorites",
-    "favorited": "Favorited",
-    "submitEnquiry": "Submit Enquiry",
-    "viewMyEnquiries": "View My Enquiries",
-    "submitTicket": "Submit Ticket",
-    "goToLogin": "Go to Login",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
     "close": "Close",
     "view": "View",
-    "resetFilters": "Reset Filters",
-    "applyFilters": "Apply Filters",
-    "submitRequest": "Submit Request",
-    "remove": "Remove",
-    "dismiss": "Dismiss"
-  },
-  "navbar": {
-    "searchPlaceholder": "Search platform...",
-    "notifications": "Notifications",
-    "notificationsCount": "Notifications ({{count}})",
-    "noNewNotifications": "No new notifications.",
-    "viewAll": "View all",
-    "newMessages": "New Messages",
-    "unreadMessages": "You have {{count}} unread message(s).",
-    "viewShoppingCart": "View shopping cart",
-    "userMenu": "User menu",
-    "settings": "Settings",
-    "signOut": "Sign Out",
-    "goBackPreviousPage": "Go back to previous page",
+    "download": "Download",
+    "upload": "Upload",
+    "submit": "Submit",
+    "login": "Log In",
+    "logout": "Log Out",
+    "register": "Register",
+    "signup": "Sign Up",
+    "continue": "Continue",
+    "send": "Send",
+    "create": "Create",
+    "update": "Update",
+    "goBack": "Go Back",
     "toggleNavigation": "Toggle navigation"
+  },
+  "pricingPage": {
+    "title": "ProCrèche Solutions – Pricing Guide",
+    "titleSignup": "Choose Your Plan",
+    "subtitle": "Select the perfect plan for your organization",
+    "subtitleSignup": "Select the plan that best fits your needs",
+    "popular": "Most Popular",
+    "whatYouGet": "What you get",
+    "choosePlan": "Choose Plan",
+    "selectAndContinue": "Select Plan & Continue",
+    "suppliersAndProvidersTitle": "ProCrèche Solutions – Pricing for Suppliers & Service Providers",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "saveUpTo10": "(Save up to 10%)",
+    "starterPlan": {
+      "name": "Starter",
+      "price": "CHF 29",
+      "period": "/month",
+      "description": "Perfect for small daycares",
+      "features": [
+        "Up to 15 children",
+        "Basic job listings",
+        "Essential support",
+        "Mobile app access"
+      ]
+    },
+    "essentialPlan": {
+      "name": "Essential",
+      "price": "CHF 49",
+      "period": "/month",
+      "description": "Ideal for growing daycares",
+      "features": [
+        "Up to 50 children",
+        "Advanced job listings",
+        "Priority support",
+        "HR tools",
+        "Analytics dashboard",
+        "Mobile app access"
+      ]
+    },
+    "professionalPlan": {
+      "name": "Professional",
+      "price": "CHF 99",
+      "period": "/month",
+      "description": "For established organizations",
+      "features": [
+        "Unlimited children",
+        "Full marketplace access",
+        "24/7 support",
+        "Complete HR suite",
+        "Advanced analytics",
+        "Custom integrations",
+        "Mobile app access"
+      ]
+    },
+    "supplierPlan": {
+      "name": "Supplier",
+      "price": "CHF 39",
+      "period": "/month",
+      "description": "For product suppliers",
+      "features": [
+        "Product listings",
+        "Order management",
+        "Customer analytics",
+        "Support included"
+      ]
+    },
+    "serviceProviderPlan": {
+      "name": "Service Provider",
+      "price": "CHF 49",
+      "period": "/month",
+      "description": "For service providers",
+      "features": [
+        "Service listings",
+        "Booking management",
+        "Client analytics",
+        "Premium support"
+      ]
+    },
+    "basicPlan": {
+      "name": "Basic",
+      "tagline": "Perfect for: Small daycares who want essential tools without complexity.",
+      "description": "Get immediate access to suppliers, compliance info, and support—everything you need to operate smoothly at a low cost.",
+      "features": {
+        "marketplace": "Supplier & service provider marketplace",
+        "policyhub": "State policy hub (by canton)",
+        "multilingual": "Multilingual interface (EN/FR/DE)",
+        "emailSupport": "Email support"
+      }
+    },
+    "essentialPlan": {
+      "name": "Essential",
+      "tagline": "Perfect for: Single-site daycares who want to save time with parent leads and compliant HR tools.",
+      "description": "Win parents faster, stay compliant, and manage enquiries with ease—all from one simple dashboard.",
+      "features": {
+        "everythingBasic": "Everything in Basic",
+         "leadInbox": "Parent leads inbox + auto-matching system",
+        "hrCompliance": "HR & compliance document library (Swiss-validated)",
+        "enquiryTracker": "Parent enquiry tracker with quick replies"
+      }
+    },
+    "professionalPlan": {
+      "name": "Professional",
+      "tagline": "Perfect for: Medium-sized daycares ready to grow and professionalize operations.",
+      "description": "Recruit and train staff, handle unlimited parent enquiries, and deliver excellence without adding admin burden.",
+      "features": {
+        "everythingEssential": "Everything in Essential",
+        "recruitment": "Recruitment module",
+        "unlimitedEnquiries": "Unlimited parent enquiries",
+        "elearning": "E-learning for staff",
+        "phoneSupport": "Phone support"
+      }
+    },
+    "suppliersPlan": {
+      "name": "Suppliers",
+      "tagline": "Perfect for: Food, equipment, and product suppliers who want direct access to Swiss daycares—without middlemen or wasted outreach.",
+      "description": "Get your products in front of decision-makers, generate recurring bulk orders, and build long-term contracts.",
+      "features": {
+        "profileListings": "Profile + unlimited product listings",
+        "orderRequests": "Structured order requests & status tracking",
+        "analytics": "Analytics (views, clicks, orders)",
+        "promoCodes": "Promo codes & redemption tracking",
+        "fullVisibility": "Full visibility across all daycares",
+        "emailSupportOnboarding": "Email support & guided onboarding"
+      }
+    },
+    "serviceProviderPlan": {
+      "tagline": "Perfect for: Legal, accounting, IT, coaching, training, and other professionals who want to secure recurring daycare clients at scale.",
+      "description": "Fill your pipeline with high-trust contracts and appointments—without cold outreach or endless networking.",
+      "features": {
+        "profileServices": "Profile + multi-service listings",
+        "appointmentRequests": "Appointment & quote requests",
+        "scheduling": "Scheduling link integration (Calendly/Cal.com)",
+        "pipelineTools": "Pipeline management tools",
+        "analytics": "Analytics (requests, regions, promo codes)",
+        "promoOptions": "Promo code options",
+        "emailSupportOnboarding": "Email support & guided onboarding"
+      }
+    }
+  },
+  "settingsBillingSubscription": {
+    "title": "Billing & Subscription",
+    "currentPlan": "Current Plan",
+    "yourCurrentPlan": "Your Current Plan",
+    "upgradePlan": "Upgrade Plan",
+    "downgradePlan": "Downgrade Plan",
+    "manageSubscriptionTitle": "Manage Subscription",
+    "manageSubscriptionDescription": "Update your payment information or view your billing history through our secure Stripe portal.",
+    "managePaymentButton": "Manage Payment & Billing",
+    "nextInvoiceOn": "Next invoice on {{date}}",
+    "managePaymentMethod": "Manage Payment Method (via Stripe)",
+    "stripePortalLinkNotConfigured": "Stripe portal link not configured",
+    "cancelSubscription": "Cancel Subscription",
+    "confirmCancelTitle": "Confirm Cancellation",
+    "confirmCancelMessage": "Are you sure you want to cancel your subscription? This is irreversible and may result in loss of access to premium features at the end of your current billing period.",
+    "keepSubscription": "Keep Subscription",
+    "yesCancel": "Yes, Cancel",
+    "planSelection": "Select a Plan",
+    "currentPlanDisplay": "You're currently on the {{plan}} plan",
+    "monthlyBilling": "Monthly Billing",
+    "annualBilling": "Annual Billing (Save 20%)",
+    "changePlanNote": "Changing your plan will take effect immediately.",
+    "includedFeatures": "Included Features",
+    "getStarted": "Get Started",
+    "contactSupport": "Contact Support",
+    "freeTrial": "30-day free trial"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -102,786 +254,94 @@
   },
   "dashboardPage": {
     "welcome": "Welcome back, {{name}}!",
-    "defaultUser": "User",
-    "overviewSubtitle": "Here's your overview of the {{appName}} platform.",
-    "activeUsers": "Active Users",
-    "newOrders": "New Orders",
-    "openJobs": "Open Jobs",
-    "pageViews": "Page Views",
-    "viewDetailsFor": "View details for {{name}}",
+    "upcomingMeetings": "Upcoming Meetings",
     "recentActivity": "Recent Activity",
-    "quickLinks": "Quick Links",
-    "browseMarketplace": "Browse Marketplace",
-    "postNewJob": "Post a New Job",
-    "manageUsers": "Manage Users",
-    "platformSettings": "Platform Settings",
-    "activityLina": "Lina Meier posted a new job \"Pediatric Nurse\"",
-    "activityEcoToys": "EcoToys GmbH updated product \"Wooden Blocks Set\"",
-    "activityJohn": "John Smith approved 3 new parent accounts",
-    "activityParent": "Parent Example submitted a lead for \"Happy Kids Daycare\"",
-    "timeAgo": {
-      "minutes": "{{count}}m ago",
-      "hours": "{{count}}h ago",
-      "yesterday": "Yesterday"
-    }
-  },
-  "foundationDashboard": {
-    "title": "Foundation Dashboard",
-    "welcomeMessage": "Welcome, {{name}}!",
-    "quickStats": {
-      "title": "Quick Stats",
-      "enrolled": "Enrolled Children",
-      "availableSpots": "Available Spots",
-      "pendingApps": "Pending Applications",
-      "upcomingAppointments": "Upcoming Appointments"
-    },
-    "todayAtGlance": "Today at a Glance",
-    "calendar": {
-      "event1": "Visit with Dubois Family",
-      "event2": "Interview: J. Miller",
-      "event3": "ProClean Service"
-    },
-    "activity": {
-      "title": "Recent Activity",
-      "parentInquiry": "New parent inquiry",
-      "jobApplication": "New job application",
-      "orderConfirmation": "Order confirmation",
-      "serviceUpdate": "Service update",
-      "newMessage": "New message received"
-    },
-    "quickActions": {
-      "title": "Quick Actions",
-      "postJob": "Post a New Job",
-      "browseMarketplace": "Browse Marketplace",
-      "viewParentLeads": "View Parent Leads",
-      "viewAnalytics": "View Analytics"
-    },
-    "quickMessage": {
-      "title": "Quick Message",
-      "placeholder": "Send a quick message to staff..."
-    }
-  },
-  "dashboardDetailPage": {
-    "defaultTitle": "Details",
-    "detailsFor": "Details for: {{pageDisplayTitle}}",
-    "noSpecificView": "No specific detail view available for \"{{pageDisplayTitle}}\".",
-    "activeUsers": {
-      "title": "Active User Details",
-      "recentActivity": "Recent Activity",
-      "totalToday": "Total active users today: {{count}}"
-    },
-    "newOrders": {
-      "title": "New Order Details",
-      "recentOrders": "Recent Orders",
-      "totalThisWeek": "Total new orders this week: {{count}}",
-      "table": {
-        "orderId": "Order ID",
-        "product": "Product",
-        "amount": "Amount",
-        "status": "Status"
-      },
-      "status": {
-        "paid": "Paid",
-        "pending": "Pending"
-      }
-    },
-    "openJobs": {
-      "title": "Open Job Details",
-      "currentPositions": "Current Open Positions",
-      "applications": "{{count}} applications",
-      "status": {
-        "open": "Open",
-        "interviewing": "Interviewing"
-      },
-      "totalOpenPositions": "Total open positions: {{count}}"
-    },
-    "pageViews": {
-      "title": "Page View Analytics",
-      "keyMetrics": "Key Metrics",
-      "totalToday": "Total Views Today:",
-      "uniqueVisitors": "Unique Visitors:",
-      "mostViewed": "Most Viewed Page:",
-      "avgSession": "Avg. Session:",
-      "mockChartText": "Mock {{type}} chart data"
-    }
-  },
-  "loginPage": {
-    "title": "{{appName}} Login",
-    "subtitle": "Access your dashboard",
-    "emailLabel": "Email Address",
-    "emailPlaceholder": "you@example.com",
-    "passwordLabel": "Password",
-    "passwordPlaceholder": "••••••••",
-    "forgotPassword": "Forgot Password?",
-    "orContinueWith": "Or continue with",
-    "google": "Google",
-    "facebook": "Facebook",
-    "noAccount": "Don't have an account?",
-    "parentLookingForCreche": "Are you a parent looking for a crèche?",
-    "findCrecheHere": "Find a Crèche here",
-    "errorBothFields": "Please enter both email and password.",
-    "alreadyAccount": "Already have an account?",
-    "loggingIn": "Logging in...",
-    "demoLoginPrompt": "For demo purposes, log in as:",
-    "forgotPasswordTBD": "Forgot Password functionality is not yet implemented.",
-    "socialLoginTBD": "Social login with {{provider}} is a future feature.",
-    "viewPlansPrompt": "Interested in our features?",
-    "viewPlans": "View Plans"
-  },
-  "signupPage": {
-    "selectRoleTitle": "Select Your Role",
-    "detailsTitle": "{{role}} Signup",
-    "progressStep1": "Step 1 of 2: Choose your role",
-    "progressStep2": "Step 2 of 2: Account Details",
-    "submissionSuccessTitle": "Registration Successful!",
-    "submissionSuccessMessage": "Your account has been created. You are now being redirected to your dashboard.",
-    "goToDashboardButton": "Go to Dashboard",
-    "roles": {
-      "foundation": "Foundation (Daycare)",
-      "supplier": "Product Supplier",
-      "serviceProvider": "Service Provider",
-      "parent": "Parent"
-    },
-    "labels": {
-      "organisationName": "Organisation Name",
-      "contactPerson": "Contact Person Name",
-      "parentName": "Your Full Name",
-      "email": "Email Address",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "phone": "Phone Number",
-      "canton": "Canton",
-      "languagesSpoken": "Languages Spoken (comma-separated)",
-      "capacity": "Max. Child Capacity",
-      "category": "Main Product Category",
-      "serviceType": "Main Service Type",
-      "childAge": "Child's Age (Years)",
-      "childStartDate": "Desired Start Date"
-    },
-    "termsLabel": "I agree to the",
-    "termsLink": "Terms and Conditions",
-    "createAccountButton": "Create Account",
-    "creatingAccount": "Creating Account...",
-    "placeholders": {
-      "organisationName": "e.g., Happy Kids Daycare",
-      "contactPerson": "e.g., Jane Doe",
-      "parentName": "e.g., John Doe",
-      "email": "you@example.com",
-      "password": "Min. 6 characters",
-      "confirmPassword": "Re-enter your password",
-      "phone": "e.g., 079 123 45 67",
-      "languagesSpoken": "e.g., English, French",
-      "category": "e.g., Educational Toys, Furniture",
-      "serviceType": "e.g., Cleaning, Workshops, Legal",
-      "select": "Select..."
-    },
-    "errors": {
-      "organisationNameRequired": "Organisation name is required.",
-      "contactPersonRequired": "Contact person name is required.",
-      "parentNameRequired": "Your name is required.",
-      "emailRequired": "Email is required.",
-      "emailInvalid": "Please enter a valid email address.",
-      "passwordRequired": "Password is required.",
-      "passwordTooShort": "Password must be at least 6 characters.",
-      "passwordsNoMatch": "Passwords do not match.",
-      "phoneRequired": "Phone number is required.",
-      "cantonRequired": "Canton is required.",
-      "capacityRequired": "Capacity must be a positive number.",
-      "categoryRequired": "Product category is required.",
-      "serviceTypeRequired": "Service type is required.",
-      "childAgeRequired": "Child's age is required and must be positive.",
-      "childStartDateRequired": "Desired start date is required.",
-      "termsRequired": "You must accept the terms and conditions."
-    },
-    "submissionSuccess": "Signup successful for role: {{role}}! Redirecting..."
-  },
-  "languageSwitcher": {
-    "enShort": "EN",
-    "frShort": "FR",
-    "deShort": "DE",
-    "enLong": "English",
-    "frLong": "Français",
-    "deLong": "Deutsch",
-    "selectLanguage": "Select language: {{currentLanguage}}"
-  },
-  "userRoles": {
-    "Super Admin": "Super Admin",
-    "Admin": "Admin",
-    "Foundation (Daycare)": "Foundation (Daycare)",
-    "Product Supplier": "Product Supplier",
-    "Service Provider": "Service Provider",
-    "Educator / Candidate": "Educator / Candidate",
-    "Parent": "Parent"
-  },
-  "usersPage": {
-    "allUsersTitle": "All Users",
-    "searchPlaceholder": "Search by name, email, region...",
-    "filtersButton": "Filters",
-    "addNewUserButton": "Add New User",
-    "table": {
-      "nameOrg": "Name / Org Name",
-      "role": "Role",
-      "status": "Status",
-      "region": "Region",
-      "lastLogin": "Last Login",
-      "actions": "View/Actions"
-    },
-    "status": {
-      "active": "Active",
-      "pending": "Pending",
-      "inactive": "Inactive"
-    },
-    "emptyState": "No users found.",
-    "rolePageTitle": "{{role}}s",
-    "userDetailDrawer": {
-      "title": "User Details",
-      "roleLabel": "Role:",
-      "statusLabel": "Status:",
-      "regionLabel": "Region:",
-      "lastLoginLabel": "Last Login:",
-      "orgLabel": "Organization:",
-      "adminActionsTitle": "Admin Actions",
-      "changeRoleLabel": "Change Role",
-      "updateRoleButton": "Update Role",
-      "suspendUserButton": "Suspend User",
-      "activateUserButton": "Activate User",
-      "cannotModifyOwnAccount": "You cannot modify your own account."
-    },
-    "cannotDeleteOwnAccount": "You cannot delete your own account.",
-    "confirmDeleteUser": "Are you sure you want to delete this user? This action cannot be undone.",
-    "userProfileUpdated": "{{name}}'s profile has been updated.",
-    "addNewUserTBD": "Add New User functionality TBD. This would open a form/modal.",
-    "filtersTBD": "Filters TBD",
-    "bulkActions": {
-      "title": "Bulk Actions",
-      "select": "Select Action",
-      "activate": "Activate Selected",
-      "suspend": "Suspend Selected",
-      "delete": "Delete Selected",
-      "apply": "Apply",
-      "confirm": {
-        "title": "Confirm Bulk Action",
-        "message_one": "Are you sure you want to {{action}} {{count}} user?",
-        "message_other": "Are you sure you want to {{action}} {{count}} users?",
-        "activate": "activate",
-        "suspend": "suspend",
-        "delete": "delete"
-      }
-    }
-  },
-  "hrProceduresPage": {
-    "title": "HR Procedures Library",
-    "uploadButton": "Upload Document",
-    "searchPlaceholder": "Search documents by title, category, or tag...",
-    "categoriesTitle": "Categories",
-    "allDocumentsCategory": "All Documents",
-    "documentsInCategoryTitle": "Documents in \"{{category}}\"",
-    "allItemsCount": "({{count}} items)",
-    "backToCategoriesButton": "← Back to All Categories",
-    "noDocumentsInCategory": "No documents found in \"{{category}}\".",
-    "noDocumentsMatchSearch": "No documents match your search.",
-    "noDocumentsAvailable": "No HR documents are currently available.",
-    "confirmDeleteDocument": "Are you sure you want to delete this HR document?",
-    "categoryDisplay": {
-      "documentsCount_one": "{{count}} Document",
-      "documentsCount_other": "{{count}} Documents",
-      "viewCategoryAria": "View documents in category: {{title}}"
-    }
-  },
-  "hrDocumentCard": {
-    "categoryLabel": "Category: {{category}}",
-    "languageLabel": "Language: {{language}}",
-    "versionLabel": "({{version}})",
-    "lastUpdatedLabel": "Last updated: {{date}}",
-    "downloadButton": "Download",
-    "previewButtonLabel": "Preview",
-    "editButtonLabel": "Edit",
-    "deleteButtonLabel": "Delete",
-    "toggleFavoriteLabel": "Toggle Favorite",
-    "downloadingAlert": "Downloading {{title}}",
-    "previewingAlert": "Previewing {{title}}"
-  },
-  "contentUploadModal": {
-    "title": {
-      "edit": "Edit {{contentType}}",
-      "add": {
-        "e-learning": "Add E-Learning Content",
-        "hr": "Upload HR Document",
-        "policy": "Upload State Policy"
-      }
-    },
-    "contentType": {
-      "e-learning": "E-Learning Content",
-      "hr": "HR Document",
-      "policy": "State Policy"
-    },
-    "labels": {
-      "title": "Title",
-      "documentTitle": "Document Title",
-      "description": "Description",
-      "descriptionPreview": "Description / Content Preview",
-      "category": "Category",
-      "contentType": "Content Type",
-      "language": "Language",
-      "duration": "Duration (e.g., 30m, 1h 15m)",
-      "lessons": "Number of Lessons",
-      "linkUrl": "Link URL",
-      "accessRoles": "Access Roles",
-      "status": "Status",
-      "fileType": "File Type",
-      "version": "Version (e.g., v1.0)",
-      "country": "Country",
-      "regionCanton": "Region/Canton",
-      "policyType": "Policy Type",
-      "criticality": "Criticality",
-      "markAsCritical": "Mark as critical",
-      "effectiveDate": "Effective Date",
-      "externalLink": "Link to Official Policy (Optional)",
-      "currentFile": "Current file: {{fileName}}. Replace?",
-      "uploadFileType": "Upload {{fileType}} file",
-      "uploadFile": "Upload File"
-    },
-    "placeholders": {
-      "duration": "e.g., 1h 30m",
-      "linkUrl": "https://example.com/resource",
-      "version": "e.g., v1.2",
-      "externalLink": "https://example.gov/policy-doc"
-    },
-    "eLearningTypes": {
-      "course": "Course",
-      "video": "Video",
-      "pdf": "PDF",
-      "link": "Link"
-    },
-    "criticalityOptions": {
-      "critical": "Critical",
-      "normal": "Normal"
-    },
-    "statusOptions": {
-      "draft": "Draft",
-      "published": "Published",
-      "archived": "Archived"
-    },
-    "policyStatusOptions": {
-      "draft": "Draft",
-      "inreview": "In Review",
-      "approved": "Approved",
-      "published": "Published",
-      "upcoming": "Upcoming",
-      "archived": "Archived"
-    },
-    "fileUpload": {
-      "browse": "Click to browse",
-      "dragAndDrop": "or drag and drop",
-      "eLearningAllowedTypes": "MP4, PDF, DOCX (Max 50MB)",
-      "hrPolicyAllowedTypes": "PDF, DOCX (Max 10MB)",
-      "selected": "Selected: {{fileName}}"
-    },
-    "buttons": {
-      "uploading": "Uploading...",
-      "upload": "Upload"
-    },
-    "error": {
-      "selectFileOrLink": "Please select a file to upload, or provide a URL for the e-learning link type."
-    }
-  },
-  "notifications": {
-    "successTitle": "Success",
-    "errorTitle": "Error",
-    "settingsUpdated": "Settings updated successfully.",
-    "newMessageFrom": "New message from {{sender}}",
-    "adminNewActiveClient": {
-      "title": "New Active Client Marked",
-      "message": "{{vendorName}} has marked {{daycareName}} as an active client."
-    }
-  },
-  "adminSystemMonitoringPage": {
-    "title": "System Monitoring",
-    "overallStatus": {
-      "title": "Overall System Status",
-      "operational": "All Systems Operational",
-      "degraded": "Degraded Performance",
-      "outage": "Major Outage"
-    },
-    "components": {
-      "api": "Backend API",
-      "database": "Database",
-      "authService": "Auth Service"
-    },
-    "metadata": {
-      "environment": "Environment",
-      "version": "Version",
-      "uptime": "Uptime",
-      "lastCheck": "Last Check"
-    },
-    "serverPerformance": {
-      "title": "Server Performance",
-      "cpuUsage": "CPU Usage",
-      "memoryUsage": "Memory Usage",
-      "diskUsage": "Disk Usage",
-      "uptimeDays": "Uptime (Days)"
-    },
-    "databasePerformance": {
-      "title": "Database Performance",
-      "activeConnections": "Active Connections",
-      "queryTime": "Avg. Query Time",
-      "storage": "Storage Usage",
-      "connectionHealth": "Connection Health",
-      "healthy": "Healthy",
-      "unhealthy": "Unhealthy"
-    },
-    "appPerformance": {
-      "title": "Application Performance",
-      "activeUsers": "Active Users",
-      "requestsPerMinute": "Requests/min",
-      "avgResponseTime": "Avg. Response Time",
-      "errorRate": "Error Rate"
-    },
-    "recentEvents": {
-      "title": "Recent System Events"
-    },
-    "rawLogConsole": {
-      "title": "Raw Log Console",
-      "tabs": {
-        "all": "All Logs",
-        "errors": "Errors",
-        "warnings": "Warnings",
-        "info": "Info"
-      },
-      "emptyLogMessage": "No log entries for this category."
-    },
-    "eventTypes": {
-      "HealthCheck": "Health Check",
-      "DatabaseBackup": "Database Backup",
-      "MemoryAlert": "Memory Alert",
-      "APIImprovement": "API Improvement"
-    }
+    "quickActions": "Quick Actions",
+    "overview": "Overview",
+    "announcements": "Announcements",
+    "notifications": "Notifications"
   },
   "settingsPage": {
     "title": "Settings",
-    "loading": "Loading settings...",
-    "accountSecurity": "Account & Security",
-    "companyProfile": "Company Profile",
-    "contactBooking": "Contact & Booking",
-    "notificationPreferences": "Notification Preferences",
-    "defaults": "Defaults",
-    "promoCodeManager": "Promo Code Manager",
+    "general": "General",
+    "notifications": "Notifications",
+    "account": "Account",
+    "appearance": "Appearance",
+    "language": "Language",
+    "privacySecurity": "Privacy & Security",
     "billingSubscription": "Billing & Subscription",
-    "analyticsPreferences": "Analytics Preferences",
-    "teamPermissions": "Team & Permissions",
-    "privacyData": "Privacy & Data",
-    "noSectionsAvailable": "No settings sections available for your role.",
-    "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to cancel?"
+    "organizationProfile": "Organization Profile",
+    "userPreferences": "User Preferences"
   },
-  "activeClientToggle": {
-    "title": "Relationship Status",
-    "label": "Active Client",
-    "reasonLabel": "Reason (Optional)",
-    "noteLabel": "Note (Optional)",
-    "notePlaceholder": "PO #, account ref, or short context",
-    "subtext": "Only admins see this. This helps prevent discount abuse.",
-    "confirmSave": "Only admins will see this. This helps prevent discount abuse. Confirm save?",
-    "saveSuccess": {
-      "title": "Saved",
-      "message": "Admin has been notified of the change."
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "submit": "Submit",
+    "login": "Log In",
+    "logout": "Log Out",
+    "register": "Register",
+    "signup": "Sign Up",
+    "continue": "Continue",
+    "send": "Send",
+    "create": "Create",
+    "update": "Update",
+    "goBack": "Go Back",
+    "toggleNavigation": "Toggle navigation"
+  },
+  "navbar": {
+    "login": "Sign In",
+    "signup": "Sign Up",
+    "dashboard": "Dashboard",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Sign Out",
+    "searchPlaceholder": "Search...",
+    "userMenu": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Sign Out"
     }
   },
-  "vendorClientReasons": {
-    "NewClient": "New Client",
-    "Trial": "Trial",
-    "Contract": "Contract",
-    "Paused": "Paused",
-    "Terminated": "Terminated"
-  },
-  "discountTerminationsPage": {
-    "queue": {
-      "title": "Action Required: Discount Terminations",
-      "description": "The following daycares have left the platform. Please notify the vendors who marked them as 'Active Clients' to terminate any special pricing or discounts.",
-      "tableTitle": "Termination Queue",
-      "empty": "The termination queue is empty. No active clients have left the platform recently."
-    },
-    "allActive": {
-      "title": "All Active Client Relationships",
-      "description": "This is a comprehensive list of all currently active client relationships as marked by vendors.",
-      "tableTitle": "Active Clients List",
-      "empty": "No vendors have marked any daycares as active clients yet."
-    },
-    "table": {
-      "vendor": "Vendor",
-      "daycare": "Daycare",
-      "activeSince": "Active Since",
-      "reason": "Reason",
-      "actions": "Actions"
-    },
-    "actions": {
-      "sendNotices": "Send Termination Notices ({{count}})",
-      "sendNoticesAlert": "{{count}} termination notices have been sent. (Mock action)",
-      "markCompleted": "Mark Completed"
-    }
-  },
-  "messagesPage": {
-    "newGroupButton": "New Group",
-    "noConversationSelectedTitle": "Select a Conversation",
-    "noConversationSelectedSubtitle": "Choose from your existing conversations to start chatting.",
-    "noConversationsYet": "You don't have any conversations yet.",
-    "searchPlaceholder": "Search messages or users...",
-    "filters": {
-      "all": "All",
-      "unread": "Unread"
-    },
-    "noConversationsFound": "No conversations found.",
-    "unknownUser": "Unknown User",
-    "youPrefix": "You: ",
-    "noMessagesYet": "No messages yet.",
-    "selectConversationToView": "Select a conversation to view messages.",
-    "conversationFallbackTitle": "Conversation",
-    "attachFile": "Attach file",
-    "addEmoji": "Add emoji",
-    "typeMessagePlaceholder": "Type a message..."
-  },
-  "createGroupChatModal": {
-    "title": "Create New Group Chat",
-    "groupNameLabel": "Group Name (Optional)",
-    "groupNamePlaceholder": "e.g., Team Meeting Prep",
-    "selectParticipantsLabel": "Select Participants (min. 2)",
-    "error": {
-      "minParticipants": "Please select at least 2 users to create a group."
-    },
-    "createButton": "Create Group"
-  },
-  "partnersPage": {
-    "partnerCard": {
-      "logoAlt": "{{name}} logo",
-      "partnerType": "Partner {{type}}",
-      "learnMoreButton": "Learn More"
-    },
-    "hero": {
-      "title": "Our Valued Partners",
-      "subtitle": "We collaborate with leading organizations to enhance the early childhood ecosystem in Switzerland.",
-      "ctaButton": "Become a Partner"
-    },
-    "featured": {
-      "title": "Featured Partners",
-      "subtitle": "We are proud to work with institutions that share our vision for quality early childhood education."
-    },
-    "joinUs": {
-      "title": "Join Our Network",
-      "subtitle": "Interested in becoming a Pro Crèche Solutions partner? We're always looking for organizations that can bring value to our community. Let's connect.",
-      "contactUsButton": "Contact Us",
-      "inquiryFormLink": "or fill out our partnership inquiry form",
-      "contactUsAlert": "Contact form/modal functionality to be implemented."
-    }
-  },
-  "adminPlatformSettings": {
-    "title": "Platform Settings",
-    "general": {
-      "title": "General Information",
-      "nameLabel": "Platform Name",
-      "descriptionLabel": "Metadata Description"
-    },
-    "branding": {
-      "title": "Branding",
-      "logoLabel": "Platform Logo",
-      "faviconLabel": "Platform Favicon"
-    }
-  },
-  "organizationProfileForm": {
-    "accessDenied": "You do not have permission to view this page.",
-    "title": "Public Profile Details",
-    "subtitle": "This information is displayed to parents and other users on the platform.",
-    "saveSuccess": "Profile information saved successfully!",
-    "labels": {
-      "capacity": "Total Child Capacity",
-      "pedagogy": "Pedagogical Approach(es)",
-      "languages": "Languages Spoken"
-    },
-    "placeholders": {
-      "pedagogy": "e.g., Montessori, Play-based, Forest school",
-      "languages": "e.g., French, English, German"
-    },
-    "helpText": {
-      "commaSeparated": "Separate multiple values with a comma."
-    },
-    "saveButton": "Save Profile Details"
-  },
-  "settingsCompanyProfile": {
-    "companyName": "Company Name",
-    "logo": "Logo",
-    "coverImage": "Cover Image",
-    "aboutText": "About / Description",
-    "aboutTextLength": "{{length}}/500",
-    "vatNumber": "VAT Number",
-    "regionsServed": "Regions Served",
-    "selectCanton": "Select a canton...",
-    "cantonsHelpText": "Select the cantons your business operates in.",
-    "languagesSpoken": "Languages Spoken",
-    "selectLanguage": "Select a language...",
-    "languagesHelpText": "Select the languages your team can communicate in."
-  },
-  "settingsContactBooking": {
-    "preferredContactMethod": "Preferred Contact Method",
-    "contactMethods": {
-      "email": "Email",
-      "phone": "Phone",
-      "platformForm": "Platform Form"
-    },
-    "avgResponseTime": "Avg. Response Time Badge",
-    "responseTimes": {
-      "lessThan24h": "< 24 hours",
-      "twoToThreeDays": "2–3 days",
-      "other": "Other"
-    },
-    "externalBookingLink": "External Booking Link",
-    "externalBookingLinkPlaceholder": "https://example.com/booking",
-    "directOrderLink": "Direct Order Link",
-    "directOrderLinkPlaceholder": "https://yourshop.com/procreche",
-    "directOrderLinkHelpText": "Link foundations directly to your order page.",
-    "calComLink": "Cal.com / Calendly Link",
-    "calComLinkPlaceholder": "https://cal.com/your-name",
-    "deliveryTypeToggleRemote": "Offer Remote Services"
-  },
-  "settingsNotificationPreferences": {
-    "newRequestEmailToggleSupplier": "New Order Requests",
-    "newRequestEmailToggleProvider": "New Service Requests",
-    "digestFrequency": "Request Digest Frequency",
-    "digestFrequencies": {
-      "daily": "Daily",
-      "weekly": "Weekly",
-      "none": "None"
-    },
-    "promoRedemptionAlertsToggle": "Promo Redemption Alerts"
-  },
-  "settingsDefaults": {
-    "autoRespondToggle": "Auto-respond to new requests",
-    "autoRespondHelpText": "Automatically send a confirmation when a new request is received.",
-    "defaultMOQ": "Default Minimum Order Qty (MOQ)",
-    "defaultMOQPlaceholder": "e.g., 10",
-    "autoAcceptOrderQtyLimit": "Auto-Accept Order Qty Limit",
-    "autoAcceptOrderQtyLimitPlaceholder": "e.g., 5",
-    "defaultConsultationLength": "Default Consultation Length",
-    "consultationLengths": {
-      "30min": "30 min",
-      "60min": "60 min"
-    }
-  },
-  "settingsPromoCodeManager": {
-    "confirmDelete": "Are you sure you want to delete this promo code?",
-    "addNewCode": "Add New Code",
-    "noCodesYet": "You haven't created any promo codes yet.",
-    "table": {
-      "code": "Code",
-      "discountOffer": "Discount / Offer",
-      "expiry": "Expiry",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "discountTypes": {
-      "percentage": "{{value}}% off",
-      "fixedAmount": "CHF {{value}} off",
-      "freeMinutes": "{{value}} free minutes"
-    },
-    "addEditModal": {
-      "editTitle": "Edit Promo Code",
-      "addTitle": "Add New Promo Code",
-      "placeholder": "Full modal functionality is a work in progress.",
-      "save": "Save Code"
-    }
-  },
-  "settingsAnalyticsPreferences": {
-    "timeZone": "Time Zone",
-    "currency": "Currency",
-    "currencies": {
-      "chf": "CHF (Swiss Franc)",
-      "eur": "EUR (Euro)"
-    },
-    "benchmarkData": "Anonymised Benchmark Data",
-    "benchmarkDataHelpText": "Opt-in to contribute your anonymised data to our platform-wide analytics and benchmarks."
-  },
-  "settingsTeamPermissions": {
-    "inviteNewMember": "Invite New Team Member",
-    "emailAddress": "Email address",
-    "emailPlaceholder": "member@example.com",
-    "role": "Role",
-    "roles": {
-      "viewer": "Viewer",
-      "editor": "Editor"
-    },
-    "sendInvite": "Send Invite",
-    "currentTeamMembers": "Current Team Members",
-    "noTeamMembers": "You haven't invited any team members yet.",
-    "table": {
-      "email": "Email",
-      "role": "Role",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "confirmRemoveMember": "Are you sure you want to remove this team member?",
-    "passwordResetSentAlert": "Password reset link sent to member ID: {{memberId}}.",
-    "resetPasswordTooltip": "Send Password Reset",
-    "removeMemberTooltip": "Remove Member"
-  },
-  "settingsPrivacyData": {
-    "hidePricesPublicly": "Hide Prices Publicly",
-    "hideStartingRatePublicly": "Hide Starting Rate Publicly",
-    "hidePricesHelpText": "If enabled, prices for your products will only be visible to logged-in foundations.",
-    "hideRateHelpText": "If enabled, your starting rate will only be visible to logged-in foundations.",
-    "dataDeletion": "Data Deletion",
-    "requestGDPRDeletion": "Request GDPR Data Deletion",
-    "deletionRequestSubmitted": "Deletion Request Submitted",
-    "requestDeletionHelpText": "This will start the process to permanently delete your account and all associated data.",
-    "deletionRequestSubmittedHelpText": "Your request has been submitted. Our team will contact you within 30 days.",
-    "confirmGDPRDelete": "Are you sure? This will permanently delete your account and all associated data. This action cannot be undone."
-  },
-  "settingsAccountSecurity": {
-    "notifications": {
-      "infoUpdated": "Personal information updated successfully.",
-      "passwordChanged": "Password changed successfully."
-    },
-    "personalInfo": {
-      "title": "Personal Information",
-      "contactNameLabel": "Contact Name",
-      "nameLabel": "Full Name",
-      "orgNameLabel": "Organisation Name",
-      "emailLabel": "Email Address",
-      "accountTypeLabel": "Account Type",
-      "memberSinceLabel": "Member Since",
-      "updateInfoButton": "Update Information"
-    },
-    "changePassword": {
-      "title": "Change Password",
-      "currentPasswordLabel": "Current Password",
-      "newPasswordLabel": "New Password",
-      "confirmNewPasswordLabel": "Confirm New Password",
-      "updatePasswordButton": "Update Password"
-    },
-    "dangerZone": {
-      "title": "Danger Zone",
-      "deleteAccountTitle": "Delete this account",
-      "deleteAccountSubtitle": "Once you delete your account, there is no going back. Please be certain.",
-      "deleteAccountButton": "Delete Account",
-      "finalConfirmation": "FINAL CONFIRMATION: Are you absolutely sure you want to delete your account? Type 'DELETE' to confirm."
-    }
-  },
-  "parentLeadFormPage": {
-    "title": "Find a Crèche",
-    "subtitle": "Tell us about your child's needs and we'll help you find the perfect crèche",
-    "sectionTitleChildNeeds": "Child's Needs",
-    "thankYouTitle": "Thank You!",
-    "authenticatedSuccessMessage": "Your enquiry has been submitted successfully. You can view and manage your enquiries from your dashboard.",
-    "unauthenticatedSuccessMessage": "Your enquiry has been submitted successfully. We've sent a confirmation email to {{email}}. You can also create an account to track your enquiries.",
-    "errorAllFields": "Please fill in all required fields.",
-    "labels": {
-      "yourFullName": "Your Full Name",
-      "yourEmail": "Your Email",
-      "yourPhone": "Your Phone Number",
-      "canton": "Canton",
-      "municipality": "Municipality",
-      "childAge": "Child's Age (Years)",
-      "desiredStartDate": "Desired Start Date",
-      "specialNeeds": "Special Needs or Requirements"
-    },
-    "helpText": {
-      "specialNeeds": "Please describe any special needs, dietary requirements, or other important information about your child."
-    }
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "description": "Description",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "date": "Date",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "save10Percent": "save 10%"
   }
 }

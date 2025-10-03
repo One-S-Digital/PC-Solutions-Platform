@@ -1,5 +1,13 @@
 {
   "appName": "Pro Crèche Solutions",
+  "languageSwitcher": {
+    "enShort": "EN",
+    "enLong": "English",
+    "frShort": "FR", 
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Deutsch"
+  },
   "loading": "Lädt...",
   "errors": {
     "unknown": "Ein unbekannter Fehler ist aufgetreten."
@@ -220,7 +228,6 @@
     "errorBothFields": "Bitte geben Sie E-Mail und Passwort ein.",
     "alreadyAccount": "Haben Sie bereits ein Konto?",
     "loggingIn": "Anmeldung läuft...",
-    "demoLoginPrompt": "Für Demozwecke, melden Sie sich an als:",
     "forgotPasswordTBD": "Die Funktion 'Passwort vergessen' ist noch nicht implementiert.",
     "socialLoginTBD": "Soziale Anmeldung mit {{provider}} ist ein zukünftiges Feature.",
     "viewPlansPrompt": "Interessiert an unseren Funktionen?",
@@ -364,6 +371,146 @@
       "termsRequired": "Sie müssen den Allgemeinen Geschäftsbedingungen zustimmen."
     },
     "submissionSuccess": "Registrierung für Rolle: {{role}} erfolgreich! Sie werden weitergeleitet..."
+  },
+  "pricingPage": {
+    "title": "ProCrèche Solutions – Preisführer",
+    "titleSignup": "Wählen Sie Ihren Plan",
+    "subtitle": "Wählen Sie den perfekten Plan für Ihre Organisation",
+    "subtitleSignup": "Wählen Sie den Plan, der am besten zu Ihren Bedürfnissen passt",
+    "popular": "Am Beliebtesten",
+    "whatYouGet": "Was Sie erhalten",
+    "choosePlan": "Plan Wählen",
+    "selectAndContinue": "Auswählen und Fortfahren",
+    "suppliersAndProvidersTitle": "ProCrèche Solutions – Preise für Lieferanten und Dienstleister",
+    "monthly": "Monatlich",
+    "annual": "Jährlich",
+    "saveUpTo10": "(Bis zu 10% sparen)",
+    "starterPlan": {
+      "name": "Starter",
+      "price": "39 CHF",
+      "period": "/Monat",
+      "description": "Perfekt für kleine Kitas",
+      "features": [
+        "Bis zu 15 Kinder",
+        "Grundlegende Stellenanzeigen",
+        "Grundlegende Unterstützung",
+        "Mobile App-Zugang"
+      ]
+    },
+    "essentialPlan": {
+      "name": "Essential",
+      "price": "79 CHF",
+      "period": "/Monat",
+      "description": "Ideal für wachsende Kitas",
+      "features": [
+        "Bis zu 50 Kinder",
+        "Erweiterte Stellenanzeigen",
+        "Prioritäts-Support",
+        "HR-Tools",
+        "Analytics-Dashboard",
+        "Mobile App-Zugang"
+      ]
+    },
+    "professionalPlan": {
+      "name": "Professional",
+      "price": "159 CHF",
+      "period": "/Monat",
+      "description": "Für etablierte Organisationen",
+      "features": [
+        "Unbegrenzte Kinder",
+        "Vollständiger Marketplace-Zugang",
+        "24/7 Support",
+        "Vollständige HR-Suite",
+        "Erweiterte Analytics",
+        "Benutzerdefinierte Integrationen",
+        "Mobile App-Zugang"
+      ]
+    },
+    "supplierPlan": {
+      "name": "Lieferant",
+      "price": "59 CHF",
+      "period": "/Monat",
+      "description": "Für Produktlieferanten",
+      "features": [
+        "Produktlisten",
+        "Bestellungsverwaltung",
+        "Kundenanalyse",
+        "Support inbegriffen"
+      ]
+    },
+    "serviceProviderPlan": {
+      "name": "Dienstleister",
+      "price": "79 CHF",
+      "period": "/Monat",
+      "description": "Für Dienstleister",
+      "features": [
+        "Dienstleistungslisten",
+        "Buchungsverwaltung",
+        "Kundenanalyse",
+        "Premium-Support"
+      ]
+    },
+    "basicPlan": {
+      "name": "Basic",
+      "tagline": "Perfekt für: Kleine Kitas, die wesentliche Tools ohne Komplexität möchten.",
+      "description": "Sofortiger Zugang zu Lieferanten, Compliance-Informationen und Support—alles was Sie brauchen, um reibungslos zu geringen Kosten zu arbeiten.",
+      "features": {
+        "marketplace": "Lieferanten- und Dienstleister-Marketplace",
+        "policyhub": "Kantons-Politikzentrum",
+        "multilingual": "Mehrsprachige Oberfläche (EN/FR/DE)",
+        "emailSupport": "E-Mail-Support"
+      }
+    },
+    "essentialPlan": {
+      "name": "Essential",
+      "tagline": "Perfekt für: Einzelstandort-Kitas, die Zeit mit Eltern-Leads und einwandfreien HR-Tools sparen möchten.",
+      "description": "Gewinnen Sie Eltern schneller, bleiben Sie konform und verwalten Sie Anfragen mühelos—alles von einem einfachen Dashboard aus.",
+      "features": {
+        "everythingBasic": "Alles in Basic",
+        "leadInbox": "Eltern-Leads-Inbox + automatisches Matching-System",
+        "hrCompliance": "HR- und Compliance-Dokumentenbibliothek (Schweiz-validiert)",
+        "enquiryTracker": "Eltern-Anfrage-Tracker mit schnellen Antworten"
+      }
+    },
+    "professionalPlan": {
+      "name": "Professional",
+      "tagline": "Perfekt für: Mittlere Kitas, die bereit sind zu wachsen und Betrieb zu professionalisieren.",
+      "description": "Rekrutieren und trainieren Sie Personal, handhaben unbegrenzte Eltern-Anfragen und liefern Exzellenz ohne zusätzliche Admin-Belastung.",
+      "features": {
+        "everythingEssential": "Alles in Essential",
+        "recruitment": "Rekrutierungs-Modul",
+        "unlimitedEnquiries": "Unbegrenzte Eltern-Anfragen",
+        "elearning": "E-Learning für Personal",
+        "phoneSupport": "Telefon-Support"
+      }
+    },
+    "suppliersPlan": {
+      "name": "Lieferanten",
+      "tagline": "Perfekt für: Lebensmittel-, Ausrüstungs- und Produktlieferanten, die direkten Zugang zu Schweizer Kitas wollen—ohne Zwischenhändler oder verschwendete Akquise.",
+      "description": "Bringen Sie Ihre Produkte vor Entscheidungsträger, generieren Sie wiederkehrende Großaufträge und bauen Sie langfristige Verträge auf.",
+      "features": {
+        "profileListings": "Profil + unbegrenzte Produktlisten",
+        "orderRequests": "Strukturierte Bestellanfragen und Status-Tracking",
+        "analytics": "Analytics (Ansichten, Klicks, Bestellungen)",
+        "promoCodes": "Promo-Codes und Einlösungs-Tracking",
+        "fullVisibility": "Volle Sichtbarkeit über alle Kitas",
+        "emailSupportOnboarding": "E-Mail-Support und geleitete Onboarding"
+      }
+    },
+    "serviceProviderPlan": {
+      "name": "Dienstleister", 
+      "tagline": "Perfekt für: Rechts-, Buchhaltungs-, IT-, Coaching-, Trainings- und andere Fachkräfte, die wiederkehrende Kita-Kunden in großem Maßstab sichern möchten.",
+      "description": "Füllen Sie Ihren Pipeline mit hochvertrauenswürdigen Verträgen und Terminen—ohne kalte Akquise oder endloses Networking.",
+      "features": {
+        "profileServices": "Profil + Multi-Service-Listen",
+        "appointmentRequests": "Termin- und Angebotsanfragen",
+        "scheduling": "Terminplanungs-Link-Integration (Calendly/Cal.com)",
+        "pipelineTools": "Pipeline-Management-Tools",
+        "analytics": "Analytics (Anfragen, Regionen, Promo-Codes)",
+        "promoOptions": "Promo-Code-Optionen",
+        "emailSupportOnboarding": "E-Mail-Support und geleitete Onboarding"
+      }
+    }
   },
   "settingsBillingSubscription": {
     "title": "Rechnung & Abonnement",
@@ -837,5 +984,10 @@
     "helpText": {
       "specialNeeds": "Bitte beschreiben Sie alle besonderen Bedürfnisse, Ernährungsanforderungen oder andere wichtige Informationen über Ihr Kind."
     }
+  },
+  "common": {
+    "perMonth": "/Monat",
+    "perYear": "/Jahr", 
+    "save10Percent": "10% sparen"
   }
 }

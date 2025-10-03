@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import { Message, Conversation, UserRole, User } from '../types';
-import { MOCK_CONVERSATIONS, MOCK_MESSAGES, ALL_USERS_MOCK } from '../constants';
+import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '../constants';
 import { useAppContext } from './AppContext';
 
 interface MessagingContextType {
@@ -131,15 +131,15 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       const otherParticipants = conversation.participantIds.filter(id => id !== currentUser.id);
       if (otherParticipants.length > 0) {
         const replierId = otherParticipants[0]; // Just pick the first other person to reply
-        const replier = ALL_USERS_MOCK.find(u => u.id === replierId);
-        if (replier) {
+        // Remove mock user dependency for production
+        if (replierId) {
             const replyContent = `This is a simulated reply to: "${content}"`;
             const replyMessage: Message = {
                 id: `msg${Date.now() + 1}`,
                 conversationId,
-                senderId: replier.id,
-                senderName: replier.name,
-                senderRole: replier.role,
+                senderId: replierId,
+                senderName: 'System Reply',
+                senderRole: 'ASSISTANT' as UserRole,
                 content: replyContent,
                 timestamp: new Date().toISOString(),
                 isRead: conversationId === activeConversationId, // Mark as read if user is watching
@@ -153,7 +153,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
             // Also update conversation list with new last message
             const updatedConvsWithReply = MOCK_CONVERSATIONS.map(conv =>
               conv.id === conversationId
-                ? { ...conv, lastMessageSnippet: replyContent, lastMessageTimestamp: replyMessage.timestamp, lastMessageSenderId: replier.id }
+                ? { ...conv, lastMessageSnippet: replyContent, lastMessageTimestamp: replyMessage.timestamp, lastMessageSenderId: replierId }
                 : conv
             );
             setConversations(updatedConvsWithReply);

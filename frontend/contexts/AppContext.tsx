@@ -4,14 +4,12 @@ import React, { createContext, useState, useContext, ReactNode, Dispatch, SetSta
 // FIX: Add VendorClient and VendorClientReason to imports
 import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, ApplicationStatus, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types'; 
 import { 
-  ALL_USERS_MOCK,
   MOCK_PARENT_LEADS,
   MOCK_APPLICATIONS,
   MOCK_JOB_LISTINGS,
   MOCK_CANDIDATE_PROFILES,
   MOCK_PLATFORM_SETTINGS,
   MOCK_SERVICE_REQUESTS,
-  // FIX: Import MOCK_VENDOR_CLIENTS
   MOCK_VENDOR_CLIENTS
 } from '../constants';
 import i18n from '../i18n'; // Import i18n instance
@@ -48,8 +46,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// In-memory store for mock users, initialized with constants
-const mockUserStore = [...ALL_USERS_MOCK];
+// Mock user store removed for production
 
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);

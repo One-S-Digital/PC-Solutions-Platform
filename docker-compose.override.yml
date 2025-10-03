@@ -1,24 +1,14 @@
 version: '3.8'
 
 services:
-  # Override API service for development
-  api:
-    command: pnpm --filter api dev
-    volumes:
-      - ./apps/api:/app/apps/api
-      - ./packages:/app/packages
-      - /app/node_modules
-    environment:
-      NODE_ENV: development
-
   # Override Frontend service for development
   frontend:
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile.dev
-    command: pnpm --filter frontend dev
+      dockerfile: Dockerfile.frontend
+    command: cd frontend && pnpm run dev
     volumes:
-      - ./apps/frontend:/app/apps/frontend
+      - ./frontend:/app/frontend
       - ./packages:/app/packages
       - /app/node_modules
     ports:
@@ -28,10 +18,10 @@ services:
   admin:
     build:
       context: .
-      dockerfile: apps/admin/Dockerfile.dev
-    command: pnpm --filter admin dev
+      dockerfile: Dockerfile.admin
+    command: cd admin && pnpm run dev
     volumes:
-      - ./apps/admin:/app/apps/admin
+      - ./admin:/app/admin
       - ./packages:/app/packages
       - /app/node_modules
     ports:

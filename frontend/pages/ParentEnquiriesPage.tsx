@@ -8,7 +8,7 @@ import { ClipboardDocumentListIcon, ClockIcon, CheckCircleIcon, InformationCircl
 import { useTranslation } from 'react-i18next';
 import { useMessaging } from '../contexts/MessagingContext';
 import { useNavigate } from 'react-router-dom';
-import { ALL_USERS_MOCK } from '../constants';
+// Removed ALL_USERS_MOCK import - using API in production
 import Button from '../components/ui/Button';
 
 const ParentEnquiriesPage: React.FC = () => {
@@ -50,7 +50,7 @@ const ParentEnquiriesPage: React.FC = () => {
   };
   
   const handleMessageFoundation = (foundationOrgId: string, foundationName: string) => {
-    const foundationUser = ALL_USERS_MOCK.find(u => u.orgId === foundationOrgId);
+    const foundationUser = null; // Production: Fetch foundation user from API
     if (!foundationUser) {
         alert(`Could not find user for ${foundationName}`);
         return;

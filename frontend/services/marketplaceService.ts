@@ -1,5 +1,6 @@
 import { apiService, ApiResponse } from './api';
 import { Product, Service } from '../types';
+import { API_ENDPOINTS } from './api-endpoints';
 
 export interface ProductCreateData {
   title: string;
@@ -32,7 +33,7 @@ class MarketplaceService {
     });
     
     const response = await apiService.get<{ products: Product[]; pagination: any }>(
-      `/products?${params.toString()}`
+      `${API_ENDPOINTS.marketplace.products.list}?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch products');
@@ -44,7 +45,7 @@ class MarketplaceService {
   }
 
   async getProductById(id: string): Promise<Product> {
-    const response = await apiService.get<Product>(`/products/${id}`);
+    const response = await apiService.get<Product>(API_ENDPOINTS.marketplace.products.get(id));
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch product');
     }
@@ -52,7 +53,7 @@ class MarketplaceService {
   }
 
   async createProduct(data: ProductCreateData): Promise<Product> {
-    const response = await apiService.post<Product>('/products', data);
+    const response = await apiService.post<Product>(API_ENDPOINTS.marketplace.products.create, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to create product');
     }
@@ -60,7 +61,7 @@ class MarketplaceService {
   }
 
   async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
-    const response = await apiService.put<Product>(`/products/${id}`, data);
+    const response = await apiService.put<Product>(API_ENDPOINTS.marketplace.products.update(id), data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update product');
     }
@@ -68,7 +69,7 @@ class MarketplaceService {
   }
 
   async deleteProduct(id: string): Promise<void> {
-    const response = await apiService.delete(`/products/${id}`);
+    const response = await apiService.delete(API_ENDPOINTS.marketplace.products.delete(id));
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete product');
     }

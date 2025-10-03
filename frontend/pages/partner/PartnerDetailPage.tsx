@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Organization, Product, Service, UserRole, StockStatus, ServiceRequest, OrderRequestStatus, ServiceRequestStatus } from '../../types';
-import { MOCK_ORGANIZATIONS, MOCK_PRODUCTS, MOCK_SERVICES, STANDARD_INPUT_FIELD, MOCK_ORDERS, ALL_USERS_MOCK } from '../../constants';
+import { MOCK_ORGANIZATIONS, MOCK_PRODUCTS, MOCK_SERVICES, STANDARD_INPUT_FIELD, MOCK_ORDERS } from '../../constants';
 import { useAppContext } from '../../contexts/AppContext';
 import { useCart } from '../../contexts/CartContext'; // Import useCart
 import Card from '../../components/ui/Card';
@@ -124,7 +124,7 @@ const PartnerDetailPage: React.FC = () => {
   
   const partnerUser = useMemo(() => {
     if (!partner) return null;
-    return ALL_USERS_MOCK.find(user => user.orgId === partner.id);
+    return null; // Production: fetch user data from API
   }, [partner]);
 
 

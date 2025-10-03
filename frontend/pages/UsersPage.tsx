@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { User, UserRole } from '../types';
-import { ALL_USERS_MOCK, ICON_INPUT_FIELD, STANDARD_INPUT_FIELD } from '../constants'; 
+import { ICON_INPUT_FIELD, STANDARD_INPUT_FIELD } from '../constants'; 
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { UsersIcon, MagnifyingGlassIcon, FunnelIcon, EyeIcon, PencilIcon, ShieldExclamationIcon, ChevronRightIcon, PlusIcon, ArrowUturnLeftIcon, TrashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
@@ -169,7 +169,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const { t } = useTranslation();
   const { currentUser } = useAppContext();
   const [usersData, setUsersData] = useState<User[]>(() => 
-    JSON.parse(JSON.stringify(ALL_USERS_MOCK))
+    [] // Empty array for production - users fetched from API
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
