@@ -10,21 +10,24 @@ i18n
   .init({
     supportedLngs: ['en', 'fr', 'de'],
     fallbackLng: 'en',
-    debug: false, // Disable debug mode to prevent console spam
+    debug: process.env.NODE_ENV === 'development', // Debug only in development
     ns: ['translation'], 
     defaultNS: 'translation',
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json', 
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      allowMultiLoading: false,
     },
     interpolation: {
       escapeValue: false, 
     },
     react: {
-      useSuspense: false, // Disable suspense to prevent hanging
+      useSuspense: false, // Disable Suspense for production stability
     },
-    // Add missing options to ensure proper loading
-    load: 'languageOnly',
-    cleanCode: true,
+    saveMissing: false, // As per specification
+    returnEmptyString: false, // As per specification
+    initImmediate: false, // Ensure translations load before render
+    load: 'languageOnly', // Load only language, not region
+    cleanCode: true, // Clean language codes
     preload: ['en'], // Preload English translations
   });
 
