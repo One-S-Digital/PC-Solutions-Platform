@@ -16,6 +16,9 @@ i18n
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       allowMultiLoading: false,
+      requestOptions: {
+        cache: 'no-cache'
+      }
     },
     interpolation: {
       escapeValue: false, 
@@ -36,16 +39,38 @@ i18n
     console.log('🌍 Available languages:', i18n.languages);
     console.log('🌍 Has resource bundle:', i18n.hasResourceBundle(i18n.language, 'translation'));
     
-    // Test a translation
-    const testTranslation = i18n.t('appName');
-    console.log('🌍 Test translation (appName):', testTranslation);
+    // Test multiple translations
+    const testKeys = ['appName', 'buttons.login', 'sidebar.dashboard', 'dashboardPage.welcome'];
+    console.log('🌍 Testing translations:');
+    testKeys.forEach(key => {
+      const result = i18n.t(key);
+      const isWorking = result !== key;
+      console.log(`  ${isWorking ? '✅' : '❌'} ${key}: "${result}"`);
+    });
     
-    if (testTranslation === 'appName') {
-      console.warn('⚠️ Translation key returned as-is, translations may not be loading properly');
+    // Check if resource bundle is loaded
+    const resourceBundle = i18n.getResourceBundle(i18n.language, 'translation');
+    console.log('🌍 Resource bundle keys:', Object.keys(resourceBundle || {}).length);
+    
+    if (!i18n.hasResourceBundle(i18n.language, 'translation')) {
+      console.error('❌ Resource bundle not loaded! This will cause translation keys to show instead of text.');
     }
   })
   .catch((error) => {
     console.error('❌ i18n initialization failed:', error);
   });
+
+// Add event listeners for debugging
+i18n.on('loaded', () => {
+  console.log('🌍 Translation files loaded');
+});
+
+i18n.on('failedLoading', (lng, ns, msg) => {
+  console.error(`❌ Failed to load translation for ${lng}/${ns}:`, msg);
+});
+
+i18n.on('missingKey', (lng, ns, key) => {
+  console.warn(`⚠️ Missing translation key: ${key} for language ${lng}`);
+});
 
 export default i18n; // Export the configured instance
