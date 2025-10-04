@@ -37,7 +37,8 @@
     "create": "Create",
     "update": "Update",
     "goBack": "Go Back",
-    "toggleNavigation": "Toggle navigation"
+    "toggleNavigation": "Toggle navigation",
+    "saveChanges": "Save Changes"
   },
   "pricingPage": {
     "title": "ProCrèche Solutions – Pricing Guide",
@@ -255,8 +256,29 @@
   },
   "dashboardPage": {
     "welcome": "Welcome back, {{name}}!",
-    "upcomingMeetings": "Upcoming Meetings",
+    "defaultUser": "User",
+    "overviewSubtitle": "Here's what's happening with {{appName}} today",
+    "activeUsers": "Active Users",
+    "newOrders": "New Orders",
+    "openJobs": "Open Jobs",
+    "pageViews": "Page Views",
     "recentActivity": "Recent Activity",
+    "quickLinks": "Quick Links",
+    "browseMarketplace": "Browse Marketplace",
+    "postNewJob": "Post New Job",
+    "manageUsers": "Manage Users",
+    "platformSettings": "Platform Settings",
+    "activityLina": "updated their profile",
+    "activityEcoToys": "submitted a new product",
+    "activityJohn": "applied for a position",
+    "activityParent": "submitted an enquiry",
+    "viewDetailsFor": "View details for {{name}}",
+    "timeAgo": {
+      "minutes": "{{count}} minutes ago",
+      "hours": "{{count}} hours ago",
+      "yesterday": "Yesterday"
+    },
+    "upcomingMeetings": "Upcoming Meetings",
     "quickActions": "Quick Actions",
     "overview": "Overview",
     "announcements": "Announcements",
@@ -272,7 +294,10 @@
     "privacySecurity": "Privacy & Security",
     "billingSubscription": "Billing & Subscription",
     "organizationProfile": "Organization Profile",
-    "userPreferences": "User Preferences"
+    "userPreferences": "User Preferences",
+    "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
+    "loading": "Loading settings...",
+    "noSectionsAvailable": "No settings sections available"
   },
   "buttons": {
     "save": "Save",
@@ -302,7 +327,8 @@
     "create": "Create",
     "update": "Update",
     "goBack": "Go Back",
-    "toggleNavigation": "Toggle navigation"
+    "toggleNavigation": "Toggle navigation",
+    "saveChanges": "Save Changes"
   },
   "navbar": {
     "login": "Sign In",
@@ -349,6 +375,10 @@
   },
   "errors": {
     "unknown": "An unknown error occurred. Please try again."
+  },
+  "notifications": {
+    "successTitle": "Success",
+    "settingsUpdated": "Settings updated successfully"
   },
   "hidePassword": "Hide password",
   "showPassword": "Show password",
