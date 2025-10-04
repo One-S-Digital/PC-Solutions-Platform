@@ -46,7 +46,44 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Mock user store removed for production
+// Mock user store for development/testing
+const mockUserStore: User[] = [
+  {
+    id: 'admin-1',
+    email: 'admin@procrechesolutions.com',
+    name: 'Admin User',
+    role: UserRole.SUPER_ADMIN,
+    organizationId: 'org-1',
+    organizationName: 'ProCrèche Solutions',
+    plan: 'Professional',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    status: 'Active',
+    phone: '+41 44 123 4567',
+    address: 'Zurich, Switzerland',
+    preferredLanguage: 'en',
+    timezone: 'Europe/Zurich',
+    lastLoginAt: new Date().toISOString(),
+    emailVerified: true,
+    profilePictureUrl: null,
+    bio: 'System administrator',
+    website: 'https://procrechesolutions.com',
+    linkedinProfile: null,
+    twitterHandle: null,
+    instagramHandle: null,
+    facebookProfile: null,
+    notificationPreferences: {
+      email: true,
+      sms: false,
+      push: true
+    },
+    privacySettings: {
+      profileVisibility: 'public',
+      showEmail: false,
+      showPhone: false
+    }
+  }
+];
 
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
