@@ -5,7 +5,7 @@ services:
     env: node
     plan: starter
     buildCommand: cd frontend && pnpm install && pnpm run build
-    startCommand: cd frontend && npx serve -s dist -l 3000
+    startCommand: cd frontend && pnpm run start
     envVars:
       - key: NODE_ENV
         value: production
@@ -45,7 +45,7 @@ services:
     env: node
     plan: starter
     buildCommand: cd admin && pnpm install && pnpm run build
-    startCommand: cd admin && npx serve -s dist -l 3000
+    startCommand: cd admin && pnpm run start
     envVars:
       - key: NODE_ENV
         value: production
