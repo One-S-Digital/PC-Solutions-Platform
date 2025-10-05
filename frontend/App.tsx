@@ -38,6 +38,7 @@ import DesignSystemPage from './pages/DesignSystemPage'; // New Design System Pa
 import DiscountTerminationsPage from './pages/admin/DiscountTerminationsPage'; // New Admin Page
 import TranslationDebugger from './components/debug/TranslationDebugger'; // Debug component
 import TranslationDiagnostics from './components/debug/TranslationDiagnostics'; // Comprehensive diagnostics
+import TranslationErrorLogger from './components/debug/TranslationErrorLogger'; // Automatic error logging
 
 
 // Product Supplier Pages
@@ -323,6 +324,13 @@ const App: React.FC = () => {
             {/* Debug components - enabled for debugging translation issues */}
             <TranslationDebugger enabled={true} />
             <TranslationDiagnostics enabled={true} />
+            <TranslationErrorLogger 
+              enabled={true} 
+              logToFile={true} 
+              logToConsole={true} 
+              autoScan={true} 
+              scanInterval={15000} 
+            />
             
             {/* Debug banner - visible in production */}
             <div 
