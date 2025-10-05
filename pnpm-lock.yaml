@@ -116,6 +116,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.13
         version: 4.1.13
+      translate-google-api:
+        specifier: ^1.0.4
+        version: 1.0.4
       vite:
         specifier: ^7.1.7
         version: 7.1.7(@types/node@22.15.3)(jiti@2.5.1)(terser@5.44.0)(yaml@2.8.1)
@@ -3629,6 +3632,10 @@ packages:
     peerDependencies:
       axios: 0.x || 1.x
 
+  axios@0.20.0:
+    resolution: {integrity: sha512-ANA4rr2BDcmmAQLOKft2fufrtuvlqR+cXNNinUmvfeSNCOF98PZL+7M/v1zIdGo7OLjEA9J2gXJL+j4zGsl0bA==}
+    deprecated: Critical security vulnerability fixed in v0.21.1. For more information, see https://github.com/axios/axios/pull/3410
+
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
@@ -7021,6 +7028,9 @@ packages:
   tr46@6.0.0:
     resolution: {integrity: sha512-bLVMLPtstlZ4iMQHpFHTR7GAGj2jxi8Dg0s2h2MafAE4uSWF98FC/3MomU51iQAMf8/qDUbKWf5GxuvvVcXEhw==}
     engines: {node: '>=20'}
+
+  translate-google-api@1.0.4:
+    resolution: {integrity: sha512-KVXmo4+64/H1vIbnzf2zNiJ2JLeEB3jrEnNRP2EFNAGNqna/5bmw/Cps3pCHu0n3BzTOoWh9u6wFvrRYdzQ6Iw==}
 
   tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
@@ -11769,6 +11779,12 @@ snapshots:
       axios: 1.12.2
       is-retry-allowed: 2.2.0
 
+  axios@0.20.0:
+    dependencies:
+      follow-redirects: 1.15.11
+    transitivePeerDependencies:
+      - debug
+
   axios@1.12.2:
     dependencies:
       follow-redirects: 1.15.11
@@ -15743,6 +15759,12 @@ snapshots:
   tr46@6.0.0:
     dependencies:
       punycode: 2.3.1
+
+  translate-google-api@1.0.4:
+    dependencies:
+      axios: 0.20.0
+    transitivePeerDependencies:
+      - debug
 
   tree-kill@1.2.2: {}
 
