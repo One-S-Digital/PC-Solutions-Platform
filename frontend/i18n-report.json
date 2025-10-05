@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2025-10-05T17:15:51.971Z",
+  "generatedAt": "2025-10-05T17:58:03.768Z",
   "summary": {
     "hardcodedCount": 0,
     "missingKeyCount": 0,
-    "unusedKeyCount": 1251,
+    "unusedKeyCount": 1614,
     "langs": [
       "en",
       "fr",
@@ -2206,13 +2206,1057 @@
       "suggestion": "Remove unused key \"contactPerson\" from namespace \"translation\" in en, fr, de"
     },
     {
-      "key": "translation:createAccount",
+      "key": "translation:contentUploadModal.buttons.upload",
       "locales": [
         "en",
         "fr",
         "de"
       ],
-      "suggestion": "Remove unused key \"createAccount\" from namespace \"translation\" in en, fr, de"
+      "suggestion": "Remove unused key \"contentUploadModal.buttons.upload\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.buttons.upload",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.buttons.upload\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.buttons.upload",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.buttons.upload\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.buttons.uploading",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.buttons.uploading\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.buttons.uploading",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.buttons.uploading\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.buttons.uploading",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.buttons.uploading\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.eLearning",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.eLearning\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.eLearning",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.eLearning\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.eLearning",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.eLearning\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.hrPolicy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.hrPolicy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.hrPolicy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.hrPolicy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.hrPolicy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.hrPolicy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.statePolicy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.statePolicy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.statePolicy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.statePolicy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.contentType.statePolicy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.contentType.statePolicy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.criticalityOptions.critical",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.criticalityOptions.critical\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.criticalityOptions.critical",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.criticalityOptions.critical\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.criticalityOptions.critical",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.criticalityOptions.critical\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.criticalityOptions.normal",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.criticalityOptions.normal\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.criticalityOptions.normal",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.criticalityOptions.normal\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.criticalityOptions.normal",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.criticalityOptions.normal\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.error.selectFileOrLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.error.selectFileOrLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.error.selectFileOrLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.error.selectFileOrLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.error.selectFileOrLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.error.selectFileOrLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.fileUpload.eLearningAllowedTypes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.fileUpload.eLearningAllowedTypes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.fileUpload.eLearningAllowedTypes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.fileUpload.eLearningAllowedTypes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.fileUpload.eLearningAllowedTypes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.fileUpload.eLearningAllowedTypes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.fileUpload.hrPolicyAllowedTypes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.fileUpload.hrPolicyAllowedTypes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.fileUpload.hrPolicyAllowedTypes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.fileUpload.hrPolicyAllowedTypes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.fileUpload.hrPolicyAllowedTypes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.fileUpload.hrPolicyAllowedTypes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.accessRoles",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.accessRoles\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.accessRoles",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.accessRoles\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.accessRoles",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.accessRoles\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.category",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.category\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.category",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.category\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.category",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.category\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.contentType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.contentType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.contentType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.contentType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.contentType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.contentType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.country",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.country\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.country",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.country\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.country",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.country\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.criticality",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.criticality\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.criticality",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.criticality\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.criticality",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.criticality\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.description",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.description\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.description",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.description\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.description",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.description\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.descriptionPreview",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.descriptionPreview\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.descriptionPreview",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.descriptionPreview\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.descriptionPreview",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.descriptionPreview\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.documentTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.documentTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.documentTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.documentTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.documentTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.documentTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.duration",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.duration\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.duration",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.duration\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.duration",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.duration\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.effectiveDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.effectiveDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.effectiveDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.effectiveDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.effectiveDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.effectiveDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.externalLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.externalLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.externalLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.externalLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.externalLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.externalLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.fileType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.fileType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.fileType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.fileType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.fileType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.fileType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.language",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.language\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.language",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.language\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.language",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.language\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.lessons",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.lessons\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.lessons",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.lessons\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.lessons",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.lessons\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.linkUrl",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.linkUrl\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.linkUrl",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.linkUrl\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.linkUrl",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.linkUrl\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.markAsCritical",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.markAsCritical\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.markAsCritical",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.markAsCritical\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.markAsCritical",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.markAsCritical\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.policyType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.policyType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.policyType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.policyType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.policyType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.policyType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.regionCanton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.regionCanton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.regionCanton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.regionCanton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.regionCanton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.regionCanton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.uploadFile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.uploadFile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.uploadFile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.uploadFile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.uploadFile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.uploadFile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.version",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.version\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.version",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.version\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.labels.version",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.labels.version\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.duration",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.duration\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.duration",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.duration\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.duration",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.duration\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.externalLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.externalLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.externalLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.externalLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.externalLink",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.externalLink\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.linkUrl",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.linkUrl\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.linkUrl",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.linkUrl\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.linkUrl",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.linkUrl\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.version",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.version\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.version",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.version\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.placeholders.version",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.placeholders.version\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.archived",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.archived\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.archived",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.archived\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.archived",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.archived\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.draft",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.draft\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.draft",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.draft\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.draft",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.draft\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.published",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.published\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.published",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.published\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:contentUploadModal.statusOptions.published",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"contentUploadModal.statusOptions.published\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:createAccount",
@@ -2231,6 +3275,177 @@
         "de"
       ],
       "suggestion": "Remove unused key \"createAccount\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createAccount",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createAccount\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.createButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.createButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.createButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.createButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.createButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.createButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.error.minParticipants",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.error.minParticipants\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.error.minParticipants",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.error.minParticipants\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.error.minParticipants",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.error.minParticipants\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.groupNameLabel",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.groupNameLabel\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.groupNameLabel",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.groupNameLabel\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.groupNameLabel",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.groupNameLabel\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.groupNamePlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.groupNamePlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.groupNamePlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.groupNamePlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.groupNamePlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.groupNamePlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.selectParticipantsLabel",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.selectParticipantsLabel\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.selectParticipantsLabel",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.selectParticipantsLabel\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.selectParticipantsLabel",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.selectParticipantsLabel\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:createGroupChatModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"createGroupChatModal.title\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:dashboardPage.activeUsers",
@@ -5365,13 +6580,85 @@
       "suggestion": "Remove unused key \"marketplacePage.title\" from namespace \"translation\" in en, fr, de"
     },
     {
-      "key": "translation:messagesPage.conversations",
+      "key": "translation:messagesPage.addEmoji",
       "locales": [
         "en",
         "fr",
         "de"
       ],
-      "suggestion": "Remove unused key \"messagesPage.conversations\" from namespace \"translation\" in en, fr, de"
+      "suggestion": "Remove unused key \"messagesPage.addEmoji\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.addEmoji",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.addEmoji\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.addEmoji",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.addEmoji\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.attachFile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.attachFile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.attachFile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.attachFile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.attachFile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.attachFile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.conversationFallbackTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.conversationFallbackTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.conversationFallbackTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.conversationFallbackTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.conversationFallbackTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.conversationFallbackTitle\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:messagesPage.conversations",
@@ -5390,6 +6677,96 @@
         "de"
       ],
       "suggestion": "Remove unused key \"messagesPage.conversations\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.conversations",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.conversations\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.filters.all",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.filters.all\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.filters.all",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.filters.all\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.filters.all",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.filters.all\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.filters.unread",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.filters.unread\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.filters.unread",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.filters.unread\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.filters.unread",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.filters.unread\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.newGroupButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.newGroupButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.newGroupButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.newGroupButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.newGroupButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.newGroupButton\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:messagesPage.newMessage",
@@ -5419,13 +6796,193 @@
       "suggestion": "Remove unused key \"messagesPage.newMessage\" from namespace \"translation\" in en, fr, de"
     },
     {
-      "key": "translation:messagesPage.title",
+      "key": "translation:messagesPage.noConversationSelectedSubtitle",
       "locales": [
         "en",
         "fr",
         "de"
       ],
-      "suggestion": "Remove unused key \"messagesPage.title\" from namespace \"translation\" in en, fr, de"
+      "suggestion": "Remove unused key \"messagesPage.noConversationSelectedSubtitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationSelectedSubtitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationSelectedSubtitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationSelectedSubtitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationSelectedSubtitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationSelectedTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationSelectedTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationSelectedTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationSelectedTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationSelectedTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationSelectedTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationsFound",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationsFound\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationsFound",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationsFound\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationsFound",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationsFound\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationsYet",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationsYet\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationsYet",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationsYet\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noConversationsYet",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noConversationsYet\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noMessagesYet",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noMessagesYet\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noMessagesYet",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noMessagesYet\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.noMessagesYet",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.noMessagesYet\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.searchPlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.searchPlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.searchPlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.searchPlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.searchPlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.searchPlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.selectConversationToView",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.selectConversationToView\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.selectConversationToView",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.selectConversationToView\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.selectConversationToView",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.selectConversationToView\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:messagesPage.title",
@@ -5444,6 +7001,96 @@
         "de"
       ],
       "suggestion": "Remove unused key \"messagesPage.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.typeMessagePlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.typeMessagePlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.typeMessagePlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.typeMessagePlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.typeMessagePlaceholder",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.typeMessagePlaceholder\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.unknownUser",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.unknownUser\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.unknownUser",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.unknownUser\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.unknownUser",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.unknownUser\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.youPrefix",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.youPrefix\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.youPrefix",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.youPrefix\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:messagesPage.youPrefix",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"messagesPage.youPrefix\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:navbar.dashboard",
@@ -5471,6 +7118,33 @@
         "de"
       ],
       "suggestion": "Remove unused key \"navbar.dashboard\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.goBackPreviousPage",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.goBackPreviousPage\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.goBackPreviousPage",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.goBackPreviousPage\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.goBackPreviousPage",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.goBackPreviousPage\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:navbar.login",
@@ -5552,6 +7226,60 @@
         "de"
       ],
       "suggestion": "Remove unused key \"navbar.messages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.newMessages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.newMessages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.newMessages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.newMessages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.newMessages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.newMessages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.noNewNotifications",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.noNewNotifications\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.noNewNotifications",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.noNewNotifications\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.noNewNotifications",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.noNewNotifications\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:navbar.notifications",
@@ -5662,13 +7390,31 @@
       "suggestion": "Remove unused key \"navbar.settings\" from namespace \"translation\" in en, fr, de"
     },
     {
-      "key": "translation:navbar.signup",
+      "key": "translation:navbar.signOut",
       "locales": [
         "en",
         "fr",
         "de"
       ],
-      "suggestion": "Remove unused key \"navbar.signup\" from namespace \"translation\" in en, fr, de"
+      "suggestion": "Remove unused key \"navbar.signOut\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.signOut",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.signOut\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.signOut",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.signOut\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:navbar.signup",
@@ -5687,6 +7433,42 @@
         "de"
       ],
       "suggestion": "Remove unused key \"navbar.signup\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.signup",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.signup\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.toggleNavigation",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.toggleNavigation\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.toggleNavigation",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.toggleNavigation\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.toggleNavigation",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.toggleNavigation\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:navbar.userMenu.logout",
@@ -5770,6 +7552,87 @@
       "suggestion": "Remove unused key \"navbar.userMenu.settings\" from namespace \"translation\" in en, fr, de"
     },
     {
+      "key": "translation:navbar.viewAll",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.viewAll\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.viewAll",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.viewAll\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.viewAll",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.viewAll\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.viewShoppingCart",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.viewShoppingCart\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.viewShoppingCart",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.viewShoppingCart\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:navbar.viewShoppingCart",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"navbar.viewShoppingCart\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notifications.errorTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notifications.errorTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notifications.errorTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notifications.errorTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notifications.errorTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notifications.errorTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
       "key": "translation:notifications.settingsUpdated",
       "locales": [
         "en",
@@ -5822,6 +7685,87 @@
         "de"
       ],
       "suggestion": "Remove unused key \"notifications.successTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.clearAll",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.clearAll\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.clearAll",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.clearAll\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.clearAll",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.clearAll\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.emptyState.message",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.emptyState.message\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.emptyState.message",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.emptyState.message\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.emptyState.message",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.emptyState.message\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.emptyState.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.emptyState.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.emptyState.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.emptyState.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:notificationsPage.emptyState.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"notificationsPage.emptyState.title\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:notificationsPage.notifications",
@@ -5905,13 +7849,436 @@
       "suggestion": "Remove unused key \"notificationsPage.unread\" from namespace \"translation\" in en, fr, de"
     },
     {
-      "key": "translation:organizationName",
+      "key": "translation:orderRequestDetailModal.date",
       "locales": [
         "en",
         "fr",
         "de"
       ],
-      "suggestion": "Remove unused key \"organizationName\" from namespace \"translation\" in en, fr, de"
+      "suggestion": "Remove unused key \"orderRequestDetailModal.date\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.date",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.date\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.date",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.date\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.lineItems",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.lineItems\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.lineItems",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.lineItems\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.lineItems",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.lineItems\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.orderId",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.orderId\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.orderId",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.orderId\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.orderId",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.orderId\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.price",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.price\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.price",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.price\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.price",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.price\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.product",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.product\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.product",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.product\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.product",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.product\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.quantity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.quantity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.quantity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.quantity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.quantity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.quantity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.total",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.total\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.total",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.total\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.total",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.total\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.viewDaycareProfile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.viewDaycareProfile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.viewDaycareProfile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.viewDaycareProfile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestDetailModal.viewDaycareProfile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestDetailModal.viewDaycareProfile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.product",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.product\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.product",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.product\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.product",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.product\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.quantity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.quantity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.quantity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.quantity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.quantity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.quantity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.supplier",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.supplier\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.supplier",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.supplier\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.labels.supplier",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.labels.supplier\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.placeholders.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.placeholders.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.placeholders.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.placeholders.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:orderRequestModal.placeholders.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"orderRequestModal.placeholders.notes\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:organizationName",
@@ -5930,6 +8297,231 @@
         "de"
       ],
       "suggestion": "Remove unused key \"organizationName\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationName",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationName\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.accessDenied",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.accessDenied\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.accessDenied",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.accessDenied\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.accessDenied",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.accessDenied\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.helpText.commaSeparated",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.helpText.commaSeparated\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.helpText.commaSeparated",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.helpText.commaSeparated\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.helpText.commaSeparated",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.helpText.commaSeparated\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.capacity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.capacity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.capacity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.capacity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.capacity",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.capacity\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.languages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.languages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.languages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.languages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.languages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.languages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.pedagogy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.pedagogy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.pedagogy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.pedagogy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.labels.pedagogy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.labels.pedagogy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.placeholders.languages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.placeholders.languages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.placeholders.languages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.placeholders.languages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.placeholders.languages",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.placeholders.languages\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.placeholders.pedagogy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.placeholders.pedagogy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.placeholders.pedagogy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.placeholders.pedagogy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.placeholders.pedagogy",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.placeholders.pedagogy\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.saveButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.saveButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.saveButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.saveButton\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.saveButton",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.saveButton\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:organizationProfileForm.saveSuccess",
@@ -5957,6 +8549,60 @@
         "de"
       ],
       "suggestion": "Remove unused key \"organizationProfileForm.saveSuccess\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.subtitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.subtitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.subtitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.subtitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.subtitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.subtitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:organizationProfileForm.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"organizationProfileForm.title\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:parentDashboardPage.findCreche",
@@ -7606,13 +10252,247 @@
       "suggestion": "Remove unused key \"serviceProviderSupportPage.title\" from namespace \"translation\" in en, fr, de"
     },
     {
-      "key": "translation:serviceType",
+      "key": "translation:serviceRequestDetailModal.date",
       "locales": [
         "en",
         "fr",
         "de"
       ],
-      "suggestion": "Remove unused key \"serviceType\" from namespace \"translation\" in en, fr, de"
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.date\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.date",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.date\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.date",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.date\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.noPreferredDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.noPreferredDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.noPreferredDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.noPreferredDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.noPreferredDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.noPreferredDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.notes",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.notes\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.preferredDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.preferredDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.preferredDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.preferredDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.preferredDate",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.preferredDate\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.requestId",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.requestId\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.requestId",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.requestId\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.requestId",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.requestId\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.serviceName",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.serviceName\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.serviceName",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.serviceName\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.serviceName",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.serviceName\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.status",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.status\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.viewDaycareProfile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.viewDaycareProfile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.viewDaycareProfile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.viewDaycareProfile\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceRequestDetailModal.viewDaycareProfile",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceRequestDetailModal.viewDaycareProfile\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:serviceType",
@@ -7631,6 +10511,393 @@
         "de"
       ],
       "suggestion": "Remove unused key \"serviceType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.addTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.addTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.addTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.addTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.addTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.addTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.editTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.editTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.editTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.editTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.editTitle",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.editTitle\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.imageHelpText",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.imageHelpText\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.imageHelpText",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.imageHelpText\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.imageHelpText",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.imageHelpText\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.availability",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.availability\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.availability",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.availability\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.availability",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.availability\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.category",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.category\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.category",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.category\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.category",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.category\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.deliveryType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.deliveryType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.deliveryType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.deliveryType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.deliveryType",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.deliveryType\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.description",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.description\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.description",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.description\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.description",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.description\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.image",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.image\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.image",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.image\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.image",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.image\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.priceInfo",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.priceInfo\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.priceInfo",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.priceInfo\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.priceInfo",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.priceInfo\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.tags",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.tags\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.tags",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.tags\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.tags",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.tags\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.labels.title",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.labels.title\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.availability",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.availability\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.availability",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.availability\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.availability",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.availability\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.priceInfo",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.priceInfo\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.priceInfo",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.priceInfo\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.priceInfo",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.priceInfo\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.tags",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.tags\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.tags",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.tags\" from namespace \"translation\" in en, fr, de"
+    },
+    {
+      "key": "translation:serviceUploadModal.placeholders.tags",
+      "locales": [
+        "en",
+        "fr",
+        "de"
+      ],
+      "suggestion": "Remove unused key \"serviceUploadModal.placeholders.tags\" from namespace \"translation\" in en, fr, de"
     },
     {
       "key": "translation:settingsPage.account",
