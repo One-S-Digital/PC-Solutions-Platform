@@ -271,5 +271,249 @@
     "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
     "loading": "Loading settings...",
     "noSectionsAvailable": "No settings sections available"
+  },
+  "marketplacePage": {
+    "title": "Marketplace",
+    "tabs": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    },
+    "serviceCard": {
+      "categoryLabel": "Category: {{category}}",
+      "bookAppointment": "Book Appointment",
+      "viewProvider": "View Provider"
+    },
+    "emptyStates": {
+      "noProductSuppliers": "No product suppliers found",
+      "noServiceProviders": "No service providers found"
+    }
+  },
+  "partnerDetailPage": {
+    "onlyFoundationsRequestService": "Only foundations can request this service",
+    "requestSubmittedAlert": "Service request for {{serviceName}} submitted successfully!"
+  },
+  "adminPlatformSettings": {
+    "title": "Platform Settings",
+    "general": {
+      "title": "General Settings",
+      "nameLabel": "Platform Name",
+      "descriptionLabel": "Platform Description"
+    },
+    "branding": {
+      "title": "Branding",
+      "logoLabel": "Logo URL",
+      "faviconLabel": "Favicon URL"
+    }
+  },
+  "organizationProfileForm": {
+    "saveSuccess": "Organization profile saved successfully"
+  },
+  "foundationDashboardPage": {
+    "title": "Foundation Dashboard",
+    "welcome": "Welcome to your foundation dashboard",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Analytics Overview",
+    "metrics": "Key Metrics"
+  },
+  "foundationLeadsPage": {
+    "title": "Parent Leads",
+    "leads": "Parent Leads",
+    "newLeads": "New Leads",
+    "contactedLeads": "Contacted Leads"
+  },
+  "foundationOrdersAppointmentsPage": {
+    "title": "Orders & Appointments",
+    "orders": "Orders",
+    "appointments": "Appointments"
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "Organization Profile",
+    "profile": "Organization Profile",
+    "settings": "Profile Settings"
+  },
+  "foundationSupportPage": {
+    "title": "Support",
+    "help": "Help & Support",
+    "tickets": "Support Tickets"
+  },
+  "parentDashboardPage": {
+    "title": "Parent Dashboard",
+    "welcome": "Welcome to your parent dashboard",
+    "myChildren": "My Children",
+    "findCreche": "Find a Crèche"
+  },
+  "parentEnquiriesPage": {
+    "title": "My Enquiries",
+    "enquiries": "My Enquiries",
+    "newEnquiry": "New Enquiry"
+  },
+  "parentSupportPage": {
+    "title": "Support",
+    "help": "Help & Support",
+    "faq": "Frequently Asked Questions"
+  },
+  "educatorDashboardPage": {
+    "title": "Educator Dashboard",
+    "welcome": "Welcome to your educator dashboard",
+    "applications": "My Applications",
+    "jobBoard": "Job Board"
+  },
+  "educatorApplicationsPage": {
+    "title": "My Applications",
+    "applications": "Job Applications",
+    "status": "Application Status"
+  },
+  "educatorJobBoardPage": {
+    "title": "Job Board",
+    "jobs": "Available Jobs",
+    "apply": "Apply Now"
+  },
+  "educatorProfilePage": {
+    "title": "My Profile",
+    "profile": "Educator Profile",
+    "experience": "Experience"
+  },
+  "educatorSupportPage": {
+    "title": "Support",
+    "help": "Help & Support"
+  },
+  "serviceProviderDashboardPage": {
+    "title": "Service Provider Dashboard",
+    "welcome": "Welcome to your service provider dashboard",
+    "services": "My Services",
+    "requests": "Service Requests"
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Service Analytics",
+    "performance": "Performance Metrics"
+  },
+  "serviceProviderListingsPage": {
+    "title": "Service Listings",
+    "listings": "My Service Listings",
+    "addService": "Add New Service"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "Service Requests",
+    "requests": "Service Requests",
+    "pending": "Pending Requests"
+  },
+  "serviceProviderSupportPage": {
+    "title": "Support",
+    "help": "Help & Support"
+  },
+  "supplierDashboardPage": {
+    "title": "Supplier Dashboard",
+    "welcome": "Welcome to your supplier dashboard",
+    "products": "My Products",
+    "orders": "Product Orders"
+  },
+  "supplierAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Product Analytics",
+    "sales": "Sales Metrics"
+  },
+  "supplierProductListingsPage": {
+    "title": "Product Listings",
+    "listings": "My Product Listings",
+    "addProduct": "Add New Product"
+  },
+  "supplierOrdersPage": {
+    "title": "Product Orders",
+    "orders": "Product Orders",
+    "pending": "Pending Orders"
+  },
+  "supplierSupportPage": {
+    "title": "Support",
+    "help": "Help & Support"
+  },
+  "adminContentManagementDashboardPage": {
+    "title": "Content Management",
+    "content": "Content Management",
+    "policies": "Policies",
+    "announcements": "Announcements"
+  },
+  "adminSystemMonitoringPage": {
+    "title": "System Monitoring",
+    "monitoring": "System Monitoring",
+    "performance": "Performance Metrics",
+    "logs": "System Logs"
+  },
+  "adminDiscountTerminationsPage": {
+    "title": "Discount Terminations",
+    "terminations": "Discount Terminations",
+    "manage": "Manage Discounts"
+  },
+  "pricingPage": {
+    "title": "Pricing Plans",
+    "plans": "Choose Your Plan",
+    "features": "Features",
+    "billing": "Billing"
+  },
+  "recruitmentPage": {
+    "title": "Recruitment",
+    "jobs": "Job Listings",
+    "candidates": "Candidates",
+    "postJob": "Post New Job"
+  },
+  "messagesPage": {
+    "title": "Messages",
+    "conversations": "Conversations",
+    "newMessage": "New Message"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notifications": "All Notifications",
+    "unread": "Unread"
+  },
+  "fileGalleryPage": {
+    "title": "File Gallery",
+    "files": "Files",
+    "upload": "Upload Files"
+  },
+  "eLearningPage": {
+    "title": "E-Learning",
+    "courses": "Courses",
+    "progress": "My Progress"
+  },
+  "statePoliciesPage": {
+    "title": "State Policies",
+    "policies": "Policies",
+    "compliance": "Compliance"
+  },
+  "hrProceduresPage": {
+    "title": "HR Procedures",
+    "procedures": "HR Procedures",
+    "guidelines": "Guidelines"
+  },
+  "usersPage": {
+    "title": "Users",
+    "allUsers": "All Users",
+    "roles": "User Roles"
+  },
+  "partnersPage": {
+    "title": "Partners",
+    "partners": "Our Partners",
+    "becomePartner": "Become a Partner"
+  },
+  "parentLeadFormPage": {
+    "title": "Submit Lead",
+    "form": "Lead Form",
+    "submit": "Submit Lead"
+  },
+  "candidateProfilePage": {
+    "title": "Candidate Profile",
+    "profile": "Profile",
+    "experience": "Experience"
+  },
+  "designSystemPage": {
+    "title": "Design System",
+    "components": "Components",
+    "guidelines": "Guidelines"
   }
 }

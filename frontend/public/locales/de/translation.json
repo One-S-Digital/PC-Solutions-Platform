@@ -1,5 +1,5 @@
 {
-  "appName": "Pro Crèche Solutions",
+  "appName": "ProCrèche Solutions Suisse",
   "languageSwitcher": {
     "enShort": "EN",
     "enLong": "English",
@@ -7,269 +7,513 @@
     "frLong": "Français",
     "deShort": "DE",
     "deLong": "Deutsch",
-    "selectLanguage": "Sprache Auswählen"
+    "selectLanguage": "Select Language"
   },
-  "loading": "Lädt...",
+  "loading": "Loading...",
   "buttons": {
-    "save": "Speichern",
-    "saveChanges": "Änderungen speichern",
-    "cancel": "Abbrechen",
-    "submit": "Senden",
-    "add": "Hinzufügen",
-    "edit": "Bearbeiten",
-    "delete": "Löschen",
-    "viewDetails": "Details anzeigen",
-    "goBack": "Zurück",
-    "login": "Anmelden",
-    "signup": "Registrieren",
-    "applyNow": "Jetzt bewerben",
-    "confirmApply": "Bewerbung bestätigen",
-    "sendMessage": "Nachricht senden",
-    "inviteToApply": "Zur Bewerbung einladen",
-    "inviteToInterview": "Zum Gespräch einladen",
-    "addToFavorites": "Zu Favoriten hinzufügen",
-    "favorited": "Favorisiert",
-    "submitEnquiry": "Anfrage senden",
-    "viewMyEnquiries": "Meine Anfragen",
-    "submitTicket": "Ticket senden",
-    "goToLogin": "Zur Anmeldung",
-    "close": "Schließen",
-    "view": "Ansehen",
-    "resetFilters": "Filter zurücksetzen",
-    "applyFilters": "Filter anwenden",
-    "submitRequest": "Anfrage senden",
-    "remove": "Entfernen",
-    "dismiss": "Verwerfen"
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "viewDetails": "View Details",
+    "goBack": "Go Back",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "applyNow": "Apply Now",
+    "confirmApply": "Confirm Application",
+    "sendMessage": "Send Message",
+    "inviteToApply": "Invite to Apply",
+    "inviteToInterview": "Invite to Interview",
+    "addToFavorites": "Add to Favorites",
+    "favorited": "Favorited",
+    "submitEnquiry": "Submit Enquiry",
+    "viewMyEnquiries": "View My Enquiries",
+    "submitTicket": "Submit Ticket",
+    "goToLogin": "Go to Login",
+    "close": "Close",
+    "view": "View",
+    "resetFilters": "Reset Filters",
+    "applyFilters": "Apply Filters",
+    "submitRequest": "Submit Request",
+    "remove": "Remove",
+    "dismiss": "Dismiss"
   },
   "navbar": {
-    "searchPlaceholder": "Plattform durchsuchen...",
-    "login": "Anmelden",
-    "signup": "Registrieren",
+    "searchPlaceholder": "Search the platform...",
+    "login": "Sign In",
+    "signup": "Sign Up",
     "dashboard": "Dashboard",
-    "messages": "Nachrichten",
-    "notifications": "Benachrichtigungen",
-    "profile": "Profil",
-    "settings": "Einstellungen",
-    "logout": "Abmelden",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Sign Out",
     "userMenu": {
-      "profile": "Profil",
-      "settings": "Einstellungen",
-      "logout": "Abmelden"
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Sign Out"
     }
   },
   "sidebar": {
     "dashboard": "Dashboard",
-    "marketplace": "Marktplatz",
-    "products": "Produkte",
-    "services": "Dienstleistungen",
-    "orders": "Bestellungen",
-    "productMarketplace": "Produktmarktplatz",
-    "serviceMarketplace": "Dienstleistungsmarktplatz",
-    "ordersAppointments": "Bestellungen und Termine",
-    "parentLeads": "Eltern-Leads",
-    "recruitment": "Rekrutierung",
-    "jobListings": "Stellenausschreibungen",
-    "candidatePool": "Kandidatenpool",
-    "hrProcedures": "HR-Verfahren",
+    "marketplace": "Marketplace",
+    "products": "Products",
+    "services": "Services",
+    "orders": "Orders",
+    "productMarketplace": "Product Marketplace",
+    "serviceMarketplace": "Service Marketplace",
+    "ordersAppointments": "Orders & Appointments",
+    "parentLeads": "Parent Leads",
+    "recruitment": "Recruitment",
+    "jobListings": "Job Listings",
+    "candidatePool": "Candidate Pool",
+    "hrProcedures": "HR Procedures",
     "eLearning": "E-Learning",
-    "statePolicies": "Staatliche Richtlinien",
-    "analytics": "Analytik",
-    "messages": "Nachrichten",
-    "organisationProfile": "Organisationsprofil",
+    "statePolicies": "State Policies",
+    "analytics": "Analytics",
+    "messages": "Messages",
+    "organisationProfile": "Organisation Profile",
     "support": "Support",
-    "jobBoard": "Stellenbörse",
-    "myProfile": "Mein Profil",
-    "applications": "Bewerbungen",
-    "homeFindCreche": "Startseite / Krippe finden",
-    "myRequests": "Meine Anfragen",
+    "jobBoard": "Job Board",
+    "myProfile": "My Profile",
+    "applications": "Applications",
+    "homeFindCreche": "Home / Find a Crèche",
+    "myRequests": "My Requests",
     "supportFAQ": "Support / FAQ",
-    "users": "Benutzer",
-    "allUsers": "Alle Benutzer",
-    "admins": "Administratoren",
-    "foundations": "Stiftungen",
-    "productSuppliers": "Produktlieferanten",
-    "serviceProviders": "Dienstleister",
-    "parents": "Eltern",
-    "content": "Inhalt",
-    "partners": "Partner",
-    "settings": "Einstellungen",
-    "managePlan": "Plan verwalten",
-    "billingSubscription": "Abrechnung und Abonnement",
-    "premiumPlan": "Premium-Plan",
-    "premiumPlanDesc": "Zugang zu allen Funktionen",
-    "fileGallery": "Dateigalerie",
-    "systemMonitoring": "Systemüberwachung",
-    "platformSettings": "Plattform-Einstellungen",
-    "designSystem": "Design-System",
-    "discountTerminations": "Rabattkündigungen",
+    "users": "Users",
+    "allUsers": "All Users",
+    "admins": "Admins",
+    "foundations": "Foundations",
+    "productSuppliers": "Product Suppliers",
+    "serviceProviders": "Service Providers",
+    "parents": "Parents",
+    "content": "Content",
+    "partners": "Partners",
+    "settings": "Settings",
+    "managePlan": "Manage Plan",
+    "billingSubscription": "Billing & Subscription",
+    "premiumPlan": "Premium Plan",
+    "premiumPlanDesc": "Access to all features",
+    "fileGallery": "File Gallery",
+    "systemMonitoring": "System Monitoring",
+    "platformSettings": "Platform Settings",
+    "designSystem": "Design System",
+    "discountTerminations": "Discount Terminations",
     "currentPlan": "{{plan}} Plan",
-    "manageSubscriptionDesc": "Verwalten Sie Ihren aktuellen Plan und die Abrechnung."
+    "manageSubscriptionDesc": "Manage your current plan and billing."
   },
   "stockStatus": {
-    "instock": "Auf Lager",
-    "outofstock": "Nicht auf Lager",
-    "lowstock": "Wenig auf Lager",
-    "discontinued": "Eingestellt"
+    "instock": "In Stock",
+    "outofstock": "Out of Stock",
+    "lowstock": "Low Stock",
+    "discontinued": "Discontinued"
   },
   "common": {
-    "loading": "Lädt...",
-    "error": "Ein Fehler ist aufgetreten",
-    "success": "Erfolg",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
     "name": "Name",
-    "email": "E-Mail",
-    "phone": "Telefon",
-    "address": "Adresse",
-    "description": "Beschreibung",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "description": "Description",
     "status": "Status",
-    "active": "Aktiv",
-    "inactive": "Inaktiv",
-    "pending": "Ausstehend",
-    "completed": "Abgeschlossen",
-    "date": "Datum",
-    "createdAt": "Erstellt",
-    "updatedAt": "Aktualisiert",
-    "actions": "Aktionen",
-    "yes": "Ja",
-    "no": "Nein",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "date": "Date",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
     "ok": "OK",
-    "perMonth": "/Monat",
-    "perYear": "/Jahr",
-    "save10Percent": "10% sparen"
+    "perMonth": "/month",
+    "perYear": "/year",
+    "save10Percent": "save 10%"
   },
   "errors": {
-    "unknown": "Ein unbekannter Fehler ist aufgetreten."
+    "unknown": "An unknown error occurred. Please try again."
   },
   "notifications": {
-    "successTitle": "Erfolg",
-    "settingsUpdated": "Einstellungen erfolgreich aktualisiert"
+    "successTitle": "Success",
+    "settingsUpdated": "Settings updated successfully"
   },
-  "showPassword": "Passwort anzeigen",
-  "hidePassword": "Passwort ausblenden",
-  "signIn": "Anmelden",
-  "signOut": "Abmelden",
-  "confirmPassword": "Passwort bestätigen",
-  "resetPassword": "Passwort zurücksetzen",
-  "rememberMe": "Angemeldet bleiben",
-  "createAccount": "Konto erstellen",
-  "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
-  "dontHaveAccount": "Haben Sie noch kein Konto?",
-  "welcomeBack": "Willkommen zurück",
-  "joinPlatform": "PC Solutions Plattform beitreten",
-  "chooseRole": "Wählen Sie Ihre Rolle, um zu beginnen",
-  "firstName": "Vorname",
-  "lastName": "Nachname",
-  "phoneNumber": "Telefonnummer",
-  "organizationName": "Organisationsname",
-  "contactPerson": "Ansprechpartner",
-  "canton": "Kanton",
-  "languages": "Sprachen",
-  "capacity": "Kapazität",
-  "productCategory": "Produktkategorie",
-  "serviceType": "Service-Typ",
-  "childAge": "Alter des Kindes",
-  "preferredLocation": "Bevorzugter Standort",
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
+  "signIn": "Sign In",
+  "signOut": "Sign Out",
+  "confirmPassword": "Confirm Password",
+  "resetPassword": "Reset Password",
+  "rememberMe": "Remember Me",
+  "createAccount": "Create Account",
+  "alreadyHaveAccount": "Already have an account?",
+  "dontHaveAccount": "Don't have an account?",
+  "welcomeBack": "Welcome back",
+  "joinPlatform": "Join PC Solutions Platform",
+  "chooseRole": "Choose your role to get started",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "phoneNumber": "Phone Number",
+  "organizationName": "Organization Name",
+  "contactPerson": "Contact Person",
+  "canton": "Canton",
+  "languages": "Languages",
+  "capacity": "Capacity",
+  "productCategory": "Product Category",
+  "serviceType": "Service Type",
+  "childAge": "Child's Age",
+  "preferredLocation": "Preferred Location",
   "loginPage": {
-    "title": "Willkommen bei {{appName}}",
-    "subtitle": "Melden Sie sich in Ihrem Konto an, um fortzufahren",
-    "errorBothFields": "Bitte geben Sie sowohl E-Mail als auch Passwort ein",
-    "emailLabel": "E-Mail-Adresse",
-    "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
-    "passwordLabel": "Passwort",
-    "passwordPlaceholder": "Geben Sie Ihr Passwort ein",
-    "loggingIn": "Anmeldung läuft...",
-    "orContinueWith": "Oder fortfahren mit",
+    "title": "Welcome to {{appName}}",
+    "subtitle": "Sign in to your account to continue",
+    "errorBothFields": "Please enter both email and password",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loggingIn": "Signing in...",
+    "orContinueWith": "Or continue with",
     "google": "Google",
     "facebook": "Facebook",
-    "noAccount": "Haben Sie noch kein Konto?",
-    "viewPlansPrompt": "Möchten Sie unsere Pläne sehen?",
-    "viewPlans": "Pläne Anzeigen",
-    "parentLookingForCreche": "Sind Sie ein Elternteil auf der Suche nach einer Krippe?",
-    "findCrecheHere": "Hier eine Krippe Finden",
-    "forgotPassword": "Passwort vergessen?",
-    "forgotPasswordTBD": "Passwort-Zurücksetzung kommt bald!",
-    "socialLoginTBD": "{{provider}} Anmeldung kommt bald!"
+    "noAccount": "Don't have an account?",
+    "viewPlansPrompt": "Want to see our plans?",
+    "viewPlans": "View Plans",
+    "parentLookingForCreche": "Are you a parent looking for a crèche?",
+    "findCrecheHere": "Find a Crèche Here",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordTBD": "Password reset functionality coming soon!",
+    "socialLoginTBD": "{{provider}} login coming soon!"
   },
   "signupPage": {
-    "title": "PC Solutions Plattform beitreten",
-    "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
-    "createAccountTitle": "Erstellen Sie Ihr Konto",
-    "roleLabel": "Rolle",
-    "roleDescription": "Beschreibung",
-    "verifyEmail": "E-Mail bestätigen",
-    "verifyEmailDescription": "Wir haben einen Bestätigungscode an Ihre E-Mail-Adresse gesendet",
-    "verificationCode": "Bestätigungscode",
+    "title": "Join PC Solutions Platform",
+    "subtitle": "Choose your role to get started",
+    "createAccountTitle": "Create your account",
+    "roleLabel": "Role",
+    "roleDescription": "Description",
+    "verifyEmail": "Verify Your Email",
+    "verifyEmailDescription": "We've sent a verification code to your email address",
+    "verificationCode": "Verification Code",
     "superAdmin": {
-      "label": "Super-Administrator",
-      "description": "Vollzugriff auf das System und Verwaltung"
+      "label": "Super Admin",
+      "description": "Full system access and management"
     },
     "admin": {
-      "label": "Administrator",
-      "description": "Administrativer Zugriff auf die Plattformverwaltung"
+      "label": "Admin",
+      "description": "Administrative access to platform management"
     },
     "foundation": {
-      "label": "Stiftung (Krippe)",
-      "description": "Verwalten Sie Ihre Krippenoperationen, rekrutieren Sie Personal und beschaffen Sie Dienstleistungen"
+      "label": "Foundation (Daycare)",
+      "description": "Manage your daycare operations, recruit staff, and procure services"
     },
     "productSupplier": {
-      "label": "Produktlieferant",
-      "description": "Verkaufen Sie Produkte an Kinderbetreuungsorganisationen"
+      "label": "Product Supplier",
+      "description": "Sell products to childcare organizations"
     },
     "serviceProvider": {
-      "label": "Dienstleister",
-      "description": "Bieten Sie Dienstleistungen für Kinderbetreuungsorganisationen an"
+      "label": "Service Provider",
+      "description": "Offer services to childcare organizations"
     },
     "educator": {
-      "label": "Pädagoge/Kandidat",
-      "description": "Finden Sie Beschäftigungsmöglichkeiten in der Kinderbetreuung"
+      "label": "Educator/Candidate",
+      "description": "Find employment opportunities in childcare"
     },
     "parent": {
-      "label": "Elternteil",
-      "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder"
+      "label": "Parent",
+      "description": "Find childcare services for your children"
     }
   },
   "dashboardPage": {
-    "welcome": "Willkommen zurück, {{name}}!",
-    "defaultUser": "Benutzer",
-    "overviewSubtitle": "Hier ist, was heute mit {{appName}} passiert",
-    "activeUsers": "Aktive Benutzer",
-    "newOrders": "Neue Bestellungen",
-    "openJobs": "Offene Stellen",
-    "pageViews": "Seitenaufrufe",
-    "recentActivity": "Letzte Aktivität",
-    "quickLinks": "Schnelllinks",
-    "browseMarketplace": "Marktplatz durchsuchen",
-    "postNewJob": "Neue Stelle veröffentlichen",
-    "manageUsers": "Benutzer verwalten",
-    "platformSettings": "Plattform-Einstellungen",
-    "activityLina": "hat ihr Profil aktualisiert",
-    "activityEcoToys": "hat ein neues Produkt eingereicht",
-    "activityJohn": "hat sich auf eine Stelle beworben",
-    "activityParent": "hat eine Anfrage eingereicht",
-    "viewDetailsFor": "Details anzeigen für {{name}}",
+    "welcome": "Welcome back, {{name}}!",
+    "defaultUser": "User",
+    "overviewSubtitle": "Here's what's happening with {{appName}} today",
+    "activeUsers": "Active Users",
+    "newOrders": "New Orders",
+    "openJobs": "Open Jobs",
+    "pageViews": "Page Views",
+    "recentActivity": "Recent Activity",
+    "quickLinks": "Quick Links",
+    "browseMarketplace": "Browse Marketplace",
+    "postNewJob": "Post New Job",
+    "manageUsers": "Manage Users",
+    "platformSettings": "Platform Settings",
+    "activityLina": "updated their profile",
+    "activityEcoToys": "submitted a new product",
+    "activityJohn": "applied for a position",
+    "activityParent": "submitted an enquiry",
+    "viewDetailsFor": "View details for {{name}}",
     "timeAgo": {
-      "minutes": "vor {{count}} Minuten",
-      "hours": "vor {{count}} Stunden",
-      "yesterday": "Gestern"
+      "minutes": "{{count}} minutes ago",
+      "hours": "{{count}} hours ago",
+      "yesterday": "Yesterday"
     },
-    "upcomingMeetings": "Anstehende Meetings",
-    "quickActions": "Schnellaktionen",
-    "overview": "Überblick",
-    "announcements": "Ankündigungen",
-    "notifications": "Benachrichtigungen"
+    "upcomingMeetings": "Upcoming Meetings",
+    "quickActions": "Quick Actions",
+    "overview": "Overview",
+    "announcements": "Announcements",
+    "notifications": "Notifications"
   },
   "settingsPage": {
-    "title": "Einstellungen",
-    "general": "Allgemein",
-    "notifications": "Benachrichtigungen",
-    "account": "Konto",
-    "appearance": "Erscheinungsbild",
-    "language": "Sprache",
-    "privacySecurity": "Datenschutz und Sicherheit",
-    "billingSubscription": "Abrechnung und Abonnement",
-    "organizationProfile": "Organisationsprofil",
-    "userPreferences": "Benutzereinstellungen",
-    "unsavedChangesPrompt": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie gehen möchten?",
-    "loading": "Einstellungen werden geladen...",
-    "noSectionsAvailable": "Keine Einstellungsbereiche verfügbar"
+    "title": "Settings",
+    "general": "General",
+    "notifications": "Notifications",
+    "account": "Account",
+    "appearance": "Appearance",
+    "language": "Language",
+    "privacySecurity": "Privacy & Security",
+    "billingSubscription": "Billing & Subscription",
+    "organizationProfile": "Organization Profile",
+    "userPreferences": "User Preferences",
+    "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
+    "loading": "Loading settings...",
+    "noSectionsAvailable": "No settings sections available"
+  },
+  "marketplacePage": {
+    "title": "Marketplace",
+    "tabs": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    },
+    "serviceCard": {
+      "categoryLabel": "Category: {{category}}",
+      "bookAppointment": "Book Appointment",
+      "viewProvider": "View Provider"
+    },
+    "emptyStates": {
+      "noProductSuppliers": "No product suppliers found",
+      "noServiceProviders": "No service providers found"
+    }
+  },
+  "partnerDetailPage": {
+    "onlyFoundationsRequestService": "Only foundations can request this service",
+    "requestSubmittedAlert": "Service request for {{serviceName}} submitted successfully!"
+  },
+  "adminPlatformSettings": {
+    "title": "Platform Settings",
+    "general": {
+      "title": "General Settings",
+      "nameLabel": "Platform Name",
+      "descriptionLabel": "Platform Description"
+    },
+    "branding": {
+      "title": "Branding",
+      "logoLabel": "Logo URL",
+      "faviconLabel": "Favicon URL"
+    }
+  },
+  "organizationProfileForm": {
+    "saveSuccess": "Organization profile saved successfully"
+  },
+  "foundationDashboardPage": {
+    "title": "Foundation Dashboard",
+    "welcome": "Welcome to your foundation dashboard",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Analytics Overview",
+    "metrics": "Key Metrics"
+  },
+  "foundationLeadsPage": {
+    "title": "Parent Leads",
+    "leads": "Parent Leads",
+    "newLeads": "New Leads",
+    "contactedLeads": "Contacted Leads"
+  },
+  "foundationOrdersAppointmentsPage": {
+    "title": "Orders & Appointments",
+    "orders": "Orders",
+    "appointments": "Appointments"
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "Organization Profile",
+    "profile": "Organization Profile",
+    "settings": "Profile Settings"
+  },
+  "foundationSupportPage": {
+    "title": "Support",
+    "help": "Help & Support",
+    "tickets": "Support Tickets"
+  },
+  "parentDashboardPage": {
+    "title": "Parent Dashboard",
+    "welcome": "Welcome to your parent dashboard",
+    "myChildren": "My Children",
+    "findCreche": "Find a Crèche"
+  },
+  "parentEnquiriesPage": {
+    "title": "My Enquiries",
+    "enquiries": "My Enquiries",
+    "newEnquiry": "New Enquiry"
+  },
+  "parentSupportPage": {
+    "title": "Support",
+    "help": "Help & Support",
+    "faq": "Frequently Asked Questions"
+  },
+  "educatorDashboardPage": {
+    "title": "Educator Dashboard",
+    "welcome": "Welcome to your educator dashboard",
+    "applications": "My Applications",
+    "jobBoard": "Job Board"
+  },
+  "educatorApplicationsPage": {
+    "title": "My Applications",
+    "applications": "Job Applications",
+    "status": "Application Status"
+  },
+  "educatorJobBoardPage": {
+    "title": "Job Board",
+    "jobs": "Available Jobs",
+    "apply": "Apply Now"
+  },
+  "educatorProfilePage": {
+    "title": "My Profile",
+    "profile": "Educator Profile",
+    "experience": "Experience"
+  },
+  "educatorSupportPage": {
+    "title": "Support",
+    "help": "Help & Support"
+  },
+  "serviceProviderDashboardPage": {
+    "title": "Service Provider Dashboard",
+    "welcome": "Welcome to your service provider dashboard",
+    "services": "My Services",
+    "requests": "Service Requests"
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Service Analytics",
+    "performance": "Performance Metrics"
+  },
+  "serviceProviderListingsPage": {
+    "title": "Service Listings",
+    "listings": "My Service Listings",
+    "addService": "Add New Service"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "Service Requests",
+    "requests": "Service Requests",
+    "pending": "Pending Requests"
+  },
+  "serviceProviderSupportPage": {
+    "title": "Support",
+    "help": "Help & Support"
+  },
+  "supplierDashboardPage": {
+    "title": "Supplier Dashboard",
+    "welcome": "Welcome to your supplier dashboard",
+    "products": "My Products",
+    "orders": "Product Orders"
+  },
+  "supplierAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Product Analytics",
+    "sales": "Sales Metrics"
+  },
+  "supplierProductListingsPage": {
+    "title": "Product Listings",
+    "listings": "My Product Listings",
+    "addProduct": "Add New Product"
+  },
+  "supplierOrdersPage": {
+    "title": "Product Orders",
+    "orders": "Product Orders",
+    "pending": "Pending Orders"
+  },
+  "supplierSupportPage": {
+    "title": "Support",
+    "help": "Help & Support"
+  },
+  "adminContentManagementDashboardPage": {
+    "title": "Content Management",
+    "content": "Content Management",
+    "policies": "Policies",
+    "announcements": "Announcements"
+  },
+  "adminSystemMonitoringPage": {
+    "title": "System Monitoring",
+    "monitoring": "System Monitoring",
+    "performance": "Performance Metrics",
+    "logs": "System Logs"
+  },
+  "adminDiscountTerminationsPage": {
+    "title": "Discount Terminations",
+    "terminations": "Discount Terminations",
+    "manage": "Manage Discounts"
+  },
+  "pricingPage": {
+    "title": "Pricing Plans",
+    "plans": "Choose Your Plan",
+    "features": "Features",
+    "billing": "Billing"
+  },
+  "recruitmentPage": {
+    "title": "Recruitment",
+    "jobs": "Job Listings",
+    "candidates": "Candidates",
+    "postJob": "Post New Job"
+  },
+  "messagesPage": {
+    "title": "Messages",
+    "conversations": "Conversations",
+    "newMessage": "New Message"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notifications": "All Notifications",
+    "unread": "Unread"
+  },
+  "fileGalleryPage": {
+    "title": "File Gallery",
+    "files": "Files",
+    "upload": "Upload Files"
+  },
+  "eLearningPage": {
+    "title": "E-Learning",
+    "courses": "Courses",
+    "progress": "My Progress"
+  },
+  "statePoliciesPage": {
+    "title": "State Policies",
+    "policies": "Policies",
+    "compliance": "Compliance"
+  },
+  "hrProceduresPage": {
+    "title": "HR Procedures",
+    "procedures": "HR Procedures",
+    "guidelines": "Guidelines"
+  },
+  "usersPage": {
+    "title": "Users",
+    "allUsers": "All Users",
+    "roles": "User Roles"
+  },
+  "partnersPage": {
+    "title": "Partners",
+    "partners": "Our Partners",
+    "becomePartner": "Become a Partner"
+  },
+  "parentLeadFormPage": {
+    "title": "Submit Lead",
+    "form": "Lead Form",
+    "submit": "Submit Lead"
+  },
+  "candidateProfilePage": {
+    "title": "Candidate Profile",
+    "profile": "Profile",
+    "experience": "Experience"
+  },
+  "designSystemPage": {
+    "title": "Design System",
+    "components": "Components",
+    "guidelines": "Guidelines"
   }
 }
