@@ -17,7 +17,7 @@ const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const LoginPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'common']);
   const { login, currentUser } = useAppContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError('');
     if (!email || !password) {
-      setError(t('loginPage.errorBothFields'));
+      setError(t('auth:loginPage.errorBothFields'));
       return;
     }
     setIsLoading(true);
@@ -50,14 +50,14 @@ const LoginPage: React.FC = () => {
     if (result.success) {
       // The redirect is handled by the useEffect watching currentUser
     } else {
-      setError(result.message || t('errors.unknown'));
+      setError(result.message || t('common:errors.unknown'));
     }
     setIsLoading(false);
   };
   
 
   const handleSocialLogin = (provider: string) => {
-    alert(t('loginPage.socialLoginTBD', { provider }));
+    alert(t('auth:loginPage.socialLoginTBD', { provider }));
   };
 
   return (
