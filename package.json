@@ -11,7 +11,11 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "clean": "turbo run clean",
-    "precommit:guard": "node scripts/check-no-raw-imports.mjs"
+    "precommit:guard": "node scripts/check-no-raw-imports.mjs",
+    "translate": "node scripts/translate-i18n-free.js",
+    "translate:ai": "node scripts/translate-i18n.js",
+    "translate:manual": "node scripts/create-translations-manual.js",
+    "translate:simple": "node scripts/translate-simple.js"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
@@ -59,6 +63,7 @@
     "stripe": "^18.5.0",
     "svix": "^1.76.1",
     "tailwindcss": "^4.1.13",
+    "translate-google-api": "^1.0.4",
     "vite": "^7.1.7",
     "winston": "^3.17.0"
   }
