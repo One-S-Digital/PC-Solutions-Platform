@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2025-10-05T18:41:10.483Z",
-  "baseUrl": "https://pc-solutions-frontend.onrender.com",
+  "generatedAt": "2025-10-05T18:44:15.549Z",
+  "baseUrl": "https://app.procrechesolutions.com",
   "environment": "production",
   "summary": {
-    "totalPagesScanned": 2,
-    "successfulScans": 2,
+    "totalPagesScanned": 17,
+    "successfulScans": 17,
     "failedScans": 0,
     "totalMissingKeys": 0,
     "totalHardcodedText": 17,
-    "pagesWithIssues": 2
+    "pagesWithIssues": 17
   },
   "pages": [
     {
-      "url": "https://pc-solutions-frontend.onrender.com/",
+      "url": "https://app.procrechesolutions.com/",
       "pageName": "Home",
       "missingKeys": 0,
       "hardcodedText": 17,
@@ -22,13 +22,163 @@
       "status": "success"
     },
     {
-      "url": "https://pc-solutions-frontend.onrender.com/login",
+      "url": "https://app.procrechesolutions.com/login",
       "pageName": "Login",
       "missingKeys": 0,
       "hardcodedText": 17,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./production-i18n-screenshots/Login.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/register",
+      "pageName": "Register",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Register.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/dashboard",
+      "pageName": "Dashboard",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Dashboard.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/profile",
+      "pageName": "Profile",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Profile.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/settings",
+      "pageName": "Settings",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Settings.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/messages",
+      "pageName": "Messages",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Messages.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/notifications",
+      "pageName": "Notifications",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Notifications.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/orders",
+      "pageName": "Orders",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Orders.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/services",
+      "pageName": "Services",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Services.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/content",
+      "pageName": "Content",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Content.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/suppliers",
+      "pageName": "Suppliers",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Suppliers.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/daycares",
+      "pageName": "Daycares",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Daycares.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/admin",
+      "pageName": "Admin",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Admin.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/help",
+      "pageName": "Help",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Help.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/about",
+      "pageName": "About",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/About.png",
+      "status": "success"
+    },
+    {
+      "url": "https://app.procrechesolutions.com/contact",
+      "pageName": "Contact",
+      "missingKeys": 0,
+      "hardcodedText": 17,
+      "i18nErrors": 0,
+      "translationIssues": 2,
+      "screenshot": "./production-i18n-screenshots/Contact.png",
       "status": "success"
     }
   ],
