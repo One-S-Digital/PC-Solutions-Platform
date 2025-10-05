@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { writeFileSync, existsSync, mkdirSync, appendFileSync, execSync } from 'fs';
+import { writeFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
+import { execSync } from 'child_process';
 import { join } from 'path';
 
 interface TranslationErrorLog {
