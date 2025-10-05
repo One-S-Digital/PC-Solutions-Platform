@@ -1,0 +1,47 @@
+{
+  "dashboardPage": {
+    "welcome": "Bon retour, {{name}} !",
+    "defaultUser": "Utilisateur",
+    "overviewSubtitle": "Voici ce qui se passe avec {{appName}} aujourd'hui",
+    "activeUsers": "Utilisateurs actifs",
+    "newOrders": "Nouvelles commandes",
+    "openJobs": "Emplois ouverts",
+    "pageViews": "Vues de page",
+    "recentActivity": "Activité récente",
+    "quickLinks": "Liens rapides",
+    "browseMarketplace": "Parcourir le marché",
+    "postNewJob": "Publier un nouvel emploi",
+    "manageUsers": "Gérer les utilisateurs",
+    "platformSettings": "Paramètres de la plateforme",
+    "activityLina": "a mis à jour son profil",
+    "activityEcoToys": "a soumis un nouveau produit",
+    "activityJohn": "a postulé pour un poste",
+    "activityParent": "a soumis une demande",
+    "viewDetailsFor": "Voir les détails pour {{name}}",
+    "timeAgo": {
+      "minutes": "Il y a {{count}} minutes",
+      "hours": "Il y a {{count}} heures",
+      "yesterday": "Hier"
+    },
+    "upcomingMeetings": "Réunions à venir",
+    "quickActions": "Actions rapides",
+    "overview": "Aperçu",
+    "announcements": "Annonces",
+    "notifications": "Notifications"
+  },
+  "settingsPage": {
+    "title": "Paramètres",
+    "general": "Général",
+    "notifications": "Notifications",
+    "account": "Compte",
+    "appearance": "Apparence",
+    "language": "Langue",
+    "privacySecurity": "Confidentialité et sécurité",
+    "billingSubscription": "Facturation et abonnement",
+    "organizationProfile": "Profil de l'organisation",
+    "userPreferences": "Préférences utilisateur",
+    "unsavedChangesPrompt": "Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir partir ?",
+    "loading": "Chargement des paramètres...",
+    "noSectionsAvailable": "Aucune section de paramètres disponible"
+  }
+}
