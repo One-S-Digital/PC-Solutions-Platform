@@ -21,7 +21,7 @@
     "scan:i18n:advanced": "node advanced-visual-i18n-scanner.js",
     "scan:i18n:advanced:headless": "FRONTEND_URL=http://localhost:3000 HEADLESS=true node advanced-visual-i18n-scanner.js",
     "scan:i18n:production": "node production-visual-scanner.js",
-    "scan:i18n:production:headless": "PRODUCTION_URL=https://pc-solutions-frontend.onrender.com HEADLESS=true node production-visual-scanner.js"
+    "scan:i18n:production:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node production-visual-scanner.js"
   },
   "devDependencies": {
     "playwright": "^1.55.1",

@@ -9,7 +9,7 @@ class ProductionVisualI18nScanner {
     this.missingKeys = new Set();
     this.hardcodedText = new Set();
     this.scannedPages = [];
-    this.baseUrl = options.baseUrl || process.env.PRODUCTION_URL || 'https://pc-solutions-frontend.onrender.com';
+    this.baseUrl = options.baseUrl || process.env.PRODUCTION_URL || 'https://app.procrechesolutions.com';
     this.headless = options.headless !== false;
     this.slowMo = options.slowMo || 1000;
     this.waitTime = options.waitTime || 5000; // Longer wait for production
@@ -304,8 +304,7 @@ class ProductionVisualI18nScanner {
             element: node.parentElement?.tagName || 'unknown',
             className: node.parentElement?.className || '',
             id: node.parentElement?.id || '',
-            context: node.parentElement?.textContent?.substring(0, 200) || '',
-            xpath: this.getXPath(node.parentElement)
+            context: node.parentElement?.textContent?.substring(0, 200) || ''
           });
         }
       }
