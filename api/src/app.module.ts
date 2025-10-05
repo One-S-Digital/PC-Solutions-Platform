@@ -41,6 +41,7 @@ import { CompatModule } from './compat/compat.module';
 import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
 import { ContentManagementModule } from './content-management/content-management.module';
 import { PolicyAlertsModule } from './policy-alerts/policy-alerts.module';
+import { TranslationErrorsModule } from './translation-errors/translation-errors.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -121,6 +122,7 @@ import {
     PlatformSettingsModule,
     ContentManagementModule,
     PolicyAlertsModule,
+    TranslationErrorsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -673,22 +673,36 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
     return uniqueErrors;
   }, [t, i18nInstance, getAllKeysToCheck]);
 
-  const logErrorsToFile = useCallback((errorLog: ErrorLog) => {
+  const logErrorsToFile = useCallback(async (errorLog: ErrorLog) => {
     if (!logToFile) return;
 
     try {
-      // Create a downloadable file
-      const blob = new Blob([JSON.stringify(errorLog, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `translation-errors-${errorLog.language}-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      // Send error log to backend API to save to git repository
+      const response = await fetch('/api/translation-errors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...errorLog,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          referrer: document.referrer
+        })
+      });
+
+      if (response.ok) {
+        console.log('✅ Translation errors logged to git repository');
+      } else {
+        console.error('❌ Failed to log errors to repository:', response.statusText);
+        // Fallback to console logging
+        console.log('📝 Translation Error Log (Fallback):', errorLog);
+      }
     } catch (error) {
-      console.error('Failed to create error log file:', error);
+      console.error('❌ Failed to log errors to repository:', error);
+      // Fallback to console logging
+      console.log('📝 Translation Error Log (Fallback):', errorLog);
     }
   }, [logToFile]);
 
@@ -900,7 +914,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
                 }}
                 className="bg-green-500 text-white px-2 py-1 rounded text-xs"
               >
-                Download Log
+                Log to Git
               </button>
               <button
                 onClick={() => {
@@ -929,6 +943,24 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
                 className="bg-yellow-500 text-white px-2 py-1 rounded text-xs"
               >
                 Copy Missing
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/translation-errors/commit-logs');
+                    const result = await response.json();
+                    if (result.success) {
+                      alert(`✅ ${result.message}\nFiles committed: ${result.filesCommitted}`);
+                    } else {
+                      alert(`❌ ${result.message}`);
+                    }
+                  } catch (error) {
+                    alert(`❌ Failed to commit logs: ${error.message}`);
+                  }
+                }}
+                className="bg-purple-500 text-white px-2 py-1 rounded text-xs"
+              >
+                Commit to Git
               </button>
             </div>
 
