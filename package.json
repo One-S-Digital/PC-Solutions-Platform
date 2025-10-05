@@ -23,7 +23,9 @@
     "scan:i18n:production": "node production-visual-scanner.js",
     "scan:i18n:production:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node production-visual-scanner.js",
     "scan:i18n:authenticated": "node authenticated-production-scanner.js",
-    "scan:i18n:authenticated:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node authenticated-production-scanner.js"
+    "scan:i18n:authenticated:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node authenticated-production-scanner.js",
+    "scan:i18n:comprehensive": "node comprehensive-page-scanner.js",
+    "scan:i18n:comprehensive:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node comprehensive-page-scanner.js"
   },
   "devDependencies": {
     "playwright": "^1.55.1",
