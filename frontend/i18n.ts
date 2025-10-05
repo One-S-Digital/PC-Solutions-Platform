@@ -11,8 +11,8 @@ i18n
     supportedLngs: ['en', 'fr', 'de'],
     fallbackLng: 'en',
     debug: true, // Enable debug for translation troubleshooting
-    ns: ['common', 'auth', 'dashboard'], 
-    defaultNS: 'common',
+    ns: ['translation'], 
+    defaultNS: 'translation',
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       allowMultiLoading: false,
