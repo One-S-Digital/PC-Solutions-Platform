@@ -303,6 +303,9 @@ const ProtectedLayout: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  // Debug logging
+  console.log('🔍 Debug components enabled - look for debug buttons in bottom corners');
+  
   return (
     <AppContextProvider>
       <CartProvider>
@@ -315,9 +318,9 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-            {/* Debug components - only show in development */}
-            <TranslationDebugger enabled={process.env.NODE_ENV === 'development'} />
-            <TranslationDiagnostics enabled={process.env.NODE_ENV === 'development'} />
+            {/* Debug components - enabled for debugging translation issues */}
+            <TranslationDebugger enabled={true} />
+            <TranslationDiagnostics enabled={true} />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>

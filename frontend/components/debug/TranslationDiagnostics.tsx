@@ -162,7 +162,15 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
     <div className="fixed bottom-4 left-4 z-50">
       <button
         onClick={() => setIsVisible(!isVisible)}
-        className="bg-purple-600 text-white px-4 py-2 rounded text-sm font-mono shadow-lg"
+        className="bg-purple-600 text-white px-4 py-2 rounded text-sm font-mono shadow-lg border-2 border-yellow-400 animate-pulse"
+        style={{ 
+          position: 'fixed',
+          bottom: '16px',
+          left: '16px',
+          zIndex: 9999,
+          fontSize: '14px',
+          fontWeight: 'bold'
+        }}
       >
         🔍 Translation Debug {isVisible ? '▼' : '▶'}
       </button>
