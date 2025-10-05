@@ -225,6 +225,37 @@
     "parent": {
       "label": "Elternteil",
       "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder"
+    },
+    "selectRoleTitle": "Wählen Sie Ihre Rolle",
+    "detailsTitle": "Vervollständigen Sie Ihr {{role}} Profil",
+    "progressStep1": "Schritt 1 von 2: Rolle auswählen",
+    "progressStep2": "Schritt 2 von 2: Details vervollständigen",
+    "submissionSuccessTitle": "Konto erfolgreich erstellt!",
+    "submissionSuccessMessage": "Ihr Konto wurde erstellt. Bitte überprüfen Sie Ihre E-Mail für Verifizierungsanweisungen.",
+    "placeholders": {
+      "select": "Bitte auswählen..."
+    },
+    "errors": {
+      "organisationNameRequired": "Organisationsname ist erforderlich",
+      "emailRequired": "E-Mail ist erforderlich",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "passwordRequired": "Passwort ist erforderlich",
+      "passwordTooShort": "Passwort muss mindestens 6 Zeichen haben",
+      "passwordsNoMatch": "Passwörter stimmen nicht überein",
+      "phoneRequired": "Telefonnummer ist erforderlich",
+      "cantonRequired": "Kanton ist erforderlich",
+      "capacityRequired": "Kapazität ist erforderlich",
+      "categoryRequired": "Produktkategorie ist erforderlich",
+      "serviceTypeRequired": "Service-Typ ist erforderlich",
+      "childAgeRequired": "Kindesalter ist erforderlich",
+      "childStartDateRequired": "Kindesstartdatum ist erforderlich",
+      "termsRequired": "Sie müssen die Geschäftsbedingungen akzeptieren"
+    },
+    "roles": {
+      "foundation": "Stiftung (Kita)",
+      "supplier": "Produktlieferant",
+      "serviceProvider": "Dienstleister",
+      "parent": "Elternteil"
     }
   },
   "dashboardPage": {
@@ -451,9 +482,17 @@
   },
   "pricingPage": {
     "title": "Preispläne",
+    "titleSignup": "Wählen Sie Ihren Plan",
+    "subtitle": "Wählen Sie den perfekten Plan für Ihre Organisation",
+    "subtitleSignup": "Vervollständigen Sie Ihre Registrierung durch Auswahl eines Plans",
     "plans": "Wählen Sie Ihren Plan",
     "features": "Merkmale",
-    "billing": "Abrechnung"
+    "billing": "Abrechnung",
+    "popular": "Am Beliebtesten",
+    "whatYouGet": "Was Sie bekommen",
+    "selectAndContinue": "Plan auswählen und fortfahren",
+    "choosePlan": "Wählen Sie Ihren Plan",
+    "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister"
   },
   "recruitmentPage": {
     "title": "Werbung",
@@ -502,9 +541,18 @@
     "becomePartner": "Werden Sie Partner"
   },
   "parentLeadFormPage": {
-    "title": "LEIN einreichen",
+    "title": "Finden Sie eine Kita",
+    "subtitle": "Erzählen Sie uns von Ihren Kinderbetreuungsbedürfnissen und wir helfen Ihnen, die perfekte Übereinstimmung zu finden",
     "form": "Leitform",
-    "submit": "LEIN einreichen"
+    "submit": "LEIN einreichen",
+    "thankYouTitle": "Vielen Dank!",
+    "errorAllFields": "Bitte füllen Sie alle erforderlichen Felder aus",
+    "authenticatedSuccessMessage": "Ihre Anfrage wurde erfolgreich eingereicht!",
+    "labels": {
+      "yourFullName": "Ihr vollständiger Name",
+      "yourEmail": "Ihre E-Mail-Adresse",
+      "yourPhone": "Ihre Telefonnummer"
+    }
   },
   "candidateProfilePage": {
     "title": "Kandidatenprofil",

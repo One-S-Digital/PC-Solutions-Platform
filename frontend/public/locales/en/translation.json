@@ -198,6 +198,37 @@
     "verifyEmail": "Verify Your Email",
     "verifyEmailDescription": "We've sent a verification code to your email address",
     "verificationCode": "Verification Code",
+    "selectRoleTitle": "Select Your Role",
+    "detailsTitle": "Complete Your {{role}} Profile",
+    "progressStep1": "Step 1 of 2: Select Role",
+    "progressStep2": "Step 2 of 2: Complete Details",
+    "submissionSuccessTitle": "Account Created Successfully!",
+    "submissionSuccessMessage": "Your account has been created. Please check your email for verification instructions.",
+    "placeholders": {
+      "select": "Please select..."
+    },
+    "errors": {
+      "organisationNameRequired": "Organization name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordsNoMatch": "Passwords do not match",
+      "phoneRequired": "Phone number is required",
+      "cantonRequired": "Canton is required",
+      "capacityRequired": "Capacity is required",
+      "categoryRequired": "Product category is required",
+      "serviceTypeRequired": "Service type is required",
+      "childAgeRequired": "Child age is required",
+      "childStartDateRequired": "Child start date is required",
+      "termsRequired": "You must accept the terms and conditions"
+    },
+    "roles": {
+      "foundation": "Foundation (Daycare)",
+      "supplier": "Product Supplier",
+      "serviceProvider": "Service Provider",
+      "parent": "Parent"
+    },
     "superAdmin": {
       "label": "Super Admin",
       "description": "Full system access and management"
@@ -451,9 +482,17 @@
   },
   "pricingPage": {
     "title": "Pricing Plans",
+    "titleSignup": "Choose Your Plan",
+    "subtitle": "Select the perfect plan for your organization",
+    "subtitleSignup": "Complete your registration by selecting a plan",
     "plans": "Choose Your Plan",
     "features": "Features",
-    "billing": "Billing"
+    "billing": "Billing",
+    "popular": "Most Popular",
+    "whatYouGet": "What you get",
+    "selectAndContinue": "Select Plan & Continue",
+    "choosePlan": "Choose Your Plan",
+    "suppliersAndProvidersTitle": "For Suppliers & Service Providers"
   },
   "recruitmentPage": {
     "title": "Recruitment",
@@ -502,9 +541,18 @@
     "becomePartner": "Become a Partner"
   },
   "parentLeadFormPage": {
-    "title": "Submit Lead",
+    "title": "Find a Crèche",
+    "subtitle": "Tell us about your childcare needs and we'll help you find the perfect match",
     "form": "Lead Form",
-    "submit": "Submit Lead"
+    "submit": "Submit Lead",
+    "thankYouTitle": "Thank You!",
+    "errorAllFields": "Please fill in all required fields",
+    "authenticatedSuccessMessage": "Your enquiry has been submitted successfully!",
+    "labels": {
+      "yourFullName": "Your Full Name",
+      "yourEmail": "Your Email Address",
+      "yourPhone": "Your Phone Number"
+    }
   },
   "candidateProfilePage": {
     "title": "Candidate Profile",

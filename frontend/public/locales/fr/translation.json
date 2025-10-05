@@ -225,6 +225,37 @@
     "parent": {
       "label": "Mère",
       "description": "Trouvez des services de garde d'enfants pour vos enfants"
+    },
+    "selectRoleTitle": "Sélectionnez Votre Rôle",
+    "detailsTitle": "Complétez Votre Profil {{role}}",
+    "progressStep1": "Étape 1 sur 2 : Sélectionner le Rôle",
+    "progressStep2": "Étape 2 sur 2 : Compléter les Détails",
+    "submissionSuccessTitle": "Compte Créé avec Succès !",
+    "submissionSuccessMessage": "Votre compte a été créé. Veuillez vérifier votre e-mail pour les instructions de vérification.",
+    "placeholders": {
+      "select": "Veuillez sélectionner..."
+    },
+    "errors": {
+      "organisationNameRequired": "Le nom de l'organisation est requis",
+      "emailRequired": "L'e-mail est requis",
+      "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+      "passwordRequired": "Le mot de passe est requis",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+      "passwordsNoMatch": "Les mots de passe ne correspondent pas",
+      "phoneRequired": "Le numéro de téléphone est requis",
+      "cantonRequired": "Le canton est requis",
+      "capacityRequired": "La capacité est requise",
+      "categoryRequired": "La catégorie de produit est requise",
+      "serviceTypeRequired": "Le type de service est requis",
+      "childAgeRequired": "L'âge de l'enfant est requis",
+      "childStartDateRequired": "La date de début de l'enfant est requise",
+      "termsRequired": "Vous devez accepter les termes et conditions"
+    },
+    "roles": {
+      "foundation": "Fondation (Crèche)",
+      "supplier": "Fournisseur de Produits",
+      "serviceProvider": "Prestataire de Services",
+      "parent": "Parent"
     }
   },
   "dashboardPage": {
@@ -451,9 +482,17 @@
   },
   "pricingPage": {
     "title": "Plans de prix",
+    "titleSignup": "Choisissez Votre Plan",
+    "subtitle": "Sélectionnez le plan parfait pour votre organisation",
+    "subtitleSignup": "Complétez votre inscription en sélectionnant un plan",
     "plans": "Choisissez votre plan",
     "features": "Caractéristiques",
-    "billing": "Facturation"
+    "billing": "Facturation",
+    "popular": "Le Plus Populaire",
+    "whatYouGet": "Ce que vous obtenez",
+    "selectAndContinue": "Sélectionner le Plan et Continuer",
+    "choosePlan": "Choisissez Votre Plan",
+    "suppliersAndProvidersTitle": "Pour les Fournisseurs et Prestataires de Services"
   },
   "recruitmentPage": {
     "title": "Recrutement",
@@ -502,9 +541,18 @@
     "becomePartner": "Devenir partenaire"
   },
   "parentLeadFormPage": {
-    "title": "Soumettre le plomb",
+    "title": "Trouver une Crèche",
+    "subtitle": "Dites-nous vos besoins de garde d'enfants et nous vous aiderons à trouver la correspondance parfaite",
     "form": "Forme de plomb",
-    "submit": "Soumettre le plomb"
+    "submit": "Soumettre le plomb",
+    "thankYouTitle": "Merci !",
+    "errorAllFields": "Veuillez remplir tous les champs requis",
+    "authenticatedSuccessMessage": "Votre demande a été soumise avec succès !",
+    "labels": {
+      "yourFullName": "Votre Nom Complet",
+      "yourEmail": "Votre Adresse E-mail",
+      "yourPhone": "Votre Numéro de Téléphone"
+    }
   },
   "candidateProfilePage": {
     "title": "Profil candidat",
