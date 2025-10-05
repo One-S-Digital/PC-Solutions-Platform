@@ -373,6 +373,44 @@
     "forgotPasswordTBD": "Password reset functionality coming soon!",
     "socialLoginTBD": "{{provider}} login coming soon!"
   },
+  "signupPage": {
+    "title": "Join PC Solutions Platform",
+    "subtitle": "Choose your role to get started",
+    "createAccountTitle": "Create your account",
+    "roleLabel": "Role",
+    "roleDescription": "Description",
+    "verifyEmail": "Verify Your Email",
+    "verifyEmailDescription": "We've sent a verification code to your email address",
+    "verificationCode": "Verification Code",
+    "superAdmin": {
+      "label": "Super Admin",
+      "description": "Full system access and management"
+    },
+    "admin": {
+      "label": "Admin",
+      "description": "Administrative access to platform management"
+    },
+    "foundation": {
+      "label": "Foundation (Daycare)",
+      "description": "Manage your daycare operations, recruit staff, and procure services"
+    },
+    "productSupplier": {
+      "label": "Product Supplier",
+      "description": "Sell products to childcare organizations"
+    },
+    "serviceProvider": {
+      "label": "Service Provider",
+      "description": "Offer services to childcare organizations"
+    },
+    "educator": {
+      "label": "Educator/Candidate",
+      "description": "Find employment opportunities in childcare"
+    },
+    "parent": {
+      "label": "Parent",
+      "description": "Find childcare services for your children"
+    }
+  },
   "errors": {
     "unknown": "An unknown error occurred. Please try again."
   },
@@ -382,6 +420,29 @@
   },
   "hidePassword": "Hide password",
   "showPassword": "Show password",
+  "signIn": "Sign In",
+  "signOut": "Sign Out",
+  "confirmPassword": "Confirm Password",
+  "resetPassword": "Reset Password",
+  "rememberMe": "Remember Me",
+  "createAccount": "Create Account",
+  "alreadyHaveAccount": "Already have an account?",
+  "dontHaveAccount": "Don't have an account?",
+  "welcomeBack": "Welcome back",
+  "joinPlatform": "Join PC Solutions Platform",
+  "chooseRole": "Choose your role to get started",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "phoneNumber": "Phone Number",
+  "organizationName": "Organization Name",
+  "contactPerson": "Contact Person",
+  "canton": "Canton",
+  "languages": "Languages",
+  "capacity": "Capacity",
+  "productCategory": "Product Category",
+  "serviceType": "Service Type",
+  "childAge": "Child's Age",
+  "preferredLocation": "Preferred Location",
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

@@ -31,11 +31,72 @@
     "forgotPasswordTBD": "La fonctionnalité de réinitialisation du mot de passe arrive bientôt !",
     "socialLoginTBD": "Connexion {{provider}} arrive bientôt !"
   },
+  "signupPage": {
+    "title": "Rejoindre la plateforme PC Solutions",
+    "subtitle": "Choisissez votre rôle pour commencer",
+    "createAccountTitle": "Créez votre compte",
+    "roleLabel": "Rôle",
+    "roleDescription": "Description",
+    "verifyEmail": "Vérifiez votre e-mail",
+    "verifyEmailDescription": "Nous avons envoyé un code de vérification à votre adresse e-mail",
+    "verificationCode": "Code de vérification",
+    "superAdmin": {
+      "label": "Super administrateur",
+      "description": "Accès complet au système et gestion"
+    },
+    "admin": {
+      "label": "Administrateur",
+      "description": "Accès administratif à la gestion de la plateforme"
+    },
+    "foundation": {
+      "label": "Fondation (Crèche)",
+      "description": "Gérez les opérations de votre crèche, recrutez du personnel et procurez-vous des services"
+    },
+    "productSupplier": {
+      "label": "Fournisseur de produits",
+      "description": "Vendez des produits aux organisations de garde d'enfants"
+    },
+    "serviceProvider": {
+      "label": "Fournisseur de services",
+      "description": "Offrez des services aux organisations de garde d'enfants"
+    },
+    "educator": {
+      "label": "Éducateur/Candidat",
+      "description": "Trouvez des opportunités d'emploi dans la garde d'enfants"
+    },
+    "parent": {
+      "label": "Parent",
+      "description": "Trouvez des services de garde d'enfants pour vos enfants"
+    }
+  },
   "errors": {
     "unknown": "Une erreur inconnue est survenue."
   },
   "showPassword": "Afficher le mot de passe",
   "hidePassword": "Masquer le mot de passe",
+  "signIn": "Se connecter",
+  "signOut": "Se déconnecter",
+  "confirmPassword": "Confirmer le mot de passe",
+  "resetPassword": "Réinitialiser le mot de passe",
+  "rememberMe": "Se souvenir de moi",
+  "createAccount": "Créer un compte",
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "dontHaveAccount": "Vous n'avez pas de compte ?",
+  "welcomeBack": "Bon retour",
+  "joinPlatform": "Rejoindre la plateforme PC Solutions",
+  "chooseRole": "Choisissez votre rôle pour commencer",
+  "firstName": "Prénom",
+  "lastName": "Nom de famille",
+  "phoneNumber": "Numéro de téléphone",
+  "organizationName": "Nom de l'organisation",
+  "contactPerson": "Personne de contact",
+  "canton": "Canton",
+  "languages": "Langues",
+  "capacity": "Capacité",
+  "productCategory": "Catégorie de produit",
+  "serviceType": "Type de service",
+  "childAge": "Âge de l'enfant",
+  "preferredLocation": "Lieu préféré",
   "buttons": {
     "save": "Enregistrer",
     "saveChanges": "Enregistrer les modifs.",

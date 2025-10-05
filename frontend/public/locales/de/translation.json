@@ -31,11 +31,72 @@
     "forgotPasswordTBD": "Passwort-Zurücksetzung kommt bald!",
     "socialLoginTBD": "{{provider}} Anmeldung kommt bald!"
   },
+  "signupPage": {
+    "title": "PC Solutions Plattform beitreten",
+    "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
+    "createAccountTitle": "Erstellen Sie Ihr Konto",
+    "roleLabel": "Rolle",
+    "roleDescription": "Beschreibung",
+    "verifyEmail": "E-Mail bestätigen",
+    "verifyEmailDescription": "Wir haben einen Bestätigungscode an Ihre E-Mail-Adresse gesendet",
+    "verificationCode": "Bestätigungscode",
+    "superAdmin": {
+      "label": "Super-Administrator",
+      "description": "Vollzugriff auf das System und Verwaltung"
+    },
+    "admin": {
+      "label": "Administrator",
+      "description": "Administrativer Zugriff auf die Plattformverwaltung"
+    },
+    "foundation": {
+      "label": "Stiftung (Krippe)",
+      "description": "Verwalten Sie Ihre Krippenoperationen, rekrutieren Sie Personal und beschaffen Sie Dienstleistungen"
+    },
+    "productSupplier": {
+      "label": "Produktlieferant",
+      "description": "Verkaufen Sie Produkte an Kinderbetreuungsorganisationen"
+    },
+    "serviceProvider": {
+      "label": "Dienstleister",
+      "description": "Bieten Sie Dienstleistungen für Kinderbetreuungsorganisationen an"
+    },
+    "educator": {
+      "label": "Pädagoge/Kandidat",
+      "description": "Finden Sie Beschäftigungsmöglichkeiten in der Kinderbetreuung"
+    },
+    "parent": {
+      "label": "Elternteil",
+      "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder"
+    }
+  },
   "errors": {
     "unknown": "Ein unbekannter Fehler ist aufgetreten."
   },
   "showPassword": "Passwort anzeigen",
   "hidePassword": "Passwort ausblenden",
+  "signIn": "Anmelden",
+  "signOut": "Abmelden",
+  "confirmPassword": "Passwort bestätigen",
+  "resetPassword": "Passwort zurücksetzen",
+  "rememberMe": "Angemeldet bleiben",
+  "createAccount": "Konto erstellen",
+  "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+  "dontHaveAccount": "Haben Sie noch kein Konto?",
+  "welcomeBack": "Willkommen zurück",
+  "joinPlatform": "PC Solutions Plattform beitreten",
+  "chooseRole": "Wählen Sie Ihre Rolle, um zu beginnen",
+  "firstName": "Vorname",
+  "lastName": "Nachname",
+  "phoneNumber": "Telefonnummer",
+  "organizationName": "Organisationsname",
+  "contactPerson": "Ansprechpartner",
+  "canton": "Kanton",
+  "languages": "Sprachen",
+  "capacity": "Kapazität",
+  "productCategory": "Produktkategorie",
+  "serviceType": "Service-Typ",
+  "childAge": "Alter des Kindes",
+  "preferredLocation": "Bevorzugter Standort",
   "buttons": {
     "save": "Speichern",
     "saveChanges": "Änderungen speichern",
