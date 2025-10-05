@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2025-10-05T18:40:32.008Z",
+  "baseUrl": "https://pc-solutions-frontend.onrender.com",
+  "environment": "production",
+  "summary": {
+    "totalPagesScanned": 2,
+    "successfulScans": 0,
+    "failedScans": 2,
+    "totalMissingKeys": 0,
+    "totalHardcodedText": 0,
+    "pagesWithIssues": 0
+  },
+  "pages": [
+    {
+      "url": "https://pc-solutions-frontend.onrender.com/",
+      "pageName": "Home",
+      "missingKeys": 0,
+      "hardcodedText": 0,
+      "i18nErrors": 0,
+      "translationIssues": 0,
+      "screenshot": null,
+      "status": "error",
+      "error": "page.evaluate: TypeError: this.getXPath is not a function\n    at eval (eval at evaluate (:291:30), <anonymous>:80:25)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    },
+    {
+      "url": "https://pc-solutions-frontend.onrender.com/login",
+      "pageName": "Login",
+      "missingKeys": 0,
+      "hardcodedText": 0,
+      "i18nErrors": 0,
+      "translationIssues": 0,
+      "screenshot": null,
+      "status": "error",
+      "error": "page.evaluate: TypeError: this.getXPath is not a function\n    at eval (eval at evaluate (:291:30), <anonymous>:80:25)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    }
+  ],
+  "missingKeys": [],
+  "hardcodedText": [],
+  "recommendations": [
+    {
+      "type": "success",
+      "priority": "low",
+      "message": "No i18n issues found in production! Your application appears to be properly internationalized.",
+      "action": "Continue monitoring with regular scans"
+    }
+  ]
+}
