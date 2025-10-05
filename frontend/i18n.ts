@@ -10,7 +10,7 @@ i18n
   .init({
     supportedLngs: ['en', 'fr', 'de'],
     fallbackLng: 'en',
-    debug: process.env.NODE_ENV === 'development', // Debug only in development
+    debug: true, // Enable debug for translation troubleshooting
     ns: ['translation'], 
     defaultNS: 'translation',
     backend: {

@@ -305,6 +305,8 @@ const ProtectedLayout: React.FC = () => {
 const App: React.FC = () => {
   // Debug logging
   console.log('🔍 Debug components enabled - look for debug buttons in bottom corners');
+  console.log('🔍 Environment:', process.env.NODE_ENV);
+  console.log('🔍 Debug components should be visible in production');
   
   return (
     <AppContextProvider>
@@ -321,6 +323,26 @@ const App: React.FC = () => {
             {/* Debug components - enabled for debugging translation issues */}
             <TranslationDebugger enabled={true} />
             <TranslationDiagnostics enabled={true} />
+            
+            {/* Debug banner - visible in production */}
+            <div 
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(90deg, #8B5CF6, #EC4899)',
+                color: 'white',
+                padding: '8px 16px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                zIndex: 10000,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+              }}
+            >
+              🔍 DEBUG MODE ACTIVE - Look for purple debug buttons in bottom corners
+            </div>
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
