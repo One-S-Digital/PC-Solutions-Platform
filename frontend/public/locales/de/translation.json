@@ -55,7 +55,14 @@
       "profile": "Profil",
       "settings": "Einstellungen",
       "logout": "Abmelden"
-    }
+    },
+    "toggleNavigation": "Navigation umschalten",
+    "goBackPreviousPage": "Zurück zur vorherigen Seite",
+    "viewShoppingCart": "Warenkorb anzeigen",
+    "newMessages": "Neue Nachrichten",
+    "noNewNotifications": "Keine neuen Benachrichtigungen",
+    "viewAll": "Alle anzeigen",
+    "signOut": "Abmelden"
   },
   "sidebar": {
     "dashboard": "Armaturenbrett",
@@ -141,7 +148,8 @@
   },
   "notifications": {
     "successTitle": "Erfolg",
-    "settingsUpdated": "Einstellungen erfolgreich aktualisiert"
+    "settingsUpdated": "Einstellungen erfolgreich aktualisiert",
+    "errorTitle": "Fehler"
   },
   "hidePassword": "Passwort verbergen",
   "showPassword": "Passwort anzeigen",
@@ -337,7 +345,23 @@
     }
   },
   "organizationProfileForm": {
-    "saveSuccess": "Organisationsprofil erfolgreich gespeichert"
+    "saveSuccess": "Organisationsprofil erfolgreich gespeichert",
+    "accessDenied": "Zugriff verweigert",
+    "title": "Organisationsprofil",
+    "subtitle": "Vervollständigen Sie die Profilinformationen Ihrer Organisation",
+    "labels": {
+      "capacity": "Kapazität",
+      "pedagogy": "Pädagogische Erklärung",
+      "languages": "Sprachen"
+    },
+    "placeholders": {
+      "pedagogy": "Beschreiben Sie Ihren pädagogischen Ansatz...",
+      "languages": "z.B. Englisch, Französisch, Deutsch"
+    },
+    "helpText": {
+      "commaSeparated": "Trennen Sie mehrere Elemente durch Kommas"
+    },
+    "saveButton": "Profil speichern"
   },
   "foundationDashboardPage": {
     "title": "Foundation Dashboard",
@@ -503,12 +527,35 @@
   "messagesPage": {
     "title": "Nachrichten",
     "conversations": "Gespräche",
-    "newMessage": "Neue Nachricht"
+    "newMessage": "Neue Nachricht",
+    "searchPlaceholder": "Gespräche suchen...",
+    "filters": {
+      "all": "Alle",
+      "unread": "Ungelesen"
+    },
+    "noConversationsFound": "Keine Gespräche gefunden",
+    "selectConversationToView": "Wählen Sie ein Gespräch zum Anzeigen",
+    "conversationFallbackTitle": "Unbekannter Benutzer",
+    "attachFile": "Datei anhängen",
+    "addEmoji": "Emoji hinzufügen",
+    "typeMessagePlaceholder": "Nachricht eingeben...",
+    "unknownUser": "Unbekannter Benutzer",
+    "youPrefix": "Sie: ",
+    "noMessagesYet": "Noch keine Nachrichten",
+    "newGroupButton": "Neue Gruppe",
+    "noConversationSelectedTitle": "Kein Gespräch ausgewählt",
+    "noConversationSelectedSubtitle": "Wählen Sie ein Gespräch aus der Liste aus, um mit dem Messaging zu beginnen",
+    "noConversationsYet": "Noch keine Gespräche"
   },
   "notificationsPage": {
     "title": "Benachrichtigungen",
     "notifications": "Alle Benachrichtigungen",
-    "unread": "Ungelesen"
+    "unread": "Ungelesen",
+    "clearAll": "Alle löschen",
+    "emptyState": {
+      "title": "Keine Benachrichtigungen",
+      "message": "Sie haben noch keine Benachrichtigungen"
+    }
   },
   "fileGalleryPage": {
     "title": "Dateigalerie",
@@ -563,5 +610,127 @@
     "title": "Designsystem",
     "components": "Komponenten",
     "guidelines": "Richtlinien"
+  },
+  "createGroupChatModal": {
+    "error": {
+      "minParticipants": "Bitte wählen Sie mindestens 2 Teilnehmer aus"
+    },
+    "title": "Gruppenchat erstellen",
+    "groupNameLabel": "Gruppenname",
+    "groupNamePlaceholder": "Gruppenname eingeben...",
+    "selectParticipantsLabel": "Teilnehmer auswählen",
+    "createButton": "Gruppe erstellen"
+  },
+  "orderRequestDetailModal": {
+    "title": "Bestelldetails",
+    "orderId": "Bestell-ID",
+    "date": "Datum",
+    "status": "Status",
+    "total": "Gesamt",
+    "viewDaycareProfile": "Krippenprofil anzeigen",
+    "lineItems": "Positionen",
+    "product": "Produkt",
+    "quantity": "Menge",
+    "price": "Preis",
+    "notes": "Notizen"
+  },
+  "serviceRequestDetailModal": {
+    "title": "Serviceanfrage-Details",
+    "requestId": "Anfrage-ID",
+    "serviceName": "Service-Name",
+    "viewDaycareProfile": "Krippenprofil anzeigen",
+    "date": "Datum",
+    "status": "Status",
+    "preferredDate": "Bevorzugtes Datum",
+    "noPreferredDate": "Kein bevorzugtes Datum festgelegt",
+    "notes": "Notizen"
+  },
+  "serviceUploadModal": {
+    "editTitle": "Service bearbeiten",
+    "addTitle": "Neuen Service hinzufügen",
+    "labels": {
+      "title": "Service-Titel",
+      "description": "Beschreibung",
+      "category": "Kategorie",
+      "deliveryType": "Lieferart",
+      "availability": "Verfügbarkeit",
+      "priceInfo": "Preisinformationen",
+      "tags": "Tags",
+      "image": "Service-Bild"
+    },
+    "placeholders": {
+      "availability": "z.B. Montag-Freitag 9-17 Uhr",
+      "priceInfo": "z.B. CHF 50/Stunde",
+      "tags": "z.B. Beratung, Schulung, Support"
+    },
+    "imageHelpText": "Laden Sie ein Bild hoch, das Ihren Service repräsentiert"
+  },
+  "contentUploadModal": {
+    "fileUpload": {
+      "eLearningAllowedTypes": "Erlaubt: PDF, MP4, DOC, DOCX",
+      "hrPolicyAllowedTypes": "Erlaubt: PDF, DOC, DOCX"
+    },
+    "error": {
+      "selectFileOrLink": "Bitte wählen Sie eine Datei aus oder geben Sie einen Link ein"
+    },
+    "contentType": {
+      "eLearning": "E-Learning-Inhalt",
+      "hrPolicy": "HR-Richtlinie",
+      "statePolicy": "Staatsrichtlinie"
+    },
+    "labels": {
+      "descriptionPreview": "Beschreibungsvorschau",
+      "description": "Beschreibung",
+      "title": "Titel",
+      "category": "Kategorie",
+      "contentType": "Inhaltstyp",
+      "language": "Sprache",
+      "duration": "Dauer",
+      "lessons": "Anzahl der Lektionen",
+      "linkUrl": "Link-URL",
+      "accessRoles": "Zugriffsrollen",
+      "status": "Status",
+      "documentTitle": "Dokumenttitel",
+      "fileType": "Dateityp",
+      "version": "Version",
+      "country": "Land",
+      "regionCanton": "Region/Kanton",
+      "policyType": "Richtlinientyp",
+      "criticality": "Kritikalität",
+      "markAsCritical": "Als kritisch markieren",
+      "effectiveDate": "Gültigkeitsdatum",
+      "externalLink": "Externer Link",
+      "uploadFile": "Datei hochladen"
+    },
+    "placeholders": {
+      "duration": "z.B. 2 Stunden",
+      "linkUrl": "https://beispiel.com",
+      "version": "z.B. 1.0",
+      "externalLink": "https://beispiel.com"
+    },
+    "statusOptions": {
+      "draft": "Entwurf",
+      "published": "Veröffentlicht",
+      "archived": "Archiviert"
+    },
+    "criticalityOptions": {
+      "critical": "Kritisch",
+      "normal": "Normal"
+    },
+    "buttons": {
+      "uploading": "Hochladen...",
+      "upload": "Hochladen"
+    }
+  },
+  "orderRequestModal": {
+    "labels": {
+      "product": "Produkt",
+      "supplier": "Lieferant",
+      "quantity": "Menge",
+      "notes": "Notizen"
+    },
+    "placeholders": {
+      "notes": "Fügen Sie spezielle Anweisungen hinzu..."
+    }
   }
 }

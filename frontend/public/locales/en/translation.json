@@ -3,7 +3,7 @@
   "languageSwitcher": {
     "enShort": "EN",
     "enLong": "English",
-    "frShort": "FR", 
+    "frShort": "FR",
     "frLong": "Français",
     "deShort": "DE",
     "deLong": "Deutsch",
@@ -55,7 +55,14 @@
       "profile": "Profile",
       "settings": "Settings",
       "logout": "Sign Out"
-    }
+    },
+    "toggleNavigation": "Toggle navigation",
+    "goBackPreviousPage": "Go back to previous page",
+    "viewShoppingCart": "View shopping cart",
+    "newMessages": "New messages",
+    "noNewNotifications": "No new notifications",
+    "viewAll": "View all",
+    "signOut": "Sign out"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -141,7 +148,8 @@
   },
   "notifications": {
     "successTitle": "Success",
-    "settingsUpdated": "Settings updated successfully"
+    "settingsUpdated": "Settings updated successfully",
+    "errorTitle": "Error"
   },
   "hidePassword": "Hide password",
   "showPassword": "Show password",
@@ -337,7 +345,23 @@
     }
   },
   "organizationProfileForm": {
-    "saveSuccess": "Organization profile saved successfully"
+    "saveSuccess": "Organization profile saved successfully",
+    "accessDenied": "Access denied",
+    "title": "Organization Profile",
+    "subtitle": "Complete your organization's profile information",
+    "labels": {
+      "capacity": "Capacity",
+      "pedagogy": "Pedagogy Statement",
+      "languages": "Languages"
+    },
+    "placeholders": {
+      "pedagogy": "Describe your educational approach...",
+      "languages": "e.g., English, French, German"
+    },
+    "helpText": {
+      "commaSeparated": "Separate multiple items with commas"
+    },
+    "saveButton": "Save Profile"
   },
   "foundationDashboardPage": {
     "title": "Foundation Dashboard",
@@ -503,12 +527,35 @@
   "messagesPage": {
     "title": "Messages",
     "conversations": "Conversations",
-    "newMessage": "New Message"
+    "newMessage": "New Message",
+    "searchPlaceholder": "Search conversations...",
+    "filters": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "noConversationsFound": "No conversations found",
+    "selectConversationToView": "Select a conversation to view",
+    "conversationFallbackTitle": "Unknown User",
+    "attachFile": "Attach file",
+    "addEmoji": "Add emoji",
+    "typeMessagePlaceholder": "Type a message...",
+    "unknownUser": "Unknown User",
+    "youPrefix": "You: ",
+    "noMessagesYet": "No messages yet",
+    "newGroupButton": "New Group",
+    "noConversationSelectedTitle": "No conversation selected",
+    "noConversationSelectedSubtitle": "Choose a conversation from the list to start messaging",
+    "noConversationsYet": "No conversations yet"
   },
   "notificationsPage": {
     "title": "Notifications",
     "notifications": "All Notifications",
-    "unread": "Unread"
+    "unread": "Unread",
+    "clearAll": "Clear All",
+    "emptyState": {
+      "title": "No notifications",
+      "message": "You don't have any notifications yet"
+    }
   },
   "fileGalleryPage": {
     "title": "File Gallery",
@@ -563,5 +610,127 @@
     "title": "Design System",
     "components": "Components",
     "guidelines": "Guidelines"
+  },
+  "createGroupChatModal": {
+    "error": {
+      "minParticipants": "Please select at least 2 participants"
+    },
+    "title": "Create Group Chat",
+    "groupNameLabel": "Group Name",
+    "groupNamePlaceholder": "Enter group name...",
+    "selectParticipantsLabel": "Select Participants",
+    "createButton": "Create Group"
+  },
+  "orderRequestDetailModal": {
+    "title": "Order Details",
+    "orderId": "Order ID",
+    "date": "Date",
+    "status": "Status",
+    "total": "Total",
+    "viewDaycareProfile": "View Daycare Profile",
+    "lineItems": "Line Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "notes": "Notes"
+  },
+  "serviceRequestDetailModal": {
+    "title": "Service Request Details",
+    "requestId": "Request ID",
+    "serviceName": "Service Name",
+    "viewDaycareProfile": "View Daycare Profile",
+    "date": "Date",
+    "status": "Status",
+    "preferredDate": "Preferred Date",
+    "noPreferredDate": "No preferred date set",
+    "notes": "Notes"
+  },
+  "serviceUploadModal": {
+    "editTitle": "Edit Service",
+    "addTitle": "Add New Service",
+    "labels": {
+      "title": "Service Title",
+      "description": "Description",
+      "category": "Category",
+      "deliveryType": "Delivery Type",
+      "availability": "Availability",
+      "priceInfo": "Price Information",
+      "tags": "Tags",
+      "image": "Service Image"
+    },
+    "placeholders": {
+      "availability": "e.g., Monday-Friday 9AM-5PM",
+      "priceInfo": "e.g., CHF 50/hour",
+      "tags": "e.g., consultation, training, support"
+    },
+    "imageHelpText": "Upload an image that represents your service"
+  },
+  "contentUploadModal": {
+    "fileUpload": {
+      "eLearningAllowedTypes": "Allowed: PDF, MP4, DOC, DOCX",
+      "hrPolicyAllowedTypes": "Allowed: PDF, DOC, DOCX"
+    },
+    "error": {
+      "selectFileOrLink": "Please select a file or enter a link"
+    },
+    "contentType": {
+      "eLearning": "E-Learning Content",
+      "hrPolicy": "HR Policy",
+      "statePolicy": "State Policy"
+    },
+    "labels": {
+      "descriptionPreview": "Description Preview",
+      "description": "Description",
+      "title": "Title",
+      "category": "Category",
+      "contentType": "Content Type",
+      "language": "Language",
+      "duration": "Duration",
+      "lessons": "Number of Lessons",
+      "linkUrl": "Link URL",
+      "accessRoles": "Access Roles",
+      "status": "Status",
+      "documentTitle": "Document Title",
+      "fileType": "File Type",
+      "version": "Version",
+      "country": "Country",
+      "regionCanton": "Region/Canton",
+      "policyType": "Policy Type",
+      "criticality": "Criticality",
+      "markAsCritical": "Mark as Critical",
+      "effectiveDate": "Effective Date",
+      "externalLink": "External Link",
+      "uploadFile": "Upload File"
+    },
+    "placeholders": {
+      "duration": "e.g., 2 hours",
+      "linkUrl": "https://example.com",
+      "version": "e.g., 1.0",
+      "externalLink": "https://example.com"
+    },
+    "statusOptions": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "criticalityOptions": {
+      "critical": "Critical",
+      "normal": "Normal"
+    },
+    "buttons": {
+      "uploading": "Uploading...",
+      "upload": "Upload"
+    }
+  },
+  "orderRequestModal": {
+    "labels": {
+      "product": "Product",
+      "supplier": "Supplier",
+      "quantity": "Quantity",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "notes": "Add any special instructions..."
+    }
   }
 }
