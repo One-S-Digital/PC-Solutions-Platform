@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-10-05T16:27:49.228Z",
+  "language": "en",
+  "totalErrors": 3,
+  "errors": [
+    {
+      "key": "buttons.missingKey",
+      "returned": "buttons.missingKey",
+      "expected": "Actual translated text",
+      "timestamp": "2025-10-05T16:27:49.228Z",
+      "language": "en",
+      "page": "/test",
+      "severity": "missing"
+    },
+    {
+      "key": "dashboardPage.missingTitle",
+      "returned": "dashboardPage.missingTitle",
+      "expected": "Dashboard Title",
+      "timestamp": "2025-10-05T16:27:49.228Z",
+      "language": "en",
+      "page": "/dashboard",
+      "severity": "missing"
+    },
+    {
+      "key": "navbar.missingItem",
+      "returned": "navbar.missingItem",
+      "expected": "Navigation Item",
+      "timestamp": "2025-10-05T16:27:49.228Z",
+      "language": "en",
+      "page": "/navbar",
+      "severity": "missing"
+    }
+  ],
+  "summary": {
+    "missingKeys": 3,
+    "fallbackKeys": 0,
+    "errorKeys": 0
+  },
+  "userAgent": "Test Script",
+  "url": "http://localhost:3000/test",
+  "referrer": "http://localhost:3000/"
+}
