@@ -1551,6 +1551,10 @@
     }
   },
   "settingsPage": {
+    "title": "Paramètres",
+    "unsavedChangesPrompt": "Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir partir ?",
+    "loading": "Chargement des paramètres...",
+    "noSectionsAvailable": "Aucune section de paramètres disponible",
     "accountSecurity": "Sécurité du compte",
     "analyticsPreferences": "Préférences d'analytique",
     "companyProfile": "Profil de l'entreprise",
@@ -1766,5 +1770,117 @@
   },
   "dashboard": {
     "welcome": "Bienvenue sur votre tableau de bord administrateur !"
+  },
+  "policyAlertModal": {
+    "title": "Alerte de politique",
+    "message": "Message d'alerte de politique"
+  },
+  "orderSummaryDrawer": {
+    "title": "Résumé de la commande",
+    "subtotal": "Sous-total",
+    "total": "Total",
+    "checkout": "Procéder au paiement",
+    "emptyCart": "Votre panier est vide",
+    "cannotSubmitOrder": "Impossible de soumettre la commande. Utilisateur non connecté, informations fournisseur manquantes ou panier vide."
+  },
+  "translationDiagnostics": {
+    "missingKeysCopied": "Clés manquantes copiées dans le presse-papiers !"
+  },
+  "translationErrorLogger": {
+    "missingKeysCopied": "Clés manquantes copiées dans le presse-papiers !"
+  },
+  "serviceUploadModal": {
+    "title": "Télécharger un service",
+    "subtitle": "Télécharger un nouveau service sur la plateforme"
+  },
+  "supplierCard": {
+    "title": "Fournisseur",
+    "rating": "Note",
+    "reviews": "Avis",
+    "contact": "Contact"
+  },
+  "recruitmentPage": {
+    "jobDetailModal": {
+      "title": "Détails du poste",
+      "apply": "Postuler maintenant",
+      "close": "Fermer"
+    },
+    "jobPostModal": {
+      "title": "Publier un emploi",
+      "submit": "Soumettre la publication d'emploi"
+    },
+    "viewApplicantsModal": {
+      "title": "Voir les candidats",
+      "applicants": "Candidats"
+    },
+    "candidateCard": {
+      "name": "Nom du candidat",
+      "experience": "Expérience",
+      "skills": "Compétences"
+    }
+  },
+  "educatorProfilePage": {
+    "skills": {
+      "title": "Compétences",
+      "add": "Ajouter une compétence"
+    },
+    "availability": {
+      "title": "Disponibilité",
+      "schedule": "Horaire"
+    },
+    "documents": {
+      "title": "Documents",
+      "upload": "Télécharger un document"
+    },
+    "experience": {
+      "title": "Expérience",
+      "add": "Ajouter une expérience"
+    },
+    "education": {
+      "title": "Éducation",
+      "add": "Ajouter une éducation"
+    },
+    "certifications": {
+      "title": "Certifications",
+      "add": "Ajouter une certification"
+    }
+  },
+  "parentDashboard": {
+    "enquiry": {
+      "title": "Demandes",
+      "new": "Nouvelle demande"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "findCreche": "Trouver une crèche"
+    },
+    "childProfile": {
+      "title": "Profil de l'enfant",
+      "edit": "Modifier le profil"
+    },
+    "favorites": {
+      "title": "Favoris",
+      "viewAll": "Voir tout"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytiques",
+    "overview": "Aperçu",
+    "reports": "Rapports"
+  },
+  "serviceProviderDashboard": {
+    "title": "Tableau de bord du prestataire de services",
+    "services": "Services",
+    "requests": "Demandes"
+  },
+  "supportPage": {
+    "title": "Support",
+    "faq": "FAQ",
+    "contact": "Nous contacter"
+  },
+  "partnerDetailPage": {
+    "title": "Détails du partenaire",
+    "contact": "Contacter le partenaire",
+    "services": "Services"
   }
 }
