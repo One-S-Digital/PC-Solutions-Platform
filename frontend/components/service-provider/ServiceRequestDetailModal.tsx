@@ -38,7 +38,7 @@ const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ r
       case ServiceRequestStatus.ACCEPTED:
         return <Button variant="secondary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.SCHEDULED)}>Schedule</Button>;
       case ServiceRequestStatus.SCHEDULED:
-        return <Button variant="primary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.COMPLETED)}>Mark as Completed</Button>;
+        return <Button variant="primary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.COMPLETED)}>{t("serviceRequestDetailModal.markAsCompleted")}</Button>;
       default:
         return null;
     }

@@ -197,8 +197,28 @@
     "errors": {
       "organisationNameRequired": "Organization name is required",
       "emailRequired": "Email is required",
-      "emailInvalid": "Please enter a valid email address"
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "phoneRequired": "Phone number is required",
+      "cantonRequired": "Canton is required",
+      "capacityRequired": "Capacity is required",
+      "categoryRequired": "Category is required",
+      "serviceTypeRequired": "Service type is required",
+      "childAgeRequired": "Child age is required",
+      "childStartDateRequired": "Child start date is required",
+      "termsRequired": "You must accept the terms and conditions"
     },
+    "progressStep1": "Step 1: Select Role",
+    "progressStep2": "Step 2: Enter Details",
+    "selectRoleTitle": "Select Your Role",
+    "detailsTitle": "Enter Your Details",
+    "submissionSuccessTitle": "Registration Successful!",
+    "submissionSuccessMessage": "Your account has been created successfully. You can now access your dashboard.",
+    "goToDashboardButton": "Go to Dashboard",
+    "termsLabel": "I agree to the terms and conditions",
+    "termsLink": "Terms and Conditions",
+    "creatingAccount": "Creating your account...",
+    "createAccountButton": "Create Account",
     "placeholders": {
       "firstName": "Enter your first name",
       "lastName": "Enter your last name",
@@ -1398,5 +1418,31 @@
   "Adding a new candidate - Functionality TBD.": "Adding a new candidate - Functionality TBD.",
   "Filter UI TBD": "Filter UI TBD",
   "Apply Job Filters TBD": "Apply Job Filters TBD",
-  "Apply Candidate Filters TBD": "Apply Candidate Filters TBD"
+  "Apply Candidate Filters TBD": "Apply Candidate Filters TBD",
+  "serviceRequestModal": {
+    "preferredDateLabel": "Preferred Date (Optional)",
+    "notesLabel": "Notes / Specific Requirements (Optional)",
+    "submitButton": "Submit Request"
+  },
+  "serviceRequestDetailModal": {
+    "markAsCompleted": "Mark as Completed"
+  },
+  "Cantonal Policies": "Cantonal Policies",
+  "National Regulations": "National Regulations",
+  "Compliance Requirements": "Compliance Requirements",
+  "Updates & News": "Updates & News",
+  "Official Downloads": "Official Downloads",
+  "usersPage": {
+    "cannotDeleteOwnAccount": "You cannot delete your own account",
+    "status": {
+      "pending": "Pending"
+    },
+    "userDetailDrawer": {
+      "title": "User Details",
+      "roleLabel": "Role",
+      "statusLabel": "Status",
+      "regionLabel": "Region",
+      "lastLoginLabel": "Last Login"
+    }
+  }
 }

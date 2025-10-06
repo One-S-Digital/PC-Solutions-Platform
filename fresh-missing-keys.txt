@@ -2,26 +2,83 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1004 translation keys
+✅ Found 1074 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1309 t() calls
+📊 Found 1316 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 140 potential hardcoded text instances
+📊 Found 133 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1004
-🔧 t() Calls Found: 1309
-❌ Missing Keys: 538
-⚠️  Hardcoded Text: 140
-✅ Used Keys: 1022
-📦 Unused Keys: -18
+📚 Translation Keys: 1074
+🔧 t() Calls Found: 1316
+❌ Missing Keys: 435
+⚠️  Hardcoded Text: 133
+✅ Used Keys: 1029
+📦 Unused Keys: 45
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
+📄 frontend/components/recruitment/JobDetailModal.tsx:99
+   Key: "recruitmentPage.jobDetailModal.overviewTitle"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:104
+   Key: "recruitmentPage.jobDetailModal.location"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:111
+   Key: "recruitmentPage.jobDetailModal.contractType"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:118
+   Key: "recruitmentPage.jobDetailModal.startDate"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:126
+   Key: "recruitmentPage.jobDetailModal.salary"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:140
+   Key: "recruitmentPage.jobDetailModal.applyNow"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:119
+   Key: "recruitmentPage.jobPostModal.editTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:119
+   Key: "recruitmentPage.jobPostModal.addTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:130
+   Key: "recruitmentPage.jobPostModal.jobTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:134
+   Key: "recruitmentPage.jobPostModal.location"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:138
+   Key: "recruitmentPage.jobPostModal.contractType"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:144
+   Key: "recruitmentPage.jobPostModal.startDate"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:149
+   Key: "recruitmentPage.jobPostModal.salaryRange"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:150
+   Key: "recruitmentPage.jobPostModal.salaryRangePlaceholder"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:153
+   Key: "recruitmentPage.jobPostModal.description"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:165
+   Key: "recruitmentPage.jobPostModal.postJob"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:52
+   Key: "recruitmentPage.viewApplicantsModal.noApplicants"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:61
+   Key: "recruitmentPage.viewApplicantsModal.appliedOn"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:69
+   Key: "recruitmentPage.candidateCard.viewProfile"
+
 📄 frontend/components/service-provider/ServiceUploadModal.tsx:55
    Key: ","
 
@@ -33,6 +90,15 @@
 
 📄 frontend/components/ui/FileUploadZone.tsx:122
    Key: ","
+
+📄 frontend/components/ui/PricingToggle.tsx:24
+   Key: "pricingPage.monthly"
+
+📄 frontend/components/ui/PricingToggle.tsx:34
+   Key: "pricingPage.annual"
+
+📄 frontend/components/ui/PricingToggle.tsx:39
+   Key: "pricingPage.saveUpTo10"
 
 📄 frontend/contexts/AppContext.tsx:98
    Key: "-"
@@ -55,299 +121,8 @@
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
 
-📄 frontend/pages/MessagesPage.tsx:86
-   Key: "messagesPage.noConversationSelectedSubtitle"
-
-📄 frontend/pages/MessagesPage.tsx:88
-   Key: "messagesPage.noConversationsYet"
-
-📄 frontend/pages/NotificationsPage.tsx:39
-   Key: "notificationsPage.clearAll"
-
-📄 frontend/pages/NotificationsPage.tsx:48
-   Key: "notificationsPage.emptyState.title"
-
-📄 frontend/pages/NotificationsPage.tsx:49
-   Key: "notificationsPage.emptyState.message"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:23
-   Key: "parentEnquiriesPage.accessDenied.title"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:24
-   Key: "parentEnquiriesPage.accessDenied.message"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:74
-   Key: "parentEnquiriesPage.emptyState.title"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:75
-   Key: "parentEnquiriesPage.emptyState.message.0"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:75
-   Key: "parentEnquiriesPage.emptyState.message.1"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:84
-   Key: "parentEnquiriesPage.card.title"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:86
-   Key: "parentEnquiriesPage.card.submitted"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:87
-   Key: "parentEnquiriesPage.card.childInfo"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:95
-   Key: "parentEnquiriesPage.card.notes"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:99
-   Key: "parentEnquiriesPage.card.responsesTitle"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:101
-   Key: "parentEnquiriesPage.card.awaitingMatch"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:113
-   Key: "parentEnquiriesPage.card.message"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:123
-   Key: "parentEnquiriesPage.card.waitingForMoreResponses"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:48
-   Key: "parentLeadFormPage.errorAllFields"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:75
-   Key: "parentLeadFormPage.thankYouTitle"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:79
-   Key: "parentLeadFormPage.unauthenticatedSuccessMessage"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:86
-   Key: "parentLeadFormPage.authenticatedSuccessMessage"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:101
-   Key: "parentLeadFormPage.subtitle"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:106
-   Key: "parentLeadFormPage.labels.yourFullName"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:111
-   Key: "parentLeadFormPage.labels.yourEmail"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:115
-   Key: "parentLeadFormPage.labels.yourPhone"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:121
-   Key: "parentLeadFormPage.sectionTitleChildNeeds"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:125
-   Key: "parentLeadFormPage.labels.canton"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:132
-   Key: "parentLeadFormPage.labels.municipality"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:139
-   Key: "parentLeadFormPage.labels.childAge"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:143
-   Key: "parentLeadFormPage.labels.desiredStartDate"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:149
-   Key: "parentLeadFormPage.labels.specialNeeds"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:151
-   Key: "parentLeadFormPage.helpText.specialNeeds"
-
-📄 frontend/pages/PartnersPage.tsx:14
-   Key: "partnersPage.partnerCard.logoAlt"
-
-📄 frontend/pages/PartnersPage.tsx:16
-   Key: "partnersPage.partnerCard.partnerType"
-
-📄 frontend/pages/PartnersPage.tsx:20
-   Key: "partnersPage.partnerCard.learnMoreButton"
-
-📄 frontend/pages/PartnersPage.tsx:38
-   Key: "partnersPage.hero.title"
-
-📄 frontend/pages/PartnersPage.tsx:40
-   Key: "partnersPage.hero.subtitle"
-
-📄 frontend/pages/PartnersPage.tsx:43
-   Key: "partnersPage.hero.ctaButton"
-
-📄 frontend/pages/PartnersPage.tsx:50
-   Key: "partnersPage.featured.title"
-
-📄 frontend/pages/PartnersPage.tsx:51
-   Key: "partnersPage.featured.subtitle"
-
-📄 frontend/pages/PartnersPage.tsx:62
-   Key: "partnersPage.joinUs.title"
-
-📄 frontend/pages/PartnersPage.tsx:64
-   Key: "partnersPage.joinUs.subtitle"
-
-📄 frontend/pages/PartnersPage.tsx:67
-   Key: "partnersPage.joinUs.contactUsAlert"
-
-📄 frontend/pages/PartnersPage.tsx:68
-   Key: "partnersPage.joinUs.contactUsButton"
-
-📄 frontend/pages/PartnersPage.tsx:70
-   Key: "partnersPage.joinUs.inquiryFormLink"
-
-📄 frontend/pages/PricingPage.tsx:45
-   Key: "pricingPage.popular"
-
-📄 frontend/pages/PricingPage.tsx:58
-   Key: "pricingPage.whatYouGet"
-
-📄 frontend/pages/PricingPage.tsx:70
-   Key: "pricingPage.selectAndContinue"
-
-📄 frontend/pages/PricingPage.tsx:70
-   Key: "pricingPage.choosePlan"
-
-📄 frontend/pages/PricingPage.tsx:94
-   Key: "pricingPage.titleSignup"
-
-📄 frontend/pages/PricingPage.tsx:95
-   Key: "pricingPage.subtitleSignup"
-
-📄 frontend/pages/PricingPage.tsx:95
-   Key: "pricingPage.subtitle"
-
-📄 frontend/pages/PricingPage.tsx:117
-   Key: "pricingPage.suppliersAndProvidersTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:44
-   Key: "recruitmentPage.buttons.viewApplicants"
-
-📄 frontend/pages/RecruitmentPage.tsx:46
-   Key: "Close Job TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:71
-   Key: "Favorite TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:86
-   Key: "recruitmentPage.confirmRemoveCandidate"
-
-📄 frontend/pages/RecruitmentPage.tsx:158
-   Key: "Adding a new candidate - Functionality TBD."
-
-📄 frontend/pages/RecruitmentPage.tsx:192
-   Key: "recruitmentPage.jobOffers.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:196
-   Key: "recruitmentPage.jobOffers.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:203
-   Key: "Filter UI TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:203
-   Key: "recruitmentPage.buttons.filters"
-
-📄 frontend/pages/RecruitmentPage.tsx:205
-   Key: "recruitmentPage.buttons.postNewJob"
-
-📄 frontend/pages/RecruitmentPage.tsx:211
-   Key: "recruitmentPage.jobOffers.filterTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:213
-   Key: "recruitmentPage.labels.location"
-
-📄 frontend/pages/RecruitmentPage.tsx:213
-   Key: "recruitmentPage.labels.location"
-
-📄 frontend/pages/RecruitmentPage.tsx:214
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:214
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:215
-   Key: "recruitmentPage.labels.allStatuses"
-
-📄 frontend/pages/RecruitmentPage.tsx:215
-   Key: "recruitmentPage.labels.allStatuses"
-
-📄 frontend/pages/RecruitmentPage.tsx:217
-   Key: "Apply Job Filters TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:217
-   Key: "recruitmentPage.buttons.applyFilters"
-
-📄 frontend/pages/RecruitmentPage.tsx:220
-   Key: "recruitmentPage.jobOffers.activeJobsCount"
-
-📄 frontend/pages/RecruitmentPage.tsx:224
-   Key: "recruitmentPage.jobOffers.emptyState"
-
-📄 frontend/pages/RecruitmentPage.tsx:233
-   Key: "recruitmentPage.candidatePool.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:237
-   Key: "recruitmentPage.candidatePool.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:244
-   Key: "Filter UI TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:244
-   Key: "recruitmentPage.buttons.filters"
-
-📄 frontend/pages/RecruitmentPage.tsx:246
-   Key: "recruitmentPage.buttons.addCandidate"
-
-📄 frontend/pages/RecruitmentPage.tsx:252
-   Key: "recruitmentPage.candidatePool.filterTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:254
-   Key: "recruitmentPage.labels.allRoles"
-
-📄 frontend/pages/RecruitmentPage.tsx:254
-   Key: "recruitmentPage.labels.allRoles"
-
-📄 frontend/pages/RecruitmentPage.tsx:255
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/RecruitmentPage.tsx:255
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/RecruitmentPage.tsx:256
-   Key: "recruitmentPage.labels.availabilityDate"
-
-📄 frontend/pages/RecruitmentPage.tsx:256
-   Key: "recruitmentPage.labels.availabilityDate"
-
-📄 frontend/pages/RecruitmentPage.tsx:257
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:257
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:259
-   Key: "Apply Candidate Filters TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:259
-   Key: "recruitmentPage.buttons.applyFilters"
-
-📄 frontend/pages/RecruitmentPage.tsx:265
-   Key: "recruitmentPage.candidatePool.emptyState"
-
-📄 frontend/pages/RecruitmentPage.tsx:270
-   Key: "recruitmentPage.tabs.jobOffers"
-
-📄 frontend/pages/RecruitmentPage.tsx:271
-   Key: "recruitmentPage.tabs.candidatePool"
-
-📄 frontend/pages/RecruitmentPage.tsx:276
-   Key: "recruitmentPage.title"
-
-📄 frontend/pages/SignupPage.tsx:90
-   Key: "signupPage.errors.organisationNameRequired"
-
-📄 frontend/pages/SignupPage.tsx:92
-   Key: "signupPage.errors.emailRequired"
-
-📄 frontend/pages/SignupPage.tsx:93
-   Key: "signupPage.errors.emailInvalid"
+📄 frontend/pages/RecruitmentPage.tsx:81
+   Key: "recruitmentPage.candidateCard.viewProfile"
 
 📄 frontend/pages/SignupPage.tsx:94
    Key: "signupPage.errors.passwordRequired"
@@ -745,12 +520,6 @@
 📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
    Key: "educatorJobBoardPage.searchPlaceholder"
 
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:120
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:126
-   Key: "recruitmentPage.labels.allContractTypes"
-
 📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
    Key: "educatorJobBoardPage.noJobsFound"
 
@@ -1102,45 +871,6 @@
 📄 frontend/pages/parent/ParentDashboardPage.tsx:92
    Key: "parentDashboard.favorites.button"
 
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:17
-   Key: "parentEnquiriesPage.accessDenied.title"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:18
-   Key: "parentEnquiriesPage.accessDenied.message"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:58
-   Key: "parentEnquiriesPage.emptyState.title"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:59
-   Key: "parentEnquiriesPage.emptyState.message.0"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:59
-   Key: "parentEnquiriesPage.emptyState.message.1"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:68
-   Key: "parentEnquiriesPage.card.title"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:70
-   Key: "parentEnquiriesPage.card.submitted"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:71
-   Key: "parentEnquiriesPage.card.childInfo"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:79
-   Key: "parentEnquiriesPage.card.notes"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:83
-   Key: "parentEnquiriesPage.card.responsesTitle"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:85
-   Key: "parentEnquiriesPage.card.awaitingMatch"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:95
-   Key: "parentEnquiriesPage.card.message"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:100
-   Key: "parentEnquiriesPage.card.waitingForMoreResponses"
-
 📄 frontend/pages/parent/ParentSupportPage.tsx:19
    Key: "supportPage.faqTitle"
 
@@ -1236,45 +966,6 @@
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:301
    Key: "partnerDetailPage.applyPromoButton"
-
-📄 frontend/pages/partnersPage.tsx:14
-   Key: "partnersPage.partnerCard.logoAlt"
-
-📄 frontend/pages/partnersPage.tsx:16
-   Key: "partnersPage.partnerCard.partnerType"
-
-📄 frontend/pages/partnersPage.tsx:20
-   Key: "partnersPage.partnerCard.learnMoreButton"
-
-📄 frontend/pages/partnersPage.tsx:38
-   Key: "partnersPage.hero.title"
-
-📄 frontend/pages/partnersPage.tsx:40
-   Key: "partnersPage.hero.subtitle"
-
-📄 frontend/pages/partnersPage.tsx:43
-   Key: "partnersPage.hero.ctaButton"
-
-📄 frontend/pages/partnersPage.tsx:50
-   Key: "partnersPage.featured.title"
-
-📄 frontend/pages/partnersPage.tsx:51
-   Key: "partnersPage.featured.subtitle"
-
-📄 frontend/pages/partnersPage.tsx:62
-   Key: "partnersPage.joinUs.title"
-
-📄 frontend/pages/partnersPage.tsx:64
-   Key: "partnersPage.joinUs.subtitle"
-
-📄 frontend/pages/partnersPage.tsx:67
-   Key: "partnersPage.joinUs.contactUsAlert"
-
-📄 frontend/pages/partnersPage.tsx:68
-   Key: "partnersPage.joinUs.contactUsButton"
-
-📄 frontend/pages/partnersPage.tsx:70
-   Key: "partnersPage.joinUs.inquiryFormLink"
 
 📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:20
    Key: "supplierAnalyticsPage.mockChartText"
@@ -1647,13 +1338,6 @@
 📄 frontend/components/debug/TranslationErrorLogger.tsx:
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
-   Line 853: "Translation Error Logger" (JSX_TEXT)
-   Line 865: "📊 Error Summary:" (JSX_TEXT)
-   Line 878: "🔍 Recent Errors:" (JSX_TEXT)
-   Line 916: "Log to Git" (JSX_TEXT)
-   Line 931: "Log to Console" (JSX_TEXT)
-   Line 944: "Copy Missing" (JSX_TEXT)
-   Line 962: "Commit to Git" (JSX_TEXT)
 
 📄 frontend/components/marketplace/ServiceRequestModal.tsx:
    Line 70: "Preferred Date (Optional)" (JSX_TEXT)
@@ -1841,7 +1525,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 538 translation keys are missing from translation files.
-⚠️  140 instances of hardcoded text found.
+❌ 435 translation keys are missing from translation files.
+⚠️  133 instances of hardcoded text found.
 
-📊 Coverage: 1022/1004 keys are being used (102%)
+📊 Coverage: 1029/1074 keys are being used (96%)

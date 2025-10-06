@@ -5,6 +5,7 @@ import Button from '../ui/Button';
 import Card from '../ui/Card'; 
 import { XMarkIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { STANDARD_INPUT_FIELD } from '../../constants';
+import { useTranslation } from 'react-i18next';
 
 interface ServiceRequestModalProps {
   service: Service | null;
@@ -14,6 +15,7 @@ interface ServiceRequestModalProps {
 }
 
 const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOpen, onClose, onSubmitRequest }) => {
+  const { t } = useTranslation();
   const [preferredDate, setPreferredDate] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -67,7 +69,7 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
               />
             </div>
             <div>
-              <label htmlFor="preferredDateModal" className="block text-sm font-medium text-gray-700 mb-1">Preferred Date (Optional)</label>
+              <label htmlFor="preferredDateModal" className="block text-sm font-medium text-gray-700 mb-1">{t("serviceRequestModal.preferredDateLabel")}</label>
               <div className="relative">
                 <input
                     type="date"
@@ -80,7 +82,7 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
               </div>
             </div>
             <div>
-              <label htmlFor="notesModal" className="block text-sm font-medium text-gray-700 mb-1">Notes / Specific Requirements (Optional)</label>
+              <label htmlFor="notesModal" className="block text-sm font-medium text-gray-700 mb-1">{t("serviceRequestModal.notesLabel")}</label>
               <textarea
                 id="notesModal"
                 value={notes}
@@ -93,7 +95,7 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
             <Button type="button" variant="light" onClick={onClose}>Cancel</Button>
-            <Button type="submit" variant="secondary">Submit Request</Button>
+            <Button type="submit" variant="secondary">{t("serviceRequestModal.submitButton")}</Button>
           </div>
         </form>
       </Card>

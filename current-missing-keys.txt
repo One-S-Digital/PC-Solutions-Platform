@@ -2,26 +2,83 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1043 translation keys
+✅ Found 1090 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1309 t() calls
+📊 Found 1316 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 140 potential hardcoded text instances
+📊 Found 133 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1043
-🔧 t() Calls Found: 1309
-❌ Missing Keys: 480
-⚠️  Hardcoded Text: 140
-✅ Used Keys: 1022
-📦 Unused Keys: 21
+📚 Translation Keys: 1090
+🔧 t() Calls Found: 1316
+❌ Missing Keys: 419
+⚠️  Hardcoded Text: 133
+✅ Used Keys: 1029
+📦 Unused Keys: 61
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
+📄 frontend/components/recruitment/JobDetailModal.tsx:99
+   Key: "recruitmentPage.jobDetailModal.overviewTitle"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:104
+   Key: "recruitmentPage.jobDetailModal.location"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:111
+   Key: "recruitmentPage.jobDetailModal.contractType"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:118
+   Key: "recruitmentPage.jobDetailModal.startDate"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:126
+   Key: "recruitmentPage.jobDetailModal.salary"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:140
+   Key: "recruitmentPage.jobDetailModal.applyNow"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:119
+   Key: "recruitmentPage.jobPostModal.editTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:119
+   Key: "recruitmentPage.jobPostModal.addTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:130
+   Key: "recruitmentPage.jobPostModal.jobTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:134
+   Key: "recruitmentPage.jobPostModal.location"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:138
+   Key: "recruitmentPage.jobPostModal.contractType"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:144
+   Key: "recruitmentPage.jobPostModal.startDate"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:149
+   Key: "recruitmentPage.jobPostModal.salaryRange"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:150
+   Key: "recruitmentPage.jobPostModal.salaryRangePlaceholder"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:153
+   Key: "recruitmentPage.jobPostModal.description"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:165
+   Key: "recruitmentPage.jobPostModal.postJob"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:52
+   Key: "recruitmentPage.viewApplicantsModal.noApplicants"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:61
+   Key: "recruitmentPage.viewApplicantsModal.appliedOn"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:69
+   Key: "recruitmentPage.candidateCard.viewProfile"
+
 📄 frontend/components/service-provider/ServiceUploadModal.tsx:55
    Key: ","
 
@@ -33,6 +90,15 @@
 
 📄 frontend/components/ui/FileUploadZone.tsx:122
    Key: ","
+
+📄 frontend/components/ui/PricingToggle.tsx:24
+   Key: "pricingPage.monthly"
+
+📄 frontend/components/ui/PricingToggle.tsx:34
+   Key: "pricingPage.annual"
+
+📄 frontend/components/ui/PricingToggle.tsx:39
+   Key: "pricingPage.saveUpTo10"
 
 📄 frontend/contexts/AppContext.tsx:98
    Key: "-"
@@ -55,230 +121,8 @@
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
 
-📄 frontend/pages/PartnersPage.tsx:50
-   Key: "partnersPage.featured.title"
-
-📄 frontend/pages/PartnersPage.tsx:51
-   Key: "partnersPage.featured.subtitle"
-
-📄 frontend/pages/PartnersPage.tsx:62
-   Key: "partnersPage.joinUs.title"
-
-📄 frontend/pages/PartnersPage.tsx:64
-   Key: "partnersPage.joinUs.subtitle"
-
-📄 frontend/pages/PartnersPage.tsx:67
-   Key: "partnersPage.joinUs.contactUsAlert"
-
-📄 frontend/pages/PartnersPage.tsx:68
-   Key: "partnersPage.joinUs.contactUsButton"
-
-📄 frontend/pages/PartnersPage.tsx:70
-   Key: "partnersPage.joinUs.inquiryFormLink"
-
-📄 frontend/pages/PricingPage.tsx:45
-   Key: "pricingPage.popular"
-
-📄 frontend/pages/PricingPage.tsx:58
-   Key: "pricingPage.whatYouGet"
-
-📄 frontend/pages/PricingPage.tsx:70
-   Key: "pricingPage.selectAndContinue"
-
-📄 frontend/pages/PricingPage.tsx:70
-   Key: "pricingPage.choosePlan"
-
-📄 frontend/pages/PricingPage.tsx:94
-   Key: "pricingPage.titleSignup"
-
-📄 frontend/pages/PricingPage.tsx:95
-   Key: "pricingPage.subtitleSignup"
-
-📄 frontend/pages/PricingPage.tsx:95
-   Key: "pricingPage.subtitle"
-
-📄 frontend/pages/PricingPage.tsx:117
-   Key: "pricingPage.suppliersAndProvidersTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:44
-   Key: "recruitmentPage.buttons.viewApplicants"
-
-📄 frontend/pages/RecruitmentPage.tsx:46
-   Key: "Close Job TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:71
-   Key: "Favorite TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:86
-   Key: "recruitmentPage.confirmRemoveCandidate"
-
-📄 frontend/pages/RecruitmentPage.tsx:158
-   Key: "Adding a new candidate - Functionality TBD."
-
-📄 frontend/pages/RecruitmentPage.tsx:192
-   Key: "recruitmentPage.jobOffers.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:196
-   Key: "recruitmentPage.jobOffers.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:203
-   Key: "Filter UI TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:203
-   Key: "recruitmentPage.buttons.filters"
-
-📄 frontend/pages/RecruitmentPage.tsx:205
-   Key: "recruitmentPage.buttons.postNewJob"
-
-📄 frontend/pages/RecruitmentPage.tsx:211
-   Key: "recruitmentPage.jobOffers.filterTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:213
-   Key: "recruitmentPage.labels.location"
-
-📄 frontend/pages/RecruitmentPage.tsx:213
-   Key: "recruitmentPage.labels.location"
-
-📄 frontend/pages/RecruitmentPage.tsx:214
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:214
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:215
-   Key: "recruitmentPage.labels.allStatuses"
-
-📄 frontend/pages/RecruitmentPage.tsx:215
-   Key: "recruitmentPage.labels.allStatuses"
-
-📄 frontend/pages/RecruitmentPage.tsx:217
-   Key: "Apply Job Filters TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:217
-   Key: "recruitmentPage.buttons.applyFilters"
-
-📄 frontend/pages/RecruitmentPage.tsx:220
-   Key: "recruitmentPage.jobOffers.activeJobsCount"
-
-📄 frontend/pages/RecruitmentPage.tsx:224
-   Key: "recruitmentPage.jobOffers.emptyState"
-
-📄 frontend/pages/RecruitmentPage.tsx:233
-   Key: "recruitmentPage.candidatePool.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:237
-   Key: "recruitmentPage.candidatePool.searchPlaceholder"
-
-📄 frontend/pages/RecruitmentPage.tsx:244
-   Key: "Filter UI TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:244
-   Key: "recruitmentPage.buttons.filters"
-
-📄 frontend/pages/RecruitmentPage.tsx:246
-   Key: "recruitmentPage.buttons.addCandidate"
-
-📄 frontend/pages/RecruitmentPage.tsx:252
-   Key: "recruitmentPage.candidatePool.filterTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:254
-   Key: "recruitmentPage.labels.allRoles"
-
-📄 frontend/pages/RecruitmentPage.tsx:254
-   Key: "recruitmentPage.labels.allRoles"
-
-📄 frontend/pages/RecruitmentPage.tsx:255
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/RecruitmentPage.tsx:255
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/RecruitmentPage.tsx:256
-   Key: "recruitmentPage.labels.availabilityDate"
-
-📄 frontend/pages/RecruitmentPage.tsx:256
-   Key: "recruitmentPage.labels.availabilityDate"
-
-📄 frontend/pages/RecruitmentPage.tsx:257
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:257
-   Key: "recruitmentPage.labels.allContractTypes"
-
-📄 frontend/pages/RecruitmentPage.tsx:259
-   Key: "Apply Candidate Filters TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:259
-   Key: "recruitmentPage.buttons.applyFilters"
-
-📄 frontend/pages/RecruitmentPage.tsx:265
-   Key: "recruitmentPage.candidatePool.emptyState"
-
-📄 frontend/pages/RecruitmentPage.tsx:270
-   Key: "recruitmentPage.tabs.jobOffers"
-
-📄 frontend/pages/RecruitmentPage.tsx:271
-   Key: "recruitmentPage.tabs.candidatePool"
-
-📄 frontend/pages/RecruitmentPage.tsx:276
-   Key: "recruitmentPage.title"
-
-📄 frontend/pages/SignupPage.tsx:90
-   Key: "signupPage.errors.organisationNameRequired"
-
-📄 frontend/pages/SignupPage.tsx:92
-   Key: "signupPage.errors.emailRequired"
-
-📄 frontend/pages/SignupPage.tsx:93
-   Key: "signupPage.errors.emailInvalid"
-
-📄 frontend/pages/SignupPage.tsx:94
-   Key: "signupPage.errors.passwordRequired"
-
-📄 frontend/pages/SignupPage.tsx:98
-   Key: "signupPage.errors.phoneRequired"
-
-📄 frontend/pages/SignupPage.tsx:99
-   Key: "signupPage.errors.cantonRequired"
-
-📄 frontend/pages/SignupPage.tsx:101
-   Key: "signupPage.errors.capacityRequired"
-
-📄 frontend/pages/SignupPage.tsx:102
-   Key: "signupPage.errors.categoryRequired"
-
-📄 frontend/pages/SignupPage.tsx:103
-   Key: "signupPage.errors.serviceTypeRequired"
-
-📄 frontend/pages/SignupPage.tsx:106
-   Key: "signupPage.errors.childAgeRequired"
-
-📄 frontend/pages/SignupPage.tsx:107
-   Key: "signupPage.errors.childStartDateRequired"
-
-📄 frontend/pages/SignupPage.tsx:110
-   Key: "signupPage.errors.termsRequired"
-
-📄 frontend/pages/SignupPage.tsx:163
-   Key: "signupPage.progressStep1"
-
-📄 frontend/pages/SignupPage.tsx:163
-   Key: "signupPage.progressStep2"
-
-📄 frontend/pages/SignupPage.tsx:164
-   Key: "signupPage.selectRoleTitle"
-
-📄 frontend/pages/SignupPage.tsx:164
-   Key: "signupPage.detailsTitle"
-
-📄 frontend/pages/SignupPage.tsx:172
-   Key: "signupPage.submissionSuccessTitle"
-
-📄 frontend/pages/SignupPage.tsx:173
-   Key: "signupPage.submissionSuccessMessage"
-
-📄 frontend/pages/SignupPage.tsx:175
-   Key: "signupPage.goToDashboardButton"
+📄 frontend/pages/RecruitmentPage.tsx:81
+   Key: "recruitmentPage.candidateCard.viewProfile"
 
 📄 frontend/pages/SignupPage.tsx:226
    Key: "signupPage.termsLabel"
@@ -627,12 +471,6 @@
 
 📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
    Key: "educatorJobBoardPage.searchPlaceholder"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:120
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:126
-   Key: "recruitmentPage.labels.allContractTypes"
 
 📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
    Key: "educatorJobBoardPage.noJobsFound"
@@ -1081,27 +919,6 @@
 📄 frontend/pages/partner/PartnerDetailPage.tsx:301
    Key: "partnerDetailPage.applyPromoButton"
 
-📄 frontend/pages/partnersPage.tsx:50
-   Key: "partnersPage.featured.title"
-
-📄 frontend/pages/partnersPage.tsx:51
-   Key: "partnersPage.featured.subtitle"
-
-📄 frontend/pages/partnersPage.tsx:62
-   Key: "partnersPage.joinUs.title"
-
-📄 frontend/pages/partnersPage.tsx:64
-   Key: "partnersPage.joinUs.subtitle"
-
-📄 frontend/pages/partnersPage.tsx:67
-   Key: "partnersPage.joinUs.contactUsAlert"
-
-📄 frontend/pages/partnersPage.tsx:68
-   Key: "partnersPage.joinUs.contactUsButton"
-
-📄 frontend/pages/partnersPage.tsx:70
-   Key: "partnersPage.joinUs.inquiryFormLink"
-
 📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:20
    Key: "supplierAnalyticsPage.mockChartText"
 
@@ -1473,13 +1290,6 @@
 📄 frontend/components/debug/TranslationErrorLogger.tsx:
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
-   Line 853: "Translation Error Logger" (JSX_TEXT)
-   Line 865: "📊 Error Summary:" (JSX_TEXT)
-   Line 878: "🔍 Recent Errors:" (JSX_TEXT)
-   Line 916: "Log to Git" (JSX_TEXT)
-   Line 931: "Log to Console" (JSX_TEXT)
-   Line 944: "Copy Missing" (JSX_TEXT)
-   Line 962: "Commit to Git" (JSX_TEXT)
 
 📄 frontend/components/marketplace/ServiceRequestModal.tsx:
    Line 70: "Preferred Date (Optional)" (JSX_TEXT)
@@ -1667,7 +1477,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 480 translation keys are missing from translation files.
-⚠️  140 instances of hardcoded text found.
+❌ 419 translation keys are missing from translation files.
+⚠️  133 instances of hardcoded text found.
 
-📊 Coverage: 1022/1043 keys are being used (98%)
+📊 Coverage: 1029/1090 keys are being used (94%)
