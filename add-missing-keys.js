@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+const enTranslationsPath = path.resolve(__dirname, 'frontend/public/locales/en/translation.json');
+
 // Read the current English translation file
-const enTranslations = JSON.parse(fs.readFileSync('/workspace/frontend/public/locales/en/translation.json', 'utf8'));
+const enTranslations = JSON.parse(fs.readFileSync(enTranslationsPath, 'utf8'));
 
 // Function to set a nested key in an object
 function setNestedKey(obj, keyPath, value) {
@@ -249,6 +251,6 @@ Object.keys(criticalMissingKeys).forEach(namespace => {
 });
 
 // Write the updated English translation file
-fs.writeFileSync('/workspace/frontend/public/locales/en/translation.json', JSON.stringify(enTranslations, null, 2));
+fs.writeFileSync(enTranslationsPath, JSON.stringify(enTranslations, null, 2));
 
 console.log('✅ Added critical missing translation keys to English locale file');

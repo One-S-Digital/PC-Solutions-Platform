@@ -1,7 +1,10 @@
 const fs = require('fs');
+const path = require('path');
+
+const deTranslationsPath = path.resolve(__dirname, 'frontend/public/locales/de/translation.json');
 
 // Read the current German translation file
-const deTranslations = JSON.parse(fs.readFileSync('/workspace/frontend/public/locales/de/translation.json', 'utf8'));
+const deTranslations = JSON.parse(fs.readFileSync(deTranslationsPath, 'utf8'));
 
 // Add the critical missing keys in German
 const criticalMissingKeys = {
@@ -232,6 +235,6 @@ Object.keys(criticalMissingKeys).forEach(namespace => {
 });
 
 // Write the updated German translation file
-fs.writeFileSync('/workspace/frontend/public/locales/de/translation.json', JSON.stringify(deTranslations, null, 2));
+fs.writeFileSync(deTranslationsPath, JSON.stringify(deTranslations, null, 2));
 
 console.log('✅ Added critical missing translation keys to German locale file');
