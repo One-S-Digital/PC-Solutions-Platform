@@ -12,7 +12,7 @@ const initI18n = () => {
     .init({
       supportedLngs: ['en', 'fr', 'de'],
       fallbackLng: 'en',
-      debug: true, // Enable debug for translation troubleshooting
+      debug: false, // Disable debug to reduce console noise
       ns: ['translation'], 
       defaultNS: 'translation',
       backend: {
@@ -95,5 +95,4 @@ i18n.on('missingKey', (lng, ns, key) => {
 // Initialize i18n immediately
 initI18n();
 
-// Export the configured instance
 export default i18n;

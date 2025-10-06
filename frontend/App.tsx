@@ -17,6 +17,7 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
 import TestI18n from './test-i18n'; // Test component for i18n
+import DebugI18n from './debug-i18n'; // Debug component for i18n
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -315,6 +316,7 @@ const App: React.FC = () => {
       <CartProvider>
         <MessagingProvider>
           <NotificationProvider>
+            <DebugI18n />
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
