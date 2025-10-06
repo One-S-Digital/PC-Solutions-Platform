@@ -1321,11 +1321,6 @@
     "allItemsCount": "{{count}} items",
     "noDocumentsInCategory": "No documents in this category"
   },
-  "loginPage": {
-    "errorBothFields": "Please fill in both email and password",
-    "forgotPasswordTBD": "Forgot password functionality coming soon",
-    "loggingIn": "Logging in..."
-  },
   "partnerDetailPage": {
     "onlyFoundationsRequestService": "Only foundations can request this service",
     "requestSubmittedAlert": "Service request submitted successfully"

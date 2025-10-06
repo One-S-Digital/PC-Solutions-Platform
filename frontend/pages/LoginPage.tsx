@@ -17,7 +17,7 @@ const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const LoginPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { login, currentUser } = useAppContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -25,8 +25,23 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isI18nReady, setIsI18nReady] = useState(false);
 
   
+  // Check if i18n is ready
+  useEffect(() => {
+    const checkI18nReady = () => {
+      if (i18n.isInitialized && i18n.hasResourceBundle(i18n.language, 'translation')) {
+        setIsI18nReady(true);
+        console.log('🌍 i18n is ready for LoginPage');
+      } else {
+        console.log('🌍 i18n not ready yet, waiting...');
+        setTimeout(checkI18nReady, 100);
+      }
+    };
+    checkI18nReady();
+  }, [i18n]);
+
   // Redirect if user is already logged in
   useEffect(() => {
     if (currentUser) {
@@ -59,6 +74,20 @@ const LoginPage: React.FC = () => {
   const handleSocialLogin = (provider: string) => {
     alert(t('loginPage.socialLoginTBD', { provider }));
   };
+
+  // Show loading state while i18n is initializing
+  if (!isI18nReady) {
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+        <Card className="w-full max-w-md p-8 shadow-xl">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading translations...</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">

@@ -95,4 +95,5 @@ i18n.on('missingKey', (lng, ns, key) => {
 // Initialize i18n immediately
 initI18n();
 
-export default i18n; // Export the configured instance
+// Export the configured instance
+export default i18n;
