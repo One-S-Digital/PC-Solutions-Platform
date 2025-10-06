@@ -36,7 +36,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
           </>
         );
       case OrderRequestStatus.ACCEPTED:
-        return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>Mark as Processing</Button>;
+        return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t("orderRequestDetailModal.markAsProcessing")}</Button>;
       case OrderRequestStatus.PROCESSING:
         return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('supplierOrdersPage.actions.ship')}</Button>;
       default:

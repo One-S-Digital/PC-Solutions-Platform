@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1126 translation keys
+✅ Found 1163 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1320 t() calls
+📊 Found 1325 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 129 potential hardcoded text instances
+📊 Found 124 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1126
-🔧 t() Calls Found: 1320
-❌ Missing Keys: 387
-⚠️  Hardcoded Text: 129
-✅ Used Keys: 1033
-📦 Unused Keys: 93
+📚 Translation Keys: 1163
+🔧 t() Calls Found: 1325
+❌ Missing Keys: 355
+⚠️  Hardcoded Text: 124
+✅ Used Keys: 1038
+📦 Unused Keys: 125
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -123,102 +123,6 @@
 
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
-
-📄 frontend/pages/UsersPage.tsx:238
-   Key: "usersPage.table.nameOrg"
-
-📄 frontend/pages/UsersPage.tsx:239
-   Key: "usersPage.table.role"
-
-📄 frontend/pages/UsersPage.tsx:240
-   Key: "usersPage.table.status"
-
-📄 frontend/pages/UsersPage.tsx:241
-   Key: "usersPage.table.region"
-
-📄 frontend/pages/UsersPage.tsx:242
-   Key: "usersPage.table.lastLogin"
-
-📄 frontend/pages/UsersPage.tsx:243
-   Key: "usersPage.table.actions"
-
-📄 frontend/pages/UsersPage.tsx:259
-   Key: "usersPage.emptyState"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
-   Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:73
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.all"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:74
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.errors"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:75
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.warnings"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:95
-   Key: "adminSystemMonitoringPage.overallStatus.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:102
-   Key: "adminSystemMonitoringPage.components.api"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:103
-   Key: "adminSystemMonitoringPage.components.database"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:104
-   Key: "adminSystemMonitoringPage.components.authService"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:111
-   Key: "adminSystemMonitoringPage.metadata.environment"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:112
-   Key: "adminSystemMonitoringPage.metadata.version"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:113
-   Key: "adminSystemMonitoringPage.metadata.uptime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:114
-   Key: "adminSystemMonitoringPage.metadata.lastCheck"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:121
-   Key: "adminSystemMonitoringPage.serverPerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:124
-   Key: "adminSystemMonitoringPage.serverPerformance.cpuUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:128
-   Key: "adminSystemMonitoringPage.serverPerformance.memoryUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:132
-   Key: "adminSystemMonitoringPage.serverPerformance.diskUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:136
-   Key: "adminSystemMonitoringPage.serverPerformance.uptimeDays"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:144
-   Key: "adminSystemMonitoringPage.databasePerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:147
-   Key: "adminSystemMonitoringPage.databasePerformance.activeConnections"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:150
-   Key: "adminSystemMonitoringPage.databasePerformance.queryTime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:152
-   Key: "adminSystemMonitoringPage.databasePerformance.storage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:156
-   Key: "adminSystemMonitoringPage.databasePerformance.connectionHealth"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:166
-   Key: "adminSystemMonitoringPage.appPerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:168
-   Key: "adminSystemMonitoringPage.appPerformance.activeUsers"
 
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:169
    Key: "adminSystemMonitoringPage.appPerformance.requestsPerMinute"
@@ -1198,13 +1102,6 @@
 📄 frontend/components/settings/AddPromoCodeModal.tsx:
    Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
 
-📄 frontend/components/shared/ErrorBoundary.tsx:
-   Line 43: "Something went wrong" (JSX_TEXT)
-   Line 46: "We're sorry, but something unexpected happened. Please try again." (JSX_TEXT)
-   Line 51: "Error Details" (JSX_TEXT)
-   Line 65: "Try Again" (JSX_TEXT)
-   Line 72: "Reload Page" (JSX_TEXT)
-
 📄 frontend/components/supplier/OrderRequestDetailModal.tsx:
    Line 39: "Mark as Processing" (JSX_TEXT)
 
@@ -1373,7 +1270,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 387 translation keys are missing from translation files.
-⚠️  129 instances of hardcoded text found.
+❌ 355 translation keys are missing from translation files.
+⚠️  124 instances of hardcoded text found.
 
-📊 Coverage: 1033/1126 keys are being used (92%)
+📊 Coverage: 1038/1163 keys are being used (89%)

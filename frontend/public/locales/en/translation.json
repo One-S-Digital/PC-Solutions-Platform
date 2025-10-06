@@ -1487,6 +1487,58 @@
       "api": "API",
       "database": "Database",
       "authService": "Auth Service"
+    },
+    "metadata": {
+      "environment": "Environment",
+      "version": "Version",
+      "uptime": "Uptime",
+      "lastCheck": "Last Check"
+    },
+    "serverPerformance": {
+      "title": "Server Performance",
+      "cpuUsage": "CPU Usage",
+      "memoryUsage": "Memory Usage",
+      "diskUsage": "Disk Usage",
+      "uptimeDays": "Uptime (Days)"
+    },
+    "databasePerformance": {
+      "title": "Database Performance",
+      "activeConnections": "Active Connections",
+      "queryTime": "Query Time",
+      "storage": "Storage",
+      "connectionHealth": "Connection Health"
+    },
+    "appPerformance": {
+      "title": "Application Performance",
+      "activeUsers": "Active Users",
+      "requestsPerMinute": "Requests per Minute",
+      "avgResponseTime": "Average Response Time",
+      "errorRate": "Error Rate"
+    },
+    "recentEvents": {
+      "title": "Recent Events"
+    },
+    "rawLogConsole": {
+      "title": "Raw Log Console"
+    }
+  },
+  "discountTerminationsPage": {
+    "actions": {
+      "sendNoticesAlert": "Send notices to selected vendors",
+      "markCompleted": "Mark Completed",
+      "sendNotices": "Send Notices"
+    },
+    "table": {
+      "vendor": "Vendor",
+      "daycare": "Daycare",
+      "activeSince": "Active Since",
+      "reason": "Reason",
+      "actions": "Actions"
+    },
+    "queue": {
+      "title": "Termination Queue",
+      "description": "Manage discount terminations and send notices",
+      "tableTitle": "Pending Terminations"
     }
   },
   "errorBoundary": {
@@ -1495,5 +1547,14 @@
     "errorDetails": "Error Details",
     "tryAgain": "Try Again",
     "reloadPage": "Reload Page"
+  },
+  "addPromoCodeModal": {
+    "placeholder": "Add/Edit Promo Code Modal (Placeholder)"
+  },
+  "orderRequestDetailModal": {
+    "markAsProcessing": "Mark as Processing"
+  },
+  "fileUploadZone": {
+    "dragAndDrop": "or drag and drop"
   }
 }

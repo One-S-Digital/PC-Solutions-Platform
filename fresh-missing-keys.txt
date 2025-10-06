@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1110 translation keys
+✅ Found 1147 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1320 t() calls
+📊 Found 1325 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 129 potential hardcoded text instances
+📊 Found 124 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1110
-🔧 t() Calls Found: 1320
-❌ Missing Keys: 403
-⚠️  Hardcoded Text: 129
-✅ Used Keys: 1033
-📦 Unused Keys: 77
+📚 Translation Keys: 1147
+🔧 t() Calls Found: 1325
+❌ Missing Keys: 371
+⚠️  Hardcoded Text: 124
+✅ Used Keys: 1038
+📦 Unused Keys: 109
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -123,102 +123,6 @@
 
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
-
-📄 frontend/pages/UsersPage.tsx:130
-   Key: "usersPage.userDetailDrawer.orgLabel"
-
-📄 frontend/pages/UsersPage.tsx:135
-   Key: "usersPage.userDetailDrawer.adminActionsTitle"
-
-📄 frontend/pages/UsersPage.tsx:139
-   Key: "usersPage.userDetailDrawer.changeRoleLabel"
-
-📄 frontend/pages/UsersPage.tsx:148
-   Key: "usersPage.userDetailDrawer.updateRoleButton"
-
-📄 frontend/pages/UsersPage.tsx:151
-   Key: "usersPage.userDetailDrawer.suspendUserButton"
-
-📄 frontend/pages/UsersPage.tsx:153
-   Key: "usersPage.userDetailDrawer.activateUserButton"
-
-📄 frontend/pages/UsersPage.tsx:157
-   Key: "usersPage.userDetailDrawer.cannotModifyOwnAccount"
-
-📄 frontend/pages/UsersPage.tsx:177
-   Key: "usersPage.rolePageTitle"
-
-📄 frontend/pages/UsersPage.tsx:177
-   Key: "usersPage.allUsersTitle"
-
-📄 frontend/pages/UsersPage.tsx:197
-   Key: "usersPage.confirmDeleteUser"
-
-📄 frontend/pages/UsersPage.tsx:208
-   Key: "usersPage.userProfileUpdated"
-
-📄 frontend/pages/UsersPage.tsx:216
-   Key: "usersPage.addNewUserTBD"
-
-📄 frontend/pages/UsersPage.tsx:216
-   Key: "usersPage.addNewUserButton"
-
-📄 frontend/pages/UsersPage.tsx:225
-   Key: "usersPage.searchPlaceholder"
-
-📄 frontend/pages/UsersPage.tsx:231
-   Key: "usersPage.filtersTBD"
-
-📄 frontend/pages/UsersPage.tsx:231
-   Key: "usersPage.filtersButton"
-
-📄 frontend/pages/UsersPage.tsx:238
-   Key: "usersPage.table.nameOrg"
-
-📄 frontend/pages/UsersPage.tsx:239
-   Key: "usersPage.table.role"
-
-📄 frontend/pages/UsersPage.tsx:240
-   Key: "usersPage.table.status"
-
-📄 frontend/pages/UsersPage.tsx:241
-   Key: "usersPage.table.region"
-
-📄 frontend/pages/UsersPage.tsx:242
-   Key: "usersPage.table.lastLogin"
-
-📄 frontend/pages/UsersPage.tsx:243
-   Key: "usersPage.table.actions"
-
-📄 frontend/pages/UsersPage.tsx:259
-   Key: "usersPage.emptyState"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
-   Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:73
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.all"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:74
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.errors"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:75
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.warnings"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
-   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:95
-   Key: "adminSystemMonitoringPage.overallStatus.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:102
-   Key: "adminSystemMonitoringPage.components.api"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:103
-   Key: "adminSystemMonitoringPage.components.database"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:104
-   Key: "adminSystemMonitoringPage.components.authService"
 
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:111
    Key: "adminSystemMonitoringPage.metadata.environment"
@@ -1246,13 +1150,6 @@
 📄 frontend/components/settings/AddPromoCodeModal.tsx:
    Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
 
-📄 frontend/components/shared/ErrorBoundary.tsx:
-   Line 43: "Something went wrong" (JSX_TEXT)
-   Line 46: "We're sorry, but something unexpected happened. Please try again." (JSX_TEXT)
-   Line 51: "Error Details" (JSX_TEXT)
-   Line 65: "Try Again" (JSX_TEXT)
-   Line 72: "Reload Page" (JSX_TEXT)
-
 📄 frontend/components/supplier/OrderRequestDetailModal.tsx:
    Line 39: "Mark as Processing" (JSX_TEXT)
 
@@ -1421,7 +1318,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 403 translation keys are missing from translation files.
-⚠️  129 instances of hardcoded text found.
+❌ 371 translation keys are missing from translation files.
+⚠️  124 instances of hardcoded text found.
 
-📊 Coverage: 1033/1110 keys are being used (93%)
+📊 Coverage: 1038/1147 keys are being used (90%)

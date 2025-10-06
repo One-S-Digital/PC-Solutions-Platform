@@ -1,6 +1,7 @@
 
 import React, { useState, DragEvent, ChangeEvent, useRef } from 'react';
 import { ArrowUpTrayIcon, PaperClipIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 interface FileUploadZoneProps {
   onFileUpload: (file: File) => void;
@@ -17,6 +18,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   label = "Upload a file",
   multiple = false,
 }) => {
+  const { t } = useTranslation();
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -116,7 +118,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             >
               <span>{label}</span>
             </span>
-            <p className="pl-1 text-gray-500">or drag and drop</p>
+            <p className="pl-1 text-gray-500">{t("fileUploadZone.dragAndDrop")}</p>
           </div>
           <p className="text-xs text-gray-500">
             {acceptedMimeTypes.replace(/\/\*/g, '').split(',').join(', ').toUpperCase()}. Max {maxFileSizeMB}MB.
