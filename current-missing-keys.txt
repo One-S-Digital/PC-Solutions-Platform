@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1307 translation keys
+✅ Found 1482 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1361 t() calls
+📊 Found 1393 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 91 potential hardcoded text instances
+📊 Found 61 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1307
-🔧 t() Calls Found: 1361
-❌ Missing Keys: 206
-⚠️  Hardcoded Text: 91
-✅ Used Keys: 1073
-📦 Unused Keys: 234
+📚 Translation Keys: 1482
+🔧 t() Calls Found: 1393
+❌ Missing Keys: 57
+⚠️  Hardcoded Text: 61
+✅ Used Keys: 1100
+📦 Unused Keys: 382
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -85,6 +85,18 @@
 📄 frontend/components/settings/OrganizationProfileForm.tsx:36
    Key: ","
 
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:34
+   Key: "supplierDashboard.recentOrdersActions.decline"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:35
+   Key: "supplierDashboard.recentOrdersActions.accept"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:41
+   Key: "supplierOrdersPage.actions.ship"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:63
+   Key: "supplierOrdersPage.table.foundation"
+
 📄 frontend/components/ui/FileUploadZone.tsx:39
    Key: ","
 
@@ -148,179 +160,14 @@
 📄 frontend/pages/foundation/FoundationLeadsPage.tsx:25
    Key: "sidebar.parentLeads"
 
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:16
-   Key: "foundationOrganisationProfilePage.mock.pedagogyStatement"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:35
-   Key: "foundationOrganisationProfilePage.alert.infoSaved"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:54
-   Key: "foundationOrganisationProfilePage.sections.branding.title"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:58
-   Key: "foundationOrganisationProfilePage.sections.branding.logoLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:62
-   Key: "foundationOrganisationProfilePage.sections.branding.coverImageLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:66
-   Key: "foundationOrganisationProfilePage.sections.branding.pedagogyStatementLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:67
-   Key: "foundationOrganisationProfilePage.sections.branding.pedagogyStatementPlaceholder"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:73
-   Key: "foundationOrganisationProfilePage.sections.operations.title"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:77
-   Key: "foundationOrganisationProfilePage.sections.operations.openingHoursLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:78
-   Key: "foundationOrganisationProfilePage.sections.operations.openingHoursPlaceholder"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:81
-   Key: "foundationOrganisationProfilePage.sections.operations.contactInfoLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:82
-   Key: "foundationOrganisationProfilePage.sections.operations.contactInfoPlaceholder"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:88
-   Key: "foundationOrganisationProfilePage.sections.online.title"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:92
-   Key: "foundationOrganisationProfilePage.sections.online.bookingLinkLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:93
-   Key: "foundationOrganisationProfilePage.sections.online.bookingLinkPlaceholder"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:96
-   Key: "foundationOrganisationProfilePage.sections.online.socialMediaLinkLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:97
-   Key: "foundationOrganisationProfilePage.sections.online.socialMediaLinkPlaceholder"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:101
-   Key: "foundationOrganisationProfilePage.sections.online.acceptingLeadsLabel"
-
-📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:106
-   Key: "foundationOrganisationProfilePage.saveButton"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:46
-   Key: "foundationSupportPage.ticketSubmittedAlert"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:82
-   Key: "foundationSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:94
-   Key: "foundationSupportPage.ticketForm.messagePlaceholder"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:33
-   Key: "parentDashboard.title"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:35
-   Key: "parentDashboard.welcomeMessage"
-
 📄 frontend/pages/parent/ParentDashboardPage.tsx:35
    Key: " "
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:46
-   Key: "parentDashboard.enquiry.sent"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:50
-   Key: "parentDashboard.enquiry.responses"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:54
-   Key: "parentDashboard.enquiry.pending"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:59
-   Key: "parentDashboard.enquiry.button"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:80
-   Key: "parentDashboard.childProfile.name"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:81
-   Key: "parentDashboard.childProfile.age"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:82
-   Key: "parentDashboard.childProfile.location"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:83
-   Key: "parentDashboard.childProfile.languages"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:84
-   Key: "parentDashboard.childProfile.specialNeeds"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:86
-   Key: "parentDashboard.childProfile.button"
-
-📄 frontend/pages/parent/ParentDashboardPage.tsx:91
-   Key: "parentDashboard.favorites.subtitle"
 
 📄 frontend/pages/parent/ParentDashboardPage.tsx:92
    Key: "View Favorites TBD"
 
-📄 frontend/pages/parent/ParentDashboardPage.tsx:92
-   Key: "parentDashboard.favorites.button"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:22
-   Key: "parentSupportPage.faq.matchingProcess.q"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:23
-   Key: "parentSupportPage.faq.matchingProcess.a"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:26
-   Key: "parentSupportPage.faq.responseTime.q"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:27
-   Key: "parentSupportPage.faq.responseTime.a"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:30
-   Key: "parentSupportPage.faq.dataSecurity.q"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:31
-   Key: "parentSupportPage.faq.dataSecurity.a"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:40
-   Key: "partnerDetailPage.productOutOfStock"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:46
-   Key: "partnerDetailPage.productAddedToOrder"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:77
-   Key: "partnerDetailPage.addToOrderButton"
-
 📄 frontend/pages/partner/PartnerDetailPage.tsx:133
    Key: "Could not find a user associated with this organization to message."
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:172
-   Key: "partnerDetailPage.loadingPartnerDetails"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:173
-   Key: "partnerDetailPage.invalidPartnerIdMessage"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:194
-   Key: "userRoles.Product Supplier"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:194
-   Key: "userRoles.Service Provider"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:217
-   Key: "partnerDetailPage.contactInfoTitle"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:231
-   Key: "partnerDetailPage.directOrderButton"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:237
-   Key: "partnerDetailPage.aboutTitle"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:242
-   Key: "partnerDetailPage.ratingsReviewsTitle"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:245
-   Key: "partnerDetailPage.ratingText"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:247
-   Key: "partnerDetailPage.reviewsPlaceholder"
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:255
    Key: "sidebar.products"
@@ -328,314 +175,20 @@
 📄 frontend/pages/partner/PartnerDetailPage.tsx:255
    Key: "sidebar.services"
 
-📄 frontend/pages/partner/PartnerDetailPage.tsx:270
-   Key: "partnerDetailPage.noProductsListed"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:287
-   Key: "partnerDetailPage.requestServiceButton"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:293
-   Key: "partnerDetailPage.noServicesListed"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:298
-   Key: "partnerDetailPage.promoCodeTitle"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:300
-   Key: "partnerDetailPage.promoCodePlaceholder"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:301
-   Key: "partnerDetailPage.applyPromoButton"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:20
-   Key: "supplierAnalyticsPage.mockChartText"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:43
-   Key: "serviceProviderAnalyticsPage.serviceRequestsPerWeek"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:47
-   Key: "serviceProviderAnalyticsPage.topViewedServices"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:54
-   Key: "serviceProviderAnalyticsPage.requestsByCanton"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:60
-   Key: "supplierAnalyticsPage.promoCodePerformance"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:66
-   Key: "supplierAnalyticsPage.table.code"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:67
-   Key: "supplierAnalyticsPage.table.uses"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:68
-   Key: "supplierAnalyticsPage.table.estRevenueImpact"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:41
-   Key: "serviceProviderDashboard.welcomeMessage"
-
 📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:41
    Key: " "
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:47
-   Key: "serviceProviderDashboard.widgets.overview.title"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:50
-   Key: "serviceProviderDashboard.widgets.overview.activeRequests"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:54
-   Key: "serviceProviderDashboard.widgets.overview.completedServices"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:58
-   Key: "serviceProviderDashboard.widgets.overview.upcoming"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:62
-   Key: "serviceProviderDashboard.widgets.overview.customerRating"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:70
-   Key: "serviceProviderDashboard.widgets.overview.button"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:76
-   Key: "serviceProviderDashboard.widgets.management.title"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:79
-   Key: "serviceProviderDashboard.widgets.management.listings"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:83
-   Key: "serviceProviderDashboard.widgets.management.pending"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:87
-   Key: "serviceProviderDashboard.widgets.management.categories"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:96
-   Key: "serviceProviderDashboard.widgets.management.button"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:104
-   Key: "serviceProviderDashboard.widgets.appointments.title"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:110
-   Key: "serviceProviderDashboard.widgets.appointments.with"
-
-📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:115
-   Key: "serviceProviderDashboard.widgets.appointments.button"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:27
-   Key: "serviceProviderListingsPage.card.category"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:27
-   Key: "serviceProviderListingsPage.card.delivery"
 
 📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:69
    Key: "User organization details are missing."
 
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:108
-   Key: "serviceProviderListingsPage.confirmDelete"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:125
-   Key: "serviceProviderListingsPage.addNewServiceButton"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:133
-   Key: "serviceProviderListingsPage.searchPlaceholder"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:151
-   Key: "serviceProviderListingsPage.emptyState.title"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:153
-   Key: "serviceProviderListingsPage.emptyState.noMatch"
-
-📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:153
-   Key: "serviceProviderListingsPage.emptyState.noServicesYet"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:61
-   Key: "serviceProviderRequestsPage.filterByStatus"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:79
-   Key: "serviceProviderRequestsPage.table.requestId"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:80
-   Key: "serviceProviderRequestsPage.table.foundation"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:81
-   Key: "serviceProviderRequestsPage.table.service"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:82
-   Key: "serviceProviderRequestsPage.table.date"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:83
-   Key: "serviceProviderRequestsPage.table.status"
-
-📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:105
-   Key: "serviceProviderRequestsPage.emptyState"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:46
-   Key: "serviceProviderSupportPage.ticketSubmittedAlert"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:82
-   Key: "serviceProviderSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:94
-   Key: "serviceProviderSupportPage.ticketForm.messagePlaceholder"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:20
-   Key: "supplierAnalyticsPage.mockChartText"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:44
-   Key: "supplierAnalyticsPage.orderRequestsPerWeek"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:48
-   Key: "supplierAnalyticsPage.topViewedProducts"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:55
-   Key: "supplierAnalyticsPage.requestsByCanton"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:61
-   Key: "supplierAnalyticsPage.promoCodePerformance"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:67
-   Key: "supplierAnalyticsPage.table.code"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:68
-   Key: "supplierAnalyticsPage.table.uses"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:69
-   Key: "supplierAnalyticsPage.table.estRevenueImpact"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:29
-   Key: "supplierDashboard.noSalesYet"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:36
-   Key: "supplierDashboard.noSalesYet"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:86
-   Key: "supplierDashboard.title"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:88
-   Key: "supplierDashboard.welcomeMessage"
-
 📄 frontend/pages/supplier/SupplierDashboardPage.tsx:88
    Key: " "
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:94
-   Key: "supplierDashboard.widgets.sales.title"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:97
-   Key: "supplierDashboard.widgets.sales.totalOrders"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:101
-   Key: "supplierDashboard.widgets.sales.revenueMonth"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:105
-   Key: "supplierDashboard.widgets.sales.topSelling"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:109
-   Key: "supplierDashboard.widgets.sales.fulfillmentRate"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:113
-   Key: "supplierDashboard.widgets.sales.button"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:118
-   Key: "supplierDashboard.widgets.products.title"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:121
-   Key: "supplierDashboard.widgets.products.active"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:125
-   Key: "supplierDashboard.widgets.products.pending"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:130
-   Key: "supplierDashboard.widgets.products.lowStock"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:138
-   Key: "supplierDashboard.widgets.products.button"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:144
-   Key: "supplierDashboard.widgets.orders.title"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:147
-   Key: "supplierDashboard.widgets.orders.pending"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:152
-   Key: "supplierDashboard.widgets.orders.toFulfill"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:160
-   Key: "supplierDashboard.widgets.orders.button"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:167
-   Key: "supplierDashboard.recentOrdersTitle"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:169
-   Key: "supplierDashboard.noRecentOrders"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:175
-   Key: "supplierDashboard.recentOrdersTable.id"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:176
-   Key: "supplierDashboard.recentOrdersTable.creche"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:177
-   Key: "supplierDashboard.recentOrdersTable.date"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:178
-   Key: "supplierDashboard.recentOrdersTable.total"
-
-📄 frontend/pages/supplier/SupplierDashboardPage.tsx:179
-   Key: "supplierDashboard.recentOrdersTable.status"
 
 📄 frontend/pages/supplier/SupplierDashboardPage.tsx:185
    Key: "-"
 
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:61
-   Key: "supplierOrdersPage.filterByStatus"
-
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:79
-   Key: "supplierOrdersPage.table.orderId"
-
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:81
-   Key: "supplierOrdersPage.table.date"
-
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:82
-   Key: "supplierOrdersPage.table.total"
-
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:83
-   Key: "supplierOrdersPage.table.status"
-
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:102
-   Key: "supplierOrdersPage.emptyState"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:53
-   Key: "supplierProductListingsPage.addProductAlert"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:54
-   Key: "supplierProductListingsPage.addProductButton"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:62
-   Key: "supplierProductListingsPage.searchPlaceholder"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:74
-   Key: "supplierProductListingsPage.table.product"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:75
-   Key: "supplierProductListingsPage.table.price"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:76
-   Key: "supplierProductListingsPage.table.stock"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:77
-   Key: "supplierProductListingsPage.table.visibility"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:78
-   Key: "supplierProductListingsPage.table.actions"
-
-📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:114
-   Key: "supplierProductListingsPage.emptyState"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:46
-   Key: "supplierSupportPage.ticketSubmittedAlert"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:82
-   Key: "supplierSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:94
-   Key: "supplierSupportPage.ticketForm.messagePlaceholder"
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:80
+   Key: "supplierOrdersPage.table.foundation"
 
 📄 frontend/tailwind.config.js:1
    Key: "tailwindcss"
@@ -663,42 +216,10 @@
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DesignSystemPage.tsx:
-   Line 67: "Heading 3: The quick brown fox" (JSX_TEXT)
-   Line 68: "Heading 4: The quick brown fox" (JSX_TEXT)
-   Line 69: "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." (JSX_TEXT)
-   Line 70: "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi." (JSX_TEXT)
-   Line 71: "This is a link" (JSX_TEXT)
-   Line 93: "Extra Small" (JSX_TEXT)
-   Line 95: "Medium (Default)" (JSX_TEXT)
-   Line 100: "With Icons" (JSX_TEXT)
-   Line 102: "Left Icon" (JSX_TEXT)
-   Line 103: "Right Icon" (JSX_TEXT)
-   Line 104: "Small Icon" (JSX_TEXT)
-   Line 109: "Disabled State" (JSX_TEXT)
-   Line 111: "Primary Disabled" (JSX_TEXT)
-   Line 112: "Secondary Disabled" (JSX_TEXT)
-   Line 113: "Outline Disabled" (JSX_TEXT)
-   Line 124: "Standard Card" (JSX_TEXT)
-   Line 125: "This is a standard card component with a soft shadow. It's the base for most content containers." (JSX_TEXT)
-   Line 128: "Hover Effect Card" (JSX_TEXT)
-   Line 129: "This card has a subtle scale and shadow transition on hover, useful for interactive elements." (JSX_TEXT)
-   Line 136: "Form Controls" (JSX_TEXT)
-   Line 140: "Text Input" (JSX_TEXT)
-   Line 144: "Select Menu" (JSX_TEXT)
-   Line 146: "Option 1" (JSX_TEXT)
-   Line 147: "Option 2" (JSX_TEXT)
-   Line 148: "Option 3" (JSX_TEXT)
    Line 158: "Quantity Input" (JSX_TEXT)
    Line 162: "Disabled Input" (JSX_TEXT)
    Line 174: "Pills Variant (Default)" (JSX_TEXT)
    Line 178: "Line Variant" (JSX_TEXT)
-
-📄 frontend/pages/FoundationLeadsPage.tsx:
-   Line 15: "Access Denied" (JSX_TEXT)
-   Line 16: "You must be logged in as a Foundation with a valid Organization ID to view this page." (JSX_TEXT)
-   Line 36: "Incoming Parent Leads" (JSX_TEXT)
-   Line 45: "No Incoming Leads" (JSX_TEXT)
-   Line 46: "There are currently no new parent enquiries matching your daycare." (JSX_TEXT)
 
 📄 frontend/pages/ParentEnquiriesPage.tsx:
    Line 122: "0 && lead.responses.length" (JSX_TEXT)
@@ -774,7 +295,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 206 translation keys are missing from translation files.
-⚠️  91 instances of hardcoded text found.
+❌ 57 translation keys are missing from translation files.
+⚠️  61 instances of hardcoded text found.
 
-📊 Coverage: 1073/1307 keys are being used (82%)
+📊 Coverage: 1100/1482 keys are being used (74%)

@@ -5,15 +5,17 @@ import { ParentLead, UserRole, FoundationLeadResponseStatus, LeadMainStatus } fr
 import Card from '../components/ui/Card';
 import LeadCard from '../components/foundation/LeadCard'; // Correct relative path
 import { InboxArrowDownIcon, InboxIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 const FoundationLeadsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { currentUser, leads, setLeads } = useAppContext();
 
   if (!currentUser || currentUser.role !== UserRole.FOUNDATION || !currentUser.orgId) {
     return (
       <div className="text-center p-10">
-        <h1 className="text-2xl font-bold text-swiss-charcoal">Access Denied</h1>
-        <p className="text-gray-600">You must be logged in as a Foundation with a valid Organization ID to view this page.</p>
+        <h1 className="text-2xl font-bold text-swiss-charcoal">{t('foundationLeadsPage.accessDenied.title')}</h1>
+        <p className="text-gray-600">{t('foundationLeadsPage.accessDenied.message')}</p>
       </div>
     );
   }
@@ -34,7 +36,7 @@ const FoundationLeadsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
           <InboxArrowDownIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-          Incoming Parent Leads
+          {t('foundationLeadsPage.title')}
         </h1>
         {/* Add filters here: by status, date, etc. */}
       </div>
@@ -42,8 +44,8 @@ const FoundationLeadsPage: React.FC = () => {
       {foundationLeads.length === 0 && (
          <Card className="p-10 text-center">
           <InboxIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">No Incoming Leads</h2>
-          <p className="text-gray-500">There are currently no new parent enquiries matching your daycare.</p>
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('foundationLeadsPage.emptyState.title')}</h2>
+          <p className="text-gray-500">{t('foundationLeadsPage.emptyState.message')}</p>
         </Card>
       )}
 

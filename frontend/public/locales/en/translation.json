@@ -87,7 +87,9 @@
     "systemMonitoring": "System Monitoring",
     "platformSettings": "Platform Settings",
     "designSystem": "Design System",
-    "parentLeads": "Parent Leads"
+    "parentLeads": "Parent Leads",
+    "products": "Products",
+    "services": "Services"
   },
   "stockStatus": {
     "instock": "In Stock",
@@ -1664,13 +1666,14 @@
     }
   },
   "foundationLeadsPage": {
+    "title": "Incoming Parent Leads",
     "accessDenied": {
       "title": "Access Denied",
-      "message": "You don't have permission to view this page"
+      "message": "You must be logged in as a Foundation with a valid Organization ID to view this page."
     },
     "emptyState": {
-      "title": "No Leads Found",
-      "message": "No parent leads are available at the moment"
+      "title": "No Incoming Leads",
+      "message": "There are currently no new parent enquiries matching your daycare."
     }
   },
   "foundationOrdersAppointmentsPage": {
@@ -1704,7 +1707,154 @@
   "supplierAnalyticsPage": {
     "datePickerLabel": "Select Date Range",
     "exportCsvAlert": "CSV export started",
-    "exportCsvButton": "Export CSV"
+    "exportCsvButton": "Export CSV",
+    "mockChartText": "Mock chart visualization",
+    "orderRequestsPerWeek": "Order Requests Per Week",
+    "topViewedProducts": "Top Viewed Products",
+    "requestsByCanton": "Requests by Canton",
+    "promoCodePerformance": "Promo Code Performance",
+    "table": {
+      "code": "Code",
+      "uses": "Uses",
+      "estRevenueImpact": "Est. Revenue Impact"
+    }
+  },
+  "serviceProviderAnalyticsPage": {
+    "serviceRequestsPerWeek": "Service Requests Per Week",
+    "topViewedServices": "Top Viewed Services",
+    "requestsByCanton": "Requests by Canton"
+  },
+  "serviceProviderDashboard": {
+    "welcomeMessage": "Welcome to your service provider dashboard",
+    "widgets": {
+      "overview": {
+        "title": "Overview",
+        "activeRequests": "Active Requests",
+        "completedServices": "Completed Services",
+        "upcoming": "Upcoming",
+        "customerRating": "Customer Rating",
+        "button": "View All"
+      },
+      "management": {
+        "title": "Service Management",
+        "listings": "Service Listings",
+        "pending": "Pending Approvals",
+        "categories": "Categories",
+        "button": "Manage Services"
+      },
+      "appointments": {
+        "title": "Appointments",
+        "with": "with",
+        "button": "Schedule New"
+      }
+    }
+  },
+  "serviceProviderListingsPage": {
+    "card": {
+      "category": "Category",
+      "delivery": "Delivery"
+    },
+    "confirmDelete": "Are you sure you want to delete this service?",
+    "addNewServiceButton": "Add New Service",
+    "searchPlaceholder": "Search services...",
+    "emptyState": {
+      "title": "No Services Found",
+      "noMatch": "No services match your search criteria",
+      "noServicesYet": "You haven't created any services yet"
+    }
+  },
+  "serviceProviderRequestsPage": {
+    "filterByStatus": "Filter by Status",
+    "table": {
+      "requestId": "Request ID",
+      "foundation": "Foundation",
+      "service": "Service",
+      "date": "Date",
+      "status": "Status"
+    },
+    "emptyState": "No service requests found"
+  },
+  "serviceProviderSupportPage": {
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "ticketForm": {
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
+    }
+  },
+  "supplierDashboard": {
+    "title": "Supplier Dashboard",
+    "welcomeMessage": "Welcome to your supplier dashboard",
+    "noSalesYet": "No sales data available yet",
+    "widgets": {
+      "sales": {
+        "title": "Sales Overview",
+        "totalOrders": "Total Orders",
+        "revenueMonth": "Revenue This Month",
+        "topSelling": "Top Selling",
+        "fulfillmentRate": "Fulfillment Rate",
+        "button": "View Analytics"
+      },
+      "products": {
+        "title": "Product Management",
+        "active": "Active Products",
+        "pending": "Pending Approval",
+        "lowStock": "Low Stock",
+        "button": "Manage Products"
+      },
+      "orders": {
+        "title": "Order Management",
+        "pending": "Pending Orders",
+        "toFulfill": "To Fulfill",
+        "button": "View Orders"
+      }
+    },
+    "recentOrdersTitle": "Recent Orders",
+    "noRecentOrders": "No recent orders",
+    "recentOrdersTable": {
+      "id": "Order ID",
+      "creche": "Crèche",
+      "date": "Date",
+      "total": "Total",
+      "status": "Status"
+    },
+    "recentOrdersActions": {
+      "decline": "Decline",
+      "accept": "Accept"
+    }
+  },
+  "supplierOrdersPage": {
+    "filterByStatus": "Filter by Status",
+    "table": {
+      "orderId": "Order ID",
+      "date": "Date",
+      "total": "Total",
+      "status": "Status",
+      "foundation": "Foundation"
+    },
+    "actions": {
+      "ship": "Ship"
+    },
+    "emptyState": "No orders found"
+  },
+  "supplierProductListingsPage": {
+    "addProductAlert": "Product added successfully",
+    "addProductButton": "Add New Product",
+    "searchPlaceholder": "Search products...",
+    "table": {
+      "product": "Product",
+      "price": "Price",
+      "stock": "Stock",
+      "visibility": "Visibility",
+      "actions": "Actions"
+    },
+    "emptyState": "No products found"
+  },
+  "supplierSupportPage": {
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "ticketForm": {
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
+    }
   },
   "foundationOrganisationProfilePage": {
     "mock": {
@@ -1722,9 +1872,92 @@
         "pedagogyStatementPlaceholder": "Describe your educational approach and philosophy..."
       },
       "operations": {
-        "title": "Operations"
+        "title": "Operations",
+        "openingHoursLabel": "Opening Hours",
+        "openingHoursPlaceholder": "e.g., Monday-Friday 7:00-18:00",
+        "contactInfoLabel": "Contact Information",
+        "contactInfoPlaceholder": "Phone, email, address..."
+      },
+      "online": {
+        "title": "Online Presence",
+        "bookingLinkLabel": "Booking Link",
+        "bookingLinkPlaceholder": "https://your-booking-system.com",
+        "socialMediaLinkLabel": "Social Media Links",
+        "socialMediaLinkPlaceholder": "Facebook, Instagram, LinkedIn...",
+        "acceptingLeadsLabel": "Accepting New Leads"
+      }
+    },
+    "saveButton": "Save Profile"
+  },
+  "foundationSupportPage": {
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "ticketForm": {
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
+    }
+  },
+  "parentDashboard": {
+    "title": "Parent Dashboard",
+    "welcomeMessage": "Welcome to your parent dashboard",
+    "enquiry": {
+      "sent": "Enquiries Sent",
+      "responses": "Responses Received",
+      "pending": "Pending Responses",
+      "button": "Send New Enquiry"
+    },
+    "childProfile": {
+      "name": "Child's Name",
+      "age": "Age",
+      "location": "Location",
+      "languages": "Languages",
+      "specialNeeds": "Special Needs",
+      "button": "Update Profile"
+    },
+    "favorites": {
+      "subtitle": "Your favorite crèches and services",
+      "button": "View Favorites"
+    }
+  },
+  "parentSupportPage": {
+    "faq": {
+      "matchingProcess": {
+        "q": "How does the matching process work?",
+        "a": "Our algorithm matches your child's needs with available crèches based on location, age, special requirements, and availability."
+      },
+      "responseTime": {
+        "q": "How quickly will I receive responses?",
+        "a": "Most crèches respond within 24-48 hours. You'll be notified immediately when responses arrive."
+      },
+      "dataSecurity": {
+        "q": "Is my personal information secure?",
+        "a": "Yes, we use enterprise-grade encryption and comply with Swiss data protection laws. Your information is never shared without consent."
       }
     }
+  },
+  "partnerDetailPage": {
+    "productOutOfStock": "Product is currently out of stock",
+    "productAddedToOrder": "Product added to order successfully",
+    "addToOrderButton": "Add to Order",
+    "loadingPartnerDetails": "Loading partner details...",
+    "invalidPartnerIdMessage": "Could not find a user associated with this organization to message.",
+    "contactInfoTitle": "Contact Information",
+    "directOrderButton": "Direct Order",
+    "aboutTitle": "About",
+    "ratingsReviewsTitle": "Ratings & Reviews",
+    "ratingText": "Rating",
+    "reviewsPlaceholder": "No reviews yet",
+    "noProductsListed": "No products listed",
+    "requestServiceButton": "Request Service",
+    "noServicesListed": "No services listed",
+    "promoCodeTitle": "Promo Code",
+    "promoCodePlaceholder": "Enter promo code",
+    "applyPromoButton": "Apply",
+    "onlyFoundationsRequestService": "Only foundations can request services",
+    "requestSubmittedAlert": "Service request submitted successfully"
+  },
+  "userRoles": {
+    "Product Supplier": "Product Supplier",
+    "Service Provider": "Service Provider"
   },
   "errorBoundary": {
     "somethingWentWrong": "Something went wrong",
@@ -1839,7 +2072,39 @@
       "small": "Small",
       "mediumDefault": "Medium (Default)",
       "large": "Large",
-      "withIcons": "With Icons"
-    }
+      "withIcons": "With Icons",
+      "leftIcon": "Left Icon",
+      "rightIcon": "Right Icon",
+      "smallIcon": "Small Icon",
+      "disabledState": "Disabled State",
+      "primaryDisabled": "Primary Disabled",
+      "secondaryDisabled": "Secondary Disabled",
+      "outlineDisabled": "Outline Disabled"
+    },
+    "cards": {
+      "standardCard": "Standard Card",
+      "standardCardDesc": "This is a standard card component with a soft shadow. It's the base for most content containers.",
+      "hoverEffectCard": "Hover Effect Card",
+      "hoverEffectCardDesc": "This card has a subtle scale and shadow transition on hover, useful for interactive elements."
+    },
+    "formControls": {
+      "title": "Form Controls",
+      "textInput": "Text Input",
+      "selectMenu": "Select Menu",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "quantityInput": "Quantity Input",
+      "disabledInput": "Disabled Input"
+    },
+    "tabs": {
+      "title": "Tabs",
+      "pillsVariant": "Pills Variant (Default)",
+      "lineVariant": "Line Variant"
+    },
+  "View Favorites TBD": "View Favorites TBD",
+  "Could not find a user associated with this organization to message.": "Could not find a user associated with this organization to message.",
+  "User organization details are missing.": "User organization details are missing.",
+  "tailwindcss": "tailwindcss"
   }
 }
