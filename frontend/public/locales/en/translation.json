@@ -1924,5 +1924,184 @@
     "title": "Partner Details",
     "contact": "Contact Partner",
     "services": "Services"
+  },
+  "T": "T",
+  "Title and Message are required.": "Title and Message are required.",
+  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
+  "Missing keys copied to clipboard!": "Missing keys copied to clipboard!",
+  ".": ".",
+  "navbar": {
+    "toggleNavigation": "Toggle Navigation",
+    "goBackPreviousPage": "Go Back to Previous Page",
+    "searchPlaceholder": "Search...",
+    "viewShoppingCart": "View Shopping Cart",
+    "notifications": "Notifications",
+    "newMessages": "New Messages",
+    "noNewNotifications": "No New Notifications",
+    "viewAll": "View All",
+    "userMenu": "User Menu",
+    "signOut": "Sign Out"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "currentPlan": "Current Plan",
+    "manageSubscriptionDesc": "Manage your current plan and billing",
+    "fileGallery": "File Gallery",
+    "messages": "Messages",
+    "discountTerminations": "Discount Terminations",
+    "jobBoard": "Job Board",
+    "analytics": "Analytics",
+    "leads": "Leads",
+    "ordersAppointments": "Orders & Appointments",
+    "organisationProfile": "Organisation Profile",
+    "support": "Support",
+    "myProfile": "My Profile",
+    "applications": "Applications",
+    "homeFindCreche": "Home / Find a Crèche",
+    "myRequests": "My Requests",
+    "supportFAQ": "Support / FAQ",
+    "users": "Users",
+    "allUsers": "All Users",
+    "admins": "Admins",
+    "foundations": "Foundations",
+    "productSuppliers": "Product Suppliers",
+    "serviceProviders": "Service Providers",
+    "parents": "Parents",
+    "content": "Content",
+    "partners": "Partners",
+    "managePlan": "Manage Plan",
+    "premiumPlan": "Premium Plan",
+    "premiumPlanDesc": "Access to all features",
+    "systemMonitoring": "System Monitoring",
+    "platformSettings": "Platform Settings",
+    "designSystem": "Design System"
+  },
+  "contentUploadModal": {
+    "title": {
+      "edit": "Edit Content",
+      "add": "Add Content"
+    },
+    "labels": {
+      "currentFile": "Current File",
+      "uploadFileType": "File Type"
+    },
+    "fileUpload": {
+      "browse": "Browse Files",
+      "dragAndDrop": "Drag and drop files here",
+      "selected": "Selected Files"
+    }
+  },
+  "policyAlertModal": {
+    "title": "Policy Alert",
+    "message": "Policy Alert Message"
+  },
+  "orderSummaryDrawer": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "emptyCart": "Your cart is empty",
+    "cannotSubmitOrder": "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
+  },
+  "translationDiagnostics": {
+    "missingKeysCopied": "Missing keys copied to clipboard!"
+  },
+  "translationErrorLogger": {
+    "missingKeysCopied": "Missing keys copied to clipboard!"
+  },
+  "serviceUploadModal": {
+    "title": "Upload Service",
+    "subtitle": "Upload a new service to the platform"
+  },
+  "supplierCard": {
+    "title": "Supplier",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "contact": "Contact"
+  },
+  "recruitmentPage": {
+    "jobDetailModal": {
+      "title": "Job Details",
+      "apply": "Apply Now",
+      "close": "Close"
+    },
+    "jobPostModal": {
+      "title": "Post Job",
+      "submit": "Submit Job Post"
+    },
+    "viewApplicantsModal": {
+      "title": "View Applicants",
+      "applicants": "Applicants"
+    },
+    "candidateCard": {
+      "name": "Candidate Name",
+      "experience": "Experience",
+      "skills": "Skills"
+    }
+  },
+  "educatorProfilePage": {
+    "skills": {
+      "title": "Skills",
+      "add": "Add Skill"
+    },
+    "availability": {
+      "title": "Availability",
+      "schedule": "Schedule"
+    },
+    "documents": {
+      "title": "Documents",
+      "upload": "Upload Document"
+    },
+    "experience": {
+      "title": "Experience",
+      "add": "Add Experience"
+    },
+    "education": {
+      "title": "Education",
+      "add": "Add Education"
+    },
+    "certifications": {
+      "title": "Certifications",
+      "add": "Add Certification"
+    }
+  },
+  "parentDashboard": {
+    "enquiry": {
+      "title": "Enquiries",
+      "new": "New Enquiry"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "findCreche": "Find Crèche"
+    },
+    "childProfile": {
+      "title": "Child Profile",
+      "edit": "Edit Profile"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "viewAll": "View All"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Overview",
+    "reports": "Reports"
+  },
+  "serviceProviderDashboard": {
+    "title": "Service Provider Dashboard",
+    "services": "Services",
+    "requests": "Requests"
+  },
+  "supportPage": {
+    "title": "Support",
+    "faq": "FAQ",
+    "contact": "Contact Us"
+  },
+  "partnerDetailPage": {
+    "title": "Partner Details",
+    "contact": "Contact Partner",
+    "services": "Services"
   }
 }

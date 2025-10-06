@@ -1882,5 +1882,184 @@
     "title": "Partnerdetails",
     "contact": "Partner kontaktieren",
     "services": "Dienstleistungen"
+  },
+  "T": "T",
+  "Title and Message are required.": "Titel und Nachricht sind erforderlich.",
+  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Bestellung kann nicht übermittelt werden. Benutzer nicht angemeldet, Lieferanteninformationen fehlen oder Warenkorb ist leer.",
+  "Missing keys copied to clipboard!": "Fehlende Schlüssel in die Zwischenablage kopiert!",
+  ".": ".",
+  "navbar": {
+    "toggleNavigation": "Navigation umschalten",
+    "goBackPreviousPage": "Zurück zur vorherigen Seite",
+    "searchPlaceholder": "Suchen...",
+    "viewShoppingCart": "Warenkorb anzeigen",
+    "notifications": "Benachrichtigungen",
+    "newMessages": "Neue Nachrichten",
+    "noNewNotifications": "Keine neuen Benachrichtigungen",
+    "viewAll": "Alle anzeigen",
+    "userMenu": "Benutzermenü",
+    "signOut": "Abmelden"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen",
+    "currentPlan": "Aktueller Plan",
+    "manageSubscriptionDesc": "Verwalten Sie Ihren aktuellen Plan und die Abrechnung",
+    "fileGallery": "Dateigalerie",
+    "messages": "Nachrichten",
+    "discountTerminations": "Rabattkündigungen",
+    "jobBoard": "Stellenbörse",
+    "analytics": "Analytik",
+    "leads": "Leads",
+    "ordersAppointments": "Bestellungen & Termine",
+    "organisationProfile": "Organisationsprofil",
+    "support": "Support",
+    "myProfile": "Mein Profil",
+    "applications": "Bewerbungen",
+    "homeFindCreche": "Startseite / Kita finden",
+    "myRequests": "Meine Anfragen",
+    "supportFAQ": "Support / FAQ",
+    "users": "Benutzer",
+    "allUsers": "Alle Benutzer",
+    "admins": "Administratoren",
+    "foundations": "Stiftungen",
+    "productSuppliers": "Produktlieferanten",
+    "serviceProviders": "Dienstleister",
+    "parents": "Eltern",
+    "content": "Inhalt",
+    "partners": "Partner",
+    "managePlan": "Plan verwalten",
+    "premiumPlan": "Premium-Plan",
+    "premiumPlanDesc": "Zugang zu allen Funktionen",
+    "systemMonitoring": "Systemüberwachung",
+    "platformSettings": "Plattform-Einstellungen",
+    "designSystem": "Design-System"
+  },
+  "contentUploadModal": {
+    "title": {
+      "edit": "Inhalt bearbeiten",
+      "add": "Inhalt hinzufügen"
+    },
+    "labels": {
+      "currentFile": "Aktuelle Datei",
+      "uploadFileType": "Dateityp"
+    },
+    "fileUpload": {
+      "browse": "Dateien durchsuchen",
+      "dragAndDrop": "Dateien hier hineinziehen",
+      "selected": "Ausgewählte Dateien"
+    }
+  },
+  "policyAlertModal": {
+    "title": "Richtlinien-Warnung",
+    "message": "Richtlinien-Warnmeldung"
+  },
+  "orderSummaryDrawer": {
+    "title": "Bestellübersicht",
+    "subtotal": "Zwischensumme",
+    "total": "Gesamt",
+    "checkout": "Zur Kasse gehen",
+    "emptyCart": "Ihr Warenkorb ist leer",
+    "cannotSubmitOrder": "Bestellung kann nicht übermittelt werden. Benutzer nicht angemeldet, Lieferanteninformationen fehlen oder Warenkorb ist leer."
+  },
+  "translationDiagnostics": {
+    "missingKeysCopied": "Fehlende Schlüssel in die Zwischenablage kopiert!"
+  },
+  "translationErrorLogger": {
+    "missingKeysCopied": "Fehlende Schlüssel in die Zwischenablage kopiert!"
+  },
+  "serviceUploadModal": {
+    "title": "Service hochladen",
+    "subtitle": "Einen neuen Service auf die Plattform hochladen"
+  },
+  "supplierCard": {
+    "title": "Lieferant",
+    "rating": "Bewertung",
+    "reviews": "Bewertungen",
+    "contact": "Kontakt"
+  },
+  "recruitmentPage": {
+    "jobDetailModal": {
+      "title": "Stellendetails",
+      "apply": "Jetzt bewerben",
+      "close": "Schließen"
+    },
+    "jobPostModal": {
+      "title": "Stelle veröffentlichen",
+      "submit": "Stellenausschreibung einreichen"
+    },
+    "viewApplicantsModal": {
+      "title": "Bewerber anzeigen",
+      "applicants": "Bewerber"
+    },
+    "candidateCard": {
+      "name": "Bewerbername",
+      "experience": "Erfahrung",
+      "skills": "Fähigkeiten"
+    }
+  },
+  "educatorProfilePage": {
+    "skills": {
+      "title": "Fähigkeiten",
+      "add": "Fähigkeit hinzufügen"
+    },
+    "availability": {
+      "title": "Verfügbarkeit",
+      "schedule": "Zeitplan"
+    },
+    "documents": {
+      "title": "Dokumente",
+      "upload": "Dokument hochladen"
+    },
+    "experience": {
+      "title": "Erfahrung",
+      "add": "Erfahrung hinzufügen"
+    },
+    "education": {
+      "title": "Bildung",
+      "add": "Bildung hinzufügen"
+    },
+    "certifications": {
+      "title": "Zertifizierungen",
+      "add": "Zertifizierung hinzufügen"
+    }
+  },
+  "parentDashboard": {
+    "enquiry": {
+      "title": "Anfragen",
+      "new": "Neue Anfrage"
+    },
+    "quickActions": {
+      "title": "Schnellaktionen",
+      "findCreche": "Kita finden"
+    },
+    "childProfile": {
+      "title": "Kinderprofil",
+      "edit": "Profil bearbeiten"
+    },
+    "favorites": {
+      "title": "Favoriten",
+      "viewAll": "Alle anzeigen"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytik",
+    "overview": "Übersicht",
+    "reports": "Berichte"
+  },
+  "serviceProviderDashboard": {
+    "title": "Dienstleister-Dashboard",
+    "services": "Dienstleistungen",
+    "requests": "Anfragen"
+  },
+  "supportPage": {
+    "title": "Support",
+    "faq": "FAQ",
+    "contact": "Kontaktieren Sie uns"
+  },
+  "partnerDetailPage": {
+    "title": "Partnerdetails",
+    "contact": "Partner kontaktieren",
+    "services": "Dienstleistungen"
   }
 }

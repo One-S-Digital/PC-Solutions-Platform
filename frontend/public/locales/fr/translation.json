@@ -1882,5 +1882,184 @@
     "title": "Détails du partenaire",
     "contact": "Contacter le partenaire",
     "services": "Services"
+  },
+  "T": "T",
+  "Title and Message are required.": "Le titre et le message sont requis.",
+  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Impossible de soumettre la commande. Utilisateur non connecté, informations fournisseur manquantes ou panier vide.",
+  "Missing keys copied to clipboard!": "Clés manquantes copiées dans le presse-papiers !",
+  ".": ".",
+  "navbar": {
+    "toggleNavigation": "Basculer la navigation",
+    "goBackPreviousPage": "Retourner à la page précédente",
+    "searchPlaceholder": "Rechercher...",
+    "viewShoppingCart": "Voir le panier",
+    "notifications": "Notifications",
+    "newMessages": "Nouveaux messages",
+    "noNewNotifications": "Aucune nouvelle notification",
+    "viewAll": "Voir tout",
+    "userMenu": "Menu utilisateur",
+    "signOut": "Se déconnecter"
+  },
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "settings": "Paramètres",
+    "currentPlan": "Plan actuel",
+    "manageSubscriptionDesc": "Gérez votre plan actuel et la facturation",
+    "fileGallery": "Galerie de fichiers",
+    "messages": "Messages",
+    "discountTerminations": "Résiliations de remise",
+    "jobBoard": "Tableau d'emplois",
+    "analytics": "Analytiques",
+    "leads": "Prospects",
+    "ordersAppointments": "Commandes et rendez-vous",
+    "organisationProfile": "Profil d'organisation",
+    "support": "Support",
+    "myProfile": "Mon profil",
+    "applications": "Candidatures",
+    "homeFindCreche": "Accueil / Trouver une crèche",
+    "myRequests": "Mes demandes",
+    "supportFAQ": "Support / FAQ",
+    "users": "Utilisateurs",
+    "allUsers": "Tous les utilisateurs",
+    "admins": "Administrateurs",
+    "foundations": "Fondations",
+    "productSuppliers": "Fournisseurs de produits",
+    "serviceProviders": "Prestataires de services",
+    "parents": "Parents",
+    "content": "Contenu",
+    "partners": "Partenaires",
+    "managePlan": "Gérer le plan",
+    "premiumPlan": "Plan premium",
+    "premiumPlanDesc": "Accès à toutes les fonctionnalités",
+    "systemMonitoring": "Surveillance du système",
+    "platformSettings": "Paramètres de la plateforme",
+    "designSystem": "Système de design"
+  },
+  "contentUploadModal": {
+    "title": {
+      "edit": "Modifier le contenu",
+      "add": "Ajouter du contenu"
+    },
+    "labels": {
+      "currentFile": "Fichier actuel",
+      "uploadFileType": "Type de fichier"
+    },
+    "fileUpload": {
+      "browse": "Parcourir les fichiers",
+      "dragAndDrop": "Glissez-déposez les fichiers ici",
+      "selected": "Fichiers sélectionnés"
+    }
+  },
+  "policyAlertModal": {
+    "title": "Alerte de politique",
+    "message": "Message d'alerte de politique"
+  },
+  "orderSummaryDrawer": {
+    "title": "Résumé de la commande",
+    "subtotal": "Sous-total",
+    "total": "Total",
+    "checkout": "Procéder au paiement",
+    "emptyCart": "Votre panier est vide",
+    "cannotSubmitOrder": "Impossible de soumettre la commande. Utilisateur non connecté, informations fournisseur manquantes ou panier vide."
+  },
+  "translationDiagnostics": {
+    "missingKeysCopied": "Clés manquantes copiées dans le presse-papiers !"
+  },
+  "translationErrorLogger": {
+    "missingKeysCopied": "Clés manquantes copiées dans le presse-papiers !"
+  },
+  "serviceUploadModal": {
+    "title": "Télécharger un service",
+    "subtitle": "Télécharger un nouveau service sur la plateforme"
+  },
+  "supplierCard": {
+    "title": "Fournisseur",
+    "rating": "Note",
+    "reviews": "Avis",
+    "contact": "Contact"
+  },
+  "recruitmentPage": {
+    "jobDetailModal": {
+      "title": "Détails du poste",
+      "apply": "Postuler maintenant",
+      "close": "Fermer"
+    },
+    "jobPostModal": {
+      "title": "Publier un emploi",
+      "submit": "Soumettre la publication d'emploi"
+    },
+    "viewApplicantsModal": {
+      "title": "Voir les candidats",
+      "applicants": "Candidats"
+    },
+    "candidateCard": {
+      "name": "Nom du candidat",
+      "experience": "Expérience",
+      "skills": "Compétences"
+    }
+  },
+  "educatorProfilePage": {
+    "skills": {
+      "title": "Compétences",
+      "add": "Ajouter une compétence"
+    },
+    "availability": {
+      "title": "Disponibilité",
+      "schedule": "Horaire"
+    },
+    "documents": {
+      "title": "Documents",
+      "upload": "Télécharger un document"
+    },
+    "experience": {
+      "title": "Expérience",
+      "add": "Ajouter une expérience"
+    },
+    "education": {
+      "title": "Éducation",
+      "add": "Ajouter une éducation"
+    },
+    "certifications": {
+      "title": "Certifications",
+      "add": "Ajouter une certification"
+    }
+  },
+  "parentDashboard": {
+    "enquiry": {
+      "title": "Demandes",
+      "new": "Nouvelle demande"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "findCreche": "Trouver une crèche"
+    },
+    "childProfile": {
+      "title": "Profil de l'enfant",
+      "edit": "Modifier le profil"
+    },
+    "favorites": {
+      "title": "Favoris",
+      "viewAll": "Voir tout"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytiques",
+    "overview": "Aperçu",
+    "reports": "Rapports"
+  },
+  "serviceProviderDashboard": {
+    "title": "Tableau de bord du prestataire de services",
+    "services": "Services",
+    "requests": "Demandes"
+  },
+  "supportPage": {
+    "title": "Support",
+    "faq": "FAQ",
+    "contact": "Nous contacter"
+  },
+  "partnerDetailPage": {
+    "title": "Détails du partenaire",
+    "contact": "Contacter le partenaire",
+    "services": "Services"
   }
 }

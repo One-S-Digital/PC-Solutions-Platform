@@ -1,0 +1,2634 @@
+🔍 Comprehensive Translation Verification
+=========================================
+
+📚 Loading translation files...
+✅ Found 707 translation keys
+
+🔍 Scanning for t() calls...
+📊 Found 1280 t() calls
+
+🔍 Scanning for hardcoded text...
+📊 Found 168 potential hardcoded text instances
+
+📋 VERIFICATION RESULTS:
+========================
+
+📚 Translation Keys: 707
+🔧 t() Calls Found: 1280
+❌ Missing Keys: 789
+⚠️  Hardcoded Text: 168
+✅ Used Keys: 993
+📦 Unused Keys: -286
+
+❌ MISSING TRANSLATION KEYS:
+============================
+📄 frontend/components/admin/ContentUploadModal.tsx:192
+   Key: "contentUploadModal.error.selectFileOrLink"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:208
+   Key: "contentUploadModal.labels.descriptionPreview"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:208
+   Key: "contentUploadModal.labels.description"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:251
+   Key: "contentUploadModal.labels.title"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:255
+   Key: "contentUploadModal.labels.category"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:267
+   Key: "contentUploadModal.labels.contentType"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:268
+   Key: "contentUploadModal.labels.language"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:272
+   Key: "contentUploadModal.labels.duration"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:273
+   Key: "contentUploadModal.placeholders.duration"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:278
+   Key: "contentUploadModal.labels.lessons"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:284
+   Key: "contentUploadModal.labels.linkUrl"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:285
+   Key: "contentUploadModal.placeholders.linkUrl"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:289
+   Key: "contentUploadModal.labels.accessRoles"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:300
+   Key: "contentUploadModal.labels.status"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:302
+   Key: "contentUploadModal.statusOptions.draft"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:303
+   Key: "contentUploadModal.statusOptions.published"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:304
+   Key: "contentUploadModal.statusOptions.archived"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:313
+   Key: "contentUploadModal.labels.documentTitle"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:318
+   Key: "contentUploadModal.labels.category"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:323
+   Key: "contentUploadModal.labels.language"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:326
+   Key: "contentUploadModal.labels.fileType"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:334
+   Key: "contentUploadModal.labels.version"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:335
+   Key: "contentUploadModal.placeholders.version"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:338
+   Key: "contentUploadModal.labels.status"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:340
+   Key: "contentUploadModal.statusOptions.draft"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:341
+   Key: "contentUploadModal.statusOptions.published"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:342
+   Key: "contentUploadModal.statusOptions.archived"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:351
+   Key: "contentUploadModal.labels.title"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:356
+   Key: "contentUploadModal.labels.category"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:361
+   Key: "contentUploadModal.labels.language"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:365
+   Key: "contentUploadModal.labels.country"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:371
+   Key: "contentUploadModal.labels.regionCanton"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:379
+   Key: "contentUploadModal.labels.policyType"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:385
+   Key: "contentUploadModal.labels.criticality"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:393
+   Key: "contentUploadModal.labels.markAsCritical"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:396
+   Key: "contentUploadModal.criticalityOptions.critical"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:396
+   Key: "contentUploadModal.criticalityOptions.normal"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:401
+   Key: "contentUploadModal.labels.effectiveDate"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:405
+   Key: "contentUploadModal.labels.status"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:412
+   Key: "contentUploadModal.labels.externalLink"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:413
+   Key: "contentUploadModal.placeholders.externalLink"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:443
+   Key: "contentUploadModal.labels.uploadFile"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:457
+   Key: "contentUploadModal.fileUpload.eLearningAllowedTypes"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:457
+   Key: "contentUploadModal.fileUpload.hrPolicyAllowedTypes"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:474
+   Key: "contentUploadModal.buttons.uploading"
+
+📄 frontend/components/admin/ContentUploadModal.tsx:474
+   Key: "contentUploadModal.buttons.upload"
+
+📄 frontend/components/layout/Navbar.tsx:113
+   Key: "navbar.notificationsCount"
+
+📄 frontend/components/layout/Navbar.tsx:130
+   Key: "navbar.unreadMessages"
+
+📄 frontend/components/layout/Sidebar.tsx:255
+   Key: "sidebar.billingSubscription"
+
+📄 frontend/components/marketplace/OrderRequestModal.tsx:29
+   Key: "Quantity must be at least 1."
+
+📄 frontend/components/marketplace/OrderRequestModal.tsx:57
+   Key: "orderRequestModal.labels.product"
+
+📄 frontend/components/marketplace/OrderRequestModal.tsx:67
+   Key: "orderRequestModal.labels.supplier"
+
+📄 frontend/components/marketplace/OrderRequestModal.tsx:77
+   Key: "orderRequestModal.labels.quantity"
+
+📄 frontend/components/marketplace/OrderRequestModal.tsx:89
+   Key: "orderRequestModal.labels.notes"
+
+📄 frontend/components/marketplace/OrderRequestModal.tsx:96
+   Key: "orderRequestModal.placeholders.notes"
+
+📄 frontend/components/marketplace/SupplierCard.tsx:84
+   Key: "supplierCard.specializesIn"
+
+📄 frontend/components/marketplace/SupplierCard.tsx:95
+   Key: "supplierCard.viewProfileAndProducts"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:99
+   Key: "recruitmentPage.jobDetailModal.overviewTitle"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:104
+   Key: "recruitmentPage.jobDetailModal.location"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:111
+   Key: "recruitmentPage.jobDetailModal.contractType"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:118
+   Key: "recruitmentPage.jobDetailModal.startDate"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:126
+   Key: "recruitmentPage.jobDetailModal.salary"
+
+📄 frontend/components/recruitment/JobDetailModal.tsx:140
+   Key: "recruitmentPage.jobDetailModal.applyNow"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:76
+   Key: "Cannot post job. Foundation details are missing."
+
+📄 frontend/components/recruitment/JobPostModal.tsx:119
+   Key: "recruitmentPage.jobPostModal.editTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:119
+   Key: "recruitmentPage.jobPostModal.addTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:130
+   Key: "recruitmentPage.jobPostModal.jobTitle"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:134
+   Key: "recruitmentPage.jobPostModal.location"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:138
+   Key: "recruitmentPage.jobPostModal.contractType"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:144
+   Key: "recruitmentPage.jobPostModal.startDate"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:149
+   Key: "recruitmentPage.jobPostModal.salaryRange"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:150
+   Key: "recruitmentPage.jobPostModal.salaryRangePlaceholder"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:153
+   Key: "recruitmentPage.jobPostModal.description"
+
+📄 frontend/components/recruitment/JobPostModal.tsx:165
+   Key: "recruitmentPage.jobPostModal.postJob"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:52
+   Key: "recruitmentPage.viewApplicantsModal.noApplicants"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:61
+   Key: "recruitmentPage.viewApplicantsModal.appliedOn"
+
+📄 frontend/components/recruitment/ViewApplicantsModal.tsx:69
+   Key: "recruitmentPage.candidateCard.viewProfile"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:55
+   Key: ","
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:70
+   Key: "Current user or organization ID is missing."
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:84
+   Key: "serviceUploadModal.editTitle"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:84
+   Key: "serviceUploadModal.addTitle"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:94
+   Key: "serviceUploadModal.labels.title"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:99
+   Key: "serviceUploadModal.labels.description"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:106
+   Key: "serviceUploadModal.labels.category"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:112
+   Key: "serviceUploadModal.labels.deliveryType"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:120
+   Key: "serviceUploadModal.labels.availability"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:121
+   Key: "serviceUploadModal.placeholders.availability"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:125
+   Key: "serviceUploadModal.labels.priceInfo"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:126
+   Key: "serviceUploadModal.placeholders.priceInfo"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:130
+   Key: "serviceUploadModal.labels.tags"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:131
+   Key: "serviceUploadModal.placeholders.tags"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:135
+   Key: "serviceUploadModal.labels.image"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:146
+   Key: "serviceUploadModal.imageHelpText"
+
+📄 frontend/components/service-provider/ServiceUploadModal.tsx:150
+   Key: "serviceUploadModal.currentImage"
+
+📄 frontend/components/settings/OrganizationProfileForm.tsx:36
+   Key: ","
+
+📄 frontend/components/settings/OrganizationProfileForm.tsx:67
+   Key: "organizationProfileForm.saveSuccess"
+
+📄 frontend/components/settings/sections/AccountSecuritySettings.tsx:69
+   Key: "settingsPrivacyData.confirmGDPRDelete"
+
+📄 frontend/components/settings/sections/AccountSecuritySettings.tsx:73
+   Key: "settingsPrivacyData.deletionRequestSubmittedHelpText"
+
+📄 frontend/components/settings/sections/AccountSecuritySettings.tsx:152
+   Key: "settingsAccountSecurity.dangerZone.title"
+
+📄 frontend/components/settings/sections/BillingSubscriptionSettings.tsx:78
+   Key: "settingsPage.billingSubscription"
+
+📄 frontend/components/settings/sections/BillingSubscriptionSettings.tsx:126
+   Key: "Subscription cancelled (mock action)"
+
+📄 frontend/components/settings/sections/PrivacyDataSettings.tsx:30
+   Key: "settingsPrivacyData.confirmGDPRDelete"
+
+📄 frontend/components/settings/sections/PrivacyDataSettings.tsx:32
+   Key: "settingsPrivacyData.deletionRequestSubmittedHelpText"
+
+📄 frontend/components/settings/sections/PrivacyDataSettings.tsx:72
+   Key: "settingsPrivacyData.deletionRequestSubmittedHelpText"
+
+📄 frontend/components/shared/FileUploadModal.tsx:97
+   Key: "fileUploadModal.uploading"
+
+📄 frontend/components/shared/FileUploadModal.tsx:97
+   Key: "fileUploadModal.uploadButton"
+
+📄 frontend/components/shared/RenameFileModal.tsx:40
+   Key: "renameFileModal.title"
+
+📄 frontend/components/shared/RenameFileModal.tsx:44
+   Key: "renameFileModal.label"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:34
+   Key: "supplierDashboard.recentOrdersActions.decline"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:35
+   Key: "supplierDashboard.recentOrdersActions.accept"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:41
+   Key: "supplierOrdersPage.actions.ship"
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:63
+   Key: "supplierOrdersPage.table.foundation"
+
+📄 frontend/components/ui/FileUploadZone.tsx:37
+   Key: ","
+
+📄 frontend/components/ui/FileUploadZone.tsx:122
+   Key: ","
+
+📄 frontend/components/ui/PricingToggle.tsx:24
+   Key: "pricingPage.monthly"
+
+📄 frontend/components/ui/PricingToggle.tsx:34
+   Key: "pricingPage.annual"
+
+📄 frontend/components/ui/PricingToggle.tsx:39
+   Key: "pricingPage.saveUpTo10"
+
+📄 frontend/contexts/AppContext.tsx:98
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:131
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:135
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:143
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:147
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:148
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:232
+   Key: "You must be logged in as a foundation to submit a request."
+
+📄 frontend/hooks/usePricingTranslations.ts:48
+   Key: "common.perMonth"
+
+📄 frontend/hooks/usePricingTranslations.ts:48
+   Key: "common.perMonth"
+
+📄 frontend/hooks/usePricingTranslations.ts:54
+   Key: "common.perYear"
+
+📄 frontend/hooks/usePricingTranslations.ts:54
+   Key: "common.save10Percent"
+
+📄 frontend/hooks/usePricingTranslations.ts:65
+   Key: "common.perMonth"
+
+📄 frontend/hooks/usePricingTranslations.ts:65
+   Key: "common.perMonth"
+
+📄 frontend/hooks/usePricingTranslations.ts:71
+   Key: "common.perYear"
+
+📄 frontend/hooks/usePricingTranslations.ts:71
+   Key: "common.save10Percent"
+
+📄 frontend/hooks/usePricingTranslations.ts:83
+   Key: "common.perMonth"
+
+📄 frontend/hooks/usePricingTranslations.ts:84
+   Key: "common.perYear"
+
+📄 frontend/hooks/usePricingTranslations.ts:84
+   Key: "common.save10Percent"
+
+📄 frontend/hooks/usePricingTranslations.ts:89
+   Key: "common.perMonth"
+
+📄 frontend/hooks/usePricingTranslations.ts:90
+   Key: "common.perYear"
+
+📄 frontend/hooks/usePricingTranslations.ts:91
+   Key: "common.save10Percent"
+
+📄 frontend/pages/DashboardDetailPage.tsx:22
+   Key: "dashboardDetailPage.activeUsers.recentActivity"
+
+📄 frontend/pages/DashboardDetailPage.tsx:30
+   Key: "dashboardDetailPage.activeUsers.totalToday"
+
+📄 frontend/pages/DashboardDetailPage.tsx:40
+   Key: "dashboardDetailPage.newOrders.recentOrders"
+
+📄 frontend/pages/DashboardDetailPage.tsx:44
+   Key: "dashboardDetailPage.newOrders.table.orderId"
+
+📄 frontend/pages/DashboardDetailPage.tsx:45
+   Key: "dashboardDetailPage.newOrders.table.product"
+
+📄 frontend/pages/DashboardDetailPage.tsx:46
+   Key: "dashboardDetailPage.newOrders.table.amount"
+
+📄 frontend/pages/DashboardDetailPage.tsx:47
+   Key: "dashboardDetailPage.newOrders.table.status"
+
+📄 frontend/pages/DashboardDetailPage.tsx:51
+   Key: "dashboardDetailPage.newOrders.status.paid"
+
+📄 frontend/pages/DashboardDetailPage.tsx:52
+   Key: "dashboardDetailPage.newOrders.status.paid"
+
+📄 frontend/pages/DashboardDetailPage.tsx:53
+   Key: "dashboardDetailPage.newOrders.status.pending"
+
+📄 frontend/pages/DashboardDetailPage.tsx:57
+   Key: "dashboardDetailPage.newOrders.totalThisWeek"
+
+📄 frontend/pages/DashboardDetailPage.tsx:67
+   Key: "dashboardDetailPage.openJobs.currentPositions"
+
+📄 frontend/pages/DashboardDetailPage.tsx:71
+   Key: "dashboardDetailPage.openJobs.applications"
+
+📄 frontend/pages/DashboardDetailPage.tsx:71
+   Key: "dashboardDetailPage.openJobs.status.open"
+
+📄 frontend/pages/DashboardDetailPage.tsx:75
+   Key: "dashboardDetailPage.openJobs.applications"
+
+📄 frontend/pages/DashboardDetailPage.tsx:75
+   Key: "dashboardDetailPage.openJobs.status.open"
+
+📄 frontend/pages/DashboardDetailPage.tsx:79
+   Key: "dashboardDetailPage.openJobs.applications"
+
+📄 frontend/pages/DashboardDetailPage.tsx:79
+   Key: "dashboardDetailPage.openJobs.status.interviewing"
+
+📄 frontend/pages/DashboardDetailPage.tsx:83
+   Key: "dashboardDetailPage.openJobs.totalOpenPositions"
+
+📄 frontend/pages/DashboardDetailPage.tsx:93
+   Key: "dashboardDetailPage.pageViews.keyMetrics"
+
+📄 frontend/pages/DashboardDetailPage.tsx:95
+   Key: "dashboardDetailPage.pageViews.totalToday"
+
+📄 frontend/pages/DashboardDetailPage.tsx:96
+   Key: "dashboardDetailPage.pageViews.uniqueVisitors"
+
+📄 frontend/pages/DashboardDetailPage.tsx:97
+   Key: "dashboardDetailPage.pageViews.mostViewed"
+
+📄 frontend/pages/DashboardDetailPage.tsx:98
+   Key: "dashboardDetailPage.pageViews.avgSession"
+
+📄 frontend/pages/DashboardDetailPage.tsx:101
+   Key: "dashboardDetailPage.pageViews.mockChartText"
+
+📄 frontend/pages/DashboardDetailPage.tsx:119
+   Key: "dashboardDetailPage.defaultTitle"
+
+📄 frontend/pages/DashboardDetailPage.tsx:127
+   Key: "dashboardDetailPage.detailsFor"
+
+📄 frontend/pages/DashboardDetailPage.tsx:146
+   Key: "dashboardDetailPage.detailsFor"
+
+📄 frontend/pages/DashboardDetailPage.tsx:149
+   Key: "dashboardDetailPage.noSpecificView"
+
+📄 frontend/pages/DashboardPage.tsx:14
+   Key: " "
+
+📄 frontend/pages/ELearningPage.tsx:24
+   Key: "eLearningPage.actions.viewCourse"
+
+📄 frontend/pages/ELearningPage.tsx:25
+   Key: "eLearningPage.actions.watchVideo"
+
+📄 frontend/pages/ELearningPage.tsx:26
+   Key: "eLearningPage.actions.downloadPdf"
+
+📄 frontend/pages/ELearningPage.tsx:27
+   Key: "eLearningPage.actions.openLink"
+
+📄 frontend/pages/ELearningPage.tsx:42
+   Key: "eLearningPage.viewingAlert"
+
+📄 frontend/pages/ELearningPage.tsx:55
+   Key: "eLearningPage.lessonsCount"
+
+📄 frontend/pages/ELearningPage.tsx:56
+   Key: "eLearningPage.durationLabel"
+
+📄 frontend/pages/ELearningPage.tsx:57
+   Key: "eLearningPage.languageLabel"
+
+📄 frontend/pages/ELearningPage.tsx:58
+   Key: "eLearningPage.updatedLabel"
+
+📄 frontend/pages/ELearningPage.tsx:148
+   Key: "eLearningPage.confirmDelete"
+
+📄 frontend/pages/ELearningPage.tsx:160
+   Key: "eLearningPage.noItemsFound"
+
+📄 frontend/pages/ELearningPage.tsx:183
+   Key: "eLearningPage.addNewContentButton"
+
+📄 frontend/pages/ELearningPage.tsx:192
+   Key: "eLearningPage.searchPlaceholder"
+
+📄 frontend/pages/ELearningPage.tsx:196
+   Key: "eLearningPage.searchPlaceholder"
+
+📄 frontend/pages/ELearningPage.tsx:203
+   Key: "eLearningPage.categoryLabel"
+
+📄 frontend/pages/ELearningPage.tsx:217
+   Key: "eLearningPage.noContentFound"
+
+📄 frontend/pages/ELearningPage.tsx:220
+   Key: "eLearningPage.coursesTitle"
+
+📄 frontend/pages/ELearningPage.tsx:220
+   Key: "eLearningPage.itemType.courses"
+
+📄 frontend/pages/ELearningPage.tsx:221
+   Key: "eLearningPage.videosTitle"
+
+📄 frontend/pages/ELearningPage.tsx:221
+   Key: "eLearningPage.itemType.videos"
+
+📄 frontend/pages/ELearningPage.tsx:222
+   Key: "eLearningPage.pdfsTitle"
+
+📄 frontend/pages/ELearningPage.tsx:222
+   Key: "eLearningPage.itemType.pdfs"
+
+📄 frontend/pages/ELearningPage.tsx:223
+   Key: "eLearningPage.externalLinksTitle"
+
+📄 frontend/pages/ELearningPage.tsx:223
+   Key: "eLearningPage.itemType.links"
+
+📄 frontend/pages/FileGalleryPage.tsx:35
+   Key: "fileGallery.actions.preview"
+
+📄 frontend/pages/FileGalleryPage.tsx:35
+   Key: "fileGallery.actions.preview"
+
+📄 frontend/pages/FileGalleryPage.tsx:36
+   Key: "fileGallery.actions.download"
+
+📄 frontend/pages/FileGalleryPage.tsx:36
+   Key: "fileGallery.actions.download"
+
+📄 frontend/pages/FileGalleryPage.tsx:37
+   Key: "fileGallery.actions.rename"
+
+📄 frontend/pages/FileGalleryPage.tsx:38
+   Key: "fileGallery.actions.delete"
+
+📄 frontend/pages/FileGalleryPage.tsx:52
+   Key: "fileGallery.confirmDelete"
+
+📄 frontend/pages/FileGalleryPage.tsx:70
+   Key: "fileGallery.uploadButton"
+
+📄 frontend/pages/FileGalleryPage.tsx:77
+   Key: "fileGallery.emptyState.title"
+
+📄 frontend/pages/FileGalleryPage.tsx:78
+   Key: "fileGallery.emptyState.message"
+
+📄 frontend/pages/HRProceduresPage.tsx:39
+   Key: "hrDocumentCard.categoryLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:40
+   Key: "hrDocumentCard.languageLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:40
+   Key: "hrDocumentCard.versionLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:43
+   Key: "hrDocumentCard.toggleFavoriteLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:48
+   Key: "hrDocumentCard.lastUpdatedLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:62
+   Key: "hrDocumentCard.downloadingAlert"
+
+📄 frontend/pages/HRProceduresPage.tsx:62
+   Key: "hrDocumentCard.downloadButton"
+
+📄 frontend/pages/HRProceduresPage.tsx:63
+   Key: "hrDocumentCard.previewingAlert"
+
+📄 frontend/pages/HRProceduresPage.tsx:63
+   Key: "hrDocumentCard.previewButtonLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:63
+   Key: "hrDocumentCard.previewButtonLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:66
+   Key: "hrDocumentCard.editButtonLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:66
+   Key: "hrDocumentCard.editButtonLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:67
+   Key: "hrDocumentCard.deleteButtonLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:67
+   Key: "hrDocumentCard.deleteButtonLabel"
+
+📄 frontend/pages/HRProceduresPage.tsx:84
+   Key: "hrProceduresPage.categoryDisplay.viewCategoryAria"
+
+📄 frontend/pages/HRProceduresPage.tsx:88
+   Key: "hrProceduresPage.categoryDisplay.documentsCount"
+
+📄 frontend/pages/HRProceduresPage.tsx:166
+   Key: "hrProceduresPage.confirmDeleteDocument"
+
+📄 frontend/pages/HRProceduresPage.tsx:180
+   Key: "hrProceduresPage.uploadButton"
+
+📄 frontend/pages/HRProceduresPage.tsx:189
+   Key: "hrProceduresPage.searchPlaceholder"
+
+📄 frontend/pages/HRProceduresPage.tsx:193
+   Key: "hrProceduresPage.searchPlaceholder"
+
+📄 frontend/pages/HRProceduresPage.tsx:202
+   Key: "hrProceduresPage.categoriesTitle"
+
+📄 frontend/pages/HRProceduresPage.tsx:205
+   Key: "hrProceduresPage.allDocumentsCategory"
+
+📄 frontend/pages/HRProceduresPage.tsx:225
+   Key: "hrProceduresPage.noDocumentsMatchSearch"
+
+📄 frontend/pages/HRProceduresPage.tsx:227
+   Key: "hrProceduresPage.noDocumentsAvailable"
+
+📄 frontend/pages/HRProceduresPage.tsx:233
+   Key: "hrProceduresPage.backToCategoriesButton"
+
+📄 frontend/pages/HRProceduresPage.tsx:239
+   Key: "hrProceduresPage.documentsInCategoryTitle"
+
+📄 frontend/pages/HRProceduresPage.tsx:239
+   Key: "hrProceduresPage.allDocumentsCategory"
+
+📄 frontend/pages/HRProceduresPage.tsx:240
+   Key: "hrProceduresPage.allItemsCount"
+
+📄 frontend/pages/HRProceduresPage.tsx:254
+   Key: "hrProceduresPage.noDocumentsInCategory"
+
+📄 frontend/pages/HRProceduresPage.tsx:255
+   Key: "hrProceduresPage.noDocumentsMatchSearch"
+
+📄 frontend/pages/LoginPage.tsx:45
+   Key: "loginPage.errorBothFields"
+
+📄 frontend/pages/LoginPage.tsx:98
+   Key: "loginPage.forgotPasswordTBD"
+
+📄 frontend/pages/LoginPage.tsx:124
+   Key: "loginPage.loggingIn"
+
+📄 frontend/pages/MarketplacePage.tsx:85
+   Key: "partnerDetailPage.onlyFoundationsRequestService"
+
+📄 frontend/pages/MarketplacePage.tsx:102
+   Key: "partnerDetailPage.requestSubmittedAlert"
+
+📄 frontend/pages/MarketplacePage.tsx:198
+   Key: "marketplacePage.emptyStates.noServices"
+
+📄 frontend/pages/MarketplacePage.tsx:211
+   Key: "marketplacePage.subtitles.productSuppliers"
+
+📄 frontend/pages/MarketplacePage.tsx:214
+   Key: "marketplacePage.subtitles.serviceProviders"
+
+📄 frontend/pages/MarketplacePage.tsx:217
+   Key: "Partner Onboarding TBD"
+
+📄 frontend/pages/MarketplacePage.tsx:217
+   Key: "marketplacePage.buttons.partnerOnboarding"
+
+📄 frontend/pages/MarketplacePage.tsx:223
+   Key: "marketplacePage.infoAlert"
+
+📄 frontend/pages/MarketplacePage.tsx:230
+   Key: "marketplacePage.searchPlaceholder"
+
+📄 frontend/pages/MarketplacePage.tsx:235
+   Key: "marketplacePage.searchPlaceholder"
+
+📄 frontend/pages/MarketplacePage.tsx:242
+   Key: "marketplacePage.labels.category"
+
+📄 frontend/pages/MarketplacePage.tsx:253
+   Key: "marketplacePage.labels.region"
+
+📄 frontend/pages/MarketplacePage.tsx:266
+   Key: "marketplacePage.labels.supplierTags"
+
+📄 frontend/pages/MarketplacePage.tsx:277
+   Key: "marketplacePage.labels.sortBy"
+
+📄 frontend/pages/MarketplacePage.tsx:284
+   Key: "marketplacePage.sortOptions.nameAsc"
+
+📄 frontend/pages/MarketplacePage.tsx:285
+   Key: "marketplacePage.sortOptions.nameDesc"
+
+📄 frontend/pages/MarketplacePage.tsx:286
+   Key: "marketplacePage.sortOptions.ratingDesc"
+
+📄 frontend/pages/MarketplacePage.tsx:300
+   Key: "marketplacePage.ariaLabels.gridView"
+
+📄 frontend/pages/MarketplacePage.tsx:310
+   Key: "marketplacePage.ariaLabels.listView"
+
+📄 frontend/pages/MessagesPage.tsx:49
+   Key: "notifications.newMessageFrom"
+
+📄 frontend/pages/MessagesPage.tsx:68
+   Key: "messagesPage.newGroupButton"
+
+📄 frontend/pages/MessagesPage.tsx:85
+   Key: "messagesPage.noConversationSelectedTitle"
+
+📄 frontend/pages/MessagesPage.tsx:86
+   Key: "messagesPage.noConversationSelectedSubtitle"
+
+📄 frontend/pages/MessagesPage.tsx:88
+   Key: "messagesPage.noConversationsYet"
+
+📄 frontend/pages/NotificationsPage.tsx:39
+   Key: "notificationsPage.clearAll"
+
+📄 frontend/pages/NotificationsPage.tsx:48
+   Key: "notificationsPage.emptyState.title"
+
+📄 frontend/pages/NotificationsPage.tsx:49
+   Key: "notificationsPage.emptyState.message"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:23
+   Key: "parentEnquiriesPage.accessDenied.title"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:24
+   Key: "parentEnquiriesPage.accessDenied.message"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:74
+   Key: "parentEnquiriesPage.emptyState.title"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:75
+   Key: "parentEnquiriesPage.emptyState.message.0"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:75
+   Key: "parentEnquiriesPage.emptyState.message.1"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:84
+   Key: "parentEnquiriesPage.card.title"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:86
+   Key: "parentEnquiriesPage.card.submitted"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:87
+   Key: "parentEnquiriesPage.card.childInfo"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:95
+   Key: "parentEnquiriesPage.card.notes"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:99
+   Key: "parentEnquiriesPage.card.responsesTitle"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:101
+   Key: "parentEnquiriesPage.card.awaitingMatch"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:113
+   Key: "parentEnquiriesPage.card.message"
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:123
+   Key: "parentEnquiriesPage.card.waitingForMoreResponses"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:48
+   Key: "parentLeadFormPage.errorAllFields"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:75
+   Key: "parentLeadFormPage.thankYouTitle"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:79
+   Key: "parentLeadFormPage.unauthenticatedSuccessMessage"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:86
+   Key: "parentLeadFormPage.authenticatedSuccessMessage"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:101
+   Key: "parentLeadFormPage.subtitle"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:106
+   Key: "parentLeadFormPage.labels.yourFullName"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:111
+   Key: "parentLeadFormPage.labels.yourEmail"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:115
+   Key: "parentLeadFormPage.labels.yourPhone"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:121
+   Key: "parentLeadFormPage.sectionTitleChildNeeds"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:125
+   Key: "parentLeadFormPage.labels.canton"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:132
+   Key: "parentLeadFormPage.labels.municipality"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:139
+   Key: "parentLeadFormPage.labels.childAge"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:143
+   Key: "parentLeadFormPage.labels.desiredStartDate"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:149
+   Key: "parentLeadFormPage.labels.specialNeeds"
+
+📄 frontend/pages/ParentLeadFormPage.tsx:151
+   Key: "parentLeadFormPage.helpText.specialNeeds"
+
+📄 frontend/pages/PartnersPage.tsx:14
+   Key: "partnersPage.partnerCard.logoAlt"
+
+📄 frontend/pages/PartnersPage.tsx:16
+   Key: "partnersPage.partnerCard.partnerType"
+
+📄 frontend/pages/PartnersPage.tsx:20
+   Key: "partnersPage.partnerCard.learnMoreButton"
+
+📄 frontend/pages/PartnersPage.tsx:38
+   Key: "partnersPage.hero.title"
+
+📄 frontend/pages/PartnersPage.tsx:40
+   Key: "partnersPage.hero.subtitle"
+
+📄 frontend/pages/PartnersPage.tsx:43
+   Key: "partnersPage.hero.ctaButton"
+
+📄 frontend/pages/PartnersPage.tsx:50
+   Key: "partnersPage.featured.title"
+
+📄 frontend/pages/PartnersPage.tsx:51
+   Key: "partnersPage.featured.subtitle"
+
+📄 frontend/pages/PartnersPage.tsx:62
+   Key: "partnersPage.joinUs.title"
+
+📄 frontend/pages/PartnersPage.tsx:64
+   Key: "partnersPage.joinUs.subtitle"
+
+📄 frontend/pages/PartnersPage.tsx:67
+   Key: "partnersPage.joinUs.contactUsAlert"
+
+📄 frontend/pages/PartnersPage.tsx:68
+   Key: "partnersPage.joinUs.contactUsButton"
+
+📄 frontend/pages/PartnersPage.tsx:70
+   Key: "partnersPage.joinUs.inquiryFormLink"
+
+📄 frontend/pages/PricingPage.tsx:45
+   Key: "pricingPage.popular"
+
+📄 frontend/pages/PricingPage.tsx:58
+   Key: "pricingPage.whatYouGet"
+
+📄 frontend/pages/PricingPage.tsx:70
+   Key: "pricingPage.selectAndContinue"
+
+📄 frontend/pages/PricingPage.tsx:70
+   Key: "pricingPage.choosePlan"
+
+📄 frontend/pages/PricingPage.tsx:94
+   Key: "pricingPage.titleSignup"
+
+📄 frontend/pages/PricingPage.tsx:95
+   Key: "pricingPage.subtitleSignup"
+
+📄 frontend/pages/PricingPage.tsx:95
+   Key: "pricingPage.subtitle"
+
+📄 frontend/pages/PricingPage.tsx:117
+   Key: "pricingPage.suppliersAndProvidersTitle"
+
+📄 frontend/pages/RecruitmentPage.tsx:44
+   Key: "recruitmentPage.buttons.viewApplicants"
+
+📄 frontend/pages/RecruitmentPage.tsx:46
+   Key: "Close Job TBD"
+
+📄 frontend/pages/RecruitmentPage.tsx:71
+   Key: "Favorite TBD"
+
+📄 frontend/pages/RecruitmentPage.tsx:81
+   Key: "recruitmentPage.candidateCard.viewProfile"
+
+📄 frontend/pages/RecruitmentPage.tsx:86
+   Key: "recruitmentPage.confirmRemoveCandidate"
+
+📄 frontend/pages/RecruitmentPage.tsx:158
+   Key: "Adding a new candidate - Functionality TBD."
+
+📄 frontend/pages/RecruitmentPage.tsx:192
+   Key: "recruitmentPage.jobOffers.searchPlaceholder"
+
+📄 frontend/pages/RecruitmentPage.tsx:196
+   Key: "recruitmentPage.jobOffers.searchPlaceholder"
+
+📄 frontend/pages/RecruitmentPage.tsx:203
+   Key: "Filter UI TBD"
+
+📄 frontend/pages/RecruitmentPage.tsx:203
+   Key: "recruitmentPage.buttons.filters"
+
+📄 frontend/pages/RecruitmentPage.tsx:205
+   Key: "recruitmentPage.buttons.postNewJob"
+
+📄 frontend/pages/RecruitmentPage.tsx:211
+   Key: "recruitmentPage.jobOffers.filterTitle"
+
+📄 frontend/pages/RecruitmentPage.tsx:213
+   Key: "recruitmentPage.labels.location"
+
+📄 frontend/pages/RecruitmentPage.tsx:213
+   Key: "recruitmentPage.labels.location"
+
+📄 frontend/pages/RecruitmentPage.tsx:214
+   Key: "recruitmentPage.labels.allContractTypes"
+
+📄 frontend/pages/RecruitmentPage.tsx:214
+   Key: "recruitmentPage.labels.allContractTypes"
+
+📄 frontend/pages/RecruitmentPage.tsx:215
+   Key: "recruitmentPage.labels.allStatuses"
+
+📄 frontend/pages/RecruitmentPage.tsx:215
+   Key: "recruitmentPage.labels.allStatuses"
+
+📄 frontend/pages/RecruitmentPage.tsx:217
+   Key: "Apply Job Filters TBD"
+
+📄 frontend/pages/RecruitmentPage.tsx:217
+   Key: "recruitmentPage.buttons.applyFilters"
+
+📄 frontend/pages/RecruitmentPage.tsx:220
+   Key: "recruitmentPage.jobOffers.activeJobsCount"
+
+📄 frontend/pages/RecruitmentPage.tsx:224
+   Key: "recruitmentPage.jobOffers.emptyState"
+
+📄 frontend/pages/RecruitmentPage.tsx:233
+   Key: "recruitmentPage.candidatePool.searchPlaceholder"
+
+📄 frontend/pages/RecruitmentPage.tsx:237
+   Key: "recruitmentPage.candidatePool.searchPlaceholder"
+
+📄 frontend/pages/RecruitmentPage.tsx:244
+   Key: "Filter UI TBD"
+
+📄 frontend/pages/RecruitmentPage.tsx:244
+   Key: "recruitmentPage.buttons.filters"
+
+📄 frontend/pages/RecruitmentPage.tsx:246
+   Key: "recruitmentPage.buttons.addCandidate"
+
+📄 frontend/pages/RecruitmentPage.tsx:252
+   Key: "recruitmentPage.candidatePool.filterTitle"
+
+📄 frontend/pages/RecruitmentPage.tsx:254
+   Key: "recruitmentPage.labels.allRoles"
+
+📄 frontend/pages/RecruitmentPage.tsx:254
+   Key: "recruitmentPage.labels.allRoles"
+
+📄 frontend/pages/RecruitmentPage.tsx:255
+   Key: "recruitmentPage.labels.region"
+
+📄 frontend/pages/RecruitmentPage.tsx:255
+   Key: "recruitmentPage.labels.region"
+
+📄 frontend/pages/RecruitmentPage.tsx:256
+   Key: "recruitmentPage.labels.availabilityDate"
+
+📄 frontend/pages/RecruitmentPage.tsx:256
+   Key: "recruitmentPage.labels.availabilityDate"
+
+📄 frontend/pages/RecruitmentPage.tsx:257
+   Key: "recruitmentPage.labels.allContractTypes"
+
+📄 frontend/pages/RecruitmentPage.tsx:257
+   Key: "recruitmentPage.labels.allContractTypes"
+
+📄 frontend/pages/RecruitmentPage.tsx:259
+   Key: "Apply Candidate Filters TBD"
+
+📄 frontend/pages/RecruitmentPage.tsx:259
+   Key: "recruitmentPage.buttons.applyFilters"
+
+📄 frontend/pages/RecruitmentPage.tsx:265
+   Key: "recruitmentPage.candidatePool.emptyState"
+
+📄 frontend/pages/RecruitmentPage.tsx:270
+   Key: "recruitmentPage.tabs.jobOffers"
+
+📄 frontend/pages/RecruitmentPage.tsx:271
+   Key: "recruitmentPage.tabs.candidatePool"
+
+📄 frontend/pages/RecruitmentPage.tsx:276
+   Key: "recruitmentPage.title"
+
+📄 frontend/pages/SignupPage.tsx:90
+   Key: "signupPage.errors.organisationNameRequired"
+
+📄 frontend/pages/SignupPage.tsx:92
+   Key: "signupPage.errors.emailRequired"
+
+📄 frontend/pages/SignupPage.tsx:93
+   Key: "signupPage.errors.emailInvalid"
+
+📄 frontend/pages/SignupPage.tsx:94
+   Key: "signupPage.errors.passwordRequired"
+
+📄 frontend/pages/SignupPage.tsx:98
+   Key: "signupPage.errors.phoneRequired"
+
+📄 frontend/pages/SignupPage.tsx:99
+   Key: "signupPage.errors.cantonRequired"
+
+📄 frontend/pages/SignupPage.tsx:101
+   Key: "signupPage.errors.capacityRequired"
+
+📄 frontend/pages/SignupPage.tsx:102
+   Key: "signupPage.errors.categoryRequired"
+
+📄 frontend/pages/SignupPage.tsx:103
+   Key: "signupPage.errors.serviceTypeRequired"
+
+📄 frontend/pages/SignupPage.tsx:106
+   Key: "signupPage.errors.childAgeRequired"
+
+📄 frontend/pages/SignupPage.tsx:107
+   Key: "signupPage.errors.childStartDateRequired"
+
+📄 frontend/pages/SignupPage.tsx:110
+   Key: "signupPage.errors.termsRequired"
+
+📄 frontend/pages/SignupPage.tsx:163
+   Key: "signupPage.progressStep1"
+
+📄 frontend/pages/SignupPage.tsx:163
+   Key: "signupPage.progressStep2"
+
+📄 frontend/pages/SignupPage.tsx:164
+   Key: "signupPage.selectRoleTitle"
+
+📄 frontend/pages/SignupPage.tsx:164
+   Key: "signupPage.detailsTitle"
+
+📄 frontend/pages/SignupPage.tsx:172
+   Key: "signupPage.submissionSuccessTitle"
+
+📄 frontend/pages/SignupPage.tsx:173
+   Key: "signupPage.submissionSuccessMessage"
+
+📄 frontend/pages/SignupPage.tsx:175
+   Key: "signupPage.goToDashboardButton"
+
+📄 frontend/pages/SignupPage.tsx:226
+   Key: "signupPage.termsLabel"
+
+📄 frontend/pages/SignupPage.tsx:226
+   Key: "signupPage.termsLink"
+
+📄 frontend/pages/SignupPage.tsx:236
+   Key: "signupPage.creatingAccount"
+
+📄 frontend/pages/SignupPage.tsx:236
+   Key: "signupPage.createAccountButton"
+
+📄 frontend/pages/StatePoliciesPage.tsx:200
+   Key: "Cantonal Policies"
+
+📄 frontend/pages/StatePoliciesPage.tsx:201
+   Key: "National Regulations"
+
+📄 frontend/pages/StatePoliciesPage.tsx:202
+   Key: "Compliance Requirements"
+
+📄 frontend/pages/StatePoliciesPage.tsx:203
+   Key: "Updates & News"
+
+📄 frontend/pages/StatePoliciesPage.tsx:204
+   Key: "Official Downloads"
+
+📄 frontend/pages/UsersPage.tsx:31
+   Key: "usersPage.cannotDeleteOwnAccount"
+
+📄 frontend/pages/UsersPage.tsx:57
+   Key: "usersPage.status.pending"
+
+📄 frontend/pages/UsersPage.tsx:117
+   Key: "usersPage.userDetailDrawer.title"
+
+📄 frontend/pages/UsersPage.tsx:126
+   Key: "usersPage.userDetailDrawer.roleLabel"
+
+📄 frontend/pages/UsersPage.tsx:127
+   Key: "usersPage.userDetailDrawer.statusLabel"
+
+📄 frontend/pages/UsersPage.tsx:128
+   Key: "usersPage.userDetailDrawer.regionLabel"
+
+📄 frontend/pages/UsersPage.tsx:129
+   Key: "usersPage.userDetailDrawer.lastLoginLabel"
+
+📄 frontend/pages/UsersPage.tsx:130
+   Key: "usersPage.userDetailDrawer.orgLabel"
+
+📄 frontend/pages/UsersPage.tsx:135
+   Key: "usersPage.userDetailDrawer.adminActionsTitle"
+
+📄 frontend/pages/UsersPage.tsx:139
+   Key: "usersPage.userDetailDrawer.changeRoleLabel"
+
+📄 frontend/pages/UsersPage.tsx:148
+   Key: "usersPage.userDetailDrawer.updateRoleButton"
+
+📄 frontend/pages/UsersPage.tsx:151
+   Key: "usersPage.userDetailDrawer.suspendUserButton"
+
+📄 frontend/pages/UsersPage.tsx:153
+   Key: "usersPage.userDetailDrawer.activateUserButton"
+
+📄 frontend/pages/UsersPage.tsx:157
+   Key: "usersPage.userDetailDrawer.cannotModifyOwnAccount"
+
+📄 frontend/pages/UsersPage.tsx:177
+   Key: "usersPage.rolePageTitle"
+
+📄 frontend/pages/UsersPage.tsx:177
+   Key: "usersPage.allUsersTitle"
+
+📄 frontend/pages/UsersPage.tsx:197
+   Key: "usersPage.confirmDeleteUser"
+
+📄 frontend/pages/UsersPage.tsx:208
+   Key: "usersPage.userProfileUpdated"
+
+📄 frontend/pages/UsersPage.tsx:216
+   Key: "usersPage.addNewUserTBD"
+
+📄 frontend/pages/UsersPage.tsx:216
+   Key: "usersPage.addNewUserButton"
+
+📄 frontend/pages/UsersPage.tsx:225
+   Key: "usersPage.searchPlaceholder"
+
+📄 frontend/pages/UsersPage.tsx:231
+   Key: "usersPage.filtersTBD"
+
+📄 frontend/pages/UsersPage.tsx:231
+   Key: "usersPage.filtersButton"
+
+📄 frontend/pages/UsersPage.tsx:238
+   Key: "usersPage.table.nameOrg"
+
+📄 frontend/pages/UsersPage.tsx:239
+   Key: "usersPage.table.role"
+
+📄 frontend/pages/UsersPage.tsx:240
+   Key: "usersPage.table.status"
+
+📄 frontend/pages/UsersPage.tsx:241
+   Key: "usersPage.table.region"
+
+📄 frontend/pages/UsersPage.tsx:242
+   Key: "usersPage.table.lastLogin"
+
+📄 frontend/pages/UsersPage.tsx:243
+   Key: "usersPage.table.actions"
+
+📄 frontend/pages/UsersPage.tsx:259
+   Key: "usersPage.emptyState"
+
+📄 frontend/pages/admin/AdminPlatformSettingsPage.tsx:39
+   Key: "organizationProfileForm.saveSuccess"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
+   Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:73
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.all"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:74
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.errors"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:75
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.warnings"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:95
+   Key: "adminSystemMonitoringPage.overallStatus.title"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:102
+   Key: "adminSystemMonitoringPage.components.api"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:103
+   Key: "adminSystemMonitoringPage.components.database"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:104
+   Key: "adminSystemMonitoringPage.components.authService"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:111
+   Key: "adminSystemMonitoringPage.metadata.environment"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:112
+   Key: "adminSystemMonitoringPage.metadata.version"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:113
+   Key: "adminSystemMonitoringPage.metadata.uptime"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:114
+   Key: "adminSystemMonitoringPage.metadata.lastCheck"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:121
+   Key: "adminSystemMonitoringPage.serverPerformance.title"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:124
+   Key: "adminSystemMonitoringPage.serverPerformance.cpuUsage"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:128
+   Key: "adminSystemMonitoringPage.serverPerformance.memoryUsage"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:132
+   Key: "adminSystemMonitoringPage.serverPerformance.diskUsage"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:136
+   Key: "adminSystemMonitoringPage.serverPerformance.uptimeDays"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:144
+   Key: "adminSystemMonitoringPage.databasePerformance.title"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:147
+   Key: "adminSystemMonitoringPage.databasePerformance.activeConnections"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:150
+   Key: "adminSystemMonitoringPage.databasePerformance.queryTime"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:152
+   Key: "adminSystemMonitoringPage.databasePerformance.storage"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:156
+   Key: "adminSystemMonitoringPage.databasePerformance.connectionHealth"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:166
+   Key: "adminSystemMonitoringPage.appPerformance.title"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:168
+   Key: "adminSystemMonitoringPage.appPerformance.activeUsers"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:169
+   Key: "adminSystemMonitoringPage.appPerformance.requestsPerMinute"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:170
+   Key: "adminSystemMonitoringPage.appPerformance.avgResponseTime"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:171
+   Key: "adminSystemMonitoringPage.appPerformance.errorRate"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:180
+   Key: "adminSystemMonitoringPage.recentEvents.title"
+
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:220
+   Key: "adminSystemMonitoringPage.rawLogConsole.title"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:28
+   Key: "discountTerminationsPage.actions.sendNoticesAlert"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:56
+   Key: "discountTerminationsPage.table.vendor"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:57
+   Key: "discountTerminationsPage.table.daycare"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:58
+   Key: "discountTerminationsPage.table.activeSince"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:59
+   Key: "discountTerminationsPage.table.reason"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:60
+   Key: "discountTerminationsPage.table.actions"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:72
+   Key: "discountTerminationsPage.actions.markCompleted"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:99
+   Key: "discountTerminationsPage.queue.title"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:101
+   Key: "discountTerminationsPage.queue.description"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:105
+   Key: "discountTerminationsPage.actions.sendNotices"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:110
+   Key: "discountTerminationsPage.queue.tableTitle"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:118
+   Key: "discountTerminationsPage.allActive.title"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:120
+   Key: "discountTerminationsPage.allActive.description"
+
+📄 frontend/pages/admin/DiscountTerminationsPage.tsx:121
+   Key: "discountTerminationsPage.allActive.tableTitle"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:17
+   Key: "educatorApplicationsPage.status.new"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:18
+   Key: "educatorApplicationsPage.status.viewed"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:19
+   Key: "educatorApplicationsPage.status.interview"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:20
+   Key: "educatorApplicationsPage.status.offer"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:21
+   Key: "educatorApplicationsPage.status.declined"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:37
+   Key: "educatorApplicationsPage.table.jobTitle"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:38
+   Key: "educatorApplicationsPage.table.creche"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:39
+   Key: "educatorApplicationsPage.table.status"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:40
+   Key: "educatorApplicationsPage.table.lastUpdated"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:41
+   Key: "educatorApplicationsPage.table.actions"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:58
+   Key: "educatorApplicationsPage.viewingDetailsFor"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:68
+   Key: "educatorApplicationsPage.emptyState"
+
+📄 frontend/pages/educator/EducatorApplicationsPage.tsx:70
+   Key: "educatorApplicationsPage.footerNote"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:35
+   Key: "educatorDashboard.title"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
+   Key: "educatorDashboard.welcome"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
+   Key: " "
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:43
+   Key: "educatorDashboard.profileCompletion.title"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:44
+   Key: "educatorDashboard.profileCompletion.subtitle"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:51
+   Key: "educatorDashboard.profileCompletion.button"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:60
+   Key: "educatorDashboard.applicationStatus.title"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:63
+   Key: "educatorDashboard.applicationStatus.submitted"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:67
+   Key: "educatorDashboard.applicationStatus.viewed"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:71
+   Key: "educatorDashboard.applicationStatus.interviews"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:75
+   Key: "educatorDashboard.applicationStatus.offers"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:80
+   Key: "educatorDashboard.applicationStatus.button"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:84
+   Key: "educatorDashboard.skills.title"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:85
+   Key: "educatorDashboard.skills.subtitle"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:86
+   Key: "educatorDashboard.skills.button"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:93
+   Key: "educatorDashboard.recommendations.title"
+
+📄 frontend/pages/educator/EducatorDashboardPage.tsx:105
+   Key: "educatorDashboard.recommendations.match"
+
+📄 frontend/pages/educator/EducatorJobBoardPage.tsx:46
+   Key: "educatorJobBoardPage.postedOn"
+
+📄 frontend/pages/educator/EducatorJobBoardPage.tsx:93
+   Key: "notifications.errorTitle"
+
+📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
+   Key: "educatorJobBoardPage.searchPlaceholder"
+
+📄 frontend/pages/educator/EducatorJobBoardPage.tsx:120
+   Key: "recruitmentPage.labels.region"
+
+📄 frontend/pages/educator/EducatorJobBoardPage.tsx:126
+   Key: "recruitmentPage.labels.allContractTypes"
+
+📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
+   Key: "educatorJobBoardPage.noJobsFound"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:44
+   Key: "Profile changes saved!"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:58
+   Key: "educatorProfilePage.editProfile"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:88
+   Key: "educatorProfilePage.availability.days"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:89
+   Key: "educatorProfilePage.availability.times"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:90
+   Key: "educatorProfilePage.availability.contract"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:91
+   Key: "educatorProfilePage.availability.ageGroups"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:137
+   Key: "educatorProfilePage.education.graduated"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:150
+   Key: "educatorProfilePage.certifications.issued"
+
+📄 frontend/pages/educator/EducatorProfilePage.tsx:150
+   Key: "educatorProfilePage.certifications.expires"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:46
+   Key: "educatorSupportPage.ticketSubmittedAlert"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:61
+   Key: "supportPage.faqTitle"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:65
+   Key: "supportPage.furtherAssistanceTitle"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.0"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.1"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:71
+   Key: "supportPage.submitTicketTitle"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:74
+   Key: "supportPage.ticketForm.subjectLabel"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:82
+   Key: "educatorSupportPage.ticketForm.subjectPlaceholder"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:86
+   Key: "supportPage.ticketForm.messageLabel"
+
+📄 frontend/pages/educator/EducatorSupportPage.tsx:94
+   Key: "educatorSupportPage.ticketForm.messagePlaceholder"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:18
+   Key: "foundationAnalyticsPage.mockDataVisualization"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:27
+   Key: "supplierAnalyticsPage.datePickerLabel"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:28
+   Key: "supplierAnalyticsPage.exportCsvAlert"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:29
+   Key: "supplierAnalyticsPage.exportCsvButton"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:36
+   Key: "foundationAnalyticsPage.spendingByCategory"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:40
+   Key: "foundationAnalyticsPage.parentLeadConversion"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:44
+   Key: "foundationAnalyticsPage.staffTrainingCompletion"
+
+📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:50
+   Key: "foundationAnalyticsPage.enrollmentTrend"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:61
+   Key: "foundationDashboard.title"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
+   Key: "foundationDashboard.welcomeMessage"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
+   Key: " "
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:70
+   Key: "foundationDashboard.quickStats.title"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:88
+   Key: "foundationDashboard.todayAtGlance"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:108
+   Key: "foundationDashboard.activity.title"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:131
+   Key: "foundationDashboard.quickActions.title"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:141
+   Key: "foundationDashboard.quickMessage.title"
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:142
+   Key: "foundationDashboard.quickMessage.placeholder"
+
+📄 frontend/pages/foundation/FoundationLeadsPage.tsx:18
+   Key: "foundationLeadsPage.accessDenied.title"
+
+📄 frontend/pages/foundation/FoundationLeadsPage.tsx:19
+   Key: "foundationLeadsPage.accessDenied.message"
+
+📄 frontend/pages/foundation/FoundationLeadsPage.tsx:25
+   Key: "sidebar.parentLeads"
+
+📄 frontend/pages/foundation/FoundationLeadsPage.tsx:52
+   Key: "foundationLeadsPage.emptyState.title"
+
+📄 frontend/pages/foundation/FoundationLeadsPage.tsx:53
+   Key: "foundationLeadsPage.emptyState.message"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:76
+   Key: "foundationOrdersAppointmentsPage.productOrdersTitle"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
+   Key: "foundationOrdersAppointmentsPage.exportCsvProductAlert"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
+   Key: "foundationOrdersAppointmentsPage.exportCsvButton"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:82
+   Key: "foundationOrdersAppointmentsPage.noProductOrders"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:89
+   Key: "foundationOrdersAppointmentsPage.table.refNo"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:90
+   Key: "foundationOrdersAppointmentsPage.table.supplier"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:91
+   Key: "foundationOrdersAppointmentsPage.table.itemsQty"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:92
+   Key: "foundationOrdersAppointmentsPage.table.total"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:93
+   Key: "foundationOrdersAppointmentsPage.table.date"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:94
+   Key: "foundationOrdersAppointmentsPage.table.status"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:95
+   Key: "foundationOrdersAppointmentsPage.table.actions"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:123
+   Key: "foundationOrdersAppointmentsPage.cancelOrderAlert"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:139
+   Key: "foundationOrdersAppointmentsPage.serviceAppointmentsTitle"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:140
+   Key: "foundationOrdersAppointmentsPage.exportCsvServiceAlert"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:140
+   Key: "foundationOrdersAppointmentsPage.exportCsvButton"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:145
+   Key: "foundationOrdersAppointmentsPage.noServiceAppointments"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:152
+   Key: "foundationOrdersAppointmentsPage.table.refNo"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:153
+   Key: "foundationOrdersAppointmentsPage.table.provider"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:154
+   Key: "foundationOrdersAppointmentsPage.table.service"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:155
+   Key: "foundationOrdersAppointmentsPage.table.date"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:156
+   Key: "foundationOrdersAppointmentsPage.table.status"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:157
+   Key: "foundationOrdersAppointmentsPage.table.actions"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:169
+   Key: "foundationOrdersAppointmentsPage.unknownProvider"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:174
+   Key: "foundationOrdersAppointmentsPage.preferredAbbr"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:174
+   Key: "foundationOrdersAppointmentsPage.notApplicable"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:182
+   Key: "foundationOrdersAppointmentsPage.unknownProvider"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:184
+   Key: "foundationOrdersAppointmentsPage.rescheduleAlert"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:184
+   Key: "foundationOrdersAppointmentsPage.rescheduleButton"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:198
+   Key: "foundationOrdersAppointmentsPage.productOrdersTab"
+
+📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:199
+   Key: "foundationOrdersAppointmentsPage.serviceAppointmentsTab"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:16
+   Key: "foundationOrganisationProfilePage.mock.pedagogyStatement"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:35
+   Key: "foundationOrganisationProfilePage.alert.infoSaved"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:54
+   Key: "foundationOrganisationProfilePage.sections.branding.title"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:58
+   Key: "foundationOrganisationProfilePage.sections.branding.logoLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:62
+   Key: "foundationOrganisationProfilePage.sections.branding.coverImageLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:66
+   Key: "foundationOrganisationProfilePage.sections.branding.pedagogyStatementLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:67
+   Key: "foundationOrganisationProfilePage.sections.branding.pedagogyStatementPlaceholder"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:73
+   Key: "foundationOrganisationProfilePage.sections.operations.title"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:77
+   Key: "foundationOrganisationProfilePage.sections.operations.openingHoursLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:78
+   Key: "foundationOrganisationProfilePage.sections.operations.openingHoursPlaceholder"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:81
+   Key: "foundationOrganisationProfilePage.sections.operations.contactInfoLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:82
+   Key: "foundationOrganisationProfilePage.sections.operations.contactInfoPlaceholder"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:88
+   Key: "foundationOrganisationProfilePage.sections.online.title"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:92
+   Key: "foundationOrganisationProfilePage.sections.online.bookingLinkLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:93
+   Key: "foundationOrganisationProfilePage.sections.online.bookingLinkPlaceholder"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:96
+   Key: "foundationOrganisationProfilePage.sections.online.socialMediaLinkLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:97
+   Key: "foundationOrganisationProfilePage.sections.online.socialMediaLinkPlaceholder"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:101
+   Key: "foundationOrganisationProfilePage.sections.online.acceptingLeadsLabel"
+
+📄 frontend/pages/foundation/FoundationOrganisationProfilePage.tsx:106
+   Key: "foundationOrganisationProfilePage.saveButton"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:46
+   Key: "foundationSupportPage.ticketSubmittedAlert"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:61
+   Key: "supportPage.faqTitle"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:65
+   Key: "supportPage.furtherAssistanceTitle"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.0"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.1"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:71
+   Key: "supportPage.submitTicketTitle"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:74
+   Key: "supportPage.ticketForm.subjectLabel"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:82
+   Key: "foundationSupportPage.ticketForm.subjectPlaceholder"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:86
+   Key: "supportPage.ticketForm.messageLabel"
+
+📄 frontend/pages/foundation/FoundationSupportPage.tsx:94
+   Key: "foundationSupportPage.ticketForm.messagePlaceholder"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:33
+   Key: "parentDashboard.title"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:35
+   Key: "parentDashboard.welcomeMessage"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:35
+   Key: " "
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:46
+   Key: "parentDashboard.enquiry.sent"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:50
+   Key: "parentDashboard.enquiry.responses"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:54
+   Key: "parentDashboard.enquiry.pending"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:59
+   Key: "parentDashboard.enquiry.button"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:80
+   Key: "parentDashboard.childProfile.name"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:81
+   Key: "parentDashboard.childProfile.age"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:82
+   Key: "parentDashboard.childProfile.location"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:83
+   Key: "parentDashboard.childProfile.languages"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:84
+   Key: "parentDashboard.childProfile.specialNeeds"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:86
+   Key: "parentDashboard.childProfile.button"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:91
+   Key: "parentDashboard.favorites.subtitle"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:92
+   Key: "View Favorites TBD"
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:92
+   Key: "parentDashboard.favorites.button"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:17
+   Key: "parentEnquiriesPage.accessDenied.title"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:18
+   Key: "parentEnquiriesPage.accessDenied.message"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:58
+   Key: "parentEnquiriesPage.emptyState.title"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:59
+   Key: "parentEnquiriesPage.emptyState.message.0"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:59
+   Key: "parentEnquiriesPage.emptyState.message.1"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:68
+   Key: "parentEnquiriesPage.card.title"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:70
+   Key: "parentEnquiriesPage.card.submitted"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:71
+   Key: "parentEnquiriesPage.card.childInfo"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:79
+   Key: "parentEnquiriesPage.card.notes"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:83
+   Key: "parentEnquiriesPage.card.responsesTitle"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:85
+   Key: "parentEnquiriesPage.card.awaitingMatch"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:95
+   Key: "parentEnquiriesPage.card.message"
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:100
+   Key: "parentEnquiriesPage.card.waitingForMoreResponses"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:19
+   Key: "supportPage.faqTitle"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:22
+   Key: "parentSupportPage.faq.matchingProcess.q"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:23
+   Key: "parentSupportPage.faq.matchingProcess.a"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:26
+   Key: "parentSupportPage.faq.responseTime.q"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:27
+   Key: "parentSupportPage.faq.responseTime.a"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:30
+   Key: "parentSupportPage.faq.dataSecurity.q"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:31
+   Key: "parentSupportPage.faq.dataSecurity.a"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:36
+   Key: "supportPage.furtherAssistanceTitle"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:37
+   Key: "supportPage.furtherAssistanceText.0"
+
+📄 frontend/pages/parent/ParentSupportPage.tsx:37
+   Key: "supportPage.furtherAssistanceText.1"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:40
+   Key: "partnerDetailPage.productOutOfStock"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:46
+   Key: "partnerDetailPage.productAddedToOrder"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:77
+   Key: "partnerDetailPage.addToOrderButton"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:133
+   Key: "Could not find a user associated with this organization to message."
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:143
+   Key: "partnerDetailPage.onlyFoundationsRequestService"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:165
+   Key: "partnerDetailPage.requestSubmittedAlert"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:172
+   Key: "partnerDetailPage.loadingPartnerDetails"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:173
+   Key: "partnerDetailPage.invalidPartnerIdMessage"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:194
+   Key: "userRoles.Product Supplier"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:194
+   Key: "userRoles.Service Provider"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:217
+   Key: "partnerDetailPage.contactInfoTitle"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:231
+   Key: "partnerDetailPage.directOrderButton"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:237
+   Key: "partnerDetailPage.aboutTitle"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:242
+   Key: "partnerDetailPage.ratingsReviewsTitle"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:245
+   Key: "partnerDetailPage.ratingText"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:247
+   Key: "partnerDetailPage.reviewsPlaceholder"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:255
+   Key: "sidebar.products"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:255
+   Key: "sidebar.services"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:270
+   Key: "partnerDetailPage.noProductsListed"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:287
+   Key: "partnerDetailPage.requestServiceButton"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:293
+   Key: "partnerDetailPage.noServicesListed"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:298
+   Key: "partnerDetailPage.promoCodeTitle"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:300
+   Key: "partnerDetailPage.promoCodePlaceholder"
+
+📄 frontend/pages/partner/PartnerDetailPage.tsx:301
+   Key: "partnerDetailPage.applyPromoButton"
+
+📄 frontend/pages/partnersPage.tsx:14
+   Key: "partnersPage.partnerCard.logoAlt"
+
+📄 frontend/pages/partnersPage.tsx:16
+   Key: "partnersPage.partnerCard.partnerType"
+
+📄 frontend/pages/partnersPage.tsx:20
+   Key: "partnersPage.partnerCard.learnMoreButton"
+
+📄 frontend/pages/partnersPage.tsx:38
+   Key: "partnersPage.hero.title"
+
+📄 frontend/pages/partnersPage.tsx:40
+   Key: "partnersPage.hero.subtitle"
+
+📄 frontend/pages/partnersPage.tsx:43
+   Key: "partnersPage.hero.ctaButton"
+
+📄 frontend/pages/partnersPage.tsx:50
+   Key: "partnersPage.featured.title"
+
+📄 frontend/pages/partnersPage.tsx:51
+   Key: "partnersPage.featured.subtitle"
+
+📄 frontend/pages/partnersPage.tsx:62
+   Key: "partnersPage.joinUs.title"
+
+📄 frontend/pages/partnersPage.tsx:64
+   Key: "partnersPage.joinUs.subtitle"
+
+📄 frontend/pages/partnersPage.tsx:67
+   Key: "partnersPage.joinUs.contactUsAlert"
+
+📄 frontend/pages/partnersPage.tsx:68
+   Key: "partnersPage.joinUs.contactUsButton"
+
+📄 frontend/pages/partnersPage.tsx:70
+   Key: "partnersPage.joinUs.inquiryFormLink"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:20
+   Key: "supplierAnalyticsPage.mockChartText"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:34
+   Key: "supplierAnalyticsPage.datePickerLabel"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:35
+   Key: "supplierAnalyticsPage.exportCsvAlert"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:36
+   Key: "supplierAnalyticsPage.exportCsvButton"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:43
+   Key: "serviceProviderAnalyticsPage.serviceRequestsPerWeek"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:47
+   Key: "serviceProviderAnalyticsPage.topViewedServices"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:54
+   Key: "serviceProviderAnalyticsPage.requestsByCanton"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:60
+   Key: "supplierAnalyticsPage.promoCodePerformance"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:66
+   Key: "supplierAnalyticsPage.table.code"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:67
+   Key: "supplierAnalyticsPage.table.uses"
+
+📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:68
+   Key: "supplierAnalyticsPage.table.estRevenueImpact"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:41
+   Key: "serviceProviderDashboard.welcomeMessage"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:41
+   Key: " "
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:47
+   Key: "serviceProviderDashboard.widgets.overview.title"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:50
+   Key: "serviceProviderDashboard.widgets.overview.activeRequests"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:54
+   Key: "serviceProviderDashboard.widgets.overview.completedServices"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:58
+   Key: "serviceProviderDashboard.widgets.overview.upcoming"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:62
+   Key: "serviceProviderDashboard.widgets.overview.customerRating"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:70
+   Key: "serviceProviderDashboard.widgets.overview.button"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:76
+   Key: "serviceProviderDashboard.widgets.management.title"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:79
+   Key: "serviceProviderDashboard.widgets.management.listings"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:83
+   Key: "serviceProviderDashboard.widgets.management.pending"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:87
+   Key: "serviceProviderDashboard.widgets.management.categories"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:96
+   Key: "serviceProviderDashboard.widgets.management.button"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:104
+   Key: "serviceProviderDashboard.widgets.appointments.title"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:110
+   Key: "serviceProviderDashboard.widgets.appointments.with"
+
+📄 frontend/pages/service-provider/ServiceProviderDashboardPage.tsx:115
+   Key: "serviceProviderDashboard.widgets.appointments.button"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:27
+   Key: "serviceProviderListingsPage.card.category"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:27
+   Key: "serviceProviderListingsPage.card.delivery"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:69
+   Key: "User organization details are missing."
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:108
+   Key: "serviceProviderListingsPage.confirmDelete"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:125
+   Key: "serviceProviderListingsPage.addNewServiceButton"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:133
+   Key: "serviceProviderListingsPage.searchPlaceholder"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:151
+   Key: "serviceProviderListingsPage.emptyState.title"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:153
+   Key: "serviceProviderListingsPage.emptyState.noMatch"
+
+📄 frontend/pages/service-provider/ServiceProviderListingsPage.tsx:153
+   Key: "serviceProviderListingsPage.emptyState.noServicesYet"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:30
+   Key: "foundationOrdersAppointmentsPage.unknownProvider"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:61
+   Key: "serviceProviderRequestsPage.filterByStatus"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:79
+   Key: "serviceProviderRequestsPage.table.requestId"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:80
+   Key: "serviceProviderRequestsPage.table.foundation"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:81
+   Key: "serviceProviderRequestsPage.table.service"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:82
+   Key: "serviceProviderRequestsPage.table.date"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:83
+   Key: "serviceProviderRequestsPage.table.status"
+
+📄 frontend/pages/service-provider/ServiceProviderRequestsPage.tsx:105
+   Key: "serviceProviderRequestsPage.emptyState"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:46
+   Key: "serviceProviderSupportPage.ticketSubmittedAlert"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:61
+   Key: "supportPage.faqTitle"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:65
+   Key: "supportPage.furtherAssistanceTitle"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.0"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.1"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:71
+   Key: "supportPage.submitTicketTitle"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:74
+   Key: "supportPage.ticketForm.subjectLabel"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:82
+   Key: "serviceProviderSupportPage.ticketForm.subjectPlaceholder"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:86
+   Key: "supportPage.ticketForm.messageLabel"
+
+📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:94
+   Key: "serviceProviderSupportPage.ticketForm.messagePlaceholder"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:20
+   Key: "supplierAnalyticsPage.mockChartText"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:35
+   Key: "supplierAnalyticsPage.datePickerLabel"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:36
+   Key: "supplierAnalyticsPage.exportCsvAlert"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:37
+   Key: "supplierAnalyticsPage.exportCsvButton"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:44
+   Key: "supplierAnalyticsPage.orderRequestsPerWeek"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:48
+   Key: "supplierAnalyticsPage.topViewedProducts"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:55
+   Key: "supplierAnalyticsPage.requestsByCanton"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:61
+   Key: "supplierAnalyticsPage.promoCodePerformance"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:67
+   Key: "supplierAnalyticsPage.table.code"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:68
+   Key: "supplierAnalyticsPage.table.uses"
+
+📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:69
+   Key: "supplierAnalyticsPage.table.estRevenueImpact"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:29
+   Key: "supplierDashboard.noSalesYet"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:36
+   Key: "supplierDashboard.noSalesYet"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:86
+   Key: "supplierDashboard.title"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:88
+   Key: "supplierDashboard.welcomeMessage"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:88
+   Key: " "
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:94
+   Key: "supplierDashboard.widgets.sales.title"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:97
+   Key: "supplierDashboard.widgets.sales.totalOrders"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:101
+   Key: "supplierDashboard.widgets.sales.revenueMonth"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:105
+   Key: "supplierDashboard.widgets.sales.topSelling"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:109
+   Key: "supplierDashboard.widgets.sales.fulfillmentRate"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:113
+   Key: "supplierDashboard.widgets.sales.button"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:118
+   Key: "supplierDashboard.widgets.products.title"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:121
+   Key: "supplierDashboard.widgets.products.active"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:125
+   Key: "supplierDashboard.widgets.products.pending"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:130
+   Key: "supplierDashboard.widgets.products.lowStock"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:138
+   Key: "supplierDashboard.widgets.products.button"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:144
+   Key: "supplierDashboard.widgets.orders.title"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:147
+   Key: "supplierDashboard.widgets.orders.pending"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:152
+   Key: "supplierDashboard.widgets.orders.toFulfill"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:160
+   Key: "supplierDashboard.widgets.orders.button"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:167
+   Key: "supplierDashboard.recentOrdersTitle"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:169
+   Key: "supplierDashboard.noRecentOrders"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:175
+   Key: "supplierDashboard.recentOrdersTable.id"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:176
+   Key: "supplierDashboard.recentOrdersTable.creche"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:177
+   Key: "supplierDashboard.recentOrdersTable.date"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:178
+   Key: "supplierDashboard.recentOrdersTable.total"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:179
+   Key: "supplierDashboard.recentOrdersTable.status"
+
+📄 frontend/pages/supplier/SupplierDashboardPage.tsx:185
+   Key: "-"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:30
+   Key: "foundationOrdersAppointmentsPage.unknownProvider"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:61
+   Key: "supplierOrdersPage.filterByStatus"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:79
+   Key: "supplierOrdersPage.table.orderId"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:80
+   Key: "supplierOrdersPage.table.foundation"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:81
+   Key: "supplierOrdersPage.table.date"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:82
+   Key: "supplierOrdersPage.table.total"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:83
+   Key: "supplierOrdersPage.table.status"
+
+📄 frontend/pages/supplier/SupplierOrdersPage.tsx:102
+   Key: "supplierOrdersPage.emptyState"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:53
+   Key: "supplierProductListingsPage.addProductAlert"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:54
+   Key: "supplierProductListingsPage.addProductButton"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:62
+   Key: "supplierProductListingsPage.searchPlaceholder"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:74
+   Key: "supplierProductListingsPage.table.product"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:75
+   Key: "supplierProductListingsPage.table.price"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:76
+   Key: "supplierProductListingsPage.table.stock"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:77
+   Key: "supplierProductListingsPage.table.visibility"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:78
+   Key: "supplierProductListingsPage.table.actions"
+
+📄 frontend/pages/supplier/SupplierProductListingsPage.tsx:114
+   Key: "supplierProductListingsPage.emptyState"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:46
+   Key: "supplierSupportPage.ticketSubmittedAlert"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:61
+   Key: "supportPage.faqTitle"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:65
+   Key: "supportPage.furtherAssistanceTitle"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.0"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:66
+   Key: "supportPage.furtherAssistanceText.1"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:71
+   Key: "supportPage.submitTicketTitle"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:74
+   Key: "supportPage.ticketForm.subjectLabel"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:82
+   Key: "supplierSupportPage.ticketForm.subjectPlaceholder"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:86
+   Key: "supportPage.ticketForm.messageLabel"
+
+📄 frontend/pages/supplier/SupplierSupportPage.tsx:94
+   Key: "supplierSupportPage.ticketForm.messagePlaceholder"
+
+📄 frontend/tailwind.config.js:1
+   Key: "tailwindcss"
+
+⚠️  POTENTIAL HARDCODED TEXT:
+============================
+📄 frontend/App.tsx:
+   Line 351: "🔍 DEBUG MODE ACTIVE - Look for purple debug buttons in bottom corners" (JSX_TEXT)
+
+📄 frontend/components/admin/PolicyAlertModal.tsx:
+   Line 85: "Title *" (JSX_TEXT)
+   Line 89: "Message *" (JSX_TEXT)
+   Line 94: "Type *" (JSX_TEXT)
+   Line 100: "Region Scope *" (JSX_TEXT)
+   Line 108: "Display Start Date (Optional)" (JSX_TEXT)
+   Line 112: "Display End Date (Optional)" (JSX_TEXT)
+
+📄 frontend/components/cart/OrderSummaryDrawer.tsx:
+   Line 86: "Your Order" (JSX_TEXT)
+   Line 95: "Close panel" (JSX_TEXT)
+   Line 104: "Your order cart is empty." (JSX_TEXT)
+   Line 109: "Items from:" (JSX_TEXT)
+   Line 157: "Special Instructions or Notes for Supplier:" (JSX_TEXT)
+   Line 174: "Shipping and taxes calculated at checkout (if applicable)." (JSX_TEXT)
+   Line 193: "Continue Shopping" (JSX_TEXT)
+   Line 194: "&rarr;" (JSX_TEXT)
+
+📄 frontend/components/debug/TranslationDebugger.tsx:
+   Line 105: "Translation Debug Info" (JSX_TEXT)
+   Line 108: "Status:" (JSX_TEXT)
+   Line 118: "Test Translation:" (JSX_TEXT)
+   Line 127: "Missing Keys:" (JSX_TEXT)
+   Line 137: "Resource Bundle Keys:" (JSX_TEXT)
+   Line 148: "Backend Status:" (JSX_TEXT)
+   Line 156: "Options:" (JSX_TEXT)
+   Line 171: "Log to Console" (JSX_TEXT)
+
+📄 frontend/components/debug/TranslationDiagnostics.tsx:
+   Line 182: "Translation Diagnostics" (JSX_TEXT)
+   Line 196: "📊 Basic Status:" (JSX_TEXT)
+   Line 207: "📁 Translation Files:" (JSX_TEXT)
+   Line 252: "🧪 Test Translations:" (JSX_TEXT)
+   Line 267: "⚙️ Configuration:" (JSX_TEXT)
+   Line 286: "Log to Console" (JSX_TEXT)
+   Line 296: "Copy Missing Keys" (JSX_TEXT)
+
+📄 frontend/components/debug/TranslationErrorLogger.tsx:
+   Line 613: "3 && text.length" (JSX_TEXT)
+   Line 645: "5 && text.length" (JSX_TEXT)
+   Line 853: "Translation Error Logger" (JSX_TEXT)
+   Line 865: "📊 Error Summary:" (JSX_TEXT)
+   Line 878: "🔍 Recent Errors:" (JSX_TEXT)
+   Line 916: "Log to Git" (JSX_TEXT)
+   Line 931: "Log to Console" (JSX_TEXT)
+   Line 944: "Copy Missing" (JSX_TEXT)
+   Line 962: "Commit to Git" (JSX_TEXT)
+
+📄 frontend/components/marketplace/ServiceRequestModal.tsx:
+   Line 70: "Preferred Date (Optional)" (JSX_TEXT)
+   Line 83: "Notes / Specific Requirements (Optional)" (JSX_TEXT)
+   Line 96: "Submit Request" (JSX_TEXT)
+
+📄 frontend/components/service-provider/ServiceRequestDetailModal.tsx:
+   Line 41: "Mark as Completed" (JSX_TEXT)
+
+📄 frontend/components/settings/AddPromoCodeModal.tsx:
+   Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
+
+📄 frontend/components/shared/ErrorBoundary.tsx:
+   Line 43: "Something went wrong" (JSX_TEXT)
+   Line 46: "We're sorry, but something unexpected happened. Please try again." (JSX_TEXT)
+   Line 51: "Error Details" (JSX_TEXT)
+   Line 65: "Try Again" (JSX_TEXT)
+   Line 72: "Reload Page" (JSX_TEXT)
+
+📄 frontend/components/supplier/OrderRequestDetailModal.tsx:
+   Line 39: "Mark as Processing" (JSX_TEXT)
+
+📄 frontend/components/ui/FileUploadZone.tsx:
+   Line 119: "or drag and drop" (JSX_TEXT)
+
+📄 frontend/contexts/AppContext.tsx:
+   Line 404: "useAppContext must be used within an AppContextProvider" (ERROR)
+
+📄 frontend/contexts/CartContext.tsx:
+   Line 134: "useCart must be used within a CartProvider" (ERROR)
+
+📄 frontend/contexts/MessagingContext.tsx:
+   Line 169: "User not logged in" (ERROR)
+   Line 178: "User not logged in" (ERROR)
+   Line 244: "useMessaging must be used within a MessagingProvider" (ERROR)
+
+📄 frontend/contexts/NotificationContext.tsx:
+   Line 46: "useNotifications must be used within a NotificationProvider" (ERROR)
+
+📄 frontend/hooks/useApi.ts:
+   Line 10: "extends UseApiState" (JSX_TEXT)
+   Line 16: "): UseApiReturn" (JSX_TEXT)
+
+📄 frontend/hooks/useAuthenticatedApi.ts:
+   Line 53: "): Promise" (JSX_TEXT)
+
+📄 frontend/index.tsx:
+   Line 17: "Loading translations..." (JSX_TEXT)
+   Line 11: "Could not find root element to mount to" (ERROR)
+
+📄 frontend/pages/DashboardDetailPage.tsx:
+   Line 24: "Alice Johnson - Logged in 2 hours ago, viewed 5 pages." (JSX_TEXT)
+   Line 25: "Bob Williams - Updated profile at 10:30 AM." (JSX_TEXT)
+   Line 26: "Carol Davis - Joined yesterday, completed onboarding." (JSX_TEXT)
+   Line 27: "David Brown - Viewed marketplace listings." (JSX_TEXT)
+   Line 51: "#ORD789" (JSX_TEXT)
+   Line 51: "EcoToys Wooden Blocks" (JSX_TEXT)
+   Line 52: "#ORD790" (JSX_TEXT)
+   Line 52: "FreshBites Meal Plan" (JSX_TEXT)
+   Line 53: "#ORD791" (JSX_TEXT)
+   Line 53: "ArtFun Creative Pack" (JSX_TEXT)
+   Line 70: "Lead Educator - Geneva" (JSX_TEXT)
+   Line 74: "Assistant Educator - Lausanne" (JSX_TEXT)
+   Line 78: "Daycare Director - Zurich" (JSX_TEXT)
+   Line 97: "/dashboard (560 views)" (JSX_TEXT)
+   Line 98: "4m 15s" (JSX_TEXT)
+
+📄 frontend/pages/DesignSystemPage.tsx:
+   Line 34: "This is the content for Tab 1." (JSX_TEXT)
+   Line 35: "This is the content for Tab 2." (JSX_TEXT)
+   Line 36: "This is a disabled tab." (JSX_TEXT)
+   Line 42: "Design System" (JSX_TEXT)
+   Line 43: "A living reference for all UI components and design tokens in the Pro Crèche Solutions application." (JSX_TEXT)
+   Line 62: "Font Family: Nunito, Inter, sans-serif" (JSX_TEXT)
+   Line 63: "Heading 1: The quick brown fox" (JSX_TEXT)
+   Line 64: "Heading 2: The quick brown fox" (JSX_TEXT)
+   Line 65: "Heading 3: The quick brown fox" (JSX_TEXT)
+   Line 66: "Heading 4: The quick brown fox" (JSX_TEXT)
+   Line 67: "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." (JSX_TEXT)
+   Line 68: "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi." (JSX_TEXT)
+   Line 69: "This is a link" (JSX_TEXT)
+   Line 91: "Extra Small" (JSX_TEXT)
+   Line 93: "Medium (Default)" (JSX_TEXT)
+   Line 98: "With Icons" (JSX_TEXT)
+   Line 100: "Left Icon" (JSX_TEXT)
+   Line 101: "Right Icon" (JSX_TEXT)
+   Line 102: "Small Icon" (JSX_TEXT)
+   Line 107: "Disabled State" (JSX_TEXT)
+   Line 109: "Primary Disabled" (JSX_TEXT)
+   Line 110: "Secondary Disabled" (JSX_TEXT)
+   Line 111: "Outline Disabled" (JSX_TEXT)
+   Line 122: "Standard Card" (JSX_TEXT)
+   Line 123: "This is a standard card component with a soft shadow. It's the base for most content containers." (JSX_TEXT)
+   Line 126: "Hover Effect Card" (JSX_TEXT)
+   Line 127: "This card has a subtle scale and shadow transition on hover, useful for interactive elements." (JSX_TEXT)
+   Line 134: "Form Controls" (JSX_TEXT)
+   Line 138: "Text Input" (JSX_TEXT)
+   Line 142: "Select Menu" (JSX_TEXT)
+   Line 144: "Option 1" (JSX_TEXT)
+   Line 145: "Option 2" (JSX_TEXT)
+   Line 146: "Option 3" (JSX_TEXT)
+   Line 156: "Quantity Input" (JSX_TEXT)
+   Line 160: "Disabled Input" (JSX_TEXT)
+   Line 172: "Pills Variant (Default)" (JSX_TEXT)
+   Line 176: "Line Variant" (JSX_TEXT)
+
+📄 frontend/pages/FoundationLeadsPage.tsx:
+   Line 15: "Access Denied" (JSX_TEXT)
+   Line 16: "You must be logged in as a Foundation with a valid Organization ID to view this page." (JSX_TEXT)
+   Line 36: "Incoming Parent Leads" (JSX_TEXT)
+   Line 45: "No Incoming Leads" (JSX_TEXT)
+   Line 46: "There are currently no new parent enquiries matching your daycare." (JSX_TEXT)
+
+📄 frontend/pages/ParentEnquiriesPage.tsx:
+   Line 122: "0 && lead.responses.length" (JSX_TEXT)
+
+📄 frontend/pages/StatePoliciesPage.tsx:
+   Line 68: "View Online" (JSX_TEXT)
+   Line 195: "doc.category === category).length === 0 &&" (JSX_TEXT)
+   Line 195: "No documents found in this category for current filters." (JSX_TEXT)
+   Line 211: "State Policies & Regulations" (JSX_TEXT)
+   Line 214: "Manage Alerts" (JSX_TEXT)
+   Line 215: "Add/Edit Policy" (JSX_TEXT)
+   Line 234: "Search Policies" (JSX_TEXT)
+   Line 245: "All Cantons/Regions" (JSX_TEXT)
+   Line 249: "All Policy Types" (JSX_TEXT)
+   Line 253: "All Broad Categories" (JSX_TEXT)
+   Line 277: "Manage Existing Alerts" (JSX_TEXT)
+   Line 278: "No custom alerts created yet." (JSX_TEXT)
+   Line 294: "Add New Alert" (JSX_TEXT)
+
+📄 frontend/pages/admin/ContentManagementDashboardPage.tsx:
+   Line 144: "Content Management Dashboard" (JSX_TEXT)
+   Line 167: "View All &rarr;" (JSX_TEXT)
+   Line 176: "Recent Activity" (JSX_TEXT)
+   Line 177: "No recent activity." (JSX_TEXT)
+   Line 202: "Content Status Flags" (JSX_TEXT)
+   Line 203: "No status flags to show." (JSX_TEXT)
+
+📄 frontend/pages/candidate/CandidateProfilePage.tsx:
+   Line 33: "Candidate not found." (JSX_TEXT)
+   Line 34: "The profile you are looking for does not exist or the ID is incorrect." (JSX_TEXT)
+   Line 35: "Go Back" (JSX_TEXT)
+   Line 69: "Back to Candidate Pool" (JSX_TEXT)
+   Line 96: "Invite to Apply" (JSX_TEXT)
+   Line 97: "Send Message" (JSX_TEXT)
+   Line 148: "View Credential" (JSX_TEXT)
+   Line 171: "Preferred Days:" (JSX_TEXT)
+   Line 172: "Preferred Times:" (JSX_TEXT)
+   Line 173: "Contract Type:" (JSX_TEXT)
+   Line 174: "Preferred Age Groups:" (JSX_TEXT)
+   Line 201: "Invite to Interview" (JSX_TEXT)
+   Line 211: "Message Candidate" (JSX_TEXT)
+
+📄 frontend/pages/foundation/FoundationDashboardPage.tsx:
+   Line 91: "18°C" (JSX_TEXT)
+
+📄 frontend/pages/parent/ParentDashboardPage.tsx:
+   Line 80: "Child's Name (from Profile)" (JSX_TEXT)
+   Line 81: "3 years" (JSX_TEXT)
+   Line 83: "French, English" (JSX_TEXT)
+   Line 84: "None specified" (JSX_TEXT)
+
+📄 frontend/pages/parent/ParentEnquiriesPage.tsx:
+   Line 99: "0 && lead.responses.length" (JSX_TEXT)
+
+📄 frontend/providers/AuthProvider.tsx:
+   Line 180: "VITE_CLERK_PUBLISHABLE_KEY is required. Please set up Clerk authentication in your environment variables." (ERROR)
+   Line 197: "useAuthContext must be used within an AuthProvider" (ERROR)
+
+📄 frontend/services/api.ts:
+   Line 78: "(endpoint: string): Promise" (JSX_TEXT)
+   Line 82: "(endpoint: string, data?: any): Promise" (JSX_TEXT)
+   Line 89: "(endpoint: string, data?: any): Promise" (JSX_TEXT)
+   Line 96: "(endpoint: string, data?: any): Promise" (JSX_TEXT)
+   Line 103: "(endpoint: string): Promise" (JSX_TEXT)
+   Line 111: "): Promise" (JSX_TEXT)
+
+📄 frontend/services/leadsService.ts:
+   Line 95: "): Promise" (JSX_TEXT)
+
+📄 frontend/services/messagingService.ts:
+   Line 53: "): Promise" (JSX_TEXT)
+
+🎯 FINAL ASSESSMENT:
+===================
+⚠️  ATTENTION NEEDED:
+❌ 789 translation keys are missing from translation files.
+⚠️  168 instances of hardcoded text found.
+
+📊 Coverage: 993/707 keys are being used (140%)
