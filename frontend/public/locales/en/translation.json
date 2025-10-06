@@ -734,6 +734,16 @@
   "translationDiagnostics": {
     "missingKeysCopied": "Missing keys copied to clipboard!"
   },
+  "translationDebugger": {
+    "title": "Translation Debug Info",
+    "status": "Status",
+    "testTranslation": "Test Translation",
+    "missingKeys": "Missing Keys",
+    "resourceBundleKeys": "Resource Bundle Keys",
+    "backendStatus": "Backend Status",
+    "options": "Options",
+    "logToConsole": "Log to Console"
+  },
   "translationErrorLogger": {
     "missingKeysCopied": "Missing keys copied to clipboard!"
   },
@@ -997,5 +1007,132 @@
   "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
   "Missing keys copied to clipboard!": "Missing keys copied to clipboard!",
   ".": ".",
-  "hardcodedText": {}
+  "hardcodedText": {},
+  "navbar": {
+    "notificationsCount": "{{count}} notifications",
+    "unreadMessages": "{{count}} unread messages"
+  },
+  "sidebar": {
+    "billingSubscription": "Billing & Subscription"
+  },
+  "Quantity must be at least 1.": "Quantity must be at least 1.",
+  "supplierCard": {
+    "specializesIn": "Specializes in",
+    "viewProfileAndProducts": "View Profile and Products"
+  },
+  "recruitmentPage": {
+    "jobDetailModal": {
+      "overviewTitle": "Job Overview",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salary": "Salary",
+      "applyNow": "Apply Now"
+    },
+    "jobPostModal": {
+      "editTitle": "Edit Job Post",
+      "addTitle": "Add Job Post",
+      "jobTitle": "Job Title",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salaryRange": "Salary Range",
+      "salaryRangePlaceholder": "e.g., CHF 50,000 - 70,000",
+      "description": "Job Description",
+      "postJob": "Post Job"
+    },
+    "viewApplicantsModal": {
+      "noApplicants": "No applicants yet",
+      "appliedOn": "Applied on"
+    },
+    "candidateCard": {
+      "viewProfile": "View Profile"
+    }
+  },
+  "Cannot post job. Foundation details are missing.": "Cannot post job. Foundation details are missing.",
+  "Current user or organization ID is missing.": "Current user or organization ID is missing.",
+  "organizationProfileForm": {
+    "saveSuccess": "Organization profile saved successfully"
+  },
+  "settingsPrivacyData": {
+    "confirmGDPRDelete": "Confirm GDPR Data Deletion",
+    "deletionRequestSubmittedHelpText": "This will permanently delete all your data from our systems"
+  },
+  "settingsPage": {
+    "billingSubscription": "Billing & Subscription"
+  },
+  "Subscription cancelled (mock action)": "Subscription cancelled (mock action)",
+  "fileUploadModal": {
+    "uploading": "Uploading...",
+    "uploadButton": "Upload File"
+  },
+  "renameFileModal": {
+    "title": "Rename File",
+    "label": "File Name"
+  },
+  "supplierDashboard": {
+    "recentOrdersActions": {
+      "decline": "Decline",
+      "accept": "Accept"
+    }
+  },
+  "supplierOrdersPage": {
+    "actions": {
+      "ship": "Ship"
+    },
+    "table": {
+      "foundation": "Foundation"
+    }
+  },
+  "pricingPage": {
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "saveUpTo10": "Save up to 10%"
+  },
+  "You must be logged in as a foundation to submit a request.": "You must be logged in as a foundation to submit a request.",
+  "common": {
+    "perMonth": "/month",
+    "perYear": "/year",
+    "save10Percent": "save 10%"
+  },
+  "dashboardDetailPage": {
+    "activeUsers": {
+      "recentActivity": "Recent Activity",
+      "totalToday": "Total Today"
+    },
+    "newOrders": {
+      "recentOrders": "Recent Orders",
+      "table": {
+        "orderId": "Order ID",
+        "product": "Product",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending"
+      },
+      "totalThisWeek": "Total This Week"
+    },
+    "openJobs": {
+      "currentPositions": "Current Positions",
+      "applications": "Applications",
+      "status": {
+        "open": "Open",
+        "interviewing": "Interviewing"
+      },
+      "totalOpenPositions": "Total Open Positions"
+    },
+    "pageViews": {
+      "keyMetrics": "Key Metrics",
+      "totalToday": "Total Today",
+      "uniqueVisitors": "Unique Visitors",
+      "mostViewed": "Most Viewed",
+      "avgSession": "Avg Session",
+      "mockChartText": "Mock chart data - replace with real analytics"
+    },
+    "defaultTitle": "Dashboard Details",
+    "detailsFor": "Details for",
+    "noSpecificView": "No specific view selected"
+  }
 }

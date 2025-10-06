@@ -102,10 +102,10 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
       {isVisible && (
         <div className="absolute bottom-12 right-0 bg-white border border-gray-300 rounded-lg shadow-lg p-4 max-w-md max-h-96 overflow-auto">
           <div className="text-xs font-mono space-y-2">
-            <div className="font-bold text-red-600">Translation Debug Info</div>
+            <div className="font-bold text-red-600">{t("translationDebugger.title")}</div>
             
             <div>
-              <strong>Status:</strong>
+              <strong>{t("translationDebugger.status")}:</strong>
               <div className="ml-2">
                 <div>Initialized: {debugInfo.isInitialized ? '✅' : '❌'}</div>
                 <div>Language: {debugInfo.language}</div>
@@ -115,7 +115,7 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
             </div>
 
             <div>
-              <strong>Test Translation:</strong>
+              <strong>{t("translationDebugger.testTranslation")}:</strong>
               <div className="ml-2">
                 <div>appName: "{debugInfo.testTranslation}"</div>
                 <div>Fallback: "{debugInfo.testTranslationKey}"</div>
@@ -124,7 +124,7 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
 
             {debugInfo.missingKeys && debugInfo.missingKeys.length > 0 && (
               <div>
-                <strong className="text-red-600">Missing Keys:</strong>
+                <strong className="text-red-600">{t("translationDebugger.missingKeys")}:</strong>
                 <div className="ml-2">
                   {debugInfo.missingKeys.map((key: string) => (
                     <div key={key} className="text-red-600">❌ {key}</div>
@@ -134,7 +134,7 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
             )}
 
             <div>
-              <strong>Resource Bundle Keys:</strong>
+              <strong>{t("translationDebugger.resourceBundleKeys")}:</strong>
               <div className="ml-2 text-xs">
                 {debugInfo.resourceBundle ? 
                   Object.keys(debugInfo.resourceBundle).slice(0, 10).join(', ') + 
@@ -145,7 +145,7 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
             </div>
 
             <div>
-              <strong>Backend Status:</strong>
+              <strong>{t("translationDebugger.backendStatus")}:</strong>
               <div className="ml-2">
                 <div>Backend: {debugInfo.services?.backend ? '✅' : '❌'}</div>
                 <div>Detector: {debugInfo.services?.languageDetector ? '✅' : '❌'}</div>
@@ -153,7 +153,7 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
             </div>
 
             <div>
-              <strong>Options:</strong>
+              <strong>{t("translationDebugger.options")}:</strong>
               <div className="ml-2 text-xs">
                 <div>Debug: {debugInfo.options?.debug ? 'ON' : 'OFF'}</div>
                 <div>Suspense: {debugInfo.options?.react?.useSuspense ? 'ON' : 'OFF'}</div>
@@ -169,7 +169,7 @@ const TranslationDebugger: React.FC<TranslationDebuggerProps> = ({ enabled = tru
               }}
               className="bg-blue-500 text-white px-2 py-1 rounded text-xs mt-2"
             >
-              Log to Console
+{t("translationDebugger.logToConsole")}
             </button>
           </div>
         </div>
