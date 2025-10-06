@@ -1675,7 +1675,24 @@
   },
   "foundationOrdersAppointmentsPage": {
     "productOrdersTitle": "Product Orders",
-    "exportCsvProductAlert": "Product orders CSV export started"
+    "exportCsvProductAlert": "Product orders CSV export started",
+    "exportCsvButton": "Export CSV",
+    "noProductOrders": "No product orders found",
+    "table": {
+      "refNo": "Ref No",
+      "supplier": "Supplier",
+      "itemsQty": "Items/Qty",
+      "total": "Total",
+      "date": "Date",
+      "status": "Status",
+      "actions": "Actions",
+      "provider": "Provider",
+      "service": "Service"
+    },
+    "cancelOrderAlert": "Order cancelled successfully",
+    "serviceAppointmentsTitle": "Service Appointments",
+    "exportCsvServiceAlert": "Service appointments CSV export started",
+    "noServiceAppointments": "No service appointments found"
   },
   "supplierAnalyticsPage": {
     "datePickerLabel": "Select Date Range",
@@ -1768,5 +1785,22 @@
     "defaultTitle": "Dashboard Detail",
     "detailsFor": "Details for",
     "noSpecificView": "No specific view selected"
+  },
+  "designSystemPage": {
+    "title": "Design System",
+    "description": "A living reference for all UI components and design tokens in the Pro Crèche Solutions application.",
+    "tabs": {
+      "tab1": "Tab 1",
+      "tab2": "Tab 2",
+      "tab3": "Tab 3",
+      "content1": "This is the content for Tab 1.",
+      "content2": "This is the content for Tab 2.",
+      "content3": "This is a disabled tab."
+    },
+    "typography": {
+      "fontFamily": "Font Family: Nunito, Inter, sans-serif",
+      "heading1": "Heading 1: The quick brown fox",
+      "heading2": "Heading 2: The quick brown fox"
+    }
   }
 }

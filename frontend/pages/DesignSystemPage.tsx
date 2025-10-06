@@ -5,6 +5,7 @@ import Tabs from '../components/ui/Tabs';
 import QuantityInput from '../components/ui/QuantityInput';
 import { STANDARD_INPUT_FIELD } from '../constants';
 import { ArrowRightIcon, CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 const colorPalette = {
   'swiss-mint': '#48CFAE',
@@ -27,20 +28,21 @@ const ColorSwatch: React.FC<{ name: string; hex: string }> = ({ name, hex }) => 
 );
 
 const DesignSystemPage: React.FC = () => {
+    const { t } = useTranslation();
     const [quantity, setQuantity] = useState(1);
     const [tabIndex, setTabIndex] = useState(0);
 
     const tabsContent = [
-        { label: 'Tab 1', content: <p>This is the content for Tab 1.</p> },
-        { label: 'Tab 2', content: <p>This is the content for Tab 2.</p> },
-        { label: 'Tab 3', content: <p>This is a disabled tab.</p>, disabled: true },
+        { label: t('designSystemPage.tabs.tab1'), content: <p>{t('designSystemPage.tabs.content1')}</p> },
+        { label: t('designSystemPage.tabs.tab2'), content: <p>{t('designSystemPage.tabs.content2')}</p> },
+        { label: t('designSystemPage.tabs.tab3'), content: <p>{t('designSystemPage.tabs.content3')}</p>, disabled: true },
     ];
 
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="text-4xl font-bold text-swiss-charcoal">Design System</h1>
-        <p className="mt-2 text-lg text-gray-600">A living reference for all UI components and design tokens in the Pro Crèche Solutions application.</p>
+        <h1 className="text-4xl font-bold text-swiss-charcoal">{t('designSystemPage.title')}</h1>
+        <p className="mt-2 text-lg text-gray-600">{t('designSystemPage.description')}</p>
       </div>
 
       {/* Colors Section */}
@@ -59,9 +61,9 @@ const DesignSystemPage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Typography</h2>
         <Card className="p-8 space-y-4">
-          <p className="text-xs text-gray-500">Font Family: Nunito, Inter, sans-serif</p>
-          <h1 className="text-4xl font-bold">Heading 1: The quick brown fox</h1>
-          <h2 className="text-3xl font-bold">Heading 2: The quick brown fox</h2>
+          <p className="text-xs text-gray-500">{t('designSystemPage.typography.fontFamily')}</p>
+          <h1 className="text-4xl font-bold">{t('designSystemPage.typography.heading1')}</h1>
+          <h2 className="text-3xl font-bold">{t('designSystemPage.typography.heading2')}</h2>
           <h3 className="text-2xl font-semibold">Heading 3: The quick brown fox</h3>
           <h4 className="text-xl font-semibold">Heading 4: The quick brown fox</h4>
           <p className="text-base">Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.</p>

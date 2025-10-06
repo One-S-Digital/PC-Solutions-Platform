@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1262 translation keys
+✅ Found 1283 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1345 t() calls
+📊 Found 1350 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 104 potential hardcoded text instances
+📊 Found 99 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1262
-🔧 t() Calls Found: 1345
-❌ Missing Keys: 244
-⚠️  Hardcoded Text: 104
-✅ Used Keys: 1057
-📦 Unused Keys: 205
+📚 Translation Keys: 1283
+🔧 t() Calls Found: 1350
+❌ Missing Keys: 224
+⚠️  Hardcoded Text: 99
+✅ Used Keys: 1062
+📦 Unused Keys: 221
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -145,56 +145,8 @@
 📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
    Key: " "
 
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:141
-   Key: "foundationDashboard.quickMessage.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:142
-   Key: "foundationDashboard.quickMessage.placeholder"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:18
-   Key: "foundationLeadsPage.accessDenied.title"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:19
-   Key: "foundationLeadsPage.accessDenied.message"
-
 📄 frontend/pages/foundation/FoundationLeadsPage.tsx:25
    Key: "sidebar.parentLeads"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:52
-   Key: "foundationLeadsPage.emptyState.title"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:53
-   Key: "foundationLeadsPage.emptyState.message"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:76
-   Key: "foundationOrdersAppointmentsPage.productOrdersTitle"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
-   Key: "foundationOrdersAppointmentsPage.exportCsvProductAlert"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
-   Key: "foundationOrdersAppointmentsPage.exportCsvButton"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:82
-   Key: "foundationOrdersAppointmentsPage.noProductOrders"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:89
-   Key: "foundationOrdersAppointmentsPage.table.refNo"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:90
-   Key: "foundationOrdersAppointmentsPage.table.supplier"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:91
-   Key: "foundationOrdersAppointmentsPage.table.itemsQty"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:92
-   Key: "foundationOrdersAppointmentsPage.table.total"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:93
-   Key: "foundationOrdersAppointmentsPage.table.date"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:94
-   Key: "foundationOrdersAppointmentsPage.table.status"
 
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:95
    Key: "foundationOrdersAppointmentsPage.table.actions"
@@ -208,26 +160,14 @@
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:140
    Key: "foundationOrdersAppointmentsPage.exportCsvServiceAlert"
 
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:140
-   Key: "foundationOrdersAppointmentsPage.exportCsvButton"
-
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:145
    Key: "foundationOrdersAppointmentsPage.noServiceAppointments"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:152
-   Key: "foundationOrdersAppointmentsPage.table.refNo"
 
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:153
    Key: "foundationOrdersAppointmentsPage.table.provider"
 
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:154
    Key: "foundationOrdersAppointmentsPage.table.service"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:155
-   Key: "foundationOrdersAppointmentsPage.table.date"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:156
-   Key: "foundationOrdersAppointmentsPage.table.status"
 
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:157
    Key: "foundationOrdersAppointmentsPage.table.actions"
@@ -776,13 +716,6 @@
 📄 frontend/index.tsx:
    Line 11: "Could not find root element to mount to" (ERROR)
 
-📄 frontend/pages/DashboardDetailPage.tsx:
-   Line 70: "Lead Educator - Geneva" (JSX_TEXT)
-   Line 74: "Assistant Educator - Lausanne" (JSX_TEXT)
-   Line 78: "Daycare Director - Zurich" (JSX_TEXT)
-   Line 97: "/dashboard (560 views)" (JSX_TEXT)
-   Line 98: "4m 15s" (JSX_TEXT)
-
 📄 frontend/pages/DesignSystemPage.tsx:
    Line 34: "This is the content for Tab 1." (JSX_TEXT)
    Line 35: "This is the content for Tab 2." (JSX_TEXT)
@@ -903,7 +836,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 244 translation keys are missing from translation files.
-⚠️  104 instances of hardcoded text found.
+❌ 224 translation keys are missing from translation files.
+⚠️  99 instances of hardcoded text found.
 
-📊 Coverage: 1057/1262 keys are being used (84%)
+📊 Coverage: 1062/1283 keys are being used (83%)

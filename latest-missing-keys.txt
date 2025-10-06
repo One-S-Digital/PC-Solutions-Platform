@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1252 translation keys
+✅ Found 1275 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1345 t() calls
+📊 Found 1350 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 104 potential hardcoded text instances
+📊 Found 99 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1252
-🔧 t() Calls Found: 1345
-❌ Missing Keys: 255
-⚠️  Hardcoded Text: 104
-✅ Used Keys: 1057
-📦 Unused Keys: 195
+📚 Translation Keys: 1275
+🔧 t() Calls Found: 1350
+❌ Missing Keys: 236
+⚠️  Hardcoded Text: 99
+✅ Used Keys: 1062
+📦 Unused Keys: 213
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -118,39 +118,6 @@
 📄 frontend/contexts/AppContext.tsx:149
    Key: "-"
 
-📄 frontend/pages/DashboardDetailPage.tsx:83
-   Key: "dashboardDetailPage.openJobs.totalOpenPositions"
-
-📄 frontend/pages/DashboardDetailPage.tsx:93
-   Key: "dashboardDetailPage.pageViews.keyMetrics"
-
-📄 frontend/pages/DashboardDetailPage.tsx:95
-   Key: "dashboardDetailPage.pageViews.totalToday"
-
-📄 frontend/pages/DashboardDetailPage.tsx:96
-   Key: "dashboardDetailPage.pageViews.uniqueVisitors"
-
-📄 frontend/pages/DashboardDetailPage.tsx:97
-   Key: "dashboardDetailPage.pageViews.mostViewed"
-
-📄 frontend/pages/DashboardDetailPage.tsx:98
-   Key: "dashboardDetailPage.pageViews.avgSession"
-
-📄 frontend/pages/DashboardDetailPage.tsx:101
-   Key: "dashboardDetailPage.pageViews.mockChartText"
-
-📄 frontend/pages/DashboardDetailPage.tsx:119
-   Key: "dashboardDetailPage.defaultTitle"
-
-📄 frontend/pages/DashboardDetailPage.tsx:127
-   Key: "dashboardDetailPage.detailsFor"
-
-📄 frontend/pages/DashboardDetailPage.tsx:146
-   Key: "dashboardDetailPage.detailsFor"
-
-📄 frontend/pages/DashboardDetailPage.tsx:149
-   Key: "dashboardDetailPage.noSpecificView"
-
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
 
@@ -178,32 +145,8 @@
 📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
    Key: " "
 
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:141
-   Key: "foundationDashboard.quickMessage.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:142
-   Key: "foundationDashboard.quickMessage.placeholder"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:18
-   Key: "foundationLeadsPage.accessDenied.title"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:19
-   Key: "foundationLeadsPage.accessDenied.message"
-
 📄 frontend/pages/foundation/FoundationLeadsPage.tsx:25
    Key: "sidebar.parentLeads"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:52
-   Key: "foundationLeadsPage.emptyState.title"
-
-📄 frontend/pages/foundation/FoundationLeadsPage.tsx:53
-   Key: "foundationLeadsPage.emptyState.message"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:76
-   Key: "foundationOrdersAppointmentsPage.productOrdersTitle"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
-   Key: "foundationOrdersAppointmentsPage.exportCsvProductAlert"
 
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
    Key: "foundationOrdersAppointmentsPage.exportCsvButton"
@@ -809,13 +752,6 @@
 📄 frontend/index.tsx:
    Line 11: "Could not find root element to mount to" (ERROR)
 
-📄 frontend/pages/DashboardDetailPage.tsx:
-   Line 70: "Lead Educator - Geneva" (JSX_TEXT)
-   Line 74: "Assistant Educator - Lausanne" (JSX_TEXT)
-   Line 78: "Daycare Director - Zurich" (JSX_TEXT)
-   Line 97: "/dashboard (560 views)" (JSX_TEXT)
-   Line 98: "4m 15s" (JSX_TEXT)
-
 📄 frontend/pages/DesignSystemPage.tsx:
    Line 34: "This is the content for Tab 1." (JSX_TEXT)
    Line 35: "This is the content for Tab 2." (JSX_TEXT)
@@ -936,7 +872,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 255 translation keys are missing from translation files.
-⚠️  104 instances of hardcoded text found.
+❌ 236 translation keys are missing from translation files.
+⚠️  99 instances of hardcoded text found.
 
-📊 Coverage: 1057/1252 keys are being used (84%)
+📊 Coverage: 1062/1275 keys are being used (83%)
