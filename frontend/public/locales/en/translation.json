@@ -2163,6 +2163,15 @@
   "tailwindcss": "tailwindcss",
   "sidebar.parentLeads": "Parent Leads",
   "sidebar.products": "Products",
-  "sidebar.services": "Services"
+  "sidebar.services": "Services",
+  "No recent activity.": "No recent activity.",
+  "loaded": "loaded",
+  "SUPER_ADMIN": "SUPER_ADMIN",
+  "Show": "Show",
+  "Refresh": "Refresh",
+  "keys)": "keys)",
+  "(240)": "(240)",
+  "Branding": "Branding",
+  "Favicon": "Favicon"
   }
 }
