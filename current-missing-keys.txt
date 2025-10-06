@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1243 translation keys
+✅ Found 1262 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1335 t() calls
+📊 Found 1345 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 114 potential hardcoded text instances
+📊 Found 104 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1243
-🔧 t() Calls Found: 1335
-❌ Missing Keys: 253
-⚠️  Hardcoded Text: 114
-✅ Used Keys: 1047
-📦 Unused Keys: 196
+📚 Translation Keys: 1262
+🔧 t() Calls Found: 1345
+❌ Missing Keys: 244
+⚠️  Hardcoded Text: 104
+✅ Used Keys: 1057
+📦 Unused Keys: 205
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -142,35 +142,8 @@
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
 
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:40
-   Key: "foundationAnalyticsPage.parentLeadConversion"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:44
-   Key: "foundationAnalyticsPage.staffTrainingCompletion"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:50
-   Key: "foundationAnalyticsPage.enrollmentTrend"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:61
-   Key: "foundationDashboard.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
-   Key: "foundationDashboard.welcomeMessage"
-
 📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
    Key: " "
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:70
-   Key: "foundationDashboard.quickStats.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:88
-   Key: "foundationDashboard.todayAtGlance"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:108
-   Key: "foundationDashboard.activity.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:131
-   Key: "foundationDashboard.quickActions.title"
 
 📄 frontend/pages/foundation/FoundationDashboardPage.tsx:141
    Key: "foundationDashboard.quickMessage.title"
@@ -804,16 +777,6 @@
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DashboardDetailPage.tsx:
-   Line 24: "Alice Johnson - Logged in 2 hours ago, viewed 5 pages." (JSX_TEXT)
-   Line 25: "Bob Williams - Updated profile at 10:30 AM." (JSX_TEXT)
-   Line 26: "Carol Davis - Joined yesterday, completed onboarding." (JSX_TEXT)
-   Line 27: "David Brown - Viewed marketplace listings." (JSX_TEXT)
-   Line 51: "#ORD789" (JSX_TEXT)
-   Line 51: "EcoToys Wooden Blocks" (JSX_TEXT)
-   Line 52: "#ORD790" (JSX_TEXT)
-   Line 52: "FreshBites Meal Plan" (JSX_TEXT)
-   Line 53: "#ORD791" (JSX_TEXT)
-   Line 53: "ArtFun Creative Pack" (JSX_TEXT)
    Line 70: "Lead Educator - Geneva" (JSX_TEXT)
    Line 74: "Assistant Educator - Lausanne" (JSX_TEXT)
    Line 78: "Daycare Director - Zurich" (JSX_TEXT)
@@ -940,7 +903,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 253 translation keys are missing from translation files.
-⚠️  114 instances of hardcoded text found.
+❌ 244 translation keys are missing from translation files.
+⚠️  104 instances of hardcoded text found.
 
-📊 Coverage: 1047/1243 keys are being used (84%)
+📊 Coverage: 1057/1262 keys are being used (84%)

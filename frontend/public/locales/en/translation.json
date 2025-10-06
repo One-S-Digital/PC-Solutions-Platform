@@ -86,7 +86,8 @@
     "premiumPlanDesc": "Access to all features",
     "systemMonitoring": "System Monitoring",
     "platformSettings": "Platform Settings",
-    "designSystem": "Design System"
+    "designSystem": "Design System",
+    "parentLeads": "Parent Leads"
   },
   "stockStatus": {
     "instock": "In Stock",
@@ -1656,7 +1657,25 @@
     },
     "quickActions": {
       "title": "Quick Actions"
+    },
+    "quickMessage": {
+      "title": "Quick Message",
+      "placeholder": "Type your message here..."
     }
+  },
+  "foundationLeadsPage": {
+    "accessDenied": {
+      "title": "Access Denied",
+      "message": "You don't have permission to view this page"
+    },
+    "emptyState": {
+      "title": "No Leads Found",
+      "message": "No parent leads are available at the moment"
+    }
+  },
+  "foundationOrdersAppointmentsPage": {
+    "productOrdersTitle": "Product Orders",
+    "exportCsvProductAlert": "Product orders CSV export started"
   },
   "supplierAnalyticsPage": {
     "datePickerLabel": "Select Date Range",
@@ -1727,10 +1746,27 @@
     "openJobs": {
       "currentPositions": "Current Open Positions",
       "applications": "Applications",
+      "totalOpenPositions": "Total Open Positions",
+      "leadEducatorGeneva": "Lead Educator - Geneva",
+      "assistantEducatorLausanne": "Assistant Educator - Lausanne",
+      "daycareDirectorZurich": "Daycare Director - Zurich",
       "status": {
         "open": "Open",
         "interviewing": "Interviewing"
       }
-    }
+    },
+    "pageViews": {
+      "keyMetrics": "Key Metrics",
+      "totalToday": "Total page views today",
+      "uniqueVisitors": "Unique visitors",
+      "mostViewed": "Most viewed pages",
+      "dashboardViews": "/dashboard (560 views)",
+      "avgSession": "Average session duration",
+      "sessionDuration": "4m 15s",
+      "mockChartText": "Mock chart visualization"
+    },
+    "defaultTitle": "Dashboard Detail",
+    "detailsFor": "Details for",
+    "noSpecificView": "No specific view selected"
   }
 }

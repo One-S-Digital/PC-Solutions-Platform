@@ -67,15 +67,15 @@ const getMockDetailData = (t: Function): Record<string, DetailContent> => ({
         <p className="font-semibold text-lg">{t('dashboardDetailPage.openJobs.currentPositions')}</p>
         <ul className="space-y-2">
             <li className="p-3 bg-gray-50 rounded-md">
-                <p className="font-medium text-swiss-teal">Lead Educator - Geneva</p>
+                <p className="font-medium text-swiss-teal">{t('dashboardDetailPage.openJobs.leadEducatorGeneva')}</p>
                 <p className="text-xs text-gray-500">{t('dashboardDetailPage.openJobs.applications', { count: 7 })} | {t('dashboardDetailPage.openJobs.status.open')}</p>
             </li>
             <li className="p-3 bg-gray-50 rounded-md">
-                <p className="font-medium text-swiss-teal">Assistant Educator - Lausanne</p>
+                <p className="font-medium text-swiss-teal">{t('dashboardDetailPage.openJobs.assistantEducatorLausanne')}</p>
                 <p className="text-xs text-gray-500">{t('dashboardDetailPage.openJobs.applications', { count: 3 })} | {t('dashboardDetailPage.openJobs.status.open')}</p>
             </li>
              <li className="p-3 bg-gray-50 rounded-md">
-                <p className="font-medium text-swiss-teal">Daycare Director - Zurich</p>
+                <p className="font-medium text-swiss-teal">{t('dashboardDetailPage.openJobs.daycareDirectorZurich')}</p>
                 <p className="text-xs text-gray-500">{t('dashboardDetailPage.openJobs.applications', { count: 1 })} | {t('dashboardDetailPage.openJobs.status.interviewing')}</p>
             </li>
         </ul>
@@ -94,8 +94,8 @@ const getMockDetailData = (t: Function): Record<string, DetailContent> => ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="p-3 bg-gray-100 rounded"><strong>{t('dashboardDetailPage.pageViews.totalToday')}</strong> 2,345</div>
             <div className="p-3 bg-gray-100 rounded"><strong>{t('dashboardDetailPage.pageViews.uniqueVisitors')}</strong> 867</div>
-            <div className="p-3 bg-gray-100 rounded"><strong>{t('dashboardDetailPage.pageViews.mostViewed')}</strong> /dashboard (560 views)</div>
-            <div className="p-3 bg-gray-100 rounded"><strong>{t('dashboardDetailPage.pageViews.avgSession')}</strong> 4m 15s</div>
+            <div className="p-3 bg-gray-100 rounded"><strong>{t('dashboardDetailPage.pageViews.mostViewed')}</strong> {t('dashboardDetailPage.pageViews.dashboardViews')}</div>
+            <div className="p-3 bg-gray-100 rounded"><strong>{t('dashboardDetailPage.pageViews.avgSession')}</strong> {t('dashboardDetailPage.pageViews.sessionDuration')}</div>
         </div>
         <div className="bg-swiss-coral/10 h-48 w-full mt-4 flex items-center justify-center text-swiss-coral/70 rounded-lg">
             {t('dashboardDetailPage.pageViews.mockChartText')}

@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1233 translation keys
+✅ Found 1252 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1335 t() calls
+📊 Found 1345 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 114 potential hardcoded text instances
+📊 Found 104 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1233
-🔧 t() Calls Found: 1335
-❌ Missing Keys: 278
-⚠️  Hardcoded Text: 114
-✅ Used Keys: 1047
-📦 Unused Keys: 186
+📚 Translation Keys: 1252
+🔧 t() Calls Found: 1345
+❌ Missing Keys: 255
+⚠️  Hardcoded Text: 104
+✅ Used Keys: 1057
+📦 Unused Keys: 195
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -118,6 +118,39 @@
 📄 frontend/contexts/AppContext.tsx:149
    Key: "-"
 
+📄 frontend/pages/DashboardDetailPage.tsx:83
+   Key: "dashboardDetailPage.openJobs.totalOpenPositions"
+
+📄 frontend/pages/DashboardDetailPage.tsx:93
+   Key: "dashboardDetailPage.pageViews.keyMetrics"
+
+📄 frontend/pages/DashboardDetailPage.tsx:95
+   Key: "dashboardDetailPage.pageViews.totalToday"
+
+📄 frontend/pages/DashboardDetailPage.tsx:96
+   Key: "dashboardDetailPage.pageViews.uniqueVisitors"
+
+📄 frontend/pages/DashboardDetailPage.tsx:97
+   Key: "dashboardDetailPage.pageViews.mostViewed"
+
+📄 frontend/pages/DashboardDetailPage.tsx:98
+   Key: "dashboardDetailPage.pageViews.avgSession"
+
+📄 frontend/pages/DashboardDetailPage.tsx:101
+   Key: "dashboardDetailPage.pageViews.mockChartText"
+
+📄 frontend/pages/DashboardDetailPage.tsx:119
+   Key: "dashboardDetailPage.defaultTitle"
+
+📄 frontend/pages/DashboardDetailPage.tsx:127
+   Key: "dashboardDetailPage.detailsFor"
+
+📄 frontend/pages/DashboardDetailPage.tsx:146
+   Key: "dashboardDetailPage.detailsFor"
+
+📄 frontend/pages/DashboardDetailPage.tsx:149
+   Key: "dashboardDetailPage.noSpecificView"
+
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
 
@@ -142,65 +175,8 @@
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
 
-📄 frontend/pages/educator/EducatorSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:82
-   Key: "educatorSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:94
-   Key: "educatorSupportPage.ticketForm.messagePlaceholder"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:18
-   Key: "foundationAnalyticsPage.mockDataVisualization"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:27
-   Key: "supplierAnalyticsPage.datePickerLabel"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:28
-   Key: "supplierAnalyticsPage.exportCsvAlert"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:29
-   Key: "supplierAnalyticsPage.exportCsvButton"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:36
-   Key: "foundationAnalyticsPage.spendingByCategory"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:40
-   Key: "foundationAnalyticsPage.parentLeadConversion"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:44
-   Key: "foundationAnalyticsPage.staffTrainingCompletion"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:50
-   Key: "foundationAnalyticsPage.enrollmentTrend"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:61
-   Key: "foundationDashboard.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
-   Key: "foundationDashboard.welcomeMessage"
-
 📄 frontend/pages/foundation/FoundationDashboardPage.tsx:63
    Key: " "
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:70
-   Key: "foundationDashboard.quickStats.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:88
-   Key: "foundationDashboard.todayAtGlance"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:108
-   Key: "foundationDashboard.activity.title"
-
-📄 frontend/pages/foundation/FoundationDashboardPage.tsx:131
-   Key: "foundationDashboard.quickActions.title"
 
 📄 frontend/pages/foundation/FoundationDashboardPage.tsx:141
    Key: "foundationDashboard.quickMessage.title"
@@ -373,17 +349,8 @@
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:46
    Key: "foundationSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:82
    Key: "foundationSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
 
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:94
    Key: "foundationSupportPage.ticketForm.messagePlaceholder"
@@ -523,15 +490,6 @@
 📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:20
    Key: "supplierAnalyticsPage.mockChartText"
 
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:34
-   Key: "supplierAnalyticsPage.datePickerLabel"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:35
-   Key: "supplierAnalyticsPage.exportCsvAlert"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:36
-   Key: "supplierAnalyticsPage.exportCsvButton"
-
 📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:43
    Key: "serviceProviderAnalyticsPage.serviceRequestsPerWeek"
 
@@ -655,32 +613,14 @@
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:46
    Key: "serviceProviderSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:82
    Key: "serviceProviderSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
 
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:94
    Key: "serviceProviderSupportPage.ticketForm.messagePlaceholder"
 
 📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:20
    Key: "supplierAnalyticsPage.mockChartText"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:35
-   Key: "supplierAnalyticsPage.datePickerLabel"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:36
-   Key: "supplierAnalyticsPage.exportCsvAlert"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:37
-   Key: "supplierAnalyticsPage.exportCsvButton"
 
 📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:44
    Key: "supplierAnalyticsPage.orderRequestsPerWeek"
@@ -838,17 +778,8 @@
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:46
    Key: "supplierSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:82
    Key: "supplierSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
 
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:94
    Key: "supplierSupportPage.ticketForm.messagePlaceholder"
@@ -879,16 +810,6 @@
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DashboardDetailPage.tsx:
-   Line 24: "Alice Johnson - Logged in 2 hours ago, viewed 5 pages." (JSX_TEXT)
-   Line 25: "Bob Williams - Updated profile at 10:30 AM." (JSX_TEXT)
-   Line 26: "Carol Davis - Joined yesterday, completed onboarding." (JSX_TEXT)
-   Line 27: "David Brown - Viewed marketplace listings." (JSX_TEXT)
-   Line 51: "#ORD789" (JSX_TEXT)
-   Line 51: "EcoToys Wooden Blocks" (JSX_TEXT)
-   Line 52: "#ORD790" (JSX_TEXT)
-   Line 52: "FreshBites Meal Plan" (JSX_TEXT)
-   Line 53: "#ORD791" (JSX_TEXT)
-   Line 53: "ArtFun Creative Pack" (JSX_TEXT)
    Line 70: "Lead Educator - Geneva" (JSX_TEXT)
    Line 74: "Assistant Educator - Lausanne" (JSX_TEXT)
    Line 78: "Daycare Director - Zurich" (JSX_TEXT)
@@ -1015,7 +936,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 278 translation keys are missing from translation files.
-⚠️  114 instances of hardcoded text found.
+❌ 255 translation keys are missing from translation files.
+⚠️  104 instances of hardcoded text found.
 
-📊 Coverage: 1047/1233 keys are being used (85%)
+📊 Coverage: 1057/1252 keys are being used (84%)
