@@ -5,6 +5,7 @@ import Button from '../ui/Button';
 import Card from '../ui/Card';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { STANDARD_INPUT_FIELD } from '../../constants'; // Import constant
+import { useTranslation } from 'react-i18next';
 
 interface PolicyAlertModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface PolicyAlertModalProps {
 }
 
 const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, onSubmit, existingAlert }) => {
+  const { t } = useTranslation();
   const initialFormState: Omit<PolicyAlert, 'id' | 'creationDate'> = {
     title: '',
     message: '',
@@ -52,7 +54,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.message) {
-        alert("Title and Message are required.");
+        alert(t("Title and Message are required."));
         return;
     }
     onSubmit({
@@ -82,22 +84,22 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
         <form onSubmit={handleSubmit}>
           <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title *</label>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.title")} *</label>
               <input type="text" name="title" id="title" value={formData.title} onChange={handleChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={100} />
             </div>
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message *</label>
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.message")} *</label>
               <textarea name="message" id="message" value={formData.message} onChange={handleChange} required rows={4} className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={500}></textarea>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700">Type *</label>
+                <label htmlFor="type" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.type")} *</label>
                 <select name="type" id="type" value={formData.type} onChange={handleChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
                   {Object.values(PolicyAlertType).map(type => <option key={type} value={type}>{type}</option>)}
                 </select>
               </div>
               <div>
-                <label htmlFor="regionScope" className="block text-sm font-medium text-gray-700">Region Scope *</label>
+                <label htmlFor="regionScope" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.regionScope")} *</label>
                 <select name="regionScope" id="regionScope" value={formData.regionScope} onChange={handleChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
                   {cantonOptions.map(canton => <option key={canton} value={canton}>{canton === 'All' ? 'All Switzerland' : canton}</option>)}
                 </select>
@@ -105,11 +107,11 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
             </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label htmlFor="displayStartDate" className="block text-sm font-medium text-gray-700">Display Start Date (Optional)</label>
+                    <label htmlFor="displayStartDate" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.displayStartDate")}</label>
                     <input type="date" name="displayStartDate" id="displayStartDate" value={formData.displayStartDate} onChange={handleChange} className={`${STANDARD_INPUT_FIELD} mt-1`} />
                 </div>
                 <div>
-                    <label htmlFor="displayEndDate" className="block text-sm font-medium text-gray-700">Display End Date (Optional)</label>
+                    <label htmlFor="displayEndDate" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.displayEndDate")}</label>
                     <input type="date" name="displayEndDate" id="displayEndDate" value={formData.displayEndDate} onChange={handleChange} className={`${STANDARD_INPUT_FIELD} mt-1`} />
                 </div>
             </div>

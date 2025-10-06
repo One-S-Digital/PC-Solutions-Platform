@@ -7,6 +7,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from '@heroicons/react/24/outl
 import { OrderRequestStatus, LineItem, Order } from '../../types';
 import QuantityInput from '../ui/QuantityInput'; // Assuming QuantityInput is in ui folder
 import { MOCK_ORDERS } from '../../constants'; // To store submitted orders
+import { useTranslation } from 'react-i18next';
 
 interface OrderSummaryDrawerProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface OrderSummaryDrawerProps {
 }
 
 const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const { 
     cartItems, 
     cartSupplierInfo,
@@ -29,7 +31,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
 
   const handleSubmitOrder = () => {
     if (!currentUser || !cartSupplierInfo || cartItems.length === 0) {
-      alert("Cannot submit order. User not logged in, supplier info missing, or cart is empty.");
+      alert(t("Cannot submit order. User not logged in, supplier info missing, or cart is empty."));
       return;
     }
     setIsSubmitting(true);
@@ -84,7 +86,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                 <div className="flex items-start justify-between pb-4 border-b border-gray-200">
                   <h2 className="text-xl font-semibold text-swiss-charcoal flex items-center" id="slide-over-title">
                     <ShoppingCartIcon className="h-6 w-6 mr-2 text-swiss-mint" />
-                    Your Order
+{t("orderSummaryDrawer.title")}
                   </h2>
                   <div className="ml-3 h-7 flex items-center">
                     <button
@@ -92,7 +94,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                       className="-m-2 p-2 text-gray-400 hover:text-gray-500"
                       onClick={onClose}
                     >
-                      <span className="sr-only">Close panel</span>
+                      <span className="sr-only">{t("orderSummaryDrawer.closePanel")}</span>
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
@@ -101,12 +103,12 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                 {cartItems.length === 0 ? (
                   <div className="text-center py-10">
                     <ShoppingCartIcon className="h-12 w-12 mx-auto text-gray-300 mb-2" />
-                    <p className="text-gray-500">Your order cart is empty.</p>
+                    <p className="text-gray-500">{t("orderSummaryDrawer.emptyCart")}</p>
                     {cartSupplierInfo && <p className="text-xs text-gray-400 mt-1">Items will be from {cartSupplierInfo.name}.</p>}
                   </div>
                 ) : (
                   <div className="mt-6">
-                    <p className="text-sm text-gray-600 mb-2">Items from: <span className="font-medium text-swiss-teal">{cartSupplierInfo?.name || 'Supplier'}</span></p>
+                    <p className="text-sm text-gray-600 mb-2">{t("orderSummaryDrawer.itemsFrom")}: <span className="font-medium text-swiss-teal">{cartSupplierInfo?.name || 'Supplier'}</span></p>
                     <ul role="list" className="-my-6 divide-y divide-gray-200">
                       {cartItems.map((item) => (
                         <li key={item.productId} className="py-6 flex">
@@ -155,7 +157,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                 <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
                   <div>
                     <label htmlFor="orderNotes" className="block text-sm font-medium text-gray-700 mb-1">
-                      Special Instructions or Notes for Supplier:
+{t("orderSummaryDrawer.specialInstructions")}
                     </label>
                     <textarea
                       id="orderNotes"
@@ -168,10 +170,10 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                     ></textarea>
                   </div>
                   <div className="flex justify-between text-base font-medium text-gray-900 mt-6">
-                    <p>Subtotal</p>
+                    <p>{t("orderSummaryDrawer.subtotal")}</p>
                     <p>CHF {getCartTotal().toFixed(2)}</p>
                   </div>
-                  <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout (if applicable).</p>
+                  <p className="mt-0.5 text-sm text-gray-500">{t("orderSummaryDrawer.shippingNote")}</p>
                   <div className="mt-6">
                     <Button
                       variant="danger" // Using danger for coral color
@@ -191,7 +193,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                         className="font-medium text-swiss-mint hover:text-opacity-80"
                         onClick={onClose}
                       >
-                        Continue Shopping <span aria-hidden="true"> &rarr;</span>
+{t("orderSummaryDrawer.continueShopping")} <span aria-hidden="true"> &rarr;</span>
                       </button>
                     </p>
                   </div>
