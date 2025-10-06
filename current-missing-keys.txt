@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1163 translation keys
+✅ Found 1188 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1325 t() calls
+📊 Found 1328 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 124 potential hardcoded text instances
+📊 Found 121 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1163
-🔧 t() Calls Found: 1325
-❌ Missing Keys: 355
-⚠️  Hardcoded Text: 124
-✅ Used Keys: 1038
-📦 Unused Keys: 125
+📚 Translation Keys: 1188
+🔧 t() Calls Found: 1328
+❌ Missing Keys: 333
+⚠️  Hardcoded Text: 121
+✅ Used Keys: 1041
+📦 Unused Keys: 147
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -85,10 +85,10 @@
 📄 frontend/components/settings/OrganizationProfileForm.tsx:36
    Key: ","
 
-📄 frontend/components/ui/FileUploadZone.tsx:37
+📄 frontend/components/ui/FileUploadZone.tsx:39
    Key: ","
 
-📄 frontend/components/ui/FileUploadZone.tsx:122
+📄 frontend/components/ui/FileUploadZone.tsx:124
    Key: ","
 
 📄 frontend/components/ui/PricingToggle.tsx:24
@@ -124,86 +124,20 @@
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:169
-   Key: "adminSystemMonitoringPage.appPerformance.requestsPerMinute"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
+   Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:170
-   Key: "adminSystemMonitoringPage.appPerformance.avgResponseTime"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:73
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.all"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:171
-   Key: "adminSystemMonitoringPage.appPerformance.errorRate"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:74
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.errors"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:180
-   Key: "adminSystemMonitoringPage.recentEvents.title"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:75
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.warnings"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:220
-   Key: "adminSystemMonitoringPage.rawLogConsole.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:28
-   Key: "discountTerminationsPage.actions.sendNoticesAlert"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:56
-   Key: "discountTerminationsPage.table.vendor"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:57
-   Key: "discountTerminationsPage.table.daycare"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:58
-   Key: "discountTerminationsPage.table.activeSince"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:59
-   Key: "discountTerminationsPage.table.reason"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:60
-   Key: "discountTerminationsPage.table.actions"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:72
-   Key: "discountTerminationsPage.actions.markCompleted"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:99
-   Key: "discountTerminationsPage.queue.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:101
-   Key: "discountTerminationsPage.queue.description"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:105
-   Key: "discountTerminationsPage.actions.sendNotices"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:110
-   Key: "discountTerminationsPage.queue.tableTitle"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:118
-   Key: "discountTerminationsPage.allActive.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:120
-   Key: "discountTerminationsPage.allActive.description"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:121
-   Key: "discountTerminationsPage.allActive.tableTitle"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:17
-   Key: "educatorApplicationsPage.status.new"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:18
-   Key: "educatorApplicationsPage.status.viewed"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:19
-   Key: "educatorApplicationsPage.status.interview"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:20
-   Key: "educatorApplicationsPage.status.offer"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:21
-   Key: "educatorApplicationsPage.status.declined"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:37
-   Key: "educatorApplicationsPage.table.jobTitle"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:38
-   Key: "educatorApplicationsPage.table.creche"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:39
-   Key: "educatorApplicationsPage.table.status"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
 
 📄 frontend/pages/educator/EducatorApplicationsPage.tsx:40
    Key: "educatorApplicationsPage.table.lastUpdated"
@@ -1099,15 +1033,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/components/settings/AddPromoCodeModal.tsx:
-   Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:
-   Line 39: "Mark as Processing" (JSX_TEXT)
-
-📄 frontend/components/ui/FileUploadZone.tsx:
-   Line 119: "or drag and drop" (JSX_TEXT)
-
 📄 frontend/contexts/AppContext.tsx:
    Line 404: "useAppContext must be used within an AppContextProvider" (ERROR)
 
@@ -1270,7 +1195,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 355 translation keys are missing from translation files.
-⚠️  124 instances of hardcoded text found.
+❌ 333 translation keys are missing from translation files.
+⚠️  121 instances of hardcoded text found.
 
-📊 Coverage: 1038/1163 keys are being used (89%)
+📊 Coverage: 1041/1188 keys are being used (88%)

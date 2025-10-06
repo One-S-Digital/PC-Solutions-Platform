@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { CartItem, Product, Organization, StockStatus } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -129,9 +130,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 };
 
 export const useCart = (): CartContextType => {
+  const { t } = useTranslation();
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error(t('cartContext.useCartError'));
   }
   return context;
 };

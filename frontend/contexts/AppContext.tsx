@@ -2,7 +2,8 @@
 
 import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
 // FIX: Add VendorClient and VendorClientReason to imports
-import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, ApplicationStatus, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types'; 
+import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, ApplicationStatus, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types';
+import { useTranslation } from 'react-i18next'; 
 import { 
   MOCK_PARENT_LEADS,
   MOCK_APPLICATIONS,
@@ -399,9 +400,10 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 };
 
 export const useAppContext = (): AppContextType => {
+  const { t } = useTranslation();
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useAppContext must be used within an AppContextProvider');
+    throw new Error(t('appContext.useAppContextError'));
   }
   return context;
 };

@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1147 translation keys
+✅ Found 1177 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1325 t() calls
+📊 Found 1328 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 124 potential hardcoded text instances
+📊 Found 121 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1147
-🔧 t() Calls Found: 1325
-❌ Missing Keys: 371
-⚠️  Hardcoded Text: 124
-✅ Used Keys: 1038
-📦 Unused Keys: 109
+📚 Translation Keys: 1177
+🔧 t() Calls Found: 1328
+❌ Missing Keys: 344
+⚠️  Hardcoded Text: 121
+✅ Used Keys: 1041
+📦 Unused Keys: 136
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -85,10 +85,10 @@
 📄 frontend/components/settings/OrganizationProfileForm.tsx:36
    Key: ","
 
-📄 frontend/components/ui/FileUploadZone.tsx:37
+📄 frontend/components/ui/FileUploadZone.tsx:39
    Key: ","
 
-📄 frontend/components/ui/FileUploadZone.tsx:122
+📄 frontend/components/ui/FileUploadZone.tsx:124
    Key: ","
 
 📄 frontend/components/ui/PricingToggle.tsx:24
@@ -124,101 +124,20 @@
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:111
-   Key: "adminSystemMonitoringPage.metadata.environment"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
+   Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:112
-   Key: "adminSystemMonitoringPage.metadata.version"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:73
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.all"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:113
-   Key: "adminSystemMonitoringPage.metadata.uptime"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:74
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.errors"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:114
-   Key: "adminSystemMonitoringPage.metadata.lastCheck"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:75
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.warnings"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:121
-   Key: "adminSystemMonitoringPage.serverPerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:124
-   Key: "adminSystemMonitoringPage.serverPerformance.cpuUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:128
-   Key: "adminSystemMonitoringPage.serverPerformance.memoryUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:132
-   Key: "adminSystemMonitoringPage.serverPerformance.diskUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:136
-   Key: "adminSystemMonitoringPage.serverPerformance.uptimeDays"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:144
-   Key: "adminSystemMonitoringPage.databasePerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:147
-   Key: "adminSystemMonitoringPage.databasePerformance.activeConnections"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:150
-   Key: "adminSystemMonitoringPage.databasePerformance.queryTime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:152
-   Key: "adminSystemMonitoringPage.databasePerformance.storage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:156
-   Key: "adminSystemMonitoringPage.databasePerformance.connectionHealth"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:166
-   Key: "adminSystemMonitoringPage.appPerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:168
-   Key: "adminSystemMonitoringPage.appPerformance.activeUsers"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:169
-   Key: "adminSystemMonitoringPage.appPerformance.requestsPerMinute"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:170
-   Key: "adminSystemMonitoringPage.appPerformance.avgResponseTime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:171
-   Key: "adminSystemMonitoringPage.appPerformance.errorRate"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:180
-   Key: "adminSystemMonitoringPage.recentEvents.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:220
-   Key: "adminSystemMonitoringPage.rawLogConsole.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:28
-   Key: "discountTerminationsPage.actions.sendNoticesAlert"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:56
-   Key: "discountTerminationsPage.table.vendor"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:57
-   Key: "discountTerminationsPage.table.daycare"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:58
-   Key: "discountTerminationsPage.table.activeSince"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:59
-   Key: "discountTerminationsPage.table.reason"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:60
-   Key: "discountTerminationsPage.table.actions"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:72
-   Key: "discountTerminationsPage.actions.markCompleted"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:99
-   Key: "discountTerminationsPage.queue.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:101
-   Key: "discountTerminationsPage.queue.description"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:105
-   Key: "discountTerminationsPage.actions.sendNotices"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:110
-   Key: "discountTerminationsPage.queue.tableTitle"
+📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
+   Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
 
 📄 frontend/pages/admin/DiscountTerminationsPage.tsx:118
    Key: "discountTerminationsPage.allActive.title"
@@ -1147,15 +1066,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/components/settings/AddPromoCodeModal.tsx:
-   Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:
-   Line 39: "Mark as Processing" (JSX_TEXT)
-
-📄 frontend/components/ui/FileUploadZone.tsx:
-   Line 119: "or drag and drop" (JSX_TEXT)
-
 📄 frontend/contexts/AppContext.tsx:
    Line 404: "useAppContext must be used within an AppContextProvider" (ERROR)
 
@@ -1318,7 +1228,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 371 translation keys are missing from translation files.
-⚠️  124 instances of hardcoded text found.
+❌ 344 translation keys are missing from translation files.
+⚠️  121 instances of hardcoded text found.
 
-📊 Coverage: 1038/1147 keys are being used (90%)
+📊 Coverage: 1041/1177 keys are being used (88%)

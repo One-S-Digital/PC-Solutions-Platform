@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, ReactNode, useEffect, useCa
 import { Message, Conversation, UserRole, User } from '../types';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '../constants';
 import { useAppContext } from './AppContext';
+import { useTranslation } from 'react-i18next';
 
 interface MessagingContextType {
   conversations: Conversation[];
@@ -166,7 +167,8 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
 
   const startOrGetConversation = (recipientId: string, recipientName: string, recipientRole: UserRole): string => {
-    if (!currentUser) throw new Error("User not logged in");
+    const { t } = useTranslation();
+    if (!currentUser) throw new Error(t("messagingContext.userNotLoggedIn"));
     const participants = [
         { id: currentUser.id, name: currentUser.name, role: currentUser.role },
         { id: recipientId, name: recipientName, role: recipientRole }
@@ -175,7 +177,8 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
   
   const startConversation = (participants: {id: string, name: string, role: UserRole}[], groupName?: string): string => {
-    if (!currentUser) throw new Error("User not logged in");
+    const { t } = useTranslation();
+    if (!currentUser) throw new Error(t("messagingContext.userNotLoggedIn"));
 
     // Ensure current user is part of the participants
     if (!participants.some(p => p.id === currentUser.id)) {

@@ -1539,6 +1539,39 @@
       "title": "Termination Queue",
       "description": "Manage discount terminations and send notices",
       "tableTitle": "Pending Terminations"
+    },
+    "allActive": {
+      "title": "All Active Discounts",
+      "description": "View and manage all currently active discount agreements",
+      "tableTitle": "Active Discounts"
+    }
+  },
+  "educatorApplicationsPage": {
+    "status": {
+      "new": "New",
+      "viewed": "Viewed",
+      "interview": "Interview",
+      "offer": "Offer",
+      "declined": "Declined"
+    },
+    "table": {
+      "jobTitle": "Job Title",
+      "creche": "Crèche",
+      "status": "Status",
+      "lastUpdated": "Last Updated",
+      "actions": "Actions"
+    },
+    "viewingDetailsFor": "Viewing details for",
+    "emptyState": "No applications found",
+    "footerNote": "Applications are updated in real-time"
+  },
+  "educatorDashboard": {
+    "title": "Educator Dashboard",
+    "welcome": "Welcome back!",
+    "profileCompletion": {
+      "title": "Complete Your Profile",
+      "subtitle": "Add more details to increase your chances of being hired",
+      "button": "Complete Profile"
     }
   },
   "errorBoundary": {
@@ -1556,5 +1589,14 @@
   },
   "fileUploadZone": {
     "dragAndDrop": "or drag and drop"
+  },
+  "appContext": {
+    "useAppContextError": "useAppContext must be used within an AppContextProvider"
+  },
+  "cartContext": {
+    "useCartError": "useCart must be used within a CartProvider"
+  },
+  "messagingContext": {
+    "userNotLoggedIn": "User not logged in"
   }
 }
