@@ -179,7 +179,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
         <div className="absolute bottom-12 left-0 bg-white border border-gray-300 rounded-lg shadow-xl p-6 max-w-2xl max-h-96 overflow-auto">
           <div className="text-xs font-mono space-y-4">
             <div className="flex justify-between items-center">
-              <div className="font-bold text-purple-600 text-lg">Translation Diagnostics</div>
+              <div className="font-bold text-purple-600 text-lg">{t("translationDiagnostics.title")}</div>
               <button
                 onClick={runDiagnostics}
                 disabled={isLoading}
@@ -193,7 +193,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
               <>
                 {/* Basic Status */}
                 <div>
-                  <strong className="text-green-600">📊 Basic Status:</strong>
+                  <strong className="text-green-600">{t("translationDiagnostics.basicStatus")}:</strong>
                   <div className="ml-2 space-y-1">
                     <div>Initialized: {diagnostics.isInitialized ? '✅' : '❌'}</div>
                     <div>Language: {diagnostics.currentLanguage}</div>
@@ -204,7 +204,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
 
                 {/* Translation Files */}
                 <div>
-                  <strong className="text-blue-600">📁 Translation Files:</strong>
+                  <strong className="text-blue-600">{t("translationDiagnostics.translationFiles")}:</strong>
                   <div className="ml-2 space-y-1">
                     {Object.entries(diagnostics.translationFiles).map(([lang, file]) => (
                       <div key={lang} className="flex items-center space-x-2">
@@ -249,7 +249,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
 
                 {/* Test Translations */}
                 <div>
-                  <strong className="text-indigo-600">🧪 Test Translations:</strong>
+                  <strong className="text-indigo-600">{t("translationDiagnostics.testTranslations")}:</strong>
                   <div className="ml-2 space-y-1">
                     {diagnostics.testTranslations.map(({ key, result, isWorking }) => (
                       <div key={key} className="flex items-center space-x-2">
@@ -264,7 +264,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
 
                 {/* Configuration */}
                 <div>
-                  <strong className="text-gray-600">⚙️ Configuration:</strong>
+                  <strong className="text-gray-600">{t("translationDiagnostics.configuration")}:</strong>
                   <div className="ml-2 space-y-1 text-xs">
                     <div>Debug: {diagnostics.config.debug ? 'ON' : 'OFF'}</div>
                     <div>Fallback: {diagnostics.config.fallbackLng}</div>
@@ -284,7 +284,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
                     }}
                     className="bg-gray-500 text-white px-2 py-1 rounded text-xs"
                   >
-                    Log to Console
+{t("translationDiagnostics.logToConsole")}
                   </button>
                   <button
                     onClick={() => {
@@ -294,7 +294,7 @@ const TranslationDiagnostics: React.FC<TranslationDiagnosticsProps> = ({ enabled
                     }}
                     className="bg-yellow-500 text-white px-2 py-1 rounded text-xs"
                   >
-                    Copy Missing Keys
+{t("translationDiagnostics.copyMissingKeys")}
                   </button>
                 </div>
               </>

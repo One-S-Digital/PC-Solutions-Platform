@@ -732,7 +732,14 @@
     "cannotSubmitOrder": "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "translationDiagnostics": {
-    "missingKeysCopied": "Missing keys copied to clipboard!"
+    "missingKeysCopied": "Missing keys copied to clipboard!",
+    "title": "Translation Diagnostics",
+    "basicStatus": "📊 Basic Status",
+    "translationFiles": "📁 Translation Files",
+    "testTranslations": "🧪 Test Translations",
+    "configuration": "⚙️ Configuration",
+    "logToConsole": "Log to Console",
+    "copyMissingKeys": "Copy Missing Keys"
   },
   "translationDebugger": {
     "title": "Translation Debug Info",
@@ -1134,5 +1141,189 @@
     "defaultTitle": "Dashboard Details",
     "detailsFor": "Details for",
     "noSpecificView": "No specific view selected"
+  },
+  "eLearningPage": {
+    "actions": {
+      "viewCourse": "View Course",
+      "watchVideo": "Watch Video",
+      "downloadPdf": "Download PDF",
+      "openLink": "Open Link"
+    },
+    "viewingAlert": "You are viewing external content",
+    "lessonsCount": "{{count}} lessons",
+    "durationLabel": "Duration",
+    "languageLabel": "Language",
+    "updatedLabel": "Updated",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "noItemsFound": "No items found",
+    "addNewContentButton": "Add New Content",
+    "searchPlaceholder": "Search content...",
+    "categoryLabel": "Category",
+    "noContentFound": "No content found",
+    "coursesTitle": "Courses",
+    "itemType": {
+      "courses": "Courses",
+      "videos": "Videos",
+      "pdfs": "PDFs",
+      "links": "External Links"
+    },
+    "videosTitle": "Videos",
+    "pdfsTitle": "PDFs",
+    "externalLinksTitle": "External Links"
+  },
+  "fileGallery": {
+    "actions": {
+      "preview": "Preview",
+      "download": "Download",
+      "rename": "Rename",
+      "delete": "Delete"
+    },
+    "confirmDelete": "Are you sure you want to delete this file?",
+    "uploadButton": "Upload File",
+    "emptyState": {
+      "title": "No files uploaded yet",
+      "message": "Upload your first file to get started"
+    }
+  },
+  "hrDocumentCard": {
+    "categoryLabel": "Category",
+    "languageLabel": "Language",
+    "versionLabel": "Version",
+    "toggleFavoriteLabel": "Toggle Favorite",
+    "lastUpdatedLabel": "Last Updated",
+    "downloadingAlert": "Downloading document...",
+    "downloadButton": "Download",
+    "previewingAlert": "Previewing document...",
+    "previewButtonLabel": "Preview",
+    "editButtonLabel": "Edit",
+    "deleteButtonLabel": "Delete"
+  },
+  "hrProceduresPage": {
+    "categoryDisplay": {
+      "viewCategoryAria": "View category {{category}}",
+      "documentsCount": "{{count}} documents"
+    },
+    "confirmDeleteDocument": "Are you sure you want to delete this document?",
+    "uploadButton": "Upload Document",
+    "searchPlaceholder": "Search documents...",
+    "categoriesTitle": "Categories",
+    "allDocumentsCategory": "All Documents",
+    "noDocumentsMatchSearch": "No documents match your search",
+    "noDocumentsAvailable": "No documents available",
+    "backToCategoriesButton": "Back to Categories",
+    "documentsInCategoryTitle": "Documents in {{category}}",
+    "allItemsCount": "{{count}} items",
+    "noDocumentsInCategory": "No documents in this category"
+  },
+  "loginPage": {
+    "errorBothFields": "Please fill in both email and password",
+    "forgotPasswordTBD": "Forgot password functionality coming soon",
+    "loggingIn": "Logging in..."
+  },
+  "partnerDetailPage": {
+    "onlyFoundationsRequestService": "Only foundations can request this service",
+    "requestSubmittedAlert": "Service request submitted successfully"
+  },
+  "marketplacePage": {
+    "emptyStates": {
+      "noServices": "No services available"
+    },
+    "subtitles": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    },
+    "buttons": {
+      "partnerOnboarding": "Partner Onboarding"
+    },
+    "infoAlert": "Partner Onboarding TBD",
+    "searchPlaceholder": "Search partners...",
+    "labels": {
+      "category": "Category",
+      "region": "Region",
+      "supplierTags": "Supplier Tags",
+      "sortBy": "Sort by"
+    },
+    "sortOptions": {
+      "nameAsc": "Name (A-Z)",
+      "nameDesc": "Name (Z-A)",
+      "ratingDesc": "Rating (High to Low)"
+    },
+    "ariaLabels": {
+      "gridView": "Switch to grid view",
+      "listView": "Switch to list view"
+    }
+  },
+  "Partner Onboarding TBD": "Partner Onboarding TBD",
+  "notifications": {
+    "newMessageFrom": "New message from {{sender}}"
+  },
+  "messagesPage": {
+    "newGroupButton": "New Group",
+    "noConversationSelectedTitle": "Select a conversation to start messaging",
+    "noConversationSelectedSubtitle": "Choose a conversation from the list to view messages",
+    "noConversationsYet": "No conversations yet"
+  },
+  "notificationsPage": {
+    "clearAll": "Clear All",
+    "emptyState": {
+      "title": "No notifications",
+      "message": "You're all caught up! New notifications will appear here."
+    }
+  },
+  "parentEnquiriesPage": {
+    "accessDenied": {
+      "title": "Access Denied",
+      "message": "You need to be logged in as a parent to view enquiries"
+    },
+    "emptyState": {
+      "title": "No enquiries yet",
+      "message": {
+        "0": "You haven't submitted any enquiries yet.",
+        "1": "Start by filling out the enquiry form to find suitable childcare options."
+      }
+    },
+    "card": {
+      "title": "Enquiry Details",
+      "submitted": "Submitted on {{date}}",
+      "childInfo": "Child Information",
+      "notes": "Additional Notes",
+      "responsesTitle": "Responses",
+      "awaitingMatch": "Awaiting Match",
+      "message": "Your enquiry has been sent to relevant providers",
+      "waitingForMoreResponses": "Waiting for more responses..."
+    }
+  },
+  "parentLeadFormPage": {
+    "errorAllFields": "Please fill in all required fields",
+    "thankYouTitle": "Thank You!",
+    "unauthenticatedSuccessMessage": "Your enquiry has been submitted successfully. We'll contact you soon!",
+    "authenticatedSuccessMessage": "Your enquiry has been submitted and saved to your dashboard.",
+    "subtitle": "Tell us about your childcare needs",
+    "labels": {
+      "yourFullName": "Your Full Name",
+      "yourEmail": "Your Email",
+      "yourPhone": "Your Phone",
+      "canton": "Canton",
+      "municipality": "Municipality",
+      "childAge": "Child's Age",
+      "desiredStartDate": "Desired Start Date",
+      "specialNeeds": "Special Needs"
+    },
+    "sectionTitleChildNeeds": "Child's Needs",
+    "helpText": {
+      "specialNeeds": "Please describe any special requirements or needs"
+    }
+  },
+  "partnersPage": {
+    "partnerCard": {
+      "logoAlt": "{{partnerName}} logo",
+      "partnerType": "{{type}} Partner",
+      "learnMoreButton": "Learn More"
+    },
+    "hero": {
+      "title": "Our Partners",
+      "subtitle": "Discover trusted childcare providers and suppliers",
+      "ctaButton": "Become a Partner"
+    }
   }
 }
