@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-10-05T19:11:37.280Z",
+  "generatedAt": "2025-10-06T16:32:54.771Z",
   "baseUrl": "https://app.procrechesolutions.com",
   "environment": "production",
   "authenticated": false,
@@ -7,16 +7,16 @@
     "totalPagesScanned": 22,
     "successfulScans": 22,
     "failedScans": 0,
-    "totalMissingKeys": 0,
-    "totalHardcodedText": 18,
+    "totalMissingKeys": 1,
+    "totalHardcodedText": 42,
     "pagesWithIssues": 22
   },
   "pages": [
     {
       "url": "https://app.procrechesolutions.com/",
       "pageName": "Home",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Home.png",
@@ -26,8 +26,8 @@
     {
       "url": "https://app.procrechesolutions.com/login",
       "pageName": "Login",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Login.png",
@@ -37,8 +37,8 @@
     {
       "url": "https://app.procrechesolutions.com/register",
       "pageName": "Register",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Register.png",
@@ -48,8 +48,8 @@
     {
       "url": "https://app.procrechesolutions.com/signup",
       "pageName": "Signup",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Signup.png",
@@ -59,8 +59,8 @@
     {
       "url": "https://app.procrechesolutions.com/dashboard",
       "pageName": "Dashboard",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Dashboard.png",
@@ -70,8 +70,8 @@
     {
       "url": "https://app.procrechesolutions.com/profile",
       "pageName": "Profile",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Profile.png",
@@ -81,8 +81,8 @@
     {
       "url": "https://app.procrechesolutions.com/settings",
       "pageName": "Settings",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Settings.png",
@@ -92,8 +92,8 @@
     {
       "url": "https://app.procrechesolutions.com/pricing",
       "pageName": "Pricing",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Pricing.png",
@@ -103,8 +103,8 @@
     {
       "url": "https://app.procrechesolutions.com/plans",
       "pageName": "Plans",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Plans.png",
@@ -114,8 +114,8 @@
     {
       "url": "https://app.procrechesolutions.com/find-creche",
       "pageName": "Find Creche",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Find_Creche.png",
@@ -125,8 +125,8 @@
     {
       "url": "https://app.procrechesolutions.com/find-daycare",
       "pageName": "Find Daycare",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Find_Daycare.png",
@@ -136,8 +136,8 @@
     {
       "url": "https://app.procrechesolutions.com/messages",
       "pageName": "Messages",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Messages.png",
@@ -147,8 +147,8 @@
     {
       "url": "https://app.procrechesolutions.com/notifications",
       "pageName": "Notifications",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Notifications.png",
@@ -158,8 +158,8 @@
     {
       "url": "https://app.procrechesolutions.com/orders",
       "pageName": "Orders",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Orders.png",
@@ -169,8 +169,8 @@
     {
       "url": "https://app.procrechesolutions.com/services",
       "pageName": "Services",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Services.png",
@@ -180,8 +180,8 @@
     {
       "url": "https://app.procrechesolutions.com/content",
       "pageName": "Content",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Content.png",
@@ -191,8 +191,8 @@
     {
       "url": "https://app.procrechesolutions.com/suppliers",
       "pageName": "Suppliers",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Suppliers.png",
@@ -202,8 +202,8 @@
     {
       "url": "https://app.procrechesolutions.com/daycares",
       "pageName": "Daycares",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Daycares.png",
@@ -213,8 +213,8 @@
     {
       "url": "https://app.procrechesolutions.com/admin",
       "pageName": "Admin",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Admin.png",
@@ -224,8 +224,8 @@
     {
       "url": "https://app.procrechesolutions.com/help",
       "pageName": "Help",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Help.png",
@@ -235,8 +235,8 @@
     {
       "url": "https://app.procrechesolutions.com/about",
       "pageName": "About",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/About.png",
@@ -246,8 +246,8 @@
     {
       "url": "https://app.procrechesolutions.com/contact",
       "pageName": "Contact",
-      "missingKeys": 0,
-      "hardcodedText": 18,
+      "missingKeys": 1,
+      "hardcodedText": 42,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Contact.png",
@@ -255,8 +255,121 @@
       "authenticated": false
     }
   ],
-  "missingKeys": [],
+  "missingKeys": [
+    {
+      "type": "missing_key",
+      "text": "sidebar.dashboard",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "Dashboard Sidebar: sidebar.dashboard"
+    }
+  ],
   "hardcodedText": [
+    {
+      "type": "hardcoded_text",
+      "text": "i18n Debug Information",
+      "element": "H1",
+      "className": "",
+      "id": "",
+      "context": "i18n Debug Information"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "{\n  \"isInitialized\": true,\n  \"language\": \"en\",\n  \"languages\": [\n    \"en\"\n  ],\n  \"hasResourceBundle\": true,\n  \"resourceBundle\": {\n    \"appName\": \"ProCrèche Solutions Suisse\",\n    \"languageSwitcher\": {\n      \"enShort\": \"EN\",\n      \"enLong\": \"English\",\n      \"frShort\": \"FR\",\n      \"frLong\": \"Français\",\n      \"deShort\": \"DE\",\n      \"deLong\": \"Deutsch\",\n      \"selectLanguage\": \"Select Language\"\n    },\n    \"loading\": {\n      \"translations\": \"Loading translations...\"\n    },\n    \"buttons\": {\n      \"save\": \"Save\",\n      \"saveChanges\": \"Save Changes\",\n      \"cancel\": \"Cancel\",\n      \"submit\": \"Submit\",\n      \"add\": \"Add\",\n      \"edit\": \"Edit\",\n      \"delete\": \"Delete\",\n      \"viewDetails\": \"View Details\",\n      \"goBack\": \"Go Back\",\n      \"login\": \"Log In\",\n      \"signup\": \"Sign Up\",\n      \"applyNow\": \"Apply Now\",\n      \"confirmApply\": \"Confirm Application\",\n      \"sendMessage\": \"Send Message\",\n      \"inviteToApply\": \"Invite to Apply\",\n      \"inviteToInterview\": \"Invite to Interview\",\n      \"addToFavorites\": \"Add to Favorites\",\n      \"favorited\": \"Favorited\",\n      \"submitEnquiry\": \"Submit Enquiry\",\n      \"viewMyEnquiries\": \"View My Enquiries\",\n      \"submitTicket\": \"Submit Ticket\",\n      \"goToLogin\": \"Go to Login\",\n      \"close\": \"Close\",\n      \"view\": \"View\",\n      \"resetFilters\": \"Reset Filters\",\n      \"applyFilters\": \"Apply Filters\",\n      \"submitRequest\": \"Submit Request\",\n      \"remove\": \"Remove\",\n      \"dismiss\": \"Dismiss\"\n    },\n    \"navbar\": {\n      \"notificationsCount\": \"{{count}} notifications\",\n      \"unreadMessages\": \"{{count}} unread messages\"\n    },\n    \"sidebar\": {\n      \"billingSubscription\": \"Billing & Subscription\"\n    },\n    \"stockStatus\": {\n      \"instock\": \"In Stock\",\n      \"outofstock\": \"Out of Stock\",\n      \"lowstock\": \"Low Stock\",\n      \"discontinued\": \"Discontinued\"\n    },\n    \"common\": {\n      \"perMonth\": \"/month\",\n      \"perYear\": \"/year\",\n      \"save10Percent\": \"save 10%\"\n    },\n    \"errors\": {\n      \"unknown\": \"An unknown error occurred\"\n    },\n    \"notifications\": {\n      \"errorTitle\": \"Error\",\n      \"newMessageFrom\": \"New message from\"\n    },\n    \"hidePassword\": \"Hide password\",\n    \"showPassword\": \"Show password\",\n    \"signIn\": \"Sign In\",\n    \"signOut\": \"Sign Out\",\n    \"confirmPassword\": \"Confirm Password\",\n    \"resetPassword\": \"Reset Password\",\n    \"rememberMe\": \"Remember me\",\n    \"createAccount\": \"Create Account\",\n    \"alreadyHaveAccount\": \"Already have an account?\",\n    \"dontHaveAccount\": \"Don't have an account?\",\n    \"welcomeBack\": \"Welcome back!\",\n    \"joinPlatform\": \"Join the platform\",\n    \"chooseRole\": \"Choose your role\",\n    \"firstName\": \"First Name\",\n    \"lastName\": \"Last Name\",\n    \"phoneNumber\": \"Phone Number\",\n    \"organizationName\": \"Organization Name\",\n    \"contactPerson\": \"Contact Person\",\n    \"canton\": \"Canton\",\n    \"languages\": \"Languages\",\n    \"capacity\": \"Capacity\",\n    \"productCategory\": \"Product Category\",\n    \"serviceType\": \"Service Type\",\n    \"childAge\": \"Child Age\",\n    \"preferredLocation\": \"Preferred Location\",\n    \"loginPage\": {\n      \"title\": \"Welcome to {{appName}}\",\n      \"subtitle\": \"Sign in to your account\",\n      \"emailLabel\": \"Email Address\",\n      \"emailPlaceholder\": \"Enter your email\",\n      \"passwordLabel\": \"Password\",\n      \"passwordPlaceholder\": \"Enter your password\",\n      \"forgotPassword\": \"Forgot your password?\",\n      \"forgotPasswordTBD\": \"Forgot password functionality coming soon\",\n      \"orContinueWith\": \"Or continue with\",\n      \"google\": \"Google\",\n      \"facebook\": \"Facebook\",\n      \"noAccount\": \"Don't have an account?\",\n      \"viewPlansPrompt\": \"Want to see our plans?\",\n      \"viewPlans\": \"View Plans\",\n      \"parentLookingForCreche\": \"Parent looking for a crèche?\",\n      \"findCrecheHere\": \"Find your perfect crèche here\",\n      \"socialLoginTBD\": \"{{provider}} login coming soon!\",\n      \"alreadyAccount\": \"Already have an account?\",\n      \"errorBothFields\": \"Please fill in both email and password\",\n      \"loggingIn\": \"Logging in...\"\n    },\n    \"signupPage\": {\n      \"form\": {\n        \"firstName\": \"First Name\",\n        \"lastName\": \"Last Name\",\n        \"email\": \"Email\",\n        \"password\": \"Password\",\n        \"confirmPassword\": \"Confirm Password\",\n        \"phone\": \"Phone\",\n        \"organization\": \"Organization\",\n        \"role\": \"Role\"\n      },\n      \"validation\": {\n        \"firstNameRequired\": \"First name is required\",\n        \"lastNameRequired\": \"Last name is required\",\n        \"emailRequired\": \"Email is required\",\n        \"passwordRequired\": \"Password is required\",\n        \"phoneRequired\": \"Phone is required\",\n        \"organizationRequired\": \"Organization is required\",\n        \"roleRequired\": \"Role is required\"\n      },\n      \"success\": {\n        \"accountCreated\": \"Account created successfully\"\n      },\n      \"error\": {\n        \"accountCreationFailed\": \"Failed to create account\"\n      },\n      \"errors\": {\n        \"organisationNameRequired\": \"Organization name is required\",\n        \"emailRequired\": \"Email is required\",\n        \"emailInvalid\": \"Please enter a valid email address\",\n        \"passwordRequired\": \"Password is required\",\n        \"passwordTooShort\": \"Password must be at least 6 characters\",\n        \"passwordsNoMatch\": \"Passwords do not match\",\n        \"phoneRequired\": \"Phone number is required\",\n        \"cantonRequired\": \"Canton is required\",\n        \"capacityRequired\": \"Capacity is required\",\n        \"categoryRequired\": \"Category is required\",\n        \"serviceTypeRequired\": \"Service type is required\",\n        \"childAgeRequired\": \"Child age is required\",\n        \"childStartDateRequired\": \"Child start date is required\",\n        \"termsRequired\": \"You must accept the terms and conditions\",\n        \"contactPersonRequired\": \"Contact person is required\",\n        \"parentNameRequired\": \"Parent name is required\"\n      },\n      \"progressStep1\": \"Step 1: Select Role\",\n      \"progressStep2\": \"Step 2: Enter Details\",\n      \"selectRoleTitle\": \"Select Your Role\",\n      \"detailsTitle\": \"Enter Your Details\",\n      \"submissionSuccessTitle\": \"Registration Successful!\",\n      \"submissionSuccessMessage\": \"Your account has been created successfully. You can now access your dashboard.\",\n      \"goToDashboardButton\": \"Go to Dashboard\",\n      \"termsLabel\": \"I agree to the terms and conditions\",\n      \"termsLink\": \"Terms and Conditions\",\n      \"creatingAccount\": \"Creating your account...\",\n      \"createAccountButton\": \"Create Account\",\n      \"placeholders\": {\n        \"firstName\": \"Enter your first name\",\n        \"lastName\": \"Enter your last name\",\n        \"email\": \"Enter your email address\",\n        \"password\": \"Enter your password\",\n        \"confirmPassword\": \"Confirm your password\",\n        \"phone\": \"Enter your phone number\",\n        \"organization\": \"Enter your organization name\",\n        \"select\": \"Please select...\",\n        \"organisationName\": \"Enter your organization name\",\n        \"contactPerson\": \"Enter contact person name\",\n        \"parentName\": \"Enter your full name\",\n        \"category\": \"Enter product category\",\n        \"serviceType\": \"Enter service type\"\n      },\n      \"labels\": {\n        \"organisationName\": \"Organization Name\",\n        \"contactPerson\": \"Contact Person\",\n        \"parentName\": \"Your Name\",\n        \"email\": \"Email\",\n        \"password\": \"Password\",\n        \"confirmPassword\": \"Confirm Password\",\n        \"phone\": \"Phone\",\n        \"canton\": \"Canton\",\n        \"capacity\": \"Capacity\",\n        \"category\": \"Product Category\",\n        \"serviceType\": \"Service Type\",\n        \"childAge\": \"Child's Age\",\n        \"childStartDate\": \"Desired Start Date\"\n      },\n      \"roles\": {\n        \"foundation\": \"Foundation\",\n        \"supplier\": \"Product Supplier\",\n        \"serviceProvider\": \"Service Provider\",\n        \"parent\": \"Parent\"\n      }\n    },\n    \"dashboardPage\": {\n      \"welcome\": \"Welcome back, {{name}}!\",\n      \"defaultUser\": \"User\",\n      \"overviewSubtitle\": \"Here's what's happening with {{appName}} today\",\n      \"activeUsers\": \"Active Users\",\n      \"newOrders\": \"New Orders\",\n      \"openJobs\": \"Open Jobs\",\n      \"pageViews\": \"Page Views\",\n      \"recentActivity\": \"Recent Activity\",\n      \"quickLinks\": \"Quick Links\",\n      \"browseMarketplace\": \"Browse Marketplace\",\n      \"postNewJob\": \"Post New Job\",\n      \"manageUsers\": \"Manage Users\",\n      \"platformSettings\": \"Platform Settings\",\n      \"activityLina\": \"Lina uploaded a new policy document\",\n      \"activityEcoToys\": \"EcoToys submitted a new product\",\n      \"activityJohn\": \"John applied for the educator position\",\n      \"activityParent\": \"A parent submitted a new enquiry\",\n      \"viewDetailsFor\": \"View details for\",\n      \"timeAgo\": {\n        \"minutes\": \"{{count}} minutes ago\",\n        \"hours\": \"{{count}} hours ago\",\n        \"yesterday\": \"Yesterday\"\n      },\n      \"upcomingMeetings\": \"Upcoming Meetings\",\n      \"quickActions\": \"Quick Actions\",\n      \"overview\": \"Overview\",\n      \"announcements\": \"Announcements\",\n      \"notifications\": \"Notifications\"\n    },\n    \"settingsPage\": {\n      \"billingSubscription\": \"Billing & Subscription\"\n    },\n    \"marketplacePage\": {\n      \"emptyStates\": {\n        \"noServices\": \"No services available\"\n      },\n      \"subtitles\": {\n        \"productSuppliers\": \"Product Suppliers\",\n        \"serviceProviders\": \"Service Providers\"\n      },\n      \"buttons\": {\n        \"partnerOnboarding\": \"Partner Onboarding\"\n      },\n      \"infoAlert\": \"Partner Onboarding TBD\",\n      \"searchPlaceholder\": \"Search partners...\",\n      \"labels\": {\n        \"category\": \"Category\",\n        \"region\": \"Region\",\n        \"supplierTags\": \"Supplier Tags\",\n        \"sortBy\": \"Sort by\"\n      },\n      \"sortOptions\": {\n        \"nameAsc\": \"Name (A-Z)\",\n        \"nameDesc\": \"Name (Z-A)\",\n        \"ratingDesc\": \"Rating (High to Low)\"\n      },\n      \"ariaLabels\": {\n        \"gridView\": \"Switch to grid view\",\n        \"listView\": \"Switch to list view\"\n      }\n    },\n    \"partnerDetailPage\": {\n      \"productOutOfStock\": \"Product is currently out of stock\",\n      \"productAddedToOrder\": \"Product added to order successfully\",\n      \"addToOrderButton\": \"Add to Order\",\n      \"loadingPartnerDetails\": \"Loading partner details...\",\n      \"invalidPartnerIdMessage\": \"Could not find a user associated with this organization to message.\",\n      \"contactInfoTitle\": \"Contact Information\",\n      \"directOrderButton\": \"Direct Order\",\n      \"aboutTitle\": \"About\",\n      \"ratingsReviewsTitle\": \"Ratings & Reviews\",\n      \"ratingText\": \"Rating\",\n      \"reviewsPlaceholder\": \"No reviews yet\",\n      \"noProductsListed\": \"No products listed\",\n      \"requestServiceButton\": \"Request Service\",\n      \"noServicesListed\": \"No services listed\",\n      \"promoCodeTitle\": \"Promo Code\",\n      \"promoCodePlaceholder\": \"Enter promo code\",\n      \"applyPromoButton\": \"Apply\",\n      \"onlyFoundationsRequestService\": \"Only foundations can request services\",\n      \"requestSubmittedAlert\": \"Service request submitted successfully\"\n    },\n    \"adminPlatformSettings\": {\n      \"title\": \"Platform Settings\",\n      \"general\": {\n        \"title\": \"General Settings\",\n        \"nameLabel\": \"Platform Name\",\n        \"descriptionLabel\": \"Platform Description\"\n      },\n      \"branding\": {\n        \"title\": \"Branding\",\n        \"logoLabel\": \"Platform Logo\",\n        \"faviconLabel\": \"Favicon\"\n      }\n    },\n    \"organizationProfileForm\": {\n      \"saveSuccess\": \"Organization profile saved successfully\"\n    },\n    \"foundationDashboardPage\": {\n      \"title\": \"Foundation Dashboard\",\n      \"welcome\": \"Welcome to your foundation dashboard\",\n      \"overview\": \"Overview\",\n      \"recentActivity\": \"Recent Activity\",\n      \"quickActions\": \"Quick Actions\"\n    },\n    \"foundationAnalyticsPage\": {\n      \"mockDataVisualization\": \"Mock Data Visualization\",\n      \"spendingByCategory\": \"Spending by Category\",\n      \"parentLeadConversion\": \"Parent Lead Conversion\",\n      \"staffTrainingCompletion\": \"Staff Training Completion\",\n      \"enrollmentTrend\": \"Enrollment Trend\"\n    },\n    \"foundationLeadsPage\": {\n      \"title\": \"Incoming Parent Leads\",\n      \"accessDenied\": {\n        \"title\": \"Access Denied\",\n        \"message\": \"You must be logged in as a Foundation with a valid Organization ID to view this page.\"\n      },\n      \"emptyState\": {\n        \"title\": \"No Incoming Leads\",\n        \"message\": \"There are currently no new parent enquiries matching your daycare.\"\n      }\n    },\n    \"foundationOrdersAppointmentsPage\": {\n      \"productOrdersTitle\": \"Product Orders\",\n      \"exportCsvProductAlert\": \"Product orders CSV export started\",\n      \"exportCsvButton\": \"Export CSV\",\n      \"noProductOrders\": \"No product orders found\",\n      \"table\": {\n        \"refNo\": \"Ref No\",\n        \"supplier\": \"Supplier\",\n        \"itemsQty\": \"Items/Qty\",\n        \"total\": \"Total\",\n        \"date\": \"Date\",\n        \"status\": \"Status\",\n        \"actions\": \"Actions\",\n        \"provider\": \"Provider\",\n        \"service\": \"Service\"\n      },\n      \"cancelOrderAlert\": \"Order cancelled successfully\",\n      \"serviceAppointmentsTitle\": \"Service Appointments\",\n      \"exportCsvServiceAlert\": \"Service appointments CSV export started\",\n      \"noServiceAppointments\": \"No service appointments found\",\n      \"unknownProvider\": \"Unknown Provider\",\n      \"preferredAbbr\": \"Pref.\",\n      \"notApplicable\": \"N/A\",\n      \"rescheduleAlert\": \"Appointment rescheduled successfully\",\n      \"rescheduleButton\": \"Reschedule\",\n      \"productOrdersTab\": \"Product Orders\",\n      \"serviceAppointmentsTab\": \"Service Appointments\"\n    },\n    \"foundationOrganisationProfilePage\": {\n      \"mock\": {\n        \"pedagogyStatement\": \"Our pedagogy is based on the principles of respect, creativity, and individual development. We believe in providing a nurturing environment where children can explore, learn, and grow at their own pace.\"\n      },\n      \"alert\": {\n        \"infoSaved\": \"Profile information saved successfully\"\n      },\n      \"sections\": {\n        \"branding\": {\n          \"title\": \"Branding & Identity\",\n          \"logoLabel\": \"Logo\",\n          \"coverImageLabel\": \"Cover Image\",\n          \"pedagogyStatementLabel\": \"Pedagogy Statement\",\n          \"pedagogyStatementPlaceholder\": \"Describe your educational approach and philosophy...\"\n        },\n        \"operations\": {\n          \"title\": \"Operations\",\n          \"openingHoursLabel\": \"Opening Hours\",\n          \"openingHoursPlaceholder\": \"e.g., Monday-Friday 7:00-18:00\",\n          \"contactInfoLabel\": \"Contact Information\",\n          \"contactInfoPlaceholder\": \"Phone, email, address...\"\n        },\n        \"online\": {\n          \"title\": \"Online Presence\",\n          \"bookingLinkLabel\": \"Booking Link\",\n          \"bookingLinkPlaceholder\": \"https://your-booking-system.com\",\n          \"socialMediaLinkLabel\": \"Social Media Links\",\n          \"socialMediaLinkPlaceholder\": \"Facebook, Instagram, LinkedIn...\",\n          \"acceptingLeadsLabel\": \"Accepting New Leads\"\n        }\n      },\n      \"saveButton\": \"Save Profile\"\n    },\n    \"foundationSupportPage\": {\n      \"ticketSubmittedAlert\": \"Support ticket submitted successfully\",\n      \"ticketForm\": {\n        \"subjectPlaceholder\": \"Brief description of your issue\",\n        \"messagePlaceholder\": \"Please provide detailed information about your issue\"\n      }\n    },\n    \"parentDashboardPage\": {\n      \"title\": \"Parent Dashboard\",\n      \"welcome\": \"Welcome to your parent dashboard\",\n      \"myChildren\": \"My Children\",\n      \"findCreche\": \"Find a Crèche\"\n    },\n    \"parentEnquiriesPage\": {\n      \"accessDenied\": {\n        \"title\": \"Access Denied\",\n        \"message\": \"You need to be logged in as a parent to view enquiries\"\n      },\n      \"emptyState\": {\n        \"title\": \"No enquiries yet\",\n        \"message\": {\n          \"0\": \"You haven't submitted any enquiries yet.\",\n          \"1\": \"Start by filling out the enquiry form to find suitable childcare options.\"\n        }\n      },\n      \"card\": {\n        \"title\": \"Enquiry Details\",\n        \"submitted\": \"Submitted on {{date}}\",\n        \"childInfo\": \"Child Information\",\n        \"notes\": \"Additional Notes\",\n        \"responsesTitle\": \"Responses\",\n        \"awaitingMatch\": \"Awaiting Match\",\n        \"message\": \"Your enquiry has been sent to relevant providers\",\n        \"waitingForMoreResponses\": \"Waiting for more responses...\"\n      }\n    },\n    \"parentSupportPage\": {\n      \"faq\": {\n        \"matchingProcess\": {\n          \"q\": \"How does the matching process work?\",\n          \"a\": \"Our algorithm matches your child's needs with available crèches based on location, age, special requirements, and availability.\"\n        },\n        \"responseTime\": {\n          \"q\": \"How quickly will I receive responses?\",\n          \"a\": \"Most crèches respond within 24-48 hours. You'll be notified immediately when responses arrive.\"\n        },\n        \"dataSecurity\": {\n          \"q\": \"Is my personal information secure?\",\n          \"a\": \"Yes, we use enterprise-grade encryption and comply with Swiss data protection laws. Your information is never shared without consent.\"\n        }\n      }\n    },\n    \"educatorDashboardPage\": {\n      \"title\": \"Educator Dashboard\",\n      \"welcome\": \"Welcome to your educator dashboard\",\n      \"applications\": \"My Applications\",\n      \"jobBoard\": \"Job Board\"\n    },\n    \"educatorApplicationsPage\": {\n      \"status\": {\n        \"new\": \"New\",\n        \"viewed\": \"Viewed\",\n        \"interview\": \"Interview\",\n        \"offer\": \"Offer\",\n        \"declined\": \"Declined\"\n      },\n      \"table\": {\n        \"jobTitle\": \"Job Title\",\n        \"creche\": \"Crèche\",\n        \"status\": \"Status\",\n        \"lastUpdated\": \"Last Updated\",\n        \"actions\": \"Actions\"\n      },\n      \"viewingDetailsFor\": \"Viewing details for\",\n      \"emptyState\": \"No applications found\",\n      \"footerNote\": \"Applications are updated in real-time\"\n    },\n    \"educatorJobBoardPage\": {\n      \"postedOn\": \"Posted on\",\n      \"searchPlaceholder\": \"Search jobs...\",\n      \"noJobsFound\": \"No jobs found\"\n    },\n    \"educatorProfilePage\": {\n      \"editProfile\": \"Edit Profile\",\n      \"availability\": {\n        \"days\": \"Days\",\n        \"times\": \"Times\",\n        \"contract\": \"Contract\",\n        \"ageGroups\": \"Age Groups\"\n      },\n      \"education\": {\n        \"graduated\": \"Graduated\"\n      },\n      \"certifications\": {\n        \"issued\": \"Issued\",\n        \"expires\": \"Expires\"\n      }\n    },\n    \"educatorSupportPage\": {\n      \"ticketSubmittedAlert\": \"Support ticket submitted successfully\",\n      \"ticketForm\": {\n        \"subjectPlaceholder\": \"Brief description of your issue\",\n        \"messagePlaceholder\": \"Please provide detailed information about your issue\"\n      }\n    },\n    \"serviceProviderDashboardPage\": {\n      \"title\": \"Service Provider Dashboard\",\n      \"welcome\": \"Welcome to your service provider dashboard\",\n      \"services\": \"My Services\",\n      \"requests\": \"Service Requests\"\n    },\n    \"serviceProviderAnalyticsPage\": {\n      \"serviceRequestsPerWeek\": \"Service Requests Per Week\",\n      \"topViewedServices\": \"Top Viewed Services\",\n      \"requestsByCanton\": \"Requests by Canton\"\n    },\n    \"serviceProviderListingsPage\": {\n      \"card\": {\n        \"category\": \"Category\",\n        \"delivery\": \"Delivery\"\n      },\n      \"confirmDelete\": \"Are you sure you want to delete this service?\",\n      \"addNewServiceButton\": \"Add New Service\",\n      \"searchPlaceholder\": \"Search services...\",\n      \"emptyState\": {\n        \"title\": \"No Services Found\",\n        \"noMatch\": \"No services match your search criteria\",\n        \"noServicesYet\": \"You haven't created any services yet\"\n      }\n    },\n    \"serviceProviderRequestsPage\": {\n      \"filterByStatus\": \"Filter by Status\",\n      \"table\": {\n        \"requestId\": \"Request ID\",\n        \"foundation\": \"Foundation\",\n        \"service\": \"Service\",\n        \"date\": \"Date\",\n        \"status\": \"Status\"\n      },\n      \"emptyState\": \"No service requests found\"\n    },\n    \"serviceProviderSupportPage\": {\n      \"ticketSubmittedAlert\": \"Support ticket submitted successfully\",\n      \"ticketForm\": {\n        \"subjectPlaceholder\": \"Brief description of your issue\",\n        \"messagePlaceholder\": \"Please provide detailed information about your issue\"\n      }\n    },\n    \"supplierDashboardPage\": {\n      \"title\": \"Supplier Dashboard\",\n      \"welcome\": \"Welcome to your supplier dashboard\",\n      \"products\": \"My Products\",\n      \"orders\": \"Orders\"\n    },\n    \"supplierAnalyticsPage\": {\n      \"datePickerLabel\": \"Select Date Range\",\n      \"exportCsvAlert\": \"CSV export started\",\n      \"exportCsvButton\": \"Export CSV\",\n      \"mockChartText\": \"Mock chart visualization\",\n      \"orderRequestsPerWeek\": \"Order Requests Per Week\",\n      \"topViewedProducts\": \"Top Viewed Products\",\n      \"requestsByCanton\": \"Requests by Canton\",\n      \"promoCodePerformance\": \"Promo Code Performance\",\n      \"table\": {\n        \"code\": \"Code\",\n        \"uses\": \"Uses\",\n        \"estRevenueImpact\": \"Est. Revenue Impact\"\n      }\n    },\n    \"supplierProductListingsPage\": {\n      \"addProductAlert\": \"Product added successfully\",\n      \"addProductButton\": \"Add New Product\",\n      \"searchPlaceholder\": \"Search products...\",\n      \"table\": {\n        \"product\": \"Product\",\n        \"price\": \"Price\",\n        \"stock\": \"Stock\",\n        \"visibility\": \"Visibility\",\n        \"actions\": \"Actions\"\n      },\n      \"emptyState\": \"No products found\"\n    },\n    \"supplierOrdersPage\": {\n      \"filterByStatus\": \"Filter by Status\",\n      \"table\": {\n        \"orderId\": \"Order ID\",\n        \"date\": \"Date\",\n        \"total\": \"Total\",\n        \"status\": \"Status\",\n        \"foundation\": \"Foundation\"\n      },\n      \"actions\": {\n        \"ship\": \"Ship\"\n      },\n      \"emptyState\": \"No orders found\"\n    },\n    \"supplierSupportPage\": {\n      \"ticketSubmittedAlert\": \"Support ticket submitted successfully\",\n      \"ticketForm\": {\n        \"subjectPlaceholder\": \"Brief description of your issue\",\n        \"messagePlaceholder\": \"Please provide detailed information about your issue\"\n      }\n    },\n    \"adminContentManagementDashboardPage\": {\n      \"title\": \"Content Management\",\n      \"content\": \"Content Overview\",\n      \"policies\": \"Policy Management\",\n      \"announcements\": \"Announcements\"\n    },\n    \"adminSystemMonitoringPage\": {\n      \"rawLogConsole\": {\n        \"title\": \"Raw Log Console\"\n      },\n      \"overallStatus\": {\n        \"title\": \"Overall System Status\"\n      },\n      \"components\": {\n        \"api\": \"API\",\n        \"database\": \"Database\",\n        \"authService\": \"Auth Service\"\n      },\n      \"metadata\": {\n        \"environment\": \"Environment\",\n        \"version\": \"Version\",\n        \"uptime\": \"Uptime\",\n        \"lastCheck\": \"Last Check\"\n      },\n      \"serverPerformance\": {\n        \"title\": \"Server Performance\",\n        \"cpuUsage\": \"CPU Usage\",\n        \"memoryUsage\": \"Memory Usage\",\n        \"diskUsage\": \"Disk Usage\",\n        \"uptimeDays\": \"Uptime (Days)\"\n      },\n      \"databasePerformance\": {\n        \"title\": \"Database Performance\",\n        \"activeConnections\": \"Active Connections\",\n        \"queryTime\": \"Query Time\",\n        \"storage\": \"Storage\",\n        \"connectionHealth\": \"Connection Health\"\n      },\n      \"appPerformance\": {\n        \"title\": \"Application Performance\",\n        \"activeUsers\": \"Active Users\",\n        \"requestsPerMinute\": \"Requests per Minute\",\n        \"avgResponseTime\": \"Average Response Time\",\n        \"errorRate\": \"Error Rate\"\n      },\n      \"recentEvents\": {\n        \"title\": \"Recent Events\"\n      }\n    },\n    \"adminDiscountTerminationsPage\": {\n      \"title\": \"Discount Terminations\",\n      \"terminations\": \"Active Terminations\",\n      \"manage\": \"Manage Terminations\"\n    },\n    \"pricingPage\": {\n      \"title\": \"Pricing Plans\",\n      \"plans\": \"Available Plans\",\n      \"features\": \"Plan Features\",\n      \"billing\": \"Billing Information\",\n      \"monthly\": \"Monthly\",\n      \"annual\": \"Annual\",\n      \"saveUpTo10\": \"Save up to 10%\",\n      \"popular\": \"Most Popular\",\n      \"whatYouGet\": \"What You Get\",\n      \"selectAndContinue\": \"Select and Continue\",\n      \"choosePlan\": \"Choose Your Plan\",\n      \"titleSignup\": \"Sign Up\",\n      \"subtitleSignup\": \"Create your account to get started\",\n      \"subtitle\": \"Choose the plan that's right for your organization\",\n      \"suppliersAndProvidersTitle\": \"For Suppliers & Service Providers\"\n    },\n    \"recruitmentPage\": {\n      \"title\": \"Recruitment\",\n      \"jobDetailModal\": {\n        \"title\": \"Job Details\",\n        \"apply\": \"Apply Now\",\n        \"close\": \"Close\",\n        \"overviewTitle\": \"Job Overview\",\n        \"location\": \"Location\",\n        \"contractType\": \"Contract Type\",\n        \"startDate\": \"Start Date\",\n        \"salary\": \"Salary\",\n        \"applyNow\": \"Apply Now\"\n      },\n      \"jobPostModal\": {\n        \"title\": \"Post Job\",\n        \"submit\": \"Submit Job Post\",\n        \"editTitle\": \"Edit Job Posting\",\n        \"addTitle\": \"Add New Job Posting\",\n        \"jobTitle\": \"Job Title\",\n        \"location\": \"Location\",\n        \"contractType\": \"Contract Type\",\n        \"startDate\": \"Start Date\",\n        \"salaryRange\": \"Salary Range\",\n        \"salaryRangePlaceholder\": \"e.g., CHF 4,500 - 5,500\",\n        \"description\": \"Job Description\",\n        \"postJob\": \"Post Job\"\n      },\n      \"viewApplicantsModal\": {\n        \"title\": \"View Applicants\",\n        \"applicants\": \"Applicants\",\n        \"noApplicants\": \"No applicants yet\",\n        \"appliedOn\": \"Applied on\"\n      },\n      \"candidateCard\": {\n        \"name\": \"Candidate Name\",\n        \"experience\": \"Experience\",\n        \"skills\": \"Skills\",\n        \"viewProfile\": \"View Profile\"\n      },\n      \"buttons\": {\n        \"viewApplicants\": \"View Applicants\",\n        \"filters\": \"Filters\",\n        \"postNewJob\": \"Post New Job\",\n        \"applyFilters\": \"Apply Filters\",\n        \"addCandidate\": \"Add Candidate\"\n      },\n      \"confirmRemoveCandidate\": \"Are you sure you want to remove this candidate?\",\n      \"jobOffers\": {\n        \"searchPlaceholder\": \"Search job offers...\",\n        \"filterTitle\": \"Filter Jobs\",\n        \"activeJobsCount\": \"{{count}} active jobs\",\n        \"emptyState\": \"No job offers found\"\n      },\n      \"labels\": {\n        \"location\": \"Location\",\n        \"allContractTypes\": \"All Contract Types\",\n        \"allStatuses\": \"All Statuses\",\n        \"allRoles\": \"All Roles\",\n        \"region\": \"Region\",\n        \"availabilityDate\": \"Availability Date\"\n      },\n      \"candidatePool\": {\n        \"searchPlaceholder\": \"Search candidates...\",\n        \"filterTitle\": \"Filter Candidates\",\n        \"emptyState\": \"No candidates found\"\n      },\n      \"tabs\": {\n        \"jobOffers\": \"Job Offers\",\n        \"candidatePool\": \"Candidate Pool\"\n      }\n    },\n    \"messagesPage\": {\n      \"newGroupButton\": \"New Group\",\n      \"noConversationSelectedTitle\": \"Select a conversation to start messaging\",\n      \"noConversationSelectedSubtitle\": \"Choose a conversation from the list to view messages\",\n      \"noConversationsYet\": \"No conversations yet\"\n    },\n    \"notificationsPage\": {\n      \"clearAll\": \"Clear All\",\n      \"emptyState\": {\n        \"title\": \"No notifications\",\n        \"message\": \"You're all caught up! New notifications will appear here.\"\n      }\n    },\n    \"fileGalleryPage\": {\n      \"title\": \"File Gallery\",\n      \"files\": \"All Files\",\n      \"upload\": \"Upload Files\"\n    },\n    \"eLearningPage\": {\n      \"actions\": {\n        \"viewCourse\": \"View Course\",\n        \"watchVideo\": \"Watch Video\",\n        \"downloadPdf\": \"Download PDF\",\n        \"openLink\": \"Open Link\"\n      },\n      \"viewingAlert\": \"You are viewing external content\",\n      \"lessonsCount\": \"{{count}} lessons\",\n      \"durationLabel\": \"Duration\",\n      \"languageLabel\": \"Language\",\n      \"updatedLabel\": \"Updated\",\n      \"confirmDelete\": \"Are you sure you want to delete this item?\",\n      \"noItemsFound\": \"No items found\",\n      \"addNewContentButton\": \"Add New Content\",\n      \"searchPlaceholder\": \"Search content...\",\n      \"categoryLabel\": \"Category\",\n      \"noContentFound\": \"No content found\",\n      \"coursesTitle\": \"Courses\",\n      \"itemType\": {\n        \"courses\": \"Courses\",\n        \"videos\": \"Videos\",\n        \"pdfs\": \"PDFs\",\n        \"links\": \"External Links\"\n      },\n      \"videosTitle\": \"Videos\",\n      \"pdfsTitle\": \"PDFs\",\n      \"externalLinksTitle\": \"External Links\"\n    },\n    \"statePoliciesPage\": {\n      \"title\": \"State Policies\",\n      \"policies\": \"Policy Documents\",\n      \"compliance\": \"Compliance Status\"\n    },\n    \"hrProceduresPage\": {\n      \"categoryDisplay\": {\n        \"viewCategoryAria\": \"View category {{category}}\",\n        \"documentsCount\": \"{{count}} documents\"\n      },\n      \"confirmDeleteDocument\": \"Are you sure you want to delete this document?\",\n      \"uploadButton\": \"Upload Document\",\n      \"searchPlaceholder\": \"Search documents...\",\n      \"categoriesTitle\": \"Categories\",\n      \"allDocumentsCategory\": \"All Documents\",\n      \"noDocumentsMatchSearch\": \"No documents match your search\",\n      \"noDocumentsAvailable\": \"No documents available\",\n      \"backToCategoriesButton\": \"Back to Categories\",\n      \"documentsInCategoryTitle\": \"Documents in {{category}}\",\n      \"allItemsCount\": \"{{count}} items\",\n      \"noDocumentsInCategory\": \"No documents in this category\"\n    },\n    \"usersPage\": {\n      \"cannotDeleteOwnAccount\": \"You cannot delete your own account\",\n      \"status\": {\n        \"pending\": \"Pending\"\n      },\n      \"userDetailDrawer\": {\n        \"title\": \"User Details\",\n        \"roleLabel\": \"Role\",\n        \"statusLabel\": \"Status\",\n        \"regionLabel\": \"Region\",\n        \"lastLoginLabel\": \"Last Login\",\n        \"orgLabel\": \"Organization\",\n        \"adminActionsTitle\": \"Admin Actions\",\n        \"changeRoleLabel\": \"Change Role\",\n        \"updateRoleButton\": \"Update Role\",\n        \"suspendUserButton\": \"Suspend User\",\n        \"activateUserButton\": \"Activate User\",\n        \"cannotModifyOwnAccount\": \"You cannot modify your own account\"\n      },\n      \"rolePageTitle\": \"Role Management\",\n      \"allUsersTitle\": \"All Users\",\n      \"confirmDeleteUser\": \"Are you sure you want to delete this user?\",\n      \"userProfileUpdated\": \"User profile updated successfully\",\n      \"addNewUserTBD\": \"Add New User TBD\",\n      \"addNewUserButton\": \"Add New User\",\n      \"searchPlaceholder\": \"Search users...\",\n      \"filtersTBD\": \"Filters TBD\",\n      \"filtersButton\": \"Filters\",\n      \"table\": {\n        \"nameOrg\": \"Name / Organization\",\n        \"role\": \"Role\",\n        \"status\": \"Status\",\n        \"region\": \"Region\",\n        \"lastLogin\": \"Last Login\",\n        \"actions\": \"Actions\"\n      },\n      \"emptyState\": \"No users found\"\n    },\n    \"partnersPage\": {\n      \"partnerCard\": {\n        \"logoAlt\": \"{{partnerName}} logo\",\n        \"partnerType\": \"{{type}} Partner\",\n        \"learnMoreButton\": \"Learn More\"\n      },\n      \"hero\": {\n        \"title\": \"Our Partners\",\n        \"subtitle\": \"Discover trusted childcare providers and suppliers\",\n        \"ctaButton\": \"Become a Partner\"\n      },\n      \"featured\": {\n        \"title\": \"Featured Partners\",\n        \"subtitle\": \"Meet our top-rated childcare providers and suppliers\"\n      },\n      \"joinUs\": {\n        \"title\": \"Join Our Network\",\n        \"subtitle\": \"Become part of Switzerland's leading childcare platform\",\n        \"contactUsAlert\": \"Contact us to learn more about partnership opportunities\",\n        \"contactUsButton\": \"Contact Us\",\n        \"inquiryFormLink\": \"Partnership Inquiry Form\"\n      }\n    },\n    \"parentLeadFormPage\": {\n      \"errorAllFields\": \"Please fill in all required fields\",\n      \"thankYouTitle\": \"Thank You!\",\n      \"unauthenticatedSuccessMessage\": \"Your enquiry has been submitted successfully. We'll contact you soon!\",\n      \"authenticatedSuccessMessage\": \"Your enquiry has been submitted and saved to your dashboard.\",\n      \"subtitle\": \"Tell us about your childcare needs\",\n      \"labels\": {\n        \"yourFullName\": \"Your Full Name\",\n        \"yourEmail\": \"Your Email\",\n        \"yourPhone\": \"Your Phone\",\n        \"canton\": \"Canton\",\n        \"municipality\": \"Municipality\",\n        \"childAge\": \"Child's Age\",\n        \"desiredStartDate\": \"Desired Start Date\",\n        \"specialNeeds\": \"Special Needs\"\n      },\n      \"sectionTitleChildNeeds\": \"Child's Needs\",\n      \"helpText\": {\n        \"specialNeeds\": \"Please describe any special requirements or needs\"\n      }\n    },\n    \"candidateProfilePage\": {\n      \"title\": \"Candidate Profile\",\n      \"profile\": \"Profile Information\",\n      \"experience\": \"Work Experience\"\n    },\n    \"designSystemPage\": {\n      \"title\": \"Design System\",\n      \"description\": \"A living reference for all UI components and design tokens in the Pro Crèche Solutions application.\",\n      \"tabs\": {\n        \"title\": \"Tabs\",\n        \"pillsVariant\": \"Pills Variant (Default)\",\n        \"lineVariant\": \"Line Variant\",\n        \"tab1\": \"Tab 1\",\n        \"content1\": \"This is the content for Tab 1.\",\n        \"tab2\": \"Tab 2\",\n        \"content2\": \"This is the content for Tab 2.\",\n        \"tab3\": \"Tab 3\",\n        \"content3\": \"This is a disabled tab.\"\n      },\n      \"typography\": {\n        \"fontFamily\": \"Font Family: Nunito, Inter, sans-serif\",\n        \"heading1\": \"Heading 1: The quick brown fox\",\n        \"heading2\": \"Heading 2: The quick brown fox\",\n        \"heading3\": \"Heading 3: The quick brown fox\",\n        \"heading4\": \"Heading 4: The quick brown fox\",\n        \"bodyBase\": \"Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.\",\n        \"bodySmall\": \"Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.\",\n        \"link\": \"This is a link\"\n      },\n      \"buttons\": {\n        \"extraSmall\": \"Extra Small\",\n        \"small\": \"Small\",\n        \"mediumDefault\": \"Medium (Default)\",\n        \"large\": \"Large\",\n        \"withIcons\": \"With Icons\",\n        \"leftIcon\": \"Left Icon\",\n        \"rightIcon\": \"Right Icon\",\n        \"smallIcon\": \"Small Icon\",\n        \"disabledState\": \"Disabled State\",\n        \"primaryDisabled\": \"Primary Disabled\",\n        \"secondaryDisabled\": \"Secondary Disabled\",\n        \"outlineDisabled\": \"Outline Disabled\"\n      },\n      \"cards\": {\n        \"standardCard\": \"Standard Card\",\n        \"standardCardDesc\": \"This is a standard card component with a soft shadow. It's the base for most content containers.\",\n        \"hoverEffectCard\": \"Hover Effect Card\",\n        \"hoverEffectCardDesc\": \"This card has a subtle scale and shadow transition on hover, useful for interactive elements.\"\n      },\n      \"formControls\": {\n        \"title\": \"Form Controls\",\n        \"textInput\": \"Text Input\",\n        \"selectMenu\": \"Select Menu\",\n        \"option1\": \"Option 1\",\n        \"option2\": \"Option 2\",\n        \"option3\": \"Option 3\",\n        \"quantityInput\": \"Quantity Input\",\n        \"disabledInput\": \"Disabled Input\"\n      },\n      \"View Favorites TBD\": \"View Favorites TBD\",\n      \"Could not find a user associated with this organization to message.\": \"Could not find a user associated with this organization to message.\",\n      \"User organization details are missing.\": \"User organization details are missing.\",\n      \"tailwindcss\": \"tailwindcss\",\n      \"sidebar.parentLeads\": \"Parent Leads\",\n      \"sidebar.products\": \"Products\",\n      \"sidebar.services\": \"Services\"\n    },\n    \"createGroupChatModal\": {\n      \"error\": {\n        \"minParticipants\": \"Please select at least 2 participants\"\n      },\n      \"title\": \"Create Group Chat\",\n      \"groupNameLabel\": \"Group Name\",\n      \"groupNamePlaceholder\": \"Enter group name...\",\n      \"selectParticipantsLabel\": \"Select Participants\",\n      \"createButton\": \"Create Group\"\n    },\n    \"orderRequestDetailModal\": {\n      \"markAsProcessing\": \"Mark as Processing\"\n    },\n    \"serviceRequestDetailModal\": {\n      \"markAsCompleted\": \"Mark as Completed\"\n    },\n    \"serviceUploadModal\": {\n      \"editTitle\": \"Edit Service\",\n      \"addTitle\": \"Add Service\",\n      \"labels\": {\n        \"title\": \"Title\",\n        \"description\": \"Description\",\n        \"category\": \"Category\",\n        \"deliveryType\": \"Delivery Type\",\n        \"availability\": \"Availability\",\n        \"priceInfo\": \"Price Information\",\n        \"tags\": \"Tags\",\n        \"image\": \"Image\"\n      },\n      \"placeholders\": {\n        \"availability\": \"Enter availability details\",\n        \"priceInfo\": \"Enter price information\",\n        \"tags\": \"Enter tags separated by commas\"\n      },\n      \"imageHelpText\": \"Upload an image to represent this service\",\n      \"currentImage\": \"Current Image\"\n    },\n    \"contentUploadModal\": {\n      \"error\": {\n        \"selectFileOrLink\": \"Please select a file or enter a link\"\n      },\n      \"labels\": {\n        \"descriptionPreview\": \"Description Preview\",\n        \"description\": \"Description\",\n        \"title\": \"Title\",\n        \"category\": \"Category\",\n        \"contentType\": \"Content Type\",\n        \"language\": \"Language\",\n        \"duration\": \"Duration\",\n        \"lessons\": \"Lessons\",\n        \"linkUrl\": \"Link URL\",\n        \"accessRoles\": \"Access Roles\",\n        \"status\": \"Status\",\n        \"documentTitle\": \"Document Title\",\n        \"fileType\": \"File Type\",\n        \"version\": \"Version\",\n        \"country\": \"Country\",\n        \"regionCanton\": \"Region/Canton\",\n        \"policyType\": \"Policy Type\",\n        \"criticality\": \"Criticality\",\n        \"markAsCritical\": \"Mark as Critical\",\n        \"effectiveDate\": \"Effective Date\",\n        \"externalLink\": \"External Link\",\n        \"uploadFile\": \"Upload File\"\n      },\n      \"fileUpload\": {\n        \"eLearningAllowedTypes\": \"Allowed: PDF, MP4, DOC, DOCX\",\n        \"hrPolicyAllowedTypes\": \"Allowed: PDF, DOC, DOCX\"\n      },\n      \"placeholders\": {\n        \"duration\": \"Enter duration in minutes\",\n        \"linkUrl\": \"Enter the URL\",\n        \"version\": \"Enter version number\",\n        \"externalLink\": \"Enter external link\"\n      },\n      \"statusOptions\": {\n        \"draft\": \"Draft\",\n        \"published\": \"Published\",\n        \"archived\": \"Archived\"\n      },\n      \"criticalityOptions\": {\n        \"critical\": \"Critical\",\n        \"normal\": \"Normal\"\n      },\n      \"buttons\": {\n        \"uploading\": \"Uploading...\",\n        \"upload\": \"Upload\"\n      }\n    },\n    \"orderRequestModal\": {\n      \"labels\": {\n        \"product\": \"Product\",\n        \"supplier\": \"Supplier\",\n        \"quantity\": \"Quantity\",\n        \"notes\": \"Notes\"\n      },\n      \"placeholders\": {\n        \"notes\": \"Add any additional notes...\"\n      }\n    },\n    \"leadCard\": {\n      \"title\": \"Lead\",\n      \"labels\": {\n        \"name\": \"Name\",\n        \"email\": \"Email\",\n        \"phone\": \"Phone\",\n        \"status\": \"Status\",\n        \"source\": \"Source\",\n        \"date\": \"Date\"\n      },\n      \"actions\": {\n        \"view\": \"View\",\n        \"edit\": \"Edit\",\n        \"delete\": \"Delete\"\n      },\n      \"status\": {\n        \"new\": \"New\",\n        \"contacted\": \"Contacted\",\n        \"qualified\": \"Qualified\",\n        \"converted\": \"Converted\",\n        \"lost\": \"Lost\"\n      }\n    },\n    \"orderSummaryDrawer\": {\n      \"title\": \"Your Order\",\n      \"subtotal\": \"Subtotal\",\n      \"total\": \"Total\",\n      \"checkout\": \"Proceed to Checkout\",\n      \"emptyCart\": \"Your order cart is empty.\",\n      \"closePanel\": \"Close panel\",\n      \"itemsFrom\": \"Items from\",\n      \"specialInstructions\": \"Special Instructions or Notes for Supplier:\",\n      \"shippingNote\": \"Shipping and taxes calculated at checkout (if applicable).\",\n      \"continueShopping\": \"Continue Shopping\",\n      \"cannotSubmitOrder\": \"Cannot submit order. User not logged in, supplier info missing, or cart is empty.\"\n    },\n    \"translationDiagnostics\": {\n      \"missingKeysCopied\": \"Missing keys copied to clipboard!\",\n      \"title\": \"Translation Diagnostics\",\n      \"basicStatus\": \"📊 Basic Status\",\n      \"translationFiles\": \"📁 Translation Files\",\n      \"testTranslations\": \"🧪 Test Translations\",\n      \"configuration\": \"⚙️ Configuration\",\n      \"logToConsole\": \"Log to Console\",\n      \"copyMissingKeys\": \"Copy Missing Keys\"\n    },\n    \"translationDebugger\": {\n      \"title\": \"Translation Debug Info\",\n      \"status\": \"Status\",\n      \"testTranslation\": \"Test Translation\",\n      \"missingKeys\": \"Missing Keys\",\n      \"resourceBundleKeys\": \"Resource Bundle Keys\",\n      \"backendStatus\": \"Backend Status\",\n      \"options\": \"Options\",\n      \"logToConsole\": \"Log to Console\"\n    },\n    \"translationErrorLogger\": {\n      \"missingKeysCopied\": \"Missing keys copied to clipboard!\",\n      \"title\": \"Translation Error Logger\",\n      \"errorSummary\": \"📊 Error Summary\",\n      \"recentErrors\": \"🔍 Recent Errors\",\n      \"logToGit\": \"Log to Git\",\n      \"logToConsole\": \"Log to Console\",\n      \"copyMissing\": \"Copy Missing\",\n      \"commitToGit\": \"Commit to Git\"\n    },\n    \"supplierCard\": {\n      \"specializesIn\": \"Specializes in\",\n      \"viewProfileAndProducts\": \"View Profile and Products\"\n    },\n    \"settingsAccountSecurity\": {\n      \"personalInfo\": {\n        \"title\": \"Personal Information\",\n        \"subtitle\": \"Manage your personal details and contact information\"\n      },\n      \"changePassword\": {\n        \"title\": \"Change Password\",\n        \"subtitle\": \"Update your password for better security\"\n      },\n      \"dangerZone\": {\n        \"title\": \"Danger Zone\",\n        \"subtitle\": \"Irreversible and destructive actions\"\n      },\n      \"notifications\": {\n        \"title\": \"Notifications\",\n        \"subtitle\": \"Manage your notification preferences\"\n      }\n    },\n    \"settingsAnalyticsPreferences\": {\n      \"title\": \"Analytics Preferences\",\n      \"subtitle\": \"Configure your analytics and reporting settings\"\n    },\n    \"settingsBillingSubscription\": {\n      \"title\": \"Billing & Subscription\",\n      \"subtitle\": \"Manage your billing and subscription settings\"\n    },\n    \"settingsCompanyProfile\": {\n      \"title\": \"Company Profile\",\n      \"subtitle\": \"Manage your company information and branding\"\n    },\n    \"settingsContactBooking\": {\n      \"title\": \"Contact & Booking\",\n      \"subtitle\": \"Configure your contact and booking preferences\"\n    },\n    \"settingsDefaults\": {\n      \"title\": \"Defaults\",\n      \"subtitle\": \"Set your default preferences and settings\"\n    },\n    \"settingsNotificationPreferences\": {\n      \"title\": \"Notification Preferences\",\n      \"subtitle\": \"Customize how you receive notifications\"\n    },\n    \"settingsPrivacyData\": {\n      \"confirmGDPRDelete\": \"Confirm GDPR Data Deletion\",\n      \"deletionRequestSubmittedHelpText\": \"This will permanently delete all your data from our systems\"\n    },\n    \"parentDashboard\": {\n      \"title\": \"Parent Dashboard\",\n      \"welcomeMessage\": \"Welcome to your parent dashboard\",\n      \"enquiry\": {\n        \"sent\": \"Enquiries Sent\",\n        \"responses\": \"Responses Received\",\n        \"pending\": \"Pending Responses\",\n        \"button\": \"Send New Enquiry\"\n      },\n      \"childProfile\": {\n        \"name\": \"Child's Name\",\n        \"age\": \"Age\",\n        \"location\": \"Location\",\n        \"languages\": \"Languages\",\n        \"specialNeeds\": \"Special Needs\",\n        \"button\": \"Update Profile\"\n      },\n      \"favorites\": {\n        \"subtitle\": \"Your favorite crèches and services\",\n        \"button\": \"View Favorites\"\n      }\n    },\n    \"type\": \"Type\",\n    \"language\": \"Language\",\n    \"responsibilities\": \"Responsibilities\",\n    \"qualifications\": \"Qualifications\",\n    \"benefits\": \"Benefits\",\n    \"requirements\": \"Requirements\",\n    \"settingsPromoCodeManager\": {\n      \"title\": \"Promo Code Manager\",\n      \"subtitle\": \"Create and manage promotional codes\"\n    },\n    \"settingsTeamPermissions\": {\n      \"title\": \"Team Permissions\",\n      \"subtitle\": \"Manage team member access and permissions\"\n    },\n    \"activeClientToggle\": {\n      \"title\": \"Active Client\",\n      \"labels\": {\n        \"active\": \"Active\",\n        \"inactive\": \"Inactive\"\n      },\n      \"status\": {\n        \"enabled\": \"Enabled\",\n        \"disabled\": \"Disabled\"\n      }\n    },\n    \"featureLock\": {\n      \"title\": \"Feature Locked\",\n      \"message\": \"This feature is not available in your current plan\",\n      \"upgrade\": \"Upgrade Plan\"\n    },\n    \"fileUploadModal\": {\n      \"uploading\": \"Uploading...\",\n      \"uploadButton\": \"Upload File\"\n    },\n    \"auth\": {\n      \"signIn\": \"Sign In\",\n      \"signUp\": \"Sign Up\",\n      \"signOut\": \"Sign Out\",\n      \"email\": \"Email\",\n      \"password\": \"Password\",\n      \"confirmPassword\": \"Confirm Password\",\n      \"forgotPassword\": \"Forgot Password?\",\n      \"resetPassword\": \"Reset Password\",\n      \"rememberMe\": \"Remember Me\",\n      \"createAccount\": \"Create Account\",\n      \"alreadyHaveAccount\": \"Already have an account?\",\n      \"dontHaveAccount\": \"Don't have an account?\",\n      \"welcomeBack\": \"Welcome back\",\n      \"joinPlatform\": \"Join PC Solutions Platform\",\n      \"chooseRole\": \"Choose your role to get started\",\n      \"role\": \"Role\",\n      \"firstName\": \"First Name\",\n      \"lastName\": \"Last Name\",\n      \"phoneNumber\": \"Phone Number\",\n      \"organizationName\": \"Organization Name\",\n      \"contactPerson\": \"Contact Person\",\n      \"canton\": \"Canton\",\n      \"languages\": \"Languages\",\n      \"capacity\": \"Capacity\",\n      \"productCategory\": \"Product Category\",\n      \"serviceType\": \"Service Type\",\n      \"childAge\": \"Child's Age\",\n      \"preferredLocation\": \"Preferred Location\",\n      \"signupSuccess\": \"Registration successful\",\n      \"loginSuccess\": \"Login successful\",\n      \"logoutSuccess\": \"Logout successful\",\n      \"invalidCredentials\": \"Invalid credentials\",\n      \"emailRequired\": \"Email is required\",\n      \"passwordRequired\": \"Password is required\",\n      \"passwordTooShort\": \"Password is too short\",\n      \"passwordsDoNotMatch\": \"Passwords do not match\",\n      \"emailInvalid\": \"Invalid email format\",\n      \"phoneInvalid\": \"Invalid phone format\",\n      \"roleRequired\": \"Role is required\",\n      \"organizationRequired\": \"Organization is required\",\n      \"firstNameRequired\": \"First name is required\",\n      \"lastNameRequired\": \"Last name is required\",\n      \"phoneRequired\": \"Phone is required\",\n      \"termsAccepted\": \"I accept the terms of service\",\n      \"privacyAccepted\": \"I accept the privacy policy\",\n      \"termsAndPrivacy\": \"Terms and Privacy\",\n      \"signupHere\": \"Sign up here\",\n      \"loginHere\": \"Login here\",\n      \"keepMeLoggedIn\": \"Keep me logged in\",\n      \"twoFactorAuth\": \"Two-factor authentication\",\n      \"verifyEmail\": \"Verify Email\",\n      \"emailVerified\": \"Email verified\",\n      \"emailNotVerified\": \"Email not verified\",\n      \"resendVerification\": \"Resend verification\",\n      \"verificationSent\": \"Verification email sent\",\n      \"accountCreated\": \"Account created successfully\",\n      \"accountActivated\": \"Account activated successfully\",\n      \"accountDeactivated\": \"Account deactivated\",\n      \"accountSuspended\": \"Account suspended\",\n      \"accountDeleted\": \"Account deleted\",\n      \"profileUpdated\": \"Profile updated\",\n      \"passwordChanged\": \"Password changed\",\n      \"passwordReset\": \"Password reset\",\n      \"loginExpired\": \"Login expired\",\n      \"sessionExpired\": \"Session expired\",\n      \"pleaseLoginAgain\": \"Please login again\",\n      \"accessDenied\": \"Access denied\",\n      \"insufficientPermissions\": \"Insufficient permissions\",\n      \"unauthorized\": \"Unauthorized\",\n      \"forbidden\": \"Forbidden\",\n      \"notFound\": \"Not found\",\n      \"serverError\": \"Server error\",\n      \"networkError\": \"Network error\",\n      \"tryAgain\": \"Try again\",\n      \"contactSupport\": \"Contact support\",\n      \"reportIssue\": \"Report issue\",\n      \"helpCenter\": \"Help center\",\n      \"documentation\": \"Documentation\",\n      \"apiDocs\": \"API documentation\",\n      \"changelog\": \"Changelog\",\n      \"version\": \"Version\",\n      \"build\": \"Build\",\n      \"environment\": \"Environment\",\n      \"development\": \"Development\",\n      \"staging\": \"Staging\",\n      \"production\": \"Production\",\n      \"test\": \"Test\",\n      \"debug\": \"Debug\",\n      \"info\": \"Info\",\n      \"warning\": \"Warning\",\n      \"error\": \"Error\",\n      \"critical\": \"Critical\",\n      \"fatal\": \"Fatal\"\n    },\n    \"dashboard\": {\n      \"welcome\": \"Welcome to your Admin Dashboard!\"\n    },\n    \"policyAlertModal\": {\n      \"title\": \"Policy Alert\",\n      \"message\": \"Policy Alert Message\",\n      \"labels\": {\n        \"title\": \"Title\",\n        \"message\": \"Message\",\n        \"type\": \"Type\",\n        \"regionScope\": \"Region Scope\",\n        \"displayStartDate\": \"Display Start Date (Optional)\",\n        \"displayEndDate\": \"Display End Date (Optional)\"\n      }\n    },\n    \"serviceProviderDashboard\": {\n      \"welcomeMessage\": \"Welcome to your service provider dashboard\",\n      \"widgets\": {\n        \"overview\": {\n          \"title\": \"Overview\",\n          \"activeRequests\": \"Active Requests\",\n          \"completedServices\": \"Completed Services\",\n          \"upcoming\": \"Upcoming\",\n          \"customerRating\": \"Customer Rating\",\n          \"button\": \"View All\"\n        },\n        \"management\": {\n          \"title\": \"Service Management\",\n          \"listings\": \"Service Listings\",\n          \"pending\": \"Pending Approvals\",\n          \"categories\": \"Categories\",\n          \"button\": \"Manage Services\"\n        },\n        \"appointments\": {\n          \"title\": \"Appointments\",\n          \"with\": \"with\",\n          \"button\": \"Schedule New\"\n        }\n      }\n    },\n    \"supportPage\": {\n      \"faqTitle\": \"Frequently Asked Questions\",\n      \"furtherAssistanceTitle\": \"Need Further Assistance?\",\n      \"furtherAssistanceText\": [\n        \"Contact our support team for personalized help\",\n        \"We're here to assist you with any questions or issues\"\n      ],\n      \"submitTicketTitle\": \"Submit Support Ticket\",\n      \"ticketForm\": {\n        \"subjectLabel\": \"Subject\",\n        \"messageLabel\": \"Message\"\n      }\n    },\n    \"T\": \"T\",\n    \"Title and Message are required.\": \"Title and Message are required.\",\n    \"Cannot submit order. User not logged in, supplier info missing, or cart is empty.\": \"Cannot submit order. User not logged in, supplier info missing, or cart is empty.\",\n    \"Missing keys copied to clipboard!\": \"Missing keys copied to clipboard!\",\n    \".\": \".\",\n    \"hardcodedText\": {},\n    \"Quantity must be at least 1.\": \"Quantity must be at least 1.\",\n    \"Cannot post job. Foundation details are missing.\": \"Cannot post job. Foundation details are missing.\",\n    \"Current user or organization ID is missing.\": \"Current user or organization ID is missing.\",\n    \"Subscription cancelled (mock action)\": \"Subscription cancelled (mock action)\",\n    \"renameFileModal\": {\n      \"title\": \"Rename File\",\n      \"label\": \"File Name\"\n    },\n    \"supplierDashboard\": {\n      \"title\": \"Supplier Dashboard\",\n      \"welcomeMessage\": \"Welcome to your supplier dashboard\",\n      \"noSalesYet\": \"No sales data available yet\",\n      \"widgets\": {\n        \"sales\": {\n          \"title\": \"Sales Overview\",\n          \"totalOrders\": \"Total Orders\",\n          \"revenueMonth\": \"Revenue This Month\",\n          \"topSelling\": \"Top Selling\",\n          \"fulfillmentRate\": \"Fulfillment Rate\",\n          \"button\": \"View Analytics\"\n        },\n        \"products\": {\n          \"title\": \"Product Management\",\n          \"active\": \"Active Products\",\n          \"pending\": \"Pending Approval\",\n          \"lowStock\": \"Low Stock\",\n          \"button\": \"Manage Products\"\n        },\n        \"orders\": {\n          \"title\": \"Order Management\",\n          \"pending\": \"Pending Orders\",\n          \"toFulfill\": \"To Fulfill\",\n          \"button\": \"View Orders\"\n        }\n      },\n      \"recentOrdersTitle\": \"Recent Orders\",\n      \"noRecentOrders\": \"No recent orders\",\n      \"recentOrdersTable\": {\n        \"id\": \"Order ID\",\n        \"creche\": \"Crèche\",\n        \"date\": \"Date\",\n        \"total\": \"Total\",\n        \"status\": \"Status\"\n      },\n      \"recentOrdersActions\": {\n        \"decline\": \"Decline\",\n        \"accept\": \"Accept\"\n      }\n    },\n    \"You must be logged in as a foundation to submit a request.\": \"You must be logged in as a foundation to submit a request.\",\n    \"dashboardDetailPage\": {\n      \"activeUsers\": {\n        \"recentActivity\": \"Recent Activity\",\n        \"totalToday\": \"Total active users today: {{count}}\",\n        \"aliceActivity\": \"Alice Johnson - Logged in 2 hours ago, viewed 5 pages.\",\n        \"bobActivity\": \"Bob Williams - Updated profile at 10:30 AM.\",\n        \"carolActivity\": \"Carol Davis - Joined yesterday, completed onboarding.\",\n        \"davidActivity\": \"David Brown - Viewed marketplace listings.\"\n      },\n      \"newOrders\": {\n        \"recentOrders\": \"Recent Orders\",\n        \"table\": {\n          \"orderId\": \"Order ID\",\n          \"product\": \"Product\",\n          \"amount\": \"Amount\",\n          \"status\": \"Status\"\n        },\n        \"status\": {\n          \"paid\": \"Paid\",\n          \"pending\": \"Pending\"\n        },\n        \"totalThisWeek\": \"Total orders this week: {{count}}\",\n        \"order789\": \"#ORD789\",\n        \"order790\": \"#ORD790\",\n        \"order791\": \"#ORD791\",\n        \"ecotoysBlocks\": \"EcoToys Wooden Blocks\",\n        \"freshBitesMeal\": \"FreshBites Meal Plan\",\n        \"artFunPack\": \"ArtFun Creative Pack\"\n      },\n      \"openJobs\": {\n        \"currentPositions\": \"Current Open Positions\",\n        \"applications\": \"Applications\",\n        \"totalOpenPositions\": \"Total Open Positions\",\n        \"leadEducatorGeneva\": \"Lead Educator - Geneva\",\n        \"assistantEducatorLausanne\": \"Assistant Educator - Lausanne\",\n        \"daycareDirectorZurich\": \"Daycare Director - Zurich\",\n        \"status\": {\n          \"open\": \"Open\",\n          \"interviewing\": \"Interviewing\"\n        }\n      },\n      \"pageViews\": {\n        \"keyMetrics\": \"Key Metrics\",\n        \"totalToday\": \"Total page views today\",\n        \"uniqueVisitors\": \"Unique visitors\",\n        \"mostViewed\": \"Most viewed pages\",\n        \"dashboardViews\": \"/dashboard (560 views)\",\n        \"avgSession\": \"Average session duration\",\n        \"sessionDuration\": \"4m 15s\",\n        \"mockChartText\": \"Mock chart visualization\"\n      },\n      \"defaultTitle\": \"Dashboard Detail\",\n      \"detailsFor\": \"Details for\",\n      \"noSpecificView\": \"No specific view selected\"\n    },\n    \"fileGallery\": {\n      \"actions\": {\n        \"preview\": \"Preview\",\n        \"download\": \"Download\",\n        \"rename\": \"Rename\",\n        \"delete\": \"Delete\"\n      },\n      \"confirmDelete\": \"Are you sure you want to delete this file?\",\n      \"uploadButton\": \"Upload File\",\n      \"emptyState\": {\n        \"title\": \"No files uploaded yet\",\n        \"message\": \"Upload your first file to get started\"\n      }\n    },\n    \"hrDocumentCard\": {\n      \"categoryLabel\": \"Category\",\n      \"languageLabel\": \"Language\",\n      \"versionLabel\": \"Version\",\n      \"toggleFavoriteLabel\": \"Toggle Favorite\",\n      \"lastUpdatedLabel\": \"Last Updated\",\n      \"downloadingAlert\": \"Downloading document...\",\n      \"downloadButton\": \"Download\",\n      \"previewingAlert\": \"Previewing document...\",\n      \"previewButtonLabel\": \"Preview\",\n      \"editButtonLabel\": \"Edit\",\n      \"deleteButtonLabel\": \"Delete\"\n    },\n    \"Partner Onboarding TBD\": \"Partner Onboarding TBD\",\n    \"Close Job TBD\": \"Close Job TBD\",\n    \"Favorite TBD\": \"Favorite TBD\",\n    \"Adding a new candidate - Functionality TBD.\": \"Adding a new candidate - Functionality TBD.\",\n    \"Filter UI TBD\": \"Filter UI TBD\",\n    \"Apply Job Filters TBD\": \"Apply Job Filters TBD\",\n    \"Apply Candidate Filters TBD\": \"Apply Candidate Filters TBD\",\n    \"serviceRequestModal\": {\n      \"preferredDateLabel\": \"Preferred Date (Optional)\",\n      \"notesLabel\": \"Notes / Specific Requirements (Optional)\",\n      \"submitButton\": \"Submit Request\"\n    },\n    \"Cantonal Policies\": \"Cantonal Policies\",\n    \"National Regulations\": \"National Regulations\",\n    \"Compliance Requirements\": \"Compliance Requirements\",\n    \"Updates & News\": \"Updates & News\",\n    \"Official Downloads\": \"Official Downloads\",\n    \"discountTerminationsPage\": {\n      \"actions\": {\n        \"sendNoticesAlert\": \"Send notices to selected vendors\",\n        \"markCompleted\": \"Mark Completed\",\n        \"sendNotices\": \"Send Notices\"\n      },\n      \"table\": {\n        \"vendor\": \"Vendor\",\n        \"daycare\": \"Daycare\",\n        \"activeSince\": \"Active Since\",\n        \"reason\": \"Reason\",\n        \"actions\": \"Actions\"\n      },\n      \"queue\": {\n        \"title\": \"Termination Queue\",\n        \"description\": \"Manage discount terminations and send notices\",\n        \"tableTitle\": \"Pending Terminations\"\n      },\n      \"allActive\": {\n        \"title\": \"All Active Discounts\",\n        \"description\": \"View and manage all currently active discount agreements\",\n        \"tableTitle\": \"Active Discounts\"\n      }\n    },\n    \"educatorDashboard\": {\n      \"title\": \"Educator Dashboard\",\n      \"welcome\": \"Welcome back!\",\n      \"profileCompletion\": {\n        \"title\": \"Complete Your Profile\",\n        \"subtitle\": \"Add more details to increase your chances of being hired\",\n        \"button\": \"Complete Profile\"\n      },\n      \"applicationStatus\": {\n        \"title\": \"Application Status\",\n        \"submitted\": \"Submitted\",\n        \"viewed\": \"Viewed\",\n        \"interviews\": \"Interviews\",\n        \"offers\": \"Offers\",\n        \"button\": \"View All Applications\"\n      },\n      \"skills\": {\n        \"title\": \"Skills & Certifications\",\n        \"subtitle\": \"Showcase your qualifications and expertise\",\n        \"button\": \"Update Skills\"\n      },\n      \"recommendations\": {\n        \"title\": \"Job Recommendations\",\n        \"match\": \"Match\"\n      }\n    },\n    \"Profile changes saved!\": \"Profile changes saved!\",\n    \"foundationDashboard\": {\n      \"title\": \"Foundation Dashboard\",\n      \"welcomeMessage\": \"Welcome to your foundation dashboard\",\n      \"quickStats\": {\n        \"title\": \"Quick Stats\"\n      },\n      \"todayAtGlance\": \"Today at a Glance\",\n      \"activity\": {\n        \"title\": \"Recent Activity\"\n      },\n      \"quickActions\": {\n        \"title\": \"Quick Actions\"\n      },\n      \"quickMessage\": {\n        \"title\": \"Quick Message\",\n        \"placeholder\": \"Type your message here...\"\n      }\n    },\n    \"userRoles\": {\n      \"Product Supplier\": \"Product Supplier\",\n      \"Service Provider\": \"Service Provider\"\n    },\n    \"errorBoundary\": {\n      \"somethingWentWrong\": \"Something went wrong\",\n      \"sorryMessage\": \"We're sorry, but something unexpected happened. Please try again.\",\n      \"errorDetails\": \"Error Details\",\n      \"tryAgain\": \"Try Again\",\n      \"reloadPage\": \"Reload Page\"\n    },\n    \"addPromoCodeModal\": {\n      \"placeholder\": \"Add/Edit Promo Code Modal (Placeholder)\"\n    },\n    \"fileUploadZone\": {\n      \"dragAndDrop\": \"or drag and drop\"\n    },\n    \"appContext\": {\n      \"useAppContextError\": \"useAppContext must be used within an AppContextProvider\"\n    },\n    \"cartContext\": {\n      \"useCartError\": \"useCart must be used within a CartProvider\"\n    },\n    \"messagingContext\": {\n      \"userNotLoggedIn\": \"User not logged in\",\n      \"useMessagingError\": \"useMessaging must be used within a MessagingProvider\"\n    },\n    \"notificationContext\": {\n      \"useNotificationsError\": \"useNotifications must be used within a NotificationProvider\"\n    }\n  },\n  \"testTranslation\": \"ProCrèche Solutions Suisse\",\n  \"testLoginTitle\": \"Welcome to {{appName}}\",\n  \"testLoginSubtitle\": \"Sign in to your account\"\n}",
+      "element": "PRE",
+      "className": "",
+      "id": "",
+      "context": "{\n  \"isInitialized\": true,\n  \"language\": \"en\",\n  \"languages\": [\n    \"en\"\n  ],\n  \"hasResourceBundle\": true,\n  \"resourceBundle\": {\n    \"appName\": \"ProCrèche Solutions Suisse\",\n    \"languageSwitcher\": {\n"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Test Translations:",
+      "element": "H2",
+      "className": "",
+      "id": "",
+      "context": "Test Translations:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "appName:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "appName:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "ProCrèche Solutions Suisse",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "appName: ProCrèche Solutions Suisse"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "loginPage.title:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "loginPage.title:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Welcome to {{appName}}",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "loginPage.title: Welcome to {{appName}}"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "loginPage.subtitle:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "loginPage.subtitle:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Sign in to your account",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "loginPage.subtitle: Sign in to your account"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "buttons.login:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "buttons.login:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Log In",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "buttons.login: Log In"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Raw Translation Test:",
+      "element": "H2",
+      "className": "",
+      "id": "",
+      "context": "Raw Translation Test:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Testing direct translation calls...",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "Testing direct translation calls..."
+    },
     {
       "type": "hardcoded_text",
       "text": "Welcome to Pro Crèche Solutions",
@@ -267,11 +380,11 @@
     },
     {
       "type": "hardcoded_text",
-      "text": "Sign in to your account to continue",
+      "text": "Sign in to your account",
       "element": "P",
       "className": "text-sm text-gray-500",
       "id": "",
-      "context": "Sign in to your account to continue"
+      "context": "Sign in to your account"
     },
     {
       "type": "hardcoded_text",
@@ -291,11 +404,11 @@
     },
     {
       "type": "hardcoded_text",
-      "text": "Forgot password?",
+      "text": "Forgot your password?",
       "element": "A",
       "className": "text-xs text-swiss-mint hover:underline",
       "id": "",
-      "context": "Forgot password?"
+      "context": "Forgot your password?"
     },
     {
       "type": "hardcoded_text",
@@ -363,19 +476,19 @@
     },
     {
       "type": "hardcoded_text",
-      "text": "Are you a parent looking for a crèche?",
+      "text": "Parent looking for a crèche?",
       "element": "P",
       "className": "text-sm text-gray-600 text-center mb-3",
       "id": "",
-      "context": "Are you a parent looking for a crèche?"
+      "context": "Parent looking for a crèche?"
     },
     {
       "type": "hardcoded_text",
-      "text": "Find a Crèche Here",
+      "text": "Find your perfect crèche here",
       "element": "A",
       "className": "inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40",
       "id": "",
-      "context": "🏠Find a Crèche Here"
+      "context": "🏠Find your perfect crèche here"
     },
     {
       "type": "hardcoded_text",
@@ -391,7 +504,95 @@
       "element": "BUTTON",
       "className": "bg-orange-500 text-white px-3 py-2 rounded text-sm font-mono shadow-lg",
       "id": "",
-      "context": "📝 Error Logger ▶ (7)"
+      "context": "📝 Error Logger ▶ (234)"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "i18n Test Component",
+      "element": "H2",
+      "className": "",
+      "id": "",
+      "context": "i18n Test Component"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "App Name:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "App Name:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "ProCrèche Solutions Suisse",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "App Name: ProCrèche Solutions Suisse"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Login Button:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Login Button:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Log In",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "Login Button: Log In"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Dashboard Sidebar:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Dashboard Sidebar:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Current Language:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Current Language:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Is Initialized:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Is Initialized:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Yes",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "Is Initialized: Yes"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Has Resource Bundle:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Has Resource Bundle:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Yes",
+      "element": "P",
+      "className": "",
+      "id": "",
+      "context": "Has Resource Bundle: Yes"
     },
     {
       "type": "hardcoded_text",
@@ -404,9 +605,15 @@
   ],
   "recommendations": [
     {
+      "type": "missing_keys",
+      "priority": "high",
+      "message": "Found 1 missing translation keys across all pages. These need to be added to your locale files.",
+      "action": "Add the missing keys to your translation files and redeploy"
+    },
+    {
       "type": "hardcoded_text",
       "priority": "high",
-      "message": "Found 18 pieces of hardcoded text across all pages that should be translated.",
+      "message": "Found 42 pieces of hardcoded text across all pages that should be translated.",
       "action": "Replace hardcoded text with translation keys and redeploy"
     }
   ]
