@@ -1,7 +1,10 @@
 const fs = require('fs');
+const path = require('path');
+
+const frTranslationsPath = path.resolve(__dirname, 'frontend/public/locales/fr/translation.json');
 
 // Read the current French translation file
-const frTranslations = JSON.parse(fs.readFileSync('/workspace/frontend/public/locales/fr/translation.json', 'utf8'));
+const frTranslations = JSON.parse(fs.readFileSync(frTranslationsPath, 'utf8'));
 
 // Add the critical missing keys in French
 const criticalMissingKeys = {
@@ -232,6 +235,6 @@ Object.keys(criticalMissingKeys).forEach(namespace => {
 });
 
 // Write the updated French translation file
-fs.writeFileSync('/workspace/frontend/public/locales/fr/translation.json', JSON.stringify(frTranslations, null, 2));
+fs.writeFileSync(frTranslationsPath, JSON.stringify(frTranslations, null, 2));
 
 console.log('✅ Added critical missing translation keys to French locale file');
