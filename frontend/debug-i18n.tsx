@@ -31,26 +31,64 @@ const DebugI18n: React.FC = () => {
   return (
     <div style={{ 
       position: 'fixed', 
-      top: 0, 
-      left: 0, 
-      right: 0, 
-      bottom: 0, 
+      top: '10px', 
+      right: '10px', 
+      width: '400px',
+      maxHeight: '500px',
       background: 'white', 
-      padding: '20px',
+      border: '2px solid #ccc',
+      borderRadius: '8px',
+      padding: '15px',
       zIndex: 9999,
-      overflow: 'auto'
+      overflow: 'auto',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+      fontSize: '12px'
     }}>
-      <h1>i18n Debug Information</h1>
-      <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+        <h3 style={{ margin: 0, color: '#333' }}>🔍 i18n Debug</h3>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{ 
+            background: '#007bff', 
+            color: 'white', 
+            border: 'none', 
+            padding: '5px 10px', 
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '11px'
+          }}
+        >
+          Refresh
+        </button>
+      </div>
       
-      <h2>Test Translations:</h2>
-      <p><strong>appName:</strong> {t('appName')}</p>
-      <p><strong>loginPage.title:</strong> {t('loginPage.title')}</p>
-      <p><strong>loginPage.subtitle:</strong> {t('loginPage.subtitle')}</p>
-      <p><strong>buttons.login:</strong> {t('buttons.login')}</p>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Status:</strong> {debugInfo.isInitialized ? '✅ Ready' : '⏳ Loading...'}
+      </div>
       
-      <h2>Raw Translation Test:</h2>
-      <p>Testing direct translation calls...</p>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Language:</strong> {debugInfo.language}
+      </div>
+      
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Resource Bundle:</strong> {debugInfo.hasResourceBundle ? '✅ Loaded' : '❌ Missing'}
+      </div>
+      
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Test Translations:</strong>
+        <div style={{ marginLeft: '10px', fontSize: '11px' }}>
+          <div>appName: <span style={{ color: debugInfo.testTranslation === 'appName' ? 'red' : 'green' }}>{debugInfo.testTranslation}</span></div>
+          <div>loginPage.title: <span style={{ color: debugInfo.testLoginTitle === 'loginPage.title' ? 'red' : 'green' }}>{debugInfo.testLoginTitle}</span></div>
+          <div>loginPage.subtitle: <span style={{ color: debugInfo.testLoginSubtitle === 'loginPage.subtitle' ? 'red' : 'green' }}>{debugInfo.testLoginSubtitle}</span></div>
+        </div>
+      </div>
+      
+      <details style={{ marginTop: '10px' }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Full Debug Info</summary>
+        <pre style={{ fontSize: '10px', marginTop: '5px', background: '#f5f5f5', padding: '5px', borderRadius: '4px', overflow: 'auto', maxHeight: '200px' }}>
+          {JSON.stringify(debugInfo, null, 2)}
+        </pre>
+      </details>
     </div>
   );
 };
