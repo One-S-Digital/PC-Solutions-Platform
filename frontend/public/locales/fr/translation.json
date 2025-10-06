@@ -1,112 +1,112 @@
 {
-  "appName": "Solutions pro-crèche",
+  "appName": "ProCrèche Solutions Suisse",
   "languageSwitcher": {
-    "enShort": "En",
-    "enLong": "Anglais",
-    "frShort": "Frousser",
+    "enShort": "EN",
+    "enLong": "English",
+    "frShort": "FR",
     "frLong": "Français",
-    "deShort": "De",
+    "deShort": "DE",
     "deLong": "Deutsch",
-    "selectLanguage": "Choisir la Langue"
+    "selectLanguage": "Select Language"
   },
   "loading": {
-    "translations": "Chargement des tradons ..."
+    "translations": "Chargement des traductions..."
   },
   "buttons": {
-    "save": "Accumulateur",
-    "saveChanges": "Modifications des érégistrer les",
-    "cancel": "Anuler",
-    "submit": "Envoyer",
+    "save": "Enregistrer",
+    "saveChanges": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "submit": "Soumettre",
     "add": "Ajouter",
-    "edit": "Modificateur",
-    "delete": "Adapté",
+    "edit": "Modifier",
+    "delete": "Supprimer",
     "viewDetails": "Voir les détails",
-    "goBack": "Remettre à une revers",
-    "login": "Rapport",
+    "goBack": "Retour",
+    "login": "Log In",
     "signup": "S'inscrire",
-    "applyNow": "Postuler Maintenant",
-    "confirmApply": "Confirmer la candidature",
-    "sendMessage": "Envoyer UN Message",
+    "applyNow": "Postuler maintenant",
+    "confirmApply": "Confirm Application",
+    "sendMessage": "Envoyer un message",
     "inviteToApply": "Inviter à postuler",
     "inviteToInterview": "Inviter à un entretien",
     "addToFavorites": "Ajouter aux favoris",
     "favorited": "Favori",
     "submitEnquiry": "Soumettre la demande",
-    "viewMyEnquiries": "Voir mes exigences",
-    "submitTicket": "Ticket Envoyer Le",
-    "goToLogin": "Aller à la page de Connexion",
+    "viewMyEnquiries": "Voir mes demandes",
+    "submitTicket": "Envoyer le ticket",
+    "goToLogin": "Aller à la page de connexion",
     "close": "Fermer",
-    "view": "Voir-dire",
-    "resetFilters": "Réinitialiste les filtres",
-    "applyFilters": "Appliqueur Les Filtres",
-    "submitRequest": "Envoi LA Demande",
-    "remove": "Retraité",
-    "dismiss": "Refaire"
+    "view": "Voir",
+    "resetFilters": "Réinitialiser les filtres",
+    "applyFilters": "Appliquer les filtres",
+    "submitRequest": "Envoyer la demande",
+    "remove": "Retirer",
+    "dismiss": "Rejeter"
   },
   "navbar": {
-    "notificationsCount": "Notifications: {{count}}",
-    "unreadMessages": "Messages non lus: {{count}}",
-    "searchPlaceholder": "Rechercher sur la plaque formel ..."
+    "notificationsCount": "{{count}} notifications",
+    "unreadMessages": "{{count}} unread messages",
+    "searchPlaceholder": "Rechercher..."
   },
   "sidebar": {
-    "billingSubscription": "Facturation et abonement",
-    "dashboard": "Tableau de Bord",
-    "marketplace": "Place de Marché",
+    "billingSubscription": "Billing & Subscription",
+    "dashboard": "Tableau de bord",
+    "marketplace": "Marketplace",
     "products": "Produits",
     "services": "Services",
-    "recruitment": "Recrutement",
-    "jobListings": "Offres d'Emploi",
-    "candidatePool": "Réserve de Candidats",
-    "eLearning": "Formation en ligne",
+    "recruitment": "Recruitment",
+    "jobListings": "Job Listings",
+    "candidatePool": "Candidate Pool",
+    "eLearning": "E-Learning",
     "messages": "Messages",
-    "users": "Utilisateur",
+    "users": "Utilisateurs",
     "allUsers": "Tous les utilisateurs",
     "admins": "Administrateurs",
-    "foundations": "Affineurs",
-    "productSuppliers": "Quatreniseurs",
-    "serviceProviders": "Présatares",
+    "foundations": "Fondations",
+    "productSuppliers": "Fournisseurs de produits",
+    "serviceProviders": "Prestataires de services",
     "parents": "Parents",
     "content": "Contenu",
-    "hrProcedures": "Procédures rh",
-    "statePolicies": "Directives cantonales",
-    "discountTerminations": "Résiliations de Rabais",
-    "systemMonitoring": "Système de surveillance",
+    "hrProcedures": "HR Procedures",
+    "statePolicies": "State Policies",
+    "discountTerminations": "Résiliations de remise",
+    "systemMonitoring": "Surveillance du système",
     "partners": "Partenaires",
-    "platformSettings": "Paramètres Plateforme",
-    "designSystem": "Système de conception",
+    "platformSettings": "Paramètres de la plateforme",
+    "designSystem": "Système de design",
     "settings": "Paramètres"
   },
   "stockStatus": {
-    "instock": "Enterre",
+    "instock": "En stock",
     "outofstock": "Rupture de stock",
-    "lowstock": "Stock de stock",
-    "discontinued": "Cesser"
+    "lowstock": "Stock faible",
+    "discontinued": "Discontinué"
   },
   "common": {
-    "perMonth": "/ Mois",
-    "perYear": "/ Année",
-    "save10Percent": "Économiser 10%"
+    "perMonth": "/month",
+    "perYear": "/year",
+    "save10Percent": "save 10%"
   },
   "errors": {
-    "unknown": "Un erreur inconnue est le survenue."
+    "unknown": "Une erreur inconnue s'est produite"
   },
   "notifications": {
     "errorTitle": "Erreur",
-    "successTitle": "Succurs",
-    "newMessageFrom": "Nouveau Message de {{Sender}}"
+    "successTitle": "Succès",
+    "newMessageFrom": "New message from"
   },
-  "hidePassword": "Masque",
-  "showPassword": "Afficher le mot de passe",
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
   "signIn": "Se connecter",
   "signOut": "Se déconnecter",
-  "confirmPassword": "Confirmez le mot de passe",
+  "confirmPassword": "Confirmer le mot de passe",
   "resetPassword": "Réinitialiser le mot de passe",
-  "rememberMe": "Souviens-toi de moi",
+  "rememberMe": "Remember me",
   "createAccount": "Créer un compte",
-  "alreadyHaveAccount": "Vous avez déjà un compte?",
-  "dontHaveAccount": "Vous n'avez pas de compte?",
-  "welcomeBack": "Content de te revoir!",
-  "joinPlatform": "Rejoignez la plate-forme",
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "dontHaveAccount": "Vous n'avez pas de compte ?",
+  "welcomeBack": "Bon retour !",
+  "joinPlatform": "Rejoindre la plateforme",
   "chooseRole": "Choisissez votre rôle",
   "firstName": "Prénom",
   "lastName": "Nom de famille",
@@ -116,31 +116,31 @@
   "canton": "Canton",
   "languages": "Langues",
   "capacity": "Capacité",
-  "productCategory": "Catégorie de produits",
+  "productCategory": "Catégorie de produit",
   "serviceType": "Type de service",
-  "childAge": "Âge de l'enfant",
-  "preferredLocation": "Emplacement préféré",
+  "childAge": "Child Age",
+  "preferredLocation": "Lieu préféré",
   "loginPage": {
-    "title": "Bienvenue à {{appname}}",
-    "subtitle": "Accédez à vote Tableau de Bord",
-    "emailLabel": "ADRESSE",
-    "emailPlaceholder": "vous@exemple.com",
-    "passwordLabel": "MOT DE PASSE",
-    "passwordPlaceholder": "••••••••",
-    "forgotPassword": "MOT DE PASSE OUBLIÉ?",
-    "forgotPasswordTBD": "La Fonctionnalité 'MOT DE PASSE OUBLIÉ' N'EST PAS ENCORE IMPLÉMENTÉ.",
-    "orContinueWith": "OU Continuer AVEC",
+    "title": "Welcome to {{appName}}",
+    "subtitle": "Sign in to your account",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot your password?",
+    "forgotPasswordTBD": "Forgot password functionality coming soon",
+    "orContinueWith": "Or continue with",
     "google": "Google",
     "facebook": "Facebook",
-    "noAccount": "Pas Encore de Compte?",
-    "viewPlansPrompt": "INTÉRÉSÉ (E) PAR NOS FONctionnalités?",
-    "viewPlans": "VOIR Les abonments",
-    "parentLookingForCreche": "Vous les êtes un parent cherchant unche Crèche?",
-    "findCrecheHere": "TRUPVEZ UNE CRÈCHE ICI",
-    "socialLoginTBD": "{{Provider}} Connexion à venir bientôt!",
-    "alreadyAccount": "Vous AVVEZ DÉJà un compte?",
-    "errorBothFields": "Veuillez Saisir l'e-Mail et le Mot de PasS.",
-    "loggingIn": "Cours de connexion ..."
+    "noAccount": "Vous n'avez pas de compte ?",
+    "viewPlansPrompt": "Want to see our plans?",
+    "viewPlans": "View Plans",
+    "parentLookingForCreche": "Parent looking for a crèche?",
+    "findCrecheHere": "Find your perfect crèche here",
+    "socialLoginTBD": "{{provider}} login coming soon!",
+    "alreadyAccount": "Vous avez déjà un compte ?",
+    "errorBothFields": "Please fill in both email and password",
+    "loggingIn": "Logging in..."
   },
   "signupPage": {
     "form": {
@@ -148,978 +148,978 @@
       "lastName": "Nom de famille",
       "email": "E-mail",
       "password": "Mot de passe",
-      "confirmPassword": "Confirmez le mot de passe",
-      "phone": "Téléphone",
+      "confirmPassword": "Confirmer le mot de passe",
+      "phone": "Phone",
       "organization": "Organisation",
-      "role": "Rôle"
+      "role": "Role"
     },
     "validation": {
-      "firstNameRequired": "Le prénom est requis",
-      "lastNameRequired": "Le nom de famille est requis",
-      "emailRequired": "Un e-mail est requis",
-      "passwordRequired": "Le mot de passe est requis",
-      "phoneRequired": "Le téléphone est requis",
-      "organizationRequired": "L'organisation est requise",
-      "roleRequired": "Le rôle est requis"
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "phoneRequired": "Phone is required",
+      "organizationRequired": "Organization is required",
+      "roleRequired": "Role is required"
     },
     "success": {
-      "accountCreated": "Compte créé avec succès"
+      "accountCreated": "Account created successfully"
     },
     "error": {
-      "accountCreationFailed": "Échec de la création du compte"
+      "accountCreationFailed": "Failed to create account"
     },
     "errors": {
-      "organisationNameRequired": "Le nom de l'organisation est requis",
-      "emailRequired": "Un e-mail est requis",
-      "emailInvalid": "S'il vous plaît, mettez une adresse email valide",
-      "passwordRequired": "Le mot de passe est requis",
-      "passwordTooShort": "Le mot de passe doit comporter au moins 6 caractères",
-      "passwordsNoMatch": "Les mots de passe ne correspondent pas",
-      "phoneRequired": "Le numéro de téléphone est requis",
-      "cantonRequired": "Le canton est requis",
-      "capacityRequired": "La capacité est requise",
-      "categoryRequired": "La catégorie est requise",
-      "serviceTypeRequired": "Le type de service est requis",
-      "childAgeRequired": "L'âge de l'enfant est requis",
-      "childStartDateRequired": "La date de début de l'enfant est requise",
-      "termsRequired": "Vous devez accepter les termes et conditions",
-      "contactPersonRequired": "La personne de contact est requise",
-      "parentNameRequired": "Le nom du parent est requis"
+      "organisationNameRequired": "Organization name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordsNoMatch": "Passwords do not match",
+      "phoneRequired": "Phone number is required",
+      "cantonRequired": "Canton is required",
+      "capacityRequired": "Capacity is required",
+      "categoryRequired": "Category is required",
+      "serviceTypeRequired": "Service type is required",
+      "childAgeRequired": "Child age is required",
+      "childStartDateRequired": "Child start date is required",
+      "termsRequired": "You must accept the terms and conditions",
+      "contactPersonRequired": "Contact person is required",
+      "parentNameRequired": "Parent name is required"
     },
-    "progressStep1": "Étape 1: Sélectionner un rôle",
-    "progressStep2": "Étape 2: Entrez les détails",
-    "selectRoleTitle": "Sélectionnez votre rôle",
-    "detailsTitle": "Entrez vos coordonnées",
-    "submissionSuccessTitle": "Enregistrement réussi!",
-    "submissionSuccessMessage": "Votre compte a été créé avec succès. ",
-    "goToDashboardButton": "Aller au tableau de bord",
-    "termsLabel": "J'accepte les termes et conditions",
-    "termsLink": "Termes et conditions",
-    "creatingAccount": "Créer votre compte ...",
+    "progressStep1": "Step 1: Select Role",
+    "progressStep2": "Step 2: Enter Details",
+    "selectRoleTitle": "Select Your Role",
+    "detailsTitle": "Enter Your Details",
+    "submissionSuccessTitle": "Registration Successful!",
+    "submissionSuccessMessage": "Your account has been created successfully. You can now access your dashboard.",
+    "goToDashboardButton": "Go to Dashboard",
+    "termsLabel": "I agree to the terms and conditions",
+    "termsLink": "Terms and Conditions",
+    "creatingAccount": "Creating your account...",
     "createAccountButton": "Créer un compte",
     "placeholders": {
-      "firstName": "Entrez votre prénom",
-      "lastName": "Entrez votre nom de famille",
-      "email": "Entrez votre adresse e-mail",
-      "password": "Entrez votre mot de passe",
-      "confirmPassword": "Confirmez votre mot de passe",
-      "phone": "Entrez votre numéro de téléphone",
-      "organization": "Entrez le nom de votre organisation",
-      "select": "Veuillez sélectionner ...",
-      "organisationName": "Entrez le nom de votre organisation",
-      "contactPerson": "Entrez le nom de la personne de contact",
-      "parentName": "Entrez votre nom complet",
-      "category": "Entrez la catégorie des produits",
-      "serviceType": "Entrez le type de service"
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "email": "Enter your email address",
+      "password": "Enter your password",
+      "confirmPassword": "Confirm your password",
+      "phone": "Enter your phone number",
+      "organization": "Enter your organization name",
+      "select": "Please select...",
+      "organisationName": "Enter your organization name",
+      "contactPerson": "Enter contact person name",
+      "parentName": "Enter your full name",
+      "category": "Enter product category",
+      "serviceType": "Enter service type"
     },
     "labels": {
       "organisationName": "Nom de l'organisation",
       "contactPerson": "Personne de contact",
-      "parentName": "Votre nom",
+      "parentName": "Your Name",
       "email": "E-mail",
       "password": "Mot de passe",
-      "confirmPassword": "Confirmez le mot de passe",
-      "phone": "Téléphone",
+      "confirmPassword": "Confirmer le mot de passe",
+      "phone": "Phone",
       "canton": "Canton",
       "capacity": "Capacité",
-      "category": "Catégorie de produits",
+      "category": "Catégorie de produit",
       "serviceType": "Type de service",
       "childAge": "Âge de l'enfant",
-      "childStartDate": "Date de début souhaitée"
+      "childStartDate": "Desired Start Date"
     },
     "roles": {
       "foundation": "Fondation",
       "supplier": "Fournisseur de produits",
-      "serviceProvider": "Fournisseur de services",
-      "parent": "Mère"
+      "serviceProvider": "Prestataire de services",
+      "parent": "Parent"
     }
   },
   "dashboardPage": {
-    "welcome": "Bienvenue, {{nom}}!",
-    "defaultUser": "Utilisateur",
-    "overviewSubtitle": "Voici ce qui se passe avec {{appname}} aujourd'hui",
-    "activeUsers": "Actifs des utilisateurs",
-    "newOrders": "Commandes de Nouvelles",
-    "openJobs": "Postes ouverts",
-    "pageViews": "Vues de page",
-    "recentActivity": "Activité Récente",
-    "quickLinks": "Rapides de privilèges",
-    "browseMarketplace": "Parcourir Le Marché",
-    "postNewJob": "Publier Une Offre",
-    "manageUsers": "Gérer Les Utilisators",
-    "platformSettings": "Paramètres Plateforme",
-    "activityLina": "Lina Meier a publié unité une «Infirmière Pédiatrique»",
-    "activityEcoToys": "Ecotoys gmbH a mis à jour le produit \"Blocs en Bois\"",
-    "activityJohn": "John Smith A Approuvé 3 Nouveaux Comptes Parents",
-    "activityParent": "Les parents illustrent un soumis un de la demande pour \"crèche les Petits choux\"",
-    "viewDetailsFor": "Voir les Détails pour {{nom}}",
+    "welcome": "Welcome back, {{name}}!",
+    "defaultUser": "User",
+    "overviewSubtitle": "Here's what's happening with {{appName}} today",
+    "activeUsers": "Active Users",
+    "newOrders": "New Orders",
+    "openJobs": "Open Jobs",
+    "pageViews": "Page Views",
+    "recentActivity": "Recent Activity",
+    "quickLinks": "Quick Links",
+    "browseMarketplace": "Browse Marketplace",
+    "postNewJob": "Post New Job",
+    "manageUsers": "Manage Users",
+    "platformSettings": "Paramètres de la plateforme",
+    "activityLina": "Lina uploaded a new policy document",
+    "activityEcoToys": "EcoToys submitted a new product",
+    "activityJohn": "John applied for the educator position",
+    "activityParent": "A parent submitted a new enquiry",
+    "viewDetailsFor": "View details for",
     "timeAgo": {
-      "minutes": "{{count}} il y a quelques minutes",
-      "hours": "{{count}} il y a des heures",
-      "yesterday": "Chahut"
+      "minutes": "{{count}} minutes ago",
+      "hours": "{{count}} hours ago",
+      "yesterday": "Yesterday"
     },
-    "upcomingMeetings": "Réunions à venir",
-    "quickActions": "Actions rapides",
-    "overview": "Aperçu",
-    "announcements": "Annonces",
+    "upcomingMeetings": "Upcoming Meetings",
+    "quickActions": "Quick Actions",
+    "overview": "Overview",
+    "announcements": "Announcements",
     "notifications": "Notifications"
   },
   "settingsPage": {
-    "billingSubscription": "Facturation et abonnement",
+    "billingSubscription": "Billing & Subscription",
     "title": "Paramètres",
-    "accountSecurity": "Compte et sécurité"
+    "accountSecurity": "Account & Security"
   },
   "marketplacePage": {
     "emptyStates": {
-      "noServices": "Aucun service disponible",
-      "noProductSuppliers": "Aucun produit de produit disponible"
+      "noServices": "No services available",
+      "noProductSuppliers": "No product suppliers available"
     },
     "subtitles": {
       "productSuppliers": "Fournisseurs de produits",
-      "serviceProviders": "Fournisseurs de services"
+      "serviceProviders": "Prestataires de services"
     },
     "tabs": {
       "productSuppliers": "Fournisseurs de produits",
-      "serviceProviders": "Fournisseurs de services"
+      "serviceProviders": "Prestataires de services"
     },
     "buttons": {
-      "partnerOnboarding": "Partenaire à bord"
+      "partnerOnboarding": "Partner Onboarding"
     },
-    "infoAlert": "Partenaire à embarquement TBD",
-    "searchPlaceholder": "Partenaires de recherche...",
+    "infoAlert": "Partner Onboarding TBD",
+    "searchPlaceholder": "Search partners...",
     "labels": {
-      "category": "Catégorie",
-      "region": "Région",
-      "supplierTags": "Tags de fournisseur",
-      "sortBy": "Trier par"
+      "category": "Category",
+      "region": "Region",
+      "supplierTags": "Supplier Tags",
+      "sortBy": "Sort by"
     },
     "sortOptions": {
-      "nameAsc": "Nom (A-Z)",
-      "nameDesc": "Nom (Z-A)",
-      "ratingDesc": "Note (haut à bas)"
+      "nameAsc": "Name (A-Z)",
+      "nameDesc": "Name (Z-A)",
+      "ratingDesc": "Rating (High to Low)"
     },
     "ariaLabels": {
-      "gridView": "Passer à la vue de la grille",
-      "listView": "Passer à la vue de liste"
+      "gridView": "Switch to grid view",
+      "listView": "Switch to list view"
     }
   },
   "partnerDetailPage": {
-    "productOutOfStock": "Le produit est actuellement en rupture de stock",
-    "productAddedToOrder": "Produit ajouté à la commande avec succès",
-    "addToOrderButton": "Ajouter à la commande",
-    "loadingPartnerDetails": "Détails du partenaire de chargement ...",
-    "invalidPartnerIdMessage": "Impossible de trouver un utilisateur associé à cette organisation à un message.",
-    "contactInfoTitle": "Coordonnées",
-    "directOrderButton": "Commande directe",
-    "aboutTitle": "À propos",
-    "ratingsReviewsTitle": "Notes et avis",
-    "ratingText": "Notation",
-    "reviewsPlaceholder": "Aucune critique encore",
-    "noProductsListed": "Aucun produit répertorié",
-    "requestServiceButton": "Demander des services",
-    "noServicesListed": "Aucun service répertorié",
-    "promoCodeTitle": "Code promotionnel",
-    "promoCodePlaceholder": "Entrez le code promotionnel",
-    "applyPromoButton": "Appliquer",
-    "onlyFoundationsRequestService": "Seules les fondations peuvent demander des services",
-    "requestSubmittedAlert": "Demande de service soumise avec succès"
+    "productOutOfStock": "Product is currently out of stock",
+    "productAddedToOrder": "Product added to order successfully",
+    "addToOrderButton": "Add to Order",
+    "loadingPartnerDetails": "Loading partner details...",
+    "invalidPartnerIdMessage": "Could not find a user associated with this organization to message.",
+    "contactInfoTitle": "Contact Information",
+    "directOrderButton": "Direct Order",
+    "aboutTitle": "About",
+    "ratingsReviewsTitle": "Ratings & Reviews",
+    "ratingText": "Rating",
+    "reviewsPlaceholder": "No reviews yet",
+    "noProductsListed": "No products listed",
+    "requestServiceButton": "Request Service",
+    "noServicesListed": "No services listed",
+    "promoCodeTitle": "Promo Code",
+    "promoCodePlaceholder": "Enter promo code",
+    "applyPromoButton": "Apply",
+    "onlyFoundationsRequestService": "Only foundations can request services",
+    "requestSubmittedAlert": "Service request submitted successfully"
   },
   "adminPlatformSettings": {
-    "title": "Paramétres de la plaque formelle",
+    "title": "Paramètres de la plateforme",
     "general": {
-      "title": "Informations Générales",
-      "nameLabel": "Nom de la plaque formelle",
-      "descriptionLabel": "Description (Métadonnées)"
+      "title": "General Settings",
+      "nameLabel": "Platform Name",
+      "descriptionLabel": "Platform Description"
     },
     "branding": {
-      "title": "Image de Marque",
-      "logoLabel": "Logo de la plaque formelle",
-      "faviconLabel": "Favicon de la plaque formelle"
+      "title": "Branding",
+      "logoLabel": "Platform Logo",
+      "faviconLabel": "Favicon"
     }
   },
   "organizationProfileForm": {
-    "saveSuccess": "Profil de l'organisation a économisé avec succès"
+    "saveSuccess": "Organization profile saved successfully"
   },
   "foundationDashboardPage": {
-    "title": "Tableau de bord de base",
-    "welcome": "Bienvenue dans votre tableau de bord de fondation",
-    "overview": "Aperçu",
-    "recentActivity": "Activité récente",
-    "quickActions": "Actions rapides"
+    "title": "Foundation Dashboard",
+    "welcome": "Welcome to your foundation dashboard",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
   },
   "foundationAnalyticsPage": {
-    "mockDataVisualization": "Visualisation des données simulées",
-    "spendingByCategory": "Dépenses par catégorie",
-    "parentLeadConversion": "Conversion de plomb parent",
-    "staffTrainingCompletion": "Achèvement de la formation du personnel",
-    "enrollmentTrend": "Tendance"
+    "mockDataVisualization": "Mock Data Visualization",
+    "spendingByCategory": "Spending by Category",
+    "parentLeadConversion": "Parent Lead Conversion",
+    "staffTrainingCompletion": "Staff Training Completion",
+    "enrollmentTrend": "Enrollment Trend"
   },
   "foundationLeadsPage": {
-    "title": "Parents entrants",
+    "title": "Incoming Parent Leads",
     "accessDenied": {
-      "title": "Accès refusé",
-      "message": "Vous devez être connecté en tant que base avec un identifiant d'organisation valide pour afficher cette page."
+      "title": "Access Denied",
+      "message": "You must be logged in as a Foundation with a valid Organization ID to view this page."
     },
     "emptyState": {
-      "title": "Pas de pistes entrantes",
-      "message": "Il n'y a actuellement pas de nouvelles demandes de parents correspondant à votre garderie."
+      "title": "No Incoming Leads",
+      "message": "There are currently no new parent enquiries matching your daycare."
     }
   },
   "foundationOrdersAppointmentsPage": {
-    "productOrdersTitle": "Commandes de produits",
-    "exportCsvProductAlert": "Commandes de produits CSV Exportation a commencé",
-    "exportCsvButton": "Exporter CSV",
-    "noProductOrders": "Aucune commande de produit trouvé",
+    "productOrdersTitle": "Product Orders",
+    "exportCsvProductAlert": "Product orders CSV export started",
+    "exportCsvButton": "Export CSV",
+    "noProductOrders": "No product orders found",
     "table": {
-      "refNo": "Ref",
-      "supplier": "Fournisseur",
-      "itemsQty": "Articles / Qté",
+      "refNo": "Ref No",
+      "supplier": "Supplier",
+      "itemsQty": "Items/Qty",
       "total": "Total",
       "date": "Date",
-      "status": "Statut",
-      "actions": "Actes",
-      "provider": "Fournisseur",
+      "status": "Status",
+      "actions": "Actions",
+      "provider": "Provider",
       "service": "Service"
     },
-    "cancelOrderAlert": "Commander annulé avec succès",
-    "serviceAppointmentsTitle": "Rendez-vous de service",
-    "exportCsvServiceAlert": "Rendez-vous de service CSV Export commencé",
-    "noServiceAppointments": "Aucun rendez-vous de service trouvé",
-    "unknownProvider": "Fournisseur inconnu",
+    "cancelOrderAlert": "Order cancelled successfully",
+    "serviceAppointmentsTitle": "Service Appointments",
+    "exportCsvServiceAlert": "Service appointments CSV export started",
+    "noServiceAppointments": "No service appointments found",
+    "unknownProvider": "Unknown Provider",
     "preferredAbbr": "Pref.",
-    "notApplicable": "N / A",
-    "rescheduleAlert": "Rendez-vous reprogrammé avec succès",
-    "rescheduleButton": "Reprogrammer",
-    "productOrdersTab": "Commandes de produits",
-    "serviceAppointmentsTab": "Rendez-vous de service"
+    "notApplicable": "N/A",
+    "rescheduleAlert": "Appointment rescheduled successfully",
+    "rescheduleButton": "Reschedule",
+    "productOrdersTab": "Product Orders",
+    "serviceAppointmentsTab": "Service Appointments"
   },
   "foundationOrganisationProfilePage": {
     "mock": {
-      "pedagogyStatement": "Notre pédagogie est basée sur les principes de respect, de créativité et de développement individuel. "
+      "pedagogyStatement": "Our pedagogy is based on the principles of respect, creativity, and individual development. We believe in providing a nurturing environment where children can explore, learn, and grow at their own pace."
     },
     "alert": {
-      "infoSaved": "Informations de Profil Supplémentaires Engistrés!"
+      "infoSaved": "Profile information saved successfully"
     },
     "sections": {
       "branding": {
-        "title": "Image de Marque et Présentation",
+        "title": "Branding & Identity",
         "logoLabel": "Logo",
-        "coverImageLabel": "Image de couverture",
-        "pedagogyStatementLabel": "Déclaration Pédagogique",
-        "pedagogyStatementPlaceholder": "Décrivez vote philosophie éducative ..."
+        "coverImageLabel": "Cover Image",
+        "pedagogyStatementLabel": "Pedagogy Statement",
+        "pedagogyStatementPlaceholder": "Describe your educational approach and philosophy..."
       },
       "operations": {
-        "title": "Détails Opérationnels",
-        "openingHoursLabel": "Heures d'ouverture",
-        "openingHoursPlaceholder": "Ex: Lun-Ven: 07:30 - 18:30",
-        "contactInfoLabel": "Infos de Contact Publie",
-        "contactInfoPlaceholder": "Téléphone ou envoyez un courriel à public pour les parents"
+        "title": "Operations",
+        "openingHoursLabel": "Opening Hours",
+        "openingHoursPlaceholder": "e.g., Monday-Friday 7:00-18:00",
+        "contactInfoLabel": "Contact Information",
+        "contactInfoPlaceholder": "Phone, email, address..."
       },
       "online": {
-        "title": "Présence en Ligne & Demandes",
-        "bookingLinkLabel": "Privilège de réservation de visite en ligne",
-        "bookingLinkPlaceholder": "Ex: https://cal.com/votre-creche",
-        "socialMediaLinkLabel": "Privilège média social",
-        "socialMediaLinkPlaceholder": "EX: https://facebook.com/votre-creche",
-        "acceptingLeadsLabel": "Accepte Actuellement Les Nouvelles Demandes de parents"
+        "title": "Online Presence",
+        "bookingLinkLabel": "Booking Link",
+        "bookingLinkPlaceholder": "https://your-booking-system.com",
+        "socialMediaLinkLabel": "Social Media Links",
+        "socialMediaLinkPlaceholder": "Facebook, Instagram, LinkedIn...",
+        "acceptingLeadsLabel": "Accepting New Leads"
       }
     },
-    "saveButton": "Égisseur Les Infos Supplémentaires"
+    "saveButton": "Save Profile"
   },
   "foundationSupportPage": {
-    "ticketSubmittedAlert": "Soutenir le billet soumis avec succès",
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
     "ticketForm": {
-      "subjectPlaceholder": "Brève description de votre problème",
-      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
     }
   },
   "parentDashboardPage": {
-    "title": "Tableau de bord parent",
-    "welcome": "Bienvenue dans votre tableau de bord parent",
-    "myChildren": "Mes enfants",
-    "findCreche": "Trouver une crèche"
+    "title": "Parent Dashboard",
+    "welcome": "Welcome to your parent dashboard",
+    "myChildren": "My Children",
+    "findCreche": "Find a Crèche"
   },
   "parentEnquiriesPage": {
     "accessDenied": {
-      "title": "Accès refusé",
-      "message": "Vous devez être connecté en tant que parent pour afficher les demandes"
+      "title": "Access Denied",
+      "message": "You need to be logged in as a parent to view enquiries"
     },
     "emptyState": {
-      "title": "Aucune demandes encore",
+      "title": "No enquiries yet",
       "message": {
-        "0": "Vous n'avez pas encore soumis de demandes de renseignements.",
-        "1": "Commencez par remplir le formulaire d'enquête pour trouver des options de garde d'enfants appropriées."
+        "0": "You haven't submitted any enquiries yet.",
+        "1": "Start by filling out the enquiry form to find suitable childcare options."
       }
     },
     "card": {
-      "title": "Détails de demande",
-      "submitted": "Soumis sur {{date}}",
-      "childInfo": "Information sur l'enfant",
-      "notes": "Notes supplémentaires",
-      "responsesTitle": "Réponses",
-      "awaitingMatch": "Match en attente",
-      "message": "Votre demande a été envoyée aux fournisseurs concernés",
-      "waitingForMoreResponses": "En attendant plus de réponses ..."
+      "title": "Enquiry Details",
+      "submitted": "Submitted on {{date}}",
+      "childInfo": "Child Information",
+      "notes": "Additional Notes",
+      "responsesTitle": "Responses",
+      "awaitingMatch": "Awaiting Match",
+      "message": "Your enquiry has been sent to relevant providers",
+      "waitingForMoreResponses": "Waiting for more responses..."
     }
   },
   "parentSupportPage": {
     "faq": {
       "matchingProcess": {
-        "q": "Comment fonctionne le processus de correspondance?",
-        "a": "Notre algorithme correspond aux besoins de votre enfant avec les crèches disponibles en fonction de l'emplacement, de l'âge, des exigences spéciales et de la disponibilité."
+        "q": "How does the matching process work?",
+        "a": "Our algorithm matches your child's needs with available crèches based on location, age, special requirements, and availability."
       },
       "responseTime": {
-        "q": "À quelle vitesse vais-je recevoir des réponses?",
-        "a": "La plupart des crèches réagissent dans les 24 à 48 heures. "
+        "q": "How quickly will I receive responses?",
+        "a": "Most crèches respond within 24-48 hours. You'll be notified immediately when responses arrive."
       },
       "dataSecurity": {
-        "q": "Mes informations personnelles sont-elles sécurisées?",
-        "a": "Oui, nous utilisons un cryptage de niveau entreprise et respectons les lois suisses sur la protection des données. "
+        "q": "Is my personal information secure?",
+        "a": "Yes, we use enterprise-grade encryption and comply with Swiss data protection laws. Your information is never shared without consent."
       }
     }
   },
   "educatorDashboardPage": {
-    "title": "Tableau de bord de l'éducateur",
-    "welcome": "Bienvenue dans votre tableau de bord éducateur",
-    "applications": "Mes applications",
-    "jobBoard": "Comité de travail"
+    "title": "Educator Dashboard",
+    "welcome": "Welcome to your educator dashboard",
+    "applications": "My Applications",
+    "jobBoard": "Tableau d'emplois"
   },
   "educatorApplicationsPage": {
     "status": {
-      "new": "Nouveau",
-      "viewed": "Visualisé",
-      "interview": "Entretien",
-      "offer": "Offre",
-      "declined": "Refusé"
+      "new": "New",
+      "viewed": "Viewed",
+      "interview": "Interview",
+      "offer": "Offer",
+      "declined": "Declined"
     },
     "table": {
-      "jobTitle": "Titre d'emploi",
+      "jobTitle": "Job Title",
       "creche": "Crèche",
-      "status": "Statut",
-      "lastUpdated": "Dernière mise à jour",
-      "actions": "Actes"
+      "status": "Status",
+      "lastUpdated": "Last Updated",
+      "actions": "Actions"
     },
-    "viewingDetailsFor": "Affichage des détails pour",
-    "emptyState": "Aucune application trouvée",
-    "footerNote": "Les applications sont mises à jour en temps réel"
+    "viewingDetailsFor": "Viewing details for",
+    "emptyState": "No applications found",
+    "footerNote": "Applications are updated in real-time"
   },
   "educatorJobBoardPage": {
-    "postedOn": "Publié sur",
-    "searchPlaceholder": "Emplois de recherche ...",
-    "noJobsFound": "Aucun emploi trouvé"
+    "postedOn": "Posted on",
+    "searchPlaceholder": "Search jobs...",
+    "noJobsFound": "No jobs found"
   },
   "educatorProfilePage": {
-    "editProfile": "Modifier le profil",
+    "editProfile": "Edit Profile",
     "availability": {
-      "days": "Jours",
-      "times": "Fois",
-      "contract": "Contracter",
-      "ageGroups": "Groupes d'âge"
+      "days": "Days",
+      "times": "Times",
+      "contract": "Contract",
+      "ageGroups": "Age Groups"
     },
     "education": {
-      "graduated": "Gradué"
+      "graduated": "Graduated"
     },
     "certifications": {
-      "issued": "Émis",
-      "expires": "Expire"
+      "issued": "Issued",
+      "expires": "Expires"
     }
   },
   "educatorSupportPage": {
-    "ticketSubmittedAlert": "Soutenir le billet soumis avec succès",
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
     "ticketForm": {
-      "subjectPlaceholder": "Brève description de votre problème",
-      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
     }
   },
   "serviceProviderDashboardPage": {
-    "title": "Tableau de bord du fournisseur de services",
-    "welcome": "Bienvenue dans votre tableau de bord de votre fournisseur de services",
-    "services": "Mes services",
-    "requests": "Demandes de service"
+    "title": "Service Provider Dashboard",
+    "welcome": "Welcome to your service provider dashboard",
+    "services": "My Services",
+    "requests": "Service Requests"
   },
   "serviceProviderAnalyticsPage": {
-    "serviceRequestsPerWeek": "Demandes de service par semaine",
-    "topViewedServices": "Services visualisés",
-    "requestsByCanton": "Demandes par canton"
+    "serviceRequestsPerWeek": "Service Requests Per Week",
+    "topViewedServices": "Top Viewed Services",
+    "requestsByCanton": "Requests by Canton"
   },
   "serviceProviderListingsPage": {
     "card": {
-      "category": "Catégorie",
-      "delivery": "Livraison"
+      "category": "Category",
+      "delivery": "Delivery"
     },
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce service?",
-    "addNewServiceButton": "Ajouter un nouveau service",
-    "searchPlaceholder": "Services de recherche ...",
+    "confirmDelete": "Are you sure you want to delete this service?",
+    "addNewServiceButton": "Add New Service",
+    "searchPlaceholder": "Search services...",
     "emptyState": {
-      "title": "Aucun service trouvé",
-      "noMatch": "Aucun service ne correspond à vos critères de recherche",
-      "noServicesYet": "Vous n'avez pas encore créé de services"
+      "title": "No Services Found",
+      "noMatch": "No services match your search criteria",
+      "noServicesYet": "You haven't created any services yet"
     }
   },
   "serviceProviderRequestsPage": {
-    "filterByStatus": "Filtrateur PAR Statut:",
+    "filterByStatus": "Filter by Status",
     "table": {
-      "requestId": "ID DEMANDE",
-      "foundation": "Affection",
+      "requestId": "Request ID",
+      "foundation": "Fondation",
       "service": "Service",
       "date": "Date",
-      "status": "Statut"
+      "status": "Status"
     },
-    "emptyState": "AUCUNE DEMANDE DE SERVICE TRUVÉE LE LE FILTRE SÉLECTIONNÉ."
+    "emptyState": "No service requests found"
   },
   "serviceProviderSupportPage": {
-    "ticketSubmittedAlert": "Soutenir le billet soumis avec succès",
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
     "ticketForm": {
-      "subjectPlaceholder": "Brève description de votre problème",
-      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
     }
   },
   "supplierDashboardPage": {
-    "title": "Tableau de bord fournisseur",
-    "welcome": "Bienvenue dans votre tableau de bord fournisseur",
-    "products": "Mes produits",
-    "orders": "Ordres"
+    "title": "Supplier Dashboard",
+    "welcome": "Welcome to your supplier dashboard",
+    "products": "My Products",
+    "orders": "Orders"
   },
   "supplierAnalyticsPage": {
-    "datePickerLabel": "Sélectionner La Page de Dates",
-    "exportCsvAlert": "Exportation du Rapport en CSV ... (à Venir)",
-    "exportCsvButton": "Exportateur en csv",
-    "mockChartText": "DONNES GRAPHIQUES FICTIVES DE TYPE {{Type}}",
-    "orderRequestsPerWeek": "Exige de commode par sémene",
-    "topViewedProducts": "Produits Les Plus Consrés",
-    "requestsByCanton": "Exige par le canton",
-    "promoCodePerformance": "Promo des codes de performance des",
+    "datePickerLabel": "Select Date Range",
+    "exportCsvAlert": "CSV export started",
+    "exportCsvButton": "Export CSV",
+    "mockChartText": "Mock chart visualization",
+    "orderRequestsPerWeek": "Order Requests Per Week",
+    "topViewedProducts": "Top Viewed Products",
+    "requestsByCanton": "Requests by Canton",
+    "promoCodePerformance": "Promo Code Performance",
     "table": {
       "code": "Code",
-      "uses": "Utilisations",
-      "estRevenueImpact": "Impact estimé Sur le Revenu"
+      "uses": "Uses",
+      "estRevenueImpact": "Est. Revenue Impact"
     }
   },
   "supplierProductListingsPage": {
-    "addProductAlert": "La Fonctionnalité du Modal / Forulaire 'Ajouter Un Produit' Sera Implémentée.",
-    "addProductButton": "Ajouter un nouveau produit",
-    "searchPlaceholder": "RECHERCHER PAR NOM DE PRODUIT ...",
+    "addProductAlert": "Product added successfully",
+    "addProductButton": "Add New Product",
+    "searchPlaceholder": "Search products...",
     "table": {
-      "product": "Produire",
-      "price": "Prix",
-      "stock": "Action",
-      "visibility": "Visibilité",
-      "actions": "Actes"
+      "product": "Product",
+      "price": "Price",
+      "stock": "Stock",
+      "visibility": "Visibility",
+      "actions": "Actions"
     },
-    "emptyState": "AUCUN PRODUITS TRUVÉ."
+    "emptyState": "No products found"
   },
   "supplierOrdersPage": {
-    "filterByStatus": "Filtrateur par Statt",
+    "filterByStatus": "Filter by Status",
     "table": {
-      "orderId": "Id commande",
+      "orderId": "Order ID",
       "date": "Date",
       "total": "Total",
-      "status": "Statut",
-      "foundation": "Affection"
+      "status": "Status",
+      "foundation": "Fondation"
     },
     "actions": {
-      "ship": "Marquer comme expédié"
+      "ship": "Ship"
     },
-    "emptyState": "Aunucune comm"
+    "emptyState": "No orders found"
   },
   "supplierSupportPage": {
-    "ticketSubmittedAlert": "Soutenir le billet soumis avec succès",
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
     "ticketForm": {
-      "subjectPlaceholder": "Brève description de votre problème",
-      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
     }
   },
   "adminContentManagementDashboardPage": {
-    "title": "Gestion du contenu",
-    "content": "Aperçu du contenu",
-    "policies": "Gestion des politiques",
-    "announcements": "Annonces"
+    "title": "Content Management",
+    "content": "Content Overview",
+    "policies": "Policy Management",
+    "announcements": "Announcements"
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
-      "title": "Console de Logs Brutts"
+      "title": "Raw Log Console"
     },
     "overallStatus": {
-      "title": "ÉTAT GÉNÉRAL DU SYSTÈME"
+      "title": "Overall System Status"
     },
     "components": {
-      "api": "Backend API",
-      "database": "Base de Donnés",
-      "authService": "Service d'authentification"
+      "api": "API",
+      "database": "Database",
+      "authService": "Auth Service"
     },
     "metadata": {
-      "environment": "Environnement",
+      "environment": "Environment",
       "version": "Version",
-      "uptime": "Disonibility",
-      "lastCheck": "Dernier Contrôle"
+      "uptime": "Uptime",
+      "lastCheck": "Last Check"
     },
     "serverPerformance": {
-      "title": "Performance du Serveur",
-      "cpuUsage": "CPU d'utilisation",
-      "memoryUsage": "Utilisation mémoire",
-      "diskUsage": "Disque d'utilisation",
-      "uptimeDays": "Disonibilité (Jours)"
+      "title": "Server Performance",
+      "cpuUsage": "CPU Usage",
+      "memoryUsage": "Memory Usage",
+      "diskUsage": "Disk Usage",
+      "uptimeDays": "Uptime (Days)"
     },
     "databasePerformance": {
-      "title": "Performance de la base de Donnés",
-      "activeConnections": "Les connexions actifs",
-      "queryTime": "Temps de requirete Moyen",
-      "storage": "Utilisation du stockage",
-      "connectionHealth": "Santé de la Connexion"
+      "title": "Database Performance",
+      "activeConnections": "Active Connections",
+      "queryTime": "Query Time",
+      "storage": "Storage",
+      "connectionHealth": "Connection Health"
     },
     "appPerformance": {
-      "title": "Performance de L'application",
-      "activeUsers": "Actifs des utilisateurs",
-      "requestsPerMinute": "Requêtes / min",
-      "avgResponseTime": "Temps de Rép. ",
-      "errorRate": "Taux d'Erreur"
+      "title": "Application Performance",
+      "activeUsers": "Active Users",
+      "requestsPerMinute": "Requests per Minute",
+      "avgResponseTime": "Average Response Time",
+      "errorRate": "Error Rate"
     },
     "recentEvents": {
-      "title": "Événements Système Récents"
+      "title": "Recent Events"
     }
   },
   "adminDiscountTerminationsPage": {
-    "title": "Terminations à prix réduit",
-    "terminations": "Terminations actives",
-    "manage": "Gérer les terminaisons"
+    "title": "Résiliations de remise",
+    "terminations": "Active Terminations",
+    "manage": "Manage Terminations"
   },
   "pricingPage": {
-    "title": "Procrèche Solutions - Guide de Tarification",
-    "plans": "Plans disponibles",
-    "features": "Planifier les fonctionnalités",
-    "billing": "Informations de facturation",
-    "monthly": "Mensuel",
-    "annual": "Anneaux",
-    "saveUpTo10": "(Économiser jusqu'à 10%)",
-    "popular": "Plus populaire",
-    "whatYouGet": "CE que Vous Obtesez",
-    "selectAndContinue": "Sélectionner et continuer",
-    "choosePlan": "CHOISIR LE PLAN",
-    "titleSignup": "Plan de vote choissez",
-    "subtitleSignup": "Sélectionnez le Plan Qui correspond le Mieux à Vos Besoins",
-    "subtitle": "Sélectionnez le Plan Parfait pour l'organisation",
-    "suppliersAndProvidersTitle": "Procrèche Solutions - Tarification pour quatrenisseurs et pré-pré-présataires de services"
+    "title": "Pricing Plans",
+    "plans": "Available Plans",
+    "features": "Plan Features",
+    "billing": "Billing Information",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "saveUpTo10": "Save up to 10%",
+    "popular": "Most Popular",
+    "whatYouGet": "What You Get",
+    "selectAndContinue": "Select and Continue",
+    "choosePlan": "Choose Your Plan",
+    "titleSignup": "S'inscrire",
+    "subtitleSignup": "Create your account to get started",
+    "subtitle": "Choose the plan that's right for your organization",
+    "suppliersAndProvidersTitle": "For Suppliers & Service Providers"
   },
   "recruitmentPage": {
-    "title": "Recrutement",
+    "title": "Recruitment",
     "jobDetailModal": {
-      "title": "Détails de l'offre",
+      "title": "Job Details",
       "apply": "Postuler maintenant",
       "close": "Fermer",
-      "overviewTitle": "Aperçu du poste",
-      "location": "Lieu",
-      "contractType": "Type de contrat",
-      "startDate": "Date de début",
-      "salary": "Salaire",
-      "applyNow": "Postuler Maintenant"
+      "overviewTitle": "Job Overview",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salary": "Salary",
+      "applyNow": "Postuler maintenant"
     },
     "jobPostModal": {
-      "title": "Poste de poste",
-      "submit": "Soumettre un poste d'emploi",
-      "editTitle": "Modifier l'offre d'emploi",
-      "addTitle": "Ajouter une nouvelle publication d'emploi",
-      "jobTitle": "Titre d'emploi",
-      "location": "Emplacement",
-      "contractType": "Type de contrat",
-      "startDate": "Date de début",
-      "salaryRange": "Fourchette Salariale (optionnel)",
-      "salaryRangePlaceholder": "Ex: CHF 60'000 - 70'000 PAR AN",
-      "description": "Description de l'emploi",
-      "postJob": "Poste de poste"
+      "title": "Post Job",
+      "submit": "Submit Job Post",
+      "editTitle": "Edit Job Posting",
+      "addTitle": "Add New Job Posting",
+      "jobTitle": "Job Title",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salaryRange": "Salary Range",
+      "salaryRangePlaceholder": "e.g., CHF 4,500 - 5,500",
+      "description": "Job Description",
+      "postJob": "Post Job"
     },
     "viewApplicantsModal": {
-      "title": "Afficher les candidats",
-      "applicants": "Candidats",
-      "noApplicants": "Pas encore de candidats",
-      "appliedOn": "Appliqué sur"
+      "title": "View Applicants",
+      "applicants": "Applicants",
+      "noApplicants": "No applicants yet",
+      "appliedOn": "Applied on"
     },
     "candidateCard": {
-      "name": "Nom de candidat",
-      "experience": "Expérience",
-      "skills": "Compétences",
-      "viewProfile": "Afficher le profil"
+      "name": "Candidate Name",
+      "experience": "Experience",
+      "skills": "Skills",
+      "viewProfile": "View Profile"
     },
     "buttons": {
-      "viewApplicants": "Afficher les candidats",
-      "filters": "Filtres",
-      "postNewJob": "Publier un nouvel emploi",
-      "applyFilters": "Appliquer des filtres",
-      "addCandidate": "Ajouter un candidat"
+      "viewApplicants": "View Applicants",
+      "filters": "Filters",
+      "postNewJob": "Post New Job",
+      "applyFilters": "Appliquer les filtres",
+      "addCandidate": "Add Candidate"
     },
-    "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer ce candidat?",
+    "confirmRemoveCandidate": "Are you sure you want to remove this candidate?",
     "jobOffers": {
-      "searchPlaceholder": "Recherchez des offres d'emploi ...",
-      "filterTitle": "Emploi de filtre",
-      "activeJobsCount": "{{count}} travaux actifs",
-      "emptyState": "Aucune offre d'emploi trouvée"
+      "searchPlaceholder": "Search job offers...",
+      "filterTitle": "Filter Jobs",
+      "activeJobsCount": "{{count}} active jobs",
+      "emptyState": "No job offers found"
     },
     "labels": {
-      "location": "Emplacement",
-      "allContractTypes": "Tous les types de contrats",
-      "allStatuses": "Tous les statuts",
-      "allRoles": "Tous les rôles",
-      "region": "Région",
-      "availabilityDate": "Date de disponibilité"
+      "location": "Location",
+      "allContractTypes": "All Contract Types",
+      "allStatuses": "All Statuses",
+      "allRoles": "All Roles",
+      "region": "Region",
+      "availabilityDate": "Availability Date"
     },
     "candidatePool": {
-      "searchPlaceholder": "Rechercher les candidats ...",
-      "filterTitle": "Filtrer les candidats",
-      "emptyState": "Aucun candidat trouvé"
+      "searchPlaceholder": "Search candidates...",
+      "filterTitle": "Filter Candidates",
+      "emptyState": "No candidates found"
     },
     "tabs": {
-      "jobOffers": "Offres d'emploi",
-      "candidatePool": "Pool de candidats"
+      "jobOffers": "Job Offers",
+      "candidatePool": "Candidate Pool"
     }
   },
   "messagesPage": {
     "title": "Messages",
-    "newGroupButton": "Nouveau Group",
-    "noConversationSelectedTitle": "Sélectionnez une conversation",
-    "noConversationSelectedSubtitle": "Choisissez Parmi Vos Conversations existantes verser le débutant à disqueur.",
-    "noConversationsYet": "Vous N'avez pas Encore des conversations.",
-    "noConversationsFound": "Conversation aucune Trouvée.",
+    "newGroupButton": "New Group",
+    "noConversationSelectedTitle": "Select a conversation to start messaging",
+    "noConversationSelectedSubtitle": "Choose a conversation from the list to view messages",
+    "noConversationsYet": "No conversations yet",
+    "noConversationsFound": "No conversations found",
     "filters": {
-      "all": "Tous",
-      "unread": "Non lus"
+      "all": "All",
+      "unread": "Unread"
     }
   },
   "notificationsPage": {
-    "clearAll": "Effacer tout",
+    "clearAll": "Clear All",
     "emptyState": {
-      "title": "Pas de notifications",
-      "message": "Vous êtes tous rattrapés! "
+      "title": "No notifications",
+      "message": "You're all caught up! New notifications will appear here."
     }
   },
   "fileGalleryPage": {
-    "title": "Galerie de dossiers",
-    "files": "Tous les fichiers",
-    "upload": "Télécharger des fichiers"
+    "title": "Galerie de fichiers",
+    "files": "All Files",
+    "upload": "Upload Files"
   },
   "eLearningPage": {
-    "title": "E-learning",
+    "title": "E-Learning",
     "actions": {
-      "viewCourse": "Voir le cours",
-      "watchVideo": "Regarder la vidéo",
-      "downloadPdf": "Télécharger PDF",
-      "openLink": "Lien ouvert"
+      "viewCourse": "View Course",
+      "watchVideo": "Watch Video",
+      "downloadPdf": "Download PDF",
+      "openLink": "Open Link"
     },
-    "viewingAlert": "Vous consultez du contenu externe",
-    "lessonsCount": "{{count}} leçons",
-    "durationLabel": "Durée",
+    "viewingAlert": "You are viewing external content",
+    "lessonsCount": "{{count}} lessons",
+    "durationLabel": "Duration",
     "languageLabel": "Langue",
-    "updatedLabel": "Mis à jour",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément?",
-    "noItemsFound": "Aucun article trouvé",
-    "addNewContentButton": "Ajouter un nouveau contenu",
-    "searchPlaceholder": "Rechercher le contenu ...",
-    "categoryLabel": "Catégorie",
-    "noContentFound": "Aucun contenu trouvé",
-    "coursesTitle": "Cours",
+    "updatedLabel": "Updated",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "noItemsFound": "No items found",
+    "addNewContentButton": "Add New Content",
+    "searchPlaceholder": "Search content...",
+    "categoryLabel": "Category",
+    "noContentFound": "No content found",
+    "coursesTitle": "Courses",
     "itemType": {
-      "courses": "Cours",
-      "videos": "Vidéos",
-      "pdfs": "Pdfs",
-      "links": "Liens externes"
+      "courses": "Courses",
+      "videos": "Videos",
+      "pdfs": "PDFs",
+      "links": "External Links"
     },
-    "videosTitle": "Vidéos",
-    "pdfsTitle": "Pdfs",
-    "externalLinksTitle": "Liens externes"
+    "videosTitle": "Videos",
+    "pdfsTitle": "PDFs",
+    "externalLinksTitle": "External Links"
   },
   "statePoliciesPage": {
-    "title": "Politiques d'État",
-    "policies": "Documents politiques",
-    "compliance": "Statut de conformité"
+    "title": "State Policies",
+    "policies": "Policy Documents",
+    "compliance": "Compliance Status"
   },
   "hrProceduresPage": {
-    "title": "Procédures RH",
+    "title": "HR Procedures",
     "categoryDisplay": {
-      "viewCategoryAria": "Afficher la catégorie {{catégorie}}",
+      "viewCategoryAria": "View category {{category}}",
       "documentsCount": "{{count}} documents"
     },
-    "confirmDeleteDocument": "Êtes-vous sûr de vouloir supprimer ce document?",
-    "uploadButton": "Télécharger le document",
-    "searchPlaceholder": "Rechercher des documents ...",
-    "categoriesTitle": "Catégories",
-    "allDocumentsCategory": "Tous les documents",
-    "noDocumentsMatchSearch": "Aucun document ne correspond à votre recherche",
-    "noDocumentsAvailable": "Aucun document disponible",
-    "backToCategoriesButton": "Retour aux catégories",
-    "documentsInCategoryTitle": "Documents dans {{catégorie}}",
-    "allItemsCount": "{{count}}",
-    "noDocumentsInCategory": "Aucun document dans cette catégorie"
+    "confirmDeleteDocument": "Are you sure you want to delete this document?",
+    "uploadButton": "Upload Document",
+    "searchPlaceholder": "Search documents...",
+    "categoriesTitle": "Categories",
+    "allDocumentsCategory": "All Documents",
+    "noDocumentsMatchSearch": "No documents match your search",
+    "noDocumentsAvailable": "No documents available",
+    "backToCategoriesButton": "Back to Categories",
+    "documentsInCategoryTitle": "Documents in {{category}}",
+    "allItemsCount": "{{count}} items",
+    "noDocumentsInCategory": "No documents in this category"
   },
   "usersPage": {
-    "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
+    "cannotDeleteOwnAccount": "You cannot delete your own account",
     "status": {
-      "pending": "En attente"
+      "pending": "Pending"
     },
     "userDetailDrawer": {
-      "title": "Coordonnées",
-      "roleLabel": "Rôle",
-      "statusLabel": "Statut",
-      "regionLabel": "Région",
-      "lastLoginLabel": "Dernière connexion",
+      "title": "User Details",
+      "roleLabel": "Role",
+      "statusLabel": "Status",
+      "regionLabel": "Region",
+      "lastLoginLabel": "Last Login",
       "orgLabel": "Organisation",
-      "adminActionsTitle": "Actions administratives",
-      "changeRoleLabel": "Rôle de changement",
-      "updateRoleButton": "Mettre à jour le rôle",
-      "suspendUserButton": "Suspendre l'utilisateur",
-      "activateUserButton": "Activer l'utilisateur",
-      "cannotModifyOwnAccount": "Vous ne pouvez pas modifier votre propre compte"
+      "adminActionsTitle": "Admin Actions",
+      "changeRoleLabel": "Change Role",
+      "updateRoleButton": "Update Role",
+      "suspendUserButton": "Suspend User",
+      "activateUserButton": "Activate User",
+      "cannotModifyOwnAccount": "You cannot modify your own account"
     },
-    "rolePageTitle": "Gestion des rôles",
+    "rolePageTitle": "Role Management",
     "allUsersTitle": "Tous les utilisateurs",
-    "confirmDeleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur?",
-    "userProfileUpdated": "Profil utilisateur mis à jour avec succès",
-    "addNewUserTBD": "Ajouter un nouvel utilisateur TBD",
-    "addNewUserButton": "Ajouter un nouvel utilisateur",
-    "searchPlaceholder": "Rechercher les utilisateurs ...",
-    "filtersTBD": "Filtres TBD",
-    "filtersButton": "Filtres",
+    "confirmDeleteUser": "Are you sure you want to delete this user?",
+    "userProfileUpdated": "User profile updated successfully",
+    "addNewUserTBD": "Add New User TBD",
+    "addNewUserButton": "Add New User",
+    "searchPlaceholder": "Search users...",
+    "filtersTBD": "Filters TBD",
+    "filtersButton": "Filters",
     "table": {
-      "nameOrg": "Nom / organisation",
-      "role": "Rôle",
-      "status": "Statut",
-      "region": "Région",
-      "lastLogin": "Dernière connexion",
-      "actions": "Actes"
+      "nameOrg": "Name / Organization",
+      "role": "Role",
+      "status": "Status",
+      "region": "Region",
+      "lastLogin": "Last Login",
+      "actions": "Actions"
     },
-    "emptyState": "Aucun utilisateur trouvé"
+    "emptyState": "No users found"
   },
   "partnersPage": {
     "partnerCard": {
-      "logoAlt": "{{partenaire-nom}} logo",
-      "partnerType": "{{type}} partenaire",
-      "learnMoreButton": "En savoir plus"
+      "logoAlt": "{{partnerName}} logo",
+      "partnerType": "{{type}} Partner",
+      "learnMoreButton": "Learn More"
     },
     "hero": {
-      "title": "NOS PRÉCIEUX Partenaires",
-      "subtitle": "Les collaborons nous avec des organisations de Premier plan pour Améliorerer L'Écosystème de la Petite enfance en Suisse.",
-      "ctaButton": "Devenir Partenaire"
+      "title": "Our Partners",
+      "subtitle": "Discover trusted childcare providers and suppliers",
+      "ctaButton": "Become a Partner"
     },
     "featured": {
-      "title": "Partenaires en vedette",
-      "subtitle": "Nous sommes fiers de travailleur avec des institutions qui partagent notre vision d'unité de la petite enfance de qualité."
+      "title": "Featured Partners",
+      "subtitle": "Meet our top-rated childcare providers and suppliers"
     },
     "joinUs": {
-      "title": "Rejoignez Notre",
-      "subtitle": "Interessé à Devenir Partenaire de Pro Crèche Solutions? ",
-      "contactUsAlert": "La Fonctionnalité du Forulaire / Modal de Contact Sera Impdémentée.",
-      "contactUsButton": "Nous contacter",
-      "inquiryFormLink": "ou remplissez Notre Forulaire de Partenariat"
+      "title": "Join Our Network",
+      "subtitle": "Become part of Switzerland's leading childcare platform",
+      "contactUsAlert": "Contact us to learn more about partnership opportunities",
+      "contactUsButton": "Contact Us",
+      "inquiryFormLink": "Partnership Inquiry Form"
     }
   },
   "parentLeadFormPage": {
-    "errorAllFields": "Veuillez remplir tous Les Champs Obligatoires.",
-    "thankYouTitle": "MERCI!",
-    "unauthenticatedSuccessMessage": "Votre demande un été sume avec succés. ",
-    "authenticatedSuccessMessage": "Votre demande un été sume avec succés. ",
-    "subtitle": "Dete-nous Quels Sont les Besoins de Vote enfant et nous",
+    "errorAllFields": "Please fill in all required fields",
+    "thankYouTitle": "Thank You!",
+    "unauthenticatedSuccessMessage": "Your enquiry has been submitted successfully. We'll contact you soon!",
+    "authenticatedSuccessMessage": "Your enquiry has been submitted and saved to your dashboard.",
+    "subtitle": "Tell us about your childcare needs",
     "labels": {
-      "yourFullName": "VOTRE NOM EXCHET",
-      "yourEmail": "E-mail",
-      "yourPhone": "Votre Numéro de Téléphone",
+      "yourFullName": "Your Full Name",
+      "yourEmail": "Your Email",
+      "yourPhone": "Your Phone",
       "canton": "Canton",
-      "municipality": "Municipalité",
-      "childAge": "Âge de l'Enfant (Années)",
-      "desiredStartDate": "Date de Début Souhaitéee",
-      "specialNeeds": "Besoins Spéciaux ou Exigences"
+      "municipality": "Municipality",
+      "childAge": "Âge de l'enfant",
+      "desiredStartDate": "Desired Start Date",
+      "specialNeeds": "Special Needs"
     },
-    "sectionTitleChildNeeds": "Besoins de l'Enfant",
+    "sectionTitleChildNeeds": "Child's Needs",
     "helpText": {
-      "specialNeeds": "Veuillez Décrire Tous Besoins Spéciaux, Exigence Alimentaires ou Auteurs Informations importantes concernant le vote."
+      "specialNeeds": "Please describe any special requirements or needs"
     }
   },
   "candidateProfilePage": {
-    "title": "Profil candidat",
-    "profile": "Informations sur le profil",
-    "experience": "Expérience de travail"
+    "title": "Candidate Profile",
+    "profile": "Profile Information",
+    "experience": "Work Experience"
   },
   "designSystemPage": {
-    "title": "Système de conception",
-    "description": "Une référence vivante pour tous les composants de l'interface utilisateur et les jetons de conception dans l'application Pro Crèche Solutions.",
+    "title": "Système de design",
+    "description": "A living reference for all UI components and design tokens in the Pro Crèche Solutions application.",
     "tabs": {
-      "title": "Onglets",
-      "pillsVariant": "Variante des pilules (par défaut)",
-      "lineVariant": "Variante de ligne",
-      "tab1": "Onglet 1",
-      "content1": "Ceci est le contenu de l'onglet 1.",
-      "tab2": "Onglet 2",
-      "content2": "Ceci est le contenu de l'onglet 2.",
-      "tab3": "Onglet 3",
-      "content3": "Ceci est un onglet désactivé."
+      "title": "Tabs",
+      "pillsVariant": "Pills Variant (Default)",
+      "lineVariant": "Line Variant",
+      "tab1": "Tab 1",
+      "content1": "This is the content for Tab 1.",
+      "tab2": "Tab 2",
+      "content2": "This is the content for Tab 2.",
+      "tab3": "Tab 3",
+      "content3": "This is a disabled tab."
     },
     "typography": {
-      "fontFamily": "Famille de polices: Nunito, Inter, Sans-Serif",
-      "heading1": "En tête 1: Le renard brun rapide",
-      "heading2": "En tête 2: Le renard brun rapide",
-      "heading3": "En tête de 3: Le renard brun rapide",
-      "heading4": "En tête de 4: Le renard brun rapide",
-      "bodyBase": "Texte du corps (base): Lorem ipsum Dolor SIT AMET, CONCECTETUR ADIPISCING ELIT. ",
-      "bodySmall": "Texte du corps (petit): CRAS Elements Ultrices Diam. ",
-      "link": "Ceci est un lien"
+      "fontFamily": "Font Family: Nunito, Inter, sans-serif",
+      "heading1": "Heading 1: The quick brown fox",
+      "heading2": "Heading 2: The quick brown fox",
+      "heading3": "Heading 3: The quick brown fox",
+      "heading4": "Heading 4: The quick brown fox",
+      "bodyBase": "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+      "bodySmall": "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
+      "link": "This is a link"
     },
     "buttons": {
-      "extraSmall": "Très petit",
-      "small": "Petit",
-      "mediumDefault": "Moyen (par défaut)",
-      "large": "Grand",
-      "withIcons": "Avec des icônes",
-      "leftIcon": "Icône gauche",
-      "rightIcon": "Icône droite",
-      "smallIcon": "Petite icône",
-      "disabledState": "État handicapé",
-      "primaryDisabled": "Primaire handicapé",
-      "secondaryDisabled": "Secondaire handicapé",
-      "outlineDisabled": "Désigner désactivé"
+      "extraSmall": "Extra Small",
+      "small": "Small",
+      "mediumDefault": "Medium (Default)",
+      "large": "Large",
+      "withIcons": "With Icons",
+      "leftIcon": "Left Icon",
+      "rightIcon": "Right Icon",
+      "smallIcon": "Small Icon",
+      "disabledState": "Disabled State",
+      "primaryDisabled": "Primary Disabled",
+      "secondaryDisabled": "Secondary Disabled",
+      "outlineDisabled": "Outline Disabled"
     },
     "cards": {
-      "standardCard": "Carte standard",
-      "standardCardDesc": "Il s'agit d'un composant de carte standard avec une ombre douce. ",
-      "hoverEffectCard": "Carte d'effet de survol",
-      "hoverEffectCardDesc": "Cette carte a une échelle subtile et une transition de l'ombre sur le plan de volants, utile pour les éléments interactifs."
+      "standardCard": "Standard Card",
+      "standardCardDesc": "This is a standard card component with a soft shadow. It's the base for most content containers.",
+      "hoverEffectCard": "Hover Effect Card",
+      "hoverEffectCardDesc": "This card has a subtle scale and shadow transition on hover, useful for interactive elements."
     },
     "formControls": {
-      "title": "Commandes de formulaire",
-      "textInput": "Entrée de texte",
-      "selectMenu": "Sélectionner le menu",
+      "title": "Form Controls",
+      "textInput": "Text Input",
+      "selectMenu": "Select Menu",
       "option1": "Option 1",
       "option2": "Option 2",
       "option3": "Option 3",
-      "quantityInput": "Entrée de quantité",
-      "disabledInput": "Entrée handicapée"
+      "quantityInput": "Quantity Input",
+      "disabledInput": "Disabled Input"
     },
-    "View Favorites TBD": "Voir les favoris TBD",
-    "Could not find a user associated with this organization to message.": "Impossible de trouver un utilisateur associé à cette organisation à un message.",
-    "User organization details are missing.": "Les détails de l'organisation utilisateur sont manquants.",
+    "View Favorites TBD": "View Favorites TBD",
+    "Could not find a user associated with this organization to message.": "Could not find a user associated with this organization to message.",
+    "User organization details are missing.": "User organization details are missing.",
     "tailwindcss": "tailwindcss",
-    "sidebar.parentLeads": "Parents dirige",
+    "sidebar.parentLeads": "Prospects parents",
     "sidebar.products": "Produits",
     "sidebar.services": "Services",
-    "No recent activity.": "Aucune activité récente.",
-    "loaded": "chargé",
-    "SUPER_ADMIN": "Super_admin",
-    "Show": "Montrer",
-    "Refresh": "Rafraîchir",
-    "keys)": "Clés)",
+    "No recent activity.": "No recent activity.",
+    "loaded": "loaded",
+    "SUPER_ADMIN": "SUPER_ADMIN",
+    "Show": "Show",
+    "Refresh": "Refresh",
+    "keys)": "keys)",
     "(240)": "(240)",
-    "Branding": "Marque",
+    "Branding": "Branding",
     "Favicon": "Favicon",
-    "Search job offers...": "Recherchez des offres d'emploi ...",
-    "Search partners...": "Partenaires de recherche ...",
-    "Search candidates...": "Rechercher les candidats ...",
-    "Search content...": "Rechercher le contenu ...",
-    "admin@procrechesolutions.com": "administr@procrechesolutions.com",
-    "No documents found in this category for current filters.": "Aucun document trouvé dans cette catégorie pour les filtres actuels.",
-    "No custom alerts created yet.": "Aucune alerte personnalisée encore créée."
+    "Search job offers...": "Search job offers...",
+    "Search partners...": "Search partners...",
+    "Search candidates...": "Search candidates...",
+    "Search content...": "Search content...",
+    "admin@procrechesolutions.com": "admin@procrechesolutions.com",
+    "No documents found in this category for current filters.": "No documents found in this category for current filters.",
+    "No custom alerts created yet.": "No custom alerts created yet."
   },
   "createGroupChatModal": {
     "error": {
-      "minParticipants": "Veuillez Sélectionner Au Moins 2 Utilisateurs Pour CREER UN GROUPE."
+      "minParticipants": "Please select at least 2 participants"
     },
-    "title": "CREER UN NOUVEAU GROUPE DE DISCUSSION",
-    "groupNameLabel": "Nom du groupe (optionnel)",
-    "groupNamePlaceholder": "Ex: Préparation Réunion d'Équipe",
-    "selectParticipantsLabel": "Sélectionner Les participants (min. 2)",
-    "createButton": "CREER LE GROUP"
+    "title": "Create Group Chat",
+    "groupNameLabel": "Group Name",
+    "groupNamePlaceholder": "Enter group name...",
+    "selectParticipantsLabel": "Select Participants",
+    "createButton": "Create Group"
   },
   "orderRequestDetailModal": {
-    "markAsProcessing": "Marquez comme traitement"
+    "markAsProcessing": "Mark as Processing"
   },
   "serviceRequestDetailModal": {
-    "markAsCompleted": "Marquez comme terminé"
+    "markAsCompleted": "Mark as Completed"
   },
   "serviceUploadModal": {
-    "editTitle": "Modifier le service",
-    "addTitle": "Ajouter un service",
+    "editTitle": "Edit Service",
+    "addTitle": "Add Service",
     "labels": {
-      "title": "Titre",
+      "title": "Title",
       "description": "Description",
-      "category": "Catégorie",
-      "deliveryType": "Type de livraison",
-      "availability": "Disponibilité",
-      "priceInfo": "Informations sur les prix",
-      "tags": "Balises",
+      "category": "Category",
+      "deliveryType": "Delivery Type",
+      "availability": "Availability",
+      "priceInfo": "Price Information",
+      "tags": "Tags",
       "image": "Image"
     },
     "placeholders": {
-      "availability": "Entrez les détails de la disponibilité",
-      "priceInfo": "Entrez les informations sur le prix",
-      "tags": "Entrez les balises séparées par des virgules"
+      "availability": "Enter availability details",
+      "priceInfo": "Enter price information",
+      "tags": "Enter tags separated by commas"
     },
-    "imageHelpText": "Téléchargez une image pour représenter ce service",
-    "currentImage": "Image actuelle"
+    "imageHelpText": "Upload an image to represent this service",
+    "currentImage": "Current Image"
   },
   "contentUploadModal": {
     "error": {
-      "selectFileOrLink": "Veuillez sélectionner un fichier ou entrer un lien"
+      "selectFileOrLink": "Please select a file or enter a link"
     },
     "labels": {
-      "descriptionPreview": "Description Aperçu",
+      "descriptionPreview": "Description Preview",
       "description": "Description",
-      "title": "Titre",
-      "category": "Catégorie",
-      "contentType": "Type de contenu",
+      "title": "Title",
+      "category": "Category",
+      "contentType": "Content Type",
       "language": "Langue",
-      "duration": "Durée",
-      "lessons": "Leçons",
-      "linkUrl": "URL de liaison",
-      "accessRoles": "Rôles d'accès",
-      "status": "Statut",
-      "documentTitle": "Titre du document",
-      "fileType": "Type de fichier",
+      "duration": "Duration",
+      "lessons": "Lessons",
+      "linkUrl": "Link URL",
+      "accessRoles": "Access Roles",
+      "status": "Status",
+      "documentTitle": "Document Title",
+      "fileType": "File Type",
       "version": "Version",
-      "country": "Pays",
-      "regionCanton": "Région / canton",
-      "policyType": "Type de politique",
-      "criticality": "Criticité",
-      "markAsCritical": "Marquez comme critique",
-      "effectiveDate": "Date d'entrée en vigueur",
-      "externalLink": "Lien externe",
-      "uploadFile": "Télécharger le fichier"
+      "country": "Country",
+      "regionCanton": "Region/Canton",
+      "policyType": "Policy Type",
+      "criticality": "Criticality",
+      "markAsCritical": "Mark as Critical",
+      "effectiveDate": "Effective Date",
+      "externalLink": "External Link",
+      "uploadFile": "Upload File"
     },
     "fileUpload": {
-      "eLearningAllowedTypes": "Autorisé: PDF, MP4, DOC, DOCX",
-      "hrPolicyAllowedTypes": "Autorisé: PDF, DOC, DOCX"
+      "eLearningAllowedTypes": "Allowed: PDF, MP4, DOC, DOCX",
+      "hrPolicyAllowedTypes": "Allowed: PDF, DOC, DOCX"
     },
     "placeholders": {
-      "duration": "Entrez la durée en minutes",
-      "linkUrl": "Entrez dans l'URL",
-      "version": "Entrez le numéro de version",
-      "externalLink": "Entrez le lien externe"
+      "duration": "Enter duration in minutes",
+      "linkUrl": "Enter the URL",
+      "version": "Enter version number",
+      "externalLink": "Enter external link"
     },
     "statusOptions": {
-      "draft": "Brouillon",
-      "published": "Publié",
-      "archived": "Archivé"
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
     },
     "criticalityOptions": {
-      "critical": "Critique",
-      "normal": "Normale"
+      "critical": "Critical",
+      "normal": "Normal"
     },
     "buttons": {
-      "uploading": "Téléchargement ...",
-      "upload": "Télécharger"
+      "uploading": "Uploading...",
+      "upload": "Téléverser"
     }
   },
   "orderRequestModal": {
     "labels": {
-      "product": "Produit",
-      "supplier": "Fournisseur",
-      "quantity": "Quantité",
+      "product": "Product",
+      "supplier": "Supplier",
+      "quantity": "Quantity",
       "notes": "Notes"
     },
     "placeholders": {
-      "notes": "Ajoutez toutes les notes supplémentaires ..."
+      "notes": "Add any additional notes..."
     }
   },
   "leadCard": {
-    "title": "Plomb",
+    "title": "Lead",
     "labels": {
-      "name": "Nom",
+      "name": "Name",
       "email": "E-mail",
-      "phone": "Téléphone",
-      "status": "Statut",
+      "phone": "Phone",
+      "status": "Status",
       "source": "Source",
       "date": "Date"
     },
@@ -1129,174 +1129,174 @@
       "delete": "Supprimer"
     },
     "status": {
-      "new": "Nouveau",
-      "contacted": "Contacté",
-      "qualified": "Qualifié",
-      "converted": "Converti",
-      "lost": "Perdu"
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "converted": "Converted",
+      "lost": "Lost"
     }
   },
   "orderSummaryDrawer": {
-    "title": "Votre commande",
-    "subtotal": "Total",
+    "title": "Your Order",
+    "subtotal": "Subtotal",
     "total": "Total",
-    "checkout": "Passer à la caisse",
-    "emptyCart": "Votre panier de commande est vide.",
-    "closePanel": "Fermer le panneau",
-    "itemsFrom": "Articles de",
-    "specialInstructions": "Instructions ou notes spéciales pour le fournisseur:",
-    "shippingNote": "Expédition et taxes calculées à la caisse (le cas échéant).",
-    "continueShopping": "Continuer les achats",
-    "cannotSubmitOrder": "Impossible de soumettre la commande. "
+    "checkout": "Proceed to Checkout",
+    "emptyCart": "Your order cart is empty.",
+    "closePanel": "Close panel",
+    "itemsFrom": "Items from",
+    "specialInstructions": "Special Instructions or Notes for Supplier:",
+    "shippingNote": "Shipping and taxes calculated at checkout (if applicable).",
+    "continueShopping": "Continue Shopping",
+    "cannotSubmitOrder": "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "translationDiagnostics": {
-    "missingKeysCopied": "Clés manquantes copiées dans le presse-papiers!",
-    "title": "Diagnostic de traduction",
-    "basicStatus": "📊 Statut de base",
-    "translationFiles": "📁 Fichiers de traduction",
-    "testTranslations": "🧪 TRADUITS TEST",
+    "missingKeysCopied": "Missing keys copied to clipboard!",
+    "title": "Translation Diagnostics",
+    "basicStatus": "📊 Basic Status",
+    "translationFiles": "📁 Translation Files",
+    "testTranslations": "🧪 Test Translations",
     "configuration": "⚙️ Configuration",
-    "logToConsole": "Journal à la console",
-    "copyMissingKeys": "Copier les clés manquantes"
+    "logToConsole": "Log to Console",
+    "copyMissingKeys": "Copy Missing Keys"
   },
   "translationDebugger": {
-    "title": "Informations de débogage de traduction",
-    "status": "Statut",
-    "testTranslation": "Traduction de test",
-    "missingKeys": "Clés manquantes",
-    "resourceBundleKeys": "Touches de bundle de ressources",
-    "backendStatus": "Statut backend",
+    "title": "Translation Debug Info",
+    "status": "Status",
+    "testTranslation": "Test Translation",
+    "missingKeys": "Missing Keys",
+    "resourceBundleKeys": "Resource Bundle Keys",
+    "backendStatus": "Backend Status",
     "options": "Options",
-    "logToConsole": "Journal à la console"
+    "logToConsole": "Log to Console"
   },
   "translationErrorLogger": {
-    "missingKeysCopied": "Clés manquantes copiées dans le presse-papiers!",
-    "title": "Enregistreur d'erreur de traduction",
-    "errorSummary": "📊 Résumé des erreurs",
-    "recentErrors": "🔍 Erreurs récentes",
-    "logToGit": "Se connecter à Git",
-    "logToConsole": "Journal à la console",
-    "copyMissing": "Copie manquante",
-    "commitToGit": "S'engager à Git"
+    "missingKeysCopied": "Missing keys copied to clipboard!",
+    "title": "Translation Error Logger",
+    "errorSummary": "📊 Error Summary",
+    "recentErrors": "🔍 Recent Errors",
+    "logToGit": "Log to Git",
+    "logToConsole": "Log to Console",
+    "copyMissing": "Copy Missing",
+    "commitToGit": "Commit to Git"
   },
   "supplierCard": {
-    "specializesIn": "Se spécialise dans",
-    "viewProfileAndProducts": "Afficher le profil et les produits"
+    "specializesIn": "Specializes in",
+    "viewProfileAndProducts": "View Profile and Products"
   },
   "settingsAccountSecurity": {
     "personalInfo": {
-      "title": "Informations Personnelles",
-      "subtitle": "Gérez vos coordonnées personnelles et vos coordonnées",
-      "contactNameLabel": "Nom du contact",
+      "title": "Personal Information",
+      "subtitle": "Manage your personal details and contact information",
+      "contactNameLabel": "Contact Name",
       "orgNameLabel": "Nom de l'organisation",
-      "emailLabel": "ADRESSE",
-      "accountTypeLabel": "Type de compte",
-      "memberSinceLabel": "MEMBRE DEPUIS",
-      "updateInfoButton": "Mettre à Jour Les informations"
+      "emailLabel": "Email Address",
+      "accountTypeLabel": "Account Type",
+      "memberSinceLabel": "Member Since",
+      "updateInfoButton": "Update Information"
     },
     "changePassword": {
-      "title": "Changeur Le Mot de Passe",
-      "subtitle": "Mettez à jour votre mot de passe pour une meilleure sécurité",
-      "currentPasswordLabel": "MOT DE PASSE ACTUEL",
-      "newPasswordLabel": "Nouveau Mot de pas",
-      "confirmNewPasswordLabel": "Confirmateur Le Nouveau Mot de Passe",
-      "updatePasswordButton": "Mettre à Jour le Mot de Pas"
+      "title": "Change Password",
+      "subtitle": "Update your password for better security",
+      "currentPasswordLabel": "Current Password",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "updatePasswordButton": "Update Password"
     },
     "dangerZone": {
-      "title": "Zone de danger",
-      "subtitle": "Actions irréversibles et destructrices",
-      "deleteAccountTitle": "Supprimer CE Compte",
-      "deleteAccountSubtitle": "Une fois que vous suprimez vote compte, il n'y a pas de retrour en arrière. ",
-      "deleteAccountButton": "Supprimer Le Compte"
+      "title": "Danger Zone",
+      "subtitle": "Irreversible and destructive actions",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountSubtitle": "Permanently delete your account and all data",
+      "deleteAccountButton": "Delete Account"
     },
     "notifications": {
       "title": "Notifications",
-      "subtitle": "Gérez vos préférences de notification"
+      "subtitle": "Manage your notification preferences"
     }
   },
   "settingsAnalyticsPreferences": {
-    "title": "Préférences analytiques",
-    "subtitle": "Configurez vos paramètres d'analyse et de rapport"
+    "title": "Analytics Preferences",
+    "subtitle": "Configure your analytics and reporting settings"
   },
   "settingsBillingSubscription": {
-    "title": "Facturation et abondance",
-    "subtitle": "Gérez vos paramètres de facturation et d'abonnement"
+    "title": "Billing & Subscription",
+    "subtitle": "Manage your billing and subscription settings"
   },
   "settingsCompanyProfile": {
-    "title": "Profil de l'entreprise",
-    "subtitle": "Gérer les informations et la marque de votre entreprise"
+    "title": "Company Profile",
+    "subtitle": "Manage your company information and branding"
   },
   "settingsContactBooking": {
-    "title": "Contact et réservation",
-    "subtitle": "Configurez vos préférences de contact et de réservation"
+    "title": "Contact & Booking",
+    "subtitle": "Configure your contact and booking preferences"
   },
   "settingsDefaults": {
-    "title": "Par défaut",
-    "subtitle": "Définissez vos préférences et paramètres par défaut"
+    "title": "Defaults",
+    "subtitle": "Set your default preferences and settings"
   },
   "settingsNotificationPreferences": {
-    "title": "Préférences de notification",
-    "subtitle": "Personnalisez la façon dont vous recevez des notifications"
+    "title": "Notification Preferences",
+    "subtitle": "Customize how you receive notifications"
   },
   "settingsPrivacyData": {
-    "confirmGDPRDelete": "Les êtes-vous sûr? ",
-    "deletionRequestSubmittedHelpText": "Votre demande un été sume. "
+    "confirmGDPRDelete": "Confirm GDPR Data Deletion",
+    "deletionRequestSubmittedHelpText": "This will permanently delete all your data from our systems"
   },
   "parentDashboard": {
-    "title": "Tableau de bord parent",
-    "welcomeMessage": "Bienvenue dans votre tableau de bord parent",
+    "title": "Parent Dashboard",
+    "welcomeMessage": "Welcome to your parent dashboard",
     "enquiry": {
-      "sent": "Enquêtes envoyées",
-      "responses": "Réponses reçues",
-      "pending": "Réponses en attente",
-      "button": "Envoyer une nouvelle demande"
+      "sent": "Enquiries Sent",
+      "responses": "Responses Received",
+      "pending": "Pending Responses",
+      "button": "Send New Enquiry"
     },
     "childProfile": {
-      "name": "Nom de l'enfant",
-      "age": "Âge",
-      "location": "Emplacement",
+      "name": "Child's Name",
+      "age": "Age",
+      "location": "Location",
       "languages": "Langues",
-      "specialNeeds": "Besoins spéciaux",
-      "button": "Mettre à jour le profil"
+      "specialNeeds": "Special Needs",
+      "button": "Update Profile"
     },
     "favorites": {
-      "subtitle": "Vos crèches et services préférés",
-      "button": "Voir les favoris"
+      "subtitle": "Your favorite crèches and services",
+      "button": "View Favorites"
     }
   },
-  "type": "Taper",
+  "type": "Type",
   "language": "Langue",
   "responsibilities": "Responsabilités",
   "qualifications": "Qualifications",
   "benefits": "Avantages",
   "requirements": "Exigences",
   "settingsPromoCodeManager": {
-    "title": "Gestionnaire de code promotionnel",
-    "subtitle": "Créer et gérer les codes promotionnels"
+    "title": "Promo Code Manager",
+    "subtitle": "Create and manage promotional codes"
   },
   "settingsTeamPermissions": {
-    "title": "Autorisation d'équipe",
-    "subtitle": "Gérer l'accès et les autorisations des membres de l'équipe"
+    "title": "Team Permissions",
+    "subtitle": "Manage team member access and permissions"
   },
   "activeClientToggle": {
-    "title": "Relation Statut de la",
+    "title": "Active Client",
     "labels": {
-      "active": "Actif",
-      "inactive": "Inactif"
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "status": {
-      "enabled": "Activé",
-      "disabled": "Désactivé"
+      "enabled": "Enabled",
+      "disabled": "Disabled"
     }
   },
   "featureLock": {
-    "title": "Caractéristique verrouillée",
-    "message": "Cette fonctionnalité n'est pas disponible dans votre plan actuel",
-    "upgrade": "Plan de mise à niveau"
+    "title": "Feature Locked",
+    "message": "This feature is not available in your current plan",
+    "upgrade": "Upgrade Plan"
   },
   "fileUploadModal": {
-    "uploading": "Téléchargement ...",
-    "uploadButton": "Télécharger le fichier"
+    "uploading": "Uploading...",
+    "uploadButton": "Upload File"
   },
   "auth": {
     "signIn": "Se connecter",
@@ -1304,17 +1304,17 @@
     "signOut": "Se déconnecter",
     "email": "E-mail",
     "password": "Mot de passe",
-    "confirmPassword": "Confirmez le mot de passe",
-    "forgotPassword": "Mot de passe oublié?",
+    "confirmPassword": "Confirmer le mot de passe",
+    "forgotPassword": "Forgot Password?",
     "resetPassword": "Réinitialiser le mot de passe",
-    "rememberMe": "Souviens-toi de moi",
+    "rememberMe": "Se souvenir de moi",
     "createAccount": "Créer un compte",
-    "alreadyHaveAccount": "Vous avez déjà un compte?",
-    "dontHaveAccount": "Vous n'avez pas de compte?",
-    "welcomeBack": "Content de te revoir",
-    "joinPlatform": "Rejoignez la plate-forme PC Solutions",
-    "chooseRole": "Choisissez votre rôle pour commencer",
-    "role": "Rôle",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "welcomeBack": "Welcome back",
+    "joinPlatform": "Join PC Solutions Platform",
+    "chooseRole": "Choose your role to get started",
+    "role": "Role",
     "firstName": "Prénom",
     "lastName": "Nom de famille",
     "phoneNumber": "Numéro de téléphone",
@@ -1323,381 +1323,381 @@
     "canton": "Canton",
     "languages": "Langues",
     "capacity": "Capacité",
-    "productCategory": "Catégorie de produits",
+    "productCategory": "Catégorie de produit",
     "serviceType": "Type de service",
     "childAge": "Âge de l'enfant",
-    "preferredLocation": "Emplacement préféré",
-    "signupSuccess": "Enregistrement réussi",
-    "loginSuccess": "Connectez-vous à succès",
-    "logoutSuccess": "Déconnexion réussie",
-    "invalidCredentials": "Des références non valides",
-    "emailRequired": "Un e-mail est requis",
-    "passwordRequired": "Le mot de passe est requis",
-    "passwordTooShort": "Le mot de passe est trop court",
-    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
-    "emailInvalid": "Format de messagerie non valide",
-    "phoneInvalid": "Format de téléphone non valide",
-    "roleRequired": "Le rôle est requis",
-    "organizationRequired": "L'organisation est requise",
-    "firstNameRequired": "Le prénom est obligatoire",
-    "lastNameRequired": "Le nom de famille est requis",
-    "phoneRequired": "Le téléphone est requis",
-    "termsAccepted": "J'accepte les conditions d'utilisation",
-    "privacyAccepted": "J'accepte la politique de confidentialité",
-    "termsAndPrivacy": "Termes et confidentialité",
-    "signupHere": "Inscrivez-vous ici",
-    "loginHere": "Connectez-vous ici",
-    "keepMeLoggedIn": "Rester connecté",
-    "twoFactorAuth": "Authentification à deux facteurs",
-    "verifyEmail": "Vérifiez le courrier électronique",
-    "emailVerified": "E-mail vérifié",
-    "emailNotVerified": "E-mail non vérifié",
-    "resendVerification": "Rendre la vérification",
-    "verificationSent": "Email de vérification envoyé",
-    "accountCreated": "Compte créé avec succès",
-    "accountActivated": "Compte activé avec succès",
-    "accountDeactivated": "Compte désactivé",
-    "accountSuspended": "Compte suspendu",
-    "accountDeleted": "Compte supprimé",
-    "profileUpdated": "Profil mis à jour",
-    "passwordChanged": "Mot de passe modifié",
-    "passwordReset": "Réinitialisation du mot de passe",
-    "loginExpired": "Connexion expirée",
-    "sessionExpired": "La session a expiré",
-    "pleaseLoginAgain": "Veuillez vous connecter à nouveau",
-    "accessDenied": "Accès refusé",
-    "insufficientPermissions": "Autorisation insuffisante",
-    "unauthorized": "Non autorisé",
-    "forbidden": "Interdit",
-    "notFound": "Pas trouvé",
-    "serverError": "Erreur de serveur",
-    "networkError": "Erreur de réseau",
-    "tryAgain": "Essayer à nouveau",
-    "contactSupport": "Support de contact",
-    "reportIssue": "Signaler une question",
-    "helpCenter": "Centre d'aide",
+    "preferredLocation": "Lieu préféré",
+    "signupSuccess": "Registration successful",
+    "loginSuccess": "Login successful",
+    "logoutSuccess": "Logout successful",
+    "invalidCredentials": "Invalid credentials",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password is too short",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "emailInvalid": "Invalid email format",
+    "phoneInvalid": "Invalid phone format",
+    "roleRequired": "Role is required",
+    "organizationRequired": "Organization is required",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "phoneRequired": "Phone is required",
+    "termsAccepted": "I accept the terms of service",
+    "privacyAccepted": "I accept the privacy policy",
+    "termsAndPrivacy": "Terms and Privacy",
+    "signupHere": "Sign up here",
+    "loginHere": "Login here",
+    "keepMeLoggedIn": "Keep me logged in",
+    "twoFactorAuth": "Two-factor authentication",
+    "verifyEmail": "Verify Email",
+    "emailVerified": "Email verified",
+    "emailNotVerified": "Email not verified",
+    "resendVerification": "Resend verification",
+    "verificationSent": "Verification email sent",
+    "accountCreated": "Account created successfully",
+    "accountActivated": "Account activated successfully",
+    "accountDeactivated": "Account deactivated",
+    "accountSuspended": "Account suspended",
+    "accountDeleted": "Account deleted",
+    "profileUpdated": "Profile updated",
+    "passwordChanged": "Password changed",
+    "passwordReset": "Password reset",
+    "loginExpired": "Login expired",
+    "sessionExpired": "Session expired",
+    "pleaseLoginAgain": "Please login again",
+    "accessDenied": "Access denied",
+    "insufficientPermissions": "Insufficient permissions",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "notFound": "Not found",
+    "serverError": "Server error",
+    "networkError": "Network error",
+    "tryAgain": "Try again",
+    "contactSupport": "Contact support",
+    "reportIssue": "Report issue",
+    "helpCenter": "Help center",
     "documentation": "Documentation",
-    "apiDocs": "Documentation API",
+    "apiDocs": "API documentation",
     "changelog": "Changelog",
     "version": "Version",
-    "build": "Construire",
-    "environment": "Environnement",
-    "development": "Développement",
-    "staging": "Mise en scène",
+    "build": "Build",
+    "environment": "Environment",
+    "development": "Development",
+    "staging": "Staging",
     "production": "Production",
     "test": "Test",
-    "debug": "Déboguer",
-    "info": "Informations",
+    "debug": "Debug",
+    "info": "Information",
     "warning": "Avertissement",
     "error": "Erreur",
-    "critical": "Critique",
+    "critical": "Critical",
     "fatal": "Fatal"
   },
   "dashboard": {
-    "welcome": "Bienvenue dans votre tableau de bord d'administration!"
+    "welcome": "Welcome to your Admin Dashboard!"
   },
   "policyAlertModal": {
-    "title": "Alerte politique",
-    "message": "Message d'alerte de politique",
+    "title": "Policy Alert",
+    "message": "Policy Alert Message",
     "labels": {
-      "title": "Titre",
+      "title": "Title",
       "message": "Message",
-      "type": "Taper",
-      "regionScope": "Portée de la région",
-      "displayStartDate": "Afficher la date de début (facultative)",
-      "displayEndDate": "Afficher la date de fin (facultatif)"
+      "type": "Type",
+      "regionScope": "Region Scope",
+      "displayStartDate": "Display Start Date (Optional)",
+      "displayEndDate": "Display End Date (Optional)"
     }
   },
   "serviceProviderDashboard": {
-    "welcomeMessage": "Bienvenue dans votre tableau de bord de votre fournisseur de services",
+    "welcomeMessage": "Welcome to your service provider dashboard",
     "widgets": {
       "overview": {
-        "title": "Aperçu",
-        "activeRequests": "Demandes actives",
-        "completedServices": "Services terminés",
-        "upcoming": "Prochain",
-        "customerRating": "Note client",
-        "button": "Afficher tous"
+        "title": "Overview",
+        "activeRequests": "Active Requests",
+        "completedServices": "Completed Services",
+        "upcoming": "Upcoming",
+        "customerRating": "Customer Rating",
+        "button": "Voir tout"
       },
       "management": {
-        "title": "Gestion des services",
-        "listings": "Listes de services",
-        "pending": "Approbations en attente",
-        "categories": "Catégories",
-        "button": "Gérer les services"
+        "title": "Service Management",
+        "listings": "Service Listings",
+        "pending": "Pending Approvals",
+        "categories": "Categories",
+        "button": "Manage Services"
       },
       "appointments": {
-        "title": "Nominations",
-        "with": "avec",
-        "button": "Planifier nouveau"
+        "title": "Appointments",
+        "with": "with",
+        "button": "Schedule New"
       }
     }
   },
   "supportPage": {
-    "faqTitle": "Questions fréquemment posées",
-    "furtherAssistanceTitle": "Besoin d'une aide supplémentaire?",
-    "furtherAssistanceText": {
-      "0": "Contactez notre équipe d'assistance pour une aide personnalisée",
-      "1": "Nous sommes ici pour vous aider dans toutes les questions ou problèmes"
-    },
-    "submitTicketTitle": "Soumettre le ticket d'assistance",
+    "faqTitle": "Frequently Asked Questions",
+    "furtherAssistanceTitle": "Need Further Assistance?",
+    "furtherAssistanceText": [
+      "Contact our support team for personalized help",
+      "We're here to assist you with any questions or issues"
+    ],
+    "submitTicketTitle": "Submit Support Ticket",
     "ticketForm": {
-      "subjectLabel": "Sujet",
+      "subjectLabel": "Subject",
       "messageLabel": "Message"
     }
   },
   "T": "T",
-  "Title and Message are required.": "Le titre et le message sont requis.",
-  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Impossible de soumettre la commande. ",
-  "Missing keys copied to clipboard!": "Clés manquantes copiées dans le presse-papiers!",
+  "Title and Message are required.": "Title and Message are required.",
+  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
+  "Missing keys copied to clipboard!": "Missing keys copied to clipboard!",
   ".": ".",
   "hardcodedText": {},
-  "Quantity must be at least 1.": "La quantité doit être d'au moins 1.",
-  "Cannot post job. Foundation details are missing.": "Impossible de publier un travail. ",
-  "Current user or organization ID is missing.": "L'identification actuelle de l'utilisateur ou de l'organisation est manquante.",
-  "Subscription cancelled (mock action)": "Abonnement annulé (Action simulée)",
+  "Quantity must be at least 1.": "Quantity must be at least 1.",
+  "Cannot post job. Foundation details are missing.": "Cannot post job. Foundation details are missing.",
+  "Current user or organization ID is missing.": "Current user or organization ID is missing.",
+  "Subscription cancelled (mock action)": "Subscription cancelled (mock action)",
   "renameFileModal": {
-    "title": "Renommer le fichier",
-    "label": "Nom de fichier"
+    "title": "Rename File",
+    "label": "File Name"
   },
   "supplierDashboard": {
-    "title": "Tableau de Bord Fournisseur",
-    "welcomeMessage": "Bienvenue, {{nom}}! ",
-    "noSalesYet": "Autre vente vers le moment",
+    "title": "Supplier Dashboard",
+    "welcomeMessage": "Welcome to your supplier dashboard",
+    "noSalesYet": "No sales data available yet",
     "widgets": {
       "sales": {
-        "title": "Aperçu des Ventes",
-        "totalOrders": "Commandes Total",
-        "revenueMonth": "Revenu (CE MOIS-CI)",
-        "topSelling": "MEILLEURE VENTTE",
-        "fulfillmentRate": "Taux de réalisation",
-        "button": "Le voir les analyses des complais"
+        "title": "Sales Overview",
+        "totalOrders": "Total Orders",
+        "revenueMonth": "Revenue This Month",
+        "topSelling": "Top Selling",
+        "fulfillmentRate": "Fulfillment Rate",
+        "button": "View Analytics"
       },
       "products": {
-        "title": "Geste des produits",
-        "active": "Produits actifs",
-        "pending": "En approbation attente",
-        "lowStock": "Alertes de stock",
-        "button": "Gérer tous les products"
+        "title": "Product Management",
+        "active": "Active Products",
+        "pending": "Pending Approval",
+        "lowStock": "Stock faible",
+        "button": "Manage Products"
       },
       "orders": {
-        "title": "Geste des commandes",
-        "pending": "Commands en Attente",
-        "toFulfill": "Commande à Préparer",
-        "button": "Aller à la page des commandes"
+        "title": "Order Management",
+        "pending": "Pending Orders",
+        "toFulfill": "To Fulfill",
+        "button": "View Orders"
       }
     },
-    "recentOrdersTitle": "Commandes récentes (les 5 dernières)",
-    "noRecentOrders": "AUCUNE COMMANDE RÉCENTE À AFFICHER.",
+    "recentOrdersTitle": "Recent Orders",
+    "noRecentOrders": "No recent orders",
     "recentOrdersTable": {
-      "id": "IDENTIFIANT",
+      "id": "Order ID",
       "creche": "Crèche",
       "date": "Date",
       "total": "Total",
-      "status": "Statut"
+      "status": "Status"
     },
     "recentOrdersActions": {
-      "decline": "Déclin",
-      "accept": "Accepter"
+      "decline": "Decline",
+      "accept": "Accept"
     }
   },
-  "You must be logged in as a foundation to submit a request.": "Vous devez être connecté en tant que base pour soumettre une demande.",
+  "You must be logged in as a foundation to submit a request.": "You must be logged in as a foundation to submit a request.",
   "dashboardDetailPage": {
     "activeUsers": {
-      "recentActivity": "Activité Récente",
-      "totalToday": "Total des utilisateurs actifs aujourd'hui: {{count}}",
-      "aliceActivity": "Alice Johnson - Connectée il y a 2 heures, a vu 5 pages.",
-      "bobActivity": "Bob Williams - Profil mis à jour à 10h30.",
-      "carolActivity": "Carol Davis - s'est jointe hier, terminée à bord.",
-      "davidActivity": "David Brown - Listes du marché visualisé."
+      "recentActivity": "Recent Activity",
+      "totalToday": "Total active users today: {{count}}",
+      "aliceActivity": "Alice Johnson - Logged in 2 hours ago, viewed 5 pages.",
+      "bobActivity": "Bob Williams - Updated profile at 10:30 AM.",
+      "carolActivity": "Carol Davis - Joined yesterday, completed onboarding.",
+      "davidActivity": "David Brown - Viewed marketplace listings."
     },
     "newOrders": {
-      "recentOrders": "Commandez des récentes",
+      "recentOrders": "Recent Orders",
       "table": {
-        "orderId": "Id commande",
-        "product": "Produire",
-        "amount": "Montant",
-        "status": "Statut"
+        "orderId": "Order ID",
+        "product": "Product",
+        "amount": "Amount",
+        "status": "Status"
       },
       "status": {
-        "paid": "Bénéficiaire",
-        "pending": "En attitude"
+        "paid": "Paid",
+        "pending": "Pending"
       },
-      "totalThisWeek": "Total des commandes cette semaine: {{count}}",
+      "totalThisWeek": "Total orders this week: {{count}}",
       "order789": "#ORD789",
-      "order790": "# Ord790",
-      "order791": "# Ord791",
-      "ecotoysBlocks": "Blocs en bois Ecotoys",
-      "freshBitesMeal": "Plan de repas frais",
-      "artFunPack": "Pack créatif artfun"
+      "order790": "#ORD790",
+      "order791": "#ORD791",
+      "ecotoysBlocks": "EcoToys Wooden Blocks",
+      "freshBitesMeal": "FreshBites Meal Plan",
+      "artFunPack": "ArtFun Creative Pack"
     },
     "openJobs": {
-      "currentPositions": "Postes actuelment ouverts",
-      "applications": "{{count}} candidatures",
-      "totalOpenPositions": "Total des Postes ouverts: {{count}}",
-      "leadEducatorGeneva": "Éducateur principal - Genève",
-      "assistantEducatorLausanne": "Éducateur adjoint - Lausanne",
-      "daycareDirectorZurich": "Directeur de la garderie - Zurich",
+      "currentPositions": "Current Open Positions",
+      "applications": "Candidatures",
+      "totalOpenPositions": "Total Open Positions",
+      "leadEducatorGeneva": "Lead Educator - Geneva",
+      "assistantEducatorLausanne": "Assistant Educator - Lausanne",
+      "daycareDirectorZurich": "Daycare Director - Zurich",
       "status": {
-        "open": "Ouvert",
-        "interviewing": "En entretien"
+        "open": "Ouvrir",
+        "interviewing": "Interviewing"
       }
     },
     "pageViews": {
-      "keyMetrics": "Indique aux clés",
-      "totalToday": "Vues totalise aujourd'hui:",
-      "uniqueVisitors": "Les visiteurs uniques:",
-      "mostViewed": "Page la Plus Vue:",
-      "dashboardViews": "/ Tableau de bord (560 vues)",
-      "avgSession": "Session Moyenne:",
-      "sessionDuration": "4 min 15 s",
-      "mockChartText": "DONNES GRAPHIQUES FICTIVES DE TYPE {{Type}}"
+      "keyMetrics": "Key Metrics",
+      "totalToday": "Total page views today",
+      "uniqueVisitors": "Unique visitors",
+      "mostViewed": "Most viewed pages",
+      "dashboardViews": "/dashboard (560 views)",
+      "avgSession": "Average session duration",
+      "sessionDuration": "4m 15s",
+      "mockChartText": "Mock chart visualization"
     },
-    "defaultTitle": "Détails",
-    "detailsFor": "Détails pour: {{PagedisplayTitle}}",
-    "noSpecificView": "Aucune vue DétAILée répondible couler \"{{PagedisplayTitle}}\"."
+    "defaultTitle": "Dashboard Detail",
+    "detailsFor": "Details for",
+    "noSpecificView": "No specific view selected"
   },
   "fileGallery": {
     "actions": {
-      "preview": "Prévisualisation",
+      "preview": "Preview",
       "download": "Télécharger",
-      "rename": "Rebaptiser",
+      "rename": "Rename",
       "delete": "Supprimer"
     },
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fichier?",
-    "uploadButton": "Télécharger le fichier",
+    "confirmDelete": "Are you sure you want to delete this file?",
+    "uploadButton": "Upload File",
     "emptyState": {
-      "title": "Pas encore de fichiers téléchargés",
-      "message": "Téléchargez votre premier fichier pour commencer"
+      "title": "No files uploaded yet",
+      "message": "Upload your first file to get started"
     }
   },
   "hrDocumentCard": {
-    "categoryLabel": "Catégorie",
+    "categoryLabel": "Category",
     "languageLabel": "Langue",
     "versionLabel": "Version",
-    "toggleFavoriteLabel": "Bascule favori",
-    "lastUpdatedLabel": "Dernière mise à jour",
-    "downloadingAlert": "Document de téléchargement ...",
+    "toggleFavoriteLabel": "Toggle Favorite",
+    "lastUpdatedLabel": "Last Updated",
+    "downloadingAlert": "Downloading document...",
     "downloadButton": "Télécharger",
-    "previewingAlert": "Document de prévisualisation ...",
-    "previewButtonLabel": "Prévisualisation",
+    "previewingAlert": "Previewing document...",
+    "previewButtonLabel": "Preview",
     "editButtonLabel": "Modifier",
     "deleteButtonLabel": "Supprimer"
   },
-  "Partner Onboarding TBD": "Partenaire à embarquement TBD",
-  "Close Job TBD": "Closez le travail TBD",
-  "Favorite TBD": "TBD préféré",
-  "Adding a new candidate - Functionality TBD.": "Ajout d'un nouveau candidat - fonctionnalité TBD.",
-  "Filter UI TBD": "Filtre UI TBD",
-  "Apply Job Filters TBD": "Appliquer des filtres à l'emploi TBD",
-  "Apply Candidate Filters TBD": "Appliquer les filtres candidats TBD",
+  "Partner Onboarding TBD": "Partner Onboarding TBD",
+  "Close Job TBD": "Close Job TBD",
+  "Favorite TBD": "Favorite TBD",
+  "Adding a new candidate - Functionality TBD.": "Adding a new candidate - Functionality TBD.",
+  "Filter UI TBD": "Filter UI TBD",
+  "Apply Job Filters TBD": "Apply Job Filters TBD",
+  "Apply Candidate Filters TBD": "Apply Candidate Filters TBD",
   "serviceRequestModal": {
-    "preferredDateLabel": "Date préférée (facultative)",
-    "notesLabel": "Remarques / Exigences spécifiques (facultatif)",
-    "submitButton": "Soumettre une demande"
+    "preferredDateLabel": "Preferred Date (Optional)",
+    "notesLabel": "Notes / Specific Requirements (Optional)",
+    "submitButton": "Envoyer la demande"
   },
-  "Cantonal Policies": "Politiques cantonales",
-  "National Regulations": "Règlements nationaux",
-  "Compliance Requirements": "Exigences de conformité",
-  "Updates & News": "Mises à jour et nouvelles",
-  "Official Downloads": "Téléchargements officiels",
+  "Cantonal Policies": "Cantonal Policies",
+  "National Regulations": "National Regulations",
+  "Compliance Requirements": "Compliance Requirements",
+  "Updates & News": "Updates & News",
+  "Official Downloads": "Official Downloads",
   "discountTerminationsPage": {
     "actions": {
-      "sendNoticesAlert": "{{count}} Avis de Résiliation Envoyés. ",
-      "markCompleted": "Marquer Comme Termé",
-      "sendNotices": "Envoyer Les Avis de Résiliation ({{Count}})"
+      "sendNoticesAlert": "Send notices to selected vendors",
+      "markCompleted": "Mark Completed",
+      "sendNotices": "Send Notices"
     },
     "table": {
-      "vendor": "Vendeur",
-      "daycare": "Crèche",
-      "activeSince": "Actif depuis",
-      "reason": "Raison",
-      "actions": "Actes"
+      "vendor": "Vendor",
+      "daycare": "Garderie",
+      "activeSince": "Active Since",
+      "reason": "Reason",
+      "actions": "Actions"
     },
     "queue": {
-      "title": "Action requise: Résiliations de Rabais",
-      "description": "Les Crèches Suivotes aT quittent la plaque formelle. ",
-      "tableTitle": "Déposer d'attente de résiliation"
+      "title": "Termination Queue",
+      "description": "Manage discount terminations and send notices",
+      "tableTitle": "Pending Terminations"
     },
     "allActive": {
-      "title": "Toutes les relations client actifs",
-      "description": "Ceci est une liste complete de toutes les relations client actuelment active, tees que marquées par les les vendeurs.",
-      "tableTitle": "Liste des clients actifs"
+      "title": "All Active Discounts",
+      "description": "View and manage all currently active discount agreements",
+      "tableTitle": "Active Discounts"
     }
   },
   "educatorDashboard": {
-    "title": "Tableau de bord de l'éducateur",
-    "welcome": "Content de te revoir!",
+    "title": "Educator Dashboard",
+    "welcome": "Bon retour !",
     "profileCompletion": {
-      "title": "Complétez votre profil",
-      "subtitle": "Ajoutez plus de détails pour augmenter vos chances d'être embauché",
-      "button": "Profil complet"
+      "title": "Complete Your Profile",
+      "subtitle": "Add more details to increase your chances of being hired",
+      "button": "Complete Profile"
     },
     "applicationStatus": {
-      "title": "Statut de demande",
-      "submitted": "Soumis",
-      "viewed": "Visualisé",
+      "title": "Application Status",
+      "submitted": "Submitted",
+      "viewed": "Viewed",
       "interviews": "Interviews",
-      "offers": "Offres",
-      "button": "Afficher toutes les applications"
+      "offers": "Offers",
+      "button": "View All Applications"
     },
     "skills": {
-      "title": "Compétences et certifications",
-      "subtitle": "Présentez vos qualifications et expertise",
-      "button": "Mettre à jour les compétences"
+      "title": "Skills & Certifications",
+      "subtitle": "Showcase your qualifications and expertise",
+      "button": "Update Skills"
     },
     "recommendations": {
-      "title": "Recommandations d'emploi",
-      "match": "Correspondre"
+      "title": "Job Recommendations",
+      "match": "Match"
     }
   },
-  "Profile changes saved!": "Modifications de profil enregistrées!",
+  "Profile changes saved!": "Profile changes saved!",
   "foundationDashboard": {
-    "title": "Tableau de Bord Fondation",
-    "welcomeMessage": "Bienvenue, {{nom}}!",
+    "title": "Foundation Dashboard",
+    "welcomeMessage": "Welcome to your foundation dashboard",
     "quickStats": {
-      "title": "Statistiques Rapides"
+      "title": "Quick Stats"
     },
-    "todayAtGlance": "Aperçu D'Aujour'hui",
+    "todayAtGlance": "Today at a Glance",
     "activity": {
-      "title": "Activité Récente"
+      "title": "Recent Activity"
     },
     "quickActions": {
-      "title": "Actions Rapides"
+      "title": "Quick Actions"
     },
     "quickMessage": {
-      "title": "Message Rapide",
-      "placeholder": "Envoyer Un Message Rapide au personnel ..."
+      "title": "Quick Message",
+      "placeholder": "Type your message here..."
     }
   },
   "userRoles": {
     "Product Supplier": "Fournisseur de produits",
-    "Service Provider": "Fournisseur de services"
+    "Service Provider": "Prestataire de services"
   },
   "errorBoundary": {
-    "somethingWentWrong": "Quelque chose s'est mal passé",
-    "sorryMessage": "Nous sommes désolés, mais quelque chose d'inattendu s'est produit. ",
-    "errorDetails": "Détails d'erreur",
-    "tryAgain": "Essayer à nouveau",
-    "reloadPage": "Page de rechargement"
+    "somethingWentWrong": "Something went wrong",
+    "sorryMessage": "We're sorry, but something unexpected happened. Please try again.",
+    "errorDetails": "Error Details",
+    "tryAgain": "Try Again",
+    "reloadPage": "Reload Page"
   },
   "addPromoCodeModal": {
-    "placeholder": "Ajouter / modifier le code promotionnel modal (espace réservé)"
+    "placeholder": "Add/Edit Promo Code Modal (Placeholder)"
   },
   "fileUploadZone": {
-    "dragAndDrop": "ou glisser et laisser tomber"
+    "dragAndDrop": "or drag and drop"
   },
   "appContext": {
-    "useAppContextError": "USEAppContext doit être utilisé dans un appcontextprovider"
+    "useAppContextError": "useAppContext must be used within an AppContextProvider"
   },
   "cartContext": {
-    "useCartError": "Usecart doit être utilisé dans un carto"
+    "useCartError": "useCart must be used within a CartProvider"
   },
   "messagingContext": {
-    "userNotLoggedIn": "Utilisateur non connecté",
-    "useMessagingError": "L'utilisation doit être utilisée dans un MessagingProvider"
+    "userNotLoggedIn": "User not logged in",
+    "useMessagingError": "useMessaging must be used within a MessagingProvider"
   },
   "notificationContext": {
-    "useNotificationsError": "Les unénotifications doivent être utilisées dans une notification Provider"
+    "useNotificationsError": "useNotifications must be used within a NotificationProvider"
   }
 }

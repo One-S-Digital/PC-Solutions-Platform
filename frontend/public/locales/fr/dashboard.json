@@ -7,51 +7,51 @@
     "newOrders": "Commande de Nouvelles",
     "openJobs": "Postes ouverts",
     "pageViews": "Vues de page",
-    "recentActivity": "Activité Récente",
+    "recentActivity": "Dernière activité",
     "quickLinks": "Rapides de privilèges",
     "browseMarketplace": "Parcourir Le Marché",
-    "postNewJob": "Publier Une Offre",
-    "manageUsers": "Gérer Les Utilisateurs",
+    "postNewJob": "Publier un Emploi",
+    "manageUsers": "Manage Users",
     "platformSettings": "Paramètres Plateforme",
-    "activityLina": "Lina Meier A publié Unité un «Infirmière Pédiatrique»",
+    "activityLina": "Lina Meier une unité publiée une « Infirmière Pédiatrique »",
     "activityEcoToys": "Ecotoys gmbH a mis à jour le produit \"Blocs en Bois\"",
     "activityJohn": "John Smith A Approuvé 3 Nouveaux Comptes Parents",
     "activityParent": "Les parents illustrent un soumis un de la demande pour \"crèche les Petits choux\"",
-    "viewDetailsFor": "Voir les details pour {{nom}}",
+    "viewDetailsFor": "Voir les détails pour {{nom}}",
     "timeAgo": {
-      "minutes": "{{count}} il y a des minutes Quelques",
+      "minutes": "{{count}} il y a des minutes quelques",
       "hours": "{{count}} il y a des heures",
       "yesterday": "Chahut"
     },
-    "upcomingMeetings": "RÉUNIONS À VENIR",
+    "upcomingMeetings": "La 21e séance* (privée) du Comité du Conseil de sécu-rité créée par la résolution 1132 (1997) concernant la situation la Sierra Leone aura lieu le mercredi 21 mars 2001 à 16 heures dans la salle de conférence 5.",
     "quickActions": "Actions Rapides",
     "overview": "Aperçu",
-    "announcements": "Anonces",
+    "announcements": "Annonces Publicitaires",
     "notifications": "Notifications"
   },
   "sidebar": {
-    "billingSubscription": "Facturation et abandon",
+    "billingSubscription": "Facturation et avis",
     "dashboard": "Tableau de Bord",
-    "marketplace": "Place de Marché",
+    "marketplace": "1, Place du marché",
     "products": "Produits",
     "services": "Services",
     "recruitment": "Recrutement",
-    "jobListings": "Offres d'Emploi",
+    "jobListings": "Offres Postées",
     "candidatePool": "Réserve de Candidats",
     "eLearning": "Formation en ligne",
     "messages": "Messages",
     "users": "Utilisateur",
-    "allUsers": "Tous les utilisateurs",
+    "allUsers": "Afficher tous les utilisateurs",
     "admins": "Administrateurs",
     "foundations": "Affénieurs",
     "productSuppliers": "Quatréniseurs",
     "serviceProviders": "Présatares",
     "parents": "Parents",
     "content": "Contenu",
-    "hrProcedures": "Procédures rh",
+    "hrProcedures": "Procédures RH",
     "statePolicies": "Directives cantonales",
     "discountTerminations": "Résiliations de Rabais",
-    "systemMonitoring": "Système de surveillance",
+    "systemMonitoring": "Système de Surveillance",
     "partners": "Partenaires",
     "platformSettings": "Paramètres Plateforme",
     "designSystem": "Système de Design",
@@ -68,7 +68,7 @@
     "analytics": "[FR] sidebar.analytics"
   },
   "navbar": {
-    "notificationsCount": "Notifications: {{count}}",
+    "notificationsCount": "Notifications  : {{count}}",
     "unreadMessages": "Messages non lus: {{count}}",
     "searchPlaceholder": "RECHERCHER SUR LA PLAQUE FORMEL ...",
     "toggleNavigation": "[FR] navbar.toggleNavigation",
@@ -83,32 +83,32 @@
   },
   "stockStatus": {
     "instock": "Enterre",
-    "outofstock": "Rupture de stock",
+    "outofstock": "Rupture de stock.",
     "lowstock": "Stock de stock",
-    "discontinued": "Artiste"
+    "discontinued": "artiste"
   },
   "settingsPage": {
-    "billingSubscription": "Facturation et abonement",
+    "billingSubscription": "Facturation et Abonement",
     "title": "Paramètres",
     "accountSecurity": "Compte et Sécurit"
   },
   "marketplacePage": {
     "emptyStates": {
-      "noServices": "Aucun service disponible",
-      "noProductSuppliers": "Aucun produit de produit répondiable"
+      "noServices": "Aucun service n'est disponible",
+      "noProductSuppliers": "Aunun produit de produit répétiable"
     },
     "subtitles": {
       "productSuppliers": "Fournisseurs de Produits",
       "serviceProviders": "Fournisseurs de services"
     },
     "tabs": {
-      "productSuppliers": "Fournisseurs de produits",
+      "productSuppliers": "Fournisseurs de Produits",
       "serviceProviders": "Fournisseurs de services"
     },
     "buttons": {
-      "partnerOnboarding": "Partenaire à Bord"
+      "partnerOnboarding": "Partenaire à bord"
     },
-    "infoAlert": "Partenaire à l'embarquage TBD",
+    "infoAlert": "Partenaire à embarquette à débattre",
     "searchPlaceholder": "Partenaires de Recherche ...",
     "labels": {
       "category": "Catégorie",
@@ -122,19 +122,19 @@
       "ratingDesc": "Remarque (Haut à bas)"
     },
     "ariaLabels": {
-      "gridView": "Passeur à la Vue de la Grille",
-      "listView": "Passeur à la Vue de Liste"
+      "gridView": "Passeur à la vue de la grille",
+      "listView": "Passeur à la vue de liste"
     }
   },
   "partnerDetailPage": {
-    "productOutOfStock": "Le produit est actulement en rupture de stock",
-    "productAddedToOrder": "Produit ajouté à la comm",
+    "productOutOfStock": "Il ne reste plus de places disponibles dans cette Classe LMS.",
+    "productAddedToOrder": "Produit ajouté à la command",
     "addToOrderButton": "Ajouter à la commande",
     "loadingPartnerDetails": "Détails du Partenaire de Charment ...",
     "invalidPartnerIdMessage": "Impossible de Trouver Un Utilisateur Associé à CETTe Organisation à un Message.",
     "contactInfoTitle": "Coordonnées",
-    "directOrderButton": "Commande directe",
-    "aboutTitle": "À propos de",
+    "directOrderButton": "Commande Direte",
+    "aboutTitle": "À propos de...",
     "ratingsReviewsTitle": "Notes et avis",
     "ratingText": "Notation",
     "reviewsPlaceholder": "AUCUNE CRITIQUE ENCORE",
@@ -143,54 +143,54 @@
     "noServicesListed": "AUCUN Service Répertorié",
     "promoCodeTitle": "Promotion de code",
     "promoCodePlaceholder": "Entrez le Code promotionnel",
-    "applyPromoButton": "Appliquant",
+    "applyPromoButton": "Applicateur",
     "onlyFoundationsRequestService": "Seules Les Fondations peuvent DeMander des Services",
     "requestSubmittedAlert": "Demande de Service Soumise Avec Succils"
   },
   "adminPlatformSettings": {
     "title": "Paramétres de la Formelle de la plaque",
     "general": {
-      "title": "Informations Générales",
+      "title": "INFORMATIONS GÉNÉRALES",
       "nameLabel": "Nom de la Plaque Formelle",
       "descriptionLabel": "Description (Métadonnees)"
     },
     "branding": {
-      "title": "Image de Marque",
+      "title": "Image de marque",
       "logoLabel": "Logo de la plaque plaque",
-      "faviconLabel": "Favicon de la plaque formelle"
+      "faviconLabel": "Favicon de la plaque plaque"
     }
   },
   "organizationProfileForm": {
-    "saveSuccess": "Profil de l'organisation a Écouché AVEC succés"
+    "saveSuccess": "Profil de l'organisation a Écouché AVEC SUCCÉS"
   },
   "foundationDashboardPage": {
     "title": "Tableau de Bord de base",
     "welcome": "Bienvenue dans le tableau de bord de fondation",
     "overview": "Aperçu",
-    "recentActivity": "Activité Récente",
+    "recentActivity": "Dernière activité",
     "quickActions": "Actions Rapides"
   },
   "foundationAnalyticsPage": {
-    "mockDataVisualization": "Visualisation des Donnés Simulés",
+    "mockDataVisualization": "Visualisation des Donnés simulés",
     "spendingByCategory": "Dépenses par catégorie",
     "parentLeadConversion": "Conversion de plomb parent",
     "staffTrainingCompletion": "Achèvement de la Formation du Personnel",
     "enrollmentTrend": "Tendance"
   },
   "foundationLeadsPage": {
-    "title": "Les chefs de participants parents",
+    "title": "Les chefs de chefs des parents",
     "accessDenied": {
-      "title": "Accès refus",
-      "message": "Vous DeVEZ ÊTRE CONNECTÉ EN TANT QUE BASE AVEC UN IDENTIFIANT D'ORGANISATION VALIDE PAGE DE CETTE AFFICHER."
+      "title": "Accès refusé",
+      "message": "Vous DEVEZ ÊTRE connecté EN TANT QUE BASE AVEC UN IDENTIFIANT D'ORGANISATION VALIDE PAGE DE CE AFFICHER."
     },
     "emptyState": {
       "title": "Pas de pistes entrantes",
-      "message": "Il n’y a actuelment Autre nouvelle demande de parents correspondant à vote jarderie."
+      "message": "Il n'y a actuelment aucune nouvelle demande de parents correspondant à vote jarderie."
     }
   },
   "foundationOrdersAppointmentsPage": {
     "productOrdersTitle": "Commandes de Produits",
-    "exportCsvProductAlert": "Commande de produits CSV Exportation A Commencé",
+    "exportCsvProductAlert": "Commande de Produits CSV Exportation A Commencé",
     "exportCsvButton": "Exportateur au format CSV",
     "noProductOrders": "Aucune commande de Protuit Trouvé",
     "table": {
@@ -200,21 +200,21 @@
       "total": "Total",
       "date": "Date",
       "status": "Statut",
-      "actions": "Actes",
+      "actions": "Actes.",
       "provider": "Fournisseur",
       "service": "Service"
     },
-    "cancelOrderAlert": "Commande annulée avec succès",
+    "cancelOrderAlert": "Commande Annulée AVEC succluls",
     "serviceAppointmentsTitle": "Rendez-vous de service",
-    "exportCsvServiceAlert": "Rendez-vous de service CSV Export commencé",
-    "noServiceAppointments": "AUCUN RENDEZ-VOS DE SERVICE TRUVÉ",
+    "exportCsvServiceAlert": "Rendez-vous de service CSV Export a started",
+    "noServiceAppointments": "Aucun rendez-vous de service",
     "unknownProvider": "Fournisseur",
-    "preferredAbbr": "Pref.",
-    "notApplicable": "N / A",
+    "preferredAbbr": "Préf.",
+    "notApplicable": "DONC.",
     "rescheduleAlert": "Rendez-vous reprogrammé AVEC succés",
     "rescheduleButton": "Reprogrammer",
     "productOrdersTab": "Commandes de Produits",
-    "serviceAppointmentsTab": "Rendez-Vous de service"
+    "serviceAppointmentsTab": "Rendez-vous de service"
   },
   "foundationOrganisationProfilePage": {
     "mock": {
@@ -229,20 +229,20 @@
         "logoLabel": "Logo",
         "coverImageLabel": "Image de couverture",
         "pedagogyStatementLabel": "Déclaration Pédagogique",
-        "pedagogyStatementPlaceholder": "Déducatif de la Déducative de vote décrède ..."
+        "pedagogyStatementPlaceholder": "Déducteur de la déducatif de vote décrède ..."
       },
       "operations": {
         "title": "Détails Opérationnels",
         "openingHoursLabel": "Heures d'ouverture",
-        "openingHoursPlaceholder": "Ex: Lun-Ven: 07:30 - 18:30",
+        "openingHoursPlaceholder": "Ex: Lun-Ven: 07h30 - 18h30",
         "contactInfoLabel": "Infos de Contact Publie",
-        "contactInfoPlaceholder": "Téléphone ou Envoyez un Courriel à public pour les parents"
+        "contactInfoPlaceholder": "Téléphonez ou Envoyez un Courriel à public pour les parents"
       },
       "online": {
-        "title": "Présence en ligne et demande",
+        "title": "PRÉSENCE EN LIGNE ET DEMANDE",
         "bookingLinkLabel": "Privilège de Réservation de Visite en Ligne",
         "bookingLinkPlaceholder": "Ex: https://cal.com/votre-creche",
-        "socialMediaLinkLabel": "Privilège média social",
+        "socialMediaLinkLabel": "Privilège médias sociaux",
         "socialMediaLinkPlaceholder": "EX: https://facebook.com/votre-creche",
         "acceptingLeadsLabel": "Accepte Actuellement Les Nouvelles Demandes de parents"
       }
@@ -250,10 +250,10 @@
     "saveButton": "Égisseur Les infos Supplémentaires"
   },
   "foundationSupportPage": {
-    "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC Succils",
+    "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC SUCCILS",
     "ticketForm": {
-      "subjectPlaceholder": "BReve Description de Votre Problame",
-      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
+      "subjectPlaceholder": "Breve Description de Votre Problame",
+      "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
     }
   },
   "parentDashboardPage": {
@@ -264,36 +264,36 @@
   },
   "parentEnquiriesPage": {
     "accessDenied": {
-      "title": "Accès refus",
-      "message": "Vous DevEz Être connecté en trent que parent pour afficher les demandes"
+      "title": "Accès refusé",
+      "message": "Vous DeVEZ ÊTRE CONNECTÉ EN TRENT QUE PARENT PARENT AFFICHER LES DEMANDES"
     },
     "emptyState": {
-      "title": "Aucune demande enrore",
+      "title": "Aunuse Demande Encore",
       "message": {
         "0": "Vous N'avez pas Encore Soumis de demande de resensiaux.",
-        "1": "Commencez par remplir le Forulaire d'Enquête pour résoudre les options de Garde d'Enfants appropriés."
+        "1": "Commencez par remplir le Forulaire d'Enquête pour résoudre les options de Garde d'Enfants appropriées."
       }
     },
     "card": {
-      "title": "Dédoue de demande",
+      "title": "Détails de la demande",
       "submitted": "Soumis Sur {{date}}",
-      "childInfo": "Informations sur l'Enfant",
+      "childInfo": "Child's Information",
       "notes": "Notes Supplémentaires",
-      "responsesTitle": "Réponses",
+      "responsesTitle": "Réponses.",
       "awaitingMatch": "En attitude de match",
-      "message": "Votre demande un envoyée été aux quatre.",
-      "waitingForMoreResponses": "En attendant plus de réponses..."
+      "message": "Votre demande un envoyé était aux quatre.",
+      "waitingForMoreResponses": "En préposé plus de réponses ..."
     }
   },
   "parentSupportPage": {
     "faq": {
       "matchingProcess": {
         "q": "Commentaire Fonctionne le Processus de correspondance?",
-        "a": "Notre algorithme correspond aux besoins de votre enfant avec les crèches disponibles en fonction de l'emplacement, de l'âge, des exigences spéciales et de la disponibilité."
+        "a": "Notre algorithme correspond aux besoins de vote de défant des vencs lescarts de crèches en forme de l'emplacement, de l'âge, des exigences Spéciales et de la disponibilité."
       },
       "responseTime": {
         "q": "À quelle vitesse vais-je recevoir des réponsses?",
-        "a": "La plupart des crèches réagissent dans les 24 à 48 heures."
+        "a": "La Plupart des Crèches Réagissente dans les 24 à 48 Heures."
       },
       "dataSecurity": {
         "q": "MES Informations Personnelles Sont-Ellies Sécurisés?",
@@ -303,66 +303,66 @@
   },
   "educatorDashboardPage": {
     "title": "Tableau de Bord de l'Éducateur",
-    "welcome": "Bienvenue dans le tableau de bord éducateur",
-    "applications": "Applications MES",
+    "welcome": "Bienvenue dans le tableau de bord éducteur",
+    "applications": "Applications mes",
     "jobBoard": "Comité de Travail"
   },
   "educatorApplicationsPage": {
     "status": {
       "new": "Nouveau",
-      "viewed": "Visualiser",
+      "viewed": "viewed",
       "interview": "Entretien",
-      "offer": "Se promener",
-      "declined": "Refuser"
+      "offer": "Citation",
+      "declined": "Refusé"
     },
     "table": {
       "jobTitle": "Titre d'emploi",
       "creche": "Crèche",
       "status": "Statut",
-      "lastUpdated": "Dernière Mise à Jour",
-      "actions": "Actes"
+      "lastUpdated": "Dernière mise à jour",
+      "actions": "Actes."
     },
-    "viewingDetailsFor": "Affichage des Détails",
-    "emptyState": "AUCUNE Application Trouvee",
-    "footerNote": "Les applications Sont mises à Jour en Temps Raine"
+    "viewingDetailsFor": "Afficher les détails",
+    "emptyState": "Dépoi de l'application Autre",
+    "footerNote": "Les applications sont mises à jour en temps réel"
   },
   "educatorJobBoardPage": {
-    "postedOn": "Publié Sur",
+    "postedOn": "Publié Sur:",
     "searchPlaceholder": "EMPLOIS DE RECHERCHE ...",
-    "noJobsFound": "Aunun Emploi Trouvé"
+    "noJobsFound": "Aucune annonces trouvées"
   },
   "educatorProfilePage": {
     "editProfile": "Modificateur le Profil",
     "availability": {
-      "days": "Jours",
-      "times": "Foir",
-      "contract": "Contracter",
+      "days": "Perc",
+      "times": "je mais",
+      "contract": "Contrat",
       "ageGroups": "Groupes d'âge"
     },
     "education": {
-      "graduated": "Diplôme"
+      "graduated": "Diplôme."
     },
     "certifications": {
       "issued": "Émis",
-      "expires": "Expirer"
+      "expires": "Expired"
     }
   },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succés",
     "ticketForm": {
-      "subjectPlaceholder": "BReve Description de Votre Problame",
+      "subjectPlaceholder": "Breve Description de Votre Problame",
       "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
     }
   },
   "serviceProviderDashboardPage": {
     "title": "Tableau de Bord du Fournisseur de Services",
     "welcome": "Bienvenue dans le tableau de bord de vote quatre quatre services",
-    "services": "Services MES",
+    "services": "Services MES:",
     "requests": "Exige le service"
   },
   "serviceProviderAnalyticsPage": {
-    "serviceRequestsPerWeek": "Exige de Service par Semaine",
-    "topViewedServices": "Services Visualisés",
+    "serviceRequestsPerWeek": "Exige de service par sémene",
+    "topViewedServices": "Services visualisés",
     "requestsByCanton": "Exige de canton"
   },
   "serviceProviderListingsPage": {
@@ -370,9 +370,9 @@
       "category": "Catégorie",
       "delivery": "Libaison"
     },
-    "confirmDelete": "Service CE de Sûr de Vouloir Sair de Vouloir?",
-    "addNewServiceButton": "Service ajouter un nouveau",
-    "searchPlaceholder": "Services de Recherche ...",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette prestation ?",
+    "addNewServiceButton": "Ajouter une prestation",
+    "searchPlaceholder": "Services de Recherche...",
     "emptyState": {
       "title": "AUCUN Service Trouvé",
       "noMatch": "AUCUN Service NE correspond à Vos Critères de Recherche",
@@ -380,28 +380,28 @@
     }
   },
   "serviceProviderRequestsPage": {
-    "filterByStatus": "Filtratrice par statut:",
+    "filterByStatus": "Statut du Filtrateur PAR :",
     "table": {
-      "requestId": "ID DEMANDE",
-      "foundation": "Affection",
+      "requestId": "Demande d'identification",
+      "foundation": "L'affection",
       "service": "Service",
       "date": "Date",
       "status": "Statut"
     },
-    "emptyState": "AUCUNE DEMANDE DE SERVICE TRUVÉE LE LE FILTRE SÉLECTIONNÉ."
+    "emptyState": "AUCUNE DEMANDE DE SERVICE TRUVÉE LE FILTRE SÉLÉCTIONNÉ."
   },
   "serviceProviderSupportPage": {
-    "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC Succils",
+    "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC SUCCILS",
     "ticketForm": {
       "subjectPlaceholder": "BReve Description de Votre Problame",
       "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
     }
   },
   "supplierDashboardPage": {
-    "title": "Tableau de bord fournisseur",
+    "title": "Tableau de Bord Fournisseur",
     "welcome": "Bienvenue dans le tableau de bord Fournisseur",
     "products": "Mes Produits",
-    "orders": "Ordres"
+    "orders": "Commandement"
   },
   "supplierAnalyticsPage": {
     "datePickerLabel": "Sélectionner La Page de Dates",
@@ -423,22 +423,22 @@
     "addProductButton": "Ajouter un nouveau produit",
     "searchPlaceholder": "RECHERCHER PAR NOM DE PRODUIT ...",
     "table": {
-      "product": "Produire",
+      "product": "produire",
       "price": "Prix",
       "stock": "Action",
       "visibility": "Visibilité",
-      "actions": "Actes"
+      "actions": "ACTES."
     },
     "emptyState": "AUCUN PRODUITS TRUVÉ."
   },
   "supplierOrdersPage": {
     "filterByStatus": "Filtratrice par statt",
     "table": {
-      "orderId": "Commande d'identi",
+      "orderId": "Commande d'identité",
       "date": "Date",
       "total": "Total",
       "status": "Statut",
-      "foundation": "Affection"
+      "foundation": "L'affection"
     },
     "actions": {
       "ship": "Marquer comme expédié"
@@ -446,17 +446,17 @@
     "emptyState": "Aunucune Comm"
   },
   "supplierSupportPage": {
-    "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succés",
+    "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succès",
     "ticketForm": {
-      "subjectPlaceholder": "BReve Description de Votre Problame",
+      "subjectPlaceholder": "Breve Description de Votre Problame",
       "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
     }
   },
   "adminContentManagementDashboardPage": {
     "title": "Geste du contenu",
-    "content": "Aperçu du Contenu",
+    "content": "Aperçu du contenu",
     "policies": "Geste des politiques",
-    "announcements": "Anonces"
+    "announcements": "Annonces Publicitaires"
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
@@ -466,14 +466,14 @@
       "title": "ÉTAT GÉNÉRAL DU SYSTÈME"
     },
     "components": {
-      "api": "API backend",
+      "api": "API Back End",
       "database": "Base de Donnés",
-      "authService": "Service d'authentification"
+      "authService": "Service d'identification"
     },
     "metadata": {
-      "environment": "Environnement",
+      "environment": "Protection de l'environnement",
       "version": "Version",
-      "uptime": "Désonabilité",
+      "uptime": "Désonibilité",
       "lastCheck": "Dernier Contrôle"
     },
     "serverPerformance": {
@@ -485,33 +485,33 @@
     },
     "databasePerformance": {
       "title": "Performance de la base de Donnés",
-      "activeConnections": "Les connexions actifs",
+      "activeConnections": "Les Connexions actifs",
       "queryTime": "Temps de Besoin Moyen",
       "storage": "Utilisation du stockage",
       "connectionHealth": "Santé de la Connexion"
     },
     "appPerformance": {
-      "title": "Performance de l'application",
+      "title": "Performance de L'application",
       "activeUsers": "Actifs des utilisateurs",
       "requestsPerMinute": "Requêtes / min",
       "avgResponseTime": "Temps de Rép.",
-      "errorRate": "Taux d'Erreur"
+      "errorRate": "Taux d'horreur"
     },
     "recentEvents": {
       "title": "Événements Systèmes"
     }
   },
   "adminDiscountTerminationsPage": {
-    "title": "Terminations à Prix Réitit",
-    "terminations": "Actifs des terminaisons",
+    "title": "Terminations à la rémit",
+    "terminations": "Les réseliations actifs",
     "manage": "Gérer les terminaisons"
   },
   "pricingPage": {
     "title": "Procrèche Solutions - Guide de Tarification",
-    "plans": "Plans des fausses",
+    "plans": "Forfaits Disponibles",
     "features": "Planificateur Les Fonctionnalités",
-    "billing": "Informations de facturation",
-    "monthly": "Mensuel",
+    "billing": "Détails de facturation",
+    "monthly": "Mensuellement",
     "annual": "Anneaux",
     "saveUpTo10": "(Économiser jusqu'à 10%)",
     "popular": "Plus populaire",
@@ -519,14 +519,14 @@
     "selectAndContinue": "Sélectionner et continuer",
     "choosePlan": "CHOISIR LE PLAN",
     "titleSignup": "Plan de vote Choissez",
-    "subtitleSignup": "Sélectionnez le Plan Qui correspond le Mieux à Vos Besoins",
-    "subtitle": "SÉLECTIONNEMENT LE PLAN PARFAIT POUR L'ORGANISATION",
-    "suppliersAndProvidersTitle": "Procrèche Solutions - Tarification Pour Quatrenseurs et Pré-Pré-Présataires de Services"
+    "subtitleSignup": "Sélectionnez le Plan Qui correspond au Mieux à Vos Besoins",
+    "subtitle": "Sélectionnem le Plan Parfait pour l'organisation",
+    "suppliersAndProvidersTitle": "Procrèche Solutions - Tarification Pour Quatrenènes et Pré-Pré-Présataires de Services"
   },
   "recruitmentPage": {
     "title": "Recrutement",
     "jobDetailModal": {
-      "title": "Détails de l'offre",
+      "title": "Détails de l'offre:",
       "apply": "Postuler Maintenant",
       "close": "Fermer",
       "overviewTitle": "Aperçu du poste",
@@ -538,20 +538,20 @@
     },
     "jobPostModal": {
       "title": "Poste de poste",
-      "submit": "Soumettre un posté d'emploi",
-      "editTitle": "Modificateur la publication d'emploi",
-      "addTitle": "Ajouter une nouvelle publication d'emploi",
+      "submit": "Soumettre un Posté d'Emploi",
+      "editTitle": "Modificateur de la publication d'emploi",
+      "addTitle": "AJOUTER UNE NOUVELLE PUBLICATION D'EMPLOOI",
       "jobTitle": "Titre d'emploi",
       "location": "Emplacement",
       "contractType": "Type de contrat",
       "startDate": "Date de début",
       "salaryRange": "Fourchette Salariale (optionnel)",
       "salaryRangePlaceholder": "Ex: CHF 60'000 - 70'000 PAR AN",
-      "description": "Description de l'Emploi",
+      "description": "Description de l'emploi",
       "postJob": "Poste de poste"
     },
     "viewApplicantsModal": {
-      "title": "Afficher Les Candidats",
+      "title": "Candidats au spectacle",
       "applicants": "Candidats",
       "noApplicants": "Pas Encore de Candidats",
       "appliedOn": "Applié Sur"
@@ -559,55 +559,55 @@
     "candidateCard": {
       "name": "Nom de Candidat",
       "experience": "Expérience",
-      "skills": "Compétence",
-      "viewProfile": "Afficher le Profil"
+      "skills": "Skill",
+      "viewProfile": "Afficher le profil"
     },
     "buttons": {
       "viewApplicants": "Voi des Candidats",
       "filters": "Filtres",
       "postNewJob": "Publier un Nouvel Emploi",
-      "applyFilters": "Appliquer des filtres",
+      "applyFilters": "Appliquant des filtres",
       "addCandidate": "Ajouter un candidat"
     },
-    "confirmRemoveCandidate": "Etes-vous sûr de vouloir supprimer ce candidat ?",
+    "confirmRemoveCandidate": "Les êtes-vous Sûr de Vouloir Supprimer ce Candidat?",
     "jobOffers": {
-      "searchPlaceholder": "Recherchez des offres d'emploi...",
+      "searchPlaceholder": "Recherchez des Offres d'Emploi ...",
       "filterTitle": "Emploi de Filtre",
-      "activeJobsCount": "{{count}} Travaux Actives",
-      "emptyState": "Aunuse Offre d'Emploi Trouvee"
+      "activeJobsCount": "{{count}} Travaux Actifs",
+      "emptyState": "AUNUSE OFFRE D'EMPLOI TRUNVEE"
     },
     "labels": {
       "location": "Emplacement",
       "allContractTypes": "Tous les types de contrats",
-      "allStatuses": "Tous les statuts",
-      "allRoles": "Tous Les Rôles",
+      "allStatuses": "Tous les Statuts",
+      "allRoles": "Tous les Rôles",
       "region": "Région",
-      "availabilityDate": "Date de Disponibilité"
+      "availabilityDate": "Date Disponibilité"
     },
     "candidatePool": {
       "searchPlaceholder": "Rechercher Les Candidats ...",
-      "filterTitle": "Filtrateur Les Candidats",
-      "emptyState": "Aunun Candidat Trouvé"
+      "filterTitle": "Filtrer les candidats",
+      "emptyState": "Aucun candidat trouvé"
     },
     "tabs": {
-      "jobOffers": "Offres d'Emploi",
+      "jobOffers": "Offres Postées",
       "candidatePool": "Pool de Candidats"
     }
   },
   "messagesPage": {
     "title": "Messages",
-    "newGroupButton": "Groupe de nouveau",
+    "newGroupButton": "Nouveau groupe",
     "noConversationSelectedTitle": "Sélectionnez une conversation",
     "noConversationSelectedSubtitle": "Choisissez Parmi Vos Conversations existantes Verser le Débutant à Disqueur.",
     "noConversationsYet": "Vous N'avez pas Encore des conversations.",
-    "noConversationsFound": "Conversation aucune trouvée.",
+    "noConversationsFound": "Conversation Une Trouvée.",
     "filters": {
       "all": "Tous",
-      "unread": "Non lus"
+      "unread": "Non lu"
     }
   },
   "notificationsPage": {
-    "clearAll": "Navage de l'effacer",
+    "clearAll": "Effacer tout",
     "emptyState": {
       "title": "Pas de notifications",
       "message": "Vous ou Tous Rattrapés!"
@@ -615,24 +615,24 @@
   },
   "fileGalleryPage": {
     "title": "Galerie de dossiers",
-    "files": "Tous Les Fichiers",
+    "files": "Toutes les ressources",
     "upload": "Télécharger des Fichiers"
   },
   "eLearningPage": {
-    "title": "E-learning",
+    "title": "Formation en ligne",
     "actions": {
       "viewCourse": "Cours de voir",
-      "watchVideo": "Regarder La Vidéo",
-      "downloadPdf": "Télécharger PDF",
-      "openLink": "Privilège"
+      "watchVideo": "Regarder la vidéo",
+      "downloadPdf": "Télécharger le pdf",
+      "openLink": "PRIVILÈGE"
     },
-    "viewingAlert": "Vous CONSULTANZ DU CONTENU EXCERNE",
-    "lessonsCount": "{{count}} Leçons",
+    "viewingAlert": "Vous consultez DU CONTENU EXCERNE",
+    "lessonsCount": "{{count}} leçons",
     "durationLabel": "Durée",
-    "languageLabel": "Languette",
+    "languageLabel": "LANGUETTE",
     "updatedLabel": "Mis à jour",
-    "confirmDelete": "Les êtes-vous Sûr de Vouloir Supprimer Cet élément?",
-    "noItemsFound": "Article aucun Trouvé",
+    "confirmDelete": "Confirmez-vous la suppression ?",
+    "noItemsFound": "Article AUCUN TRUVÉ.",
     "addNewContentButton": "Ajouter un nouveau contenu",
     "searchPlaceholder": "Rechercher le Contenu ...",
     "categoryLabel": "Catégorie",
@@ -656,32 +656,32 @@
   "hrProceduresPage": {
     "title": "Procédures rh",
     "categoryDisplay": {
-      "viewCategoryAria": "Afficher La Categorie {{Catégorie}}",
+      "viewCategoryAria": "Afficher la catégorie {{Catégorie}}",
       "documentsCount": "{{count}} documents"
     },
     "confirmDeleteDocument": "Les ou documents Sûr de Vouloir Supprimer ce de Vouloir?",
     "uploadButton": "Télécharger Le Document",
     "searchPlaceholder": "Rechercher DES Documents ...",
     "categoriesTitle": "Catégories",
-    "allDocumentsCategory": "Tous Les documents",
-    "noDocumentsMatchSearch": "Document aucun ne correspond à Votre Recherche",
-    "noDocumentsAvailable": "Document AUCUN répondiable",
+    "allDocumentsCategory": "Tous les documents",
+    "noDocumentsMatchSearch": "Documenter Aunun ne correspond à Votre Recherche",
+    "noDocumentsAvailable": "Aucun document n'est disponible",
     "backToCategoriesButton": "Retour aux catégories",
     "documentsInCategoryTitle": "Documents dans {{catégorie}}",
-    "allItemsCount": "{{compter}}",
-    "noDocumentsInCategory": "Document aucun dans cette catégorie"
+    "allItemsCount": "{{compter}}.",
+    "noDocumentsInCategory": "Documenter aunun dans cette catégorie"
   },
   "usersPage": {
     "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer",
     "status": {
-      "pending": "En attitude"
+      "pending": "Attitude"
     },
     "userDetailDrawer": {
       "title": "Coordonnées",
-      "roleLabel": "Rôle",
+      "roleLabel": "Rôle social",
       "statusLabel": "Statut",
       "regionLabel": "Région",
-      "lastLoginLabel": "Dernière Connexion",
+      "lastLoginLabel": "Dernière date de consultation  :",
       "orgLabel": "Organisation",
       "adminActionsTitle": "Actions administratives",
       "changeRoleLabel": "Rôle de Changement",
@@ -691,55 +691,55 @@
       "cannotModifyOwnAccount": "Vous ne pouvez pas modificateur"
     },
     "rolePageTitle": "Geste des Rôles",
-    "allUsersTitle": "Tous les utilisateurs",
-    "confirmDeleteUser": "Les êtes-vous Sûr de Vouloir Supprimer Cet Utilisateur?",
-    "userProfileUpdated": "Profil Utilisateur Mis à Jour AVEC succés",
-    "addNewUserTBD": "Ajouter un nouvel utilisateur à déterminer",
+    "allUsersTitle": "Afficher tous les utilisateurs",
+    "confirmDeleteUser": "Etes-vous totalement sûr de vouloir supprimer cet utilisateur ?",
+    "userProfileUpdated": "Profil Utilisateur Mis à Jour AVEC SUCCÉS",
+    "addNewUserTBD": "Ajouter un-coul utilisateur",
     "addNewUserButton": "Ajouter un-coul utilisateur",
-    "searchPlaceholder": "RECHERCHER Les Utilisators ...",
+    "searchPlaceholder": "RECHERCHER Les Utilisateurs ...",
     "filtersTBD": "Filtres à Déterminer",
     "filtersButton": "Filtres",
     "table": {
-      "nameOrg": "Nom / organisation",
-      "role": "Rôle",
+      "nameOrg": "Organisation nom",
+      "role": "Rôle social",
       "status": "Statut",
       "region": "Région",
-      "lastLogin": "Dernière Connexion",
-      "actions": "Actes"
+      "lastLogin": "Dernière date de consultation  :",
+      "actions": "Actes."
     },
     "emptyState": "Aucun Utilisateur Trouvé"
   },
   "partnersPage": {
     "partnerCard": {
-      "logoAlt": "{{Partenaire-nom}} logo",
+      "logoAlt": "Logo {{Partenaire-nom}}",
       "partnerType": "{{type}} Partenaire",
       "learnMoreButton": "En savoir plus"
     },
     "hero": {
-      "title": "NOS PRÉCIEUX Partenaires",
-      "subtitle": "Les Collaborons nous des organisations de premier plan pour Améliorerer l'Écosystème de la Petite Enfance en Suisse.",
+      "title": "Nos PRÉCIEUX Partenaires",
+      "subtitle": "Les Collaborons nous des organisations de premier plan pour Améliorerer L'Écosystème de la Petite Enfance en Suisse.",
       "ctaButton": "Devenir Partenaire"
     },
     "featured": {
       "title": "Partenaires en vedette",
-      "subtitle": "Nous sommes fières"
+      "subtitle": "Nous sommes fières de travailleur avec des institutions qui partagent notre vision d'unité de la petite enfance de qualité."
     },
     "joinUs": {
       "title": "Rejoignez Notre",
       "subtitle": "Interessé à Devenir Partenaire de Pro Crèche Solutions?",
       "contactUsAlert": "La Fonctionnalité du Forulaire / Modal de Contact Sera Impdémentée.",
-      "contactUsButton": "Nous contacter",
+      "contactUsButton": "Appelez-nous",
       "inquiryFormLink": "ou remplissez Notre Forulaire de Partenariat"
     }
   },
   "parentLeadFormPage": {
-    "errorAllFields": "Veuillez remplir tous Les Champs Obligatoires.",
-    "thankYouTitle": "MERCI!",
-    "unauthenticatedSuccessMessage": "Votre demande un été sume avec succès.",
+    "errorAllFields": "Veuillez remplir tous les champs obligatoires (*)",
+    "thankYouTitle": "MERCI",
+    "unauthenticatedSuccessMessage": "Votre demande un été sume des succés.",
     "authenticatedSuccessMessage": "Votre demande un été sume des succés.",
     "subtitle": "Dete-nous quels sont les besoins de vote enfant et nous",
     "labels": {
-      "yourFullName": "VOTRE NOM EXCHET",
+      "yourFullName": "VOTRE NOM SCHETT",
       "yourEmail": "E-mail",
       "yourPhone": "Votre Numéro de Téléphone",
       "canton": "Canton",
@@ -750,37 +750,37 @@
     },
     "sectionTitleChildNeeds": "Besoins de l'Enfant",
     "helpText": {
-      "specialNeeds": "Veuillez Décrire Tous Besoins Spéciaux, Exigence Alimentaires Ou Auteurs Informations importantes Important le vote concernant le vote."
+      "specialNeeds": "Veuillez Décrire Tous Besoins Spéciaux, Exigence Alimentaires ou Auteurs Informations importantes concernant le vote."
     }
   },
   "candidateProfilePage": {
     "title": "Profil du Candidat",
-    "profile": "Informations sur le profil",
-    "experience": "EXPRIENCE DE TRAVAIL"
+    "profile": "informations du profil",
+    "experience": "Expression de Travail"
   },
   "designSystemPage": {
     "title": "Système de Conception",
-    "description": "Unéférence vivante pour tous les composés d'interface utilisateur et jetons de conception dans les solutions de l'application pro crèche.",
+    "description": "Unéférence vivante pour tous les composés d'interface utilisateur et jetons de conception dans les solutions de L'Application pro crèche.",
     "tabs": {
-      "title": "Onglets",
-      "pillsVariant": "Variante des pilules (par défaut)",
+      "title": "ONGLETS",
+      "pillsVariant": "Variante des Pilules (par défaut)",
       "lineVariant": "Variante de Ligne",
       "tab1": "Onglet 1",
       "content1": "Ceci est le contenu de l'onglet 1.",
       "tab2": "Onglet 2",
-      "content2": "Ceci est le contenu de l'onglet 2.",
+      "content2": "Ceci est le contenu de la boite.",
       "tab3": "Onglet 3",
       "content3": "Ceci est un onglet desactivé."
     },
     "typography": {
-      "fontFamily": "Famille de polices : Nunito, Inter, Sans-Serif",
+      "fontFamily": "Famille de polices : Nunito, Inter, Sans-Serif",
       "heading1": "En Tête 1: Le Renard Brun Rapide",
       "heading2": "En Tête 2: Le Renard Brun Rapide",
       "heading3": "En Tête de 3: Le Renard Brun Rapide",
       "heading4": "En Tête de 4: Le Renard Brun Rapide",
       "bodyBase": "Texte du Corps (base): Lorem ipsum Dolor Sit Amet, concexetur adipiscing elit.",
-      "bodySmall": "Texte du Corps (Petit): CRAS Elements ultrices diam.",
-      "link": "Ceci est un privilège"
+      "bodySmall": "Texte du Corps (Petit): CRS Elements ultrices diam.",
+      "link": "Ceci est un lien"
     },
     "buttons": {
       "extraSmall": "Très petit",
@@ -792,49 +792,49 @@
       "rightIcon": "Icône Droite",
       "smallIcon": "Petite Icône",
       "disabledState": "ÉTAT HANDICAPÉ",
-      "primaryDisabled": "Primaire Handicap",
+      "primaryDisabled": "Handicapé de primaire",
       "secondaryDisabled": "Handicapé secondaire",
-      "outlineDisabled": "Décorner desactivé"
+      "outlineDisabled": "Décorner désactivé"
     },
     "cards": {
-      "standardCard": "Norme de carte",
-      "standardCardDesc": "Il s'agit d'un composant de carte standard avec une ombre douce.",
-      "hoverEffectCard": "Carte d'effet de survol",
-      "hoverEffectCardDesc": "CETTE CARTE A UNE ÉCHELLE SUBTILE ET UNE TRANSITION DE L'OBRE SUR LE PLAN DE VOLANTS, UTILE pour les éléments interactifs."
+      "standardCard": "NORME DE CARTE",
+      "standardCardDesc": "Il s'agit d'Unt Composant de Carte Standard Avec un ombre Douce.",
+      "hoverEffectCard": "Carte d'Effet de survol",
+      "hoverEffectCardDesc": "CETTE CARTE A UNE ÉCHELLE SUBTILE ET UNE TRANSITION DE L'OBRE SUR LE PLAN DE volants, UTILE pour les éléments interactifs."
     },
     "formControls": {
-      "title": "Commands de Forulaire",
+      "title": "Commandes de Forulaire",
       "textInput": "Entrée de texte",
-      "selectMenu": "Menu Sélectionner Le",
+      "selectMenu": "Menu selectionner le",
       "option1": "Option 1",
       "option2": "Option 2",
       "option3": "Option 3",
-      "quantityInput": "Entrée de Quantité",
+      "quantityInput": "Entrée de quantité",
       "disabledInput": "Entrée handicapée"
     },
-    "View Favorites TBD": "Voir les favoris tbd",
+    "View Favorites TBD": "Voi des favoris à deterner",
     "Could not find a user associated with this organization to message.": "Impossible de Trouver Un Utilisateur Associé à CETTe Organisation à un Message.",
     "User organization details are missing.": "Les Dédails de l'organisation Utilisateur Sont Manquants.",
-    "tailwindcss": "tailwindcss",
-    "sidebar.parentLeads": "Parents Dirige",
+    "tailwindcss": "Tailwindcss",
+    "sidebar.parentLeads": "Les parents dirigés",
     "sidebar.products": "Produits",
     "sidebar.services": "Services",
     "No recent activity.": "AUCUNE Activité Récente.",
-    "loaded": "charge",
-    "SUPER_ADMIN": "Super_admin",
+    "loaded": "Charge",
+    "SUPER_ADMIN": "Super Administrateur",
     "Show": "Montre",
-    "Refresh": "Rafraîchir",
+    "Refresh": "Renouvellement",
     "keys)": "Clés)",
     "(240)": "(240)",
-    "Branding": "Image de Marque",
+    "Branding": "Image de marque",
     "Favicon": "Favicon",
     "Search job offers...": "Recherchez des Offres d'Emploi ...",
-    "Search partners...": "Partenaires de recherche...",
-    "Search candidates...": "Rechercher Les Candidats ...",
+    "Search partners...": "Partenaires de Recherche ...",
+    "Search candidates...": "Rechercher Les Candidats...",
     "Search content...": "Rechercher le Contenu ...",
     "admin@procrechesolutions.com": "administrat@procrechesolutions.com",
-    "No documents found in this category for current filters.": "AUCUN DOCUMENT TRUPVÉ DANS CETTE CATÉGORIE LES LES FILTRES ACTUELS.",
-    "No custom alerts created yet.": "Autre Alerte Personnalisee Encore Créée."
+    "No documents found in this category for current filters.": "AUCUN DOCUMENT TRUPVÉ DANS CETTE CATÉGORIE LES FILTRES ACTUELS.",
+    "No custom alerts created yet.": "Autre Alerte Personnalisée Encore Créée."
   },
   "dashboard redirects based on user role": "[FR] dashboard redirects based on user role"
 }
