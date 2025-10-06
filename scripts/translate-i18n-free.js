@@ -16,20 +16,15 @@ const path = require('path');
 
 // Try to use translate-google-api, fallback to manual if not available
 let translate;
+let usingOfflineFallback = false;
+const OFFLINE_TRANSLATIONS_DIR = path.join('translation-files-consolidated');
 
 try {
   translate = require('translate-google-api');
 } catch (error) {
-  console.log('📦 Installing translate-google-api...');
-  const { execSync } = require('child_process');
-  
-  try {
-    execSync('npm install translate-google-api', { stdio: 'inherit' });
-    translate = require('translate-google-api');
-  } catch (installError) {
-    console.error('❌ Failed to install translate-google-api. Please run: npm install translate-google-api');
-    process.exit(1);
-  }
+  console.warn('⚠️  translate-google-api not available. Falling back to offline translations if provided.');
+  usingOfflineFallback = true;
+  translate = async (value, { to }) => ({ value, to });
 }
 
 // Configuration
@@ -51,6 +46,7 @@ class FreeI18nTranslator {
   constructor() {
     this.translatedCount = 0;
     this.totalKeys = 0;
+    this.offlineDictionaries = {};
   }
 
   async loadSourceFile() {
@@ -64,18 +60,31 @@ class FreeI18nTranslator {
     return JSON.parse(content);
   }
 
-  async translateValue(value, targetLanguage) {
+  async translateValue(value, targetLanguage, pathParts = []) {
     if (typeof value === 'string') {
       // Skip if it's just a variable interpolation or HTML
       if (value.includes('{{') || value.includes('<') || value.length < 3) {
         return value;
       }
-      
+
       try {
         console.log(`  Translating: "${value}"`);
+        if (usingOfflineFallback) {
+          const keyPath = pathParts.join('.');
+          const offlineValue = this.offlineDictionaries[targetLanguage]?.get(keyPath);
+
+          if (offlineValue) {
+            this.translatedCount++;
+            return offlineValue;
+          }
+
+          console.warn(`  ⚠️  Offline translation missing for key: ${keyPath}. Keeping original value.`);
+          return value;
+        }
+
         const translated = await translate(value, { to: LANGUAGE_CODES[targetLanguage] });
         this.translatedCount++;
-        
+
         // Handle array responses from Google Translate
         if (Array.isArray(translated)) {
           return translated[0] || value;
@@ -90,7 +99,7 @@ class FreeI18nTranslator {
       // Recursively translate object values
       const result = {};
       for (const [key, val] of Object.entries(value)) {
-        result[key] = await this.translateValue(val, targetLanguage);
+        result[key] = await this.translateValue(val, targetLanguage, [...pathParts, key]);
       }
       return result;
     }
@@ -100,15 +109,50 @@ class FreeI18nTranslator {
 
   async translateObject(obj, targetLanguage) {
     console.log(`\n🌍 Translating to ${targetLanguage.toUpperCase()}...`);
-    
+
     // Count total string values to translate
     this.totalKeys = this.countStringValues(obj);
     this.translatedCount = 0;
-    
+
     const translated = await this.translateValue(obj, targetLanguage);
-    
+
     console.log(`✅ Translated ${this.translatedCount}/${this.totalKeys} values`);
     return translated;
+  }
+
+  prepareOfflineDictionary(sourceObj, targetLanguage) {
+    if (!usingOfflineFallback) {
+      return;
+    }
+
+    const targetFilePath = path.join(process.cwd(), OFFLINE_TRANSLATIONS_DIR, targetLanguage, 'translation.json');
+    if (!fs.existsSync(targetFilePath)) {
+      console.warn(`  ⚠️  Offline translation file not found for ${targetLanguage.toUpperCase()}: ${targetFilePath}`);
+      this.offlineDictionaries[targetLanguage] = new Map();
+      return;
+    }
+
+    const fallbackObj = JSON.parse(fs.readFileSync(targetFilePath, 'utf8'));
+    const map = new Map();
+
+    const walk = (sourceNode, fallbackNode, pathParts = []) => {
+      if (typeof sourceNode === 'string') {
+        if (typeof fallbackNode === 'string') {
+          map.set(pathParts.join('.'), fallbackNode);
+        }
+        return;
+      }
+
+      if (typeof sourceNode === 'object' && sourceNode !== null) {
+        for (const [key, sourceVal] of Object.entries(sourceNode)) {
+          const fallbackVal = fallbackNode && typeof fallbackNode === 'object' ? fallbackNode[key] : undefined;
+          walk(sourceVal, fallbackVal, [...pathParts, key]);
+        }
+      }
+    };
+
+    walk(sourceObj, fallbackObj);
+    this.offlineDictionaries[targetLanguage] = map;
   }
 
   countStringValues(obj) {
@@ -153,14 +197,20 @@ class FreeI18nTranslator {
     const sourceObj = await this.loadSourceFile();
     console.log(`📊 Found ${Object.keys(sourceObj).length} top-level keys\n`);
 
+    if (usingOfflineFallback) {
+      console.log('ℹ️  Using offline fallback translations where available.');
+    }
+
     // Translate to each target language
     for (const targetLanguage of CONFIG.targetLanguages) {
       try {
         console.log(`\n🌍 Processing ${targetLanguage.toUpperCase()}...`);
-        
+
+        this.prepareOfflineDictionary(sourceObj, targetLanguage);
+
         const translatedObj = await this.translateObject(sourceObj, targetLanguage);
         await this.saveTranslation(translatedObj, targetLanguage);
-        
+
         // Add delay between requests to respect rate limits
         if (targetLanguage !== CONFIG.targetLanguages[CONFIG.targetLanguages.length - 1]) {
           console.log(`⏳ Waiting ${CONFIG.delayBetweenRequests}ms before next translation...`);
