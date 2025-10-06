@@ -913,24 +913,37 @@
       "noReviews": "No reviews yet"
     }
   },
-  "settingsAccountSecurity": {
-    "personalInfo": {
-      "title": "Personal Information",
-      "subtitle": "Manage your personal details and contact information"
+    "settingsAccountSecurity": {
+      "personalInfo": {
+        "title": "Personal Information",
+        "subtitle": "Manage your personal details and contact information",
+        "contactNameLabel": "Contact Name",
+        "orgNameLabel": "Organization Name",
+        "emailLabel": "Email Address",
+        "accountTypeLabel": "Account Type",
+        "memberSinceLabel": "Member Since",
+        "updateInfoButton": "Update Information"
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "subtitle": "Update your password for better security",
+        "currentPasswordLabel": "Current Password",
+        "newPasswordLabel": "New Password",
+        "confirmNewPasswordLabel": "Confirm New Password",
+        "updatePasswordButton": "Update Password"
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "subtitle": "Irreversible and destructive actions",
+        "deleteAccountTitle": "Delete Account",
+        "deleteAccountSubtitle": "Permanently delete your account and all data",
+        "deleteAccountButton": "Delete Account"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "subtitle": "Manage your notification preferences"
+      }
     },
-    "changePassword": {
-      "title": "Change Password",
-      "subtitle": "Update your password for better security"
-    },
-    "dangerZone": {
-      "title": "Danger Zone",
-      "subtitle": "Irreversible and destructive actions"
-    },
-    "notifications": {
-      "title": "Notifications",
-      "subtitle": "Manage your notification preferences"
-    }
-  },
   "settingsAnalyticsPreferences": {
     "title": "Analytics Preferences",
     "subtitle": "Configure your analytics and reporting settings"
@@ -1203,7 +1216,8 @@
   },
     "settingsPage": {
       "billingSubscription": "Billing & Subscription",
-      "title": "Settings"
+      "title": "Settings",
+      "accountSecurity": "Account & Security"
     },
   "Subscription cancelled (mock action)": "Subscription cancelled (mock action)",
   "fileUploadModal": {
@@ -1274,13 +1288,14 @@
     "detailsFor": "Details for",
     "noSpecificView": "No specific view selected"
   },
-  "eLearningPage": {
-    "actions": {
-      "viewCourse": "View Course",
-      "watchVideo": "Watch Video",
-      "downloadPdf": "Download PDF",
-      "openLink": "Open Link"
-    },
+    "eLearningPage": {
+      "title": "E-Learning",
+      "actions": {
+        "viewCourse": "View Course",
+        "watchVideo": "Watch Video",
+        "downloadPdf": "Download PDF",
+        "openLink": "Open Link"
+      },
     "viewingAlert": "You are viewing external content",
     "lessonsCount": "{{count}} lessons",
     "durationLabel": "Duration",
@@ -1330,11 +1345,12 @@
     "editButtonLabel": "Edit",
     "deleteButtonLabel": "Delete"
   },
-  "hrProceduresPage": {
-    "categoryDisplay": {
-      "viewCategoryAria": "View category {{category}}",
-      "documentsCount": "{{count}} documents"
-    },
+    "hrProceduresPage": {
+      "title": "HR Procedures",
+      "categoryDisplay": {
+        "viewCategoryAria": "View category {{category}}",
+        "documentsCount": "{{count}} documents"
+      },
     "confirmDeleteDocument": "Are you sure you want to delete this document?",
     "uploadButton": "Upload Document",
     "searchPlaceholder": "Search documents...",
@@ -1351,45 +1367,56 @@
     "onlyFoundationsRequestService": "Only foundations can request this service",
     "requestSubmittedAlert": "Service request submitted successfully"
   },
-  "marketplacePage": {
-    "emptyStates": {
-      "noServices": "No services available"
+    "marketplacePage": {
+      "emptyStates": {
+        "noServices": "No services available",
+        "noProductSuppliers": "No product suppliers available"
+      },
+      "subtitles": {
+        "productSuppliers": "Product Suppliers",
+        "serviceProviders": "Service Providers"
+      },
+      "tabs": {
+        "productSuppliers": "Product Suppliers",
+        "serviceProviders": "Service Providers"
+      },
+      "buttons": {
+        "partnerOnboarding": "Partner Onboarding"
+      },
+      "infoAlert": "Partner Onboarding TBD",
+      "searchPlaceholder": "Search partners...",
+      "labels": {
+        "category": "Category",
+        "region": "Region",
+        "supplierTags": "Supplier Tags",
+        "sortBy": "Sort by"
+      },
+      "sortOptions": {
+        "nameAsc": "Name (A-Z)",
+        "nameDesc": "Name (Z-A)",
+        "ratingDesc": "Rating (High to Low)"
+      },
+      "ariaLabels": {
+        "gridView": "Switch to grid view",
+        "listView": "Switch to list view"
+      }
     },
-    "subtitles": {
-      "productSuppliers": "Product Suppliers",
-      "serviceProviders": "Service Providers"
-    },
-    "buttons": {
-      "partnerOnboarding": "Partner Onboarding"
-    },
-    "infoAlert": "Partner Onboarding TBD",
-    "searchPlaceholder": "Search partners...",
-    "labels": {
-      "category": "Category",
-      "region": "Region",
-      "supplierTags": "Supplier Tags",
-      "sortBy": "Sort by"
-    },
-    "sortOptions": {
-      "nameAsc": "Name (A-Z)",
-      "nameDesc": "Name (Z-A)",
-      "ratingDesc": "Rating (High to Low)"
-    },
-    "ariaLabels": {
-      "gridView": "Switch to grid view",
-      "listView": "Switch to list view"
-    }
-  },
   "Partner Onboarding TBD": "Partner Onboarding TBD",
   "notifications": {
     "newMessageFrom": "New message from {{sender}}"
   },
-  "messagesPage": {
-    "newGroupButton": "New Group",
-    "noConversationSelectedTitle": "Select a conversation to start messaging",
-    "noConversationSelectedSubtitle": "Choose a conversation from the list to view messages",
-    "noConversationsYet": "No conversations yet"
-  },
+    "messagesPage": {
+      "title": "Messages",
+      "newGroupButton": "New Group",
+      "noConversationSelectedTitle": "Select a conversation to start messaging",
+      "noConversationSelectedSubtitle": "Choose a conversation from the list to view messages",
+      "noConversationsYet": "No conversations yet",
+      "noConversationsFound": "No conversations found",
+      "filters": {
+        "all": "All",
+        "unread": "Unread"
+      }
+    },
   "notificationsPage": {
     "clearAll": "Clear All",
     "emptyState": {
@@ -2172,6 +2199,13 @@
   "keys)": "keys)",
   "(240)": "(240)",
   "Branding": "Branding",
-  "Favicon": "Favicon"
+  "Favicon": "Favicon",
+  "Search job offers...": "Search job offers...",
+  "Search partners...": "Search partners...",
+  "Search candidates...": "Search candidates...",
+  "Search content...": "Search content...",
+  "admin@procrechesolutions.com": "admin@procrechesolutions.com",
+  "No documents found in this category for current filters.": "No documents found in this category for current filters.",
+  "No custom alerts created yet.": "No custom alerts created yet."
   }
 }
