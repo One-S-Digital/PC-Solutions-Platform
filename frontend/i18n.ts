@@ -25,9 +25,13 @@ const initI18n = () => {
       interpolation: {
         escapeValue: false, 
       },
-      returnObjects: true, // Enable object access for nested translations
       react: {
         useSuspense: false, // Disable Suspense for now to avoid blocking
+        bindI18n: 'languageChanged loaded',
+        bindI18nStore: 'added removed',
+        transEmptyNodeValue: '',
+        transSupportBasicHtmlNodes: true,
+        transKeepBasicHtmlNodesFor: ['br', 'strong', 'i'],
       },
       saveMissing: false, // As per specification
       returnEmptyString: false, // As per specification
@@ -42,24 +46,32 @@ const initI18n = () => {
       console.log('🌍 Available languages:', i18n.languages);
       console.log('🌍 Has resource bundle:', i18n.hasResourceBundle(i18n.language, 'translation'));
       
-      // Test multiple translations
+      // Test multiple translations safely
       const testKeys = ['appName', 'buttons.login', 'sidebar.dashboard', 'dashboardPage.welcome'];
       console.log('🌍 Testing translations:');
       testKeys.forEach(key => {
-        const result = i18n.t(key);
-        const isWorking = result !== key;
-        console.log(`  ${isWorking ? '✅' : '❌'} ${key}: "${result}"`);
+        try {
+          const result = i18n.t(key);
+          const isWorking = result !== key;
+          console.log(`  ${isWorking ? '✅' : '❌'} ${key}: "${result}"`);
+        } catch (error) {
+          console.error(`  ❌ Error translating ${key}:`, error);
+        }
       });
       
       // Check if resource bundle is loaded
-      const resourceBundle = i18n.getResourceBundle(i18n.language, 'translation');
-      console.log('🌍 Resource bundle keys:', Object.keys(resourceBundle || {}).length);
-      
-      if (!i18n.hasResourceBundle(i18n.language, 'translation')) {
-        console.error('❌ Resource bundle not loaded! This will cause translation keys to show instead of text.');
-        console.error('❌ This means all text will show as translation keys instead of actual text!');
-      } else {
-        console.log('✅ Resource bundle loaded successfully!');
+      try {
+        const resourceBundle = i18n.getResourceBundle(i18n.language, 'translation');
+        console.log('🌍 Resource bundle keys:', Object.keys(resourceBundle || {}).length);
+        
+        if (!i18n.hasResourceBundle(i18n.language, 'translation')) {
+          console.error('❌ Resource bundle not loaded! This will cause translation keys to show instead of text.');
+          console.error('❌ This means all text will show as translation keys instead of actual text!');
+        } else {
+          console.log('✅ Resource bundle loaded successfully!');
+        }
+      } catch (error) {
+        console.error('❌ Error checking resource bundle:', error);
       }
     })
     .catch((error) => {

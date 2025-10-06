@@ -544,6 +544,9 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
       const result = t(key);
       const timestamp = new Date().toISOString();
       
+      // Ensure result is a string for processing
+      const resultString = typeof result === 'string' ? result : String(result);
+      
       // Check for different types of errors
       if (result === key) {
         // Missing translation - key returned as-is
@@ -556,33 +559,33 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
           page: currentPage,
           severity: 'missing'
         });
-      } else if (result.includes('translation') && result.includes('missing')) {
+      } else if (resultString.includes('translation') && resultString.includes('missing')) {
         // i18next missing key error
         detectedErrors.push({
           key,
-          returned: result,
+          returned: resultString,
           expected: 'Actual translated text',
           timestamp,
           language: currentLanguage,
           page: currentPage,
           severity: 'error'
         });
-      } else if (result.includes('{{') && result.includes('}}') && !result.includes('{{count}}') && !result.includes('{{name}}')) {
+      } else if (resultString.includes('{{') && resultString.includes('}}') && !resultString.includes('{{count}}') && !resultString.includes('{{name}}')) {
         // Potential interpolation error
         detectedErrors.push({
           key,
-          returned: result,
+          returned: resultString,
           expected: 'Properly interpolated text',
           timestamp,
           language: currentLanguage,
           page: currentPage,
           severity: 'fallback'
         });
-      } else if (result.length < 2) {
+      } else if (resultString.length < 2) {
         // Very short or empty result
         detectedErrors.push({
           key,
-          returned: result,
+          returned: resultString,
           expected: 'Meaningful translated text',
           timestamp,
           language: currentLanguage,
@@ -642,7 +645,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
         const text = element.textContent || element.getAttribute('placeholder') || '';
         
         // Look for dot notation patterns that might be translation keys
-        if (text && text.includes('.') && text.length > 5 && text.length < 50) {
+        if (text && typeof text === 'string' && text.includes('.') && text.length > 5 && text.length < 50) {
           const parts = text.split('.');
           if (parts.length >= 2 && parts.every(part => /^[a-zA-Z][a-zA-Z0-9]*$/.test(part))) {
             // This looks like a translation key
