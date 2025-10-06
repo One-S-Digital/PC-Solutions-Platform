@@ -194,6 +194,11 @@
     "error": {
       "accountCreationFailed": "Failed to create account"
     },
+    "errors": {
+      "organisationNameRequired": "Organization name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address"
+    },
     "placeholders": {
       "firstName": "Enter your first name",
       "lastName": "Enter your last name",
@@ -752,7 +757,14 @@
     "logToConsole": "Log to Console"
   },
   "translationErrorLogger": {
-    "missingKeysCopied": "Missing keys copied to clipboard!"
+    "missingKeysCopied": "Missing keys copied to clipboard!",
+    "title": "Translation Error Logger",
+    "errorSummary": "📊 Error Summary",
+    "recentErrors": "🔍 Recent Errors",
+    "logToGit": "Log to Git",
+    "logToConsole": "Log to Console",
+    "copyMissing": "Copy Missing",
+    "commitToGit": "Commit to Git"
   },
   "supplierCard": {
     "title": "Supplier",
@@ -1324,6 +1336,67 @@
       "title": "Our Partners",
       "subtitle": "Discover trusted childcare providers and suppliers",
       "ctaButton": "Become a Partner"
+    },
+    "featured": {
+      "title": "Featured Partners",
+      "subtitle": "Meet our top-rated childcare providers and suppliers"
+    },
+    "joinUs": {
+      "title": "Join Our Network",
+      "subtitle": "Become part of Switzerland's leading childcare platform",
+      "contactUsAlert": "Contact us to learn more about partnership opportunities",
+      "contactUsButton": "Contact Us",
+      "inquiryFormLink": "Partnership Inquiry Form"
     }
-  }
+  },
+  "pricingPage": {
+    "popular": "Most Popular",
+    "whatYouGet": "What You Get",
+    "selectAndContinue": "Select and Continue",
+    "choosePlan": "Choose Your Plan",
+    "titleSignup": "Sign Up",
+    "subtitleSignup": "Create your account to get started",
+    "subtitle": "Choose the plan that's right for your organization",
+    "suppliersAndProvidersTitle": "For Suppliers & Service Providers"
+  },
+  "recruitmentPage": {
+    "title": "Recruitment",
+    "buttons": {
+      "viewApplicants": "View Applicants",
+      "filters": "Filters",
+      "postNewJob": "Post New Job",
+      "applyFilters": "Apply Filters",
+      "addCandidate": "Add Candidate"
+    },
+    "confirmRemoveCandidate": "Are you sure you want to remove this candidate?",
+    "jobOffers": {
+      "searchPlaceholder": "Search job offers...",
+      "filterTitle": "Filter Jobs",
+      "activeJobsCount": "{{count}} active jobs",
+      "emptyState": "No job offers found"
+    },
+    "labels": {
+      "location": "Location",
+      "allContractTypes": "All Contract Types",
+      "allStatuses": "All Statuses",
+      "allRoles": "All Roles",
+      "region": "Region",
+      "availabilityDate": "Availability Date"
+    },
+    "candidatePool": {
+      "searchPlaceholder": "Search candidates...",
+      "filterTitle": "Filter Candidates",
+      "emptyState": "No candidates found"
+    },
+    "tabs": {
+      "jobOffers": "Job Offers",
+      "candidatePool": "Candidate Pool"
+    }
+  },
+  "Close Job TBD": "Close Job TBD",
+  "Favorite TBD": "Favorite TBD",
+  "Adding a new candidate - Functionality TBD.": "Adding a new candidate - Functionality TBD.",
+  "Filter UI TBD": "Filter UI TBD",
+  "Apply Job Filters TBD": "Apply Job Filters TBD",
+  "Apply Candidate Filters TBD": "Apply Candidate Filters TBD"
 }

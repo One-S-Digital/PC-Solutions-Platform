@@ -850,7 +850,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
         <div className="absolute top-12 right-0 bg-white border border-gray-300 rounded-lg shadow-xl p-4 max-w-md max-h-96 overflow-auto">
           <div className="text-xs font-mono space-y-3">
             <div className="flex justify-between items-center">
-              <div className="font-bold text-orange-600">Translation Error Logger</div>
+              <div className="font-bold text-orange-600">{t("translationErrorLogger.title")}</div>
               <button
                 onClick={runErrorScan}
                 disabled={isScanning}
@@ -862,7 +862,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
 
             {/* Summary */}
             <div>
-              <strong className="text-green-600">📊 Error Summary:</strong>
+              <strong className="text-green-600">{t("translationErrorLogger.errorSummary")}:</strong>
               <div className="ml-2 space-y-1">
                 <div>Total Errors: {errors.length}</div>
                 <div>Missing Keys: {summary.missingKeys}</div>
@@ -875,7 +875,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
             {/* Recent Errors */}
             {errors.length > 0 && (
               <div>
-                <strong className="text-red-600">🔍 Recent Errors:</strong>
+                <strong className="text-red-600">{t("translationErrorLogger.recentErrors")}:</strong>
                 <div className="ml-2 max-h-32 overflow-y-auto space-y-1">
                   {errors.slice(0, 10).map((error, index) => (
                     <div key={index} className="text-xs">
@@ -914,7 +914,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
                 }}
                 className="bg-green-500 text-white px-2 py-1 rounded text-xs"
               >
-                Log to Git
+{t("translationErrorLogger.logToGit")}
               </button>
               <button
                 onClick={() => {
@@ -929,7 +929,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
                 }}
                 className="bg-gray-500 text-white px-2 py-1 rounded text-xs"
               >
-                Log to Console
+{t("translationErrorLogger.logToConsole")}
               </button>
               <button
                 onClick={() => {
@@ -942,7 +942,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
                 }}
                 className="bg-yellow-500 text-white px-2 py-1 rounded text-xs"
               >
-                Copy Missing
+{t("translationErrorLogger.copyMissing")}
               </button>
               <button
                 onClick={async () => {
@@ -960,7 +960,7 @@ const TranslationErrorLogger: React.FC<TranslationErrorLoggerProps> = ({
                 }}
                 className="bg-purple-500 text-white px-2 py-1 rounded text-xs"
               >
-                Commit to Git
+{t("translationErrorLogger.commitToGit")}
               </button>
             </div>
 

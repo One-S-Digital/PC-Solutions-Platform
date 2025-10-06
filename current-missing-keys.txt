@@ -2,175 +2,37 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 892 translation keys
+✅ Found 1043 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1294 t() calls
+📊 Found 1309 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 155 potential hardcoded text instances
+📊 Found 140 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 892
-🔧 t() Calls Found: 1294
-❌ Missing Keys: 722
-⚠️  Hardcoded Text: 155
-✅ Used Keys: 1007
-📦 Unused Keys: -115
+📚 Translation Keys: 1043
+🔧 t() Calls Found: 1309
+❌ Missing Keys: 480
+⚠️  Hardcoded Text: 140
+✅ Used Keys: 1022
+📦 Unused Keys: 21
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
-📄 frontend/components/layout/Navbar.tsx:113
-   Key: "navbar.notificationsCount"
-
-📄 frontend/components/layout/Navbar.tsx:130
-   Key: "navbar.unreadMessages"
-
-📄 frontend/components/layout/Sidebar.tsx:255
-   Key: "sidebar.billingSubscription"
-
-📄 frontend/components/marketplace/OrderRequestModal.tsx:29
-   Key: "Quantity must be at least 1."
-
-📄 frontend/components/marketplace/SupplierCard.tsx:84
-   Key: "supplierCard.specializesIn"
-
-📄 frontend/components/marketplace/SupplierCard.tsx:95
-   Key: "supplierCard.viewProfileAndProducts"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:99
-   Key: "recruitmentPage.jobDetailModal.overviewTitle"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:104
-   Key: "recruitmentPage.jobDetailModal.location"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:111
-   Key: "recruitmentPage.jobDetailModal.contractType"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:118
-   Key: "recruitmentPage.jobDetailModal.startDate"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:126
-   Key: "recruitmentPage.jobDetailModal.salary"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:140
-   Key: "recruitmentPage.jobDetailModal.applyNow"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:76
-   Key: "Cannot post job. Foundation details are missing."
-
-📄 frontend/components/recruitment/JobPostModal.tsx:119
-   Key: "recruitmentPage.jobPostModal.editTitle"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:119
-   Key: "recruitmentPage.jobPostModal.addTitle"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:130
-   Key: "recruitmentPage.jobPostModal.jobTitle"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:134
-   Key: "recruitmentPage.jobPostModal.location"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:138
-   Key: "recruitmentPage.jobPostModal.contractType"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:144
-   Key: "recruitmentPage.jobPostModal.startDate"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:149
-   Key: "recruitmentPage.jobPostModal.salaryRange"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:150
-   Key: "recruitmentPage.jobPostModal.salaryRangePlaceholder"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:153
-   Key: "recruitmentPage.jobPostModal.description"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:165
-   Key: "recruitmentPage.jobPostModal.postJob"
-
-📄 frontend/components/recruitment/ViewApplicantsModal.tsx:52
-   Key: "recruitmentPage.viewApplicantsModal.noApplicants"
-
-📄 frontend/components/recruitment/ViewApplicantsModal.tsx:61
-   Key: "recruitmentPage.viewApplicantsModal.appliedOn"
-
-📄 frontend/components/recruitment/ViewApplicantsModal.tsx:69
-   Key: "recruitmentPage.candidateCard.viewProfile"
-
 📄 frontend/components/service-provider/ServiceUploadModal.tsx:55
    Key: ","
 
-📄 frontend/components/service-provider/ServiceUploadModal.tsx:70
-   Key: "Current user or organization ID is missing."
-
 📄 frontend/components/settings/OrganizationProfileForm.tsx:36
    Key: ","
-
-📄 frontend/components/settings/OrganizationProfileForm.tsx:67
-   Key: "organizationProfileForm.saveSuccess"
-
-📄 frontend/components/settings/sections/AccountSecuritySettings.tsx:69
-   Key: "settingsPrivacyData.confirmGDPRDelete"
-
-📄 frontend/components/settings/sections/AccountSecuritySettings.tsx:73
-   Key: "settingsPrivacyData.deletionRequestSubmittedHelpText"
-
-📄 frontend/components/settings/sections/BillingSubscriptionSettings.tsx:78
-   Key: "settingsPage.billingSubscription"
-
-📄 frontend/components/settings/sections/BillingSubscriptionSettings.tsx:126
-   Key: "Subscription cancelled (mock action)"
-
-📄 frontend/components/settings/sections/PrivacyDataSettings.tsx:30
-   Key: "settingsPrivacyData.confirmGDPRDelete"
-
-📄 frontend/components/settings/sections/PrivacyDataSettings.tsx:32
-   Key: "settingsPrivacyData.deletionRequestSubmittedHelpText"
-
-📄 frontend/components/settings/sections/PrivacyDataSettings.tsx:72
-   Key: "settingsPrivacyData.deletionRequestSubmittedHelpText"
-
-📄 frontend/components/shared/FileUploadModal.tsx:97
-   Key: "fileUploadModal.uploading"
-
-📄 frontend/components/shared/FileUploadModal.tsx:97
-   Key: "fileUploadModal.uploadButton"
-
-📄 frontend/components/shared/RenameFileModal.tsx:40
-   Key: "renameFileModal.title"
-
-📄 frontend/components/shared/RenameFileModal.tsx:44
-   Key: "renameFileModal.label"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:34
-   Key: "supplierDashboard.recentOrdersActions.decline"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:35
-   Key: "supplierDashboard.recentOrdersActions.accept"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:41
-   Key: "supplierOrdersPage.actions.ship"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:63
-   Key: "supplierOrdersPage.table.foundation"
 
 📄 frontend/components/ui/FileUploadZone.tsx:37
    Key: ","
 
 📄 frontend/components/ui/FileUploadZone.tsx:122
    Key: ","
-
-📄 frontend/components/ui/PricingToggle.tsx:24
-   Key: "pricingPage.monthly"
-
-📄 frontend/components/ui/PricingToggle.tsx:34
-   Key: "pricingPage.annual"
-
-📄 frontend/components/ui/PricingToggle.tsx:39
-   Key: "pricingPage.saveUpTo10"
 
 📄 frontend/contexts/AppContext.tsx:98
    Key: "-"
@@ -190,524 +52,8 @@
 📄 frontend/contexts/AppContext.tsx:148
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:232
-   Key: "You must be logged in as a foundation to submit a request."
-
-📄 frontend/hooks/usePricingTranslations.ts:48
-   Key: "common.perMonth"
-
-📄 frontend/hooks/usePricingTranslations.ts:48
-   Key: "common.perMonth"
-
-📄 frontend/hooks/usePricingTranslations.ts:54
-   Key: "common.perYear"
-
-📄 frontend/hooks/usePricingTranslations.ts:54
-   Key: "common.save10Percent"
-
-📄 frontend/hooks/usePricingTranslations.ts:65
-   Key: "common.perMonth"
-
-📄 frontend/hooks/usePricingTranslations.ts:65
-   Key: "common.perMonth"
-
-📄 frontend/hooks/usePricingTranslations.ts:71
-   Key: "common.perYear"
-
-📄 frontend/hooks/usePricingTranslations.ts:71
-   Key: "common.save10Percent"
-
-📄 frontend/hooks/usePricingTranslations.ts:83
-   Key: "common.perMonth"
-
-📄 frontend/hooks/usePricingTranslations.ts:84
-   Key: "common.perYear"
-
-📄 frontend/hooks/usePricingTranslations.ts:84
-   Key: "common.save10Percent"
-
-📄 frontend/hooks/usePricingTranslations.ts:89
-   Key: "common.perMonth"
-
-📄 frontend/hooks/usePricingTranslations.ts:90
-   Key: "common.perYear"
-
-📄 frontend/hooks/usePricingTranslations.ts:91
-   Key: "common.save10Percent"
-
-📄 frontend/pages/DashboardDetailPage.tsx:22
-   Key: "dashboardDetailPage.activeUsers.recentActivity"
-
-📄 frontend/pages/DashboardDetailPage.tsx:30
-   Key: "dashboardDetailPage.activeUsers.totalToday"
-
-📄 frontend/pages/DashboardDetailPage.tsx:40
-   Key: "dashboardDetailPage.newOrders.recentOrders"
-
-📄 frontend/pages/DashboardDetailPage.tsx:44
-   Key: "dashboardDetailPage.newOrders.table.orderId"
-
-📄 frontend/pages/DashboardDetailPage.tsx:45
-   Key: "dashboardDetailPage.newOrders.table.product"
-
-📄 frontend/pages/DashboardDetailPage.tsx:46
-   Key: "dashboardDetailPage.newOrders.table.amount"
-
-📄 frontend/pages/DashboardDetailPage.tsx:47
-   Key: "dashboardDetailPage.newOrders.table.status"
-
-📄 frontend/pages/DashboardDetailPage.tsx:51
-   Key: "dashboardDetailPage.newOrders.status.paid"
-
-📄 frontend/pages/DashboardDetailPage.tsx:52
-   Key: "dashboardDetailPage.newOrders.status.paid"
-
-📄 frontend/pages/DashboardDetailPage.tsx:53
-   Key: "dashboardDetailPage.newOrders.status.pending"
-
-📄 frontend/pages/DashboardDetailPage.tsx:57
-   Key: "dashboardDetailPage.newOrders.totalThisWeek"
-
-📄 frontend/pages/DashboardDetailPage.tsx:67
-   Key: "dashboardDetailPage.openJobs.currentPositions"
-
-📄 frontend/pages/DashboardDetailPage.tsx:71
-   Key: "dashboardDetailPage.openJobs.applications"
-
-📄 frontend/pages/DashboardDetailPage.tsx:71
-   Key: "dashboardDetailPage.openJobs.status.open"
-
-📄 frontend/pages/DashboardDetailPage.tsx:75
-   Key: "dashboardDetailPage.openJobs.applications"
-
-📄 frontend/pages/DashboardDetailPage.tsx:75
-   Key: "dashboardDetailPage.openJobs.status.open"
-
-📄 frontend/pages/DashboardDetailPage.tsx:79
-   Key: "dashboardDetailPage.openJobs.applications"
-
-📄 frontend/pages/DashboardDetailPage.tsx:79
-   Key: "dashboardDetailPage.openJobs.status.interviewing"
-
-📄 frontend/pages/DashboardDetailPage.tsx:83
-   Key: "dashboardDetailPage.openJobs.totalOpenPositions"
-
-📄 frontend/pages/DashboardDetailPage.tsx:93
-   Key: "dashboardDetailPage.pageViews.keyMetrics"
-
-📄 frontend/pages/DashboardDetailPage.tsx:95
-   Key: "dashboardDetailPage.pageViews.totalToday"
-
-📄 frontend/pages/DashboardDetailPage.tsx:96
-   Key: "dashboardDetailPage.pageViews.uniqueVisitors"
-
-📄 frontend/pages/DashboardDetailPage.tsx:97
-   Key: "dashboardDetailPage.pageViews.mostViewed"
-
-📄 frontend/pages/DashboardDetailPage.tsx:98
-   Key: "dashboardDetailPage.pageViews.avgSession"
-
-📄 frontend/pages/DashboardDetailPage.tsx:101
-   Key: "dashboardDetailPage.pageViews.mockChartText"
-
-📄 frontend/pages/DashboardDetailPage.tsx:119
-   Key: "dashboardDetailPage.defaultTitle"
-
-📄 frontend/pages/DashboardDetailPage.tsx:127
-   Key: "dashboardDetailPage.detailsFor"
-
-📄 frontend/pages/DashboardDetailPage.tsx:146
-   Key: "dashboardDetailPage.detailsFor"
-
-📄 frontend/pages/DashboardDetailPage.tsx:149
-   Key: "dashboardDetailPage.noSpecificView"
-
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
-
-📄 frontend/pages/ELearningPage.tsx:24
-   Key: "eLearningPage.actions.viewCourse"
-
-📄 frontend/pages/ELearningPage.tsx:25
-   Key: "eLearningPage.actions.watchVideo"
-
-📄 frontend/pages/ELearningPage.tsx:26
-   Key: "eLearningPage.actions.downloadPdf"
-
-📄 frontend/pages/ELearningPage.tsx:27
-   Key: "eLearningPage.actions.openLink"
-
-📄 frontend/pages/ELearningPage.tsx:42
-   Key: "eLearningPage.viewingAlert"
-
-📄 frontend/pages/ELearningPage.tsx:55
-   Key: "eLearningPage.lessonsCount"
-
-📄 frontend/pages/ELearningPage.tsx:56
-   Key: "eLearningPage.durationLabel"
-
-📄 frontend/pages/ELearningPage.tsx:57
-   Key: "eLearningPage.languageLabel"
-
-📄 frontend/pages/ELearningPage.tsx:58
-   Key: "eLearningPage.updatedLabel"
-
-📄 frontend/pages/ELearningPage.tsx:148
-   Key: "eLearningPage.confirmDelete"
-
-📄 frontend/pages/ELearningPage.tsx:160
-   Key: "eLearningPage.noItemsFound"
-
-📄 frontend/pages/ELearningPage.tsx:183
-   Key: "eLearningPage.addNewContentButton"
-
-📄 frontend/pages/ELearningPage.tsx:192
-   Key: "eLearningPage.searchPlaceholder"
-
-📄 frontend/pages/ELearningPage.tsx:196
-   Key: "eLearningPage.searchPlaceholder"
-
-📄 frontend/pages/ELearningPage.tsx:203
-   Key: "eLearningPage.categoryLabel"
-
-📄 frontend/pages/ELearningPage.tsx:217
-   Key: "eLearningPage.noContentFound"
-
-📄 frontend/pages/ELearningPage.tsx:220
-   Key: "eLearningPage.coursesTitle"
-
-📄 frontend/pages/ELearningPage.tsx:220
-   Key: "eLearningPage.itemType.courses"
-
-📄 frontend/pages/ELearningPage.tsx:221
-   Key: "eLearningPage.videosTitle"
-
-📄 frontend/pages/ELearningPage.tsx:221
-   Key: "eLearningPage.itemType.videos"
-
-📄 frontend/pages/ELearningPage.tsx:222
-   Key: "eLearningPage.pdfsTitle"
-
-📄 frontend/pages/ELearningPage.tsx:222
-   Key: "eLearningPage.itemType.pdfs"
-
-📄 frontend/pages/ELearningPage.tsx:223
-   Key: "eLearningPage.externalLinksTitle"
-
-📄 frontend/pages/ELearningPage.tsx:223
-   Key: "eLearningPage.itemType.links"
-
-📄 frontend/pages/FileGalleryPage.tsx:35
-   Key: "fileGallery.actions.preview"
-
-📄 frontend/pages/FileGalleryPage.tsx:35
-   Key: "fileGallery.actions.preview"
-
-📄 frontend/pages/FileGalleryPage.tsx:36
-   Key: "fileGallery.actions.download"
-
-📄 frontend/pages/FileGalleryPage.tsx:36
-   Key: "fileGallery.actions.download"
-
-📄 frontend/pages/FileGalleryPage.tsx:37
-   Key: "fileGallery.actions.rename"
-
-📄 frontend/pages/FileGalleryPage.tsx:38
-   Key: "fileGallery.actions.delete"
-
-📄 frontend/pages/FileGalleryPage.tsx:52
-   Key: "fileGallery.confirmDelete"
-
-📄 frontend/pages/FileGalleryPage.tsx:70
-   Key: "fileGallery.uploadButton"
-
-📄 frontend/pages/FileGalleryPage.tsx:77
-   Key: "fileGallery.emptyState.title"
-
-📄 frontend/pages/FileGalleryPage.tsx:78
-   Key: "fileGallery.emptyState.message"
-
-📄 frontend/pages/HRProceduresPage.tsx:39
-   Key: "hrDocumentCard.categoryLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:40
-   Key: "hrDocumentCard.languageLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:40
-   Key: "hrDocumentCard.versionLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:43
-   Key: "hrDocumentCard.toggleFavoriteLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:48
-   Key: "hrDocumentCard.lastUpdatedLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:62
-   Key: "hrDocumentCard.downloadingAlert"
-
-📄 frontend/pages/HRProceduresPage.tsx:62
-   Key: "hrDocumentCard.downloadButton"
-
-📄 frontend/pages/HRProceduresPage.tsx:63
-   Key: "hrDocumentCard.previewingAlert"
-
-📄 frontend/pages/HRProceduresPage.tsx:63
-   Key: "hrDocumentCard.previewButtonLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:63
-   Key: "hrDocumentCard.previewButtonLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:66
-   Key: "hrDocumentCard.editButtonLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:66
-   Key: "hrDocumentCard.editButtonLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:67
-   Key: "hrDocumentCard.deleteButtonLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:67
-   Key: "hrDocumentCard.deleteButtonLabel"
-
-📄 frontend/pages/HRProceduresPage.tsx:84
-   Key: "hrProceduresPage.categoryDisplay.viewCategoryAria"
-
-📄 frontend/pages/HRProceduresPage.tsx:88
-   Key: "hrProceduresPage.categoryDisplay.documentsCount"
-
-📄 frontend/pages/HRProceduresPage.tsx:166
-   Key: "hrProceduresPage.confirmDeleteDocument"
-
-📄 frontend/pages/HRProceduresPage.tsx:180
-   Key: "hrProceduresPage.uploadButton"
-
-📄 frontend/pages/HRProceduresPage.tsx:189
-   Key: "hrProceduresPage.searchPlaceholder"
-
-📄 frontend/pages/HRProceduresPage.tsx:193
-   Key: "hrProceduresPage.searchPlaceholder"
-
-📄 frontend/pages/HRProceduresPage.tsx:202
-   Key: "hrProceduresPage.categoriesTitle"
-
-📄 frontend/pages/HRProceduresPage.tsx:205
-   Key: "hrProceduresPage.allDocumentsCategory"
-
-📄 frontend/pages/HRProceduresPage.tsx:225
-   Key: "hrProceduresPage.noDocumentsMatchSearch"
-
-📄 frontend/pages/HRProceduresPage.tsx:227
-   Key: "hrProceduresPage.noDocumentsAvailable"
-
-📄 frontend/pages/HRProceduresPage.tsx:233
-   Key: "hrProceduresPage.backToCategoriesButton"
-
-📄 frontend/pages/HRProceduresPage.tsx:239
-   Key: "hrProceduresPage.documentsInCategoryTitle"
-
-📄 frontend/pages/HRProceduresPage.tsx:239
-   Key: "hrProceduresPage.allDocumentsCategory"
-
-📄 frontend/pages/HRProceduresPage.tsx:240
-   Key: "hrProceduresPage.allItemsCount"
-
-📄 frontend/pages/HRProceduresPage.tsx:254
-   Key: "hrProceduresPage.noDocumentsInCategory"
-
-📄 frontend/pages/HRProceduresPage.tsx:255
-   Key: "hrProceduresPage.noDocumentsMatchSearch"
-
-📄 frontend/pages/LoginPage.tsx:45
-   Key: "loginPage.errorBothFields"
-
-📄 frontend/pages/LoginPage.tsx:98
-   Key: "loginPage.forgotPasswordTBD"
-
-📄 frontend/pages/LoginPage.tsx:124
-   Key: "loginPage.loggingIn"
-
-📄 frontend/pages/MarketplacePage.tsx:85
-   Key: "partnerDetailPage.onlyFoundationsRequestService"
-
-📄 frontend/pages/MarketplacePage.tsx:102
-   Key: "partnerDetailPage.requestSubmittedAlert"
-
-📄 frontend/pages/MarketplacePage.tsx:198
-   Key: "marketplacePage.emptyStates.noServices"
-
-📄 frontend/pages/MarketplacePage.tsx:211
-   Key: "marketplacePage.subtitles.productSuppliers"
-
-📄 frontend/pages/MarketplacePage.tsx:214
-   Key: "marketplacePage.subtitles.serviceProviders"
-
-📄 frontend/pages/MarketplacePage.tsx:217
-   Key: "Partner Onboarding TBD"
-
-📄 frontend/pages/MarketplacePage.tsx:217
-   Key: "marketplacePage.buttons.partnerOnboarding"
-
-📄 frontend/pages/MarketplacePage.tsx:223
-   Key: "marketplacePage.infoAlert"
-
-📄 frontend/pages/MarketplacePage.tsx:230
-   Key: "marketplacePage.searchPlaceholder"
-
-📄 frontend/pages/MarketplacePage.tsx:235
-   Key: "marketplacePage.searchPlaceholder"
-
-📄 frontend/pages/MarketplacePage.tsx:242
-   Key: "marketplacePage.labels.category"
-
-📄 frontend/pages/MarketplacePage.tsx:253
-   Key: "marketplacePage.labels.region"
-
-📄 frontend/pages/MarketplacePage.tsx:266
-   Key: "marketplacePage.labels.supplierTags"
-
-📄 frontend/pages/MarketplacePage.tsx:277
-   Key: "marketplacePage.labels.sortBy"
-
-📄 frontend/pages/MarketplacePage.tsx:284
-   Key: "marketplacePage.sortOptions.nameAsc"
-
-📄 frontend/pages/MarketplacePage.tsx:285
-   Key: "marketplacePage.sortOptions.nameDesc"
-
-📄 frontend/pages/MarketplacePage.tsx:286
-   Key: "marketplacePage.sortOptions.ratingDesc"
-
-📄 frontend/pages/MarketplacePage.tsx:300
-   Key: "marketplacePage.ariaLabels.gridView"
-
-📄 frontend/pages/MarketplacePage.tsx:310
-   Key: "marketplacePage.ariaLabels.listView"
-
-📄 frontend/pages/MessagesPage.tsx:49
-   Key: "notifications.newMessageFrom"
-
-📄 frontend/pages/MessagesPage.tsx:68
-   Key: "messagesPage.newGroupButton"
-
-📄 frontend/pages/MessagesPage.tsx:85
-   Key: "messagesPage.noConversationSelectedTitle"
-
-📄 frontend/pages/MessagesPage.tsx:86
-   Key: "messagesPage.noConversationSelectedSubtitle"
-
-📄 frontend/pages/MessagesPage.tsx:88
-   Key: "messagesPage.noConversationsYet"
-
-📄 frontend/pages/NotificationsPage.tsx:39
-   Key: "notificationsPage.clearAll"
-
-📄 frontend/pages/NotificationsPage.tsx:48
-   Key: "notificationsPage.emptyState.title"
-
-📄 frontend/pages/NotificationsPage.tsx:49
-   Key: "notificationsPage.emptyState.message"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:23
-   Key: "parentEnquiriesPage.accessDenied.title"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:24
-   Key: "parentEnquiriesPage.accessDenied.message"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:74
-   Key: "parentEnquiriesPage.emptyState.title"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:75
-   Key: "parentEnquiriesPage.emptyState.message.0"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:75
-   Key: "parentEnquiriesPage.emptyState.message.1"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:84
-   Key: "parentEnquiriesPage.card.title"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:86
-   Key: "parentEnquiriesPage.card.submitted"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:87
-   Key: "parentEnquiriesPage.card.childInfo"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:95
-   Key: "parentEnquiriesPage.card.notes"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:99
-   Key: "parentEnquiriesPage.card.responsesTitle"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:101
-   Key: "parentEnquiriesPage.card.awaitingMatch"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:113
-   Key: "parentEnquiriesPage.card.message"
-
-📄 frontend/pages/ParentEnquiriesPage.tsx:123
-   Key: "parentEnquiriesPage.card.waitingForMoreResponses"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:48
-   Key: "parentLeadFormPage.errorAllFields"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:75
-   Key: "parentLeadFormPage.thankYouTitle"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:79
-   Key: "parentLeadFormPage.unauthenticatedSuccessMessage"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:86
-   Key: "parentLeadFormPage.authenticatedSuccessMessage"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:101
-   Key: "parentLeadFormPage.subtitle"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:106
-   Key: "parentLeadFormPage.labels.yourFullName"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:111
-   Key: "parentLeadFormPage.labels.yourEmail"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:115
-   Key: "parentLeadFormPage.labels.yourPhone"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:121
-   Key: "parentLeadFormPage.sectionTitleChildNeeds"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:125
-   Key: "parentLeadFormPage.labels.canton"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:132
-   Key: "parentLeadFormPage.labels.municipality"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:139
-   Key: "parentLeadFormPage.labels.childAge"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:143
-   Key: "parentLeadFormPage.labels.desiredStartDate"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:149
-   Key: "parentLeadFormPage.labels.specialNeeds"
-
-📄 frontend/pages/ParentLeadFormPage.tsx:151
-   Key: "parentLeadFormPage.helpText.specialNeeds"
-
-📄 frontend/pages/PartnersPage.tsx:14
-   Key: "partnersPage.partnerCard.logoAlt"
-
-📄 frontend/pages/PartnersPage.tsx:16
-   Key: "partnersPage.partnerCard.partnerType"
-
-📄 frontend/pages/PartnersPage.tsx:20
-   Key: "partnersPage.partnerCard.learnMoreButton"
-
-📄 frontend/pages/PartnersPage.tsx:38
-   Key: "partnersPage.hero.title"
-
-📄 frontend/pages/PartnersPage.tsx:40
-   Key: "partnersPage.hero.subtitle"
-
-📄 frontend/pages/PartnersPage.tsx:43
-   Key: "partnersPage.hero.ctaButton"
 
 📄 frontend/pages/PartnersPage.tsx:50
    Key: "partnersPage.featured.title"
@@ -762,9 +108,6 @@
 
 📄 frontend/pages/RecruitmentPage.tsx:71
    Key: "Favorite TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:81
-   Key: "recruitmentPage.candidateCard.viewProfile"
 
 📄 frontend/pages/RecruitmentPage.tsx:86
    Key: "recruitmentPage.confirmRemoveCandidate"
@@ -1053,9 +396,6 @@
 
 📄 frontend/pages/UsersPage.tsx:259
    Key: "usersPage.emptyState"
-
-📄 frontend/pages/admin/AdminPlatformSettingsPage.tsx:39
-   Key: "organizationProfileForm.saveSuccess"
 
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
    Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
@@ -1645,45 +985,6 @@
 📄 frontend/pages/parent/ParentDashboardPage.tsx:92
    Key: "parentDashboard.favorites.button"
 
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:17
-   Key: "parentEnquiriesPage.accessDenied.title"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:18
-   Key: "parentEnquiriesPage.accessDenied.message"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:58
-   Key: "parentEnquiriesPage.emptyState.title"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:59
-   Key: "parentEnquiriesPage.emptyState.message.0"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:59
-   Key: "parentEnquiriesPage.emptyState.message.1"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:68
-   Key: "parentEnquiriesPage.card.title"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:70
-   Key: "parentEnquiriesPage.card.submitted"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:71
-   Key: "parentEnquiriesPage.card.childInfo"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:79
-   Key: "parentEnquiriesPage.card.notes"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:83
-   Key: "parentEnquiriesPage.card.responsesTitle"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:85
-   Key: "parentEnquiriesPage.card.awaitingMatch"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:95
-   Key: "parentEnquiriesPage.card.message"
-
-📄 frontend/pages/parent/ParentEnquiriesPage.tsx:100
-   Key: "parentEnquiriesPage.card.waitingForMoreResponses"
-
 📄 frontend/pages/parent/ParentSupportPage.tsx:19
    Key: "supportPage.faqTitle"
 
@@ -1725,12 +1026,6 @@
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:133
    Key: "Could not find a user associated with this organization to message."
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:143
-   Key: "partnerDetailPage.onlyFoundationsRequestService"
-
-📄 frontend/pages/partner/PartnerDetailPage.tsx:165
-   Key: "partnerDetailPage.requestSubmittedAlert"
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:172
    Key: "partnerDetailPage.loadingPartnerDetails"
@@ -1785,24 +1080,6 @@
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:301
    Key: "partnerDetailPage.applyPromoButton"
-
-📄 frontend/pages/partnersPage.tsx:14
-   Key: "partnersPage.partnerCard.logoAlt"
-
-📄 frontend/pages/partnersPage.tsx:16
-   Key: "partnersPage.partnerCard.partnerType"
-
-📄 frontend/pages/partnersPage.tsx:20
-   Key: "partnersPage.partnerCard.learnMoreButton"
-
-📄 frontend/pages/partnersPage.tsx:38
-   Key: "partnersPage.hero.title"
-
-📄 frontend/pages/partnersPage.tsx:40
-   Key: "partnersPage.hero.subtitle"
-
-📄 frontend/pages/partnersPage.tsx:43
-   Key: "partnersPage.hero.ctaButton"
 
 📄 frontend/pages/partnersPage.tsx:50
    Key: "partnersPage.featured.title"
@@ -2113,9 +1390,6 @@
 📄 frontend/pages/supplier/SupplierOrdersPage.tsx:79
    Key: "supplierOrdersPage.table.orderId"
 
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:80
-   Key: "supplierOrdersPage.table.foundation"
-
 📄 frontend/pages/supplier/SupplierOrdersPage.tsx:81
    Key: "supplierOrdersPage.table.date"
 
@@ -2195,25 +1469,6 @@
 
 📄 frontend/components/cart/OrderSummaryDrawer.tsx:
    Line 196: "&rarr;" (JSX_TEXT)
-
-📄 frontend/components/debug/TranslationDebugger.tsx:
-   Line 105: "Translation Debug Info" (JSX_TEXT)
-   Line 108: "Status:" (JSX_TEXT)
-   Line 118: "Test Translation:" (JSX_TEXT)
-   Line 127: "Missing Keys:" (JSX_TEXT)
-   Line 137: "Resource Bundle Keys:" (JSX_TEXT)
-   Line 148: "Backend Status:" (JSX_TEXT)
-   Line 156: "Options:" (JSX_TEXT)
-   Line 171: "Log to Console" (JSX_TEXT)
-
-📄 frontend/components/debug/TranslationDiagnostics.tsx:
-   Line 182: "Translation Diagnostics" (JSX_TEXT)
-   Line 196: "📊 Basic Status:" (JSX_TEXT)
-   Line 207: "📁 Translation Files:" (JSX_TEXT)
-   Line 252: "🧪 Test Translations:" (JSX_TEXT)
-   Line 267: "⚙️ Configuration:" (JSX_TEXT)
-   Line 286: "Log to Console" (JSX_TEXT)
-   Line 296: "Copy Missing Keys" (JSX_TEXT)
 
 📄 frontend/components/debug/TranslationErrorLogger.tsx:
    Line 613: "3 && text.length" (JSX_TEXT)
@@ -2412,7 +1667,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 722 translation keys are missing from translation files.
-⚠️  155 instances of hardcoded text found.
+❌ 480 translation keys are missing from translation files.
+⚠️  140 instances of hardcoded text found.
 
-📊 Coverage: 1007/892 keys are being used (113%)
+📊 Coverage: 1022/1043 keys are being used (98%)
