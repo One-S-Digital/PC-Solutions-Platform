@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-10-06T16:32:54.771Z",
+  "generatedAt": "2025-10-06T16:35:08.822Z",
   "baseUrl": "https://app.procrechesolutions.com",
   "environment": "production",
   "authenticated": false,
@@ -8,7 +8,7 @@
     "successfulScans": 22,
     "failedScans": 0,
     "totalMissingKeys": 1,
-    "totalHardcodedText": 42,
+    "totalHardcodedText": 55,
     "pagesWithIssues": 22
   },
   "pages": [
@@ -192,7 +192,7 @@
       "url": "https://app.procrechesolutions.com/suppliers",
       "pageName": "Suppliers",
       "missingKeys": 1,
-      "hardcodedText": 42,
+      "hardcodedText": 43,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Suppliers.png",
@@ -203,7 +203,7 @@
       "url": "https://app.procrechesolutions.com/daycares",
       "pageName": "Daycares",
       "missingKeys": 1,
-      "hardcodedText": 42,
+      "hardcodedText": 43,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Daycares.png",
@@ -214,7 +214,7 @@
       "url": "https://app.procrechesolutions.com/admin",
       "pageName": "Admin",
       "missingKeys": 1,
-      "hardcodedText": 42,
+      "hardcodedText": 43,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Admin.png",
@@ -225,7 +225,7 @@
       "url": "https://app.procrechesolutions.com/help",
       "pageName": "Help",
       "missingKeys": 1,
-      "hardcodedText": 42,
+      "hardcodedText": 43,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Help.png",
@@ -236,7 +236,7 @@
       "url": "https://app.procrechesolutions.com/about",
       "pageName": "About",
       "missingKeys": 1,
-      "hardcodedText": 42,
+      "hardcodedText": 43,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/About.png",
@@ -247,7 +247,7 @@
       "url": "https://app.procrechesolutions.com/contact",
       "pageName": "Contact",
       "missingKeys": 1,
-      "hardcodedText": 42,
+      "hardcodedText": 43,
       "i18nErrors": 0,
       "translationIssues": 2,
       "screenshot": "./focused-screenshots/Contact.png",
@@ -601,6 +601,110 @@
       "className": "",
       "id": "",
       "context": "🔍 DEBUG MODE ACTIVE - Look for purple debug buttons in bottom corners"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Refresh",
+      "element": "BUTTON",
+      "className": "",
+      "id": "",
+      "context": "Refresh"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Status:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Status:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "✅ Ready",
+      "element": "DIV",
+      "className": "",
+      "id": "",
+      "context": "Status: ✅ Ready"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Language:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Language:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Resource Bundle:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Resource Bundle:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Test Translations:",
+      "element": "STRONG",
+      "className": "",
+      "id": "",
+      "context": "Test Translations:"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "appName:",
+      "element": "DIV",
+      "className": "",
+      "id": "",
+      "context": "appName: ProCrèche Solutions Suisse"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "ProCrèche Solutions Suisse",
+      "element": "SPAN",
+      "className": "",
+      "id": "",
+      "context": "ProCrèche Solutions Suisse"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "loginPage.title:",
+      "element": "DIV",
+      "className": "",
+      "id": "",
+      "context": "loginPage.title: Welcome to {{appName}}"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Welcome to {{appName}}",
+      "element": "SPAN",
+      "className": "",
+      "id": "",
+      "context": "Welcome to {{appName}}"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "loginPage.subtitle:",
+      "element": "DIV",
+      "className": "",
+      "id": "",
+      "context": "loginPage.subtitle: Sign in to your account"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Sign in to your account",
+      "element": "SPAN",
+      "className": "",
+      "id": "",
+      "context": "Sign in to your account"
+    },
+    {
+      "type": "hardcoded_text",
+      "text": "Full Debug Info",
+      "element": "SUMMARY",
+      "className": "",
+      "id": "",
+      "context": "Full Debug Info"
     }
   ],
   "recommendations": [
@@ -613,7 +717,7 @@
     {
       "type": "hardcoded_text",
       "priority": "high",
-      "message": "Found 42 pieces of hardcoded text across all pages that should be translated.",
+      "message": "Found 55 pieces of hardcoded text across all pages that should be translated.",
       "action": "Replace hardcoded text with translation keys and redeploy"
     }
   ]
