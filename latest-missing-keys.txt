@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1275 translation keys
+✅ Found 1300 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1350 t() calls
+📊 Found 1361 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 99 potential hardcoded text instances
+📊 Found 91 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1275
-🔧 t() Calls Found: 1350
-❌ Missing Keys: 236
-⚠️  Hardcoded Text: 99
-✅ Used Keys: 1062
-📦 Unused Keys: 213
+📚 Translation Keys: 1300
+🔧 t() Calls Found: 1361
+❌ Missing Keys: 216
+⚠️  Hardcoded Text: 91
+✅ Used Keys: 1073
+📦 Unused Keys: 227
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -147,66 +147,6 @@
 
 📄 frontend/pages/foundation/FoundationLeadsPage.tsx:25
    Key: "sidebar.parentLeads"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:77
-   Key: "foundationOrdersAppointmentsPage.exportCsvButton"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:82
-   Key: "foundationOrdersAppointmentsPage.noProductOrders"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:89
-   Key: "foundationOrdersAppointmentsPage.table.refNo"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:90
-   Key: "foundationOrdersAppointmentsPage.table.supplier"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:91
-   Key: "foundationOrdersAppointmentsPage.table.itemsQty"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:92
-   Key: "foundationOrdersAppointmentsPage.table.total"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:93
-   Key: "foundationOrdersAppointmentsPage.table.date"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:94
-   Key: "foundationOrdersAppointmentsPage.table.status"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:95
-   Key: "foundationOrdersAppointmentsPage.table.actions"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:123
-   Key: "foundationOrdersAppointmentsPage.cancelOrderAlert"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:139
-   Key: "foundationOrdersAppointmentsPage.serviceAppointmentsTitle"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:140
-   Key: "foundationOrdersAppointmentsPage.exportCsvServiceAlert"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:140
-   Key: "foundationOrdersAppointmentsPage.exportCsvButton"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:145
-   Key: "foundationOrdersAppointmentsPage.noServiceAppointments"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:152
-   Key: "foundationOrdersAppointmentsPage.table.refNo"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:153
-   Key: "foundationOrdersAppointmentsPage.table.provider"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:154
-   Key: "foundationOrdersAppointmentsPage.table.service"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:155
-   Key: "foundationOrdersAppointmentsPage.table.date"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:156
-   Key: "foundationOrdersAppointmentsPage.table.status"
-
-📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:157
-   Key: "foundationOrdersAppointmentsPage.table.actions"
 
 📄 frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx:169
    Key: "foundationOrdersAppointmentsPage.unknownProvider"
@@ -753,43 +693,35 @@
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DesignSystemPage.tsx:
-   Line 34: "This is the content for Tab 1." (JSX_TEXT)
-   Line 35: "This is the content for Tab 2." (JSX_TEXT)
-   Line 36: "This is a disabled tab." (JSX_TEXT)
-   Line 42: "Design System" (JSX_TEXT)
-   Line 43: "A living reference for all UI components and design tokens in the Pro Crèche Solutions application." (JSX_TEXT)
-   Line 62: "Font Family: Nunito, Inter, sans-serif" (JSX_TEXT)
-   Line 63: "Heading 1: The quick brown fox" (JSX_TEXT)
-   Line 64: "Heading 2: The quick brown fox" (JSX_TEXT)
-   Line 65: "Heading 3: The quick brown fox" (JSX_TEXT)
-   Line 66: "Heading 4: The quick brown fox" (JSX_TEXT)
-   Line 67: "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." (JSX_TEXT)
-   Line 68: "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi." (JSX_TEXT)
-   Line 69: "This is a link" (JSX_TEXT)
-   Line 91: "Extra Small" (JSX_TEXT)
-   Line 93: "Medium (Default)" (JSX_TEXT)
-   Line 98: "With Icons" (JSX_TEXT)
-   Line 100: "Left Icon" (JSX_TEXT)
-   Line 101: "Right Icon" (JSX_TEXT)
-   Line 102: "Small Icon" (JSX_TEXT)
-   Line 107: "Disabled State" (JSX_TEXT)
-   Line 109: "Primary Disabled" (JSX_TEXT)
-   Line 110: "Secondary Disabled" (JSX_TEXT)
-   Line 111: "Outline Disabled" (JSX_TEXT)
-   Line 122: "Standard Card" (JSX_TEXT)
-   Line 123: "This is a standard card component with a soft shadow. It's the base for most content containers." (JSX_TEXT)
-   Line 126: "Hover Effect Card" (JSX_TEXT)
-   Line 127: "This card has a subtle scale and shadow transition on hover, useful for interactive elements." (JSX_TEXT)
-   Line 134: "Form Controls" (JSX_TEXT)
-   Line 138: "Text Input" (JSX_TEXT)
-   Line 142: "Select Menu" (JSX_TEXT)
-   Line 144: "Option 1" (JSX_TEXT)
-   Line 145: "Option 2" (JSX_TEXT)
-   Line 146: "Option 3" (JSX_TEXT)
-   Line 156: "Quantity Input" (JSX_TEXT)
-   Line 160: "Disabled Input" (JSX_TEXT)
-   Line 172: "Pills Variant (Default)" (JSX_TEXT)
-   Line 176: "Line Variant" (JSX_TEXT)
+   Line 67: "Heading 3: The quick brown fox" (JSX_TEXT)
+   Line 68: "Heading 4: The quick brown fox" (JSX_TEXT)
+   Line 69: "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." (JSX_TEXT)
+   Line 70: "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi." (JSX_TEXT)
+   Line 71: "This is a link" (JSX_TEXT)
+   Line 93: "Extra Small" (JSX_TEXT)
+   Line 95: "Medium (Default)" (JSX_TEXT)
+   Line 100: "With Icons" (JSX_TEXT)
+   Line 102: "Left Icon" (JSX_TEXT)
+   Line 103: "Right Icon" (JSX_TEXT)
+   Line 104: "Small Icon" (JSX_TEXT)
+   Line 109: "Disabled State" (JSX_TEXT)
+   Line 111: "Primary Disabled" (JSX_TEXT)
+   Line 112: "Secondary Disabled" (JSX_TEXT)
+   Line 113: "Outline Disabled" (JSX_TEXT)
+   Line 124: "Standard Card" (JSX_TEXT)
+   Line 125: "This is a standard card component with a soft shadow. It's the base for most content containers." (JSX_TEXT)
+   Line 128: "Hover Effect Card" (JSX_TEXT)
+   Line 129: "This card has a subtle scale and shadow transition on hover, useful for interactive elements." (JSX_TEXT)
+   Line 136: "Form Controls" (JSX_TEXT)
+   Line 140: "Text Input" (JSX_TEXT)
+   Line 144: "Select Menu" (JSX_TEXT)
+   Line 146: "Option 1" (JSX_TEXT)
+   Line 147: "Option 2" (JSX_TEXT)
+   Line 148: "Option 3" (JSX_TEXT)
+   Line 158: "Quantity Input" (JSX_TEXT)
+   Line 162: "Disabled Input" (JSX_TEXT)
+   Line 174: "Pills Variant (Default)" (JSX_TEXT)
+   Line 178: "Line Variant" (JSX_TEXT)
 
 📄 frontend/pages/FoundationLeadsPage.tsx:
    Line 15: "Access Denied" (JSX_TEXT)
@@ -872,7 +804,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 236 translation keys are missing from translation files.
-⚠️  99 instances of hardcoded text found.
+❌ 216 translation keys are missing from translation files.
+⚠️  91 instances of hardcoded text found.
 
-📊 Coverage: 1062/1275 keys are being used (83%)
+📊 Coverage: 1073/1300 keys are being used (83%)

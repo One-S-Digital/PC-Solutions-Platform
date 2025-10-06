@@ -64,11 +64,11 @@ const DesignSystemPage: React.FC = () => {
           <p className="text-xs text-gray-500">{t('designSystemPage.typography.fontFamily')}</p>
           <h1 className="text-4xl font-bold">{t('designSystemPage.typography.heading1')}</h1>
           <h2 className="text-3xl font-bold">{t('designSystemPage.typography.heading2')}</h2>
-          <h3 className="text-2xl font-semibold">Heading 3: The quick brown fox</h3>
-          <h4 className="text-xl font-semibold">Heading 4: The quick brown fox</h4>
-          <p className="text-base">Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.</p>
-          <p className="text-sm">Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.</p>
-          <a href="#" className="text-swiss-mint hover:underline">This is a link</a>
+          <h3 className="text-2xl font-semibold">{t('designSystemPage.typography.heading3')}</h3>
+          <h4 className="text-xl font-semibold">{t('designSystemPage.typography.heading4')}</h4>
+          <p className="text-base">{t('designSystemPage.typography.bodyBase')}</p>
+          <p className="text-sm">{t('designSystemPage.typography.bodySmall')}</p>
+          <a href="#" className="text-swiss-mint hover:underline">{t('designSystemPage.typography.link')}</a>
         </Card>
       </section>
 
@@ -90,14 +90,14 @@ const DesignSystemPage: React.FC = () => {
            <div>
             <h3 className="font-medium mb-3">Sizes</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary" size="xs">Extra Small</Button>
-              <Button variant="primary" size="sm">Small</Button>
-              <Button variant="primary" size="md">Medium (Default)</Button>
-              <Button variant="primary" size="lg">Large</Button>
+              <Button variant="primary" size="xs">{t('designSystemPage.buttons.extraSmall')}</Button>
+              <Button variant="primary" size="sm">{t('designSystemPage.buttons.small')}</Button>
+              <Button variant="primary" size="md">{t('designSystemPage.buttons.mediumDefault')}</Button>
+              <Button variant="primary" size="lg">{t('designSystemPage.buttons.large')}</Button>
             </div>
           </div>
            <div>
-            <h3 className="font-medium mb-3">With Icons</h3>
+            <h3 className="font-medium mb-3">{t('designSystemPage.buttons.withIcons')}</h3>
             <div className="flex flex-wrap items-center gap-4">
               <Button variant="secondary" leftIcon={PlusIcon}>Left Icon</Button>
               <Button variant="outline" rightIcon={ArrowRightIcon}>Right Icon</Button>
