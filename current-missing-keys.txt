@@ -2,115 +2,37 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1482 translation keys
+✅ Found 1516 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1393 t() calls
+📊 Found 1398 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 61 potential hardcoded text instances
+📊 Found 57 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1482
-🔧 t() Calls Found: 1393
-❌ Missing Keys: 57
-⚠️  Hardcoded Text: 61
-✅ Used Keys: 1100
-📦 Unused Keys: 382
+📚 Translation Keys: 1516
+🔧 t() Calls Found: 1398
+❌ Missing Keys: 29
+⚠️  Hardcoded Text: 57
+✅ Used Keys: 1105
+📦 Unused Keys: 411
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
-📄 frontend/components/recruitment/JobDetailModal.tsx:99
-   Key: "recruitmentPage.jobDetailModal.overviewTitle"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:104
-   Key: "recruitmentPage.jobDetailModal.location"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:111
-   Key: "recruitmentPage.jobDetailModal.contractType"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:118
-   Key: "recruitmentPage.jobDetailModal.startDate"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:126
-   Key: "recruitmentPage.jobDetailModal.salary"
-
-📄 frontend/components/recruitment/JobDetailModal.tsx:140
-   Key: "recruitmentPage.jobDetailModal.applyNow"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:119
-   Key: "recruitmentPage.jobPostModal.editTitle"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:119
-   Key: "recruitmentPage.jobPostModal.addTitle"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:130
-   Key: "recruitmentPage.jobPostModal.jobTitle"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:134
-   Key: "recruitmentPage.jobPostModal.location"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:138
-   Key: "recruitmentPage.jobPostModal.contractType"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:144
-   Key: "recruitmentPage.jobPostModal.startDate"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:149
-   Key: "recruitmentPage.jobPostModal.salaryRange"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:150
-   Key: "recruitmentPage.jobPostModal.salaryRangePlaceholder"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:153
-   Key: "recruitmentPage.jobPostModal.description"
-
-📄 frontend/components/recruitment/JobPostModal.tsx:165
-   Key: "recruitmentPage.jobPostModal.postJob"
-
-📄 frontend/components/recruitment/ViewApplicantsModal.tsx:52
-   Key: "recruitmentPage.viewApplicantsModal.noApplicants"
-
-📄 frontend/components/recruitment/ViewApplicantsModal.tsx:61
-   Key: "recruitmentPage.viewApplicantsModal.appliedOn"
-
-📄 frontend/components/recruitment/ViewApplicantsModal.tsx:69
-   Key: "recruitmentPage.candidateCard.viewProfile"
-
 📄 frontend/components/service-provider/ServiceUploadModal.tsx:55
    Key: ","
 
 📄 frontend/components/settings/OrganizationProfileForm.tsx:36
    Key: ","
 
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:34
-   Key: "supplierDashboard.recentOrdersActions.decline"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:35
-   Key: "supplierDashboard.recentOrdersActions.accept"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:41
-   Key: "supplierOrdersPage.actions.ship"
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:63
-   Key: "supplierOrdersPage.table.foundation"
-
 📄 frontend/components/ui/FileUploadZone.tsx:39
    Key: ","
 
 📄 frontend/components/ui/FileUploadZone.tsx:124
    Key: ","
-
-📄 frontend/components/ui/PricingToggle.tsx:24
-   Key: "pricingPage.monthly"
-
-📄 frontend/components/ui/PricingToggle.tsx:34
-   Key: "pricingPage.annual"
-
-📄 frontend/components/ui/PricingToggle.tsx:39
-   Key: "pricingPage.saveUpTo10"
 
 📄 frontend/contexts/AppContext.tsx:99
    Key: "-"
@@ -132,9 +54,6 @@
 
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
-
-📄 frontend/pages/RecruitmentPage.tsx:81
-   Key: "recruitmentPage.candidateCard.viewProfile"
 
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
    Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
@@ -187,9 +106,6 @@
 📄 frontend/pages/supplier/SupplierDashboardPage.tsx:185
    Key: "-"
 
-📄 frontend/pages/supplier/SupplierOrdersPage.tsx:80
-   Key: "supplierOrdersPage.table.foundation"
-
 📄 frontend/tailwind.config.js:1
    Key: "tailwindcss"
 
@@ -214,12 +130,6 @@
 
 📄 frontend/index.tsx:
    Line 11: "Could not find root element to mount to" (ERROR)
-
-📄 frontend/pages/DesignSystemPage.tsx:
-   Line 158: "Quantity Input" (JSX_TEXT)
-   Line 162: "Disabled Input" (JSX_TEXT)
-   Line 174: "Pills Variant (Default)" (JSX_TEXT)
-   Line 178: "Line Variant" (JSX_TEXT)
 
 📄 frontend/pages/ParentEnquiriesPage.tsx:
    Line 122: "0 && lead.responses.length" (JSX_TEXT)
@@ -295,7 +205,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 57 translation keys are missing from translation files.
-⚠️  61 instances of hardcoded text found.
+❌ 29 translation keys are missing from translation files.
+⚠️  57 instances of hardcoded text found.
 
-📊 Coverage: 1100/1482 keys are being used (74%)
+📊 Coverage: 1105/1516 keys are being used (73%)

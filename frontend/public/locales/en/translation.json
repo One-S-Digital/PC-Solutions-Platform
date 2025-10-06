@@ -506,7 +506,16 @@
     "title": "System Monitoring",
     "monitoring": "System Monitoring",
     "performance": "Performance Metrics",
-    "logs": "System Logs"
+    "logs": "System Logs",
+    "rawLogConsole": {
+      "emptyLogMessage": "No logs available",
+      "tabs": {
+        "all": "All",
+        "errors": "Errors",
+        "warnings": "Warnings",
+        "info": "Info"
+      }
+    }
   },
   "adminDiscountTerminationsPage": {
     "title": "Discount Terminations",
@@ -517,26 +526,88 @@
     "title": "Pricing Plans",
     "plans": "Available Plans",
     "features": "Plan Features",
-    "billing": "Billing Information"
+    "billing": "Billing Information",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "saveUpTo10": "Save up to 10%",
+    "popular": "Most Popular",
+    "whatYouGet": "What You Get",
+    "selectAndContinue": "Select and Continue",
+    "choosePlan": "Choose Your Plan",
+    "titleSignup": "Sign Up",
+    "subtitleSignup": "Create your account to get started",
+    "subtitle": "Choose the plan that's right for your organization",
+    "suppliersAndProvidersTitle": "For Suppliers & Service Providers"
   },
   "recruitmentPage": {
+    "title": "Recruitment",
     "jobDetailModal": {
       "title": "Job Details",
       "apply": "Apply Now",
-      "close": "Close"
+      "close": "Close",
+      "overviewTitle": "Job Overview",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salary": "Salary",
+      "applyNow": "Apply Now"
     },
     "jobPostModal": {
       "title": "Post Job",
-      "submit": "Submit Job Post"
+      "submit": "Submit Job Post",
+      "editTitle": "Edit Job Posting",
+      "addTitle": "Add New Job Posting",
+      "jobTitle": "Job Title",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salaryRange": "Salary Range",
+      "salaryRangePlaceholder": "e.g., CHF 4,500 - 5,500",
+      "description": "Job Description",
+      "postJob": "Post Job"
     },
     "viewApplicantsModal": {
       "title": "View Applicants",
-      "applicants": "Applicants"
+      "applicants": "Applicants",
+      "noApplicants": "No applicants yet",
+      "appliedOn": "Applied on"
     },
     "candidateCard": {
       "name": "Candidate Name",
       "experience": "Experience",
-      "skills": "Skills"
+      "skills": "Skills",
+      "viewProfile": "View Profile"
+    },
+    "buttons": {
+      "viewApplicants": "View Applicants",
+      "filters": "Filters",
+      "postNewJob": "Post New Job",
+      "applyFilters": "Apply Filters",
+      "addCandidate": "Add Candidate"
+    },
+    "confirmRemoveCandidate": "Are you sure you want to remove this candidate?",
+    "jobOffers": {
+      "searchPlaceholder": "Search job offers...",
+      "filterTitle": "Filter Jobs",
+      "activeJobsCount": "{{count}} active jobs",
+      "emptyState": "No job offers found"
+    },
+    "labels": {
+      "location": "Location",
+      "allContractTypes": "All Contract Types",
+      "allStatuses": "All Statuses",
+      "allRoles": "All Roles",
+      "region": "Region",
+      "availabilityDate": "Availability Date"
+    },
+    "candidatePool": {
+      "searchPlaceholder": "Search candidates...",
+      "filterTitle": "Filter Candidates",
+      "emptyState": "No candidates found"
+    },
+    "tabs": {
+      "jobOffers": "Job Offers",
+      "candidatePool": "Candidate Pool"
     }
   },
   "messagesPage": {
@@ -1062,35 +1133,6 @@
     "specializesIn": "Specializes in",
     "viewProfileAndProducts": "View Profile and Products"
   },
-  "recruitmentPage": {
-    "jobDetailModal": {
-      "overviewTitle": "Job Overview",
-      "location": "Location",
-      "contractType": "Contract Type",
-      "startDate": "Start Date",
-      "salary": "Salary",
-      "applyNow": "Apply Now"
-    },
-    "jobPostModal": {
-      "editTitle": "Edit Job Post",
-      "addTitle": "Add Job Post",
-      "jobTitle": "Job Title",
-      "location": "Location",
-      "contractType": "Contract Type",
-      "startDate": "Start Date",
-      "salaryRange": "Salary Range",
-      "salaryRangePlaceholder": "e.g., CHF 50,000 - 70,000",
-      "description": "Job Description",
-      "postJob": "Post Job"
-    },
-    "viewApplicantsModal": {
-      "noApplicants": "No applicants yet",
-      "appliedOn": "Applied on"
-    },
-    "candidateCard": {
-      "viewProfile": "View Profile"
-    }
-  },
   "Cannot post job. Foundation details are missing.": "Cannot post job. Foundation details are missing.",
   "Current user or organization ID is missing.": "Current user or organization ID is missing.",
   "organizationProfileForm": {
@@ -1125,11 +1167,6 @@
     "table": {
       "foundation": "Foundation"
     }
-  },
-  "pricingPage": {
-    "monthly": "Monthly",
-    "annual": "Annual",
-    "saveUpTo10": "Save up to 10%"
   },
   "You must be logged in as a foundation to submit a request.": "You must be logged in as a foundation to submit a request.",
   "common": {
@@ -1370,50 +1407,6 @@
       "contactUsAlert": "Contact us to learn more about partnership opportunities",
       "contactUsButton": "Contact Us",
       "inquiryFormLink": "Partnership Inquiry Form"
-    }
-  },
-  "pricingPage": {
-    "popular": "Most Popular",
-    "whatYouGet": "What You Get",
-    "selectAndContinue": "Select and Continue",
-    "choosePlan": "Choose Your Plan",
-    "titleSignup": "Sign Up",
-    "subtitleSignup": "Create your account to get started",
-    "subtitle": "Choose the plan that's right for your organization",
-    "suppliersAndProvidersTitle": "For Suppliers & Service Providers"
-  },
-  "recruitmentPage": {
-    "title": "Recruitment",
-    "buttons": {
-      "viewApplicants": "View Applicants",
-      "filters": "Filters",
-      "postNewJob": "Post New Job",
-      "applyFilters": "Apply Filters",
-      "addCandidate": "Add Candidate"
-    },
-    "confirmRemoveCandidate": "Are you sure you want to remove this candidate?",
-    "jobOffers": {
-      "searchPlaceholder": "Search job offers...",
-      "filterTitle": "Filter Jobs",
-      "activeJobsCount": "{{count}} active jobs",
-      "emptyState": "No job offers found"
-    },
-    "labels": {
-      "location": "Location",
-      "allContractTypes": "All Contract Types",
-      "allStatuses": "All Statuses",
-      "allRoles": "All Roles",
-      "region": "Region",
-      "availabilityDate": "Availability Date"
-    },
-    "candidatePool": {
-      "searchPlaceholder": "Search candidates...",
-      "filterTitle": "Filter Candidates",
-      "emptyState": "No candidates found"
-    },
-    "tabs": {
-      "jobOffers": "Job Offers",
-      "candidatePool": "Candidate Pool"
     }
   },
   "Close Job TBD": "Close Job TBD",
@@ -2100,11 +2093,20 @@
     "tabs": {
       "title": "Tabs",
       "pillsVariant": "Pills Variant (Default)",
-      "lineVariant": "Line Variant"
+      "lineVariant": "Line Variant",
+      "tab1": "Tab 1",
+      "content1": "This is the content for Tab 1.",
+      "tab2": "Tab 2",
+      "content2": "This is the content for Tab 2.",
+      "tab3": "Tab 3",
+      "content3": "This is a disabled tab."
     },
   "View Favorites TBD": "View Favorites TBD",
   "Could not find a user associated with this organization to message.": "Could not find a user associated with this organization to message.",
   "User organization details are missing.": "User organization details are missing.",
-  "tailwindcss": "tailwindcss"
+  "tailwindcss": "tailwindcss",
+  "sidebar.parentLeads": "Parent Leads",
+  "sidebar.products": "Products",
+  "sidebar.services": "Services"
   }
 }
