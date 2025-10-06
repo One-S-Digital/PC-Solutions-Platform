@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1211 translation keys
+✅ Found 1243 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1332 t() calls
+📊 Found 1335 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 117 potential hardcoded text instances
+📊 Found 114 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1211
-🔧 t() Calls Found: 1332
-❌ Missing Keys: 313
-⚠️  Hardcoded Text: 117
-✅ Used Keys: 1044
-📦 Unused Keys: 167
+📚 Translation Keys: 1243
+🔧 t() Calls Found: 1335
+❌ Missing Keys: 253
+⚠️  Hardcoded Text: 114
+✅ Used Keys: 1047
+📦 Unused Keys: 196
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -141,93 +141,6 @@
 
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:105
-   Key: "educatorDashboard.recommendations.match"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:46
-   Key: "educatorJobBoardPage.postedOn"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:93
-   Key: "notifications.errorTitle"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
-   Key: "educatorJobBoardPage.searchPlaceholder"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
-   Key: "educatorJobBoardPage.noJobsFound"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:44
-   Key: "Profile changes saved!"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:58
-   Key: "educatorProfilePage.editProfile"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:88
-   Key: "educatorProfilePage.availability.days"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:89
-   Key: "educatorProfilePage.availability.times"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:90
-   Key: "educatorProfilePage.availability.contract"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:91
-   Key: "educatorProfilePage.availability.ageGroups"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:137
-   Key: "educatorProfilePage.education.graduated"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:150
-   Key: "educatorProfilePage.certifications.issued"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:150
-   Key: "educatorProfilePage.certifications.expires"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:46
-   Key: "educatorSupportPage.ticketSubmittedAlert"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:82
-   Key: "educatorSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:94
-   Key: "educatorSupportPage.ticketForm.messagePlaceholder"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:18
-   Key: "foundationAnalyticsPage.mockDataVisualization"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:27
-   Key: "supplierAnalyticsPage.datePickerLabel"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:28
-   Key: "supplierAnalyticsPage.exportCsvAlert"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:29
-   Key: "supplierAnalyticsPage.exportCsvButton"
-
-📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:36
-   Key: "foundationAnalyticsPage.spendingByCategory"
 
 📄 frontend/pages/foundation/FoundationAnalyticsPage.tsx:40
    Key: "foundationAnalyticsPage.parentLeadConversion"
@@ -430,29 +343,8 @@
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:46
    Key: "foundationSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:82
    Key: "foundationSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
 
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:94
    Key: "foundationSupportPage.ticketForm.messagePlaceholder"
@@ -505,9 +397,6 @@
 📄 frontend/pages/parent/ParentDashboardPage.tsx:92
    Key: "parentDashboard.favorites.button"
 
-📄 frontend/pages/parent/ParentSupportPage.tsx:19
-   Key: "supportPage.faqTitle"
-
 📄 frontend/pages/parent/ParentSupportPage.tsx:22
    Key: "parentSupportPage.faq.matchingProcess.q"
 
@@ -525,15 +414,6 @@
 
 📄 frontend/pages/parent/ParentSupportPage.tsx:31
    Key: "parentSupportPage.faq.dataSecurity.a"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:36
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:37
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:37
-   Key: "supportPage.furtherAssistanceText.1"
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:40
    Key: "partnerDetailPage.productOutOfStock"
@@ -603,15 +483,6 @@
 
 📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:20
    Key: "supplierAnalyticsPage.mockChartText"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:34
-   Key: "supplierAnalyticsPage.datePickerLabel"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:35
-   Key: "supplierAnalyticsPage.exportCsvAlert"
-
-📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:36
-   Key: "supplierAnalyticsPage.exportCsvButton"
 
 📄 frontend/pages/service-provider/ServiceProviderAnalyticsPage.tsx:43
    Key: "serviceProviderAnalyticsPage.serviceRequestsPerWeek"
@@ -736,44 +607,14 @@
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:46
    Key: "serviceProviderSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:82
    Key: "serviceProviderSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
 
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:94
    Key: "serviceProviderSupportPage.ticketForm.messagePlaceholder"
 
 📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:20
    Key: "supplierAnalyticsPage.mockChartText"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:35
-   Key: "supplierAnalyticsPage.datePickerLabel"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:36
-   Key: "supplierAnalyticsPage.exportCsvAlert"
-
-📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:37
-   Key: "supplierAnalyticsPage.exportCsvButton"
 
 📄 frontend/pages/supplier/SupplierAnalyticsPage.tsx:44
    Key: "supplierAnalyticsPage.orderRequestsPerWeek"
@@ -931,29 +772,8 @@
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:46
    Key: "supplierSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:71
-   Key: "supportPage.submitTicketTitle"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:74
-   Key: "supportPage.ticketForm.subjectLabel"
-
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:82
    Key: "supplierSupportPage.ticketForm.subjectPlaceholder"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:86
-   Key: "supportPage.ticketForm.messageLabel"
 
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:94
    Key: "supplierSupportPage.ticketForm.messagePlaceholder"
@@ -973,12 +793,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/contexts/MessagingContext.tsx:
-   Line 247: "useMessaging must be used within a MessagingProvider" (ERROR)
-
-📄 frontend/contexts/NotificationContext.tsx:
-   Line 46: "useNotifications must be used within a NotificationProvider" (ERROR)
-
 📄 frontend/hooks/useApi.ts:
    Line 10: "extends UseApiState" (JSX_TEXT)
    Line 16: "): UseApiReturn" (JSX_TEXT)
@@ -987,7 +801,6 @@
    Line 53: "): Promise" (JSX_TEXT)
 
 📄 frontend/index.tsx:
-   Line 17: "Loading translations..." (JSX_TEXT)
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DashboardDetailPage.tsx:
@@ -1127,7 +940,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 313 translation keys are missing from translation files.
-⚠️  117 instances of hardcoded text found.
+❌ 253 translation keys are missing from translation files.
+⚠️  114 instances of hardcoded text found.
 
-📊 Coverage: 1044/1211 keys are being used (86%)
+📊 Coverage: 1047/1243 keys are being used (84%)

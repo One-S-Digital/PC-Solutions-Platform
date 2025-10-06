@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1201 translation keys
+✅ Found 1233 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1332 t() calls
+📊 Found 1335 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 117 potential hardcoded text instances
+📊 Found 114 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1201
-🔧 t() Calls Found: 1332
-❌ Missing Keys: 323
-⚠️  Hardcoded Text: 117
-✅ Used Keys: 1044
-📦 Unused Keys: 157
+📚 Translation Keys: 1233
+🔧 t() Calls Found: 1335
+❌ Missing Keys: 278
+⚠️  Hardcoded Text: 114
+✅ Used Keys: 1047
+📦 Unused Keys: 186
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -141,93 +141,6 @@
 
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:60
-   Key: "educatorDashboard.applicationStatus.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:63
-   Key: "educatorDashboard.applicationStatus.submitted"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:67
-   Key: "educatorDashboard.applicationStatus.viewed"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:71
-   Key: "educatorDashboard.applicationStatus.interviews"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:75
-   Key: "educatorDashboard.applicationStatus.offers"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:80
-   Key: "educatorDashboard.applicationStatus.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:84
-   Key: "educatorDashboard.skills.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:85
-   Key: "educatorDashboard.skills.subtitle"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:86
-   Key: "educatorDashboard.skills.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:93
-   Key: "educatorDashboard.recommendations.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:105
-   Key: "educatorDashboard.recommendations.match"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:46
-   Key: "educatorJobBoardPage.postedOn"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:93
-   Key: "notifications.errorTitle"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
-   Key: "educatorJobBoardPage.searchPlaceholder"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
-   Key: "educatorJobBoardPage.noJobsFound"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:44
-   Key: "Profile changes saved!"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:58
-   Key: "educatorProfilePage.editProfile"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:88
-   Key: "educatorProfilePage.availability.days"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:89
-   Key: "educatorProfilePage.availability.times"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:90
-   Key: "educatorProfilePage.availability.contract"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:91
-   Key: "educatorProfilePage.availability.ageGroups"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:137
-   Key: "educatorProfilePage.education.graduated"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:150
-   Key: "educatorProfilePage.certifications.issued"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:150
-   Key: "educatorProfilePage.certifications.expires"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:46
-   Key: "educatorSupportPage.ticketSubmittedAlert"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/educator/EducatorSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
 
 📄 frontend/pages/educator/EducatorSupportPage.tsx:71
    Key: "supportPage.submitTicketTitle"
@@ -460,18 +373,6 @@
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:46
    Key: "foundationSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/foundation/FoundationSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
 📄 frontend/pages/foundation/FoundationSupportPage.tsx:71
    Key: "supportPage.submitTicketTitle"
 
@@ -535,9 +436,6 @@
 📄 frontend/pages/parent/ParentDashboardPage.tsx:92
    Key: "parentDashboard.favorites.button"
 
-📄 frontend/pages/parent/ParentSupportPage.tsx:19
-   Key: "supportPage.faqTitle"
-
 📄 frontend/pages/parent/ParentSupportPage.tsx:22
    Key: "parentSupportPage.faq.matchingProcess.q"
 
@@ -555,15 +453,6 @@
 
 📄 frontend/pages/parent/ParentSupportPage.tsx:31
    Key: "parentSupportPage.faq.dataSecurity.a"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:36
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:37
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/parent/ParentSupportPage.tsx:37
-   Key: "supportPage.furtherAssistanceText.1"
 
 📄 frontend/pages/partner/PartnerDetailPage.tsx:40
    Key: "partnerDetailPage.productOutOfStock"
@@ -766,18 +655,6 @@
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:46
    Key: "serviceProviderSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
 📄 frontend/pages/service-provider/ServiceProviderSupportPage.tsx:71
    Key: "supportPage.submitTicketTitle"
 
@@ -961,18 +838,6 @@
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:46
    Key: "supplierSupportPage.ticketSubmittedAlert"
 
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:61
-   Key: "supportPage.faqTitle"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:65
-   Key: "supportPage.furtherAssistanceTitle"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.0"
-
-📄 frontend/pages/supplier/SupplierSupportPage.tsx:66
-   Key: "supportPage.furtherAssistanceText.1"
-
 📄 frontend/pages/supplier/SupplierSupportPage.tsx:71
    Key: "supportPage.submitTicketTitle"
 
@@ -1003,12 +868,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/contexts/MessagingContext.tsx:
-   Line 247: "useMessaging must be used within a MessagingProvider" (ERROR)
-
-📄 frontend/contexts/NotificationContext.tsx:
-   Line 46: "useNotifications must be used within a NotificationProvider" (ERROR)
-
 📄 frontend/hooks/useApi.ts:
    Line 10: "extends UseApiState" (JSX_TEXT)
    Line 16: "): UseApiReturn" (JSX_TEXT)
@@ -1017,7 +876,6 @@
    Line 53: "): Promise" (JSX_TEXT)
 
 📄 frontend/index.tsx:
-   Line 17: "Loading translations..." (JSX_TEXT)
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DashboardDetailPage.tsx:
@@ -1157,7 +1015,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 323 translation keys are missing from translation files.
-⚠️  117 instances of hardcoded text found.
+❌ 278 translation keys are missing from translation files.
+⚠️  114 instances of hardcoded text found.
 
-📊 Coverage: 1044/1201 keys are being used (87%)
+📊 Coverage: 1047/1233 keys are being used (85%)

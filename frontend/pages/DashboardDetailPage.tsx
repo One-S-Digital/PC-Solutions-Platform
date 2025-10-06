@@ -21,10 +21,10 @@ const getMockDetailData = (t: Function): Record<string, DetailContent> => ({
       <div className="space-y-3">
         <p className="font-semibold text-lg">{t('dashboardDetailPage.activeUsers.recentActivity')}</p>
         <ul className="list-disc list-inside text-gray-700 space-y-1">
-          <li>Alice Johnson - Logged in 2 hours ago, viewed 5 pages.</li>
-          <li>Bob Williams - Updated profile at 10:30 AM.</li>
-          <li>Carol Davis - Joined yesterday, completed onboarding.</li>
-          <li>David Brown - Viewed marketplace listings.</li>
+          <li>{t('dashboardDetailPage.activeUsers.aliceActivity')}</li>
+          <li>{t('dashboardDetailPage.activeUsers.bobActivity')}</li>
+          <li>{t('dashboardDetailPage.activeUsers.carolActivity')}</li>
+          <li>{t('dashboardDetailPage.activeUsers.davidActivity')}</li>
         </ul>
         <div className="mt-4 p-4 bg-swiss-mint/10 rounded-lg">
             <p className="font-medium text-swiss-mint">{t('dashboardDetailPage.activeUsers.totalToday', { count: 152 })}</p>
@@ -48,9 +48,9 @@ const getMockDetailData = (t: Function): Record<string, DetailContent> => ({
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 text-sm">
-                    <tr><td className="px-4 py-2">#ORD789</td><td className="px-4 py-2">EcoToys Wooden Blocks</td><td className="px-4 py-2">$49.99</td><td className="px-4 py-2"><span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">{t('dashboardDetailPage.newOrders.status.paid')}</span></td></tr>
-                    <tr><td className="px-4 py-2">#ORD790</td><td className="px-4 py-2">FreshBites Meal Plan</td><td className="px-4 py-2">$120.00</td><td className="px-4 py-2"><span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">{t('dashboardDetailPage.newOrders.status.paid')}</span></td></tr>
-                    <tr><td className="px-4 py-2">#ORD791</td><td className="px-4 py-2">ArtFun Creative Pack</td><td className="px-4 py-2">$25.50</td><td className="px-4 py-2"><span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs">{t('dashboardDetailPage.newOrders.status.pending')}</span></td></tr>
+                    <tr><td className="px-4 py-2">{t('dashboardDetailPage.newOrders.order789')}</td><td className="px-4 py-2">{t('dashboardDetailPage.newOrders.ecotoysBlocks')}</td><td className="px-4 py-2">$49.99</td><td className="px-4 py-2"><span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">{t('dashboardDetailPage.newOrders.status.paid')}</span></td></tr>
+                    <tr><td className="px-4 py-2">{t('dashboardDetailPage.newOrders.order790')}</td><td className="px-4 py-2">{t('dashboardDetailPage.newOrders.freshBitesMeal')}</td><td className="px-4 py-2">$120.00</td><td className="px-4 py-2"><span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">{t('dashboardDetailPage.newOrders.status.paid')}</span></td></tr>
+                    <tr><td className="px-4 py-2">{t('dashboardDetailPage.newOrders.order791')}</td><td className="px-4 py-2">{t('dashboardDetailPage.newOrders.artFunPack')}</td><td className="px-4 py-2">$25.50</td><td className="px-4 py-2"><span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs">{t('dashboardDetailPage.newOrders.status.pending')}</span></td></tr>
                 </tbody>
             </table>
              <div className="mt-4 p-4 bg-swiss-sand/20 rounded-lg">

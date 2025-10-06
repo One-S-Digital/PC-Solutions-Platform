@@ -1617,16 +1617,51 @@
       "expires": "Expires"
     }
   },
-  "educatorSupportPage": {
-    "ticketSubmittedAlert": "Support ticket submitted successfully"
-  },
   "supportPage": {
     "faqTitle": "Frequently Asked Questions",
     "furtherAssistanceTitle": "Need Further Assistance?",
     "furtherAssistanceText": [
       "Contact our support team for personalized help",
       "We're here to assist you with any questions or issues"
-    ]
+    ],
+    "submitTicketTitle": "Submit Support Ticket",
+    "ticketForm": {
+      "subjectLabel": "Subject",
+      "messageLabel": "Message"
+    }
+  },
+  "educatorSupportPage": {
+    "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "ticketForm": {
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "mockDataVisualization": "Mock Data Visualization",
+    "spendingByCategory": "Spending by Category",
+    "parentLeadConversion": "Parent Lead Conversion",
+    "staffTrainingCompletion": "Staff Training Completion",
+    "enrollmentTrend": "Enrollment Trend"
+  },
+  "foundationDashboard": {
+    "title": "Foundation Dashboard",
+    "welcomeMessage": "Welcome to your foundation dashboard",
+    "quickStats": {
+      "title": "Quick Stats"
+    },
+    "todayAtGlance": "Today at a Glance",
+    "activity": {
+      "title": "Recent Activity"
+    },
+    "quickActions": {
+      "title": "Quick Actions"
+    }
+  },
+  "supplierAnalyticsPage": {
+    "datePickerLabel": "Select Date Range",
+    "exportCsvAlert": "CSV export started",
+    "exportCsvButton": "Export CSV"
   },
   "errorBoundary": {
     "somethingWentWrong": "Something went wrong",
@@ -1659,5 +1694,43 @@
   },
   "loading": {
     "translations": "Loading translations..."
+  },
+  "dashboardDetailPage": {
+    "activeUsers": {
+      "recentActivity": "Recent Activity",
+      "totalToday": "Total active users today: {{count}}",
+      "aliceActivity": "Alice Johnson - Logged in 2 hours ago, viewed 5 pages.",
+      "bobActivity": "Bob Williams - Updated profile at 10:30 AM.",
+      "carolActivity": "Carol Davis - Joined yesterday, completed onboarding.",
+      "davidActivity": "David Brown - Viewed marketplace listings."
+    },
+    "newOrders": {
+      "recentOrders": "Recent Orders",
+      "table": {
+        "orderId": "Order ID",
+        "product": "Product",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending"
+      },
+      "totalThisWeek": "Total orders this week: {{count}}",
+      "order789": "#ORD789",
+      "order790": "#ORD790", 
+      "order791": "#ORD791",
+      "ecotoysBlocks": "EcoToys Wooden Blocks",
+      "freshBitesMeal": "FreshBites Meal Plan",
+      "artFunPack": "ArtFun Creative Pack"
+    },
+    "openJobs": {
+      "currentPositions": "Current Open Positions",
+      "applications": "Applications",
+      "status": {
+        "open": "Open",
+        "interviewing": "Interviewing"
+      }
+    }
   }
 }
