@@ -1159,9 +1159,34 @@
     "notificationsCount": "{{count}} notifications",
     "unreadMessages": "{{count}} unread messages"
   },
-  "sidebar": {
-    "billingSubscription": "Billing & Subscription"
-  },
+    "sidebar": {
+      "billingSubscription": "Billing & Subscription",
+      "dashboard": "Dashboard",
+      "marketplace": "Marketplace",
+      "products": "Products",
+      "services": "Services",
+      "recruitment": "Recruitment",
+      "jobListings": "Job Listings",
+      "candidatePool": "Candidate Pool",
+      "eLearning": "E-Learning",
+      "messages": "Messages",
+      "users": "Users",
+      "allUsers": "All Users",
+      "admins": "Admins",
+      "foundations": "Foundations",
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers",
+      "parents": "Parents",
+      "content": "Content",
+      "hrProcedures": "HR Procedures",
+      "statePolicies": "State Policies",
+      "discountTerminations": "Discount Terminations",
+      "systemMonitoring": "System Monitoring",
+      "partners": "Partners",
+      "platformSettings": "Platform Settings",
+      "designSystem": "Design System",
+      "settings": "Settings"
+    },
   "Quantity must be at least 1.": "Quantity must be at least 1.",
   "supplierCard": {
     "specializesIn": "Specializes in",
@@ -1176,9 +1201,10 @@
     "confirmGDPRDelete": "Confirm GDPR Data Deletion",
     "deletionRequestSubmittedHelpText": "This will permanently delete all your data from our systems"
   },
-  "settingsPage": {
-    "billingSubscription": "Billing & Subscription"
-  },
+    "settingsPage": {
+      "billingSubscription": "Billing & Subscription",
+      "title": "Settings"
+    },
   "Subscription cancelled (mock action)": "Subscription cancelled (mock action)",
   "fileUploadModal": {
     "uploading": "Uploading...",
@@ -1621,10 +1647,11 @@
     "searchPlaceholder": "Search jobs...",
     "noJobsFound": "No jobs found"
   },
-  "notifications": {
-    "errorTitle": "Error",
-    "newMessageFrom": "New message from"
-  },
+    "notifications": {
+      "errorTitle": "Error",
+      "successTitle": "Success",
+      "newMessageFrom": "New message from"
+    },
   "Profile changes saved!": "Profile changes saved!",
   "educatorProfilePage": {
     "editProfile": "Edit Profile",
