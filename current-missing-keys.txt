@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1090 translation keys
+✅ Found 1126 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1316 t() calls
+📊 Found 1320 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 133 potential hardcoded text instances
+📊 Found 129 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1090
-🔧 t() Calls Found: 1316
-❌ Missing Keys: 419
-⚠️  Hardcoded Text: 133
-✅ Used Keys: 1029
-📦 Unused Keys: 61
+📚 Translation Keys: 1126
+🔧 t() Calls Found: 1320
+❌ Missing Keys: 387
+⚠️  Hardcoded Text: 129
+✅ Used Keys: 1033
+📦 Unused Keys: 93
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -123,102 +123,6 @@
 
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
-
-📄 frontend/pages/SignupPage.tsx:226
-   Key: "signupPage.termsLabel"
-
-📄 frontend/pages/SignupPage.tsx:226
-   Key: "signupPage.termsLink"
-
-📄 frontend/pages/SignupPage.tsx:236
-   Key: "signupPage.creatingAccount"
-
-📄 frontend/pages/SignupPage.tsx:236
-   Key: "signupPage.createAccountButton"
-
-📄 frontend/pages/StatePoliciesPage.tsx:200
-   Key: "Cantonal Policies"
-
-📄 frontend/pages/StatePoliciesPage.tsx:201
-   Key: "National Regulations"
-
-📄 frontend/pages/StatePoliciesPage.tsx:202
-   Key: "Compliance Requirements"
-
-📄 frontend/pages/StatePoliciesPage.tsx:203
-   Key: "Updates & News"
-
-📄 frontend/pages/StatePoliciesPage.tsx:204
-   Key: "Official Downloads"
-
-📄 frontend/pages/UsersPage.tsx:31
-   Key: "usersPage.cannotDeleteOwnAccount"
-
-📄 frontend/pages/UsersPage.tsx:57
-   Key: "usersPage.status.pending"
-
-📄 frontend/pages/UsersPage.tsx:117
-   Key: "usersPage.userDetailDrawer.title"
-
-📄 frontend/pages/UsersPage.tsx:126
-   Key: "usersPage.userDetailDrawer.roleLabel"
-
-📄 frontend/pages/UsersPage.tsx:127
-   Key: "usersPage.userDetailDrawer.statusLabel"
-
-📄 frontend/pages/UsersPage.tsx:128
-   Key: "usersPage.userDetailDrawer.regionLabel"
-
-📄 frontend/pages/UsersPage.tsx:129
-   Key: "usersPage.userDetailDrawer.lastLoginLabel"
-
-📄 frontend/pages/UsersPage.tsx:130
-   Key: "usersPage.userDetailDrawer.orgLabel"
-
-📄 frontend/pages/UsersPage.tsx:135
-   Key: "usersPage.userDetailDrawer.adminActionsTitle"
-
-📄 frontend/pages/UsersPage.tsx:139
-   Key: "usersPage.userDetailDrawer.changeRoleLabel"
-
-📄 frontend/pages/UsersPage.tsx:148
-   Key: "usersPage.userDetailDrawer.updateRoleButton"
-
-📄 frontend/pages/UsersPage.tsx:151
-   Key: "usersPage.userDetailDrawer.suspendUserButton"
-
-📄 frontend/pages/UsersPage.tsx:153
-   Key: "usersPage.userDetailDrawer.activateUserButton"
-
-📄 frontend/pages/UsersPage.tsx:157
-   Key: "usersPage.userDetailDrawer.cannotModifyOwnAccount"
-
-📄 frontend/pages/UsersPage.tsx:177
-   Key: "usersPage.rolePageTitle"
-
-📄 frontend/pages/UsersPage.tsx:177
-   Key: "usersPage.allUsersTitle"
-
-📄 frontend/pages/UsersPage.tsx:197
-   Key: "usersPage.confirmDeleteUser"
-
-📄 frontend/pages/UsersPage.tsx:208
-   Key: "usersPage.userProfileUpdated"
-
-📄 frontend/pages/UsersPage.tsx:216
-   Key: "usersPage.addNewUserTBD"
-
-📄 frontend/pages/UsersPage.tsx:216
-   Key: "usersPage.addNewUserButton"
-
-📄 frontend/pages/UsersPage.tsx:225
-   Key: "usersPage.searchPlaceholder"
-
-📄 frontend/pages/UsersPage.tsx:231
-   Key: "usersPage.filtersTBD"
-
-📄 frontend/pages/UsersPage.tsx:231
-   Key: "usersPage.filtersButton"
 
 📄 frontend/pages/UsersPage.tsx:238
    Key: "usersPage.table.nameOrg"
@@ -1291,14 +1195,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/components/marketplace/ServiceRequestModal.tsx:
-   Line 70: "Preferred Date (Optional)" (JSX_TEXT)
-   Line 83: "Notes / Specific Requirements (Optional)" (JSX_TEXT)
-   Line 96: "Submit Request" (JSX_TEXT)
-
-📄 frontend/components/service-provider/ServiceRequestDetailModal.tsx:
-   Line 41: "Mark as Completed" (JSX_TEXT)
-
 📄 frontend/components/settings/AddPromoCodeModal.tsx:
    Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
 
@@ -1477,7 +1373,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 419 translation keys are missing from translation files.
-⚠️  133 instances of hardcoded text found.
+❌ 387 translation keys are missing from translation files.
+⚠️  129 instances of hardcoded text found.
 
-📊 Coverage: 1029/1090 keys are being used (94%)
+📊 Coverage: 1033/1126 keys are being used (92%)

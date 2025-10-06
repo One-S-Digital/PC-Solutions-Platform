@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1074 translation keys
+✅ Found 1110 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1316 t() calls
+📊 Found 1320 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 133 potential hardcoded text instances
+📊 Found 129 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1074
-🔧 t() Calls Found: 1316
-❌ Missing Keys: 435
-⚠️  Hardcoded Text: 133
-✅ Used Keys: 1029
-📦 Unused Keys: 45
+📚 Translation Keys: 1110
+🔧 t() Calls Found: 1320
+❌ Missing Keys: 403
+⚠️  Hardcoded Text: 129
+✅ Used Keys: 1033
+📦 Unused Keys: 77
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -123,102 +123,6 @@
 
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
-
-📄 frontend/pages/SignupPage.tsx:94
-   Key: "signupPage.errors.passwordRequired"
-
-📄 frontend/pages/SignupPage.tsx:98
-   Key: "signupPage.errors.phoneRequired"
-
-📄 frontend/pages/SignupPage.tsx:99
-   Key: "signupPage.errors.cantonRequired"
-
-📄 frontend/pages/SignupPage.tsx:101
-   Key: "signupPage.errors.capacityRequired"
-
-📄 frontend/pages/SignupPage.tsx:102
-   Key: "signupPage.errors.categoryRequired"
-
-📄 frontend/pages/SignupPage.tsx:103
-   Key: "signupPage.errors.serviceTypeRequired"
-
-📄 frontend/pages/SignupPage.tsx:106
-   Key: "signupPage.errors.childAgeRequired"
-
-📄 frontend/pages/SignupPage.tsx:107
-   Key: "signupPage.errors.childStartDateRequired"
-
-📄 frontend/pages/SignupPage.tsx:110
-   Key: "signupPage.errors.termsRequired"
-
-📄 frontend/pages/SignupPage.tsx:163
-   Key: "signupPage.progressStep1"
-
-📄 frontend/pages/SignupPage.tsx:163
-   Key: "signupPage.progressStep2"
-
-📄 frontend/pages/SignupPage.tsx:164
-   Key: "signupPage.selectRoleTitle"
-
-📄 frontend/pages/SignupPage.tsx:164
-   Key: "signupPage.detailsTitle"
-
-📄 frontend/pages/SignupPage.tsx:172
-   Key: "signupPage.submissionSuccessTitle"
-
-📄 frontend/pages/SignupPage.tsx:173
-   Key: "signupPage.submissionSuccessMessage"
-
-📄 frontend/pages/SignupPage.tsx:175
-   Key: "signupPage.goToDashboardButton"
-
-📄 frontend/pages/SignupPage.tsx:226
-   Key: "signupPage.termsLabel"
-
-📄 frontend/pages/SignupPage.tsx:226
-   Key: "signupPage.termsLink"
-
-📄 frontend/pages/SignupPage.tsx:236
-   Key: "signupPage.creatingAccount"
-
-📄 frontend/pages/SignupPage.tsx:236
-   Key: "signupPage.createAccountButton"
-
-📄 frontend/pages/StatePoliciesPage.tsx:200
-   Key: "Cantonal Policies"
-
-📄 frontend/pages/StatePoliciesPage.tsx:201
-   Key: "National Regulations"
-
-📄 frontend/pages/StatePoliciesPage.tsx:202
-   Key: "Compliance Requirements"
-
-📄 frontend/pages/StatePoliciesPage.tsx:203
-   Key: "Updates & News"
-
-📄 frontend/pages/StatePoliciesPage.tsx:204
-   Key: "Official Downloads"
-
-📄 frontend/pages/UsersPage.tsx:31
-   Key: "usersPage.cannotDeleteOwnAccount"
-
-📄 frontend/pages/UsersPage.tsx:57
-   Key: "usersPage.status.pending"
-
-📄 frontend/pages/UsersPage.tsx:117
-   Key: "usersPage.userDetailDrawer.title"
-
-📄 frontend/pages/UsersPage.tsx:126
-   Key: "usersPage.userDetailDrawer.roleLabel"
-
-📄 frontend/pages/UsersPage.tsx:127
-   Key: "usersPage.userDetailDrawer.statusLabel"
-
-📄 frontend/pages/UsersPage.tsx:128
-   Key: "usersPage.userDetailDrawer.regionLabel"
-
-📄 frontend/pages/UsersPage.tsx:129
-   Key: "usersPage.userDetailDrawer.lastLoginLabel"
 
 📄 frontend/pages/UsersPage.tsx:130
    Key: "usersPage.userDetailDrawer.orgLabel"
@@ -1339,14 +1243,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/components/marketplace/ServiceRequestModal.tsx:
-   Line 70: "Preferred Date (Optional)" (JSX_TEXT)
-   Line 83: "Notes / Specific Requirements (Optional)" (JSX_TEXT)
-   Line 96: "Submit Request" (JSX_TEXT)
-
-📄 frontend/components/service-provider/ServiceRequestDetailModal.tsx:
-   Line 41: "Mark as Completed" (JSX_TEXT)
-
 📄 frontend/components/settings/AddPromoCodeModal.tsx:
    Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
 
@@ -1525,7 +1421,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 435 translation keys are missing from translation files.
-⚠️  133 instances of hardcoded text found.
+❌ 403 translation keys are missing from translation files.
+⚠️  129 instances of hardcoded text found.
 
-📊 Coverage: 1029/1074 keys are being used (96%)
+📊 Coverage: 1033/1110 keys are being used (93%)

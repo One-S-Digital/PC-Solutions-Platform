@@ -1442,7 +1442,58 @@
       "roleLabel": "Role",
       "statusLabel": "Status",
       "regionLabel": "Region",
-      "lastLoginLabel": "Last Login"
+      "lastLoginLabel": "Last Login",
+      "orgLabel": "Organization",
+      "adminActionsTitle": "Admin Actions",
+      "changeRoleLabel": "Change Role",
+      "updateRoleButton": "Update Role",
+      "suspendUserButton": "Suspend User",
+      "activateUserButton": "Activate User",
+      "cannotModifyOwnAccount": "You cannot modify your own account"
+    },
+    "rolePageTitle": "Role Management",
+    "allUsersTitle": "All Users",
+    "confirmDeleteUser": "Are you sure you want to delete this user?",
+    "userProfileUpdated": "User profile updated successfully",
+    "addNewUserTBD": "Add New User TBD",
+    "addNewUserButton": "Add New User",
+    "searchPlaceholder": "Search users...",
+    "filtersTBD": "Filters TBD",
+    "filtersButton": "Filters",
+    "table": {
+      "nameOrg": "Name / Organization",
+      "role": "Role",
+      "status": "Status",
+      "region": "Region",
+      "lastLogin": "Last Login",
+      "actions": "Actions"
+    },
+    "emptyState": "No users found"
+  },
+  "adminSystemMonitoringPage": {
+    "rawLogConsole": {
+      "emptyLogMessage": "No logs available",
+      "tabs": {
+        "all": "All",
+        "errors": "Errors",
+        "warnings": "Warnings",
+        "info": "Info"
+      }
+    },
+    "overallStatus": {
+      "title": "Overall System Status"
+    },
+    "components": {
+      "api": "API",
+      "database": "Database",
+      "authService": "Auth Service"
     }
+  },
+  "errorBoundary": {
+    "somethingWentWrong": "Something went wrong",
+    "sorryMessage": "We're sorry, but something unexpected happened. Please try again.",
+    "errorDetails": "Error Details",
+    "tryAgain": "Try Again",
+    "reloadPage": "Reload Page"
   }
 }
