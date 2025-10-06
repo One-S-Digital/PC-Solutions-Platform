@@ -1572,7 +1572,61 @@
       "title": "Complete Your Profile",
       "subtitle": "Add more details to increase your chances of being hired",
       "button": "Complete Profile"
+    },
+    "applicationStatus": {
+      "title": "Application Status",
+      "submitted": "Submitted",
+      "viewed": "Viewed",
+      "interviews": "Interviews",
+      "offers": "Offers",
+      "button": "View All Applications"
+    },
+    "skills": {
+      "title": "Skills & Certifications",
+      "subtitle": "Showcase your qualifications and expertise",
+      "button": "Update Skills"
+    },
+    "recommendations": {
+      "title": "Job Recommendations",
+      "match": "Match"
     }
+  },
+  "educatorJobBoardPage": {
+    "postedOn": "Posted on",
+    "searchPlaceholder": "Search jobs...",
+    "noJobsFound": "No jobs found"
+  },
+  "notifications": {
+    "errorTitle": "Error",
+    "newMessageFrom": "New message from"
+  },
+  "Profile changes saved!": "Profile changes saved!",
+  "educatorProfilePage": {
+    "editProfile": "Edit Profile",
+    "availability": {
+      "days": "Days",
+      "times": "Times",
+      "contract": "Contract",
+      "ageGroups": "Age Groups"
+    },
+    "education": {
+      "graduated": "Graduated"
+    },
+    "certifications": {
+      "issued": "Issued",
+      "expires": "Expires"
+    }
+  },
+  "educatorSupportPage": {
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
+  },
+  "supportPage": {
+    "faqTitle": "Frequently Asked Questions",
+    "furtherAssistanceTitle": "Need Further Assistance?",
+    "furtherAssistanceText": [
+      "Contact our support team for personalized help",
+      "We're here to assist you with any questions or issues"
+    ]
   },
   "errorBoundary": {
     "somethingWentWrong": "Something went wrong",
@@ -1597,6 +1651,13 @@
     "useCartError": "useCart must be used within a CartProvider"
   },
   "messagingContext": {
-    "userNotLoggedIn": "User not logged in"
+    "userNotLoggedIn": "User not logged in",
+    "useMessagingError": "useMessaging must be used within a MessagingProvider"
+  },
+  "notificationContext": {
+    "useNotificationsError": "useNotifications must be used within a NotificationProvider"
+  },
+  "loading": {
+    "translations": "Loading translations..."
   }
 }

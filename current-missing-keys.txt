@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1188 translation keys
+✅ Found 1211 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1328 t() calls
+📊 Found 1332 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 121 potential hardcoded text instances
+📊 Found 117 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1188
-🔧 t() Calls Found: 1328
-❌ Missing Keys: 333
-⚠️  Hardcoded Text: 121
-✅ Used Keys: 1041
-📦 Unused Keys: 147
+📚 Translation Keys: 1211
+🔧 t() Calls Found: 1332
+❌ Missing Keys: 313
+⚠️  Hardcoded Text: 117
+✅ Used Keys: 1044
+📦 Unused Keys: 167
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -100,22 +100,22 @@
 📄 frontend/components/ui/PricingToggle.tsx:39
    Key: "pricingPage.saveUpTo10"
 
-📄 frontend/contexts/AppContext.tsx:98
+📄 frontend/contexts/AppContext.tsx:99
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:131
+📄 frontend/contexts/AppContext.tsx:132
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:135
+📄 frontend/contexts/AppContext.tsx:136
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:143
-   Key: "-"
-
-📄 frontend/contexts/AppContext.tsx:147
+📄 frontend/contexts/AppContext.tsx:144
    Key: "-"
 
 📄 frontend/contexts/AppContext.tsx:148
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:149
    Key: "-"
 
 📄 frontend/pages/DashboardPage.tsx:14
@@ -139,68 +139,8 @@
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
    Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
 
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:40
-   Key: "educatorApplicationsPage.table.lastUpdated"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:41
-   Key: "educatorApplicationsPage.table.actions"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:58
-   Key: "educatorApplicationsPage.viewingDetailsFor"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:68
-   Key: "educatorApplicationsPage.emptyState"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:70
-   Key: "educatorApplicationsPage.footerNote"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:35
-   Key: "educatorDashboard.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
-   Key: "educatorDashboard.welcome"
-
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:43
-   Key: "educatorDashboard.profileCompletion.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:44
-   Key: "educatorDashboard.profileCompletion.subtitle"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:51
-   Key: "educatorDashboard.profileCompletion.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:60
-   Key: "educatorDashboard.applicationStatus.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:63
-   Key: "educatorDashboard.applicationStatus.submitted"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:67
-   Key: "educatorDashboard.applicationStatus.viewed"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:71
-   Key: "educatorDashboard.applicationStatus.interviews"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:75
-   Key: "educatorDashboard.applicationStatus.offers"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:80
-   Key: "educatorDashboard.applicationStatus.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:84
-   Key: "educatorDashboard.skills.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:85
-   Key: "educatorDashboard.skills.subtitle"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:86
-   Key: "educatorDashboard.skills.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:93
-   Key: "educatorDashboard.recommendations.title"
 
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:105
    Key: "educatorDashboard.recommendations.match"
@@ -1033,16 +973,8 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/contexts/AppContext.tsx:
-   Line 404: "useAppContext must be used within an AppContextProvider" (ERROR)
-
-📄 frontend/contexts/CartContext.tsx:
-   Line 134: "useCart must be used within a CartProvider" (ERROR)
-
 📄 frontend/contexts/MessagingContext.tsx:
-   Line 169: "User not logged in" (ERROR)
-   Line 178: "User not logged in" (ERROR)
-   Line 244: "useMessaging must be used within a MessagingProvider" (ERROR)
+   Line 247: "useMessaging must be used within a MessagingProvider" (ERROR)
 
 📄 frontend/contexts/NotificationContext.tsx:
    Line 46: "useNotifications must be used within a NotificationProvider" (ERROR)
@@ -1195,7 +1127,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 333 translation keys are missing from translation files.
-⚠️  121 instances of hardcoded text found.
+❌ 313 translation keys are missing from translation files.
+⚠️  117 instances of hardcoded text found.
 
-📊 Coverage: 1041/1188 keys are being used (88%)
+📊 Coverage: 1044/1211 keys are being used (86%)

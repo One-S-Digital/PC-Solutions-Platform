@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1054 translation keys
+✅ Found 1201 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1309 t() calls
+📊 Found 1332 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 140 potential hardcoded text instances
+📊 Found 117 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1054
-🔧 t() Calls Found: 1309
-❌ Missing Keys: 452
-⚠️  Hardcoded Text: 140
-✅ Used Keys: 1022
-📦 Unused Keys: 32
+📚 Translation Keys: 1201
+🔧 t() Calls Found: 1332
+❌ Missing Keys: 323
+⚠️  Hardcoded Text: 117
+✅ Used Keys: 1044
+📦 Unused Keys: 157
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -85,10 +85,10 @@
 📄 frontend/components/settings/OrganizationProfileForm.tsx:36
    Key: ","
 
-📄 frontend/components/ui/FileUploadZone.tsx:37
+📄 frontend/components/ui/FileUploadZone.tsx:39
    Key: ","
 
-📄 frontend/components/ui/FileUploadZone.tsx:122
+📄 frontend/components/ui/FileUploadZone.tsx:124
    Key: ","
 
 📄 frontend/components/ui/PricingToggle.tsx:24
@@ -100,22 +100,22 @@
 📄 frontend/components/ui/PricingToggle.tsx:39
    Key: "pricingPage.saveUpTo10"
 
-📄 frontend/contexts/AppContext.tsx:98
+📄 frontend/contexts/AppContext.tsx:99
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:131
+📄 frontend/contexts/AppContext.tsx:132
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:135
+📄 frontend/contexts/AppContext.tsx:136
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:143
-   Key: "-"
-
-📄 frontend/contexts/AppContext.tsx:147
+📄 frontend/contexts/AppContext.tsx:144
    Key: "-"
 
 📄 frontend/contexts/AppContext.tsx:148
+   Key: "-"
+
+📄 frontend/contexts/AppContext.tsx:149
    Key: "-"
 
 📄 frontend/pages/DashboardPage.tsx:14
@@ -123,219 +123,6 @@
 
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
-
-📄 frontend/pages/RecruitmentPage.tsx:246
-   Key: "recruitmentPage.buttons.addCandidate"
-
-📄 frontend/pages/RecruitmentPage.tsx:252
-   Key: "recruitmentPage.candidatePool.filterTitle"
-
-📄 frontend/pages/RecruitmentPage.tsx:254
-   Key: "recruitmentPage.labels.allRoles"
-
-📄 frontend/pages/RecruitmentPage.tsx:254
-   Key: "recruitmentPage.labels.allRoles"
-
-📄 frontend/pages/RecruitmentPage.tsx:255
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/RecruitmentPage.tsx:255
-   Key: "recruitmentPage.labels.region"
-
-📄 frontend/pages/RecruitmentPage.tsx:256
-   Key: "recruitmentPage.labels.availabilityDate"
-
-📄 frontend/pages/RecruitmentPage.tsx:256
-   Key: "recruitmentPage.labels.availabilityDate"
-
-📄 frontend/pages/RecruitmentPage.tsx:259
-   Key: "Apply Candidate Filters TBD"
-
-📄 frontend/pages/RecruitmentPage.tsx:265
-   Key: "recruitmentPage.candidatePool.emptyState"
-
-📄 frontend/pages/RecruitmentPage.tsx:270
-   Key: "recruitmentPage.tabs.jobOffers"
-
-📄 frontend/pages/RecruitmentPage.tsx:271
-   Key: "recruitmentPage.tabs.candidatePool"
-
-📄 frontend/pages/RecruitmentPage.tsx:276
-   Key: "recruitmentPage.title"
-
-📄 frontend/pages/SignupPage.tsx:90
-   Key: "signupPage.errors.organisationNameRequired"
-
-📄 frontend/pages/SignupPage.tsx:92
-   Key: "signupPage.errors.emailRequired"
-
-📄 frontend/pages/SignupPage.tsx:93
-   Key: "signupPage.errors.emailInvalid"
-
-📄 frontend/pages/SignupPage.tsx:94
-   Key: "signupPage.errors.passwordRequired"
-
-📄 frontend/pages/SignupPage.tsx:98
-   Key: "signupPage.errors.phoneRequired"
-
-📄 frontend/pages/SignupPage.tsx:99
-   Key: "signupPage.errors.cantonRequired"
-
-📄 frontend/pages/SignupPage.tsx:101
-   Key: "signupPage.errors.capacityRequired"
-
-📄 frontend/pages/SignupPage.tsx:102
-   Key: "signupPage.errors.categoryRequired"
-
-📄 frontend/pages/SignupPage.tsx:103
-   Key: "signupPage.errors.serviceTypeRequired"
-
-📄 frontend/pages/SignupPage.tsx:106
-   Key: "signupPage.errors.childAgeRequired"
-
-📄 frontend/pages/SignupPage.tsx:107
-   Key: "signupPage.errors.childStartDateRequired"
-
-📄 frontend/pages/SignupPage.tsx:110
-   Key: "signupPage.errors.termsRequired"
-
-📄 frontend/pages/SignupPage.tsx:163
-   Key: "signupPage.progressStep1"
-
-📄 frontend/pages/SignupPage.tsx:163
-   Key: "signupPage.progressStep2"
-
-📄 frontend/pages/SignupPage.tsx:164
-   Key: "signupPage.selectRoleTitle"
-
-📄 frontend/pages/SignupPage.tsx:164
-   Key: "signupPage.detailsTitle"
-
-📄 frontend/pages/SignupPage.tsx:172
-   Key: "signupPage.submissionSuccessTitle"
-
-📄 frontend/pages/SignupPage.tsx:173
-   Key: "signupPage.submissionSuccessMessage"
-
-📄 frontend/pages/SignupPage.tsx:175
-   Key: "signupPage.goToDashboardButton"
-
-📄 frontend/pages/SignupPage.tsx:226
-   Key: "signupPage.termsLabel"
-
-📄 frontend/pages/SignupPage.tsx:226
-   Key: "signupPage.termsLink"
-
-📄 frontend/pages/SignupPage.tsx:236
-   Key: "signupPage.creatingAccount"
-
-📄 frontend/pages/SignupPage.tsx:236
-   Key: "signupPage.createAccountButton"
-
-📄 frontend/pages/StatePoliciesPage.tsx:200
-   Key: "Cantonal Policies"
-
-📄 frontend/pages/StatePoliciesPage.tsx:201
-   Key: "National Regulations"
-
-📄 frontend/pages/StatePoliciesPage.tsx:202
-   Key: "Compliance Requirements"
-
-📄 frontend/pages/StatePoliciesPage.tsx:203
-   Key: "Updates & News"
-
-📄 frontend/pages/StatePoliciesPage.tsx:204
-   Key: "Official Downloads"
-
-📄 frontend/pages/UsersPage.tsx:31
-   Key: "usersPage.cannotDeleteOwnAccount"
-
-📄 frontend/pages/UsersPage.tsx:57
-   Key: "usersPage.status.pending"
-
-📄 frontend/pages/UsersPage.tsx:117
-   Key: "usersPage.userDetailDrawer.title"
-
-📄 frontend/pages/UsersPage.tsx:126
-   Key: "usersPage.userDetailDrawer.roleLabel"
-
-📄 frontend/pages/UsersPage.tsx:127
-   Key: "usersPage.userDetailDrawer.statusLabel"
-
-📄 frontend/pages/UsersPage.tsx:128
-   Key: "usersPage.userDetailDrawer.regionLabel"
-
-📄 frontend/pages/UsersPage.tsx:129
-   Key: "usersPage.userDetailDrawer.lastLoginLabel"
-
-📄 frontend/pages/UsersPage.tsx:130
-   Key: "usersPage.userDetailDrawer.orgLabel"
-
-📄 frontend/pages/UsersPage.tsx:135
-   Key: "usersPage.userDetailDrawer.adminActionsTitle"
-
-📄 frontend/pages/UsersPage.tsx:139
-   Key: "usersPage.userDetailDrawer.changeRoleLabel"
-
-📄 frontend/pages/UsersPage.tsx:148
-   Key: "usersPage.userDetailDrawer.updateRoleButton"
-
-📄 frontend/pages/UsersPage.tsx:151
-   Key: "usersPage.userDetailDrawer.suspendUserButton"
-
-📄 frontend/pages/UsersPage.tsx:153
-   Key: "usersPage.userDetailDrawer.activateUserButton"
-
-📄 frontend/pages/UsersPage.tsx:157
-   Key: "usersPage.userDetailDrawer.cannotModifyOwnAccount"
-
-📄 frontend/pages/UsersPage.tsx:177
-   Key: "usersPage.rolePageTitle"
-
-📄 frontend/pages/UsersPage.tsx:177
-   Key: "usersPage.allUsersTitle"
-
-📄 frontend/pages/UsersPage.tsx:197
-   Key: "usersPage.confirmDeleteUser"
-
-📄 frontend/pages/UsersPage.tsx:208
-   Key: "usersPage.userProfileUpdated"
-
-📄 frontend/pages/UsersPage.tsx:216
-   Key: "usersPage.addNewUserTBD"
-
-📄 frontend/pages/UsersPage.tsx:216
-   Key: "usersPage.addNewUserButton"
-
-📄 frontend/pages/UsersPage.tsx:225
-   Key: "usersPage.searchPlaceholder"
-
-📄 frontend/pages/UsersPage.tsx:231
-   Key: "usersPage.filtersTBD"
-
-📄 frontend/pages/UsersPage.tsx:231
-   Key: "usersPage.filtersButton"
-
-📄 frontend/pages/UsersPage.tsx:238
-   Key: "usersPage.table.nameOrg"
-
-📄 frontend/pages/UsersPage.tsx:239
-   Key: "usersPage.table.role"
-
-📄 frontend/pages/UsersPage.tsx:240
-   Key: "usersPage.table.status"
-
-📄 frontend/pages/UsersPage.tsx:241
-   Key: "usersPage.table.region"
-
-📄 frontend/pages/UsersPage.tsx:242
-   Key: "usersPage.table.lastLogin"
-
-📄 frontend/pages/UsersPage.tsx:243
-   Key: "usersPage.table.actions"
-
-📄 frontend/pages/UsersPage.tsx:259
-   Key: "usersPage.emptyState"
 
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:54
    Key: "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage"
@@ -352,179 +139,8 @@
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
    Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
 
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:95
-   Key: "adminSystemMonitoringPage.overallStatus.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:102
-   Key: "adminSystemMonitoringPage.components.api"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:103
-   Key: "adminSystemMonitoringPage.components.database"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:104
-   Key: "adminSystemMonitoringPage.components.authService"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:111
-   Key: "adminSystemMonitoringPage.metadata.environment"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:112
-   Key: "adminSystemMonitoringPage.metadata.version"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:113
-   Key: "adminSystemMonitoringPage.metadata.uptime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:114
-   Key: "adminSystemMonitoringPage.metadata.lastCheck"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:121
-   Key: "adminSystemMonitoringPage.serverPerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:124
-   Key: "adminSystemMonitoringPage.serverPerformance.cpuUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:128
-   Key: "adminSystemMonitoringPage.serverPerformance.memoryUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:132
-   Key: "adminSystemMonitoringPage.serverPerformance.diskUsage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:136
-   Key: "adminSystemMonitoringPage.serverPerformance.uptimeDays"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:144
-   Key: "adminSystemMonitoringPage.databasePerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:147
-   Key: "adminSystemMonitoringPage.databasePerformance.activeConnections"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:150
-   Key: "adminSystemMonitoringPage.databasePerformance.queryTime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:152
-   Key: "adminSystemMonitoringPage.databasePerformance.storage"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:156
-   Key: "adminSystemMonitoringPage.databasePerformance.connectionHealth"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:166
-   Key: "adminSystemMonitoringPage.appPerformance.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:168
-   Key: "adminSystemMonitoringPage.appPerformance.activeUsers"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:169
-   Key: "adminSystemMonitoringPage.appPerformance.requestsPerMinute"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:170
-   Key: "adminSystemMonitoringPage.appPerformance.avgResponseTime"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:171
-   Key: "adminSystemMonitoringPage.appPerformance.errorRate"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:180
-   Key: "adminSystemMonitoringPage.recentEvents.title"
-
-📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:220
-   Key: "adminSystemMonitoringPage.rawLogConsole.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:28
-   Key: "discountTerminationsPage.actions.sendNoticesAlert"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:56
-   Key: "discountTerminationsPage.table.vendor"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:57
-   Key: "discountTerminationsPage.table.daycare"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:58
-   Key: "discountTerminationsPage.table.activeSince"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:59
-   Key: "discountTerminationsPage.table.reason"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:60
-   Key: "discountTerminationsPage.table.actions"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:72
-   Key: "discountTerminationsPage.actions.markCompleted"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:99
-   Key: "discountTerminationsPage.queue.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:101
-   Key: "discountTerminationsPage.queue.description"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:105
-   Key: "discountTerminationsPage.actions.sendNotices"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:110
-   Key: "discountTerminationsPage.queue.tableTitle"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:118
-   Key: "discountTerminationsPage.allActive.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:120
-   Key: "discountTerminationsPage.allActive.description"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:121
-   Key: "discountTerminationsPage.allActive.tableTitle"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:17
-   Key: "educatorApplicationsPage.status.new"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:18
-   Key: "educatorApplicationsPage.status.viewed"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:19
-   Key: "educatorApplicationsPage.status.interview"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:20
-   Key: "educatorApplicationsPage.status.offer"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:21
-   Key: "educatorApplicationsPage.status.declined"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:37
-   Key: "educatorApplicationsPage.table.jobTitle"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:38
-   Key: "educatorApplicationsPage.table.creche"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:39
-   Key: "educatorApplicationsPage.table.status"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:40
-   Key: "educatorApplicationsPage.table.lastUpdated"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:41
-   Key: "educatorApplicationsPage.table.actions"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:58
-   Key: "educatorApplicationsPage.viewingDetailsFor"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:68
-   Key: "educatorApplicationsPage.emptyState"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:70
-   Key: "educatorApplicationsPage.footerNote"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:35
-   Key: "educatorDashboard.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
-   Key: "educatorDashboard.welcome"
-
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:43
-   Key: "educatorDashboard.profileCompletion.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:44
-   Key: "educatorDashboard.profileCompletion.subtitle"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:51
-   Key: "educatorDashboard.profileCompletion.button"
 
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:60
    Key: "educatorDashboard.applicationStatus.title"
@@ -567,9 +183,6 @@
 
 📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
    Key: "educatorJobBoardPage.searchPlaceholder"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:120
-   Key: "recruitmentPage.labels.region"
 
 📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
    Key: "educatorJobBoardPage.noJobsFound"
@@ -1389,48 +1002,9 @@
 📄 frontend/components/debug/TranslationErrorLogger.tsx:
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
-   Line 853: "Translation Error Logger" (JSX_TEXT)
-   Line 865: "📊 Error Summary:" (JSX_TEXT)
-   Line 878: "🔍 Recent Errors:" (JSX_TEXT)
-   Line 916: "Log to Git" (JSX_TEXT)
-   Line 931: "Log to Console" (JSX_TEXT)
-   Line 944: "Copy Missing" (JSX_TEXT)
-   Line 962: "Commit to Git" (JSX_TEXT)
-
-📄 frontend/components/marketplace/ServiceRequestModal.tsx:
-   Line 70: "Preferred Date (Optional)" (JSX_TEXT)
-   Line 83: "Notes / Specific Requirements (Optional)" (JSX_TEXT)
-   Line 96: "Submit Request" (JSX_TEXT)
-
-📄 frontend/components/service-provider/ServiceRequestDetailModal.tsx:
-   Line 41: "Mark as Completed" (JSX_TEXT)
-
-📄 frontend/components/settings/AddPromoCodeModal.tsx:
-   Line 9: "Add/Edit Promo Code Modal (Placeholder)" (JSX_TEXT)
-
-📄 frontend/components/shared/ErrorBoundary.tsx:
-   Line 43: "Something went wrong" (JSX_TEXT)
-   Line 46: "We're sorry, but something unexpected happened. Please try again." (JSX_TEXT)
-   Line 51: "Error Details" (JSX_TEXT)
-   Line 65: "Try Again" (JSX_TEXT)
-   Line 72: "Reload Page" (JSX_TEXT)
-
-📄 frontend/components/supplier/OrderRequestDetailModal.tsx:
-   Line 39: "Mark as Processing" (JSX_TEXT)
-
-📄 frontend/components/ui/FileUploadZone.tsx:
-   Line 119: "or drag and drop" (JSX_TEXT)
-
-📄 frontend/contexts/AppContext.tsx:
-   Line 404: "useAppContext must be used within an AppContextProvider" (ERROR)
-
-📄 frontend/contexts/CartContext.tsx:
-   Line 134: "useCart must be used within a CartProvider" (ERROR)
 
 📄 frontend/contexts/MessagingContext.tsx:
-   Line 169: "User not logged in" (ERROR)
-   Line 178: "User not logged in" (ERROR)
-   Line 244: "useMessaging must be used within a MessagingProvider" (ERROR)
+   Line 247: "useMessaging must be used within a MessagingProvider" (ERROR)
 
 📄 frontend/contexts/NotificationContext.tsx:
    Line 46: "useNotifications must be used within a NotificationProvider" (ERROR)
@@ -1583,7 +1157,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 452 translation keys are missing from translation files.
-⚠️  140 instances of hardcoded text found.
+❌ 323 translation keys are missing from translation files.
+⚠️  117 instances of hardcoded text found.
 
-📊 Coverage: 1022/1054 keys are being used (97%)
+📊 Coverage: 1044/1201 keys are being used (87%)

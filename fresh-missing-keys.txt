@@ -2,23 +2,23 @@
 =========================================
 
 📚 Loading translation files...
-✅ Found 1177 translation keys
+✅ Found 1223 translation keys
 
 🔍 Scanning for t() calls...
-📊 Found 1328 t() calls
+📊 Found 1335 t() calls
 
 🔍 Scanning for hardcoded text...
-📊 Found 121 potential hardcoded text instances
+📊 Found 114 potential hardcoded text instances
 
 📋 VERIFICATION RESULTS:
 ========================
 
-📚 Translation Keys: 1177
-🔧 t() Calls Found: 1328
-❌ Missing Keys: 344
-⚠️  Hardcoded Text: 121
-✅ Used Keys: 1041
-📦 Unused Keys: 136
+📚 Translation Keys: 1223
+🔧 t() Calls Found: 1335
+❌ Missing Keys: 304
+⚠️  Hardcoded Text: 114
+✅ Used Keys: 1047
+📦 Unused Keys: 176
 
 ❌ MISSING TRANSLATION KEYS:
 ============================
@@ -100,26 +100,29 @@
 📄 frontend/components/ui/PricingToggle.tsx:39
    Key: "pricingPage.saveUpTo10"
 
-📄 frontend/contexts/AppContext.tsx:98
+📄 frontend/contexts/AppContext.tsx:99
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:131
+📄 frontend/contexts/AppContext.tsx:132
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:135
+📄 frontend/contexts/AppContext.tsx:136
    Key: "-"
 
-📄 frontend/contexts/AppContext.tsx:143
-   Key: "-"
-
-📄 frontend/contexts/AppContext.tsx:147
+📄 frontend/contexts/AppContext.tsx:144
    Key: "-"
 
 📄 frontend/contexts/AppContext.tsx:148
    Key: "-"
 
+📄 frontend/contexts/AppContext.tsx:149
+   Key: "-"
+
 📄 frontend/pages/DashboardPage.tsx:14
    Key: " "
+
+📄 frontend/pages/MessagesPage.tsx:49
+   Key: "notifications.newMessageFrom"
 
 📄 frontend/pages/RecruitmentPage.tsx:81
    Key: "recruitmentPage.candidateCard.viewProfile"
@@ -139,131 +142,8 @@
 📄 frontend/pages/admin/AdminSystemMonitoringPage.tsx:76
    Key: "adminSystemMonitoringPage.rawLogConsole.tabs.info"
 
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:118
-   Key: "discountTerminationsPage.allActive.title"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:120
-   Key: "discountTerminationsPage.allActive.description"
-
-📄 frontend/pages/admin/DiscountTerminationsPage.tsx:121
-   Key: "discountTerminationsPage.allActive.tableTitle"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:17
-   Key: "educatorApplicationsPage.status.new"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:18
-   Key: "educatorApplicationsPage.status.viewed"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:19
-   Key: "educatorApplicationsPage.status.interview"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:20
-   Key: "educatorApplicationsPage.status.offer"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:21
-   Key: "educatorApplicationsPage.status.declined"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:37
-   Key: "educatorApplicationsPage.table.jobTitle"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:38
-   Key: "educatorApplicationsPage.table.creche"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:39
-   Key: "educatorApplicationsPage.table.status"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:40
-   Key: "educatorApplicationsPage.table.lastUpdated"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:41
-   Key: "educatorApplicationsPage.table.actions"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:58
-   Key: "educatorApplicationsPage.viewingDetailsFor"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:68
-   Key: "educatorApplicationsPage.emptyState"
-
-📄 frontend/pages/educator/EducatorApplicationsPage.tsx:70
-   Key: "educatorApplicationsPage.footerNote"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:35
-   Key: "educatorDashboard.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
-   Key: "educatorDashboard.welcome"
-
 📄 frontend/pages/educator/EducatorDashboardPage.tsx:37
    Key: " "
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:43
-   Key: "educatorDashboard.profileCompletion.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:44
-   Key: "educatorDashboard.profileCompletion.subtitle"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:51
-   Key: "educatorDashboard.profileCompletion.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:60
-   Key: "educatorDashboard.applicationStatus.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:63
-   Key: "educatorDashboard.applicationStatus.submitted"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:67
-   Key: "educatorDashboard.applicationStatus.viewed"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:71
-   Key: "educatorDashboard.applicationStatus.interviews"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:75
-   Key: "educatorDashboard.applicationStatus.offers"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:80
-   Key: "educatorDashboard.applicationStatus.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:84
-   Key: "educatorDashboard.skills.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:85
-   Key: "educatorDashboard.skills.subtitle"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:86
-   Key: "educatorDashboard.skills.button"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:93
-   Key: "educatorDashboard.recommendations.title"
-
-📄 frontend/pages/educator/EducatorDashboardPage.tsx:105
-   Key: "educatorDashboard.recommendations.match"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:46
-   Key: "educatorJobBoardPage.postedOn"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:93
-   Key: "notifications.errorTitle"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:109
-   Key: "educatorJobBoardPage.searchPlaceholder"
-
-📄 frontend/pages/educator/EducatorJobBoardPage.tsx:134
-   Key: "educatorJobBoardPage.noJobsFound"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:44
-   Key: "Profile changes saved!"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:58
-   Key: "educatorProfilePage.editProfile"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:88
-   Key: "educatorProfilePage.availability.days"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:89
-   Key: "educatorProfilePage.availability.times"
-
-📄 frontend/pages/educator/EducatorProfilePage.tsx:90
-   Key: "educatorProfilePage.availability.contract"
 
 📄 frontend/pages/educator/EducatorProfilePage.tsx:91
    Key: "educatorProfilePage.availability.ageGroups"
@@ -1066,20 +946,6 @@
    Line 613: "3 && text.length" (JSX_TEXT)
    Line 645: "5 && text.length" (JSX_TEXT)
 
-📄 frontend/contexts/AppContext.tsx:
-   Line 404: "useAppContext must be used within an AppContextProvider" (ERROR)
-
-📄 frontend/contexts/CartContext.tsx:
-   Line 134: "useCart must be used within a CartProvider" (ERROR)
-
-📄 frontend/contexts/MessagingContext.tsx:
-   Line 169: "User not logged in" (ERROR)
-   Line 178: "User not logged in" (ERROR)
-   Line 244: "useMessaging must be used within a MessagingProvider" (ERROR)
-
-📄 frontend/contexts/NotificationContext.tsx:
-   Line 46: "useNotifications must be used within a NotificationProvider" (ERROR)
-
 📄 frontend/hooks/useApi.ts:
    Line 10: "extends UseApiState" (JSX_TEXT)
    Line 16: "): UseApiReturn" (JSX_TEXT)
@@ -1088,7 +954,6 @@
    Line 53: "): Promise" (JSX_TEXT)
 
 📄 frontend/index.tsx:
-   Line 17: "Loading translations..." (JSX_TEXT)
    Line 11: "Could not find root element to mount to" (ERROR)
 
 📄 frontend/pages/DashboardDetailPage.tsx:
@@ -1228,7 +1093,7 @@
 🎯 FINAL ASSESSMENT:
 ===================
 ⚠️  ATTENTION NEEDED:
-❌ 344 translation keys are missing from translation files.
-⚠️  121 instances of hardcoded text found.
+❌ 304 translation keys are missing from translation files.
+⚠️  114 instances of hardcoded text found.
 
-📊 Coverage: 1041/1177 keys are being used (88%)
+📊 Coverage: 1047/1223 keys are being used (86%)

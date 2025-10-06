@@ -242,9 +242,10 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
 };
 
 export const useMessaging = (): MessagingContextType => {
+  const { t } = useTranslation();
   const context = useContext(MessagingContext);
   if (context === undefined) {
-    throw new Error('useMessaging must be used within a MessagingProvider');
+    throw new Error(t('messagingContext.useMessagingError'));
   }
   return context;
 };

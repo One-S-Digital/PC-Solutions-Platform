@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
 import { AppNotification } from '../types'; // AppNotification is defined in types.ts
+import { useTranslation } from 'react-i18next';
 
 interface NotificationContextType {
   notifications: AppNotification[];
@@ -41,9 +42,10 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 };
 
 export const useNotifications = (): NotificationContextType => {
+  const { t } = useTranslation();
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
+    throw new Error(t('notificationContext.useNotificationsError'));
   }
   return context;
 };
