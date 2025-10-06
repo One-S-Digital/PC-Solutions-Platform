@@ -1168,10 +1168,11 @@
   "Missing keys copied to clipboard!": "Missing keys copied to clipboard!",
   ".": ".",
   "hardcodedText": {},
-  "navbar": {
-    "notificationsCount": "{{count}} notifications",
-    "unreadMessages": "{{count}} unread messages"
-  },
+    "navbar": {
+      "notificationsCount": "{{count}} notifications",
+      "unreadMessages": "{{count}} unread messages",
+      "searchPlaceholder": "Search..."
+    },
     "sidebar": {
       "billingSubscription": "Billing & Subscription",
       "dashboard": "Dashboard",
