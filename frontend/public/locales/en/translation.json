@@ -160,6 +160,7 @@
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
     "forgotPassword": "Forgot your password?",
+    "forgotPasswordTBD": "Forgot password functionality coming soon",
     "orContinueWith": "Or continue with",
     "google": "Google",
     "facebook": "Facebook",
@@ -169,7 +170,9 @@
     "parentLookingForCreche": "Parent looking for a crèche?",
     "findCrecheHere": "Find your perfect crèche here",
     "socialLoginTBD": "{{provider}} login coming soon!",
-    "alreadyAccount": "Already have an account?"
+    "alreadyAccount": "Already have an account?",
+    "errorBothFields": "Please fill in both email and password",
+    "loggingIn": "Logging in..."
   },
   "signupPage": {
     "form": {
@@ -202,6 +205,8 @@
       "emailRequired": "Email is required",
       "emailInvalid": "Please enter a valid email address",
       "passwordRequired": "Password is required",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordsNoMatch": "Passwords do not match",
       "phoneRequired": "Phone number is required",
       "cantonRequired": "Canton is required",
       "capacityRequired": "Capacity is required",
@@ -209,7 +214,9 @@
       "serviceTypeRequired": "Service type is required",
       "childAgeRequired": "Child age is required",
       "childStartDateRequired": "Child start date is required",
-      "termsRequired": "You must accept the terms and conditions"
+      "termsRequired": "You must accept the terms and conditions",
+      "contactPersonRequired": "Contact person is required",
+      "parentNameRequired": "Parent name is required"
     },
     "progressStep1": "Step 1: Select Role",
     "progressStep2": "Step 2: Enter Details",
@@ -229,7 +236,34 @@
       "password": "Enter your password",
       "confirmPassword": "Confirm your password",
       "phone": "Enter your phone number",
-      "organization": "Enter your organization name"
+      "organization": "Enter your organization name",
+      "select": "Please select...",
+      "organisationName": "Enter your organization name",
+      "contactPerson": "Enter contact person name",
+      "parentName": "Enter your full name",
+      "category": "Enter product category",
+      "serviceType": "Enter service type"
+    },
+    "labels": {
+      "organisationName": "Organization Name",
+      "contactPerson": "Contact Person",
+      "parentName": "Your Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "phone": "Phone",
+      "canton": "Canton",
+      "capacity": "Capacity",
+      "category": "Product Category",
+      "serviceType": "Service Type",
+      "childAge": "Child's Age",
+      "childStartDate": "Desired Start Date"
+    },
+    "roles": {
+      "foundation": "Foundation",
+      "supplier": "Product Supplier",
+      "serviceProvider": "Service Provider",
+      "parent": "Parent"
     }
   },
   "dashboardPage": {

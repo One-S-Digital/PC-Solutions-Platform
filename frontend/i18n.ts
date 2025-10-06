@@ -25,6 +25,7 @@ const initI18n = () => {
       interpolation: {
         escapeValue: false, 
       },
+      returnObjects: true, // Enable object access for nested translations
       react: {
         useSuspense: false, // Disable Suspense for now to avoid blocking
       },
