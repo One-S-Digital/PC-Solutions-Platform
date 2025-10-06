@@ -29,5 +29,10 @@ export default defineConfig(({ mode }) => {
           external: [],
         },
       },
+      // Allow importing JSON files
+      json: {
+        namedExports: true,
+        stringify: false
+      }
     };
 });

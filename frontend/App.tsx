@@ -16,6 +16,7 @@ import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
+import TestI18n from './test-i18n'; // Test component for i18n
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -326,11 +327,13 @@ const App: React.FC = () => {
             <TranslationDiagnostics enabled={true} />
             <TranslationErrorLogger 
               enabled={true} 
-              logToFile={true} 
+              logToFile={true}
               logToConsole={true} 
               autoScan={true} 
               scanInterval={15000} 
             />
+            {/* Test i18n component */}
+            <TestI18n />
             
             {/* Debug banner - visible in production */}
             <div 
