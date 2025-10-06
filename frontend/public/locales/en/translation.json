@@ -732,5 +732,917 @@
     "placeholders": {
       "notes": "Add any special instructions..."
     }
+  },
+  "adminSystemMonitoringPage": {
+    "title": "System Monitoring",
+    "monitoring": "System Monitoring",
+    "performance": "Performance Metrics",
+    "logs": "System Logs"
+  },
+  "adminDiscountTerminationsPage": {
+    "title": "Discount Terminations",
+    "terminations": "Active Terminations",
+    "manage": "Manage Terminations"
+  },
+  "pricingPage": {
+    "title": "Pricing Plans",
+    "plans": "Available Plans",
+    "features": "Plan Features",
+    "billing": "Billing Information"
+  },
+  "recruitmentPage": {
+    "title": "Recruitment",
+    "jobs": "Job Listings",
+    "candidates": "Candidates",
+    "postJob": "Post New Job"
+  },
+  "messagesPage": {
+    "title": "Messages",
+    "conversations": "Conversations",
+    "newMessage": "New Message"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notifications": "All Notifications",
+    "unread": "Unread Notifications"
+  },
+  "fileGalleryPage": {
+    "title": "File Gallery",
+    "files": "All Files",
+    "upload": "Upload Files"
+  },
+  "eLearningPage": {
+    "title": "E-Learning",
+    "courses": "Available Courses",
+    "progress": "Learning Progress"
+  },
+  "statePoliciesPage": {
+    "title": "State Policies",
+    "policies": "Policy Documents",
+    "compliance": "Compliance Status"
+  },
+  "hrProceduresPage": {
+    "title": "HR Procedures",
+    "procedures": "HR Procedures",
+    "guidelines": "Guidelines"
+  },
+  "usersPage": {
+    "title": "User Management",
+    "allUsers": "All Users",
+    "roles": "User Roles"
+  },
+  "partnersPage": {
+    "title": "Partners",
+    "partners": "Partner Directory",
+    "becomePartner": "Become a Partner"
+  },
+  "parentLeadFormPage": {
+    "title": "Find a Crèche",
+    "form": "Lead Form",
+    "submit": "Submit Request"
+  },
+  "candidateProfilePage": {
+    "title": "Candidate Profile",
+    "profile": "Profile Information",
+    "experience": "Work Experience"
+  },
+  "designSystemPage": {
+    "title": "Design System",
+    "components": "UI Components",
+    "guidelines": "Design Guidelines"
+  },
+  "stockStatus": {
+    "instock": "In Stock",
+    "outofstock": "Out of Stock",
+    "lowstock": "Low Stock",
+    "discontinued": "Discontinued"
+  },
+  "loginPage": {
+    "title": "Welcome to {{appName}}",
+    "subtitle": "Sign in to your account",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot your password?",
+    "orContinueWith": "Or continue with",
+    "google": "Google",
+    "facebook": "Facebook",
+    "noAccount": "Don't have an account?",
+    "viewPlansPrompt": "Want to see our plans?",
+    "viewPlans": "View Plans",
+    "parentLookingForCreche": "Parent looking for a crèche?",
+    "findCrecheHere": "Find your perfect crèche here",
+    "socialLoginTBD": "{{provider}} login coming soon!",
+    "alreadyAccount": "Already have an account?"
+  },
+  "signupPage": {
+    "title": "Create Your Account",
+    "subtitle": "Join the ProCrèche platform",
+    "createAccountTitle": "Create Account",
+    "roleLabel": "Select Your Role",
+    "roleDescription": "Choose the role that best describes you",
+    "verifyEmail": "Verify Your Email",
+    "verifyEmailDescription": "We've sent a verification code to your email",
+    "verificationCode": "Verification Code",
+    "detailsTitle": "Complete Your {{role}} Profile",
+    "labels": {
+      "organisationName": "Organization Name",
+      "contactPerson": "Contact Person",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "phone": "Phone Number",
+      "canton": "Canton",
+      "capacity": "Capacity"
+    },
+    "placeholders": {
+      "organisationName": "Enter organization name",
+      "contactPerson": "Enter contact person name",
+      "email": "Enter your email",
+      "password": "Create a password",
+      "confirmPassword": "Confirm your password",
+      "phone": "Enter phone number"
+    },
+    "termsLabel": "I agree to the",
+    "termsLink": "Terms of Service",
+    "createAccountButton": "Create Account",
+    "superAdmin": {
+      "label": "Super Admin",
+      "description": "Full platform access and administration"
+    },
+    "admin": {
+      "label": "Admin",
+      "description": "Administrative access to specific areas"
+    },
+    "foundation": {
+      "label": "Foundation",
+      "description": "Manage your childcare foundation"
+    },
+    "productSupplier": {
+      "label": "Product Supplier",
+      "description": "Supply products to the platform"
+    },
+    "serviceProvider": {
+      "label": "Service Provider",
+      "description": "Provide services to foundations"
+    },
+    "educator": {
+      "label": "Educator",
+      "description": "Work as an educator in childcare"
+    },
+    "parent": {
+      "label": "Parent",
+      "description": "Find childcare for your children"
+    }
+  },
+  "dashboardPage": {
+    "welcome": "Welcome back, {{name}}!",
+    "defaultUser": "User",
+    "overviewSubtitle": "Here's what's happening with {{appName}} today",
+    "activeUsers": "Active Users",
+    "newOrders": "New Orders",
+    "openJobs": "Open Jobs",
+    "pageViews": "Page Views",
+    "recentActivity": "Recent Activity",
+    "quickLinks": "Quick Links",
+    "browseMarketplace": "Browse Marketplace",
+    "postNewJob": "Post New Job",
+    "manageUsers": "Manage Users",
+    "platformSettings": "Platform Settings",
+    "activityLina": "Lina uploaded a new policy document",
+    "activityEcoToys": "EcoToys submitted a new product",
+    "activityJohn": "John applied for the educator position",
+    "activityParent": "A parent submitted a new enquiry",
+    "viewDetailsFor": "View details for",
+    "timeAgo": {
+      "minutes": "{{count}} minutes ago",
+      "hours": "{{count}} hours ago",
+      "yesterday": "Yesterday"
+    },
+    "upcomingMeetings": "Upcoming Meetings",
+    "quickActions": "Quick Actions",
+    "overview": "Overview",
+    "announcements": "Announcements",
+    "notifications": "Notifications"
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "general": "General",
+    "notifications": "Notifications",
+    "account": "Account",
+    "appearance": "Appearance",
+    "language": "Language",
+    "privacySecurity": "Privacy & Security",
+    "billingSubscription": "Billing & Subscription",
+    "organizationProfile": "Organization Profile",
+    "userPreferences": "User Preferences",
+    "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
+    "loading": "Loading settings...",
+    "noSectionsAvailable": "No settings sections available"
+  },
+  "marketplacePage": {
+    "title": "Marketplace",
+    "tabs": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    },
+    "serviceCard": {
+      "categoryLabel": "Category: {{category}}",
+      "bookAppointment": "Book Appointment",
+      "viewProvider": "View Provider"
+    },
+    "emptyStates": {
+      "noProductSuppliers": "No product suppliers available",
+      "noServiceProviders": "No service providers available"
+    }
+  },
+  "partnerDetailPage": {
+    "onlyFoundationsRequestService": "Only foundations can request this service",
+    "requestSubmittedAlert": "Service request for {{serviceName}} submitted successfully!",
+    "requestService": "Request Service"
+  },
+  "adminPlatformSettings": {
+    "title": "Platform Settings",
+    "general": {
+      "title": "General Settings",
+      "nameLabel": "Platform Name",
+      "descriptionLabel": "Platform Description"
+    },
+    "branding": {
+      "title": "Branding",
+      "logoLabel": "Platform Logo",
+      "faviconLabel": "Favicon"
+    }
+  },
+  "organizationProfileForm": {
+    "saveSuccess": "Profile saved successfully!"
+  },
+  "foundationDashboardPage": {
+    "title": "Foundation Dashboard",
+    "welcome": "Welcome to your foundation dashboard",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
+  },
+  "foundationAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Analytics Overview",
+    "metrics": "Key Metrics"
+  },
+  "foundationLeadsPage": {
+    "title": "Parent Leads",
+    "leads": "All Leads",
+    "newLeads": "New Leads",
+    "contactedLeads": "Contacted Leads"
+  },
+  "foundationOrdersAppointmentsPage": {
+    "title": "Orders & Appointments",
+    "orders": "Orders",
+    "appointments": "Appointments"
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "Organization Profile",
+    "profile": "Profile Information",
+    "settings": "Settings"
+  },
+  "foundationSupportPage": {
+    "title": "Support",
+    "help": "Help Center",
+    "tickets": "Support Tickets"
+  },
+  "parentDashboardPage": {
+    "title": "Parent Dashboard",
+    "welcome": "Welcome to your parent dashboard",
+    "myChildren": "My Children",
+    "findCreche": "Find a Crèche"
+  },
+  "parentEnquiriesPage": {
+    "title": "My Enquiries",
+    "enquiries": "All Enquiries",
+    "newEnquiry": "New Enquiry"
+  },
+  "parentSupportPage": {
+    "title": "Support",
+    "help": "Help Center",
+    "faq": "Frequently Asked Questions"
+  },
+  "educatorDashboardPage": {
+    "title": "Educator Dashboard",
+    "welcome": "Welcome to your educator dashboard",
+    "applications": "My Applications",
+    "jobBoard": "Job Board"
+  },
+  "educatorApplicationsPage": {
+    "title": "My Applications",
+    "applications": "All Applications",
+    "status": "Application Status"
+  },
+  "educatorJobBoardPage": {
+    "title": "Job Board",
+    "jobs": "Available Jobs",
+    "apply": "Apply Now"
+  },
+  "educatorProfilePage": {
+    "title": "My Profile",
+    "profile": "Educator Profile",
+    "experience": "Work Experience",
+    "editProfile": "Edit Profile",
+    "skills": {
+      "title": "Skills & Qualifications"
+    },
+    "availability": {
+      "title": "Availability",
+      "days": "Available Days",
+      "times": "Preferred Times",
+      "contract": "Contract Type",
+      "ageGroups": "Preferred Age Groups"
+    },
+    "documents": {
+      "title": "Documents"
+    }
+  },
+  "educatorSupportPage": {
+    "title": "Support",
+    "help": "Help Center"
+  },
+  "serviceProviderDashboardPage": {
+    "title": "Service Provider Dashboard",
+    "welcome": "Welcome to your service provider dashboard",
+    "services": "My Services",
+    "requests": "Service Requests"
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Analytics Overview",
+    "performance": "Performance Metrics"
+  },
+  "serviceProviderListingsPage": {
+    "title": "Service Listings",
+    "listings": "All Listings",
+    "addService": "Add New Service"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "Service Requests",
+    "requests": "All Requests",
+    "pending": "Pending Requests"
+  },
+  "serviceProviderSupportPage": {
+    "title": "Support",
+    "help": "Help Center"
+  },
+  "supplierDashboardPage": {
+    "title": "Supplier Dashboard",
+    "welcome": "Welcome to your supplier dashboard",
+    "products": "My Products",
+    "orders": "Orders"
+  },
+  "supplierAnalyticsPage": {
+    "title": "Analytics",
+    "overview": "Analytics Overview",
+    "sales": "Sales Metrics"
+  },
+  "supplierProductListingsPage": {
+    "title": "Product Listings",
+    "listings": "All Listings",
+    "addProduct": "Add New Product"
+  },
+  "supplierOrdersPage": {
+    "title": "Orders",
+    "orders": "All Orders",
+    "pending": "Pending Orders"
+  },
+  "supplierSupportPage": {
+    "title": "Support",
+    "help": "Help Center"
+  },
+  "adminContentManagementDashboardPage": {
+    "title": "Content Management",
+    "content": "Content Overview",
+    "policies": "Policy Management",
+    "announcements": "Announcements"
+  },
+  "sidebar": {
+    "currentPlan": "{{plan}} Plan",
+    "manageSubscriptionDesc": "Manage your subscription and billing"
+  },
+  "leadCard": {
+    "alert": {
+      "missingParentInfo": "Missing parent information"
+    },
+    "status": {
+      "notResponded": "Not Responded",
+      "interested": "Interested",
+      "notInterested": "Not Interested",
+      "needsMoreInfo": "Needs More Info",
+      "enrolled": "Enrolled"
+    },
+    "title": "Lead Information",
+    "forLocation": "For Location",
+    "childAge": "Child Age",
+    "desiredStart": "Desired Start Date",
+    "submittedOn": "Submitted On",
+    "notes": "Notes",
+    "defaultMessages": {
+      "interested": "Thank you for your interest! We'll contact you soon.",
+      "notInterested": "Thank you for your response. We understand this isn't the right fit.",
+      "enrolled": "Congratulations! Your child has been enrolled."
+    },
+    "buttons": {
+      "interested": "Mark as Interested",
+      "notInterested": "Not Interested",
+      "needInfo": "Need More Info",
+      "sendQuestion": "Send Question",
+      "messageParent": "Message Parent",
+      "markEnrolled": "Mark as Enrolled"
+    },
+    "questionFor": "Question for",
+    "questionPlaceholder": "Ask a question...",
+    "yourResponse": "Your Response",
+    "messageSent": "Message sent successfully"
+  },
+  "contentUploadModal": {
+    "title": {
+      "edit": "Edit Content",
+      "add": "Add Content"
+    },
+    "labels": {
+      "currentFile": "Current File",
+      "uploadFileType": "File Type"
+    },
+    "fileUpload": {
+      "browse": "Browse Files",
+      "dragAndDrop": "Drag and drop files here",
+      "selected": "Selected Files"
+    }
+  },
+  "orderSummaryDrawer": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "emptyCart": "Your cart is empty",
+    "error": {
+      "notLoggedIn": "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
+    }
+  },
+  "translationDiagnostics": {
+    "missingKeysCopied": "Missing keys copied to clipboard!"
+  },
+  "translationErrorLogger": {
+    "period": ".",
+    "missingKeysCopied": "Missing keys copied to clipboard!"
+  },
+  "supplierCard": {
+    "specializesIn": "Specializes in",
+    "viewProfileAndProducts": "View Profile & Products"
+  },
+  "recruitmentPage": {
+    "jobDetailModal": {
+      "overviewTitle": "Job Overview",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salary": "Salary",
+      "applyNow": "Apply Now"
+    },
+    "jobPostModal": {
+      "editTitle": "Edit Job Posting",
+      "addTitle": "Post New Job",
+      "jobTitle": "Job Title",
+      "location": "Location",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "salaryRange": "Salary Range",
+      "salaryRangePlaceholder": "e.g., CHF 4,000 - 5,000",
+      "description": "Job Description",
+      "postJob": "Post Job"
+    },
+    "viewApplicantsModal": {
+      "title": "Job Applicants",
+      "noApplicants": "No applicants yet",
+      "appliedOn": "Applied On"
+    },
+    "candidateCard": {
+      "viewProfile": "View Profile"
+    },
+    "buttons": {
+      "viewApplicants": "View Applicants",
+      "filters": "Filters",
+      "postNewJob": "Post New Job",
+      "applyFilters": "Apply Filters"
+    }
+  },
+  "serviceUploadModal": {
+    "currentImage": "Current Image",
+    "error": {
+      "missingUserInfo": "Current user or organization ID is missing."
+    }
+  },
+  "settingsAccountSecurity": {
+    "notifications": {
+      "infoUpdated": "Information updated successfully",
+      "passwordChanged": "Password changed successfully"
+    },
+    "confirmGDPRDelete": "Confirm GDPR Data Deletion",
+    "dangerZone": {
+      "finalConfirmation": "This action cannot be undone",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountSubtitle": "Permanently delete your account and all data",
+      "deleteAccountButton": "Delete Account"
+    },
+    "deletionRequestSubmittedHelpText": "Your deletion request has been submitted",
+    "personalInfo": {
+      "title": "Personal Information",
+      "contactNameLabel": "Contact Name",
+      "nameLabel": "Full Name",
+      "orgNameLabel": "Organization Name",
+      "emailLabel": "Email Address",
+      "accountTypeLabel": "Account Type",
+      "memberSinceLabel": "Member Since",
+      "updateInfoButton": "Update Information"
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "currentPasswordLabel": "Current Password",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "updatePasswordButton": "Update Password"
+    }
+  },
+  "settingsAnalyticsPreferences": {
+    "timeZone": "Time Zone",
+    "currency": "Currency",
+    "benchmarkData": "Benchmark Data",
+    "benchmarkDataHelpText": "Help improve our platform by sharing anonymous usage data"
+  },
+  "settingsBillingSubscription": {
+    "yourCurrentPlan": "Your Current Plan",
+    "upgradePlan": "Upgrade Plan",
+    "downgradePlan": "Downgrade Plan",
+    "currentPlan": "Current Plan",
+    "nextInvoiceOn": "Next Invoice On",
+    "manageSubscriptionTitle": "Manage Subscription",
+    "manageSubscriptionDescription": "Update your subscription settings and payment method",
+    "managePaymentButton": "Manage Payment",
+    "cancelSubscription": "Cancel Subscription",
+    "stripePortalLinkNotConfigured": "Payment portal not configured",
+    "confirmCancelTitle": "Cancel Subscription",
+    "confirmCancelMessage": "Are you sure you want to cancel your subscription?",
+    "keepSubscription": "Keep Subscription",
+    "yesCancel": "Yes, Cancel"
+  },
+  "settingsCompanyProfile": {
+    "companyName": "Company Name",
+    "logo": "Company Logo",
+    "coverImage": "Cover Image",
+    "aboutText": "About Us",
+    "aboutTextLength": "{{count}} characters remaining",
+    "vatNumber": "VAT Number",
+    "regionsServed": "Regions Served",
+    "selectCanton": "Select Canton",
+    "cantonsHelpText": "Select all cantons where you operate",
+    "languagesSpoken": "Languages Spoken",
+    "selectLanguage": "Select Languages",
+    "languagesHelpText": "Select all languages your team speaks"
+  },
+  "settingsContactBooking": {
+    "preferredContactMethod": "Preferred Contact Method",
+    "avgResponseTime": "Average Response Time",
+    "externalBookingLink": "External Booking Link",
+    "externalBookingLinkPlaceholder": "https://calendly.com/your-link",
+    "directOrderLink": "Direct Order Link",
+    "directOrderLinkPlaceholder": "https://your-website.com/order",
+    "directOrderLinkHelpText": "Link for direct product orders",
+    "calComLink": "Cal.com Integration",
+    "calComLinkPlaceholder": "https://cal.com/your-link",
+    "deliveryTypeToggleRemote": "Remote Delivery Available"
+  },
+  "settingsDefaults": {
+    "autoRespondToggle": "Auto-respond to enquiries",
+    "autoRespondHelpText": "Automatically respond to new parent enquiries",
+    "defaultMOQ": "Default Minimum Order Quantity",
+    "defaultMOQPlaceholder": "Enter minimum quantity",
+    "autoAcceptOrderQtyLimit": "Auto-accept Order Quantity Limit",
+    "autoAcceptOrderQtyLimitPlaceholder": "Enter quantity limit",
+    "defaultConsultationLength": "Default Consultation Length"
+  },
+  "settingsNotificationPreferences": {
+    "digestFrequency": "Email Digest Frequency",
+    "promoRedemptionAlertsToggle": "Promotional Redemption Alerts"
+  },
+  "settingsPrivacyData": {
+    "confirmGDPRDelete": "Confirm GDPR Data Deletion"
+  },
+  "parentDashboard": {
+    "title": "Parent Dashboard",
+    "welcomeMessage": "Welcome back, {{name}}!",
+    "enquiry": {
+      "title": "My Enquiries",
+      "sent": "Sent",
+      "responses": "Responses",
+      "pending": "Pending",
+      "button": "View All Enquiries"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "findDaycare": "Find a Daycare",
+      "viewEnquiries": "View My Enquiries",
+      "updateProfile": "Update Profile",
+      "browseServices": "Browse Services"
+    },
+    "childProfile": {
+      "title": "Child Profile",
+      "name": "Name",
+      "age": "Age",
+      "location": "Location",
+      "languages": "Languages",
+      "specialNeeds": "Special Needs",
+      "button": "Update Profile"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "subtitle": "Your saved daycares and services",
+      "button": "View Favorites"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "description": "Description",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "date": "Date",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "perMonth": "per month",
+    "perYear": "per year",
+    "save10Percent": "Save 10%"
+  },
+  "errors": {
+    "unknown": "An unknown error occurred"
+  },
+  "notifications": {
+    "successTitle": "Success",
+    "settingsUpdated": "Settings updated successfully"
+  },
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
+  "signIn": "Sign In",
+  "signOut": "Sign Out",
+  "confirmPassword": "Confirm Password",
+  "resetPassword": "Reset Password",
+  "rememberMe": "Remember me",
+  "createAccount": "Create Account",
+  "alreadyHaveAccount": "Already have an account?",
+  "dontHaveAccount": "Don't have an account?",
+  "welcomeBack": "Welcome back!",
+  "joinPlatform": "Join the platform",
+  "chooseRole": "Choose your role",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "phoneNumber": "Phone Number",
+  "organizationName": "Organization Name",
+  "contactPerson": "Contact Person",
+  "canton": "Canton",
+  "languages": "Languages",
+  "capacity": "Capacity",
+  "productCategory": "Product Category",
+  "serviceType": "Service Type",
+  "childAge": "Child Age",
+  "preferredLocation": "Preferred Location",
+  "type": "Type",
+  "language": "Language",
+  "responsibilities": "Responsibilities",
+  "qualifications": "Qualifications",
+  "benefits": "Benefits",
+  "requirements": "Requirements",
+  "contentUploadModal": {
+    "error": {
+      "selectFileOrLink": "Please select a file or enter a link"
+    },
+    "labels": {
+      "descriptionPreview": "Description Preview",
+      "description": "Description",
+      "title": "Title",
+      "category": "Category",
+      "contentType": "Content Type",
+      "language": "Language",
+      "duration": "Duration",
+      "lessons": "Lessons",
+      "linkUrl": "Link URL",
+      "accessRoles": "Access Roles",
+      "status": "Status",
+      "documentTitle": "Document Title",
+      "fileType": "File Type",
+      "version": "Version",
+      "country": "Country",
+      "regionCanton": "Region/Canton",
+      "policyType": "Policy Type",
+      "criticality": "Criticality",
+      "markAsCritical": "Mark as Critical",
+      "effectiveDate": "Effective Date",
+      "externalLink": "External Link",
+      "uploadFile": "Upload File"
+    },
+    "placeholders": {
+      "duration": "e.g., 2 hours",
+      "linkUrl": "https://example.com",
+      "version": "e.g., 1.0",
+      "externalLink": "https://example.com"
+    },
+    "statusOptions": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "criticalityOptions": {
+      "critical": "Critical",
+      "normal": "Normal"
+    },
+    "fileUpload": {
+      "eLearningAllowedTypes": "Allowed: PDF, MP4, DOC, DOCX",
+      "hrPolicyAllowedTypes": "Allowed: PDF, DOC, DOCX"
+    },
+    "buttons": {
+      "uploading": "Uploading...",
+      "upload": "Upload"
+    }
+  },
+  "orderRequestModal": {
+    "title": "Request Order",
+    "error": {
+      "quantityMin": "Quantity must be at least 1."
+    }
+  },
+  "messagesPage": {
+    "selectConversationToView": "Select a conversation to view messages",
+    "conversationFallbackTitle": "Select a conversation",
+    "attachFile": "Attach File",
+    "addEmoji": "Add Emoji",
+    "typeMessagePlaceholder": "Type a message...",
+    "searchPlaceholder": "Search conversations...",
+    "filters": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "noConversationsFound": "No conversations found",
+    "unknownUser": "Unknown User",
+    "youPrefix": "You:",
+    "noMessagesYet": "No messages yet"
+  },
+  "serviceUploadModal": {
+    "editTitle": "Edit Service",
+    "addTitle": "Add Service",
+    "labels": {
+      "title": "Service Title",
+      "description": "Description",
+      "category": "Category",
+      "deliveryType": "Delivery Type",
+      "availability": "Availability",
+      "priceInfo": "Price Information",
+      "tags": "Tags",
+      "image": "Service Image"
+    },
+    "placeholders": {
+      "availability": "e.g., Monday-Friday 9AM-5PM",
+      "priceInfo": "e.g., CHF 50/hour",
+      "tags": "e.g., consultation, training"
+    },
+    "imageHelpText": "Upload an image that represents your service"
+  },
+  "organizationProfileForm": {
+    "accessDenied": "Access denied. You don't have permission to edit this profile.",
+    "title": "Organization Profile",
+    "subtitle": "Update your organization's information",
+    "labels": {
+      "capacity": "Capacity",
+      "pedagogy": "Pedagogical Approach",
+      "languages": "Languages Spoken"
+    },
+    "placeholders": {
+      "pedagogy": "e.g., Montessori, Reggio Emilia",
+      "languages": "e.g., French, German, English"
+    },
+    "helpText": {
+      "commaSeparated": "Separate multiple values with commas"
+    },
+    "saveButton": "Save Profile"
+  },
+  "signupPage": {
+    "errors": {
+      "passwordsNoMatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters"
+    },
+    "placeholders": {
+      "select": "Select an option"
+    }
+  },
+  "settingsPage": {
+    "accountSecurity": "Account Security",
+    "analyticsPreferences": "Analytics Preferences",
+    "companyProfile": "Company Profile",
+    "contactBooking": "Contact & Booking",
+    "defaults": "Defaults",
+    "notificationPreferences": "Notification Preferences",
+    "privacyData": "Privacy & Data",
+    "promoCodeManager": "Promo Code Manager",
+    "teamPermissions": "Team Permissions"
+  },
+  "settingsPrivacyData": {
+    "dataDeletion": "Data Deletion",
+    "deletionRequestSubmitted": "Deletion request submitted",
+    "requestGDPRDeletion": "Request GDPR Data Deletion",
+    "requestDeletionHelpText": "This will permanently delete all your data from our systems"
+  },
+  "settingsPromoCodeManager": {
+    "confirmDelete": "Are you sure you want to delete this promo code?",
+    "discountTypes": {
+      "percentage": "Percentage",
+      "fixedAmount": "Fixed Amount",
+      "freeMinutes": "Free Minutes"
+    },
+    "addNewCode": "Add New Code",
+    "noCodesYet": "No promo codes yet",
+    "table": {
+      "code": "Code",
+      "discountOffer": "Discount/Offer",
+      "expiry": "Expiry",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "addEditModal": {
+      "editTitle": "Edit Promo Code",
+      "addTitle": "Add Promo Code",
+      "placeholder": "Enter promo code details",
+      "save": "Save Code"
+    }
+  },
+  "settingsTeamPermissions": {
+    "confirmRemoveMember": "Are you sure you want to remove this team member?",
+    "passwordResetSentAlert": "Password reset email sent successfully",
+    "inviteNewMember": "Invite New Member",
+    "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "role": "Role",
+    "sendInvite": "Send Invite",
+    "currentTeamMembers": "Current Team Members",
+    "noTeamMembers": "No team members yet",
+    "table": {
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "roles": {
+      "editor": "Editor",
+      "viewer": "Viewer"
+    },
+    "resetPasswordTooltip": "Send password reset email",
+    "removeMemberTooltip": "Remove team member"
+  },
+  "activeClientToggle": {
+    "confirmSave": "Are you sure you want to save these changes?",
+    "saveSuccess": {
+      "title": "Changes Saved",
+      "message": "Your settings have been updated successfully"
+    },
+    "title": "Active Client Status",
+    "label": "Mark as Active Client",
+    "reasonLabel": "Reason for Change",
+    "noteLabel": "Additional Notes",
+    "notePlaceholder": "Optional notes about this change",
+    "subtext": "This will affect how the client appears in your dashboard"
+  },
+  "featureLock": {
+    "title": "Feature Locked",
+    "message": "This feature is only available with a premium subscription",
+    "upgradeButton": "Upgrade Now"
+  },
+  "fileUploadModal": {
+    "title": "Upload Files",
+    "uploadFile": "Upload File",
+    "dragAndDrop": "Drag and drop files here",
+    "fileTypes": "Supported file types: PDF, DOC, DOCX, JPG, PNG",
+    "filesToUpload": "Files to Upload"
+  },
+  "navbar": {
+    "notificationsCount": "{{count}} notifications",
+    "unreadMessages": "{{count}} unread messages"
+  },
+  "sidebar": {
+    "billingSubscription": "Billing & Subscription"
   }
 }
