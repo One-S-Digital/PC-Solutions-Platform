@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
@@ -11,29 +11,12 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-const LoadingFallback = () => {
-  return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      fontSize: '18px',
-      color: '#666'
-    }}>
-      Loading translations...
-    </div>
-  );
-};
-
 const AppWithProviders = () => {
   return (
     <I18nextProvider i18n={i18nInstance}>
-      <Suspense fallback={<LoadingFallback />}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Suspense>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </I18nextProvider>
   );
 };

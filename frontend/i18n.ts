@@ -3,14 +3,10 @@ import { initReactI18next } from 'react-i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Import translations directly to ensure they're available
-import enTranslation from './public/locales/en/translation.json';
-import frTranslation from './public/locales/fr/translation.json';
-import deTranslation from './public/locales/de/translation.json';
-
 // Create a promise to ensure i18n is initialized before the app renders
 const initI18n = () => {
   return i18n
+    .use(HttpApi) // Load translations using http (e.g., from public/locales)
     .use(LanguageDetector) // Detect user language
     .use(initReactI18next) // Pass i18n down to react-i18next
     .init({
@@ -19,22 +15,18 @@ const initI18n = () => {
       debug: true, // Enable debug for translation troubleshooting
       ns: ['translation'], 
       defaultNS: 'translation',
-      resources: {
-        en: {
-          translation: enTranslation
-        },
-        fr: {
-          translation: frTranslation
-        },
-        de: {
-          translation: deTranslation
+      backend: {
+        loadPath: '/locales/{{lng}}/{{ns}}.json',
+        allowMultiLoading: false,
+        requestOptions: {
+          cache: 'no-cache'
         }
       },
       interpolation: {
         escapeValue: false, 
       },
       react: {
-        useSuspense: true, // Enable Suspense to wait for translations
+        useSuspense: false, // Disable Suspense for now to avoid blocking
       },
       saveMissing: false, // As per specification
       returnEmptyString: false, // As per specification
@@ -64,6 +56,9 @@ const initI18n = () => {
       
       if (!i18n.hasResourceBundle(i18n.language, 'translation')) {
         console.error('❌ Resource bundle not loaded! This will cause translation keys to show instead of text.');
+        console.error('❌ This means all text will show as translation keys instead of actual text!');
+      } else {
+        console.log('✅ Resource bundle loaded successfully!');
       }
     })
     .catch((error) => {
