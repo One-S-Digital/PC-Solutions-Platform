@@ -1,0 +1,451 @@
+{
+  "appName": "Solutions Pro Crèche",
+  "loading": {
+    "translations": "Chargement des Tradons ..."
+  },
+  "buttons": {
+    "save": "Accumulé",
+    "saveChanges": "Modifications des érégistrer Les",
+    "cancel": "Anuler",
+    "submit": "Envoyé",
+    "add": "Ajouter",
+    "edit": "Modificateur",
+    "delete": "S'adapter",
+    "viewDetails": "VOI DES DÉTAILS",
+    "goBack": "Remettre à un invers revers",
+    "login": "Rapport",
+    "signup": "S'inscrire",
+    "applyNow": "Postuler Maintenant",
+    "confirmApply": "Confirmateur la candidature",
+    "sendMessage": "Envoyer UN Message",
+    "inviteToApply": "Inviter à postuler",
+    "inviteToInterview": "Inviter à un entretien",
+    "addToFavorites": "Ajouter aux favoris",
+    "favorited": "Favori",
+    "submitEnquiry": "Soumettre la demande",
+    "viewMyEnquiries": "Exigences de voir-être",
+    "submitTicket": "Ticket Envoyer Le",
+    "goToLogin": "Aller à la page de Connexion",
+    "close": "Fermer",
+    "view": "Voiloir",
+    "resetFilters": "Réinitist les filtres",
+    "applyFilters": "Appliqueur Les Filtres",
+    "submitRequest": "Envoi la demande",
+    "remove": "Rétraité",
+    "dismiss": "Refaire"
+  },
+  "common": {
+    "perMonth": "/ Mois",
+    "perYear": "/ Année",
+    "save10Percent": "Économiser 10%"
+  },
+  "errors": {
+    "unknown": "Un erreur inconnue est le survenue."
+  },
+  "notifications": {
+    "errorTitle": "Erreur",
+    "successTitle": "Succurs",
+    "newMessageFrom": "Nouveau Message de {{Sender}}",
+    "settingsUpdated": "[FR] notifications.settingsUpdated"
+  },
+  "hidePassword": "Mascarade",
+  "showPassword": "Afficher Le Mot de Passe",
+  "signIn": "SE Connecter",
+  "signOut": "SE Déconnexateur",
+  "confirmPassword": "Confirmez le Mot de Passe",
+  "resetPassword": "Réinitialiste le Mot de Passe",
+  "rememberMe": "Souviens-Toi de Moi",
+  "createAccount": "CREER UN Compte",
+  "alreadyHaveAccount": "Vous AVVEZ DÉJà un compte?",
+  "dontHaveAccount": "Vous n'avez pas de compte ?",
+  "welcomeBack": "Contenu de te reveoir!",
+  "joinPlatform": "Rejoignez la plate-forme",
+  "chooseRole": "Choisissez vote rôle",
+  "firstName": "Préfabriqué",
+  "lastName": "Nom de Famille",
+  "phoneNumber": "Numéro de Téléphone",
+  "organizationName": "Nom de l'organisation",
+  "contactPerson": "Personne de Contact",
+  "canton": "Canton",
+  "languages": "Languette",
+  "capacity": "Capacité",
+  "productCategory": "Catégorie de Produits",
+  "serviceType": "Service de type de",
+  "childAge": "Âge de l'Enfant",
+  "preferredLocation": "Emplacement preféré",
+  "type": "Fuseau",
+  "language": "Languette",
+  "responsibilities": "Responsabilité",
+  "qualifications": "Qualifications",
+  "benefits": "Avantages",
+  "requirements": "Exigences",
+  "settingsPage": {
+    "unsavedChangesPrompt": "[FR] settingsPage.unsavedChangesPrompt",
+    "loading": "[FR] settingsPage.loading",
+    "noSectionsAvailable": "[FR] settingsPage.noSectionsAvailable",
+    "analyticsPreferences": "[FR] settingsPage.analyticsPreferences",
+    "companyProfile": "[FR] settingsPage.companyProfile",
+    "contactBooking": "[FR] settingsPage.contactBooking",
+    "defaults": "[FR] settingsPage.defaults",
+    "notificationPreferences": "[FR] settingsPage.notificationPreferences",
+    "privacyData": "[FR] settingsPage.privacyData",
+    "promoCodeManager": "[FR] settingsPage.promoCodeManager",
+    "teamPermissions": "[FR] settingsPage.teamPermissions"
+  },
+  "contentUploadModal": {
+    "title": {
+      "edit": "[FR] contentUploadModal.title.edit"
+    },
+    "labels": {
+      "currentFile": "[FR] contentUploadModal.labels.currentFile",
+      "uploadFileType": "[FR] contentUploadModal.labels.uploadFileType"
+    },
+    "fileUpload": {
+      "browse": "[FR] contentUploadModal.fileUpload.browse",
+      "dragAndDrop": "[FR] contentUploadModal.fileUpload.dragAndDrop",
+      "selected": "[FR] contentUploadModal.fileUpload.selected"
+    }
+  },
+  "leadCard": {
+    "alert": {
+      "missingParentInfo": "[FR] leadCard.alert.missingParentInfo"
+    },
+    "status": {
+      "notResponded": "[FR] leadCard.status.notResponded",
+      "interested": "[FR] leadCard.status.interested",
+      "notInterested": "[FR] leadCard.status.notInterested",
+      "needsMoreInfo": "[FR] leadCard.status.needsMoreInfo",
+      "enrolled": "[FR] leadCard.status.enrolled"
+    },
+    "forLocation": "[FR] leadCard.forLocation",
+    "childAge": "[FR] leadCard.childAge",
+    "desiredStart": "[FR] leadCard.desiredStart",
+    "submittedOn": "[FR] leadCard.submittedOn",
+    "notes": "[FR] leadCard.notes",
+    "defaultMessages": {
+      "interested": "[FR] leadCard.defaultMessages.interested",
+      "notInterested": "[FR] leadCard.defaultMessages.notInterested",
+      "enrolled": "[FR] leadCard.defaultMessages.enrolled"
+    },
+    "buttons": {
+      "interested": "[FR] leadCard.buttons.interested",
+      "notInterested": "[FR] leadCard.buttons.notInterested",
+      "needInfo": "[FR] leadCard.buttons.needInfo",
+      "sendQuestion": "[FR] leadCard.buttons.sendQuestion",
+      "messageParent": "[FR] leadCard.buttons.messageParent",
+      "markEnrolled": "[FR] leadCard.buttons.markEnrolled"
+    },
+    "questionFor": "[FR] leadCard.questionFor",
+    "questionPlaceholder": "[FR] leadCard.questionPlaceholder",
+    "yourResponse": "[FR] leadCard.yourResponse",
+    "messageSent": "[FR] leadCard.messageSent"
+  },
+  "orderRequestModal": {
+    "title": "[FR] orderRequestModal.title"
+  },
+  "messagesPage": {
+    "selectConversationToView": "[FR] messagesPage.selectConversationToView",
+    "conversationFallbackTitle": "[FR] messagesPage.conversationFallbackTitle",
+    "attachFile": "[FR] messagesPage.attachFile",
+    "addEmoji": "[FR] messagesPage.addEmoji",
+    "typeMessagePlaceholder": "[FR] messagesPage.typeMessagePlaceholder",
+    "searchPlaceholder": "[FR] messagesPage.searchPlaceholder",
+    "unknownUser": "[FR] messagesPage.unknownUser",
+    "youPrefix": "[FR] messagesPage.youPrefix",
+    "noMessagesYet": "[FR] messagesPage.noMessagesYet"
+  },
+  "serviceRequestDetailModal": {
+    "title": "[FR] serviceRequestDetailModal.title",
+    "requestId": "[FR] serviceRequestDetailModal.requestId",
+    "serviceName": "[FR] serviceRequestDetailModal.serviceName",
+    "viewDaycareProfile": "[FR] serviceRequestDetailModal.viewDaycareProfile",
+    "date": "[FR] serviceRequestDetailModal.date",
+    "status": "[FR] serviceRequestDetailModal.status",
+    "preferredDate": "[FR] serviceRequestDetailModal.preferredDate",
+    "noPreferredDate": "[FR] serviceRequestDetailModal.noPreferredDate",
+    "notes": "[FR] serviceRequestDetailModal.notes"
+  },
+  ",": "[FR] ,",
+  "organizationProfileForm": {
+    "accessDenied": "[FR] organizationProfileForm.accessDenied",
+    "title": "[FR] organizationProfileForm.title",
+    "subtitle": "[FR] organizationProfileForm.subtitle",
+    "labels": {
+      "capacity": "[FR] organizationProfileForm.labels.capacity",
+      "pedagogy": "[FR] organizationProfileForm.labels.pedagogy",
+      "languages": "[FR] organizationProfileForm.labels.languages"
+    },
+    "placeholders": {
+      "pedagogy": "[FR] organizationProfileForm.placeholders.pedagogy",
+      "languages": "[FR] organizationProfileForm.placeholders.languages"
+    },
+    "helpText": {
+      "commaSeparated": "[FR] organizationProfileForm.helpText.commaSeparated"
+    },
+    "saveButton": "[FR] organizationProfileForm.saveButton"
+  },
+  "settingsAccountSecurity": {
+    "notifications": {
+      "infoUpdated": "[FR] settingsAccountSecurity.notifications.infoUpdated",
+      "passwordChanged": "[FR] settingsAccountSecurity.notifications.passwordChanged"
+    },
+    "dangerZone": {
+      "finalConfirmation": "[FR] settingsAccountSecurity.dangerZone.finalConfirmation"
+    },
+    "personalInfo": {
+      "nameLabel": "[FR] settingsAccountSecurity.personalInfo.nameLabel"
+    }
+  },
+  "settingsAnalyticsPreferences": {
+    "timeZone": "[FR] settingsAnalyticsPreferences.timeZone",
+    "currency": "[FR] settingsAnalyticsPreferences.currency",
+    "benchmarkData": "[FR] settingsAnalyticsPreferences.benchmarkData",
+    "benchmarkDataHelpText": "[FR] settingsAnalyticsPreferences.benchmarkDataHelpText"
+  },
+  "settingsBillingSubscription": {
+    "yourCurrentPlan": "[FR] settingsBillingSubscription.yourCurrentPlan",
+    "upgradePlan": "[FR] settingsBillingSubscription.upgradePlan",
+    "downgradePlan": "[FR] settingsBillingSubscription.downgradePlan",
+    "currentPlan": "[FR] settingsBillingSubscription.currentPlan",
+    "nextInvoiceOn": "[FR] settingsBillingSubscription.nextInvoiceOn",
+    "manageSubscriptionTitle": "[FR] settingsBillingSubscription.manageSubscriptionTitle",
+    "manageSubscriptionDescription": "[FR] settingsBillingSubscription.manageSubscriptionDescription",
+    "managePaymentButton": "[FR] settingsBillingSubscription.managePaymentButton",
+    "cancelSubscription": "[FR] settingsBillingSubscription.cancelSubscription",
+    "stripePortalLinkNotConfigured": "[FR] settingsBillingSubscription.stripePortalLinkNotConfigured",
+    "confirmCancelTitle": "[FR] settingsBillingSubscription.confirmCancelTitle",
+    "confirmCancelMessage": "[FR] settingsBillingSubscription.confirmCancelMessage",
+    "keepSubscription": "[FR] settingsBillingSubscription.keepSubscription",
+    "yesCancel": "[FR] settingsBillingSubscription.yesCancel"
+  },
+  "settingsCompanyProfile": {
+    "companyName": "[FR] settingsCompanyProfile.companyName",
+    "logo": "[FR] settingsCompanyProfile.logo",
+    "coverImage": "[FR] settingsCompanyProfile.coverImage",
+    "aboutText": "[FR] settingsCompanyProfile.aboutText",
+    "aboutTextLength": "[FR] settingsCompanyProfile.aboutTextLength",
+    "vatNumber": "[FR] settingsCompanyProfile.vatNumber",
+    "regionsServed": "[FR] settingsCompanyProfile.regionsServed",
+    "selectCanton": "[FR] settingsCompanyProfile.selectCanton",
+    "cantonsHelpText": "[FR] settingsCompanyProfile.cantonsHelpText",
+    "languagesSpoken": "[FR] settingsCompanyProfile.languagesSpoken",
+    "selectLanguage": "[FR] settingsCompanyProfile.selectLanguage",
+    "languagesHelpText": "[FR] settingsCompanyProfile.languagesHelpText"
+  },
+  "settingsContactBooking": {
+    "preferredContactMethod": "[FR] settingsContactBooking.preferredContactMethod",
+    "avgResponseTime": "[FR] settingsContactBooking.avgResponseTime",
+    "externalBookingLink": "[FR] settingsContactBooking.externalBookingLink",
+    "externalBookingLinkPlaceholder": "[FR] settingsContactBooking.externalBookingLinkPlaceholder",
+    "directOrderLink": "[FR] settingsContactBooking.directOrderLink",
+    "directOrderLinkPlaceholder": "[FR] settingsContactBooking.directOrderLinkPlaceholder",
+    "directOrderLinkHelpText": "[FR] settingsContactBooking.directOrderLinkHelpText",
+    "calComLink": "[FR] settingsContactBooking.calComLink",
+    "calComLinkPlaceholder": "[FR] settingsContactBooking.calComLinkPlaceholder",
+    "deliveryTypeToggleRemote": "[FR] settingsContactBooking.deliveryTypeToggleRemote"
+  },
+  "settingsDefaults": {
+    "autoRespondToggle": "[FR] settingsDefaults.autoRespondToggle",
+    "autoRespondHelpText": "[FR] settingsDefaults.autoRespondHelpText",
+    "defaultMOQ": "[FR] settingsDefaults.defaultMOQ",
+    "defaultMOQPlaceholder": "[FR] settingsDefaults.defaultMOQPlaceholder",
+    "autoAcceptOrderQtyLimit": "[FR] settingsDefaults.autoAcceptOrderQtyLimit",
+    "autoAcceptOrderQtyLimitPlaceholder": "[FR] settingsDefaults.autoAcceptOrderQtyLimitPlaceholder",
+    "defaultConsultationLength": "[FR] settingsDefaults.defaultConsultationLength"
+  },
+  "settingsNotificationPreferences": {
+    "digestFrequency": "[FR] settingsNotificationPreferences.digestFrequency",
+    "promoRedemptionAlertsToggle": "[FR] settingsNotificationPreferences.promoRedemptionAlertsToggle"
+  },
+  "settingsPrivacyData": {
+    "dataDeletion": "[FR] settingsPrivacyData.dataDeletion",
+    "deletionRequestSubmitted": "[FR] settingsPrivacyData.deletionRequestSubmitted",
+    "requestGDPRDeletion": "[FR] settingsPrivacyData.requestGDPRDeletion",
+    "requestDeletionHelpText": "[FR] settingsPrivacyData.requestDeletionHelpText"
+  },
+  "settingsPromoCodeManager": {
+    "confirmDelete": "[FR] settingsPromoCodeManager.confirmDelete",
+    "discountTypes": {
+      "percentage": "[FR] settingsPromoCodeManager.discountTypes.percentage",
+      "fixedAmount": "[FR] settingsPromoCodeManager.discountTypes.fixedAmount",
+      "freeMinutes": "[FR] settingsPromoCodeManager.discountTypes.freeMinutes"
+    },
+    "addNewCode": "[FR] settingsPromoCodeManager.addNewCode",
+    "noCodesYet": "[FR] settingsPromoCodeManager.noCodesYet",
+    "table": {
+      "code": "[FR] settingsPromoCodeManager.table.code",
+      "discountOffer": "[FR] settingsPromoCodeManager.table.discountOffer",
+      "expiry": "[FR] settingsPromoCodeManager.table.expiry",
+      "status": "[FR] settingsPromoCodeManager.table.status",
+      "actions": "[FR] settingsPromoCodeManager.table.actions"
+    },
+    "addEditModal": {
+      "editTitle": "[FR] settingsPromoCodeManager.addEditModal.editTitle",
+      "addTitle": "[FR] settingsPromoCodeManager.addEditModal.addTitle",
+      "placeholder": "[FR] settingsPromoCodeManager.addEditModal.placeholder",
+      "save": "[FR] settingsPromoCodeManager.addEditModal.save"
+    }
+  },
+  "settingsTeamPermissions": {
+    "confirmRemoveMember": "[FR] settingsTeamPermissions.confirmRemoveMember",
+    "passwordResetSentAlert": "[FR] settingsTeamPermissions.passwordResetSentAlert",
+    "inviteNewMember": "[FR] settingsTeamPermissions.inviteNewMember",
+    "emailAddress": "[FR] settingsTeamPermissions.emailAddress",
+    "emailPlaceholder": "[FR] settingsTeamPermissions.emailPlaceholder",
+    "role": "[FR] settingsTeamPermissions.role",
+    "sendInvite": "[FR] settingsTeamPermissions.sendInvite",
+    "currentTeamMembers": "[FR] settingsTeamPermissions.currentTeamMembers",
+    "noTeamMembers": "[FR] settingsTeamPermissions.noTeamMembers",
+    "table": {
+      "email": "[FR] settingsTeamPermissions.table.email",
+      "role": "[FR] settingsTeamPermissions.table.role",
+      "status": "[FR] settingsTeamPermissions.table.status",
+      "actions": "[FR] settingsTeamPermissions.table.actions"
+    },
+    "roles": {
+      "editor": "[FR] settingsTeamPermissions.roles.editor",
+      "viewer": "[FR] settingsTeamPermissions.roles.viewer"
+    },
+    "resetPasswordTooltip": "[FR] settingsTeamPermissions.resetPasswordTooltip",
+    "removeMemberTooltip": "[FR] settingsTeamPermissions.removeMemberTooltip"
+  },
+  "activeClientToggle": {
+    "confirmSave": "[FR] activeClientToggle.confirmSave",
+    "saveSuccess": {
+      "title": "[FR] activeClientToggle.saveSuccess.title",
+      "message": "[FR] activeClientToggle.saveSuccess.message"
+    },
+    "label": "[FR] activeClientToggle.label",
+    "reasonLabel": "[FR] activeClientToggle.reasonLabel",
+    "noteLabel": "[FR] activeClientToggle.noteLabel",
+    "notePlaceholder": "[FR] activeClientToggle.notePlaceholder",
+    "subtext": "[FR] activeClientToggle.subtext"
+  },
+  "featureLock": {
+    "upgradeButton": "[FR] featureLock.upgradeButton"
+  },
+  "fileUploadModal": {
+    "title": "[FR] fileUploadModal.title",
+    "uploadFile": "[FR] fileUploadModal.uploadFile",
+    "dragAndDrop": "[FR] fileUploadModal.dragAndDrop",
+    "fileTypes": "[FR] fileUploadModal.fileTypes",
+    "filesToUpload": "[FR] fileUploadModal.filesToUpload"
+  },
+  "orderRequestDetailModal": {
+    "title": "[FR] orderRequestDetailModal.title",
+    "orderId": "[FR] orderRequestDetailModal.orderId",
+    "date": "[FR] orderRequestDetailModal.date",
+    "status": "[FR] orderRequestDetailModal.status",
+    "total": "[FR] orderRequestDetailModal.total",
+    "viewDaycareProfile": "[FR] orderRequestDetailModal.viewDaycareProfile",
+    "lineItems": "[FR] orderRequestDetailModal.lineItems",
+    "product": "[FR] orderRequestDetailModal.product",
+    "quantity": "[FR] orderRequestDetailModal.quantity",
+    "price": "[FR] orderRequestDetailModal.price",
+    "notes": "[FR] orderRequestDetailModal.notes"
+  },
+  "-": "[FR] -",
+  "[data-debug-component]": "[FR] [data-debug-component]",
+  " ": "[FR]  ",
+  "marketplacePage": {
+    "serviceCard": {
+      "categoryLabel": "[FR] marketplacePage.serviceCard.categoryLabel",
+      "bookAppointment": "[FR] marketplacePage.serviceCard.bookAppointment",
+      "viewProvider": "[FR] marketplacePage.serviceCard.viewProvider"
+    }
+  },
+  "notificationsPage": {
+    "title": "[FR] notificationsPage.title"
+  },
+  "parentEnquiriesPage": {
+    "title": "[FR] parentEnquiriesPage.title"
+  },
+  "parentLeadFormPage": {
+    "title": "[FR] parentLeadFormPage.title"
+  },
+  "adminSystemMonitoringPage": {
+    "rawLogConsole": {
+      "emptyLogMessage": "[FR] adminSystemMonitoringPage.rawLogConsole.emptyLogMessage",
+      "tabs": {
+        "all": "[FR] adminSystemMonitoringPage.rawLogConsole.tabs.all",
+        "errors": "[FR] adminSystemMonitoringPage.rawLogConsole.tabs.errors",
+        "warnings": "[FR] adminSystemMonitoringPage.rawLogConsole.tabs.warnings",
+        "info": "[FR] adminSystemMonitoringPage.rawLogConsole.tabs.info"
+      }
+    },
+    "title": "[FR] adminSystemMonitoringPage.title"
+  },
+  "educatorApplicationsPage": {
+    "title": "[FR] educatorApplicationsPage.title"
+  },
+  "foundationAnalyticsPage": {
+    "title": "[FR] foundationAnalyticsPage.title"
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "[FR] foundationOrganisationProfilePage.title"
+  },
+  "parentDashboard": {
+    "enquiry": {
+      "title": "[FR] parentDashboard.enquiry.title"
+    },
+    "quickActions": {
+      "title": "[FR] parentDashboard.quickActions.title"
+    },
+    "childProfile": {
+      "title": "[FR] parentDashboard.childProfile.title"
+    },
+    "favorites": {
+      "title": "[FR] parentDashboard.favorites.title"
+    }
+  },
+  "View Favorites TBD": "[FR] View Favorites TBD",
+  "Could not find a user associated with this organization to message": {
+    "": "[FR] Could not find a user associated with this organization to message."
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "[FR] serviceProviderAnalyticsPage.title"
+  },
+  "serviceProviderDashboard": {
+    "title": "[FR] serviceProviderDashboard.title"
+  },
+  "User organization details are missing": {
+    "": "[FR] User organization details are missing."
+  },
+  "serviceProviderListingsPage": {
+    "title": "[FR] serviceProviderListingsPage.title"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "[FR] serviceProviderRequestsPage.title"
+  },
+  "supplierOrdersPage": {
+    "title": "[FR] supplierOrdersPage.title"
+  },
+  "supplierProductListingsPage": {
+    "title": "[FR] supplierProductListingsPage.title"
+  },
+  "tailwindcss": "[FR] tailwindcss",
+  "requests carry authorization header": "[FR] requests carry authorization header",
+  "login page renders correctly": "[FR] login page renders correctly",
+  "parent lead form validates and submits to backend": "[FR] parent lead form validates and submits to backend",
+  "signup form validates required fields": "[FR] signup form validates required fields",
+  "contact/settings forms handle input correctly": "[FR] contact/settings forms handle input correctly",
+  "form validation messages work correctly": "[FR] form validation messages work correctly",
+  "login shows link to plans and no demo login": "[FR] login shows link to plans and no demo login",
+  "body": "[FR] body",
+  "login form elements are present": "[FR] login form elements are present",
+  "login page has proper branding and messaging": "[FR] login page has proper branding and messaging",
+  "signup link redirects to signup page": "[FR] signup link redirects to signup page",
+  "forgot password link exists if applicable": "[FR] forgot password link exists if applicable",
+  "non-super-admin cannot access super-admin routes": "[FR] non-super-admin cannot access super-admin routes",
+  "protected routes require authentication": "[FR] protected routes require authentication",
+  "role-based navigation shows correct sidebar items": "[FR] role-based navigation shows correct sidebar items",
+  "file upload zone accepts files and shows preview": "[FR] file upload zone accepts files and shows preview",
+  "service upload modal works correctly": "[FR] service upload modal works correctly",
+  "content upload validates file types": "[FR] content upload validates file types",
+  "upload API endpoints are intercepted correctly": "[FR] upload API endpoints are intercepted correctly",
+  "product transformation maps API data to UI model": "[FR] product transformation maps API data to UI model",
+  "service transformation maps API data to UI model": "[FR] service transformation maps API data to UI model",
+  "handles missing optional fields gracefully": "[FR] handles missing optional fields gracefully",
+  "job listing transformation correct maps API data to UI model": "[FR] job listing transformation correct maps API data to UI model",
+  "application transformation maps application data correctly": "[FR] application transformation maps application data correctly"
+}

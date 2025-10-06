@@ -13,8 +13,8 @@ const initI18n = () => {
       supportedLngs: ['en', 'fr', 'de'],
       fallbackLng: 'en',
       debug: false, // Disable debug to reduce console noise
-      ns: ['translation'], 
-      defaultNS: 'translation',
+      ns: ['common', 'auth', 'dashboard'], 
+      defaultNS: 'common',
       backend: {
         loadPath: '/locales/{{lng}}/{{ns}}.json',
         allowMultiLoading: false,
@@ -44,35 +44,6 @@ const initI18n = () => {
       console.log('🌍 i18n initialized successfully');
       console.log('🌍 Current language:', i18n.language);
       console.log('🌍 Available languages:', i18n.languages);
-      console.log('🌍 Has resource bundle:', i18n.hasResourceBundle(i18n.language, 'translation'));
-      
-      // Test multiple translations safely
-      const testKeys = ['appName', 'buttons.login', 'sidebar.dashboard', 'dashboardPage.welcome'];
-      console.log('🌍 Testing translations:');
-      testKeys.forEach(key => {
-        try {
-          const result = i18n.t(key);
-          const isWorking = result !== key;
-          console.log(`  ${isWorking ? '✅' : '❌'} ${key}: "${result}"`);
-        } catch (error) {
-          console.error(`  ❌ Error translating ${key}:`, error);
-        }
-      });
-      
-      // Check if resource bundle is loaded
-      try {
-        const resourceBundle = i18n.getResourceBundle(i18n.language, 'translation');
-        console.log('🌍 Resource bundle keys:', Object.keys(resourceBundle || {}).length);
-        
-        if (!i18n.hasResourceBundle(i18n.language, 'translation')) {
-          console.error('❌ Resource bundle not loaded! This will cause translation keys to show instead of text.');
-          console.error('❌ This means all text will show as translation keys instead of actual text!');
-        } else {
-          console.log('✅ Resource bundle loaded successfully!');
-        }
-      } catch (error) {
-        console.error('❌ Error checking resource bundle:', error);
-      }
     })
     .catch((error) => {
       console.error('❌ i18n initialization failed:', error);
