@@ -9,6 +9,15 @@
     "deLong": "Deutsch",
     "selectLanguage": "Select Language"
   },
+  "userRoles": {
+    "FOUNDATION": "Foundation",
+    "PRODUCT_SUPPLIER": "Product Supplier",
+    "SERVICE_PROVIDER": "Service Provider",
+    "EDUCATOR": "Educator",
+    "PARENT": "Parent",
+    "ADMIN": "Admin",
+    "SUPER_ADMIN": "Super Admin"
+  },
   "loading": "Loading...",
   "buttons": {
     "save": "Save",
@@ -1230,32 +1239,32 @@
   },
   "settingsAccountSecurity": {
     "notifications": {
-      "infoUpdated": "Info Updated",
-      "passwordChanged": "Password Changed"
+      "infoUpdated": "Information updated successfully",
+      "passwordChanged": "Password changed successfully"
     },
     "dangerZone": {
-      "finalConfirmation": "Final Confirmation",
-      "title": "",
-      "deleteAccountTitle": " Account Title",
-      "deleteAccountSubtitle": " Account Subtitle",
-      "deleteAccountButton": " Account Button"
+      "title": "Danger Zone",
+      "finalConfirmation": "Are you sure you want to permanently delete your account? This action cannot be undone.",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountSubtitle": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteAccountButton": "Delete Account"
     },
     "personalInfo": {
-      "title": "",
-      "contactNameLabel": "Contact Name Label",
-      "nameLabel": "Name Label",
-      "orgNameLabel": "Org Name Label",
-      "emailLabel": "Email Label",
-      "accountTypeLabel": "Account Type Label",
-      "memberSinceLabel": "Member Since Label",
-      "updateInfoButton": " Info Button"
+      "title": "Personal Information",
+      "nameLabel": "Full Name",
+      "contactNameLabel": "Contact Name",
+      "orgNameLabel": "Organization Name",
+      "emailLabel": "Email Address",
+      "accountTypeLabel": "Account Type",
+      "memberSinceLabel": "Member Since",
+      "updateInfoButton": "Update Information"
     },
     "changePassword": {
-      "title": "",
-      "currentPasswordLabel": "Current Password Label",
-      "newPasswordLabel": "New Password Label",
-      "confirmNewPasswordLabel": "Confirm New Password Label",
-      "updatePasswordButton": " Password Button"
+      "title": "Change Password",
+      "currentPasswordLabel": "Current Password",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "updatePasswordButton": "Update Password"
     }
   },
   "settingsPrivacyData": {
@@ -1289,16 +1298,17 @@
   },
   "settingsCompanyProfile": {
     "companyName": "Company Name",
-    "logo": "Logo",
+    "logo": "Company Logo",
     "coverImage": "Cover Image",
-    "aboutText": "About Text",
-    "vatNumber": "Vat Number",
+    "aboutText": "About Us",
+    "aboutTextLength": "{{length}}/500 characters",
+    "vatNumber": "VAT Number",
     "regionsServed": "Regions Served",
     "selectCanton": "Select Canton",
-    "cantonsHelpText": "Cantons Help Text",
+    "cantonsHelpText": "Select all cantons where you provide services",
     "languagesSpoken": "Languages Spoken",
     "selectLanguage": "Select Language",
-    "languagesHelpText": "Languages Help Text"
+    "languagesHelpText": "Select all languages spoken by your team"
   },
   "settingsContactBooking": {
     "preferredContactMethod": "Preferred Contact Method",
