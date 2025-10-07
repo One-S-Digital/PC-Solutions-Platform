@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  tolgee:
+    image: tolgee/tolgee:latest
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    environment:
+      # Authentication
+      TOLGEE_AUTHENTICATION_ENABLED: "true"
+      TOLGEE_AUTHENTICATION_DEFAULT_ENABLED: "true"
+      
+      # Database (Aiven PostgreSQL)
+      SPRING_DATASOURCE_URL: "${DATABASE_URL}"
+      SPRING_DATASOURCE_USERNAME: "${DATABASE_USERNAME}"
+      SPRING_DATASOURCE_PASSWORD: "${DATABASE_PASSWORD}"
+      
+      # App Configuration
+      TOLGEE_APP_FRONTEND_URL: "${TOLGEE_FRONTEND_URL}"
+      TOLGEE_APP_BASE_URL: "${TOLGEE_BASE_URL}"
+      
+      # Security
+      TOLGEE_AUTHENTICATION_JWT_SECRET: "${JWT_SECRET}"
+      
+      # File Storage (Render persistent disk)
+      TOLGEE_FILE_STORAGE: "local"
+      TOLGEE_FILE_STORAGE_LOCAL_PATH: "/app/data"
+      
+      # Logging
+      LOGGING_LEVEL_ROOT: "INFO"
+      LOGGING_LEVEL_TOLGEE: "DEBUG"
+      
+      # Performance
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+      SPRING_JPA_SHOW_SQL: "false"
+      
+    volumes:
+      - tolgee_data:/app/data
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  tolgee_data:

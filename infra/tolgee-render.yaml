@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: tolgee
+    env: docker
+    dockerfilePath: ./infra/Dockerfile.tolgee
+    dockerContext: ./infra
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: ""
+    startCommand: ""
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: TOLGEE_FRONTEND_URL
+        value: https://tolgee.yourdomain.com
+      - key: TOLGEE_BASE_URL
+        value: https://tolgee.yourdomain.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TOLGEE_AUTHENTICATION_ENABLED
+        value: "true"
+      - key: TOLGEE_AUTHENTICATION_DEFAULT_ENABLED
+        value: "true"
+      - key: TOLGEE_FILE_STORAGE
+        value: "local"
+      - key: TOLGEE_FILE_STORAGE_LOCAL_PATH
+        value: "/app/data"
+      - key: LOGGING_LEVEL_ROOT
+        value: "INFO"
+      - key: LOGGING_LEVEL_TOLGEE
+        value: "DEBUG"
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: "update"
+      - key: SPRING_JPA_SHOW_SQL
+        value: "false"
