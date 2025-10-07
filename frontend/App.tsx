@@ -1,8 +1,7 @@
 
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
@@ -17,8 +16,6 @@ import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
-import TestI18n from './test-i18n'; // Test component for i18n
-import DebugI18n from './debug-i18n'; // Debug component for i18n
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -39,9 +36,6 @@ import NotificationsPage from './pages/NotificationsPage';
 import FileGalleryPage from './pages/FileGalleryPage';
 import DesignSystemPage from './pages/DesignSystemPage'; // New Design System Page
 import DiscountTerminationsPage from './pages/admin/DiscountTerminationsPage'; // New Admin Page
-import TranslationDebugger from './components/debug/TranslationDebugger'; // Debug component
-import TranslationDiagnostics from './components/debug/TranslationDiagnostics'; // Comprehensive diagnostics
-import TranslationErrorLogger from './components/debug/TranslationErrorLogger'; // Automatic error logging
 
 
 // Product Supplier Pages
@@ -307,17 +301,11 @@ const ProtectedLayout: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  // Debug logging
-  console.log('🔍 Debug components enabled - look for debug buttons in bottom corners');
-  console.log('🔍 Environment:', process.env.NODE_ENV);
-  console.log('🔍 Debug components should be visible in production');
-  
   return (
     <AppContextProvider>
       <CartProvider>
         <MessagingProvider>
           <NotificationProvider>
-            <DebugI18n />
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
@@ -325,38 +313,6 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-            {/* Debug components - enabled for debugging translation issues */}
-            <TranslationDebugger enabled={true} />
-            <TranslationDiagnostics enabled={true} />
-            <TranslationErrorLogger 
-              enabled={true} 
-              logToFile={true}
-              logToConsole={true} 
-              autoScan={true} 
-              scanInterval={15000} 
-            />
-            {/* Test i18n component */}
-            <TestI18n />
-            
-            {/* Debug banner - visible in production */}
-            <div 
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                background: 'linear-gradient(90deg, #8B5CF6, #EC4899)',
-                color: 'white',
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                zIndex: 10000,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
-              }}
-            >
-              🔍 DEBUG MODE ACTIVE - Look for purple debug buttons in bottom corners
-            </div>
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
