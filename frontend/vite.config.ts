@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+          '@workspace/translations': path.resolve(__dirname, '../packages/translations/src/index.ts'),
+          '@repo/ui': path.resolve(__dirname, '../packages/ui/src/index.ts'),
         }
       },
       // Ensure static assets are properly copied

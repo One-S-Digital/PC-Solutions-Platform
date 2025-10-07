@@ -136,7 +136,7 @@ export function getPluralForm(
 export function formatRelativeTime(
   date: Date | string | number,
   language: SupportedLanguage,
-  unit: Intl.RelativeTimeFormatUnit = 'auto'
+  unit: Intl.RelativeTimeFormatUnit = 'second'
 ): string {
   const dateObj = new Date(date);
   const now = new Date();
