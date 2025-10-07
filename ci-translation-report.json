@@ -4,7 +4,7 @@
     {
       "name": "Translation Validation",
       "passed": true,
-      "details": "Coverage: 100%, Errors: 0, Warnings: 2329"
+      "details": "Coverage: 100%, Errors: 0, Warnings: 2481"
     },
     {
       "name": "Translation Coverage",
@@ -19,7 +19,7 @@
     {
       "name": "Warning Limits",
       "passed": false,
-      "details": "Warnings: 2329 (maximum: 10)"
+      "details": "Warnings: 2481 (maximum: 10)"
     },
     {
       "name": "Required Languages",
@@ -39,7 +39,7 @@
   ],
   "coverage": 100,
   "errors": 0,
-  "warnings": 2329,
+  "warnings": 2481,
   "missingKeys": 0,
   "recommendations": [
     "Consider reducing translation warnings",
