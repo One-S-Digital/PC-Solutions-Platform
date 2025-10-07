@@ -35,9 +35,9 @@
     "dismiss": "Verwerfen"
   },
   "common": {
-    "perMonth": "/Monat",
-    "perYear": "/Jahr",
-    "save10Percent": "Sparen Sie 10%"
+    "perMonth": "pro Monat",
+    "perYear": "pro Jahr",
+    "save10Percent": "Sparen Sie 10 %"
   },
   "errors": {
     "unknown": "Ein unbekannter fehler ist auf"
@@ -46,7 +46,7 @@
     "errorTitle": "Fehler",
     "successTitle": "Erfolg",
     "newMessageFrom": "Neue Nachricht von",
-    "settingsUpdated": "Benachrichtigungen.Einstellungen aktualisiert"
+    "settingsUpdated": "Einstellungen erfolgreich aktualisiert"
   },
   "hidePassword": "Passwort Verbergen",
   "showPassword": "Passwort anzeigen",
@@ -504,5 +504,14 @@
     "privacy": "Datenschutz",
     "copyright": "Urheberrecht",
     "all.rights.reserved": "Alle Rechte vorbehalten"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Sprache wählen (aktuell: {{currentLanguage}})",
+    "enShort": "EN",
+    "enLong": "Englisch",
+    "frShort": "FR",
+    "frLong": "Französisch",
+    "deShort": "DE",
+    "deLong": "Deutsch"
   }
 }

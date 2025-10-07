@@ -14,7 +14,7 @@ interface SupplierCardProps {
 }
 
 const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const navigate = useNavigate();
 
   const renderRatingStars = (rating?: number) => {

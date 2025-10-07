@@ -15,7 +15,7 @@ interface PolicyAlertModalProps {
 }
 
 const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, onSubmit, existingAlert }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const initialFormState: Omit<PolicyAlert, 'id' | 'creationDate'> = {
     title: '',
     message: '',

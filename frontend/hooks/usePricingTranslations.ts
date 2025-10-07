@@ -1,8 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { PricingPlan, UserRole } from '../types';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 export const usePricingTranslations = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('pricing');
+
+  const translatePricingKey = (key: string) => {
+    const namespacedKey = `pricingPage.${key}`;
+    const value = t(namespacedKey);
+    if (isDev && value === namespacedKey) {
+      // eslint-disable-next-line no-console
+      console.warn(`[i18n] Missing pricing translation for key: ${namespacedKey}`);
+    }
+    return value === namespacedKey ? '' : value;
+  };
+
+  const normalizePlanName = (name: string) =>
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+([a-z0-9])/g, (_, char: string) => char.toUpperCase())
+      .replace(/[^a-z0-9]/g, '');
 
   // Helper function to convert feature text to translation key
   const getFeatureKey = (feature: string) => {
@@ -19,7 +37,15 @@ export const usePricingTranslations = () => {
       'Recruitment module': 'recruitment',
       'Unlimited parent enquiries': 'unlimitedEnquiries',
       'E-learning for staff': 'elearning',
+      'Team management & tools': 'teamTools',
+      'Priority support': 'prioritySupport',
       'Phone support': 'phoneSupport',
+      'Everything in Professional': 'everythingProfessional',
+      'Multi-site management': 'multiSiteManagement',
+      'Advanced analytics & reporting': 'advancedAnalytics',
+      'Dedicated account manager': 'accountManager',
+      'Custom integrations & API access': 'customIntegrations',
+      'White-label branding options': 'whiteLabelBranding',
       // Supplier plan features
       'Profile + unlimited product listings': 'profileListings',
       'Structured order requests & status tracking': 'orderRequests',
@@ -27,12 +53,21 @@ export const usePricingTranslations = () => {
       'Promo codes & redemption tracking': 'promoCodes',
       'Full visibility across all daycares': 'fullVisibility',
       'Email support & guided onboarding': 'emailSupportOnboarding',
+      'Product listings & marketplace access': 'productListings',
+      'Lead management system': 'leadManagement',
+      'Order tracking & fulfillment': 'orderTracking',
+      'Multi-language support': 'multiLanguageSupport',
+      'Sales analytics dashboard': 'salesAnalytics',
       // Service provider plan features
       'Profile + multi-service listings': 'profileServices',
       'Appointment & quote requests': 'appointmentRequests',
       'Scheduling link integration (Calendly/Cal.com)': 'scheduling',
       'Pipeline management tools': 'pipelineTools',
-      'Promo code options': 'promoOptions'
+      'Promo code options': 'promoOptions',
+      'Service listings & marketplace access': 'serviceListings',
+      'Appointment scheduling system': 'appointmentScheduling',
+      'Client relationship management': 'crm',
+      'Revenue tracking & reporting': 'revenueTracking'
     };
     
     return featureMap[feature] || 'default';
@@ -40,40 +75,42 @@ export const usePricingTranslations = () => {
 
   // Translate a pricing plan with proper formatting
   const translatePlan = (plan: PricingPlan, isAnnual: boolean = false): PricingPlan => {
-    const planKey = plan.name.toLowerCase();
+    const planKey = normalizePlanName(plan.name);
     
     if (plan.role === UserRole.FOUNDATION) {
       const translationKey = `${planKey}Plan`;
       const displayPrice = isAnnual ? plan.price.annualEquivalent : plan.price.monthly;
-      const priceLabel = isAnnual ? t('common.perMonth') : t('common.perMonth');
-      
+      const priceLabel = t('common.perMonth');
+
       return {
         ...plan,
-        name: t(`pricingPage.${translationKey}.name`, plan.name),
+        name: translatePricingKey(`${translationKey}.name`) || plan.name,
         monthlyPriceText: `CHF ${displayPrice || plan.price.monthly} ${priceLabel}`,
         annualPlanText: `CHF ${plan.price.annually} ${t('common.perYear')} (${t('common.save10Percent')})`,
-        tagline: t(`pricingPage.${translationKey}.tagline`, plan.tagline),
-        description: t(`pricingPage.${translationKey}.description`, plan.description),
-        features: plan.features.map(feature => 
-          t(`pricingPage.${translationKey}.features.${getFeatureKey(feature)}`, feature)
-        )
+        tagline: translatePricingKey(`${translationKey}.tagline`) || plan.tagline,
+        description: translatePricingKey(`${translationKey}.description`) || plan.description,
+        features: plan.features.map(feature => {
+          const translatedFeature = translatePricingKey(`${translationKey}.features.${getFeatureKey(feature)}`);
+          return translatedFeature || feature;
+        })
       };
     } else {
       // For supplier and service provider plans
       const baseKey = plan.role === UserRole.PRODUCT_SUPPLIER ? 'suppliersPlan' : 'serviceProviderPlan';
       const displayPrice = isAnnual ? plan.price.annualEquivalent : plan.price.monthly;
-      const priceLabel = isAnnual ? t('common.perMonth') : t('common.perMonth');
-      
+      const priceLabel = t('common.perMonth');
+
       return {
         ...plan,
-        name: t(`pricingPage.${baseKey}.name`, plan.name),
+        name: translatePricingKey(`${baseKey}.name`) || plan.name,
         monthlyPriceText: `CHF ${displayPrice || plan.price.monthly} ${priceLabel}`,
         annualPlanText: `CHF ${plan.price.annually} ${t('common.perYear')} (${t('common.save10Percent')})`,
-        tagline: t(`pricingPage.${baseKey}.tagline`, plan.tagline),
-        description: t(`pricingPage.${baseKey}.description`, plan.description),
-        features: plan.features.map(feature => 
-          t(`pricingPage.${baseKey}.features.${getFeatureKey(feature)}`, feature)
-        )
+        tagline: translatePricingKey(`${baseKey}.tagline`) || plan.tagline,
+        description: translatePricingKey(`${baseKey}.description`) || plan.description,
+        features: plan.features.map(feature => {
+          const translatedFeature = translatePricingKey(`${baseKey}.features.${getFeatureKey(feature)}`);
+          return translatedFeature || feature;
+        })
       };
     }
   };

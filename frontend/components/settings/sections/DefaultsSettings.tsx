@@ -23,7 +23,7 @@ const CONSULTATION_LENGTHS: {labelKey: string, value: ConsultationLength}[] = [
 ];
 
 const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const isSupplier = userRole === UserRole.PRODUCT_SUPPLIER;
   const isProvider = userRole === UserRole.SERVICE_PROVIDER;
 

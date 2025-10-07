@@ -13,7 +13,7 @@
     "delete": "Supprimer",
     "viewDetails": "Voir les détails",
     "goBack": "Retour",
-    "login": "Log In",
+  "login": "Se connecter",
     "signup": "S'inscrire",
     "applyNow": "Postuler maintenant",
     "confirmApply": "Confirm Application",
@@ -35,9 +35,9 @@
     "dismiss": "Rejeter"
   },
   "common": {
-    "perMonth": "/month",
-    "perYear": "/year",
-    "save10Percent": "save 10%"
+    "perMonth": "par mois",
+    "perYear": "par an",
+    "save10Percent": "Économisez 10 %"
   },
   "errors": {
     "unknown": "Une erreur inconnue s'est produite"
@@ -46,7 +46,7 @@
     "errorTitle": "Erreur",
     "successTitle": "Succès",
     "newMessageFrom": "Nouveau message de",
-    "settingsUpdated": "notifications.settingsUpdated"
+    "settingsUpdated": "Paramètres mis à jour avec succès"
   },
   "hidePassword": "Masquer le mot de passe",
   "showPassword": "Afficher le mot de passe",
@@ -504,5 +504,14 @@
     "privacy": "Confidentialité",
     "copyright": "Droits d'auteur",
     "all.rights.reserved": "Tous droits réservés"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Choisir la langue (actuelle : {{currentLanguage}})",
+    "enShort": "EN",
+    "enLong": "Anglais",
+    "frShort": "FR",
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Allemand"
   }
 }

@@ -17,7 +17,7 @@ interface PrivacyDataSettingsProps {
 }
 
 const PrivacyDataSettings: React.FC<PrivacyDataSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const hidePubliclyLabelKey = userRole === UserRole.PRODUCT_SUPPLIER 
     ? "settingsPrivacyData.hidePricesPublicly" 
     : "settingsPrivacyData.hideStartingRatePublicly";

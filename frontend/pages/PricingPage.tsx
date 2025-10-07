@@ -13,7 +13,7 @@ import { pricingService } from '../services/pricingService';
 import { usePricingTranslations } from '../hooks/usePricingTranslations';
 
 const PricingPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('pricing');
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAppContext();

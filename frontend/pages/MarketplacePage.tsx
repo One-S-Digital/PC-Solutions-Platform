@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 // ServiceCard now includes a function to book an appointment
 const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: string) => void, onBookAppointment: (service: Service) => void }> = ({ service, onViewProvider, onBookAppointment }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   return (
   <Card className="flex flex-col group" hoverEffect>
      <div className="relative overflow-hidden aspect-video cursor-pointer" onClick={() => onViewProvider(service.providerId)}>
@@ -50,7 +50,7 @@ const getActiveTabFromPath = (path: string) => {
 };
 
 const MarketplacePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser, submitServiceRequest } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();

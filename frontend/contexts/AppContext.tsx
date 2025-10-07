@@ -400,7 +400,7 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 };
 
 export const useAppContext = (): AppContextType => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const context = useContext(AppContext);
   if (context === undefined) {
     throw new Error(t('appContext.useAppContextError'));

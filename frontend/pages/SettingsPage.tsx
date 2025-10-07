@@ -36,7 +36,8 @@ export interface SettingsSectionConfig {
 }
 
 const SettingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
+  const { t: tCommon } = useTranslation('common');
   const { currentUser } = useAppContext();
   const { addNotification } = useNotifications();
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ const SettingsPage: React.FC = () => {
   const handleSave = () => {
     console.log('Saving settings:', formData);
     setInitialFormData(JSON.parse(JSON.stringify(formData)));
-    addNotification({ title: t('notifications.successTitle'), message: t('notifications.settingsUpdated'), type: 'success' });
+    addNotification({ title: tCommon('notifications.successTitle'), message: tCommon('notifications.settingsUpdated'), type: 'success' });
     setIsDirty(false);
   };
 
@@ -198,10 +199,10 @@ const SettingsPage: React.FC = () => {
           {availableSections.length > 1 && ( 
             <div className="flex space-x-3">
               <Button variant="light" onClick={handleCancel}>
-                {t('buttons.cancel')}
+                {tCommon('buttons.cancel')}
               </Button>
               <Button variant="primary" onClick={handleSave} disabled={!isDirty} className="bg-swiss-mint hover:bg-opacity-90">
-                {t('buttons.saveChanges')}
+                {tCommon('buttons.saveChanges')}
               </Button>
             </div>
           )}

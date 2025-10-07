@@ -28,7 +28,7 @@ const ColorSwatch: React.FC<{ name: string; hex: string }> = ({ name, hex }) => 
 );
 
 const DesignSystemPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('dashboard');
     const [quantity, setQuantity] = useState(1);
     const [tabIndex, setTabIndex] = useState(0);
 

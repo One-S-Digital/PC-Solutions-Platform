@@ -41,7 +41,7 @@ type FormData = {
 
 
 const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose, onSubmit, contentType, existingContent }) => {
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation('dashboard'); // Initialize useTranslation
   const getInitialFormState = (): FormData => ({
     title: '',
     description: '', 

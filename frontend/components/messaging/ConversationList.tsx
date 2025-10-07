@@ -8,7 +8,7 @@ import { ICON_INPUT_FIELD } from '../../constants';
 import { useTranslation } from 'react-i18next';
 
 const ConversationList: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { conversations, activeConversationId, setActiveConversationId, loadUserConversations, getUnreadCountForConversation } = useMessaging();
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'unread'>('all');

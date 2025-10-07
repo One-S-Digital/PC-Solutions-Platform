@@ -17,7 +17,8 @@ const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const LoginPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
+  const { t: tCommon } = useTranslation('common');
   const { login, currentUser } = useAppContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -49,7 +50,7 @@ const LoginPage: React.FC = () => {
     if (result.success) {
       // The redirect is handled by the useEffect watching currentUser
     } else {
-      setError(result.message || t('errors.unknown'));
+      setError(result.message || tCommon('errors.unknown'));
     }
     setIsLoading(false);
   };
@@ -113,7 +114,7 @@ const LoginPage: React.FC = () => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-                    aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+                    aria-label={showPassword ? tCommon('hidePassword') : tCommon('showPassword')}
                 >
                     {showPassword ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
                 </button>
@@ -121,7 +122,7 @@ const LoginPage: React.FC = () => {
           </div>
           <div>
             <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isLoading}>
-              {isLoading ? t('loginPage.loggingIn') : t('buttons.login')}
+              {isLoading ? t('loginPage.loggingIn') : tCommon('buttons.login')}
             </Button>
           </div>
         </form>
@@ -151,7 +152,7 @@ const LoginPage: React.FC = () => {
             <p>
             {t('loginPage.noAccount')}{' '}
             <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
-                {t('buttons.signup')}
+                {tCommon('buttons.signup')}
             </Link>
             </p>
             <p>

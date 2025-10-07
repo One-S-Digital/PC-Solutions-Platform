@@ -15,7 +15,7 @@ interface ServiceRequestModalProps {
 }
 
 const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOpen, onClose, onSubmitRequest }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const [preferredDate, setPreferredDate] = useState('');
   const [notes, setNotes] = useState('');
 

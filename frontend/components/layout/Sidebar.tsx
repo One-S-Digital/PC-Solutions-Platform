@@ -30,7 +30,7 @@ const translateUserRole = (role: UserRole, t: TFunction): string => {
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const navigate = useNavigate();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({

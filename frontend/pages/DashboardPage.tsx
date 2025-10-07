@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { APP_NAME } from '../constants'; // Import APP_NAME
 
 const DashboardPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const navigate = useNavigate();
 

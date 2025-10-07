@@ -506,23 +506,6 @@
     "terminations": "Active Terminations",
     "manage": "Manage Terminations"
   },
-  "pricingPage": {
-    "title": "Pricing Plans",
-    "plans": "Available Plans",
-    "features": "Plan Features",
-    "billing": "Billing Information",
-    "monthly": "Monthly",
-    "annual": "Annual",
-    "saveUpTo10": "Save up to 10%",
-    "popular": "Most Popular",
-    "whatYouGet": "What You Get",
-    "selectAndContinue": "Select and Continue",
-    "choosePlan": "Choose Your Plan",
-    "titleSignup": "Sign Up",
-    "subtitleSignup": "Create your account to get started",
-    "subtitle": "Choose the plan that's right for your organization",
-    "suppliersAndProvidersTitle": "For Suppliers & Service Providers"
-  },
   "recruitmentPage": {
     "title": "Recruitment",
     "jobDetailModal": {

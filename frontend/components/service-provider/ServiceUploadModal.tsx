@@ -16,7 +16,7 @@ interface ServiceUploadModalProps {
 type ServiceFormData = Partial<Omit<Service, 'id' | 'providerId' | 'providerName' | 'providerLogo'>>;
 
 const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose, onSubmit, existingService }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
 
   const initialFormState: ServiceFormData = {

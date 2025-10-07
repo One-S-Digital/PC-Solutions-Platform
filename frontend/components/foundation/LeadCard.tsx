@@ -16,7 +16,7 @@ interface LeadCardProps {
 }
 
 const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const [showResponseInput, setShowResponseInput] = useState(false);
   const [responseText, setResponseText] = useState('');
   const { currentUser } = useAppContext(); // Assuming foundation name comes from currentUser or org lookup

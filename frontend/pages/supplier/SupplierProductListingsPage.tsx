@@ -9,7 +9,7 @@ import { Product, StockStatus } from '../../types';
 import { MOCK_PRODUCTS, ICON_INPUT_FIELD } from '../../constants';
 
 const SupplierProductListingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [searchTerm, setSearchTerm] = useState('');

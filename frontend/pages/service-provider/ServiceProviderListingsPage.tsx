@@ -15,7 +15,7 @@ interface ServiceCardProps {
 }
 
 const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDelete }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('dashboard');
     return (
         <Card className="flex flex-col group" hoverEffect>
             <div className="relative overflow-hidden aspect-[16/10]">
@@ -39,7 +39,7 @@ const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDe
 
 
 const ServiceProviderListingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const [serviceListings, setServiceListings] = useState<Service[]>(
     // Filter MOCK_SERVICES to only those belonging to the current service provider for initial state

@@ -167,7 +167,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
 
   const startOrGetConversation = (recipientId: string, recipientName: string, recipientRole: UserRole): string => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('dashboard');
     if (!currentUser) throw new Error(t("messagingContext.userNotLoggedIn"));
     const participants = [
         { id: currentUser.id, name: currentUser.name, role: currentUser.role },
@@ -177,7 +177,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
   
   const startConversation = (participants: {id: string, name: string, role: UserRole}[], groupName?: string): string => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('dashboard');
     if (!currentUser) throw new Error(t("messagingContext.userNotLoggedIn"));
 
     // Ensure current user is part of the participants
@@ -242,7 +242,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
 };
 
 export const useMessaging = (): MessagingContextType => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const context = useContext(MessagingContext);
   if (context === undefined) {
     throw new Error(t('messagingContext.useMessagingError'));

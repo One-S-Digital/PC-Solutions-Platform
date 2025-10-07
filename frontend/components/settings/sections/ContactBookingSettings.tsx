@@ -29,7 +29,7 @@ const AVG_RESPONSE_TIMES: { labelKey: string, value: AvgResponseType }[] = [
 ];
 
 const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const isProvider = userRole === UserRole.SERVICE_PROVIDER;
   const isSupplier = userRole === UserRole.PRODUCT_SUPPLIER;
   const providerSettings = settings as ProviderSettings; // Type assertion for provider-specific fields

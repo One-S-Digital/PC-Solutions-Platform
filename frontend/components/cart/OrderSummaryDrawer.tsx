@@ -15,7 +15,7 @@ interface OrderSummaryDrawerProps {
 }
 
 const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { 
     cartItems, 
     cartSupplierInfo,

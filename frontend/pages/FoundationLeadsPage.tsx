@@ -8,7 +8,7 @@ import { InboxArrowDownIcon, InboxIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 const FoundationLeadsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser, leads, setLeads } = useAppContext();
 
   if (!currentUser || currentUser.role !== UserRole.FOUNDATION || !currentUser.orgId) {

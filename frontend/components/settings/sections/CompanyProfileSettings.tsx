@@ -22,7 +22,7 @@ const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLang
 ];
 
 const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (settings[field] as string[] || []) as Array<SwissCanton | SupportedLanguage>;

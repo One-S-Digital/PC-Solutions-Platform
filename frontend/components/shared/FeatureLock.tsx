@@ -12,7 +12,7 @@ interface FeatureLockProps {
 }
 
 const FeatureLock: React.FC<FeatureLockProps> = ({ featureName, requiredPlan }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const navigate = useNavigate();
 
   return (

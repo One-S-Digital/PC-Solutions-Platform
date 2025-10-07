@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button';
 import OrderRequestDetailModal from '../../components/supplier/OrderRequestDetailModal';
 
 const SupplierOrdersPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
   const [statusFilter, setStatusFilter] = useState<OrderRequestStatus | 'All'>('All');

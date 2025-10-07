@@ -10,7 +10,7 @@ import { UserRole } from '../types';
 import { useTranslation } from 'react-i18next';
 
 const ParentLeadFormPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { submitParentLead, currentUser } = useAppContext(); 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

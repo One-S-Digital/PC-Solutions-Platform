@@ -21,7 +21,7 @@ interface HRDocumentCardProps {
 }
 
 const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, onEdit, onDelete, isAdmin }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const fileTypeColors = {
     PDF: 'text-red-500',
     DOCX: 'text-blue-500',
@@ -73,7 +73,7 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
 };
 
 const CategoryDisplayCard: React.FC<{title: string, icon: React.ElementType, count: number, colorClasses: string, onSelect: () => void}> = ({title, icon: Icon, count, colorClasses, onSelect}) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('dashboard');
     return (
     <div 
       className={`p-5 cursor-pointer rounded-card shadow-soft hover:shadow-lg transition-shadow duration-200 ease-in-out ${colorClasses}`} 
@@ -92,7 +92,7 @@ const CategoryDisplayCard: React.FC<{title: string, icon: React.ElementType, cou
 
 
 const HRProceduresPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

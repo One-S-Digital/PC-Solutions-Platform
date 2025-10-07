@@ -15,7 +15,7 @@ interface JobDetailModalProps {
 }
 
 const DetailSection: React.FC<{ titleKey: string; icon: React.ElementType; children: React.ReactNode }> = ({ titleKey, icon: Icon, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   return (
     <div className="mb-6">
       <h3 className="text-xl font-semibold text-swiss-charcoal mb-3 flex items-center">
@@ -28,7 +28,7 @@ const DetailSection: React.FC<{ titleKey: string; icon: React.ElementType; child
 };
 
 const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, onApply }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const foundation = MOCK_ORGANIZATIONS.find(org => org.id === job.foundationId);
 
   if (!isOpen) return null;

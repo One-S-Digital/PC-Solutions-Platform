@@ -12,7 +12,7 @@ interface FAQItemProps {
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ questionKey, answerKey }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="border-b border-gray-200 py-4">
@@ -29,7 +29,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ questionKey, answerKey }) => {
 };
 
 const EducatorSupportPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const faqs = [
     { questionKey: "educatorSupportPage.faq.updateProfile.q", answerKey: "educatorSupportPage.faq.updateProfile.a" },
     { questionKey: "educatorSupportPage.faq.findJobs.q", answerKey: "educatorSupportPage.faq.findJobs.a" },

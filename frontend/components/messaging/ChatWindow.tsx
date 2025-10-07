@@ -7,7 +7,7 @@ import { PaperAirplaneIcon, UserCircleIcon, PaperClipIcon, FaceSmileIcon, UserGr
 import { useTranslation } from 'react-i18next';
 
 const ChatWindow: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { activeConversationId, messagesByConversation, sendMessage, conversations } = useMessaging();
   const { currentUser } = useAppContext();
   const [newMessage, setNewMessage] = useState('');

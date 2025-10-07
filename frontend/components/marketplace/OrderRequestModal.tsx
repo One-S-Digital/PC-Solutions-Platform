@@ -16,7 +16,7 @@ interface OrderRequestModalProps {
 }
 
 const OrderRequestModal: React.FC<OrderRequestModalProps> = ({ product, isOpen, onClose, onSubmitOrder }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser } = useAppContext();
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState('');

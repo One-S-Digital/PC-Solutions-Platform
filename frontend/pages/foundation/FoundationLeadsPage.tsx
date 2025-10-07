@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import FeatureLock from '../../components/shared/FeatureLock';
 
 const FoundationLeadsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { currentUser, leads, setLeads } = useAppContext();
 
   if (!currentUser || currentUser.role !== UserRole.FOUNDATION) {

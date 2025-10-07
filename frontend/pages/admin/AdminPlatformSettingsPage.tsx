@@ -7,7 +7,7 @@ import { AdjustmentsHorizontalIcon, GlobeAltIcon, PhotoIcon } from '@heroicons/r
 import { useTranslation } from 'react-i18next';
 
 const AdminPlatformSettingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { platformSettings, setPlatformSettings } = useAppContext();
   const [formData, setFormData] = useState(platformSettings);
   const [isSaved, setIsSaved] = useState(false);

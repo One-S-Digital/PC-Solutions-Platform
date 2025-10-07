@@ -6,7 +6,7 @@ import { STANDARD_INPUT_FIELD } from '../../constants';
 import { useTranslation } from 'react-i18next';
 
 const FoundationAnalyticsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const chartPlaceholder = (titleKey: string, type: string = 'bar', icon?: React.ElementType) => {
     const Icon = icon || (type === 'line' ? PresentationChartLineIcon : type === 'currency' ? CurrencyDollarIcon : type === 'users' ? UserGroupIcon : type === 'edu' ? AcademicCapIcon : ChartBarIcon);
     return (

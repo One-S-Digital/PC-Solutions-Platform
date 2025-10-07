@@ -10,7 +10,8 @@ import Card from '../components/ui/Card';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
+  const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
   const { signup, currentUser } = useAppContext();
 
@@ -149,7 +150,7 @@ const SignupPage: React.FC = () => {
             {(name === 'password' || name === 'confirmPassword') && (
                  <button type="button" onClick={() => name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-                    aria-label={ (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? t('hidePassword') : t('showPassword')}
+                    aria-label={ (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? tCommon('hidePassword') : tCommon('showPassword')}
                  >
                     { (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
                 </button>
@@ -230,7 +231,7 @@ const SignupPage: React.FC = () => {
                 
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
                     <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto">
-                        {t('buttons.goBack')}
+                        {tCommon('buttons.goBack')}
                     </Button>
                     <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
                     {isLoading ? t('signupPage.creatingAccount') : t('signupPage.createAccountButton')}
@@ -241,7 +242,7 @@ const SignupPage: React.FC = () => {
              <p className="mt-6 text-center text-sm text-gray-600">
               {t('loginPage.alreadyAccount')}{' '}
               <Link to="/login" className="font-medium text-swiss-mint hover:underline">
-                {t('buttons.login')}
+                {tCommon('buttons.login')}
               </Link>
             </p>
         </>
