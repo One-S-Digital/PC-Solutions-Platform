@@ -1,6 +1,6 @@
-# Tolgee Integration Guide for ProCrèche Monorepo
+# Complete i18n Migration to Tolgee for ProCrèche Monorepo
 
-A comprehensive, end-to-end playbook to integrate Tolgee into your ProCrèche monorepo the right way, prevent regressions, and keep translators productive.
+A comprehensive, end-to-end playbook to **completely replace** your current i18n implementation with Tolgee, eliminate legacy JSON files, and modernize your translation workflow.
 
 ## Table of Contents
 
@@ -18,15 +18,26 @@ A comprehensive, end-to-end playbook to integrate Tolgee into your ProCrèche mo
 12. [Rollout Plan](#12-rollout-plan-safe--fast)
 13. [Troubleshooting](#13-troubleshooting-quick-list)
 
-## 1. Monorepo Structure
+## 1. Current State & Migration Goals
 
+### Current i18n Implementation (TO BE REMOVED)
 ```
-/frontend           # Next.js (user app)
-/admin              # Next.js (admin dashboard)  
+/frontend/src/i18n/     # i18next configuration
+/frontend/src/locales/  # JSON files (en, fr, de)
+/admin/src/i18n/        # i18next configuration  
+/admin/src/locales/     # JSON files (en, fr, de)
+```
+
+### Target Architecture (TOLGEE-ONLY)
+```
+/frontend           # Next.js with Tolgee SDK
+/admin              # Next.js with Tolgee SDK
 /api                # Node/Express (no i18n needed)
-/infra              # docker-compose, deploy files
-/locales            # legacy JSONs (temporary during migration)
+/infra              # Tolgee + PostgreSQL
+/locales            # DELETED (replaced by Tolgee)
 ```
+
+**Migration Goal:** Complete elimination of JSON files and i18next in favor of Tolgee's cloud-based translation management.
 
 **Target languages:** en, fr, de (add more later)  
 **Namespaces:** common, auth, dashboard, pricing (add as needed)
@@ -85,41 +96,70 @@ docker compose -f tolgee.docker-compose.yml up -d
 
 **Tip:** Create an API key (Project → Settings → API keys) with Read for production, Read/Write for dev.
 
-## 3. Import your existing JSONs (one-time)
+## 3. Export & Import Legacy JSONs (One-time Migration)
 
+### Step 1: Export Current Translations
+```bash
+# Export from frontend
+cp -r frontend/src/locales ./legacy-locales-frontend
+cp -r admin/src/locales ./legacy-locales-admin
+
+# Create consolidated export
+mkdir -p ./migration-export
+```
+
+### Step 2: Import into Tolgee
 In Tolgee UI → your project → Import → choose **i18next JSON format**.
 
 Import by language + namespace:
 
-- `locales/en/common.json` → en / namespace common
-- `locales/fr/common.json` → fr / namespace common
-- `locales/de/common.json` → de / namespace common
-- `locales/en/auth.json` → en / namespace auth
-- `locales/fr/auth.json` → fr / namespace auth
-- `locales/de/auth.json` → de / namespace auth
-- `locales/en/dashboard.json` → en / namespace dashboard
-- `locales/fr/dashboard.json` → fr / namespace dashboard
-- `locales/de/dashboard.json` → de / namespace dashboard
-- `locales/en/pricing.json` → en / namespace pricing
-- `locales/fr/pricing.json` → fr / namespace pricing
-- `locales/de/pricing.json` → de / namespace pricing
+**Frontend translations:**
+- `legacy-locales-frontend/en/common.json` → en / namespace common
+- `legacy-locales-frontend/fr/common.json` → fr / namespace common
+- `legacy-locales-frontend/de/common.json` → de / namespace common
+- `legacy-locales-frontend/en/auth.json` → en / namespace auth
+- `legacy-locales-frontend/fr/auth.json` → fr / namespace auth
+- `legacy-locales-frontend/de/auth.json` → de / namespace auth
+- `legacy-locales-frontend/en/dashboard.json` → en / namespace dashboard
+- `legacy-locales-frontend/fr/dashboard.json` → fr / namespace dashboard
+- `legacy-locales-frontend/de/dashboard.json` → de / namespace dashboard
 
-**Don't import placeholder values where `value === key`.** Fix those now or leave empty (Tolgee will fall back to en).
+**Admin translations:**
+- `legacy-locales-admin/en/common.json` → en / namespace admin-common
+- `legacy-locales-admin/fr/common.json` → fr / namespace admin-common
+- `legacy-locales-admin/de/common.json` → de / namespace admin-common
+- `legacy-locales-admin/en/dashboard.json` → en / namespace admin-dashboard
+- `legacy-locales-admin/fr/dashboard.json` → fr / namespace admin-dashboard
+- `legacy-locales-admin/de/dashboard.json` → de / namespace admin-dashboard
 
-## 4. Frontend Wiring (Next.js)
+**Clean up placeholders:** Don't import values where `value === key`. Fix those now or leave empty (Tolgee will fall back to en).
 
-You have two good options. Pick **A** if you're happy to adopt Tolgee's SDK (best DX), or **B** to keep react-i18next with minimal changes.
+## 4. Complete Frontend Migration (Remove i18next)
 
-### A) Use Tolgee React SDK (recommended)
+**IMPORTANT:** This section completely removes i18next and replaces it with Tolgee SDK.
 
-#### Install:
+### A) Use Tolgee React SDK (RECOMMENDED - Complete Migration)
+
+#### Step 1: Remove i18next Dependencies
 
 ```bash
 cd frontend
+npm uninstall i18next react-i18next i18next-browser-languagedetector
 npm i @tolgee/react @tolgee/core
 ```
 
-#### Create `frontend/src/providers/TolgeeProvider.tsx`:
+#### Step 2: Delete Legacy Files
+
+```bash
+# Remove old i18n files
+rm -rf src/i18n/
+rm -rf src/locales/
+rm -rf public/locales/  # if exists
+```
+
+#### Step 3: Create Tolgee Provider
+
+Create `frontend/src/providers/TolgeeProvider.tsx`:
 
 ```tsx
 "use client";
@@ -140,7 +180,7 @@ export function TolgeeAppProvider({ children }: { children: React.ReactNode }) {
 }
 ```
 
-#### Wrap your app:
+#### Step 4: Replace App Layout
 
 **App Router** (`frontend/app/layout.tsx`):
 
@@ -158,7 +198,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-#### Use in components:
+#### Step 5: Update All Components
+
+**Replace ALL i18next usage with Tolgee:**
+
+```tsx
+// OLD (i18next) - DELETE THIS
+import { useTranslation } from 'react-i18next';
+const { t } = useTranslation('dashboard');
+
+// NEW (Tolgee) - USE THIS
+import { useTranslate } from '@tolgee/react';
+const { t } = useTranslate('dashboard', { keyPrefix: 'dashboardPage' });
+```
+
+**Example component migration:**
 
 ```tsx
 "use client";
@@ -170,50 +224,18 @@ export function DashboardTitle() {
 }
 ```
 
-**Repeat the same setup for `/admin`** (copy provider + layout).
+#### Step 6: Repeat for Admin
 
-### B) Keep react-i18next (compatible path)
-
-#### Install:
+**Do the same for `/admin`:**
 
 ```bash
-cd frontend
-npm i i18next react-i18next @tolgee/i18next
+cd admin
+npm uninstall i18next react-i18next i18next-browser-languagedetector
+npm i @tolgee/react @tolgee/core
+rm -rf src/i18n/ src/locales/ public/locales/
 ```
 
-#### `frontend/src/i18n.ts`:
-
-```typescript
-import i18n from 'i18next';
-import { TolgeeBackend } from '@tolgee/i18next';
-import { initReactI18next } from 'react-i18next';
-
-i18n
-  .use(TolgeeBackend)
-  .use(initReactI18next)
-  .init({
-    backend: {
-      apiUrl: process.env.NEXT_PUBLIC_TOLGEE_API_URL,
-      apiKey: process.env.NEXT_PUBLIC_TOLGEE_API_KEY,
-    },
-    lng: 'en',
-    fallbackLng: 'en',
-    ns: ['common', 'auth', 'dashboard', 'pricing'],
-    defaultNS: 'common',
-    interpolation: { escapeValue: false },
-    returnEmptyString: false,
-  });
-
-export default i18n;
-```
-
-In your app entry (e.g., `_app.tsx` or root layout client boundary), import `./i18n` once.
-
-Then continue to use:
-
-```tsx
-const { t } = useTranslation('dashboard', { keyPrefix: 'dashboardPage' });
-```
+Copy the TolgeeProvider and update admin layout accordingly.
 
 ## 5. Environment Configuration
 
@@ -227,20 +249,58 @@ NEXT_PUBLIC_I18N_LANGS=en,fr,de
 
 **In production, use a Read-only key. Never expose a write key in public prod builds.**
 
-## 6. Namespace & Key Hygiene (fix your earlier issues)
+## 6. Complete Codebase Cleanup (Remove All i18next References)
 
-### Always pass a namespace
-Replace bare `useTranslation()` with `useTranslation('dashboard')` (or `useTranslate('dashboard')` in Tolgee SDK).
+### Step 1: Remove i18next Imports
+```bash
+# Find and remove all i18next imports
+find frontend admin -name "*.tsx" -o -name "*.ts" | xargs grep -l "react-i18next\|i18next" | xargs sed -i '/import.*react-i18next\|import.*i18next/d'
+```
 
-If helpful, run a quick search/replace or a codemod.
+### Step 2: Update Translation Calls
+Replace all `useTranslation()` calls with `useTranslate()`:
 
-### Remove inline English fallbacks
-Stop calling `t(key, englishText)`. Let fallback logic show en.
+```bash
+# Replace useTranslation with useTranslate
+find frontend admin -name "*.tsx" -o -name "*.ts" | xargs sed -i 's/useTranslation/useTranslate/g'
+```
 
-For Pricing: create a pricing namespace and fetch via `useTranslate('pricing')`.
+### Step 3: Remove i18next Configuration Files
+```bash
+# Remove any remaining i18next config
+rm -f frontend/src/i18n.ts
+rm -f admin/src/i18n.ts
+rm -f frontend/i18next.config.js
+rm -f admin/i18next.config.js
+```
 
-### Ban placeholder values
-No more `"settingsPage.loading": "settingsPage.loading"`. Fix en copies; leave others empty if needed.
+### Step 4: Update Package.json Scripts
+Remove i18next-related scripts:
+
+```json
+{
+  "scripts": {
+    // REMOVE THESE:
+    // "extract-i18n": "...",
+    // "test:i18n": "...",
+    
+    // KEEP THESE:
+    "i18n:guard": "ts-node --transpile-only scripts/i18n-guard.ts"
+  }
+}
+```
+
+### Step 5: Clean Up Legacy Directories
+```bash
+# Remove all legacy i18n directories
+rm -rf frontend/src/locales/
+rm -rf admin/src/locales/
+rm -rf frontend/public/locales/
+rm -rf admin/public/locales/
+rm -rf ./legacy-locales-frontend/
+rm -rf ./legacy-locales-admin/
+rm -rf ./migration-export/
+```
 
 ## 7. Dev Ergonomics: In-Context Editing
 
@@ -353,25 +413,35 @@ NEXT_PUBLIC_TOLGEE_API_KEY=prod_readonly_key
 4. Enable Translation Memory and Glossary (e.g., HR terms, daycare roles)
 5. If you need approvals: make "Reviewer" mandatory before prod
 
-## 12. Rollout Plan (safe & fast)
+## 12. Complete Migration Rollout Plan (Eliminate i18next)
 
-### Week 1
-- [ ] Host Tolgee
-- [ ] Import JSONs
-- [ ] Wire SDK in frontend + admin (dev env)
-- [ ] Fix namespaces + remove inline fallbacks
-- [ ] Turn on DevTools; verify screens in en/fr/de
+### Week 1: Preparation & Setup
+- [ ] **Host Tolgee** (Docker setup)
+- [ ] **Export all legacy JSONs** from frontend and admin
+- [ ] **Import into Tolgee** with proper namespaces
+- [ ] **Remove i18next dependencies** from both apps
+- [ ] **Install Tolgee SDK** in both apps
+- [ ] **Delete all JSON files** and i18n directories
 
-### Week 2
-- [ ] Clean placeholders in en
-- [ ] Fill high-traffic fr keys (dashboard, pricing)
-- [ ] Add CI guard + basic tests
-- [ ] Ship to staging with Read-only key
+### Week 2: Code Migration
+- [ ] **Replace all useTranslation()** with useTranslate()
+- [ ] **Update all components** to use Tolgee SDK
+- [ ] **Remove i18next imports** and configuration files
+- [ ] **Clean up package.json** scripts
+- [ ] **Test in development** with DevTools enabled
 
-### Week 3
-- [ ] Switch production to Tolgee
-- [ ] Train translators on in-context editing
-- [ ] Schedule weekly JSON export backups
+### Week 3: Production Cutover
+- [ ] **Deploy Tolgee** to production
+- [ ] **Switch production apps** to Tolgee (read-only key)
+- [ ] **Train translators** on in-context editing
+- [ ] **Verify all translations** are working
+- [ ] **Delete legacy i18n documentation**
+
+### Week 4: Optimization
+- [ ] **Enable Translation Memory** and Glossary
+- [ ] **Set up automated workflows**
+- [ ] **Implement quality assurance** processes
+- [ ] **Monitor performance** and user experience
 
 ## 13. Troubleshooting Quick List
 
@@ -382,42 +452,43 @@ NEXT_PUBLIC_TOLGEE_API_KEY=prod_readonly_key
 | Prod 401/403 | Using write key or expired key; rotate to prod Read-only key |
 | Latency | Host Tolgee closer to your users; cache responses in your app if needed |
 
-## TL;DR
+## TL;DR - Complete i18n Elimination
 
 1. **Host Tolgee with Docker**
-2. **Import your JSONs by language + namespace**
-3. **Use Tolgee React SDK (or i18next backend) with explicit namespaces**
-4. **Remove inline English fallbacks; rely on `fallbackLanguage='en'`**
-5. **Add CI guardrails + a couple of tests**
-6. **Deploy with a read-only key; use in-context editing for rapid iteration**
+2. **Export & import all legacy JSONs into Tolgee**
+3. **Completely remove i18next** from both frontend and admin
+4. **Replace with Tolgee React SDK** (no i18next backend)
+5. **Delete all JSON files** and i18n directories
+6. **Deploy with read-only key**; use in-context editing
 
 ---
 
-## Migration from Current i18n Implementation
+## Why This Complete Migration Approach?
 
-If you're currently using the existing i18n setup described in `i18n-implementation-guide.md`, here's how to migrate:
+### Problems with Current i18n Setup:
+- **JSON file management** is error-prone and doesn't scale
+- **No translator interface** - requires developer involvement
+- **No translation memory** or consistency tools
+- **Manual key extraction** and namespace management
+- **No in-context editing** for translators
+- **Version control conflicts** with translation files
 
-### Phase 1: Parallel Setup
-1. Keep existing i18next setup running
-2. Set up Tolgee alongside (different port)
-3. Import current JSON files into Tolgee
-4. Test Tolgee integration in development
+### Benefits of Complete Tolgee Migration:
+- **Cloud-based translation management** - no more JSON files
+- **In-context editing** - translators can edit directly in the app
+- **Translation memory** and glossary for consistency
+- **Automated key extraction** and namespace management
+- **Real-time collaboration** between translators
+- **Quality assurance** workflows and approval processes
+- **API-driven** - no file system dependencies
 
-### Phase 2: Gradual Migration
-1. Start using Tolgee for new features
-2. Migrate high-priority components one by one
-3. Keep both systems running during transition
+### Migration Strategy: Complete Replacement
+This guide advocates for **complete elimination** of i18next rather than gradual migration because:
 
-### Phase 3: Full Cutover
-1. Migrate all components to Tolgee
-2. Remove old i18next configuration
-3. Delete legacy JSON files
-4. Update CI/CD pipelines
+1. **Cleaner codebase** - no legacy i18n code to maintain
+2. **Faster adoption** - translators get full Tolgee features immediately
+3. **No technical debt** - eliminates i18next complexity entirely
+4. **Better DX** - developers work with one translation system
+5. **Future-proof** - Tolgee handles all translation needs
 
-### Phase 4: Optimization
-1. Enable advanced Tolgee features (Translation Memory, Glossary)
-2. Set up automated workflows
-3. Train translators on new tools
-4. Implement quality assurance processes
-
-This approach ensures zero downtime and allows for thorough testing at each phase.
+**Result:** A modern, scalable translation system that eliminates the need for JSON files and provides a superior experience for both developers and translators.
