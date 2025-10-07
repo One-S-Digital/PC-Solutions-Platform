@@ -1,0 +1,31 @@
+{
+  "name": "@workspace/translations",
+  "version": "1.0.0",
+  "description": "Shared translation package for Swiss terminology and common translations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "i18next": "^23.7.6",
+    "react-i18next": "^13.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0"
+  },
+  "files": [
+    "dist",
+    "locales"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./locales/*": "./locales/*"
+  }
+}

@@ -1,0 +1,93 @@
+name: Translation Quality Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  translation-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm install
+        cd packages/translations && npm install
+        
+    - name: Build shared translation package
+      run: |
+        cd packages/translations && npm run build
+        
+    - name: Run translation validation
+      run: |
+        node scripts/translation-validation.mjs
+        
+    - name: Run CI translation check
+      run: |
+        node scripts/ci-translation-check.mjs
+        
+    - name: Upload translation reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: translation-reports
+        path: |
+          translation-validation-report.json
+          ci-translation-report.json
+          translation-audit-report.json
+          
+    - name: Comment PR with translation status
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let comment = '## 🌍 Translation Quality Check\n\n';
+          
+          // Read CI report
+          if (fs.existsSync('ci-translation-report.json')) {
+            const report = JSON.parse(fs.readFileSync('ci-translation-report.json', 'utf8'));
+            
+            comment += `**Status:** ${report.passed ? '✅ PASSED' : '❌ FAILED'}\n`;
+            comment += `**Coverage:** ${report.coverage}%\n`;
+            comment += `**Errors:** ${report.errors}\n`;
+            comment += `**Warnings:** ${report.warnings}\n`;
+            comment += `**Missing Keys:** ${report.missingKeys}\n\n`;
+            
+            if (report.checks && report.checks.length > 0) {
+              comment += '**Check Results:**\n';
+              report.checks.forEach(check => {
+                const status = check.passed ? '✅' : '❌';
+                comment += `- ${status} ${check.name}: ${check.details}\n`;
+              });
+            }
+            
+            if (report.recommendations && report.recommendations.length > 0) {
+              comment += '\n**Recommendations:**\n';
+              report.recommendations.forEach(rec => {
+                comment += `- ${rec}\n`;
+              });
+            }
+          } else {
+            comment += '❌ Translation check failed to generate report\n';
+          }
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
