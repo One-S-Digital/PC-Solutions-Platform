@@ -1,44 +1,58 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpApi from 'i18next-http-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
+
+// Import translation files directly instead of using HttpApi
+import commonEn from './public/locales/en/common.json';
+import authEn from './public/locales/en/auth.json';
+import dashboardEn from './public/locales/en/dashboard.json';
+import commonFr from './public/locales/fr/common.json';
+import authFr from './public/locales/fr/auth.json';
+import dashboardFr from './public/locales/fr/dashboard.json';
+import commonDe from './public/locales/de/common.json';
+import authDe from './public/locales/de/auth.json';
+import dashboardDe from './public/locales/de/dashboard.json';
 
 // Create a promise to ensure i18n is initialized before the app renders
 const initI18n = () => {
   return i18n
-    .use(HttpApi) // Load translations using http (e.g., from public/locales)
-    .use(LanguageDetector) // Detect user language
     .use(initReactI18next) // Pass i18n down to react-i18next
     .init({
-      supportedLngs: ['en', 'fr', 'de'],
+      lng: 'en', // default language
       fallbackLng: 'en',
-      debug: false, // Disable debug to reduce console noise
-      ns: ['common', 'auth', 'dashboard'], 
-      defaultNS: 'common',
-      backend: {
-        loadPath: '/locales/{{lng}}/{{ns}}.json',
-        allowMultiLoading: false,
-        requestOptions: {
-          cache: 'no-cache'
-        }
-      },
+      debug: process.env.NODE_ENV !== 'production',
       interpolation: {
-        escapeValue: false, 
+        escapeValue: false, // not needed for react as it escapes by default
       },
+      resources: {
+        en: {
+          common: commonEn,
+          auth: authEn,
+          dashboard: dashboardEn,
+        },
+        fr: {
+          common: commonFr,
+          auth: authFr,
+          dashboard: dashboardFr,
+        },
+        de: {
+          common: commonDe,
+          auth: authDe,
+          dashboard: dashboardDe,
+        },
+      },
+      ns: ['common', 'auth', 'dashboard'],
+      defaultNS: 'common',
       react: {
-        useSuspense: false, // Disable Suspense for now to avoid blocking
+        useSuspense: false, // Disable Suspense to avoid blocking
         bindI18n: 'languageChanged loaded',
         bindI18nStore: 'added removed',
         transEmptyNodeValue: '',
         transSupportBasicHtmlNodes: true,
         transKeepBasicHtmlNodesFor: ['br', 'strong', 'i'],
       },
-      saveMissing: false, // As per specification
-      returnEmptyString: false, // As per specification
-      initImmediate: true, // Initialize immediately
-      load: 'languageOnly', // Load only language, not region
-      cleanCode: true, // Clean language codes
-      preload: ['en'], // Preload English translations
+      saveMissing: false,
+      returnEmptyString: false,
+      initImmediate: true,
     })
     .then(() => {
       console.log('🌍 i18n initialized successfully');

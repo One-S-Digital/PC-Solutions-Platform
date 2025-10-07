@@ -1,7 +1,8 @@
 
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
