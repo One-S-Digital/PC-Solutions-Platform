@@ -17,7 +17,7 @@ const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const LoginPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('auth');
   const { login, currentUser } = useAppContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -25,6 +25,12 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Debug logging
+  console.log('🔍 LoginPage - i18n ready:', i18n.isInitialized);
+  console.log('🔍 LoginPage - current language:', i18n.language);
+  console.log('🔍 LoginPage - test translation:', t('loginPage.title'));
+  console.log('🔍 LoginPage - has auth bundle:', i18n.hasResourceBundle('en', 'auth'));
 
   // Redirect if user is already logged in
   useEffect(() => {

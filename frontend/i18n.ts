@@ -18,7 +18,7 @@ i18n
   .init({
     lng: 'en',
     fallbackLng: 'en',
-    debug: false,
+    debug: true, // Enable debug to see what's happening
     interpolation: {
       escapeValue: false,
     },
@@ -52,6 +52,16 @@ i18n
     saveMissing: false,
     returnEmptyString: false,
     initImmediate: true,
+  })
+  .then(() => {
+    console.log('🌍 i18n initialized successfully');
+    console.log('🌍 Current language:', i18n.language);
+    console.log('🌍 Available languages:', i18n.languages);
+    console.log('🌍 Resources loaded:', i18n.hasResourceBundle('en', 'common'));
+    console.log('🌍 Test translation:', i18n.t('appName'));
+  })
+  .catch((error) => {
+    console.error('❌ i18n initialization failed:', error);
   });
 
 export default i18n;
