@@ -9,6 +9,8 @@ export * from './types';
 export * from './utils';
 export * from './hooks';
 export * from './constants';
+export * from './advanced-features';
+export * from './performance';
 
 // Re-export i18next utilities
 export { useTranslation } from 'react-i18next';

@@ -134,6 +134,37 @@ function getNestedValue(obj, key) {
  * Check if text appears to be English
  */
 function isEnglishText(text) {
+  // Skip if text contains French/German characters or is already translated
+  if (text.includes('é') || text.includes('è') || text.includes('ê') || text.includes('ë') ||
+      text.includes('à') || text.includes('â') || text.includes('ä') || text.includes('ç') ||
+      text.includes('ù') || text.includes('û') || text.includes('ü') || text.includes('ö') ||
+      text.includes('ß') || text.includes('ä') || text.includes('ö') || text.includes('ü') ||
+      text.includes('É') || text.includes('È') || text.includes('Ê') || text.includes('Ë') ||
+      text.includes('À') || text.includes('Â') || text.includes('Ä') || text.includes('Ç') ||
+      text.includes('Ù') || text.includes('Û') || text.includes('Ü') || text.includes('Ö')) {
+    return false;
+  }
+  
+  // Skip if text contains common French/German words
+  const nonEnglishWords = [
+    'Mot de passe', 'Confirmer', 'Saisissez', 'Veuillez', 'obligatoire', 'requis',
+    'Passwort', 'Bestätigen', 'Geben Sie', 'Bitte', 'erforderlich', 'benötigt',
+    'Se connecter', 'Connexion', 'Anmelden', 'Anmeldung',
+    'Nom de famille', 'Nachname', 'Vorname', 'Prénom',
+    'Organisation', 'Téléphone', 'Telefon', 'Canton', 'Kanton',
+    'Langues', 'Sprachen', 'Type de service', 'Serviceart',
+    'Personne de contact', 'Kontaktperson', 'Fondation', 'Stiftung',
+    'Fournisseur', 'Lieferant', 'Prestataire', 'Dienstleister',
+    'Enregistrer', 'Speichern', 'Annuler', 'Abbrechen',
+    'Soumettre', 'Absenden', 'Ajouter', 'Hinzufügen',
+    'Modifier', 'Bearbeiten', 'Supprimer', 'Löschen',
+    'Voir les détails', 'Details anzeigen', 'Retour', 'Zurück'
+  ];
+  
+  if (nonEnglishWords.some(word => text.includes(word))) {
+    return false;
+  }
+  
   // Simple heuristic: check for common English patterns
   const englishPatterns = [
     /^[A-Z][a-z\s]+$/, // Title case
