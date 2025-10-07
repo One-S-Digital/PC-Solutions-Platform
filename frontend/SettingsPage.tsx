@@ -35,7 +35,7 @@ export interface SettingsSectionConfig {
 }
 
 const SettingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const { addNotification } = useNotifications();
   const navigate = useNavigate();

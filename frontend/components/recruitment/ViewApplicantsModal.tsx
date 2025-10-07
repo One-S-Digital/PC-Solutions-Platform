@@ -15,7 +15,7 @@ interface ViewApplicantsModalProps {
 }
 
 const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({ isOpen, onClose, job }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { applications } = useAppContext();
   const navigate = useNavigate();
   const { startOrGetConversation } = useMessaging();

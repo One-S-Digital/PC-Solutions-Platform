@@ -10,7 +10,7 @@ import Card from '../components/ui/Card';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const { signup, currentUser } = useAppContext();
 

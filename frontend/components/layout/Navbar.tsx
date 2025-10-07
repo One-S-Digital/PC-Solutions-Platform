@@ -16,7 +16,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation(['dashboard', 'common']); // Initialize useTranslation
   const { currentUser, logout } = useAppContext();
   const { getCartItemCount } = useCart();
   const { conversations, getUnreadCountForConversation } = useMessaging();

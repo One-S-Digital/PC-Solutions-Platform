@@ -8,7 +8,7 @@ interface PricingToggleProps {
 }
 
 const PricingToggle: React.FC<PricingToggleProps> = ({ isAnnual, onToggle, className = '' }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('pricing');
 
   return (
     <div className={`flex items-center justify-center ${className}`}>

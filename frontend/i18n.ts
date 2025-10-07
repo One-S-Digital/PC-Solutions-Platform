@@ -9,10 +9,12 @@ i18n
   .use(initReactI18next)
   .init({
     lng: 'en',
-    fallbackLng: 'en',
+    fallbackLng: ['en'],
     debug: false,
-    ns: ['common', 'auth', 'dashboard'],
+    ns: ['common', 'auth', 'dashboard', 'pricing'],
     defaultNS: 'common',
+    returnEmptyString: false,
+    saveMissing: true,
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },

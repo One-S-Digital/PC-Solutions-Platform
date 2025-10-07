@@ -14,7 +14,7 @@ interface OrderRequestDetailModalProps {
 }
 
 const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order, isOpen, onClose, onUpdateStatus }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
 
   if (!isOpen || !order) return null;

@@ -16,7 +16,7 @@ interface EducatorJobCardProps {
 }
 
 const EducatorJobCard: React.FC<EducatorJobCardProps> = ({ job, onViewDetails }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const contractTypeColor = (type: JobListing['contractType']) => {
     switch(type) {
       case 'CDI': return 'bg-blue-100 text-blue-700';
@@ -58,7 +58,7 @@ const EducatorJobCard: React.FC<EducatorJobCardProps> = ({ job, onViewDetails })
 
 
 const EducatorJobBoardPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { applyForJob } = useAppContext();
   const { addNotification } = useNotifications();
 

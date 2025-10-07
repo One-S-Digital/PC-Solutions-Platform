@@ -14,7 +14,7 @@ import { CandidateProfile, WorkExperienceItem, EducationItem, DocumentItem, Cert
 const mockCandidateData = MOCK_CANDIDATE_PROFILES[0];
 
 const SectionCard: React.FC<{ titleKey: string; icon: React.ElementType; children: React.ReactNode; onEdit?: () => void; isEditing?: boolean }> = ({ titleKey, icon: Icon, children, onEdit, isEditing }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['dashboard', 'common']);
     return (
       <Card className="p-6">
         <div className="flex justify-between items-center mb-4">
@@ -34,7 +34,7 @@ const SectionCard: React.FC<{ titleKey: string; icon: React.ElementType; childre
 };
 
 const EducatorProfilePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const [profile, setProfile] = useState<CandidateProfile>(mockCandidateData);
   const [isEditing, setIsEditing] = useState(false);
   const [editSection, setEditSection] = useState<string | null>(null);

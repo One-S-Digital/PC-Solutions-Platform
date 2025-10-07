@@ -12,6 +12,7 @@
     "test:watch": "turbo run test:watch",
     "clean": "turbo run clean",
     "precommit:guard": "node scripts/check-no-raw-imports.mjs",
+    "i18n:check": "node scripts/i18n-check.js",
     "translate": "node scripts/translate-i18n-free.js",
     "translate:ai": "node scripts/translate-i18n.js",
     "translate:manual": "node scripts/create-translations-manual.js",

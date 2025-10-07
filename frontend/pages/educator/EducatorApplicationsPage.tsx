@@ -7,7 +7,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { Application, ApplicationStatus } from '../../types';
 
 const EducatorApplicationsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser, applications } = useAppContext();
 
   const myApplications = applications.filter(app => app.educatorId === currentUser?.id);

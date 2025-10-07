@@ -19,7 +19,7 @@ interface CourseMaterialCardProps {
 }
 
 const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, onDelete, isAdmin }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const typeSpecifics = {
     [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearningPage.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
     [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearningPage.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
@@ -86,7 +86,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
 };
 
 const ELearningPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const [eLearningItems, setELearningItems] = useState<Course[]>(MOCK_COURSES);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);

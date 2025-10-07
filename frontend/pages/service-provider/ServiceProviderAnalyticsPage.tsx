@@ -7,7 +7,7 @@ import { STANDARD_INPUT_FIELD } from '../../constants';
 import { useTranslation } from 'react-i18next';
 
 const ServiceProviderAnalyticsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
 
   const chartPlaceholder = (titleKey: string, type: string) => (
     <div className="bg-gray-50 p-6 rounded-lg shadow-inner h-64 flex flex-col items-center justify-center">

@@ -8,7 +8,7 @@ import { SwissFlagIcon } from '../components/icons/CustomIcons';
 import { useTranslation } from 'react-i18next';
 
 const PartnerCard: React.FC<{ partner: Partner }> = ({ partner }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   return (
     <Card className="text-center p-6 transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105" hoverEffect={false}>
       <img src={partner.logoUrl} alt={t('partnersPage.partnerCard.logoAlt', { name: partner.name })} className="h-16 mx-auto mb-4 object-contain grayscale hover:grayscale-0 transition-all duration-300" />
@@ -24,7 +24,7 @@ const PartnerCard: React.FC<{ partner: Partner }> = ({ partner }) => {
 };
 
 const PartnersPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   return (
     <div className="space-y-12">
       {/* Hero Section */}

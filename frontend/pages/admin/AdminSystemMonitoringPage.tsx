@@ -32,7 +32,7 @@ const getStatusIndicator = (status: SystemStatusLevel) => {
 };
 
 const AdminSystemMonitoringPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const data = MOCK_SYSTEM_MONITORING_DATA;
 
   const eventIcons: Record<SystemEventType, React.ElementType> = {

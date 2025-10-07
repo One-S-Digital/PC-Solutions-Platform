@@ -17,7 +17,7 @@ interface TeamPermissionsSettingsProps {
 }
 
 const TeamPermissionsSettings: React.FC<TeamPermissionsSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'Viewer' | 'Editor'>('Viewer');
 

@@ -44,7 +44,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
 }
 
 const ErrorFallback: React.FC<{ error?: Error; onRetry: () => void }> = ({ error, onRetry }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

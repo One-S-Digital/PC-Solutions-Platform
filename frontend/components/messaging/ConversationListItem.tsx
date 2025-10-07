@@ -13,7 +13,7 @@ interface ConversationListItemProps {
 }
 
 const ConversationListItem: React.FC<ConversationListItemProps> = ({ conversation, isActive, onSelect }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const { getUnreadCountForConversation } = useMessaging();
 

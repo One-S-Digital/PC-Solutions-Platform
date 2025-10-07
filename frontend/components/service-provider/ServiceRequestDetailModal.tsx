@@ -14,7 +14,7 @@ interface ServiceRequestDetailModalProps {
 }
 
 const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ request, isOpen, onClose, onUpdateStatus }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
 
   if (!isOpen || !request) return null;

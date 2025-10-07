@@ -13,7 +13,7 @@ interface RenameFileModalProps {
 }
 
 const RenameFileModal: React.FC<RenameFileModalProps> = ({ isOpen, onClose, onRename, file }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const [newName, setNewName] = useState('');
 
   useEffect(() => {

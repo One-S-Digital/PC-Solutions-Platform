@@ -7,7 +7,7 @@ import Card from '../ui/Card';
 import { useTranslation } from 'react-i18next';
 
 const OrganizationProfileForm: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const [profile, setProfile] = useState<Partial<Organization>>({
     capacity: undefined,

@@ -506,23 +506,6 @@
     "terminations": "Les réseliations actifs",
     "manage": "Gérer les terminaisons"
   },
-  "pricingPage": {
-    "title": "Procrèche Solutions - Guide de Tarification",
-    "plans": "Forfaits Disponibles",
-    "features": "Planificateur Les Fonctionnalités",
-    "billing": "Détails de facturation",
-    "monthly": "Mensuellement",
-    "annual": "Anneaux",
-    "saveUpTo10": "(Économiser jusqu'à 10%)",
-    "popular": "Plus populaire",
-    "whatYouGet": "CE que Vous Obtesez",
-    "selectAndContinue": "Sélectionner et continuer",
-    "choosePlan": "CHOISIR LE PLAN",
-    "titleSignup": "Plan de vote Choissez",
-    "subtitleSignup": "Sélectionnez le Plan Qui correspond au Mieux à Vos Besoins",
-    "subtitle": "Sélectionnem le Plan Parfait pour l'organisation",
-    "suppliersAndProvidersTitle": "Procrèche Solutions - Tarification Pour Quatrenènes et Pré-Pré-Présataires de Services"
-  },
   "recruitmentPage": {
     "title": "Recrutement",
     "jobDetailModal": {
