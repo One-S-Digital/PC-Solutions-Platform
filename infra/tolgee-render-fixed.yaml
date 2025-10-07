@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: tolgee
+    env: docker
+    dockerfilePath: ./infra/Dockerfile.tolgee-fixed
+    dockerContext: ./infra
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: ""
+    startCommand: ""
+    healthCheckPath: /actuator/health
+    healthCheckGracePeriod: 300
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: TOLGEE_FRONTEND_URL
+        value: https://tolgee.onrender.com
+      - key: TOLGEE_BASE_URL
+        value: https://tolgee.onrender.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TOLGEE_AUTHENTICATION_ENABLED
+        value: "true"
+      - key: TOLGEE_AUTHENTICATION_DEFAULT_ENABLED
+        value: "true"
+      - key: TOLGEE_FILE_STORAGE
+        value: "local"
+      - key: TOLGEE_FILE_STORAGE_LOCAL_PATH
+        value: "/app/data"
+      - key: LOGGING_LEVEL_ROOT
+        value: "INFO"
+      - key: LOGGING_LEVEL_TOLGEE
+        value: "DEBUG"
+      - key: SERVER_PORT
+        value: "8080"
+      - key: MANAGEMENT_SERVER_PORT
+        value: "8080"
+      - key: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+        value: "health,info"
+      - key: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+        value: "always"
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: "update"
+      - key: SPRING_JPA_SHOW_SQL
+        value: "false"
+      - key: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+        value: "org.hibernate.dialect.PostgreSQLDialect"
+      - key: SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL
+        value: "false"
+      - key: SPRING_JPA_PROPERTIES_HIBERNATE_USE_SQL_COMMENTS
+        value: "false"
