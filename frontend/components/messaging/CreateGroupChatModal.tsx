@@ -13,7 +13,7 @@ interface CreateGroupChatModalProps {
 }
 
 const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onClose }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const { startConversation } = useMessaging();
   

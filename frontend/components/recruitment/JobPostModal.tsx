@@ -17,7 +17,7 @@ interface JobPostModalProps {
 type JobFormData = Omit<JobListing, 'id' | 'applicationsReceived' | 'status' | 'foundationName'>;
 
 const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, existingJob }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
 
   const initialFormState: JobFormData = {

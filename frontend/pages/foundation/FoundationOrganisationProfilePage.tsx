@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 // This page can extend or wrap the OrganizationProfileForm from settings,
 // or be a more public-facing version. For now, let's assume it's an extended settings page.
 const FoundationOrganisationProfilePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   // Mock state for additional fields not in OrganizationProfileForm
   const [additionalProfile, setAdditionalProfile] = React.useState({
     pedagogyStatement: t('foundationOrganisationProfilePage.mock.pedagogyStatement'),

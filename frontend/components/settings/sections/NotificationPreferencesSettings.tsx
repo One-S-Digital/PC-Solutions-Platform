@@ -23,7 +23,7 @@ const DIGEST_FREQUENCIES: { labelKey: string, value: DigestFrequency }[] = [
 ];
 
 const NotificationPreferencesSettings: React.FC<NotificationPreferencesSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const isProvider = userRole === UserRole.SERVICE_PROVIDER;
   const newRequestLabelKey = isProvider ? "settingsNotificationPreferences.newRequestEmailToggleProvider" : "settingsNotificationPreferences.newRequestEmailToggleSupplier";
 

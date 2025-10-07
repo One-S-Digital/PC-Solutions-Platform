@@ -17,7 +17,7 @@ interface UserRowProps {
 }
 
 const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isSuperAdmin }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const statusColors = {
     Active: 'bg-green-100 text-green-700',
@@ -82,7 +82,7 @@ interface UserDetailDrawerProps {
 }
 
 const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUpdateUser }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const [selectedRole, setSelectedRole] = useState<UserRole | undefined>(user?.role);
 
@@ -166,7 +166,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
 
 
 const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const [usersData, setUsersData] = useState<User[]>(() => 
     [] // Empty array for production - users fetched from API

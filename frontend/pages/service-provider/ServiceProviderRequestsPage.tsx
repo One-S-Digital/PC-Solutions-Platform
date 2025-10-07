@@ -9,7 +9,7 @@ import ServiceRequestDetailModal from '../../components/service-provider/Service
 import { InboxIcon } from '@heroicons/react/24/outline';
 
 const ServiceProviderRequestsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser, serviceRequests: allRequests } = useAppContext();
   const [requests, setRequests] = useState(allRequests);
   const [statusFilter, setStatusFilter] = useState<ServiceRequestStatus | 'All'>('All');

@@ -13,7 +13,7 @@ import { useNotifications } from '../contexts/NotificationContext';
 import { useAppContext } from '../contexts/AppContext';
 
 const MessagesPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const {
     conversations,
     activeConversationId,

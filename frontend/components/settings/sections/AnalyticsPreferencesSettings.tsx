@@ -22,7 +22,7 @@ const CURRENCIES = [{value: 'CHF', labelKey: 'settingsAnalyticsPreferences.curre
 
 
 const AnalyticsPreferencesSettings: React.FC<AnalyticsPreferencesSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   return (
     <SettingsSectionWrapper title={t('settingsPage.analyticsPreferences')} icon={ChartPieIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">

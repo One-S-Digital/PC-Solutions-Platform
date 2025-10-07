@@ -20,7 +20,7 @@ const formatBytes = (bytes: number, decimals = 2) => {
 };
 
 const FileCard: React.FC<{ file: DocumentItem; onDelete: (id: string) => void; onRename: (file: DocumentItem) => void }> = ({ file, onDelete, onRename }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   return (
     <Card className="p-4 flex flex-col group" hoverEffect>
       <div className="flex-grow">
@@ -42,7 +42,7 @@ const FileCard: React.FC<{ file: DocumentItem; onDelete: (id: string) => void; o
 };
 
 const FileGalleryPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { userFiles, deleteUserFile, renameUserFile } = useAppContext();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);

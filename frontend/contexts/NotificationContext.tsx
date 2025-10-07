@@ -42,7 +42,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 };
 
 export const useNotifications = (): NotificationContextType => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const context = useContext(NotificationContext);
   if (context === undefined) {
     throw new Error(t('notificationContext.useNotificationsError'));

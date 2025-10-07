@@ -106,7 +106,7 @@ const getMockDetailData = (t: Function): Record<string, DetailContent> => ({
 });
 
 const DashboardDetailPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { detailType } = useParams<{ detailType: string }>();
   const navigate = useNavigate();
   const mockDetailData = getMockDetailData(t);

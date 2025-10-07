@@ -16,7 +16,7 @@ interface BillingSubscriptionSettingsProps {
 }
 
 const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelectPlan: (planName: string) => void }> = ({ plan, currentPlanName, onSelectPlan }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['dashboard', 'common']);
     const { translatePlan } = usePricingTranslations();
     const translatedPlan = translatePlan(plan);
     const isCurrentPlan = plan.name === currentPlanName;
@@ -62,7 +62,7 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
 
 
 const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const [isCancelModalOpen, setIsCancelModalOpen] = React.useState(false);
   
   const handleSelectPlan = (planName: string) => {

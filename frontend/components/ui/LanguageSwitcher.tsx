@@ -7,7 +7,7 @@ import { UKFlagIcon, FrenchFlagIcon, GermanFlagIcon } from '../icons/CustomIcons
 import { useTranslation } from 'react-i18next'; 
 
 const LanguageSwitcher: React.FC = () => {
-  const { t } = useTranslation(); 
+  const { t } = useTranslation('common');
   const { language, setLanguage } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

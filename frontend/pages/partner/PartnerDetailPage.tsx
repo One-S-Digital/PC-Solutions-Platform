@@ -25,7 +25,7 @@ interface ProductItemProps {
 }
 
 const ProductItemCard: React.FC<ProductItemProps> = ({ product, partner, isFoundationUser, onAddToCart }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const [quantity, setQuantity] = useState(1);
 
   const getStockStatusColor = (status?: StockStatus) => {
@@ -84,7 +84,7 @@ const ProductItemCard: React.FC<ProductItemProps> = ({ product, partner, isFound
 
 
 const PartnerDetailPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { partnerId } = useParams<{ partnerId: string }>();
   const navigate = useNavigate();
   const { currentUser } = useAppContext();

@@ -16,7 +16,7 @@ interface AccountSecuritySettingsProps {
 }
 
 const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser, updateCurrentUserInfo } = useAppContext();
   const { addNotification } = useNotifications();
   

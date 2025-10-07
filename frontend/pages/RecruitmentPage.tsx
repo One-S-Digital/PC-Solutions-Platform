@@ -20,7 +20,7 @@ interface FoundationJobListingCardProps {
 }
 
 const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job, onEdit, onViewApplicants }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   return (
   <Card className="mb-4" hoverEffect>
     <div className="p-5">
@@ -57,7 +57,7 @@ interface CandidateCardProps {
 }
 
 const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onRemove, onEdit, canEditRemove }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   return (
     <Card className="mb-4 flex flex-col" hoverEffect>
@@ -96,7 +96,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onRemove, onEd
 
 
 const RecruitmentPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser } = useAppContext();

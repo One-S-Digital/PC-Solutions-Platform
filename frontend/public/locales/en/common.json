@@ -57,8 +57,8 @@
     "dismiss": "Dismiss"
   },
   "common": {
-    "perMonth": "/month",
-    "perYear": "/year",
+    "perMonth": "per month",
+    "perYear": "per year",
     "save10Percent": "save 10%"
   },
   "errors": {
@@ -68,7 +68,7 @@
     "errorTitle": "Error",
     "successTitle": "Success",
     "newMessageFrom": "New message from",
-    "settingsUpdated": "notifications.settingsUpdated"
+    "settingsUpdated": "Settings updated successfully"
   },
   "hidePassword": "Hide password",
   "showPassword": "Show password",
@@ -526,5 +526,14 @@
     "privacy": "Privacy",
     "copyright": "Copyright",
     "all.rights.reserved": "All Rights Reserved"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Select language (current: {{currentLanguage}})",
+    "enShort": "EN",
+    "enLong": "English",
+    "frShort": "FR",
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Deutsch"
   }
 }

@@ -14,7 +14,7 @@ interface ActiveClientToggleProps {
 }
 
 const ActiveClientToggle: React.FC<ActiveClientToggleProps> = ({ vendorId, orgId }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['dashboard', 'common']);
     const { vendorClients, updateVendorClientStatus } = useAppContext();
     const { addNotification } = useNotifications();
 
