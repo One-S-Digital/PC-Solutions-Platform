@@ -2,7 +2,7 @@ services:
   - type: web
     name: tolgee
     env: docker
-    dockerfilePath: ./infra/Dockerfile.tolgee
+    dockerfilePath: ./infra/Dockerfile.tolgee-simple
     dockerContext: ./infra
     plan: starter
     region: oregon
@@ -19,9 +19,9 @@ services:
       - key: DATABASE_PASSWORD
         sync: false
       - key: TOLGEE_FRONTEND_URL
-        value: https://tolgee.yourdomain.com
+        value: https://tolgee.onrender.com
       - key: TOLGEE_BASE_URL
-        value: https://tolgee.yourdomain.com
+        value: https://tolgee.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: TOLGEE_AUTHENTICATION_ENABLED
@@ -40,3 +40,11 @@ services:
         value: "update"
       - key: SPRING_JPA_SHOW_SQL
         value: "false"
+      - key: SERVER_PORT
+        value: "8080"
+      - key: MANAGEMENT_SERVER_PORT
+        value: "8080"
+      - key: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+        value: "health,info"
+      - key: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+        value: "always"
