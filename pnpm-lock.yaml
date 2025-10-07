@@ -129,6 +129,9 @@ importers:
         specifier: ^3.17.0
         version: 3.17.0
     devDependencies:
+      playwright:
+        specifier: ^1.55.1
+        version: 1.55.1
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
