@@ -17,7 +17,7 @@ const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const LoginPage: React.FC = () => {
-  const { t, i18n, ready } = useTranslation('auth');
+  const { t } = useTranslation();
   const { login, currentUser } = useAppContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -25,13 +25,6 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // Debug logging
-  console.log('🔍 LoginPage - i18n ready:', ready);
-  console.log('🔍 LoginPage - i18n initialized:', i18n.isInitialized);
-  console.log('🔍 LoginPage - current language:', i18n.language);
-  console.log('🔍 LoginPage - test translation:', t('loginPage.title'));
-  console.log('🔍 LoginPage - has auth bundle:', i18n.hasResourceBundle('en', 'auth'));
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -72,8 +65,8 @@ const LoginPage: React.FC = () => {
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
           <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
-          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('loginPage.title', { appName: APP_NAME }) || `Welcome to ${APP_NAME}`}</h1>
-          <p className="text-sm text-gray-500">{t('loginPage.subtitle') || 'Sign in to your account'}</p>
+          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('loginPage.title', { appName: APP_NAME })}</h1>
+          <p className="text-sm text-gray-500">{t('loginPage.subtitle')}</p>
         </div>
 
         {error && (
@@ -85,7 +78,7 @@ const LoginPage: React.FC = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('loginPage.emailLabel') || 'Email Address'}
+              {t('loginPage.emailLabel')}
             </label>
             <input
               type="email"
@@ -94,7 +87,7 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               className={STANDARD_INPUT_FIELD}
               required
-              placeholder={t('loginPage.emailPlaceholder') || 'Enter your email'}
+              placeholder={t('loginPage.emailPlaceholder')}
             />
           </div>
           <div>

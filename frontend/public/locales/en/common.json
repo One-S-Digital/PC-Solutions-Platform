@@ -3,6 +3,28 @@
   "loading": {
     "translations": "Loading translations..."
   },
+  "loginPage": {
+    "title": "Welcome to {{appName}}",
+    "subtitle": "Sign in to your account",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot your password?",
+    "forgotPasswordTBD": "Forgot password functionality coming soon",
+    "orContinueWith": "Or continue with",
+    "google": "Google",
+    "facebook": "Facebook",
+    "noAccount": "Don't have an account?",
+    "viewPlansPrompt": "Want to see our plans?",
+    "viewPlans": "View Plans",
+    "parentLookingForCreche": "Parent looking for a crèche?",
+    "findCrecheHere": "Find your perfect crèche here",
+    "socialLoginTBD": "{{provider}} login coming soon!",
+    "alreadyAccount": "Already have an account?",
+    "errorBothFields": "Please fill in both email and password",
+    "loggingIn": "Logging in..."
+  },
   "buttons": {
     "save": "Save",
     "saveChanges": "Save Changes",
