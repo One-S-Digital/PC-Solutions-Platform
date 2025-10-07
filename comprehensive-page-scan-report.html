@@ -1,0 +1,1152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Page Scan Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%); color: white; border-radius: 8px; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .summary-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border-left: 4px solid #007bff; }
+        .summary-card h3 { margin: 0 0 10px 0; color: #333; }
+        .summary-card .number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .section { margin-bottom: 30px; }
+        .section h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .issue-item { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-bottom: 10px; }
+        .issue-item.missing-key { border-left: 4px solid #dc3545; }
+        .issue-item.hardcoded-text { border-left: 4px solid #ffc107; }
+        .issue-text { font-weight: bold; color: #333; margin-bottom: 5px; }
+        .issue-details { color: #666; font-size: 0.9em; }
+        .page-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .page-card { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        .page-card.error { border-left: 4px solid #dc3545; }
+        .page-card.success { border-left: 4px solid #28a745; }
+        .page-card.authenticated { border-left: 4px solid #17a2b8; }
+        .page-card h4 { margin: 0 0 10px 0; color: #333; }
+        .page-stats { display: flex; justify-content: space-between; font-size: 0.9em; color: #666; }
+        .recommendations { background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; }
+        .recommendation { margin-bottom: 15px; padding: 10px; background: white; border-radius: 6px; }
+        .priority-high { border-left: 4px solid #dc3545; }
+        .priority-medium { border-left: 4px solid #ffc107; }
+        .priority-low { border-left: 4px solid #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Comprehensive Page Scan Report</h1>
+            <p>Generated on 10/5/2025, 7:14:50 PM</p>
+            <p>Environment: PRODUCTION | URL: https://app.procrechesolutions.com</p>
+            <p>Authentication: ❌ Failed | Pages Discovered: 83</p>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Pages Discovered</h3>
+                <div class="number">83</div>
+            </div>
+            <div class="summary-card">
+                <h3>Pages Scanned</h3>
+                <div class="number">83</div>
+            </div>
+            <div class="summary-card">
+                <h3>Successful</h3>
+                <div class="number">83</div>
+            </div>
+            <div class="summary-card">
+                <h3>Authenticated</h3>
+                <div class="number">0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Missing Keys</h3>
+                <div class="number">0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Hardcoded Text</h3>
+                <div class="number">18</div>
+            </div>
+            <div class="summary-card">
+                <h3>Pages with Issues</h3>
+                <div class="number">83</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📄 Page Summary</h2>
+            <div class="page-grid">
+                
+                    <div class="page-card success ">
+                        <h4>Home </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>login </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/login</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>register </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/register</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>signup </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/signup</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forgot_password </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forgot-password</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>reset_password </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/reset-password</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>verify_email </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/verify-email</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>profile </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/profile</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>settings </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/settings</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>account </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/account</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>billing </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/billing</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>subscription </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/subscription</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>pricing </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/pricing</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>plans </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/plans</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>find_creche </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/find-creche</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>find_daycare </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/find-daycare</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>search </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/search</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>search_results </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/search-results</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>messages </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/messages</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>notifications </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/notifications</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>orders </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/orders</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>order_history </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/order-history</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>services </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/services</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>my_services </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/my-services</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>content </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/content</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>e_learning </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/e-learning</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>hr_policies </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/hr-policies</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>state_policies </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/state-policies</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>suppliers </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/suppliers</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>my_suppliers </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/my-suppliers</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>daycares </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/daycares</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>my_daycares </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/my-daycares</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>admin </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/admin</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>admin_users </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/admin/users</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>admin_settings </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/admin/settings</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>admin_dashboard </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/admin/dashboard</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>help </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/help</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>support </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/support</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>faq </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/faq</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>about </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/about</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>contact </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/contact</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>privacy </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/privacy</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>terms </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/terms</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>legal </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/legal</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>blog </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/blog</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>news </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/news</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>careers </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/careers</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>partners </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/partners</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>api_docs </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/api-docs</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>status </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/status</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>maintenance </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/maintenance</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>404 </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/404</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>500 </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/500</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>error </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/error</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>parent_lead_form </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/parent-lead-form</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_overview </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/overview</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_analytics </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/analytics</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_reports </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/reports</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_notifications </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/notifications</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_messages </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/messages</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_orders </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/orders</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_services </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/services</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_content </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/content</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_suppliers </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/suppliers</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_daycares </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/daycares</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_settings </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/settings</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_profile </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/profile</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_billing </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/billing</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_subscription </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/subscription</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_help </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/help</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>dashboard_support </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/dashboard/support</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_contact </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/contact</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_feedback </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/feedback</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_support </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/support</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_application </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/application</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_registration </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/registration</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_profile_update </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/profile-update</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_service_request </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/service-request</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_order_request </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/order-request</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_content_upload </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/content-upload</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_supplier_application </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/supplier-application</small></p>
+                        
+                    </div>
+                
+                    <div class="page-card success ">
+                        <h4>forms_daycare_application </h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: 0</span>
+                            <span>Hardcoded: 18</span>
+                        </div>
+                        <p><small>URL: https://app.procrechesolutions.com/forms/daycare-application</small></p>
+                        
+                    </div>
+                
+            </div>
+        </div>
+        
+        
+        
+        
+        <div class="section">
+            <h2>📝 Hardcoded Text</h2>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Welcome to Pro Crèche Solutions"</div>
+                    <div class="issue-details">
+                        Element: H1 | 
+                        Class: text-2xl font-bold text-swiss-charcoal | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Welcome to Pro Crèche Solutions
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Sign in to your account to continue"</div>
+                    <div class="issue-details">
+                        Element: P | 
+                        Class: text-sm text-gray-500 | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Sign in to your account to continue
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Email Address"</div>
+                    <div class="issue-details">
+                        Element: LABEL | 
+                        Class: block text-sm font-medium text-gray-700 mb-1 | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Email Address
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Password"</div>
+                    <div class="issue-details">
+                        Element: LABEL | 
+                        Class: block text-sm font-medium text-gray-700 mb-1 | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Password
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Forgot password?"</div>
+                    <div class="issue-details">
+                        Element: A | 
+                        Class: text-xs text-swiss-mint hover:underline | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Forgot password?
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Log In"</div>
+                    <div class="issue-details">
+                        Element: BUTTON | 
+                        Class: inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-minimal hover:shadow-interactive bg-swiss-mint text-white hover:bg-opacity-90 focus:ring-swiss-mint px-6 py-3 text-base w-full | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Log In
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Or continue with"</div>
+                    <div class="issue-details">
+                        Element: SPAN | 
+                        Class: px-2 bg-white text-gray-500 | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Or continue with
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Google"</div>
+                    <div class="issue-details">
+                        Element: BUTTON | 
+                        Class: inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-minimal hover:shadow-interactive bg-gray-100 text-swiss-charcoal hover:bg-gray-200 focus:ring-gray-300 border border-gray-200 px-5 py-2.5 text-sm w-full | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context:  Google
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Facebook"</div>
+                    <div class="issue-details">
+                        Element: BUTTON | 
+                        Class: inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-minimal hover:shadow-interactive bg-gray-100 text-swiss-charcoal hover:bg-gray-200 focus:ring-gray-300 border border-gray-200 px-5 py-2.5 text-sm w-full | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context:  Facebook
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Don't have an account?"</div>
+                    <div class="issue-details">
+                        Element: P | 
+                        Class: none | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Don't have an account? Sign Up
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Sign Up"</div>
+                    <div class="issue-details">
+                        Element: A | 
+                        Class: font-medium text-swiss-mint hover:underline | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Sign Up
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Want to see our plans?"</div>
+                    <div class="issue-details">
+                        Element: P | 
+                        Class: none | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Want to see our plans? View Plans
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"View Plans"</div>
+                    <div class="issue-details">
+                        Element: A | 
+                        Class: font-medium text-swiss-mint hover:underline | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: View Plans
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Are you a parent looking for a crèche?"</div>
+                    <div class="issue-details">
+                        Element: P | 
+                        Class: text-sm text-gray-600 text-center mb-3 | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: Are you a parent looking for a crèche?
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Find a Crèche Here"</div>
+                    <div class="issue-details">
+                        Element: A | 
+                        Class: inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40 | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: 🏠Find a Crèche Here
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"Show"</div>
+                    <div class="issue-details">
+                        Element: BUTTON | 
+                        Class: bg-red-500 text-white px-3 py-2 rounded text-sm font-mono | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: 🐛 Debug (Show)
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"📝 Error Logger"</div>
+                    <div class="issue-details">
+                        Element: BUTTON | 
+                        Class: bg-orange-500 text-white px-3 py-2 rounded text-sm font-mono shadow-lg | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: 📝 Error Logger ▶ (7)
+                    </div>
+                </div>
+            
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"🔍 DEBUG MODE ACTIVE - Look for purple debug buttons in bottom corners"</div>
+                    <div class="issue-details">
+                        Element: DIV | 
+                        Class: none | 
+                        ID: none
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: 🔍 DEBUG MODE ACTIVE - Look for purple debug buttons in bottom corners
+                    </div>
+                </div>
+            
+        </div>
+        
+        
+        <div class="section">
+            <h2>💡 Recommendations</h2>
+            <div class="recommendations">
+                
+                    <div class="recommendation priority-high">
+                        <strong>Found 18 pieces of hardcoded text across all pages that should be translated.</strong>
+                        <p>Replace hardcoded text with translation keys and redeploy</p>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

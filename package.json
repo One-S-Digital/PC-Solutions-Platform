@@ -16,9 +16,20 @@
     "translate": "node scripts/translate-i18n-free.js",
     "translate:ai": "node scripts/translate-i18n.js",
     "translate:manual": "node scripts/create-translations-manual.js",
-    "translate:simple": "node scripts/translate-simple.js"
+    "translate:simple": "node scripts/translate-simple.js",
+    "scan:i18n:visual": "node visual-i18n-scanner.js",
+    "scan:i18n:visual:headless": "FRONTEND_URL=http://localhost:3000 node visual-i18n-scanner.js",
+    "scan:i18n:advanced": "node advanced-visual-i18n-scanner.js",
+    "scan:i18n:advanced:headless": "FRONTEND_URL=http://localhost:3000 HEADLESS=true node advanced-visual-i18n-scanner.js",
+    "scan:i18n:production": "node production-visual-scanner.js",
+    "scan:i18n:production:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node production-visual-scanner.js",
+    "scan:i18n:authenticated": "node authenticated-production-scanner.js",
+    "scan:i18n:authenticated:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node authenticated-production-scanner.js",
+    "scan:i18n:comprehensive": "node comprehensive-page-scanner.js",
+    "scan:i18n:comprehensive:headless": "PRODUCTION_URL=https://app.procrechesolutions.com HEADLESS=true node comprehensive-page-scanner.js"
   },
   "devDependencies": {
+    "playwright": "^1.55.1",
     "prettier": "^3.6.2",
     "turbo": "^2.5.6",
     "typescript": "5.9.2"

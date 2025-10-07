@@ -1,0 +1,477 @@
+const { chromium } = require('playwright');
+const fs = require('fs');
+const path = require('path');
+
+class VisualI18nScanner {
+  constructor() {
+    this.browser = null;
+    this.page = null;
+    this.missingKeys = new Set();
+    this.hardcodedText = new Set();
+    this.scannedPages = [];
+    this.baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  }
+
+  async init() {
+    console.log('🚀 Starting Visual i18n Scanner...');
+    this.browser = await chromium.launch({ 
+      headless: false, // Set to true for headless mode
+      slowMo: 1000 // Slow down for better observation
+    });
+    this.page = await this.browser.newPage();
+    
+    // Set viewport for consistent screenshots
+    await this.page.setViewportSize({ width: 1920, height: 1080 });
+    
+    // Enable console logging to catch i18n errors
+    this.page.on('console', msg => {
+      if (msg.type() === 'error' && msg.text().includes('i18n')) {
+        console.log('🔍 i18n Error detected:', msg.text());
+      }
+    });
+  }
+
+  async scanPage(url, pageName) {
+    console.log(`\n📄 Scanning: ${pageName} (${url})`);
+    
+    try {
+      await this.page.goto(url, { waitUntil: 'networkidle' });
+      await this.page.waitForTimeout(3000); // Wait for dynamic content
+      
+      // Take screenshot for reference
+      const screenshotPath = `./i18n-screenshots/${pageName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+      await this.page.screenshot({ path: screenshotPath, fullPage: true });
+      
+      // Scan for missing translation keys (keys that look like translation keys)
+      const missingKeys = await this.page.evaluate(() => {
+        const results = [];
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
+        
+        let node;
+        while (node = walker.nextNode()) {
+          const text = node.textContent.trim();
+          
+          // Look for patterns that suggest missing translation keys
+          // Pattern 1: Keys with dots (e.g., "common.save", "dashboard.title")
+          if (text.match(/^[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z0-9_.]+$/)) {
+            results.push({
+              type: 'missing_key',
+              text: text,
+              element: node.parentElement?.tagName || 'unknown',
+              className: node.parentElement?.className || '',
+              id: node.parentElement?.id || ''
+            });
+          }
+          
+          // Pattern 2: Keys with colons (e.g., "common:save", "dashboard:title")
+          if (text.match(/^[a-zA-Z][a-zA-Z0-9]*:[a-zA-Z0-9_.]+$/)) {
+            results.push({
+              type: 'missing_key',
+              text: text,
+              element: node.parentElement?.tagName || 'unknown',
+              className: node.parentElement?.className || '',
+              id: node.parentElement?.id || ''
+            });
+          }
+          
+          // Pattern 3: Keys with underscores (e.g., "common_save", "dashboard_title")
+          if (text.match(/^[a-zA-Z][a-zA-Z0-9]*_[a-zA-Z0-9_]+$/)) {
+            results.push({
+              type: 'missing_key',
+              text: text,
+              element: node.parentElement?.tagName || 'unknown',
+              className: node.parentElement?.className || '',
+              id: node.parentElement?.id || ''
+            });
+          }
+        }
+        
+        return results;
+      });
+      
+      // Scan for hardcoded text that should be translated
+      const hardcodedText = await this.page.evaluate(() => {
+        const results = [];
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
+        
+        let node;
+        while (node = walker.nextNode()) {
+          const text = node.textContent.trim();
+          
+          // Skip empty text, numbers, and very short text
+          if (!text || text.length < 3 || /^[0-9.,:;!?%+*/<>=(){}[\]_'"`-]+$/.test(text)) {
+            continue;
+          }
+          
+          // Skip if it's inside a script or style tag
+          if (node.parentElement?.tagName === 'SCRIPT' || node.parentElement?.tagName === 'STYLE') {
+            continue;
+          }
+          
+          // Look for UI text that should probably be translated
+          const uiKeywords = [
+            'save', 'cancel', 'delete', 'edit', 'add', 'remove', 'create', 'update',
+            'submit', 'confirm', 'back', 'next', 'previous', 'continue', 'finish',
+            'loading', 'error', 'success', 'warning', 'info', 'help', 'search',
+            'filter', 'sort', 'view', 'hide', 'show', 'close', 'open', 'select',
+            'choose', 'upload', 'download', 'print', 'share', 'copy', 'paste',
+            'cut', 'undo', 'redo', 'refresh', 'reload', 'restart', 'stop', 'start',
+            'pause', 'play', 'resume', 'skip', 'jump', 'go', 'enter', 'exit',
+            'login', 'logout', 'register', 'signup', 'signin', 'forgot', 'reset',
+            'password', 'username', 'email', 'phone', 'address', 'name', 'title',
+            'description', 'message', 'notification', 'alert', 'dialog', 'modal',
+            'popup', 'tooltip', 'hint', 'tip', 'note', 'comment', 'reply',
+            'like', 'dislike', 'vote', 'rate', 'review', 'feedback', 'report',
+            'block', 'unblock', 'follow', 'unfollow', 'subscribe', 'unsubscribe',
+            'settings', 'preferences', 'options', 'configuration', 'profile',
+            'account', 'dashboard', 'home', 'about', 'contact', 'support',
+            'privacy', 'terms', 'conditions', 'policy', 'agreement', 'license'
+          ];
+          
+          const lowerText = text.toLowerCase();
+          const hasUIKeyword = uiKeywords.some(keyword => lowerText.includes(keyword));
+          
+          // Check if it looks like user-facing text
+          const isLikelyUIText = hasUIKeyword || 
+            (text.length > 3 && text.length < 100 && 
+             /^[A-Za-z\s.,!?;:'"()-]+$/.test(text) &&
+             !text.includes('http') && 
+             !text.includes('@') &&
+             !text.includes('#') &&
+             !text.match(/^[0-9]+$/));
+          
+          if (isLikelyUIText) {
+            results.push({
+              type: 'hardcoded_text',
+              text: text,
+              element: node.parentElement?.tagName || 'unknown',
+              className: node.parentElement?.className || '',
+              id: node.parentElement?.id || '',
+              context: node.parentElement?.textContent?.substring(0, 100) || ''
+            });
+          }
+        }
+        
+        return results;
+      });
+      
+      // Store results
+      this.scannedPages.push({
+        url,
+        pageName,
+        missingKeys: missingKeys.length,
+        hardcodedText: hardcodedText.length,
+        screenshot: screenshotPath
+      });
+      
+      // Add to global sets
+      missingKeys.forEach(item => this.missingKeys.add(JSON.stringify(item)));
+      hardcodedText.forEach(item => this.hardcodedText.add(JSON.stringify(item)));
+      
+      console.log(`   ✅ Found ${missingKeys.length} missing keys, ${hardcodedText.length} hardcoded text items`);
+      
+      return { missingKeys, hardcodedText };
+      
+    } catch (error) {
+      console.error(`   ❌ Error scanning ${pageName}:`, error.message);
+      return { missingKeys: [], hardcodedText: [] };
+    }
+  }
+
+  async scanAllPages() {
+    // Create screenshots directory
+    if (!fs.existsSync('./i18n-screenshots')) {
+      fs.mkdirSync('./i18n-screenshots');
+    }
+
+    // Define pages to scan
+    const pagesToScan = [
+      { url: '/', name: 'Home' },
+      { url: '/login', name: 'Login' },
+      { url: '/register', name: 'Register' },
+      { url: '/dashboard', name: 'Dashboard' },
+      { url: '/profile', name: 'Profile' },
+      { url: '/settings', name: 'Settings' },
+      { url: '/messages', name: 'Messages' },
+      { url: '/notifications', name: 'Notifications' },
+      { url: '/orders', name: 'Orders' },
+      { url: '/services', name: 'Services' },
+      { url: '/content', name: 'Content' },
+      { url: '/suppliers', name: 'Suppliers' },
+      { url: '/daycares', name: 'Daycares' },
+      { url: '/admin', name: 'Admin' },
+      { url: '/help', name: 'Help' },
+      { url: '/about', name: 'About' },
+      { url: '/contact', name: 'Contact' }
+    ];
+
+    console.log(`\n🔍 Scanning ${pagesToScan.length} pages...`);
+    
+    for (const page of pagesToScan) {
+      const fullUrl = `${this.baseUrl}${page.url}`;
+      await this.scanPage(fullUrl, page.name);
+    }
+  }
+
+  async generateReport() {
+    console.log('\n📊 Generating Visual i18n Report...');
+    
+    const missingKeysArray = Array.from(this.missingKeys).map(item => JSON.parse(item));
+    const hardcodedTextArray = Array.from(this.hardcodedText).map(item => JSON.parse(item));
+    
+    const report = {
+      generatedAt: new Date().toISOString(),
+      baseUrl: this.baseUrl,
+      summary: {
+        totalPagesScanned: this.scannedPages.length,
+        totalMissingKeys: missingKeysArray.length,
+        totalHardcodedText: hardcodedTextArray.length,
+        pagesWithIssues: this.scannedPages.filter(p => p.missingKeys > 0 || p.hardcodedText > 0).length
+      },
+      pages: this.scannedPages,
+      missingKeys: missingKeysArray,
+      hardcodedText: hardcodedTextArray,
+      recommendations: this.generateRecommendations(missingKeysArray, hardcodedTextArray)
+    };
+    
+    // Save detailed report
+    fs.writeFileSync('./visual-i18n-report.json', JSON.stringify(report, null, 2));
+    
+    // Generate HTML report
+    this.generateHTMLReport(report);
+    
+    // Print summary
+    console.log('\n' + '='.repeat(60));
+    console.log('📋 VISUAL i18n SCAN RESULTS');
+    console.log('='.repeat(60));
+    console.log(`📄 Pages scanned: ${report.summary.totalPagesScanned}`);
+    console.log(`🔑 Missing keys found: ${report.summary.totalMissingKeys}`);
+    console.log(`📝 Hardcoded text found: ${report.summary.totalHardcodedText}`);
+    console.log(`⚠️  Pages with issues: ${report.summary.pagesWithIssues}`);
+    console.log('\n📁 Reports saved:');
+    console.log('   - visual-i18n-report.json (detailed JSON)');
+    console.log('   - visual-i18n-report.html (visual HTML report)');
+    console.log('   - i18n-screenshots/ (page screenshots)');
+    
+    if (missingKeysArray.length > 0) {
+      console.log('\n🔑 MISSING KEYS FOUND:');
+      missingKeysArray.slice(0, 10).forEach((item, i) => {
+        console.log(`   ${i + 1}. "${item.text}" (${item.element})`);
+      });
+      if (missingKeysArray.length > 10) {
+        console.log(`   ... and ${missingKeysArray.length - 10} more`);
+      }
+    }
+    
+    if (hardcodedTextArray.length > 0) {
+      console.log('\n📝 HARDCODED TEXT FOUND:');
+      hardcodedTextArray.slice(0, 10).forEach((item, i) => {
+        console.log(`   ${i + 1}. "${item.text}" (${item.element})`);
+      });
+      if (hardcodedTextArray.length > 10) {
+        console.log(`   ... and ${hardcodedTextArray.length - 10} more`);
+      }
+    }
+  }
+
+  generateRecommendations(missingKeys, hardcodedText) {
+    const recommendations = [];
+    
+    if (missingKeys.length > 0) {
+      recommendations.push({
+        type: 'missing_keys',
+        priority: 'high',
+        message: `Found ${missingKeys.length} missing translation keys. These need to be added to your locale files.`,
+        action: 'Add the missing keys to your translation files (en/translation.json, fr/translation.json, de/translation.json)'
+      });
+    }
+    
+    if (hardcodedText.length > 0) {
+      recommendations.push({
+        type: 'hardcoded_text',
+        priority: 'medium',
+        message: `Found ${hardcodedText.length} pieces of hardcoded text that should be translated.`,
+        action: 'Replace hardcoded text with translation keys using t() function or <Trans> component'
+      });
+    }
+    
+    if (missingKeys.length === 0 && hardcodedText.length === 0) {
+      recommendations.push({
+        type: 'success',
+        priority: 'low',
+        message: 'No i18n issues found! Your application appears to be properly internationalized.',
+        action: 'Continue monitoring with regular scans'
+      });
+    }
+    
+    return recommendations;
+  }
+
+  generateHTMLReport(report) {
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual i18n Scan Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .summary-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border-left: 4px solid #007bff; }
+        .summary-card h3 { margin: 0 0 10px 0; color: #333; }
+        .summary-card .number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .section { margin-bottom: 30px; }
+        .section h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .issue-item { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-bottom: 10px; }
+        .issue-item.missing-key { border-left: 4px solid #dc3545; }
+        .issue-item.hardcoded-text { border-left: 4px solid #ffc107; }
+        .issue-text { font-weight: bold; color: #333; margin-bottom: 5px; }
+        .issue-details { color: #666; font-size: 0.9em; }
+        .page-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .page-card { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        .page-card h4 { margin: 0 0 10px 0; color: #333; }
+        .page-stats { display: flex; justify-content: space-between; font-size: 0.9em; color: #666; }
+        .recommendations { background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; }
+        .recommendation { margin-bottom: 15px; padding: 10px; background: white; border-radius: 6px; }
+        .priority-high { border-left: 4px solid #dc3545; }
+        .priority-medium { border-left: 4px solid #ffc107; }
+        .priority-low { border-left: 4px solid #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Visual i18n Scan Report</h1>
+            <p>Generated on ${new Date(report.generatedAt).toLocaleString()}</p>
+            <p>Base URL: ${report.baseUrl}</p>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Pages Scanned</h3>
+                <div class="number">${report.summary.totalPagesScanned}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Missing Keys</h3>
+                <div class="number">${report.summary.totalMissingKeys}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Hardcoded Text</h3>
+                <div class="number">${report.summary.totalHardcodedText}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Pages with Issues</h3>
+                <div class="number">${report.summary.pagesWithIssues}</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📄 Page Summary</h2>
+            <div class="page-grid">
+                ${report.pages.map(page => `
+                    <div class="page-card">
+                        <h4>${page.pageName}</h4>
+                        <div class="page-stats">
+                            <span>Missing Keys: ${page.missingKeys}</span>
+                            <span>Hardcoded: ${page.hardcodedText}</span>
+                        </div>
+                        <p><small>URL: ${page.url}</small></p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        ${report.missingKeys.length > 0 ? `
+        <div class="section">
+            <h2>🔑 Missing Translation Keys</h2>
+            ${report.missingKeys.map(item => `
+                <div class="issue-item missing-key">
+                    <div class="issue-text">"${item.text}"</div>
+                    <div class="issue-details">
+                        Element: ${item.element} | 
+                        Class: ${item.className || 'none'} | 
+                        ID: ${item.id || 'none'}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
+        
+        ${report.hardcodedText.length > 0 ? `
+        <div class="section">
+            <h2>📝 Hardcoded Text</h2>
+            ${report.hardcodedText.map(item => `
+                <div class="issue-item hardcoded-text">
+                    <div class="issue-text">"${item.text}"</div>
+                    <div class="issue-details">
+                        Element: ${item.element} | 
+                        Class: ${item.className || 'none'} | 
+                        ID: ${item.id || 'none'}
+                    </div>
+                    <div class="issue-details" style="margin-top: 5px;">
+                        Context: ${item.context}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
+        
+        <div class="section">
+            <h2>💡 Recommendations</h2>
+            <div class="recommendations">
+                ${report.recommendations.map(rec => `
+                    <div class="recommendation priority-${rec.priority}">
+                        <strong>${rec.message}</strong>
+                        <p>${rec.action}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+    
+    fs.writeFileSync('./visual-i18n-report.html', html);
+  }
+
+  async cleanup() {
+    if (this.browser) {
+      await this.browser.close();
+    }
+  }
+}
+
+// Main execution
+async function main() {
+  const scanner = new VisualI18nScanner();
+  
+  try {
+    await scanner.init();
+    await scanner.scanAllPages();
+    await scanner.generateReport();
+  } catch (error) {
+    console.error('❌ Scanner failed:', error);
+  } finally {
+    await scanner.cleanup();
+  }
+}
+
+// Run if called directly
+if (require.main === module) {
+  main().catch(console.error);
+}
+
+module.exports = VisualI18nScanner;
