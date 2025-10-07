@@ -1,66 +1,66 @@
 {
-  "appName": "ProCrèche Solutions Suisse",
+  "appName": "Procrèche Solutions Suisse",
   "loading": {
-    "translations": "Übersetzungen werden geladen..."
+    "translations": "Überetzungen Werden Geladen ..."
   },
   "buttons": {
     "save": "Speichern",
-    "saveChanges": "Änderungen speichern",
-    "cancel": "Abbrechen",
-    "submit": "Absenden",
+    "saveChanges": "Aarderungen Speichern",
+    "cancel": "Abbraten",
+    "submit": "Abwesenheit",
     "add": "Hinzufügen",
-    "edit": "Bearbeiten",
+    "edit": "Bearebeitenen",
     "delete": "Löschen",
-    "viewDetails": "Details anzeigen",
+    "viewDetails": "Details anzegen",
     "goBack": "Zurück",
-    "login": "Log In",
+    "login": "Einloggen",
     "signup": "Registrieren",
-    "applyNow": "Jetzt bewerben",
-    "confirmApply": "Confirm Application",
-    "sendMessage": "Nachricht senden",
-    "inviteToApply": "Zur Bewerbung einladen",
-    "inviteToInterview": "Zum Gespräch einladen",
-    "addToFavorites": "Zu Favoriten hinzufügen",
-    "favorited": "Favorisiert",
-    "submitEnquiry": "Anfrage senden",
-    "viewMyEnquiries": "Meine Anfragen",
-    "submitTicket": "Ticket senden",
-    "goToLogin": "Zur Anmeldeseite",
-    "close": "Schließen",
-    "view": "Anzeigen",
-    "resetFilters": "Filter zurücksetzen",
+    "applyNow": "JETZT Bewerben",
+    "confirmApply": "Anwendung Bestätigen",
+    "sendMessage": "Nachrichts sgen",
+    "inviteToApply": "Zurbung Einladen",
+    "inviteToInterview": "Zummspräch Einladen",
+    "addToFavorites": "Zutzorbeer Hintzügen",
+    "favorited": "Bevorzugung",
+    "submitEnquiry": "Anfage Senden",
+    "viewMyEnquiries": "Meins anfragen",
+    "submitTicket": "Ticket Senden",
+    "goToLogin": "Zur Anmeldee",
+    "close": "Schliebe",
+    "view": "Anzegen",
+    "resetFilters": "Filter Bercksetze",
     "applyFilters": "Filter anwenden",
-    "submitRequest": "Anfrage absenden",
+    "submitRequest": "Anfage Abspenen",
     "remove": "Entfernen",
     "dismiss": "Verwerfen"
   },
   "common": {
-    "perMonth": "/month",
-    "perYear": "/year",
-    "save10Percent": "save 10%"
+    "perMonth": "/Monat",
+    "perYear": "/Jahr",
+    "save10Percent": "Sparen Sie 10%"
   },
   "errors": {
-    "unknown": "Ein unbekannter Fehler ist aufgetreten"
+    "unknown": "Ein unbekannter fehler ist auf"
   },
   "notifications": {
     "errorTitle": "Fehler",
     "successTitle": "Erfolg",
-    "newMessageFrom": "New message from",
-    "settingsUpdated": "notifications.settingsUpdated"
+    "newMessageFrom": "Neue Nachricht von",
+    "settingsUpdated": "Benachrichtigungen.Einstellungen aktualisiert"
   },
-  "hidePassword": "Hide password",
-  "showPassword": "Show password",
+  "hidePassword": "Passwort Verbergen",
+  "showPassword": "Passwort anzeigen",
   "signIn": "Anmelden",
   "signOut": "Abmelden",
-  "confirmPassword": "Passwort bestätigen",
-  "resetPassword": "Passwort zurücksetzen",
-  "rememberMe": "Remember me",
-  "createAccount": "Konto erstellen",
-  "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
-  "dontHaveAccount": "Haben Sie kein Konto?",
-  "welcomeBack": "Willkommen zurück!",
-  "joinPlatform": "Der Plattform beitreten",
-  "chooseRole": "Wählen Sie Ihre Rolle",
+  "confirmPassword": "Passwort Bestätgen",
+  "resetPassword": "Passwort Zurücksetzen",
+  "rememberMe": "Erinnere Dich an Mich",
+  "createAccount": "BONTO ERSTELLEN",
+  "alreadyHaveAccount": "HABEN SIE BERITEN EIN BONTO?",
+  "dontHaveAccount": "Haven Sie Kein Konto?",
+  "welcomeBack": "Willkommen Zurück!",
+  "joinPlatform": "Die Plattform Beitrenen",
+  "chooseRole": "Wämlen Sie Ihre Rolle",
   "firstName": "Vorname",
   "lastName": "Nachname",
   "phoneNumber": "Telefonnummer",
@@ -71,26 +71,26 @@
   "capacity": "Kapazität",
   "productCategory": "Produktkategorie",
   "serviceType": "Serviceart",
-  "childAge": "Child Age",
+  "childAge": "Kindererald",
   "preferredLocation": "Bevorzugter Standort",
   "type": "Typ",
   "language": "Sprache",
-  "responsibilities": "Verantwortlichkeiten",
-  "qualifications": "Qualifikationen",
-  "benefits": "Vorteile",
+  "responsibilities": "Verantwortlichlich",
+  "qualifications": "Qualifikationssen",
+  "benefits": "Vorhöhe",
   "requirements": "Anforderungen",
   "settingsPage": {
-    "unsavedChangesPrompt": "settingsPage.unsavedChangesPrompt",
-    "loading": "settingsPage.loading",
-    "noSectionsAvailable": "settingsPage.noSectionsAvailable",
-    "analyticsPreferences": "settingsPage.analyticsPreferences",
-    "companyProfile": "settingsPage.companyProfile",
-    "contactBooking": "settingsPage.contactBooking",
-    "defaults": "settingsPage.defaults",
-    "notificationPreferences": "settingsPage.notificationPreferences",
-    "privacyData": "settingsPage.privacyData",
-    "promoCodeManager": "settingsPage.promoCodeManager",
-    "teamPermissions": "settingsPage.teamPermissions"
+    "unsavedChangesPrompt": "SettingSpage.unsavedChangesprompt",
+    "loading": "SettingSpage.loading",
+    "noSectionsAvailable": "SettingSpage.nosiections Applage",
+    "analyticsPreferences": "SettingSpage.AnalyticsPreferences",
+    "companyProfile": "SettingSpage.comPanyProfile",
+    "contactBooking": "SettingSpage.Contactbooking",
+    "defaults": "SettingSpage.Defaults",
+    "notificationPreferences": "SettingSpage.NotificationPreferences",
+    "privacyData": "SettingSpage.PrivacyData",
+    "promoCodeManager": "SettingSpage.Promocodemanager",
+    "teamPermissions": "SettingSpage.teampermissions"
   },
   "contentUploadModal": {
     "title": {
@@ -98,354 +98,354 @@
     },
     "labels": {
       "currentFile": "contentUploadModal.labels.currentFile",
-      "uploadFileType": "contentUploadModal.labels.uploadFileType"
+      "uploadFileType": "contentUploadModal.labels.UploadFiletype"
     },
     "fileUpload": {
-      "browse": "contentUploadModal.fileUpload.browse",
-      "dragAndDrop": "contentUploadModal.fileUpload.dragAndDrop",
-      "selected": "contentUploadModal.fileUpload.selected"
+      "browse": "contentUploadModal.FileEeupload.Browse",
+      "dragAndDrop": "contentUploadModal.FileEeupload.DRagandDrop",
+      "selected": "contentUploadModal.FileEeupload.Selected"
     }
   },
   "leadCard": {
     "alert": {
-      "missingParentInfo": "leadCard.alert.missingParentInfo"
+      "missingParentInfo": "Leadcard.Alert.missingParentInfo"
     },
     "status": {
-      "notResponded": "leadCard.status.notResponded",
-      "interested": "leadCard.status.interested",
-      "notInterested": "leadCard.status.notInterested",
-      "needsMoreInfo": "leadCard.status.needsMoreInfo",
-      "enrolled": "leadCard.status.enrolled"
+      "notResponded": "LeadCard.status.noTrespondiert",
+      "interested": "LeadCard.status.intereste",
+      "notInterested": "LeadCard.status.notintereste",
+      "needsMoreInfo": "Leadcard.Status.NeedsmoreInfo",
+      "enrolled": "Leadcard.status.Enrolled"
     },
-    "forLocation": "leadCard.forLocation",
-    "childAge": "leadCard.childAge",
-    "desiredStart": "leadCard.desiredStart",
-    "submittedOn": "leadCard.submittedOn",
-    "notes": "leadCard.notes",
+    "forLocation": "LeadCard.forlocation",
+    "childAge": "Leadcard.Childage",
+    "desiredStart": "LeadCard.Desiedstart",
+    "submittedOn": "Leadcard.SubMittedon",
+    "notes": "Leadcard.notes",
     "defaultMessages": {
-      "interested": "leadCard.defaultMessages.interested",
-      "notInterested": "leadCard.defaultMessages.notInterested",
-      "enrolled": "leadCard.defaultMessages.enrolled"
+      "interested": "LeadCard.DefaultMessages.Interesste",
+      "notInterested": "LeadCard.DefaultMessages.notintereste",
+      "enrolled": "LeadCard.DefaultMessages.Enrolled"
     },
     "buttons": {
-      "interested": "leadCard.buttons.interested",
-      "notInterested": "leadCard.buttons.notInterested",
-      "needInfo": "leadCard.buttons.needInfo",
-      "sendQuestion": "leadCard.buttons.sendQuestion",
-      "messageParent": "leadCard.buttons.messageParent",
-      "markEnrolled": "leadCard.buttons.markEnrolled"
+      "interested": "Leadcard.buttons.Intereste",
+      "notInterested": "Leadcard.buttons.notintereste",
+      "needInfo": "Leadcard.buttons.Needinfo",
+      "sendQuestion": "Leadcard.buttons.SendQuestion",
+      "messageParent": "Leadcard.buttons.MessageParent",
+      "markEnrolled": "Leadcard.buttons.Markenrolled"
     },
-    "questionFor": "leadCard.questionFor",
-    "questionPlaceholder": "leadCard.questionPlaceholder",
-    "yourResponse": "leadCard.yourResponse",
-    "messageSent": "leadCard.messageSent"
+    "questionFor": "Leadcard.questionfor",
+    "questionPlaceholder": "Leadcard.QuestionPlaceHolder",
+    "yourResponse": "LeadCard.YourResponse",
+    "messageSent": "LeadCard.Messagesent"
   },
   "orderRequestModal": {
-    "title": "orderRequestModal.title"
+    "title": "orderRequestModal.titel"
   },
   "messagesPage": {
-    "selectConversationToView": "messagesPage.selectConversationToView",
-    "conversationFallbackTitle": "messagesPage.conversationFallbackTitle",
-    "attachFile": "messagesPage.attachFile",
-    "addEmoji": "messagesPage.addEmoji",
-    "typeMessagePlaceholder": "messagesPage.typeMessagePlaceholder",
-    "searchPlaceholder": "messagesPage.searchPlaceholder",
-    "unknownUser": "messagesPage.unknownUser",
-    "youPrefix": "messagesPage.youPrefix",
-    "noMessagesYet": "messagesPage.noMessagesYet"
+    "selectConversationToView": "MessagePage.SelectConverationToview",
+    "conversationFallbackTitle": "MessagePage.ConversationFallbacktitle",
+    "attachFile": "MessagePage.attachfile",
+    "addEmoji": "MessagePage.Addemoji",
+    "typeMessagePlaceholder": "MessagePage.TypeMessagePlaceHolder",
+    "searchPlaceholder": "MessagePage.searchPlaceHolder",
+    "unknownUser": "MessagePage.unnownownuser",
+    "youPrefix": "MessagePage.youpRefix",
+    "noMessagesYet": "MessagePage.nomessAgessyet"
   },
   "serviceRequestDetailModal": {
-    "title": "serviceRequestDetailModal.title",
-    "requestId": "serviceRequestDetailModal.requestId",
-    "serviceName": "serviceRequestDetailModal.serviceName",
-    "viewDaycareProfile": "serviceRequestDetailModal.viewDaycareProfile",
-    "date": "serviceRequestDetailModal.date",
-    "status": "serviceRequestDetailModal.status",
-    "preferredDate": "serviceRequestDetailModal.preferredDate",
-    "noPreferredDate": "serviceRequestDetailModal.noPreferredDate",
-    "notes": "serviceRequestDetailModal.notes"
+    "title": "serviceRequestDetailmodal.titel",
+    "requestId": "serviceRequestDetailmodal.requestid",
+    "serviceName": "serviceRequestDetailModal.ServiceName",
+    "viewDaycareProfile": "serviceRequestDetailModal.ViewdayCareprofile",
+    "date": "serviceRequestDetailmodal.date",
+    "status": "serviceRequestDetailmodal.status",
+    "preferredDate": "serviceRequestDetailModal.preferreddate",
+    "noPreferredDate": "serviceRequestDetailmodal.noperDerRedDate",
+    "notes": "serviceRequestDetailmodal.notes"
   },
-  ",": ",",
+  ",": "Anwesend",
   "organizationProfileForm": {
-    "accessDenied": "organizationProfileForm.accessDenied",
-    "title": "organizationProfileForm.title",
-    "subtitle": "organizationProfileForm.subtitle",
+    "accessDenied": "organisationProfileForm.AccessDenied",
+    "title": "organisationsprofileform.titel",
+    "subtitle": "organisationsprofileform.subtitel",
     "labels": {
-      "capacity": "organizationProfileForm.labels.capacity",
-      "pedagogy": "organizationProfileForm.labels.pedagogy",
-      "languages": "organizationProfileForm.labels.languages"
+      "capacity": "organisationsprofileform.labels.Capacity",
+      "pedagogy": "organisationsprofileform.labels.pedagogy",
+      "languages": "organisationProfileform.labels.UBUGUAGES"
     },
     "placeholders": {
-      "pedagogy": "organizationProfileForm.placeholders.pedagogy",
-      "languages": "organizationProfileForm.placeholders.languages"
+      "pedagogy": "organisationsprofileform.PlaceHolders.pedagogy",
+      "languages": "organisationsprofileform.plapholders.Ulovertation"
     },
     "helpText": {
-      "commaSeparated": "organizationProfileForm.helpText.commaSeparated"
+      "commaSeparated": "organisationsprofileform.helptext.CommaseParated"
     },
-    "saveButton": "organizationProfileForm.saveButton"
+    "saveButton": "organisationsprofileform.savebutton"
   },
   "settingsAccountSecurity": {
     "notifications": {
-      "infoUpdated": "settingsAccountSecurity.notifications.infoUpdated",
-      "passwordChanged": "settingsAccountSecurity.notifications.passwordChanged"
+      "infoUpdated": "EinSTELLUNTENACTECOUNTSECURITY.NOTIFIKATIONS.infupeatdated",
+      "passwordChanged": "EinstellungNACTECOUNTSECURITY.NOTIFIKATIONS.PASSWORDCHANDED"
     },
     "dangerZone": {
-      "finalConfirmation": "settingsAccountSecurity.dangerZone.finalConfirmation"
+      "finalConfirmation": "EinstellungNACTECOUNTSECURITY.DANGERZONE.FINALCONFURRIMIMATION"
     },
     "personalInfo": {
-      "nameLabel": "settingsAccountSecurity.personalInfo.nameLabel"
+      "nameLabel": "EinstellungNACTECOUNTSECURITY.Personalinfo.Namelabel"
     }
   },
   "settingsAnalyticsPreferences": {
-    "timeZone": "settingsAnalyticsPreferences.timeZone",
-    "currency": "settingsAnalyticsPreferences.currency",
-    "benchmarkData": "settingsAnalyticsPreferences.benchmarkData",
-    "benchmarkDataHelpText": "settingsAnalyticsPreferences.benchmarkDataHelpText"
+    "timeZone": "EinstellungenAnalyticsPreferences.TimeZone",
+    "currency": "EinstellungenAnalyticsPreferences.Currency",
+    "benchmarkData": "EinstellungenAnalyticsPreferences.Benchmarkdata",
+    "benchmarkDataHelpText": "EinstellungenAnalyticsPreferences.Benchmarkdatahelptext"
   },
   "settingsBillingSubscription": {
-    "yourCurrentPlan": "settingsBillingSubscription.yourCurrentPlan",
-    "upgradePlan": "settingsBillingSubscription.upgradePlan",
-    "downgradePlan": "settingsBillingSubscription.downgradePlan",
-    "currentPlan": "settingsBillingSubscription.currentPlan",
-    "nextInvoiceOn": "settingsBillingSubscription.nextInvoiceOn",
-    "manageSubscriptionTitle": "settingsBillingSubscription.manageSubscriptionTitle",
-    "manageSubscriptionDescription": "settingsBillingSubscription.manageSubscriptionDescription",
-    "managePaymentButton": "settingsBillingSubscription.managePaymentButton",
-    "cancelSubscription": "settingsBillingSubscription.cancelSubscription",
-    "stripePortalLinkNotConfigured": "settingsBillingSubscription.stripePortalLinkNotConfigured",
-    "confirmCancelTitle": "settingsBillingSubscription.confirmCancelTitle",
-    "confirmCancelMessage": "settingsBillingSubscription.confirmCancelMessage",
-    "keepSubscription": "settingsBillingSubscription.keepSubscription",
-    "yesCancel": "settingsBillingSubscription.yesCancel"
+    "yourCurrentPlan": "Einstellungen Zur VerfÜGung Stehen",
+    "upgradePlan": "Einstellungen Zur VerfÜGung Stehen",
+    "downgradePlan": "Einstellungen Zur VerfÜGung Stehen",
+    "currentPlan": "Einstellungen Zur VerfÜGung Stehen",
+    "nextInvoiceOn": "Einstellungen Zur VerfÜGung Stehen",
+    "manageSubscriptionTitle": "Einstellungenbillingsubscription.ManageSubScriptionTitle",
+    "manageSubscriptionDescription": "Einstellungen Zur VerfÜGung Stehen",
+    "managePaymentButton": "Einstellungen zum Verfüjung Stehen. ",
+    "cancelSubscription": "Einstellungen Zur VerfÜGung Stehen",
+    "stripePortalLinkNotConfigured": "Einstellungen Zur VerfÜGung Stehen",
+    "confirmCancelTitle": "Einstellungen Zur VerfÜGung Stehen",
+    "confirmCancelMessage": "Einstellungen Zur VerfÜGung Stehen",
+    "keepSubscription": "Einstellungen Zur VerfÜGung Stehen",
+    "yesCancel": "Einstellungen zum Verfüjung Stehen. "
   },
   "settingsCompanyProfile": {
-    "companyName": "settingsCompanyProfile.companyName",
-    "logo": "settingsCompanyProfile.logo",
-    "coverImage": "settingsCompanyProfile.coverImage",
-    "aboutText": "settingsCompanyProfile.aboutText",
-    "aboutTextLength": "settingsCompanyProfile.aboutTextLength",
-    "vatNumber": "settingsCompanyProfile.vatNumber",
-    "regionsServed": "settingsCompanyProfile.regionsServed",
-    "selectCanton": "settingsCompanyProfile.selectCanton",
-    "cantonsHelpText": "settingsCompanyProfile.cantonsHelpText",
-    "languagesSpoken": "settingsCompanyProfile.languagesSpoken",
-    "selectLanguage": "settingsCompanyProfile.selectLanguage",
-    "languagesHelpText": "settingsCompanyProfile.languagesHelpText"
+    "companyName": "EinstellungCompanyProfile.comPanyname",
+    "logo": "EinstellungenCompanyProfile.Logo",
+    "coverImage": "EinstellertencompanyProfile.Coverimage",
+    "aboutText": "EinSTELLUNDCOMPANYPROFILE.ABOUTTEXT",
+    "aboutTextLength": "EinSTELLUNDCOMPANYPROFILE.aboutTextLength",
+    "vatNumber": "EinstellungenCompanyProfile.VatNumber",
+    "regionsServed": "EinSTELLUNDCOMPANYPROFILE.regionenserien",
+    "selectCanton": "EinstellertencompanyProfile.Selectcanton",
+    "cantonsHelpText": "EinstellungenCompanyProfile.CantonShelptext",
+    "languagesSpoken": "EinSTELLUNDCOMPANYPROFILE.LANGUAGESSPOOKEN",
+    "selectLanguage": "EinstellertencompanyProfile.SelectLanguage",
+    "languagesHelpText": "EinSTELLUNDCOMPANYPROFILE.LANGUAGESHELPTEXT"
   },
   "settingsContactBooking": {
-    "preferredContactMethod": "settingsContactBooking.preferredContactMethod",
-    "avgResponseTime": "settingsContactBooking.avgResponseTime",
-    "externalBookingLink": "settingsContactBooking.externalBookingLink",
-    "externalBookingLinkPlaceholder": "settingsContactBooking.externalBookingLinkPlaceholder",
-    "directOrderLink": "settingsContactBooking.directOrderLink",
-    "directOrderLinkPlaceholder": "settingsContactBooking.directOrderLinkPlaceholder",
-    "directOrderLinkHelpText": "settingsContactBooking.directOrderLinkHelpText",
-    "calComLink": "settingsContactBooking.calComLink",
-    "calComLinkPlaceholder": "settingsContactBooking.calComLinkPlaceholder",
-    "deliveryTypeToggleRemote": "settingsContactBooking.deliveryTypeToggleRemote"
+    "preferredContactMethod": "SettingScontactbooking.PreferredContactMethod",
+    "avgResponseTime": "SettingScontactbooking.avgresponsetime",
+    "externalBookingLink": "SettingScontactbooking.externalbookingLink",
+    "externalBookingLinkPlaceholder": "SettingScontactbooking.externalbookingLinkPlaPleholder",
+    "directOrderLink": "SettingScontactbooking.DirectorderLink",
+    "directOrderLinkPlaceholder": "SettingScontactbooking.DirectOrderLinkPlaplapleholder",
+    "directOrderLinkHelpText": "SettingScontactbooking.DirectorderLinkHelptext",
+    "calComLink": "SettingScontactbooking.calcomlink",
+    "calComLinkPlaceholder": "SettingScontactbooking.CALCOMLINKPLAPHELTER",
+    "deliveryTypeToggleRemote": "SettingScontactbooking.Deliverytypetoggleremote"
   },
   "settingsDefaults": {
-    "autoRespondToggle": "settingsDefaults.autoRespondToggle",
-    "autoRespondHelpText": "settingsDefaults.autoRespondHelpText",
-    "defaultMOQ": "settingsDefaults.defaultMOQ",
-    "defaultMOQPlaceholder": "settingsDefaults.defaultMOQPlaceholder",
-    "autoAcceptOrderQtyLimit": "settingsDefaults.autoAcceptOrderQtyLimit",
-    "autoAcceptOrderQtyLimitPlaceholder": "settingsDefaults.autoAcceptOrderQtyLimitPlaceholder",
-    "defaultConsultationLength": "settingsDefaults.defaultConsultationLength"
+    "autoRespondToggle": "Einstellungendefaults.AutorrespeatToggle",
+    "autoRespondHelpText": "Einstellungendefaults.Autorrespecthelptext",
+    "defaultMOQ": "Einstellungendefaults.DefaultMoq",
+    "defaultMOQPlaceholder": "Einstellungendefaults.DefaultMoqPlaplapleholder",
+    "autoAcceptOrderQtyLimit": "Einstellungendefaults.AutoacceptOrderqtylimit",
+    "autoAcceptOrderQtyLimitPlaceholder": "Einstellungendefaults.AutoacceptOrderqtylimitPlaceplaceholder",
+    "defaultConsultationLength": "EinstellungenDefaults.DefaultConsultationLength"
   },
   "settingsNotificationPreferences": {
-    "digestFrequency": "settingsNotificationPreferences.digestFrequency",
-    "promoRedemptionAlertsToggle": "settingsNotificationPreferences.promoRedemptionAlertsToggle"
+    "digestFrequency": "EinstellungenenTificationPreferences.DigestFrequency",
+    "promoRedemptionAlertsToggle": "EinstellungenenTificationPreferences"
   },
   "settingsPrivacyData": {
-    "dataDeletion": "settingsPrivacyData.dataDeletion",
-    "deletionRequestSubmitted": "settingsPrivacyData.deletionRequestSubmitted",
-    "requestGDPRDeletion": "settingsPrivacyData.requestGDPRDeletion",
-    "requestDeletionHelpText": "settingsPrivacyData.requestDeletionHelpText"
+    "dataDeletion": "Einstellungssparkreisdata.Datadeletion",
+    "deletionRequestSubmitted": "Einstellungensprüchedata.DeletionRequestSubMited",
+    "requestGDPRDeletion": "Einstellungssparkreisdata.RequestGdprdeletion",
+    "requestDeletionHelpText": "SettingSpivacyData.RequestDeletionHelptext"
   },
   "settingsPromoCodeManager": {
-    "confirmDelete": "settingsPromoCodeManager.confirmDelete",
+    "confirmDelete": "Einstellungenspromocodemanager.Confirpldelete",
     "discountTypes": {
-      "percentage": "settingsPromoCodeManager.discountTypes.percentage",
-      "fixedAmount": "settingsPromoCodeManager.discountTypes.fixedAmount",
-      "freeMinutes": "settingsPromoCodeManager.discountTypes.freeMinutes"
+      "percentage": "Einstellungenpromocodemanager.DiscountTypes.Percentage",
+      "fixedAmount": "EinSTELLUNDENSPROMOCODEMANGE.DISCOUNTTYPES.FIXEDAMOUNT",
+      "freeMinutes": "EinstellungenSPROMOCODEMANGE.DiscountTypes.Freeminutes"
     },
-    "addNewCode": "settingsPromoCodeManager.addNewCode",
-    "noCodesYet": "settingsPromoCodeManager.noCodesYet",
+    "addNewCode": "EinstellungenspromocoDemanager.Addnewcode",
+    "noCodesYet": "Einstellungenspromocodemanager.Nocodesyet",
     "table": {
-      "code": "settingsPromoCodeManager.table.code",
-      "discountOffer": "settingsPromoCodeManager.table.discountOffer",
-      "expiry": "settingsPromoCodeManager.table.expiry",
-      "status": "settingsPromoCodeManager.table.status",
-      "actions": "settingsPromoCodeManager.table.actions"
+      "code": "EinstellungenSPROMOCODEMANGE.TABLE.CODE",
+      "discountOffer": "EinstellungenPromoCodeManager.table.discountOffer",
+      "expiry": "Einstellungenpromocodemanager.table.expiry",
+      "status": "Einstellungenspromocodemanager.table.status",
+      "actions": "Einstellungenspromocodemanager.table.actions"
     },
     "addEditModal": {
-      "editTitle": "settingsPromoCodeManager.addEditModal.editTitle",
-      "addTitle": "settingsPromoCodeManager.addEditModal.addTitle",
-      "placeholder": "settingsPromoCodeManager.addEditModal.placeholder",
-      "save": "settingsPromoCodeManager.addEditModal.save"
+      "editTitle": "Einstellungenspromocodemanager.AddeditModal.Edittitle",
+      "addTitle": "Einstellungenpromocodemanager.AddeditModal.Addtitle",
+      "placeholder": "EinstellungensPromocoDemanager.AddeditModal.PLACEHPLER",
+      "save": "EinstellungenspromocoDemanager.AddeditModal.save"
     }
   },
   "settingsTeamPermissions": {
-    "confirmRemoveMember": "settingsTeamPermissions.confirmRemoveMember",
-    "passwordResetSentAlert": "settingsTeamPermissions.passwordResetSentAlert",
-    "inviteNewMember": "settingsTeamPermissions.inviteNewMember",
-    "emailAddress": "settingsTeamPermissions.emailAddress",
-    "emailPlaceholder": "settingsTeamPermissions.emailPlaceholder",
-    "role": "settingsTeamPermissions.role",
-    "sendInvite": "settingsTeamPermissions.sendInvite",
-    "currentTeamMembers": "settingsTeamPermissions.currentTeamMembers",
-    "noTeamMembers": "settingsTeamPermissions.noTeamMembers",
+    "confirmRemoveMember": "SettingSteampermissions.ConfirMremovemember",
+    "passwordResetSentAlert": "Einstellungen",
+    "inviteNewMember": "SetingSteampermissions.inViteNewMember",
+    "emailAddress": "SetingSteampermissions.emailaddress",
+    "emailPlaceholder": "SettingsTeamPermissions.emailPlaceholder",
+    "role": "SettingSteamPermissions.role",
+    "sendInvite": "SetingSteampermissions.sendinvite",
+    "currentTeamMembers": "SettingSteamPermissions.CurrentTeamMembers",
+    "noTeamMembers": "Einstellungen",
     "table": {
-      "email": "settingsTeamPermissions.table.email",
-      "role": "settingsTeamPermissions.table.role",
-      "status": "settingsTeamPermissions.table.status",
-      "actions": "settingsTeamPermissions.table.actions"
+      "email": "SettingSteamPermissions.Table.Email",
+      "role": "EinstellungSteamPermissions.Table.role",
+      "status": "SettingSteamPermissions.Table.Status",
+      "actions": "SetingSteampermissions.table.actions"
     },
     "roles": {
-      "editor": "settingsTeamPermissions.roles.editor",
-      "viewer": "settingsTeamPermissions.roles.viewer"
+      "editor": "SettingSteamPermissions.roles.Editor",
+      "viewer": "SettingSteamPermissions.roles.Viewer"
     },
-    "resetPasswordTooltip": "settingsTeamPermissions.resetPasswordTooltip",
-    "removeMemberTooltip": "settingsTeamPermissions.removeMemberTooltip"
+    "resetPasswordTooltip": "Einstellungen",
+    "removeMemberTooltip": "SettingSteamPermissions.RemovememberToolTip"
   },
   "activeClientToggle": {
-    "confirmSave": "activeClientToggle.confirmSave",
+    "confirmSave": "activeClientToggle.Confirmsave",
     "saveSuccess": {
-      "title": "activeClientToggle.saveSuccess.title",
-      "message": "activeClientToggle.saveSuccess.message"
+      "title": "activeClientToggle.Savesuccess.title",
+      "message": "activeClientToggle.Savesuccess.Message"
     },
     "label": "activeClientToggle.label",
-    "reasonLabel": "activeClientToggle.reasonLabel",
-    "noteLabel": "activeClientToggle.noteLabel",
-    "notePlaceholder": "activeClientToggle.notePlaceholder",
-    "subtext": "activeClientToggle.subtext"
+    "reasonLabel": "activeClientToggle.reasonlabel",
+    "noteLabel": "activeClientToggle.notelabel",
+    "notePlaceholder": "activeClientToggle.noteplaceholder",
+    "subtext": "activeClientToggle.subText"
   },
   "featureLock": {
-    "upgradeButton": "featureLock.upgradeButton"
+    "upgradeButton": "featurelelock.upgradeButton"
   },
   "fileUploadModal": {
-    "title": "fileUploadModal.title",
-    "uploadFile": "fileUploadModal.uploadFile",
-    "dragAndDrop": "fileUploadModal.dragAndDrop",
-    "fileTypes": "fileUploadModal.fileTypes",
-    "filesToUpload": "fileUploadModal.filesToUpload"
+    "title": "FileUploadModal.title",
+    "uploadFile": "FileUploadModal.UploadFile",
+    "dragAndDrop": "FileUploadModal.draganddrop",
+    "fileTypes": "FileUploadModal.filetypen",
+    "filesToUpload": "FileUploadModal.filestoUPload"
   },
   "orderRequestDetailModal": {
-    "title": "orderRequestDetailModal.title",
-    "orderId": "orderRequestDetailModal.orderId",
-    "date": "orderRequestDetailModal.date",
+    "title": "orderRequestDetailModal.titel",
+    "orderId": "orderRequestDetailModal.OrderId",
+    "date": "orderRequestDetailmodal.date",
     "status": "orderRequestDetailModal.status",
-    "total": "orderRequestDetailModal.total",
+    "total": "orderRequestDetailmodal.total",
     "viewDaycareProfile": "orderRequestDetailModal.viewDaycareProfile",
     "lineItems": "orderRequestDetailModal.lineItems",
-    "product": "orderRequestDetailModal.product",
-    "quantity": "orderRequestDetailModal.quantity",
+    "product": "orderRequestDetailModal.Product",
+    "quantity": "orderRequestDetailmodal.quantity",
     "price": "orderRequestDetailModal.price",
     "notes": "orderRequestDetailModal.notes"
   },
-  "-": "-",
-  "[data-debug-component]": "[data-debug-component]",
+  "-": "- -",
+  "[data-debug-component]": "[DATEN-Debug-Komponente]",
   " ": " ",
   "marketplacePage": {
     "serviceCard": {
-      "categoryLabel": "marketplacePage.serviceCard.categoryLabel",
-      "bookAppointment": "marketplacePage.serviceCard.bookAppointment",
-      "viewProvider": "marketplacePage.serviceCard.viewProvider"
+      "categoryLabel": "MarketPlacePage.Servicecard.CategoryLabel",
+      "bookAppointment": "MarketPlacePage.Servicecard.BookAppointment",
+      "viewProvider": "MarketPlacePage.ServiceCard.ViewProvider"
     }
   },
   "notificationsPage": {
-    "title": "notificationsPage.title"
+    "title": "Benachrichtigungspage.title"
   },
   "parentEnquiriesPage": {
-    "title": "parentEnquiriesPage.title"
+    "title": "SalenquirieSpage.title"
   },
   "parentLeadFormPage": {
-    "title": "parentLeadFormPage.title"
+    "title": "Parentleadforpage.title"
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
-      "emptyLogMessage": "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage",
+      "emptyLogMessage": "adminsystemmonitoringPage.rawlogconsole.EmptylogMessage",
       "tabs": {
-        "all": "adminSystemMonitoringPage.rawLogConsole.tabs.all",
-        "errors": "adminSystemMonitoringPage.rawLogConsole.tabs.errors",
-        "warnings": "adminSystemMonitoringPage.rawLogConsole.tabs.warnings",
-        "info": "adminSystemMonitoringPage.rawLogConsole.tabs.info"
+        "all": "adminsystemmonitoringPage.rawgogConsole.tabs.All",
+        "errors": "adminsystemmonitoringPage.rawlogconsole.tabs.Errors",
+        "warnings": "adminsystemmonitoringPage.rawlogconsole.tabs.warnings",
+        "info": "adminsystemmonitoringPage.rawlogconsole.tabs.info"
       }
     },
-    "title": "adminSystemMonitoringPage.title"
+    "title": "adminsystemmonitoringPage.title"
   },
   "educatorApplicationsPage": {
-    "title": "educatorApplicationsPage.title"
+    "title": "EducatorApplicationsPage.title"
   },
   "foundationAnalyticsPage": {
-    "title": "foundationAnalyticsPage.title"
+    "title": "FoundationAnalyticsPage.title"
   },
   "foundationOrganisationProfilePage": {
-    "title": "foundationOrganisationProfilePage.title"
+    "title": "FoundationorganisationProfilePage.titel"
   },
   "parentDashboard": {
     "enquiry": {
-      "title": "parentDashboard.enquiry.title"
+      "title": "parentdashboard.enquiry.title"
     },
     "quickActions": {
-      "title": "parentDashboard.quickActions.title"
+      "title": "parentDashboard.quickactions.titel"
     },
     "childProfile": {
-      "title": "parentDashboard.childProfile.title"
+      "title": "parentdashboard.childprofile.title"
     },
     "favorites": {
-      "title": "parentDashboard.favorites.title"
+      "title": "parentdashboard.favorites.title"
     }
   },
-  "View Favorites TBD": "View Favorites TBD",
+  "View Favorites TBD": "Favoriten tbd Anzegen",
   "Could not find a user associated with this organization to message": {
-    "": "Could not find a user associated with this organization to message."
+    "": "Es Konten Keinen Benzutzer Findden, Der Dieder -Organisation Zuur Nachricht Zugeordnet Ist."
   },
   "serviceProviderAnalyticsPage": {
-    "title": "serviceProviderAnalyticsPage.title"
+    "title": "ServiceProvideranalyticsPage.title"
   },
   "serviceProviderDashboard": {
-    "title": "serviceProviderDashboard.title"
+    "title": "ServiceProviderDashboard.title"
   },
   "User organization details are missing": {
-    "": "User organization details are missing."
+    "": "Die Details der Benzutzerorganisation FEHLEN."
   },
   "serviceProviderListingsPage": {
-    "title": "serviceProviderListingsPage.title"
+    "title": "serviceProviderlistingSpage.title"
   },
   "serviceProviderRequestsPage": {
-    "title": "serviceProviderRequestsPage.title"
+    "title": "ServiceProviderRequestSpage.title"
   },
   "supplierOrdersPage": {
-    "title": "supplierOrdersPage.title"
+    "title": "LEIEFERERERSPAGE.TITLE"
   },
   "supplierProductListingsPage": {
-    "title": "supplierProductListingsPage.title"
+    "title": "LEEFERERERERPRODUCTLISTINGINGSPAGE.TITLE"
   },
-  "tailwindcss": "tailwindcss",
-  "requests carry authorization header": "requests carry authorization header",
-  "login page renders correctly": "login page renders correctly",
-  "parent lead form validates and submits to backend": "parent lead form validates and submits to backend",
-  "signup form validates required fields": "signup form validates required fields",
-  "contact/settings forms handle input correctly": "contact/settings forms handle input correctly",
-  "form validation messages work correctly": "form validation messages work correctly",
-  "login shows link to plans and no demo login": "login shows link to plans and no demo login",
-  "body": "body",
-  "login form elements are present": "login form elements are present",
-  "login page has proper branding and messaging": "login page has proper branding and messaging",
-  "signup link redirects to signup page": "signup link redirects to signup page",
-  "forgot password link exists if applicable": "forgot password link exists if applicable",
-  "non-super-admin cannot access super-admin routes": "non-super-admin cannot access super-admin routes",
-  "protected routes require authentication": "protected routes require authentication",
-  "role-based navigation shows correct sidebar items": "role-based navigation shows correct sidebar items",
-  "file upload zone accepts files and shows preview": "file upload zone accepts files and shows preview",
-  "service upload modal works correctly": "service upload modal works correctly",
-  "content upload validates file types": "content upload validates file types",
-  "upload API endpoints are intercepted correctly": "upload API endpoints are intercepted correctly",
-  "product transformation maps API data to UI model": "product transformation maps API data to UI model",
-  "service transformation maps API data to UI model": "service transformation maps API data to UI model",
-  "handles missing optional fields gracefully": "handles missing optional fields gracefully",
-  "job listing transformation correct maps API data to UI model": "job listing transformation correct maps API data to UI model",
-  "application transformation maps application data correctly": "application transformation maps application data correctly"
+  "tailwindcss": "Rückenwindcss",
+  "requests carry authorization header": "Anfragen Tragen AutorisierungSheader",
+  "login page renders correctly": "Die AnmeldeseTeTeT -Ordnungsgemäß",
+  "parent lead form validates and submits to backend": "Das übergeordnete Leitformular validier und reicht dem Backend ein",
+  "signup form validates required fields": "Das Anmeldeformular bestätigt die erforderlichen Felder",
+  "contact/settings forms handle input correctly": "Kontakt-/Einstellungsformulare verarbeiten Eingaben korrekt",
+  "form validation messages work correctly": "FormularValidierungsmeldungen Funktionieren Korrekt",
+  "login shows link to plans and no demo login": "Die Anmeldung zeigt einen Link zu Plänen und kein Demo-Login",
+  "body": "Körper",
+  "login form elements are present": "Anmeldeformularelemente Sind Vorhanden",
+  "login page has proper branding and messaging": "Die AnmeldeseTeTe verfüllten Ordnungsgemäßs Branding und nachrünchen",
+  "signup link redirects to signup page": "Anmeldungslink Leitet Sich zum AnmeldeseTeTesiiter",
+  "forgot password link exists if applicable": "Passwortvergessen, GiBt es GegeblenenFalls Vorhanden",
+  "non-super-admin cannot access super-admin routes": "Nick-super-admin Köns",
+  "protected routes require authentication": "Schutzrouten Erfordern Authentifizierung",
+  "role-based navigation shows correct sidebar items": "Die Rollenbasierte Navigation Zeige Die Richtens SeitenleistenElemente A.",
+  "file upload zone accepts files and shows preview": "Datei -Upload -zone Akzeptier DateInen und Zeige Vorschau A.",
+  "service upload modal works correctly": "Service -Upload -Modal funktioniert korrekt",
+  "content upload validates file types": "Inhalations -UPAD VALIDERIERTE DATUMITYPEN",
+  "upload API endpoints are intercepted correctly": "Die upload -api -endpunkte Werden Korrekt Abgeangen",
+  "product transformation maps API data to UI model": "Produkttransformation ist api -daten zum ui -modell zugeordnet",
+  "service transformation maps API data to UI model": "Service -Transformation ist api -daten Zum ui -modell Zugeordnet",
+  "handles missing optional fields gracefully": "Behandeln Sie Fehlende optionale Felder Anmutig",
+  "job listing transformation correct maps API data to UI model": "AuflistungStransformation Korreke",
+  "application transformation maps application data correctly": "AnwendungStransformation Kartiert anwendungsdaten Korrekt"
 }
