@@ -102,17 +102,17 @@
   "benefits": "Benefits",
   "requirements": "Requirements",
   "settingsPage": {
-    "unsavedChangesPrompt": "settingsPage.unsavedChangesPrompt",
-    "loading": "settingsPage.loading",
-    "noSectionsAvailable": "settingsPage.noSectionsAvailable",
-    "analyticsPreferences": "settingsPage.analyticsPreferences",
-    "companyProfile": "settingsPage.companyProfile",
-    "contactBooking": "settingsPage.contactBooking",
-    "defaults": "settingsPage.defaults",
-    "notificationPreferences": "settingsPage.notificationPreferences",
-    "privacyData": "settingsPage.privacyData",
-    "promoCodeManager": "settingsPage.promoCodeManager",
-    "teamPermissions": "settingsPage.teamPermissions"
+    "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
+    "loading": "Loading settings...",
+    "noSectionsAvailable": "No settings sections available for your role",
+    "analyticsPreferences": "Analytics Preferences",
+    "companyProfile": "Company Profile",
+    "contactBooking": "Contact & Booking",
+    "defaults": "Defaults",
+    "notificationPreferences": "Notification Preferences",
+    "privacyData": "Privacy & Data",
+    "promoCodeManager": "Promo Code Manager",
+    "teamPermissions": "Team Permissions"
   },
   "contentUploadModal": {
     "title": {
@@ -208,14 +208,32 @@
   },
   "settingsAccountSecurity": {
     "notifications": {
-      "infoUpdated": "settingsAccountSecurity.notifications.infoUpdated",
-      "passwordChanged": "settingsAccountSecurity.notifications.passwordChanged"
+      "infoUpdated": "Information updated successfully",
+      "passwordChanged": "Password changed successfully"
     },
     "dangerZone": {
-      "finalConfirmation": "settingsAccountSecurity.dangerZone.finalConfirmation"
+      "title": "Danger Zone",
+      "finalConfirmation": "Are you sure you want to permanently delete your account? This action cannot be undone.",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountSubtitle": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteAccountButton": "Delete Account"
     },
     "personalInfo": {
-      "nameLabel": "settingsAccountSecurity.personalInfo.nameLabel"
+      "title": "Personal Information",
+      "nameLabel": "Full Name",
+      "contactNameLabel": "Contact Name",
+      "orgNameLabel": "Organization Name",
+      "emailLabel": "Email Address",
+      "accountTypeLabel": "Account Type",
+      "memberSinceLabel": "Member Since",
+      "updateInfoButton": "Update Information"
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "currentPasswordLabel": "Current Password",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "updatePasswordButton": "Update Password"
     }
   },
   "settingsAnalyticsPreferences": {
@@ -241,18 +259,18 @@
     "yesCancel": "settingsBillingSubscription.yesCancel"
   },
   "settingsCompanyProfile": {
-    "companyName": "settingsCompanyProfile.companyName",
-    "logo": "settingsCompanyProfile.logo",
-    "coverImage": "settingsCompanyProfile.coverImage",
-    "aboutText": "settingsCompanyProfile.aboutText",
-    "aboutTextLength": "settingsCompanyProfile.aboutTextLength",
-    "vatNumber": "settingsCompanyProfile.vatNumber",
-    "regionsServed": "settingsCompanyProfile.regionsServed",
-    "selectCanton": "settingsCompanyProfile.selectCanton",
-    "cantonsHelpText": "settingsCompanyProfile.cantonsHelpText",
-    "languagesSpoken": "settingsCompanyProfile.languagesSpoken",
-    "selectLanguage": "settingsCompanyProfile.selectLanguage",
-    "languagesHelpText": "settingsCompanyProfile.languagesHelpText"
+    "companyName": "Company Name",
+    "logo": "Company Logo",
+    "coverImage": "Cover Image",
+    "aboutText": "About Us",
+    "aboutTextLength": "{{length}}/500 characters",
+    "vatNumber": "VAT Number",
+    "regionsServed": "Regions Served",
+    "selectCanton": "Select Canton",
+    "cantonsHelpText": "Select all cantons where you provide services",
+    "languagesSpoken": "Languages Spoken",
+    "selectLanguage": "Select Language",
+    "languagesHelpText": "Select all languages spoken by your team"
   },
   "settingsContactBooking": {
     "preferredContactMethod": "settingsContactBooking.preferredContactMethod",
@@ -280,10 +298,12 @@
     "promoRedemptionAlertsToggle": "settingsNotificationPreferences.promoRedemptionAlertsToggle"
   },
   "settingsPrivacyData": {
-    "dataDeletion": "settingsPrivacyData.dataDeletion",
-    "deletionRequestSubmitted": "settingsPrivacyData.deletionRequestSubmitted",
-    "requestGDPRDeletion": "settingsPrivacyData.requestGDPRDeletion",
-    "requestDeletionHelpText": "settingsPrivacyData.requestDeletionHelpText"
+    "dataDeletion": "Data Deletion",
+    "deletionRequestSubmitted": "Data deletion request submitted successfully",
+    "requestGDPRDeletion": "Request GDPR Data Deletion",
+    "requestDeletionHelpText": "This will permanently delete all your personal data from our systems. This action cannot be undone.",
+    "confirmGDPRDelete": "Are you sure you want to request data deletion? This action cannot be undone.",
+    "deletionRequestSubmittedHelpText": "Your data deletion request has been submitted. You will receive a confirmation email shortly."
   },
   "settingsPromoCodeManager": {
     "confirmDelete": "settingsPromoCodeManager.confirmDelete",
@@ -535,5 +555,14 @@
     "frLong": "Français",
     "deShort": "DE",
     "deLong": "Deutsch"
+  },
+  "userRoles": {
+    "FOUNDATION": "Foundation",
+    "PRODUCT_SUPPLIER": "Product Supplier",
+    "SERVICE_PROVIDER": "Service Provider",
+    "EDUCATOR": "Educator",
+    "PARENT": "Parent",
+    "ADMIN": "Admin",
+    "SUPER_ADMIN": "Super Admin"
   }
 }
