@@ -5,7 +5,7 @@ import { STANDARD_INPUT_FIELD } from '../../constants';
 import { User } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface CreateGroupChatModalProps {
   isOpen: boolean;

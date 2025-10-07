@@ -4,7 +4,7 @@ import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../.
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { BuildingOfficeIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // Import new UI components when ready
 // import ChipInput from '../../ui/ChipInput';
 // import FileUploadZone from '../../ui/FileUploadZone';

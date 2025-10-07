@@ -19,8 +19,8 @@
     "activityParent": "A parent submitted a new enquiry",
     "viewDetailsFor": "View details for",
     "timeAgo": {
-      "minutes": "{{count}} minutes ago",
-      "hours": "{{count}} hours ago",
+      "minutes": "[TRANSLATION_NEEDED: minutes]",
+      "hours": "[TRANSLATION_NEEDED: hours]",
       "yesterday": "Yesterday"
     },
     "upcomingMeetings": "Upcoming Meetings",
@@ -56,30 +56,30 @@
     "platformSettings": "Platform Settings",
     "designSystem": "Design System",
     "settings": "Settings",
-    "currentPlan": "sidebar.currentPlan",
-    "manageSubscriptionDesc": "sidebar.manageSubscriptionDesc",
-    "fileGallery": "sidebar.fileGallery",
-    "jobBoard": "sidebar.jobBoard",
-    "myProfile": "sidebar.myProfile",
-    "support": "sidebar.support",
-    "parentLeads": "sidebar.parentLeads",
-    "ordersAppointments": "sidebar.ordersAppointments",
-    "supportFAQ": "sidebar.supportFAQ",
-    "analytics": "sidebar.analytics"
+    "currentPlan": "[TRANSLATION_NEEDED: currentPlan]",
+    "manageSubscriptionDesc": "[TRANSLATION_NEEDED: manageSubscriptionDesc]",
+    "fileGallery": "[TRANSLATION_NEEDED: fileGallery]",
+    "jobBoard": "[TRANSLATION_NEEDED: jobBoard]",
+    "myProfile": "[TRANSLATION_NEEDED: myProfile]",
+    "support": "[TRANSLATION_NEEDED: support]",
+    "parentLeads": "[TRANSLATION_NEEDED: parentLeads]",
+    "ordersAppointments": "[TRANSLATION_NEEDED: ordersAppointments]",
+    "supportFAQ": "[TRANSLATION_NEEDED: supportFAQ]",
+    "analytics": "[TRANSLATION_NEEDED: analytics]"
   },
   "navbar": {
     "notificationsCount": "{{count}} notifications",
     "unreadMessages": "{{count}} unread messages",
     "searchPlaceholder": "Search...",
-    "toggleNavigation": "navbar.toggleNavigation",
-    "goBackPreviousPage": "navbar.goBackPreviousPage",
-    "viewShoppingCart": "navbar.viewShoppingCart",
-    "notifications": "navbar.notifications",
-    "newMessages": "navbar.newMessages",
-    "noNewNotifications": "navbar.noNewNotifications",
-    "viewAll": "navbar.viewAll",
-    "userMenu": "navbar.userMenu",
-    "signOut": "navbar.signOut"
+    "toggleNavigation": "[TRANSLATION_NEEDED: toggleNavigation]",
+    "goBackPreviousPage": "[TRANSLATION_NEEDED: goBackPreviousPage]",
+    "viewShoppingCart": "[TRANSLATION_NEEDED: viewShoppingCart]",
+    "notifications": "[TRANSLATION_NEEDED: notifications]",
+    "newMessages": "[TRANSLATION_NEEDED: newMessages]",
+    "noNewNotifications": "[TRANSLATION_NEEDED: noNewNotifications]",
+    "viewAll": "[TRANSLATION_NEEDED: viewAll]",
+    "userMenu": "[TRANSLATION_NEEDED: userMenu]",
+    "signOut": "[TRANSLATION_NEEDED: signOut]"
   },
   "stockStatus": {
     "instock": "In Stock",
@@ -289,15 +289,15 @@
     "faq": {
       "matchingProcess": {
         "q": "How does the matching process work?",
-        "a": "Our algorithm matches your child's needs with available crèches based on location, age, special requirements, and availability."
+        "a": "[TRANSLATION_NEEDED: a]"
       },
       "responseTime": {
-        "q": "How quickly will I receive responses?",
-        "a": "Most crèches respond within 24-48 hours. You'll be notified immediately when responses arrive."
+        "q": "[TRANSLATION_NEEDED: q]",
+        "a": "[TRANSLATION_NEEDED: a]"
       },
       "dataSecurity": {
         "q": "Is my personal information secure?",
-        "a": "Yes, we use enterprise-grade encryption and comply with Swiss data protection laws. Your information is never shared without consent."
+        "a": "[TRANSLATION_NEEDED: a]"
       }
     }
   },
@@ -763,7 +763,7 @@
       "heading4": "Heading 4: The quick brown fox",
       "bodyBase": "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
       "bodySmall": "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
-      "link": "This is a link"
+      "link": "[TRANSLATION_NEEDED: link]"
     },
     "buttons": {
       "extraSmall": "Extra Small",
@@ -795,29 +795,8 @@
       "quantityInput": "Quantity Input",
       "disabledInput": "Disabled Input"
     },
-    "View Favorites TBD": "View Favorites TBD",
-    "Could not find a user associated with this organization to message.": "Could not find a user associated with this organization to message.",
-    "User organization details are missing.": "User organization details are missing.",
-    "tailwindcss": "tailwindcss",
     "sidebar.parentLeads": "Parent Leads",
     "sidebar.products": "Products",
-    "sidebar.services": "Services",
-    "No recent activity.": "No recent activity.",
-    "loaded": "loaded",
-    "SUPER_ADMIN": "SUPER_ADMIN",
-    "Show": "Show",
-    "Refresh": "Refresh",
-    "keys)": "keys)",
-    "(240)": "(240)",
-    "Branding": "Branding",
-    "Favicon": "Favicon",
-    "Search job offers...": "Search job offers...",
-    "Search partners...": "Search partners...",
-    "Search candidates...": "Search candidates...",
-    "Search content...": "Search content...",
-    "admin@procrechesolutions.com": "admin@procrechesolutions.com",
-    "No documents found in this category for current filters.": "No documents found in this category for current filters.",
-    "No custom alerts created yet.": "No custom alerts created yet."
-  },
-  "dashboard redirects based on user role": "dashboard redirects based on user role"
+    "sidebar.services": "Services"
+  }
 }

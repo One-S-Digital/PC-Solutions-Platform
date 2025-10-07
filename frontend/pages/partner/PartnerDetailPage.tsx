@@ -12,7 +12,7 @@ import Button from '../../components/ui/Button';
 import ServiceRequestModal from '../../components/marketplace/ServiceRequestModal';
 import QuantityInput from '../../components/ui/QuantityInput'; // Import QuantityInput
 import { ArrowLeftIcon, BuildingStorefrontIcon, CogIcon, ShoppingCartIcon, TagIcon, StarIcon, CheckCircleIcon, PhoneIcon, EnvelopeIcon, GlobeAltIcon, MapPinIcon, PlusCircleIcon, BanknotesIcon, CubeIcon, ListBulletIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useMessaging } from '../../contexts/MessagingContext';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 

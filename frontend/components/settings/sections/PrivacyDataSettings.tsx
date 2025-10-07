@@ -7,7 +7,7 @@ import { SettingsFormData, UserRole } from '../../../types';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import Button from '../../ui/Button';
 import { LockClosedIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // import ToggleSwitch from '../../ui/ToggleSwitch';
 
 interface PrivacyDataSettingsProps {

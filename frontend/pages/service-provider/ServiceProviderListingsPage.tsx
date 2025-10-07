@@ -6,7 +6,7 @@ import { MOCK_SERVICES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../../con
 import { Service, ServiceCategory, SERVICE_CATEGORIES } from '../../types';
 import ServiceUploadModal from '../../components/service-provider/ServiceUploadModal';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface ServiceCardProps {
   service: Service;

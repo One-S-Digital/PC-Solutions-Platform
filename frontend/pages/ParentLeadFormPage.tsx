@@ -7,7 +7,7 @@ import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants';
 import { PuzzlePieceIcon } from '@heroicons/react/24/outline';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { UserRole } from '../types'; 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const ParentLeadFormPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

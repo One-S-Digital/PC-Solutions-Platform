@@ -2,7 +2,7 @@
 import React from 'react';
 import Card from '../../components/ui/Card';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const ParentSupportPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

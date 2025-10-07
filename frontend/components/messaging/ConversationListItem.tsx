@@ -3,7 +3,7 @@ import { Conversation, UserRole }
 from '../../types';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { UserGroupIcon } from '@heroicons/react/24/solid';
 
 interface ConversationListItemProps {

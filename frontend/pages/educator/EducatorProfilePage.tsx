@@ -7,7 +7,7 @@ import {
     UserCircleIcon, IdentificationIcon, ArrowUpTrayIcon, CalendarDaysIcon, 
     BriefcaseIcon, AcademicCapIcon, PaperClipIcon, StarIcon, PencilSquareIcon, XMarkIcon 
 } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { CandidateProfile, WorkExperienceItem, EducationItem, DocumentItem, CertificationItem } from '../../types';
 
 // Use the first mock candidate as the data for this page

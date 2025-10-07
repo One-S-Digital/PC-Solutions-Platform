@@ -8,8 +8,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import OrderSummaryDrawer from '../cart/OrderSummaryDrawer';
 import { UserRole, AppNotification } from '../../types';
 import { useNotifications } from '../../contexts/NotificationContext';
-import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { LanguageSwitcher } from '@repo/ui';
+import { useTranslation } from '@workspace/translations'; // Import useTranslation
 
 interface NavbarProps {
   onMobileMenuToggle: () => void;

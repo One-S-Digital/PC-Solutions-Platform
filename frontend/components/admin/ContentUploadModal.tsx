@@ -5,7 +5,7 @@ import { COUNTRIES_FOR_POLICIES, CountryForPolicies, REGIONS_BY_COUNTRY, STANDAR
 import Button from '../ui/Button';
 // import Card from '../ui/Card'; // Not used directly for modal
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from '@workspace/translations'; // Import useTranslation
 
 interface ContentUploadModalProps {
   isOpen: boolean;

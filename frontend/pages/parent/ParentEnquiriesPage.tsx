@@ -5,7 +5,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { ParentLead, LeadMainStatus, FoundationLeadResponseStatus } from '../../types';
 import Card from '../../components/ui/Card';
 import { ClipboardDocumentListIcon, ClockIcon, CheckCircleIcon, InformationCircleIcon, InboxIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const ParentEnquiriesPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

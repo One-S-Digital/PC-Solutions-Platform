@@ -4,7 +4,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { STANDARD_INPUT_FIELD } from '../../constants';
 import { AdjustmentsHorizontalIcon, GlobeAltIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const AdminPlatformSettingsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

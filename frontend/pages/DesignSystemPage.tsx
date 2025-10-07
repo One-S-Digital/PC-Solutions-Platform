@@ -5,7 +5,7 @@ import Tabs from '../components/ui/Tabs';
 import QuantityInput from '../components/ui/QuantityInput';
 import { STANDARD_INPUT_FIELD } from '../constants';
 import { ArrowRightIcon, CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const colorPalette = {
   'swiss-mint': '#48CFAE',

@@ -6,7 +6,7 @@ import { SettingsFormData, SupplierSettings, ProviderSettings, UserRole, Preferr
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { PhoneIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // import RadioPills from '../../ui/RadioPills';
 // import ToggleSwitch from '../../ui/ToggleSwitch';
 

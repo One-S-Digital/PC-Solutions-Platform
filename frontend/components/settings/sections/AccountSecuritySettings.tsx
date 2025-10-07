@@ -5,7 +5,7 @@ import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
 import Button from '../../ui/Button';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useNotifications } from '../../../contexts/NotificationContext';
 

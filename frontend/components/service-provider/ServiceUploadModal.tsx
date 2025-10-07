@@ -4,7 +4,7 @@ import { STANDARD_INPUT_FIELD } from '../../constants';
 import Button from '../ui/Button';
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface ServiceUploadModalProps {
   isOpen: boolean;

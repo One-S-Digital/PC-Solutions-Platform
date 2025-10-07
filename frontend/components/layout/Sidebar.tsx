@@ -5,7 +5,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, ServerStackIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { UserRole } from '../../types';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from '@workspace/translations'; // Import useTranslation
 import { TFunction } from 'i18next'; // Import TFunction for typing
 
 interface NavItem {

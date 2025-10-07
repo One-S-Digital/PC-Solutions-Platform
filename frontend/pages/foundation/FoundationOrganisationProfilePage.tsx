@@ -5,7 +5,7 @@ import OrganizationProfileForm from '../../components/settings/OrganizationProfi
 import Button from '../../components/ui/Button';
 import { STANDARD_INPUT_FIELD } from '../../constants';
 import { BuildingOfficeIcon, PhotoIcon, GlobeAltIcon, CalendarDaysIcon, UserPlusIcon, LinkIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 // This page can extend or wrap the OrganizationProfileForm from settings,
 // or be a more public-facing version. For now, let's assume it's an extended settings page.

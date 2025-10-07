@@ -11,7 +11,7 @@ import ServiceRequestModal from '../components/marketplace/ServiceRequestModal';
 import SupplierCard from '../components/marketplace/SupplierCard'; 
 import { useAppContext } from '../contexts/AppContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 // ServiceCard now includes a function to book an appointment
 const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: string) => void, onBookAppointment: (service: Service) => void }> = ({ service, onViewProvider, onBookAppointment }) => {

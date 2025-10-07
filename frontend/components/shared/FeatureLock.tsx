@@ -4,7 +4,7 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface FeatureLockProps {
   featureName: string;

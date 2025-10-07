@@ -5,7 +5,7 @@ import { useMessaging } from '../../contexts/MessagingContext';
 import ConversationListItem from './ConversationListItem';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { ICON_INPUT_FIELD } from '../../constants';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const ConversationList: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

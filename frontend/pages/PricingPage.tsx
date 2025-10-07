@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { PricingPlan, UserRole } from '../types';
 import Card from '../components/ui/Card';

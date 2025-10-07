@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { PlusCircleIcon, PencilSquareIcon, TrashIcon, EyeIcon, EyeSlashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../contexts/AppContext';
 import { Product, StockStatus } from '../../types';
 import { MOCK_PRODUCTS, ICON_INPUT_FIELD } from '../../constants';

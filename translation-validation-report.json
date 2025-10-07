@@ -1,0 +1,821 @@
+[
+  {
+    "file": "en/common.json",
+    "path": ",",
+    "key": ",",
+    "value": "[TRANSLATION_NEEDED: ,]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "-",
+    "key": "-",
+    "value": "[TRANSLATION_NEEDED: -]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "[data-debug-component]",
+    "key": "[data-debug-component]",
+    "value": "[TRANSLATION_NEEDED: [data-debug-component]]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": " ",
+    "key": " ",
+    "value": "[TRANSLATION_NEEDED:  ]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "View Favorites TBD",
+    "key": "View Favorites TBD",
+    "value": "[TRANSLATION_NEEDED: View Favorites TBD]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "tailwindcss",
+    "key": "tailwindcss",
+    "value": "[TRANSLATION_NEEDED: tailwindcss]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "requests carry authorization header",
+    "key": "requests carry authorization header",
+    "value": "[TRANSLATION_NEEDED: requests carry authorization header]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "login page renders correctly",
+    "key": "login page renders correctly",
+    "value": "[TRANSLATION_NEEDED: login page renders correctly]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "parent lead form validates and submits to backend",
+    "key": "parent lead form validates and submits to backend",
+    "value": "[TRANSLATION_NEEDED: parent lead form validates and submits to backend]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "signup form validates required fields",
+    "key": "signup form validates required fields",
+    "value": "[TRANSLATION_NEEDED: signup form validates required fields]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "contact/settings forms handle input correctly",
+    "key": "contact/settings forms handle input correctly",
+    "value": "[TRANSLATION_NEEDED: contact/settings forms handle input correctly]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "form validation messages work correctly",
+    "key": "form validation messages work correctly",
+    "value": "[TRANSLATION_NEEDED: form validation messages work correctly]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "login shows link to plans and no demo login",
+    "key": "login shows link to plans and no demo login",
+    "value": "[TRANSLATION_NEEDED: login shows link to plans and no demo login]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "body",
+    "key": "body",
+    "value": "[TRANSLATION_NEEDED: body]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "login form elements are present",
+    "key": "login form elements are present",
+    "value": "[TRANSLATION_NEEDED: login form elements are present]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "login page has proper branding and messaging",
+    "key": "login page has proper branding and messaging",
+    "value": "[TRANSLATION_NEEDED: login page has proper branding and messaging]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "signup link redirects to signup page",
+    "key": "signup link redirects to signup page",
+    "value": "[TRANSLATION_NEEDED: signup link redirects to signup page]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "forgot password link exists if applicable",
+    "key": "forgot password link exists if applicable",
+    "value": "[TRANSLATION_NEEDED: forgot password link exists if applicable]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "non-super-admin cannot access super-admin routes",
+    "key": "non-super-admin cannot access super-admin routes",
+    "value": "[TRANSLATION_NEEDED: non-super-admin cannot access super-admin routes]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "protected routes require authentication",
+    "key": "protected routes require authentication",
+    "value": "[TRANSLATION_NEEDED: protected routes require authentication]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "role-based navigation shows correct sidebar items",
+    "key": "role-based navigation shows correct sidebar items",
+    "value": "[TRANSLATION_NEEDED: role-based navigation shows correct sidebar items]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "file upload zone accepts files and shows preview",
+    "key": "file upload zone accepts files and shows preview",
+    "value": "[TRANSLATION_NEEDED: file upload zone accepts files and shows preview]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "service upload modal works correctly",
+    "key": "service upload modal works correctly",
+    "value": "[TRANSLATION_NEEDED: service upload modal works correctly]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "content upload validates file types",
+    "key": "content upload validates file types",
+    "value": "[TRANSLATION_NEEDED: content upload validates file types]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "upload API endpoints are intercepted correctly",
+    "key": "upload API endpoints are intercepted correctly",
+    "value": "[TRANSLATION_NEEDED: upload API endpoints are intercepted correctly]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "product transformation maps API data to UI model",
+    "key": "product transformation maps API data to UI model",
+    "value": "[TRANSLATION_NEEDED: product transformation maps API data to UI model]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "service transformation maps API data to UI model",
+    "key": "service transformation maps API data to UI model",
+    "value": "[TRANSLATION_NEEDED: service transformation maps API data to UI model]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "handles missing optional fields gracefully",
+    "key": "handles missing optional fields gracefully",
+    "value": "[TRANSLATION_NEEDED: handles missing optional fields gracefully]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "job listing transformation correct maps API data to UI model",
+    "key": "job listing transformation correct maps API data to UI model",
+    "value": "[TRANSLATION_NEEDED: job listing transformation correct maps API data to UI model]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/common.json",
+    "path": "application transformation maps application data correctly",
+    "key": "application transformation maps application data correctly",
+    "value": "[TRANSLATION_NEEDED: application transformation maps application data correctly]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "en/dashboard.json",
+    "path": "dashboard redirects based on user role",
+    "key": "dashboard redirects based on user role",
+    "value": "[TRANSLATION_NEEDED: dashboard redirects based on user role]",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.unsavedChangesPrompt",
+    "key": "unsavedChangesPrompt",
+    "value": "settingsPage.unsavedChangesPrompt",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.loading",
+    "key": "loading",
+    "value": "settingsPage.loading",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.noSectionsAvailable",
+    "key": "noSectionsAvailable",
+    "value": "settingsPage.noSectionsAvailable",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.analyticsPreferences",
+    "key": "analyticsPreferences",
+    "value": "settingsPage.analyticsPreferences",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.companyProfile",
+    "key": "companyProfile",
+    "value": "settingsPage.companyProfile",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.contactBooking",
+    "key": "contactBooking",
+    "value": "settingsPage.contactBooking",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.defaults",
+    "key": "defaults",
+    "value": "settingsPage.defaults",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.notificationPreferences",
+    "key": "notificationPreferences",
+    "value": "settingsPage.notificationPreferences",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.privacyData",
+    "key": "privacyData",
+    "value": "settingsPage.privacyData",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.promoCodeManager",
+    "key": "promoCodeManager",
+    "value": "settingsPage.promoCodeManager",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPage.teamPermissions",
+    "key": "teamPermissions",
+    "value": "settingsPage.teamPermissions",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": ",",
+    "key": ",",
+    "value": ",",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsAccountSecurity.notifications.infoUpdated",
+    "key": "infoUpdated",
+    "value": "settingsAccountSecurity.notifications.infoUpdated",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsAccountSecurity.notifications.passwordChanged",
+    "key": "passwordChanged",
+    "value": "settingsAccountSecurity.notifications.passwordChanged",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsAccountSecurity.dangerZone.finalConfirmation",
+    "key": "finalConfirmation",
+    "value": "settingsAccountSecurity.dangerZone.finalConfirmation",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsAccountSecurity.personalInfo.nameLabel",
+    "key": "nameLabel",
+    "value": "settingsAccountSecurity.personalInfo.nameLabel",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.companyName",
+    "key": "companyName",
+    "value": "settingsCompanyProfile.companyName",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.logo",
+    "key": "logo",
+    "value": "settingsCompanyProfile.logo",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.coverImage",
+    "key": "coverImage",
+    "value": "settingsCompanyProfile.coverImage",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.aboutText",
+    "key": "aboutText",
+    "value": "settingsCompanyProfile.aboutText",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.aboutTextLength",
+    "key": "aboutTextLength",
+    "value": "settingsCompanyProfile.aboutTextLength",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.vatNumber",
+    "key": "vatNumber",
+    "value": "settingsCompanyProfile.vatNumber",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.regionsServed",
+    "key": "regionsServed",
+    "value": "settingsCompanyProfile.regionsServed",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.selectCanton",
+    "key": "selectCanton",
+    "value": "settingsCompanyProfile.selectCanton",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.cantonsHelpText",
+    "key": "cantonsHelpText",
+    "value": "settingsCompanyProfile.cantonsHelpText",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.languagesSpoken",
+    "key": "languagesSpoken",
+    "value": "settingsCompanyProfile.languagesSpoken",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.selectLanguage",
+    "key": "selectLanguage",
+    "value": "settingsCompanyProfile.selectLanguage",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsCompanyProfile.languagesHelpText",
+    "key": "languagesHelpText",
+    "value": "settingsCompanyProfile.languagesHelpText",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPrivacyData.dataDeletion",
+    "key": "dataDeletion",
+    "value": "settingsPrivacyData.dataDeletion",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPrivacyData.deletionRequestSubmitted",
+    "key": "deletionRequestSubmitted",
+    "value": "settingsPrivacyData.deletionRequestSubmitted",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPrivacyData.requestGDPRDeletion",
+    "key": "requestGDPRDeletion",
+    "value": "settingsPrivacyData.requestGDPRDeletion",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "settingsPrivacyData.requestDeletionHelpText",
+    "key": "requestDeletionHelpText",
+    "value": "settingsPrivacyData.requestDeletionHelpText",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "-",
+    "key": "-",
+    "value": "-",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "[data-debug-component]",
+    "key": "[data-debug-component]",
+    "value": "[data-debug-component]",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": " ",
+    "key": " ",
+    "value": " ",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "Could not find a user associated with this organization to message.",
+    "key": "",
+    "value": "Could not find a user associated with this organization to message.",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/common.json",
+    "path": "User organization details are missing.",
+    "key": "",
+    "value": "User organization details are missing.",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.currentPlan",
+    "key": "currentPlan",
+    "value": "[FR] sidebar.currentPlan",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.manageSubscriptionDesc",
+    "key": "manageSubscriptionDesc",
+    "value": "[FR] sidebar.manageSubscriptionDesc",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.fileGallery",
+    "key": "fileGallery",
+    "value": "[FR] sidebar.fileGallery",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.jobBoard",
+    "key": "jobBoard",
+    "value": "[FR] sidebar.jobBoard",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.myProfile",
+    "key": "myProfile",
+    "value": "[FR] sidebar.myProfile",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.support",
+    "key": "support",
+    "value": "[FR] sidebar.support",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.parentLeads",
+    "key": "parentLeads",
+    "value": "[FR] sidebar.parentLeads",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.ordersAppointments",
+    "key": "ordersAppointments",
+    "value": "[FR] sidebar.ordersAppointments",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.supportFAQ",
+    "key": "supportFAQ",
+    "value": "[FR] sidebar.supportFAQ",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "sidebar.analytics",
+    "key": "analytics",
+    "value": "[FR] sidebar.analytics",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.toggleNavigation",
+    "key": "toggleNavigation",
+    "value": "[FR] navbar.toggleNavigation",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.goBackPreviousPage",
+    "key": "goBackPreviousPage",
+    "value": "[FR] navbar.goBackPreviousPage",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.viewShoppingCart",
+    "key": "viewShoppingCart",
+    "value": "[FR] navbar.viewShoppingCart",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.notifications",
+    "key": "notifications",
+    "value": "[FR] navbar.notifications",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.newMessages",
+    "key": "newMessages",
+    "value": "[FR] navbar.newMessages",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.noNewNotifications",
+    "key": "noNewNotifications",
+    "value": "[FR] navbar.noNewNotifications",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.viewAll",
+    "key": "viewAll",
+    "value": "[FR] navbar.viewAll",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.userMenu",
+    "key": "userMenu",
+    "value": "[FR] navbar.userMenu",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "navbar.signOut",
+    "key": "signOut",
+    "value": "[FR] navbar.signOut",
+    "type": "circular_reference"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "educatorApplicationsPage.status.viewed",
+    "key": "viewed",
+    "value": "viewed",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "designSystemPage.(240)",
+    "key": "(240)",
+    "value": "(240)",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "designSystemPage.Favicon",
+    "key": "Favicon",
+    "value": "Favicon",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "fr/dashboard.json",
+    "path": "dashboard redirects based on user role",
+    "key": "dashboard redirects based on user role",
+    "value": "[FR] dashboard redirects based on user role",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/common.json",
+    "path": "-",
+    "key": "-",
+    "value": "- -",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/common.json",
+    "path": " ",
+    "key": " ",
+    "value": " ",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.currentPlan",
+    "key": "currentPlan",
+    "value": "[DE] sidebar.currentPlan",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.manageSubscriptionDesc",
+    "key": "manageSubscriptionDesc",
+    "value": "[DE] sidebar.manageSubscriptionDesc",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.fileGallery",
+    "key": "fileGallery",
+    "value": "[DE] sidebar.fileGallery",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.jobBoard",
+    "key": "jobBoard",
+    "value": "[DE] sidebar.jobBoard",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.myProfile",
+    "key": "myProfile",
+    "value": "[DE] sidebar.myProfile",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.support",
+    "key": "support",
+    "value": "[DE] sidebar.support",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.parentLeads",
+    "key": "parentLeads",
+    "value": "[DE] sidebar.parentLeads",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.ordersAppointments",
+    "key": "ordersAppointments",
+    "value": "[DE] sidebar.ordersAppointments",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.supportFAQ",
+    "key": "supportFAQ",
+    "value": "[DE] sidebar.supportFAQ",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "sidebar.analytics",
+    "key": "analytics",
+    "value": "[DE] sidebar.analytics",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.toggleNavigation",
+    "key": "toggleNavigation",
+    "value": "[DE] navbar.toggleNavigation",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.goBackPreviousPage",
+    "key": "goBackPreviousPage",
+    "value": "[DE] navbar.goBackPreviousPage",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.viewShoppingCart",
+    "key": "viewShoppingCart",
+    "value": "[DE] navbar.viewShoppingCart",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.notifications",
+    "key": "notifications",
+    "value": "[DE] navbar.notifications",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.newMessages",
+    "key": "newMessages",
+    "value": "[DE] navbar.newMessages",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.noNewNotifications",
+    "key": "noNewNotifications",
+    "value": "[DE] navbar.noNewNotifications",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.viewAll",
+    "key": "viewAll",
+    "value": "[DE] navbar.viewAll",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.userMenu",
+    "key": "userMenu",
+    "value": "[DE] navbar.userMenu",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "navbar.signOut",
+    "key": "signOut",
+    "value": "[DE] navbar.signOut",
+    "type": "circular_reference"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "designSystemPage.(240)",
+    "key": "(240)",
+    "value": "(240)",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "designSystemPage.Branding",
+    "key": "Branding",
+    "value": "Branding",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "designSystemPage.Favicon",
+    "key": "Favicon",
+    "value": "Favicon",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "designSystemPage.admin@procrechesolutions.com",
+    "key": "admin@procrechesolutions.com",
+    "value": "admin@procrechesolutions.com",
+    "type": "placeholder_equals_key"
+  },
+  {
+    "file": "de/dashboard.json",
+    "path": "dashboard redirects based on user role",
+    "key": "dashboard redirects based on user role",
+    "value": "[DE] dashboard redirects based on user role",
+    "type": "circular_reference"
+  }
+]

@@ -5,7 +5,7 @@ import { ParentLead, UserRole, FoundationLeadResponseStatus, LeadMainStatus } fr
 import Card from '../../components/ui/Card';
 import LeadCard from '../../components/foundation/LeadCard'; // Correct relative path
 import { InboxArrowDownIcon, InboxIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import FeatureLock from '../../components/shared/FeatureLock';
 
 const FoundationLeadsPage: React.FC = () => {

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { VendorClient, VendorClientReason } from '../../types';

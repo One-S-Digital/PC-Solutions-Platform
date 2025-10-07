@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { ArrowLeftIcon, ChartBarIcon, UsersIcon, ShoppingCartIcon, BriefcaseIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface DetailContent {
   pageTitleKey: string; // Key for translation

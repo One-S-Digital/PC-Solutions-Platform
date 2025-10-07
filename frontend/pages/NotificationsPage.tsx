@@ -5,7 +5,7 @@ import { useNotifications } from '../contexts/NotificationContext';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { BellIcon, CheckCircleIcon, InformationCircleIcon, ExclamationTriangleIcon, XCircleIcon, TrashIcon, InboxIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { Link } from 'react-router-dom';
 
 const NotificationsPage: React.FC = () => {

@@ -94,95 +94,94 @@
   },
   "contentUploadModal": {
     "title": {
-      "edit": "contentUploadModal.title.edit"
+      "edit": "Edit Content"
     },
     "labels": {
-      "currentFile": "contentUploadModal.labels.currentFile",
-      "uploadFileType": "contentUploadModal.labels.uploadFileType"
+      "currentFile": "Current File",
+      "uploadFileType": "File Type"
     },
     "fileUpload": {
-      "browse": "contentUploadModal.fileUpload.browse",
-      "dragAndDrop": "contentUploadModal.fileUpload.dragAndDrop",
-      "selected": "contentUploadModal.fileUpload.selected"
+      "browse": "Browse Files",
+      "dragAndDrop": "Drag and drop files here",
+      "selected": "Selected Files"
     }
   },
   "leadCard": {
     "alert": {
-      "missingParentInfo": "leadCard.alert.missingParentInfo"
+      "missingParentInfo": "Missing parent information"
     },
     "status": {
-      "notResponded": "leadCard.status.notResponded",
-      "interested": "leadCard.status.interested",
-      "notInterested": "leadCard.status.notInterested",
-      "needsMoreInfo": "leadCard.status.needsMoreInfo",
-      "enrolled": "leadCard.status.enrolled"
+      "notResponded": "Not Responded",
+      "interested": "Interested",
+      "notInterested": "Not Interested",
+      "needsMoreInfo": "Needs More Info",
+      "enrolled": "Enrolled"
     },
-    "forLocation": "leadCard.forLocation",
-    "childAge": "leadCard.childAge",
-    "desiredStart": "leadCard.desiredStart",
-    "submittedOn": "leadCard.submittedOn",
-    "notes": "leadCard.notes",
+    "forLocation": "For Location",
+    "childAge": "Child Age",
+    "desiredStart": "Desired Start Date",
+    "submittedOn": "Submitted On",
+    "notes": "Notes",
     "defaultMessages": {
-      "interested": "leadCard.defaultMessages.interested",
-      "notInterested": "leadCard.defaultMessages.notInterested",
-      "enrolled": "leadCard.defaultMessages.enrolled"
+      "interested": "We are interested in your services",
+      "notInterested": "We are not interested at this time",
+      "enrolled": "Child has been enrolled"
     },
     "buttons": {
-      "interested": "leadCard.buttons.interested",
-      "notInterested": "leadCard.buttons.notInterested",
-      "needInfo": "leadCard.buttons.needInfo",
-      "sendQuestion": "leadCard.buttons.sendQuestion",
-      "messageParent": "leadCard.buttons.messageParent",
-      "markEnrolled": "leadCard.buttons.markEnrolled"
+      "interested": "Mark as Interested",
+      "notInterested": "Mark as Not Interested",
+      "needInfo": "Need More Info",
+      "sendQuestion": "Send Question",
+      "messageParent": "Message Parent",
+      "markEnrolled": "Mark as Enrolled"
     },
-    "questionFor": "leadCard.questionFor",
-    "questionPlaceholder": "leadCard.questionPlaceholder",
-    "yourResponse": "leadCard.yourResponse",
-    "messageSent": "leadCard.messageSent"
+    "questionFor": "Question for",
+    "questionPlaceholder": "Type your question here...",
+    "yourResponse": "Your Response",
+    "messageSent": "Message sent successfully"
   },
   "orderRequestModal": {
-    "title": "orderRequestModal.title"
+    "title": "Order Request"
   },
   "messagesPage": {
-    "selectConversationToView": "messagesPage.selectConversationToView",
-    "conversationFallbackTitle": "messagesPage.conversationFallbackTitle",
-    "attachFile": "messagesPage.attachFile",
-    "addEmoji": "messagesPage.addEmoji",
-    "typeMessagePlaceholder": "messagesPage.typeMessagePlaceholder",
-    "searchPlaceholder": "messagesPage.searchPlaceholder",
-    "unknownUser": "messagesPage.unknownUser",
-    "youPrefix": "messagesPage.youPrefix",
-    "noMessagesYet": "messagesPage.noMessagesYet"
+    "selectConversationToView": "Select a conversation to view messages",
+    "conversationFallbackTitle": "Conversation",
+    "attachFile": "Attach File",
+    "addEmoji": "Add Emoji",
+    "typeMessagePlaceholder": "Type your message...",
+    "searchPlaceholder": "Search conversations...",
+    "unknownUser": "Unknown User",
+    "youPrefix": "You",
+    "noMessagesYet": "No messages yet"
   },
   "serviceRequestDetailModal": {
-    "title": "serviceRequestDetailModal.title",
-    "requestId": "serviceRequestDetailModal.requestId",
-    "serviceName": "serviceRequestDetailModal.serviceName",
-    "viewDaycareProfile": "serviceRequestDetailModal.viewDaycareProfile",
-    "date": "serviceRequestDetailModal.date",
-    "status": "serviceRequestDetailModal.status",
-    "preferredDate": "serviceRequestDetailModal.preferredDate",
-    "noPreferredDate": "serviceRequestDetailModal.noPreferredDate",
-    "notes": "serviceRequestDetailModal.notes"
+    "title": "Service Request Details",
+    "requestId": "Request ID",
+    "serviceName": "Service Name",
+    "viewDaycareProfile": "View Daycare Profile",
+    "date": "Date",
+    "status": "Status",
+    "preferredDate": "Preferred Date",
+    "noPreferredDate": "No preferred date",
+    "notes": "Notes"
   },
-  ",": ",",
   "organizationProfileForm": {
-    "accessDenied": "organizationProfileForm.accessDenied",
-    "title": "organizationProfileForm.title",
-    "subtitle": "organizationProfileForm.subtitle",
+    "accessDenied": "Access Denied",
+    "title": "Organization Profile",
+    "subtitle": "Update your organization information",
     "labels": {
-      "capacity": "organizationProfileForm.labels.capacity",
-      "pedagogy": "organizationProfileForm.labels.pedagogy",
-      "languages": "organizationProfileForm.labels.languages"
+      "capacity": "Capacity",
+      "pedagogy": "Pedagogy",
+      "languages": "Languages"
     },
     "placeholders": {
-      "pedagogy": "organizationProfileForm.placeholders.pedagogy",
-      "languages": "organizationProfileForm.placeholders.languages"
+      "pedagogy": "Describe your educational approach...",
+      "languages": "Select languages..."
     },
     "helpText": {
-      "commaSeparated": "organizationProfileForm.helpText.commaSeparated"
+      "commaSeparated": "Separate multiple items with commas"
     },
-    "saveButton": "organizationProfileForm.saveButton"
+    "saveButton": "Save Profile"
   },
   "settingsAccountSecurity": {
     "notifications": {
@@ -197,26 +196,26 @@
     }
   },
   "settingsAnalyticsPreferences": {
-    "timeZone": "settingsAnalyticsPreferences.timeZone",
-    "currency": "settingsAnalyticsPreferences.currency",
-    "benchmarkData": "settingsAnalyticsPreferences.benchmarkData",
-    "benchmarkDataHelpText": "settingsAnalyticsPreferences.benchmarkDataHelpText"
+    "timeZone": "Time Zone",
+    "currency": "Currency",
+    "benchmarkData": "Benchmark Data",
+    "benchmarkDataHelpText": "Compare your performance with industry benchmarks"
   },
   "settingsBillingSubscription": {
-    "yourCurrentPlan": "settingsBillingSubscription.yourCurrentPlan",
-    "upgradePlan": "settingsBillingSubscription.upgradePlan",
-    "downgradePlan": "settingsBillingSubscription.downgradePlan",
-    "currentPlan": "settingsBillingSubscription.currentPlan",
-    "nextInvoiceOn": "settingsBillingSubscription.nextInvoiceOn",
-    "manageSubscriptionTitle": "settingsBillingSubscription.manageSubscriptionTitle",
-    "manageSubscriptionDescription": "settingsBillingSubscription.manageSubscriptionDescription",
-    "managePaymentButton": "settingsBillingSubscription.managePaymentButton",
-    "cancelSubscription": "settingsBillingSubscription.cancelSubscription",
-    "stripePortalLinkNotConfigured": "settingsBillingSubscription.stripePortalLinkNotConfigured",
-    "confirmCancelTitle": "settingsBillingSubscription.confirmCancelTitle",
-    "confirmCancelMessage": "settingsBillingSubscription.confirmCancelMessage",
-    "keepSubscription": "settingsBillingSubscription.keepSubscription",
-    "yesCancel": "settingsBillingSubscription.yesCancel"
+    "yourCurrentPlan": "Your Current Plan",
+    "upgradePlan": "Upgrade Plan",
+    "downgradePlan": "Downgrade Plan",
+    "currentPlan": "Current Plan",
+    "nextInvoiceOn": "Next Invoice On",
+    "manageSubscriptionTitle": "Manage Subscription",
+    "manageSubscriptionDescription": "Update your subscription settings",
+    "managePaymentButton": "Manage Payment",
+    "cancelSubscription": "Cancel Subscription",
+    "stripePortalLinkNotConfigured": "Stripe portal link not configured",
+    "confirmCancelTitle": "Confirm Cancellation",
+    "confirmCancelMessage": "Are you sure you want to cancel your subscription?",
+    "keepSubscription": "Keep Subscription",
+    "yesCancel": "Yes, Cancel"
   },
   "settingsCompanyProfile": {
     "companyName": "settingsCompanyProfile.companyName",
@@ -233,29 +232,29 @@
     "languagesHelpText": "settingsCompanyProfile.languagesHelpText"
   },
   "settingsContactBooking": {
-    "preferredContactMethod": "settingsContactBooking.preferredContactMethod",
-    "avgResponseTime": "settingsContactBooking.avgResponseTime",
-    "externalBookingLink": "settingsContactBooking.externalBookingLink",
-    "externalBookingLinkPlaceholder": "settingsContactBooking.externalBookingLinkPlaceholder",
-    "directOrderLink": "settingsContactBooking.directOrderLink",
-    "directOrderLinkPlaceholder": "settingsContactBooking.directOrderLinkPlaceholder",
-    "directOrderLinkHelpText": "settingsContactBooking.directOrderLinkHelpText",
-    "calComLink": "settingsContactBooking.calComLink",
-    "calComLinkPlaceholder": "settingsContactBooking.calComLinkPlaceholder",
-    "deliveryTypeToggleRemote": "settingsContactBooking.deliveryTypeToggleRemote"
+    "preferredContactMethod": "Preferred Contact Method",
+    "avgResponseTime": "Average Response Time",
+    "externalBookingLink": "External Booking Link",
+    "externalBookingLinkPlaceholder": "https://your-booking-system.com",
+    "directOrderLink": "Direct Order Link",
+    "directOrderLinkPlaceholder": "https://your-order-system.com",
+    "directOrderLinkHelpText": "Link for direct product orders",
+    "calComLink": "Cal.com Link",
+    "calComLinkPlaceholder": "https://cal.com/your-username",
+    "deliveryTypeToggleRemote": "Remote Delivery Available"
   },
   "settingsDefaults": {
-    "autoRespondToggle": "settingsDefaults.autoRespondToggle",
-    "autoRespondHelpText": "settingsDefaults.autoRespondHelpText",
-    "defaultMOQ": "settingsDefaults.defaultMOQ",
-    "defaultMOQPlaceholder": "settingsDefaults.defaultMOQPlaceholder",
-    "autoAcceptOrderQtyLimit": "settingsDefaults.autoAcceptOrderQtyLimit",
-    "autoAcceptOrderQtyLimitPlaceholder": "settingsDefaults.autoAcceptOrderQtyLimitPlaceholder",
-    "defaultConsultationLength": "settingsDefaults.defaultConsultationLength"
+    "autoRespondToggle": "Auto-respond to Messages",
+    "autoRespondHelpText": "Automatically respond to incoming messages",
+    "defaultMOQ": "Default Minimum Order Quantity",
+    "defaultMOQPlaceholder": "Enter minimum quantity",
+    "autoAcceptOrderQtyLimit": "Auto-accept Order Quantity Limit",
+    "autoAcceptOrderQtyLimitPlaceholder": "Enter quantity limit",
+    "defaultConsultationLength": "Default Consultation Length"
   },
   "settingsNotificationPreferences": {
-    "digestFrequency": "settingsNotificationPreferences.digestFrequency",
-    "promoRedemptionAlertsToggle": "settingsNotificationPreferences.promoRedemptionAlertsToggle"
+    "digestFrequency": "Digest Frequency",
+    "promoRedemptionAlertsToggle": "Promo Redemption Alerts"
   },
   "settingsPrivacyData": {
     "dataDeletion": "settingsPrivacyData.dataDeletion",
@@ -264,190 +263,161 @@
     "requestDeletionHelpText": "settingsPrivacyData.requestDeletionHelpText"
   },
   "settingsPromoCodeManager": {
-    "confirmDelete": "settingsPromoCodeManager.confirmDelete",
+    "confirmDelete": "Are you sure you want to delete this promo code?",
     "discountTypes": {
-      "percentage": "settingsPromoCodeManager.discountTypes.percentage",
-      "fixedAmount": "settingsPromoCodeManager.discountTypes.fixedAmount",
-      "freeMinutes": "settingsPromoCodeManager.discountTypes.freeMinutes"
+      "percentage": "Percentage",
+      "fixedAmount": "Fixed Amount",
+      "freeMinutes": "Free Minutes"
     },
-    "addNewCode": "settingsPromoCodeManager.addNewCode",
-    "noCodesYet": "settingsPromoCodeManager.noCodesYet",
+    "addNewCode": "Add New Code",
+    "noCodesYet": "No promo codes yet",
     "table": {
-      "code": "settingsPromoCodeManager.table.code",
-      "discountOffer": "settingsPromoCodeManager.table.discountOffer",
-      "expiry": "settingsPromoCodeManager.table.expiry",
-      "status": "settingsPromoCodeManager.table.status",
-      "actions": "settingsPromoCodeManager.table.actions"
+      "code": "Code",
+      "discountOffer": "Discount Offer",
+      "expiry": "Expiry",
+      "status": "Status",
+      "actions": "Actions"
     },
     "addEditModal": {
-      "editTitle": "settingsPromoCodeManager.addEditModal.editTitle",
-      "addTitle": "settingsPromoCodeManager.addEditModal.addTitle",
-      "placeholder": "settingsPromoCodeManager.addEditModal.placeholder",
-      "save": "settingsPromoCodeManager.addEditModal.save"
+      "editTitle": "Edit Promo Code",
+      "addTitle": "Add Promo Code",
+      "placeholder": "Enter promo code...",
+      "save": "Save"
     }
   },
   "settingsTeamPermissions": {
-    "confirmRemoveMember": "settingsTeamPermissions.confirmRemoveMember",
-    "passwordResetSentAlert": "settingsTeamPermissions.passwordResetSentAlert",
-    "inviteNewMember": "settingsTeamPermissions.inviteNewMember",
-    "emailAddress": "settingsTeamPermissions.emailAddress",
-    "emailPlaceholder": "settingsTeamPermissions.emailPlaceholder",
-    "role": "settingsTeamPermissions.role",
-    "sendInvite": "settingsTeamPermissions.sendInvite",
-    "currentTeamMembers": "settingsTeamPermissions.currentTeamMembers",
-    "noTeamMembers": "settingsTeamPermissions.noTeamMembers",
+    "confirmRemoveMember": "Are you sure you want to remove this team member?",
+    "passwordResetSentAlert": "Password reset email sent",
+    "inviteNewMember": "Invite New Member",
+    "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "role": "Role",
+    "sendInvite": "Send Invite",
+    "currentTeamMembers": "Current Team Members",
+    "noTeamMembers": "No team members yet",
     "table": {
-      "email": "settingsTeamPermissions.table.email",
-      "role": "settingsTeamPermissions.table.role",
-      "status": "settingsTeamPermissions.table.status",
-      "actions": "settingsTeamPermissions.table.actions"
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
     },
     "roles": {
-      "editor": "settingsTeamPermissions.roles.editor",
-      "viewer": "settingsTeamPermissions.roles.viewer"
+      "editor": "Editor",
+      "viewer": "Viewer"
     },
-    "resetPasswordTooltip": "settingsTeamPermissions.resetPasswordTooltip",
-    "removeMemberTooltip": "settingsTeamPermissions.removeMemberTooltip"
+    "resetPasswordTooltip": "Reset password for this user",
+    "removeMemberTooltip": "Remove this team member"
   },
   "activeClientToggle": {
-    "confirmSave": "activeClientToggle.confirmSave",
+    "confirmSave": "Confirm Save",
     "saveSuccess": {
-      "title": "activeClientToggle.saveSuccess.title",
-      "message": "activeClientToggle.saveSuccess.message"
+      "title": "Success",
+      "message": "Settings saved successfully"
     },
-    "label": "activeClientToggle.label",
-    "reasonLabel": "activeClientToggle.reasonLabel",
-    "noteLabel": "activeClientToggle.noteLabel",
-    "notePlaceholder": "activeClientToggle.notePlaceholder",
-    "subtext": "activeClientToggle.subtext"
+    "label": "Active Client",
+    "reasonLabel": "Reason",
+    "noteLabel": "Note",
+    "notePlaceholder": "Enter additional notes...",
+    "subtext": "This will affect how the client appears in the system"
   },
   "featureLock": {
-    "upgradeButton": "featureLock.upgradeButton"
+    "upgradeButton": "Upgrade Now"
   },
   "fileUploadModal": {
-    "title": "fileUploadModal.title",
-    "uploadFile": "fileUploadModal.uploadFile",
-    "dragAndDrop": "fileUploadModal.dragAndDrop",
-    "fileTypes": "fileUploadModal.fileTypes",
-    "filesToUpload": "fileUploadModal.filesToUpload"
+    "title": "Upload Files",
+    "uploadFile": "Upload File",
+    "dragAndDrop": "Drag and drop files here",
+    "fileTypes": "Supported file types",
+    "filesToUpload": "Files to Upload"
   },
   "orderRequestDetailModal": {
-    "title": "orderRequestDetailModal.title",
-    "orderId": "orderRequestDetailModal.orderId",
-    "date": "orderRequestDetailModal.date",
-    "status": "orderRequestDetailModal.status",
-    "total": "orderRequestDetailModal.total",
-    "viewDaycareProfile": "orderRequestDetailModal.viewDaycareProfile",
-    "lineItems": "orderRequestDetailModal.lineItems",
-    "product": "orderRequestDetailModal.product",
-    "quantity": "orderRequestDetailModal.quantity",
-    "price": "orderRequestDetailModal.price",
-    "notes": "orderRequestDetailModal.notes"
+    "title": "Order Request Details",
+    "orderId": "Order ID",
+    "date": "Date",
+    "status": "Status",
+    "total": "Total",
+    "viewDaycareProfile": "View Daycare Profile",
+    "lineItems": "Line Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "notes": "Notes"
   },
-  "-": "-",
-  "[data-debug-component]": "[data-debug-component]",
-  " ": " ",
   "marketplacePage": {
     "serviceCard": {
-      "categoryLabel": "marketplacePage.serviceCard.categoryLabel",
-      "bookAppointment": "marketplacePage.serviceCard.bookAppointment",
-      "viewProvider": "marketplacePage.serviceCard.viewProvider"
+      "categoryLabel": "Category",
+      "bookAppointment": "Book Appointment",
+      "viewProvider": "View Provider"
     }
   },
   "notificationsPage": {
-    "title": "notificationsPage.title"
+    "title": "Notifications"
   },
   "parentEnquiriesPage": {
-    "title": "parentEnquiriesPage.title"
+    "title": "Parent Enquiries"
   },
   "parentLeadFormPage": {
-    "title": "parentLeadFormPage.title"
+    "title": "Parent Lead Form"
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
-      "emptyLogMessage": "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage",
+      "emptyLogMessage": "No logs available",
       "tabs": {
-        "all": "adminSystemMonitoringPage.rawLogConsole.tabs.all",
-        "errors": "adminSystemMonitoringPage.rawLogConsole.tabs.errors",
-        "warnings": "adminSystemMonitoringPage.rawLogConsole.tabs.warnings",
-        "info": "adminSystemMonitoringPage.rawLogConsole.tabs.info"
+        "all": "All",
+        "errors": "Errors",
+        "warnings": "Warnings",
+        "info": "Info"
       }
     },
-    "title": "adminSystemMonitoringPage.title"
+    "title": "System Monitoring"
   },
   "educatorApplicationsPage": {
-    "title": "educatorApplicationsPage.title"
+    "title": "Educator Applications"
   },
   "foundationAnalyticsPage": {
-    "title": "foundationAnalyticsPage.title"
+    "title": "Foundation Analytics"
   },
   "foundationOrganisationProfilePage": {
-    "title": "foundationOrganisationProfilePage.title"
+    "title": "Organization Profile"
   },
   "parentDashboard": {
     "enquiry": {
-      "title": "parentDashboard.enquiry.title"
+      "title": "Enquiry"
     },
     "quickActions": {
-      "title": "parentDashboard.quickActions.title"
+      "title": "Quick Actions"
     },
     "childProfile": {
-      "title": "parentDashboard.childProfile.title"
+      "title": "Child Profile"
     },
     "favorites": {
-      "title": "parentDashboard.favorites.title"
+      "title": "Favorites"
     }
   },
-  "View Favorites TBD": "View Favorites TBD",
   "Could not find a user associated with this organization to message": {
     "": "Could not find a user associated with this organization to message."
   },
   "serviceProviderAnalyticsPage": {
-    "title": "serviceProviderAnalyticsPage.title"
+    "title": "Analytics"
   },
   "serviceProviderDashboard": {
-    "title": "serviceProviderDashboard.title"
+    "title": "Service Provider Dashboard"
   },
   "User organization details are missing": {
     "": "User organization details are missing."
   },
   "serviceProviderListingsPage": {
-    "title": "serviceProviderListingsPage.title"
+    "title": "Service Listings"
   },
   "serviceProviderRequestsPage": {
-    "title": "serviceProviderRequestsPage.title"
+    "title": "Service Requests"
   },
   "supplierOrdersPage": {
-    "title": "supplierOrdersPage.title"
+    "title": "Orders"
   },
   "supplierProductListingsPage": {
-    "title": "supplierProductListingsPage.title"
+    "title": "Product Listings"
   },
-  "tailwindcss": "tailwindcss",
-  "requests carry authorization header": "requests carry authorization header",
-  "login page renders correctly": "login page renders correctly",
-  "parent lead form validates and submits to backend": "parent lead form validates and submits to backend",
-  "signup form validates required fields": "signup form validates required fields",
-  "contact/settings forms handle input correctly": "contact/settings forms handle input correctly",
-  "form validation messages work correctly": "form validation messages work correctly",
-  "login shows link to plans and no demo login": "login shows link to plans and no demo login",
-  "body": "body",
-  "login form elements are present": "login form elements are present",
-  "login page has proper branding and messaging": "login page has proper branding and messaging",
-  "signup link redirects to signup page": "signup link redirects to signup page",
-  "forgot password link exists if applicable": "forgot password link exists if applicable",
-  "non-super-admin cannot access super-admin routes": "non-super-admin cannot access super-admin routes",
-  "protected routes require authentication": "protected routes require authentication",
-  "role-based navigation shows correct sidebar items": "role-based navigation shows correct sidebar items",
-  "file upload zone accepts files and shows preview": "file upload zone accepts files and shows preview",
-  "service upload modal works correctly": "service upload modal works correctly",
-  "content upload validates file types": "content upload validates file types",
-  "upload API endpoints are intercepted correctly": "upload API endpoints are intercepted correctly",
-  "product transformation maps API data to UI model": "product transformation maps API data to UI model",
-  "service transformation maps API data to UI model": "service transformation maps API data to UI model",
-  "handles missing optional fields gracefully": "handles missing optional fields gracefully",
-  "job listing transformation correct maps API data to UI model": "job listing transformation correct maps API data to UI model",
-  "application transformation maps application data correctly": "application transformation maps application data correctly",
   "hardcodedText": {
     "debug.mode.active.look.for.purple.debug.buttons.in.bottom.corners": "🔍 MODE DEBUG ACTIF - Cherchez les boutons de debug violets dans les coins inférieurs",
     "rarr": "&rarr;",

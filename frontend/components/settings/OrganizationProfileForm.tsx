@@ -4,7 +4,7 @@ import { MOCK_ORGANIZATIONS, STANDARD_INPUT_FIELD } from '../../constants'; // O
 import { Organization } from '../../types';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const OrganizationProfileForm: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

@@ -5,7 +5,7 @@ import Card from '../../components/ui/Card';
 import { ShoppingCartIcon, PlusCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import Button from '../../components/ui/Button';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { MOCK_ORDERS, MOCK_PRODUCTS, MOCK_ORGANIZATIONS } from '../../constants';
 import { OrderRequestStatus } from '../../types';
 

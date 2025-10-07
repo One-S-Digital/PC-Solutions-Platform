@@ -5,7 +5,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { BuildingStorefrontIcon, ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import { SwissFlagIcon } from '../components/icons/CustomIcons';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const PartnerCard: React.FC<{ partner: Partner }> = ({ partner }) => {
   const { t } = useTranslation(['dashboard', 'common']);

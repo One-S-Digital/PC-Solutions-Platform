@@ -6,7 +6,7 @@ import React from 'react';
 import { SettingsFormData, UserRole, DigestFrequency } from '../../../types';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { BellAlertIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // import ToggleSwitch from '../../ui/ToggleSwitch';
 // import RadioPills from '../../ui/RadioPills';
 

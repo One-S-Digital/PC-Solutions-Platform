@@ -3,7 +3,7 @@
 import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
 // FIX: Add VendorClient and VendorClientReason to imports
 import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, ApplicationStatus, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from '@workspace/translations'; 
 import { 
   MOCK_PARENT_LEADS,
   MOCK_APPLICATIONS,

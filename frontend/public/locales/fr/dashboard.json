@@ -795,29 +795,8 @@
       "quantityInput": "Entrée de quantité",
       "disabledInput": "Entrée handicapée"
     },
-    "View Favorites TBD": "Voi des favoris à deterner",
-    "Could not find a user associated with this organization to message.": "Impossible de Trouver Un Utilisateur Associé à CETTe Organisation à un Message.",
-    "User organization details are missing.": "Les Dédails de l'organisation Utilisateur Sont Manquants.",
-    "tailwindcss": "Tailwindcss",
     "sidebar.parentLeads": "Les parents dirigés",
     "sidebar.products": "Produits",
-    "sidebar.services": "Services",
-    "No recent activity.": "AUCUNE Activité Récente.",
-    "loaded": "Charge",
-    "SUPER_ADMIN": "Super Administrateur",
-    "Show": "Montre",
-    "Refresh": "Renouvellement",
-    "keys)": "Clés)",
-    "(240)": "(240)",
-    "Branding": "Image de marque",
-    "Favicon": "Favicon",
-    "Search job offers...": "Recherchez des Offres d'Emploi ...",
-    "Search partners...": "Partenaires de Recherche ...",
-    "Search candidates...": "Rechercher Les Candidats...",
-    "Search content...": "Rechercher le Contenu ...",
-    "admin@procrechesolutions.com": "administrat@procrechesolutions.com",
-    "No documents found in this category for current filters.": "AUCUN DOCUMENT TRUPVÉ DANS CETTE CATÉGORIE LES FILTRES ACTUELS.",
-    "No custom alerts created yet.": "Autre Alerte Personnalisée Encore Créée."
-  },
-  "dashboard redirects based on user role": "[FR] dashboard redirects based on user role"
+    "sidebar.services": "Services"
+  }
 }

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
 import { AppNotification } from '../types'; // AppNotification is defined in types.ts
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface NotificationContextType {
   notifications: AppNotification[];

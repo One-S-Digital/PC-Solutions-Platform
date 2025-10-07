@@ -7,7 +7,7 @@ import { SettingsFormData, UserRole } from '../../../types';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { ChartPieIcon, ClockIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // import ToggleSwitch from '../../ui/ToggleSwitch';
 
 interface AnalyticsPreferencesSettingsProps {

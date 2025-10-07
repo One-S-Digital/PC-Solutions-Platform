@@ -7,7 +7,7 @@ import { SettingsFormData, UserRole, PromoCode } from '../../../types';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import Button from '../../ui/Button';
 import { TagIcon, PlusCircleIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // import AddPromoCodeModal from '../AddPromoCodeModal'; // To be created
 
 interface PromoCodeManagerSettingsProps {

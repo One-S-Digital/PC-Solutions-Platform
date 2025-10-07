@@ -7,7 +7,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { UsersIcon, MagnifyingGlassIcon, FunnelIcon, EyeIcon, PencilIcon, ShieldExclamationIcon, ChevronRightIcon, PlusIcon, ArrowUturnLeftIcon, TrashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext'; 
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from '@workspace/translations'; // Import useTranslation
 
 interface UserRowProps {
   user: User;

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SettingsSectionConfig } from '../../pages/SettingsPage'; // Assuming type is exported
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface SettingsSidebarProps {
   sections: SettingsSectionConfig[];

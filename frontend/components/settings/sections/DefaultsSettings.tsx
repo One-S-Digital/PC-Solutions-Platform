@@ -7,7 +7,7 @@ import { SettingsFormData, UserRole, SupplierSettings, ProviderSettings, Consult
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 // import ToggleSwitch from '../../ui/ToggleSwitch';
 // import RadioPills from '../../ui/RadioPills';
 

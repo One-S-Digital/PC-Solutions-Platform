@@ -3,7 +3,7 @@ import { DocumentItem } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { STANDARD_INPUT_FIELD } from '../../constants';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface RenameFileModalProps {
   isOpen: boolean;

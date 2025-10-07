@@ -6,7 +6,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { BriefcaseIcon, MapPinIcon, CalendarDaysIcon, MagnifyingGlassIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useNotifications } from '../../contexts/NotificationContext';
 import JobDetailModal from '../../components/recruitment/JobDetailModal';
 

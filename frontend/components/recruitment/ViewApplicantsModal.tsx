@@ -3,7 +3,7 @@ import { JobListing, Application, UserRole } from '../../types';
 import { STANDARD_INPUT_FIELD } from '../../constants';
 import Button from '../ui/Button';
 import { XMarkIcon, UserCircleIcon, EyeIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { useMessaging } from '../../contexts/MessagingContext';

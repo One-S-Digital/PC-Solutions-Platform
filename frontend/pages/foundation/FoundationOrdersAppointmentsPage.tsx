@@ -8,7 +8,7 @@ import { ShoppingCartIcon, CalendarDaysIcon, InboxIcon } from '@heroicons/react/
 import { useAppContext } from '../../contexts/AppContext';
 import { Order, ServiceRequest, OrderRequestStatus, ServiceRequestStatus, UserRole } from '../../types';
 import { MOCK_ORDERS, MOCK_ORGANIZATIONS } from '../../constants';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useNavigate } from 'react-router-dom';
 

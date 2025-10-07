@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import Card from '../../components/ui/Card';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../contexts/AppContext';
 import { MOCK_ORGANIZATIONS } from '../../constants';
 import { ServiceRequest, ServiceRequestStatus } from '../../types';

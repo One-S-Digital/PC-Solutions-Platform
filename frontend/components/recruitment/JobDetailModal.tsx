@@ -3,7 +3,7 @@ import React from 'react';
 import { JobListing } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, ListBulletIcon, CheckBadgeIcon, SparklesIcon, BanknotesIcon, CheckIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { MOCK_ORGANIZATIONS } from '../../constants';
 import Card from '../ui/Card';
 

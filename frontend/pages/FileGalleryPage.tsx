@@ -8,7 +8,7 @@ import Button from '../components/ui/Button';
 import { PaperClipIcon, PlusCircleIcon, DocumentIcon, EyeIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, InboxIcon } from '@heroicons/react/24/outline';
 import FileUploadModal from '../components/shared/FileUploadModal';
 import RenameFileModal from '../components/shared/RenameFileModal';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const formatBytes = (bytes: number, decimals = 2) => {
   if (bytes === 0) return '0 Bytes';

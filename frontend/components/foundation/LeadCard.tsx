@@ -7,7 +7,7 @@ import { CheckCircleIcon, XCircleIcon, QuestionMarkCircleIcon, ChatBubbleLeftEll
 import { useAppContext } from '../../contexts/AppContext';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface LeadCardProps {
   lead: ParentLead;

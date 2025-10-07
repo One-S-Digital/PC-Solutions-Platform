@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { MOCK_SYSTEM_MONITORING_DATA, MOCK_LOG_ENTRIES } from '../../constants';
 import { SystemEventType, SystemStatusLevel, LogEntry } from '../../types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import Tabs from '../../components/ui/Tabs';
 
 const ProgressBar: React.FC<{ value: number; colorClass: string }> = ({ value, colorClass }) => (

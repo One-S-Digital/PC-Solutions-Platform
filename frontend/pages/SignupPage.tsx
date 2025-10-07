@@ -1,7 +1,7 @@
 
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../contexts/AppContext';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage } from '../types';
 import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants';

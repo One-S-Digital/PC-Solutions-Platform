@@ -5,7 +5,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { HomeIcon, ClipboardDocumentListIcon, UserCircleIcon, WrenchScrewdriverIcon, HeartIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const ParentDashboardPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

@@ -1,6 +1,6 @@
 module.exports = {
   locales: ['en'], // Only extract to English as per specification
-  defaultNamespace: 'translation',
+  defaultNamespace: 'common', // Fixed: spec requires 'common'
   output: 'public/locales/$LOCALE/$NAMESPACE.json',
   useKeysAsDefaultValue: false,
   defaultValue: (locale, ns, key, value) => value || '',

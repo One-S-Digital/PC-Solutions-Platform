@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { ChartBarIcon, UsersIcon, ShoppingCartIcon, BriefcaseIcon, CogIcon as SettingsIcon } from '@heroicons/react/24/outline';
 import Card from '../components/ui/Card';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from '@workspace/translations'; // Import useTranslation
 import { APP_NAME } from '../constants'; // Import APP_NAME
 
 const DashboardPage: React.FC = () => {

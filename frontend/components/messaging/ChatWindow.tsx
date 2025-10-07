@@ -4,7 +4,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import MessageBubble from './MessageBubble';
 import Button from '../ui/Button';
 import { PaperAirplaneIcon, UserCircleIcon, PaperClipIcon, FaceSmileIcon, UserGroupIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const ChatWindow: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

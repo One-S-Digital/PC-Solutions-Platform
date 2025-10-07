@@ -8,7 +8,7 @@ import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import Button from '../../ui/Button';
 import { UsersIcon, PlusCircleIcon, EnvelopeIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface TeamPermissionsSettingsProps {
   settings: SettingsFormData;

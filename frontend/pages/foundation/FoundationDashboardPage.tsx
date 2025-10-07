@@ -18,7 +18,7 @@ import {
   SunIcon
 } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const FoundationDashboardPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

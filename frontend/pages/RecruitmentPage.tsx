@@ -9,7 +9,7 @@ import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
 import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, PencilIcon, TrashIcon, PlusCircleIcon, MagnifyingGlassIcon, FunnelIcon, StarIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import JobPostModal from '../components/recruitment/JobPostModal';
 import ViewApplicantsModal from '../components/recruitment/ViewApplicantsModal';
 

@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../contexts/AppContext';
 import { VendorClient, VendorClientReason } from '../../types';
 import { MOCK_ORGANIZATIONS } from '../../constants';

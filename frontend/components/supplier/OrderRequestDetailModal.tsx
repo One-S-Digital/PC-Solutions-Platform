@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { Order, OrderRequestStatus } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline';

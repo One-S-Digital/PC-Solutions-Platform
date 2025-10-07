@@ -9,7 +9,7 @@ import Button from '../components/ui/Button';
 import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, PlusCircleIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import ContentUploadModal from '../components/admin/ContentUploadModal';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface CourseMaterialCardProps {
   item: Course;

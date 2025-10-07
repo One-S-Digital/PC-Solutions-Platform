@@ -5,7 +5,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { ParentLead, LeadMainStatus, FoundationLeadResponseStatus, UserRole } from '../types';
 import Card from '../components/ui/Card';
 import { ClipboardDocumentListIcon, ClockIcon, CheckCircleIcon, InformationCircleIcon, InboxIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useMessaging } from '../contexts/MessagingContext';
 import { useNavigate } from 'react-router-dom';
 // Removed ALL_USERS_MOCK import - using API in production

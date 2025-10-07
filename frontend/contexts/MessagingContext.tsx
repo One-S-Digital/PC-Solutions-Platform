@@ -4,7 +4,7 @@ import React, { createContext, useState, useContext, ReactNode, useEffect, useCa
 import { Message, Conversation, UserRole, User } from '../types';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '../constants';
 import { useAppContext } from './AppContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface MessagingContextType {
   conversations: Conversation[];

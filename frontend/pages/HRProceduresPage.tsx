@@ -10,7 +10,7 @@ import Button from '../components/ui/Button';
 import { DocumentTextIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, StarIcon, PlusCircleIcon, DocumentDuplicateIcon, UserPlusIcon, UsersIcon, BuildingLibraryIcon, AcademicCapIcon, HeartIcon, FolderIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import ContentUploadModal from '../components/admin/ContentUploadModal';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from '@workspace/translations'; // Import useTranslation
 
 interface HRDocumentCardProps {
   doc: HRDocument;

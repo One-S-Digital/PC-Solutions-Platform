@@ -6,7 +6,7 @@ import Button from '../ui/Button';
 import { BuildingStorefrontIcon, StarIcon, EyeIcon, TagIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { MOCK_PRODUCTS } from '../../constants'; // To derive categories
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface SupplierCardProps {
   supplier: Organization;

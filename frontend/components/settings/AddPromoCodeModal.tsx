@@ -1,7 +1,7 @@
 
 // Placeholder for AddPromoCodeModal.tsx
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 const AddPromoCodeModal: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);

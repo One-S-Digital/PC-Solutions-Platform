@@ -1,7 +1,7 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { CartItem, Product, Organization, StockStatus } from '../types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface CartContextType {
   cartItems: CartItem[];

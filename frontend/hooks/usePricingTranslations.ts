@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { PricingPlan, UserRole } from '../types';
 
 const isDev = process.env.NODE_ENV !== 'production';

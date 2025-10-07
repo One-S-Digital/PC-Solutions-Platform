@@ -795,29 +795,8 @@
       "quantityInput": "Mengenen",
       "disabledInput": "Deaattiviere Eingabe"
     },
-    "View Favorites TBD": "Favoriten tbd anzegen",
-    "Could not find a user associated with this organization to message.": "Es Konten Keinen Benzuder Findden, der Dieder -Organisierung Zuur nachricht Zugeordnet Ist.",
-    "User organization details are missing.": "Die Details der Benzutzerorganisation FEHLEN.",
-    "tailwindcss": "Rückenwindcss",
     "sidebar.parentLeads": "Elternleitungen",
     "sidebar.products": "Produkte",
-    "sidebar.services": "Dienstleistungen",
-    "No recent activity.": "Keine AKRUTEULE Aktivität.",
-    "loaded": "Geladen",
-    "SUPER_ADMIN": "Super_admin",
-    "Show": "Zeigen",
-    "Refresh": "Aktualieren",
-    "keys)": "Schlüssel)",
-    "(240)": "(240)",
-    "Branding": "Branding",
-    "Favicon": "Favicon",
-    "Search job offers...": "STELLENANGEBOTE Suchen ...",
-    "Search partners...": "Partner Suchen ...",
-    "Search candidates...": "Solche Kandidaten ...",
-    "Search content...": "Inhalieren Sie Sinyen ...",
-    "admin@procrechesolutions.com": "admin@procrechesolutions.com",
-    "No documents found in this category for current filters.": "Keine Dokumente Im Dieser Kategorie für Aktuelle Filter.",
-    "No custom alerts created yet.": "Noch Keide Benzutzerdefinierten Warnungen Erstent."
-  },
-  "dashboard redirects based on user role": "[DE] dashboard redirects based on user role"
+    "sidebar.services": "Dienstleistungen"
+  }
 }

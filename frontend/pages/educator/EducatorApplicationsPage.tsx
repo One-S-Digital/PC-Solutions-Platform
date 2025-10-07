@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { ClipboardDocumentListIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 import { useAppContext } from '../../contexts/AppContext';
 import { Application, ApplicationStatus } from '../../types';
 

@@ -6,7 +6,7 @@ import Card from '../ui/Card'; // Re-using Card for modal structure
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { STANDARD_INPUT_FIELD } from '../../constants'; // Import constant
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface OrderRequestModalProps {
   product: Product | null;

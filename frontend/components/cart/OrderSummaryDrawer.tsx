@@ -7,7 +7,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from '@heroicons/react/24/outl
 import { OrderRequestStatus, LineItem, Order } from '../../types';
 import QuantityInput from '../ui/QuantityInput'; // Assuming QuantityInput is in ui folder
 import { MOCK_ORDERS } from '../../constants'; // To store submitted orders
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@workspace/translations';
 
 interface OrderSummaryDrawerProps {
   isOpen: boolean;

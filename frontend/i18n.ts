@@ -14,7 +14,7 @@ i18n
     ns: ['common', 'auth', 'dashboard', 'pricing'],
     defaultNS: 'common',
     returnEmptyString: false,
-    saveMissing: true,
+    saveMissing: false, // Fixed: spec requires false
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
