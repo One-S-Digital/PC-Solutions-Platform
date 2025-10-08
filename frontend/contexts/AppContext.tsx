@@ -45,7 +45,7 @@ interface AppContextType {
   updateVendorClientStatus: (vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => void;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType | null>(null);
 
 // Mock user store for development/testing
 const mockUserStore: User[] = [
@@ -96,9 +96,14 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   // FIX: Add state for vendor clients
   const [vendorClients, setVendorClients] = useState<VendorClient[]>(MOCK_VENDOR_CLIENTS);
   const [language, setLanguage] = useState<SupportedLanguage>(() => {
-    const detectedLng = i18n.language?.toUpperCase().split('-')[0];
-    if (detectedLng === 'FR' || detectedLng === 'DE') {
-      return detectedLng as SupportedLanguage;
+    // Safely access i18n language with fallback
+    try {
+      const detectedLng = i18n.language?.toUpperCase().split('-')[0];
+      if (detectedLng === 'FR' || detectedLng === 'DE') {
+        return detectedLng as SupportedLanguage;
+      }
+    } catch (error) {
+      console.warn('i18n not available during language detection:', error);
     }
     return 'EN';
   });
@@ -108,9 +113,13 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   });
 
   useEffect(() => {
-    const newLangCode = language.toLowerCase();
-    if (i18n.language !== newLangCode) {
-      i18n.changeLanguage(newLangCode);
+    try {
+      const newLangCode = language.toLowerCase();
+      if (i18n.isInitialized && i18n.language !== newLangCode) {
+        i18n.changeLanguage(newLangCode);
+      }
+    } catch (error) {
+      console.warn('Failed to change language:', error);
     }
   }, [language]);
 
@@ -129,32 +138,50 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 
   useEffect(() => {
     const handleLanguageChanged = (lng: string) => {
-      const newSupportedLang = lng.toUpperCase().split('-')[0] as SupportedLanguage;
-      if (['EN', 'FR', 'DE'].includes(newSupportedLang) && newSupportedLang !== language) {
-        setLanguage(newSupportedLang);
+      try {
+        const newSupportedLang = lng.toUpperCase().split('-')[0] as SupportedLanguage;
+        if (['EN', 'FR', 'DE'].includes(newSupportedLang) && newSupportedLang !== language) {
+          setLanguage(newSupportedLang);
+        }
+        document.documentElement.lang = lng.split('-')[0];
+        document.title = i18n.t('appName');
+      } catch (error) {
+        console.warn('Error handling language change:', error);
       }
-      document.documentElement.lang = lng.split('-')[0];
-      document.title = i18n.t('appName');
     };
 
-    i18n.on('languageChanged', handleLanguageChanged);
-    
-    if (i18n.isInitialized) {
+    const handleInitialized = () => {
+      try {
         document.title = i18n.t('appName');
         document.documentElement.lang = i18n.language.split('-')[0];
-    } else {
-        i18n.on('initialized', (_options) => { 
-             document.title = i18n.t('appName');
-             document.documentElement.lang = i18n.language.split('-')[0];
-             const detectedLngOnInit = i18n.language?.toUpperCase().split('-')[0] as SupportedLanguage;
-             if (['EN', 'FR', 'DE'].includes(detectedLngOnInit) && detectedLngOnInit !== language) {
-                setLanguage(detectedLngOnInit);
-             }
-        });
+        const detectedLngOnInit = i18n.language?.toUpperCase().split('-')[0] as SupportedLanguage;
+        if (['EN', 'FR', 'DE'].includes(detectedLngOnInit) && detectedLngOnInit !== language) {
+          setLanguage(detectedLngOnInit);
+        }
+      } catch (error) {
+        console.warn('Error handling i18n initialization:', error);
+      }
+    };
+
+    try {
+      i18n.on('languageChanged', handleLanguageChanged);
+      
+      if (i18n.isInitialized) {
+        handleInitialized();
+      } else {
+        i18n.on('initialized', handleInitialized);
+      }
+    } catch (error) {
+      console.warn('Error setting up i18n listeners:', error);
     }
     
     return () => {
-      i18n.off('languageChanged', handleLanguageChanged);
+      try {
+        i18n.off('languageChanged', handleLanguageChanged);
+        i18n.off('initialized', handleInitialized);
+      } catch (error) {
+        console.warn('Error cleaning up i18n listeners:', error);
+      }
     };
   }, [language]);
 
@@ -400,10 +427,10 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 };
 
 export const useAppContext = (): AppContextType => {
-  const { t } = useTranslation(['dashboard', 'common']);
   const context = useContext(AppContext);
-  if (context === undefined) {
-    throw new Error(t('appContext.useAppContextError'));
+  if (context === null) {
+    // Use a fallback error message to avoid i18next dependency during context initialization
+    throw new Error('useAppContext must be used within an AppContextProvider');
   }
   return context;
 };
