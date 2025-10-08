@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
@@ -30,11 +30,38 @@ const LoadingScreen = () => (
   </div>
 );
 
-const AppWithProviders = () => {
-  console.log('🔧 [DEBUG] AppWithProviders rendering');
-  console.log('🔧 [DEBUG] i18nInstance in AppWithProviders:', i18nInstance);
-  console.log('🔧 [DEBUG] i18nInstance.isInitialized in AppWithProviders:', i18nInstance?.isInitialized);
+// Wrapper component that waits for i18n initialization
+const AppInitializer: React.FC = () => {
+  const [isI18nReady, setIsI18nReady] = useState(false);
   
+  useEffect(() => {
+    console.log('🔧 [DEBUG] AppInitializer useEffect running');
+    console.log('🔧 [DEBUG] i18nInstance.isInitialized:', i18nInstance?.isInitialized);
+    
+    if (i18nInstance.isInitialized) {
+      console.log('✅ [DEBUG] i18n already initialized, setting ready state');
+      setIsI18nReady(true);
+    } else {
+      console.log('🔧 [DEBUG] i18n not initialized, waiting for initialized event');
+      const handleInitialized = () => {
+        console.log('✅ [DEBUG] i18n initialized event received in AppInitializer');
+        setIsI18nReady(true);
+      };
+      
+      i18nInstance.on('initialized', handleInitialized);
+      
+      return () => {
+        i18nInstance.off('initialized', handleInitialized);
+      };
+    }
+  }, []);
+  
+  if (!isI18nReady) {
+    console.log('🔧 [DEBUG] AppInitializer rendering loading screen');
+    return <LoadingScreen />;
+  }
+  
+  console.log('🔧 [DEBUG] AppInitializer rendering app');
   return (
     <I18nextProvider i18n={i18nInstance}>
       <BrowserRouter>
@@ -46,34 +73,10 @@ const AppWithProviders = () => {
   );
 };
 
-// Wait for i18n to be initialized before rendering
-const initializeApp = async () => {
-  console.log('🔧 [DEBUG] Waiting for i18n initialization...');
-  
-  // Wait for i18n to be initialized
-  if (!i18nInstance.isInitialized) {
-    await new Promise((resolve) => {
-      if (i18nInstance.isInitialized) {
-        resolve(undefined);
-      } else {
-        i18nInstance.on('initialized', () => {
-          console.log('✅ [DEBUG] i18n initialized, proceeding with app render');
-          resolve(undefined);
-        });
-      }
-    });
-  }
-  
-  console.log('🔧 [DEBUG] About to create root and render');
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <React.StrictMode>
-      <AppWithProviders />
-    </React.StrictMode>
-  );
-};
-
-// Start the app initialization
-initializeApp().catch((error) => {
-  console.error('❌ [DEBUG] Failed to initialize app:', error);
-});
+console.log('🔧 [DEBUG] About to create root and render');
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <React.StrictMode>
+    <AppInitializer />
+  </React.StrictMode>
+);
