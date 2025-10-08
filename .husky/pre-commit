@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Validate translations before commit
+echo "🔍 Validating translations..."
+node scripts/validate-translations.mjs
+
+if [ $? -ne 0 ]; then
+  echo "❌ Translation validation failed!"
+  echo "💡 Fix errors before committing or use --no-verify to skip"
+  exit 1
+fi
+
+echo "✅ Translations validated successfully"

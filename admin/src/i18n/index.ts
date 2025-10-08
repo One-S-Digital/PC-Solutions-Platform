@@ -1,15 +1,16 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import commonEn from './locales/en/common.json';
-import authEn from './locales/en/auth.json';
-import dashboardEn from './locales/en/dashboard.json';
-import commonFr from './locales/fr/common.json';
-import authFr from './locales/fr/auth.json';
-import dashboardFr from './locales/fr/dashboard.json';
-import commonDe from './locales/de/common.json';
-import authDe from './locales/de/auth.json';
-import dashboardDe from './locales/de/dashboard.json';
+// Import translations from shared @workspace/translations package
+import commonEn from '@workspace/translations/locales/en/common.json';
+import authEn from '@workspace/translations/locales/en/auth.json';
+import dashboardEn from '@workspace/translations/locales/en/dashboard.json';
+import commonFr from '@workspace/translations/locales/fr/common.json';
+import authFr from '@workspace/translations/locales/fr/auth.json';
+import dashboardFr from '@workspace/translations/locales/fr/dashboard.json';
+import commonDe from '@workspace/translations/locales/de/common.json';
+import authDe from '@workspace/translations/locales/de/auth.json';
+import dashboardDe from '@workspace/translations/locales/de/dashboard.json';
 
 i18n
   .use(initReactI18next)

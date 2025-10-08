@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,25 +40,73 @@ function deepMerge(target, source) {
 function consolidateNamespace(namespace, language) {
   let consolidated = {};
   
-  // Start with packages (if exists)
-  const packagesFile = path.join(PACKAGES_DIR, language, `${namespace}.json`);
-  if (fs.existsSync(packagesFile)) {
-    const content = JSON.parse(fs.readFileSync(packagesFile, 'utf8'));
-    consolidated = deepMerge(consolidated, content);
-  }
+  // For German common.json, use packages as source (it's cleanest)
+  // For others, prefer frontend (most complete)
   
-  // Merge admin (if exists)
-  const adminFile = path.join(ADMIN_DIR, language, `${namespace}.json`);
-  if (fs.existsSync(adminFile)) {
-    const content = JSON.parse(fs.readFileSync(adminFile, 'utf8'));
-    consolidated = deepMerge(consolidated, content);
-  }
-  
-  // Merge frontend (if exists) - frontend takes precedence
-  const frontendFile = path.join(FRONTEND_DIR, language, `${namespace}.json`);
-  if (fs.existsSync(frontendFile)) {
-    const content = JSON.parse(fs.readFileSync(frontendFile, 'utf8'));
-    consolidated = deepMerge(consolidated, content);
+  if (language === 'de' && namespace === 'common') {
+    // German common: Start with packages (clean), only add missing keys from frontend
+    const packagesFile = path.join(PACKAGES_DIR, language, `${namespace}.json`);
+    if (fs.existsSync(packagesFile)) {
+      // Use git version (original clean one)
+      try {
+        const gitContent = execSync(`git show HEAD:packages/translations/locales/${language}/${namespace}.json`, { encoding: 'utf8' });
+        consolidated = JSON.parse(gitContent);
+        console.log(`  📌 Using clean Git version for de/common.json`);
+      } catch (e) {
+        // Fallback to current file
+        const content = JSON.parse(fs.readFileSync(packagesFile, 'utf8'));
+        consolidated = content;
+      }
+    }
+    
+    // Add only missing keys from frontend (not corrupted ones)
+    const frontendFile = path.join(FRONTEND_DIR, language, `${namespace}.json`);
+    if (fs.existsSync(frontendFile)) {
+      const frontendContent = JSON.parse(fs.readFileSync(frontendFile, 'utf8'));
+      // Only add keys that don't exist in consolidated
+      function addMissingKeys(target, source, prefix = '') {
+        for (const [key, value] of Object.entries(source)) {
+          if (!(key in target)) {
+            // Only add if value is not self-referential
+            if (typeof value === 'string') {
+              const fullKey = prefix ? `${prefix}.${key}` : key;
+              if (!value.includes(fullKey) && !value.includes('modal.') && !value.includes('page.')) {
+                target[key] = value;
+              }
+            } else if (typeof value === 'object') {
+              target[key] = {};
+              addMissingKeys(target[key], value, prefix ? `${prefix}.${key}` : key);
+            }
+          } else if (typeof value === 'object' && typeof target[key] === 'object') {
+            addMissingKeys(target[key], value, prefix ? `${prefix}.${key}` : key);
+          }
+        }
+      }
+      addMissingKeys(consolidated, frontendContent);
+    }
+  } else {
+    // For all other files, use normal merge with frontend priority
+    
+    // Start with packages (if exists)
+    const packagesFile = path.join(PACKAGES_DIR, language, `${namespace}.json`);
+    if (fs.existsSync(packagesFile)) {
+      const content = JSON.parse(fs.readFileSync(packagesFile, 'utf8'));
+      consolidated = deepMerge(consolidated, content);
+    }
+    
+    // Merge admin (if exists)
+    const adminFile = path.join(ADMIN_DIR, language, `${namespace}.json`);
+    if (fs.existsSync(adminFile)) {
+      const content = JSON.parse(fs.readFileSync(adminFile, 'utf8'));
+      consolidated = deepMerge(consolidated, content);
+    }
+    
+    // Merge frontend (if exists) - frontend takes precedence
+    const frontendFile = path.join(FRONTEND_DIR, language, `${namespace}.json`);
+    if (fs.existsSync(frontendFile)) {
+      const content = JSON.parse(fs.readFileSync(frontendFile, 'utf8'));
+      consolidated = deepMerge(consolidated, content);
+    }
   }
   
   return consolidated;

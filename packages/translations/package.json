@@ -26,6 +26,18 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./locales/*": "./locales/*"
+    "./locales/*": "./locales/*",
+    "./locales/en/common.json": "./locales/en/common.json",
+    "./locales/en/auth.json": "./locales/en/auth.json",
+    "./locales/en/dashboard.json": "./locales/en/dashboard.json",
+    "./locales/en/pricing.json": "./locales/en/pricing.json",
+    "./locales/fr/common.json": "./locales/fr/common.json",
+    "./locales/fr/auth.json": "./locales/fr/auth.json",
+    "./locales/fr/dashboard.json": "./locales/fr/dashboard.json",
+    "./locales/fr/pricing.json": "./locales/fr/pricing.json",
+    "./locales/de/common.json": "./locales/de/common.json",
+    "./locales/de/auth.json": "./locales/de/auth.json",
+    "./locales/de/dashboard.json": "./locales/de/dashboard.json",
+    "./locales/de/pricing.json": "./locales/de/pricing.json"
   }
 }
