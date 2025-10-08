@@ -19,7 +19,13 @@ export default defineConfig(({ mode }) => {
           '@': path.resolve(__dirname, '.'),
           '@workspace/translations': path.resolve(__dirname, '../packages/translations/src/index.ts'),
           '@repo/ui': path.resolve(__dirname, '../packages/ui/src/index.ts'),
-        }
+        },
+        // Dedupe ensures we only load a single copy of these dependencies even
+        // though the shared translation package has its own node_modules
+        // folder. Without this Vite would bundle separate instances of React
+        // and react-i18next which causes hooks such as useTranslation to throw
+        // and the app to render a blank screen.
+        dedupe: ['react', 'react-dom', 'react-i18next', 'i18next'],
       },
       // Ensure static assets are properly copied
       publicDir: 'public',
