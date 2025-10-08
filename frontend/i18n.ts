@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+console.log('🔧 [DEBUG] Starting i18n initialization...');
+
 i18n
   .use(HttpApi)
   .use(LanguageDetector)
@@ -10,7 +12,7 @@ i18n
   .init({
     lng: 'en',
     fallbackLng: ['en'],
-    debug: false,
+    debug: true, // Enable debug mode
     ns: ['common', 'auth', 'dashboard', 'pricing'],
     defaultNS: 'common',
     returnEmptyString: false,
@@ -24,6 +26,17 @@ i18n
     react: {
       useSuspense: false,
     },
+  })
+  .then(() => {
+    console.log('✅ [DEBUG] i18n initialization completed successfully');
+    console.log('🔧 [DEBUG] i18n.isInitialized:', i18n.isInitialized);
+    console.log('🔧 [DEBUG] i18n.language:', i18n.language);
+    console.log('🔧 [DEBUG] i18n.hasResourceBundle(en, common):', i18n.hasResourceBundle('en', 'common'));
+  })
+  .catch((error) => {
+    console.error('❌ [DEBUG] i18n initialization failed:', error);
   });
+
+console.log('🔧 [DEBUG] i18n instance created, isInitialized:', i18n.isInitialized);
 
 export default i18n;

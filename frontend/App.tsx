@@ -86,8 +86,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[]
 };
 
 const RoleBasedDashboardRedirect: React.FC = () => {
-  const { currentUser } = useAppContext();
-  if (!currentUser) return <Navigate to="/login" replace />; // Default to login for non-logged-in
+  console.log('🔧 [DEBUG] RoleBasedDashboardRedirect rendering');
+  try {
+    const { currentUser } = useAppContext();
+    console.log('🔧 [DEBUG] RoleBasedDashboardRedirect currentUser:', currentUser);
+    if (!currentUser) {
+      console.log('🔧 [DEBUG] RoleBasedDashboardRedirect no currentUser, redirecting to login');
+      return <Navigate to="/login" replace />; // Default to login for non-logged-in
+    }
 
   switch (currentUser.role) {
     case UserRole.PRODUCT_SUPPLIER:
@@ -104,21 +110,31 @@ const RoleBasedDashboardRedirect: React.FC = () => {
     case UserRole.SUPER_ADMIN:
       return <Navigate to="/admin/content-dashboard" replace />;
     default:
+      console.log('🔧 [DEBUG] RoleBasedDashboardRedirect default case, redirecting to login');
       return <Navigate to="/login" replace />; // Fallback to login
+  }
+  } catch (error) {
+    console.error('❌ [DEBUG] RoleBasedDashboardRedirect error:', error);
+    throw error;
   }
 };
 
 const ProtectedLayout: React.FC = () => {
-  const { currentUser } = useAppContext();
-  const location = useLocation();
+  console.log('🔧 [DEBUG] ProtectedLayout rendering');
+  try {
+    const { currentUser } = useAppContext();
+    console.log('🔧 [DEBUG] ProtectedLayout useAppContext successful, currentUser:', currentUser);
+    const location = useLocation();
 
-  if (!currentUser) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+    if (!currentUser) {
+      console.log('🔧 [DEBUG] ProtectedLayout no currentUser, redirecting to login');
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
 
-  return (
-    <MainLayout>
-      <Routes>
+    console.log('🔧 [DEBUG] ProtectedLayout rendering MainLayout');
+    return (
+      <MainLayout>
+        <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<RoleBasedDashboardRedirect />} />
         <Route path="/dashboard/details/:detailType" element={<DashboardDetailPage />} />
@@ -295,12 +311,17 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/notifications" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><NotificationsPage /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </MainLayout>
-  );
+        </Routes>
+      </MainLayout>
+    );
+  } catch (error) {
+    console.error('❌ [DEBUG] ProtectedLayout error:', error);
+    throw error;
+  }
 };
 
 const App: React.FC = () => {
+  console.log('🔧 [DEBUG] App component rendering');
   return (
     <AppContextProvider>
       <CartProvider>

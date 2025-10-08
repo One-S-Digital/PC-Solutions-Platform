@@ -10,7 +10,12 @@ import { translateWithSwissTerminology } from './utils';
  * Enhanced useTranslation hook with Swiss terminology support
  */
 export function useTranslation(namespace?: TranslationNamespace) {
-  const { t, i18n, ready } = useI18nTranslation(namespace);
+  console.log('🔧 [DEBUG] @workspace/translations useTranslation called with namespace:', namespace);
+  try {
+    const { t, i18n, ready } = useI18nTranslation(namespace);
+    console.log('🔧 [DEBUG] @workspace/translations useI18nTranslation result:', { t: typeof t, i18n: !!i18n, ready });
+    console.log('🔧 [DEBUG] @workspace/translations i18n.isInitialized:', i18n?.isInitialized);
+    console.log('🔧 [DEBUG] @workspace/translations i18n.language:', i18n?.language);
   
   const currentLanguage = i18n.language as SupportedLanguage;
   
@@ -34,13 +39,18 @@ export function useTranslation(namespace?: TranslationNamespace) {
     return translateWithSwissTerminology(text, currentLanguage);
   };
   
-  return {
-    t: translate,
-    translateSwiss,
-    i18n,
-    ready,
-    currentLanguage
-  };
+    console.log('✅ [DEBUG] @workspace/translations useTranslation returning successfully');
+    return {
+      t: translate,
+      translateSwiss,
+      i18n,
+      ready,
+      currentLanguage
+    };
+  } catch (error) {
+    console.error('❌ [DEBUG] @workspace/translations useTranslation error:', error);
+    throw error;
+  }
 }
 
 /**

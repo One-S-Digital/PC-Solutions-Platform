@@ -87,6 +87,7 @@ const mockUserStore: User[] = [
 ];
 
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  console.log('🔧 [DEBUG] AppContextProvider rendering');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [leads, setLeads] = useState<ParentLead[]>(MOCK_PARENT_LEADS);
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(MOCK_SERVICE_REQUESTS);
@@ -427,10 +428,14 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 };
 
 export const useAppContext = (): AppContextType => {
+  console.log('🔧 [DEBUG] useAppContext called');
   const context = useContext(AppContext);
+  console.log('🔧 [DEBUG] useAppContext context:', context);
   if (context === null) {
+    console.error('❌ [DEBUG] useAppContext context is null - not within AppContextProvider');
     // Use a fallback error message to avoid i18next dependency during context initialization
     throw new Error('useAppContext must be used within an AppContextProvider');
   }
+  console.log('✅ [DEBUG] useAppContext returning context successfully');
   return context;
 };
