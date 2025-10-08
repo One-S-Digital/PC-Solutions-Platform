@@ -7,7 +7,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 i18n
   .use(HttpApi)
   .use(LanguageDetector)
-  .use(initReactI18next)
+  .use(initReactI18next) // initReactI18next adds useSuspense: false by default
   .init({
     lng: 'en',
     fallbackLng: ['en'],

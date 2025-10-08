@@ -483,5 +483,8 @@
     "frLong": "Français",
     "deShort": "DE",
     "deLong": "Allemand"
+  },
+  "appContext": {
+    "useAppContextError": "useAppContext doit être utilisé dans un AppContextProvider"
   }
 }

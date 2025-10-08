@@ -533,5 +533,8 @@
     "EDUCATOR": "Educator",
     "PARENT": "Parent",
     "ADMIN": "Admin"
+  },
+  "appContext": {
+    "useAppContextError": "useAppContext must be used within an AppContextProvider"
   }
 }
