@@ -1,0 +1,517 @@
+{
+  "appName": "ProCrèche Solutions Suisse",
+  "loading": {
+    "translations": "Chargement des traductions..."
+  },
+  "buttons": {
+    "save": "Enregistrer",
+    "saveChanges": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "submit": "Soumettre",
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "viewDetails": "Voir les détails",
+    "goBack": "Retour",
+    "login": "Log In",
+    "signup": "S'inscrire",
+    "applyNow": "Postuler maintenant",
+    "confirmApply": "Confirm Application",
+    "sendMessage": "Envoyer un message",
+    "inviteToApply": "Inviter à postuler",
+    "inviteToInterview": "Inviter à un entretien",
+    "addToFavorites": "Ajouter aux favoris",
+    "favorited": "Favori",
+    "submitEnquiry": "Soumettre la demande",
+    "viewMyEnquiries": "Voir mes demandes",
+    "submitTicket": "Envoyer le ticket",
+    "goToLogin": "Aller à la page de connexion",
+    "close": "Fermer",
+    "view": "Voir",
+    "resetFilters": "Réinitialiser les filtres",
+    "applyFilters": "Appliquer les filtres",
+    "submitRequest": "Envoyer la demande",
+    "remove": "Retirer",
+    "dismiss": "Rejeter"
+  },
+  "common": {
+    "perMonth": "par mois",
+    "perYear": "par an",
+    "save10Percent": "Économisez 10 %"
+  },
+  "errors": {
+    "unknown": "Une erreur inconnue s'est produite"
+  },
+  "notifications": {
+    "errorTitle": "Erreur",
+    "successTitle": "Succès",
+    "newMessageFrom": "Nouveau message de",
+    "settingsUpdated": "Paramètres mis à jour avec succès"
+  },
+  "hidePassword": "Masquer le mot de passe",
+  "showPassword": "Afficher le mot de passe",
+  "signIn": "Se connecter",
+  "signOut": "Se déconnecter",
+  "confirmPassword": "Confirmer le mot de passe",
+  "resetPassword": "Réinitialiser le mot de passe",
+  "rememberMe": "Se souvenir de moi",
+  "createAccount": "Créer un compte",
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "dontHaveAccount": "Vous n'avez pas de compte ?",
+  "welcomeBack": "Bon retour !",
+  "joinPlatform": "Rejoindre la plateforme",
+  "chooseRole": "Choisissez votre rôle",
+  "firstName": "Prénom",
+  "lastName": "Nom de famille",
+  "phoneNumber": "Numéro de téléphone",
+  "organizationName": "Nom de l'organisation",
+  "contactPerson": "Personne de contact",
+  "canton": "Canton",
+  "languages": "Langues",
+  "capacity": "Capacité",
+  "productCategory": "Catégorie de produit",
+  "serviceType": "Type de service",
+  "childAge": "Child Age",
+  "preferredLocation": "Lieu préféré",
+  "type": "Type",
+  "language": "Langue",
+  "responsibilities": "Responsabilités",
+  "qualifications": "Qualifications",
+  "benefits": "Avantages",
+  "requirements": "Exigences",
+  "settingsPage": {
+    "unsavedChangesPrompt": "settingsPage.unsavedChangesPrompt",
+    "loading": "settingsPage.loading",
+    "noSectionsAvailable": "settingsPage.noSectionsAvailable",
+    "analyticsPreferences": "settingsPage.analyticsPreferences",
+    "companyProfile": "settingsPage.companyProfile",
+    "contactBooking": "settingsPage.contactBooking",
+    "defaults": "settingsPage.defaults",
+    "notificationPreferences": "settingsPage.notificationPreferences",
+    "privacyData": "settingsPage.privacyData",
+    "promoCodeManager": "settingsPage.promoCodeManager",
+    "teamPermissions": "settingsPage.teamPermissions"
+  },
+  "contentUploadModal": {
+    "title": {
+      "edit": "contentUploadModal.title.edit"
+    },
+    "labels": {
+      "currentFile": "contentUploadModal.labels.currentFile",
+      "uploadFileType": "contentUploadModal.labels.uploadFileType"
+    },
+    "fileUpload": {
+      "browse": "contentUploadModal.fileUpload.browse",
+      "dragAndDrop": "contentUploadModal.fileUpload.dragAndDrop",
+      "selected": "contentUploadModal.fileUpload.selected"
+    }
+  },
+  "leadCard": {
+    "alert": {
+      "missingParentInfo": "leadCard.alert.missingParentInfo"
+    },
+    "status": {
+      "notResponded": "leadCard.status.notResponded",
+      "interested": "leadCard.status.interested",
+      "notInterested": "leadCard.status.notInterested",
+      "needsMoreInfo": "leadCard.status.needsMoreInfo",
+      "enrolled": "leadCard.status.enrolled"
+    },
+    "forLocation": "leadCard.forLocation",
+    "childAge": "leadCard.childAge",
+    "desiredStart": "leadCard.desiredStart",
+    "submittedOn": "leadCard.submittedOn",
+    "notes": "leadCard.notes",
+    "defaultMessages": {
+      "interested": "leadCard.defaultMessages.interested",
+      "notInterested": "leadCard.defaultMessages.notInterested",
+      "enrolled": "leadCard.defaultMessages.enrolled"
+    },
+    "buttons": {
+      "interested": "leadCard.buttons.interested",
+      "notInterested": "leadCard.buttons.notInterested",
+      "needInfo": "leadCard.buttons.needInfo",
+      "sendQuestion": "leadCard.buttons.sendQuestion",
+      "messageParent": "leadCard.buttons.messageParent",
+      "markEnrolled": "leadCard.buttons.markEnrolled"
+    },
+    "questionFor": "leadCard.questionFor",
+    "questionPlaceholder": "leadCard.questionPlaceholder",
+    "yourResponse": "leadCard.yourResponse",
+    "messageSent": "leadCard.messageSent"
+  },
+  "orderRequestModal": {
+    "title": "orderRequestModal.title"
+  },
+  "messagesPage": {
+    "selectConversationToView": "messagesPage.selectConversationToView",
+    "conversationFallbackTitle": "messagesPage.conversationFallbackTitle",
+    "attachFile": "messagesPage.attachFile",
+    "addEmoji": "messagesPage.addEmoji",
+    "typeMessagePlaceholder": "messagesPage.typeMessagePlaceholder",
+    "searchPlaceholder": "messagesPage.searchPlaceholder",
+    "unknownUser": "messagesPage.unknownUser",
+    "youPrefix": "messagesPage.youPrefix",
+    "noMessagesYet": "messagesPage.noMessagesYet"
+  },
+  "serviceRequestDetailModal": {
+    "title": "serviceRequestDetailModal.title",
+    "requestId": "serviceRequestDetailModal.requestId",
+    "serviceName": "serviceRequestDetailModal.serviceName",
+    "viewDaycareProfile": "serviceRequestDetailModal.viewDaycareProfile",
+    "date": "serviceRequestDetailModal.date",
+    "status": "serviceRequestDetailModal.status",
+    "preferredDate": "serviceRequestDetailModal.preferredDate",
+    "noPreferredDate": "serviceRequestDetailModal.noPreferredDate",
+    "notes": "serviceRequestDetailModal.notes"
+  },
+  ",": ",",
+  "organizationProfileForm": {
+    "accessDenied": "organizationProfileForm.accessDenied",
+    "title": "organizationProfileForm.title",
+    "subtitle": "organizationProfileForm.subtitle",
+    "labels": {
+      "capacity": "organizationProfileForm.labels.capacity",
+      "pedagogy": "organizationProfileForm.labels.pedagogy",
+      "languages": "organizationProfileForm.labels.languages"
+    },
+    "placeholders": {
+      "pedagogy": "organizationProfileForm.placeholders.pedagogy",
+      "languages": "organizationProfileForm.placeholders.languages"
+    },
+    "helpText": {
+      "commaSeparated": "organizationProfileForm.helpText.commaSeparated"
+    },
+    "saveButton": "organizationProfileForm.saveButton"
+  },
+  "settingsAccountSecurity": {
+    "notifications": {
+      "infoUpdated": "settingsAccountSecurity.notifications.infoUpdated",
+      "passwordChanged": "settingsAccountSecurity.notifications.passwordChanged"
+    },
+    "dangerZone": {
+      "finalConfirmation": "settingsAccountSecurity.dangerZone.finalConfirmation"
+    },
+    "personalInfo": {
+      "nameLabel": "settingsAccountSecurity.personalInfo.nameLabel"
+    }
+  },
+  "settingsAnalyticsPreferences": {
+    "timeZone": "settingsAnalyticsPreferences.timeZone",
+    "currency": "settingsAnalyticsPreferences.currency",
+    "benchmarkData": "settingsAnalyticsPreferences.benchmarkData",
+    "benchmarkDataHelpText": "settingsAnalyticsPreferences.benchmarkDataHelpText"
+  },
+  "settingsBillingSubscription": {
+    "yourCurrentPlan": "settingsBillingSubscription.yourCurrentPlan",
+    "upgradePlan": "settingsBillingSubscription.upgradePlan",
+    "downgradePlan": "settingsBillingSubscription.downgradePlan",
+    "currentPlan": "settingsBillingSubscription.currentPlan",
+    "nextInvoiceOn": "settingsBillingSubscription.nextInvoiceOn",
+    "manageSubscriptionTitle": "settingsBillingSubscription.manageSubscriptionTitle",
+    "manageSubscriptionDescription": "settingsBillingSubscription.manageSubscriptionDescription",
+    "managePaymentButton": "settingsBillingSubscription.managePaymentButton",
+    "cancelSubscription": "settingsBillingSubscription.cancelSubscription",
+    "stripePortalLinkNotConfigured": "settingsBillingSubscription.stripePortalLinkNotConfigured",
+    "confirmCancelTitle": "settingsBillingSubscription.confirmCancelTitle",
+    "confirmCancelMessage": "settingsBillingSubscription.confirmCancelMessage",
+    "keepSubscription": "settingsBillingSubscription.keepSubscription",
+    "yesCancel": "settingsBillingSubscription.yesCancel"
+  },
+  "settingsCompanyProfile": {
+    "companyName": "settingsCompanyProfile.companyName",
+    "logo": "settingsCompanyProfile.logo",
+    "coverImage": "settingsCompanyProfile.coverImage",
+    "aboutText": "settingsCompanyProfile.aboutText",
+    "aboutTextLength": "settingsCompanyProfile.aboutTextLength",
+    "vatNumber": "settingsCompanyProfile.vatNumber",
+    "regionsServed": "settingsCompanyProfile.regionsServed",
+    "selectCanton": "settingsCompanyProfile.selectCanton",
+    "cantonsHelpText": "settingsCompanyProfile.cantonsHelpText",
+    "languagesSpoken": "settingsCompanyProfile.languagesSpoken",
+    "selectLanguage": "settingsCompanyProfile.selectLanguage",
+    "languagesHelpText": "settingsCompanyProfile.languagesHelpText"
+  },
+  "settingsContactBooking": {
+    "preferredContactMethod": "settingsContactBooking.preferredContactMethod",
+    "avgResponseTime": "settingsContactBooking.avgResponseTime",
+    "externalBookingLink": "settingsContactBooking.externalBookingLink",
+    "externalBookingLinkPlaceholder": "settingsContactBooking.externalBookingLinkPlaceholder",
+    "directOrderLink": "settingsContactBooking.directOrderLink",
+    "directOrderLinkPlaceholder": "settingsContactBooking.directOrderLinkPlaceholder",
+    "directOrderLinkHelpText": "settingsContactBooking.directOrderLinkHelpText",
+    "calComLink": "settingsContactBooking.calComLink",
+    "calComLinkPlaceholder": "settingsContactBooking.calComLinkPlaceholder",
+    "deliveryTypeToggleRemote": "settingsContactBooking.deliveryTypeToggleRemote"
+  },
+  "settingsDefaults": {
+    "autoRespondToggle": "settingsDefaults.autoRespondToggle",
+    "autoRespondHelpText": "settingsDefaults.autoRespondHelpText",
+    "defaultMOQ": "settingsDefaults.defaultMOQ",
+    "defaultMOQPlaceholder": "settingsDefaults.defaultMOQPlaceholder",
+    "autoAcceptOrderQtyLimit": "settingsDefaults.autoAcceptOrderQtyLimit",
+    "autoAcceptOrderQtyLimitPlaceholder": "settingsDefaults.autoAcceptOrderQtyLimitPlaceholder",
+    "defaultConsultationLength": "settingsDefaults.defaultConsultationLength"
+  },
+  "settingsNotificationPreferences": {
+    "digestFrequency": "settingsNotificationPreferences.digestFrequency",
+    "promoRedemptionAlertsToggle": "settingsNotificationPreferences.promoRedemptionAlertsToggle"
+  },
+  "settingsPrivacyData": {
+    "dataDeletion": "settingsPrivacyData.dataDeletion",
+    "deletionRequestSubmitted": "settingsPrivacyData.deletionRequestSubmitted",
+    "requestGDPRDeletion": "settingsPrivacyData.requestGDPRDeletion",
+    "requestDeletionHelpText": "settingsPrivacyData.requestDeletionHelpText"
+  },
+  "settingsPromoCodeManager": {
+    "confirmDelete": "settingsPromoCodeManager.confirmDelete",
+    "discountTypes": {
+      "percentage": "settingsPromoCodeManager.discountTypes.percentage",
+      "fixedAmount": "settingsPromoCodeManager.discountTypes.fixedAmount",
+      "freeMinutes": "settingsPromoCodeManager.discountTypes.freeMinutes"
+    },
+    "addNewCode": "settingsPromoCodeManager.addNewCode",
+    "noCodesYet": "settingsPromoCodeManager.noCodesYet",
+    "table": {
+      "code": "settingsPromoCodeManager.table.code",
+      "discountOffer": "settingsPromoCodeManager.table.discountOffer",
+      "expiry": "settingsPromoCodeManager.table.expiry",
+      "status": "settingsPromoCodeManager.table.status",
+      "actions": "settingsPromoCodeManager.table.actions"
+    },
+    "addEditModal": {
+      "editTitle": "settingsPromoCodeManager.addEditModal.editTitle",
+      "addTitle": "settingsPromoCodeManager.addEditModal.addTitle",
+      "placeholder": "settingsPromoCodeManager.addEditModal.placeholder",
+      "save": "settingsPromoCodeManager.addEditModal.save"
+    }
+  },
+  "settingsTeamPermissions": {
+    "confirmRemoveMember": "settingsTeamPermissions.confirmRemoveMember",
+    "passwordResetSentAlert": "settingsTeamPermissions.passwordResetSentAlert",
+    "inviteNewMember": "settingsTeamPermissions.inviteNewMember",
+    "emailAddress": "settingsTeamPermissions.emailAddress",
+    "emailPlaceholder": "settingsTeamPermissions.emailPlaceholder",
+    "role": "settingsTeamPermissions.role",
+    "sendInvite": "settingsTeamPermissions.sendInvite",
+    "currentTeamMembers": "settingsTeamPermissions.currentTeamMembers",
+    "noTeamMembers": "settingsTeamPermissions.noTeamMembers",
+    "table": {
+      "email": "settingsTeamPermissions.table.email",
+      "role": "settingsTeamPermissions.table.role",
+      "status": "settingsTeamPermissions.table.status",
+      "actions": "settingsTeamPermissions.table.actions"
+    },
+    "roles": {
+      "editor": "settingsTeamPermissions.roles.editor",
+      "viewer": "settingsTeamPermissions.roles.viewer"
+    },
+    "resetPasswordTooltip": "settingsTeamPermissions.resetPasswordTooltip",
+    "removeMemberTooltip": "settingsTeamPermissions.removeMemberTooltip"
+  },
+  "activeClientToggle": {
+    "confirmSave": "activeClientToggle.confirmSave",
+    "saveSuccess": {
+      "title": "activeClientToggle.saveSuccess.title",
+      "message": "activeClientToggle.saveSuccess.message"
+    },
+    "label": "activeClientToggle.label",
+    "reasonLabel": "activeClientToggle.reasonLabel",
+    "noteLabel": "activeClientToggle.noteLabel",
+    "notePlaceholder": "activeClientToggle.notePlaceholder",
+    "subtext": "activeClientToggle.subtext"
+  },
+  "featureLock": {
+    "upgradeButton": "featureLock.upgradeButton"
+  },
+  "fileUploadModal": {
+    "title": "fileUploadModal.title",
+    "uploadFile": "fileUploadModal.uploadFile",
+    "dragAndDrop": "fileUploadModal.dragAndDrop",
+    "fileTypes": "fileUploadModal.fileTypes",
+    "filesToUpload": "fileUploadModal.filesToUpload"
+  },
+  "orderRequestDetailModal": {
+    "title": "orderRequestDetailModal.title",
+    "orderId": "orderRequestDetailModal.orderId",
+    "date": "orderRequestDetailModal.date",
+    "status": "orderRequestDetailModal.status",
+    "total": "orderRequestDetailModal.total",
+    "viewDaycareProfile": "orderRequestDetailModal.viewDaycareProfile",
+    "lineItems": "orderRequestDetailModal.lineItems",
+    "product": "orderRequestDetailModal.product",
+    "quantity": "orderRequestDetailModal.quantity",
+    "price": "orderRequestDetailModal.price",
+    "notes": "orderRequestDetailModal.notes"
+  },
+  "-": "-",
+  "[data-debug-component]": "[data-debug-component]",
+  " ": " ",
+  "marketplacePage": {
+    "serviceCard": {
+      "categoryLabel": "marketplacePage.serviceCard.categoryLabel",
+      "bookAppointment": "marketplacePage.serviceCard.bookAppointment",
+      "viewProvider": "marketplacePage.serviceCard.viewProvider"
+    }
+  },
+  "notificationsPage": {
+    "title": "notificationsPage.title"
+  },
+  "parentEnquiriesPage": {
+    "title": "parentEnquiriesPage.title"
+  },
+  "parentLeadFormPage": {
+    "title": "parentLeadFormPage.title"
+  },
+  "adminSystemMonitoringPage": {
+    "rawLogConsole": {
+      "emptyLogMessage": "adminSystemMonitoringPage.rawLogConsole.emptyLogMessage",
+      "tabs": {
+        "all": "adminSystemMonitoringPage.rawLogConsole.tabs.all",
+        "errors": "adminSystemMonitoringPage.rawLogConsole.tabs.errors",
+        "warnings": "adminSystemMonitoringPage.rawLogConsole.tabs.warnings",
+        "info": "adminSystemMonitoringPage.rawLogConsole.tabs.info"
+      }
+    },
+    "title": "adminSystemMonitoringPage.title"
+  },
+  "educatorApplicationsPage": {
+    "title": "educatorApplicationsPage.title"
+  },
+  "foundationAnalyticsPage": {
+    "title": "foundationAnalyticsPage.title"
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "foundationOrganisationProfilePage.title"
+  },
+  "parentDashboard": {
+    "enquiry": {
+      "title": "parentDashboard.enquiry.title"
+    },
+    "quickActions": {
+      "title": "parentDashboard.quickActions.title"
+    },
+    "childProfile": {
+      "title": "parentDashboard.childProfile.title"
+    },
+    "favorites": {
+      "title": "parentDashboard.favorites.title"
+    }
+  },
+  "View Favorites TBD": "View Favorites TBD",
+  "Could not find a user associated with this organization to message": {
+    "": "Could not find a user associated with this organization to message."
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "serviceProviderAnalyticsPage.title"
+  },
+  "serviceProviderDashboard": {
+    "title": "serviceProviderDashboard.title"
+  },
+  "User organization details are missing": {
+    "": "User organization details are missing."
+  },
+  "serviceProviderListingsPage": {
+    "title": "serviceProviderListingsPage.title"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "serviceProviderRequestsPage.title"
+  },
+  "supplierOrdersPage": {
+    "title": "supplierOrdersPage.title"
+  },
+  "supplierProductListingsPage": {
+    "title": "supplierProductListingsPage.title"
+  },
+  "tailwindcss": "tailwindcss",
+  "requests carry authorization header": "requests carry authorization header",
+  "login page renders correctly": "login page renders correctly",
+  "parent lead form validates and submits to backend": "parent lead form validates and submits to backend",
+  "signup form validates required fields": "signup form validates required fields",
+  "contact/settings forms handle input correctly": "contact/settings forms handle input correctly",
+  "form validation messages work correctly": "form validation messages work correctly",
+  "login shows link to plans and no demo login": "login shows link to plans and no demo login",
+  "body": "body",
+  "login form elements are present": "login form elements are present",
+  "login page has proper branding and messaging": "login page has proper branding and messaging",
+  "signup link redirects to signup page": "signup link redirects to signup page",
+  "forgot password link exists if applicable": "forgot password link exists if applicable",
+  "non-super-admin cannot access super-admin routes": "non-super-admin cannot access super-admin routes",
+  "protected routes require authentication": "protected routes require authentication",
+  "role-based navigation shows correct sidebar items": "role-based navigation shows correct sidebar items",
+  "file upload zone accepts files and shows preview": "file upload zone accepts files and shows preview",
+  "service upload modal works correctly": "service upload modal works correctly",
+  "content upload validates file types": "content upload validates file types",
+  "upload API endpoints are intercepted correctly": "upload API endpoints are intercepted correctly",
+  "product transformation maps API data to UI model": "product transformation maps API data to UI model",
+  "service transformation maps API data to UI model": "service transformation maps API data to UI model",
+  "handles missing optional fields gracefully": "handles missing optional fields gracefully",
+  "job listing transformation correct maps API data to UI model": "job listing transformation correct maps API data to UI model",
+  "application transformation maps application data correctly": "application transformation maps application data correctly",
+  "hardcodedText": {
+    "debug.mode.active.look.for.purple.debug.buttons.in.bottom.corners": "🔍 MODE DEBUG ACTIF - Cherchez les boutons de debug violets dans les coins inférieurs",
+    "rarr": "&rarr;",
+    "continue.shopping": "Continuer les achats",
+    "add.to.cart": "Ajouter au panier",
+    "remove.from.cart": "Retirer du panier",
+    "view.cart": "Voir le panier",
+    "checkout": "Commander",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "shipping": "Livraison",
+    "discount": "Remise",
+    "free": "Gratuit",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "view": "Voir",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "send": "Envoyer",
+    "submit": "Soumettre",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "register": "S'inscrire",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "dashboard": "Tableau de bord",
+    "home": "Accueil",
+    "about": "À propos",
+    "contact": "Contact",
+    "help": "Aide",
+    "support": "Support",
+    "faq": "FAQ",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "copyright": "Droits d'auteur",
+    "all.rights.reserved": "Tous droits réservés"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Choisir la langue (actuelle : {{currentLanguage}})",
+    "enShort": "EN",
+    "enLong": "Anglais",
+    "frShort": "FR",
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Allemand"
+  }
+}

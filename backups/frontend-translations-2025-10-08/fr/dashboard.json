@@ -56,30 +56,30 @@
     "platformSettings": "Paramètres Plateforme",
     "designSystem": "Système de Design",
     "settings": "Paramètres",
-    "currentPlan": "Plan actuel",
-    "manageSubscriptionDesc": "Gérez votre abonnement",
-    "fileGallery": "Galerie de fichiers",
-    "jobBoard": "Tableau des emplois",
-    "myProfile": "Mon profil",
-    "support": "Support",
-    "parentLeads": "Prospects parents",
-    "ordersAppointments": "Commandes et rendez-vous",
-    "supportFAQ": "Support et FAQ",
-    "analytics": "Analytique"
+    "currentPlan": "[FR] sidebar.currentPlan",
+    "manageSubscriptionDesc": "[FR] sidebar.manageSubscriptionDesc",
+    "fileGallery": "[FR] sidebar.fileGallery",
+    "jobBoard": "[FR] sidebar.jobBoard",
+    "myProfile": "[FR] sidebar.myProfile",
+    "support": "[FR] sidebar.support",
+    "parentLeads": "[FR] sidebar.parentLeads",
+    "ordersAppointments": "[FR] sidebar.ordersAppointments",
+    "supportFAQ": "[FR] sidebar.supportFAQ",
+    "analytics": "[FR] sidebar.analytics"
   },
   "navbar": {
-    "notificationsCount": "Notifications  : {{count}}",
+    "notificationsCount": "Notifications  : {{count}}",
     "unreadMessages": "Messages non lus: {{count}}",
     "searchPlaceholder": "RECHERCHER SUR LA PLAQUE FORMEL ...",
-    "toggleNavigation": "Basculer la navigation",
-    "goBackPreviousPage": "Retour à la page précédente",
-    "viewShoppingCart": "Voir le panier",
-    "notifications": "Notifications",
-    "newMessages": "Nouveaux messages",
-    "noNewNotifications": "Aucune nouvelle notification",
-    "viewAll": "Tout voir",
-    "userMenu": "Menu utilisateur",
-    "signOut": "Se déconnecter"
+    "toggleNavigation": "[FR] navbar.toggleNavigation",
+    "goBackPreviousPage": "[FR] navbar.goBackPreviousPage",
+    "viewShoppingCart": "[FR] navbar.viewShoppingCart",
+    "notifications": "[FR] navbar.notifications",
+    "newMessages": "[FR] navbar.newMessages",
+    "noNewNotifications": "[FR] navbar.noNewNotifications",
+    "viewAll": "[FR] navbar.viewAll",
+    "userMenu": "[FR] navbar.userMenu",
+    "signOut": "[FR] navbar.signOut"
   },
   "stockStatus": {
     "instock": "Enterre",
@@ -798,6 +798,7 @@
     "View Favorites TBD": "Voi des favoris à deterner",
     "Could not find a user associated with this organization to message.": "Impossible de Trouver Un Utilisateur Associé à CETTe Organisation à un Message.",
     "User organization details are missing.": "Les Dédails de l'organisation Utilisateur Sont Manquants.",
+    "tailwindcss": "Tailwindcss",
     "sidebar.parentLeads": "Les parents dirigés",
     "sidebar.products": "Produits",
     "sidebar.services": "Services",
@@ -817,5 +818,6 @@
     "admin@procrechesolutions.com": "administrat@procrechesolutions.com",
     "No documents found in this category for current filters.": "AUCUN DOCUMENT TRUPVÉ DANS CETTE CATÉGORIE LES FILTRES ACTUELS.",
     "No custom alerts created yet.": "Autre Alerte Personnalisée Encore Créée."
-  }
+  },
+  "dashboard redirects based on user role": "[FR] dashboard redirects based on user role"
 }

@@ -56,30 +56,30 @@
     "platformSettings": "Platform Settings",
     "designSystem": "Design System",
     "settings": "Settings",
-    "currentPlan": "Current Plan",
-    "manageSubscriptionDesc": "Manage your subscription and billing",
-    "fileGallery": "File Gallery",
-    "jobBoard": "Job Board",
-    "myProfile": "My Profile",
-    "support": "Support",
-    "parentLeads": "Parent Leads",
-    "ordersAppointments": "Orders & Appointments",
-    "supportFAQ": "Support & FAQ",
-    "analytics": "Analytics"
+    "currentPlan": "sidebar.currentPlan",
+    "manageSubscriptionDesc": "sidebar.manageSubscriptionDesc",
+    "fileGallery": "sidebar.fileGallery",
+    "jobBoard": "sidebar.jobBoard",
+    "myProfile": "sidebar.myProfile",
+    "support": "sidebar.support",
+    "parentLeads": "sidebar.parentLeads",
+    "ordersAppointments": "sidebar.ordersAppointments",
+    "supportFAQ": "sidebar.supportFAQ",
+    "analytics": "sidebar.analytics"
   },
   "navbar": {
     "notificationsCount": "{{count}} notifications",
     "unreadMessages": "{{count}} unread messages",
     "searchPlaceholder": "Search...",
-    "toggleNavigation": "Toggle navigation",
-    "goBackPreviousPage": "Go back to previous page",
-    "viewShoppingCart": "View shopping cart",
-    "notifications": "Notifications",
-    "newMessages": "New messages",
-    "noNewNotifications": "No new notifications",
-    "viewAll": "View all",
-    "userMenu": "User menu",
-    "signOut": "Sign out"
+    "toggleNavigation": "navbar.toggleNavigation",
+    "goBackPreviousPage": "navbar.goBackPreviousPage",
+    "viewShoppingCart": "navbar.viewShoppingCart",
+    "notifications": "navbar.notifications",
+    "newMessages": "navbar.newMessages",
+    "noNewNotifications": "navbar.noNewNotifications",
+    "viewAll": "navbar.viewAll",
+    "userMenu": "navbar.userMenu",
+    "signOut": "navbar.signOut"
   },
   "stockStatus": {
     "instock": "In Stock",
@@ -460,14 +460,7 @@
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
-      "title": "Raw Log Console",
-      "emptyLogMessage": "No logs available",
-      "tabs": {
-        "all": "All Logs",
-        "errors": "Errors",
-        "warnings": "Warnings",
-        "info": "Info"
-      }
+      "title": "Raw Log Console"
     },
     "overallStatus": {
       "title": "Overall System Status"
@@ -805,6 +798,7 @@
     "View Favorites TBD": "View Favorites TBD",
     "Could not find a user associated with this organization to message.": "Could not find a user associated with this organization to message.",
     "User organization details are missing.": "User organization details are missing.",
+    "tailwindcss": "tailwindcss",
     "sidebar.parentLeads": "Parent Leads",
     "sidebar.products": "Products",
     "sidebar.services": "Services",
@@ -824,5 +818,6 @@
     "admin@procrechesolutions.com": "admin@procrechesolutions.com",
     "No documents found in this category for current filters.": "No documents found in this category for current filters.",
     "No custom alerts created yet.": "No custom alerts created yet."
-  }
+  },
+  "dashboard redirects based on user role": "dashboard redirects based on user role"
 }

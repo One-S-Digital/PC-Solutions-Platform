@@ -93,7 +93,11 @@
     "teamPermissions": "SettingSpage.teampermissions"
   },
   "contentUploadModal": {
+    "title": {
+      "edit": "contentUploadModal.title.edit"
+    },
     "labels": {
+      "currentFile": "contentUploadModal.labels.currentFile",
       "uploadFileType": "contentUploadModal.labels.UploadFiletype"
     },
     "fileUpload": {
@@ -161,6 +165,7 @@
     "noPreferredDate": "serviceRequestDetailmodal.noperDerRedDate",
     "notes": "serviceRequestDetailmodal.notes"
   },
+  ",": "Anwesend",
   "organizationProfileForm": {
     "accessDenied": "organisationProfileForm.AccessDenied",
     "title": "organisationsprofileform.titel",
@@ -310,6 +315,7 @@
       "title": "activeClientToggle.Savesuccess.title",
       "message": "activeClientToggle.Savesuccess.Message"
     },
+    "label": "activeClientToggle.label",
     "reasonLabel": "activeClientToggle.reasonlabel",
     "noteLabel": "activeClientToggle.notelabel",
     "notePlaceholder": "activeClientToggle.noteplaceholder",
@@ -329,11 +335,18 @@
     "title": "orderRequestDetailModal.titel",
     "orderId": "orderRequestDetailModal.OrderId",
     "date": "orderRequestDetailmodal.date",
+    "status": "orderRequestDetailModal.status",
     "total": "orderRequestDetailmodal.total",
+    "viewDaycareProfile": "orderRequestDetailModal.viewDaycareProfile",
+    "lineItems": "orderRequestDetailModal.lineItems",
     "product": "orderRequestDetailModal.Product",
-    "quantity": "orderRequestDetailmodal.quantity"
+    "quantity": "orderRequestDetailmodal.quantity",
+    "price": "orderRequestDetailModal.price",
+    "notes": "orderRequestDetailModal.notes"
   },
+  "-": "- -",
   "[data-debug-component]": "[DATEN-Debug-Komponente]",
+  " ": " ",
   "marketplacePage": {
     "serviceCard": {
       "categoryLabel": "MarketPlacePage.Servicecard.CategoryLabel",
@@ -410,6 +423,7 @@
   "supplierProductListingsPage": {
     "title": "LEEFERERERERPRODUCTLISTINGINGSPAGE.TITLE"
   },
+  "tailwindcss": "Rückenwindcss",
   "requests carry authorization header": "Anfragen Tragen AutorisierungSheader",
   "login page renders correctly": "Die AnmeldeseTeTeT -Ordnungsgemäß",
   "parent lead form validates and submits to backend": "Das übergeordnete Leitformular validier und reicht dem Backend ein",

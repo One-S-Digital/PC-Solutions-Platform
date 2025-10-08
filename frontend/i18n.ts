@@ -14,7 +14,7 @@ i18n
     ns: ['common', 'auth', 'dashboard', 'pricing'],
     defaultNS: 'common',
     returnEmptyString: false,
-    saveMissing: true,
+    saveMissing: false,  // FIXED: Disabled to prevent file corruption
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
