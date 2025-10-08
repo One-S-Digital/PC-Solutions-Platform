@@ -3,7 +3,6 @@ import { initReactI18next } from 'react-i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Initialize i18next
 i18n
   .use(HttpApi)
   .use(LanguageDetector)
@@ -15,7 +14,7 @@ i18n
     ns: ['common', 'auth', 'dashboard', 'pricing'],
     defaultNS: 'common',
     returnEmptyString: false,
-    saveMissing: false, // Fixed: spec requires false
+    saveMissing: false,
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
@@ -26,10 +25,5 @@ i18n
       useSuspense: false,
     },
   });
-
-// Ensure i18next is properly initialized
-if (!i18n.isInitialized) {
-  i18n.init();
-}
 
 export default i18n;
