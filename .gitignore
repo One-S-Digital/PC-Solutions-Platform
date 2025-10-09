@@ -35,3 +35,18 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Translation system generated files
+translation-audit.json
+*.backup
+*.old
+backups/
+*-missing-keys*
+extract-*-missing-keys*
+add-missing-keys*
+replace-hardcoded-text*
+hardcoded-text-replacements*
+
+# Keep packages/translations clean
+packages/translations/dist/
+packages/translations/tsconfig.tsbuildinfo
