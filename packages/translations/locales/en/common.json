@@ -306,7 +306,8 @@
       "currentFile": "Current File",
       "uploadFileType": "Upload File Type",
       "description": "Description",
-      "uploadFile": "Upload File"
+      "uploadFile": "Upload File",
+      "contentType": "Content Type"
     },
     "placeholders": {
       "duration": "Duration",
