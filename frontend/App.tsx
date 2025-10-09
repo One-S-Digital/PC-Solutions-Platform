@@ -28,6 +28,7 @@ import ParentLeadFormPage from './pages/ParentLeadFormPage';
 import ParentEnquiriesPage from './pages/parent/ParentEnquiriesPage';
 import FoundationLeadsPage from './pages/foundation/FoundationLeadsPage';
 import ContentManagementDashboardPage from './pages/admin/ContentManagementDashboardPage'; 
+import AdminSystemMonitoringPage from './pages/admin/AdminSystemMonitoringPage';
 import AdminPlatformSettingsPage from './pages/admin/AdminPlatformSettingsPage'; // Corrected relative import
 import DashboardDetailPage from './pages/DashboardDetailPage'; 
 import PartnerDetailPage from './pages/partner/PartnerDetailPage'; 
@@ -175,6 +176,14 @@ const ProtectedLayout: React.FC = () => {
           element={
             <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
               <DiscountTerminationsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/system-monitoring" 
+          element={
+            <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+              <AdminSystemMonitoringPage />
             </ProtectedRoute>
           } 
         />
