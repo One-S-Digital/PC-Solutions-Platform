@@ -1,0 +1,26 @@
+{
+  "title": "Settings",
+  "accountSecurity": {
+    "title": "Account & Security"
+  },
+  "personalInfo": {
+    "title": "Personal Information",
+    "updateInfoButton": "Update Information"
+  },
+  "changePassword": {
+    "title": "Change Password",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatePasswordButton": "Update Password"
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "emailNotifications": "Email Notifications",
+    "pushNotifications": "Push Notifications"
+  },
+  "language": {
+    "title": "Language & Region",
+    "selectLanguage": "Select Language"
+  }
+}

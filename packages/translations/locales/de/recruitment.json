@@ -1,0 +1,24 @@
+{
+  "jobListings": {
+    "title": "Stellenangebote",
+    "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
+    "viewDetails": "Stellendetails anzeigen"
+  },
+  "candidatePool": {
+    "title": "Kandidatenpool",
+    "noCandidates": "Keine Kandidaten verfügbar",
+    "viewProfile": "Profil anzeigen"
+  },
+  "buttons": {
+    "postNewJob": "Neue Stelle ausschreiben",
+    "addCandidate": "Kandidat hinzufügen",
+    "applyNow": "Jetzt bewerben",
+    "inviteToApply": "Zur Bewerbung einladen",
+    "inviteToInterview": "Zum Interview einladen"
+  },
+  "filters": {
+    "location": "Standort",
+    "experience": "Erfahrung",
+    "availability": "Verfügbarkeit"
+  }
+}

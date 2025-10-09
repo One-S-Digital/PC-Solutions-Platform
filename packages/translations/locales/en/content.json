@@ -1,0 +1,57 @@
+{
+  "eLearning": {
+    "title": "E-Learning",
+    "tabs": {
+      "courses": "Courses",
+      "videos": "Videos",
+      "pdfs": "PDFs"
+    },
+    "emptyState": {
+      "noContent": "No content available"
+    },
+    "buttons": {
+      "addNewContent": "Add New Content"
+    }
+  },
+  "hrProcedures": {
+    "title": "HR Procedures",
+    "uploadButton": {
+      "label": "Upload Document"
+    },
+    "emptyState": {
+      "noDocuments": "No HR documents available"
+    },
+    "buttons": {
+      "uploadDocument": "Upload Document"
+    }
+  },
+  "statePolicies": {
+    "title": "State Policies",
+    "filters": {
+      "canton": "Canton",
+      "region": "Region",
+      "policyType": "Policy Type"
+    },
+    "tabs": {
+      "cantonal": "Cantonal",
+      "national": "National"
+    },
+    "emptyState": {
+      "noPolicies": "No policies available"
+    },
+    "buttons": {
+      "manageAlerts": "Manage Alerts",
+      "addEditPolicy": "Add/Edit Policy"
+    }
+  },
+  "contentManagementDashboard": {
+    "title": "Content Management",
+    "cards": {
+      "eLearningItems": "E-Learning Items",
+      "hrDocuments": "HR Documents",
+      "statePolicies": "State Policies",
+      "recentActivity": "Recent Activity",
+      "contentStatusFlags": "Content Status Flags"
+    }
+  }
+}

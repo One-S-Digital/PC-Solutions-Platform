@@ -1,0 +1,26 @@
+{
+  "title": "Einstellungen",
+  "accountSecurity": {
+    "title": "Konto und Sicherheit"
+  },
+  "personalInfo": {
+    "title": "Persönliche Informationen",
+    "updateInfoButton": "Informationen aktualisieren"
+  },
+  "changePassword": {
+    "title": "Passwort ändern",
+    "oldPassword": "Altes Passwort",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "updatePasswordButton": "Passwort aktualisieren"
+  },
+  "notifications": {
+    "title": "Benachrichtigungseinstellungen",
+    "emailNotifications": "E-Mail-Benachrichtigungen",
+    "pushNotifications": "Push-Benachrichtigungen"
+  },
+  "language": {
+    "title": "Sprache und Region",
+    "selectLanguage": "Sprache auswählen"
+  }
+}

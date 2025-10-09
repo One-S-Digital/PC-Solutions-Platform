@@ -1,0 +1,44 @@
+{
+  "discountTerminationsPage": {
+    "queue": {
+      "title": "File d'attente de résiliation"
+    },
+    "active": {
+      "title": "Réductions actives"
+    }
+  },
+  "partnersPage": {
+    "title": "Nos partenaires",
+    "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance",
+    "sections": {
+      "featuredPartners": "Partenaires en vedette"
+    },
+    "buttons": {
+      "becomePartner": "Devenir partenaire"
+    }
+  },
+  "platformSettings": {
+    "title": "Paramètres de la plateforme",
+    "general": {
+      "title": "Paramètres généraux",
+      "platformName": "Nom de la plateforme",
+      "platformDescription": "Description de la plateforme"
+    },
+    "branding": {
+      "title": "Image de marque",
+      "logo": "Logo",
+      "favicon": "Favicon"
+    },
+    "buttons": {
+      "saveChanges": "Enregistrer les modifications"
+    }
+  },
+  "designSystem": {
+    "title": "Système de design",
+    "sections": {
+      "colors": "Couleurs",
+      "typography": "Typographie",
+      "components": "Composants"
+    }
+  }
+}

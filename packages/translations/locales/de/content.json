@@ -1,0 +1,57 @@
+{
+  "eLearning": {
+    "title": "E-Learning",
+    "tabs": {
+      "courses": "Kurse",
+      "videos": "Videos",
+      "pdfs": "PDFs"
+    },
+    "emptyState": {
+      "noContent": "Kein Inhalt verfügbar"
+    },
+    "buttons": {
+      "addNewContent": "Neuen Inhalt hinzufügen"
+    }
+  },
+  "hrProcedures": {
+    "title": "HR-Verfahren",
+    "uploadButton": {
+      "label": "Dokument hochladen"
+    },
+    "emptyState": {
+      "noDocuments": "Keine HR-Dokumente verfügbar"
+    },
+    "buttons": {
+      "uploadDocument": "Dokument hochladen"
+    }
+  },
+  "statePolicies": {
+    "title": "Staatliche Richtlinien",
+    "filters": {
+      "canton": "Kanton",
+      "region": "Region",
+      "policyType": "Richtlinientyp"
+    },
+    "tabs": {
+      "cantonal": "Kantonal",
+      "national": "National"
+    },
+    "emptyState": {
+      "noPolicies": "Keine Richtlinien verfügbar"
+    },
+    "buttons": {
+      "manageAlerts": "Warnungen verwalten",
+      "addEditPolicy": "Richtlinie hinzufügen/bearbeiten"
+    }
+  },
+  "contentManagementDashboard": {
+    "title": "Inhaltsverwaltung",
+    "cards": {
+      "eLearningItems": "E-Learning-Elemente",
+      "hrDocuments": "HR-Dokumente",
+      "statePolicies": "Staatliche Richtlinien",
+      "recentActivity": "Letzte Aktivität",
+      "contentStatusFlags": "Inhaltsstatusindikatoren"
+    }
+  }
+}

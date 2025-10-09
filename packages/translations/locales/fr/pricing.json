@@ -1,4 +1,39 @@
 {
+  "sections": {
+    "basic": {
+      "title": "Basique",
+      "desc": "Outils essentiels pour les petites crèches",
+      "price": "CHF 49"
+    },
+    "essential": {
+      "title": "Essentiel",
+      "desc": "Gagnez du temps avec des workflows prêts à l'emploi",
+      "price": "CHF 99"
+    },
+    "professional": {
+      "title": "Professionnel",
+      "desc": "Croissez en toute confiance avec un soutien complet",
+      "price": "CHF 199"
+    },
+    "enterprise": {
+      "title": "Entreprise",
+      "desc": "Évoluez sur plusieurs sites avec automatisation",
+      "price": "Personnalisé"
+    }
+  },
+  "suppliers": {
+    "title": "Pour les fournisseurs et prestataires de services",
+    "suppliersPlan": {
+      "title": "Fournisseurs de produits",
+      "desc": "Atteignez les crèches suisses avec vos produits",
+      "price": "CHF 79"
+    },
+    "serviceProvidersPlan": {
+      "title": "Prestataires de services",
+      "desc": "Créez des partenariats avec les crèches",
+      "price": "CHF 99"
+    }
+  },
   "pricingPage": {
     "title": "Plans tarifaires",
     "plans": "Offres disponibles",

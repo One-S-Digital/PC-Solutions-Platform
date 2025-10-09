@@ -1,0 +1,33 @@
+{
+  "title": "Find your perfect crèche",
+  "subtitle": "Tell us about your needs and we'll help you find the best childcare solution",
+  "labels": {
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phoneNumber": "Phone Number",
+    "canton": "Canton",
+    "municipality": "Municipality",
+    "childAge": "Child's Age (in months)",
+    "startDate": "Preferred Start Date",
+    "childNeeds": "Child's Special Needs"
+  },
+  "placeholders": {
+    "fullName": "Enter your full name",
+    "email": "your.email@example.com",
+    "phoneNumber": "+41 XX XXX XX XX",
+    "canton": "Select canton",
+    "municipality": "Select municipality",
+    "childAge": "Enter age in months",
+    "startDate": "Select date",
+    "specialRequirements": "Please describe any special requirements, dietary needs, medical conditions, or other important information about your child..."
+  },
+  "buttons": {
+    "submitEnquiry": "Submit Enquiry",
+    "viewMyEnquiries": "View My Enquiries"
+  },
+  "messages": {
+    "submitting": "Submitting your enquiry...",
+    "success": "Your enquiry has been submitted successfully!",
+    "error": "Failed to submit enquiry. Please try again."
+  }
+}

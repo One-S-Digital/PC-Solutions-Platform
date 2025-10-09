@@ -1,0 +1,44 @@
+{
+  "discountTerminationsPage": {
+    "queue": {
+      "title": "Termination Queue"
+    },
+    "active": {
+      "title": "Active Discounts"
+    }
+  },
+  "partnersPage": {
+    "title": "Our Partners",
+    "subtitle": "Trusted partners in early childhood education",
+    "sections": {
+      "featuredPartners": "Featured Partners"
+    },
+    "buttons": {
+      "becomePartner": "Become a Partner"
+    }
+  },
+  "platformSettings": {
+    "title": "Platform Settings",
+    "general": {
+      "title": "General Settings",
+      "platformName": "Platform Name",
+      "platformDescription": "Platform Description"
+    },
+    "branding": {
+      "title": "Branding",
+      "logo": "Logo",
+      "favicon": "Favicon"
+    },
+    "buttons": {
+      "saveChanges": "Save Changes"
+    }
+  },
+  "designSystem": {
+    "title": "Design System",
+    "sections": {
+      "colors": "Colors",
+      "typography": "Typography",
+      "components": "Components"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "productSuppliers": "Fournisseurs de produits",
+    "serviceProviders": "Prestataires de services"
+  },
+  "labels": {
+    "searchByName": "Rechercher par nom",
+    "categoryFilter": "Filtrer par catégorie",
+    "regionFilter": "Filtrer par région"
+  },
+  "messages": {
+    "noProductSuppliers": "Aucun fournisseur de produits trouvé",
+    "noServiceProviders": "Aucun prestataire de services trouvé",
+    "noResults": "Aucun résultat trouvé. Essayez d'ajuster vos filtres."
+  },
+  "buttons": {
+    "resetFilters": "Réinitialiser les filtres",
+    "viewDetails": "Voir les détails",
+    "contact": "Contacter le fournisseur"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Messages",
+  "tabs": {
+    "all": "All Messages",
+    "unread": "Unread"
+  },
+  "emptyState": {
+    "selectConversation": "Select a conversation to start messaging"
+  },
+  "buttons": {
+    "newGroup": "New Group",
+    "sendMessage": "Send Message"
+  },
+  "placeholders": {
+    "typeMessage": "Type a message...",
+    "searchConversations": "Search conversations..."
+  }
+}

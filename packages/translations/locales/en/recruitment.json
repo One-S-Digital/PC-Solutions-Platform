@@ -1,0 +1,24 @@
+{
+  "jobListings": {
+    "title": "Job Listings",
+    "noJobs": "No job listings available at the moment",
+    "viewDetails": "View Job Details"
+  },
+  "candidatePool": {
+    "title": "Candidate Pool",
+    "noCandidates": "No candidates available",
+    "viewProfile": "View Profile"
+  },
+  "buttons": {
+    "postNewJob": "Post New Job",
+    "addCandidate": "Add Candidate",
+    "applyNow": "Apply Now",
+    "inviteToApply": "Invite to Apply",
+    "inviteToInterview": "Invite to Interview"
+  },
+  "filters": {
+    "location": "Location",
+    "experience": "Experience",
+    "availability": "Availability"
+  }
+}

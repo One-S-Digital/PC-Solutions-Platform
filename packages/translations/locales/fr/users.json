@@ -1,0 +1,42 @@
+{
+  "all": {
+    "title": "Tous les utilisateurs"
+  },
+  "admins": {
+    "title": "Administrateurs"
+  },
+  "foundations": {
+    "title": "Fondations"
+  },
+  "productSuppliers": {
+    "title": "Fournisseurs de produits"
+  },
+  "serviceProviders": {
+    "title": "Prestataires de services"
+  },
+  "parents": {
+    "title": "Parents"
+  },
+  "educators": {
+    "title": "Éducateurs"
+  },
+  "headers": {
+    "name": "Nom",
+    "email": "E-mail",
+    "role": "Rôle",
+    "status": "Statut",
+    "actions": "Actions"
+  },
+  "noUsersFound": "Aucun utilisateur trouvé",
+  "buttons": {
+    "addNewUser": "Ajouter un nouvel utilisateur",
+    "editUser": "Modifier l'utilisateur",
+    "deleteUser": "Supprimer l'utilisateur"
+  },
+  "roleManagement": {
+    "title": "Gestion des rôles",
+    "search": "Rechercher des utilisateurs...",
+    "addNewUser": "Ajouter un nouvel utilisateur",
+    "noUsersFound": "Aucun utilisateur trouvé pour ce rôle"
+  }
+}

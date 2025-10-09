@@ -1,4 +1,39 @@
 {
+  "sections": {
+    "basic": {
+      "title": "Basis",
+      "desc": "Wesentliche Tools für kleine Kitas",
+      "price": "CHF 49"
+    },
+    "essential": {
+      "title": "Wesentlich",
+      "desc": "Sparen Sie Zeit mit sofort einsatzbereiten Workflows",
+      "price": "CHF 99"
+    },
+    "professional": {
+      "title": "Professionell",
+      "desc": "Wachsen Sie selbstbewusst mit voller Unterstützung",
+      "price": "CHF 199"
+    },
+    "enterprise": {
+      "title": "Unternehmen",
+      "desc": "Skalieren Sie über Standorte mit Automatisierung",
+      "price": "Individuell"
+    }
+  },
+  "suppliers": {
+    "title": "Für Lieferanten und Dienstleister",
+    "suppliersPlan": {
+      "title": "Produktlieferanten",
+      "desc": "Erreichen Sie Schweizer Kitas mit Ihren Produkten",
+      "price": "CHF 79"
+    },
+    "serviceProvidersPlan": {
+      "title": "Dienstleister",
+      "desc": "Bauen Sie Partnerschaften mit Kitas auf",
+      "price": "CHF 99"
+    }
+  },
   "pricingPage": {
     "title": "Preispläne",
     "plans": "Verfügbare Pakete",

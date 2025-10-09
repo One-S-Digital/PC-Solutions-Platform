@@ -1,0 +1,33 @@
+{
+  "title": "Trouvez votre crèche parfaite",
+  "subtitle": "Parlez-nous de vos besoins et nous vous aiderons à trouver la meilleure solution de garde d'enfants",
+  "labels": {
+    "fullName": "Nom complet",
+    "email": "Adresse e-mail",
+    "phoneNumber": "Numéro de téléphone",
+    "canton": "Canton",
+    "municipality": "Municipalité",
+    "childAge": "Âge de l'enfant (en mois)",
+    "startDate": "Date de début préférée",
+    "childNeeds": "Besoins spéciaux de l'enfant"
+  },
+  "placeholders": {
+    "fullName": "Entrez votre nom complet",
+    "email": "votre.email@exemple.com",
+    "phoneNumber": "+41 XX XXX XX XX",
+    "canton": "Sélectionner le canton",
+    "municipality": "Sélectionner la municipalité",
+    "childAge": "Entrez l'âge en mois",
+    "startDate": "Sélectionner la date",
+    "specialRequirements": "Veuillez décrire toute exigence particulière, besoins alimentaires, conditions médicales ou autres informations importantes concernant votre enfant..."
+  },
+  "buttons": {
+    "submitEnquiry": "Soumettre la demande",
+    "viewMyEnquiries": "Voir mes demandes"
+  },
+  "messages": {
+    "submitting": "Soumission de votre demande...",
+    "success": "Votre demande a été soumise avec succès!",
+    "error": "Échec de la soumission de la demande. Veuillez réessayer."
+  }
+}

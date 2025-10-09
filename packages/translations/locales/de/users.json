@@ -1,0 +1,42 @@
+{
+  "all": {
+    "title": "Alle Benutzer"
+  },
+  "admins": {
+    "title": "Administratoren"
+  },
+  "foundations": {
+    "title": "Stiftungen"
+  },
+  "productSuppliers": {
+    "title": "Produktlieferanten"
+  },
+  "serviceProviders": {
+    "title": "Dienstleister"
+  },
+  "parents": {
+    "title": "Eltern"
+  },
+  "educators": {
+    "title": "Pädagogen"
+  },
+  "headers": {
+    "name": "Name",
+    "email": "E-Mail",
+    "role": "Rolle",
+    "status": "Status",
+    "actions": "Aktionen"
+  },
+  "noUsersFound": "Keine Benutzer gefunden",
+  "buttons": {
+    "addNewUser": "Neuen Benutzer hinzufügen",
+    "editUser": "Benutzer bearbeiten",
+    "deleteUser": "Benutzer löschen"
+  },
+  "roleManagement": {
+    "title": "Rollenverwaltung",
+    "search": "Benutzer suchen...",
+    "addNewUser": "Neuen Benutzer hinzufügen",
+    "noUsersFound": "Keine Benutzer für diese Rolle gefunden"
+  }
+}

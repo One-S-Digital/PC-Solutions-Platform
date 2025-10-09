@@ -1,4 +1,39 @@
 {
+  "sections": {
+    "basic": {
+      "title": "Basic",
+      "desc": "Essential tools for small daycares",
+      "price": "CHF 49"
+    },
+    "essential": {
+      "title": "Essential",
+      "desc": "Save time with ready-to-go workflows",
+      "price": "CHF 99"
+    },
+    "professional": {
+      "title": "Professional",
+      "desc": "Grow confidently with full support",
+      "price": "CHF 199"
+    },
+    "enterprise": {
+      "title": "Enterprise",
+      "desc": "Scale across sites with automation",
+      "price": "Custom"
+    }
+  },
+  "suppliers": {
+    "title": "For Suppliers & Service Providers",
+    "suppliersPlan": {
+      "title": "Product Suppliers",
+      "desc": "Reach Swiss daycares with your products",
+      "price": "CHF 79"
+    },
+    "serviceProvidersPlan": {
+      "title": "Service Providers",
+      "desc": "Build partnerships with daycares",
+      "price": "CHF 99"
+    }
+  },
   "pricingPage": {
     "title": "Pricing Plans",
     "plans": "Available Plans",

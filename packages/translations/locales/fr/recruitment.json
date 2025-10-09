@@ -1,0 +1,24 @@
+{
+  "jobListings": {
+    "title": "Offres d'emploi",
+    "noJobs": "Aucune offre d'emploi disponible pour le moment",
+    "viewDetails": "Voir les détails de l'emploi"
+  },
+  "candidatePool": {
+    "title": "Bassin de candidats",
+    "noCandidates": "Aucun candidat disponible",
+    "viewProfile": "Voir le profil"
+  },
+  "buttons": {
+    "postNewJob": "Publier une nouvelle offre",
+    "addCandidate": "Ajouter un candidat",
+    "applyNow": "Postuler maintenant",
+    "inviteToApply": "Inviter à postuler",
+    "inviteToInterview": "Inviter à un entretien"
+  },
+  "filters": {
+    "location": "Localisation",
+    "experience": "Expérience",
+    "availability": "Disponibilité"
+  }
+}

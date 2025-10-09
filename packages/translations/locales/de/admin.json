@@ -1,0 +1,44 @@
+{
+  "discountTerminationsPage": {
+    "queue": {
+      "title": "Kündigungswarteschlange"
+    },
+    "active": {
+      "title": "Aktive Rabatte"
+    }
+  },
+  "partnersPage": {
+    "title": "Unsere Partner",
+    "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
+    "sections": {
+      "featuredPartners": "Ausgewählte Partner"
+    },
+    "buttons": {
+      "becomePartner": "Partner werden"
+    }
+  },
+  "platformSettings": {
+    "title": "Plattformeinstellungen",
+    "general": {
+      "title": "Allgemeine Einstellungen",
+      "platformName": "Plattformname",
+      "platformDescription": "Plattformbeschreibung"
+    },
+    "branding": {
+      "title": "Branding",
+      "logo": "Logo",
+      "favicon": "Favicon"
+    },
+    "buttons": {
+      "saveChanges": "Änderungen speichern"
+    }
+  },
+  "designSystem": {
+    "title": "Designsystem",
+    "sections": {
+      "colors": "Farben",
+      "typography": "Typografie",
+      "components": "Komponenten"
+    }
+  }
+}

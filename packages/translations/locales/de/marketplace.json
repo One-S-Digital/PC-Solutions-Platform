@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "productSuppliers": "Produktlieferanten",
+    "serviceProviders": "Dienstleister"
+  },
+  "labels": {
+    "searchByName": "Nach Namen suchen",
+    "categoryFilter": "Nach Kategorie filtern",
+    "regionFilter": "Nach Region filtern"
+  },
+  "messages": {
+    "noProductSuppliers": "Keine Produktlieferanten gefunden",
+    "noServiceProviders": "Keine Dienstleister gefunden",
+    "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, Ihre Filter anzupassen."
+  },
+  "buttons": {
+    "resetFilters": "Filter zurücksetzen",
+    "viewDetails": "Details anzeigen",
+    "contact": "Lieferanten kontaktieren"
+  }
+}

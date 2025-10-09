@@ -1,0 +1,42 @@
+{
+  "all": {
+    "title": "All Users"
+  },
+  "admins": {
+    "title": "Administrators"
+  },
+  "foundations": {
+    "title": "Foundations"
+  },
+  "productSuppliers": {
+    "title": "Product Suppliers"
+  },
+  "serviceProviders": {
+    "title": "Service Providers"
+  },
+  "parents": {
+    "title": "Parents"
+  },
+  "educators": {
+    "title": "Educators"
+  },
+  "headers": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "noUsersFound": "No users found",
+  "buttons": {
+    "addNewUser": "Add New User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User"
+  },
+  "roleManagement": {
+    "title": "Role Management",
+    "search": "Search users...",
+    "addNewUser": "Add New User",
+    "noUsersFound": "No users found for this role"
+  }
+}
