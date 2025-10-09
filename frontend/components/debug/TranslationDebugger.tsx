@@ -13,9 +13,43 @@ export const TranslationDebugger: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [translations, setTranslations] = useState<TranslationEntry[]>([]);
   const [filter, setFilter] = useState('');
-  const { i18n } = useTranslation();
+  
+  // Debug logging
+  console.log('[TranslationDebugger] Component rendering');
+  console.log('[TranslationDebugger] import.meta.env:', import.meta.env);
+  console.log('[TranslationDebugger] DEV:', import.meta.env.DEV);
+  console.log('[TranslationDebugger] MODE:', import.meta.env.MODE);
+  
+  let i18n;
+  try {
+    const translation = useTranslation();
+    i18n = translation.i18n;
+    console.log('[TranslationDebugger] i18n loaded successfully');
+  } catch (error) {
+    console.error('[TranslationDebugger] Error loading i18n:', error);
+    // Return a visible error component
+    return (
+      <div style={{ 
+        position: 'fixed', 
+        bottom: '1rem', 
+        right: '1rem', 
+        padding: '1rem', 
+        background: 'red', 
+        color: 'white',
+        zIndex: 9999,
+        borderRadius: '0.5rem'
+      }}>
+        Translation Debugger Error: {String(error)}
+      </div>
+    );
+  }
 
   useEffect(() => {
+    if (!i18n) {
+      console.error('[TranslationDebugger] i18n is not available in useEffect');
+      return;
+    }
+    
     // Intercept i18n.t calls
     const originalT = i18n.t.bind(i18n);
     
@@ -119,20 +153,39 @@ export const TranslationDebugger: React.FC = () => {
     return acc;
   }, {} as Record<string, TranslationEntry[]>);
 
+  console.log('[TranslationDebugger] Rendering with isOpen:', isOpen);
+  
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-purple-700 transition-colors z-50 flex items-center gap-2"
-        title="Press Ctrl+Shift+T to toggle"
-      >
-        🌐 Translation Debug ({translations.length})
-      </button>
+      <>
+        {/* Always visible test div */}
+        <div style={{
+          position: 'fixed',
+          top: '1rem',
+          left: '1rem',
+          padding: '0.5rem',
+          background: 'yellow',
+          color: 'black',
+          zIndex: 10000,
+          fontSize: '12px'
+        }}>
+          DEBUG: Component is rendering
+        </div>
+        
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-4 right-4 bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-purple-700 transition-colors z-[9999] flex items-center gap-2"
+          title="Press Ctrl+Shift+T to toggle"
+          style={{ position: 'fixed', bottom: '1rem', right: '1rem', zIndex: 9999 }}
+        >
+          🌐 Translation Debug ({translations.length})
+        </button>
+      </>
     );
   }
 
   return (
-    <div className="fixed inset-y-4 right-4 w-96 bg-white shadow-2xl rounded-lg flex flex-col z-50 border border-gray-200">
+    <div className="fixed inset-y-4 right-4 w-96 bg-white shadow-2xl rounded-lg flex flex-col z-[9999] border border-gray-200" style={{ zIndex: 9999 }}>
       {/* Header */}
       <div className="bg-purple-600 text-white p-4 rounded-t-lg flex justify-between items-center">
         <div>
