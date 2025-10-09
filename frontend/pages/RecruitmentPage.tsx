@@ -41,7 +41,7 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
       </div>
     </div>
     <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2">
-      <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('recruitmentPage.buttons.viewApplicants')}</Button>
+      <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('buttons.viewApplicants')}</Button>
       <Button variant="ghost" size="sm" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(job)}>{t('common:buttons.edit')}</Button>
       <Button variant="ghost" size="sm" leftIcon={TrashIcon} className="text-red-600 hover:text-red-700" onClick={() => alert('Close Job TBD')}>{t('common:buttons.close')}</Button>
     </div>
@@ -78,12 +78,12 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onRemove, onEd
         </div>
       </div>
       <div className="bg-gray-50 px-4 py-3 flex justify-end items-center gap-2">
-        <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => navigate(`/candidate/${candidate.id}`)}>{t('recruitmentPage.candidateCard.viewProfile')}</Button>
+        <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => navigate(`/candidate/${candidate.id}`)}>{t('candidateCard.viewProfile')}</Button>
         {canEditRemove && (
           <>
             <Button variant="ghost" size="xs" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(candidate)}>{t('common:buttons.edit')}</Button>
             <Button variant="ghost" size="xs" leftIcon={TrashIcon} className="text-red-600 hover:text-red-700" onClick={() => {
-                if (window.confirm(t('recruitmentPage.confirmRemoveCandidate', {name: candidate.name}))) {
+                if (window.confirm(t('confirmRemoveCandidate', {name: candidate.name}))) {
                     onRemove(candidate.id);
                 }
             }}>{t('common:buttons.remove')}</Button>
@@ -189,39 +189,39 @@ const RecruitmentPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 p-4 bg-white rounded-lg shadow">
         <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <label htmlFor="searchJobs" className="sr-only">{t('recruitmentPage.jobOffers.searchPlaceholder')}</label>
+            <label htmlFor="searchJobs" className="sr-only">{t('jobOffers.searchPlaceholder')}</label>
             <input
               id="searchJobs"
               type="text"
-              placeholder={t('recruitmentPage.jobOffers.searchPlaceholder')}
+              placeholder={t('jobOffers.searchPlaceholder')}
               value={searchTermJobs}
               onChange={(e) => setSearchTermJobs(e.target.value)}
               className={ICON_INPUT_FIELD}
             />
         </div>
         <div className="flex space-x-2">
-            <Button variant="outline" leftIcon={FunnelIcon} onClick={() => {setShowFilters(!showFilters); alert('Filter UI TBD');}}>{t('recruitmentPage.buttons.filters')}</Button>
+            <Button variant="outline" leftIcon={FunnelIcon} onClick={() => {setShowFilters(!showFilters); alert('Filter UI TBD');}}>{t('buttons.filters')}</Button>
             {canPostJob && (
-                <Button variant="primary" leftIcon={PlusCircleIcon} className="bg-swiss-mint hover:bg-opacity-90" onClick={() => handleOpenJobModal(null)}>{t('recruitmentPage.buttons.postNewJob')}</Button>
+                <Button variant="primary" leftIcon={PlusCircleIcon} className="bg-swiss-mint hover:bg-opacity-90" onClick={() => handleOpenJobModal(null)}>{t('buttons.postNewJob')}</Button>
             )}
         </div>
       </div>
        {showFilters && (
         <Card className="p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-2">{t('recruitmentPage.jobOffers.filterTitle')}</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('jobOffers.filterTitle')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" placeholder={t('recruitmentPage.labels.location')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.location')}/>
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.allContractTypes')}><option>{t('recruitmentPage.labels.allContractTypes')}</option></select>
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.allStatuses')}><option>{t('recruitmentPage.labels.allStatuses')}</option></select>
+            <input type="text" placeholder={t('labels.location')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.location')}/>
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allContractTypes')}><option>{t('labels.allContractTypes')}</option></select>
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allStatuses')}><option>{t('labels.allStatuses')}</option></select>
           </div>
-           <Button variant="secondary" size="sm" className="mt-2" onClick={() => alert('Apply Job Filters TBD')}>{t('recruitmentPage.buttons.applyFilters')}</Button>
+           <Button variant="secondary" size="sm" className="mt-2" onClick={() => alert('Apply Job Filters TBD')}>{t('buttons.applyFilters')}</Button>
         </Card>
       )}
-      <p className="text-sm text-gray-600">{t('recruitmentPage.jobOffers.activeJobsCount', { count: filteredJobs.filter(j => j.status === 'Open').length })}</p>
+      <p className="text-sm text-gray-600">{t('jobOffers.activeJobsCount', { count: filteredJobs.filter(j => j.status === 'Open').length })}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
         {filteredJobs.map(job => <FoundationJobListingCard key={job.id} job={job} onEdit={handleOpenJobModal} onViewApplicants={handleViewApplicants} />)}
       </div>
-      {filteredJobs.length === 0 && <p className="text-center text-gray-500 py-8">{t('recruitmentPage.jobOffers.emptyState')}</p>}
+      {filteredJobs.length === 0 && <p className="text-center text-gray-500 py-8">{t('jobOffers.emptyState')}</p>}
     </div>
   );
 
@@ -241,9 +241,9 @@ const RecruitmentPage: React.FC = () => {
             />
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" leftIcon={FunnelIcon} onClick={() => {setShowFilters(!showFilters); alert('Filter UI TBD');}}>{t('recruitmentPage.buttons.filters')}</Button>
+          <Button variant="outline" leftIcon={FunnelIcon} onClick={() => {setShowFilters(!showFilters); alert('Filter UI TBD');}}>{t('buttons.filters')}</Button>
           {isAdminOrSuperAdmin && (
-             <Button variant="primary" leftIcon={PlusCircleIcon} onClick={handleAddNewCandidate} className="bg-swiss-mint hover:bg-opacity-90">{t('recruitmentPage.buttons.addCandidate')}</Button>
+             <Button variant="primary" leftIcon={PlusCircleIcon} onClick={handleAddNewCandidate} className="bg-swiss-mint hover:bg-opacity-90">{t('buttons.addCandidate')}</Button>
           )}
         </div>
       </div>
@@ -251,12 +251,12 @@ const RecruitmentPage: React.FC = () => {
         <Card className="p-4 mb-4">
           <h3 className="text-lg font-semibold mb-2">{t('recruitmentPage.candidatePool.filterTitle')}</h3>
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.allRoles')}><option>{t('recruitmentPage.labels.allRoles')}</option></select>
-            <input type="text" placeholder={t('recruitmentPage.labels.region')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.region')}/>
-            <input type="date" placeholder={t('recruitmentPage.labels.availabilityDate')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.availabilityDate')}/>
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitmentPage.labels.allContractTypes')}><option>{t('recruitmentPage.labels.allContractTypes')}</option></select>
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allRoles')}><option>{t('labels.allRoles')}</option></select>
+            <input type="text" placeholder={t('labels.region')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.region')}/>
+            <input type="date" placeholder={t('labels.availabilityDate')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.availabilityDate')}/>
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allContractTypes')}><option>{t('labels.allContractTypes')}</option></select>
           </div>
-          <Button variant="secondary" size="sm" className="mt-2" onClick={() => alert('Apply Candidate Filters TBD')}>{t('recruitmentPage.buttons.applyFilters')}</Button>
+          <Button variant="secondary" size="sm" className="mt-2" onClick={() => alert('Apply Candidate Filters TBD')}>{t('buttons.applyFilters')}</Button>
         </Card>
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -273,7 +273,7 @@ const RecruitmentPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('recruitmentPage.title')}</h1>
+      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('title')}</h1>
       <Tabs 
         tabs={tabsConfig} 
         variant="pills"

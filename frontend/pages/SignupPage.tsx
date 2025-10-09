@@ -87,27 +87,27 @@ const SignupPage: React.FC = () => {
     const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
     if (!selectedRole) return false;
 
-    if (selectedRole !== SignupRole.PARENT && !formData.organisationName) newErrors.organisationName = t('signupPage.errors.organisationNameRequired');
+    if (selectedRole !== SignupRole.PARENT && !formData.organisationName) newErrors.organisationName = t('errors.organisationNameRequired');
     if (!formData.contactPerson) newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'signupPage.errors.parentNameRequired' : 'signupPage.errors.contactPersonRequired');
-    if (!formData.email) newErrors.email = t('signupPage.errors.emailRequired');
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = t('signupPage.errors.emailInvalid');
-    if (!formData.password) newErrors.password = t('signupPage.errors.passwordRequired');
-    else if (formData.password.length < 6) newErrors.password = t('signupPage.errors.passwordTooShort');
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = t('signupPage.errors.passwordsNoMatch');
+    if (!formData.email) newErrors.email = t('errors.emailRequired');
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = t('errors.emailInvalid');
+    if (!formData.password) newErrors.password = t('errors.passwordRequired');
+    else if (formData.password.length < 6) newErrors.password = t('errors.passwordTooShort');
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = t('errors.passwordsNoMatch');
     
-    if (selectedRole !== SignupRole.PARENT && !formData.phone) newErrors.phone = t('signupPage.errors.phoneRequired');
-    if (selectedRole !== SignupRole.PARENT && !formData.canton) newErrors.canton = t('signupPage.errors.cantonRequired');
+    if (selectedRole !== SignupRole.PARENT && !formData.phone) newErrors.phone = t('errors.phoneRequired');
+    if (selectedRole !== SignupRole.PARENT && !formData.canton) newErrors.canton = t('errors.cantonRequired');
 
-    if (selectedRole === SignupRole.FOUNDATION && (formData.capacity === undefined || formData.capacity <=0)) newErrors.capacity = t('signupPage.errors.capacityRequired');
-    if (selectedRole === SignupRole.SUPPLIER && !formData.category) newErrors.category = t('signupPage.errors.categoryRequired');
-    if (selectedRole === SignupRole.SERVICE_PROVIDER && !formData.serviceType) newErrors.serviceType = t('signupPage.errors.serviceTypeRequired');
+    if (selectedRole === SignupRole.FOUNDATION && (formData.capacity === undefined || formData.capacity <=0)) newErrors.capacity = t('errors.capacityRequired');
+    if (selectedRole === SignupRole.SUPPLIER && !formData.category) newErrors.category = t('errors.categoryRequired');
+    if (selectedRole === SignupRole.SERVICE_PROVIDER && !formData.serviceType) newErrors.serviceType = t('errors.serviceTypeRequired');
     
     if (selectedRole === SignupRole.PARENT) {
-        if (formData.childAge === undefined || formData.childAge <=0) newErrors.childAge = t('signupPage.errors.childAgeRequired');
-        if (!formData.childStartDate) newErrors.childStartDate = t('signupPage.errors.childStartDateRequired');
+        if (formData.childAge === undefined || formData.childAge <=0) newErrors.childAge = t('errors.childAgeRequired');
+        if (!formData.childStartDate) newErrors.childStartDate = t('errors.childStartDateRequired');
     }
 
-    if (!formData.termsAccepted) newErrors.termsAccepted = t('signupPage.errors.termsRequired');
+    if (!formData.termsAccepted) newErrors.termsAccepted = t('errors.termsRequired');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -169,10 +169,10 @@ const SignupPage: React.FC = () => {
         {currentStep === 3 ? (
             <div className="text-center">
                 <CheckCircleIcon className="w-16 h-16 text-swiss-mint mx-auto mb-4"/>
-                <h1 className="text-2xl font-bold text-swiss-charcoal">{t('signupPage.submissionSuccessTitle')}</h1>
-                <p className="text-gray-600 mt-2 mb-6">{t('signupPage.submissionSuccessMessage')}</p>
+                <h1 className="text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
+                <p className="text-gray-600 mt-2 mb-6">{t('submissionSuccessMessage')}</p>
                 <Button onClick={() => navigate('/dashboard')} variant="primary" size="lg">
-                    {t('signupPage.goToDashboardButton')}
+                    {t('goToDashboardButton')}
                 </Button>
             </div>
         ) : (
@@ -223,7 +223,7 @@ const SignupPage: React.FC = () => {
                 <div className="pt-2">
                   <label htmlFor="termsAccepted" className="flex items-center">
                     <input type="checkbox" id="termsAccepted" name="termsAccepted" checked={formData.termsAccepted} onChange={handleChange} className={`h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint ${errors.termsAccepted ? 'border-swiss-coral' : ''}`} />
-                    <span className="ml-2 text-sm text-gray-600">{t('signupPage.termsLabel')}{' '}<a href="#/terms" target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">{t('signupPage.termsLink')}</a>.</span>
+                    <span className="ml-2 text-sm text-gray-600">{t('termsLabel')}{' '}<a href="#/terms" target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">{t('termsLink')}</a>.</span>
                   </label>
                   {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
                 </div>
@@ -233,7 +233,7 @@ const SignupPage: React.FC = () => {
                         {t('buttons.goBack')}
                     </Button>
                     <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
-                    {isLoading ? t('signupPage.creatingAccount') : t('signupPage.createAccountButton')}
+                    {isLoading ? t('creatingAccount') : t('createAccountButton')}
                     </Button>
                 </div>
               </form>

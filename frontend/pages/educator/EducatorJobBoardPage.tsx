@@ -117,13 +117,13 @@ const EducatorJobBoardPage: React.FC = () => {
       <Card className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="filterCanton" className="block text-xs font-medium text-gray-500 mb-1">{t('recruitmentPage.labels.region')}</label>
+            <label htmlFor="filterCanton" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.region')}</label>
             <select id="filterCanton" value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD}>
               {cantons.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label htmlFor="filterContractType" className="block text-xs font-medium text-gray-500 mb-1">{t('recruitmentPage.labels.allContractTypes')}</label>
+            <label htmlFor="filterContractType" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.allContractTypes')}</label>
             <select id="filterContractType" value={filterContractType} onChange={(e) => setFilterContractType(e.target.value)} className={STANDARD_INPUT_FIELD}>
               {contractTypes.map(ct => <option key={ct} value={ct}>{ct}</option>)}
             </select>

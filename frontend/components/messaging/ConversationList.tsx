@@ -37,11 +37,11 @@ const ConversationList: React.FC = () => {
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder={t('messagesPage.searchPlaceholder')}
+              placeholder={t('searchPlaceholder')}
               className={`${ICON_INPUT_FIELD} w-full text-sm`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label={t('messagesPage.searchPlaceholder')}
+              aria-label={t('searchPlaceholder')}
             />
         </div>
         <div className="flex space-x-2">
@@ -49,19 +49,19 @@ const ConversationList: React.FC = () => {
                 onClick={() => setFilter('all')}
                 className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${filter === 'all' ? 'bg-swiss-mint text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
             >
-                {t('messagesPage.filters.all')}
+                {t('filters.all')}
             </button>
             <button
                 onClick={() => setFilter('unread')}
                 className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${filter === 'unread' ? 'bg-swiss-mint text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
             >
-                {t('messagesPage.filters.unread')}
+                {t('filters.unread')}
             </button>
         </div>
       </div>
       <div className="flex-grow overflow-y-auto p-2 space-y-1">
         {filteredConversations.length === 0 && (
-          <p className="text-center text-sm text-gray-400 py-10">{t('messagesPage.noConversationsFound')}</p>
+          <p className="text-center text-sm text-gray-400 py-10">{t('noConversationsFound')}</p>
         )}
         {filteredConversations.map(conv => (
           <ConversationListItem

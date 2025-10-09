@@ -52,11 +52,11 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   const handleUpdatePassword = (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordInfo.newPassword !== passwordInfo.confirmNewPassword) {
-      alert(t('signupPage.errors.passwordsNoMatch'));
+      alert(t('errors.passwordsNoMatch'));
       return;
     }
     if (passwordInfo.newPassword.length < 6) {
-      alert(t('signupPage.errors.passwordTooShort'));
+      alert(t('errors.passwordTooShort'));
       return;
     }
     // Mock action: In a real app, you'd call an API endpoint here.
@@ -78,7 +78,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   const hasOrgName = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(userRole);
   
   return (
-    <SettingsSectionWrapper title={t('settingsPage.accountSecurity')} icon={UserCircleIcon}>
+    <SettingsSectionWrapper title={t('page.accountSecurity')} icon={UserCircleIcon}>
       <div className="space-y-8">
         {/* Personal Information Section */}
         <form onSubmit={handleUpdateInfo}>

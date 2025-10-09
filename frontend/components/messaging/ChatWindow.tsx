@@ -33,7 +33,7 @@ const ChatWindow: React.FC = () => {
   if (!activeConversationId || !activeConversation) {
     return (
         <div className="flex-grow flex items-center justify-center text-gray-400">
-            {t('messagesPage.selectConversationToView')}
+            {t('selectConversationToView')}
         </div>
     );
   }
@@ -47,7 +47,7 @@ const ChatWindow: React.FC = () => {
     chatSubtitle = Object.values(activeConversation.participantNames).join(', ');
   } else {
     const otherParticipantId = activeConversation.participantIds.find(id => id !== currentUser?.id);
-    chatTitle = otherParticipantId ? activeConversation.participantNames[otherParticipantId] : t('messagesPage.conversationFallbackTitle');
+    chatTitle = otherParticipantId ? activeConversation.participantNames[otherParticipantId] : t('conversationFallbackTitle');
   }
 
 
@@ -73,20 +73,20 @@ const ChatWindow: React.FC = () => {
       {/* Message Input Area */}
       <div className="border-t border-gray-200 p-4 bg-gray-50">
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
-          <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('messagesPage.attachFile')} onClick={() => alert(t('messagesPage.attachFile') + ' TBD')}>
+          <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('attachFile')} onClick={() => alert(t('attachFile') + ' TBD')}>
             <PaperClipIcon className="w-5 h-5" />
           </Button>
-           <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('messagesPage.addEmoji')} onClick={() => alert(t('messagesPage.addEmoji') + ' TBD')}>
+           <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('addEmoji')} onClick={() => alert(t('addEmoji') + ' TBD')}>
             <FaceSmileIcon className="w-5 h-5" />
           </Button>
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={t('messagesPage.typeMessagePlaceholder')}
+            placeholder={t('typeMessagePlaceholder')}
             className="flex-grow p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent outline-none text-sm shadow-sm"
             autoFocus
-            aria-label={t('messagesPage.typeMessagePlaceholder')}
+            aria-label={t('typeMessagePlaceholder')}
           />
           <Button type="submit" variant="primary" size="md" className="!p-2.5" aria-label={t('buttons.sendMessage')}>
             <PaperAirplaneIcon className="w-5 h-5" />

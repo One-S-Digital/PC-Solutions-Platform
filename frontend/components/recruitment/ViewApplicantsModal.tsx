@@ -66,7 +66,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({ isOpen, onClo
                                     {t('buttons.sendMessage')}
                                 </Button>
                                 <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => handleViewProfile(applicant.educatorId)}>
-                                    {t('recruitmentPage.candidateCard.viewProfile')}
+                                    {t('candidateCard.viewProfile')}
                                 </Button>
                             </div>
                         </li>

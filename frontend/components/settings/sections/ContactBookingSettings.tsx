@@ -36,7 +36,7 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
   const supplierSettings = settings as SupplierSettings;
 
   return (
-    <SettingsSectionWrapper title={t('settingsPage.contactBooking')} icon={PhoneIcon}>
+    <SettingsSectionWrapper title={t('page.contactBooking')} icon={PhoneIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Preferred Contact Method */}
         <label className="form-label md:pt-2">{t('settingsContactBooking.preferredContactMethod')} <span className="text-swiss-coral">*</span></label>

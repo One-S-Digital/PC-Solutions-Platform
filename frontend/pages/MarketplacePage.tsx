@@ -29,15 +29,15 @@ const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: str
       </div>
       <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
       <div className="text-xs text-gray-500 mb-1">
-        <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('marketplacePage.serviceCard.categoryLabel', { category: service.category })}
+        <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceCard.categoryLabel', { category: service.category })}
       </div>
       {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
        <div className="mb-4">
         {service.tags.slice(0,3).map(tag => <span key={tag} className="text-xs bg-swiss-mint/10 text-swiss-mint px-2.5 py-1 rounded-full mr-1.5 mb-1 inline-block font-medium">{tag}</span>)}
       </div>
       <div className="flex space-x-2 mt-auto">
-        <Button variant="secondary" size="sm" className="flex-1" onClick={() => onBookAppointment(service)}>{t('marketplacePage.serviceCard.bookAppointment')}</Button>
-        <Button variant="outline" size="sm" leftIcon={EyeIcon} onClick={() => onViewProvider(service.providerId)}>{t('marketplacePage.serviceCard.viewProvider')}</Button>
+        <Button variant="secondary" size="sm" className="flex-1" onClick={() => onBookAppointment(service)}>{t('serviceCard.bookAppointment')}</Button>
+        <Button variant="outline" size="sm" leftIcon={EyeIcon} onClick={() => onViewProvider(service.providerId)}>{t('serviceCard.viewProvider')}</Button>
       </div>
     </div>
   </Card>
@@ -104,8 +104,8 @@ const MarketplacePage: React.FC = () => {
 
   const activeTabLabel = useMemo(() => {
     return activeTabIndex === 0 
-      ? t('marketplacePage.tabs.productSuppliers') 
-      : t('marketplacePage.tabs.serviceProviders');
+      ? t('tabs.productSuppliers') 
+      : t('tabs.serviceProviders');
   }, [activeTabIndex, t]);
 
   const productSuppliers = useMemo(() => MOCK_ORGANIZATIONS.filter(org => org.type === 'supplier'), []);
@@ -178,24 +178,24 @@ const MarketplacePage: React.FC = () => {
   };
 
   const tabsConfig = [
-    { label: t('marketplacePage.tabs.productSuppliers'), icon: BuildingStorefrontIcon, content: (
+    { label: t('tabs.productSuppliers'), icon: BuildingStorefrontIcon, content: (
       <>
         <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
           {filteredSuppliers.map(supplier => 
             <SupplierCard key={supplier.id} supplier={supplier} onViewProfile={handleViewPartner} />
           )}
         </div>
-        {filteredSuppliers.length === 0 && <p className="text-center text-gray-500 py-12">{t('marketplacePage.emptyStates.noProductSuppliers')}</p>}
+        {filteredSuppliers.length === 0 && <p className="text-center text-gray-500 py-12">{t('emptyStates.noProductSuppliers')}</p>}
       </>
     )},
-    { label: t('marketplacePage.tabs.serviceProviders'), icon: WrenchScrewdriverIcon, content: ( 
+    { label: t('tabs.serviceProviders'), icon: WrenchScrewdriverIcon, content: ( 
       <>
         <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
           {filteredServices.map(service => 
             <ServiceCard key={service.id} service={service} onViewProvider={handleViewPartner} onBookAppointment={handleOpenServiceRequestModal}/>
           )}
         </div>
-         {filteredServices.length === 0 && <p className="text-center text-gray-500 py-12">{t('marketplacePage.emptyStates.noServices')}</p>}
+         {filteredServices.length === 0 && <p className="text-center text-gray-500 py-12">{t('emptyStates.noServices')}</p>}
       </>
     )},
   ];
@@ -208,38 +208,38 @@ const MarketplacePage: React.FC = () => {
                 {activeTabLabel}
             </h1>
             {activeTabIndex === 0 && 
-                <p className="text-gray-500 mt-1">{t('marketplacePage.subtitles.productSuppliers')}</p>
+                <p className="text-gray-500 mt-1">{t('subtitles.productSuppliers')}</p>
             }
             {activeTabIndex === 1 &&
-                 <p className="text-gray-500 mt-1">{t('marketplacePage.subtitles.serviceProviders')}</p>
+                 <p className="text-gray-500 mt-1">{t('subtitles.serviceProviders')}</p>
             }
         </div>
-        {currentUser?.role === UserRole.ADMIN && <Button variant="secondary" leftIcon={FunnelIcon} size="md" onClick={() => alert("Partner Onboarding TBD")}>{t('marketplacePage.buttons.partnerOnboarding')}</Button>}
+        {currentUser?.role === UserRole.ADMIN && <Button variant="secondary" leftIcon={FunnelIcon} size="md" onClick={() => alert("Partner Onboarding TBD")}>{t('buttons.partnerOnboarding')}</Button>}
       </div>
       
       <div className="bg-swiss-teal/5 border-l-4 border-swiss-teal text-swiss-teal p-4 rounded-card flex items-start" role="alert">
         <InformationCircleIcon className="h-5 w-5 mr-2.5 mt-0.5 flex-shrink-0"/>
         <p className="text-sm">
-          {t('marketplacePage.infoAlert')}
+          {t('infoAlert')}
         </p>
       </div>
 
       <Card className="p-5">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           <div className="relative lg:col-span-2">
-             <label htmlFor="searchMarketplace" className="sr-only">{t('marketplacePage.searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}</label>
+             <label htmlFor="searchMarketplace" className="sr-only">{t('searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}</label>
              <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
              <input 
                 type="text" 
                 id="searchMarketplace"
-                placeholder={t('marketplacePage.searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}
+                placeholder={t('searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={ICON_INPUT_FIELD}
             />
           </div>
           <div>
-            <label htmlFor="categoryFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('marketplacePage.labels.category')}</label>
+            <label htmlFor="categoryFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.category')}</label>
             <select 
                 id="categoryFilterMarketplace"
                 value={categoryFilter} 
@@ -250,7 +250,7 @@ const MarketplacePage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="regionFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('marketplacePage.labels.region')}</label>
+            <label htmlFor="regionFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.region')}</label>
             <select 
                 id="regionFilterMarketplace"
                 value={regionFilter} 
@@ -263,7 +263,7 @@ const MarketplacePage: React.FC = () => {
           {activeTabIndex === 0 && (
             <>
               <div>
-                <label htmlFor="tagFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('marketplacePage.labels.supplierTags')}</label>
+                <label htmlFor="tagFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.supplierTags')}</label>
                 <select 
                     id="tagFilterMarketplace"
                     value={tagFilter} 
@@ -274,16 +274,16 @@ const MarketplacePage: React.FC = () => {
                 </select>
               </div>
                <div>
-                <label htmlFor="sortOptionMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('marketplacePage.labels.sortBy')}</label>
+                <label htmlFor="sortOptionMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.sortBy')}</label>
                 <select 
                     id="sortOptionMarketplace"
                     value={sortOption} 
                     onChange={(e) => setSortOption(e.target.value)}
                     className={STANDARD_INPUT_FIELD}
                 >
-                    <option value="name_asc">{t('marketplacePage.sortOptions.nameAsc')}</option>
-                    <option value="name_desc">{t('marketplacePage.sortOptions.nameDesc')}</option>
-                    <option value="rating_desc">{t('marketplacePage.sortOptions.ratingDesc')}</option>
+                    <option value="name_asc">{t('sortOptions.nameAsc')}</option>
+                    <option value="name_desc">{t('sortOptions.nameDesc')}</option>
+                    <option value="rating_desc">{t('sortOptions.ratingDesc')}</option>
                 </select>
               </div>
             </>
@@ -297,7 +297,7 @@ const MarketplacePage: React.FC = () => {
                     onClick={() => setViewMode('grid')}
                     className={`${viewMode === 'grid' ? 'bg-white shadow-sm' : 'shadow-none'}`}
                     aria-pressed={viewMode === 'grid'}
-                    aria-label={t('marketplacePage.ariaLabels.gridView')}
+                    aria-label={t('ariaLabels.gridView')}
                 >
                     <Squares2X2Icon className="w-5 h-5"/>
                 </Button>
@@ -307,7 +307,7 @@ const MarketplacePage: React.FC = () => {
                     onClick={() => setViewMode('list')}
                     className={`${viewMode === 'list' ? 'bg-white shadow-sm' : 'shadow-none'}`}
                     aria-pressed={viewMode === 'list'}
-                    aria-label={t('marketplacePage.ariaLabels.listView')}
+                    aria-label={t('ariaLabels.listView')}
                 >
                     <ListBulletIcon className="w-5 h-5"/>
                 </Button>

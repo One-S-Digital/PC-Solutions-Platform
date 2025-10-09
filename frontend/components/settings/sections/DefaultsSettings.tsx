@@ -28,7 +28,7 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
   const isProvider = userRole === UserRole.SERVICE_PROVIDER;
 
   return (
-    <SettingsSectionWrapper title={t('settingsPage.defaults')} icon={AdjustmentsHorizontalIcon}>
+    <SettingsSectionWrapper title={t('page.defaults')} icon={AdjustmentsHorizontalIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Auto-respond Toggle (off by default) */}
         <label htmlFor="autoRespondToggle" className="form-label md:pt-2">{t('settingsDefaults.autoRespondToggle')}</label>

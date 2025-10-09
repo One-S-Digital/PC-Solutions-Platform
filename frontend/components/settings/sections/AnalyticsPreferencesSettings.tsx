@@ -24,7 +24,7 @@ const CURRENCIES = [{value: 'CHF', labelKey: 'settingsAnalyticsPreferences.curre
 const AnalyticsPreferencesSettings: React.FC<AnalyticsPreferencesSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   return (
-    <SettingsSectionWrapper title={t('settingsPage.analyticsPreferences')} icon={ChartPieIcon}>
+    <SettingsSectionWrapper title={t('page.analyticsPreferences')} icon={ChartPieIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Time-zone Dropdown */}
         <label htmlFor="timeZone" className="form-label md:pt-2">{t('settingsAnalyticsPreferences.timeZone')} <span className="text-swiss-coral">*</span></label>

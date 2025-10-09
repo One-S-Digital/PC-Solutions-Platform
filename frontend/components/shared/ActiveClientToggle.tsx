@@ -63,7 +63,7 @@ const ActiveClientToggle: React.FC<ActiveClientToggleProps> = ({ vendorId, orgId
              <div className="mt-4">
                 <label htmlFor="clientReason" className="block text-sm font-medium text-gray-700 mb-1">{t('activeClientToggle.reasonLabel')}</label>
                 <select id="clientReason" name="reason" value={reason || ''} onChange={(e) => setReason(e.target.value as VendorClientReason)} className={STANDARD_INPUT_FIELD}>
-                    <option value="">{t('signupPage.placeholders.select')}</option>
+                    <option value="">{t('placeholders.select')}</option>
                     {Object.values(VendorClientReason).map(r => (
                         <option key={r} value={r}>{t(`vendorClientReasons.${r.replace(/\s+/g, '')}`, r)}</option>
                     ))}

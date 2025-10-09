@@ -49,7 +49,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
   }
 
   return (
-    <SettingsSectionWrapper title={t('settingsPage.promoCodeManager')} icon={TagIcon}>
+    <SettingsSectionWrapper title={t('page.promoCodeManager')} icon={TagIcon}>
       <div className="flex justify-end mb-4">
         <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => { setEditingPromo(null); setIsModalOpen(true); }}>
           {t('settingsPromoCodeManager.addNewCode')}

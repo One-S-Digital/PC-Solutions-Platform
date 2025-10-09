@@ -1,0 +1,233 @@
+{
+  "filesModified": 31,
+  "totalReplacements": 177,
+  "byFile": {
+    "/workspace/frontend/SettingsPage.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 4
+      }
+    ],
+    "/workspace/frontend/components/messaging/ChatWindow.tsx": [
+      {
+        "pattern": "messagesPage.*",
+        "count": 8
+      }
+    ],
+    "/workspace/frontend/components/messaging/ConversationList.tsx": [
+      {
+        "pattern": "messagesPage.*",
+        "count": 5
+      }
+    ],
+    "/workspace/frontend/components/messaging/ConversationListItem.tsx": [
+      {
+        "pattern": "messagesPage.*",
+        "count": 3
+      }
+    ],
+    "/workspace/frontend/components/recruitment/ViewApplicantsModal.tsx": [
+      {
+        "pattern": "recruitmentPage.candidateCard.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/AccountSecuritySettings.tsx": [
+      {
+        "pattern": "signupPage.errors.*",
+        "count": 2
+      },
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/AnalyticsPreferencesSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/BillingSubscriptionSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/CompanyProfileSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/ContactBookingSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/DefaultsSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/NotificationPreferencesSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/PrivacyDataSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/PromoCodeManagerSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/settings/sections/TeamPermissionsSettings.tsx": [
+      {
+        "pattern": "settingsPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/shared/ActiveClientToggle.tsx": [
+      {
+        "pattern": "signupPage.placeholders.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/components/ui/PricingToggle.tsx": [
+      {
+        "pattern": "pricingPage.*",
+        "count": 3
+      }
+    ],
+    "/workspace/frontend/pages/MarketplacePage.tsx": [
+      {
+        "pattern": "marketplacePage.*",
+        "count": 24
+      }
+    ],
+    "/workspace/frontend/pages/PricingPage.tsx": [
+      {
+        "pattern": "pricingPage.*",
+        "count": 9
+      }
+    ],
+    "/workspace/frontend/pages/RecruitmentPage.tsx": [
+      {
+        "pattern": "recruitmentPage.buttons.*",
+        "count": 7
+      },
+      {
+        "pattern": "recruitmentPage.labels.*",
+        "count": 14
+      },
+      {
+        "pattern": "recruitmentPage.jobOffers.*",
+        "count": 5
+      },
+      {
+        "pattern": "recruitmentPage.candidateCard.*",
+        "count": 1
+      },
+      {
+        "pattern": "recruitmentPage.*",
+        "count": 2
+      }
+    ],
+    "/workspace/frontend/pages/SignupPage.tsx": [
+      {
+        "pattern": "signupPage.errors.*",
+        "count": 14
+      },
+      {
+        "pattern": "signupPage.* (general)",
+        "count": 7
+      }
+    ],
+    "/workspace/frontend/pages/educator/EducatorJobBoardPage.tsx": [
+      {
+        "pattern": "recruitmentPage.labels.*",
+        "count": 2
+      }
+    ],
+    "/workspace/frontend/pages/educator/EducatorProfilePage.tsx": [
+      {
+        "pattern": "educatorProfilePage.*",
+        "count": 8
+      }
+    ],
+    "/workspace/frontend/pages/educator/EducatorSupportPage.tsx": [
+      {
+        "pattern": "supportPage.*",
+        "count": 7
+      }
+    ],
+    "/workspace/frontend/pages/foundation/FoundationSupportPage.tsx": [
+      {
+        "pattern": "supportPage.*",
+        "count": 7
+      }
+    ],
+    "/workspace/frontend/pages/parent/ParentSupportPage.tsx": [
+      {
+        "pattern": "supportPage.*",
+        "count": 4
+      }
+    ],
+    "/workspace/frontend/pages/partnersPage.tsx": [
+      {
+        "pattern": "partnersPage.*",
+        "count": 13
+      }
+    ],
+    "/workspace/frontend/pages/service-provider/ServiceProviderRequestsPage.tsx": [
+      {
+        "pattern": "messagesPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/pages/service-provider/ServiceProviderSupportPage.tsx": [
+      {
+        "pattern": "supportPage.*",
+        "count": 7
+      }
+    ],
+    "/workspace/frontend/pages/supplier/SupplierOrdersPage.tsx": [
+      {
+        "pattern": "messagesPage.*",
+        "count": 1
+      }
+    ],
+    "/workspace/frontend/pages/supplier/SupplierSupportPage.tsx": [
+      {
+        "pattern": "supportPage.*",
+        "count": 7
+      }
+    ]
+  },
+  "byPattern": {
+    "settingsPage.*": 14,
+    "messagesPage.*": 18,
+    "recruitmentPage.candidateCard.*": 2,
+    "signupPage.errors.*": 16,
+    "signupPage.placeholders.*": 1,
+    "pricingPage.*": 12,
+    "marketplacePage.*": 24,
+    "recruitmentPage.buttons.*": 7,
+    "recruitmentPage.labels.*": 16,
+    "recruitmentPage.jobOffers.*": 5,
+    "recruitmentPage.*": 2,
+    "signupPage.* (general)": 7,
+    "educatorProfilePage.*": 8,
+    "supportPage.*": 32,
+    "partnersPage.*": 13
+  }
+}
