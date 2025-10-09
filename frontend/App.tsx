@@ -315,7 +315,7 @@ const App: React.FC = () => {
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
             {/* Translation Debug Tool - Only visible in development */}
-            {import.meta.env.DEV && <TranslationDebugger />}
+            {(import.meta.env.DEV || import.meta.env.MODE === 'development') && <TranslationDebugger />}
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
