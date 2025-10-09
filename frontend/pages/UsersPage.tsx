@@ -17,7 +17,7 @@ interface UserRowProps {
 }
 
 const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isSuperAdmin }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['users', 'common']);
   const { currentUser } = useAppContext();
   const statusColors = {
     Active: 'bg-green-100 text-green-700',
@@ -62,13 +62,13 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         {isSuperAdmin ? (
           <div className="flex space-x-2 justify-end">
-            <Button variant="ghost" size="xs" onClick={handleEdit} leftIcon={PencilIcon}>{t('buttons.edit')}</Button>
+            <Button variant="ghost" size="xs" onClick={handleEdit} leftIcon={PencilIcon}>{t('common:buttons.edit')}</Button>
             {currentUser?.id !== user.id && (
-              <Button variant="ghost" size="xs" onClick={handleDelete} leftIcon={TrashIcon} className="text-red-600 hover:text-red-700">{t('buttons.delete')}</Button>
+              <Button variant="ghost" size="xs" onClick={handleDelete} leftIcon={TrashIcon} className="text-red-600 hover:text-red-700">{t('common:buttons.delete')}</Button>
             )}
           </div>
         ) : (
-           <Button variant="ghost" size="sm" onClick={(e) => {e.stopPropagation(); onUserSelect(user);}}>{t('buttons.view')}</Button>
+           <Button variant="ghost" size="sm" onClick={(e) => {e.stopPropagation(); onUserSelect(user);}}>{t('common:buttons.view')}</Button>
         )}
       </td>
     </tr>
@@ -82,7 +82,7 @@ interface UserDetailDrawerProps {
 }
 
 const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUpdateUser }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['users', 'common']);
   const { currentUser } = useAppContext();
   const [selectedRole, setSelectedRole] = useState<UserRole | undefined>(user?.role);
 
@@ -115,7 +115,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
       <div className="p-6 h-full flex flex-col">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-swiss-charcoal">{t('usersPage.userDetailDrawer.title')}</h2>
-          <Button variant="ghost" onClick={onClose}>{t('buttons.close')}</Button>
+          <Button variant="ghost" onClick={onClose}>{t('common:buttons.close')}</Button>
         </div>
         <div className="flex-grow overflow-y-auto">
           <img src={user.avatarUrl || `https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=48CFAE&color=fff`} alt={user.name} className="w-24 h-24 rounded-full mx-auto mb-4" />
@@ -166,7 +166,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
 
 
 const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['users', 'common']);
   const { currentUser } = useAppContext();
   const [usersData, setUsersData] = useState<User[]>(() => 
     [] // Empty array for production - users fetched from API

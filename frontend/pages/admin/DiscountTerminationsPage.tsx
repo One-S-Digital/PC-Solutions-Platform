@@ -9,7 +9,7 @@ import Button from '../../components/ui/Button';
 import { TagIcon, CheckCircleIcon, ShieldExclamationIcon, InboxIcon } from '@heroicons/react/24/outline';
 
 const DiscountTerminationsPage: React.FC = () => {
-    const { t } = useTranslation(['dashboard', 'common']);
+    const { t } = useTranslation(['admin', 'common']);
     const { vendorClients, updateVendorClientStatus } = useAppContext();
 
     // Mock: In a real app, this would be based on actual organization status.
@@ -71,7 +71,7 @@ const DiscountTerminationsPage: React.FC = () => {
                                             {terminationQueue.includes(vc) && (
                                                  <Button variant="secondary" size="xs" onClick={() => handleMarkCompleted(vc.id)}>{t('discountTerminationsPage.actions.markCompleted')}</Button>
                                             )}
-                                            <Button variant="outline" size="xs">{t('buttons.viewDetails')}</Button>
+                                            <Button variant="outline" size="xs">{t('common:buttons.viewDetails')}</Button>
                                         </td>
                                     </tr>
                                 ))}

@@ -36,7 +36,7 @@ export interface SettingsSectionConfig {
 }
 
 const SettingsPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['settings', 'common']);
   const { currentUser } = useAppContext();
   const { addNotification } = useNotifications();
   const navigate = useNavigate();
@@ -198,10 +198,10 @@ const SettingsPage: React.FC = () => {
           {availableSections.length > 1 && ( 
             <div className="flex space-x-3">
               <Button variant="light" onClick={handleCancel}>
-                {t('buttons.cancel')}
+                {t('common:buttons.cancel')}
               </Button>
               <Button variant="primary" onClick={handleSave} disabled={!isDirty} className="bg-swiss-mint hover:bg-opacity-90">
-                {t('buttons.saveChanges')}
+                {t('common:buttons.saveChanges')}
               </Button>
             </div>
           )}

@@ -20,7 +20,7 @@ interface FoundationJobListingCardProps {
 }
 
 const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job, onEdit, onViewApplicants }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['recruitment', 'common']);
   return (
   <Card className="mb-4" hoverEffect>
     <div className="p-5">
@@ -42,8 +42,8 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
     </div>
     <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2">
       <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('recruitmentPage.buttons.viewApplicants')}</Button>
-      <Button variant="ghost" size="sm" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(job)}>{t('buttons.edit')}</Button>
-      <Button variant="ghost" size="sm" leftIcon={TrashIcon} className="text-red-600 hover:text-red-700" onClick={() => alert('Close Job TBD')}>{t('buttons.close')}</Button>
+      <Button variant="ghost" size="sm" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(job)}>{t('common:buttons.edit')}</Button>
+      <Button variant="ghost" size="sm" leftIcon={TrashIcon} className="text-red-600 hover:text-red-700" onClick={() => alert('Close Job TBD')}>{t('common:buttons.close')}</Button>
     </div>
   </Card>
   );
@@ -57,7 +57,7 @@ interface CandidateCardProps {
 }
 
 const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onRemove, onEdit, canEditRemove }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['recruitment', 'common']);
   const navigate = useNavigate();
   return (
     <Card className="mb-4 flex flex-col" hoverEffect>
@@ -81,12 +81,12 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onRemove, onEd
         <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => navigate(`/candidate/${candidate.id}`)}>{t('recruitmentPage.candidateCard.viewProfile')}</Button>
         {canEditRemove && (
           <>
-            <Button variant="ghost" size="xs" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(candidate)}>{t('buttons.edit')}</Button>
+            <Button variant="ghost" size="xs" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(candidate)}>{t('common:buttons.edit')}</Button>
             <Button variant="ghost" size="xs" leftIcon={TrashIcon} className="text-red-600 hover:text-red-700" onClick={() => {
                 if (window.confirm(t('recruitmentPage.confirmRemoveCandidate', {name: candidate.name}))) {
                     onRemove(candidate.id);
                 }
-            }}>{t('buttons.remove')}</Button>
+            }}>{t('common:buttons.remove')}</Button>
           </>
         )}
       </div>
@@ -96,7 +96,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onRemove, onEd
 
 
 const RecruitmentPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['recruitment', 'common']);
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser } = useAppContext();

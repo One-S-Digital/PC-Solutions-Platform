@@ -7,6 +7,17 @@
   "candidatePool": {
     "title": "Candidate Pool",
     "noCandidates": "No candidates available",
+    "viewProfile": "View Profile",
+    "searchPlaceholder": "Search candidates...",
+    "filterTitle": "Filter Candidates"
+  },
+  "jobOffers": {
+    "searchPlaceholder": "Search jobs...",
+    "filterTitle": "Filter Jobs",
+    "activeJobsCount": "{{count}} active job openings",
+    "emptyState": "No jobs found"
+  },
+  "candidateCard": {
     "viewProfile": "View Profile"
   },
   "buttons": {
@@ -14,11 +25,21 @@
     "addCandidate": "Add Candidate",
     "applyNow": "Apply Now",
     "inviteToApply": "Invite to Apply",
-    "inviteToInterview": "Invite to Interview"
+    "inviteToInterview": "Invite to Interview",
+    "viewApplicants": "View Applicants",
+    "filters": "Filters",
+    "applyFilters": "Apply Filters"
+  },
+  "labels": {
+    "location": "Location",
+    "allContractTypes": "All Contract Types",
+    "allStatuses": "All Statuses",
+    "allRoles": "All Roles"
   },
   "filters": {
     "location": "Location",
     "experience": "Experience",
     "availability": "Availability"
-  }
+  },
+  "confirmRemoveCandidate": "Are you sure you want to remove {{name}}?"
 }

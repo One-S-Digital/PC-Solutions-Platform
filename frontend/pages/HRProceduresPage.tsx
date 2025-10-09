@@ -21,7 +21,7 @@ interface HRDocumentCardProps {
 }
 
 const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, onEdit, onDelete, isAdmin }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['content', 'common']);
   const fileTypeColors = {
     PDF: 'text-red-500',
     DOCX: 'text-blue-500',
@@ -73,7 +73,7 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
 };
 
 const CategoryDisplayCard: React.FC<{title: string, icon: React.ElementType, count: number, colorClasses: string, onSelect: () => void}> = ({title, icon: Icon, count, colorClasses, onSelect}) => {
-    const { t } = useTranslation(['dashboard', 'common']);
+    const { t } = useTranslation(['content', 'common']);
     return (
     <div 
       className={`p-5 cursor-pointer rounded-card shadow-soft hover:shadow-lg transition-shadow duration-200 ease-in-out ${colorClasses}`} 
@@ -81,18 +81,18 @@ const CategoryDisplayCard: React.FC<{title: string, icon: React.ElementType, cou
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}
-      aria-label={t('hrProceduresPage.categoryDisplay.viewCategoryAria', { title })}
+      aria-label={t('hrProcedures.categoryDisplay.viewCategoryAria', { title })}
     >
         <Icon className="w-10 h-10 mb-3 text-current"/>
         <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
-        <p className="text-sm opacity-80 text-current">{t('hrProceduresPage.categoryDisplay.documentsCount', { count })}</p>
+        <p className="text-sm opacity-80 text-current">{t('hrProcedures.categoryDisplay.documentsCount', { count })}</p>
     </div>
     );
 };
 
 
 const HRProceduresPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -163,7 +163,7 @@ const HRProceduresPage: React.FC = () => {
   };
 
   const handleDeleteDoc = (id: string) => {
-    if (window.confirm(t('hrProceduresPage.confirmDeleteDocument'))) {
+    if (window.confirm(t('hrProcedures.confirmDeleteDocument'))) {
       setHrDocs(prevDocs => prevDocs.filter(d => d.id !== id));
     }
   };
@@ -174,10 +174,10 @@ const HRProceduresPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('hrProceduresPage.title')}</h1>
+        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('hrProcedures.title')}</h1>
         {isAdminOrSuperAdmin && (
           <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => handleOpenUploadModal()}>
-            {t('hrProceduresPage.uploadButton')}
+            {t('hrProcedures.uploadButton')}
           </Button>
         )}
       </div>
@@ -186,11 +186,11 @@ const HRProceduresPage: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
                 <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <label htmlFor="hrSearch" className="sr-only">{t('hrProceduresPage.searchPlaceholder')}</label>
+                <label htmlFor="hrSearch" className="sr-only">{t('hrProcedures.searchPlaceholder')}</label>
                 <input
                 id="hrSearch"
                 type="text"
-                placeholder={t('hrProceduresPage.searchPlaceholder')}
+                placeholder={t('hrProcedures.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`${ICON_INPUT_FIELD} w-full`} 
@@ -199,10 +199,10 @@ const HRProceduresPage: React.FC = () => {
         </div>
       </Card>
 
-      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">{t('hrProceduresPage.categoriesTitle')}</h2>
+      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">{t('hrProcedures.categoriesTitle')}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <CategoryDisplayCard
-          title={t('hrProceduresPage.allDocumentsCategory')}
+          title={t('hrProcedures.allDocumentsCategory')}
           icon={FolderIcon}
           count={totalPublishedDocs}
           colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -222,22 +222,22 @@ const HRProceduresPage: React.FC = () => {
           );
         })}
         {categoriesWithCounts.length === 0 && totalPublishedDocs > 0 && (
-            <p className="text-center text-gray-500 py-8 col-span-full">{t('hrProceduresPage.noDocumentsMatchSearch')}</p>
+            <p className="text-center text-gray-500 py-8 col-span-full">{t('hrProcedures.noDocumentsMatchSearch')}</p>
         )}
-         {totalPublishedDocs === 0 && <p className="text-center text-gray-500 py-8 col-span-full">{t('hrProceduresPage.noDocumentsAvailable')}</p>}
+         {totalPublishedDocs === 0 && <p className="text-center text-gray-500 py-8 col-span-full">{t('hrProcedures.noDocumentsAvailable')}</p>}
       </div>
       
       {selectedCategory && (
         <div className="my-4">
         <Button variant="outline" onClick={() => setSelectedCategory(null)} className="text-sm">
-          {t('hrProceduresPage.backToCategoriesButton')}
+          {t('hrProcedures.backToCategoriesButton')}
         </Button>
         </div>
       )}
 
       <h2 className="text-2xl font-semibold text-swiss-charcoal mt-8 mb-4">
-        {selectedCategory ? t('hrProceduresPage.documentsInCategoryTitle', { category: selectedCategory }) : t('hrProceduresPage.allDocumentsCategory')}
-        <span className="text-base font-normal text-gray-500 ml-2">{t('hrProceduresPage.allItemsCount', { count: filteredDocs.length })}</span>
+        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: selectedCategory }) : t('hrProcedures.allDocumentsCategory')}
+        <span className="text-base font-normal text-gray-500 ml-2">{t('hrProcedures.allItemsCount', { count: filteredDocs.length })}</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredDocs.map(doc => (
@@ -251,8 +251,8 @@ const HRProceduresPage: React.FC = () => {
           />
         ))}
       </div>
-      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProceduresPage.noDocumentsInCategory', { category: selectedCategory })}</p>}
-      {filteredDocs.length === 0 && !selectedCategory && totalPublishedDocs > 0 && <p className="text-center text-gray-500 py-8">{t('hrProceduresPage.noDocumentsMatchSearch')}</p>}
+      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: selectedCategory })}</p>}
+      {filteredDocs.length === 0 && !selectedCategory && totalPublishedDocs > 0 && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsMatchSearch')}</p>}
 
       {isAdminOrSuperAdmin && (
         <ContentUploadModal

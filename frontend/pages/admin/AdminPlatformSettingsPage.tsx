@@ -7,7 +7,7 @@ import { AdjustmentsHorizontalIcon, GlobeAltIcon, PhotoIcon } from '@heroicons/r
 import { useTranslation } from 'react-i18next';
 
 const AdminPlatformSettingsPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['admin', 'common']);
   const { platformSettings, setPlatformSettings } = useAppContext();
   const [formData, setFormData] = useState(platformSettings);
   const [isSaved, setIsSaved] = useState(false);
@@ -85,7 +85,7 @@ const AdminPlatformSettingsPage: React.FC = () => {
           </div>
           
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <Button type="submit" variant="primary">{t('buttons.saveChanges')}</Button>
+            <Button type="submit" variant="primary">{t('common:buttons.saveChanges')}</Button>
           </div>
         </Card>
       </form>

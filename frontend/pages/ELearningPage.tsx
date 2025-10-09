@@ -19,7 +19,7 @@ interface CourseMaterialCardProps {
 }
 
 const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, onDelete, isAdmin }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['content', 'common']);
   const typeSpecifics = {
     [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearningPage.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
     [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearningPage.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
@@ -76,8 +76,8 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
         </Button>
         {isAdmin && (
           <div className="flex space-x-2">
-            <Button variant="ghost" size="xs" leftIcon={PencilIcon} onClick={() => onEdit(item)} className="flex-1 text-blue-600 hover:text-blue-700">{t('buttons.edit')}</Button>
-            <Button variant="ghost" size="xs" leftIcon={TrashIcon} onClick={() => onDelete(item.id)} className="flex-1 text-red-600 hover:text-red-700">{t('buttons.delete')}</Button>
+            <Button variant="ghost" size="xs" leftIcon={PencilIcon} onClick={() => onEdit(item)} className="flex-1 text-blue-600 hover:text-blue-700">{t('common:buttons.edit')}</Button>
+            <Button variant="ghost" size="xs" leftIcon={TrashIcon} onClick={() => onDelete(item.id)} className="flex-1 text-red-600 hover:text-red-700">{t('common:buttons.delete')}</Button>
           </div>
         )}
       </div>
@@ -86,7 +86,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
 };
 
 const ELearningPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
   const [eLearningItems, setELearningItems] = useState<Course[]>(MOCK_COURSES);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
