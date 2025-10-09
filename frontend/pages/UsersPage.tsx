@@ -28,7 +28,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent row click
     if (currentUser?.id === user.id) {
-      alert(t('usersPage.cannotDeleteOwnAccount'));
+      alert(t('roleManagement.cannotDeleteOwnAccount'));
       return;
     }
     onDeleteUser(user.id);
@@ -54,7 +54,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t(`userRoles.${user.role}`, user.role)}</td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[user.status || 'Pending']}`}>
-          {user.status ? t(`usersPage.status.${user.status.toLowerCase()}`, user.status) : t('usersPage.status.pending', 'Pending')}
+          {user.status ? t(`usersPage.status.${user.status.toLowerCase()}`, user.status) : t('roleManagement.status.pending', 'Pending')}
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.region || 'N/A'}</td>
@@ -114,7 +114,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
          style={{ transform: user ? 'translateX(0)' : 'translateX(100%)' }}>
       <div className="p-6 h-full flex flex-col">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('usersPage.userDetailDrawer.title')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('roleManagement.userDetailDrawer.title')}</h2>
           <Button variant="ghost" onClick={onClose}>{t('common:buttons.close')}</Button>
         </div>
         <div className="flex-grow overflow-y-auto">
@@ -123,20 +123,20 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
           <p className="text-center text-sm text-gray-500 mb-4">{user.email}</p>
           
           <div className="space-y-2 text-sm">
-            <p><strong>{t('usersPage.userDetailDrawer.roleLabel')}</strong> {t(`userRoles.${user.role}`, user.role)}</p>
-            <p><strong>{t('usersPage.userDetailDrawer.statusLabel')}</strong> {user.status ? t(`usersPage.status.${user.status.toLowerCase()}`, user.status) : 'N/A'}</p>
-            <p><strong>{t('usersPage.userDetailDrawer.regionLabel')}</strong> {user.region || 'N/A'}</p>
-            <p><strong>{t('usersPage.userDetailDrawer.lastLoginLabel')}</strong> {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</p>
-            {user.orgName && <p><strong>{t('usersPage.userDetailDrawer.orgLabel')}</strong> {user.orgName}</p>}
+            <p><strong>{t('roleManagement.userDetailDrawer.roleLabel')}</strong> {t(`userRoles.${user.role}`, user.role)}</p>
+            <p><strong>{t('roleManagement.userDetailDrawer.statusLabel')}</strong> {user.status ? t(`usersPage.status.${user.status.toLowerCase()}`, user.status) : 'N/A'}</p>
+            <p><strong>{t('roleManagement.userDetailDrawer.regionLabel')}</strong> {user.region || 'N/A'}</p>
+            <p><strong>{t('roleManagement.userDetailDrawer.lastLoginLabel')}</strong> {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</p>
+            {user.orgName && <p><strong>{t('roleManagement.userDetailDrawer.orgLabel')}</strong> {user.orgName}</p>}
           </div>
 
           { isSuperAdmin && (
             <div className="mt-6 border-t pt-4">
-                <h3 className="text-md font-semibold mb-2">{t('usersPage.userDetailDrawer.adminActionsTitle')}</h3>
+                <h3 className="text-md font-semibold mb-2">{t('roleManagement.userDetailDrawer.adminActionsTitle')}</h3>
                  {canPerformActions ? (
                     <>
                         <div className="mb-3">
-                            <label htmlFor="roleSelect" className="block text-xs font-medium text-gray-500 mb-1">{t('usersPage.userDetailDrawer.changeRoleLabel')}</label>
+                            <label htmlFor="roleSelect" className="block text-xs font-medium text-gray-500 mb-1">{t('roleManagement.userDetailDrawer.changeRoleLabel')}</label>
                             <select 
                                 id="roleSelect"
                                 value={selectedRole} 
@@ -145,16 +145,16 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
                             > 
                                 {Object.values(UserRole).map(r => <option key={r} value={r}>{t(`userRoles.${r}`, r)}</option>)}
                             </select>
-                            <Button variant="secondary" className="w-full" onClick={handleRoleUpdate}>{t('usersPage.userDetailDrawer.updateRoleButton')}</Button>
+                            <Button variant="secondary" className="w-full" onClick={handleRoleUpdate}>{t('roleManagement.userDetailDrawer.updateRoleButton')}</Button>
                         </div>
                         {user.status === 'Active' ? (
-                            <Button variant="danger" className="w-full" onClick={() => handleStatusUpdate('Inactive')} leftIcon={XCircleIcon}>{t('usersPage.userDetailDrawer.suspendUserButton')}</Button>
+                            <Button variant="danger" className="w-full" onClick={() => handleStatusUpdate('Inactive')} leftIcon={XCircleIcon}>{t('roleManagement.userDetailDrawer.suspendUserButton')}</Button>
                         ) : (
-                            <Button variant="primary" className="w-full" onClick={() => handleStatusUpdate('Active')} leftIcon={CheckCircleIcon}>{t('usersPage.userDetailDrawer.activateUserButton')}</Button>
+                            <Button variant="primary" className="w-full" onClick={() => handleStatusUpdate('Active')} leftIcon={CheckCircleIcon}>{t('roleManagement.userDetailDrawer.activateUserButton')}</Button>
                         )}
                     </>
                  ) : (
-                    <p className="text-xs text-gray-500 italic">{t('usersPage.userDetailDrawer.cannotModifyOwnAccount')}</p>
+                    <p className="text-xs text-gray-500 italic">{t('roleManagement.userDetailDrawer.cannotModifyOwnAccount')}</p>
                  )}
             </div>
           )}
@@ -174,7 +174,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const pageTitle = roleFilter ? t('usersPage.rolePageTitle', { role: t(`userRoles.${roleFilter}`, roleFilter) }) : t('usersPage.allUsersTitle');
+  const pageTitle = roleFilter ? t('roleManagement.rolePageTitle', { role: t(`userRoles.${roleFilter}`, roleFilter) }) : t('roleManagement.allUsersTitle');
   
   const filteredUsers = useMemo(() => {
     return usersData.filter(user =>
@@ -194,7 +194,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   };
 
   const handleDeleteUser = (userId: string) => {
-    if (window.confirm(t('usersPage.confirmDeleteUser'))) {
+    if (window.confirm(t('roleManagement.confirmDeleteUser'))) {
         setUsersData(currentUsers => currentUsers.filter(user => user.id !== userId));
         if (selectedUser?.id === userId) {
             setSelectedUser(null); 
@@ -205,7 +205,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const handleUpdateUser = (updatedUser: User) => {
     setUsersData(currentUsers => currentUsers.map(user => user.id === updatedUser.id ? updatedUser : user));
     setSelectedUser(updatedUser); 
-    alert(t('usersPage.userProfileUpdated', { name: updatedUser.name }));
+    alert(t('roleManagement.userProfileUpdated', { name: updatedUser.name }));
   };
 
   return (
@@ -213,7 +213,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-swiss-charcoal">{pageTitle}</h1>
         { currentUser?.role === UserRole.SUPER_ADMIN && (
-          <Button variant="primary" leftIcon={PlusIcon} onClick={() => alert(t('usersPage.addNewUserTBD'))}>{t('usersPage.addNewUserButton')}</Button>
+          <Button variant="primary" leftIcon={PlusIcon} onClick={() => alert(t('roleManagement.addNewUserTBD'))}>{t('roleManagement.addNewUserButton')}</Button>
         )}
       </div>
       <Card className="p-4">
@@ -222,25 +222,25 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
                 <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                 type="text"
-                placeholder={t('usersPage.searchPlaceholder')}
+                placeholder={t('roleManagement.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={ICON_INPUT_FIELD} 
                 />
             </div>
-            <Button variant="outline" leftIcon={FunnelIcon} onClick={() => alert(t('usersPage.filtersTBD'))}>{t('usersPage.filtersButton')}</Button>
+            <Button variant="outline" leftIcon={FunnelIcon} onClick={() => alert(t('roleManagement.filtersTBD'))}>{t('roleManagement.filtersButton')}</Button>
         </div>
       </Card>
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('usersPage.table.nameOrg')}</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('usersPage.table.role')}</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('usersPage.table.status')}</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('usersPage.table.region')}</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('usersPage.table.lastLogin')}</th>
-              <th scope="col" className="relative px-6 py-3"><span className="sr-only">{t('usersPage.table.actions')}</span></th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('roleManagement.table.nameOrg')}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('roleManagement.table.role')}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('roleManagement.table.status')}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('roleManagement.table.region')}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('roleManagement.table.lastLogin')}</th>
+              <th scope="col" className="relative px-6 py-3"><span className="sr-only">{t('roleManagement.table.actions')}</span></th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -256,7 +256,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
           </tbody>
         </table>
       </div>
-      {filteredUsers.length === 0 && <p className="text-center text-gray-500 py-8">{t('usersPage.emptyState')}</p>}
+      {filteredUsers.length === 0 && <p className="text-center text-gray-500 py-8">{t('roleManagement.emptyState')}</p>}
       <UserDetailDrawer user={selectedUser} onClose={handleCloseDrawer} onUpdateUser={handleUpdateUser} />
       {selectedUser && <div className="fixed inset-0 bg-black/30 z-40" onClick={handleCloseDrawer}></div>}
     </div>

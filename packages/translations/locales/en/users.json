@@ -37,10 +37,7 @@
     "title": "Role Management",
     "search": "Search users...",
     "addNewUser": "Add New User",
-    "noUsersFound": "No users found for this role"
-  },
-  "usersPage": {
-    "title": "User Management",
+    "noUsersFound": "No users found for this role",
     "allUsersTitle": "All Users",
     "rolePageTitle": "{{role}} Users",
     "searchPlaceholder": "Search users...",
@@ -65,8 +62,15 @@
       "actions": "Actions"
     },
     "userDetailDrawer": {
+      "title": "User Details",
+      "roleLabel": "Role",
+      "statusLabel": "Status",
+      "regionLabel": "Region",
+      "lastLoginLabel": "Last Login",
+      "orgLabel": "Organization",
       "adminActionsTitle": "Admin Actions",
       "activateUserButton": "Activate User",
+      "changeRoleLabel": "Change Role",
       "cannotModifyOwnAccount": "You cannot modify your own account"
     }
   }

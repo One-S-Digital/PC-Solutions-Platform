@@ -29,7 +29,7 @@ const AdminPlatformSettingsPage: React.FC = () => {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
         <AdjustmentsHorizontalIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-        {t('adminPlatformSettings.title')}
+        {t('platformSettings.title')}
       </h1>
 
       <form onSubmit={handleSubmit}>
@@ -42,11 +42,11 @@ const AdminPlatformSettingsPage: React.FC = () => {
           
           <h2 className="text-xl font-semibold text-swiss-charcoal mb-4 flex items-center">
             <GlobeAltIcon className="w-6 h-6 mr-2 text-swiss-teal" />
-            {t('adminPlatformSettings.general.title')}
+            {t('platformSettings.general.title')}
           </h2>
           <div className="space-y-4 mb-6">
             <div>
-              <label htmlFor="platformName" className="block text-sm font-medium text-gray-700 mb-1">{t('adminPlatformSettings.general.nameLabel')}</label>
+              <label htmlFor="platformName" className="block text-sm font-medium text-gray-700 mb-1">{t('platformSettings.general.nameLabel')}</label>
               <input
                 type="text"
                 id="platformName"
@@ -57,7 +57,7 @@ const AdminPlatformSettingsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="metadataDescription" className="block text-sm font-medium text-gray-700 mb-1">{t('adminPlatformSettings.general.descriptionLabel')}</label>
+              <label htmlFor="metadataDescription" className="block text-sm font-medium text-gray-700 mb-1">{t('platformSettings.general.descriptionLabel')}</label>
               <textarea
                 id="metadataDescription"
                 name="metadataDescription"
@@ -71,15 +71,15 @@ const AdminPlatformSettingsPage: React.FC = () => {
 
           <h2 className="text-xl font-semibold text-swiss-charcoal mb-4 flex items-center">
             <PhotoIcon className="w-6 h-6 mr-2 text-swiss-teal" />
-            {t('adminPlatformSettings.branding.title')}
+            {t('platformSettings.branding.title')}
           </h2>
           <div className="space-y-4">
             <div>
-              <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('adminPlatformSettings.branding.logoLabel')}</label>
+              <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('platformSettings.branding.logoLabel')}</label>
               <input type="file" id="logoUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
             </div>
             <div>
-              <label htmlFor="faviconUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('adminPlatformSettings.branding.faviconLabel')}</label>
+              <label htmlFor="faviconUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('platformSettings.branding.faviconLabel')}</label>
               <input type="file" id="faviconUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
             </div>
           </div>

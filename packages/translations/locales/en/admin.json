@@ -41,7 +41,7 @@
       "components": "Components"
     }
   },
-  "designSystemPage": {
+  "designSystem": {
     "title": "Design System",
     "buttons": {
       "primaryDisabled": "Primary (Disabled)",
@@ -63,7 +63,7 @@
       "hoverEffectCardDesc": "Card with hover effect"
     }
   },
-  "partnersPage": {
+  "partners": {
     "hero": {
       "title": "Our Partners",
       "subtitle": "Trusted partners in early childhood education",
@@ -86,7 +86,7 @@
       "learnMoreButton": "Learn More"
     }
   },
-  "adminPlatformSettings": {
+  "platformSettings": {
     "title": "Platform Settings",
     "general": {
       "title": "General Settings",
@@ -99,7 +99,7 @@
       "faviconLabel": "Favicon"
     }
   },
-  "discountTerminationsPage": {
+  "discountTerminations": {
     "queue": {
       "title": "Termination Queue",
       "description": "Clients pending discount termination",

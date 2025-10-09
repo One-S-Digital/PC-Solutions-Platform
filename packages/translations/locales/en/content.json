@@ -1,8 +1,5 @@
 {
   "eLearning": {
-    "title": "E-Learning"
-  },
-  "eLearningPage": {
     "title": "E-Learning",
     "coursesTitle": "Courses",
     "videosTitle": "Videos",
@@ -14,7 +11,10 @@
     "categoryLabel": "Category",
     "languageLabel": "Language",
     "durationLabel": "Duration",
+    "updatedLabel": "Updated",
+    "viewingAlert": "Viewing",
     "lessonsCount": "{{count}} lessons",
+    "searchPlaceholder": "Search content...",
     "itemType": {
       "courses": "Courses",
       "videos": "Videos",
@@ -36,31 +36,28 @@
     "allDocumentsCategory": "All Documents",
     "allItemsCount": "{{count}} documents",
     "noDocumentsAvailable": "No documents available",
+    "noDocumentsMatchSearch": "No documents match your search",
     "confirmDeleteDocument": "Are you sure you want to delete this document?",
     "backToCategoriesButton": "Back to Categories",
+    "searchPlaceholder": "Search documents...",
+    "uploadButton": "Upload Document",
     "categoryDisplay": {
       "documentsCount": "{{count}} documents",
-      "viewCategoryAria": "View {{category}}"
+      "viewCategoryAria": "View {{title}}"
     },
-    "uploadButton": {
-      "label": "Upload Document"
-    },
-    "buttons": {
-      "uploadDocument": "Upload Document"
+    "documentCard": {
+      "categoryLabel": "Category",
+      "languageLabel": "Language",
+      "lastUpdatedLabel": "Last Updated",
+      "versionLabel": "Version",
+      "downloadButton": "Download",
+      "previewButtonLabel": "Preview",
+      "editButtonLabel": "Edit",
+      "deleteButtonLabel": "Delete",
+      "toggleFavoriteLabel": "Toggle Favorite",
+      "downloadingAlert": "Downloading...",
+      "previewingAlert": "Previewing..."
     }
-  },
-  "hrDocumentCard": {
-    "categoryLabel": "Category",
-    "languageLabel": "Language",
-    "lastUpdatedLabel": "Last Updated",
-    "versionLabel": "Version",
-    "downloadButton": "Download",
-    "previewButtonLabel": "Preview",
-    "editButtonLabel": "Edit",
-    "deleteButtonLabel": "Delete",
-    "toggleFavoriteLabel": "Toggle Favorite",
-    "downloadingAlert": "Downloading...",
-    "previewingAlert": "Previewing..."
   },
   "statePolicies": {
     "title": "State Policies"

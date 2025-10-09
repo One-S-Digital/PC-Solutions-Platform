@@ -33,16 +33,16 @@ const DesignSystemPage: React.FC = () => {
     const [tabIndex, setTabIndex] = useState(0);
 
     const tabsContent = [
-        { label: t('designSystemPage.tabs.tab1'), content: <p>{t('designSystemPage.tabs.content1')}</p> },
-        { label: t('designSystemPage.tabs.tab2'), content: <p>{t('designSystemPage.tabs.content2')}</p> },
-        { label: t('designSystemPage.tabs.tab3'), content: <p>{t('designSystemPage.tabs.content3')}</p>, disabled: true },
+        { label: t('designSystem.tabs.tab1'), content: <p>{t('designSystem.tabs.content1')}</p> },
+        { label: t('designSystem.tabs.tab2'), content: <p>{t('designSystem.tabs.content2')}</p> },
+        { label: t('designSystem.tabs.tab3'), content: <p>{t('designSystem.tabs.content3')}</p>, disabled: true },
     ];
 
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="text-4xl font-bold text-swiss-charcoal">{t('designSystemPage.title')}</h1>
-        <p className="mt-2 text-lg text-gray-600">{t('designSystemPage.description')}</p>
+        <h1 className="text-4xl font-bold text-swiss-charcoal">{t('designSystem.title')}</h1>
+        <p className="mt-2 text-lg text-gray-600">{t('designSystem.description')}</p>
       </div>
 
       {/* Colors Section */}
@@ -61,14 +61,14 @@ const DesignSystemPage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Typography</h2>
         <Card className="p-8 space-y-4">
-          <p className="text-xs text-gray-500">{t('designSystemPage.typography.fontFamily')}</p>
-          <h1 className="text-4xl font-bold">{t('designSystemPage.typography.heading1')}</h1>
-          <h2 className="text-3xl font-bold">{t('designSystemPage.typography.heading2')}</h2>
-          <h3 className="text-2xl font-semibold">{t('designSystemPage.typography.heading3')}</h3>
-          <h4 className="text-xl font-semibold">{t('designSystemPage.typography.heading4')}</h4>
-          <p className="text-base">{t('designSystemPage.typography.bodyBase')}</p>
-          <p className="text-sm">{t('designSystemPage.typography.bodySmall')}</p>
-          <a href="#" className="text-swiss-mint hover:underline">{t('designSystemPage.typography.link')}</a>
+          <p className="text-xs text-gray-500">{t('designSystem.typography.fontFamily')}</p>
+          <h1 className="text-4xl font-bold">{t('designSystem.typography.heading1')}</h1>
+          <h2 className="text-3xl font-bold">{t('designSystem.typography.heading2')}</h2>
+          <h3 className="text-2xl font-semibold">{t('designSystem.typography.heading3')}</h3>
+          <h4 className="text-xl font-semibold">{t('designSystem.typography.heading4')}</h4>
+          <p className="text-base">{t('designSystem.typography.bodyBase')}</p>
+          <p className="text-sm">{t('designSystem.typography.bodySmall')}</p>
+          <a href="#" className="text-swiss-mint hover:underline">{t('designSystem.typography.link')}</a>
         </Card>
       </section>
 
@@ -90,27 +90,27 @@ const DesignSystemPage: React.FC = () => {
            <div>
             <h3 className="font-medium mb-3">Sizes</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary" size="xs">{t('designSystemPage.buttons.extraSmall')}</Button>
-              <Button variant="primary" size="sm">{t('designSystemPage.buttons.small')}</Button>
-              <Button variant="primary" size="md">{t('designSystemPage.buttons.mediumDefault')}</Button>
-              <Button variant="primary" size="lg">{t('designSystemPage.buttons.large')}</Button>
+              <Button variant="primary" size="xs">{t('designSystem.buttons.extraSmall')}</Button>
+              <Button variant="primary" size="sm">{t('designSystem.buttons.small')}</Button>
+              <Button variant="primary" size="md">{t('designSystem.buttons.mediumDefault')}</Button>
+              <Button variant="primary" size="lg">{t('designSystem.buttons.large')}</Button>
             </div>
           </div>
            <div>
-            <h3 className="font-medium mb-3">{t('designSystemPage.buttons.withIcons')}</h3>
+            <h3 className="font-medium mb-3">{t('designSystem.buttons.withIcons')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="secondary" leftIcon={PlusIcon}>{t('designSystemPage.buttons.leftIcon')}</Button>
-              <Button variant="outline" rightIcon={ArrowRightIcon}>{t('designSystemPage.buttons.rightIcon')}</Button>
-              <Button variant="primary" leftIcon={CheckIcon} size="sm">{t('designSystemPage.buttons.smallIcon')}</Button>
+              <Button variant="secondary" leftIcon={PlusIcon}>{t('designSystem.buttons.leftIcon')}</Button>
+              <Button variant="outline" rightIcon={ArrowRightIcon}>{t('designSystem.buttons.rightIcon')}</Button>
+              <Button variant="primary" leftIcon={CheckIcon} size="sm">{t('designSystem.buttons.smallIcon')}</Button>
               <Button variant="danger" leftIcon={PlusIcon} />
             </div>
           </div>
           <div>
-            <h3 className="font-medium mb-3">{t('designSystemPage.buttons.disabledState')}</h3>
+            <h3 className="font-medium mb-3">{t('designSystem.buttons.disabledState')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary" disabled>{t('designSystemPage.buttons.primaryDisabled')}</Button>
-              <Button variant="secondary" disabled>{t('designSystemPage.buttons.secondaryDisabled')}</Button>
-               <Button variant="outline" disabled>{t('designSystemPage.buttons.outlineDisabled')}</Button>
+              <Button variant="primary" disabled>{t('designSystem.buttons.primaryDisabled')}</Button>
+              <Button variant="secondary" disabled>{t('designSystem.buttons.secondaryDisabled')}</Button>
+               <Button variant="outline" disabled>{t('designSystem.buttons.outlineDisabled')}</Button>
             </div>
           </div>
         </Card>
@@ -121,31 +121,31 @@ const DesignSystemPage: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Cards</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="p-6">
-                <h3 className="font-semibold mb-2">{t('designSystemPage.cards.standardCard')}</h3>
-                <p className="text-sm text-gray-600">{t('designSystemPage.cards.standardCardDesc')}</p>
+                <h3 className="font-semibold mb-2">{t('designSystem.cards.standardCard')}</h3>
+                <p className="text-sm text-gray-600">{t('designSystem.cards.standardCardDesc')}</p>
             </Card>
              <Card className="p-6" hoverEffect>
-                <h3 className="font-semibold mb-2">{t('designSystemPage.cards.hoverEffectCard')}</h3>
-                <p className="text-sm text-gray-600">{t('designSystemPage.cards.hoverEffectCardDesc')}</p>
+                <h3 className="font-semibold mb-2">{t('designSystem.cards.hoverEffectCard')}</h3>
+                <p className="text-sm text-gray-600">{t('designSystem.cards.hoverEffectCardDesc')}</p>
             </Card>
         </div>
       </section>
 
       {/* Form Controls Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('designSystemPage.formControls.title')}</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('designSystem.formControls.title')}</h2>
         <Card className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="text-input" className="block text-sm font-medium text-gray-700 mb-1">{t('designSystemPage.formControls.textInput')}</label>
+                    <label htmlFor="text-input" className="block text-sm font-medium text-gray-700 mb-1">{t('designSystem.formControls.textInput')}</label>
                     <input type="text" id="text-input" className={STANDARD_INPUT_FIELD} placeholder="e.g., Jane Doe"/>
                 </div>
                  <div>
-                    <label htmlFor="select-input" className="block text-sm font-medium text-gray-700 mb-1">{t('designSystemPage.formControls.selectMenu')}</label>
+                    <label htmlFor="select-input" className="block text-sm font-medium text-gray-700 mb-1">{t('designSystem.formControls.selectMenu')}</label>
                     <select id="select-input" className={STANDARD_INPUT_FIELD}>
-                        <option>{t('designSystemPage.formControls.option1')}</option>
-                        <option>{t('designSystemPage.formControls.option2')}</option>
-                        <option>{t('designSystemPage.formControls.option3')}</option>
+                        <option>{t('designSystem.formControls.option1')}</option>
+                        <option>{t('designSystem.formControls.option2')}</option>
+                        <option>{t('designSystem.formControls.option3')}</option>
                     </select>
                 </div>
                 <div>
@@ -155,11 +155,11 @@ const DesignSystemPage: React.FC = () => {
             </div>
              <div className="space-y-4">
                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('designSystemPage.formControls.quantityInput')}</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('designSystem.formControls.quantityInput')}</label>
                     <QuantityInput quantity={quantity} onQuantityChange={setQuantity} />
                 </div>
                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('designSystemPage.formControls.disabledInput')}</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('designSystem.formControls.disabledInput')}</label>
                     <input type="text" className={STANDARD_INPUT_FIELD} placeholder="You can't type here" disabled/>
                 </div>
             </div>
@@ -168,14 +168,14 @@ const DesignSystemPage: React.FC = () => {
       
       {/* Tabs Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('designSystemPage.tabs.title')}</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('designSystem.tabs.title')}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <Card className="p-6">
-                <h3 className="font-medium mb-3">{t('designSystemPage.tabs.pillsVariant')}</h3>
+                <h3 className="font-medium mb-3">{t('designSystem.tabs.pillsVariant')}</h3>
                 <Tabs tabs={tabsContent} onTabChange={setTabIndex} activeTab={tabIndex} variant="pills" />
             </Card>
              <Card className="p-6">
-                <h3 className="font-medium mb-3">{t('designSystemPage.tabs.lineVariant')}</h3>
+                <h3 className="font-medium mb-3">{t('designSystem.tabs.lineVariant')}</h3>
                 <Tabs tabs={tabsContent} onTabChange={setTabIndex} activeTab={tabIndex} variant="line" />
             </Card>
         </div>

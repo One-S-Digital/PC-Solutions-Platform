@@ -23,7 +23,7 @@
     "title": "Language & Region",
     "selectLanguage": "Select Language"
   },
-  "settingsPage": {
+  "page": {
     "title": "Settings",
     "loading": "Loading settings...",
     "noSectionsAvailable": "No settings available for your role",

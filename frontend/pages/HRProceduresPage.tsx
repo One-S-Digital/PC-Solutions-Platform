@@ -36,16 +36,16 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
             <DocumentDuplicateIcon className={`w-10 h-10 ${fileTypeColors[doc.fileType] || 'text-gray-500'}`} />
             <div className="ml-3">
               <h3 className="text-lg font-semibold text-swiss-charcoal group-hover:text-swiss-mint transition-colors">{doc.title}</h3>
-              <p className="text-xs text-gray-500">{t('hrDocumentCard.categoryLabel', { category: doc.category })}</p>
-              {doc.language && <p className="text-xs text-gray-500">{t('hrDocumentCard.languageLabel', { language: doc.language })} {doc.version && t('hrDocumentCard.versionLabel', { version: doc.version })}</p>}
+              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel', { category: doc.category })}</p>
+              {doc.language && <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.languageLabel', { language: doc.language })} {doc.version && t('hrProcedures.documentCard.versionLabel', { version: doc.version })}</p>}
             </div>
           </div>
-          <button onClick={() => onToggleFavorite(doc.id)} className="text-gray-300 hover:text-yellow-400 focus:outline-none" aria-label={t('hrDocumentCard.toggleFavoriteLabel')}>
+          <button onClick={() => onToggleFavorite(doc.id)} className="text-gray-300 hover:text-yellow-400 focus:outline-none" aria-label={t('hrProcedures.documentCard.toggleFavoriteLabel')}>
             <StarIcon className={`w-6 h-6 transition-colors ${doc.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400 hover:text-yellow-300'}`} />
           </button>
         </div>
         <p className="text-xs text-gray-500 mb-1">
-          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrDocumentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString() })}
+          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString() })}
         </p>
         <div className="my-2">
           {doc.tags.map(tag => (
@@ -59,12 +59,12 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
         </div>
       </div>
       <div className="bg-gray-50 px-5 py-3 mt-auto border-t flex justify-end items-center space-x-2">
-        <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => alert(t('hrDocumentCard.downloadingAlert', { title: doc.title }))}>{t('hrDocumentCard.downloadButton')}</Button>
-        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => alert(t('hrDocumentCard.previewingAlert', { title: doc.title }))} className="p-2" aria-label={t('hrDocumentCard.previewButtonLabel')} title={t('hrDocumentCard.previewButtonLabel')}></Button>
+        <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => alert(t('hrProcedures.documentCard.downloadingAlert', { title: doc.title }))}>{t('hrProcedures.documentCard.downloadButton')}</Button>
+        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => alert(t('hrProcedures.documentCard.previewingAlert', { title: doc.title }))} className="p-2" aria-label={t('hrProcedures.documentCard.previewButtonLabel')} title={t('hrProcedures.documentCard.previewButtonLabel')}></Button>
         {isAdmin && (
           <>
-            <Button variant="ghost" size="sm" leftIcon={PencilIcon} onClick={() => onEdit(doc)} className="text-blue-600 hover:text-blue-700 p-2" aria-label={t('hrDocumentCard.editButtonLabel')} title={t('hrDocumentCard.editButtonLabel')}></Button>
-            <Button variant="ghost" size="sm" leftIcon={TrashIcon} onClick={() => onDelete(doc.id)} className="text-red-600 hover:text-red-700 p-2" aria-label={t('hrDocumentCard.deleteButtonLabel')} title={t('hrDocumentCard.deleteButtonLabel')}></Button>
+            <Button variant="ghost" size="sm" leftIcon={PencilIcon} onClick={() => onEdit(doc)} className="text-blue-600 hover:text-blue-700 p-2" aria-label={t('hrProcedures.documentCard.editButtonLabel')} title={t('hrProcedures.documentCard.editButtonLabel')}></Button>
+            <Button variant="ghost" size="sm" leftIcon={TrashIcon} onClick={() => onDelete(doc.id)} className="text-red-600 hover:text-red-700 p-2" aria-label={t('hrProcedures.documentCard.deleteButtonLabel')} title={t('hrProcedures.documentCard.deleteButtonLabel')}></Button>
           </>
         )}
       </div>

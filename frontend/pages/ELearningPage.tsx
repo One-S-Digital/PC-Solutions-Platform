@@ -21,10 +21,10 @@ interface CourseMaterialCardProps {
 const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, onDelete, isAdmin }) => {
   const { t } = useTranslation(['content', 'common']);
   const typeSpecifics = {
-    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearningPage.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
-    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearningPage.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
-    [ELearningContentType.PDF]: { icon: DocumentTextIcon, actionText: t('eLearningPage.actions.downloadPdf'), actionIcon: ArrowDownTrayIcon, color: 'text-swiss-coral' },
-    [ELearningContentType.LINK]: { icon: LinkIcon, actionText: t('eLearningPage.actions.openLink'), actionIcon: ArrowTopRightOnSquareIcon, color: 'text-purple-600' },
+    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
+    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearning.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
+    [ELearningContentType.PDF]: { icon: DocumentTextIcon, actionText: t('eLearning.actions.downloadPdf'), actionIcon: ArrowDownTrayIcon, color: 'text-swiss-coral' },
+    [ELearningContentType.LINK]: { icon: LinkIcon, actionText: t('eLearning.actions.openLink'), actionIcon: ArrowTopRightOnSquareIcon, color: 'text-purple-600' },
   };
   
   const currentItemTypeKey = Object.values(ELearningContentType).find(v => v.toLowerCase() === item.type.toLowerCase()) || ELearningContentType.COURSE;
@@ -39,7 +39,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
     } else if (item.fileUrl && (item.type === ELearningContentType.PDF || item.type === ELearningContentType.VIDEO)) {
          window.open(item.fileUrl, '_blank'); 
     } else {
-        alert(`${t('eLearningPage.viewingAlert')} ${item.title}`); 
+        alert(`${t('eLearning.viewingAlert')} ${item.title}`); 
     }
   };
 
@@ -52,10 +52,10 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
           <h3 className={`text-lg font-semibold ${currentType.color}`}>{item.title}</h3>
         </div>
         <p className="text-sm text-gray-600 mb-1 flex-grow line-clamp-3">{item.description}</p>
-        {item.type === ELearningContentType.COURSE && item.lessons && <p className="text-xs text-gray-500">{t('eLearningPage.lessonsCount', { count: item.lessons })}</p>}
-        {(item.type === ELearningContentType.VIDEO || item.type === ELearningContentType.COURSE) && item.duration && <p className="text-xs text-gray-500">{t('eLearningPage.durationLabel')}: {item.duration}</p>}
-        {item.language && <p className="text-xs text-gray-500">{t('eLearningPage.languageLabel')}: {item.language}</p>}
-        <p className="text-xs text-gray-500 mt-1">{t('eLearningPage.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}</p>
+        {item.type === ELearningContentType.COURSE && item.lessons && <p className="text-xs text-gray-500">{t('eLearning.lessonsCount', { count: item.lessons })}</p>}
+        {(item.type === ELearningContentType.VIDEO || item.type === ELearningContentType.COURSE) && item.duration && <p className="text-xs text-gray-500">{t('eLearning.durationLabel')}: {item.duration}</p>}
+        {item.language && <p className="text-xs text-gray-500">{t('eLearning.languageLabel')}: {item.language}</p>}
+        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}</p>
          {item.tags && item.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
                 {item.tags.slice(0, 3).map(tag => (
@@ -145,7 +145,7 @@ const ELearningPage: React.FC = () => {
   };
 
   const handleDeleteItem = (id: string) => {
-    if (window.confirm(t('eLearningPage.confirmDelete'))) {
+    if (window.confirm(t('eLearning.confirmDelete'))) {
         setELearningItems(prevItems => prevItems.filter(item => item.id !== id));
     }
   };
@@ -157,7 +157,7 @@ const ELearningPage: React.FC = () => {
         {title}
       </h2>
       {items.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">{t('eLearningPage.noItemsFound', { itemType: itemTypeName.toLowerCase() })}</p>
+        <p className="text-center text-gray-500 py-8">{t('eLearning.noItemsFound', { itemType: itemTypeName.toLowerCase() })}</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {items.map(item => (
@@ -177,10 +177,10 @@ const ELearningPage: React.FC = () => {
   return (
     <div className="space-y-8"> {/* Increased spacing between major page elements */}
       <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('eLearningPage.title')}</h1>
+        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('eLearning.title')}</h1>
         {isAdminOrSuperAdmin && (
           <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => handleOpenUploadModal()}>
-            {t('eLearningPage.addNewContentButton')}
+            {t('eLearning.addNewContentButton')}
           </Button>
         )}
       </div>
@@ -189,18 +189,18 @@ const ELearningPage: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
                 <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <label htmlFor="eLearningSearch" className="sr-only">{t('eLearningPage.searchPlaceholder')}</label>
+                <label htmlFor="eLearningSearch" className="sr-only">{t('eLearning.searchPlaceholder')}</label>
                 <input
                 id="eLearningSearch"
                 type="text"
-                placeholder={t('eLearningPage.searchPlaceholder')}
+                placeholder={t('eLearning.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`${ICON_INPUT_FIELD} w-full`}
                 />
             </div>
             <div>
-                <label htmlFor="eLearningCategory" className="block text-xs font-medium text-gray-500 mb-1">{t('eLearningPage.categoryLabel')}</label>
+                <label htmlFor="eLearningCategory" className="block text-xs font-medium text-gray-500 mb-1">{t('eLearning.categoryLabel')}</label>
                 <select
                     id="eLearningCategory"
                     value={filterCategory}
@@ -214,13 +214,13 @@ const ELearningPage: React.FC = () => {
       </Card>
       
       {globallyFilteredItems.length === 0 && (
-          <p className="text-center text-gray-500 py-8 text-lg">{t('eLearningPage.noContentFound')}</p>
+          <p className="text-center text-gray-500 py-8 text-lg">{t('eLearning.noContentFound')}</p>
       )}
 
-      {renderSection(t('eLearningPage.coursesTitle'), courseItems, t('eLearningPage.itemType.courses'), AcademicCapIcon)}
-      {renderSection(t('eLearningPage.videosTitle'), videoItems, t('eLearningPage.itemType.videos'), VideoCameraIcon)}
-      {renderSection(t('eLearningPage.pdfsTitle'), pdfItems, t('eLearningPage.itemType.pdfs'), DocumentTextIcon)}
-      {renderSection(t('eLearningPage.externalLinksTitle'), linkItems, t('eLearningPage.itemType.links'), LinkIcon)}
+      {renderSection(t('eLearning.coursesTitle'), courseItems, t('eLearning.itemType.courses'), AcademicCapIcon)}
+      {renderSection(t('eLearning.videosTitle'), videoItems, t('eLearning.itemType.videos'), VideoCameraIcon)}
+      {renderSection(t('eLearning.pdfsTitle'), pdfItems, t('eLearning.itemType.pdfs'), DocumentTextIcon)}
+      {renderSection(t('eLearning.externalLinksTitle'), linkItems, t('eLearning.itemType.links'), LinkIcon)}
       
 
       {isAdminOrSuperAdmin && (

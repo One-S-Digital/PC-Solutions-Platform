@@ -25,7 +25,7 @@ const DiscountTerminationsPage: React.FC = () => {
     }, [vendorClients, churnedDaycareId]);
 
     const handleSendNotices = () => {
-        alert(t('discountTerminationsPage.actions.sendNoticesAlert', { count: terminationQueue.length }));
+        alert(t('discountTerminations.actions.sendNoticesAlert', { count: terminationQueue.length }));
         // Mock updating the status
     };
 
@@ -53,11 +53,11 @@ const DiscountTerminationsPage: React.FC = () => {
                         <table className="min-w-full divide-y divide-gray-200 text-sm">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminationsPage.table.vendor')}</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminationsPage.table.daycare')}</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminationsPage.table.activeSince')}</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminationsPage.table.reason')}</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminationsPage.table.actions')}</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminations.table.vendor')}</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminations.table.daycare')}</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminations.table.activeSince')}</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminations.table.reason')}</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('discountTerminations.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -69,7 +69,7 @@ const DiscountTerminationsPage: React.FC = () => {
                                         <td className="px-4 py-3">{vc.reason ? t(`vendorClientReasons.${vc.reason.replace(/\s+/g, '')}`, vc.reason) : 'N/A'}</td>
                                         <td className="px-4 py-3 space-x-2">
                                             {terminationQueue.includes(vc) && (
-                                                 <Button variant="secondary" size="xs" onClick={() => handleMarkCompleted(vc.id)}>{t('discountTerminationsPage.actions.markCompleted')}</Button>
+                                                 <Button variant="secondary" size="xs" onClick={() => handleMarkCompleted(vc.id)}>{t('discountTerminations.actions.markCompleted')}</Button>
                                             )}
                                             <Button variant="outline" size="xs">{t('common:buttons.viewDetails')}</Button>
                                         </td>
@@ -96,18 +96,18 @@ const DiscountTerminationsPage: React.FC = () => {
                     <div>
                         <h2 className="text-xl font-semibold text-swiss-coral mb-2 flex items-center">
                             <ShieldExclamationIcon className="w-6 h-6 mr-2"/>
-                            {t('discountTerminationsPage.queue.title')}
+                            {t('discountTerminations.queue.title')}
                         </h2>
-                        <p className="text-sm text-gray-700">{t('discountTerminationsPage.queue.description')}</p>
+                        <p className="text-sm text-gray-700">{t('discountTerminations.queue.description')}</p>
                     </div>
                     {terminationQueue.length > 0 && (
                         <Button variant="danger" onClick={handleSendNotices} className="mt-3 sm:mt-0">
-                            {t('discountTerminationsPage.actions.sendNotices', { count: terminationQueue.length })}
+                            {t('discountTerminations.actions.sendNotices', { count: terminationQueue.length })}
                         </Button>
                     )}
                  </div>
                  <div className="mt-4">
-                    {renderTable(terminationQueue, t('discountTerminationsPage.queue.tableTitle'), 'discountTerminationsPage.queue.empty')}
+                    {renderTable(terminationQueue, t('discountTerminations.queue.tableTitle'), 'discountTerminationsPage.queue.empty')}
                  </div>
             </Card>
 
@@ -115,10 +115,10 @@ const DiscountTerminationsPage: React.FC = () => {
              <Card className="p-6">
                  <h2 className="text-xl font-semibold text-swiss-charcoal mb-2 flex items-center">
                     <CheckCircleIcon className="w-6 h-6 mr-2 text-swiss-mint"/>
-                    {t('discountTerminationsPage.allActive.title')}
+                    {t('discountTerminations.allActive.title')}
                 </h2>
-                <p className="text-sm text-gray-600 mb-4">{t('discountTerminationsPage.allActive.description')}</p>
-                 {renderTable(allActiveClients, t('discountTerminationsPage.allActive.tableTitle'), 'discountTerminationsPage.allActive.empty')}
+                <p className="text-sm text-gray-600 mb-4">{t('discountTerminations.allActive.description')}</p>
+                 {renderTable(allActiveClients, t('discountTerminations.allActive.tableTitle'), 'discountTerminationsPage.allActive.empty')}
             </Card>
 
         </div>

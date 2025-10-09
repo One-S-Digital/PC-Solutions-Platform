@@ -8,7 +8,8 @@ import Tabs from '../components/ui/Tabs';
 import { NewspaperIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, DocumentTextIcon, InformationCircleIcon, PlusCircleIcon, PencilSquareIcon, TrashIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import ContentUploadModal from '../components/admin/ContentUploadModal';
-import PolicyAlertModal from '../components/admin/PolicyAlertModal'; 
+import PolicyAlertModal from '../components/admin/PolicyAlertModal';
+import { useTranslation } from 'react-i18next'; 
 
 interface PolicyDocumentCardProps {
   doc: PolicyDocument;
@@ -79,6 +80,7 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onEdit, on
 };
 
 const StatePoliciesPage: React.FC = () => {
+  const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCanton, setFilterCanton] = useState('All');
@@ -197,11 +199,11 @@ const StatePoliciesPage: React.FC = () => {
   );
   
   const policyTabs = [
-    { label: 'Cantonal Policies', content: tabsContent('Cantonal Policies')},
-    { label: 'National Regulations', content: tabsContent('National Regulations')},
-    { label: 'Compliance', content: tabsContent('Compliance Requirements')},
-    { label: 'Updates & News', content: tabsContent('Updates & News')},
-    { label: 'Official Downloads', content: tabsContent('Official Downloads')},
+    { label: t('statePolicies.tabs.cantonal'), content: tabsContent('Cantonal Policies')},
+    { label: t('statePolicies.tabs.national'), content: tabsContent('National Regulations')},
+    { label: t('statePolicies.sections.compliance'), content: tabsContent('Compliance Requirements')},
+    { label: t('statePolicies.sections.updates'), content: tabsContent('Updates & News')},
+    { label: t('statePolicies.sections.downloads'), content: tabsContent('Official Downloads')},
   ];
 
 
