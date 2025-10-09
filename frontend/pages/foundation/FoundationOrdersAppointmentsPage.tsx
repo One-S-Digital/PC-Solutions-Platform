@@ -118,9 +118,9 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      <Button variant="ghost" size="xs" onClick={() => handleSendMessageToPartner(order.supplierId, order.supplierName, UserRole.PRODUCT_SUPPLIER)}>{t('buttons.sendMessage')}</Button>
+                      <Button variant="ghost" size="xs" onClick={() => handleSendMessageToPartner(order.supplierId, order.supplierName, UserRole.PRODUCT_SUPPLIER)}>{t('common:buttons.sendMessage')}</Button>
                       {order.status === OrderRequestStatus.SUBMITTED &&
-                        <Button variant="ghost" size="xs" className="text-red-600 hover:text-red-700 ml-1" onClick={() => alert(t('foundationOrdersAppointmentsPage.cancelOrderAlert', { orderId: order.id }))}>{t('buttons.cancel')}</Button>
+                        <Button variant="ghost" size="xs" className="text-red-600 hover:text-red-700 ml-1" onClick={() => alert(t('foundationOrdersAppointmentsPage.cancelOrderAlert', { orderId: order.id }))}>{t('common:buttons.cancel')}</Button>
                       }
                     </td>
                   </tr>
@@ -179,7 +179,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      <Button variant="ghost" size="xs" onClick={() => handleSendMessageToPartner(req.providerId, provider?.name || t('foundationOrdersAppointmentsPage.unknownProvider'), UserRole.SERVICE_PROVIDER)}>{t('buttons.sendMessage')}</Button>
+                      <Button variant="ghost" size="xs" onClick={() => handleSendMessageToPartner(req.providerId, provider?.name || t('foundationOrdersAppointmentsPage.unknownProvider'), UserRole.SERVICE_PROVIDER)}>{t('common:buttons.sendMessage')}</Button>
                        {(req.status === ServiceRequestStatus.NEW || req.status === ServiceRequestStatus.IN_REVIEW || req.status === ServiceRequestStatus.ACCEPTED) &&
                         <Button variant="ghost" size="xs" className="text-orange-600 hover:text-orange-700 ml-1" onClick={() => alert(t('foundationOrdersAppointmentsPage.rescheduleAlert', { requestId: req.id }))}>{t('foundationOrdersAppointmentsPage.rescheduleButton')}</Button>
                       }

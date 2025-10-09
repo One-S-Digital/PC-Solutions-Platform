@@ -49,7 +49,7 @@ const EducatorJobCard: React.FC<EducatorJobCardProps> = ({ job, onViewDetails })
       </div>
       <div className="bg-gray-50 px-5 py-3 border-t flex justify-end">
         <Button variant="primary" size="sm" leftIcon={EyeIcon} onClick={() => onViewDetails(job)} className="w-full">
-          {t('buttons.viewDetails')}
+          {t('common:buttons.viewDetails')}
         </Button>
       </div>
     </Card>

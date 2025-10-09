@@ -29,8 +29,8 @@ const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDe
             <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
             {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
             <div className="flex space-x-2 mt-auto">
-                <Button variant="outline" size="sm" leftIcon={PencilSquareIcon} onClick={() => onEdit(service)} className="flex-1">{t('buttons.edit')}</Button>
-                <Button variant="danger" size="sm" leftIcon={TrashIcon} onClick={() => onDelete(service.id)} className="flex-1">{t('buttons.delete')}</Button>
+                <Button variant="outline" size="sm" leftIcon={PencilSquareIcon} onClick={() => onEdit(service)} className="flex-1">{t('common:buttons.edit')}</Button>
+                <Button variant="danger" size="sm" leftIcon={TrashIcon} onClick={() => onDelete(service.id)} className="flex-1">{t('common:buttons.delete')}</Button>
             </div>
             </div>
         </Card>

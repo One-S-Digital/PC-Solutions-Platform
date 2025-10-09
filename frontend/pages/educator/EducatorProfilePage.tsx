@@ -24,7 +24,7 @@ const SectionCard: React.FC<{ titleKey: string; icon: React.ElementType; childre
           </h2>
           {onEdit && (
             <Button variant="ghost" size="sm" onClick={onEdit} leftIcon={isEditing ? XMarkIcon : PencilSquareIcon}>
-              {isEditing ? t('buttons.cancel') : t('buttons.edit')}
+              {isEditing ? t('common:buttons.cancel') : t('common:buttons.edit')}
             </Button>
           )}
         </div>
@@ -53,9 +53,9 @@ const EducatorProfilePage: React.FC = () => {
           {t('sidebar.myProfile')}
         </h1>
         <div className="flex space-x-2">
-            {isEditing && <Button variant="light" onClick={() => setIsEditing(false)}>{t('buttons.cancel')}</Button>}
+            {isEditing && <Button variant="light" onClick={() => setIsEditing(false)}>{t('common:buttons.cancel')}</Button>}
             <Button variant="primary" leftIcon={isEditing ? undefined : PencilSquareIcon} onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
-                {isEditing ? t('buttons.saveChanges') : t('educatorProfilePage.editProfile')}
+                {isEditing ? t('common:buttons.saveChanges') : t('educatorProfilePage.editProfile')}
             </Button>
         </div>
       </div>

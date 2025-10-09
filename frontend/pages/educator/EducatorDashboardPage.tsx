@@ -103,7 +103,7 @@ const EducatorDashboardPage: React.FC = () => {
                   </div>
                   <div className="text-right ml-4 flex-shrink-0">
                     <p className="text-sm font-bold text-swiss-mint">{job.match}% {t('educatorDashboard.recommendations.match')}</p>
-                    <Button variant="ghost" size="xs" onClick={() => alert(`${t('buttons.applyNow')} TBD`)}>{t('buttons.applyNow')} <ArrowUpRightIcon className="w-3 h-3 ml-1"/></Button>
+                    <Button variant="ghost" size="xs" onClick={() => alert(`${t('common:buttons.applyNow')} TBD`)}>{t('common:buttons.applyNow')} <ArrowUpRightIcon className="w-3 h-3 ml-1"/></Button>
                   </div>
                 </div>
               ))}

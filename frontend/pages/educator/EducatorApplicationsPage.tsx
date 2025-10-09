@@ -56,7 +56,7 @@ const EducatorApplicationsPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-gray-500">{new Date(app.applicationDate).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => alert(`${t('educatorApplicationsPage.viewingDetailsFor')} ${app.jobTitle}`)}>
-                        {t('buttons.viewDetails')}
+                        {t('common:buttons.viewDetails')}
                       </Button>
                     </td>
                   </tr>

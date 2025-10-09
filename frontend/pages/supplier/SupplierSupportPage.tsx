@@ -95,7 +95,7 @@ const SupplierSupportPage: React.FC = () => {
             />
           </div>
           <div>
-            <Button type="submit" variant="primary">{t('buttons.submitTicket')}</Button>
+            <Button type="submit" variant="primary">{t('common:buttons.submitTicket')}</Button>
           </div>
         </form>
       </Card>

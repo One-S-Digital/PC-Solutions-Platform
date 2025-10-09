@@ -118,7 +118,7 @@ const FoundationDashboardPage: React.FC = () => {
                     </p>
                     <p className="text-xs text-gray-400">{activity.time}</p>
                   </div>
-                  <Button variant="ghost" size="xs">{t('buttons.view')}</Button>
+                  <Button variant="ghost" size="xs">{t('common:buttons.view')}</Button>
                 </li>
               ))}
             </ul>
@@ -140,7 +140,7 @@ const FoundationDashboardPage: React.FC = () => {
           <Card className="p-5 bg-swiss-teal text-white">
             <h2 className="text-lg font-semibold mb-2">{t('foundationDashboard.quickMessage.title')}</h2>
             <textarea placeholder={t('foundationDashboard.quickMessage.placeholder')} rows={3} className="w-full p-2 rounded-md text-sm text-swiss-charcoal placeholder-gray-500 border-gray-300 focus:ring-swiss-mint focus:border-swiss-mint"></textarea>
-            <Button variant="secondary" size="sm" className="w-full mt-2 !bg-white !text-swiss-teal">{t('buttons.sendMessage')}</Button>
+            <Button variant="secondary" size="sm" className="w-full mt-2 !bg-white !text-swiss-teal">{t('common:buttons.sendMessage')}</Button>
           </Card>
         </div>
       </div>
