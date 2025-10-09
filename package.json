@@ -16,10 +16,18 @@
     "translate": "node scripts/translate-i18n-free.js",
     "translate:ai": "node scripts/translate-i18n.js",
     "translate:manual": "node scripts/create-translations-manual.js",
-    "translate:simple": "node scripts/translate-simple.js"
+    "translate:simple": "node scripts/translate-simple.js",
+    "generate:i18n-types": "ts-node scripts/generate-i18n-types.ts",
+    "extract:i18n-keys": "ts-node scripts/extract-i18n-keys.ts",
+    "check:i18n-keys": "ts-node scripts/check-i18n-keys.ts",
+    "i18n:full-check": "npm run extract:i18n-keys && npm run check:i18n-keys && npm run generate:i18n-types"
   },
   "devDependencies": {
+    "@types/node": "^22.10.5",
+    "eslint-plugin-i18next": "^6.1.0",
+    "glob": "^11.0.0",
     "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
     "turbo": "^2.5.6",
     "typescript": "5.9.2"
   },

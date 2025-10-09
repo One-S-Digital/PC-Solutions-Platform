@@ -1,0 +1,167 @@
+name: i18n Translation Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**/*.tsx'
+      - 'frontend/**/*.ts'
+      - 'packages/translations/**/*.json'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**/*.tsx'
+      - 'frontend/**/*.ts'
+      - 'packages/translations/**/*.json'
+
+jobs:
+  check-translations:
+    name: Check Translation Keys
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+
+      - name: 🔍 Extract used i18n keys
+        run: npm run extract:i18n-keys
+        continue-on-error: false
+
+      - name: ✅ Check for missing keys
+        id: check-keys
+        run: npm run check:i18n-keys
+        continue-on-error: true
+
+      - name: 📊 Upload missing keys report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-missing-keys-report
+          path: i18n-missing-keys.json
+          retention-days: 30
+
+      - name: 💬 Comment PR with results
+        if: github.event_name == 'pull_request' && steps.check-keys.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('i18n-missing-keys.json', 'utf8'));
+            
+            let comment = '## ⚠️ i18n Translation Keys Missing\n\n';
+            comment += `**Total keys used:** ${report.summary.totalUsedKeys}\n\n`;
+            
+            comment += '### Missing Keys by Language\n\n';
+            for (const lang of report.languages) {
+              const missing = report.summary.missingKeys[lang];
+              const icon = missing > 0 ? '❌' : '✅';
+              comment += `${icon} **${lang.toUpperCase()}**: ${missing} missing keys\n`;
+            }
+            
+            comment += '\n### Details\n\n';
+            for (const detail of report.details) {
+              if (detail.missingKeys.length > 0) {
+                comment += `<details>\n<summary>📋 ${detail.language.toUpperCase()} - ${detail.missingKeys.length} missing keys</summary>\n\n`;
+                comment += '| Namespace | Key | Used In |\n';
+                comment += '|-----------|-----|----------|\n';
+                
+                detail.missingKeys.slice(0, 10).forEach(({ namespace, key, usedIn }) => {
+                  const files = usedIn.slice(0, 2).join(', ');
+                  const more = usedIn.length > 2 ? ` +${usedIn.length - 2} more` : '';
+                  comment += `| \`${namespace}\` | \`${key}\` | ${files}${more} |\n`;
+                });
+                
+                if (detail.missingKeys.length > 10) {
+                  comment += `\n*... and ${detail.missingKeys.length - 10} more*\n`;
+                }
+                comment += '\n</details>\n\n';
+              }
+            }
+            
+            comment += '\n💡 **Action Required:** Add the missing keys to the respective namespace JSON files in `packages/translations/locales/`\n';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: ❌ Fail if keys are missing
+        if: steps.check-keys.outcome == 'failure'
+        run: |
+          echo "::error::Missing translation keys detected. Check the report for details."
+          exit 1
+
+      - name: ✅ All checks passed
+        if: steps.check-keys.outcome == 'success'
+        run: echo "✅ All i18n translation keys are present!"
+
+  type-safety:
+    name: Generate & Verify Type Safety
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+
+      - name: 🔨 Generate i18n types
+        run: npm run generate:i18n-types
+
+      - name: 📝 Check if types are up to date
+        run: |
+          if ! git diff --exit-code frontend/i18n/types.ts; then
+            echo "::error::i18n types are out of date. Run 'npm run generate:i18n-types' locally and commit the changes."
+            exit 1
+          fi
+          echo "✅ i18n types are up to date!"
+
+      - name: 🔍 TypeScript check
+        run: cd frontend && npm run type-check
+        continue-on-error: false
+
+  eslint-check:
+    name: ESLint i18n Rules
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+
+      - name: 🔍 Run ESLint
+        run: cd frontend && npm run lint
+        continue-on-error: false
