@@ -10,7 +10,7 @@ import Card from '../components/ui/Card';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
-  const { t } = useTranslation(['auth', 'common']);
+  const { t } = useTranslation(['signup', 'common']);
   const navigate = useNavigate();
   const { signup, currentUser } = useAppContext();
 
@@ -135,7 +135,7 @@ const SignupPage: React.FC = () => {
       <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{t(labelKey)}{required ? <span className="text-swiss-coral">*</span> : ''}</label>
       {type === 'select' && options ? (
         <select id={name} name={name} value={formData[name as keyof SignupFormData] as string || ''} onChange={handleChange} className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}>
-          <option value="">{t('signupPage.placeholders.select')}</option>
+          <option value="">{t('placeholders.select')}</option>
           {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
       ) : (
@@ -160,8 +160,8 @@ const SignupPage: React.FC = () => {
     </div>
   );
 
-  const progressText = currentStep === 1 ? t('signupPage.progressStep1') : t('signupPage.progressStep2');
-  const formTitle = currentStep === 1 ? t('signupPage.selectRoleTitle') : t('signupPage.detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
+  const progressText = currentStep === 1 ? t('progress.step1') : t('progress.step2');
+  const formTitle = currentStep === 1 ? t('selectRoleTitle') : t('detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4">

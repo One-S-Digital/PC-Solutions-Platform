@@ -1,0 +1,116 @@
+{
+  "title": "Rejoignez la plateforme PC Solutions",
+  "subtitle": "Choisissez votre rôle pour commencer",
+  "createAccountTitle": "Créez votre compte",
+  "steps": {
+    "step1": {
+      "title": "Sélectionnez votre rôle"
+    },
+    "step2": {
+      "title": "Entrez vos détails"
+    }
+  },
+  "progress": {
+    "step1": "Étape 1 sur 2",
+    "step2": "Étape 2 sur 2"
+  },
+  "selectRoleTitle": "Sélectionnez votre rôle",
+  "detailsTitle": "Entrez vos détails pour {{role}}",
+  "role": {
+    "foundation": "Fondation (Crèche)",
+    "productSupplier": "Fournisseur de produits",
+    "serviceProvider": "Prestataire de services",
+    "parent": "Parent",
+    "educator": "Éducateur/Candidat",
+    "admin": "Administrateur",
+    "superAdmin": "Super Administrateur"
+  },
+  "roles": {
+    "superAdmin": {
+      "label": "Super Administrateur",
+      "description": "Accès complet au système et gestion"
+    },
+    "admin": {
+      "label": "Administrateur",
+      "description": "Accès administratif à la gestion de la plateforme"
+    },
+    "foundation": {
+      "label": "Fondation (Crèche)",
+      "description": "Gérez vos opérations de crèche, recrutez du personnel et achetez des services"
+    },
+    "productSupplier": {
+      "label": "Fournisseur de produits",
+      "description": "Vendez des produits aux organisations de garde d'enfants"
+    },
+    "serviceProvider": {
+      "label": "Prestataire de services",
+      "description": "Offrez des services aux organisations de garde d'enfants"
+    },
+    "educator": {
+      "label": "Éducateur/Candidat",
+      "description": "Trouvez des opportunités d'emploi dans la garde d'enfants"
+    },
+    "parent": {
+      "label": "Parent",
+      "description": "Trouvez des services de garde pour vos enfants"
+    }
+  },
+  "fields": {
+    "fullName": "Nom complet",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "phone": "Numéro de téléphone",
+    "organisation": "Nom de l'organisation",
+    "organisationName": "Nom de l'organisation",
+    "canton": "Canton",
+    "capacity": "Capacité",
+    "category": "Catégorie",
+    "serviceType": "Type de service",
+    "childAge": "Âge de l'enfant",
+    "startDate": "Date de début préférée",
+    "childStartDate": "Date de début de l'enfant",
+    "contactPerson": "Personne de contact",
+    "termsAccepted": "J'accepte les termes et conditions"
+  },
+  "placeholders": {
+    "select": "Sélectionner...",
+    "firstName": "Entrez votre prénom",
+    "lastName": "Entrez votre nom",
+    "email": "vous@exemple.com",
+    "password": "Au moins 6 caractères",
+    "phone": "+41 XX XXX XX XX",
+    "organisation": "Nom de votre organisation"
+  },
+  "errors": {
+    "organisationNameRequired": "Le nom de l'organisation est requis",
+    "emailRequired": "L'e-mail est requis",
+    "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+    "passwordsNoMatch": "Les mots de passe ne correspondent pas",
+    "phoneRequired": "Le numéro de téléphone est requis",
+    "cantonRequired": "Le canton est requis",
+    "capacityRequired": "La capacité est requise",
+    "categoryRequired": "La catégorie est requise",
+    "serviceTypeRequired": "Le type de service est requis",
+    "childAgeRequired": "L'âge de l'enfant est requis",
+    "childStartDateRequired": "La date de début de l'enfant est requise",
+    "termsRequired": "Vous devez accepter les termes et conditions",
+    "contactPersonRequired": "La personne de contact est requise",
+    "parentNameRequired": "Le nom du parent est requis",
+    "firstNameRequired": "Le prénom est requis",
+    "lastNameRequired": "Le nom est requis"
+  },
+  "buttons": {
+    "createAccount": "Créer un compte",
+    "goBack": "Retour"
+  },
+  "submissionSuccessTitle": "Compte créé avec succès",
+  "submissionSuccessMessage": "Votre compte a été créé. Vous pouvez maintenant vous connecter pour accéder à la plateforme.",
+  "goToDashboardButton": "Aller au tableau de bord",
+  "creatingAccount": "Création du compte...",
+  "termsLabel": "J'accepte les termes et conditions"
+}

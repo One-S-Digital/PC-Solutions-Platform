@@ -1,0 +1,116 @@
+{
+  "title": "Treten Sie der PC Solutions Plattform bei",
+  "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
+  "createAccountTitle": "Erstellen Sie Ihr Konto",
+  "steps": {
+    "step1": {
+      "title": "Wählen Sie Ihre Rolle"
+    },
+    "step2": {
+      "title": "Geben Sie Ihre Details ein"
+    }
+  },
+  "progress": {
+    "step1": "Schritt 1 von 2",
+    "step2": "Schritt 2 von 2"
+  },
+  "selectRoleTitle": "Wählen Sie Ihre Rolle",
+  "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
+  "role": {
+    "foundation": "Stiftung (Kindertagesstätte)",
+    "productSupplier": "Produktlieferant",
+    "serviceProvider": "Dienstleister",
+    "parent": "Elternteil",
+    "educator": "Pädagoge/Kandidat",
+    "admin": "Administrator",
+    "superAdmin": "Super Administrator"
+  },
+  "roles": {
+    "superAdmin": {
+      "label": "Super Administrator",
+      "description": "Vollständiger Systemzugriff und Verwaltung"
+    },
+    "admin": {
+      "label": "Administrator",
+      "description": "Administrativer Zugriff auf die Plattformverwaltung"
+    },
+    "foundation": {
+      "label": "Stiftung (Kindertagesstätte)",
+      "description": "Verwalten Sie Ihren Kita-Betrieb, rekrutieren Sie Personal und beschaffen Sie Dienstleistungen"
+    },
+    "productSupplier": {
+      "label": "Produktlieferant",
+      "description": "Verkaufen Sie Produkte an Kinderbetreuungsorganisationen"
+    },
+    "serviceProvider": {
+      "label": "Dienstleister",
+      "description": "Bieten Sie Dienstleistungen für Kinderbetreuungsorganisationen an"
+    },
+    "educator": {
+      "label": "Pädagoge/Kandidat",
+      "description": "Finden Sie Beschäftigungsmöglichkeiten in der Kinderbetreuung"
+    },
+    "parent": {
+      "label": "Elternteil",
+      "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder"
+    }
+  },
+  "fields": {
+    "fullName": "Vollständiger Name",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "phone": "Telefonnummer",
+    "organisation": "Organisationsname",
+    "organisationName": "Organisationsname",
+    "canton": "Kanton",
+    "capacity": "Kapazität",
+    "category": "Kategorie",
+    "serviceType": "Dienstleistungsart",
+    "childAge": "Alter des Kindes",
+    "startDate": "Bevorzugtes Startdatum",
+    "childStartDate": "Startdatum des Kindes",
+    "contactPerson": "Kontaktperson",
+    "termsAccepted": "Ich akzeptiere die Geschäftsbedingungen"
+  },
+  "placeholders": {
+    "select": "Auswählen...",
+    "firstName": "Geben Sie Ihren Vornamen ein",
+    "lastName": "Geben Sie Ihren Nachnamen ein",
+    "email": "sie@beispiel.com",
+    "password": "Mindestens 6 Zeichen",
+    "phone": "+41 XX XXX XX XX",
+    "organisation": "Name Ihrer Organisation"
+  },
+  "errors": {
+    "organisationNameRequired": "Organisationsname ist erforderlich",
+    "emailRequired": "E-Mail ist erforderlich",
+    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordTooShort": "Passwort muss mindestens 6 Zeichen lang sein",
+    "passwordsNoMatch": "Passwörter stimmen nicht überein",
+    "phoneRequired": "Telefonnummer ist erforderlich",
+    "cantonRequired": "Kanton ist erforderlich",
+    "capacityRequired": "Kapazität ist erforderlich",
+    "categoryRequired": "Kategorie ist erforderlich",
+    "serviceTypeRequired": "Dienstleistungsart ist erforderlich",
+    "childAgeRequired": "Alter des Kindes ist erforderlich",
+    "childStartDateRequired": "Startdatum des Kindes ist erforderlich",
+    "termsRequired": "Sie müssen die Geschäftsbedingungen akzeptieren",
+    "contactPersonRequired": "Kontaktperson ist erforderlich",
+    "parentNameRequired": "Name des Elternteils ist erforderlich",
+    "firstNameRequired": "Vorname ist erforderlich",
+    "lastNameRequired": "Nachname ist erforderlich"
+  },
+  "buttons": {
+    "createAccount": "Konto erstellen",
+    "goBack": "Zurück"
+  },
+  "submissionSuccessTitle": "Konto erfolgreich erstellt",
+  "submissionSuccessMessage": "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden, um auf die Plattform zuzugreifen.",
+  "goToDashboardButton": "Zum Dashboard",
+  "creatingAccount": "Konto wird erstellt...",
+  "termsLabel": "Ich akzeptiere die Geschäftsbedingungen"
+}

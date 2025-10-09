@@ -1,0 +1,116 @@
+{
+  "title": "Join PC Solutions Platform",
+  "subtitle": "Choose your role to get started",
+  "createAccountTitle": "Create your account",
+  "steps": {
+    "step1": {
+      "title": "Select Your Role"
+    },
+    "step2": {
+      "title": "Enter Your Details"
+    }
+  },
+  "progress": {
+    "step1": "Step 1 of 2",
+    "step2": "Step 2 of 2"
+  },
+  "selectRoleTitle": "Select Your Role",
+  "detailsTitle": "Enter Your Details for {{role}}",
+  "role": {
+    "foundation": "Foundation (Daycare)",
+    "productSupplier": "Product Supplier",
+    "serviceProvider": "Service Provider",
+    "parent": "Parent",
+    "educator": "Educator/Candidate",
+    "admin": "Admin",
+    "superAdmin": "Super Admin"
+  },
+  "roles": {
+    "superAdmin": {
+      "label": "Super Admin",
+      "description": "Full system access and management"
+    },
+    "admin": {
+      "label": "Admin",
+      "description": "Administrative access to platform management"
+    },
+    "foundation": {
+      "label": "Foundation (Daycare)",
+      "description": "Manage your daycare operations, recruit staff, and procure services"
+    },
+    "productSupplier": {
+      "label": "Product Supplier",
+      "description": "Sell products to childcare organizations"
+    },
+    "serviceProvider": {
+      "label": "Service Provider",
+      "description": "Offer services to childcare organizations"
+    },
+    "educator": {
+      "label": "Educator/Candidate",
+      "description": "Find employment opportunities in childcare"
+    },
+    "parent": {
+      "label": "Parent",
+      "description": "Find childcare services for your children"
+    }
+  },
+  "fields": {
+    "fullName": "Full Name",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "phone": "Phone Number",
+    "organisation": "Organisation Name",
+    "organisationName": "Organisation Name",
+    "canton": "Canton",
+    "capacity": "Capacity",
+    "category": "Category",
+    "serviceType": "Service Type",
+    "childAge": "Child's Age",
+    "startDate": "Preferred Start Date",
+    "childStartDate": "Child's Start Date",
+    "contactPerson": "Contact Person",
+    "termsAccepted": "I accept the terms and conditions"
+  },
+  "placeholders": {
+    "select": "Select...",
+    "firstName": "Enter your first name",
+    "lastName": "Enter your last name",
+    "email": "you@example.com",
+    "password": "At least 6 characters",
+    "phone": "+41 XX XXX XX XX",
+    "organisation": "Your organisation name"
+  },
+  "errors": {
+    "organisationNameRequired": "Organisation name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordsNoMatch": "Passwords do not match",
+    "phoneRequired": "Phone number is required",
+    "cantonRequired": "Canton is required",
+    "capacityRequired": "Capacity is required",
+    "categoryRequired": "Category is required",
+    "serviceTypeRequired": "Service type is required",
+    "childAgeRequired": "Child's age is required",
+    "childStartDateRequired": "Child start date is required",
+    "termsRequired": "You must accept the terms and conditions",
+    "contactPersonRequired": "Contact person is required",
+    "parentNameRequired": "Parent name is required",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required"
+  },
+  "buttons": {
+    "createAccount": "Create Account",
+    "goBack": "Go Back"
+  },
+  "submissionSuccessTitle": "Account Created Successfully",
+  "submissionSuccessMessage": "Your account has been created. You can now log in to access the platform.",
+  "goToDashboardButton": "Go to Dashboard",
+  "creatingAccount": "Creating Account...",
+  "termsLabel": "I accept the terms and conditions"
+}
