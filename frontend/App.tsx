@@ -17,6 +17,7 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
 import { TranslationDebugger } from './components/debug/TranslationDebugger';
+import { SimpleTest } from './components/debug/SimpleTest';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -315,6 +316,7 @@ const App: React.FC = () => {
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
             {/* Translation Debug Tool - Only visible in development */}
+            <SimpleTest />
             <TranslationDebugger />
           </NotificationProvider>
         </MessagingProvider>
