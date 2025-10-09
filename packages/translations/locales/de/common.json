@@ -643,6 +643,13 @@
     "buttons": {
       "uploading": "[DE] Uploading",
       "upload": "[DE] Upload"
+    },
+    "contentType": {
+      "course": "[DE] Course",
+      "video": "[DE] Video",
+      "pdf": "[DE] Pdf",
+      "link": "[DE] Link",
+      "policy": "[DE] Policy"
     }
   },
   "policyAlertModal": {
@@ -1023,7 +1030,11 @@
     "active": "[DE] Active",
     "inactive": "[DE] Inactive",
     "paid": "[DE] Paid",
-    "shipped": "[DE] Shipped"
+    "shipped": "[DE] Shipped",
+    "confirmed": "[DE] Confirmed",
+    "processing": "[DE] Processing",
+    "delivered": "[DE] Delivered",
+    "refunded": "[DE] Refunded"
   },
   "serviceStatus": {
     "pending": "[DE] Pending",
@@ -1034,7 +1045,10 @@
     "active": "[DE] Active",
     "inactive": "[DE] Inactive",
     "paid": "[DE] Paid",
-    "shipped": "[DE] Shipped"
+    "shipped": "[DE] Shipped",
+    "confirmed": "[DE] Confirmed",
+    "inprogress": "[DE] In Progress",
+    "scheduled": "[DE] Scheduled"
   },
   "vendorClientReasons": {
     "inactive": "[DE] Inactive",

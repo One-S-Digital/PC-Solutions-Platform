@@ -333,6 +333,13 @@
     "buttons": {
       "uploading": "Uploading",
       "upload": "Upload"
+    },
+    "contentType": {
+      "course": "Course",
+      "video": "Video",
+      "pdf": "Pdf",
+      "link": "Link",
+      "policy": "Policy"
     }
   },
   "policyAlertModal": {
@@ -989,7 +996,11 @@
     "active": "Active",
     "inactive": "Inactive",
     "paid": "Paid",
-    "shipped": "Shipped"
+    "shipped": "Shipped",
+    "confirmed": "Confirmed",
+    "processing": "Processing",
+    "delivered": "Delivered",
+    "refunded": "Refunded"
   },
   "serviceStatus": {
     "pending": "Pending",
@@ -1000,7 +1011,10 @@
     "active": "Active",
     "inactive": "Inactive",
     "paid": "Paid",
-    "shipped": "Shipped"
+    "shipped": "Shipped",
+    "confirmed": "Confirmed",
+    "inprogress": "In Progress",
+    "scheduled": "Scheduled"
   },
   "vendorClientReasons": {
     "inactive": "Inactive",
