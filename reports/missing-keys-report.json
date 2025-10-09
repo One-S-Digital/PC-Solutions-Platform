@@ -1,21 +1,16 @@
 {
-  "timestamp": "2025-10-09T12:06:44.937Z",
+  "timestamp": "2025-10-09T14:07:13.873Z",
   "totalCalls": 1459,
   "missingKeys": [
     {
-      "key": "contentUploadModal.labels.contentType",
-      "file": "/workspace/frontend/components/admin/ContentUploadModal.tsx",
-      "line": 267
-    },
-    {
       "key": ",nestingSuffix:",
-      "file": "/workspace/frontend/dist/assets/index-BeLdeZ08.js",
+      "file": "/workspace/frontend/dist/assets/index-DD7XpMMh.js",
       "line": 60
     }
   ],
   "summary": {
     "frontend": 1441,
     "admin": 18,
-    "missing": 2
+    "missing": 1
   }
 }

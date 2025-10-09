@@ -616,7 +616,8 @@
       "currentFile": "[DE] Current File",
       "uploadFileType": "[DE] Upload File Type",
       "description": "[DE] Description",
-      "uploadFile": "[DE] Upload File"
+      "uploadFile": "[DE] Upload File",
+      "contentType": "[DE] Content Type"
     },
     "placeholders": {
       "duration": "[DE] Duration",

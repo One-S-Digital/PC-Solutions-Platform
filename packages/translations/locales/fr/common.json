@@ -312,7 +312,8 @@
       "currentFile": "[FR] Current File",
       "uploadFileType": "[FR] Upload File Type",
       "description": "[FR] Description",
-      "uploadFile": "[FR] Upload File"
+      "uploadFile": "[FR] Upload File",
+      "contentType": "[FR] Content Type"
     },
     "placeholders": {
       "duration": "[FR] Duration",
