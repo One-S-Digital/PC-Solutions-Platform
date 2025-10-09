@@ -16,6 +16,7 @@ import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
+import { TranslationDebugger } from './components/debug/TranslationDebugger';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -313,6 +314,8 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
+            {/* Translation Debug Tool - Only visible in development */}
+            {import.meta.env.DEV && <TranslationDebugger />}
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
