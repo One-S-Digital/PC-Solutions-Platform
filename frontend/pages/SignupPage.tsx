@@ -45,10 +45,10 @@ const SignupPage: React.FC = () => {
   }, [currentUser, navigate]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType }[] = [
-    { role: SignupRole.FOUNDATION, nameKey: 'signupPage.roles.foundation', icon: BuildingOffice2Icon },
-    { role: SignupRole.SUPPLIER, nameKey: 'signupPage.roles.supplier', icon: UserIcon },
-    { role: SignupRole.SERVICE_PROVIDER, nameKey: 'signupPage.roles.serviceProvider', icon: CogIcon },
-    { role: SignupRole.PARENT, nameKey: 'signupPage.roles.parent', icon: UsersIcon },
+    { role: SignupRole.FOUNDATION, nameKey: 'roles.foundation', icon: BuildingOffice2Icon },
+    { role: SignupRole.SUPPLIER, nameKey: 'roles.supplier', icon: UserIcon },
+    { role: SignupRole.SERVICE_PROVIDER, nameKey: 'roles.serviceProvider', icon: CogIcon },
+    { role: SignupRole.PARENT, nameKey: 'roles.parent', icon: UsersIcon },
   ];
 
   const handleRoleSelect = (role: SignupRole) => {
@@ -149,7 +149,7 @@ const SignupPage: React.FC = () => {
             {(name === 'password' || name === 'confirmPassword') && (
                  <button type="button" onClick={() => name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-                    aria-label={ (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? t('hidePassword') : t('showPassword')}
+                    aria-label={ (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? t('common:hidePassword') : t('common:showPassword')}
                  >
                     { (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
                 </button>
@@ -200,23 +200,23 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 2 && selectedRole && (
               <form onSubmit={handleSubmit} className="space-y-4">
-                {selectedRole !== SignupRole.PARENT && renderField('organisationName', 'signupPage.labels.organisationName', 'text', true, 'signupPage.placeholders.organisationName')}
-                {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'signupPage.labels.parentName' : 'signupPage.labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'signupPage.placeholders.parentName' : 'signupPage.placeholders.contactPerson')}
-                {renderField('email', 'signupPage.labels.email', 'email', true, 'signupPage.placeholders.email')}
-                {renderField('password', 'signupPage.labels.password', 'password', true, 'signupPage.placeholders.password')}
-                {renderField('confirmPassword', 'signupPage.labels.confirmPassword', 'password', true, 'signupPage.placeholders.confirmPassword')}
+                {selectedRole !== SignupRole.PARENT && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
+                {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'signupPage.labels.parentName' : 'signupPage.labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
+                {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
+                {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
+                {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
                 
-                {selectedRole !== SignupRole.PARENT && renderField('phone', 'signupPage.labels.phone', 'tel', true, 'signupPage.placeholders.phone')}
-                {selectedRole !== SignupRole.PARENT && renderField('canton', 'signupPage.labels.canton', 'select', true, undefined, SWISS_CANTONS)}
+                {selectedRole !== SignupRole.PARENT && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
+                {selectedRole !== SignupRole.PARENT && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
 
-                {selectedRole === SignupRole.FOUNDATION && renderField('capacity', 'signupPage.labels.capacity', 'number', true)}
-                {selectedRole === SignupRole.SUPPLIER && renderField('category', 'signupPage.labels.category', 'text', true, 'signupPage.placeholders.category')}
-                {selectedRole === SignupRole.SERVICE_PROVIDER && renderField('serviceType', 'signupPage.labels.serviceType', 'text', true, 'signupPage.placeholders.serviceType')}
+                {selectedRole === SignupRole.FOUNDATION && renderField('capacity', 'labels.capacity', 'number', true)}
+                {selectedRole === SignupRole.SUPPLIER && renderField('category', 'labels.category', 'text', true, 'placeholders.category')}
+                {selectedRole === SignupRole.SERVICE_PROVIDER && renderField('serviceType', 'labels.serviceType', 'text', true, 'placeholders.serviceType')}
                 
                 {selectedRole === SignupRole.PARENT && (
                     <>
-                        {renderField('childAge', 'signupPage.labels.childAge', 'number', true)}
-                        {renderField('childStartDate', 'signupPage.labels.childStartDate', 'date', true)}
+                        {renderField('childAge', 'labels.childAge', 'number', true)}
+                        {renderField('childStartDate', 'labels.childStartDate', 'date', true)}
                     </>
                 )}
 
@@ -233,15 +233,15 @@ const SignupPage: React.FC = () => {
                         {t('buttons.goBack')}
                     </Button>
                     <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
-                    {isLoading ? t('creatingAccount') : t('createAccountButton')}
+                    {isLoading ? t('creatingAccount') : t('buttons.createAccount')}
                     </Button>
                 </div>
               </form>
             )}
              <p className="mt-6 text-center text-sm text-gray-600">
-              {t('loginPage.alreadyAccount')}{' '}
+              {t('common:loginPage.alreadyAccount')}{' '}
               <Link to="/login" className="font-medium text-swiss-mint hover:underline">
-                {t('buttons.login')}
+                {t('common:buttons.login')}
               </Link>
             </p>
         </>
