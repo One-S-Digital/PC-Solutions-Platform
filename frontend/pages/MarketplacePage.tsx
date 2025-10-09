@@ -50,7 +50,7 @@ const getActiveTabFromPath = (path: string) => {
 };
 
 const MarketplacePage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['marketplace', 'common']);
   const { currentUser, submitServiceRequest } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();

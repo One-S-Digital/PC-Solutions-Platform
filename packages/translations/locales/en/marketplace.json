@@ -6,16 +6,42 @@
   "labels": {
     "searchByName": "Search by name",
     "categoryFilter": "Filter by category",
-    "regionFilter": "Filter by region"
+    "regionFilter": "Filter by region",
+    "category": "Category",
+    "region": "Region",
+    "supplierTags": "Tags",
+    "sortBy": "Sort By"
   },
   "messages": {
     "noProductSuppliers": "No product suppliers found",
     "noServiceProviders": "No service providers found",
+    "noServices": "No services found",
     "noResults": "No results found. Try adjusting your filters."
   },
   "buttons": {
     "resetFilters": "Reset Filters",
     "viewDetails": "View Details",
-    "contact": "Contact Supplier"
+    "contact": "Contact Supplier",
+    "partnerOnboarding": "Partner Onboarding"
+  },
+  "serviceCard": {
+    "categoryLabel": "{{category}}",
+    "bookAppointment": "Book Appointment",
+    "viewProvider": "View Provider"
+  },
+  "searchPlaceholder": "Search {{activeTabLabel}}...",
+  "infoAlert": "Browse products and services from verified Swiss providers",
+  "subtitles": {
+    "productSuppliers": "Browse products from verified suppliers",
+    "serviceProviders": "Discover professional services for your daycare"
+  },
+  "sortOptions": {
+    "nameAsc": "Name (A-Z)",
+    "nameDesc": "Name (Z-A)",
+    "ratingDesc": "Highest Rated"
+  },
+  "emptyStates": {
+    "noProductSuppliers": "No product suppliers found",
+    "noServices": "No services found"
   }
 }
