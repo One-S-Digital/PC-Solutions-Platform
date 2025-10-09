@@ -230,11 +230,11 @@ const RecruitmentPage: React.FC = () => {
        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 p-4 bg-white rounded-lg shadow">
         <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <label htmlFor="searchCandidates" className="sr-only">{t('recruitmentPage.candidatePool.searchPlaceholder')}</label>
+            <label htmlFor="searchCandidates" className="sr-only">{t('candidatePool.searchPlaceholder')}</label>
             <input
               id="searchCandidates"
               type="text"
-              placeholder={t('recruitmentPage.candidatePool.searchPlaceholder')}
+              placeholder={t('candidatePool.searchPlaceholder')}
               value={searchTermCandidates}
               onChange={(e) => setSearchTermCandidates(e.target.value)}
               className={ICON_INPUT_FIELD}
@@ -249,7 +249,7 @@ const RecruitmentPage: React.FC = () => {
       </div>
       {showFilters && (
         <Card className="p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-2">{t('recruitmentPage.candidatePool.filterTitle')}</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('candidatePool.filterTitle')}</h3>
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allRoles')}><option>{t('labels.allRoles')}</option></select>
             <input type="text" placeholder={t('labels.region')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.region')}/>
@@ -262,7 +262,7 @@ const RecruitmentPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCandidates.map(candidate => <CandidateCard key={candidate.id} candidate={candidate} onRemove={handleRemoveCandidate} onEdit={handleEditCandidate} canEditRemove={isAdminOrSuperAdmin} />)}
       </div>
-      {filteredCandidates.length === 0 && <p className="text-center text-gray-500 py-8">{t('recruitmentPage.candidatePool.emptyState')}</p>}
+      {filteredCandidates.length === 0 && <p className="text-center text-gray-500 py-8">{t('candidatePool.emptyState')}</p>}
     </div>
   );
 
