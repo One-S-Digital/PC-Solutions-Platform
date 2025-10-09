@@ -14,5 +14,12 @@
   "placeholders": {
     "typeMessage": "Type a message...",
     "searchConversations": "Search conversations..."
+  },
+  "messagesPage": {
+    "title": "Messages",
+    "newGroupButton": "New Group",
+    "noConversationSelectedTitle": "No Conversation Selected",
+    "noConversationSelectedSubtitle": "Select a conversation to start messaging",
+    "noConversationsYet": "No conversations yet"
   }
 }

@@ -1,31 +1,71 @@
 {
   "eLearning": {
+    "title": "E-Learning"
+  },
+  "eLearningPage": {
     "title": "E-Learning",
-    "tabs": {
+    "coursesTitle": "Courses",
+    "videosTitle": "Videos",
+    "pdfsTitle": "PDF Documents",
+    "externalLinksTitle": "External Links",
+    "addNewContentButton": "Add New Content",
+    "noContentFound": "No content available",
+    "noItemsFound": "No items found",
+    "categoryLabel": "Category",
+    "languageLabel": "Language",
+    "durationLabel": "Duration",
+    "lessonsCount": "{{count}} lessons",
+    "itemType": {
       "courses": "Courses",
       "videos": "Videos",
-      "pdfs": "PDFs"
+      "pdfs": "PDFs",
+      "links": "Links"
     },
-    "emptyState": {
-      "noContent": "No content available"
+    "actions": {
+      "viewCourse": "View Course",
+      "watchVideo": "Watch Video",
+      "downloadPdf": "Download PDF",
+      "openLink": "Open Link"
     },
-    "buttons": {
-      "addNewContent": "Add New Content"
-    }
+    "confirmDelete": "Are you sure you want to delete this item?"
   },
   "hrProcedures": {
     "title": "HR Procedures",
+    "categoriesTitle": "HR Document Categories",
+    "documentsInCategoryTitle": "{{category}} Documents",
+    "allDocumentsCategory": "All Documents",
+    "allItemsCount": "{{count}} documents",
+    "noDocumentsAvailable": "No documents available",
+    "confirmDeleteDocument": "Are you sure you want to delete this document?",
+    "backToCategoriesButton": "Back to Categories",
+    "categoryDisplay": {
+      "documentsCount": "{{count}} documents",
+      "viewCategoryAria": "View {{category}}"
+    },
     "uploadButton": {
       "label": "Upload Document"
-    },
-    "emptyState": {
-      "noDocuments": "No HR documents available"
     },
     "buttons": {
       "uploadDocument": "Upload Document"
     }
   },
+  "hrDocumentCard": {
+    "categoryLabel": "Category",
+    "languageLabel": "Language",
+    "lastUpdatedLabel": "Last Updated",
+    "versionLabel": "Version",
+    "downloadButton": "Download",
+    "previewButtonLabel": "Preview",
+    "editButtonLabel": "Edit",
+    "deleteButtonLabel": "Delete",
+    "toggleFavoriteLabel": "Toggle Favorite",
+    "downloadingAlert": "Downloading...",
+    "previewingAlert": "Previewing..."
+  },
   "statePolicies": {
+    "title": "State Policies"
+  },
+  "statePoliciesPage": {
     "title": "State Policies",
     "filters": {
       "canton": "Canton",

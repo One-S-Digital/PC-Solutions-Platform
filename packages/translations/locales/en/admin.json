@@ -40,5 +40,87 @@
       "typography": "Typography",
       "components": "Components"
     }
+  },
+  "designSystemPage": {
+    "title": "Design System",
+    "buttons": {
+      "primaryDisabled": "Primary (Disabled)",
+      "secondaryDisabled": "Secondary (Disabled)",
+      "outlineDisabled": "Outline (Disabled)",
+      "disabledState": "Disabled State",
+      "extraSmall": "Extra Small",
+      "small": "Small",
+      "mediumDefault": "Medium (Default)",
+      "large": "Large",
+      "smallIcon": "Small Icon",
+      "leftIcon": "Left Icon",
+      "rightIcon": "Right Icon",
+      "withIcons": "With Icons"
+    },
+    "cards": {
+      "standardCard": "Standard Card",
+      "hoverEffectCard": "Hover Effect Card",
+      "hoverEffectCardDesc": "Card with hover effect"
+    }
+  },
+  "partnersPage": {
+    "hero": {
+      "title": "Our Partners",
+      "subtitle": "Trusted partners in early childhood education",
+      "ctaButton": "Become a Partner"
+    },
+    "featured": {
+      "title": "Featured Partners",
+      "subtitle": "Leading organizations we work with"
+    },
+    "joinUs": {
+      "title": "Become a Partner",
+      "subtitle": "Join our network of trusted providers",
+      "contactUsButton": "Contact Us",
+      "contactUsAlert": "Contact form coming soon",
+      "inquiryFormLink": "Partner Inquiry Form"
+    },
+    "partnerCard": {
+      "logoAlt": "Partner logo",
+      "partnerType": "Partner Type",
+      "learnMoreButton": "Learn More"
+    }
+  },
+  "adminPlatformSettings": {
+    "title": "Platform Settings",
+    "general": {
+      "title": "General Settings",
+      "nameLabel": "Platform Name",
+      "descriptionLabel": "Platform Description"
+    },
+    "branding": {
+      "title": "Branding",
+      "logoLabel": "Logo",
+      "faviconLabel": "Favicon"
+    }
+  },
+  "discountTerminationsPage": {
+    "queue": {
+      "title": "Termination Queue",
+      "description": "Clients pending discount termination",
+      "tableTitle": "Pending Terminations"
+    },
+    "allActive": {
+      "title": "Active Discounts",
+      "description": "All active vendor discounts",
+      "tableTitle": "Active Vendor Discounts"
+    },
+    "table": {
+      "vendor": "Vendor",
+      "daycare": "Daycare",
+      "reason": "Reason",
+      "activeSince": "Active Since",
+      "actions": "Actions"
+    },
+    "actions": {
+      "markCompleted": "Mark Completed",
+      "sendNotices": "Send Notices",
+      "sendNoticesAlert": "Notice sending functionality coming soon"
+    }
   }
 }
