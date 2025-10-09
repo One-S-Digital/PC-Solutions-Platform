@@ -81,8 +81,14 @@
     "lastName": "Entrez votre nom",
     "email": "vous@exemple.com",
     "password": "Au moins 6 caractères",
+    "confirmPassword": "Confirmez votre mot de passe",
     "phone": "+41 XX XXX XX XX",
-    "organisation": "Nom de votre organisation"
+    "organisation": "Nom de votre organisation",
+    "organisationName": "Entrez le nom de l'organisation",
+    "contactPerson": "Entrez le nom de la personne de contact",
+    "parentName": "Entrez votre nom complet",
+    "category": "Entrez la catégorie de produit",
+    "serviceType": "Entrez le type de service"
   },
   "errors": {
     "organisationNameRequired": "Le nom de l'organisation est requis",
@@ -112,5 +118,21 @@
   "submissionSuccessMessage": "Votre compte a été créé. Vous pouvez maintenant vous connecter pour accéder à la plateforme.",
   "goToDashboardButton": "Aller au tableau de bord",
   "creatingAccount": "Création du compte...",
-  "termsLabel": "J'accepte les termes et conditions"
+  "termsLabel": "J'accepte les termes et conditions",
+  "termsLink": "Termes et Conditions",
+  "labels": {
+    "organisationName": "Nom de l'organisation",
+    "contactPerson": "Personne de contact",
+    "parentName": "Votre nom",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "phone": "Téléphone",
+    "canton": "Canton",
+    "capacity": "Capacité",
+    "category": "Catégorie de produit",
+    "serviceType": "Type de service",
+    "childAge": "Âge de l'enfant",
+    "childStartDate": "Date de début souhaitée"
+  }
 }
