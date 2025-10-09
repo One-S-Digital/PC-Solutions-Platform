@@ -22,7 +22,8 @@
     "timeAgo": {
       "minutes": "{{count}} minutes ago",
       "hours": "{{count}} hours ago",
-      "yesterday": "Yesterday"
+      "yesterday": "Yesterday",
+      "days": "{{count}} days ago"
     },
     "upcomingMeetings": "Upcoming Meetings",
     "quickActions": "Quick Actions",
@@ -468,7 +469,10 @@
       }
     },
     "overallStatus": {
-      "title": "Overall System Status"
+      "title": "Overall System Status",
+      "operational": "Operational",
+      "degraded": "Degraded",
+      "down": "Down"
     },
     "components": {
       "api": "API",
@@ -493,7 +497,9 @@
       "activeConnections": "Active Connections",
       "queryTime": "Query Time",
       "storage": "Storage",
-      "connectionHealth": "Connection Health"
+      "connectionHealth": "Connection Health",
+      "healthy": "Healthy",
+      "degraded": "Degraded"
     },
     "appPerformance": {
       "title": "Application Performance",
@@ -504,6 +510,11 @@
     },
     "recentEvents": {
       "title": "Recent Events"
+    },
+    "eventTypes": {
+      "info": "Information",
+      "warning": "Warning",
+      "error": "Error"
     }
   },
   "adminDiscountTerminationsPage": {
@@ -662,7 +673,10 @@
   "usersPage": {
     "cannotDeleteOwnAccount": "You cannot delete your own account",
     "status": {
-      "pending": "Pending"
+      "pending": "Pending",
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended"
     },
     "userDetailDrawer": {
       "title": "User Details",
@@ -811,5 +825,60 @@
     "(240)": "(240)",
     "Branding": "Branding",
     "Favicon": "Favicon"
+  },
+  "dashboardDetailPage": {
+    "activeUsers": {
+      "recentActivity": "Recent Activity",
+      "aliceActivity": "Alice Activity",
+      "bobActivity": "Bob Activity",
+      "carolActivity": "Carol Activity",
+      "davidActivity": "David Activity",
+      "totalToday": "Total Today"
+    },
+    "newOrders": {
+      "recentOrders": "Recent Orders",
+      "table": {
+        "orderId": "Order Id",
+        "product": "Product",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "order789": "Order789",
+      "order790": "Order790",
+      "order791": "Order791",
+      "totalThisWeek": "Total This Week",
+      "ecotoysBlocks": "Ecotoys Blocks",
+      "artFunPack": "Art Fun Pack",
+      "freshBitesMeal": "Fresh Bites Meal",
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending"
+      }
+    },
+    "openJobs": {
+      "currentPositions": "Current Positions",
+      "leadEducatorGeneva": "Lead Educator Geneva",
+      "applications": "Applications",
+      "assistantEducatorLausanne": "Assistant Educator Lausanne",
+      "daycareDirectorZurich": "Daycare Director Zurich",
+      "totalOpenPositions": "Total Open Positions",
+      "status": {
+        "open": "Open",
+        "interviewing": "Interviewing"
+      }
+    },
+    "pageViews": {
+      "keyMetrics": "Key Metrics",
+      "totalToday": "Total Today",
+      "uniqueVisitors": "Unique Visitors",
+      "mostViewed": "Most Viewed",
+      "avgSession": "Avg Session",
+      "mockChartText": "Mock Chart Text",
+      "dashboardViews": "Dashboard Views",
+      "sessionDuration": "Session Duration"
+    },
+    "defaultTitle": "Default Title",
+    "detailsFor": "Details For",
+    "noSpecificView": "No  Specific View"
   }
 }

@@ -22,7 +22,8 @@
     "timeAgo": {
       "minutes": "{{count}} il y a des minutes quelques",
       "hours": "{{count}} il y a des heures",
-      "yesterday": "Chahut"
+      "yesterday": "Chahut",
+      "days": "[FR] {{count}} days ago"
     },
     "upcomingMeetings": "La 21e séance* (privée) du Comité du Conseil de sécu-rité créée par la résolution 1132 (1997) concernant la situation la Sierra Leone aura lieu le mercredi 21 mars 2001 à 16 heures dans la salle de conférence 5.",
     "quickActions": "Actions Rapides",
@@ -458,10 +459,20 @@
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
-      "title": "Console de Logs Brutts"
+      "title": "Console de Logs Brutts",
+      "emptyLogMessage": "[FR] No logs available",
+      "tabs": {
+        "all": "[FR] All Logs",
+        "errors": "[FR] Errors",
+        "warnings": "[FR] Warnings",
+        "info": "[FR] Info"
+      }
     },
     "overallStatus": {
-      "title": "ÉTAT GÉNÉRAL DU SYSTÈME"
+      "title": "ÉTAT GÉNÉRAL DU SYSTÈME",
+      "operational": "[FR] Operational",
+      "degraded": "[FR] Degraded",
+      "down": "[FR] Down"
     },
     "components": {
       "api": "API Back End",
@@ -486,7 +497,9 @@
       "activeConnections": "Les Connexions actifs",
       "queryTime": "Temps de Besoin Moyen",
       "storage": "Utilisation du stockage",
-      "connectionHealth": "Santé de la Connexion"
+      "connectionHealth": "Santé de la Connexion",
+      "healthy": "[FR] Healthy",
+      "degraded": "[FR] Degraded"
     },
     "appPerformance": {
       "title": "Performance de L'application",
@@ -497,6 +510,11 @@
     },
     "recentEvents": {
       "title": "Événements Systèmes"
+    },
+    "eventTypes": {
+      "info": "[FR] Information",
+      "warning": "[FR] Warning",
+      "error": "[FR] Error"
     }
   },
   "adminDiscountTerminationsPage": {
@@ -655,7 +673,10 @@
   "usersPage": {
     "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer",
     "status": {
-      "pending": "Attitude"
+      "pending": "Attitude",
+      "active": "[FR] Active",
+      "inactive": "[FR] Inactive",
+      "suspended": "[FR] Suspended"
     },
     "userDetailDrawer": {
       "title": "Coordonnées",
@@ -815,5 +836,60 @@
     "admin@procrechesolutions.com": "administrat@procrechesolutions.com",
     "No documents found in this category for current filters.": "AUCUN DOCUMENT TRUPVÉ DANS CETTE CATÉGORIE LES FILTRES ACTUELS.",
     "No custom alerts created yet.": "Autre Alerte Personnalisée Encore Créée."
+  },
+  "dashboardDetailPage": {
+    "activeUsers": {
+      "recentActivity": "[FR] Recent Activity",
+      "aliceActivity": "[FR] Alice Activity",
+      "bobActivity": "[FR] Bob Activity",
+      "carolActivity": "[FR] Carol Activity",
+      "davidActivity": "[FR] David Activity",
+      "totalToday": "[FR] Total Today"
+    },
+    "newOrders": {
+      "recentOrders": "[FR] Recent Orders",
+      "table": {
+        "orderId": "[FR] Order Id",
+        "product": "[FR] Product",
+        "amount": "[FR] Amount",
+        "status": "[FR] Status"
+      },
+      "order789": "[FR] Order789",
+      "order790": "[FR] Order790",
+      "order791": "[FR] Order791",
+      "totalThisWeek": "[FR] Total This Week",
+      "ecotoysBlocks": "[FR] Ecotoys Blocks",
+      "artFunPack": "[FR] Art Fun Pack",
+      "freshBitesMeal": "[FR] Fresh Bites Meal",
+      "status": {
+        "paid": "[FR] Paid",
+        "pending": "[FR] Pending"
+      }
+    },
+    "openJobs": {
+      "currentPositions": "[FR] Current Positions",
+      "leadEducatorGeneva": "[FR] Lead Educator Geneva",
+      "applications": "[FR] Applications",
+      "assistantEducatorLausanne": "[FR] Assistant Educator Lausanne",
+      "daycareDirectorZurich": "[FR] Daycare Director Zurich",
+      "totalOpenPositions": "[FR] Total Open Positions",
+      "status": {
+        "open": "[FR] Open",
+        "interviewing": "[FR] Interviewing"
+      }
+    },
+    "pageViews": {
+      "keyMetrics": "[FR] Key Metrics",
+      "totalToday": "[FR] Total Today",
+      "uniqueVisitors": "[FR] Unique Visitors",
+      "mostViewed": "[FR] Most Viewed",
+      "avgSession": "[FR] Avg Session",
+      "mockChartText": "[FR] Mock Chart Text",
+      "dashboardViews": "[FR] Dashboard Views",
+      "sessionDuration": "[FR] Session Duration"
+    },
+    "defaultTitle": "[FR] Default Title",
+    "detailsFor": "[FR] Details For",
+    "noSpecificView": "[FR] No  Specific View"
   }
 }

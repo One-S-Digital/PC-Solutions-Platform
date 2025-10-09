@@ -1,0 +1,236 @@
+{
+  "timestamp": "2025-10-09T11:15:04.211Z",
+  "totalCalls": 1459,
+  "missingKeys": [
+    {
+      "key": "contentUploadModal.contentType.${contentType}",
+      "file": "/workspace/frontend/components/admin/ContentUploadModal.tsx",
+      "line": 205
+    },
+    {
+      "key": "contentUploadModal.title.add.${contentType}",
+      "file": "/workspace/frontend/components/admin/ContentUploadModal.tsx",
+      "line": 206
+    },
+    {
+      "key": "contentUploadModal.eLearningTypes.${v.toLowerCase()}",
+      "file": "/workspace/frontend/components/admin/ContentUploadModal.tsx",
+      "line": 267
+    },
+    {
+      "key": "userRoles.${role}",
+      "file": "/workspace/frontend/components/admin/ContentUploadModal.tsx",
+      "line": 294
+    },
+    {
+      "key": "contentUploadModal.policyStatusOptions.${s.toLowerCase().replace(",
+      "file": "/workspace/frontend/components/admin/ContentUploadModal.tsx",
+      "line": 407
+    },
+    {
+      "key": "serviceStatus.${request.status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/components/service-provider/ServiceRequestDetailModal.tsx",
+      "line": 77
+    },
+    {
+      "key": "userRoles.${userRole}",
+      "file": "/workspace/frontend/components/settings/sections/AccountSecuritySettings.tsx",
+      "line": 107
+    },
+    {
+      "key": "vendorClientReasons.${r.replace(/\\s+/g, ",
+      "file": "/workspace/frontend/components/shared/ActiveClientToggle.tsx",
+      "line": 68
+    },
+    {
+      "key": "orderStatus.${order.status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58
+    },
+    {
+      "key": "),this.nestingSuffix=P?kn(P):N||kn(",
+      "file": "/workspace/frontend/dist/assets/index-7ivnmXWY.js",
+      "line": 60
+    },
+    {
+      "key": "dashboardPage.${detailType}",
+      "file": "/workspace/frontend/pages/DashboardDetailPage.tsx",
+      "line": 118
+    },
+    {
+      "key": "dashboardPage.timeAgo.${timeUnit}",
+      "file": "/workspace/frontend/pages/DashboardPage.tsx",
+      "line": 39
+    },
+    {
+      "key": "userRoles.${user.role}",
+      "file": "/workspace/frontend/pages/UsersPage.tsx",
+      "line": 54
+    },
+    {
+      "key": "usersPage.status.${user.status.toLowerCase()}",
+      "file": "/workspace/frontend/pages/UsersPage.tsx",
+      "line": 57
+    },
+    {
+      "key": "userRoles.${user.role}",
+      "file": "/workspace/frontend/pages/UsersPage.tsx",
+      "line": 126
+    },
+    {
+      "key": "usersPage.status.${user.status.toLowerCase()}",
+      "file": "/workspace/frontend/pages/UsersPage.tsx",
+      "line": 127
+    },
+    {
+      "key": "userRoles.${r}",
+      "file": "/workspace/frontend/pages/UsersPage.tsx",
+      "line": 146
+    },
+    {
+      "key": "userRoles.${roleFilter}",
+      "file": "/workspace/frontend/pages/UsersPage.tsx",
+      "line": 177
+    },
+    {
+      "key": "adminSystemMonitoringPage.overallStatus.${data.systemStatus.status.toLowerCase()}",
+      "file": "/workspace/frontend/pages/admin/AdminSystemMonitoringPage.tsx",
+      "line": 97
+    },
+    {
+      "key": "adminSystemMonitoringPage.databasePerformance.${data.databasePerformance.status.toLowerCase()}",
+      "file": "/workspace/frontend/pages/admin/AdminSystemMonitoringPage.tsx",
+      "line": 158
+    },
+    {
+      "key": "adminSystemMonitoringPage.eventTypes.${event.type.replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/admin/AdminSystemMonitoringPage.tsx",
+      "line": 202
+    },
+    {
+      "key": "vendorClientReasons.${vc.reason.replace(/\\s+/g, ",
+      "file": "/workspace/frontend/pages/admin/DiscountTerminationsPage.tsx",
+      "line": 69
+    },
+    {
+      "key": "orderStatus.${order.status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx",
+      "line": 117
+    },
+    {
+      "key": "serviceStatus.${req.status.toLowerCase().replace(/\\s+/g, ",
+      "file": "/workspace/frontend/pages/foundation/FoundationOrdersAppointmentsPage.tsx",
+      "line": 178
+    },
+    {
+      "key": "stockStatus.${product.stockStatus.replace(/\\s+/g, ",
+      "file": "/workspace/frontend/pages/partner/PartnerDetailPage.tsx",
+      "line": 58
+    },
+    {
+      "key": "serviceStatus.${status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/service-provider/ServiceProviderRequestsPage.tsx",
+      "line": 69
+    },
+    {
+      "key": "serviceStatus.${req.status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/service-provider/ServiceProviderRequestsPage.tsx",
+      "line": 95
+    },
+    {
+      "key": "orderStatus.${order.status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/supplier/SupplierDashboardPage.tsx",
+      "line": 191
+    },
+    {
+      "key": "orderStatus.${status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/supplier/SupplierOrdersPage.tsx",
+      "line": 69
+    },
+    {
+      "key": "orderStatus.${order.status.toLowerCase().replace(/\\s/g, ",
+      "file": "/workspace/frontend/pages/supplier/SupplierOrdersPage.tsx",
+      "line": 95
+    },
+    {
+      "key": "stockStatus.${product.stockStatus.replace(/\\s+/g, ",
+      "file": "/workspace/frontend/pages/supplier/SupplierProductListingsPage.tsx",
+      "line": 98
+    },
+    {
+      "key": "common:loading",
+      "file": "/workspace/admin/src/components/auth/AdminCustomLoginForm.tsx",
+      "line": 143
+    },
+    {
+      "key": "common:loading",
+      "file": "/workspace/admin/src/components/auth/AdminCustomLoginFormNew.tsx",
+      "line": 151
+    },
+    {
+      "key": "auth:signupPage.firstName",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 226
+    },
+    {
+      "key": "auth:signupPage.lastName",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 241
+    },
+    {
+      "key": "auth:signupPage.email",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 258
+    },
+    {
+      "key": "auth:signupPage.password",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 274
+    },
+    {
+      "key": "auth:signupPage.phoneNumber",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 290
+    },
+    {
+      "key": "common:back",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 367
+    },
+    {
+      "key": "common:loading",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 377
+    },
+    {
+      "key": "auth:signupPage.verifyEmail",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 404
+    },
+    {
+      "key": "auth:signupPage.verifyEmailDescription",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 407
+    },
+    {
+      "key": "auth:signupPage.verificationCode",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 432
+    },
+    {
+      "key": "common:loading",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 452
+    },
+    {
+      "key": "common:loading",
+      "file": "/workspace/admin/src/components/auth/AdminCustomSignupForm.tsx",
+      "line": 469
+    }
+  ],
+  "summary": {
+    "frontend": 1441,
+    "admin": 18,
+    "missing": 45
+  }
+}

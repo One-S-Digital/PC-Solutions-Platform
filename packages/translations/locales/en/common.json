@@ -262,5 +262,777 @@
     "frLong": "Français",
     "deShort": "DE",
     "deLong": "Deutsch"
+  },
+  "settingsPage": {
+    "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
+    "loading": "Loading",
+    "noSectionsAvailable": "No settings sections available",
+    "analyticsPreferences": "Analytics Preferences",
+    "companyProfile": "Company Profile",
+    "contactBooking": "Contact Booking",
+    "defaults": "Defaults",
+    "notificationPreferences": "No tification Preferences",
+    "privacyData": "Privacy Data",
+    "promoCodeManager": "Promo Code Manager",
+    "teamPermissions": "Team Permissions"
+  },
+  "contentUploadModal": {
+    "error": {
+      "selectFileOrLink": "Please select a file or provide a link"
+    },
+    "title": {
+      "edit": "Edit"
+    },
+    "labels": {
+      "descriptionPreview": "Description Preview",
+      "title": "Title",
+      "category": "Category",
+      "language": "Language",
+      "duration": "Duration",
+      "lessons": "Lessons",
+      "linkUrl": "Link Url",
+      "accessRoles": "Access Roles",
+      "status": "Status",
+      "documentTitle": "Document Title",
+      "fileType": "File Type",
+      "version": "Version",
+      "country": "Country",
+      "regionCanton": "Region Canton",
+      "policyType": "Policy Type",
+      "criticality": "Criticality",
+      "markAsCritical": "Mark As Critical",
+      "effectiveDate": "Effective Date",
+      "externalLink": "External Link",
+      "currentFile": "Current File",
+      "uploadFileType": "Upload File Type",
+      "description": "Description",
+      "uploadFile": "Upload File"
+    },
+    "placeholders": {
+      "duration": "Duration",
+      "linkUrl": "Link Url",
+      "version": "Version",
+      "externalLink": "External Link"
+    },
+    "statusOptions": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "criticalityOptions": {
+      "critical": "Critical",
+      "normal": "Normal"
+    },
+    "fileUpload": {
+      "browse": "Browse",
+      "dragAndDrop": "Drag and drop files here",
+      "eLearningAllowedTypes": "E Learning Allowed Types",
+      "selected": "Selected",
+      "hrPolicyAllowedTypes": "PDF, DOC, DOCX"
+    },
+    "buttons": {
+      "uploading": "Uploading",
+      "upload": "Upload"
+    }
+  },
+  "policyAlertModal": {
+    "labels": {
+      "title": "Title",
+      "message": "Message",
+      "type": "Type",
+      "regionScope": "Region Scope",
+      "displayStartDate": "Display Start Date",
+      "displayEndDate": "Display End Date"
+    }
+  },
+  "orderSummaryDrawer": {
+    "title": "Title",
+    "closePanel": "Close Panel",
+    "emptyCart": "Empty Cart",
+    "itemsFrom": "Items From",
+    "specialInstructions": "Special Instructions",
+    "subtotal": "Subtotal",
+    "shippingNote": "Shipping Note",
+    "continueShopping": "Continue Shopping"
+  },
+  "leadCard": {
+    "alert": {
+      "missingParentInfo": "Missing Parent Info"
+    },
+    "status": {
+      "notResponded": "No t Responded",
+      "interested": "Interested",
+      "notInterested": "No t Interested",
+      "needsMoreInfo": "Needs More Info",
+      "enrolled": "Enrolled"
+    },
+    "title": "Title",
+    "forLocation": "For Location",
+    "childAge": "Child Age",
+    "desiredStart": "Desired Start",
+    "submittedOn": "Submitted On",
+    "notes": "No tes",
+    "defaultMessages": {
+      "interested": "Interested",
+      "notInterested": "No t Interested",
+      "enrolled": "Enrolled"
+    },
+    "buttons": {
+      "interested": "Interested",
+      "notInterested": "No t Interested",
+      "needInfo": "Need Info",
+      "sendQuestion": "Send Question",
+      "messageParent": "Message Parent",
+      "markEnrolled": "Mark Enrolled"
+    },
+    "questionFor": "Question For",
+    "questionPlaceholder": "Enter question",
+    "yourResponse": "Your Response",
+    "messageSent": "Message Sent"
+  },
+  "orderRequestModal": {
+    "title": "Title",
+    "labels": {
+      "product": "Product",
+      "supplier": "Supplier",
+      "quantity": "Quantity",
+      "notes": "No tes"
+    },
+    "placeholders": {
+      "notes": "No tes"
+    }
+  },
+  "serviceRequestModal": {
+    "preferredDateLabel": "Preferred Date",
+    "notesLabel": "No tes",
+    "submitButton": "Submit Button"
+  },
+  "supplierCard": {
+    "specializesIn": "Specializes In",
+    "viewProfileAndProducts": "View Profile And Products"
+  },
+  "messagesPage": {
+    "selectConversationToView": "Select Conversation To View",
+    "conversationFallbackTitle": "Conversation Fallback Title",
+    "attachFile": "Attach File",
+    "addEmoji": "Add Emoji",
+    "typeMessagePlaceholder": "Enter type message",
+    "searchPlaceholder": "Enter search",
+    "unknownUser": "Unknown User",
+    "youPrefix": "You Prefix",
+    "noMessagesYet": "No  Messages Yet"
+  },
+  "createGroupChatModal": {
+    "error": {
+      "minParticipants": "Min Participants"
+    },
+    "title": "Title",
+    "groupNameLabel": "Group Name",
+    "groupNamePlaceholder": "Enter group name",
+    "selectParticipantsLabel": "Select Participants",
+    "createButton": "Create Button"
+  },
+  "serviceRequestDetailModal": {
+    "markAsCompleted": "Mark As Completed",
+    "title": "Title",
+    "requestId": "Request Id",
+    "serviceName": "Service Name",
+    "viewDaycareProfile": "View Daycare Profile",
+    "date": "Date",
+    "status": "Status",
+    "preferredDate": "Preferred Date",
+    "noPreferredDate": "No  Preferred Date",
+    "notes": "No tes"
+  },
+  "serviceUploadModal": {
+    "editTitle": "Edit Title",
+    "labels": {
+      "title": "Title",
+      "description": "Description",
+      "category": "Category",
+      "deliveryType": "Delivery Type",
+      "availability": "Availability",
+      "priceInfo": "Price Info",
+      "tags": "Tags",
+      "image": "Image"
+    },
+    "placeholders": {
+      "availability": "Availability",
+      "priceInfo": "Price Info",
+      "tags": "Tags"
+    },
+    "imageHelpText": "Image Help Text",
+    "currentImage": "Current Image",
+    "addTitle": "Add Service"
+  },
+  "addPromoCodeModal": {
+    "placeholder": "Placeholder"
+  },
+  "organizationProfileForm": {
+    "accessDenied": "Access Denied",
+    "title": "Title",
+    "subtitle": "Subtitle",
+    "labels": {
+      "capacity": "Capacity",
+      "pedagogy": "Pedagogy",
+      "languages": "Languages"
+    },
+    "placeholders": {
+      "pedagogy": "Pedagogy",
+      "languages": "Languages"
+    },
+    "helpText": {
+      "commaSeparated": "Comma Separated"
+    },
+    "saveButton": "Save Button"
+  },
+  "settingsAccountSecurity": {
+    "notifications": {
+      "infoUpdated": "Info Updated",
+      "passwordChanged": "Password Changed"
+    },
+    "dangerZone": {
+      "finalConfirmation": "Final Confirmation",
+      "title": "Title",
+      "deleteAccountTitle": "Delete Account Title",
+      "deleteAccountSubtitle": "Delete Account Subtitle",
+      "deleteAccountButton": "Delete Account Button"
+    },
+    "personalInfo": {
+      "title": "Title",
+      "contactNameLabel": "Contact Name",
+      "orgNameLabel": "Org Name",
+      "emailLabel": "Email",
+      "accountTypeLabel": "Account Type",
+      "memberSinceLabel": "Member Since",
+      "updateInfoButton": "Update Info Button",
+      "nameLabel": "Name"
+    },
+    "changePassword": {
+      "title": "Title",
+      "currentPasswordLabel": "Current Password",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "updatePasswordButton": "Update Password Button"
+    }
+  },
+  "settingsPrivacyData": {
+    "confirmGDPRDelete": "Confirm G D P R Delete",
+    "deletionRequestSubmittedHelpText": "Deletion Request Submitted Help Text",
+    "dataDeletion": "Data Deletion",
+    "deletionRequestSubmitted": "Deletion Request Submitted",
+    "requestDeletionHelpText": "Request Deletion Help Text",
+    "requestGDPRDeletion": "Request Data Deletion (GDPR)"
+  },
+  "settingsAnalyticsPreferences": {
+    "timeZone": "Time Zone",
+    "currency": "Currency",
+    "benchmarkData": "Benchmark Data",
+    "benchmarkDataHelpText": "Benchmark Data Help Text"
+  },
+  "settingsBillingSubscription": {
+    "yourCurrentPlan": "Your Current Plan",
+    "upgradePlan": "Upgrade Plan",
+    "downgradePlan": "Downgrade Plan",
+    "currentPlan": "Current Plan",
+    "nextInvoiceOn": "Next Invoice On",
+    "manageSubscriptionTitle": "Manage Subscription Title",
+    "manageSubscriptionDescription": "Manage Subscription Description",
+    "managePaymentButton": "Manage Payment Button",
+    "cancelSubscription": "Cancel Subscription",
+    "stripePortalLinkNotConfigured": "Stripe Portal Link Not Configured",
+    "confirmCancelTitle": "Confirm Cancel Title",
+    "confirmCancelMessage": "Confirm Cancel Message",
+    "keepSubscription": "Keep Subscription",
+    "yesCancel": "Yes Cancel"
+  },
+  "settingsCompanyProfile": {
+    "companyName": "Company Name",
+    "logo": "Logo",
+    "coverImage": "Cover Image",
+    "aboutText": "About Text",
+    "aboutTextLength": "About Text Length",
+    "vatNumber": "Vat Number",
+    "regionsServed": "Regions Served",
+    "selectCanton": "Select Canton",
+    "cantonsHelpText": "Cantons Help Text",
+    "languagesSpoken": "Languages Spoken",
+    "selectLanguage": "Select Language",
+    "languagesHelpText": "Languages Help Text"
+  },
+  "settingsContactBooking": {
+    "preferredContactMethod": "Preferred Contact Method",
+    "avgResponseTime": "Avg Response Time",
+    "externalBookingLink": "External Booking Link",
+    "externalBookingLinkPlaceholder": "Enter external booking link",
+    "directOrderLink": "Direct Order Link",
+    "directOrderLinkPlaceholder": "Enter direct order link",
+    "directOrderLinkHelpText": "Direct Order Link Help Text",
+    "calComLink": "Cal Com Link",
+    "calComLinkPlaceholder": "Enter cal com link",
+    "deliveryTypeToggleRemote": "Delivery Type Toggle Remote"
+  },
+  "settingsDefaults": {
+    "autoRespondToggle": "Auto Respond Toggle",
+    "autoRespondHelpText": "Auto Respond Help Text",
+    "defaultMOQ": "Default M O Q",
+    "defaultMOQPlaceholder": "Enter default m o q",
+    "autoAcceptOrderQtyLimit": "Auto Accept Order Qty Limit",
+    "autoAcceptOrderQtyLimitPlaceholder": "Enter auto accept order qty limit",
+    "defaultConsultationLength": "Default Consultation Length"
+  },
+  "settingsNotificationPreferences": {
+    "digestFrequency": "Digest Frequency",
+    "promoRedemptionAlertsToggle": "Promo Redemption Alerts Toggle"
+  },
+  "settingsPromoCodeManager": {
+    "confirmDelete": "Confirm Delete",
+    "discountTypes": {
+      "percentage": "Percentage",
+      "fixedAmount": "Fixed Amount",
+      "freeMinutes": "Free Minutes"
+    },
+    "addNewCode": "Add New Code",
+    "noCodesYet": "No  Codes Yet",
+    "table": {
+      "code": "Code",
+      "discountOffer": "Discount Offer",
+      "expiry": "Expiry",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "addEditModal": {
+      "editTitle": "Edit Title",
+      "placeholder": "Placeholder",
+      "save": "Save",
+      "addTitle": "Add Promo Code"
+    }
+  },
+  "settingsTeamPermissions": {
+    "confirmRemoveMember": "Confirm Remove Member",
+    "passwordResetSentAlert": "Password Reset Sent Alert",
+    "inviteNewMember": "Invite New Member",
+    "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter email",
+    "role": "Role",
+    "sendInvite": "Send Invite",
+    "currentTeamMembers": "Current Team Members",
+    "noTeamMembers": "No  Team Members",
+    "table": {
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "roles": {
+      "editor": "Editor",
+      "viewer": "Viewer"
+    },
+    "resetPasswordTooltip": "Reset Password Tooltip",
+    "removeMemberTooltip": "Remove Member Tooltip"
+  },
+  "activeClientToggle": {
+    "confirmSave": "Confirm Save",
+    "saveSuccess": {
+      "title": "Title",
+      "message": "Message"
+    },
+    "title": "Title",
+    "label": "Label",
+    "reasonLabel": "Reason",
+    "noteLabel": "No te",
+    "notePlaceholder": "No ter note",
+    "subtext": "Subtext"
+  },
+  "errorBoundary": {
+    "somethingWentWrong": "Something Went Wrong",
+    "sorryMessage": "Sorry Message",
+    "errorDetails": "Error Details",
+    "tryAgain": "Try Again",
+    "reloadPage": "Reload Page"
+  },
+  "featureLock": {
+    "title": "Title",
+    "message": "Message",
+    "upgradeButton": "Upgrade Button"
+  },
+  "fileUploadModal": {
+    "title": "Title",
+    "uploadFile": "Upload File",
+    "dragAndDrop": "Drag and drop files here",
+    "fileTypes": "File Types",
+    "filesToUpload": "Files to Upload",
+    "uploading": "Uploading",
+    "uploadButton": "Upload"
+  },
+  "renameFileModal": {
+    "title": "Title",
+    "label": "Label"
+  },
+  "supplierDashboard": {
+    "recentOrdersActions": {
+      "decline": "Decline",
+      "accept": "Accept"
+    },
+    "noSalesYet": "No  Sales Yet",
+    "title": "Title",
+    "welcomeMessage": "Welcome Message",
+    "widgets": {
+      "sales": {
+        "title": "Title",
+        "totalOrders": "Total Orders",
+        "revenueMonth": "Revenue Month",
+        "topSelling": "Top Selling",
+        "fulfillmentRate": "Fulfillment Rate",
+        "button": "Button"
+      },
+      "products": {
+        "title": "Title",
+        "active": "Active",
+        "pending": "Pending",
+        "lowStock": "Low Stock",
+        "button": "Button"
+      },
+      "orders": {
+        "title": "Title",
+        "pending": "Pending",
+        "toFulfill": "To Fulfill",
+        "button": "Button"
+      }
+    },
+    "recentOrdersTitle": "Recent Orders Title",
+    "noRecentOrders": "No  Recent Orders",
+    "recentOrdersTable": {
+      "id": "Id",
+      "creche": "Creche",
+      "date": "Date",
+      "total": "Total",
+      "status": "Status"
+    }
+  },
+  "orderRequestDetailModal": {
+    "markAsProcessing": "Mark As Processing",
+    "title": "Title",
+    "orderId": "Order Id",
+    "date": "Date",
+    "status": "Status",
+    "total": "Total",
+    "viewDaycareProfile": "View Daycare Profile",
+    "lineItems": "Line Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "notes": "No tes"
+  },
+  "fileUploadZone": {
+    "dragAndDrop": "Drag and drop files here"
+  },
+  "appContext": {
+    "useAppContextError": "Use App Context Error"
+  },
+  "cartContext": {
+    "useCartError": "Use Cart Error"
+  },
+  "messagingContext": {
+    "userNotLoggedIn": "User Not Logged In",
+    "useMessagingError": "Use Messaging Error"
+  },
+  "notificationContext": {
+    "useNotificationsError": "Use Notifications Error"
+  },
+  "fileGallery": {
+    "actions": {
+      "preview": "Preview",
+      "download": "Download",
+      "rename": "Rename",
+      "delete": "Delete"
+    },
+    "confirmDelete": "Confirm Delete",
+    "uploadButton": "Upload Button",
+    "emptyState": {
+      "title": "Title",
+      "message": "Message"
+    }
+  },
+  "hrDocumentCard": {
+    "categoryLabel": "Category",
+    "languageLabel": "Language",
+    "toggleFavoriteLabel": "Toggle Favorite",
+    "lastUpdatedLabel": "Last Updated",
+    "downloadingAlert": "Downloading Alert",
+    "previewingAlert": "Previewing Alert",
+    "editButtonLabel": "Edit Button",
+    "deleteButtonLabel": "Delete Button",
+    "downloadButton": "Download",
+    "previewButtonLabel": "Preview",
+    "versionLabel": "Version"
+  },
+  "marketplacePage": {
+    "serviceCard": {
+      "categoryLabel": "Category",
+      "bookAppointment": "Book Appointment",
+      "viewProvider": "View Provider"
+    }
+  },
+  "notificationsPage": {
+    "title": "Title"
+  },
+  "parentEnquiriesPage": {
+    "title": "Title"
+  },
+  "parentLeadFormPage": {
+    "title": "Title"
+  },
+  "adminSystemMonitoringPage": {
+    "title": "Title"
+  },
+  "discountTerminationsPage": {
+    "actions": {
+      "sendNoticesAlert": "Send Notices Alert",
+      "markCompleted": "Mark Completed",
+      "sendNotices": "Send Notices"
+    },
+    "table": {
+      "vendor": "Vendor",
+      "daycare": "Daycare",
+      "activeSince": "Active Since",
+      "reason": "Reason",
+      "actions": "Actions"
+    },
+    "queue": {
+      "title": "Title",
+      "description": "Description",
+      "tableTitle": "Table Title"
+    },
+    "allActive": {
+      "title": "Title",
+      "description": "Description",
+      "tableTitle": "Table Title"
+    }
+  },
+  "educatorApplicationsPage": {
+    "title": "Title"
+  },
+  "educatorDashboard": {
+    "title": "Title",
+    "welcome": "Welcome",
+    "profileCompletion": {
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "button": "Button"
+    },
+    "applicationStatus": {
+      "title": "Title",
+      "submitted": "Submitted",
+      "viewed": "Viewed",
+      "interviews": "Interviews",
+      "offers": "Offers",
+      "button": "Button"
+    },
+    "skills": {
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "button": "Button"
+    },
+    "recommendations": {
+      "title": "Title",
+      "match": "Match"
+    }
+  },
+  "supportPage": {
+    "faqTitle": "Faq Title",
+    "furtherAssistanceTitle": "Further Assistance Title",
+    "furtherAssistanceText": {
+      "0": "0",
+      "1": "Our support team is here to help you."
+    },
+    "submitTicketTitle": "Submit Ticket Title",
+    "ticketForm": {
+      "subjectLabel": "Subject",
+      "messageLabel": "Message"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "title": "Title"
+  },
+  "foundationDashboard": {
+    "title": "Title",
+    "welcomeMessage": "Welcome Message",
+    "quickStats": {
+      "title": "Title"
+    },
+    "todayAtGlance": "Today At Glance",
+    "activity": {
+      "title": "Title"
+    },
+    "quickActions": {
+      "title": "Title"
+    },
+    "quickMessage": {
+      "title": "Title",
+      "placeholder": "Placeholder"
+    }
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "Title"
+  },
+  "parentDashboard": {
+    "title": "Title",
+    "welcomeMessage": "Welcome Message",
+    "enquiry": {
+      "title": "Title",
+      "sent": "Sent",
+      "responses": "Responses",
+      "pending": "Pending",
+      "button": "Button"
+    },
+    "quickActions": {
+      "title": "Title"
+    },
+    "childProfile": {
+      "title": "Title",
+      "name": "Name",
+      "age": "Age",
+      "location": "Location",
+      "languages": "Languages",
+      "specialNeeds": "Special Needs",
+      "button": "Button"
+    },
+    "favorites": {
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "button": "Button"
+    }
+  },
+  "parentSupportPage": {
+    "faq": {
+      "matchingProcess": {
+        "a": "A"
+      },
+      "responseTime": {
+        "a": "A"
+      },
+      "dataSecurity": {
+        "a": "A"
+      }
+    }
+  },
+  "userRoles": {
+    "Product Supplier": "Product Supplier",
+    "parent": "Parent",
+    "educator": "Educator",
+    "foundation": "Foundation",
+    "admin": "Administrator",
+    "productSupplier": "Product Supplier",
+    "serviceProvider": "Service Provider",
+    "Service Provider": "Service Provider",
+    "PARENT": "Parent",
+    "EDUCATOR": "Educator",
+    "FOUNDATION": "Foundation"
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "Title"
+  },
+  "serviceProviderDashboard": {
+    "title": "Title",
+    "welcomeMessage": "Welcome Message",
+    "widgets": {
+      "overview": {
+        "title": "Title",
+        "activeRequests": "Active Requests",
+        "completedServices": "Completed Services",
+        "upcoming": "Upcoming",
+        "customerRating": "Customer Rating",
+        "button": "Button"
+      },
+      "management": {
+        "title": "Title",
+        "listings": "Listings",
+        "pending": "Pending",
+        "categories": "Categories",
+        "button": "Button"
+      },
+      "appointments": {
+        "title": "Title",
+        "with": "With",
+        "button": "Button"
+      }
+    }
+  },
+  "serviceProviderListingsPage": {
+    "title": "Title"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "Title"
+  },
+  "supplierOrdersPage": {
+    "title": "Title"
+  },
+  "supplierProductListingsPage": {
+    "title": "Title"
+  },
+  "loading": "Loading",
+  "recruitment": {
+    "addCandidate": "Add Candidate"
+  },
+  "serviceProvider": {
+    "noServicesFound": "No services found"
+  },
+  "Title and Message are required.": "Title and Message are required.",
+  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
+  "orderStatus": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "paid": "Paid",
+    "shipped": "Shipped"
+  },
+  "serviceStatus": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "paid": "Paid",
+    "shipped": "Shipped"
+  },
+  "vendorClientReasons": {
+    "inactive": "Inactive",
+    "testing": "Testing",
+    "trial": "Trial",
+    "demo": "Demo"
+  },
+  "stockStatus": {
+    "instock": "In Stock",
+    "outofstock": "Out of Stock",
+    "lowstock": "Low Stock",
+    "discontinued": "Discontinued",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "lowStock": "Low Stock"
+  },
+  "contentType": {
+    "course": "Course",
+    "video": "Video",
+    "pdf": "PDF",
+    "link": "External Link",
+    "policy": "Policy"
+  },
+  "eLearningTypes": {
+    "course": "Course",
+    "video": "Video",
+    "pdf": "PDF Document",
+    "link": "External Link"
+  },
+  "policyStatusOptions": {
+    "active": "Active",
+    "archived": "Archived",
+    "draft": "Draft"
   }
 }

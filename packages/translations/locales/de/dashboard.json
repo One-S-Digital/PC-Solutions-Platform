@@ -22,7 +22,8 @@
     "timeAgo": {
       "minutes": "{{count}} minuten",
       "hours": "{{count}} Stunden",
-      "yesterday": "Gestern"
+      "yesterday": "Gestern",
+      "days": "[DE] {{count}} days ago"
     },
     "upcomingMeetings": "Bevorstehende Treffen",
     "quickActions": "SCHNELLE AKTIONEN",
@@ -459,10 +460,20 @@
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
-      "title": "Roh-Log-Konsole"
+      "title": "Roh-Log-Konsole",
+      "emptyLogMessage": "[DE] No logs available",
+      "tabs": {
+        "all": "[DE] All Logs",
+        "errors": "[DE] Errors",
+        "warnings": "[DE] Warnings",
+        "info": "[DE] Info"
+      }
     },
     "overallStatus": {
-      "title": "Gesamtsystemstatus"
+      "title": "Gesamtsystemstatus",
+      "operational": "[DE] Operational",
+      "degraded": "[DE] Degraded",
+      "down": "[DE] Down"
     },
     "components": {
       "api": "Backend-API",
@@ -487,7 +498,9 @@
       "activeConnections": "Aktive Verbindungen",
       "queryTime": "Ø Abfagezeit",
       "storage": "Speichernutzung",
-      "connectionHealth": "Verbindungszustand"
+      "connectionHealth": "Verbindungszustand",
+      "healthy": "[DE] Healthy",
+      "degraded": "[DE] Degraded"
     },
     "appPerformance": {
       "title": "Anwendungsleistung",
@@ -498,6 +511,11 @@
     },
     "recentEvents": {
       "title": "Ledzte Systemereignisse"
+    },
+    "eventTypes": {
+      "info": "[DE] Information",
+      "warning": "[DE] Warning",
+      "error": "[DE] Error"
     }
   },
   "adminDiscountTerminationsPage": {
@@ -656,7 +674,10 @@
   "usersPage": {
     "cannotDeleteOwnAccount": "Sie Kön Kön Können IHr -Echene Konto Nick Löschen",
     "status": {
-      "pending": "AUSSTEHEND"
+      "pending": "AUSSTEHEND",
+      "active": "[DE] Active",
+      "inactive": "[DE] Inactive",
+      "suspended": "[DE] Suspended"
     },
     "userDetailDrawer": {
       "title": "Benzutzerdetails",
@@ -815,5 +836,60 @@
     "Search content...": "Inhalieren Sie Sinyen ...",
     "No documents found in this category for current filters.": "Keine Dokumente Im Dieser Kategorie für Aktuelle Filter.",
     "No custom alerts created yet.": "Noch Keide Benzutzerdefinierten Warnungen Erstent."
+  },
+  "dashboardDetailPage": {
+    "activeUsers": {
+      "recentActivity": "[DE] Recent Activity",
+      "aliceActivity": "[DE] Alice Activity",
+      "bobActivity": "[DE] Bob Activity",
+      "carolActivity": "[DE] Carol Activity",
+      "davidActivity": "[DE] David Activity",
+      "totalToday": "[DE] Total Today"
+    },
+    "newOrders": {
+      "recentOrders": "[DE] Recent Orders",
+      "table": {
+        "orderId": "[DE] Order Id",
+        "product": "[DE] Product",
+        "amount": "[DE] Amount",
+        "status": "[DE] Status"
+      },
+      "order789": "[DE] Order789",
+      "order790": "[DE] Order790",
+      "order791": "[DE] Order791",
+      "totalThisWeek": "[DE] Total This Week",
+      "ecotoysBlocks": "[DE] Ecotoys Blocks",
+      "artFunPack": "[DE] Art Fun Pack",
+      "freshBitesMeal": "[DE] Fresh Bites Meal",
+      "status": {
+        "paid": "[DE] Paid",
+        "pending": "[DE] Pending"
+      }
+    },
+    "openJobs": {
+      "currentPositions": "[DE] Current Positions",
+      "leadEducatorGeneva": "[DE] Lead Educator Geneva",
+      "applications": "[DE] Applications",
+      "assistantEducatorLausanne": "[DE] Assistant Educator Lausanne",
+      "daycareDirectorZurich": "[DE] Daycare Director Zurich",
+      "totalOpenPositions": "[DE] Total Open Positions",
+      "status": {
+        "open": "[DE] Open",
+        "interviewing": "[DE] Interviewing"
+      }
+    },
+    "pageViews": {
+      "keyMetrics": "[DE] Key Metrics",
+      "totalToday": "[DE] Total Today",
+      "uniqueVisitors": "[DE] Unique Visitors",
+      "mostViewed": "[DE] Most Viewed",
+      "avgSession": "[DE] Avg Session",
+      "mockChartText": "[DE] Mock Chart Text",
+      "dashboardViews": "[DE] Dashboard Views",
+      "sessionDuration": "[DE] Session Duration"
+    },
+    "defaultTitle": "[DE] Default Title",
+    "detailsFor": "[DE] Details For",
+    "noSpecificView": "[DE] No  Specific View"
   }
 }

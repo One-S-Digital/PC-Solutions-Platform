@@ -141,9 +141,7 @@
     "archived": "Archivé"
   },
   "welcome": "Bienvener",
-  "loading": {
-    "translations": "Chargement des traductions..."
-  },
+  "loading": "[FR] Loading",
   "error": "Une erreur s'est produit",
   "submit": "Soumettre",
   "next": "Suivant",
@@ -246,6 +244,803 @@
     "terms": "Conditions",
     "privacy": "Confidentialité",
     "copyright": "Droits d'auteur",
-    "all.rights.reserved": "Tous droits réservés"
+    "all.rights.reserved": "Tous droits réservés",
+    "info": "[FR] Info"
+  },
+  "loginPage": {
+    "title": "[FR] Welcome to {{appName}}",
+    "subtitle": "[FR] Sign in to your account",
+    "emailLabel": "[FR] Email Address",
+    "emailPlaceholder": "[FR] Enter your email",
+    "passwordLabel": "[FR] Password",
+    "passwordPlaceholder": "[FR] Enter your password",
+    "forgotPassword": "[FR] Forgot your password?",
+    "forgotPasswordTBD": "[FR] Forgot password functionality coming soon",
+    "orContinueWith": "[FR] Or continue with",
+    "google": "[FR] Google",
+    "facebook": "[FR] Facebook",
+    "noAccount": "[FR] Don't have an account?",
+    "viewPlansPrompt": "[FR] Want to see our plans?",
+    "viewPlans": "[FR] View Plans",
+    "parentLookingForCreche": "[FR] Parent looking for a crèche?",
+    "findCrecheHere": "[FR] Find your perfect crèche here",
+    "socialLoginTBD": "[FR] {{provider}} login coming soon!",
+    "alreadyAccount": "[FR] Already have an account?",
+    "errorBothFields": "[FR] Please fill in both email and password",
+    "loggingIn": "[FR] Logging in..."
+  },
+  "settingsPage": {
+    "unsavedChangesPrompt": "[FR] You have unsaved changes. Are you sure you want to leave?",
+    "loading": "[FR] Loading",
+    "noSectionsAvailable": "[FR] No settings sections available",
+    "analyticsPreferences": "[FR] Analytics Preferences",
+    "companyProfile": "[FR] Company Profile",
+    "contactBooking": "[FR] Contact Booking",
+    "defaults": "[FR] Defaults",
+    "notificationPreferences": "[FR] No tification Preferences",
+    "privacyData": "[FR] Privacy Data",
+    "promoCodeManager": "[FR] Promo Code Manager",
+    "teamPermissions": "[FR] Team Permissions"
+  },
+  "contentUploadModal": {
+    "error": {
+      "selectFileOrLink": "[FR] Please select a file or provide a link"
+    },
+    "title": {
+      "edit": "[FR] Edit"
+    },
+    "labels": {
+      "descriptionPreview": "[FR] Description Preview",
+      "title": "[FR] Title",
+      "category": "[FR] Category",
+      "language": "[FR] Language",
+      "duration": "[FR] Duration",
+      "lessons": "[FR] Lessons",
+      "linkUrl": "[FR] Link Url",
+      "accessRoles": "[FR] Access Roles",
+      "status": "[FR] Status",
+      "documentTitle": "[FR] Document Title",
+      "fileType": "[FR] File Type",
+      "version": "[FR] Version",
+      "country": "[FR] Country",
+      "regionCanton": "[FR] Region Canton",
+      "policyType": "[FR] Policy Type",
+      "criticality": "[FR] Criticality",
+      "markAsCritical": "[FR] Mark As Critical",
+      "effectiveDate": "[FR] Effective Date",
+      "externalLink": "[FR] External Link",
+      "currentFile": "[FR] Current File",
+      "uploadFileType": "[FR] Upload File Type",
+      "description": "[FR] Description",
+      "uploadFile": "[FR] Upload File"
+    },
+    "placeholders": {
+      "duration": "[FR] Duration",
+      "linkUrl": "[FR] Link Url",
+      "version": "[FR] Version",
+      "externalLink": "[FR] External Link"
+    },
+    "statusOptions": {
+      "draft": "[FR] Draft",
+      "published": "[FR] Published",
+      "archived": "[FR] Archived"
+    },
+    "criticalityOptions": {
+      "critical": "[FR] Critical",
+      "normal": "[FR] Normal"
+    },
+    "fileUpload": {
+      "browse": "[FR] Browse",
+      "dragAndDrop": "[FR] Drag and drop files here",
+      "eLearningAllowedTypes": "[FR] E Learning Allowed Types",
+      "selected": "[FR] Selected",
+      "hrPolicyAllowedTypes": "[FR] PDF, DOC, DOCX"
+    },
+    "buttons": {
+      "uploading": "[FR] Uploading",
+      "upload": "[FR] Upload"
+    }
+  },
+  "policyAlertModal": {
+    "labels": {
+      "title": "[FR] Title",
+      "message": "[FR] Message",
+      "type": "[FR] Type",
+      "regionScope": "[FR] Region Scope",
+      "displayStartDate": "[FR] Display Start Date",
+      "displayEndDate": "[FR] Display End Date"
+    }
+  },
+  "orderSummaryDrawer": {
+    "title": "[FR] Title",
+    "closePanel": "[FR] Close Panel",
+    "emptyCart": "[FR] Empty Cart",
+    "itemsFrom": "[FR] Items From",
+    "specialInstructions": "[FR] Special Instructions",
+    "subtotal": "[FR] Subtotal",
+    "shippingNote": "[FR] Shipping Note",
+    "continueShopping": "[FR] Continue Shopping"
+  },
+  "leadCard": {
+    "alert": {
+      "missingParentInfo": "[FR] Missing Parent Info"
+    },
+    "status": {
+      "notResponded": "[FR] No t Responded",
+      "interested": "[FR] Interested",
+      "notInterested": "[FR] No t Interested",
+      "needsMoreInfo": "[FR] Needs More Info",
+      "enrolled": "[FR] Enrolled"
+    },
+    "title": "[FR] Title",
+    "forLocation": "[FR] For Location",
+    "childAge": "[FR] Child Age",
+    "desiredStart": "[FR] Desired Start",
+    "submittedOn": "[FR] Submitted On",
+    "notes": "[FR] No tes",
+    "defaultMessages": {
+      "interested": "[FR] Interested",
+      "notInterested": "[FR] No t Interested",
+      "enrolled": "[FR] Enrolled"
+    },
+    "buttons": {
+      "interested": "[FR] Interested",
+      "notInterested": "[FR] No t Interested",
+      "needInfo": "[FR] Need Info",
+      "sendQuestion": "[FR] Send Question",
+      "messageParent": "[FR] Message Parent",
+      "markEnrolled": "[FR] Mark Enrolled"
+    },
+    "questionFor": "[FR] Question For",
+    "questionPlaceholder": "[FR] Enter question",
+    "yourResponse": "[FR] Your Response",
+    "messageSent": "[FR] Message Sent"
+  },
+  "orderRequestModal": {
+    "title": "[FR] Title",
+    "labels": {
+      "product": "[FR] Product",
+      "supplier": "[FR] Supplier",
+      "quantity": "[FR] Quantity",
+      "notes": "[FR] No tes"
+    },
+    "placeholders": {
+      "notes": "[FR] No tes"
+    }
+  },
+  "serviceRequestModal": {
+    "preferredDateLabel": "[FR] Preferred Date",
+    "notesLabel": "[FR] No tes",
+    "submitButton": "[FR] Submit Button"
+  },
+  "supplierCard": {
+    "specializesIn": "[FR] Specializes In",
+    "viewProfileAndProducts": "[FR] View Profile And Products"
+  },
+  "messagesPage": {
+    "selectConversationToView": "[FR] Select Conversation To View",
+    "conversationFallbackTitle": "[FR] Conversation Fallback Title",
+    "attachFile": "[FR] Attach File",
+    "addEmoji": "[FR] Add Emoji",
+    "typeMessagePlaceholder": "[FR] Enter type message",
+    "searchPlaceholder": "[FR] Enter search",
+    "unknownUser": "[FR] Unknown User",
+    "youPrefix": "[FR] You Prefix",
+    "noMessagesYet": "[FR] No  Messages Yet"
+  },
+  "createGroupChatModal": {
+    "error": {
+      "minParticipants": "[FR] Min Participants"
+    },
+    "title": "[FR] Title",
+    "groupNameLabel": "[FR] Group Name",
+    "groupNamePlaceholder": "[FR] Enter group name",
+    "selectParticipantsLabel": "[FR] Select Participants",
+    "createButton": "[FR] Create Button"
+  },
+  "serviceRequestDetailModal": {
+    "markAsCompleted": "[FR] Mark As Completed",
+    "title": "[FR] Title",
+    "requestId": "[FR] Request Id",
+    "serviceName": "[FR] Service Name",
+    "viewDaycareProfile": "[FR] View Daycare Profile",
+    "date": "[FR] Date",
+    "status": "[FR] Status",
+    "preferredDate": "[FR] Preferred Date",
+    "noPreferredDate": "[FR] No  Preferred Date",
+    "notes": "[FR] No tes"
+  },
+  "serviceUploadModal": {
+    "editTitle": "[FR] Edit Title",
+    "labels": {
+      "title": "[FR] Title",
+      "description": "[FR] Description",
+      "category": "[FR] Category",
+      "deliveryType": "[FR] Delivery Type",
+      "availability": "[FR] Availability",
+      "priceInfo": "[FR] Price Info",
+      "tags": "[FR] Tags",
+      "image": "[FR] Image"
+    },
+    "placeholders": {
+      "availability": "[FR] Availability",
+      "priceInfo": "[FR] Price Info",
+      "tags": "[FR] Tags"
+    },
+    "imageHelpText": "[FR] Image Help Text",
+    "currentImage": "[FR] Current Image",
+    "addTitle": "[FR] Add Service"
+  },
+  "addPromoCodeModal": {
+    "placeholder": "[FR] Placeholder"
+  },
+  "organizationProfileForm": {
+    "accessDenied": "[FR] Access Denied",
+    "title": "[FR] Title",
+    "subtitle": "[FR] Subtitle",
+    "labels": {
+      "capacity": "[FR] Capacity",
+      "pedagogy": "[FR] Pedagogy",
+      "languages": "[FR] Languages"
+    },
+    "placeholders": {
+      "pedagogy": "[FR] Pedagogy",
+      "languages": "[FR] Languages"
+    },
+    "helpText": {
+      "commaSeparated": "[FR] Comma Separated"
+    },
+    "saveButton": "[FR] Save Button"
+  },
+  "settingsAccountSecurity": {
+    "notifications": {
+      "infoUpdated": "[FR] Info Updated",
+      "passwordChanged": "[FR] Password Changed"
+    },
+    "dangerZone": {
+      "finalConfirmation": "[FR] Final Confirmation",
+      "title": "[FR] Title",
+      "deleteAccountTitle": "[FR] Delete Account Title",
+      "deleteAccountSubtitle": "[FR] Delete Account Subtitle",
+      "deleteAccountButton": "[FR] Delete Account Button"
+    },
+    "personalInfo": {
+      "title": "[FR] Title",
+      "contactNameLabel": "[FR] Contact Name",
+      "orgNameLabel": "[FR] Org Name",
+      "emailLabel": "[FR] Email",
+      "accountTypeLabel": "[FR] Account Type",
+      "memberSinceLabel": "[FR] Member Since",
+      "updateInfoButton": "[FR] Update Info Button",
+      "nameLabel": "[FR] Name"
+    },
+    "changePassword": {
+      "title": "[FR] Title",
+      "currentPasswordLabel": "[FR] Current Password",
+      "newPasswordLabel": "[FR] New Password",
+      "confirmNewPasswordLabel": "[FR] Confirm New Password",
+      "updatePasswordButton": "[FR] Update Password Button"
+    }
+  },
+  "settingsPrivacyData": {
+    "confirmGDPRDelete": "[FR] Confirm G D P R Delete",
+    "deletionRequestSubmittedHelpText": "[FR] Deletion Request Submitted Help Text",
+    "dataDeletion": "[FR] Data Deletion",
+    "deletionRequestSubmitted": "[FR] Deletion Request Submitted",
+    "requestDeletionHelpText": "[FR] Request Deletion Help Text",
+    "requestGDPRDeletion": "[FR] Request Data Deletion (GDPR)"
+  },
+  "settingsAnalyticsPreferences": {
+    "timeZone": "[FR] Time Zone",
+    "currency": "[FR] Currency",
+    "benchmarkData": "[FR] Benchmark Data",
+    "benchmarkDataHelpText": "[FR] Benchmark Data Help Text"
+  },
+  "settingsBillingSubscription": {
+    "yourCurrentPlan": "[FR] Your Current Plan",
+    "upgradePlan": "[FR] Upgrade Plan",
+    "downgradePlan": "[FR] Downgrade Plan",
+    "currentPlan": "[FR] Current Plan",
+    "nextInvoiceOn": "[FR] Next Invoice On",
+    "manageSubscriptionTitle": "[FR] Manage Subscription Title",
+    "manageSubscriptionDescription": "[FR] Manage Subscription Description",
+    "managePaymentButton": "[FR] Manage Payment Button",
+    "cancelSubscription": "[FR] Cancel Subscription",
+    "stripePortalLinkNotConfigured": "[FR] Stripe Portal Link Not Configured",
+    "confirmCancelTitle": "[FR] Confirm Cancel Title",
+    "confirmCancelMessage": "[FR] Confirm Cancel Message",
+    "keepSubscription": "[FR] Keep Subscription",
+    "yesCancel": "[FR] Yes Cancel"
+  },
+  "settingsCompanyProfile": {
+    "companyName": "[FR] Company Name",
+    "logo": "[FR] Logo",
+    "coverImage": "[FR] Cover Image",
+    "aboutText": "[FR] About Text",
+    "aboutTextLength": "[FR] About Text Length",
+    "vatNumber": "[FR] Vat Number",
+    "regionsServed": "[FR] Regions Served",
+    "selectCanton": "[FR] Select Canton",
+    "cantonsHelpText": "[FR] Cantons Help Text",
+    "languagesSpoken": "[FR] Languages Spoken",
+    "selectLanguage": "[FR] Select Language",
+    "languagesHelpText": "[FR] Languages Help Text"
+  },
+  "settingsContactBooking": {
+    "preferredContactMethod": "[FR] Preferred Contact Method",
+    "avgResponseTime": "[FR] Avg Response Time",
+    "externalBookingLink": "[FR] External Booking Link",
+    "externalBookingLinkPlaceholder": "[FR] Enter external booking link",
+    "directOrderLink": "[FR] Direct Order Link",
+    "directOrderLinkPlaceholder": "[FR] Enter direct order link",
+    "directOrderLinkHelpText": "[FR] Direct Order Link Help Text",
+    "calComLink": "[FR] Cal Com Link",
+    "calComLinkPlaceholder": "[FR] Enter cal com link",
+    "deliveryTypeToggleRemote": "[FR] Delivery Type Toggle Remote"
+  },
+  "settingsDefaults": {
+    "autoRespondToggle": "[FR] Auto Respond Toggle",
+    "autoRespondHelpText": "[FR] Auto Respond Help Text",
+    "defaultMOQ": "[FR] Default M O Q",
+    "defaultMOQPlaceholder": "[FR] Enter default m o q",
+    "autoAcceptOrderQtyLimit": "[FR] Auto Accept Order Qty Limit",
+    "autoAcceptOrderQtyLimitPlaceholder": "[FR] Enter auto accept order qty limit",
+    "defaultConsultationLength": "[FR] Default Consultation Length"
+  },
+  "settingsNotificationPreferences": {
+    "digestFrequency": "[FR] Digest Frequency",
+    "promoRedemptionAlertsToggle": "[FR] Promo Redemption Alerts Toggle"
+  },
+  "settingsPromoCodeManager": {
+    "confirmDelete": "[FR] Confirm Delete",
+    "discountTypes": {
+      "percentage": "[FR] Percentage",
+      "fixedAmount": "[FR] Fixed Amount",
+      "freeMinutes": "[FR] Free Minutes"
+    },
+    "addNewCode": "[FR] Add New Code",
+    "noCodesYet": "[FR] No  Codes Yet",
+    "table": {
+      "code": "[FR] Code",
+      "discountOffer": "[FR] Discount Offer",
+      "expiry": "[FR] Expiry",
+      "status": "[FR] Status",
+      "actions": "[FR] Actions"
+    },
+    "addEditModal": {
+      "editTitle": "[FR] Edit Title",
+      "placeholder": "[FR] Placeholder",
+      "save": "[FR] Save",
+      "addTitle": "[FR] Add Promo Code"
+    }
+  },
+  "settingsTeamPermissions": {
+    "confirmRemoveMember": "[FR] Confirm Remove Member",
+    "passwordResetSentAlert": "[FR] Password Reset Sent Alert",
+    "inviteNewMember": "[FR] Invite New Member",
+    "emailAddress": "[FR] Email Address",
+    "emailPlaceholder": "[FR] Enter email",
+    "role": "[FR] Role",
+    "sendInvite": "[FR] Send Invite",
+    "currentTeamMembers": "[FR] Current Team Members",
+    "noTeamMembers": "[FR] No  Team Members",
+    "table": {
+      "email": "[FR] Email",
+      "role": "[FR] Role",
+      "status": "[FR] Status",
+      "actions": "[FR] Actions"
+    },
+    "roles": {
+      "editor": "[FR] Editor",
+      "viewer": "[FR] Viewer"
+    },
+    "resetPasswordTooltip": "[FR] Reset Password Tooltip",
+    "removeMemberTooltip": "[FR] Remove Member Tooltip"
+  },
+  "activeClientToggle": {
+    "confirmSave": "[FR] Confirm Save",
+    "saveSuccess": {
+      "title": "[FR] Title",
+      "message": "[FR] Message"
+    },
+    "title": "[FR] Title",
+    "label": "[FR] Label",
+    "reasonLabel": "[FR] Reason",
+    "noteLabel": "[FR] No te",
+    "notePlaceholder": "[FR] No ter note",
+    "subtext": "[FR] Subtext"
+  },
+  "errorBoundary": {
+    "somethingWentWrong": "[FR] Something Went Wrong",
+    "sorryMessage": "[FR] Sorry Message",
+    "errorDetails": "[FR] Error Details",
+    "tryAgain": "[FR] Try Again",
+    "reloadPage": "[FR] Reload Page"
+  },
+  "featureLock": {
+    "title": "[FR] Title",
+    "message": "[FR] Message",
+    "upgradeButton": "[FR] Upgrade Button"
+  },
+  "fileUploadModal": {
+    "title": "[FR] Title",
+    "uploadFile": "[FR] Upload File",
+    "dragAndDrop": "[FR] Drag and drop files here",
+    "fileTypes": "[FR] File Types",
+    "filesToUpload": "[FR] Files to Upload",
+    "uploading": "[FR] Uploading",
+    "uploadButton": "[FR] Upload"
+  },
+  "renameFileModal": {
+    "title": "[FR] Title",
+    "label": "[FR] Label"
+  },
+  "supplierDashboard": {
+    "recentOrdersActions": {
+      "decline": "[FR] Decline",
+      "accept": "[FR] Accept"
+    },
+    "noSalesYet": "[FR] No  Sales Yet",
+    "title": "[FR] Title",
+    "welcomeMessage": "[FR] Welcome Message",
+    "widgets": {
+      "sales": {
+        "title": "[FR] Title",
+        "totalOrders": "[FR] Total Orders",
+        "revenueMonth": "[FR] Revenue Month",
+        "topSelling": "[FR] Top Selling",
+        "fulfillmentRate": "[FR] Fulfillment Rate",
+        "button": "[FR] Button"
+      },
+      "products": {
+        "title": "[FR] Title",
+        "active": "[FR] Active",
+        "pending": "[FR] Pending",
+        "lowStock": "[FR] Low Stock",
+        "button": "[FR] Button"
+      },
+      "orders": {
+        "title": "[FR] Title",
+        "pending": "[FR] Pending",
+        "toFulfill": "[FR] To Fulfill",
+        "button": "[FR] Button"
+      }
+    },
+    "recentOrdersTitle": "[FR] Recent Orders Title",
+    "noRecentOrders": "[FR] No  Recent Orders",
+    "recentOrdersTable": {
+      "id": "[FR] Id",
+      "creche": "[FR] Creche",
+      "date": "[FR] Date",
+      "total": "[FR] Total",
+      "status": "[FR] Status"
+    }
+  },
+  "orderRequestDetailModal": {
+    "markAsProcessing": "[FR] Mark As Processing",
+    "title": "[FR] Title",
+    "orderId": "[FR] Order Id",
+    "date": "[FR] Date",
+    "status": "[FR] Status",
+    "total": "[FR] Total",
+    "viewDaycareProfile": "[FR] View Daycare Profile",
+    "lineItems": "[FR] Line Items",
+    "product": "[FR] Product",
+    "quantity": "[FR] Quantity",
+    "price": "[FR] Price",
+    "notes": "[FR] No tes"
+  },
+  "fileUploadZone": {
+    "dragAndDrop": "[FR] Drag and drop files here"
+  },
+  "appContext": {
+    "useAppContextError": "[FR] Use App Context Error"
+  },
+  "cartContext": {
+    "useCartError": "[FR] Use Cart Error"
+  },
+  "messagingContext": {
+    "userNotLoggedIn": "[FR] User Not Logged In",
+    "useMessagingError": "[FR] Use Messaging Error"
+  },
+  "notificationContext": {
+    "useNotificationsError": "[FR] Use Notifications Error"
+  },
+  "fileGallery": {
+    "actions": {
+      "preview": "[FR] Preview",
+      "download": "[FR] Download",
+      "rename": "[FR] Rename",
+      "delete": "[FR] Delete"
+    },
+    "confirmDelete": "[FR] Confirm Delete",
+    "uploadButton": "[FR] Upload Button",
+    "emptyState": {
+      "title": "[FR] Title",
+      "message": "[FR] Message"
+    }
+  },
+  "hrDocumentCard": {
+    "categoryLabel": "[FR] Category",
+    "languageLabel": "[FR] Language",
+    "toggleFavoriteLabel": "[FR] Toggle Favorite",
+    "lastUpdatedLabel": "[FR] Last Updated",
+    "downloadingAlert": "[FR] Downloading Alert",
+    "previewingAlert": "[FR] Previewing Alert",
+    "editButtonLabel": "[FR] Edit Button",
+    "deleteButtonLabel": "[FR] Delete Button",
+    "downloadButton": "[FR] Download",
+    "previewButtonLabel": "[FR] Preview",
+    "versionLabel": "[FR] Version"
+  },
+  "marketplacePage": {
+    "serviceCard": {
+      "categoryLabel": "[FR] Category",
+      "bookAppointment": "[FR] Book Appointment",
+      "viewProvider": "[FR] View Provider"
+    }
+  },
+  "notificationsPage": {
+    "title": "[FR] Title"
+  },
+  "parentEnquiriesPage": {
+    "title": "[FR] Title"
+  },
+  "parentLeadFormPage": {
+    "title": "[FR] Title"
+  },
+  "adminSystemMonitoringPage": {
+    "title": "[FR] Title"
+  },
+  "discountTerminationsPage": {
+    "actions": {
+      "sendNoticesAlert": "[FR] Send Notices Alert",
+      "markCompleted": "[FR] Mark Completed",
+      "sendNotices": "[FR] Send Notices"
+    },
+    "table": {
+      "vendor": "[FR] Vendor",
+      "daycare": "[FR] Daycare",
+      "activeSince": "[FR] Active Since",
+      "reason": "[FR] Reason",
+      "actions": "[FR] Actions"
+    },
+    "queue": {
+      "title": "[FR] Title",
+      "description": "[FR] Description",
+      "tableTitle": "[FR] Table Title"
+    },
+    "allActive": {
+      "title": "[FR] Title",
+      "description": "[FR] Description",
+      "tableTitle": "[FR] Table Title"
+    }
+  },
+  "educatorApplicationsPage": {
+    "title": "[FR] Title"
+  },
+  "educatorDashboard": {
+    "title": "[FR] Title",
+    "welcome": "[FR] Welcome",
+    "profileCompletion": {
+      "title": "[FR] Title",
+      "subtitle": "[FR] Subtitle",
+      "button": "[FR] Button"
+    },
+    "applicationStatus": {
+      "title": "[FR] Title",
+      "submitted": "[FR] Submitted",
+      "viewed": "[FR] Viewed",
+      "interviews": "[FR] Interviews",
+      "offers": "[FR] Offers",
+      "button": "[FR] Button"
+    },
+    "skills": {
+      "title": "[FR] Title",
+      "subtitle": "[FR] Subtitle",
+      "button": "[FR] Button"
+    },
+    "recommendations": {
+      "title": "[FR] Title",
+      "match": "[FR] Match"
+    }
+  },
+  "supportPage": {
+    "faqTitle": "[FR] Faq Title",
+    "furtherAssistanceTitle": "[FR] Further Assistance Title",
+    "furtherAssistanceText": {
+      "0": "[FR] 0",
+      "1": "[FR] Our support team is here to help you."
+    },
+    "submitTicketTitle": "[FR] Submit Ticket Title",
+    "ticketForm": {
+      "subjectLabel": "[FR] Subject",
+      "messageLabel": "[FR] Message"
+    }
+  },
+  "foundationAnalyticsPage": {
+    "title": "[FR] Title"
+  },
+  "foundationDashboard": {
+    "title": "[FR] Title",
+    "welcomeMessage": "[FR] Welcome Message",
+    "quickStats": {
+      "title": "[FR] Title"
+    },
+    "todayAtGlance": "[FR] Today At Glance",
+    "activity": {
+      "title": "[FR] Title"
+    },
+    "quickActions": {
+      "title": "[FR] Title"
+    },
+    "quickMessage": {
+      "title": "[FR] Title",
+      "placeholder": "[FR] Placeholder"
+    }
+  },
+  "foundationOrganisationProfilePage": {
+    "title": "[FR] Title"
+  },
+  "parentDashboard": {
+    "title": "[FR] Title",
+    "welcomeMessage": "[FR] Welcome Message",
+    "enquiry": {
+      "title": "[FR] Title",
+      "sent": "[FR] Sent",
+      "responses": "[FR] Responses",
+      "pending": "[FR] Pending",
+      "button": "[FR] Button"
+    },
+    "quickActions": {
+      "title": "[FR] Title"
+    },
+    "childProfile": {
+      "title": "[FR] Title",
+      "name": "[FR] Name",
+      "age": "[FR] Age",
+      "location": "[FR] Location",
+      "languages": "[FR] Languages",
+      "specialNeeds": "[FR] Special Needs",
+      "button": "[FR] Button"
+    },
+    "favorites": {
+      "title": "[FR] Title",
+      "subtitle": "[FR] Subtitle",
+      "button": "[FR] Button"
+    }
+  },
+  "parentSupportPage": {
+    "faq": {
+      "matchingProcess": {
+        "a": "[FR] A"
+      },
+      "responseTime": {
+        "a": "[FR] A"
+      },
+      "dataSecurity": {
+        "a": "[FR] A"
+      }
+    }
+  },
+  "userRoles": {
+    "Product Supplier": "[FR] Product  Supplier",
+    "parent": "[FR] Parent",
+    "educator": "[FR] Educator",
+    "foundation": "[FR] Foundation",
+    "admin": "[FR] Administrator",
+    "productSupplier": "[FR] Product Supplier",
+    "serviceProvider": "[FR] Service Provider",
+    "Service Provider": "[FR] Service Provider",
+    "PARENT": "[FR] Parent",
+    "EDUCATOR": "[FR] Educator",
+    "FOUNDATION": "[FR] Foundation"
+  },
+  "serviceProviderAnalyticsPage": {
+    "title": "[FR] Title"
+  },
+  "serviceProviderDashboard": {
+    "title": "[FR] Title",
+    "welcomeMessage": "[FR] Welcome Message",
+    "widgets": {
+      "overview": {
+        "title": "[FR] Title",
+        "activeRequests": "[FR] Active Requests",
+        "completedServices": "[FR] Completed Services",
+        "upcoming": "[FR] Upcoming",
+        "customerRating": "[FR] Customer Rating",
+        "button": "[FR] Button"
+      },
+      "management": {
+        "title": "[FR] Title",
+        "listings": "[FR] Listings",
+        "pending": "[FR] Pending",
+        "categories": "[FR] Categories",
+        "button": "[FR] Button"
+      },
+      "appointments": {
+        "title": "[FR] Title",
+        "with": "[FR] With",
+        "button": "[FR] Button"
+      }
+    }
+  },
+  "serviceProviderListingsPage": {
+    "title": "[FR] Title"
+  },
+  "serviceProviderRequestsPage": {
+    "title": "[FR] Title"
+  },
+  "supplierOrdersPage": {
+    "title": "[FR] Title"
+  },
+  "supplierProductListingsPage": {
+    "title": "[FR] Title"
+  },
+  "serviceProvider": {
+    "noServicesFound": "[FR] No services found"
+  },
+  "Title and Message are required": {
+    "": "[FR] Title and Message are required."
+  },
+  "Cannot submit order": {
+    " User not logged in, supplier info missing, or cart is empty": {
+      "": "[FR] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
+    }
+  },
+  "orderStatus": {
+    "pending": "[FR] Pending",
+    "approved": "[FR] Approved",
+    "rejected": "[FR] Rejected",
+    "completed": "[FR] Completed",
+    "cancelled": "[FR] Cancelled",
+    "active": "[FR] Active",
+    "inactive": "[FR] Inactive",
+    "paid": "[FR] Paid",
+    "shipped": "[FR] Shipped"
+  },
+  "serviceStatus": {
+    "pending": "[FR] Pending",
+    "approved": "[FR] Approved",
+    "rejected": "[FR] Rejected",
+    "completed": "[FR] Completed",
+    "cancelled": "[FR] Cancelled",
+    "active": "[FR] Active",
+    "inactive": "[FR] Inactive",
+    "paid": "[FR] Paid",
+    "shipped": "[FR] Shipped"
+  },
+  "vendorClientReasons": {
+    "inactive": "[FR] Inactive",
+    "testing": "[FR] Testing",
+    "trial": "[FR] Trial",
+    "demo": "[FR] Demo"
+  },
+  "stockStatus": {
+    "instock": "[FR] In Stock",
+    "outofstock": "[FR] Out of Stock",
+    "lowstock": "[FR] Low Stock",
+    "discontinued": "[FR] Discontinued",
+    "inStock": "[FR] In Stock",
+    "outOfStock": "[FR] Out of Stock",
+    "lowStock": "[FR] Low Stock"
+  },
+  "contentType": {
+    "course": "[FR] Course",
+    "video": "[FR] Video",
+    "pdf": "[FR] PDF",
+    "link": "[FR] External Link",
+    "policy": "[FR] Policy"
+  },
+  "eLearningTypes": {
+    "course": "[FR] Course",
+    "video": "[FR] Video",
+    "pdf": "[FR] PDF Document",
+    "link": "[FR] External Link"
+  },
+  "policyStatusOptions": {
+    "active": "[FR] Active",
+    "archived": "[FR] Archived",
+    "draft": "[FR] Draft"
   }
 }
