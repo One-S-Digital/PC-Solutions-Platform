@@ -233,46 +233,8 @@ async function seedEnterpriseStructure() {
     },
   });
 
-  // Assign users to organizations
-  const adminUser = await prisma.user.findUnique({ where: { email: 'admin@foundationA.ch' } });
-  const managerUser = await prisma.user.findUnique({ where: { email: 'manager@branchA.ch' } });
-  const educatorUser = await prisma.user.findUnique({ where: { email: 'educator@branchA.ch' } });
-
-  if (adminUser && sunriseGroup) {
-    await prisma.userOrganization.upsert({
-      where: { userId_organizationId: { userId: adminUser.id, organizationId: sunriseGroup.id } },
-      update: {},
-      create: {
-        userId: adminUser.id,
-        organizationId: sunriseGroup.id,
-        role: 'ADMIN',
-      },
-    });
-  }
-
-  if (managerUser && pullyBranch) {
-    await prisma.userOrganization.upsert({
-      where: { userId_organizationId: { userId: managerUser.id, organizationId: pullyBranch.id } },
-      update: {},
-      create: {
-        userId: managerUser.id,
-        organizationId: pullyBranch.id,
-        role: 'FOUNDATION',
-      },
-    });
-  }
-
-  if (educatorUser && pullyBranch) {
-    await prisma.userOrganization.upsert({
-      where: { userId_organizationId: { userId: educatorUser.id, organizationId: pullyBranch.id } },
-      update: {},
-      create: {
-        userId: educatorUser.id,
-        organizationId: pullyBranch.id,
-        role: 'EDUCATOR',
-      },
-    });
-  }
+  // Note: Users should be created through Clerk authentication and manually assigned to organizations
+  // via the admin interface or a separate onboarding process.
 }
 
 async function seedSampleContent() {
@@ -312,37 +274,8 @@ async function seedSampleContent() {
     });
   }
 
-  // Create sample messages
-  const educatorUser = await prisma.user.findUnique({ where: { email: 'educator@branchA.ch' } });
-  const parentUser = await prisma.user.findUnique({ where: { email: 'parent@demo.ch' } });
-
-  if (educatorUser && parentUser) {
-    // Create conversation
-    const conversation = await prisma.conversation.create({
-      data: {
-        type: 'DIRECT',
-        title: 'Child Progress Discussion',
-      },
-    });
-
-    // Add participants
-    await prisma.conversationParticipant.createMany({
-      data: [
-        { conversationId: conversation.id, userId: educatorUser.id },
-        { conversationId: conversation.id, userId: parentUser.id },
-      ],
-    });
-
-    // Create sample message
-    await prisma.message.create({
-      data: {
-        content: 'Hello! I wanted to update you on your child\'s progress this week.',
-        type: 'TEXT',
-        conversationId: conversation.id,
-        senderId: educatorUser.id,
-      },
-    });
-  }
+  // Note: Sample conversations should be created after users authenticate through Clerk
+  // and can be set up via the application UI or a separate demo data script.
 }
 
 async function seedFeatureFlags() {

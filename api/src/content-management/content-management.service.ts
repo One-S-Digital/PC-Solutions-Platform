@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContentItemDto, UpdateContentItemDto, CreateContentCategoryDto } from './dto/content-management.dto';
-import { ContentItem, ContentCategory } from '@prisma/client';
+import { ContentItem, ContentCategory, ContentStatus } from '@prisma/client';
 import { R2Service } from '../upload/r2.service';
 
 @Injectable()
@@ -251,9 +251,9 @@ export class ContentManagementService {
   async getContentDashboard(): Promise<any> {
     const [totalItems, publishedItems, draftItems, archivedItems, categories] = await Promise.all([
       this.prisma.contentItem.count(),
-      this.prisma.contentItem.count({ where: { status: 'published' } }),
-      this.prisma.contentItem.count({ where: { status: 'draft' } }),
-      this.prisma.contentItem.count({ where: { status: 'archived' } }),
+      this.prisma.contentItem.count({ where: { status: ContentStatus.PUBLISHED } }),
+      this.prisma.contentItem.count({ where: { status: ContentStatus.DRAFT } }),
+      this.prisma.contentItem.count({ where: { status: ContentStatus.ARCHIVED } }),
       this.prisma.contentCategory.count({ where: { isActive: true } }),
     ]);
 
@@ -305,7 +305,7 @@ export class ContentManagementService {
 
     return this.prisma.contentItem.update({
       where: { id },
-      data: { status: 'published' },
+      data: { status: ContentStatus.PUBLISHED },
       include: {
         uploader: {
           select: {
@@ -330,7 +330,7 @@ export class ContentManagementService {
 
     return this.prisma.contentItem.update({
       where: { id },
-      data: { status: 'archived' },
+      data: { status: ContentStatus.ARCHIVED },
       include: {
         uploader: {
           select: {

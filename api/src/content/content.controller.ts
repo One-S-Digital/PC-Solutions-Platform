@@ -10,15 +10,18 @@ import {
   UploadedFile,
   Request,
   UseGuards,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ContentService } from './content.service';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 
 @Controller('content')
-@UseGuards(RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
@@ -33,11 +36,11 @@ export class ContentController {
   ) {
     try {
       if (!file) {
-        throw new Error('No file provided');
+        throw new BadRequestException('File is required');
       }
       
       if (!req.context?.appUserId) {
-        throw new Error('User not authenticated');
+        throw new UnauthorizedException('User not authenticated');
       }
 
       const result = await this.contentService.uploadElearningContent(
@@ -69,11 +72,11 @@ export class ContentController {
   ) {
     try {
       if (!file) {
-        throw new Error('No file provided');
+        throw new BadRequestException('File is required');
       }
       
       if (!req.context?.appUserId) {
-        throw new Error('User not authenticated');
+        throw new UnauthorizedException('User not authenticated');
       }
 
       const result = await this.contentService.uploadHrDocument(
@@ -105,11 +108,11 @@ export class ContentController {
   ) {
     try {
       if (!file) {
-        throw new Error('No file provided');
+        throw new BadRequestException('File is required');
       }
       
       if (!req.context?.appUserId) {
-        throw new Error('User not authenticated');
+        throw new UnauthorizedException('User not authenticated');
       }
 
       const result = await this.contentService.uploadStatePolicy(

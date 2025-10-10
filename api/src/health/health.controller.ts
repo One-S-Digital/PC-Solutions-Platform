@@ -226,15 +226,18 @@ export class HealthController {
   @ApiResponse({ status: 200, description: 'Returns app users' })
   async listAppUsers(
     @Query('clerkId') clerkId?: string,
+    @Query('clerkUserId') clerkUserId?: string, // Deprecated: use clerkId instead
     @Query('limit') limit?: string,
   ) {
+    // Support both clerkId and clerkUserId for backwards compatibility
+    const clerkIdFilter = clerkId || clerkUserId;
     const take = Math.min(Math.max(parseInt(limit || '20', 10) || 20, 1), 100);
     // @ts-ignore - model exists
     const appUsers = await this.prisma.appUser.findMany({
-      where: clerkId ? { clerkId } : {},
+      where: clerkIdFilter ? { clerkId: clerkIdFilter } : {},
       take,
       orderBy: { createdAt: 'desc' },
-      select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
+      select: { id: true, clerkId: true, role: true, createdAt: true },
     });
     return { success: true, data: appUsers, count: appUsers.length, timestamp: new Date().toISOString() };
   }

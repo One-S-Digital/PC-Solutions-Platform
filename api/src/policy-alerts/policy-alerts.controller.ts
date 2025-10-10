@@ -38,7 +38,7 @@ export class PolicyAlertsController {
         limit: limit ? parseInt(limit) : 20,
         region,
         alertType,
-        isActive: isActive === 'true',
+        isActive: typeof isActive === 'string' ? isActive === 'true' : undefined,
       });
       return {
         success: true,
