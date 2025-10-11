@@ -45,6 +45,10 @@ export class PolicyAlertsController {
         data: alerts,
       };
     } catch (error) {
+      // Preserve existing HttpException status codes
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -65,6 +69,9 @@ export class PolicyAlertsController {
         data: alert,
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -87,6 +94,9 @@ export class PolicyAlertsController {
         message: 'Policy alert created successfully',
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -109,6 +119,9 @@ export class PolicyAlertsController {
         message: 'Policy alert updated successfully',
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -130,6 +143,9 @@ export class PolicyAlertsController {
         message: 'Policy alert deleted successfully',
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -152,6 +168,9 @@ export class PolicyAlertsController {
         message: `Policy alert ${alert.isActive ? 'activated' : 'deactivated'} successfully`,
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -172,6 +191,9 @@ export class PolicyAlertsController {
         data: alerts,
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,
@@ -192,6 +214,9 @@ export class PolicyAlertsController {
         data: summary,
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
           success: false,

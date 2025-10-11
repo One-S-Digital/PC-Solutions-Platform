@@ -181,7 +181,8 @@ model User {
   // New admin features relations
   contentItems            ContentItem[]                @relation("ContentUploader")
   policyAlerts            PolicyAlert[]                @relation("PolicyAlertCreator")
-  auditLogs               AuditLog[]                   @relation("AuditLogUser")
+  auditLogs               AuditLog[]                   @relation("AuditLogActor")
+  platformSettingsUpdates PlatformSettings[]           @relation("PlatformSettingsUpdater")
   apiKeys                 ApiKey[]                     @relation("ApiKeyCreator")
   webhooks                Webhook[]                    @relation("WebhookCreator")
 
@@ -257,10 +258,17 @@ model Asset {
   mimeType     String?
   size         Int?
   uploadedById String
+  etag         String? // ETag from R2/S3 for verification
+  checksum     String? // SHA-256 checksum (base64) for integrity
+  version      Int      @default(1) // Version for response/schema changes
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Relations - after migration, points to AppUser
   uploader AppUser @relation("AssetUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
+
+  @@index([storageKey])
+  @@index([etag])
 
   // Organization asset relations
   organizationLogos  Organization[] @relation("OrganizationLogo")
@@ -1279,6 +1287,7 @@ model PlatformSettings {
   platformDescription   String?
   platformVersion       String   @default("1.0.0")
   maintenanceMode       Boolean  @default(false)
+  maintenanceMessage    String?  // Custom message during maintenance
   registrationEnabled   Boolean  @default(true)
   emailVerificationRequired Boolean @default(true)
   maxFileUploadSize     Int      @default(10485760) // 10MB in bytes
@@ -1290,10 +1299,36 @@ model PlatformSettings {
   apiRateLimit          Int      @default(1000) // requests per hour
   backupFrequency       String   @default("daily") // daily, weekly, monthly
   logRetentionDays      Int      @default(90)
+  revision              Int      @default(1) // For optimistic locking
+  updatedBy             String?  // User ID who made last update
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  // Relations
+  updater User? @relation("PlatformSettingsUpdater", fields: [updatedBy], references: [id])
+
   @@map("platform_settings")
+}
+
+// Audit Logging for Compliance and Debugging
+model AuditLog {
+  id        String   @id @default(uuid())
+  entity    String   // e.g., "PolicyAlert", "ContentItem", "User"
+  entityId  String   // ID of the entity that was modified
+  action    String   // "create", "update", "delete", "upsert"
+  actorId   String?  // User ID who performed the action
+  diff      Json?    // Before/after snapshot
+  metadata  Json?    // Request context (IP, traceId, userAgent, etc.)
+  createdAt DateTime @default(now())
+
+  // Relations
+  actor User? @relation("AuditLogActor", fields: [actorId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@index([action])
+  @@map("audit_logs")
 }
 
 // System Monitoring and Health Checks
@@ -1396,26 +1431,6 @@ model PolicyAlert {
   creator User @relation("PolicyAlertCreator", fields: [createdBy], references: [id])
 
   @@map("policy_alerts")
-}
-
-// Audit Logging System
-model AuditLog {
-  id          String   @id @default(uuid())
-  userId      String?
-  action      String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
-  resource    String   // User, Organization, Product, etc.
-  resourceId  String?
-  oldValues   Json?    // Previous values
-  newValues   Json?    // New values
-  ipAddress   String?
-  userAgent   String?
-  metadata    Json?    // Additional context
-  createdAt   DateTime @default(now())
-
-  // Relations
-  user User? @relation("AuditLogUser", fields: [userId], references: [id])
-
-  @@map("audit_logs")
 }
 
 // API Key Management

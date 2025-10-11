@@ -1,8 +1,9 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssetKind } from '@repo/types';
+import { createHash } from 'crypto';
 
 export interface UploadResult {
   key: string;
@@ -10,6 +11,8 @@ export interface UploadResult {
   filename: string;
   mimeType: string;
   size: number;
+  etag?: string;
+  checksum?: string;
 }
 
 export interface PresignedUploadData {
@@ -91,7 +94,7 @@ export class CloudflareR2Service {
   }
 
   /**
-   * Upload file directly from server
+   * Upload file directly from server with checksum verification
    */
   async uploadFile(
     file: Express.Multer.File,
@@ -109,25 +112,39 @@ export class CloudflareR2Service {
 
       const key = this.generateStorageKey(file.originalname, assetKind, appUserId);
       
+      // Calculate SHA-256 checksum
+      const checksum = this.calculateChecksum(file.buffer);
+      
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
+        ChecksumSHA256: checksum, // S3-compatible checksum
         Metadata: {
           'uploaded-by': appUserId,
           'asset-kind': assetKind,
           'original-filename': file.originalname,
+          'checksum-sha256': checksum,
         },
       });
 
-      this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key}`);
+      this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key} with checksum: ${checksum.substring(0, 16)}...`);
       
       await this.s3Client.send(command);
       
+      // Verify upload by fetching ETag
+      const headCommand = new HeadObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+      
+      const headResponse = await this.s3Client.send(headCommand);
+      const etag = headResponse.ETag?.replace(/"/g, '') || '';
+      
       const publicUrl = `${this.publicUrl}/${key}`;
       
-      this.logger.log(`File uploaded successfully: ${key}`);
+      this.logger.log(`File uploaded successfully: ${key}, ETag: ${etag}`);
       
       return {
         key,
@@ -135,6 +152,8 @@ export class CloudflareR2Service {
         filename: file.originalname,
         mimeType: file.mimetype,
         size: file.size,
+        etag,
+        checksum,
       };
     } catch (error) {
       this.logger.error('Failed to upload file', {
@@ -150,6 +169,33 @@ export class CloudflareR2Service {
       }
       
       throw new BadRequestException(`Failed to upload file: ${error.message}`);
+    }
+  }
+
+  /**
+   * Calculate SHA-256 checksum (base64 encoded for S3 compatibility)
+   */
+  private calculateChecksum(buffer: Buffer): string {
+    return createHash('sha256').update(buffer).digest('base64');
+  }
+
+  /**
+   * Check if a file exists in R2
+   */
+  async exists(key: string): Promise<boolean> {
+    try {
+      const command = new HeadObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+      
+      await this.s3Client.send(command);
+      return true;
+    } catch (error) {
+      if (error.name === 'NotFound' || error.name === 'NoSuchKey') {
+        return false;
+      }
+      throw error;
     }
   }
 

@@ -314,8 +314,6 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-            {/* Translation Debug Tool - Only visible in development */}
-            {(import.meta.env.DEV || import.meta.env.MODE === 'development') && <TranslationDebugger />}
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>

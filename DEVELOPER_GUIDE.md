@@ -54,16 +54,16 @@ npm run dev
 ```
 
 ### Access Points
-- Frontend: http://localhost:3000
-- Admin: http://localhost:3001
-- API: http://localhost:3002
-- API Docs: http://localhost:3002/api
+- Frontend: <http://localhost:3000>
+- Admin: <http://localhost:3001>
+- API: <http://localhost:3002>
+- API Docs: <http://localhost:3002/api>
 
 ---
 
 ## Project Structure
 
-```
+```text
 PC-Solutions-V2/
 ├── admin/                 # Admin dashboard (React + Vite)
 │   ├── src/
@@ -110,7 +110,7 @@ PC-Solutions-V2/
 │
 ├── docs/                 # Documentation
 ├── scripts/              # Build/deployment scripts
-└── docker-compose.yml    # Docker services
+└── docker compose.yml    # Docker services
 ```
 
 ---
@@ -204,7 +204,7 @@ cd frontend && npm run dev
 cd admin && npm run dev
 
 # API only
-cd api && npm run start:dev
+cd api && npm run start
 
 # API with watch mode
 cd api && npm run start:dev
@@ -388,6 +388,8 @@ describe('UserService', () => {
 
 ### E2E Tests (Playwright)
 
+> **Note:** Run these commands from the app containing your Playwright config (e.g., `frontend/` or `admin/`).
+
 ```bash
 # Install Playwright
 npx playwright install
@@ -421,6 +423,10 @@ npm run test:e2e -- --ui
 - `VITE_API_URL` - Backend API URL
 - `VITE_CLERK_PUBLISHABLE_KEY` - Clerk key
 
+> **Security notes:**
+> - Never commit `.env*` files. Use GitHub Actions/Render environment secrets.
+> - Server-only secrets (e.g., `CLERK_SECRET_KEY`, `R2_*`, `DATABASE_URL`) must not be exposed to frontend builds. Only `VITE_*` vars should be read in client code.
+
 ### Build Process
 
 ```bash
@@ -437,16 +443,16 @@ npm run build
 
 ```bash
 # Build images
-docker-compose build
+docker compose build
 
 # Start services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop services
-docker-compose down
+docker compose down
 ```
 
 ### Render.com Deployment
@@ -468,25 +474,25 @@ See `RENDER_DEPLOYMENT_GUIDE.md` for detailed instructions.
 ### Common Issues
 
 #### Database Connection Error
-```
+```text
 Error: P1001: Can't reach database server
 ```
 **Solution:** Check DATABASE_URL, ensure PostgreSQL is running
 
 #### Module Not Found
-```
+```text
 Cannot find module '@/components/Button'
 ```
 **Solution:** Check tsconfig.json paths, run `npm install`
 
 #### Clerk Authentication Error
-```
+```text
 Clerk: Missing publishable key
 ```
 **Solution:** Set VITE_CLERK_PUBLISHABLE_KEY in .env
 
 #### Port Already in Use
-```
+```text
 Error: listen EADDRINUSE: address already in use :::3000
 ```
 **Solution:** Kill process on port or change port in config

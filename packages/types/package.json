@@ -1,14 +1,17 @@
 {
-  "name": "@repo/types",
-  "version": "0.0.1",
-  "private": true,
-  "type": "commonjs",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "name": "@workspace/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types and interfaces for PC Solutions V2",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "echo 'Types package - no build needed'",
-    "type-check": "tsc --noEmit"
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
   },
+  "keywords": ["types", "shared", "typescript"],
+  "author": "PC Solutions Team",
+  "license": "MIT",
   "devDependencies": {
     "typescript": "^5.9.2"
   }

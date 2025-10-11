@@ -1,4 +1,10 @@
-import { IsString, IsArray, IsBoolean, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsArray, IsBoolean, IsOptional, IsDateString, IsIn } from 'class-validator';
+
+export enum AlertType {
+  INFO = 'info',
+  WARNING = 'warning',
+  CRITICAL = 'critical',
+}
 
 export class CreatePolicyAlertDto {
   @IsString()
@@ -7,8 +13,9 @@ export class CreatePolicyAlertDto {
   @IsString()
   message: string;
 
+  @IsIn(Object.values(AlertType))
   @IsString()
-  alertType: string; // info, warning, critical
+  alertType: AlertType;
 
   @IsArray()
   @IsString({ each: true })
@@ -40,8 +47,9 @@ export class UpdatePolicyAlertDto {
   message?: string;
 
   @IsOptional()
+  @IsIn(Object.values(AlertType))
   @IsString()
-  alertType?: string;
+  alertType?: AlertType;
 
   @IsOptional()
   @IsArray()
