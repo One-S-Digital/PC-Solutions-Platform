@@ -45,10 +45,10 @@ const SignupPage: React.FC = () => {
   }, [currentUser, navigate]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType }[] = [
-    { role: SignupRole.FOUNDATION, nameKey: 'roles.foundation', icon: BuildingOffice2Icon },
-    { role: SignupRole.SUPPLIER, nameKey: 'roles.supplier', icon: UserIcon },
-    { role: SignupRole.SERVICE_PROVIDER, nameKey: 'roles.serviceProvider', icon: CogIcon },
-    { role: SignupRole.PARENT, nameKey: 'roles.parent', icon: UsersIcon },
+    { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
+    { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
+    { role: SignupRole.SERVICE_PROVIDER, nameKey: 'role.serviceProvider', icon: CogIcon },
+    { role: SignupRole.PARENT, nameKey: 'role.parent', icon: UsersIcon },
   ];
 
   const handleRoleSelect = (role: SignupRole) => {

@@ -82,7 +82,7 @@ const FIX_PATTERNS = [
   {
     name: 'signupPage.roles.*',
     find: /t\(['"`]signupPage\.roles\.([a-zA-Z0-9]+)['"`]/g,
-    replace: "t('roles.$1'",
+    replace: "t('role.$1'",  // Changed to 'role' (singular) to match simple string structure
     namespace: 'signup'
   },
   {
