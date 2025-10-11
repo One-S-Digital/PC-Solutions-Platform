@@ -181,7 +181,8 @@ model User {
   // New admin features relations
   contentItems            ContentItem[]                @relation("ContentUploader")
   policyAlerts            PolicyAlert[]                @relation("PolicyAlertCreator")
-  auditLogs               AuditLog[]                   @relation("AuditLogUser")
+  auditLogs               AuditLog[]                   @relation("AuditLogActor")
+  platformSettingsUpdates PlatformSettings[]           @relation("PlatformSettingsUpdater")
   apiKeys                 ApiKey[]                     @relation("ApiKeyCreator")
   webhooks                Webhook[]                    @relation("WebhookCreator")
 
@@ -1286,6 +1287,7 @@ model PlatformSettings {
   platformDescription   String?
   platformVersion       String   @default("1.0.0")
   maintenanceMode       Boolean  @default(false)
+  maintenanceMessage    String?  // Custom message during maintenance
   registrationEnabled   Boolean  @default(true)
   emailVerificationRequired Boolean @default(true)
   maxFileUploadSize     Int      @default(10485760) // 10MB in bytes
@@ -1297,10 +1299,36 @@ model PlatformSettings {
   apiRateLimit          Int      @default(1000) // requests per hour
   backupFrequency       String   @default("daily") // daily, weekly, monthly
   logRetentionDays      Int      @default(90)
+  revision              Int      @default(1) // For optimistic locking
+  updatedBy             String?  // AppUser ID who made last update
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  // Relations
+  updater AppUser? @relation("PlatformSettingsUpdater", fields: [updatedBy], references: [id])
+
   @@map("platform_settings")
+}
+
+// Audit Logging for Compliance and Debugging
+model AuditLog {
+  id        String   @id @default(uuid())
+  entity    String   // e.g., "PolicyAlert", "ContentItem", "AppUser"
+  entityId  String   // ID of the entity that was modified
+  action    String   // "create", "update", "delete", "upsert"
+  actorId   String?  // AppUser ID who performed the action
+  diff      Json?    // Before/after snapshot
+  metadata  Json?    // Request context (IP, traceId, userAgent, etc.)
+  createdAt DateTime @default(now())
+
+  // Relations
+  actor AppUser? @relation("AuditLogActor", fields: [actorId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@index([action])
+  @@map("audit_logs")
 }
 
 // System Monitoring and Health Checks

@@ -1,16 +1,52 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Inject } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePlatformSettingsDto, UpdatePlatformSettingsDto } from './dto/platform-settings.dto';
 import { PlatformSettings } from '@prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PlatformSettingsService {
-  constructor(private prisma: PrismaService) {}
+  private readonly CACHE_KEY_PREFIX = 'platform:settings:';
+  private readonly CACHE_TTL = 60; // 60 seconds
+
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   async getPlatformSettings(): Promise<PlatformSettings | null> {
-    return this.prisma.platformSettings.findFirst({
+    const cacheKey = this.CACHE_KEY_PREFIX + 'current';
+    
+    // Try cache first
+    const cached = await this.cacheManager.get<PlatformSettings>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    // Fetch from database
+    const settings = await this.prisma.platformSettings.findFirst({
       orderBy: { createdAt: 'desc' },
+      include: {
+        updater: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
     });
+
+    // Store in cache
+    if (settings) {
+      await this.cacheManager.set(cacheKey, settings, this.CACHE_TTL * 1000);
+    }
+
+    return settings;
   }
 
   async createPlatformSettings(createDto: CreatePlatformSettingsDto): Promise<PlatformSettings> {
@@ -28,19 +64,54 @@ export class PlatformSettingsService {
   async updatePlatformSettings(
     id: string,
     updateDto: UpdatePlatformSettingsDto,
+    actorId?: string,
+    expectedRevision?: number,
   ): Promise<PlatformSettings> {
-    const existingSettings = await this.prisma.platformSettings.findUnique({
-      where: { id },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      // Lock the row for update to prevent concurrent modifications
+      const existingSettings = await tx.platformSettings.findUnique({
+        where: { id },
+      });
 
-    if (!existingSettings) {
-      throw new NotFoundException('Platform settings not found');
-    }
+      if (!existingSettings) {
+        throw new NotFoundException('Platform settings not found');
+      }
 
-    return this.prisma.platformSettings.update({
-      where: { id },
-      data: updateDto,
-    });
+      // Check revision for optimistic locking
+      if (expectedRevision !== undefined && existingSettings.revision !== expectedRevision) {
+        throw new ConflictException(
+          `Settings have been modified by another user. Expected revision ${expectedRevision}, but current is ${existingSettings.revision}. Please refresh and try again.`
+        );
+      }
+
+      // Update with incremented revision
+      const updated = await tx.platformSettings.update({
+        where: { id },
+        data: {
+          ...updateDto,
+          revision: { increment: 1 },
+          updatedBy: actorId,
+        },
+        include: {
+          updater: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      // Invalidate cache
+      await this.cacheManager.del(this.CACHE_KEY_PREFIX + 'current');
+
+      // Emit event for real-time updates
+      this.eventEmitter.emit('platform.settings.changed', updated);
+
+      return updated;
+    }, { timeout: 5000 });
   }
 
   async deletePlatformSettings(id: string): Promise<void> {
@@ -65,23 +136,38 @@ export class PlatformSettingsService {
     };
   }
 
-  async toggleMaintenanceMode(enabled: boolean, message?: string): Promise<PlatformSettings> {
+  async toggleMaintenanceMode(
+    enabled: boolean,
+    message?: string,
+    actorId?: string,
+  ): Promise<PlatformSettings> {
     let settings = await this.getPlatformSettings();
 
     if (!settings) {
       // Create default settings if none exist
       settings = await this.createPlatformSettings({
         platformName: 'ProCrèche Solutions Suisse',
-        platformDescription: message || 'System is under maintenance',
         maintenanceMode: enabled,
+        maintenanceMessage: message,
       });
     } else {
-      // Update existing settings
-      settings = await this.updatePlatformSettings(settings.id, {
-        maintenanceMode: enabled,
-        platformDescription: message || settings.platformDescription,
-      });
+      // Update existing settings with revision tracking
+      settings = await this.updatePlatformSettings(
+        settings.id,
+        {
+          maintenanceMode: enabled,
+          maintenanceMessage: message,
+        },
+        actorId,
+      );
     }
+
+    // Emit specific event for maintenance mode changes
+    this.eventEmitter.emit('platform.maintenance.changed', {
+      enabled,
+      message,
+      timestamp: new Date().toISOString(),
+    });
 
     return settings;
   }
