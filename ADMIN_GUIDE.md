@@ -15,6 +15,9 @@
 6. [Platform Settings](#platform-settings)
 7. [Common Tasks](#common-tasks)
 8. [Troubleshooting](#troubleshooting)
+9. [Best Practices](#best-practices)
+10. [Getting Help](#getting-help)
+11. [Appendix](#appendix)
 
 ---
 
@@ -283,6 +286,8 @@ View application logs:
 3. Use search to filter
 4. Click "Export" to download
 
+> **Privacy note:** Logs may contain PII. Apply least-privilege access, scrub before sharing, and follow your data retention policy when exporting.
+
 ### Tab 3: Metrics
 
 Performance metrics:
@@ -368,6 +373,11 @@ Configure email notifications:
    - Password
    - From address
    - From name
+
+> **Security note:**
+> - Store SMTP credentials in environment variables or a secrets manager.
+> - Never commit secrets to the repository.
+> - Rotate credentials regularly and audit access.
 
 2. **Test Connection:**
    - Click "Test Email" button
@@ -512,6 +522,18 @@ For SUPER_ADMIN only:
 5. Review email logs for errors
 6. Contact email provider if issue persists
 
+### Issue: Missing or Incorrect Translation
+
+**Symptoms:** Raw keys shown (e.g., `common.save`), English fallback, broken placeholders.
+
+**Solutions:**
+1. Confirm current locale via the language switcher (top bar).
+2. Check the shared translations package (`@workspace/translations`) for the key under the correct namespace/locale.
+3. Ensure the page/component loads the needed namespace(s).
+4. Rebuild/reload to clear any stale caches.
+5. Run i18n checks (CI workflow or local script) and fix reported missing/unused keys.
+6. If unresolved, file an issue with the key path, locale, and screenshot.
+
 ---
 
 ## Best Practices
@@ -548,7 +570,7 @@ For SUPER_ADMIN only:
 
 - **Technical Issues:** Contact technical support
 - **Feature Requests:** Submit via feedback form
-- **Documentation:** Check `/docs` directory
+- **Documentation:** See [docs/](./docs/)
 - **Training:** Request admin training session
 
 ---

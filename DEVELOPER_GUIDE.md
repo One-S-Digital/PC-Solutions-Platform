@@ -110,7 +110,7 @@ PC-Solutions-V2/
 │
 ├── docs/                 # Documentation
 ├── scripts/              # Build/deployment scripts
-└── docker-compose.yml    # Docker services
+└── docker compose.yml    # Docker services
 ```
 
 ---
@@ -388,6 +388,8 @@ describe('UserService', () => {
 
 ### E2E Tests (Playwright)
 
+> **Note:** Run these commands from the app containing your Playwright config (e.g., `frontend/` or `admin/`).
+
 ```bash
 # Install Playwright
 npx playwright install
@@ -421,6 +423,10 @@ npm run test:e2e -- --ui
 - `VITE_API_URL` - Backend API URL
 - `VITE_CLERK_PUBLISHABLE_KEY` - Clerk key
 
+> **Security notes:**
+> - Never commit `.env*` files. Use GitHub Actions/Render environment secrets.
+> - Server-only secrets (e.g., `CLERK_SECRET_KEY`, `R2_*`, `DATABASE_URL`) must not be exposed to frontend builds. Only `VITE_*` vars should be read in client code.
+
 ### Build Process
 
 ```bash
@@ -437,16 +443,16 @@ npm run build
 
 ```bash
 # Build images
-docker-compose build
+docker compose build
 
 # Start services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop services
-docker-compose down
+docker compose down
 ```
 
 ### Render.com Deployment
