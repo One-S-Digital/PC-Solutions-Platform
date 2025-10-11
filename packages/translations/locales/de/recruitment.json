@@ -7,18 +7,85 @@
   "candidatePool": {
     "title": "Kandidatenpool",
     "noCandidates": "Keine Kandidaten verfügbar",
+    "viewProfile": "Profil anzeigen",
+    "searchPlaceholder": "Kandidaten suchen...",
+    "filterTitle": "Kandidaten filtern"
+  },
+  "jobOffers": {
+    "searchPlaceholder": "Stellen suchen...",
+    "filterTitle": "Stellen filtern",
+    "activeJobsCount": "{{count}} aktive Stellenangebote",
+    "emptyState": "Keine Stellen gefunden"
+  },
+  "candidateCard": {
     "viewProfile": "Profil anzeigen"
+  },
+  "tabs": {
+    "jobOffers": "Stellenangebote",
+    "candidatePool": "Kandidatenpool"
+  },
+  "viewApplicantsModal": {
+    "title": "Bewerber für {{jobTitle}}",
+    "noApplicants": "Noch keine Bewerber",
+    "appliedOn": "Beworben am {{date}}"
+  },
+  "jobPostModal": {
+    "editTitle": "Stellenangebot bearbeiten",
+    "addTitle": "Neue Stelle ausschreiben",
+    "jobTitle": "Stellenbezeichnung",
+    "location": "Standort",
+    "contractType": "Vertragsart",
+    "startDate": "Startdatum",
+    "salaryRange": "Gehaltsbereich",
+    "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
+    "description": "Stellenbeschreibung",
+    "responsibilities": "Verantwortlichkeiten",
+    "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
+    "addResponsibility": "Verantwortlichkeit hinzufügen",
+    "qualifications": "Qualifikationen",
+    "qualificationPlaceholder": "Qualifikation hinzufügen",
+    "addQualification": "Qualifikation hinzufügen",
+    "benefits": "Vorteile",
+    "benefitPlaceholder": "Vorteil hinzufügen",
+    "addBenefit": "Vorteil hinzufügen",
+    "requirements": "Anforderungen",
+    "requirementPlaceholder": "Anforderung hinzufügen",
+    "addRequirement": "Anforderung hinzufügen",
+    "postJob": "Stelle veröffentlichen"
+  },
+  "jobDetailModal": {
+    "overviewTitle": "Stellenübersicht",
+    "location": "Standort",
+    "contractType": "Vertragsart",
+    "startDate": "Startdatum",
+    "salary": "Gehalt",
+    "jobDescription": "Stellenbeschreibung",
+    "responsibilities": "Verantwortlichkeiten",
+    "requirements": "Anforderungen",
+    "qualifications": "Qualifikationen",
+    "benefits": "Vorteile",
+    "applyNow": "Jetzt bewerben"
   },
   "buttons": {
     "postNewJob": "Neue Stelle ausschreiben",
     "addCandidate": "Kandidat hinzufügen",
     "applyNow": "Jetzt bewerben",
     "inviteToApply": "Zur Bewerbung einladen",
-    "inviteToInterview": "Zum Interview einladen"
+    "inviteToInterview": "Zum Interview einladen",
+    "viewApplicants": "Bewerber anzeigen",
+    "filters": "Filter",
+    "applyFilters": "Filter anwenden"
+  },
+  "labels": {
+    "location": "Standort",
+    "allContractTypes": "Alle Vertragsarten",
+    "allStatuses": "Alle Status",
+    "allRoles": "Alle Rollen"
   },
   "filters": {
     "location": "Standort",
     "experience": "Erfahrung",
     "availability": "Verfügbarkeit"
-  }
+  },
+  "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?"
 }

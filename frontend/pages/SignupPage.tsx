@@ -88,7 +88,7 @@ const SignupPage: React.FC = () => {
     if (!selectedRole) return false;
 
     if (selectedRole !== SignupRole.PARENT && !formData.organisationName) newErrors.organisationName = t('errors.organisationNameRequired');
-    if (!formData.contactPerson) newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'signupPage.errors.parentNameRequired' : 'signupPage.errors.contactPersonRequired');
+    if (!formData.contactPerson) newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'errors.parentNameRequired' : 'errors.contactPersonRequired');
     if (!formData.email) newErrors.email = t('errors.emailRequired');
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = t('errors.emailInvalid');
     if (!formData.password) newErrors.password = t('errors.passwordRequired');
@@ -201,7 +201,7 @@ const SignupPage: React.FC = () => {
             {currentStep === 2 && selectedRole && (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {selectedRole !== SignupRole.PARENT && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
-                {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'signupPage.labels.parentName' : 'signupPage.labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
+                {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
                 {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
                 {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
                 {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}

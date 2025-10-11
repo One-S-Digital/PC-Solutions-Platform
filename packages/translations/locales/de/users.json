@@ -28,6 +28,11 @@
     "actions": "Aktionen"
   },
   "noUsersFound": "Keine Benutzer gefunden",
+  "status": {
+    "pending": "Ausstehend",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
   "buttons": {
     "addNewUser": "Neuen Benutzer hinzufügen",
     "editUser": "Benutzer bearbeiten",

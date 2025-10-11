@@ -20,6 +20,52 @@
   "candidateCard": {
     "viewProfile": "View Profile"
   },
+  "tabs": {
+    "jobOffers": "Job Offers",
+    "candidatePool": "Candidate Pool"
+  },
+  "viewApplicantsModal": {
+    "title": "Applicants for {{jobTitle}}",
+    "noApplicants": "No applicants yet",
+    "appliedOn": "Applied on {{date}}"
+  },
+  "jobPostModal": {
+    "editTitle": "Edit Job Posting",
+    "addTitle": "Post New Job",
+    "jobTitle": "Job Title",
+    "location": "Location",
+    "contractType": "Contract Type",
+    "startDate": "Start Date",
+    "salaryRange": "Salary Range",
+    "salaryRangePlaceholder": "e.g. CHF 60,000 - 80,000",
+    "description": "Job Description",
+    "responsibilities": "Responsibilities",
+    "responsibilityPlaceholder": "Add a responsibility",
+    "addResponsibility": "Add Responsibility",
+    "qualifications": "Qualifications",
+    "qualificationPlaceholder": "Add a qualification",
+    "addQualification": "Add Qualification",
+    "benefits": "Benefits",
+    "benefitPlaceholder": "Add a benefit",
+    "addBenefit": "Add Benefit",
+    "requirements": "Requirements",
+    "requirementPlaceholder": "Add a requirement",
+    "addRequirement": "Add Requirement",
+    "postJob": "Post Job"
+  },
+  "jobDetailModal": {
+    "overviewTitle": "Job Overview",
+    "location": "Location",
+    "contractType": "Contract Type",
+    "startDate": "Start Date",
+    "salary": "Salary",
+    "jobDescription": "Job Description",
+    "responsibilities": "Responsibilities",
+    "requirements": "Requirements",
+    "qualifications": "Qualifications",
+    "benefits": "Benefits",
+    "applyNow": "Apply Now"
+  },
   "buttons": {
     "postNewJob": "Post New Job",
     "addCandidate": "Add Candidate",

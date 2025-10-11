@@ -28,6 +28,11 @@
     "actions": "Actions"
   },
   "noUsersFound": "No users found",
+  "status": {
+    "pending": "Pending",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
   "buttons": {
     "addNewUser": "Add New User",
     "editUser": "Edit User",

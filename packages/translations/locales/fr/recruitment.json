@@ -7,18 +7,85 @@
   "candidatePool": {
     "title": "Bassin de candidats",
     "noCandidates": "Aucun candidat disponible",
+    "viewProfile": "Voir le profil",
+    "searchPlaceholder": "Rechercher des candidats...",
+    "filterTitle": "Filtrer les candidats"
+  },
+  "jobOffers": {
+    "searchPlaceholder": "Rechercher des emplois...",
+    "filterTitle": "Filtrer les emplois",
+    "activeJobsCount": "{{count}} postes ouverts actifs",
+    "emptyState": "Aucun emploi trouvé"
+  },
+  "candidateCard": {
     "viewProfile": "Voir le profil"
+  },
+  "tabs": {
+    "jobOffers": "Offres d'emploi",
+    "candidatePool": "Bassin de candidats"
+  },
+  "viewApplicantsModal": {
+    "title": "Candidats pour {{jobTitle}}",
+    "noApplicants": "Aucun candidat pour le moment",
+    "appliedOn": "Postulé le {{date}}"
+  },
+  "jobPostModal": {
+    "editTitle": "Modifier l'offre d'emploi",
+    "addTitle": "Publier une nouvelle offre",
+    "jobTitle": "Titre du poste",
+    "location": "Localisation",
+    "contractType": "Type de contrat",
+    "startDate": "Date de début",
+    "salaryRange": "Fourchette salariale",
+    "salaryRangePlaceholder": "p.ex. CHF 60'000 - 80'000",
+    "description": "Description du poste",
+    "responsibilities": "Responsabilités",
+    "responsibilityPlaceholder": "Ajouter une responsabilité",
+    "addResponsibility": "Ajouter une responsabilité",
+    "qualifications": "Qualifications",
+    "qualificationPlaceholder": "Ajouter une qualification",
+    "addQualification": "Ajouter une qualification",
+    "benefits": "Avantages",
+    "benefitPlaceholder": "Ajouter un avantage",
+    "addBenefit": "Ajouter un avantage",
+    "requirements": "Exigences",
+    "requirementPlaceholder": "Ajouter une exigence",
+    "addRequirement": "Ajouter une exigence",
+    "postJob": "Publier l'offre"
+  },
+  "jobDetailModal": {
+    "overviewTitle": "Aperçu du poste",
+    "location": "Localisation",
+    "contractType": "Type de contrat",
+    "startDate": "Date de début",
+    "salary": "Salaire",
+    "jobDescription": "Description du poste",
+    "responsibilities": "Responsabilités",
+    "requirements": "Exigences",
+    "qualifications": "Qualifications",
+    "benefits": "Avantages",
+    "applyNow": "Postuler maintenant"
   },
   "buttons": {
     "postNewJob": "Publier une nouvelle offre",
     "addCandidate": "Ajouter un candidat",
     "applyNow": "Postuler maintenant",
     "inviteToApply": "Inviter à postuler",
-    "inviteToInterview": "Inviter à un entretien"
+    "inviteToInterview": "Inviter à un entretien",
+    "viewApplicants": "Voir les candidats",
+    "filters": "Filtres",
+    "applyFilters": "Appliquer les filtres"
+  },
+  "labels": {
+    "location": "Localisation",
+    "allContractTypes": "Tous les types de contrats",
+    "allStatuses": "Tous les statuts",
+    "allRoles": "Tous les rôles"
   },
   "filters": {
     "location": "Localisation",
     "experience": "Expérience",
     "availability": "Disponibilité"
-  }
+  },
+  "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
 }
