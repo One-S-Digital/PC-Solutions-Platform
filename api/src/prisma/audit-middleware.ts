@@ -7,7 +7,8 @@ import { RequestContextService } from '../common/request-context';
 const AUDITED_MODELS = new Set([
   'PolicyAlert',
   'ContentItem',
-  'AppUser',
+  'User', // Main user model
+  'AppUser', // Alternative user model (if used)
   'PlatformSettings',
   'Organization',
   'Course',

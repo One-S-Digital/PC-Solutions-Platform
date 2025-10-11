@@ -1300,12 +1300,12 @@ model PlatformSettings {
   backupFrequency       String   @default("daily") // daily, weekly, monthly
   logRetentionDays      Int      @default(90)
   revision              Int      @default(1) // For optimistic locking
-  updatedBy             String?  // AppUser ID who made last update
+  updatedBy             String?  // User ID who made last update
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
   // Relations
-  updater AppUser? @relation("PlatformSettingsUpdater", fields: [updatedBy], references: [id])
+  updater User? @relation("PlatformSettingsUpdater", fields: [updatedBy], references: [id])
 
   @@map("platform_settings")
 }
@@ -1313,16 +1313,16 @@ model PlatformSettings {
 // Audit Logging for Compliance and Debugging
 model AuditLog {
   id        String   @id @default(uuid())
-  entity    String   // e.g., "PolicyAlert", "ContentItem", "AppUser"
+  entity    String   // e.g., "PolicyAlert", "ContentItem", "User"
   entityId  String   // ID of the entity that was modified
   action    String   // "create", "update", "delete", "upsert"
-  actorId   String?  // AppUser ID who performed the action
+  actorId   String?  // User ID who performed the action
   diff      Json?    // Before/after snapshot
   metadata  Json?    // Request context (IP, traceId, userAgent, etc.)
   createdAt DateTime @default(now())
 
   // Relations
-  actor AppUser? @relation("AuditLogActor", fields: [actorId], references: [id])
+  actor User? @relation("AuditLogActor", fields: [actorId], references: [id])
 
   @@index([entity, entityId])
   @@index([actorId])
@@ -1431,26 +1431,6 @@ model PolicyAlert {
   creator User @relation("PolicyAlertCreator", fields: [createdBy], references: [id])
 
   @@map("policy_alerts")
-}
-
-// Audit Logging System
-model AuditLog {
-  id          String   @id @default(uuid())
-  userId      String?
-  action      String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
-  resource    String   // User, Organization, Product, etc.
-  resourceId  String?
-  oldValues   Json?    // Previous values
-  newValues   Json?    // New values
-  ipAddress   String?
-  userAgent   String?
-  metadata    Json?    // Additional context
-  createdAt   DateTime @default(now())
-
-  // Relations
-  user User? @relation("AuditLogUser", fields: [userId], references: [id])
-
-  @@map("audit_logs")
 }
 
 // API Key Management
