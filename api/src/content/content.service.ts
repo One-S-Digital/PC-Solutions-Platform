@@ -26,49 +26,54 @@ export class ContentService {
       );
 
       try {
-        // Create course record
-        const course = await this.prisma.course.create({
-          data: {
-            title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
-            description: body.description || `E-learning content: ${file.originalname}`,
-            difficultyLevel: body.difficultyLevel || 'beginner',
-            estimatedDuration: parseInt(body.estimatedDuration) || 60,
-            status: 'DRAFT',
-            createdBy: appUserId,
-          },
-        });
+        // Wrap all DB operations in a transaction for atomicity
+        const result = await this.prisma.$transaction(async (tx) => {
+          // Create course record
+          const course = await tx.course.create({
+            data: {
+              title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
+              description: body.description || `E-learning content: ${file.originalname}`,
+              difficultyLevel: body.difficultyLevel || 'beginner',
+              estimatedDuration: parseInt(body.estimatedDuration) || 60,
+              status: 'DRAFT',
+              createdBy: appUserId,
+            },
+          });
 
-        // Create course module
-        const module = await this.prisma.courseModule.create({
-          data: {
-            courseId: course.id,
-            title: 'Main Content',
-            description: 'Primary content module',
-            sortOrder: 0,
-            isRequired: true,
-          },
-        });
+          // Create course module
+          const module = await tx.courseModule.create({
+            data: {
+              courseId: course.id,
+              title: 'Main Content',
+              description: 'Primary content module',
+              sortOrder: 0,
+              isRequired: true,
+            },
+          });
 
-        // Create course lesson with uploaded content
-        const lesson = await this.prisma.courseLesson.create({
-          data: {
-            moduleId: module.id,
-            title: file.originalname.replace(/\.[^/.]+$/, ''),
-            contentType: this.getContentTypeFromFile(file.mimetype),
-            contentUrl: uploadResult.url,
-            contentText: body.description || null,
-            duration: parseInt(body.estimatedDuration) || 60,
-            sortOrder: 0,
-            isRequired: true,
-          },
-        });
+          // Create course lesson with uploaded content
+          const lesson = await tx.courseLesson.create({
+            data: {
+              moduleId: module.id,
+              title: file.originalname.replace(/\.[^/.]+$/, ''),
+              contentType: this.getContentTypeFromFile(file.mimetype),
+              contentUrl: uploadResult.url,
+              contentText: body.description || null,
+              duration: parseInt(body.estimatedDuration) || 60,
+              sortOrder: 0,
+              isRequired: true,
+            },
+          });
 
-        return {
-          course,
-          module,
-          lesson,
-          publicUrl: uploadResult.url,
-        };
+          return {
+            course,
+            module,
+            lesson,
+            publicUrl: uploadResult.url,
+          };
+        }, { timeout: 10000 }); // 10 second timeout for transaction
+
+        return result;
       } catch (dbError) {
         // If DB operations fail, clean up the uploaded file
         if (uploadResult) {
@@ -102,32 +107,36 @@ export class ContentService {
       );
 
       try {
-        // Create HR document record (using a generic content table or extending existing)
-        // For now, we'll create a simple record in a content table
-        const hrDocument = await this.prisma.asset.create({
-          data: {
-            kind: AssetKind.DOCUMENT,
+        // Wrap DB operation in transaction
+        const result = await this.prisma.$transaction(async (tx) => {
+          // Create HR document record
+          const hrDocument = await tx.asset.create({
+            data: {
+              kind: AssetKind.DOCUMENT,
+              filename: file.originalname,
+              publicUrl: uploadResult.url,
+              storageKey: uploadResult.key,
+              mimeType: file.mimetype,
+              size: file.size,
+              uploadedById: appUserId,
+            },
+          });
+
+          return {
+            id: hrDocument.id,
+            title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
+            category: body.category || 'HR_PROCEDURE',
+            description: body.description || `HR Procedure: ${file.originalname}`,
             filename: file.originalname,
             publicUrl: uploadResult.url,
-            storageKey: uploadResult.key,
-            mimeType: file.mimetype,
             size: file.size,
-            uploadedById: appUserId,
-          },
-        });
+            mimeType: file.mimetype,
+            uploadedAt: new Date(),
+            updatedAt: new Date(),
+          };
+        }, { timeout: 5000 });
 
-        return {
-          id: hrDocument.id,
-          title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
-          category: body.category || 'HR_PROCEDURE',
-          description: body.description || `HR Procedure: ${file.originalname}`,
-          filename: file.originalname,
-          publicUrl: uploadResult.url,
-          size: file.size,
-          mimeType: file.mimetype,
-          uploadedAt: new Date(),
-          updatedAt: new Date(),
-        };
+        return result;
       } catch (dbError) {
         // If DB operation fails, clean up the uploaded file
         if (uploadResult) {
@@ -161,32 +170,37 @@ export class ContentService {
       );
 
       try {
-        // Create state policy record
-        const statePolicy = await this.prisma.asset.create({
-          data: {
-            kind: AssetKind.DOCUMENT,
+        // Wrap DB operation in transaction
+        const result = await this.prisma.$transaction(async (tx) => {
+          // Create state policy record
+          const statePolicy = await tx.asset.create({
+            data: {
+              kind: AssetKind.DOCUMENT,
+              filename: file.originalname,
+              publicUrl: uploadResult.url,
+              storageKey: uploadResult.key,
+              mimeType: file.mimetype,
+              size: file.size,
+              uploadedById: appUserId,
+            },
+          });
+
+          return {
+            id: statePolicy.id,
+            title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
+            category: body.category || 'STATE_POLICY',
+            description: body.description || `State Policy Update: ${file.originalname}`,
+            effectiveDate: body.effectiveDate ? new Date(body.effectiveDate) : new Date(),
             filename: file.originalname,
             publicUrl: uploadResult.url,
-            storageKey: uploadResult.key,
-            mimeType: file.mimetype,
             size: file.size,
-            uploadedById: appUserId,
-          },
-        });
+            mimeType: file.mimetype,
+            uploadedAt: new Date(),
+            updatedAt: new Date(),
+          };
+        }, { timeout: 5000 });
 
-        return {
-          id: statePolicy.id,
-          title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
-          category: body.category || 'STATE_POLICY',
-          description: body.description || `State Policy Update: ${file.originalname}`,
-          effectiveDate: body.effectiveDate ? new Date(body.effectiveDate) : new Date(),
-          filename: file.originalname,
-          publicUrl: uploadResult.url,
-          size: file.size,
-          mimeType: file.mimetype,
-          uploadedAt: new Date(),
-          updatedAt: new Date(),
-        };
+        return result;
       } catch (dbError) {
         // If DB operation fails, clean up the uploaded file
         if (uploadResult) {
