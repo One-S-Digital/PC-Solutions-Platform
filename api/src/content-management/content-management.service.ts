@@ -95,33 +95,46 @@ export class ContentManagementService {
     let fileUrl: string | undefined;
     let fileSize: number | undefined;
     let mimeType: string | undefined;
+    let uploadResult: { url: string; key: string } | undefined;
 
     if (file) {
       // Upload file to R2
-      const uploadResult = await this.r2Service.uploadFile(file, 'content');
+      uploadResult = await this.r2Service.uploadFile(file, 'content');
       fileUrl = uploadResult.url;
       fileSize = file.size;
       mimeType = file.mimetype;
     }
 
-    return this.prisma.contentItem.create({
-      data: {
-        ...createDto,
-        fileUrl,
-        fileSize,
-        mimeType,
-      },
-      include: {
-        uploader: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
+    try {
+      return await this.prisma.contentItem.create({
+        data: {
+          ...createDto,
+          fileUrl,
+          fileSize,
+          mimeType,
+        },
+        include: {
+          uploader: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
           },
         },
-      },
-    });
+      });
+    } catch (error) {
+      // If DB operation fails and we uploaded a file, clean it up
+      if (uploadResult) {
+        try {
+          await this.r2Service.deleteFile(uploadResult.url);
+        } catch (deleteError) {
+          console.error('Failed to delete orphaned file:', deleteError);
+        }
+      }
+      throw error;
+    }
   }
 
   async updateContentItem(

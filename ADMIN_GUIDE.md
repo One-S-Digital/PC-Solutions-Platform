@@ -30,9 +30,12 @@
 
 | Role | Permissions |
 |------|-------------|
-| **SUPER_ADMIN** | Full system access, all features |
-| **ADMIN** | Organization management, content management, user management within org |
-| **EDUCATOR** | Read-only access to content, manage own profile |
+| SUPER_ADMIN | Full system access, all features |
+| ADMIN | Manage assigned org(s): users, content, settings within scope |
+| EDUCATOR | Read-only content access; manage own profile |
+| PARENT | Parent portal access to assigned learners only |
+| SUPPLIER | Supplier workflows; limited access per contracts |
+| SERVICE_PROVIDER | Service provider workflows; limited org data access |
 
 > ℹ️ This guide assumes you have SUPER_ADMIN or ADMIN privileges.
 

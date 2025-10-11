@@ -15,57 +15,71 @@ export class ContentService {
     body: any,
     appUserId: string,
   ) {
+    let uploadResult: { url: string; key: string } | undefined;
+
     try {
       // Upload file to R2
-      const uploadResult = await this.r2Service.uploadFile(
+      uploadResult = await this.r2Service.uploadFile(
         file,
         AssetKind.DOCUMENT,
         appUserId,
       );
 
-      // Create course record
-      const course = await this.prisma.course.create({
-        data: {
-          title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
-          description: body.description || `E-learning content: ${file.originalname}`,
-          difficultyLevel: body.difficultyLevel || 'beginner',
-          estimatedDuration: parseInt(body.estimatedDuration) || 60,
-          status: 'DRAFT',
-          createdBy: appUserId,
-        },
-      });
+      try {
+        // Create course record
+        const course = await this.prisma.course.create({
+          data: {
+            title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
+            description: body.description || `E-learning content: ${file.originalname}`,
+            difficultyLevel: body.difficultyLevel || 'beginner',
+            estimatedDuration: parseInt(body.estimatedDuration) || 60,
+            status: 'DRAFT',
+            createdBy: appUserId,
+          },
+        });
 
-      // Create course module
-      const module = await this.prisma.courseModule.create({
-        data: {
-          courseId: course.id,
-          title: 'Main Content',
-          description: 'Primary content module',
-          sortOrder: 0,
-          isRequired: true,
-        },
-      });
+        // Create course module
+        const module = await this.prisma.courseModule.create({
+          data: {
+            courseId: course.id,
+            title: 'Main Content',
+            description: 'Primary content module',
+            sortOrder: 0,
+            isRequired: true,
+          },
+        });
 
-      // Create course lesson with uploaded content
-      const lesson = await this.prisma.courseLesson.create({
-        data: {
-          moduleId: module.id,
-          title: file.originalname.replace(/\.[^/.]+$/, ''),
-          contentType: this.getContentTypeFromFile(file.mimetype),
-          contentUrl: uploadResult.url,
-          contentText: body.description || null,
-          duration: parseInt(body.estimatedDuration) || 60,
-          sortOrder: 0,
-          isRequired: true,
-        },
-      });
+        // Create course lesson with uploaded content
+        const lesson = await this.prisma.courseLesson.create({
+          data: {
+            moduleId: module.id,
+            title: file.originalname.replace(/\.[^/.]+$/, ''),
+            contentType: this.getContentTypeFromFile(file.mimetype),
+            contentUrl: uploadResult.url,
+            contentText: body.description || null,
+            duration: parseInt(body.estimatedDuration) || 60,
+            sortOrder: 0,
+            isRequired: true,
+          },
+        });
 
-      return {
-        course,
-        module,
-        lesson,
-        publicUrl: uploadResult.url,
-      };
+        return {
+          course,
+          module,
+          lesson,
+          publicUrl: uploadResult.url,
+        };
+      } catch (dbError) {
+        // If DB operations fail, clean up the uploaded file
+        if (uploadResult) {
+          try {
+            await this.r2Service.deleteFile(uploadResult.key);
+          } catch (deleteError) {
+            console.error('Failed to delete orphaned file:', deleteError);
+          }
+        }
+        throw dbError;
+      }
     } catch (error) {
       console.error('Error uploading e-learning content:', error);
       throw new BadRequestException(`Failed to upload e-learning content: ${error.message}`);
@@ -77,40 +91,54 @@ export class ContentService {
     body: any,
     appUserId: string,
   ) {
+    let uploadResult: { url: string; key: string } | undefined;
+
     try {
       // Upload file to R2
-      const uploadResult = await this.r2Service.uploadFile(
+      uploadResult = await this.r2Service.uploadFile(
         file,
         AssetKind.DOCUMENT,
         appUserId,
       );
 
-      // Create HR document record (using a generic content table or extending existing)
-      // For now, we'll create a simple record in a content table
-      const hrDocument = await this.prisma.asset.create({
-        data: {
-          kind: AssetKind.DOCUMENT,
+      try {
+        // Create HR document record (using a generic content table or extending existing)
+        // For now, we'll create a simple record in a content table
+        const hrDocument = await this.prisma.asset.create({
+          data: {
+            kind: AssetKind.DOCUMENT,
+            filename: file.originalname,
+            publicUrl: uploadResult.url,
+            storageKey: uploadResult.key,
+            mimeType: file.mimetype,
+            size: file.size,
+            uploadedById: appUserId,
+          },
+        });
+
+        return {
+          id: hrDocument.id,
+          title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
+          category: body.category || 'HR_PROCEDURE',
+          description: body.description || `HR Procedure: ${file.originalname}`,
           filename: file.originalname,
           publicUrl: uploadResult.url,
-          storageKey: uploadResult.key,
-          mimeType: file.mimetype,
           size: file.size,
-          uploadedById: appUserId,
-        },
-      });
-
-      return {
-        id: hrDocument.id,
-        title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
-        category: body.category || 'HR_PROCEDURE',
-        description: body.description || `HR Procedure: ${file.originalname}`,
-        filename: file.originalname,
-        publicUrl: uploadResult.url,
-        size: file.size,
-        mimeType: file.mimetype,
-        uploadedAt: new Date(),
-        updatedAt: new Date(),
-      };
+          mimeType: file.mimetype,
+          uploadedAt: new Date(),
+          updatedAt: new Date(),
+        };
+      } catch (dbError) {
+        // If DB operation fails, clean up the uploaded file
+        if (uploadResult) {
+          try {
+            await this.r2Service.deleteFile(uploadResult.key);
+          } catch (deleteError) {
+            console.error('Failed to delete orphaned file:', deleteError);
+          }
+        }
+        throw dbError;
+      }
     } catch (error) {
       console.error('Error uploading HR document:', error);
       throw new BadRequestException(`Failed to upload HR document: ${error.message}`);
@@ -122,40 +150,54 @@ export class ContentService {
     body: any,
     appUserId: string,
   ) {
+    let uploadResult: { url: string; key: string } | undefined;
+
     try {
       // Upload file to R2
-      const uploadResult = await this.r2Service.uploadFile(
+      uploadResult = await this.r2Service.uploadFile(
         file,
         AssetKind.DOCUMENT,
         appUserId,
       );
 
-      // Create state policy record
-      const statePolicy = await this.prisma.asset.create({
-        data: {
-          kind: AssetKind.DOCUMENT,
+      try {
+        // Create state policy record
+        const statePolicy = await this.prisma.asset.create({
+          data: {
+            kind: AssetKind.DOCUMENT,
+            filename: file.originalname,
+            publicUrl: uploadResult.url,
+            storageKey: uploadResult.key,
+            mimeType: file.mimetype,
+            size: file.size,
+            uploadedById: appUserId,
+          },
+        });
+
+        return {
+          id: statePolicy.id,
+          title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
+          category: body.category || 'STATE_POLICY',
+          description: body.description || `State Policy Update: ${file.originalname}`,
+          effectiveDate: body.effectiveDate ? new Date(body.effectiveDate) : new Date(),
           filename: file.originalname,
           publicUrl: uploadResult.url,
-          storageKey: uploadResult.key,
-          mimeType: file.mimetype,
           size: file.size,
-          uploadedById: appUserId,
-        },
-      });
-
-      return {
-        id: statePolicy.id,
-        title: body.title || file.originalname.replace(/\.[^/.]+$/, ''),
-        category: body.category || 'STATE_POLICY',
-        description: body.description || `State Policy Update: ${file.originalname}`,
-        effectiveDate: body.effectiveDate ? new Date(body.effectiveDate) : new Date(),
-        filename: file.originalname,
-        publicUrl: uploadResult.url,
-        size: file.size,
-        mimeType: file.mimetype,
-        uploadedAt: new Date(),
-        updatedAt: new Date(),
-      };
+          mimeType: file.mimetype,
+          uploadedAt: new Date(),
+          updatedAt: new Date(),
+        };
+      } catch (dbError) {
+        // If DB operation fails, clean up the uploaded file
+        if (uploadResult) {
+          try {
+            await this.r2Service.deleteFile(uploadResult.key);
+          } catch (deleteError) {
+            console.error('Failed to delete orphaned file:', deleteError);
+          }
+        }
+        throw dbError;
+      }
     } catch (error) {
       console.error('Error uploading state policy:', error);
       throw new BadRequestException(`Failed to upload state policy: ${error.message}`);

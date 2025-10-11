@@ -40,7 +40,7 @@ The admin panel uses a custom design system with:
 
 ### Page Structure
 
-```
+```text
 admin/src/pages/
 ├── Dashboard.tsx          # Main admin dashboard with KPI cards
 ├── Users.tsx             # User management with role assignment
@@ -233,8 +233,8 @@ function Component() {
 ## Styling Guidelines
 
 ### Colors (Tailwind Classes)
-- **Primary:** `swiss-mint` (#00B4A6)
-- **Secondary:** `swiss-navy` (#1A2B4A)
+- **Primary:** `swiss-mint` (#48CFAE)
+- **Secondary:** `swiss-teal` (#227C9D)
 - **Success:** `green-600`
 - **Warning:** `yellow-500`
 - **Error:** `red-600`
