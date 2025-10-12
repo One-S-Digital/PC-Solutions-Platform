@@ -18,6 +18,7 @@
   "detailsTitle": "Enter Your Details for {{role}}",
   "role": {
     "foundation": "Foundation (Daycare)",
+    "supplier": "Product Supplier",
     "productSupplier": "Product Supplier",
     "serviceProvider": "Service Provider",
     "parent": "Parent",
