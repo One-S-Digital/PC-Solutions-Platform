@@ -502,32 +502,32 @@
   },
   "settingsAccountSecurity": {
     "notifications": {
-      "infoUpdated": "[FR] Info Updated",
-      "passwordChanged": "[FR] Password Changed"
+      "infoUpdated": "Informations personnelles mises à jour avec succès",
+      "passwordChanged": "Mot de passe modifié avec succès"
     },
     "dangerZone": {
-      "finalConfirmation": "[FR] Final Confirmation",
-      "title": "[FR] Title",
-      "deleteAccountTitle": "[FR] Delete Account Title",
-      "deleteAccountSubtitle": "[FR] Delete Account Subtitle",
-      "deleteAccountButton": "[FR] Delete Account Button"
+      "finalConfirmation": "Êtes-vous absolument sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée.",
+      "title": "Zone de danger",
+      "deleteAccountTitle": "Supprimer le compte",
+      "deleteAccountSubtitle": "Une fois votre compte supprimé, il n'y a pas de retour en arrière possible. Veuillez être certain.",
+      "deleteAccountButton": "Supprimer mon compte"
     },
     "personalInfo": {
-      "title": "[FR] Title",
-      "contactNameLabel": "[FR] Contact Name",
-      "orgNameLabel": "[FR] Org Name",
-      "emailLabel": "[FR] Email",
-      "accountTypeLabel": "[FR] Account Type",
-      "memberSinceLabel": "[FR] Member Since",
-      "updateInfoButton": "[FR] Update Info Button",
-      "nameLabel": "[FR] Name"
+      "title": "Informations personnelles",
+      "contactNameLabel": "Nom du contact",
+      "orgNameLabel": "Nom de l'organisation",
+      "emailLabel": "E-mail",
+      "accountTypeLabel": "Type de compte",
+      "memberSinceLabel": "Membre depuis",
+      "updateInfoButton": "Mettre à jour les informations",
+      "nameLabel": "Nom"
     },
     "changePassword": {
-      "title": "[FR] Title",
-      "currentPasswordLabel": "[FR] Current Password",
-      "newPasswordLabel": "[FR] New Password",
-      "confirmNewPasswordLabel": "[FR] Confirm New Password",
-      "updatePasswordButton": "[FR] Update Password Button"
+      "title": "Changer le mot de passe",
+      "currentPasswordLabel": "Mot de passe actuel",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
+      "updatePasswordButton": "Mettre à jour le mot de passe"
     }
   },
   "settingsPrivacyData": {

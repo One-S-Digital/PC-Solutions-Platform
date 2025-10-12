@@ -265,16 +265,18 @@
   },
   "settingsPage": {
     "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
-    "loading": "Loading",
+    "loading": "Loading settings...",
     "noSectionsAvailable": "No settings sections available",
+    "accountSecurity": "Account & Security",
+    "billingSubscription": "Billing & Subscription",
     "analyticsPreferences": "Analytics Preferences",
     "companyProfile": "Company Profile",
-    "contactBooking": "Contact Booking",
+    "contactBooking": "Contact & Booking",
     "defaults": "Defaults",
-    "notificationPreferences": "No tification Preferences",
-    "privacyData": "Privacy Data",
+    "notificationPreferences": "Notification Preferences",
+    "privacyData": "Privacy & Data",
     "promoCodeManager": "Promo Code Manager",
-    "teamPermissions": "Team Permissions"
+    "teamPermissions": "Team & Permissions"
   },
   "contentUploadModal": {
     "error": {
@@ -501,32 +503,32 @@
   },
   "settingsAccountSecurity": {
     "notifications": {
-      "infoUpdated": "Info Updated",
-      "passwordChanged": "Password Changed"
+      "infoUpdated": "Personal information updated successfully",
+      "passwordChanged": "Password changed successfully"
     },
     "dangerZone": {
-      "finalConfirmation": "Final Confirmation",
-      "title": "Title",
-      "deleteAccountTitle": "Delete Account Title",
-      "deleteAccountSubtitle": "Delete Account Subtitle",
-      "deleteAccountButton": "Delete Account Button"
+      "finalConfirmation": "Are you absolutely sure you want to delete your account? This action cannot be undone.",
+      "title": "Danger Zone",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountSubtitle": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteAccountButton": "Delete My Account"
     },
     "personalInfo": {
-      "title": "Title",
+      "title": "Personal Information",
       "contactNameLabel": "Contact Name",
-      "orgNameLabel": "Org Name",
+      "orgNameLabel": "Organization Name",
       "emailLabel": "Email",
       "accountTypeLabel": "Account Type",
       "memberSinceLabel": "Member Since",
-      "updateInfoButton": "Update Info Button",
+      "updateInfoButton": "Update Information",
       "nameLabel": "Name"
     },
     "changePassword": {
-      "title": "Title",
+      "title": "Change Password",
       "currentPasswordLabel": "Current Password",
       "newPasswordLabel": "New Password",
       "confirmNewPasswordLabel": "Confirm New Password",
-      "updatePasswordButton": "Update Password Button"
+      "updatePasswordButton": "Update Password"
     }
   },
   "settingsPrivacyData": {

@@ -174,17 +174,19 @@
   "benefits": "Vorhöhe",
   "requirements": "Anforderungen",
   "settingsPage": {
-    "loading": "Lädt...",
-    "unsavedChangesPrompt": "[DE] You have unsaved changes. Are you sure you want to leave?",
-    "noSectionsAvailable": "[DE] No settings sections available",
-    "analyticsPreferences": "[DE] Analytics Preferences",
-    "companyProfile": "[DE] Company Profile",
-    "contactBooking": "[DE] Contact Booking",
-    "defaults": "[DE] Defaults",
-    "notificationPreferences": "[DE] No tification Preferences",
-    "privacyData": "[DE] Privacy Data",
-    "promoCodeManager": "[DE] Promo Code Manager",
-    "teamPermissions": "[DE] Team Permissions"
+    "loading": "Einstellungen werden geladen...",
+    "unsavedChangesPrompt": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie die Seite verlassen möchten?",
+    "noSectionsAvailable": "Keine Einstellungen verfügbar",
+    "accountSecurity": "Konto und Sicherheit",
+    "billingSubscription": "Abrechnung und Abonnement",
+    "analyticsPreferences": "Analyse-Einstellungen",
+    "companyProfile": "Unternehmensprofil",
+    "contactBooking": "Kontakt und Buchung",
+    "defaults": "Standardeinstellungen",
+    "notificationPreferences": "Benachrichtigungseinstellungen",
+    "privacyData": "Datenschutz und Daten",
+    "promoCodeManager": "Promo-Code-Manager",
+    "teamPermissions": "Team und Berechtigungen"
   },
   "leadCard": {
     "alert": {
@@ -276,32 +278,32 @@
   },
   "settingsAccountSecurity": {
     "notifications": {
-      "infoUpdated": "EinSTELLUNTENACTECOUNTSECURITY.NOTIFIKATIONS.infupeatdated",
-      "passwordChanged": "EinstellungNACTECOUNTSECURITY.NOTIFIKATIONS.PASSWORDCHANDED"
+      "infoUpdated": "Persönliche Informationen erfolgreich aktualisiert",
+      "passwordChanged": "Passwort erfolgreich geändert"
     },
     "dangerZone": {
-      "finalConfirmation": "EinstellungNACTECOUNTSECURITY.DANGERZONE.FINALCONFURRIMIMATION",
-      "title": "[DE] Title",
-      "deleteAccountTitle": "[DE] Delete Account Title",
-      "deleteAccountSubtitle": "[DE] Delete Account Subtitle",
-      "deleteAccountButton": "[DE] Delete Account Button"
+      "finalConfirmation": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "title": "Gefahrenzone",
+      "deleteAccountTitle": "Konto löschen",
+      "deleteAccountSubtitle": "Sobald Sie Ihr Konto löschen, gibt es kein Zurück mehr. Bitte seien Sie sicher.",
+      "deleteAccountButton": "Mein Konto löschen"
     },
     "personalInfo": {
-      "title": "[DE] Title",
-      "contactNameLabel": "[DE] Contact Name",
-      "orgNameLabel": "[DE] Org Name",
-      "emailLabel": "[DE] Email",
-      "accountTypeLabel": "[DE] Account Type",
-      "memberSinceLabel": "[DE] Member Since",
-      "updateInfoButton": "[DE] Update Info Button",
-      "nameLabel": "[DE] Name"
+      "title": "Persönliche Informationen",
+      "contactNameLabel": "Kontaktname",
+      "orgNameLabel": "Organisationsname",
+      "emailLabel": "E-Mail",
+      "accountTypeLabel": "Kontotyp",
+      "memberSinceLabel": "Mitglied seit",
+      "updateInfoButton": "Informationen aktualisieren",
+      "nameLabel": "Name"
     },
     "changePassword": {
-      "title": "[DE] Title",
-      "currentPasswordLabel": "[DE] Current Password",
-      "newPasswordLabel": "[DE] New Password",
-      "confirmNewPasswordLabel": "[DE] Confirm New Password",
-      "updatePasswordButton": "[DE] Update Password Button"
+      "title": "Passwort ändern",
+      "currentPasswordLabel": "Aktuelles Passwort",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmNewPasswordLabel": "Neues Passwort bestätigen",
+      "updatePasswordButton": "Passwort aktualisieren"
     }
   },
   "settingsBillingSubscription": {
