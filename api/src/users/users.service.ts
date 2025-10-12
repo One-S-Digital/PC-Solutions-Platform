@@ -31,7 +31,11 @@ export class UsersService {
         role: createUserDto.role as UserRole,
       },
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -60,7 +64,11 @@ export class UsersService {
         skip,
         take: limit,
         include: {
-          organizations: true,
+          organizations: {
+            include: {
+              organization: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -84,7 +92,11 @@ export class UsersService {
     return this.prisma.user.findUnique({
       where: { clerkId },
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -93,7 +105,11 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
 
@@ -108,7 +124,11 @@ export class UsersService {
     return this.prisma.user.findUnique({
       where: { email },
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -123,7 +143,11 @@ export class UsersService {
         },
       },
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -138,7 +162,11 @@ export class UsersService {
       where: { id: user.id },
       data: updateUserDto,
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -153,7 +181,11 @@ export class UsersService {
       where: { id },
       data: updateUserDto,
       include: {
-        organizations: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
       },
     });
   }
@@ -211,7 +243,11 @@ export class UsersService {
           updatedAt: new Date(clerkData.updated_at),
         },
         include: {
-          organizations: true,
+          organizations: {
+            include: {
+              organization: true,
+            },
+          },
         },
       });
     } else {
@@ -227,7 +263,11 @@ export class UsersService {
           updatedAt: new Date(clerkData.updated_at),
         },
         include: {
-          organizations: true,
+          organizations: {
+            include: {
+              organization: true,
+            },
+          },
         },
       });
     }
