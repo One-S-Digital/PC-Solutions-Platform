@@ -2,8 +2,8 @@
   "name": "@workspace/types",
   "version": "1.0.0",
   "description": "Shared TypeScript types and interfaces for PC Solutions V2",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
