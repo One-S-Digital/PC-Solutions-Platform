@@ -52,7 +52,7 @@
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/websockets": "^11.0.1",
     "@prisma/client": "^6.16.2",
-    "@repo/types": "workspace:*",
+    "@workspace/types": "workspace:*",
     "@sendgrid/mail": "^8.1.5",
     "@types/multer": "^2.0.0",
     "bcryptjs": "^2.4.3",

@@ -22,7 +22,7 @@
     "@clerk/clerk-react": "^5.0.0",
     "@headlessui/react": "^2.0.0",
     "@heroicons/react": "^2.1.0",
-    "@repo/types": "workspace:*",
+    "@workspace/types": "workspace:*",
     "@repo/ui": "workspace:*",
     "clsx": "^2.1.0",
     "i18next": "^25.5.2",
