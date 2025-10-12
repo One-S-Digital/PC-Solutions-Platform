@@ -75,7 +75,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
   if (userRole !== UserRole.FOUNDATION) {
     // Render simplified version for other roles
     return (
-        <SettingsSectionWrapper title={t('page.billingSubscription')} icon={WalletIcon}>
+        <SettingsSectionWrapper title={t('settings:page.billingSubscription')} icon={WalletIcon}>
              <div className="p-4 border rounded-lg bg-gray-50">
                 <h3 className="text-md font-medium text-gray-700">{t('settingsBillingSubscription.currentPlan')}</h3>
                 <p className="text-2xl font-semibold text-swiss-mint mt-1">{settings.currentTier || 'N/A'}</p>

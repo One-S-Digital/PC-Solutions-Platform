@@ -327,9 +327,10 @@
     "footerNote": "Anwendungen Werden in Echtzeit AKTUALISIERT"
   },
   "educatorJobBoardPage": {
-    "postedOn": "Gepostet auf",
-    "searchPlaceholder": "Suchjobs ...",
-    "noJobsFound": "Keine Jobs Gefunden"
+    "title": "Stellenangebote",
+    "postedOn": "Gepostet am",
+    "searchPlaceholder": "Stellen suchen...",
+    "noJobsFound": "Keine Stellen gefunden"
   },
   "educatorProfilePage": {
     "editProfile": "Profilbärren",

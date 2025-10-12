@@ -78,7 +78,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   const hasOrgName = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(userRole);
   
   return (
-    <SettingsSectionWrapper title={t('page.accountSecurity')} icon={UserCircleIcon}>
+    <SettingsSectionWrapper title={t('settings:page.accountSecurity')} icon={UserCircleIcon}>
       <div className="space-y-8">
         {/* Personal Information Section */}
         <form onSubmit={handleUpdateInfo}>

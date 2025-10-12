@@ -28,7 +28,7 @@ const NotificationPreferencesSettings: React.FC<NotificationPreferencesSettingsP
   const newRequestLabelKey = isProvider ? "settingsNotificationPreferences.newRequestEmailToggleProvider" : "settingsNotificationPreferences.newRequestEmailToggleSupplier";
 
   return (
-    <SettingsSectionWrapper title={t('page.notificationPreferences')} icon={BellAlertIcon}>
+    <SettingsSectionWrapper title={t('settings:page.notificationPreferences')} icon={BellAlertIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* New Request Email Toggle */}
         <label htmlFor="newRequestEmailToggle" className="form-label md:pt-2">{t(newRequestLabelKey)} <span className="text-swiss-coral">*</span></label>

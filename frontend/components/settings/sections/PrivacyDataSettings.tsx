@@ -35,7 +35,7 @@ const PrivacyDataSettings: React.FC<PrivacyDataSettingsProps> = ({ settings, onC
   };
 
   return (
-    <SettingsSectionWrapper title={t('page.privacyData')} icon={LockClosedIcon}>
+    <SettingsSectionWrapper title={t('settings:page.privacyData')} icon={LockClosedIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Hide Prices/Rate Publicly Toggle */}
         <label htmlFor="hidePubliclyToggle" className="form-label md:pt-2">{t(hidePubliclyLabelKey)}</label>

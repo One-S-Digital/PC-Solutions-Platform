@@ -22,5 +22,21 @@
   "language": {
     "title": "Sprache und Region",
     "selectLanguage": "Sprache auswählen"
+  },
+  "page": {
+    "title": "Einstellungen",
+    "accountSecurity": "Konto und Sicherheit",
+    "billingSubscription": "Abrechnung und Abonnement",
+    "notificationPreferences": "Benachrichtigungseinstellungen",
+    "privacyData": "Datenschutz und Daten",
+    "companyProfile": "Unternehmensprofil",
+    "contactBooking": "Kontakt und Buchung",
+    "promoCodeManager": "Promo-Code-Manager",
+    "analyticsPreferences": "Analyse-Einstellungen",
+    "defaults": "Standardeinstellungen",
+    "teamPermissions": "Team und Berechtigungen",
+    "loading": "Einstellungen werden geladen...",
+    "noSectionsAvailable": "Keine Einstellungen für Ihre Rolle verfügbar",
+    "unsavedChangesPrompt": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie die Seite verlassen möchten?"
   }
 }

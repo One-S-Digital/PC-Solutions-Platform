@@ -39,7 +39,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
 
 
   return (
-    <SettingsSectionWrapper title={t('page.companyProfile')} icon={BuildingOfficeIcon}>
+    <SettingsSectionWrapper title={t('settings:page.companyProfile')} icon={BuildingOfficeIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Company Name */}
         <label htmlFor="companyName" className="form-label md:pt-2">{t('settingsCompanyProfile.companyName')} <span className="text-swiss-coral">*</span></label>

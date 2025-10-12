@@ -56,7 +56,7 @@ const TeamPermissionsSettings: React.FC<TeamPermissionsSettingsProps> = ({ setti
 
 
   return (
-    <SettingsSectionWrapper title={t('page.teamPermissions')} icon={UsersIcon}>
+    <SettingsSectionWrapper title={t('settings:page.teamPermissions')} icon={UsersIcon}>
       <form onSubmit={handleInviteMember} className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
         <h3 className="text-md font-semibold text-swiss-charcoal mb-2">{t('settingsTeamPermissions.inviteNewMember')}</h3>
         <div className="flex flex-col sm:flex-row gap-3 items-end">

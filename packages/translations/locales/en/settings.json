@@ -25,6 +25,16 @@
   },
   "page": {
     "title": "Settings",
+    "accountSecurity": "Account & Security",
+    "billingSubscription": "Billing & Subscription",
+    "notificationPreferences": "Notification Preferences",
+    "privacyData": "Privacy & Data",
+    "companyProfile": "Company Profile",
+    "contactBooking": "Contact & Booking",
+    "promoCodeManager": "Promo Code Manager",
+    "analyticsPreferences": "Analytics Preferences",
+    "defaults": "Defaults",
+    "teamPermissions": "Team & Permissions",
     "loading": "Loading settings...",
     "noSectionsAvailable": "No settings available for your role",
     "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?"

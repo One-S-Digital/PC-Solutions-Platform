@@ -22,5 +22,21 @@
   "language": {
     "title": "Langue et région",
     "selectLanguage": "Sélectionner la langue"
+  },
+  "page": {
+    "title": "Paramètres",
+    "accountSecurity": "Compte et sécurité",
+    "billingSubscription": "Facturation et abonnement",
+    "notificationPreferences": "Préférences de notification",
+    "privacyData": "Confidentialité et données",
+    "companyProfile": "Profil de l'entreprise",
+    "contactBooking": "Contact et réservation",
+    "promoCodeManager": "Gestionnaire de codes promo",
+    "analyticsPreferences": "Préférences d'analyse",
+    "defaults": "Paramètres par défaut",
+    "teamPermissions": "Équipe et permissions",
+    "loading": "Chargement des paramètres...",
+    "noSectionsAvailable": "Aucun paramètre disponible pour votre rôle",
+    "unsavedChangesPrompt": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir partir?"
   }
 }

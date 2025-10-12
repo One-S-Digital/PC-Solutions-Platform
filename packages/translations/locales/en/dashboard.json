@@ -326,6 +326,7 @@
     "footerNote": "Applications are updated in real-time"
   },
   "educatorJobBoardPage": {
+    "title": "Job Listings",
     "postedOn": "Posted on",
     "searchPlaceholder": "Search jobs...",
     "noJobsFound": "No jobs found"

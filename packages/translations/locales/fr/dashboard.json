@@ -326,9 +326,10 @@
     "footerNote": "Les applications sont mises à jour en temps réel"
   },
   "educatorJobBoardPage": {
-    "postedOn": "Publié Sur:",
-    "searchPlaceholder": "EMPLOIS DE RECHERCHE ...",
-    "noJobsFound": "Aucune annonces trouvées"
+    "title": "Offres d'emploi",
+    "postedOn": "Publié le",
+    "searchPlaceholder": "Rechercher des emplois...",
+    "noJobsFound": "Aucune annonce trouvée"
   },
   "educatorProfilePage": {
     "editProfile": "Modificateur le Profil",
