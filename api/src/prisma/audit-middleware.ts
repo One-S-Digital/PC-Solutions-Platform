@@ -24,8 +24,8 @@ const AUDITED_ACTIONS = new Set(['create', 'update', 'delete', 'upsert']);
  * 
  * Usage: Call this in PrismaService.onModuleInit()
  */
-export function createAuditMiddleware(prismaClient: any): Prisma.Middleware {
-  return async (params: Prisma.MiddlewareParams, next) => {
+export function createAuditMiddleware(prismaClient: any) {
+  return async (params: any, next: any) => {
     // Execute the query first
     const result = await next(params);
 
