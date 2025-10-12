@@ -55,22 +55,12 @@ async function main() {
 
     let orgId;
     if (orgCount === 0) {
-      try {
-        const org = await prisma.organization.create({
-          data: { name: 'Sample Organization', type: 'SERVICE_PROVIDER', isActive: true },
-          select: { id: true },
-        });
-        orgId = org.id;
-        console.log('🌱 Seed: organization created');
-      } catch (orgError) {
-        // Retry without isActive if column doesn't exist
-        const org = await prisma.organization.create({
-          data: { name: 'Sample Organization', type: 'SERVICE_PROVIDER' },
-          select: { id: true },
-        });
-        orgId = org.id;
-        console.log('🌱 Seed: organization created (without isActive)');
-      }
+      const org = await prisma.organization.create({
+        data: { name: 'Sample Organization', type: 'SERVICE_PROVIDER' },
+        select: { id: true },
+      });
+      orgId = org.id;
+      console.log('🌱 Seed: organization created');
     } else {
       const first = await prisma.organization.findFirst({ select: { id: true } });
       orgId = first?.id;
@@ -84,7 +74,6 @@ async function main() {
             description: 'Demo product',
             category: 'general',
             supplierId: orgId,
-            isActive: true,
           },
         });
         console.log('🌱 Seed: product created');
@@ -102,7 +91,6 @@ async function main() {
             description: 'Demo service',
             category: 'CLEANING',
             providerId: orgId,
-            isActive: true,
           },
         });
         console.log('🌱 Seed: service created');

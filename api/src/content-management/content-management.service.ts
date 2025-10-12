@@ -264,9 +264,9 @@ export class ContentManagementService {
   async getContentDashboard(): Promise<any> {
     const [totalItems, publishedItems, draftItems, archivedItems, categories] = await Promise.all([
       this.prisma.contentItem.count(),
-      this.prisma.contentItem.count({ where: { status: ContentStatus.PUBLISHED } }),
-      this.prisma.contentItem.count({ where: { status: ContentStatus.DRAFT } }),
-      this.prisma.contentItem.count({ where: { status: ContentStatus.ARCHIVED } }),
+      this.prisma.contentItem.count({ where: { status: 'published' } }),
+      this.prisma.contentItem.count({ where: { status: 'draft' } }),
+      this.prisma.contentItem.count({ where: { status: 'archived' } }),
       this.prisma.contentCategory.count({ where: { isActive: true } }),
     ]);
 
@@ -318,7 +318,7 @@ export class ContentManagementService {
 
     return this.prisma.contentItem.update({
       where: { id },
-      data: { status: ContentStatus.PUBLISHED },
+      data: { status: 'published' },
       include: {
         uploader: {
           select: {
@@ -343,7 +343,7 @@ export class ContentManagementService {
 
     return this.prisma.contentItem.update({
       where: { id },
-      data: { status: ContentStatus.ARCHIVED },
+      data: { status: 'archived' },
       include: {
         uploader: {
           select: {
