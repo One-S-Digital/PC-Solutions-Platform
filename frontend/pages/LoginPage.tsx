@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError('');
     if (!email || !password) {
-      setError(t('loginPage.errorBothFields'));
+      setError(t('common:loginPage.errorBothFields'));
       return;
     }
     setIsLoading(true);
@@ -49,14 +49,14 @@ const LoginPage: React.FC = () => {
     if (result.success) {
       // The redirect is handled by the useEffect watching currentUser
     } else {
-      setError(result.message || t('errors.unknown'));
+      setError(result.message || t('common:errors.unknown'));
     }
     setIsLoading(false);
   };
   
 
   const handleSocialLogin = (provider: string) => {
-    alert(t('loginPage.socialLoginTBD', { provider }));
+    alert(t('common:loginPage.socialLoginTBD', { provider }));
   };
 
 
@@ -65,8 +65,8 @@ const LoginPage: React.FC = () => {
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
           <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
-          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('loginPage.title', { appName: APP_NAME })}</h1>
-          <p className="text-sm text-gray-500">{t('loginPage.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('common:loginPage.title', { appName: APP_NAME })}</h1>
+          <p className="text-sm text-gray-500">{t('common:loginPage.subtitle')}</p>
         </div>
 
         {error && (
@@ -78,7 +78,7 @@ const LoginPage: React.FC = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('loginPage.emailLabel')}
+              {t('common:loginPage.emailLabel')}
             </label>
             <input
               type="email"
@@ -87,16 +87,16 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               className={STANDARD_INPUT_FIELD}
               required
-              placeholder={t('loginPage.emailPlaceholder')}
+              placeholder={t('common:loginPage.emailPlaceholder')}
             />
           </div>
           <div>
             <div className="flex justify-between items-baseline">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('loginPage.passwordLabel')}
+                  {t('common:loginPage.passwordLabel')}
                 </label>
-                <a href="#/password-reset" onClick={(e) => {e.preventDefault(); alert(t('loginPage.forgotPasswordTBD'));}} className="text-xs text-swiss-mint hover:underline">
-                    {t('loginPage.forgotPassword')}
+                <a href="#/password-reset" onClick={(e) => {e.preventDefault(); alert(t('common:loginPage.forgotPasswordTBD'));}} className="text-xs text-swiss-mint hover:underline">
+                    {t('common:loginPage.forgotPassword')}
                 </a>
             </div>
             <div className="relative">
@@ -107,13 +107,13 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className={STANDARD_INPUT_FIELD}
                 required
-                placeholder={t('loginPage.passwordPlaceholder')}
+                placeholder={t('common:loginPage.passwordPlaceholder')}
                 />
                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-                    aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+                    aria-label={showPassword ? t('common:hidePassword') : t('common:showPassword')}
                 >
                     {showPassword ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
                 </button>
@@ -121,7 +121,7 @@ const LoginPage: React.FC = () => {
           </div>
           <div>
             <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isLoading}>
-              {isLoading ? t('loginPage.loggingIn') : t('buttons.login')}
+              {isLoading ? t('common:loginPage.loggingIn') : t('common:buttons.login')}
             </Button>
           </div>
         </form>
@@ -133,36 +133,36 @@ const LoginPage: React.FC = () => {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">{t('loginPage.orContinueWith')}</span>
+              <span className="px-2 bg-white text-gray-500">{t('common:loginPage.orContinueWith')}</span>
             </div>
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Button variant="light" onClick={() => handleSocialLogin('Google')} className="w-full">
-              <GoogleIcon className="w-5 h-5 mr-2" /> {t('loginPage.google')}
+              <GoogleIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.google')}
             </Button>
             <Button variant="light" onClick={() => handleSocialLogin('Facebook')} className="w-full">
-              <FacebookIcon className="w-5 h-5 mr-2" /> {t('loginPage.facebook')}
+              <FacebookIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.facebook')}
             </Button>
           </div>
         </div>
         
         <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
             <p>
-            {t('loginPage.noAccount')}{' '}
+            {t('common:loginPage.noAccount')}{' '}
             <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
-                {t('buttons.signup')}
+                {t('common:buttons.signup')}
             </Link>
             </p>
             <p>
-            {t('loginPage.viewPlansPrompt')}{' '}
+            {t('common:loginPage.viewPlansPrompt')}{' '}
             <Link to="/pricing" className="font-medium text-swiss-mint hover:underline">
-                {t('loginPage.viewPlans')}
+                {t('common:loginPage.viewPlans')}
             </Link>
             </p>
             <div className="border-t border-gray-200 pt-4 mt-4">
               <p className="text-sm text-gray-600 text-center mb-3">
-                {t('loginPage.parentLookingForCreche')}
+                {t('common:loginPage.parentLookingForCreche')}
               </p>
               <div className="text-center">
                 <Link 
@@ -170,7 +170,7 @@ const LoginPage: React.FC = () => {
                   className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
                 >
                   <span className="mr-1">🏠</span>
-                  {t('loginPage.findCrecheHere')}
+                  {t('common:loginPage.findCrecheHere')}
                 </Link>
               </div>
             </div>
