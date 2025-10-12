@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '@repo/types';
+import { UserRole } from '@workspace/types';
 import { AppLoggerService } from '../common/logger.service';
 
 export interface UserFilters {

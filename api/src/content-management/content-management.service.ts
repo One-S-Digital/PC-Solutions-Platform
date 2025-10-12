@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContentItemDto, UpdateContentItemDto, CreateContentCategoryDto } from './dto/content-management.dto';
-import { ContentItem, ContentCategory, ContentStatus } from '@prisma/client';
+import { ContentItem, ContentCategory } from '@prisma/client';
 import { R2Service } from '../upload/r2.service';
 
 @Injectable()

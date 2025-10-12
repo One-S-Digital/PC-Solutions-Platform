@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator';
-import { ApplicationStatus } from '@repo/types';
+import { ApplicationStatus } from '@workspace/types';
 
 export class CreateJobApplicationDto {
   @IsString()

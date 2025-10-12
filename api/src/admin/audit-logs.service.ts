@@ -107,7 +107,7 @@ export class AuditLogsService {
         byActor.map(async (a) => {
           const actor = await this.prisma.appUser.findUnique({
             where: { id: a.actorId! },
-            select: { id: true, firstName: true, lastName: true, email: true },
+            select: { id: true, email: true, clerkId: true },
           });
           return {
             actorId: a.actorId,

@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
-import { JobStatus } from '@repo/types';
+import { JobStatus } from '@workspace/types';
 
 export class CreateJobListingDto {
   @IsString()

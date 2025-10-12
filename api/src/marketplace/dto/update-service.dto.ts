@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
-import { ServiceCategory } from '@repo/types';
+import { ServiceCategory } from '@workspace/types';
 
 export class UpdateServiceDto {
   @IsOptional()

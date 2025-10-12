@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
-import { ContentType } from '@repo/types';
+import { ContentType } from '@workspace/types';
 
 export class CreateCourseLessonDto {
   @IsString()

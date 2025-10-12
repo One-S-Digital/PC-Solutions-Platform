@@ -13,7 +13,7 @@ import { SubscriptionManagementService, SubscriptionPlan, Subscription } from '.
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
-import { SubscriptionTier, UserRole } from '@repo/types';
+import { SubscriptionTier, UserRole } from '@workspace/types';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';

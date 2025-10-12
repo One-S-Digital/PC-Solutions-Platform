@@ -21,7 +21,7 @@ import { UploadService } from './upload.service';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, AssetKind } from '@repo/types';
+import { UserRole, AssetKind } from '@workspace/types';
 import { UploadThrottle } from '../common/decorators/throttle.decorator';
 
 export class PresignedUploadDto {

@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from '@repo/types';
+import { UserRole } from '@workspace/types';
 import { UserSyncService } from './user-sync.service';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';

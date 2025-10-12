@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateFrontendSettingsDto } from './dto/update-frontend-settings.dto';
 import { UploadService } from '../upload/upload.service';
-import { AssetKind } from '@repo/types';
+import { AssetKind } from '@workspace/types';
 
 @Injectable()
 export class FrontendSettingsService {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AppLoggerService } from '../common/logger.service';
-import { SubscriptionTier, SubscriptionStatus } from '@repo/types';
+import { SubscriptionTier, SubscriptionStatus } from '@workspace/types';
 
 export interface SubscriptionPlan {
   id: string;
