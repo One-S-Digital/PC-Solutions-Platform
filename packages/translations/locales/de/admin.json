@@ -40,5 +40,43 @@
       "typography": "Typografie",
       "components": "Komponenten"
     }
+  },
+  "discountTerminations": {
+    "queue": {
+      "title": "Kündigungswarteschlange",
+      "description": "Kunden mit ausstehender Rabattkündigung",
+      "tableTitle": "Ausstehende Kündigungen",
+      "empty": "Keine ausstehenden Kündigungen"
+    },
+    "allActive": {
+      "title": "Aktive Rabatte",
+      "description": "Alle aktiven Anbieterrabatte",
+      "tableTitle": "Aktive Anbieterrabatte",
+      "empty": "Keine aktiven Rabatte"
+    },
+    "table": {
+      "vendor": "Anbieter",
+      "daycare": "Kindertagesstätte",
+      "reason": "Grund",
+      "activeSince": "Aktiv seit",
+      "actions": "Aktionen"
+    },
+    "actions": {
+      "markCompleted": "Als abgeschlossen markieren",
+      "sendNotices": "Benachrichtigungen senden",
+      "sendNoticesAlert": "Benachrichtigungsfunktion kommt bald"
+    }
+  },
+  "partners": {
+    "hero": {
+      "title": "Unsere Partner",
+      "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung"
+    },
+    "sections": {
+      "featuredPartners": "Ausgewählte Partner"
+    },
+    "buttons": {
+      "becomePartner": "Partner werden"
+    }
   }
 }

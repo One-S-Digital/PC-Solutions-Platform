@@ -73,6 +73,11 @@
       "cantonal": "Cantonal",
       "national": "National"
     },
+    "sections": {
+      "compliance": "Compliance",
+      "updates": "Updates",
+      "downloads": "Downloads"
+    },
     "emptyState": {
       "noPolicies": "No policies available"
     },

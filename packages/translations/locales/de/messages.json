@@ -5,7 +5,16 @@
     "unread": "Ungelesen"
   },
   "emptyState": {
-    "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
+    "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen",
+    "noConversationSelectedTitle": "Keine Konversation ausgewählt",
+    "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
+    "noConversationsYet": "Noch keine Konversationen"
+  },
+  "searchPlaceholder": "Konversationen durchsuchen...",
+  "noConversationsFound": "Keine Konversationen gefunden",
+  "filters": {
+    "all": "Alle",
+    "unread": "Ungelesen"
   },
   "buttons": {
     "newGroup": "Neue Gruppe",

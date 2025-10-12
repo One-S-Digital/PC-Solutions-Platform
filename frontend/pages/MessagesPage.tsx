@@ -62,7 +62,7 @@ const MessagesPage: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
             <ChatBubbleLeftEllipsisIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-            {t('sidebar.messages')}
+            {t('dashboard:sidebar.messages')}
         </h1>
         <Button variant="primary" leftIcon={PlusIcon} onClick={() => setIsGroupModalOpen(true)}>
             {t('buttons.newGroup')}

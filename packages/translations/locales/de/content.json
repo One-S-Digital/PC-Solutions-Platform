@@ -26,6 +26,9 @@
     }
   },
   "statePolicies": {
+    "title": "Staatliche Richtlinien"
+  },
+  "statePoliciesPage": {
     "title": "Staatliche Richtlinien",
     "filters": {
       "canton": "Kanton",
@@ -35,6 +38,11 @@
     "tabs": {
       "cantonal": "Kantonal",
       "national": "National"
+    },
+    "sections": {
+      "compliance": "Compliance",
+      "updates": "Aktualisierungen",
+      "downloads": "Downloads"
     },
     "emptyState": {
       "noPolicies": "Keine Richtlinien verfügbar"

@@ -9,7 +9,8 @@
     "municipality": "Municipality",
     "childAge": "Child's Age (in months)",
     "startDate": "Preferred Start Date",
-    "childNeeds": "Child's Special Needs"
+    "childNeeds": "Child's Special Needs",
+    "specialNeeds": "Special Requirements"
   },
   "placeholders": {
     "fullName": "Enter your full name",

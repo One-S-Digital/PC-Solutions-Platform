@@ -26,6 +26,9 @@
     }
   },
   "statePolicies": {
+    "title": "Politiques d'État"
+  },
+  "statePoliciesPage": {
     "title": "Politiques d'État",
     "filters": {
       "canton": "Canton",
@@ -35,6 +38,11 @@
     "tabs": {
       "cantonal": "Cantonal",
       "national": "National"
+    },
+    "sections": {
+      "compliance": "Conformité",
+      "updates": "Mises à jour",
+      "downloads": "Téléchargements"
     },
     "emptyState": {
       "noPolicies": "Aucune politique disponible"

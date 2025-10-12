@@ -10,6 +10,12 @@
     "noConversationSelectedSubtitle": "Select a conversation to start messaging",
     "noConversationsYet": "No conversations yet"
   },
+  "searchPlaceholder": "Search conversations...",
+  "noConversationsFound": "No conversations found",
+  "filters": {
+    "all": "All",
+    "unread": "Unread"
+  },
   "buttons": {
     "newGroup": "New Group",
     "sendMessage": "Send Message"

@@ -9,7 +9,8 @@
     "noCandidates": "No candidates available",
     "viewProfile": "View Profile",
     "searchPlaceholder": "Search candidates...",
-    "filterTitle": "Filter Candidates"
+    "filterTitle": "Filter Candidates",
+    "emptyState": "No candidates available in the pool"
   },
   "jobOffers": {
     "searchPlaceholder": "Search jobs...",

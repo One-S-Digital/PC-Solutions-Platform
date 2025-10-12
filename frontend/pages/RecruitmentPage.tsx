@@ -267,8 +267,8 @@ const RecruitmentPage: React.FC = () => {
   );
 
   const tabsConfig = [
-    { label: t('recruitmentPage.tabs.jobOffers'), icon: BriefcaseIcon, content: JobOffersTab },
-    { label: t('recruitmentPage.tabs.candidatePool'), icon: UserGroupIcon, content: CandidateAvailabilityTab },
+    { label: t('tabs.jobOffers'), icon: BriefcaseIcon, content: JobOffersTab },
+    { label: t('tabs.candidatePool'), icon: UserGroupIcon, content: CandidateAvailabilityTab },
   ];
 
   return (

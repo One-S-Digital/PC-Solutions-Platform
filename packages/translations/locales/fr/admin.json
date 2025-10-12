@@ -40,5 +40,43 @@
       "typography": "Typographie",
       "components": "Composants"
     }
+  },
+  "discountTerminations": {
+    "queue": {
+      "title": "File d'attente de résiliation",
+      "description": "Clients en attente de résiliation de réduction",
+      "tableTitle": "Résiliations en attente",
+      "empty": "Aucune résiliation en attente"
+    },
+    "allActive": {
+      "title": "Réductions actives",
+      "description": "Toutes les réductions actives des fournisseurs",
+      "tableTitle": "Réductions actives des fournisseurs",
+      "empty": "Aucune réduction active"
+    },
+    "table": {
+      "vendor": "Fournisseur",
+      "daycare": "Crèche",
+      "reason": "Raison",
+      "activeSince": "Actif depuis",
+      "actions": "Actions"
+    },
+    "actions": {
+      "markCompleted": "Marquer comme terminé",
+      "sendNotices": "Envoyer des avis",
+      "sendNoticesAlert": "Fonctionnalité d'envoi d'avis à venir"
+    }
+  },
+  "partners": {
+    "hero": {
+      "title": "Nos partenaires",
+      "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance"
+    },
+    "sections": {
+      "featuredPartners": "Partenaires en vedette"
+    },
+    "buttons": {
+      "becomePartner": "Devenir partenaire"
+    }
   }
 }

@@ -5,7 +5,16 @@
     "unread": "Non lus"
   },
   "emptyState": {
-    "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
+    "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages",
+    "noConversationSelectedTitle": "Aucune conversation sélectionnée",
+    "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer",
+    "noConversationsYet": "Aucune conversation pour le moment"
+  },
+  "searchPlaceholder": "Rechercher des conversations...",
+  "noConversationsFound": "Aucune conversation trouvée",
+  "filters": {
+    "all": "Tout",
+    "unread": "Non lus"
   },
   "buttons": {
     "newGroup": "Nouveau groupe",

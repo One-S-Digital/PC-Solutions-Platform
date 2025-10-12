@@ -103,12 +103,14 @@
     "queue": {
       "title": "Termination Queue",
       "description": "Clients pending discount termination",
-      "tableTitle": "Pending Terminations"
+      "tableTitle": "Pending Terminations",
+      "empty": "No pending terminations"
     },
     "allActive": {
       "title": "Active Discounts",
       "description": "All active vendor discounts",
-      "tableTitle": "Active Vendor Discounts"
+      "tableTitle": "Active Vendor Discounts",
+      "empty": "No active discounts"
     },
     "table": {
       "vendor": "Vendor",

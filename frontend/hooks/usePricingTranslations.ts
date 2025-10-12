@@ -86,7 +86,7 @@ export const usePricingTranslations = () => {
         ...plan,
         name: translatePricingKey(`${translationKey}.name`) || plan.name,
         monthlyPriceText: `CHF ${displayPrice || plan.price.monthly} ${priceLabel}`,
-        annualPlanText: `CHF ${plan.price.annually} ${t('common.perYear')} (${t('common.save10Percent')})`,
+        annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,
         tagline: translatePricingKey(`${translationKey}.tagline`) || plan.tagline,
         description: translatePricingKey(`${translationKey}.description`) || plan.description,
         features: plan.features.map(feature => {
@@ -104,7 +104,7 @@ export const usePricingTranslations = () => {
         ...plan,
         name: translatePricingKey(`${baseKey}.name`) || plan.name,
         monthlyPriceText: `CHF ${displayPrice || plan.price.monthly} ${priceLabel}`,
-        annualPlanText: `CHF ${plan.price.annually} ${t('common.perYear')} (${t('common.save10Percent')})`,
+        annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,
         tagline: translatePricingKey(`${baseKey}.tagline`) || plan.tagline,
         description: translatePricingKey(`${baseKey}.description`) || plan.description,
         features: plan.features.map(feature => {
@@ -117,8 +117,8 @@ export const usePricingTranslations = () => {
 
   // Translate a formatted price string
   const translatePrice = (monthlyPrice: number, annualPrice: number) => ({
-    monthly: `CHF ${monthlyPrice} ${t('common.perMonth')}`,
-    annual: `CHF ${annualPrice} ${t('common.perYear')} (${t('common.save10Percent')})`
+    monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,
+    annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`
   });
 
   // Translate pricing text like "/month", "/year", "(save 10%)"

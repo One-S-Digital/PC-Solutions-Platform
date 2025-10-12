@@ -281,7 +281,12 @@
       "selectFileOrLink": "Please select a file or provide a link"
     },
     "title": {
-      "edit": "Edit"
+      "edit": "Edit {{contentType}}",
+      "add": {
+        "e-learning": "Add E-Learning Content",
+        "hr": "Add HR Document",
+        "policy": "Add Policy Document"
+      }
     },
     "labels": {
       "descriptionPreview": "Description Preview",

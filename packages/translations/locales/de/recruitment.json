@@ -1,4 +1,5 @@
 {
+  "title": "Rekrutierung",
   "jobListings": {
     "title": "Stellenangebote",
     "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
@@ -9,7 +10,8 @@
     "noCandidates": "Keine Kandidaten verfügbar",
     "viewProfile": "Profil anzeigen",
     "searchPlaceholder": "Kandidaten suchen...",
-    "filterTitle": "Kandidaten filtern"
+    "filterTitle": "Kandidaten filtern",
+    "emptyState": "Keine Kandidaten im Pool verfügbar"
   },
   "jobOffers": {
     "searchPlaceholder": "Stellen suchen...",

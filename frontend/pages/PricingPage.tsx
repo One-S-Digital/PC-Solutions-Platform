@@ -85,7 +85,7 @@ const PricingPage: React.FC = () => {
             <span className="font-bold text-lg hidden sm:block">{t('appName')}</span>
         </Link>
         <Button variant="light" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon}>
-            {t('buttons.goBack')}
+            {t('common:buttons.goBack')}
         </Button>
       </div>
 

@@ -107,7 +107,7 @@ const SettingsPage: React.FC = () => {
 
   const handleCancel = () => {
     if (isDirty) {
-      if (window.confirm(t('page.unsavedChangesPrompt'))) {
+      if (window.confirm(t('settings:page.unsavedChangesPrompt'))) {
         setFormData(JSON.parse(JSON.stringify(initialFormData))); 
         setIsDirty(false);
         navigate('/dashboard'); 
@@ -123,7 +123,7 @@ const SettingsPage: React.FC = () => {
   };
 
   if (!currentUser || !formData) {
-    return <div className="p-6 text-center">{t('page.loading')}</div>;
+    return <div className="p-6 text-center">{t('settings:page.loading')}</div>;
   }
   
   const userRole = currentUser.role;
@@ -182,7 +182,7 @@ const SettingsPage: React.FC = () => {
           })}
            {availableSections.length === 0 && (
             <Card className="p-6 text-center">
-                <p className="text-gray-600">{t('page.noSectionsAvailable')}</p>
+                <p className="text-gray-600">{t('settings:page.noSectionsAvailable')}</p>
             </Card>
           )}
         </main>
@@ -193,7 +193,7 @@ const SettingsPage: React.FC = () => {
     <div className="flex flex-col h-full bg-page-bg">
       <div className="sticky top-0 z-30 bg-page-bg/80 backdrop-blur-md px-8 py-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('page.title')}</h1>
+          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
           {/* Don't show save/cancel if only AccountSecurity is available */}
           {availableSections.length > 1 && ( 
             <div className="flex space-x-3">

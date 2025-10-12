@@ -189,7 +189,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
        setIsUploading(false);
        onClose();
     } else if (contentType !== 'e-learning' || formData.type !== ELearningContentType.LINK) {
-      alert(t('contentUploadModal.error.selectFileOrLink'));
+      alert(t('common:contentUploadModal.error.selectFileOrLink'));
       setIsUploading(false);
       return;
     } else { 
@@ -202,18 +202,18 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
   if (!isOpen) return null;
 
   const titleText = existingContent 
-    ? t('contentUploadModal.title.edit', { contentType: t(`contentUploadModal.contentType.${contentType}`)}) 
-    : t(`contentUploadModal.title.add.${contentType}`);
+    ? t('common:contentUploadModal.title.edit', { contentType: t(`contentUploadModal.contentType.${contentType}`)}) 
+    : t(`common:contentUploadModal.title.add.${contentType}`);
   
-  const descriptionLabel = contentType === 'policy' ? t('contentUploadModal.labels.descriptionPreview') : t('contentUploadModal.labels.description');
+  const descriptionLabel = contentType === 'policy' ? t('common:contentUploadModal.labels.descriptionPreview') : t('common:contentUploadModal.labels.description');
   const descriptionMaxLength = contentType === 'policy' ? 300 : (contentType === 'e-learning' ? 300 : undefined);
   const policySpecificInputClass = `${STANDARD_INPUT_FIELD} mt-1`;
 
 
   const languageOptions: { value: LanguageCode; label: string }[] = [
-    { value: 'EN', label: t('languageSwitcher.enShort') },
-    { value: 'FR', label: t('languageSwitcher.frShort') },
-    { value: 'DE', label: t('languageSwitcher.deShort') },
+    { value: 'EN', label: t('common:languageSwitcher.enShort') },
+    { value: 'FR', label: t('common:languageSwitcher.frShort') },
+    { value: 'DE', label: t('common:languageSwitcher.deShort') },
   ];
   
   const renderButtonSelect = (
@@ -248,11 +248,11 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.title')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.title')} <span className="text-red-500 ml-0.5">*</span></label>
           <input type="text" name="title" id="title" value={formData.title} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={60} />
         </div>
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
             {ELEARNING_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
@@ -264,29 +264,29 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{300}</p>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        {renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({value: v, label: t(`contentUploadModal.eLearningTypes.${v.toLowerCase()}` as const, v)})), t('contentUploadModal.labels.contentType'), true)}
-        {renderButtonSelect('language', formData.language, languageOptions, t('contentUploadModal.labels.language'), true)}
+        {renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({value: v, label: t(`contentUploadModal.eLearningTypes.${v.toLowerCase()}` as const, v)})), t('common:contentUploadModal.labels.contentType'), true)}
+        {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}
       </div>
       {(formData.type === ELearningContentType.COURSE || formData.type === ELearningContentType.VIDEO) && (
         <div>
-          <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.duration')}</label>
-          <input type="text" name="duration" id="duration" value={formData.duration || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('contentUploadModal.placeholders.duration')}/>
+          <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.duration')}</label>
+          <input type="text" name="duration" id="duration" value={formData.duration || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.duration')}/>
         </div>
       )}
       {formData.type === ELearningContentType.COURSE && (
         <div>
-          <label htmlFor="lessons" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.lessons')}</label>
+          <label htmlFor="lessons" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.lessons')}</label>
           <input type="number" name="lessons" id="lessons" value={formData.lessons || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} min="1"/>
         </div>
       )}
       {formData.type === ELearningContentType.LINK && (
         <div>
-          <label htmlFor="fileUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.linkUrl')} <span className="text-red-500 ml-0.5">*</span></label>
-          <input type="url" name="fileUrl" id="fileUrl" value={formData.fileUrl || ''} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('contentUploadModal.placeholders.linkUrl')}/>
+          <label htmlFor="fileUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.linkUrl')} <span className="text-red-500 ml-0.5">*</span></label>
+          <input type="url" name="fileUrl" id="fileUrl" value={formData.fileUrl || ''} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.linkUrl')}/>
         </div>
       )}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.accessRoles')}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.accessRoles')}</label>
         <div className="mt-1 space-y-1">
           {Object.values(UserRole).filter(r => [UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.ADMIN, UserRole.PARENT].includes(r)).map(role => (
             <label key={role} className="flex items-center">
@@ -297,11 +297,11 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         </div>
       </div>
       <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.status')}</label>
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.status')}</label>
         <select name="status" id="status" value={formData.status || 'Draft'} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`}>
-            <option value="Draft">{t('contentUploadModal.statusOptions.draft')}</option>
-            <option value="Published">{t('contentUploadModal.statusOptions.published')}</option>
-            <option value="Archived">{t('contentUploadModal.statusOptions.archived')}</option>
+            <option value="Draft">{t('common:contentUploadModal.statusOptions.draft')}</option>
+            <option value="Published">{t('common:contentUploadModal.statusOptions.published')}</option>
+            <option value="Archived">{t('common:contentUploadModal.statusOptions.archived')}</option>
         </select>
       </div>
     </>
@@ -310,20 +310,20 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
   const renderHRFields = () => (
     <>
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.documentTitle')} <span className="text-red-500 ml-0.5">*</span></label>
+        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.documentTitle')} <span className="text-red-500 ml-0.5">*</span></label>
         <input type="text" name="title" id="title" value={formData.title} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category as HRCategory} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
             {HR_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
         </div>
-        {renderButtonSelect('language', formData.language, languageOptions, t('contentUploadModal.labels.language'), true)}
+        {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}
       </div>
       <div>
-        <label htmlFor="fileType" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.fileType')} <span className="text-red-500 ml-0.5">*</span></label>
+        <label htmlFor="fileType" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.fileType')} <span className="text-red-500 ml-0.5">*</span></label>
         <select name="fileType" id="fileType" value={formData.fileType as 'PDF' | 'DOCX' | 'XLSX'} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
           <option value="PDF">PDF</option>
           <option value="DOCX">DOCX</option>
@@ -331,15 +331,15 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         </select>
       </div>
        <div>
-        <label htmlFor="version" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.version')}</label>
-        <input type="text" name="version" id="version" value={formData.version || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('contentUploadModal.placeholders.version')}/>
+        <label htmlFor="version" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.version')}</label>
+        <input type="text" name="version" id="version" value={formData.version || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.version')}/>
       </div>
       <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.status')}</label>
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.status')}</label>
         <select name="status" id="status" value={formData.status || 'Draft'} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`}>
-             <option value="Draft">{t('contentUploadModal.statusOptions.draft')}</option>
-            <option value="Published">{t('contentUploadModal.statusOptions.published')}</option>
-            <option value="Archived">{t('contentUploadModal.statusOptions.archived')}</option>
+             <option value="Draft">{t('common:contentUploadModal.statusOptions.draft')}</option>
+            <option value="Published">{t('common:contentUploadModal.statusOptions.published')}</option>
+            <option value="Archived">{t('common:contentUploadModal.statusOptions.archived')}</option>
         </select>
       </div>
     </>
@@ -348,27 +348,27 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
   const renderPolicyFields = () => (
     <>
       <div>
-        <label htmlFor="policyTitle" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.title')} <span className="text-red-500 ml-0.5">*</span></label>
+        <label htmlFor="policyTitle" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.title')} <span className="text-red-500 ml-0.5">*</span></label>
         <input type="text" name="title" id="policyTitle" value={formData.title} onChange={handleInputChange} required className={policySpecificInputClass} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
-          <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="policyCategory" value={formData.category as PolicyBroadCategory} onChange={handleInputChange} required className={policySpecificInputClass}>
             {POLICY_BROAD_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-         {renderButtonSelect('language', formData.language, languageOptions, t('contentUploadModal.labels.language'), true)}
+         {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
-          <label htmlFor="policyCountry" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.country')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="policyCountry" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.country')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="country" id="policyCountry" value={formData.country} onChange={handleInputChange} required className={policySpecificInputClass}>
             {COUNTRIES_FOR_POLICIES.map(country => <option key={country} value={country}>{country}</option>)}
           </select>
         </div>
         <div>
-          <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.regionCanton')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.regionCanton')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="region" id="policyRegion" value={formData.region} onChange={handleInputChange} required className={policySpecificInputClass}>
             {(formData.country ? REGIONS_BY_COUNTRY[formData.country] : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
           </select>
@@ -376,13 +376,13 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 items-end">
         <div>
-          <label htmlFor="policyPolicyType" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.policyType')} <span className="text-red-500 ml-0.5">*</span></label>
+          <label htmlFor="policyPolicyType" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.policyType')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="policyType" id="policyPolicyType" value={formData.policyType} onChange={handleInputChange} required className={policySpecificInputClass}>
             {Object.values(PolicyType).map(pt => <option key={pt} value={pt}>{pt}</option>)}
           </select>
         </div>
         <div>
-            <label htmlFor="isCritical" className="block text-sm font-medium text-gray-700 mb-1.5">{t('contentUploadModal.labels.criticality')}</label>
+            <label htmlFor="isCritical" className="block text-sm font-medium text-gray-700 mb-1.5">{t('common:contentUploadModal.labels.criticality')}</label>
             <button
                 type="button"
                 onClick={() => handleButtonSelectChange('isCritical', !formData.isCritical)}
@@ -390,27 +390,27 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
                 role="switch"
                 aria-checked={!!formData.isCritical}
             >
-                <span className="sr-only">{t('contentUploadModal.labels.markAsCritical')}</span>
+                <span className="sr-only">{t('common:contentUploadModal.labels.markAsCritical')}</span>
                 <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${formData.isCritical ? 'translate-x-6' : 'translate-x-1'}`}></span>
             </button>
-            <span className="ml-2 text-sm text-gray-600">{formData.isCritical ? t('contentUploadModal.criticalityOptions.critical') : t('contentUploadModal.criticalityOptions.normal')}</span>
+            <span className="ml-2 text-sm text-gray-600">{formData.isCritical ? t('common:contentUploadModal.criticalityOptions.critical') : t('common:contentUploadModal.criticalityOptions.normal')}</span>
         </div>
       </div>
        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
-          <label htmlFor="policyEffectiveDate" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.effectiveDate')}</label>
+          <label htmlFor="policyEffectiveDate" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.effectiveDate')}</label>
           <input type="date" name="effectiveDate" id="policyEffectiveDate" value={formData.effectiveDate} onChange={handleInputChange} className={policySpecificInputClass} />
         </div>
         <div>
-          <label htmlFor="policyStatus" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.status')}</label>
+          <label htmlFor="policyStatus" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.status')}</label>
            <select name="status" id="policyStatus" value={formData.status || 'Draft'} onChange={handleInputChange} className={policySpecificInputClass}>
             {['Draft', 'In Review', 'Approved', 'Published', 'Upcoming', 'Archived'].map(s => <option key={s} value={s}>{t(`contentUploadModal.policyStatusOptions.${s.toLowerCase().replace(' ', '')}`,s)}</option>)}
           </select>
         </div>
       </div>
       <div>
-        <label htmlFor="policyExternalLink" className="block text-sm font-medium text-gray-700 mb-1">{t('contentUploadModal.labels.externalLink')}</label>
-        <input type="url" name="externalLink" id="policyExternalLink" value={formData.externalLink || ''} onChange={handleInputChange} className={policySpecificInputClass} placeholder={t('contentUploadModal.placeholders.externalLink')}/>
+        <label htmlFor="policyExternalLink" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.externalLink')}</label>
+        <input type="url" name="externalLink" id="policyExternalLink" value={formData.externalLink || ''} onChange={handleInputChange} className={policySpecificInputClass} placeholder={t('common:contentUploadModal.placeholders.externalLink')}/>
       </div>
       <div>
         <label htmlFor="policyDescription" className="block text-sm font-medium text-gray-700 mb-1">{descriptionLabel}</label>
@@ -425,7 +425,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       <div className={`w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden transform transition-all duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <h2 id="contentUploadModalTitle" className="text-xl font-semibold text-swiss-charcoal">{titleText}</h2>
-          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label={t('buttons.close')}>
+          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label={t('common:buttons.close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -439,8 +439,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
             {!(contentType === 'e-learning' && formData.type === ELearningContentType.LINK) && (
               <div className="pt-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {existingContent && (existingContent as any).fileUrl && !file ? t('contentUploadModal.labels.currentFile', { fileName: (existingContent as any).fileUrl}) : 
-                   (contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('contentUploadModal.labels.uploadFile'))}
+                  {existingContent && (existingContent as any).fileUrl && !file ? t('common:contentUploadModal.labels.currentFile', { fileName: (existingContent as any).fileUrl}) : 
+                   (contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('common:contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('common:contentUploadModal.labels.uploadFile'))}
                   {(!existingContent && (contentType === 'hr' || (contentType === 'policy' && !formData.externalLink && !formData.description))) && <span className="text-red-500 ml-0.5">*</span>}
                 </label>
                 <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-swiss-teal/60 border-dashed rounded-md bg-swiss-teal/5">
@@ -448,17 +448,17 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
                     <ArrowUpTrayIcon className="mx-auto h-10 w-10 text-swiss-mint" />
                     <div className="flex text-sm text-gray-600">
                       <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-swiss-mint hover:text-swiss-teal focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-swiss-mint">
-                        <span>{t('contentUploadModal.fileUpload.browse')}</span>
+                        <span>{t('common:contentUploadModal.fileUpload.browse')}</span>
                         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept={contentType==='e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.docx'}/>
                       </label>
-                      <p className="pl-1 text-gray-500">{t('contentUploadModal.fileUpload.dragAndDrop')}</p>
+                      <p className="pl-1 text-gray-500">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>
                     </div>
                     <p className="text-xs text-gray-500">
-                      {contentType==='e-learning' ? t('contentUploadModal.fileUpload.eLearningAllowedTypes') : t('contentUploadModal.fileUpload.hrPolicyAllowedTypes')}
+                      {contentType==='e-learning' ? t('common:contentUploadModal.fileUpload.eLearningAllowedTypes') : t('common:contentUploadModal.fileUpload.hrPolicyAllowedTypes')}
                     </p>
                   </div>
                 </div>
-                {file && <p className="mt-2 text-sm text-gray-500"><PaperClipIcon className="w-4 h-4 inline mr-1"/> {t('contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}
+                {file && <p className="mt-2 text-sm text-gray-500"><PaperClipIcon className="w-4 h-4 inline mr-1"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}
               </div>
             )}
             
@@ -469,9 +469,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
             )}
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-            <Button type="button" variant="light" onClick={onClose} disabled={isUploading}>{t('buttons.cancel')}</Button>
+            <Button type="button" variant="light" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>
             <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={isUploading}>
-              {isUploading ? t('contentUploadModal.buttons.uploading') : (existingContent ? t('buttons.saveChanges') : t('contentUploadModal.buttons.upload'))}
+              {isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}
             </Button>
           </div>
         </form>

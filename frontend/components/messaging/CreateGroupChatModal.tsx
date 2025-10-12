@@ -33,7 +33,7 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
 
   const handleCreateGroup = () => {
     if (selectedUsers.length < 2) {
-      alert(t('createGroupChatModal.error.minParticipants'));
+      alert(t('common:createGroupChatModal.error.minParticipants'));
       return;
     }
     const participants = selectedUsers.map(u => ({ id: u.id, name: u.name, role: u.role }));
@@ -49,23 +49,23 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="w-full max-w-lg bg-white shadow-xl rounded-lg">
         <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('createGroupChatModal.title')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('common:createGroupChatModal.title')}</h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600"><XMarkIcon className="w-6 h-6" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div>
-            <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 mb-1">{t('createGroupChatModal.groupNameLabel')}</label>
+            <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 mb-1">{t('common:createGroupChatModal.groupNameLabel')}</label>
             <input
               type="text"
               id="groupName"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('createGroupChatModal.groupNamePlaceholder')}
+              placeholder={t('common:createGroupChatModal.groupNamePlaceholder')}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('createGroupChatModal.selectParticipantsLabel')}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('common:createGroupChatModal.selectParticipantsLabel')}</label>
             <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-md p-2 space-y-1">
               {availableUsers.map(user => (
                 <label key={user.id} className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
@@ -83,9 +83,9 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
           </div>
         </div>
         <div className="px-6 py-4 bg-gray-50 text-right space-x-2">
-          <Button variant="light" onClick={onClose}>{t('buttons.cancel')}</Button>
+          <Button variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
           <Button variant="primary" onClick={handleCreateGroup} disabled={selectedUsers.length < 2}>
-            {t('createGroupChatModal.createButton')}
+            {t('common:createGroupChatModal.createButton')}
           </Button>
         </div>
       </div>

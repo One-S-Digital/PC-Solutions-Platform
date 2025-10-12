@@ -10,7 +10,7 @@ import { UserRole } from '../types';
 import { useTranslation } from 'react-i18next';
 
 const ParentLeadFormPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['parentLeadForm', 'common']);
   const { submitParentLead, currentUser } = useAppContext(); 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -146,7 +146,7 @@ const ParentLeadFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="specialNeeds" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.childNeeds')}</label>
+            <label htmlFor="specialNeeds" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.specialNeeds')}</label>
             <textarea name="specialNeeds" id="specialNeeds" value={formData.specialNeeds} onChange={handleChange} rows={3} className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.specialRequirements')}></textarea>
           </div>
 

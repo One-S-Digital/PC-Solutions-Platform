@@ -87,7 +87,7 @@ const DiscountTerminationsPage: React.FC = () => {
         <div className="space-y-8">
             <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
                 <TagIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-                {t('sidebar.discountTerminations')}
+                {t('dashboard:sidebar.discountTerminations')}
             </h1>
 
             {/* Termination Queue */}
@@ -118,7 +118,7 @@ const DiscountTerminationsPage: React.FC = () => {
                     {t('discountTerminations.allActive.title')}
                 </h2>
                 <p className="text-sm text-gray-600 mb-4">{t('discountTerminations.allActive.description')}</p>
-                 {renderTable(allActiveClients, t('discountTerminations.allActive.tableTitle'), 'discountTerminationsPage.allActive.empty')}
+                 {renderTable(allActiveClients, t('discountTerminations.allActive.tableTitle'), 'discountTerminations.allActive.empty')}
             </Card>
 
         </div>
