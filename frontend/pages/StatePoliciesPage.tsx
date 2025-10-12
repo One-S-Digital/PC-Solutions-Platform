@@ -199,11 +199,11 @@ const StatePoliciesPage: React.FC = () => {
   );
   
   const policyTabs = [
-    { label: t('content:statePolicies.tabs.cantonal'), content: tabsContent('Cantonal Policies')},
-    { label: t('content:statePolicies.tabs.national'), content: tabsContent('National Regulations')},
-    { label: t('content:statePolicies.sections.compliance'), content: tabsContent('Compliance Requirements')},
-    { label: t('content:statePolicies.sections.updates'), content: tabsContent('Updates & News')},
-    { label: t('content:statePolicies.sections.downloads'), content: tabsContent('Official Downloads')},
+    { label: t('statePoliciesPage.tabs.cantonal'), content: tabsContent('Cantonal Policies')},
+    { label: t('statePoliciesPage.tabs.national'), content: tabsContent('National Regulations')},
+    { label: t('statePoliciesPage.sections.compliance'), content: tabsContent('Compliance Requirements')},
+    { label: t('statePoliciesPage.sections.updates'), content: tabsContent('Updates & News')},
+    { label: t('statePoliciesPage.sections.downloads'), content: tabsContent('Official Downloads')},
   ];
 
 

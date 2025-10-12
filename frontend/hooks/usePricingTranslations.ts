@@ -80,7 +80,7 @@ export const usePricingTranslations = () => {
     if (plan.role === UserRole.FOUNDATION) {
       const translationKey = `${planKey}Plan`;
       const displayPrice = isAnnual ? plan.price.annualEquivalent : plan.price.monthly;
-      const priceLabel = t('common.perMonth');
+      const priceLabel = t('common:common.perMonth');
 
       return {
         ...plan,
@@ -98,7 +98,7 @@ export const usePricingTranslations = () => {
       // For supplier and service provider plans
       const baseKey = plan.role === UserRole.PRODUCT_SUPPLIER ? 'suppliersPlan' : 'serviceProviderPlan';
       const displayPrice = isAnnual ? plan.price.annualEquivalent : plan.price.monthly;
-      const priceLabel = t('common.perMonth');
+      const priceLabel = t('common:common.perMonth');
 
       return {
         ...plan,
@@ -123,9 +123,9 @@ export const usePricingTranslations = () => {
 
   // Translate pricing text like "/month", "/year", "(save 10%)"
   const translatePriceFormatting = () => ({
-    perMonth: t('common.perMonth'),
-    perYear: t('common.perYear'),
-    save10Percent: t('common.save10Percent')
+    perMonth: t('common:common.perMonth'),
+    perYear: t('common:common.perYear'),
+    save10Percent: t('common:common.save10Percent')
   });
 
   return {

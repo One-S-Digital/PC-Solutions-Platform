@@ -35,14 +35,22 @@
   },
   "designSystem": {
     "title": "Design System",
+    "description": "Comprehensive design system and component library for ProCrèche Solutions",
     "sections": {
       "colors": "Colors",
       "typography": "Typography",
       "components": "Components"
-    }
-  },
-  "designSystem": {
-    "title": "Design System",
+    },
+    "typography": {
+      "fontFamily": "Font Family: Inter",
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "heading4": "Heading 4",
+      "bodyBase": "Body text (base)",
+      "bodySmall": "Body text (small)",
+      "link": "Link example"
+    },
     "buttons": {
       "primaryDisabled": "Primary (Disabled)",
       "secondaryDisabled": "Secondary (Disabled)",
@@ -59,8 +67,30 @@
     },
     "cards": {
       "standardCard": "Standard Card",
+      "standardCardDesc": "Basic card component with padding and shadow",
       "hoverEffectCard": "Hover Effect Card",
       "hoverEffectCardDesc": "Card with hover effect"
+    },
+    "formControls": {
+      "title": "Form Controls",
+      "textInput": "Text Input",
+      "selectMenu": "Select Menu",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "quantityInput": "Quantity Input",
+      "disabledInput": "Disabled Input"
+    },
+    "tabs": {
+      "title": "Tabs",
+      "pillsVariant": "Pills Variant",
+      "lineVariant": "Line Variant",
+      "tab1": "Tab 1",
+      "tab2": "Tab 2",
+      "tab3": "Tab 3 (Disabled)",
+      "content1": "This is content for tab 1",
+      "content2": "This is content for tab 2",
+      "content3": "This is content for tab 3"
     }
   },
   "partners": {

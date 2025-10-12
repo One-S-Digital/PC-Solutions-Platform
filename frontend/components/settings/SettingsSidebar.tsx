@@ -10,7 +10,7 @@ interface SettingsSidebarProps {
 }
 
 const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ sections, activeSectionId, onSelectSection }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['common', 'settings']);
   return (
     <nav className="w-64 bg-white border-r border-gray-200 p-4 space-y-1 overflow-y-auto flex-shrink-0">
       {sections.map(section => (

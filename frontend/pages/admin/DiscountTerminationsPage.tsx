@@ -107,7 +107,7 @@ const DiscountTerminationsPage: React.FC = () => {
                     )}
                  </div>
                  <div className="mt-4">
-                    {renderTable(terminationQueue, t('discountTerminations.queue.tableTitle'), 'discountTerminationsPage.queue.empty')}
+                    {renderTable(terminationQueue, t('discountTerminations.queue.tableTitle'), 'discountTerminations.queue.empty')}
                  </div>
             </Card>
 
