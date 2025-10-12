@@ -18,6 +18,10 @@ export class CreatePlatformSettingsDto {
   maintenanceMode?: boolean;
 
   @IsOptional()
+  @IsString()
+  maintenanceMessage?: string;
+
+  @IsOptional()
   @IsBoolean()
   registrationEnabled?: boolean;
 
