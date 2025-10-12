@@ -18,6 +18,7 @@
   "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
   "role": {
     "foundation": "Stiftung (Kindertagesstätte)",
+    "supplier": "Produktlieferant",
     "productSupplier": "Produktlieferant",
     "serviceProvider": "Dienstleister",
     "parent": "Elternteil",

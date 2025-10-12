@@ -18,6 +18,7 @@
   "detailsTitle": "Entrez vos détails pour {{role}}",
   "role": {
     "foundation": "Fondation (Crèche)",
+    "supplier": "Fournisseur de produits",
     "productSupplier": "Fournisseur de produits",
     "serviceProvider": "Prestataire de services",
     "parent": "Parent",
