@@ -207,7 +207,11 @@ export class MessagingService {
         },
       },
       include: {
-        participants: true,
+        participants: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 
@@ -223,7 +227,11 @@ export class MessagingService {
           },
         },
         include: {
-          participants: true,
+          participants: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
     }
