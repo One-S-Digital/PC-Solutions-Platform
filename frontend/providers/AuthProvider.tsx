@@ -43,7 +43,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       try {
         // Sync user with backend API
-        await this.syncUserWithBackend(clerkUser);
+        await syncUserWithBackend(clerkUser);
       } catch (error) {
         console.error('Failed to sync user with backend:', error);
         
@@ -68,9 +68,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         };
         
         setCurrentUser(fallbackUser);
-      } catch (error) {
-        console.error('Failed to sync user:', error);
-        setCurrentUser(null);
       } finally {
         setIsLoading(false);
       }

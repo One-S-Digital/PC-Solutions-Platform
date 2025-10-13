@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, ReactNode, Dispatch, SetSta
 // FIX: Add VendorClient and VendorClientReason to imports
 import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, ApplicationStatus, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types';
 import { useTranslation } from 'react-i18next'; 
+import { useAuthContext } from '../providers/AuthProvider'; // Import AuthProvider hook
 import { 
   MOCK_PARENT_LEADS,
   MOCK_APPLICATIONS,
@@ -47,47 +48,9 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Mock user store for development/testing
-const mockUserStore: User[] = [
-  {
-    id: 'admin-1',
-    email: 'admin@procrechesolutions.com',
-    name: 'Admin User',
-    role: UserRole.SUPER_ADMIN,
-    organizationId: 'org-1',
-    organizationName: 'ProCrèche Solutions',
-    plan: 'Professional',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    status: 'Active',
-    phone: '+41 44 123 4567',
-    address: 'Zurich, Switzerland',
-    preferredLanguage: 'en',
-    timezone: 'Europe/Zurich',
-    lastLoginAt: new Date().toISOString(),
-    emailVerified: true,
-    profilePictureUrl: null,
-    bio: 'System administrator',
-    website: 'https://procrechesolutions.com',
-    linkedinProfile: null,
-    twitterHandle: null,
-    instagramHandle: null,
-    facebookProfile: null,
-    notificationPreferences: {
-      email: true,
-      sms: false,
-      push: true
-    },
-    privacySettings: {
-      profileVisibility: 'public',
-      showEmail: false,
-      showPhone: false
-    }
-  }
-];
-
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  // Use Clerk authentication from AuthProvider
+  const { currentUser, setCurrentUser, login, logout, signup, updateCurrentUserInfo: updateUserFromAuth } = useAuthContext();
   const [leads, setLeads] = useState<ParentLead[]>(MOCK_PARENT_LEADS);
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(MOCK_SERVICE_REQUESTS);
   const [applications, setApplications] = useState<Application[]>(MOCK_APPLICATIONS);
@@ -158,61 +121,8 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     };
   }, [language]);
 
-  const login = async (email: string): Promise<{ success: boolean; message?: string }> => {
-    return new Promise(resolve => {
-      setTimeout(() => { // Simulate network delay
-        const user = mockUserStore.find(u => u.email.toLowerCase() === email.toLowerCase());
-        if (user) {
-          setCurrentUser(user);
-          resolve({ success: true });
-        } else {
-          resolve({ success: false, message: 'Invalid credentials. Please try again.' });
-        }
-      }, 500);
-    });
-  };
-
-  const logout = () => {
-    setCurrentUser(null);
-  };
-
-  const signup = async (formData: SignupFormData, role: SignupRole): Promise<{ success: boolean; message?: string, redirectTo?: string }> => {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            if (mockUserStore.some(u => u.email.toLowerCase() === formData.email.toLowerCase())) {
-                resolve({ success: false, message: 'An account with this email already exists.' });
-                return;
-            }
-
-            const newUser: User = {
-                id: `user_${Date.now()}`,
-                name: formData.contactPerson,
-                email: formData.email,
-                role: role as unknown as UserRole, // Map SignupRole to UserRole
-                orgName: formData.organisationName,
-                orgId: formData.organisationName ? `org_${Date.now()}` : undefined,
-                avatarUrl: `https://ui-avatars.com/api/?name=${formData.contactPerson.replace(' ', '+')}&background=random`,
-                status: 'Active',
-                lastLogin: new Date().toISOString(),
-                region: formData.canton || undefined,
-                memberSince: new Date().toISOString(),
-                plan: 'Basic', // Default to basic plan on signup
-            };
-            
-            mockUserStore.push(newUser);
-
-            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role)) {
-                // For professional roles, don't log in immediately. Redirect to pricing.
-                // In a real app, you'd probably mark the account as pending verification/subscription.
-                resolve({ success: true, redirectTo: '/pricing' });
-            } else {
-                // For other roles like Parent, log them in directly.
-                setCurrentUser(newUser);
-                resolve({ success: true });
-            }
-        }, 500);
-    });
-  };
+  // Note: login and signup are now handled by Clerk through AuthProvider
+  // These functions are passed through from AuthProvider
 
 
   const submitParentLead = useCallback((leadData: Omit<ParentLead, 'id' | 'submissionDate' | 'mainStatus' | 'assignedFoundations' | 'responses'| 'parentId'>) => {
@@ -314,15 +224,9 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   }, []);
 
   const updateCurrentUserInfo = useCallback((updatedInfo: Partial<User>) => {
-    if (currentUser) {
-        setCurrentUser(prevUser => prevUser ? { ...prevUser, ...updatedInfo } : null);
-        // Also update the master list for mock persistence
-        const userIndex = mockUserStore.findIndex(u => u.id === currentUser.id);
-        if (userIndex > -1) {
-            mockUserStore[userIndex] = { ...mockUserStore[userIndex], ...updatedInfo };
-        }
-    }
-  }, [currentUser]);
+    // Delegate to AuthProvider's update function
+    updateUserFromAuth(updatedInfo);
+  }, [updateUserFromAuth]);
 
   // FIX: Implement vendor client status update function
   const updateVendorClientStatus = useCallback((vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => {
