@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
 import { User, UserRole } from '../types';
-import { userService } from '../services';
+import { API_ENDPOINTS } from '../services/api-endpoints';
+import { ApiError } from '../services/api';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -43,7 +44,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       try {
         // Sync user with backend API
-        await syncUserWithBackend(clerkUser);
+        await syncUserWithBackend(clerkUser, getToken);
       } catch (error) {
         console.error('Failed to sync user with backend:', error);
         
@@ -74,7 +75,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     syncUser();
-  }, [clerkUser, clerkIsLoaded]);
+  }, [clerkUser, clerkIsLoaded, getToken]);
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
@@ -95,8 +96,33 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     if (!currentUser) return;
 
     try {
-      const updatedUser = await userService.updateCurrentUser(updatedInfo);
-      setCurrentUser(updatedUser);
+      const token = await getToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      
+      const response = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.update}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify(updatedInfo),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        const transformedUser = {
+          ...data.data,
+          name: `${data.data.firstName} ${data.data.lastName}`,
+          status: data.data.isActive ? 'Active' : 'Inactive',
+          lastLogin: data.data.lastActiveAt,
+          memberSince: data.data.createdAt,
+        };
+        setCurrentUser(transformedUser);
+      }
     } catch (error) {
       console.error('Failed to update user:', error);
       throw error;
@@ -104,23 +130,49 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Sync user with backend API
-  const syncUserWithBackend = async (clerkUser: any) => {
+  const syncUserWithBackend = async (clerkUser: any, getToken: () => Promise<string | null>) => {
     try {
-      // Try to get existing user from backend
-      const backendUser = await userService.getCurrentUser();
-      setCurrentUser(backendUser);
-    } catch (error) {
-      // If user doesn't exist in backend, create them
-      if (error.status === 404) {
-        await createUserInBackend(clerkUser);
-      } else {
-        throw error;
+      const token = await getToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      
+      const response = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.me}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          // User doesn't exist in backend, create them
+          await createUserInBackend(clerkUser, getToken);
+          return;
+        }
+        throw new ApiError('Failed to fetch user', response.status);
       }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        const transformedUser = {
+          ...data.data,
+          name: `${data.data.firstName} ${data.data.lastName}`,
+          status: data.data.isActive ? 'Active' : 'Inactive',
+          lastLogin: data.data.lastActiveAt,
+          memberSince: data.data.createdAt,
+        };
+        setCurrentUser(transformedUser);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Sync error:', error);
+      throw error;
     }
   };
 
   // Create user in backend when they don't exist
-  const createUserInBackend = async (clerkUser: any) => {
+  const createUserInBackend = async (clerkUser: any, getToken: () => Promise<string | null>) => {
     const newUserData = {
       clerkId: clerkUser.id,
       email: clerkUser.emailAddresses[0]?.emailAddress || '',
@@ -130,8 +182,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     try {
-      // This would typically call an API endpoint to create the user
-      // For now, create a local user that will be synced when backend is available
+      // User will be auto-created by backend webhook
+      // Just create a local fallback for now
       const createdUser: User = {
         ...newUserData,
         id: clerkUser.id,
