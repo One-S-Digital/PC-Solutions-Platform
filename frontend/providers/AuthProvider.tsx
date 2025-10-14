@@ -48,27 +48,15 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (error) {
         console.error('Failed to sync user with backend:', error);
         
-        // Fallback to creating a basic user from Clerk data if backend is unavailable
-        const fallbackUser: User = {
-          id: clerkUser.id,
-          clerkId: clerkUser.id,
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          firstName: clerkUser.firstName || '',
-          lastName: clerkUser.lastName || '',
-          role: UserRole.PARENT, // Default role
-          certifications: [],
-          skills: [],
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          // Legacy fields for UI compatibility
-          name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
-          status: 'Active',
-          lastLogin: new Date().toISOString(),
-          memberSince: new Date().toISOString(),
-        };
+        // Don't create fallback users - show error state
+        // Backend connection is required for proper user data
+        setCurrentUser(null);
         
-        setCurrentUser(fallbackUser);
+        // Log error for debugging
+        console.error('Unable to load user profile. Backend connection required.');
+        
+        // TODO: Show error notification to user
+        // For now, the app will redirect to login via ProtectedRoute
       } finally {
         setIsLoading(false);
       }
@@ -182,35 +170,22 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Create user in backend when they don't exist
   const createUserInBackend = async (clerkUser: any, getToken: () => Promise<string | null>) => {
-    const newUserData = {
-      clerkId: clerkUser.id,
-      email: clerkUser.emailAddresses[0]?.emailAddress || '',
-      firstName: clerkUser.firstName || '',
-      lastName: clerkUser.lastName || '',
-      role: UserRole.PARENT, // Default role, can be updated later
-    };
-
+    // User should be auto-created by backend Clerk webhook
+    // If user doesn't exist yet, wait and retry
+    console.log('User not found in backend. Waiting for webhook to create user...');
+    
+    // Wait 2 seconds for webhook to process
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Try to fetch user again
     try {
-      // User will be auto-created by backend webhook
-      // Just create a local fallback for now
-      const createdUser: User = {
-        ...newUserData,
-        id: clerkUser.id,
-        certifications: [],
-        skills: [],
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        name: `${newUserData.firstName} ${newUserData.lastName}`.trim(),
-        status: 'Active',
-        lastLogin: new Date().toISOString(),
-        memberSince: new Date().toISOString(),
-      };
-      
-      setCurrentUser(createdUser);
+      await syncUserWithBackend(clerkUser, getToken);
     } catch (error) {
-      console.error('Failed to create user in backend:', error);
-      throw error;
+      console.error('User still not found after webhook wait. Backend webhook may not be configured.');
+      
+      // Don't create fallback - require backend connection
+      setCurrentUser(null);
+      throw new Error('Backend user creation failed. Please ensure Clerk webhook is configured.');
     }
   };
 

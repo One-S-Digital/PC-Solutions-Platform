@@ -38,6 +38,9 @@ export default function AdminCustomSignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showVerificationStep, setShowVerificationStep] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationError, setVerificationError] = useState('');
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -115,11 +118,24 @@ export default function AdminCustomSignupForm() {
       });
 
       if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        setCurrentStep(3);
+        try {
+          await setActive({ session: result.createdSessionId });
+          setCurrentStep(3);
+        } catch (setActiveError: any) {
+          console.error('Session activation failed:', setActiveError);
+          setErrors({ email: 'Failed to activate session. Please try logging in.' });
+        }
       } else if (result.status === 'missing_requirements') {
-        // Handle additional requirements if needed
-        console.log('Missing requirements:', result.unverifiedFields);
+        // Email verification required
+        try {
+          await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+          setShowVerificationStep(true);
+          setIsLoading(false);
+          return;
+        } catch (verifyError: any) {
+          console.error('Failed to prepare email verification:', verifyError);
+          setErrors({ email: 'Failed to send verification email. Please try again.' });
+        }
       }
     } catch (err: any) {
       console.error('Signup error:', err);
@@ -146,6 +162,36 @@ export default function AdminCustomSignupForm() {
       }
       
       setErrors({ email: errorMessage });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerification = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!signUp || !verificationCode) return;
+    
+    setIsLoading(true);
+    setVerificationError('');
+    
+    try {
+      const result = await signUp.attemptEmailAddressVerification({
+        code: verificationCode,
+      });
+      
+      if (result.status === 'complete') {
+        try {
+          await setActive({ session: result.createdSessionId });
+          setCurrentStep(3);
+        } catch (setActiveError: any) {
+          console.error('Session activation failed:', setActiveError);
+          setVerificationError('Failed to activate session. Please try logging in.');
+        }
+      }
+    } catch (err: any) {
+      console.error('Verification error:', err);
+      const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
+      setVerificationError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -259,6 +305,40 @@ export default function AdminCustomSignupForm() {
                     {isLoading ? 'Creating Account...' : 'Create Account'}
                     </Button>
                 </div>
+
+                {showVerificationStep && (
+                  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h3 className="text-lg font-semibold text-swiss-charcoal mb-2">
+                      Verify Your Email
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      We've sent a verification code to {formData.email}. Please enter it below.
+                    </p>
+                    <form onSubmit={handleVerification} className="space-y-4">
+                      <div>
+                        <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
+                          Verification Code
+                        </label>
+                        <input
+                          type="text"
+                          id="verificationCode"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value)}
+                          className={STANDARD_INPUT_FIELD}
+                          placeholder="000000"
+                          maxLength={6}
+                          required
+                        />
+                        {verificationError && (
+                          <p className="text-xs text-swiss-coral mt-1">{verificationError}</p>
+                        )}
+                      </div>
+                      <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isLoading}>
+                        {isLoading ? 'Verifying...' : 'Verify Email'}
+                      </Button>
+                    </form>
+                  </div>
+                )}
               </form>
             )}
              <p className="mt-6 text-center text-sm text-gray-600">

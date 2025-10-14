@@ -59,8 +59,13 @@ export default function AdminCustomLoginForm() {
 
       if (result.status === 'complete') {
         // User signed in successfully, activate session and redirect to admin dashboard
-        await setActive({ session: result.createdSessionId });
-        navigate('/dashboard');
+        try {
+          await setActive({ session: result.createdSessionId });
+          navigate('/dashboard');
+        } catch (setActiveError: any) {
+          console.error('Session activation failed:', setActiveError);
+          setError('Failed to activate session. Please try again.');
+        }
       } else if (result.status === 'needs_first_factor') {
         // Handle 2FA if needed
         setError('Two-factor authentication required');
@@ -119,14 +124,18 @@ export default function AdminCustomLoginForm() {
     setIsLoading(true);
 
     try {
+      // Use full URL for redirects (Clerk v5 requirement)
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
-        redirectUrl: '/dashboard',
-        redirectUrlComplete: '/dashboard',
+        redirectUrl: redirectUrl,
+        redirectUrlComplete: redirectUrl,
       });
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Google sign in error:', error);
-      toast.error('Google sign in failed. Please try again.');
+      const errorMessage = error.errors?.[0]?.message || 'Google sign in failed. Please try again.';
+      setError(errorMessage);
       setIsLoading(false);
     }
   };

@@ -67,8 +67,13 @@ const LoginPage: React.FC = () => {
       });
 
       if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        navigate('/dashboard', { replace: true });
+        try {
+          await setActive({ session: result.createdSessionId });
+          navigate('/dashboard', { replace: true });
+        } catch (setActiveError: any) {
+          console.error('Session activation failed:', setActiveError);
+          setError('Failed to activate session. Please try again.');
+        }
       } else if (result.status === 'needs_first_factor') {
         setError('Two-factor authentication required');
       } else {
@@ -111,14 +116,18 @@ const LoginPage: React.FC = () => {
     }
 
     try {
+      // Use full URL for redirects (Clerk v5 requirement)
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
       await signIn.authenticateWithRedirect({
         strategy: provider,
-        redirectUrl: '/dashboard',
-        redirectUrlComplete: '/dashboard',
+        redirectUrl: redirectUrl,
+        redirectUrlComplete: redirectUrl,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Social login error:', error);
-      setError('Social login failed. Please try again.');
+      const errorMessage = error.errors?.[0]?.message || 'Social login failed. Please try again.';
+      setError(errorMessage);
     }
   };
 
