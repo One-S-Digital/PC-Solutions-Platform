@@ -503,6 +503,9 @@ importers:
 
   frontend:
     dependencies:
+      '@clerk/clerk-react':
+        specifier: ^5.0.0
+        version: 5.47.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.1.1)
@@ -9372,7 +9375,7 @@ snapshots:
 
   '@clerk/localizations@3.25.1':
     dependencies:
-      '@clerk/types': 4.86.0
+      '@clerk/types': 4.88.0
 
   '@clerk/shared@1.4.2(react@19.1.1)':
     dependencies:
@@ -9384,7 +9387,7 @@ snapshots:
 
   '@clerk/shared@3.25.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@clerk/types': 4.86.0
+      '@clerk/types': 4.88.0
       dequal: 2.0.3
       glob-to-regexp: 0.4.1
       js-cookie: 3.0.5
