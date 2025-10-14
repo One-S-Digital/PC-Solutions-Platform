@@ -1,0 +1,266 @@
+================================================================================
+RENDER ENVIRONMENT VARIABLES - COPY & PASTE GUIDE
+Post Phase 1 & 2 Authentication Fixes
+Date: 2025-10-14
+================================================================================
+
+IMPORTANT: Replace ALL placeholder values with your actual values!
+
+================================================================================
+FRONTEND SERVICE ENVIRONMENT VARIABLES (3 variables)
+================================================================================
+
+Add these in Render Dashboard → Frontend Service → Environment tab:
+
+VITE_CLERK_PUBLISHABLE_KEY=pk_live_YOUR_CLERK_PUBLISHABLE_KEY_HERE
+VITE_API_URL=https://your-api-service-name.onrender.com/api
+VITE_NODE_ENV=production
+
+--------------------------------------------------------------------------------
+How to get VITE_CLERK_PUBLISHABLE_KEY:
+  1. Go to https://dashboard.clerk.com
+  2. Click "API Keys" in left sidebar
+  3. Copy the "Publishable Key" (starts with pk_live_)
+  
+How to get VITE_API_URL:
+  1. Go to your Render dashboard
+  2. Find your backend/API service
+  3. Copy the service URL
+  4. Add "/api" at the end
+  5. Example: https://procreche-api.onrender.com/api
+--------------------------------------------------------------------------------
+
+
+================================================================================
+ADMIN SERVICE ENVIRONMENT VARIABLES (3 variables)
+================================================================================
+
+Add these in Render Dashboard → Admin Service → Environment tab:
+
+VITE_CLERK_PUBLISHABLE_KEY=pk_live_YOUR_CLERK_PUBLISHABLE_KEY_HERE
+VITE_API_URL=https://your-api-service-name.onrender.com/api
+VITE_NODE_ENV=production
+
+--------------------------------------------------------------------------------
+IMPORTANT: Use the SAME Clerk key as frontend!
+Frontend and Admin share the same Clerk application.
+Only the role in publicMetadata differentiates admin from regular users.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+BACKEND/API SERVICE ENVIRONMENT VARIABLES (Minimum 9 variables)
+================================================================================
+
+Add these in Render Dashboard → Backend/API Service → Environment tab:
+
+# Clerk Authentication
+CLERK_PUBLISHABLE_KEY=pk_live_YOUR_CLERK_PUBLISHABLE_KEY_HERE
+CLERK_SECRET_KEY=sk_live_YOUR_CLERK_SECRET_KEY_HERE
+CLERK_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
+
+# Database (auto-filled if using Render PostgreSQL)
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# Application
+NODE_ENV=production
+PORT=3000
+API_URL=https://your-api-service-name.onrender.com
+
+# CORS (Critical for frontend/admin to work)
+FRONTEND_URL=https://your-frontend-service-name.onrender.com
+ADMIN_URL=https://your-admin-service-name.onrender.com
+
+# JWT (Recommended)
+JWT_SECRET=GENERATE_RANDOM_32_CHAR_STRING_HERE
+JWT_EXPIRES_IN=7d
+
+--------------------------------------------------------------------------------
+How to get CLERK_PUBLISHABLE_KEY:
+  - Same as VITE_CLERK_PUBLISHABLE_KEY above
+  
+How to get CLERK_SECRET_KEY:
+  1. Go to https://dashboard.clerk.com
+  2. Click "API Keys"
+  3. Copy the "Secret Key" (starts with sk_live_)
+  ⚠️  NEVER expose this key publicly!
+  
+How to get CLERK_WEBHOOK_SECRET:
+  1. Go to https://dashboard.clerk.com
+  2. Click "Webhooks"
+  3. Click "Add Endpoint"
+  4. URL: https://your-api-service-name.onrender.com/webhooks/clerk
+  5. Select events: user.created, user.updated
+  6. Click "Create"
+  7. Copy the "Signing Secret" (starts with whsec_)
+  
+How to get DATABASE_URL:
+  - Automatically filled if you add PostgreSQL database in Render
+  - Or use external database (Supabase, Railway, etc.)
+  
+How to generate JWT_SECRET:
+  Run this command: openssl rand -base64 32
+  Or use online generator: https://generate-secret.vercel.app/32
+  Must be at least 32 characters!
+--------------------------------------------------------------------------------
+
+
+================================================================================
+OPTIONAL BACKEND VARIABLES (For additional features)
+================================================================================
+
+# Email Service (if sending emails)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-specific-password
+
+# File Upload (if using AWS S3)
+AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY
+AWS_S3_BUCKET=your-bucket-name
+AWS_REGION=eu-west-1
+
+# Redis (if using caching)
+REDIS_URL=redis://username:password@host:port
+
+# Stripe (if using payments)
+STRIPE_SECRET_KEY=sk_live_YOUR_STRIPE_SECRET
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_STRIPE_WEBHOOK_SECRET
+
+
+================================================================================
+BUILD COMMANDS FOR RENDER
+================================================================================
+
+Frontend Service:
+  Build Command: npm install && npm run build
+  Publish Directory: frontend/dist
+  
+Admin Service:
+  Build Command: cd ../packages/ui && pnpm install && pnpm run build && cd ../../admin && pnpm install && pnpm run build
+  Publish Directory: admin/dist
+  
+Backend Service:
+  Build Command: npm install && npm run build
+  Start Command: npm run start:prod
+  Health Check Path: /health
+
+
+================================================================================
+CLERK DASHBOARD CONFIGURATION CHECKLIST
+================================================================================
+
+After adding environment variables, configure Clerk:
+
+1. Allowed Origins (Settings → Domains):
+   ✅ https://your-frontend.onrender.com
+   ✅ https://your-admin.onrender.com
+
+2. OAuth Redirect URLs (User & Authentication → Social Connections):
+   ✅ https://your-frontend.onrender.com/dashboard
+   ✅ https://your-admin.onrender.com/dashboard
+
+3. Webhook (Webhooks → Add Endpoint):
+   ✅ URL: https://your-api.onrender.com/webhooks/clerk
+   ✅ Events: user.created, user.updated
+   ✅ Copy signing secret to CLERK_WEBHOOK_SECRET
+
+4. Email Verification (User & Authentication → Email):
+   ✅ Enable "Email verification" (optional)
+   ✅ Method: "Email code"
+
+
+================================================================================
+CREATE FIRST ADMIN USER
+================================================================================
+
+1. Go to https://dashboard.clerk.com
+2. Click "Users" → "Create User"
+3. Enter email and password
+4. Click "Create"
+5. Click on new user → "Metadata" tab
+6. Under "Public Metadata", add:
+   {
+     "role": "SUPER_ADMIN"
+   }
+7. Click "Save"
+
+Now you can log in to admin dashboard with this user!
+
+
+================================================================================
+TESTING CHECKLIST
+================================================================================
+
+Frontend:
+  □ Site loads
+  □ Login works
+  □ Signup works
+  □ Email verification works (if enabled)
+  □ Logout works (session clears)
+  □ OAuth works (if configured)
+  □ Dashboard loads
+  □ Protected routes redirect
+
+Admin:
+  □ Site loads
+  □ Admin login works
+  □ Non-admin sees "Access Denied"
+  □ Dashboard loads
+  □ All admin pages accessible
+  □ Logout works
+
+Backend:
+  □ Health endpoint responds
+  □ Webhook receives events
+  □ Users created in database
+  □ Roles assigned correctly
+  □ API endpoints work
+  □ CORS allows frontend/admin
+
+
+================================================================================
+SECURITY CHECKLIST
+================================================================================
+
+Before Going Live:
+  □ Using pk_live_ keys (not pk_test_)
+  □ Using sk_live_ keys (not sk_test_)
+  □ JWT_SECRET is strong (32+ chars)
+  □ CLERK_SECRET_KEY not exposed
+  □ CLERK_WEBHOOK_SECRET not exposed
+  □ No .env files committed to git
+  □ CORS only allows your domains
+  □ HTTPS enabled (Render does this automatically)
+  □ Database has strong password
+  □ Admin users have MFA enabled (recommended)
+
+
+================================================================================
+FINAL NOTES
+================================================================================
+
+✅ All environment variables documented
+✅ All Phase 1 & 2 fixes applied
+✅ Both dashboards production-ready
+✅ Security vulnerabilities fixed
+✅ Email verification supported
+✅ OAuth configured properly
+
+NEXT STEPS:
+1. Copy environment variables to Render
+2. Configure Clerk dashboard
+3. Deploy services
+4. Create admin user
+5. Test everything
+6. You're live! 🚀
+
+For detailed explanations, see:
+- RENDER_ENV_VARS_COMPLETE.md
+- RENDER_DEPLOYMENT_FINAL_CHECKLIST.md
+- RENDER_ENV_QUICK_REFERENCE.md
+
+================================================================================
+Questions or issues? Review the documentation files or check Render logs!
+================================================================================
