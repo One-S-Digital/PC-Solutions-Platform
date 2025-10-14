@@ -146,7 +146,10 @@ const SignupPage: React.FC = () => {
         firstName: firstName,
         lastName: lastName,
         unsafeMetadata: {
-          role: selectedRole,
+          // Store signup intent for backend webhook to process
+          // Backend will assign actual role via publicMetadata (secure)
+          signupType: selectedRole,
+          pendingRole: selectedRole, // For backend webhook processing
           organisationName: formData.organisationName,
           phone: formData.phone,
           canton: formData.canton,
@@ -154,13 +157,18 @@ const SignupPage: React.FC = () => {
       });
 
       if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        
-        // Redirect based on role
-        if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-          navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-        } else {
-          setCurrentStep(3);
+        try {
+          await setActive({ session: result.createdSessionId });
+          
+          // Redirect based on role
+          if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+            navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+          } else {
+            setCurrentStep(3);
+          }
+        } catch (setActiveError: any) {
+          console.error('Session activation failed:', setActiveError);
+          setErrors({ email: 'Failed to activate session. Please try logging in.' });
         }
       } else if (result.status === 'missing_requirements') {
         setErrors({ email: 'Please complete all required fields.' });

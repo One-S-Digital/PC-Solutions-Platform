@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
+import { useUser, useAuth, ClerkProvider, useClerk } from '@clerk/clerk-react';
 import { User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { ApiError } from '../services/api';
@@ -9,7 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password?: string) => Promise<{ success: boolean; message?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   signup: (formData: any, role: any) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => void;
 }
@@ -22,7 +22,7 @@ interface AuthProviderProps {
 
 const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const { user: clerkUser, isLoaded: clerkIsLoaded } = useUser();
-  const { getToken } = useAuth();
+  const { getToken, signOut: clerkSignOut } = useAuth();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -82,9 +82,18 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return { success: true };
   };
 
-  const logout = () => {
-    setCurrentUser(null);
-    // Clerk will handle the actual logout
+  const logout = async () => {
+    try {
+      // Clear local user state first
+      setCurrentUser(null);
+      
+      // Properly sign out from Clerk
+      await clerkSignOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still clear local state even if Clerk signOut fails
+      setCurrentUser(null);
+    }
   };
 
   const signup = async (formData: any, role: any): Promise<{ success: boolean; message?: string; redirectTo?: string }> => {

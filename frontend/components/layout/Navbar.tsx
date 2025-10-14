@@ -36,10 +36,16 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
 
   const totalNotificationsCount = notifications.length + totalUnreadMessages;
 
-  const handleLogout = () => {
-    logout();
-    setDropdownOpen(false);
-    navigate('/login', { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setDropdownOpen(false);
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Navigate to login even if logout fails
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
