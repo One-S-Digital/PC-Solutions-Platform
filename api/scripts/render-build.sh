@@ -5,16 +5,9 @@ echo "🚀 Starting Render build process..."
 # Check for required environment variables
 echo "🔍 Checking environment..."
 if [ -z "$DATABASE_URL" ]; then
-    echo "⚠️  DATABASE_URL not set. Skipping database migrations."
-    echo "Migrations will be attempted at application startup."
-    echo "✅ Prisma client will be generated for build."
-    # Generate Prisma client without database connection
-    npx prisma generate || {
-        echo "❌ Failed to generate Prisma client"
-        exit 1
-    }
-    echo "✨ Build preparation complete (no database migrations)!"
-    exit 0
+    echo "❌ DATABASE_URL not set! Database migrations cannot run."
+    echo "The application will not work properly without a database."
+    exit 1
 fi
 
 # Check if migration files exist
