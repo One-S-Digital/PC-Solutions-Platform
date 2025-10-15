@@ -173,7 +173,7 @@
     "socialLoginFailed": "Social login failed. Please try again.",
     "signOutFailed": "We couldn't sign you out. Please try again.",
     "alreadySignedInTitle": "You're already signed in",
-    "alreadySignedInDescription": "You're currently signed in. You can head to your dashboard or sign out below.",
+    "alreadySignedInDescription": "You can head to your dashboard or sign out below.",
     "goToDashboard": "Go to Dashboard",
     "signOutButton": "Sign Out",
     "signingOut": "Signing out...",

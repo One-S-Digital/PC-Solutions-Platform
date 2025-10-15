@@ -112,7 +112,12 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
     try {
       const token = await getToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      let apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      
+      // Ensure API URL ends with /api if not already present
+      if (!apiBaseUrl.endsWith('/api')) {
+        apiBaseUrl = `${apiBaseUrl}/api`;
+      }
       
       const response = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.update}`, {
         method: 'PUT',
@@ -149,7 +154,14 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const syncUserWithBackend = async (clerkUser: any, getToken: () => Promise<string | null>) => {
     try {
       const token = await getToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      let apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      
+      // Ensure API URL ends with /api if not already present
+      if (!apiBaseUrl.endsWith('/api')) {
+        apiBaseUrl = `${apiBaseUrl}/api`;
+      }
+      
+      console.log('🔍 Syncing user with backend:', { apiBaseUrl, endpoint: API_ENDPOINTS.users.me });
       
       const response = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.me}`, {
         method: 'GET',

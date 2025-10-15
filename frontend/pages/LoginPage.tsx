@@ -42,15 +42,18 @@ const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
-  // Redirect if user is already logged in
+  // Redirect if user is already logged in and backend sync is successful
   useEffect(() => {
-    if (isSignedIn && currentUser) {
+    if (isSignedIn && currentUser && !isAuthLoading) {
+      console.log('✅ User authenticated and synced. Redirecting to dashboard...');
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, currentUser, navigate]);
+  }, [isSignedIn, currentUser, isAuthLoading, navigate]);
 
+  // Show error when backend sync fails
   useEffect(() => {
     if (isSignedIn && !currentUser && !isAuthLoading) {
+      console.error('❌ User authenticated but backend sync failed');
       if (authError) {
         setError(t(authError));
       } else {
@@ -204,7 +207,7 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        {isSignedIn ? (
+        {isSignedIn && currentUser ? (
           <div className="space-y-6">
             <h2 className="text-lg font-semibold text-swiss-charcoal text-center">
               {t('common:loginPage.alreadySignedInTitle')}
@@ -220,6 +223,32 @@ const LoginPage: React.FC = () => {
               >
                 {t('common:loginPage.goToDashboard')}
               </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={handleLogout}
+                disabled={isSigningOut}
+              >
+                {isSigningOut
+                  ? t('common:loginPage.signingOut')
+                  : t('common:loginPage.signOutButton')}
+              </Button>
+            </div>
+          </div>
+        ) : isSignedIn && !currentUser && !isAuthLoading ? (
+          <div className="space-y-6">
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-sm text-yellow-800 mb-2">
+                <strong>{t('common:loginPage.backendSyncError')}</strong>
+              </p>
+              <p className="text-xs text-yellow-700">
+                You are authenticated, but we're having trouble connecting to the backend. 
+                This may be due to a configuration issue. Please sign out and try again, 
+                or contact support if the problem persists.
+              </p>
+            </div>
+            <div className="flex flex-col space-y-3">
               <Button
                 type="button"
                 variant="secondary"
