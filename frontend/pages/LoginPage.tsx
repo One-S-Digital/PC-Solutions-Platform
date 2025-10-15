@@ -7,6 +7,8 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { SquaresPlusIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
+import { useAppContext } from '../contexts/AppContext';
+import { useAuthContext } from '../providers/AuthProvider';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -28,37 +30,56 @@ const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const LoginPage: React.FC = () => {
   const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
-  const { signIn, isLoaded, setActive } = useSignIn();
-  const { isSignedIn } = useAuth();
+  const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
+  const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
+  const { currentUser } = useAppContext();
+  const { isLoading: isAuthLoading, authError, clearAuthError, logout } = useAuthContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (isSignedIn) {
+    if (isSignedIn && currentUser) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, navigate]);
+  }, [isSignedIn, currentUser, navigate]);
+
+  useEffect(() => {
+    if (isSignedIn && !currentUser && !isAuthLoading) {
+      if (authError) {
+        setError(t(authError));
+      } else {
+        setError(t('common:loginPage.backendSyncError'));
+      }
+    }
+  }, [isSignedIn, currentUser, isAuthLoading, authError, t]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+    clearAuthError();
+
     if (!email || !password) {
       setError(t('common:loginPage.errorBothFields'));
       return;
     }
-    
-    if (!isLoaded || !signIn) {
-      setError('Authentication service not ready. Please try again.');
+
+    if (isSignedIn) {
+      setError(t('common:loginPage.sessionAlreadyActive'));
       return;
     }
 
-    setIsLoading(true);
+    if (!isSignInLoaded || !signIn) {
+      setError(t('common:loginPage.authServiceNotReady'));
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const result = await signIn.create({
@@ -72,18 +93,18 @@ const LoginPage: React.FC = () => {
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
-          setError('Failed to activate session. Please try again.');
+          setError(t('common:loginPage.sessionActivationFailed'));
         }
       } else if (result.status === 'needs_first_factor') {
-        setError('Two-factor authentication required');
+        setError(t('common:loginPage.twoFactorRequired'));
       } else {
-        setError('Login incomplete. Please try again.');
+        setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
       console.error('Login error:', err);
-      
+
       let errorMessage = t('common:errors.unknown');
-      
+
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
         switch (clerkError.code) {
@@ -96,22 +117,34 @@ const LoginPage: React.FC = () => {
           case 'form_identifier_invalid':
             errorMessage = t('common:loginPage.invalidEmail', 'Please enter a valid email address.');
             break;
+          case 'session_exists':
+            errorMessage = t('common:loginPage.sessionAlreadyActive');
+            break;
           default:
             errorMessage = clerkError.message || t('common:errors.unknown');
         }
       } else if (err.message) {
-        errorMessage = err.message;
+        if (err.message.toLowerCase().includes('already signed in')) {
+          errorMessage = t('common:loginPage.sessionAlreadyActive');
+        } else {
+          errorMessage = err.message;
+        }
       }
-      
+
       setError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleSocialLogin = async (provider: 'oauth_google' | 'oauth_facebook') => {
-    if (!isLoaded || !signIn) {
-      setError('Authentication service not ready. Please try again.');
+    if (isSignedIn) {
+      setError(t('common:loginPage.sessionAlreadyActive'));
+      return;
+    }
+
+    if (!isSignInLoaded || !signIn) {
+      setError(t('common:loginPage.authServiceNotReady'));
       return;
     }
 
@@ -126,12 +159,27 @@ const LoginPage: React.FC = () => {
       });
     } catch (error: any) {
       console.error('Social login error:', error);
-      const errorMessage = error.errors?.[0]?.message || 'Social login failed. Please try again.';
+      const errorMessage = error.errors?.[0]?.message || t('common:loginPage.socialLoginFailed');
       setError(errorMessage);
     }
   };
 
-  if (!isLoaded) {
+  const handleLogout = async () => {
+    setError('');
+    clearAuthError();
+    setIsSigningOut(true);
+
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error from login page:', error);
+      setError(t('common:loginPage.signOutFailed'));
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
+
+  if (!isSignInLoaded || !isAuthLoaded) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
@@ -156,99 +204,124 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('common:loginPage.emailLabel')}
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={STANDARD_INPUT_FIELD}
-              required
-              placeholder={t('common:loginPage.emailPlaceholder')}
-            />
-          </div>
-          
-          <div>
-            <div className="flex justify-between items-baseline">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('common:loginPage.passwordLabel')}
-              </label>
-              <Link 
-                to="/reset-password" 
-                className="text-xs text-swiss-mint hover:underline"
-              >
-                {t('common:loginPage.forgotPassword')}
-              </Link>
-            </div>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                required
-                placeholder={t('common:loginPage.passwordPlaceholder')}
-              />
-              <button
+        {isSignedIn ? (
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-swiss-charcoal text-center">
+              {t('common:loginPage.alreadySignedInTitle')}
+            </h2>
+            <p className="text-sm text-gray-600 text-center">
+              {t('common:loginPage.alreadySignedInDescription')}
+            </p>
+            <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
+              <Button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-                aria-label={showPassword ? t('common:hidePassword') : t('common:showPassword')}
+                className="w-full"
+                onClick={() => navigate('/dashboard', { replace: true })}
               >
-                {showPassword ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
-              </button>
+                {t('common:loginPage.goToDashboard')}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={handleLogout}
+                disabled={isSigningOut}
+              >
+                {isSigningOut
+                  ? t('common:loginPage.signingOut')
+                  : t('common:loginPage.signOutButton')}
+              </Button>
             </div>
           </div>
-          
-          <div>
-            <Button 
-              type="submit" 
-              variant="primary" 
-              size="lg" 
-              className="w-full" 
-              disabled={isLoading}
-            >
-              {isLoading ? t('common:loginPage.loggingIn') : t('common:buttons.login')}
-            </Button>
-          </div>
-        </form>
+        ) : (
+          <>
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('common:loginPage.emailLabel')}
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={STANDARD_INPUT_FIELD}
+                  required
+                  placeholder={t('common:loginPage.emailPlaceholder')}
+                />
+              </div>
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                {t('common:loginPage.orContinueWith')}
-              </span>
-            </div>
-          </div>
+              <div>
+                <div className="flex justify-between items-baseline">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('common:loginPage.passwordLabel')}
+                  </label>
+                  <Link
+                    to="/reset-password"
+                    className="text-xs text-swiss-mint hover:underline"
+                  >
+                    {t('common:loginPage.forgotPassword')}
+                  </Link>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={STANDARD_INPUT_FIELD}
+                    required
+                    placeholder={t('common:loginPage.passwordPlaceholder')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
+                    aria-label={showPassword ? t('common:hidePassword') : t('common:showPassword')}
+                  >
+                    {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <Button 
-              variant="light" 
-              onClick={() => handleSocialLogin('oauth_google')} 
-              className="w-full"
-              disabled={isLoading}
-            >
-              <GoogleIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.google')}
-            </Button>
-            <Button 
-              variant="light" 
-              onClick={() => handleSocialLogin('oauth_facebook')} 
-              className="w-full"
-              disabled={isLoading}
-            >
-              <FacebookIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.facebook')}
-            </Button>
-          </div>
-        </div>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? t('common:loginPage.loggingIn') : t('common:buttons.login')}
+              </Button>
+            </form>
+
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">
+                    {t('common:loginPage.orContinueWith')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Button
+                  variant="light"
+                  onClick={() => handleSocialLogin('oauth_google')}
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  <GoogleIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.google')}
+                </Button>
+                <Button
+                  variant="light"
+                  onClick={() => handleSocialLogin('oauth_facebook')}
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  <FacebookIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.facebook')}
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
         
         <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
           <p>

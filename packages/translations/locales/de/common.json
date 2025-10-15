@@ -586,7 +586,21 @@
     "socialLoginTBD": "[DE] {{provider}} login coming soon!",
     "alreadyAccount": "[DE] Already have an account?",
     "errorBothFields": "[DE] Please fill in both email and password",
-    "loggingIn": "[DE] Logging in..."
+    "loggingIn": "[DE] Logging in...",
+    "authServiceNotReady": "Der Authentifizierungsdienst ist noch nicht bereit. Bitte versuche es erneut.",
+    "sessionActivationFailed": "Die Sitzung konnte nicht aktiviert werden. Bitte versuche es erneut.",
+    "twoFactorRequired": "Eine Zwei-Faktor-Authentifizierung ist erforderlich.",
+    "loginIncomplete": "Anmeldung unvollständig. Bitte versuche es erneut.",
+    "socialLoginFailed": "Social Login fehlgeschlagen. Bitte versuche es erneut.",
+    "signOutFailed": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
+    "alreadySignedInTitle": "Du bist bereits angemeldet",
+    "alreadySignedInDescription": "Du bist bereits angemeldet. Du kannst direkt zum Dashboard wechseln oder dich unten abmelden.",
+    "goToDashboard": "Zum Dashboard",
+    "signOutButton": "Abmelden",
+    "signingOut": "Abmelden...",
+    "sessionAlreadyActive": "Es besteht bereits eine aktive Sitzung. Bitte fahre fort oder melde dich zuerst ab.",
+    "backendSyncError": "Wir konnten Ihre Kontodaten nicht laden. Bitte versuchen Sie es erneut.",
+    "backendUserCreationError": "Erstellung des Backend-Benutzers fehlgeschlagen. Bitte stellen Sie sicher, dass der Clerk-Webhook konfiguriert ist."
   },
   "contentUploadModal": {
     "error": {
