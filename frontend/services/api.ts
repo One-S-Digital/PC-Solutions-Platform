@@ -28,7 +28,27 @@ class ApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    this.baseUrl = this.normalizeBaseUrl(rawUrl);
+  }
+
+  private normalizeBaseUrl(url: string): string {
+    if (!url) {
+      return 'http://localhost:3000/api';
+    }
+
+    const trimmed = url.replace(/\s+/g, '').replace(/\/+$/g, '');
+
+    if (trimmed.length === 0) {
+      return 'http://localhost:3000/api';
+    }
+
+    // If the URL already targets an API path (e.g. /api or /api/v1), respect it
+    if (/\/api(\/|$)/.test(trimmed)) {
+      return trimmed;
+    }
+
+    return `${trimmed}/api`;
   }
 
   // Expose baseUrl for use in hooks
@@ -40,6 +60,7 @@ class ApiService {
     // This will be handled by the useAuth hook in components
     return {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     };
   }
 
