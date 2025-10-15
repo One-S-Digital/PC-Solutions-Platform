@@ -61,7 +61,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         // Backend connection is required for proper user data
         setCurrentUser(null);
 
-        setAuthError(BACKEND_SYNC_ERROR_MESSAGE);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (errorMessage !== BACKEND_USER_CREATION_ERROR_MESSAGE) {
+          setAuthError(BACKEND_SYNC_ERROR_MESSAGE);
+        }
 
         // Log error for debugging
         console.error('Unable to load user profile. Backend connection required.');
