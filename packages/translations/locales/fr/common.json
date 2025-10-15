@@ -267,7 +267,9 @@
     "socialLoginTBD": "[FR] {{provider}} login coming soon!",
     "alreadyAccount": "[FR] Already have an account?",
     "errorBothFields": "[FR] Please fill in both email and password",
-    "loggingIn": "[FR] Logging in..."
+    "loggingIn": "[FR] Logging in...",
+    "backendSyncError": "Nous n'avons pas pu charger les détails de votre compte. Veuillez réessayer.",
+    "backendUserCreationError": "La création de l'utilisateur sur le backend a échoué. Veuillez vérifier que le webhook Clerk est configuré."
   },
   "settingsPage": {
     "unsavedChangesPrompt": "[FR] You have unsaved changes. Are you sure you want to leave?",

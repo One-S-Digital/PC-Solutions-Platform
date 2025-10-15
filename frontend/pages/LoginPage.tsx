@@ -7,6 +7,8 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { SquaresPlusIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
+import { useAppContext } from '../contexts/AppContext';
+import { useAuthContext } from '../providers/AuthProvider';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -30,6 +32,8 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { signIn, isLoaded, setActive } = useSignIn();
   const { isSignedIn } = useAuth();
+  const { currentUser } = useAppContext();
+  const { isLoading: isAuthLoading, authError, clearAuthError } = useAuthContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,14 +43,25 @@ const LoginPage: React.FC = () => {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (isSignedIn) {
+    if (isSignedIn && currentUser) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, navigate]);
+  }, [isSignedIn, currentUser, navigate]);
+
+  useEffect(() => {
+    if (isSignedIn && !currentUser && !isAuthLoading) {
+      if (authError) {
+        setError(t(authError));
+      } else {
+        setError(t('common:loginPage.backendSyncError'));
+      }
+    }
+  }, [isSignedIn, currentUser, isAuthLoading, authError, t]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    clearAuthError();
     
     if (!email || !password) {
       setError(t('common:loginPage.errorBothFields'));
