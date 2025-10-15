@@ -136,9 +136,15 @@ export class ClerkAuthGuard implements CanActivate {
           appUserId: appUser.id,
           clerkUserId: payload.sub,
         };
+        // FIX: Also set request.user for backward compatibility with UsersController
+        request.user = {
+          clerkId: payload.sub,
+          role: appUser.role,
+          id: appUser.id,
+        };
         if (this.authDebug) {
            
-          console.log('🔐 Auth Debug: request.context populated', request.context);
+          console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
         }
       } catch (e) {
         if (this.authDebug) {

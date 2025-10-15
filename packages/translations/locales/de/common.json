@@ -594,7 +594,7 @@
     "socialLoginFailed": "Social Login fehlgeschlagen. Bitte versuche es erneut.",
     "signOutFailed": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
     "alreadySignedInTitle": "Du bist bereits angemeldet",
-    "alreadySignedInDescription": "Du bist bereits angemeldet. Du kannst direkt zum Dashboard wechseln oder dich unten abmelden.",
+    "alreadySignedInDescription": "Du kannst direkt zum Dashboard wechseln oder dich unten abmelden.",
     "goToDashboard": "Zum Dashboard",
     "signOutButton": "Abmelden",
     "signingOut": "Abmelden...",

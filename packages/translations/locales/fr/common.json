@@ -275,7 +275,7 @@
     "socialLoginFailed": "La connexion sociale a échoué. Veuillez réessayer.",
     "signOutFailed": "Nous n'avons pas pu vous déconnecter. Veuillez réessayer.",
     "alreadySignedInTitle": "Vous êtes déjà connecté(e)",
-    "alreadySignedInDescription": "Vous êtes actuellement connecté(e). Vous pouvez accéder à votre tableau de bord ou vous déconnecter ci-dessous.",
+    "alreadySignedInDescription": "Vous pouvez accéder à votre tableau de bord ou vous déconnecter ci-dessous.",
     "goToDashboard": "Aller au tableau de bord",
     "signOutButton": "Se déconnecter",
     "signingOut": "Déconnexion...",
