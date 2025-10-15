@@ -587,7 +587,8 @@
     "alreadyAccount": "[DE] Already have an account?",
     "errorBothFields": "[DE] Please fill in both email and password",
     "loggingIn": "[DE] Logging in...",
-    "backendSyncError": "[DE] We couldn't load your account details. Please try again."
+    "backendSyncError": "Wir konnten Ihre Kontodaten nicht laden. Bitte versuchen Sie es erneut.",
+    "backendUserCreationError": "Erstellung des Backend-Benutzers fehlgeschlagen. Bitte stellen Sie sicher, dass der Clerk-Webhook konfiguriert ist."
   },
   "contentUploadModal": {
     "error": {

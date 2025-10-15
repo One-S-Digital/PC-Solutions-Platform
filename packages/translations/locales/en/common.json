@@ -166,7 +166,8 @@
     "alreadyAccount": "Already have an account?",
     "errorBothFields": "Please fill in both email and password",
     "loggingIn": "Logging in...",
-    "backendSyncError": "We couldn't load your account details. Please try again."
+    "backendSyncError": "We couldn't load your account details. Please try again.",
+    "backendUserCreationError": "Backend user creation failed. Please ensure Clerk webhook is configured."
   },
   "hidePassword": "Hide password",
   "showPassword": "Show password",

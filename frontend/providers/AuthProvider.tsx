@@ -4,8 +4,8 @@ import { User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { ApiError } from '../services/api';
 
-const BACKEND_SYNC_ERROR_MESSAGE = "We couldn't load your account details. Please try again.";
-const BACKEND_USER_CREATION_ERROR_MESSAGE = 'Backend user creation failed. Please ensure Clerk webhook is configured.';
+const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
+const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -62,8 +62,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         setCurrentUser(null);
 
         const errorMessage = error instanceof Error ? error.message : String(error);
-        if (errorMessage !== BACKEND_USER_CREATION_ERROR_MESSAGE) {
-          setAuthError(BACKEND_SYNC_ERROR_MESSAGE);
+        if (errorMessage === BACKEND_USER_CREATION_ERROR_KEY) {
+          setAuthError(BACKEND_USER_CREATION_ERROR_KEY);
+        } else {
+          setAuthError(BACKEND_SYNC_ERROR_KEY);
         }
 
         // Log error for debugging
@@ -182,7 +184,11 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (error) {
       console.error('Sync error:', error);
-      setAuthError(BACKEND_SYNC_ERROR_MESSAGE);
+      if (error instanceof Error && error.message === BACKEND_USER_CREATION_ERROR_KEY) {
+        setAuthError(BACKEND_USER_CREATION_ERROR_KEY);
+      } else {
+        setAuthError(BACKEND_SYNC_ERROR_KEY);
+      }
       throw error;
     }
   };
@@ -204,8 +210,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Don't create fallback - require backend connection
       setCurrentUser(null);
-      setAuthError(BACKEND_USER_CREATION_ERROR_MESSAGE);
-      throw new Error(BACKEND_USER_CREATION_ERROR_MESSAGE);
+      setAuthError(BACKEND_USER_CREATION_ERROR_KEY);
+      throw new Error(BACKEND_USER_CREATION_ERROR_KEY);
     }
   };
 

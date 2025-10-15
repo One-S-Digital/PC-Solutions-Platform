@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     if (isSignedIn && !currentUser && !isAuthLoading) {
       if (authError) {
-        setError(authError);
+        setError(t(authError));
       } else {
         setError(t('common:loginPage.backendSyncError'));
       }
