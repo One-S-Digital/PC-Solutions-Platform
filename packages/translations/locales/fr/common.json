@@ -267,7 +267,8 @@
     "socialLoginTBD": "[FR] {{provider}} login coming soon!",
     "alreadyAccount": "[FR] Already have an account?",
     "errorBothFields": "[FR] Please fill in both email and password",
-    "loggingIn": "[FR] Logging in..."
+    "loggingIn": "[FR] Logging in...",
+    "backendSyncError": "[FR] We couldn't load your account details. Please try again."
   },
   "settingsPage": {
     "unsavedChangesPrompt": "[FR] You have unsaved changes. Are you sure you want to leave?",

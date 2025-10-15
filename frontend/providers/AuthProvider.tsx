@@ -1,13 +1,19 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useUser, useAuth, ClerkProvider, useClerk } from '@clerk/clerk-react';
+import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
 import { User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { ApiError } from '../services/api';
 
+const BACKEND_SYNC_ERROR_MESSAGE = "We couldn't load your account details. Please try again.";
+const BACKEND_USER_CREATION_ERROR_MESSAGE = 'Backend user creation failed. Please ensure Clerk webhook is configured.';
+
 interface AuthContextType {
   currentUser: User | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   isLoading: boolean;
   isAuthenticated: boolean;
+  authError: string | null;
+  clearAuthError: () => void;
   login: (email: string, password?: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   signup: (formData: any, role: any) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
@@ -25,8 +31,9 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const { getToken, signOut: clerkSignOut } = useAuth();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const isAuthenticated = !!currentUser && !!clerkUser;
+  const isAuthenticated = !!clerkUser;
 
   // Sync user data when Clerk user changes
   useEffect(() => {
@@ -38,6 +45,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (!clerkUser) {
         setCurrentUser(null);
+        setAuthError(null);
         setIsLoading(false);
         return;
       }
@@ -45,16 +53,19 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         // Sync user with backend API
         await syncUserWithBackend(clerkUser, getToken);
+        setAuthError(null);
       } catch (error) {
         console.error('Failed to sync user with backend:', error);
-        
+
         // Don't create fallback users - show error state
         // Backend connection is required for proper user data
         setCurrentUser(null);
-        
+
+        setAuthError(BACKEND_SYNC_ERROR_MESSAGE);
+
         // Log error for debugging
         console.error('Unable to load user profile. Backend connection required.');
-        
+
         // TODO: Show error notification to user
         // For now, the app will redirect to login via ProtectedRoute
       } finally {
@@ -67,6 +78,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
+    setAuthError(null);
     return { success: true };
   };
 
@@ -74,7 +86,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Clear local user state first
       setCurrentUser(null);
-      
+      setAuthError(null);
+
       // Properly sign out from Clerk
       await clerkSignOut();
     } catch (error) {
@@ -119,6 +132,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           memberSince: data.data.createdAt,
         };
         setCurrentUser(transformedUser);
+        setAuthError(null);
       }
     } catch (error) {
       console.error('Failed to update user:', error);
@@ -159,11 +173,13 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           memberSince: data.data.createdAt,
         };
         setCurrentUser(transformedUser);
+        setAuthError(null);
       } else {
         throw new Error('Invalid response format');
       }
     } catch (error) {
       console.error('Sync error:', error);
+      setAuthError(BACKEND_SYNC_ERROR_MESSAGE);
       throw error;
     }
   };
@@ -182,10 +198,11 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       await syncUserWithBackend(clerkUser, getToken);
     } catch (error) {
       console.error('User still not found after webhook wait. Backend webhook may not be configured.');
-      
+
       // Don't create fallback - require backend connection
       setCurrentUser(null);
-      throw new Error('Backend user creation failed. Please ensure Clerk webhook is configured.');
+      setAuthError(BACKEND_USER_CREATION_ERROR_MESSAGE);
+      throw new Error(BACKEND_USER_CREATION_ERROR_MESSAGE);
     }
   };
 
@@ -193,8 +210,11 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
+        setCurrentUser,
         isLoading,
         isAuthenticated,
+        authError,
+        clearAuthError: () => setAuthError(null),
         login,
         logout,
         signup,

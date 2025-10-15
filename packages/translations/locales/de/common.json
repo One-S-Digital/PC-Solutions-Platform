@@ -586,7 +586,8 @@
     "socialLoginTBD": "[DE] {{provider}} login coming soon!",
     "alreadyAccount": "[DE] Already have an account?",
     "errorBothFields": "[DE] Please fill in both email and password",
-    "loggingIn": "[DE] Logging in..."
+    "loggingIn": "[DE] Logging in...",
+    "backendSyncError": "[DE] We couldn't load your account details. Please try again."
   },
   "contentUploadModal": {
     "error": {
