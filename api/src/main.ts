@@ -8,6 +8,7 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { AppLoggerService } from './common/logger.service';
 
 async function bootstrap() {
+  // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // We'll handle body parsing manually
   });
