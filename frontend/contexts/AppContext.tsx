@@ -38,7 +38,7 @@ interface AppContextType {
   renameUserFile: (fileId: string, newName: string) => void;
   platformSettings: PlatformSettings;
   setPlatformSettings: Dispatch<SetStateAction<PlatformSettings>>;
-  updateCurrentUserInfo: (updatedInfo: Partial<User>) => void;
+  updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
   serviceRequests: ServiceRequest[];
   submitServiceRequest: (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId'>) => void;
   // FIX: Add missing properties for vendor client management
@@ -223,10 +223,13 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     setUserFiles(prev => prev.map(f => f.id === fileId ? {...f, name: newName} : f));
   }, []);
 
-  const updateCurrentUserInfo = useCallback((updatedInfo: Partial<User>) => {
-    // Delegate to AuthProvider's update function
-    updateUserFromAuth(updatedInfo);
-  }, [updateUserFromAuth]);
+  const updateCurrentUserInfo = useCallback(
+    (updatedInfo: Partial<User>) => {
+      // Delegate to AuthProvider's update function
+      return updateUserFromAuth(updatedInfo);
+    },
+    [updateUserFromAuth]
+  );
 
   // FIX: Implement vendor client status update function
   const updateVendorClientStatus = useCallback((vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => {

@@ -12,12 +12,19 @@ export function useAuthenticatedApi() {
     ): Promise<ApiResponse<T>> => {
       try {
         const token = await getToken();
-        
-        const response = await fetch(`${apiService.apiBaseUrl}${endpoint}`, {
+
+        if (!token) {
+          throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+        }
+
+        const url = `${apiService.apiBaseUrl}${endpoint}`;
+
+        const response = await fetch(url, {
           ...options,
           headers: {
             'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` }),
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
             ...options.headers,
           },
         });
@@ -54,19 +61,25 @@ export function useAuthenticatedApi() {
     ): Promise<ApiResponse> => {
       try {
         const token = await getToken();
+
+        if (!token) {
+          throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+        }
+
+        const url = `${apiService.apiBaseUrl}${endpoint}`;
         const formData = new FormData();
         formData.append('file', file);
-        
+
         if (additionalData) {
           Object.entries(additionalData).forEach(([key, value]) => {
             formData.append(key, String(value));
           });
         }
 
-        const response = await fetch(`${apiService.apiBaseUrl}${endpoint}`, {
+        const response = await fetch(url, {
           method: 'POST',
           headers: {
-            ...(token && { Authorization: `Bearer ${token}` }),
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         });

@@ -1,11 +1,36 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from 'react';
 import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
-import { User, UserRole } from '../types';
+import { User } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
-import { ApiError } from '../services/api';
+import { apiService, ApiError } from '../services/api';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
+const WEBHOOK_RETRY_ATTEMPTS = 2;
+const WEBHOOK_RETRY_DELAY_MS = 2000;
+const SYNC_RETRY_DELAY_MS = 5000;
+
+interface SyncAttemptState {
+  clerkId: string | null;
+  status: 'idle' | 'success' | 'error';
+  lastAttempt: number;
+  lastErrorStatus?: number;
+  lastErrorMessage?: string;
+}
+
+const INITIAL_SYNC_STATE: SyncAttemptState = {
+  clerkId: null,
+  status: 'idle',
+  lastAttempt: 0,
+};
 
 interface AuthContextType {
   currentUser: User | null;
@@ -17,7 +42,8 @@ interface AuthContextType {
   login: (email: string, password?: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   signup: (formData: any, role: any) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
-  updateCurrentUserInfo: (updatedInfo: Partial<User>) => void;
+  updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
+  refreshCurrentUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,53 +59,183 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
+  const syncAttemptRef = useRef<SyncAttemptState>(INITIAL_SYNC_STATE);
+  const syncInFlightRef = useRef(false);
+
+  const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
-  // Sync user data when Clerk user changes
-  useEffect(() => {
-    const syncUser = async () => {
-      if (!clerkIsLoaded) {
-        setIsLoading(true);
-        return;
+  const transformBackendUser = useCallback((user: any): User => ({
+    ...user,
+    name: `${user.firstName} ${user.lastName}`,
+    status: user.isActive ? 'Active' : 'Inactive',
+    lastLogin: user.lastActiveAt,
+    memberSince: user.createdAt,
+  }), []);
+
+  const determineAuthErrorKey = useCallback((error: unknown): string => {
+    if (error instanceof ApiError) {
+      if (error.status === 404) {
+        return BACKEND_USER_CREATION_ERROR_KEY;
+      }
+      return BACKEND_SYNC_ERROR_KEY;
+    }
+
+    if (error instanceof Error && error.message === BACKEND_USER_CREATION_ERROR_KEY) {
+      return BACKEND_USER_CREATION_ERROR_KEY;
+    }
+
+    return BACKEND_SYNC_ERROR_KEY;
+  }, []);
+
+  const fetchUserFromBackend = useCallback(
+    async (clerkId: string, attempt = 0): Promise<User> => {
+      const token = await getToken();
+
+      if (!token) {
+        throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
       }
 
-      if (!clerkUser) {
-        setCurrentUser(null);
-        setAuthError(null);
-        setIsLoading(false);
-        return;
+      const apiBaseUrl = apiService.apiBaseUrl;
+      const url = `${apiBaseUrl}${API_ENDPOINTS.users.me}`;
+
+      console.log('🔍 Syncing user with backend:', {
+        apiBaseUrl,
+        endpoint: API_ENDPOINTS.users.me,
+        attempt,
+        clerkId,
+      });
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
+        console.warn('User not found in backend. Waiting for webhook to create user...', {
+          attempt,
+          clerkId,
+        });
+        await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
+        return fetchUserFromBackend(clerkId, attempt + 1);
       }
+
+      if (!response.ok) {
+        throw new ApiError('Failed to fetch user', response.status);
+      }
+
+      const data = await response.json();
+
+      if (!data?.success || !data?.data) {
+        throw new Error('Invalid response format');
+      }
+
+      return transformBackendUser(data.data);
+    },
+    [getToken, transformBackendUser]
+  );
+
+  useEffect(() => {
+    if (!clerkIsLoaded) {
+      setIsLoading(true);
+      return;
+    }
+
+    if (!isSignedIn || !clerkUserId) {
+      setCurrentUser(null);
+      setAuthError(null);
+      syncAttemptRef.current = INITIAL_SYNC_STATE;
+      setIsLoading(false);
+      return;
+    }
+
+    const now = Date.now();
+    const lastSync = syncAttemptRef.current;
+
+    if (lastSync.clerkId === clerkUserId && lastSync.status === 'success') {
+      setIsLoading(false);
+      return;
+    }
+
+    if (
+      lastSync.clerkId === clerkUserId &&
+      lastSync.status === 'error' &&
+      now - lastSync.lastAttempt < SYNC_RETRY_DELAY_MS
+    ) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (syncInFlightRef.current) {
+      return;
+    }
+
+    syncInFlightRef.current = true;
+    let cancelled = false;
+
+    const runSync = async () => {
+      setIsLoading(true);
 
       try {
-        // Sync user with backend API
-        await syncUserWithBackend(clerkUser, getToken);
-        setAuthError(null);
-      } catch (error) {
-        console.error('Failed to sync user with backend:', error);
-
-        // Don't create fallback users - show error state
-        // Backend connection is required for proper user data
-        setCurrentUser(null);
-
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        if (errorMessage === BACKEND_USER_CREATION_ERROR_KEY) {
-          setAuthError(BACKEND_USER_CREATION_ERROR_KEY);
-        } else {
-          setAuthError(BACKEND_SYNC_ERROR_KEY);
+        const backendUser = await fetchUserFromBackend(clerkUserId);
+        if (cancelled) {
+          return;
         }
 
-        // Log error for debugging
-        console.error('Unable to load user profile. Backend connection required.');
+        setCurrentUser(backendUser);
+        setAuthError(null);
+        syncAttemptRef.current = {
+          clerkId: clerkUserId,
+          status: 'success',
+          lastAttempt: Date.now(),
+        };
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
 
-        // TODO: Show error notification to user
-        // For now, the app will redirect to login via ProtectedRoute
+        console.error('Failed to sync user with backend:', error);
+        const errorKey = determineAuthErrorKey(error);
+        setCurrentUser(null);
+        setAuthError(errorKey);
+
+        syncAttemptRef.current = {
+          clerkId: clerkUserId,
+          status: 'error',
+          lastAttempt: Date.now(),
+          lastErrorStatus: error instanceof ApiError ? error.status : undefined,
+          lastErrorMessage: error instanceof Error ? error.message : String(error),
+        };
+
+        const logContext = {
+          clerkId: clerkUserId,
+          status: error instanceof ApiError ? error.status : undefined,
+          message: error instanceof Error ? error.message : String(error),
+        };
+
+        if (errorKey === BACKEND_USER_CREATION_ERROR_KEY) {
+          console.error('User still not found after webhook wait. Backend webhook may not be configured.', logContext);
+        } else {
+          console.error('Unable to load user profile. Backend connection required.', logContext);
+        }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+        syncInFlightRef.current = false;
       }
     };
 
-    syncUser();
-  }, [clerkUser, clerkIsLoaded, getToken, isSignedIn]);
+    runSync();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [clerkIsLoaded, clerkUserId, isSignedIn, fetchUserFromBackend, determineAuthErrorKey]);
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
@@ -87,11 +243,12 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return { success: true };
   };
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       // Clear local user state first
       setCurrentUser(null);
       setAuthError(null);
+      syncAttemptRef.current = INITIAL_SYNC_STATE;
 
       // Properly sign out from Clerk
       await clerkSignOut();
@@ -100,132 +257,84 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       // Still clear local state even if Clerk signOut fails
       setCurrentUser(null);
     }
-  };
+  }, [clerkSignOut]);
 
   const signup = async (formData: any, role: any): Promise<{ success: boolean; message?: string; redirectTo?: string }> => {
     // Clerk handles signup, this is just for compatibility
     return { success: true };
   };
 
-  const updateCurrentUserInfo = async (updatedInfo: Partial<User>) => {
-    if (!currentUser) return;
-
-    try {
-      const token = await getToken();
-      let apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-      
-      // Ensure API URL ends with /api if not already present
-      if (!apiBaseUrl.endsWith('/api')) {
-        apiBaseUrl = `${apiBaseUrl}/api`;
-      }
-      
-      const response = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.update}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify(updatedInfo),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update user');
+  const updateCurrentUserInfo = useCallback(
+    async (updatedInfo: Partial<User>) => {
+      if (!currentUser) {
+        return;
       }
 
-      const data = await response.json();
-      if (data.success && data.data) {
-        const transformedUser = {
-          ...data.data,
-          name: `${data.data.firstName} ${data.data.lastName}`,
-          status: data.data.isActive ? 'Active' : 'Inactive',
-          lastLogin: data.data.lastActiveAt,
-          memberSince: data.data.createdAt,
-        };
-        setCurrentUser(transformedUser);
-        setAuthError(null);
-      }
-    } catch (error) {
-      console.error('Failed to update user:', error);
-      throw error;
-    }
-  };
+      try {
+        const token = await getToken();
 
-  // Sync user with backend API
-  const syncUserWithBackend = async (clerkUser: any, getToken: () => Promise<string | null>) => {
-    try {
-      const token = await getToken();
-      let apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-      
-      // Ensure API URL ends with /api if not already present
-      if (!apiBaseUrl.endsWith('/api')) {
-        apiBaseUrl = `${apiBaseUrl}/api`;
-      }
-      
-      console.log('🔍 Syncing user with backend:', { apiBaseUrl, endpoint: API_ENDPOINTS.users.me });
-      
-      const response = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.me}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          // User doesn't exist in backend, create them
-          await createUserInBackend(clerkUser, getToken);
-          return;
+        if (!token) {
+          throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
         }
-        throw new ApiError('Failed to fetch user', response.status);
-      }
 
-      const data = await response.json();
-      if (data.success && data.data) {
-        const transformedUser = {
-          ...data.data,
-          name: `${data.data.firstName} ${data.data.lastName}`,
-          status: data.data.isActive ? 'Active' : 'Inactive',
-          lastLogin: data.data.lastActiveAt,
-          memberSince: data.data.createdAt,
-        };
-        setCurrentUser(transformedUser);
-        setAuthError(null);
-      } else {
-        throw new Error('Invalid response format');
+        const apiBaseUrl = apiService.apiBaseUrl;
+        const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
+
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedInfo),
+        });
+
+        if (!response.ok) {
+          throw new ApiError('Failed to update user', response.status);
+        }
+
+        const data = await response.json();
+        if (data?.success && data?.data) {
+          const transformedUser = transformBackendUser(data.data);
+          setCurrentUser(transformedUser);
+          setAuthError(null);
+          if (clerkUserId) {
+            syncAttemptRef.current = {
+              clerkId: clerkUserId,
+              status: 'success',
+              lastAttempt: Date.now(),
+            };
+          }
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Failed to update user:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error('Sync error:', error);
-      if (error instanceof Error && error.message === BACKEND_USER_CREATION_ERROR_KEY) {
-        setAuthError(BACKEND_USER_CREATION_ERROR_KEY);
-      } else {
-        setAuthError(BACKEND_SYNC_ERROR_KEY);
-      }
-      throw error;
+    },
+    [currentUser, getToken, transformBackendUser, clerkUserId]
+  );
+
+  const refreshCurrentUser = useCallback(async () => {
+    if (!clerkIsLoaded) {
+      throw new Error('Clerk is not loaded yet');
     }
-  };
 
-  // Create user in backend when they don't exist
-  const createUserInBackend = async (clerkUser: any, getToken: () => Promise<string | null>) => {
-    // User should be auto-created by backend Clerk webhook
-    // If user doesn't exist yet, wait and retry
-    console.log('User not found in backend. Waiting for webhook to create user...');
-    
-    // Wait 2 seconds for webhook to process
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Try to fetch user again
-    try {
-      await syncUserWithBackend(clerkUser, getToken);
-    } catch (error) {
-      console.error('User still not found after webhook wait. Backend webhook may not be configured.');
-
-      // Don't create fallback - require backend connection
-      setCurrentUser(null);
-      setAuthError(BACKEND_USER_CREATION_ERROR_KEY);
-      throw new Error(BACKEND_USER_CREATION_ERROR_KEY);
+    if (!clerkUserId) {
+      throw new Error('No authenticated user to refresh');
     }
-  };
+
+    const backendUser = await fetchUserFromBackend(clerkUserId);
+    setCurrentUser(backendUser);
+    setAuthError(null);
+    syncAttemptRef.current = {
+      clerkId: clerkUserId,
+      status: 'success',
+      lastAttempt: Date.now(),
+    };
+  }, [clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
 
   return (
     <AuthContext.Provider
@@ -240,6 +349,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         logout,
         signup,
         updateCurrentUserInfo,
+        refreshCurrentUser,
       }}
     >
       {children}
