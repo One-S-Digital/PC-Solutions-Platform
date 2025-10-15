@@ -28,12 +28,12 @@ interface AuthProviderProps {
 
 const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const { user: clerkUser, isLoaded: clerkIsLoaded } = useUser();
-  const { getToken, signOut: clerkSignOut } = useAuth();
+  const { getToken, signOut: clerkSignOut, isSignedIn } = useAuth();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const isAuthenticated = !!clerkUser;
+  const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
   // Sync user data when Clerk user changes
   useEffect(() => {
@@ -79,7 +79,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     syncUser();
-  }, [clerkUser, clerkIsLoaded, getToken]);
+  }, [clerkUser, clerkIsLoaded, getToken, isSignedIn]);
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
