@@ -10,29 +10,41 @@ The SSL protocol errors are caused by **using the wrong key type** - dev keys do
 
 ## 🚨 IMMEDIATE ACTION REQUIRED
 
-### Fix in Clerk Dashboard (5 minutes)
+### Step 1: Switch to Production Key (CRITICAL)
 
-1. **Go to**: https://dashboard.clerk.com/
-2. **Select your application**
-3. **Navigate to**: Settings → **URLs & Redirects** (or **Paths**)
+1. **Go to Clerk Dashboard**: https://dashboard.clerk.com/
+2. **Navigate to**: API Keys
+3. **Copy Production Publishable Key**: Starts with `pk_live_...`
+4. **Update in Render**:
+   - Render Dashboard → Your frontend service
+   - Environment → Environment Variables
+   - Update `VITE_CLERK_PUBLISHABLE_KEY` = `pk_live_YOUR_KEY`
+   - **Save changes**
 
-4. **Add Allowed Origin**:
-   - Click "Add origin" or similar
+### Step 2: Configure Production Instance in Clerk
+
+1. **In Clerk Dashboard**, make sure you're on the **Production** instance
+2. **Navigate to**: Settings → **URLs & Redirects**
+
+3. **Add Allowed Origin**:
    - Enter your Render URL: `https://your-frontend-app.onrender.com`
-   - **Replace with your actual Render frontend URL**
    - Save changes
 
-5. **Configure Paths**:
+4. **Configure Paths**:
    - Sign-in URL: `/login`
    - Sign-up URL: `/signup`
    - After sign-in: `/dashboard`
    - After sign-up: `/dashboard`
    - Save changes
 
-6. **Set Application Domain**:
+5. **Set Application Domain**:
    - Go to: Settings → General
    - Application Domain: `https://your-frontend-app.onrender.com`
    - Save changes
+
+### Step 3: Redeploy
+- Go to Render Dashboard → Your frontend service
+- Click "Manual Deploy" → Deploy latest commit
 
 ## 📋 Checklist
 
