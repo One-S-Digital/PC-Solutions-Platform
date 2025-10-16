@@ -371,8 +371,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       publishableKey={publishableKey}
       signInUrl="/login"
       signUpUrl="/signup"
-      afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
     >
       <AuthProviderInner>{children}</AuthProviderInner>
     </ClerkProvider>
