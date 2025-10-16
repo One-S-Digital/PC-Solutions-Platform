@@ -4,7 +4,9 @@
 
 You have `VITE_CLERK_PUBLISHABLE_KEY` configured in Render ✅
 
-The SSL protocol errors are caused by **Clerk Dashboard domain configuration**, not missing env vars.
+**BUT** you're using a **development key** (`pk_test_...`) on Render (production).
+
+The SSL protocol errors are caused by **using the wrong key type** - dev keys don't work on production domains.
 
 ## 🚨 IMMEDIATE ACTION REQUIRED
 
