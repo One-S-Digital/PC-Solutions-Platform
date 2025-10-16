@@ -11,6 +11,7 @@ import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
 import { User } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
+import { logClerkDiagnostics, monitorClerkRequests } from '../utils/clerkDebug';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
@@ -360,14 +361,74 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
+  // === COMPREHENSIVE DEBUG LOGGING ===
+  console.group('🔐 [FRONTEND] Clerk Initialization Debug');
+  console.log('📍 Current URL:', window.location.href);
+  console.log('🌍 Origin:', window.location.origin);
+  console.log('📦 Environment:', {
+    NODE_ENV: import.meta.env.NODE_ENV,
+    MODE: import.meta.env.MODE,
+    DEV: import.meta.env.DEV,
+    PROD: import.meta.env.PROD,
+  });
+  console.log('🔑 Clerk Key Info:', {
+    hasKey: !!publishableKey,
+    keyPrefix: publishableKey ? publishableKey.substring(0, 15) + '...' : 'NONE',
+    keyType: publishableKey?.startsWith('pk_test_') ? 'TEST/DEV' : 
+             publishableKey?.startsWith('pk_live_') ? 'PRODUCTION/LIVE' : 'UNKNOWN',
+    keyLength: publishableKey?.length || 0,
+  });
+  console.log('🌐 API Config:', {
+    apiUrl: import.meta.env.VITE_API_URL || 'NOT SET',
+    skipAuth: import.meta.env.VITE_SKIP_AUTH || 'false',
+    devMode: import.meta.env.VITE_DEVELOPMENT_MODE || 'false',
+  });
+  console.log('🛠️ User Agent:', navigator.userAgent);
+  console.log('🔒 Is HTTPS:', window.location.protocol === 'https:');
+  
+  // Add global error listener for Clerk
+  if (typeof window !== 'undefined') {
+    const clerkErrorHandler = (event: ErrorEvent) => {
+      if (event.message?.includes('clerk') || event.message?.includes('Clerk')) {
+        console.error('🚨 [FRONTEND] Clerk Error Detected:', {
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          error: event.error,
+          stack: event.error?.stack,
+        });
+      }
+    };
+    window.addEventListener('error', clerkErrorHandler);
+  }
+  
+  console.groupEnd();
+
   if (!publishableKey) {
+    console.error('❌ [FRONTEND] CRITICAL: VITE_CLERK_PUBLISHABLE_KEY is missing!');
+    console.log('💡 Available env vars:', Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')));
     throw new Error(
       'VITE_CLERK_PUBLISHABLE_KEY is required. Please set up Clerk authentication in your environment variables.'
     );
   }
 
+  // Log ClerkProvider initialization
+  console.log('✅ [FRONTEND] Initializing ClerkProvider with key:', publishableKey.substring(0, 15) + '...');
+
+  // Run comprehensive diagnostics
+  logClerkDiagnostics(publishableKey);
+  
+  // Enable network request monitoring in development
+  if (import.meta.env.DEV) {
+    monitorClerkRequests();
+  }
+
   return (
-    <ClerkProvider publishableKey={publishableKey}>
+    <ClerkProvider 
+      publishableKey={publishableKey}
+      afterSignOutUrl="/login"
+    >
       <AuthProviderInner>{children}</AuthProviderInner>
     </ClerkProvider>
   );
