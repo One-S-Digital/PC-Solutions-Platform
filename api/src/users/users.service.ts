@@ -110,7 +110,7 @@ export class UsersService {
     });
 
     if (!appUser) {
-      throw new NotFoundException('User not found');
+      return null;
     }
 
     // Return AppUser data in User format for compatibility
