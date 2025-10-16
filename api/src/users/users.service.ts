@@ -53,29 +53,44 @@ export class UsersService {
     if (search) {
       where.OR = [
         { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
+        { clerkId: { contains: search, mode: 'insensitive' } },
       ];
     }
 
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
+    const [appUsers, total] = await Promise.all([
+      this.prisma.appUser.findMany({
         where,
         skip,
         take: limit,
-        include: {
-          organizations: {
-            include: {
-              organization: true,
-            },
-          },
-        },
         orderBy: {
           createdAt: 'desc',
         },
       }),
-      this.prisma.user.count({ where }),
+      this.prisma.appUser.count({ where }),
     ]);
+
+    // Convert AppUser to User format for compatibility
+    const users = appUsers.map(appUser => ({
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null,
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [],
+    }));
 
     return {
       data: users,
@@ -89,47 +104,37 @@ export class UsersService {
   }
 
   async findByClerkId(clerkId: string) {
-    // First try to find in AppUser table (new system)
+    // Use AppUser as the primary user table
     const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
 
-    if (appUser) {
-      // Return AppUser data in User format for compatibility
-      return {
-        id: appUser.id,
-        clerkId: appUser.clerkId,
-        email: appUser.email,
-        firstName: null, // AppUser doesn't have these fields yet
-        lastName: null,
-        role: appUser.role,
-        phoneNumber: null,
-        workExperience: null,
-        education: null,
-        certifications: [],
-        skills: [],
-        availability: null,
-        cvUrl: null,
-        stripeCustomerId: null,
-        lastActiveAt: null,
-        isActive: true,
-        createdAt: appUser.createdAt,
-        updatedAt: appUser.updatedAt,
-        organizations: [], // AppUser doesn't have organizations yet
-      };
+    if (!appUser) {
+      throw new NotFoundException('User not found');
     }
 
-    // Fallback to old User table for backward compatibility
-    return this.prisma.user.findUnique({
-      where: { clerkId },
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
-      },
-    });
+    // Return AppUser data in User format for compatibility
+    return {
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null, // AppUser doesn't have these fields yet
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [], // AppUser doesn't have organizations yet
+    };
   }
 
   async findOne(id: string) {
@@ -184,62 +189,46 @@ export class UsersService {
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
-    // Check if user exists in AppUser table
+    // Use AppUser as the primary user table
     const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
 
-    if (appUser) {
-      // Update AppUser
-      const updatedAppUser = await this.prisma.appUser.update({
-        where: { id: appUser.id },
-        data: {
-          email: updateUserDto.email || appUser.email,
-          role: updateUserDto.role as UserRole || appUser.role,
-        },
-      });
-
-      // Return in User format for compatibility
-      return {
-        id: updatedAppUser.id,
-        clerkId: updatedAppUser.clerkId,
-        email: updatedAppUser.email,
-        firstName: null,
-        lastName: null,
-        role: updatedAppUser.role,
-        phoneNumber: null,
-        workExperience: null,
-        education: null,
-        certifications: [],
-        skills: [],
-        availability: null,
-        cvUrl: null,
-        stripeCustomerId: null,
-        lastActiveAt: null,
-        isActive: true,
-        createdAt: updatedAppUser.createdAt,
-        updatedAt: updatedAppUser.updatedAt,
-        organizations: [],
-      };
-    }
-
-    // Fallback to old User table
-    const user = await this.findByClerkId(clerkId);
-    if (!user) {
+    if (!appUser) {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.user.update({
-      where: { id: user.id },
-      data: updateUserDto,
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
+    // Update AppUser
+    const updatedAppUser = await this.prisma.appUser.update({
+      where: { id: appUser.id },
+      data: {
+        email: updateUserDto.email || appUser.email,
+        role: updateUserDto.role as UserRole || appUser.role,
       },
     });
+
+    // Return in User format for compatibility
+    return {
+      id: updatedAppUser.id,
+      clerkId: updatedAppUser.clerkId,
+      email: updatedAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: updatedAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: updatedAppUser.createdAt,
+      updatedAt: updatedAppUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
