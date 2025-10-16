@@ -17,7 +17,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     // Check if user exists
-    const existingUser = await this.prisma.user.findUnique({
+    const existingUser = await this.prisma.appUser.findUnique({
       where: { email: createUserDto.email },
     });
 
@@ -25,19 +25,36 @@ export class UsersService {
       throw new ConflictException('User with this email already exists');
     }
 
-    return this.prisma.user.create({
+    const appUser = await this.prisma.appUser.create({
       data: {
-        ...createUserDto,
+        clerkId: createUserDto.clerkId,
+        email: createUserDto.email,
         role: createUserDto.role as UserRole,
       },
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
-      },
     });
+
+    // Return in User format for compatibility
+    return {
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null,
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async findAll(params: FindAllUsersParams) {
@@ -53,29 +70,44 @@ export class UsersService {
     if (search) {
       where.OR = [
         { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
+        { clerkId: { contains: search, mode: 'insensitive' } },
       ];
     }
 
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
+    const [appUsers, total] = await Promise.all([
+      this.prisma.appUser.findMany({
         where,
         skip,
         take: limit,
-        include: {
-          organizations: {
-            include: {
-              organization: true,
-            },
-          },
-        },
         orderBy: {
           createdAt: 'desc',
         },
       }),
-      this.prisma.user.count({ where }),
+      this.prisma.appUser.count({ where }),
     ]);
+
+    // Convert AppUser to User format for compatibility
+    const users = appUsers.map(appUser => ({
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null,
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [],
+    }));
 
     return {
       data: users,
@@ -89,131 +121,291 @@ export class UsersService {
   }
 
   async findByClerkId(clerkId: string) {
-    return this.prisma.user.findUnique({
+    // Use AppUser as the primary user table
+    const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
-      },
     });
+
+    if (!appUser) {
+      return null;
+    }
+
+    // Return AppUser data in User format for compatibility
+    return {
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null, // AppUser doesn't have these fields yet
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [], // AppUser doesn't have organizations yet
+    };
   }
 
   async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
+    const appUser = await this.prisma.appUser.findUnique({
       where: { id },
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
-      },
     });
 
-    if (!user) {
+    if (!appUser) {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    // Return in User format for compatibility
+    return {
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null,
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async findByEmail(email: string) {
-    return this.prisma.user.findUnique({
+    const appUser = await this.prisma.appUser.findUnique({
       where: { email },
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
-      },
     });
+
+    if (!appUser) {
+      return null;
+    }
+
+    // Return in User format for compatibility
+    return {
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: null,
+      lastName: null,
+      role: appUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async findByOrganization(orgId: string) {
-    return this.prisma.user.findMany({
-      where: {
-        organizations: {
-          some: {
-            organizationId: orgId,
-          },
-        },
-      },
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
-      },
-    });
+    // Note: AppUser doesn't have organization relations yet
+    // This method returns empty array until organization migration is complete
+    return [];
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findByClerkId(clerkId);
-    if (!user) {
+    // Use AppUser as the primary user table
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { clerkId },
+    });
+
+    if (!appUser) {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.user.update({
-      where: { id: user.id },
-      data: updateUserDto,
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
+    // Update AppUser
+    const updatedAppUser = await this.prisma.appUser.update({
+      where: { id: appUser.id },
+      data: {
+        email: updateUserDto.email || appUser.email,
+        role: updateUserDto.role as UserRole || appUser.role,
       },
     });
+
+    // Return in User format for compatibility
+    return {
+      id: updatedAppUser.id,
+      clerkId: updatedAppUser.clerkId,
+      email: updatedAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: updatedAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: updatedAppUser.createdAt,
+      updatedAt: updatedAppUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
-    if (!user) {
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { id },
+    });
+
+    if (!appUser) {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.user.update({
+    const updatedAppUser = await this.prisma.appUser.update({
       where: { id },
-      data: updateUserDto,
-      include: {
-        organizations: {
-          include: {
-            organization: true,
-          },
-        },
+      data: {
+        email: updateUserDto.email || appUser.email,
+        role: updateUserDto.role as UserRole || appUser.role,
       },
     });
+
+    // Return in User format for compatibility
+    return {
+      id: updatedAppUser.id,
+      clerkId: updatedAppUser.clerkId,
+      email: updatedAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: updatedAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: updatedAppUser.createdAt,
+      updatedAt: updatedAppUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async assignRole(userId: string, role: UserRole) {
-    return this.prisma.user.update({
+    const updatedAppUser = await this.prisma.appUser.update({
       where: { id: userId },
       data: { role },
     });
+
+    // Return in User format for compatibility
+    return {
+      id: updatedAppUser.id,
+      clerkId: updatedAppUser.clerkId,
+      email: updatedAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: updatedAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: updatedAppUser.createdAt,
+      updatedAt: updatedAppUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async removeRole(userId: string, role: UserRole) {
     // Note: This could set to a default role instead of removing
-    return this.prisma.user.update({
+    const updatedAppUser = await this.prisma.appUser.update({
       where: { id: userId },
       data: { role: UserRole.PARENT }, // Default role
     });
+
+    // Return in User format for compatibility
+    return {
+      id: updatedAppUser.id,
+      clerkId: updatedAppUser.clerkId,
+      email: updatedAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: updatedAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: updatedAppUser.createdAt,
+      updatedAt: updatedAppUser.updatedAt,
+      organizations: [],
+    };
   }
 
   async remove(id: string) {
-    const user = await this.findOne(id);
-    if (!user) {
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { id },
+    });
+
+    if (!appUser) {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.user.delete({
+    const deletedAppUser = await this.prisma.appUser.delete({
       where: { id },
     });
+
+    // Return in User format for compatibility
+    return {
+      id: deletedAppUser.id,
+      clerkId: deletedAppUser.clerkId,
+      email: deletedAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: deletedAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: deletedAppUser.createdAt,
+      updatedAt: deletedAppUser.updatedAt,
+      organizations: [],
+    };
   }
 
   // Sync user with Clerk webhook
@@ -230,46 +422,78 @@ export class UsersService {
       throw new Error('No email found in Clerk data');
     }
 
-    const existingUser = await this.findByClerkId(clerkData.id);
+    try {
+      const existingUser = await this.findByClerkId(clerkData.id);
 
-    if (existingUser) {
-      // Update existing user
-      return this.prisma.user.update({
-        where: { clerkId: clerkData.id },
-        data: {
-          email,
-          firstName: clerkData.first_name,
-          lastName: clerkData.last_name,
-          updatedAt: new Date(clerkData.updated_at),
-        },
-        include: {
-          organizations: {
-            include: {
-              organization: true,
-            },
+      if (existingUser) {
+        // Update existing user
+        const updatedAppUser = await this.prisma.appUser.update({
+          where: { clerkId: clerkData.id },
+          data: {
+            email,
+            updatedAt: new Date(clerkData.updated_at),
           },
-        },
-      });
-    } else {
-      // Create new user
-      return this.prisma.user.create({
-        data: {
-          clerkId: clerkData.id,
-          email,
-          firstName: clerkData.first_name,
-          lastName: clerkData.last_name,
-          role: UserRole.PARENT, // Default role
-          createdAt: new Date(clerkData.created_at),
-          updatedAt: new Date(clerkData.updated_at),
-        },
-        include: {
-          organizations: {
-            include: {
-              organization: true,
-            },
-          },
-        },
-      });
+        });
+
+        // Return in User format for compatibility
+        return {
+          id: updatedAppUser.id,
+          clerkId: updatedAppUser.clerkId,
+          email: updatedAppUser.email,
+          firstName: null,
+          lastName: null,
+          role: updatedAppUser.role,
+          phoneNumber: null,
+          workExperience: null,
+          education: null,
+          certifications: [],
+          skills: [],
+          availability: null,
+          cvUrl: null,
+          stripeCustomerId: null,
+          lastActiveAt: null,
+          isActive: true,
+          createdAt: updatedAppUser.createdAt,
+          updatedAt: updatedAppUser.updatedAt,
+          organizations: [],
+        };
+      }
+    } catch (error) {
+      // User not found, create new one
     }
+
+    // Create new user
+    const newAppUser = await this.prisma.appUser.create({
+      data: {
+        clerkId: clerkData.id,
+        email,
+        role: UserRole.PARENT, // Default role
+        createdAt: new Date(clerkData.created_at),
+        updatedAt: new Date(clerkData.updated_at),
+      },
+    });
+
+    // Return in User format for compatibility
+    return {
+      id: newAppUser.id,
+      clerkId: newAppUser.clerkId,
+      email: newAppUser.email,
+      firstName: null,
+      lastName: null,
+      role: newAppUser.role,
+      phoneNumber: null,
+      workExperience: null,
+      education: null,
+      certifications: [],
+      skills: [],
+      availability: null,
+      cvUrl: null,
+      stripeCustomerId: null,
+      lastActiveAt: null,
+      isActive: true,
+      createdAt: newAppUser.createdAt,
+      updatedAt: newAppUser.updatedAt,
+      organizations: [],
+    };
   }
 }
