@@ -89,6 +89,37 @@ export class UsersService {
   }
 
   async findByClerkId(clerkId: string) {
+    // First try to find in AppUser table (new system)
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { clerkId },
+    });
+
+    if (appUser) {
+      // Return AppUser data in User format for compatibility
+      return {
+        id: appUser.id,
+        clerkId: appUser.clerkId,
+        email: appUser.email,
+        firstName: null, // AppUser doesn't have these fields yet
+        lastName: null,
+        role: appUser.role,
+        phoneNumber: null,
+        workExperience: null,
+        education: null,
+        certifications: [],
+        skills: [],
+        availability: null,
+        cvUrl: null,
+        stripeCustomerId: null,
+        lastActiveAt: null,
+        isActive: true,
+        createdAt: appUser.createdAt,
+        updatedAt: appUser.updatedAt,
+        organizations: [], // AppUser doesn't have organizations yet
+      };
+    }
+
+    // Fallback to old User table for backward compatibility
     return this.prisma.user.findUnique({
       where: { clerkId },
       include: {
@@ -153,6 +184,46 @@ export class UsersService {
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
+    // Check if user exists in AppUser table
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { clerkId },
+    });
+
+    if (appUser) {
+      // Update AppUser
+      const updatedAppUser = await this.prisma.appUser.update({
+        where: { id: appUser.id },
+        data: {
+          email: updateUserDto.email || appUser.email,
+          role: updateUserDto.role as UserRole || appUser.role,
+        },
+      });
+
+      // Return in User format for compatibility
+      return {
+        id: updatedAppUser.id,
+        clerkId: updatedAppUser.clerkId,
+        email: updatedAppUser.email,
+        firstName: null,
+        lastName: null,
+        role: updatedAppUser.role,
+        phoneNumber: null,
+        workExperience: null,
+        education: null,
+        certifications: [],
+        skills: [],
+        availability: null,
+        cvUrl: null,
+        stripeCustomerId: null,
+        lastActiveAt: null,
+        isActive: true,
+        createdAt: updatedAppUser.createdAt,
+        updatedAt: updatedAppUser.updatedAt,
+        organizations: [],
+      };
+    }
+
+    // Fallback to old User table
     const user = await this.findByClerkId(clerkId);
     if (!user) {
       throw new NotFoundException('User not found');
