@@ -21,7 +21,8 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   const { addNotification } = useNotifications();
   
   const [personalInfo, setPersonalInfo] = useState({
-    name: currentUser?.name || '',
+    firstName: currentUser?.firstName || '',
+    lastName: currentUser?.lastName || '',
     orgName: currentUser?.orgName || ''
   });
   
@@ -45,7 +46,11 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   
   const handleUpdateInfo = (e: React.FormEvent) => {
     e.preventDefault();
-    updateCurrentUserInfo({ name: personalInfo.name, orgName: personalInfo.orgName });
+    updateCurrentUserInfo({ 
+      firstName: personalInfo.firstName, 
+      lastName: personalInfo.lastName,
+      orgName: personalInfo.orgName 
+    });
     addNotification({ title: t('common:settingsAccountSecurity.notifications.infoUpdated'), message: '', type: 'success' });
   };
 
@@ -84,9 +89,14 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
         <form onSubmit={handleUpdateInfo}>
           <h3 className="text-lg font-medium text-gray-900">{t('common:settingsAccountSecurity.personalInfo.title')}</h3>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
-            <label htmlFor="name" className="form-label md:pt-2">{hasOrgName ? t('common:settingsAccountSecurity.personalInfo.contactNameLabel') : t('common:settingsAccountSecurity.personalInfo.nameLabel')}</label>
+            <label htmlFor="firstName" className="form-label md:pt-2">First Name</label>
             <div className="form-input-container">
-              <input type="text" id="name" name="name" value={personalInfo.name} onChange={handlePersonalInfoChange} className={STANDARD_INPUT_FIELD} />
+              <input type="text" id="firstName" name="firstName" value={personalInfo.firstName} onChange={handlePersonalInfoChange} className={STANDARD_INPUT_FIELD} />
+            </div>
+
+            <label htmlFor="lastName" className="form-label md:pt-2">Last Name</label>
+            <div className="form-input-container">
+              <input type="text" id="lastName" name="lastName" value={personalInfo.lastName} onChange={handlePersonalInfoChange} className={STANDARD_INPUT_FIELD} />
             </div>
 
             {hasOrgName && (

@@ -63,8 +63,9 @@ export class UsersController {
   }
 
   @Patch('me')
-  updateCurrentUser(@Request() request, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateByClerkId(request.user.clerkId, updateUserDto);
+  async updateCurrentUser(@Request() request, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.updateByClerkId(request.user.clerkId, updateUserDto);
+    return { success: true, data: user };
   }
 
   @Patch(':id')
