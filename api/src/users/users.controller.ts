@@ -48,8 +48,12 @@ export class UsersController {
   }
 
   @Get('me')
-  getCurrentUser(@Request() request) {
-    return this.usersService.findByClerkId(request.user.clerkId);
+  async getCurrentUser(@Request() request) {
+    const user = await this.usersService.findByClerkId(request.user.clerkId);
+    return {
+      success: true,
+      data: user,
+    };
   }
 
   @Get(':id')
