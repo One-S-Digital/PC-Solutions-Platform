@@ -335,19 +335,38 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateCurrentUserInfo = useCallback(
     async (updatedInfo: Partial<User>) => {
+      console.group('🔄 [UPDATE USER] Starting update');
+      console.log('📝 Data to update:', updatedInfo);
+      
       if (!currentUser) {
+        console.error('❌ No current user - cannot update');
+        console.groupEnd();
         return;
       }
 
       try {
         const token = await getToken();
+        console.log('🔑 Token obtained:', token ? 'YES' : 'NO');
 
         if (!token) {
+          console.error('❌ No authentication token');
+          console.groupEnd();
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
         }
 
         const apiBaseUrl = apiService.apiBaseUrl;
         const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
+
+        console.log('📤 Making PUT request:', {
+          url,
+          method: 'PUT',
+          body: updatedInfo,
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + token.substring(0, 20) + '...',
+          }
+        });
 
         const response = await fetch(url, {
           method: 'PUT',
@@ -359,11 +378,29 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify(updatedInfo),
         });
 
+        console.log('📥 Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          headers: {
+            'content-type': response.headers.get('content-type'),
+            'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+          }
+        });
+
         if (!response.ok) {
+          const errorBody = await response.text();
+          console.error('❌ Update failed:', {
+            status: response.status,
+            body: errorBody,
+          });
+          console.groupEnd();
           throw new ApiError('Failed to update user', response.status);
         }
 
         const data = await response.json();
+        console.log('📄 Update response:', data);
+        
         if (data?.success && data?.data) {
           const transformedUser = transformBackendUser(data.data);
           setCurrentUser(transformedUser);
@@ -375,11 +412,16 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
               lastAttempt: Date.now(),
             };
           }
+          console.log('✅ User updated successfully');
+          console.groupEnd();
         } else {
+          console.error('❌ Invalid response format:', data);
+          console.groupEnd();
           throw new Error('Invalid response format');
         }
       } catch (error) {
-        console.error('Failed to update user:', error);
+        console.error('❌ Failed to update user:', error);
+        console.groupEnd();
         throw error;
       }
     },

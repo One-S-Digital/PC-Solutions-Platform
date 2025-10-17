@@ -51,33 +51,44 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
-  // CORS
+  // CORS - Enhanced configuration
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [
+        'https://app.procrechesolutions.com', 
+        'https://admin.procrechesolutions.com'
+      ]
+    : true;
+
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? [
-          'https://app.procrechesolutions.com', 
-          'https://admin.procrechesolutions.com'
-        ]
-      : true,
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
-  // CORS debugging middleware (development only)
-  if (process.env.NODE_ENV !== 'production') {
-    app.use((req, res, next) => {
-      console.log('🔧 CORS Debug:', {
-        origin: req.headers.origin,
+  // CORS debugging middleware (ALWAYS enabled to debug production issues)
+  app.use((req, res, next) => {
+    const isPreflight = req.method === 'OPTIONS';
+    
+    if (isPreflight || req.method === 'PUT' || req.method === 'PATCH') {
+      console.log('🌐 CORS Request:', {
         method: req.method,
         url: req.url,
-        allowedOrigins: process.env.NODE_ENV === 'production' 
-          ? ['https://app.procrechesolutions.com', 'https://admin.procrechesolutions.com']
-          : 'all'
+        origin: req.headers.origin,
+        isPreflight,
+        headers: {
+          'access-control-request-method': req.headers['access-control-request-method'],
+          'access-control-request-headers': req.headers['access-control-request-headers'],
+        },
+        allowedOrigins: typeof allowedOrigins === 'boolean' ? 'all' : allowedOrigins,
       });
-      next();
-    });
-  }
+    }
+    
+    next();
+  });
 
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
