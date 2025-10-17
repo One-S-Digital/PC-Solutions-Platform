@@ -93,47 +93,116 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     async (clerkId: string, attempt = 0): Promise<User> => {
       const token = await getToken();
 
+      console.group(`🔄 [BACKEND SYNC] Attempt ${attempt + 1}/${WEBHOOK_RETRY_ATTEMPTS + 1}`);
+      
       if (!token) {
+        console.error('❌ No authentication token available');
+        console.groupEnd();
         throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
       }
 
       const apiBaseUrl = apiService.apiBaseUrl;
       const url = `${apiBaseUrl}${API_ENDPOINTS.users.me}`;
 
-      console.log('🔍 Syncing user with backend:', {
-        apiBaseUrl,
-        endpoint: API_ENDPOINTS.users.me,
-        attempt,
-        clerkId,
-      });
-
-      const response = await fetch(url, {
+      console.log('📤 Request Details:', {
+        url,
         method: 'GET',
+        clerkId,
+        tokenPrefix: token.substring(0, 20) + '...',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: 'Bearer ' + token.substring(0, 20) + '...',
+        }
       });
 
+      let response: Response;
+      try {
+        response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log('📥 Response Status:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          headers: {
+            'content-type': response.headers.get('content-type'),
+            'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+          }
+        });
+      } catch (fetchError) {
+        console.error('❌ Network/Fetch Error:', fetchError);
+        console.groupEnd();
+        throw new ApiError('Network error during fetch', 0, 'network_error');
+      }
+
       if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
-        console.warn('User not found in backend. Waiting for webhook to create user...', {
-          attempt,
+        console.warn('⏳ User not found (404). Waiting for webhook to create user...', {
+          attempt: attempt + 1,
+          maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
+          waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
           clerkId,
         });
+        console.groupEnd();
         await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
         return fetchUserFromBackend(clerkId, attempt + 1);
       }
 
-      if (!response.ok) {
-        throw new ApiError('Failed to fetch user', response.status);
+      // Try to get response body for debugging
+      let responseBody: any;
+      let responseText: string = '';
+      try {
+        responseText = await response.clone().text();
+        console.log('📄 Response Body (raw):', responseText);
+        
+        try {
+          responseBody = JSON.parse(responseText);
+          console.log('📄 Response Body (parsed):', responseBody);
+        } catch (parseError) {
+          console.warn('⚠️  Response is not valid JSON:', parseError);
+        }
+      } catch (bodyError) {
+        console.error('❌ Error reading response body:', bodyError);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        console.error('❌ Backend returned error:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseBody || responseText,
+        });
+        console.groupEnd();
+        throw new ApiError(
+          responseBody?.message || `Failed to fetch user: ${response.statusText}`, 
+          response.status,
+          responseBody?.code || 'backend_error'
+        );
+      }
+
+      const data = responseBody || await response.json();
 
       if (!data?.success || !data?.data) {
-        throw new Error('Invalid response format');
+        console.error('❌ Invalid response format:', {
+          hasSuccess: !!data?.success,
+          hasData: !!data?.data,
+          fullResponse: data,
+        });
+        console.groupEnd();
+        throw new Error('Invalid response format from backend');
       }
+
+      console.log('✅ User synced successfully:', {
+        userId: data.data.id,
+        email: data.data.email,
+        role: data.data.role,
+      });
+      console.groupEnd();
 
       return transformBackendUser(data.data);
     },
