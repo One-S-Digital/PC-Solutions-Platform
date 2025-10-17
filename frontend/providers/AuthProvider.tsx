@@ -357,9 +357,9 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         const apiBaseUrl = apiService.apiBaseUrl;
         const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
 
-        console.log('📤 Making PUT request:', {
+        console.log('📤 Making PATCH request:', {
           url,
-          method: 'PUT',
+          method: 'PATCH',
           body: updatedInfo,
           headers: {
             'Content-Type': 'application/json',
@@ -369,7 +369,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         });
 
         const response = await fetch(url, {
-          method: 'PUT',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
