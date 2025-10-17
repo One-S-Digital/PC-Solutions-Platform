@@ -123,6 +123,8 @@ export class ClerkWebhookController {
     const intendedRole = 
       data.private_metadata?.intendedRole || 
       data.unsafe_metadata?.role ||
+      data.unsafe_metadata?.pendingRole ||  // Also check pendingRole from signup
+      data.unsafe_metadata?.signupType ||   // Also check signupType from signup
       'PARENT';
     
     // Validate role
