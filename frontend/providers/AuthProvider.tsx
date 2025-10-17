@@ -363,13 +363,37 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
         }
 
+        // Transform frontend data to backend format
+        const backendData: any = { ...updatedInfo };
+        
+        // Split 'name' into 'firstName' and 'lastName' if provided
+        if (updatedInfo.name) {
+          const nameParts = updatedInfo.name.trim().split(/\s+/);
+          if (nameParts.length === 1) {
+            backendData.firstName = nameParts[0];
+            backendData.lastName = '';
+          } else {
+            backendData.firstName = nameParts[0];
+            backendData.lastName = nameParts.slice(1).join(' ');
+          }
+          delete backendData.name; // Remove 'name' as backend doesn't accept it
+        }
+        
+        // Remove frontend-only fields that backend doesn't accept
+        delete backendData.orgName; // Backend uses orgId (UUID), not orgName (string)
+        delete backendData.status; // Transformed field, not raw backend field
+        delete backendData.lastLogin; // Transformed field
+        delete backendData.memberSince; // Transformed field
+        
+        console.log('🔄 Transformed data for backend:', backendData);
+
         const apiBaseUrl = apiService.apiBaseUrl;
         const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
 
         console.log('📤 Making PATCH request:', {
           url,
           method: 'PATCH',
-          body: updatedInfo,
+          body: backendData,
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -384,7 +408,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(updatedInfo),
+          body: JSON.stringify(backendData),
         });
 
         console.log('📥 Response received:', {
