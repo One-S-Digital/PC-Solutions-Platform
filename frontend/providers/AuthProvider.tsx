@@ -65,13 +65,22 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
-  const transformBackendUser = useCallback((user: any): User => ({
-    ...user,
-    name: `${user.firstName} ${user.lastName}`,
-    status: user.isActive ? 'Active' : 'Inactive',
-    lastLogin: user.lastActiveAt,
-    memberSince: user.createdAt,
-  }), []);
+  const transformBackendUser = useCallback((user: any): User => {
+    console.log('🔄 Transforming backend user:', user);
+    
+    const transformed = {
+      ...user,
+      name: user.firstName && user.lastName 
+        ? `${user.firstName} ${user.lastName}`.trim()
+        : user.firstName || user.lastName || 'Unknown User',
+      status: user.isActive ? 'Active' : 'Inactive',
+      lastLogin: user.lastActiveAt,
+      memberSince: user.createdAt,
+    };
+    
+    console.log('✅ Transformed user:', transformed);
+    return transformed;
+  }, []);
 
   const determineAuthErrorKey = useCallback((error: unknown): string => {
     if (error instanceof ApiError) {

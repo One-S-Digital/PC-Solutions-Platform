@@ -42,6 +42,21 @@ const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  // Debug login page state
+  useEffect(() => {
+    console.group('🔍 [LOGIN PAGE] State Check');
+    console.log('State:', {
+      isSignedIn,
+      hasCurrentUser: !!currentUser,
+      currentUser,
+      isAuthLoading,
+      authError,
+      isSignInLoaded,
+      isAuthLoaded,
+    });
+    console.groupEnd();
+  }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
+
   // Redirect if user is already logged in and backend sync is successful
   useEffect(() => {
     if (isSignedIn && currentUser && !isAuthLoading) {
