@@ -121,7 +121,7 @@ export class UsersService {
   }
 
   async findByClerkId(clerkId: string) {
-    // Use AppUser as the primary user table
+    // First check if AppUser exists (required for auth)
     const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
@@ -130,12 +130,30 @@ export class UsersService {
       return null;
     }
 
-    // Return AppUser data in User format for compatibility
+    // Try to get full User profile
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { clerkId },
+      });
+
+      if (user) {
+        // Return full User profile with organizations as empty array
+        return {
+          ...user,
+          organizations: [],
+        };
+      }
+    } catch (error) {
+      // Log error but continue to return AppUser minimal data
+      console.error('Error querying User table:', error);
+    }
+
+    // User profile doesn't exist yet, return minimal data from AppUser
     return {
       id: appUser.id,
       clerkId: appUser.clerkId,
       email: appUser.email,
-      firstName: null, // AppUser doesn't have these fields yet
+      firstName: null,
       lastName: null,
       role: appUser.role,
       phoneNumber: null,
@@ -150,7 +168,7 @@ export class UsersService {
       isActive: true,
       createdAt: appUser.createdAt,
       updatedAt: appUser.updatedAt,
-      organizations: [], // AppUser doesn't have organizations yet
+      organizations: [],
     };
   }
 
@@ -227,7 +245,7 @@ export class UsersService {
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
-    // Use AppUser as the primary user table
+    // Check if AppUser exists (required for auth)
     const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
@@ -236,35 +254,46 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Update AppUser
-    const updatedAppUser = await this.prisma.appUser.update({
-      where: { id: appUser.id },
-      data: {
-        email: updateUserDto.email || appUser.email,
-        role: updateUserDto.role as UserRole || appUser.role,
-      },
+    // Try to find or create User profile
+    let user = await this.prisma.user.findUnique({
+      where: { clerkId },
     });
 
-    // Return in User format for compatibility
+    if (!user) {
+      // Create User profile if it doesn't exist
+      user = await this.prisma.user.create({
+        data: {
+          clerkId,
+          email: appUser.email || updateUserDto.email || '',
+          firstName: updateUserDto.firstName || '',
+          lastName: updateUserDto.lastName || '',
+          role: appUser.role,
+        },
+      });
+    } else {
+      // Update existing User profile
+      user = await this.prisma.user.update({
+        where: { clerkId },
+        data: {
+          email: updateUserDto.email,
+          firstName: updateUserDto.firstName,
+          lastName: updateUserDto.lastName,
+          phoneNumber: updateUserDto.phoneNumber,
+        },
+      });
+    }
+
+    // Also update email in AppUser if changed
+    if (updateUserDto.email && updateUserDto.email !== appUser.email) {
+      await this.prisma.appUser.update({
+        where: { id: appUser.id },
+        data: { email: updateUserDto.email },
+      });
+    }
+
+    // Return full User profile
     return {
-      id: updatedAppUser.id,
-      clerkId: updatedAppUser.clerkId,
-      email: updatedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: updatedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: updatedAppUser.createdAt,
-      updatedAt: updatedAppUser.updatedAt,
+      ...user,
       organizations: [],
     };
   }
