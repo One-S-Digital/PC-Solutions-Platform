@@ -25,6 +25,17 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
     lastName: currentUser?.lastName || '',
     orgName: currentUser?.orgName || ''
   });
+
+  // Sync local state when currentUser updates
+  useEffect(() => {
+    if (currentUser) {
+      setPersonalInfo({
+        firstName: currentUser.firstName || '',
+        lastName: currentUser.lastName || '',
+        orgName: currentUser.orgName || ''
+      });
+    }
+  }, [currentUser]);
   
   const [passwordInfo, setPasswordInfo] = useState({
     currentPassword: '',
