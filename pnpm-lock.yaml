@@ -315,7 +315,7 @@ importers:
         version: 7.4.2(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
       '@nestjs/terminus':
         specifier: ^10.2.3
-        version: 10.3.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@6.16.2(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
+        version: 10.3.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/throttler':
         specifier: ^6.4.0
         version: 6.4.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
@@ -323,8 +323,8 @@ importers:
         specifier: ^11.0.1
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/platform-socket.io@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@prisma/client':
-        specifier: ^6.16.2
-        version: 6.16.2(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)
+        specifier: ^6.17.1
+        version: 6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)
       '@sendgrid/mail':
         specifier: ^8.1.5
         version: 8.1.5
@@ -506,6 +506,9 @@ importers:
       '@clerk/clerk-react':
         specifier: ^5.0.0
         version: 5.47.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@hcaptcha/react-hcaptcha':
+        specifier: ^1.14.0
+        version: 1.14.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.1.1)
@@ -1896,6 +1899,15 @@ packages:
     resolution: {integrity: sha512-kjotm7XJrJ6v+7knhPaRgaT6q8F8K2jiafwYdNHLzmV0uGLuZY43FK6smNSHUPrhq5kX2slCUy+RGG/xGqmIKA==}
     engines: {node: '>=10.13.0'}
 
+  '@hcaptcha/loader@2.2.0':
+    resolution: {integrity: sha512-LAd0XRt1Mu0hLpUpWAx5OS9FS0d6V+V0aCSYUKFAz0a6tTDHeAuwm5iO81mp2HIEhXFOSSB8AwCCOU9zq695lg==}
+
+  '@hcaptcha/react-hcaptcha@1.14.0':
+    resolution: {integrity: sha512-XHFhmRjw4L6spgRfTEUj/uW4cN4iWTp7BxLHyheF5zEle6g65fIHUCmqKMrIA/6OKLzBSElUKyc1IuDU+V8RaQ==}
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-dom: '>= 16.3.0'
+
   '@headlessui/react@2.2.8':
     resolution: {integrity: sha512-vkiZulDC0lFeTrZTbA4tHvhZHvkUb2PFh5xJ1BvWAZdRK0fayMKO1QEO4inWkXxK1i0I1rcwwu1d6mo0K7Pcbw==}
     engines: {node: '>=10'}
@@ -2530,18 +2542,6 @@ packages:
       prisma: '*'
     peerDependenciesMeta:
       prisma:
-        optional: true
-
-  '@prisma/client@6.16.2':
-    resolution: {integrity: sha512-E00PxBcalMfYO/TWnXobBVUai6eW/g5OsifWQsQDzJYm7yaY+IRLo7ZLsaefi0QkTpxfuhFcQ/w180i6kX3iJw==}
-    engines: {node: '>=18.18'}
-    peerDependencies:
-      prisma: '*'
-      typescript: '>=5.1.0'
-    peerDependenciesMeta:
-      prisma:
-        optional: true
-      typescript:
         optional: true
 
   '@prisma/client@6.17.1':
@@ -9860,6 +9860,15 @@ snapshots:
     dependencies:
       is-negated-glob: 1.0.0
 
+  '@hcaptcha/loader@2.2.0': {}
+
+  '@hcaptcha/react-hcaptcha@1.14.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+    dependencies:
+      '@babel/runtime': 7.28.4
+      '@hcaptcha/loader': 2.2.0
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+
   '@headlessui/react@2.2.8(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -10471,7 +10480,7 @@ snapshots:
       class-transformer: 0.5.1
       class-validator: 0.14.2
 
-  '@nestjs/terminus@10.3.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@6.16.2(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@nestjs/terminus@10.3.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -10480,7 +10489,7 @@ snapshots:
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
     optionalDependencies:
-      '@prisma/client': 6.16.2(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)
+      '@prisma/client': 6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)
 
   '@nestjs/testing@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(@nestjs/websockets@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6))':
     dependencies:
@@ -10578,11 +10587,6 @@ snapshots:
   '@prisma/client@5.22.0(prisma@6.17.1(typescript@5.9.2))':
     optionalDependencies:
       prisma: 6.17.1(typescript@5.9.2)
-
-  '@prisma/client@6.16.2(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)':
-    optionalDependencies:
-      prisma: 6.17.1(typescript@5.9.2)
-      typescript: 5.9.2
 
   '@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)':
     optionalDependencies:
