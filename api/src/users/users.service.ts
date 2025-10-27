@@ -245,14 +245,21 @@ export class UsersService {
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
+    console.log('🔄 [BACKEND UPDATE] Starting updateByClerkId');
+    console.log('📝 UpdateUserDto received:', updateUserDto);
+    console.log('🔍 ClerkId:', clerkId);
+    
     // Check if AppUser exists (required for auth)
     const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
 
     if (!appUser) {
+      console.log('❌ AppUser not found for clerkId:', clerkId);
       throw new NotFoundException('User not found');
     }
+    
+    console.log('✅ AppUser found:', appUser.id);
 
     try {
       // Try to find or create User profile
@@ -267,8 +274,8 @@ export class UsersService {
           data: {
             clerkId,
             email: appUser.email || updateUserDto.email || '',
-            firstName: updateUserDto.firstName || '',
-            lastName: updateUserDto.lastName || '',
+            firstName: updateUserDto.firstName || null,
+            lastName: updateUserDto.lastName || null,
             role: appUser.role,
           },
         });
@@ -276,16 +283,28 @@ export class UsersService {
       } else {
         // Update existing User profile
         console.log('Updating User profile for clerkId:', clerkId);
-        user = await this.prisma.user.update({
-          where: { clerkId },
-          data: {
-            email: updateUserDto.email,
-            firstName: updateUserDto.firstName,
-            lastName: updateUserDto.lastName,
-            phoneNumber: updateUserDto.phoneNumber,
-          },
-        });
-        console.log('User profile updated:', user.id);
+        
+        // Build update data object with only provided fields
+        const updateData: any = {};
+        if (updateUserDto.email !== undefined) updateData.email = updateUserDto.email;
+        if (updateUserDto.firstName !== undefined) updateData.firstName = updateUserDto.firstName;
+        if (updateUserDto.lastName !== undefined) updateData.lastName = updateUserDto.lastName;
+        if (updateUserDto.phoneNumber !== undefined) updateData.phoneNumber = updateUserDto.phoneNumber;
+        
+        console.log('Update data prepared:', updateData);
+        
+        if (Object.keys(updateData).length === 0) {
+          console.log('No fields to update, skipping database update');
+          user = await this.prisma.user.findUnique({
+            where: { clerkId },
+          });
+        } else {
+          user = await this.prisma.user.update({
+            where: { clerkId },
+            data: updateData,
+          });
+          console.log('User profile updated:', user.id);
+        }
       }
 
       // Also update email in AppUser if changed
@@ -297,10 +316,12 @@ export class UsersService {
       }
 
       // Return full User profile
-      return {
+      const result = {
         ...user,
         organizations: [],
       };
+      console.log('📤 [BACKEND UPDATE] Returning user data:', result);
+      return result;
     } catch (error) {
       console.error('Error updating User profile:', error);
       // If User table operations fail, fall back to updating AppUser only
@@ -315,7 +336,7 @@ export class UsersService {
       }
       
       // Return AppUser data in User format
-      return {
+      const fallbackResult = {
         id: appUser.id,
         clerkId: appUser.clerkId,
         email: appUser.email,
@@ -336,6 +357,8 @@ export class UsersService {
         updatedAt: appUser.updatedAt,
         organizations: [],
       };
+      console.log('📤 [BACKEND UPDATE] Returning fallback user data:', fallbackResult);
+      return fallbackResult;
     }
   }
 
