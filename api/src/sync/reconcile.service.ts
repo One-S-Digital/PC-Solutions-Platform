@@ -66,26 +66,34 @@ export class ReconcileService {
   }
 
   private async reconcileUser(user: { clerkId: string; role: string }) {
-    const clerkUser = await this.clerk.users.getUser(user.clerkId);
-    const publicRole = (clerkUser.publicMetadata as any)?.role;
+    try {
+      const clerkUser = await this.clerk.users.getUser(user.clerkId);
+      const publicRole = (clerkUser.publicMetadata as any)?.role;
 
-    if (publicRole !== user.role) {
-      this.logger.log(
-        `Reconciling role mismatch for ${user.clerkId}: ` +
-        `Clerk=${publicRole}, DB=${user.role}`
-      );
+      if (publicRole !== user.role) {
+        this.logger.log(
+          `Reconciling role mismatch for ${user.clerkId}: ` +
+          `Clerk=${publicRole}, DB=${user.role}`
+        );
 
-      // Update Clerk to match DB (DB is source of truth)
-      await this.clerk.users.updateUser(user.clerkId, {
-        publicMetadata: {
-          ...(clerkUser.publicMetadata as any),
-          role: user.role
-        },
-        unsafeMetadata: { 
-          ...(clerkUser.unsafeMetadata as any), 
-          role: undefined 
-        },
-      });
+        // Update Clerk to match DB (DB is source of truth)
+        await this.clerk.users.updateUser(user.clerkId, {
+          publicMetadata: {
+            ...(clerkUser.publicMetadata as any),
+            role: user.role
+          },
+          unsafeMetadata: { 
+            ...(clerkUser.unsafeMetadata as any), 
+            role: undefined 
+          },
+        });
+      }
+    } catch (error) {
+      if (error?.status === 404) {
+        this.logger.warn(`User ${user.clerkId} not found in Clerk, skipping reconciliation`);
+        return; // Don't create outbox job for non-existent users
+      }
+      throw error; // Re-throw other errors
     }
   }
 }
