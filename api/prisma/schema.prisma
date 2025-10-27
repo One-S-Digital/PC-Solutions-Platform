@@ -125,8 +125,8 @@ model User {
   id        String   @id @default(uuid())
   clerkId   String   @unique
   email     String   @unique
-  firstName String
-  lastName  String
+  firstName String?
+  lastName  String?
   role      UserRole
 
   // Additional fields for educators from onboarding guide
