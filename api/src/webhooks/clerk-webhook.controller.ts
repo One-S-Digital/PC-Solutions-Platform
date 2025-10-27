@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Req,
   Res,
@@ -34,53 +35,151 @@ export class ClerkWebhookController {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const webhookSecret = this.configService.get<string>('CLERK_WEBHOOK_SECRET');
     
+    this.logger.log('🔧 [WEBHOOK INIT] Initializing Clerk webhook controller', {
+      hasClerkSecretKey: !!clerkSecretKey,
+      hasWebhookSecret: !!webhookSecret,
+      clerkSecretKeyPrefix: clerkSecretKey ? clerkSecretKey.substring(0, 10) + '...' : 'MISSING',
+      webhookSecretPrefix: webhookSecret ? webhookSecret.substring(0, 10) + '...' : 'MISSING',
+    });
+    
     if (!clerkSecretKey) {
+      this.logger.error('❌ [WEBHOOK INIT] CLERK_SECRET_KEY is not configured');
       throw new Error('CLERK_SECRET_KEY is not configured');
     }
     if (!webhookSecret) {
+      this.logger.error('❌ [WEBHOOK INIT] CLERK_WEBHOOK_SECRET is not configured');
       throw new Error('CLERK_WEBHOOK_SECRET is not configured');
     }
     
     this.clerk = createClerkClient({ secretKey: clerkSecretKey });
     this.webhookSecret = webhookSecret;
+    
+    this.logger.log('✅ [WEBHOOK INIT] Clerk webhook controller initialized successfully');
+  }
+
+  @Get('health')
+  healthCheck() {
+    const hasWebhookSecret = !!this.webhookSecret;
+    const hasClerkClient = !!this.clerk;
+    
+    this.logger.log('🏥 [WEBHOOK HEALTH] Health check requested', {
+      hasWebhookSecret,
+      hasClerkClient,
+      timestamp: new Date().toISOString(),
+    });
+    
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      webhookConfigured: hasWebhookSecret,
+      clerkClientConfigured: hasClerkClient,
+      message: hasWebhookSecret && hasClerkClient 
+        ? 'Webhook is properly configured' 
+        : 'Webhook configuration issues detected',
+    };
   }
 
   @Post()
   @HttpCode(204)
   async handleWebhook(@Req() req: Request, @Res() res: Response) {
+    const requestId = Math.random().toString(36).substring(7);
+    
+    // Enhanced debugging - log all incoming request details
+    this.logger.log(`🔍 [WEBHOOK DEBUG ${requestId}] Webhook request received`, {
+      method: req.method,
+      url: req.url,
+      headers: {
+        'content-type': req.headers['content-type'],
+        'user-agent': req.headers['user-agent'],
+        'svix-id': req.headers['svix-id'],
+        'svix-timestamp': req.headers['svix-timestamp'],
+        'svix-signature': req.headers['svix-signature'] ? 'present' : 'missing',
+        'content-length': req.headers['content-length'],
+        'host': req.headers['host'],
+        'x-forwarded-for': req.headers['x-forwarded-for'],
+        'x-forwarded-proto': req.headers['x-forwarded-proto'],
+      },
+      bodyLength: req.body?.length || 0,
+      bodyType: typeof req.body,
+      bodyPreview: req.body ? String(req.body).substring(0, 200) + '...' : 'empty',
+    });
+
+    // Check webhook secret configuration
+    if (!this.webhookSecret) {
+      this.logger.error(`❌ [WEBHOOK DEBUG ${requestId}] CLERK_WEBHOOK_SECRET is not configured`);
+      return res.status(500).send('Webhook secret not configured');
+    }
+
     // Get Svix headers
     const svixId = req.headers['svix-id'] as string;
     const svixTimestamp = req.headers['svix-timestamp'] as string;
     const svixSignature = req.headers['svix-signature'] as string;
 
+    this.logger.log(`🔍 [WEBHOOK DEBUG ${requestId}] Svix headers check`, {
+      svixId: svixId || 'MISSING',
+      svixTimestamp: svixTimestamp || 'MISSING',
+      svixSignature: svixSignature ? 'present' : 'MISSING',
+    });
+
     if (!svixId || !svixTimestamp || !svixSignature) {
+      this.logger.error(`❌ [WEBHOOK DEBUG ${requestId}] Missing Svix headers`, {
+        missing: {
+          svixId: !svixId,
+          svixTimestamp: !svixTimestamp,
+          svixSignature: !svixSignature,
+        }
+      });
       return res.status(400).send('Missing Svix headers');
     }
 
     // Check idempotency
     if (processedEvents.has(svixId)) {
-      this.logger.log(`Skipping duplicate event: ${svixId}`);
+      this.logger.log(`⏭️ [WEBHOOK DEBUG ${requestId}] Skipping duplicate event: ${svixId}`);
       return res.status(204).end();
     }
 
     // Verify webhook signature
     let event: ClerkWebhookEvent;
     try {
+      this.logger.log(`🔐 [WEBHOOK DEBUG ${requestId}] Verifying webhook signature`, {
+        secretLength: this.webhookSecret.length,
+        secretPrefix: this.webhookSecret.substring(0, 10) + '...',
+        bodyLength: req.body?.length || 0,
+      });
+
       const webhook = new Webhook(this.webhookSecret);
       event = webhook.verify(req.body, {
         'svix-id': svixId,
         'svix-timestamp': svixTimestamp,
         'svix-signature': svixSignature,
       }) as ClerkWebhookEvent;
+
+      this.logger.log(`✅ [WEBHOOK DEBUG ${requestId}] Signature verification successful`, {
+        eventType: event.type,
+        eventDataKeys: Object.keys(event.data || {}),
+      });
     } catch (error) {
-      this.logger.error('Invalid webhook signature', error);
+      this.logger.error(`❌ [WEBHOOK DEBUG ${requestId}] Invalid webhook signature`, {
+        error: error.message,
+        errorType: error.constructor.name,
+        stack: error.stack,
+        bodyPreview: req.body ? String(req.body).substring(0, 100) : 'empty',
+      });
       return res.status(400).send('Invalid signature');
     }
 
     // Process event
     try {
+      this.logger.log(`🔄 [WEBHOOK DEBUG ${requestId}] Processing event`, {
+        type: event.type,
+        userId: event.data?.id,
+        email: event.data?.email_addresses?.[0]?.email_address,
+      });
+
       await this.processEvent(event);
       processedEvents.add(svixId);
+      
+      this.logger.log(`✅ [WEBHOOK DEBUG ${requestId}] Event processed successfully`);
       
       // Clean up old events (keep last 10000)
       if (processedEvents.size > 10000) {
@@ -90,7 +189,13 @@ export class ClerkWebhookController {
       
       return res.status(204).end();
     } catch (error) {
-      this.logger.error('Failed to process webhook event', error);
+      this.logger.error(`❌ [WEBHOOK DEBUG ${requestId}] Failed to process webhook event`, {
+        error: error.message,
+        errorType: error.constructor.name,
+        stack: error.stack,
+        eventType: event?.type,
+        eventData: event?.data,
+      });
       return res.status(500).send('Webhook processing failed');
     }
   }
