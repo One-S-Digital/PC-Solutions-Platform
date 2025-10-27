@@ -7,6 +7,7 @@ import {
   HttpCode,
   Logger,
 } from '@nestjs/common';
+import { Public } from '../auth/decorators/public.decorator';
 import { Webhook } from 'svix';
 import { Request, Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
@@ -58,6 +59,7 @@ export class ClerkWebhookController {
   }
 
   @Get('health')
+  @Public()
   healthCheck() {
     const hasWebhookSecret = !!this.webhookSecret;
     const hasClerkClient = !!this.clerk;
@@ -80,6 +82,7 @@ export class ClerkWebhookController {
   }
 
   @Post()
+  @Public()
   @HttpCode(204)
   async handleWebhook(@Req() req: Request, @Res() res: Response) {
     const requestId = Math.random().toString(36).substring(7);
