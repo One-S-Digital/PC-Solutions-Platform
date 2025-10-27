@@ -109,7 +109,10 @@
     "contactPersonRequired": "La personne de contact est requise",
     "parentNameRequired": "Le nom du parent est requis",
     "firstNameRequired": "Le prénom est requis",
-    "lastNameRequired": "Le nom est requis"
+    "lastNameRequired": "Le nom est requis",
+    "captchaRequired": "Veuillez compléter la vérification CAPTCHA",
+    "captchaExpired": "Le CAPTCHA a expiré. Veuillez réessayer",
+    "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer"
   },
   "buttons": {
     "createAccount": "Créer un compte",

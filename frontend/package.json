@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.0.0",
+    "@hcaptcha/react-hcaptcha": "^1.14.0",
     "@heroicons/react": "^2.2.0",
     "i18next": "^25.2.1",
     "i18next-browser-languagedetector": "^8.2.0",

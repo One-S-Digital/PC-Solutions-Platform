@@ -109,7 +109,10 @@
     "contactPersonRequired": "Contact person is required",
     "parentNameRequired": "Parent name is required",
     "firstNameRequired": "First name is required",
-    "lastNameRequired": "Last name is required"
+    "lastNameRequired": "Last name is required",
+    "captchaRequired": "Please complete the CAPTCHA verification",
+    "captchaExpired": "CAPTCHA has expired. Please try again",
+    "captchaError": "CAPTCHA verification failed. Please try again"
   },
   "buttons": {
     "createAccount": "Create Account",

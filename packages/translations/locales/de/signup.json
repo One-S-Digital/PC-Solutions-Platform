@@ -109,7 +109,10 @@
     "contactPersonRequired": "Kontaktperson ist erforderlich",
     "parentNameRequired": "Name des Elternteils ist erforderlich",
     "firstNameRequired": "Vorname ist erforderlich",
-    "lastNameRequired": "Nachname ist erforderlich"
+    "lastNameRequired": "Nachname ist erforderlich",
+    "captchaRequired": "Bitte vervollständigen Sie die CAPTCHA-Verifizierung",
+    "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
+    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut"
   },
   "buttons": {
     "createAccount": "Konto erstellen",

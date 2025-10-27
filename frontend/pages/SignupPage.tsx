@@ -3,9 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth } from '@clerk/clerk-react';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage } from '../types';
-import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants';
+import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import Captcha from '../components/ui/Captcha';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
@@ -39,6 +40,8 @@ const SignupPage: React.FC = () => {
   const [showVerificationStep, setShowVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationError, setVerificationError] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState('');
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -127,8 +130,31 @@ const SignupPage: React.FC = () => {
     if (!formData.termsAccepted) 
       newErrors.termsAccepted = t('errors.termsRequired');
 
+    // CAPTCHA validation
+    if (!captchaToken) {
+      setCaptchaError(t('errors.captchaRequired'));
+    } else {
+      setCaptchaError('');
+    }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0 && captchaToken !== null;
+  };
+
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+    setCaptchaError('');
+  };
+
+  const handleCaptchaExpire = () => {
+    setCaptchaToken(null);
+    setCaptchaError(t('errors.captchaExpired'));
+  };
+
+  const handleCaptchaError = (error: any) => {
+    setCaptchaToken(null);
+    setCaptchaError(t('errors.captchaError'));
+    console.error('CAPTCHA error:', error);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -384,6 +410,20 @@ const SignupPage: React.FC = () => {
                     </span>
                   </label>
                   {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
+                </div>
+
+                {/* CAPTCHA Section */}
+                <div className="pt-4">
+                  <Captcha
+                    siteKey={HCAPTCHA_SITE_KEY}
+                    theme={HCAPTCHA_THEME}
+                    size={HCAPTCHA_SIZE}
+                    onVerify={handleCaptchaVerify}
+                    onExpire={handleCaptchaExpire}
+                    onError={handleCaptchaError}
+                    className="flex justify-center"
+                  />
+                  {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
                 </div>
                 
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">

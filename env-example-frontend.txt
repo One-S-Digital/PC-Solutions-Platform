@@ -5,6 +5,10 @@
 # Get this from: https://dashboard.clerk.com/
 VITE_CLERK_PUBLISHABLE_KEY=pk_live_your_clerk_publishable_key_here
 
+# hCaptcha Configuration (REQUIRED for production)
+# Get this from: https://www.hcaptcha.com/
+VITE_HCAPTCHA_SITE_KEY=your_hcaptcha_site_key_here
+
 # Skip Authentication (FOR DEVELOPMENT ONLY - must be false in production)
 VITE_SKIP_AUTH=false
 VITE_DEVELOPMENT_MODE=false

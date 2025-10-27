@@ -6,6 +6,11 @@ export { SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES };
 
 export const APP_NAME = "Pro Crèche Solutions";
 
+// hCaptcha Configuration
+export const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || '10000000-ffff-ffff-ffff-000000000001'; // Test key for development
+export const HCAPTCHA_THEME = 'light' as const;
+export const HCAPTCHA_SIZE = 'normal' as const;
+
 // Standard Tailwind classes for input fields
 const COMMON_INPUT_CLASSES_BASE = "block w-full bg-white placeholder-gray-400 shadow-sm border border-gray-300 rounded-button focus:outline-none focus:ring-1 focus:ring-swiss-mint focus:border-swiss-mint";
 const COMMON_INPUT_CLASSES_PADDING_DEFAULT = "px-3 py-2";
@@ -37,7 +42,7 @@ export const MOCK_PLATFORM_SETTINGS: PlatformSettings = {
   enablePublicRegistration: true,
   enabledLanguages: ['en', 'fr', 'de'],
   defaultLanguage: 'en',
-  enableCaptcha: false,
+  enableCaptcha: true,
   requireEmailVerification: true,
 };
 
