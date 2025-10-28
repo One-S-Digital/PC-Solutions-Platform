@@ -14,8 +14,35 @@ async function bootstrap() {
   });
   const logger = app.get(AppLoggerService);
   
+  // Webhook body parsing debug middleware
+  app.use('/api/webhooks/clerk', (req, res, next) => {
+    console.log('🔍 [WEBHOOK BODY DEBUG] Clerk webhook request intercepted');
+    console.log('🔍 [WEBHOOK BODY DEBUG] Before raw parser:', {
+      method: req.method,
+      url: req.url,
+      contentType: req.headers['content-type'],
+      contentLength: req.headers['content-length'],
+      hasBody: !!(req as any).body,
+      bodyType: typeof (req as any).body,
+    });
+    next();
+  });
+  
   // Raw body for webhook route
   app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
+  
+  // Webhook body parsing verification middleware
+  app.use('/api/webhooks/clerk', (req, res, next) => {
+    console.log('🔍 [WEBHOOK BODY DEBUG] After raw parser:', {
+      hasBody: !!(req as any).body,
+      bodyType: typeof (req as any).body,
+      bodyConstructor: (req as any).body?.constructor?.name,
+      bodyLength: (req as any).body?.length || 0,
+      isBuffer: Buffer.isBuffer((req as any).body),
+      bodyPreview: (req as any).body ? String((req as any).body).substring(0, 200) : 'EMPTY',
+    });
+    next();
+  });
   
   // JSON parser for all other routes
   app.use(express.json());
