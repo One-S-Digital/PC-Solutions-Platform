@@ -9,6 +9,8 @@ import { SquaresPlusIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outl
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
+import { debugLogger } from '../utils/debugLogger';
+import { useDebugLogger } from '../hooks/useDebugLogger';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -42,10 +44,12 @@ const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  // Enable debug logging for this component
+  useDebugLogger();
+
   // Debug login page state
   useEffect(() => {
-    console.group('🔍 [LOGIN PAGE] State Check');
-    console.log('State:', {
+    debugLogger.info('LOGIN', 'State Check', {
       isSignedIn,
       hasCurrentUser: !!currentUser,
       currentUser,
@@ -54,7 +58,6 @@ const LoginPage: React.FC = () => {
       isSignInLoaded,
       isAuthLoaded,
     });
-    console.groupEnd();
   }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
 
   // Redirect if user is already logged in and backend sync is successful

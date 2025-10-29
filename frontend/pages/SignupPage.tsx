@@ -7,6 +7,8 @@ import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPT
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Captcha from '../components/ui/Captcha';
+import { debugLogger } from '../utils/debugLogger';
+import { useDebugLogger } from '../hooks/useDebugLogger';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
@@ -14,6 +16,9 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
+  
+  // Enable debug logging for this component
+  useDebugLogger();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
@@ -54,7 +59,7 @@ const SignupPage: React.FC = () => {
   // Handle successful verification - redirect if user becomes authenticated
   useEffect(() => {
     if (isSignedIn && currentStep === 3) {
-      console.log('🚀 [VERIFICATION DEBUG] User became authenticated after verification, redirecting...');
+      debugLogger.info('VERIFICATION', 'User became authenticated after verification, redirecting...');
       // Small delay to ensure the success message is visible
       setTimeout(() => {
         navigate('/dashboard', { replace: true });
@@ -218,7 +223,7 @@ const SignupPage: React.FC = () => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      console.log('🚀 [SIGNUP DEBUG] Starting signup process...', {
+      debugLogger.info('SIGNUP', 'Starting signup process...', {
         email: formData.email,
         role: selectedRole,
         firstName,
@@ -241,7 +246,7 @@ const SignupPage: React.FC = () => {
         },
       });
 
-      console.log('🚀 [SIGNUP DEBUG] Signup result:', {
+      debugLogger.info('SIGNUP', 'Signup result:', {
         status: result.status,
         userId: result.createdUserId,
         sessionId: result.createdSessionId,
@@ -265,15 +270,15 @@ const SignupPage: React.FC = () => {
         }
       } else if (result.status === 'missing_requirements') {
         // Email verification required
-        console.log('🚀 [SIGNUP DEBUG] Email verification required, preparing verification...');
+        debugLogger.info('SIGNUP', 'Email verification required, preparing verification...');
         try {
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-          console.log('🚀 [SIGNUP DEBUG] Email verification prepared successfully');
+          debugLogger.info('SIGNUP', 'Email verification prepared successfully');
           setShowVerificationStep(true);
           setIsLoading(false);
           return;
         } catch (verifyError: any) {
-          console.error('🚀 [SIGNUP DEBUG] Failed to prepare email verification:', verifyError);
+          debugLogger.error('SIGNUP', 'Failed to prepare email verification:', verifyError);
           setErrors({ email: 'Failed to send verification email. Please try again.' });
         }
       }
@@ -310,7 +315,7 @@ const SignupPage: React.FC = () => {
   const handleVerification = async (e: FormEvent) => {
     e.preventDefault();
     
-    console.log('🚀 [VERIFICATION DEBUG] handleVerification called', {
+    debugLogger.info('VERIFICATION', 'handleVerification called', {
       hasSignUp: !!signUp,
       verificationCode,
       signUpStatus: signUp?.status,
@@ -320,17 +325,17 @@ const SignupPage: React.FC = () => {
     });
     
     if (!signUp || !verificationCode) {
-      console.log('🚀 [VERIFICATION DEBUG] Early return - missing signUp or verificationCode');
+      debugLogger.warn('VERIFICATION', 'Early return - missing signUp or verificationCode');
       setVerificationError('Please enter a verification code.');
       return;
     }
 
     if (isVerifying) {
-      console.log('🚀 [VERIFICATION DEBUG] Verification already in progress, ignoring duplicate request');
+      debugLogger.warn('VERIFICATION', 'Verification already in progress, ignoring duplicate request');
       return;
     }
     
-    console.log('🚀 [VERIFICATION DEBUG] Starting email verification...', {
+    debugLogger.info('VERIFICATION', 'Starting email verification...', {
       code: verificationCode,
       userId: signUp.createdUserId,
       signUpStatus: signUp.status
@@ -341,12 +346,12 @@ const SignupPage: React.FC = () => {
     setVerificationError('');
     
     try {
-      console.log('🚀 [VERIFICATION DEBUG] Calling attemptEmailAddressVerification...');
+      debugLogger.info('VERIFICATION', 'Calling attemptEmailAddressVerification...');
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
       
-      console.log('🚀 [VERIFICATION DEBUG] Verification result:', {
+      debugLogger.info('VERIFICATION', 'Verification result:', {
         status: result.status,
         userId: result.createdUserId,
         sessionId: result.createdSessionId,
@@ -383,21 +388,21 @@ const SignupPage: React.FC = () => {
               setCurrentStep(3);
             }
           } catch (setActiveError: any) {
-            console.error('🚀 [VERIFICATION DEBUG] Session activation failed:', setActiveError);
+            debugLogger.error('VERIFICATION', 'Session activation failed:', setActiveError);
             setVerificationError('Failed to activate session. Please try logging in manually.');
             return; // Don't proceed to success step if session activation fails
           }
         } else {
-          console.error('🚀 [VERIFICATION DEBUG] No session ID provided after verification');
+          debugLogger.error('VERIFICATION', 'No session ID provided after verification');
           setVerificationError('Verification completed but no session was created. Please try logging in manually.');
         }
       } else {
-        console.log('🚀 [VERIFICATION DEBUG] Verification not complete, status:', result.status);
+        debugLogger.warn('VERIFICATION', 'Verification not complete, status:', result.status);
         setVerificationError('Verification failed. Please try again.');
       }
     } catch (err: any) {
-      console.error('🚀 [VERIFICATION DEBUG] Verification error:', err);
-      console.error('🚀 [VERIFICATION DEBUG] Error details:', {
+      debugLogger.error('VERIFICATION', 'Verification error:', err);
+      debugLogger.error('VERIFICATION', 'Error details:', {
         message: err.message,
         stack: err.stack,
         errors: err.errors,
@@ -407,7 +412,7 @@ const SignupPage: React.FC = () => {
       const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
       setVerificationError(errorMessage);
     } finally {
-      console.log('🚀 [VERIFICATION DEBUG] Verification process completed, setting loading to false');
+      debugLogger.info('VERIFICATION', 'Verification process completed, setting loading to false');
       setIsLoading(false);
       setIsVerifying(false);
     }
@@ -588,10 +593,10 @@ const SignupPage: React.FC = () => {
                       {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
                     </p>
                     <form onSubmit={(e) => {
-                      console.log('🚀 [FORM DEBUG] Verification form submitted');
+                      debugLogger.info('FORM', 'Verification form submitted');
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('🚀 [FORM DEBUG] Form submission prevented, calling handleVerification');
+                      debugLogger.info('FORM', 'Form submission prevented, calling handleVerification');
                       handleVerification(e);
                     }} className="space-y-4" noValidate>
                       <div>
@@ -603,11 +608,11 @@ const SignupPage: React.FC = () => {
                           id="verificationCode"
                           value={verificationCode}
                           onChange={(e) => {
-                            console.log('🚀 [FORM DEBUG] Verification code changed:', e.target.value);
+                            debugLogger.debug('FORM', 'Verification code changed:', e.target.value);
                             setVerificationCode(e.target.value);
                           }}
                           onInvalid={(e) => {
-                            console.log('🚀 [FORM DEBUG] Input validation failed:', e);
+                            debugLogger.warn('FORM', 'Input validation failed:', e);
                           }}
                           className={STANDARD_INPUT_FIELD}
                           placeholder="000000"

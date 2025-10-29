@@ -17,6 +17,7 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
 import { TranslationDebugger } from './components/debug/TranslationDebugger';
+import DebugToggle from './components/debug/DebugToggle';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -314,6 +315,7 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
+            <DebugToggle />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
