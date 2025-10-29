@@ -19,11 +19,15 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { UserSyncService } from '../auth/services/user-sync.service';
 
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly userSyncService: UserSyncService,
+  ) {}
 
   @Post()
   @Roles(UserRole.SUPER_ADMIN)
@@ -75,34 +79,24 @@ export class UsersController {
 
   @Post('me/sync')
   async syncCurrentUser(@Request() request) {
-    // Manual sync endpoint - creates user if webhook hasn't fired yet
-    // This is the critical rescue route for when webhooks fail
+    // Manual sync endpoint - uses centralized UserSyncService
+    // Kept for backwards compatibility, delegates to UserSyncService
     console.log('🔄 [SYNC] Manual sync requested for clerkId:', request.user.clerkId);
     
     try {
-      // First check if user already exists
-      let user = await this.usersService.findByClerkId(request.user.clerkId);
+      const result = await this.userSyncService.ensureUserExists(request.user.clerkId, {
+        waitForWebhook: false, // Don't wait for webhook in manual sync
+        forceSync: false,
+      });
       
-      if (user && !user.isPending) {
-        console.log('✅ [SYNC] User already exists, returning existing record');
-        return {
-          success: true,
-          data: user,
-          synced: false,
-          message: 'User already exists'
-        };
-      }
-      
-      // User doesn't exist or is pending - create via Clerk sync
-      console.log('🔄 [SYNC] Fetching user from Clerk and creating record...');
-      user = await this.usersService.syncUserFromClerk(request.user.clerkId);
-      
-      console.log('✅ [SYNC] User synced successfully:', user.id);
+      console.log('✅ [SYNC] User synced successfully via UserSyncService');
       return {
         success: true,
-        data: user,
-        synced: true,
-        message: 'User synchronized from Clerk'
+        data: result.user,
+        synced: result.synced,
+        method: result.method,
+        duration: result.duration,
+        message: result.synced ? 'User synchronized from Clerk' : 'User already exists'
       };
     } catch (error) {
       console.error('❌ [SYNC] Failed to sync user:', error);

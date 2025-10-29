@@ -8,7 +8,9 @@ export const API_ENDPOINTS = {
 
   // Authentication (handled by Clerk, but for user sync)
   auth: {
-    sync: '/auth/sync-user',
+    sync: '/auth/sync-user',  // Legacy, deprecated
+    ensureUser: '/auth/ensure-user',  // New centralized endpoint
+    syncStatus: '/auth/sync-status',  // Monitoring endpoint
   },
 
   // Users & Profiles
