@@ -5,13 +5,33 @@ import { apiService, ApiResponse, ApiError } from '../services/api';
 export function useAuthenticatedApi() {
   const { getToken } = useAuth();
 
+  const getTokenWithRetry = useCallback(async (): Promise<string> => {
+    let lastError: unknown = null;
+
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      try {
+        const token = await getToken();
+        if (token) {
+          return token;
+        }
+      } catch (error) {
+        lastError = error;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+
+    console.error('Failed to obtain Clerk token for authenticated request', lastError);
+    throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+  }, [getToken]);
+
   const authenticatedRequest = useCallback(
     async <T = any>(
       endpoint: string,
       options: RequestInit = {}
     ): Promise<ApiResponse<T>> => {
       try {
-        const token = await getToken();
+        const token = await getTokenWithRetry();
 
         if (!token) {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
@@ -50,7 +70,7 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [getTokenWithRetry]
   );
 
   const authenticatedUpload = useCallback(
@@ -60,7 +80,7 @@ export function useAuthenticatedApi() {
       additionalData?: Record<string, any>
     ): Promise<ApiResponse> => {
       try {
-        const token = await getToken();
+        const token = await getTokenWithRetry();
 
         if (!token) {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
@@ -104,7 +124,7 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [getTokenWithRetry]
   );
 
   return {

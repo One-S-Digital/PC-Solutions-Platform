@@ -10,12 +10,14 @@ import Captcha from '../components/ui/Captcha';
 import { debugLogger } from '../src/utils/debugLogger';
 import { useDebugLogger } from '../src/hooks/useDebugLogger';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import { useAuthContext } from '../providers/AuthProvider';
 
 const SignupPage: React.FC = () => {
   const { t } = useTranslation(['signup', 'common']);
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
+  const { currentUser, isAuthenticated, refreshCurrentUser } = useAuthContext();
   
   // Enable debug logging for this component
   useDebugLogger();
@@ -49,23 +51,25 @@ const SignupPage: React.FC = () => {
   const [captchaError, setCaptchaError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
 
-  // Redirect if user is already logged in
+  // Redirect if the viewer is already authenticated (and not mid-signup)
   useEffect(() => {
-    if (isSignedIn) {
+    if (isAuthenticated && currentUser && currentStep === 1 && !selectedRole) {
+      debugLogger.debug('SIGNUP', 'User already authenticated, redirecting away from signup');
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, navigate]);
+  }, [isAuthenticated, currentUser, currentStep, selectedRole, navigate]);
 
   // Handle successful verification - redirect if user becomes authenticated
   useEffect(() => {
-    if (isSignedIn && currentStep === 3) {
+    if (isAuthenticated && currentUser && currentStep === 3) {
       debugLogger.info('VERIFICATION', 'User became authenticated after verification, redirecting...');
       // Small delay to ensure the success message is visible
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         navigate('/dashboard', { replace: true });
       }, 2000);
+      return () => clearTimeout(timeoutId);
     }
-  }, [isSignedIn, currentStep, navigate]);
+  }, [isAuthenticated, currentUser, currentStep, navigate]);
 
   // Global error handler to catch unhandled errors
   useEffect(() => {
@@ -256,9 +260,27 @@ const SignupPage: React.FC = () => {
 
       if (result.status === 'complete') {
         try {
+          if (!result.createdSessionId) {
+            debugLogger.error('SIGNUP', 'Signup completed without creating a session');
+            setErrors({ email: 'Account created but session could not be established. Please log in.' });
+            return;
+          }
+
           await setActive({ session: result.createdSessionId });
-          
-          // Redirect based on role
+
+          let profileSynced = true;
+          try {
+            await refreshCurrentUser();
+          } catch (syncError) {
+            profileSynced = false;
+            debugLogger.error('SIGNUP', 'Failed to refresh user profile after signup completion', syncError);
+          }
+
+          if (!profileSynced) {
+            setErrors({ email: 'Account created but we could not load your profile yet. Please log in to continue.' });
+            return;
+          }
+
           if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
             navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
           } else {
@@ -375,10 +397,23 @@ const SignupPage: React.FC = () => {
           try {
             await setActive({ session: result.createdSessionId });
             console.log('🚀 [VERIFICATION DEBUG] Session activated successfully!');
-            
+
+            let profileSynced = true;
+            try {
+              await refreshCurrentUser();
+            } catch (syncError) {
+              profileSynced = false;
+              debugLogger.error('VERIFICATION', 'Failed to refresh user profile after verification', syncError);
+            }
+
+            if (!profileSynced) {
+              setVerificationError('Email verified but we could not load your profile yet. Please try logging in manually.');
+              return;
+            }
+
             // Only show success step after successful session activation
             console.log('🚀 [VERIFICATION DEBUG] Moving to success step...');
-            
+
             // Redirect based on role, similar to direct signup flow
             if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
               console.log('🚀 [VERIFICATION DEBUG] Redirecting to pricing for business roles...');

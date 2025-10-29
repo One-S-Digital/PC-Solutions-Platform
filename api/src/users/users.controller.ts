@@ -1,15 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Query,
+  Get,
+  NotFoundException,
+  Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -50,10 +51,19 @@ export class UsersController {
   @Get('me')
   async getCurrentUser(@Request() request) {
     const user = await this.usersService.findByClerkId(request.user.clerkId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     return {
       success: true,
       data: user,
     };
+  }
+
+  @Post('me/sync')
+  async syncCurrentUser(@Request() request) {
+    const user = await this.usersService.syncCurrentUser(request.user.clerkId);
+    return { success: true, data: user };
   }
 
   @Get(':id')

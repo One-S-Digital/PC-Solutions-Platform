@@ -64,6 +64,9 @@ export class WebhooksService {
         last_name: userData.last_name || '',
         created_at: userData.created_at,
         updated_at: userData.updated_at,
+        primary_email_address_id: userData.primary_email_address_id,
+        public_metadata: userData.public_metadata,
+        unsafe_metadata: userData.unsafe_metadata,
       });
 
       this.logger.log(`User created successfully: ${userData.id}`);
@@ -83,6 +86,9 @@ export class WebhooksService {
         last_name: userData.last_name || '',
         created_at: userData.created_at,
         updated_at: userData.updated_at,
+        primary_email_address_id: userData.primary_email_address_id,
+        public_metadata: userData.public_metadata,
+        unsafe_metadata: userData.unsafe_metadata,
       });
 
       this.logger.log(`User updated successfully: ${userData.id}`);

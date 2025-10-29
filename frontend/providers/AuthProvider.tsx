@@ -17,6 +17,8 @@ const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationErr
 const WEBHOOK_RETRY_ATTEMPTS = 2;
 const WEBHOOK_RETRY_DELAY_MS = 2000;
 const SYNC_RETRY_DELAY_MS = 5000;
+const TOKEN_RETRY_ATTEMPTS = 10;
+const TOKEN_RETRY_DELAY_MS = 200;
 
 interface SyncAttemptState {
   clerkId: string | null;
@@ -65,6 +67,32 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
+  const getTokenWithRetry = useCallback(async () => {
+    let lastError: unknown = null;
+
+    for (let attempt = 0; attempt < TOKEN_RETRY_ATTEMPTS; attempt += 1) {
+      try {
+        const token = await getToken();
+        if (token) {
+          if (attempt > 0) {
+            console.log(
+              `🔑 Obtained Clerk token after ${attempt + 1} attempts (${(attempt + 1) * TOKEN_RETRY_DELAY_MS}ms)`
+            );
+          }
+          return token;
+        }
+      } catch (error) {
+        lastError = error;
+        console.warn('⚠️  Failed to fetch Clerk token on attempt', attempt + 1, error);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, TOKEN_RETRY_DELAY_MS));
+    }
+
+    console.error('❌ Unable to obtain Clerk token after retries', lastError);
+    throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+  }, [getToken]);
+
   const transformBackendUser = useCallback((user: any): User => {
     console.log('🔄 Transforming backend user:', user);
     
@@ -99,7 +127,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserFromBackend = useCallback(
     async (clerkId: string, attempt = 0): Promise<User> => {
-      const token = await getToken();
+      const token = await getTokenWithRetry();
 
       console.group(`🔄 [BACKEND SYNC] Attempt ${attempt + 1}/${WEBHOOK_RETRY_ATTEMPTS + 1}`);
       
@@ -214,8 +242,92 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       return transformBackendUser(data.data);
     },
-    [getToken, transformBackendUser]
+    [getTokenWithRetry, transformBackendUser]
   );
+
+  const triggerBackendUserSync = useCallback(
+    async () => {
+      const token = await getTokenWithRetry();
+
+      if (!token) {
+        throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+      }
+
+      const apiBaseUrl = apiService.apiBaseUrl;
+      const url = `${apiBaseUrl}${API_ENDPOINTS.users.sync}`;
+
+      console.group('🔄 [BACKEND SYNC] Triggering manual user sync');
+      console.log('📤 Request Details:', { url, method: 'POST' });
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }).catch(error => {
+        console.error('❌ Network error during manual sync:', error);
+        console.groupEnd();
+        throw new ApiError('Network error during manual sync', 0, 'network_error');
+      });
+
+      console.log('📥 Sync Response Status:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+      });
+
+      if (!response.ok) {
+        const bodyText = await response.text().catch(() => '');
+        console.error('❌ Manual sync failed:', { status: response.status, body: bodyText });
+        console.groupEnd();
+        throw new ApiError(bodyText || 'Failed to sync user with backend', response.status, 'backend_sync_failed');
+      }
+
+      let responseJson: any = null;
+      try {
+        responseJson = await response.json();
+      } catch (parseError) {
+        // Some responses may not include a body; treat as success.
+        console.warn('⚠️ Manual sync response was not JSON. Proceeding anyway.', parseError);
+      }
+
+      if (responseJson?.success) {
+        console.log('✅ Manual sync succeeded:', {
+          userId: responseJson.data?.id,
+          role: responseJson.data?.role,
+        });
+      } else {
+        console.warn('⚠️ Manual sync completed without success flag:', responseJson);
+      }
+
+      console.groupEnd();
+    },
+    [getTokenWithRetry]
+  );
+
+  const syncAndFetchBackendUser = useCallback(async (): Promise<User> => {
+    if (!clerkUserId) {
+      throw new Error('No authenticated user to load');
+    }
+
+    try {
+      return await fetchUserFromBackend(clerkUserId);
+    } catch (error) {
+      const isMissingUser =
+        (error instanceof ApiError && error.status === 404) ||
+        (error instanceof Error && error.message === 'Invalid response format from backend');
+
+      if (!isMissingUser) {
+        throw error;
+      }
+
+      console.warn('⚠️ Backend user missing, attempting manual sync...');
+      await triggerBackendUserSync();
+      return fetchUserFromBackend(clerkUserId);
+    }
+  }, [clerkUserId, fetchUserFromBackend, triggerBackendUserSync]);
 
   useEffect(() => {
     if (!clerkIsLoaded) {
@@ -259,7 +371,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
 
       try {
-        const backendUser = await fetchUserFromBackend(clerkUserId);
+        const backendUser = await syncAndFetchBackendUser();
         if (cancelled) {
           return;
         }
@@ -313,7 +425,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, [clerkIsLoaded, clerkUserId, isSignedIn, fetchUserFromBackend, determineAuthErrorKey]);
+  }, [clerkIsLoaded, clerkUserId, isSignedIn, syncAndFetchBackendUser, determineAuthErrorKey]);
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
@@ -354,7 +466,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       try {
-        const token = await getToken();
+        const token = await getTokenWithRetry();
         console.log('🔑 Token obtained:', token ? 'YES' : 'NO');
 
         if (!token) {
@@ -447,7 +559,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         throw error;
       }
     },
-    [currentUser, getToken, transformBackendUser, clerkUserId]
+    [currentUser, getTokenWithRetry, transformBackendUser, clerkUserId]
   );
 
   const refreshCurrentUser = useCallback(async () => {
@@ -459,7 +571,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error('No authenticated user to refresh');
     }
 
-    const backendUser = await fetchUserFromBackend(clerkUserId);
+    const backendUser = await syncAndFetchBackendUser();
     setCurrentUser(backendUser);
     setAuthError(null);
     syncAttemptRef.current = {
@@ -467,7 +579,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       status: 'success',
       lastAttempt: Date.now(),
     };
-  }, [clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
+  }, [clerkIsLoaded, clerkUserId, syncAndFetchBackendUser]);
 
   return (
     <AuthContext.Provider

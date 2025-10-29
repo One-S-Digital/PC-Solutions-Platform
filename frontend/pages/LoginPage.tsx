@@ -35,7 +35,13 @@ const LoginPage: React.FC = () => {
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
-  const { isLoading: isAuthLoading, authError, clearAuthError, logout } = useAuthContext();
+  const {
+    isLoading: isAuthLoading,
+    authError,
+    clearAuthError,
+    logout,
+    refreshCurrentUser,
+  } = useAuthContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -111,6 +117,15 @@ const LoginPage: React.FC = () => {
       if (result.status === 'complete') {
         try {
           await setActive({ session: result.createdSessionId });
+
+          try {
+            await refreshCurrentUser();
+          } catch (refreshError) {
+            console.error('Backend sync failed immediately after login:', refreshError);
+            setError(t('common:loginPage.backendSyncError'));
+            return;
+          }
+
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
