@@ -169,6 +169,13 @@ const SignupPage: React.FC = () => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
+      console.log('🚀 [SIGNUP DEBUG] Starting signup process...', {
+        email: formData.email,
+        role: selectedRole,
+        firstName,
+        lastName
+      });
+
       const result = await signUp.create({
         emailAddress: formData.email,
         password: formData.password,
@@ -183,6 +190,14 @@ const SignupPage: React.FC = () => {
           phone: formData.phone,
           canton: formData.canton,
         },
+      });
+
+      console.log('🚀 [SIGNUP DEBUG] Signup result:', {
+        status: result.status,
+        userId: result.createdUserId,
+        sessionId: result.createdSessionId,
+        hasErrors: result.errors?.length > 0,
+        errors: result.errors
       });
 
       if (result.status === 'complete') {
@@ -201,13 +216,15 @@ const SignupPage: React.FC = () => {
         }
       } else if (result.status === 'missing_requirements') {
         // Email verification required
+        console.log('🚀 [SIGNUP DEBUG] Email verification required, preparing verification...');
         try {
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+          console.log('🚀 [SIGNUP DEBUG] Email verification prepared successfully');
           setShowVerificationStep(true);
           setIsLoading(false);
           return;
         } catch (verifyError: any) {
-          console.error('Failed to prepare email verification:', verifyError);
+          console.error('🚀 [SIGNUP DEBUG] Failed to prepare email verification:', verifyError);
           setErrors({ email: 'Failed to send verification email. Please try again.' });
         }
       }
@@ -245,6 +262,11 @@ const SignupPage: React.FC = () => {
     e.preventDefault();
     if (!signUp || !verificationCode) return;
     
+    console.log('🚀 [VERIFICATION DEBUG] Starting email verification...', {
+      code: verificationCode,
+      userId: signUp.createdUserId
+    });
+    
     setIsLoading(true);
     setVerificationError('');
     
@@ -253,9 +275,19 @@ const SignupPage: React.FC = () => {
         code: verificationCode,
       });
       
+      console.log('🚀 [VERIFICATION DEBUG] Verification result:', {
+        status: result.status,
+        userId: result.createdUserId,
+        sessionId: result.createdSessionId,
+        hasErrors: result.errors?.length > 0,
+        errors: result.errors
+      });
+      
       if (result.status === 'complete') {
+        console.log('🚀 [VERIFICATION DEBUG] User creation complete! This should trigger webhook...');
         try {
           await setActive({ session: result.createdSessionId });
+          console.log('🚀 [VERIFICATION DEBUG] Session activated successfully');
           
           // Redirect based on role
           if (selectedRole && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
@@ -264,12 +296,12 @@ const SignupPage: React.FC = () => {
             setCurrentStep(3);
           }
         } catch (setActiveError: any) {
-          console.error('Session activation failed:', setActiveError);
+          console.error('🚀 [VERIFICATION DEBUG] Session activation failed:', setActiveError);
           setVerificationError('Failed to activate session. Please try logging in.');
         }
       }
     } catch (err: any) {
-      console.error('Verification error:', err);
+      console.error('🚀 [VERIFICATION DEBUG] Verification error:', err);
       const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
       setVerificationError(errorMessage);
     } finally {
