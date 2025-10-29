@@ -50,6 +50,23 @@ export class UsersController {
   @Get('me')
   async getCurrentUser(@Request() request) {
     const user = await this.usersService.findByClerkId(request.user.clerkId);
+    
+    if (!user) {
+      // User doesn't exist yet (webhook hasn't processed)
+      // Return a temporary response indicating the user is being processed
+      return {
+        success: true,
+        data: {
+          id: 'pending',
+          clerkId: request.user.clerkId,
+          email: request.user.email,
+          role: 'PENDING',
+          isPending: true,
+          message: 'User account is being processed. Please wait a moment and refresh.'
+        },
+      };
+    }
+    
     return {
       success: true,
       data: user,
