@@ -53,22 +53,72 @@ export class WebhooksService {
     }
   }
 
-  private async handleUserCreated(userData: any) {
+  private async handleUserCreated(userData: any, retryCount = 0) {
+    const maxRetries = 3;
+    const clerkId = userData.id;
+    
     try {
-      this.logger.log(`Creating user: ${userData.id}`);
+      this.logger.log(`Creating user: ${clerkId} (attempt ${retryCount + 1}/${maxRetries + 1})`);
       
-      await this.usersService.syncWithClerk({
-        id: userData.id,
+      // Check if user already exists
+      const existingAppUser = await this.usersService.findAppUserByClerkId(clerkId);
+      if (existingAppUser) {
+        this.logger.log(`User already exists: ${clerkId}`);
+        return;
+      }
+      
+      // Create user with retry logic
+      await this.createUserWithRetry(userData, retryCount);
+      
+      this.logger.log(`✅ User created successfully: ${clerkId}`);
+      
+    } catch (error) {
+      this.logger.error(`❌ Failed to create user ${clerkId} (attempt ${retryCount + 1}):`, error);
+      
+      if (retryCount < maxRetries) {
+        // Exponential backoff: 1s, 2s, 4s
+        const delay = Math.pow(2, retryCount) * 1000;
+        this.logger.warn(`Retrying user creation in ${delay}ms...`);
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.handleUserCreated(userData, retryCount + 1);
+      } else {
+        this.logger.error(`❌ User creation failed after ${maxRetries + 1} attempts: ${clerkId}`);
+        // Don't throw - let Clerk retry the webhook
+      }
+    }
+  }
+
+  private async createUserWithRetry(userData: any, retryCount: number) {
+    const clerkId = userData.id;
+    
+    try {
+      // Create AppUser first
+      const appUser = await this.usersService.createAppUser({
+        clerkId,
+        email: userData.email_addresses?.[0]?.email_address,
+        role: 'PARENT', // Default role, will be updated by webhook
+      });
+      
+      this.logger.log(`AppUser created: ${appUser.id} for ClerkId: ${clerkId}`);
+      
+      // Create User profile
+      const user = await this.usersService.syncWithClerk({
+        id: clerkId,
         email_addresses: userData.email_addresses,
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
         created_at: userData.created_at,
         updated_at: userData.updated_at,
       });
-
-      this.logger.log(`User created successfully: ${userData.id}`);
+      
+      this.logger.log(`User profile created: ${user.id} for ClerkId: ${clerkId}`);
+      
+      return user;
+      
     } catch (error) {
-      this.logger.error(`Failed to create user ${userData.id}:`, error);
+      this.logger.error(`User creation failed (attempt ${retryCount + 1}):`, error);
+      throw error;
     }
   }
 

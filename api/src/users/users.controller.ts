@@ -73,6 +73,21 @@ export class UsersController {
     };
   }
 
+  @Get('webhook-status/:clerkId')
+  async getWebhookStatus(@Param('clerkId') clerkId: string) {
+    const appUser = await this.usersService.findAppUserByClerkId(clerkId);
+    
+    return {
+      success: true,
+      data: {
+        exists: !!appUser,
+        isPending: !appUser,
+        clerkId,
+        timestamp: new Date().toISOString()
+      }
+    };
+  }
+
   @Get(':id')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   findOne(@Param('id', ParseUUIDPipe) id: string) {

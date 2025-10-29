@@ -9,6 +9,8 @@ import Card from '../components/ui/Card';
 import Captcha from '../components/ui/Captcha';
 import { debugLogger } from '../src/utils/debugLogger';
 import { useDebugLogger } from '../src/hooks/useDebugLogger';
+import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
+import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
@@ -19,6 +21,58 @@ const SignupPage: React.FC = () => {
   
   // Enable debug logging for this component
   useDebugLogger();
+
+  // Webhook status hook
+  const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling } = useWebhookStatus(signUp?.createdUserId || '');
+
+  // Wait for webhook processing to complete
+  const waitForWebhookProcessing = async (userId: string, sessionId: string | null) => {
+    debugLogger.info('VERIFICATION', 'Starting webhook processing wait...', { userId, sessionId });
+    
+    try {
+      // Start polling for webhook status
+      startPolling();
+      
+      // Wait for webhook to complete (max 30 seconds)
+      const maxWaitTime = 30000;
+      const pollInterval = 1000;
+      const startTime = Date.now();
+      
+      while (Date.now() - startTime < maxWaitTime) {
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
+        
+        if (webhookStatusFromHook === 'ready') {
+          debugLogger.info('VERIFICATION', 'Webhook processing complete, activating session...');
+          
+          // Activate session now that user is ready
+          if (sessionId) {
+            await setActive({ session: sessionId });
+            debugLogger.info('VERIFICATION', 'Session activated successfully!');
+            
+            // Redirect based on role
+            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+              navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+            } else {
+              setCurrentStep(3);
+            }
+            return;
+          }
+        } else if (webhookStatusFromHook === 'error') {
+          throw new Error(webhookErrorFromHook || 'Webhook processing failed');
+        }
+      }
+      
+      // Timeout
+      throw new Error('Account setup timeout - please contact support');
+      
+    } catch (error) {
+      debugLogger.error('VERIFICATION', 'Webhook processing failed:', error);
+      setWebhookStatus('error');
+      setWebhookError(error instanceof Error ? error.message : 'Account setup failed');
+    } finally {
+      stopPolling();
+    }
+  };
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
@@ -48,6 +102,8 @@ const SignupPage: React.FC = () => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
+  const [webhookError, setWebhookError] = useState<string | null>(null);
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -361,40 +417,15 @@ const SignupPage: React.FC = () => {
       });
       
       if (result.status === 'complete') {
-        console.log('🚀 [VERIFICATION DEBUG] User creation complete! This should trigger webhook...');
-        console.log('🚀 [VERIFICATION DEBUG] User details:', {
-          userId: result.createdUserId,
-          sessionId: result.createdSessionId,
-          email: formData.email,
-          role: selectedRole
-        });
+        debugLogger.info('VERIFICATION', 'Email verification complete, waiting for webhook processing...');
         
-        // CRITICAL FIX: Properly activate session before showing success
-        if (result.createdSessionId) {
-          console.log('🚀 [VERIFICATION DEBUG] Activating session before showing success...');
-          try {
-            await setActive({ session: result.createdSessionId });
-            console.log('🚀 [VERIFICATION DEBUG] Session activated successfully!');
-            
-            // Only show success step after successful session activation
-            console.log('🚀 [VERIFICATION DEBUG] Moving to success step...');
-            
-            // Redirect based on role, similar to direct signup flow
-            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-              console.log('🚀 [VERIFICATION DEBUG] Redirecting to pricing for business roles...');
-              navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-            } else {
-              console.log('🚀 [VERIFICATION DEBUG] Showing success step for parent role...');
-              setCurrentStep(3);
-            }
-          } catch (setActiveError: any) {
-            debugLogger.error('VERIFICATION', 'Session activation failed:', setActiveError);
-            setVerificationError('Failed to activate session. Please try logging in manually.');
-            return; // Don't proceed to success step if session activation fails
-          }
+        if (result.createdUserId) {
+          // Start webhook status polling
+          setWebhookStatus('processing');
+          await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
         } else {
-          debugLogger.error('VERIFICATION', 'No session ID provided after verification');
-          setVerificationError('Verification completed but no session was created. Please try logging in manually.');
+          debugLogger.error('VERIFICATION', 'No user ID provided after verification');
+          setVerificationError('Verification completed but no user was created. Please try again.');
         }
       } else {
         debugLogger.warn('VERIFICATION', 'Verification not complete, status:', result.status);
@@ -586,12 +617,23 @@ const SignupPage: React.FC = () => {
 
                 {showVerificationStep && (
                   <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h3 className="text-lg font-semibold text-swiss-charcoal mb-2">
-                      {t('common:verifyEmail', 'Verify Your Email')}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
-                    </p>
+                    {webhookStatus === 'processing' ? (
+                      <VerificationProgress 
+                        status={webhookStatus} 
+                        error={webhookError}
+                        onRetry={() => {
+                          setWebhookStatus('pending');
+                          setWebhookError(null);
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <h3 className="text-lg font-semibold text-swiss-charcoal mb-2">
+                          {t('common:verifyEmail', 'Verify Your Email')}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-4">
+                          {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
+                        </p>
                     <form onSubmit={(e) => {
                       debugLogger.info('FORM', 'Verification form submitted');
                       e.preventDefault();
@@ -636,6 +678,8 @@ const SignupPage: React.FC = () => {
                         {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
                       </Button>
                     </form>
+                      </>
+                    )}
                   </div>
                 )}
               </form>

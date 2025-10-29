@@ -120,6 +120,22 @@ export class UsersService {
     };
   }
 
+  async findAppUserByClerkId(clerkId: string) {
+    return this.prisma.appUser.findUnique({
+      where: { clerkId },
+    });
+  }
+
+  async createAppUser(data: { clerkId: string; email?: string; role: string }) {
+    return this.prisma.appUser.create({
+      data: {
+        clerkId: data.clerkId,
+        email: data.email,
+        role: data.role as any,
+      },
+    });
+  }
+
   async findByClerkId(clerkId: string) {
     // First check if AppUser exists (required for auth)
     const appUser = await this.prisma.appUser.findUnique({
