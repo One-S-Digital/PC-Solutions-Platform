@@ -42,6 +42,7 @@ const SignupPage: React.FC = () => {
   const [verificationError, setVerificationError] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -49,6 +50,17 @@ const SignupPage: React.FC = () => {
       navigate('/dashboard', { replace: true });
     }
   }, [isSignedIn, navigate]);
+
+  // Handle successful verification - redirect if user becomes authenticated
+  useEffect(() => {
+    if (isSignedIn && currentStep === 3) {
+      console.log('🚀 [VERIFICATION DEBUG] User became authenticated after verification, redirecting...');
+      // Small delay to ensure the success message is visible
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 2000);
+    }
+  }, [isSignedIn, currentStep, navigate]);
 
   // Global error handler to catch unhandled errors
   useEffect(() => {
@@ -302,11 +314,19 @@ const SignupPage: React.FC = () => {
       hasSignUp: !!signUp,
       verificationCode,
       signUpStatus: signUp?.status,
-      signUpCreatedUserId: signUp?.createdUserId
+      signUpCreatedUserId: signUp?.createdUserId,
+      isSignedIn,
+      currentStep
     });
     
     if (!signUp || !verificationCode) {
       console.log('🚀 [VERIFICATION DEBUG] Early return - missing signUp or verificationCode');
+      setVerificationError('Please enter a verification code.');
+      return;
+    }
+
+    if (isVerifying) {
+      console.log('🚀 [VERIFICATION DEBUG] Verification already in progress, ignoring duplicate request');
       return;
     }
     
@@ -317,6 +337,7 @@ const SignupPage: React.FC = () => {
     });
     
     setIsLoading(true);
+    setIsVerifying(true);
     setVerificationError('');
     
     try {
@@ -343,19 +364,32 @@ const SignupPage: React.FC = () => {
           role: selectedRole
         });
         
-        // Show success message immediately - don't wait for setActive
-        console.log('🚀 [VERIFICATION DEBUG] Moving to success step...');
-        setCurrentStep(3);
-        
-        // Try to activate session in the background, but don't let it block the UI
+        // CRITICAL FIX: Properly activate session before showing success
         if (result.createdSessionId) {
-          console.log('🚀 [VERIFICATION DEBUG] Attempting to activate session in background...');
-          setActive({ session: result.createdSessionId }).then((setActiveResult) => {
-            console.log('🚀 [VERIFICATION DEBUG] Background setActive successful:', setActiveResult);
-          }).catch((setActiveError) => {
-            console.error('🚀 [VERIFICATION DEBUG] Background setActive failed:', setActiveError);
-            // Don't show error to user, just log it
-          });
+          console.log('🚀 [VERIFICATION DEBUG] Activating session before showing success...');
+          try {
+            await setActive({ session: result.createdSessionId });
+            console.log('🚀 [VERIFICATION DEBUG] Session activated successfully!');
+            
+            // Only show success step after successful session activation
+            console.log('🚀 [VERIFICATION DEBUG] Moving to success step...');
+            
+            // Redirect based on role, similar to direct signup flow
+            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+              console.log('🚀 [VERIFICATION DEBUG] Redirecting to pricing for business roles...');
+              navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+            } else {
+              console.log('🚀 [VERIFICATION DEBUG] Showing success step for parent role...');
+              setCurrentStep(3);
+            }
+          } catch (setActiveError: any) {
+            console.error('🚀 [VERIFICATION DEBUG] Session activation failed:', setActiveError);
+            setVerificationError('Failed to activate session. Please try logging in manually.');
+            return; // Don't proceed to success step if session activation fails
+          }
+        } else {
+          console.error('🚀 [VERIFICATION DEBUG] No session ID provided after verification');
+          setVerificationError('Verification completed but no session was created. Please try logging in manually.');
         }
       } else {
         console.log('🚀 [VERIFICATION DEBUG] Verification not complete, status:', result.status);
@@ -375,6 +409,7 @@ const SignupPage: React.FC = () => {
     } finally {
       console.log('🚀 [VERIFICATION DEBUG] Verification process completed, setting loading to false');
       setIsLoading(false);
+      setIsVerifying(false);
     }
   };
   
@@ -440,9 +475,17 @@ const SignupPage: React.FC = () => {
             <CheckCircleIcon className="w-16 h-16 text-swiss-mint mx-auto mb-4"/>
             <h1 className="text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
             <p className="text-gray-600 mt-2 mb-6">{t('submissionSuccessMessage')}</p>
-            <Button onClick={() => navigate('/dashboard')} variant="primary" size="lg">
-              {t('goToDashboardButton')}
-            </Button>
+            <div className="space-y-3">
+              <Button onClick={() => navigate('/dashboard')} variant="primary" size="lg" className="w-full">
+                {t('goToDashboardButton')}
+              </Button>
+              <p className="text-sm text-gray-500">
+                {t('common:loginPage.alreadyAccount')}{' '}
+                <Link to="/login" className="font-medium text-swiss-mint hover:underline">
+                  {t('common:buttons.login')}
+                </Link>
+              </p>
+            </div>
           </div>
         ) : (
           <>
@@ -580,12 +623,12 @@ const SignupPage: React.FC = () => {
                         variant="primary" 
                         size="lg" 
                         className="w-full" 
-                        disabled={isLoading}
+                        disabled={isLoading || isVerifying}
                         onClick={() => {
                           console.log('🚀 [FORM DEBUG] Verify button clicked');
                         }}
                       >
-                        {isLoading ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
+                        {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
                       </Button>
                     </form>
                   </div>
