@@ -135,10 +135,29 @@ export class ClerkWebhookController {
     };
   }
 
+  @Get('debug')
+  @Public()
+  debugEndpoint() {
+    console.log(`\n${'='.repeat(100)}\n🐛 [DEBUG ENDPOINT] WEBHOOK DEBUG ENDPOINT CALLED\n${'='.repeat(100)}`);
+    console.log(`🐛 [DEBUG ENDPOINT] Debug endpoint accessed at: ${new Date().toISOString()}`);
+    console.log(`🐛 [DEBUG ENDPOINT] This should appear in Render logs!\n${'='.repeat(100)}\n`);
+    
+    return {
+      status: 'success',
+      message: 'Debug endpoint is working - check Render logs for console output',
+      timestamp: new Date().toISOString(),
+      webhookConfigured: !!this.webhookSecret,
+      clerkClientConfigured: !!this.clerk,
+    };
+  }
+
   @Post()
   @Public()
   @HttpCode(204)
   async handleWebhook(@Req() req: Request, @Res() res: Response) {
+    // IMMEDIATE LOG - This should appear first in logs
+    console.log(`\n🚨🚨🚨 WEBHOOK POST ENDPOINT CALLED - ${new Date().toISOString()} 🚨🚨🚨\n`);
+    
     const requestId = Math.random().toString(36).substring(7);
     const startTime = Date.now();
     
