@@ -157,6 +157,14 @@ export class ClerkWebhookController {
   async handleWebhook(@Req() req: Request, @Res() res: Response) {
     // IMMEDIATE LOG - This should appear first in logs
     console.log(`\n🚨🚨🚨 WEBHOOK POST ENDPOINT CALLED - ${new Date().toISOString()} 🚨🚨🚨\n`);
+    this.logger.log(`🚨🚨🚨 WEBHOOK POST ENDPOINT CALLED - ${new Date().toISOString()} 🚨🚨🚨`, 'ClerkWebhookController');
+    
+    // TEMPORARY: Return a simple response to test if webhook is being called
+    return res.status(200).json({ 
+      message: 'Webhook received - check logs for debug info',
+      timestamp: new Date().toISOString(),
+      debug: 'This response means the webhook endpoint is being called'
+    });
     
     const requestId = Math.random().toString(36).substring(7);
     const startTime = Date.now();
