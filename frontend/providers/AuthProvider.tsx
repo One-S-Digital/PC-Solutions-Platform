@@ -162,6 +162,32 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         return fetchUserFromBackend(clerkId, attempt + 1);
       }
 
+      // Handle pending user case (200 response with isPending: true)
+      if (response.ok) {
+        const data = responseBody || await response.json();
+        if (data?.success && data?.data?.isPending) {
+          console.warn('⏳ User is pending webhook processing. Retrying...', {
+            attempt: attempt + 1,
+            maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
+            waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
+            clerkId,
+            message: data.data.message,
+          });
+          console.groupEnd();
+          
+          if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
+            await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
+            return fetchUserFromBackend(clerkId, attempt + 1);
+          } else {
+            throw new ApiError(
+              data.data.message || 'User account is being processed. Please wait a moment and refresh.',
+              202, // 202 Accepted - processing
+              'user_pending'
+            );
+          }
+        }
+      }
+
       // Try to get response body for debugging
       let responseBody: any;
       let responseText: string = '';

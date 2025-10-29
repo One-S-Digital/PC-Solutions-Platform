@@ -45,6 +45,21 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User role not found');
     }
 
+    // Handle pending users - allow access to basic endpoints
+    if (userContext.role === 'PENDING' || userContext.isPending) {
+      // Allow access to user profile and webhook status endpoints
+      const allowedPaths = ['/users/me', '/users/webhook-status'];
+      const isAllowedPath = allowedPaths.some(path => request.url.startsWith(path));
+      
+      if (isAllowedPath) {
+        console.log('🔐 RolesGuard: Allowing pending user access to', request.url);
+        return true;
+      } else {
+        console.log('🚫 RolesGuard: Pending user denied access to', request.url);
+        throw new ForbiddenException('Account is being processed. Please wait a moment and refresh.');
+      }
+    }
+
     const hasRole = requiredRoles.includes(userContext.role as UserRole);
     
     if (!hasRole) {

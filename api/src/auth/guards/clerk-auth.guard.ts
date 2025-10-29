@@ -122,34 +122,47 @@ export class ClerkAuthGuard implements CanActivate {
         let appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
         if (!appUser) {
           if (this.authDebug) {
-             
-            console.log('🔐 Auth Debug: AppUser missing, creating baseline user with PARENT role', { userId: payload.sub });
+            console.log('🔐 Auth Debug: AppUser missing, user may be pending webhook processing', { userId: payload.sub });
           }
-          // Create a baseline user; admins can later promote via role management
-          appUser = await this.prisma.appUser.create({
-            data: { clerkId: payload.sub, role: 'PARENT' },
-          });
-        }
-        request.context = {
-          userId: payload.sub,
-          role: appUser.role,
-          appUserId: appUser.id,
-          clerkUserId: payload.sub,
-        };
-        // FIX: Also set request.user for backward compatibility with UsersController
-        request.user = {
-          clerkId: payload.sub,
-          role: appUser.role,
-          id: appUser.id,
-        };
-        if (this.authDebug) {
-           
-          console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
+          // Don't create AppUser here - let webhook handle it
+          // Set minimal context for pending users
+          request.context = {
+            userId: payload.sub,
+            role: 'PENDING',
+            appUserId: null,
+            clerkUserId: payload.sub,
+            isPending: true,
+          };
+          // FIX: Also set request.user for backward compatibility with UsersController
+          request.user = {
+            clerkId: payload.sub,
+            role: 'PENDING',
+            id: null,
+            isPending: true,
+          };
+          if (this.authDebug) {
+            console.log('🔐 Auth Debug: request.context and request.user set for pending user', { context: request.context, user: request.user });
+          }
+        } else {
+          request.context = {
+            userId: payload.sub,
+            role: appUser.role,
+            appUserId: appUser.id,
+            clerkUserId: payload.sub,
+          };
+          // FIX: Also set request.user for backward compatibility with UsersController
+          request.user = {
+            clerkId: payload.sub,
+            role: appUser.role,
+            id: appUser.id,
+          };
+          if (this.authDebug) {
+            console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
+          }
         }
       } catch (e) {
         if (this.authDebug) {
-           
-          console.error('🔐 Auth Debug: failed to load/create AppUser', e);
+          console.error('🔐 Auth Debug: failed to load AppUser', e);
         }
         // non-fatal; RolesGuard will handle missing context
       }
