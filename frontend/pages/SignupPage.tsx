@@ -336,29 +336,26 @@ const SignupPage: React.FC = () => {
       
       if (result.status === 'complete') {
         console.log('🚀 [VERIFICATION DEBUG] User creation complete! This should trigger webhook...');
-        console.log('🚀 [VERIFICATION DEBUG] About to call setActive with session:', result.createdSessionId);
+        console.log('🚀 [VERIFICATION DEBUG] User details:', {
+          userId: result.createdUserId,
+          sessionId: result.createdSessionId,
+          email: formData.email,
+          role: selectedRole
+        });
         
-        try {
-          const setActiveResult = await setActive({ session: result.createdSessionId });
-          console.log('🚀 [VERIFICATION DEBUG] setActive result:', setActiveResult);
-          console.log('🚀 [VERIFICATION DEBUG] Session activated successfully');
-          
-          // Redirect based on role
-          if (selectedRole && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-            console.log('🚀 [VERIFICATION DEBUG] Redirecting to pricing page...');
-            navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-          } else {
-            console.log('🚀 [VERIFICATION DEBUG] Moving to step 3...');
-            setCurrentStep(3);
-          }
-        } catch (setActiveError: any) {
-          console.error('🚀 [VERIFICATION DEBUG] Session activation failed:', setActiveError);
-          console.error('🚀 [VERIFICATION DEBUG] SetActive error details:', {
-            message: setActiveError.message,
-            stack: setActiveError.stack,
-            errors: setActiveError.errors
+        // Show success message immediately - don't wait for setActive
+        console.log('🚀 [VERIFICATION DEBUG] Moving to success step...');
+        setCurrentStep(3);
+        
+        // Try to activate session in the background, but don't let it block the UI
+        if (result.createdSessionId) {
+          console.log('🚀 [VERIFICATION DEBUG] Attempting to activate session in background...');
+          setActive({ session: result.createdSessionId }).then((setActiveResult) => {
+            console.log('🚀 [VERIFICATION DEBUG] Background setActive successful:', setActiveResult);
+          }).catch((setActiveError) => {
+            console.error('🚀 [VERIFICATION DEBUG] Background setActive failed:', setActiveError);
+            // Don't show error to user, just log it
           });
-          setVerificationError('Failed to activate session. Please try logging in.');
         }
       } else {
         console.log('🚀 [VERIFICATION DEBUG] Verification not complete, status:', result.status);
