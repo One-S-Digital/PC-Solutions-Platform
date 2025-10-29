@@ -288,7 +288,18 @@ const SignupPage: React.FC = () => {
 
   const handleVerification = async (e: FormEvent) => {
     e.preventDefault();
-    if (!signUp || !verificationCode) return;
+    
+    console.log('🚀 [VERIFICATION DEBUG] handleVerification called', {
+      hasSignUp: !!signUp,
+      verificationCode,
+      signUpStatus: signUp?.status,
+      signUpCreatedUserId: signUp?.createdUserId
+    });
+    
+    if (!signUp || !verificationCode) {
+      console.log('🚀 [VERIFICATION DEBUG] Early return - missing signUp or verificationCode');
+      return;
+    }
     
     console.log('🚀 [VERIFICATION DEBUG] Starting email verification...', {
       code: verificationCode,
@@ -527,7 +538,10 @@ const SignupPage: React.FC = () => {
                     <p className="text-sm text-gray-600 mb-4">
                       {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
                     </p>
-                    <form onSubmit={handleVerification} className="space-y-4">
+                    <form onSubmit={(e) => {
+                      console.log('🚀 [FORM DEBUG] Verification form submitted');
+                      handleVerification(e);
+                    }} className="space-y-4">
                       <div>
                         <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
                           {t('common:labels.verificationCode', 'Verification Code')}
@@ -536,7 +550,10 @@ const SignupPage: React.FC = () => {
                           type="text"
                           id="verificationCode"
                           value={verificationCode}
-                          onChange={(e) => setVerificationCode(e.target.value)}
+                          onChange={(e) => {
+                            console.log('🚀 [FORM DEBUG] Verification code changed:', e.target.value);
+                            setVerificationCode(e.target.value);
+                          }}
                           className={STANDARD_INPUT_FIELD}
                           placeholder="000000"
                           maxLength={6}
@@ -546,7 +563,16 @@ const SignupPage: React.FC = () => {
                           <p className="text-xs text-swiss-coral mt-1">{verificationError}</p>
                         )}
                       </div>
-                      <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isLoading}>
+                      <Button 
+                        type="submit" 
+                        variant="primary" 
+                        size="lg" 
+                        className="w-full" 
+                        disabled={isLoading}
+                        onClick={() => {
+                          console.log('🚀 [FORM DEBUG] Verify button clicked');
+                        }}
+                      >
                         {isLoading ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
                       </Button>
                     </form>
