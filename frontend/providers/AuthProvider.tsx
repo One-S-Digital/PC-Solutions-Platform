@@ -14,9 +14,9 @@ import { apiService, ApiError } from '../services/api';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
-const WEBHOOK_RETRY_ATTEMPTS = 2;
-const WEBHOOK_RETRY_DELAY_MS = 2000;
-const SYNC_RETRY_DELAY_MS = 5000;
+const WEBHOOK_RETRY_ATTEMPTS = 3; // Increased from 2 to 3
+const WEBHOOK_RETRY_DELAY_MS = 1500; // Reduced from 2000ms to 1500ms
+const SYNC_RETRY_DELAY_MS = 3000; // Reduced from 5000ms to 3000ms
 
 interface SyncAttemptState {
   clerkId: string | null;
@@ -153,7 +153,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
         console.warn('⏳ User not found (404). Waiting for webhook to create user...', {
           attempt: attempt + 1,
-          maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
+          maxAttempts: WEBHOOK_RETRY_ATTEMPTS + 1,
           waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
           clerkId,
         });
@@ -162,13 +162,30 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         return fetchUserFromBackend(clerkId, attempt + 1);
       }
 
+      // Try to get response body for debugging BEFORE checking pending status
+      let responseBody: any;
+      let responseText: string = '';
+      try {
+        responseText = await response.clone().text();
+        console.log('📄 Response Body (raw):', responseText);
+        
+        try {
+          responseBody = JSON.parse(responseText);
+          console.log('📄 Response Body (parsed):', responseBody);
+        } catch (parseError) {
+          console.warn('⚠️  Response is not valid JSON:', parseError);
+        }
+      } catch (bodyError) {
+        console.error('❌ Error reading response body:', bodyError);
+      }
+
       // Handle pending user case (200 response with isPending: true)
       if (response.ok) {
-        const data = responseBody || await response.json();
+        const data = responseBody;
         if (data?.success && data?.data?.isPending) {
           console.warn('⏳ User is pending webhook processing. Retrying...', {
             attempt: attempt + 1,
-            maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
+            maxAttempts: WEBHOOK_RETRY_ATTEMPTS + 1,
             waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
             clerkId,
             message: data.data.message,
@@ -186,23 +203,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
             );
           }
         }
-      }
-
-      // Try to get response body for debugging
-      let responseBody: any;
-      let responseText: string = '';
-      try {
-        responseText = await response.clone().text();
-        console.log('📄 Response Body (raw):', responseText);
-        
-        try {
-          responseBody = JSON.parse(responseText);
-          console.log('📄 Response Body (parsed):', responseBody);
-        } catch (parseError) {
-          console.warn('⚠️  Response is not valid JSON:', parseError);
-        }
-      } catch (bodyError) {
-        console.error('❌ Error reading response body:', bodyError);
       }
 
       if (!response.ok) {

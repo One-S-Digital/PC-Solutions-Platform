@@ -60,13 +60,13 @@ const LoginPage: React.FC = () => {
     });
   }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
 
-  // Redirect if user is already logged in and backend sync is successful
+  // Redirect if user is already logged in and backend sync is successful (but not during submit)
   useEffect(() => {
-    if (isSignedIn && currentUser && !isAuthLoading) {
+    if (isSignedIn && currentUser && !isAuthLoading && !isSubmitting) {
       console.log('✅ User authenticated and synced. Redirecting to dashboard...');
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, currentUser, isAuthLoading, navigate]);
+  }, [isSignedIn, currentUser, isAuthLoading, isSubmitting, navigate]);
 
   // Show error when backend sync fails
   useEffect(() => {
@@ -110,8 +110,12 @@ const LoginPage: React.FC = () => {
 
       if (result.status === 'complete') {
         try {
+          // Activate the session
           await setActive({ session: result.createdSessionId });
-          navigate('/dashboard', { replace: true });
+          
+          // Wait for backend sync before redirecting
+          await waitForBackendSync();
+          
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
@@ -198,6 +202,38 @@ const LoginPage: React.FC = () => {
     } finally {
       setIsSigningOut(false);
     }
+  };
+
+  // Wait for backend sync after login
+  const waitForBackendSync = async () => {
+    debugLogger.info('LOGIN', 'Waiting for backend sync...');
+    
+    const maxWaitTime = 10000; // 10 seconds
+    const pollInterval = 500; // 500ms
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < maxWaitTime) {
+      // Check if currentUser is loaded
+      if (currentUser && !isAuthLoading) {
+        debugLogger.info('LOGIN', 'Backend sync complete, redirecting...');
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+      
+      // Check if there's an error
+      if (authError && !isAuthLoading) {
+        debugLogger.error('LOGIN', 'Backend sync failed with error:', authError);
+        setError(t('common:loginPage.backendSyncError'));
+        return;
+      }
+      
+      // Wait before next check
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+    }
+    
+    // Timeout - backend sync is taking too long, but still redirect
+    debugLogger.warn('LOGIN', 'Backend sync timeout, redirecting anyway...');
+    navigate('/dashboard', { replace: true });
   };
 
   if (!isSignInLoaded || !isAuthLoaded) {

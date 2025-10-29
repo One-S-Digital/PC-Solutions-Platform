@@ -17,7 +17,7 @@ const SignupPage: React.FC = () => {
   const { t } = useTranslation(['signup', 'common']);
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, getToken } = useAuth();
   
   // Enable debug logging for this component
   useDebugLogger();
@@ -25,52 +25,89 @@ const SignupPage: React.FC = () => {
   // Webhook status hook
   const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling } = useWebhookStatus(signUp?.createdUserId || '');
 
-  // Wait for webhook processing to complete
-  const waitForWebhookProcessing = async (userId: string, sessionId: string | null) => {
-    debugLogger.info('VERIFICATION', 'Starting webhook processing wait...', { userId, sessionId });
+  // Wait for backend user creation via direct API polling
+  const waitForBackendUserCreation = async (userId: string, sessionId: string) => {
+    debugLogger.info('VERIFICATION', 'Waiting for backend user creation...', { userId, sessionId });
     
     try {
-      // Start polling for webhook status
-      startPolling();
-      
-      // Wait for webhook to complete (max 30 seconds)
-      const maxWaitTime = 30000;
-      const pollInterval = 1000;
+      const maxWaitTime = 30000; // 30 seconds
+      const pollInterval = 1500; // 1.5 seconds
       const startTime = Date.now();
       
+      // First activate the session to enable authenticated requests
+      debugLogger.info('VERIFICATION', 'Activating session...');
+      await setActive({ session: sessionId });
+      debugLogger.info('VERIFICATION', 'Session activated, waiting for Clerk session to be ready...');
+      
+      // Wait a bit for session to fully propagate
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       while (Date.now() - startTime < maxWaitTime) {
-        await new Promise(resolve => setTimeout(resolve, pollInterval));
+        debugLogger.info('VERIFICATION', 'Polling backend for user...', { 
+          elapsed: Date.now() - startTime,
+          maxWaitTime 
+        });
         
-        if (webhookStatusFromHook === 'ready') {
-          debugLogger.info('VERIFICATION', 'Webhook processing complete, activating session...');
-          
-          // Activate session now that user is ready
-          if (sessionId) {
-            await setActive({ session: sessionId });
-            debugLogger.info('VERIFICATION', 'Session activated successfully!');
-            
-            // Redirect based on role
-            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-              navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-            } else {
-              setCurrentStep(3);
-            }
-            return;
+        // Try to fetch the user from backend
+        try {
+          // Get fresh token from Clerk
+          const token = await getToken();
+          if (!token) {
+            debugLogger.warn('VERIFICATION', 'No token available yet, waiting...');
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+            continue;
           }
-        } else if (webhookStatusFromHook === 'error') {
-          throw new Error(webhookErrorFromHook || 'Webhook processing failed');
+          
+          const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+          const response = await fetch(`${API_BASE_URL}/api/users/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            debugLogger.info('VERIFICATION', 'Backend response:', data);
+            
+            // Check if user is ready (not pending)
+            if (data.success && data.data && !data.data.isPending && data.data.id !== 'pending') {
+              debugLogger.info('VERIFICATION', 'Backend user created successfully!');
+              setWebhookStatus('ready');
+              
+              // Small delay to ensure everything is synced
+              await new Promise(resolve => setTimeout(resolve, 500));
+              
+              // Redirect based on role
+              if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+                navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+              } else {
+                setCurrentStep(3);
+              }
+              return;
+            } else if (data.data?.isPending || data.data?.id === 'pending') {
+              debugLogger.info('VERIFICATION', 'User still pending, continuing to poll...');
+            }
+          } else if (response.status === 401) {
+            debugLogger.warn('VERIFICATION', 'Unauthorized - token may not be ready yet');
+          } else {
+            debugLogger.warn('VERIFICATION', `Backend returned ${response.status}, will retry`);
+          }
+        } catch (fetchError) {
+          debugLogger.warn('VERIFICATION', 'Error fetching user, will retry:', fetchError);
         }
+        
+        // Wait before next poll
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
       }
       
-      // Timeout
-      throw new Error('Account setup timeout - please contact support');
+      // Timeout - user was not created in time
+      throw new Error('Account setup is taking longer than expected. Please refresh the page in a few moments or contact support if the issue persists.');
       
     } catch (error) {
-      debugLogger.error('VERIFICATION', 'Webhook processing failed:', error);
+      debugLogger.error('VERIFICATION', 'Backend user creation failed:', error);
       setWebhookStatus('error');
       setWebhookError(error instanceof Error ? error.message : 'Account setup failed');
-    } finally {
-      stopPolling();
     }
   };
 
@@ -417,15 +454,17 @@ const SignupPage: React.FC = () => {
       });
       
       if (result.status === 'complete') {
-        debugLogger.info('VERIFICATION', 'Email verification complete, waiting for webhook processing...');
+        debugLogger.info('VERIFICATION', 'Email verification complete, waiting for backend user creation...');
         
-        if (result.createdUserId) {
-          // Start webhook status polling
+        if (result.createdUserId && result.createdSessionId) {
+          // IMPORTANT: Wait for backend user creation BEFORE activating session
           setWebhookStatus('processing');
-          await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
+          
+          // Wait for webhook to create backend user
+          await waitForBackendUserCreation(result.createdUserId, result.createdSessionId);
         } else {
-          debugLogger.error('VERIFICATION', 'No user ID provided after verification');
-          setVerificationError('Verification completed but no user was created. Please try again.');
+          debugLogger.error('VERIFICATION', 'No user ID or session ID provided after verification');
+          setVerificationError('Verification completed but session data is missing. Please try again.');
         }
       } else {
         debugLogger.warn('VERIFICATION', 'Verification not complete, status:', result.status);
