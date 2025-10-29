@@ -191,7 +191,7 @@ ${'='.repeat(100)}`);
       bodyFullLength: req.body ? String(req.body).length : 0,
     });
 
-    // E2E DEBUG: Webhook secret configuration analysis
+    // E2E DEBUG: Webhook secret configuration analysis (sanitized)
     console.log(`🔑 [E2E DEBUG ${requestId}] WEBHOOK SECRET ANALYSIS:`, {
       secretConfigured: !!this.webhookSecret,
       secretLength: this.webhookSecret?.length || 0,
@@ -221,14 +221,14 @@ ${'='.repeat(100)}`);
       svixTimestamp: {
         present: !!req.headers['svix-timestamp'],
         value: req.headers['svix-timestamp'] || '❌ MISSING',
-        parsed: req.headers['svix-timestamp'] ? new Date(parseInt(req.headers['svix-timestamp']) * 1000).toISOString() : 'N/A',
-        age: req.headers['svix-timestamp'] ? Date.now() - (parseInt(req.headers['svix-timestamp']) * 1000) : 'N/A',
+        parsed: req.headers['svix-timestamp'] ? new Date(parseInt(String(req.headers['svix-timestamp'])) * 1000).toISOString() : 'N/A',
+        age: req.headers['svix-timestamp'] ? Date.now() - (parseInt(String(req.headers['svix-timestamp'])) * 1000) : 'N/A',
       },
       svixSignature: {
         present: !!req.headers['svix-signature'],
-        value: req.headers['svix-signature'] ? `${req.headers['svix-signature'].substring(0, 30)}...` : '❌ MISSING',
-        length: req.headers['svix-signature']?.length || 0,
-        format: req.headers['svix-signature']?.includes('v1,') ? 'v1 format' : 'unknown format',
+        value: req.headers['svix-signature'] ? `${String(req.headers['svix-signature']).substring(0, 30)}...` : '❌ MISSING',
+        length: String(req.headers['svix-signature'] || '').length,
+        format: String(req.headers['svix-signature'] || '').includes('v1,') ? 'v1 format' : 'unknown format',
       }
     });
 
@@ -261,7 +261,7 @@ ${'='.repeat(100)}`);
       return res.status(204).end();
     }
 
-    // E2E DEBUG: Signature verification with comprehensive analysis
+    // E2E DEBUG: Signature verification with comprehensive analysis (sanitized)
     console.log(`🔐 [E2E DEBUG ${requestId}] SIGNATURE VERIFICATION ANALYSIS:`, {
       verificationInputs: {
         secretConfigured: !!this.webhookSecret,
@@ -556,9 +556,11 @@ ${'='.repeat(100)}`);
     // E2E DEBUG: Database operations with comprehensive logging
     console.log(`💾 [E2E DEBUG] STARTING DATABASE OPERATIONS...`);
     
+    let appUser: any;
+    
     try {
       console.log(`💾 [E2E DEBUG] UPSERTING APPUSER IN DATABASE...`);
-      const appUser = await this.prisma.appUser.upsert({
+      appUser = await this.prisma.appUser.upsert({
         where: { clerkId },
         create: {
           clerkId,
