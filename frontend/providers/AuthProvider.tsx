@@ -183,21 +183,53 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.ok) {
         const data = responseBody;
         if (data?.success && data?.data?.isPending) {
-          console.warn('⏳ User is pending webhook processing. Retrying...', {
+          console.warn('⏳ User is pending webhook processing. Attempting manual sync...', {
             attempt: attempt + 1,
             maxAttempts: WEBHOOK_RETRY_ATTEMPTS + 1,
-            waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
             clerkId,
             message: data.data.message,
           });
+          
+          // Try manual sync via POST /users/me/sync (rescue route)
+          if (attempt === 0) {
+            console.log('🔄 Attempting manual sync via POST /users/me/sync...');
+            try {
+              const syncResponse = await fetch(`${apiBaseUrl}${API_ENDPOINTS.users.sync}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+              
+              if (syncResponse.ok) {
+                const syncData = await syncResponse.json();
+                if (syncData?.success && syncData?.data && !syncData?.data?.isPending) {
+                  console.log('✅ Manual sync successful!', {
+                    userId: syncData.data.id,
+                    synced: syncData.synced,
+                  });
+                  console.groupEnd();
+                  return transformBackendUser(syncData.data);
+                }
+              } else {
+                console.warn('⚠️  Manual sync returned non-OK status:', syncResponse.status);
+              }
+            } catch (syncError) {
+              console.error('❌ Manual sync failed:', syncError);
+            }
+          }
+          
           console.groupEnd();
           
+          // If manual sync failed or this is a retry, wait and try again
           if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
             await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
             return fetchUserFromBackend(clerkId, attempt + 1);
           } else {
             throw new ApiError(
-              data.data.message || 'User account is being processed. Please wait a moment and refresh.',
+              'User account setup is taking longer than expected. Please refresh the page or contact support if this persists.',
               202, // 202 Accepted - processing
               'user_pending'
             );

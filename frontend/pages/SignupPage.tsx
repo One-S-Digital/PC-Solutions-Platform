@@ -86,7 +86,39 @@ const SignupPage: React.FC = () => {
               }
               return;
             } else if (data.data?.isPending || data.data?.id === 'pending') {
-              debugLogger.info('VERIFICATION', 'User still pending, continuing to poll...');
+              debugLogger.info('VERIFICATION', 'User still pending, trying manual sync...');
+              
+              // Try manual sync via POST /users/me/sync (rescue route)
+              if (Date.now() - startTime > 3000) { // Only try after 3 seconds
+                debugLogger.info('VERIFICATION', 'Attempting manual sync via POST /users/me/sync...');
+                try {
+                  const syncResponse = await fetch(`${API_BASE_URL}/api/users/me/sync`, {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                    },
+                  });
+                  
+                  if (syncResponse.ok) {
+                    const syncData = await syncResponse.json();
+                    if (syncData?.success && syncData?.data && !syncData?.data?.isPending) {
+                      debugLogger.info('VERIFICATION', 'Manual sync successful!', { synced: syncData.synced });
+                      setWebhookStatus('ready');
+                      
+                      // Redirect based on role
+                      if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+                        navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+                      } else {
+                        setCurrentStep(3);
+                      }
+                      return;
+                    }
+                  }
+                } catch (syncError) {
+                  debugLogger.warn('VERIFICATION', 'Manual sync failed, continuing to poll:', syncError);
+                }
+              }
             }
           } else if (response.status === 401) {
             debugLogger.warn('VERIFICATION', 'Unauthorized - token may not be ready yet');

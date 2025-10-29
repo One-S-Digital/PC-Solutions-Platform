@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRole } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { createClerkClient } from '@clerk/clerk-sdk-node';
 
 export interface FindAllUsersParams {
   page: number;
@@ -13,7 +15,21 @@ export interface FindAllUsersParams {
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  private clerkClient: any;
+  
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {
+    // Initialize Clerk client for manual sync
+    const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
+    if (clerkSecretKey) {
+      this.clerkClient = createClerkClient({ secretKey: clerkSecretKey });
+      console.log('✅ [UsersService] Clerk client initialized for manual sync');
+    } else {
+      console.warn('⚠️  [UsersService] CLERK_SECRET_KEY not configured - manual sync will not work');
+    }
+  }
 
   async create(createUserDto: CreateUserDto) {
     // Check if user exists
@@ -604,5 +620,105 @@ export class UsersService {
       updatedAt: newAppUser.updatedAt,
       organizations: [],
     };
+  }
+
+  /**
+   * Manual sync from Clerk - rescue route when webhooks fail
+   * Fetches user data directly from Clerk API and creates/updates local record
+   */
+  async syncUserFromClerk(clerkId: string) {
+    console.log('🔄 [syncUserFromClerk] Starting manual sync for clerkId:', clerkId);
+    
+    if (!this.clerkClient) {
+      const error = 'CLERK_SECRET_KEY not configured - cannot sync from Clerk';
+      console.error('❌ [syncUserFromClerk]', error);
+      throw new BadRequestException(error);
+    }
+
+    try {
+      // Fetch user data from Clerk
+      console.log('📡 [syncUserFromClerk] Fetching user from Clerk API...');
+      const clerkUser = await this.clerkClient.users.getUser(clerkId);
+      console.log('✅ [syncUserFromClerk] Clerk user fetched:', {
+        id: clerkUser.id,
+        email: clerkUser.emailAddresses?.[0]?.emailAddress,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+      });
+
+      // Extract user data
+      const primaryEmail = clerkUser.emailAddresses?.[0]?.emailAddress;
+      if (!primaryEmail) {
+        throw new BadRequestException('No email found for Clerk user');
+      }
+
+      // Determine role from metadata (same logic as webhook)
+      const intendedRole = 
+        clerkUser.privateMetadata?.intendedRole || 
+        clerkUser.unsafeMetadata?.role ||
+        clerkUser.unsafeMetadata?.pendingRole ||
+        clerkUser.unsafeMetadata?.signupType ||
+        'PARENT';
+      
+      const validRole = Object.values(UserRole).includes(intendedRole as UserRole) 
+        ? intendedRole 
+        : 'PARENT';
+
+      console.log('👤 [syncUserFromClerk] Creating/updating AppUser:', {
+        clerkId,
+        email: primaryEmail,
+        role: validRole,
+      });
+
+      // Upsert AppUser
+      const appUser = await this.prisma.appUser.upsert({
+        where: { clerkId },
+        create: {
+          clerkId,
+          email: primaryEmail,
+          role: validRole as UserRole,
+        },
+        update: {
+          email: primaryEmail,
+          role: validRole as UserRole,
+        },
+      });
+
+      console.log('✅ [syncUserFromClerk] AppUser created/updated:', appUser.id);
+
+      // Try to create/update User profile as well
+      try {
+        await this.prisma.user.upsert({
+          where: { clerkId },
+          create: {
+            clerkId,
+            email: primaryEmail,
+            firstName: clerkUser.firstName || null,
+            lastName: clerkUser.lastName || null,
+            role: validRole as UserRole,
+          },
+          update: {
+            email: primaryEmail,
+            firstName: clerkUser.firstName || null,
+            lastName: clerkUser.lastName || null,
+          },
+        });
+        console.log('✅ [syncUserFromClerk] User profile created/updated');
+      } catch (userError) {
+        console.warn('⚠️  [syncUserFromClerk] User profile creation failed (non-fatal):', userError.message);
+      }
+
+      // Return the user in the expected format
+      const result = await this.findByClerkId(clerkId);
+      console.log('✅ [syncUserFromClerk] Sync complete, returning user');
+      return result;
+
+    } catch (error) {
+      console.error('❌ [syncUserFromClerk] Failed to sync from Clerk:', error);
+      if (error.status === 404) {
+        throw new NotFoundException('User not found in Clerk');
+      }
+      throw new BadRequestException(`Failed to sync from Clerk: ${error.message}`);
+    }
   }
 }

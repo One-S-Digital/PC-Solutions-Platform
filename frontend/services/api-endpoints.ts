@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   users: {
     me: '/users/me',
     update: '/users/me',
+    sync: '/users/me/sync',  // Manual sync endpoint (rescue route for failed webhooks)
     organization: '/users/organization',
   },
 

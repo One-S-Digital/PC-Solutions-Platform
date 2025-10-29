@@ -73,6 +73,47 @@ export class UsersController {
     };
   }
 
+  @Post('me/sync')
+  async syncCurrentUser(@Request() request) {
+    // Manual sync endpoint - creates user if webhook hasn't fired yet
+    // This is the critical rescue route for when webhooks fail
+    console.log('🔄 [SYNC] Manual sync requested for clerkId:', request.user.clerkId);
+    
+    try {
+      // First check if user already exists
+      let user = await this.usersService.findByClerkId(request.user.clerkId);
+      
+      if (user && !user.isPending) {
+        console.log('✅ [SYNC] User already exists, returning existing record');
+        return {
+          success: true,
+          data: user,
+          synced: false,
+          message: 'User already exists'
+        };
+      }
+      
+      // User doesn't exist or is pending - create via Clerk sync
+      console.log('🔄 [SYNC] Fetching user from Clerk and creating record...');
+      user = await this.usersService.syncUserFromClerk(request.user.clerkId);
+      
+      console.log('✅ [SYNC] User synced successfully:', user.id);
+      return {
+        success: true,
+        data: user,
+        synced: true,
+        message: 'User synchronized from Clerk'
+      };
+    } catch (error) {
+      console.error('❌ [SYNC] Failed to sync user:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to synchronize user',
+        clerkId: request.user.clerkId
+      };
+    }
+  }
+
   @Get('webhook-status/:clerkId')
   async getWebhookStatus(@Param('clerkId') clerkId: string) {
     const appUser = await this.usersService.findAppUserByClerkId(clerkId);
