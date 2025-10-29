@@ -7,8 +7,8 @@ import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPT
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Captcha from '../components/ui/Captcha';
-import { debugLogger } from '../utils/debugLogger';
-import { useDebugLogger } from '../hooks/useDebugLogger';
+import { debugLogger } from '../src/utils/debugLogger';
+import { useDebugLogger } from '../src/hooks/useDebugLogger';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {

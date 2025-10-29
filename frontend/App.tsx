@@ -16,8 +16,7 @@ import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
-import { TranslationDebugger } from './components/debug/TranslationDebugger';
-import DebugToggle from './components/debug/DebugToggle';
+import DebugToggle from './src/components/debug/DebugToggle';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.

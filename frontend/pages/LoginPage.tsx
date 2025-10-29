@@ -9,8 +9,8 @@ import { SquaresPlusIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outl
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
-import { debugLogger } from '../utils/debugLogger';
-import { useDebugLogger } from '../hooks/useDebugLogger';
+import { debugLogger } from '../src/utils/debugLogger';
+import { useDebugLogger } from '../src/hooks/useDebugLogger';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
