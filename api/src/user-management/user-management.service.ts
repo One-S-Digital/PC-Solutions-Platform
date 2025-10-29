@@ -5,7 +5,7 @@ import { AppLoggerService } from '../common/logger.service';
 
 export interface UserFilters {
   role?: UserRole;
-  isActive?: boolean;
+  accountEnabled?: boolean;
   search?: string;
   dateFrom?: Date;
   dateTo?: Date;
@@ -148,19 +148,19 @@ export class UserManagementService {
       case 'activate':
         return this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { isActive: true },
+          data: { accountEnabled: true },
         });
 
       case 'deactivate':
         return this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { isActive: false },
+          data: { accountEnabled: false },
         });
 
       case 'suspend':
         return this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { isActive: false },
+          data: { accountEnabled: false },
         });
 
       case 'delete':
@@ -225,8 +225,8 @@ export class UserManagementService {
       recentRegistrations,
     ] = await Promise.all([
       this.prisma.user.count(),
-      this.prisma.user.count({ where: { isActive: true } }),
-      this.prisma.user.count({ where: { isActive: false } }),
+      this.prisma.user.count({ where: { accountEnabled: true } }),
+      this.prisma.user.count({ where: { accountEnabled: false } }),
       this.prisma.user.groupBy({
         by: ['role'],
         _count: { id: true },
@@ -279,8 +279,8 @@ export class UserManagementService {
       where.role = filters.role;
     }
 
-    if (filters.isActive !== undefined) {
-      where.isActive = filters.isActive;
+    if (filters.accountEnabled !== undefined) {
+      where.accountEnabled = filters.accountEnabled;
     }
 
     if (filters.search) {

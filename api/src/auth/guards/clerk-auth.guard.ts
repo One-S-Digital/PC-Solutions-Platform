@@ -130,6 +130,17 @@ export class ClerkAuthGuard implements CanActivate {
             data: { clerkId: payload.sub, role: 'PARENT' },
           });
         }
+
+        // Check if account is suspended (accountEnabled = false in User table)
+        const user = await this.prisma.user.findUnique({ 
+          where: { clerkId: payload.sub },
+          select: { accountEnabled: true }
+        });
+        
+        if (user && user.accountEnabled === false) {
+          throw new UnauthorizedException('Account has been suspended by an administrator');
+        }
+        
         request.context = {
           userId: payload.sub,
           role: appUser.role,
@@ -150,6 +161,10 @@ export class ClerkAuthGuard implements CanActivate {
         if (this.authDebug) {
            
           console.error('🔐 Auth Debug: failed to load/create AppUser', e);
+        }
+        // If it's an UnauthorizedException (suspended account), re-throw it
+        if (e instanceof UnauthorizedException) {
+          throw e;
         }
         // non-fatal; RolesGuard will handle missing context
       }

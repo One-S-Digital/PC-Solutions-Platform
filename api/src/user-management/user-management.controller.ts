@@ -26,7 +26,7 @@ export class UserManagementController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
     @Query('role') role?: string,
-    @Query('isActive') isActive?: string,
+    @Query('accountEnabled') accountEnabled?: string,
     @Query('search') search?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
@@ -37,7 +37,7 @@ export class UserManagementController {
   ) {
     const filters: UserFilters = {
       role: role as UserRole,
-      isActive: isActive as any,
+      accountEnabled: accountEnabled as any,
       search,
       dateFrom: dateFrom ? new Date(dateFrom) : undefined,
       dateTo: dateTo ? new Date(dateTo) : undefined,
@@ -101,14 +101,14 @@ export class UserManagementController {
   @Get('export/csv')
   async exportUsers(
     @Query('role') role?: string,
-    @Query('isActive') isActive?: string,
+    @Query('accountEnabled') accountEnabled?: string,
     @Query('search') search?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
   ) {
     const filters: UserFilters = {
       role: role as UserRole,
-      isActive: isActive as any,
+      accountEnabled: accountEnabled as any,
       search,
       dateFrom: dateFrom ? new Date(dateFrom) : undefined,
       dateTo: dateTo ? new Date(dateTo) : undefined,
