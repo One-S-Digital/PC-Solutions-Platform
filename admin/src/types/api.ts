@@ -195,6 +195,7 @@ export interface User {
   orgIds: string[];
   orgName?: string;
   status: UserStatus;
+  accountEnabled?: boolean; // Admin can suspend accounts
   lastLogin?: Date;
   region?: string;
   createdAt: Date;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
   Plus, 
@@ -9,7 +9,9 @@ import {
   Trash2,
   MoreVertical,
   Shield,
-  Building2
+  Building2,
+  XCircle,
+  CheckCircle
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 
@@ -32,6 +34,7 @@ const Users: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
+  const queryClient = useQueryClient()
 
   const { data: usersResponse, isLoading, error } = useQuery({
     queryKey: ['users'],
@@ -71,6 +74,40 @@ const Users: React.FC = () => {
     } catch (error) {
       logger.error('Failed to update user:', error)
       // You might want to show an error message to the user
+    }
+  }
+
+  const handleSuspendUser = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to suspend ${userName}'s account? They will not be able to login.`)) {
+      return
+    }
+
+    try {
+      await apiService.bulkUpdateUsers(apiClient, {
+        userIds: [userId],
+        operation: 'suspend'
+      })
+      
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      alert('User account suspended successfully')
+    } catch (error) {
+      logger.error('Failed to suspend user:', error)
+      alert('Failed to suspend user account. Please try again.')
+    }
+  }
+
+  const handleActivateUser = async (userId: string, userName: string) => {
+    try {
+      await apiService.bulkUpdateUsers(apiClient, {
+        userIds: [userId],
+        operation: 'activate'
+      })
+      
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      alert(`${userName}'s account has been activated successfully`)
+    } catch (error) {
+      logger.error('Failed to activate user:', error)
+      alert('Failed to activate user account. Please try again.')
     }
   }
 
@@ -211,11 +248,13 @@ const Users: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      user.status === 'ACTIVE' 
+                      user.accountEnabled === false
+                        ? 'bg-red-100 text-red-800'
+                        : user.status === 'ACTIVE' 
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {user.status}
+                      {user.accountEnabled === false ? 'Suspended' : user.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -235,7 +274,7 @@ const Users: React.FC = () => {
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                        <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                           <div className="py-1">
                             <Menu.Item>
                               {({ active }) => (
@@ -247,6 +286,30 @@ const Users: React.FC = () => {
                                 </button>
                               )}
                             </Menu.Item>
+                            
+                            {/* Suspend/Activate Account */}
+                            <Menu.Item>
+                              {({ active }) => (
+                                user.accountEnabled !== false ? (
+                                  <button
+                                    onClick={() => handleSuspendUser(user.id, user.name)}
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-orange-600`}
+                                  >
+                                    <XCircle className="h-4 w-4 mr-2" />
+                                    Suspend Account
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleActivateUser(user.id, user.name)}
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-green-600`}
+                                  >
+                                    <CheckCircle className="h-4 w-4 mr-2" />
+                                    Activate Account
+                                  </button>
+                                )
+                              )}
+                            </Menu.Item>
+                            
                             <Menu.Item>
                               {({ active }) => (
                                 <button

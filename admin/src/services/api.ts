@@ -225,6 +225,16 @@ export const apiService = {
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => apiClient.put<ApiResponse<User>>(`/users/${id}`, userData),
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
+  
+  // User Management - Bulk Operations
+  bulkUpdateUsers: (
+    apiClient: AxiosInstance,
+    operation: {
+      userIds: string[];
+      operation: 'activate' | 'deactivate' | 'suspend' | 'delete' | 'changeRole';
+      newRole?: string;
+    }
+  ) => apiClient.post<ApiResponse<any>>('/user-management/bulk-update', operation),
 
   // Organizations
   getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/organizations'),
