@@ -50,6 +50,34 @@ const SignupPage: React.FC = () => {
     }
   }, [isSignedIn, navigate]);
 
+  // Global error handler to catch unhandled errors
+  useEffect(() => {
+    const handleError = (error: ErrorEvent) => {
+      console.error('🚀 [GLOBAL ERROR] Unhandled error caught:', {
+        message: error.message,
+        filename: error.filename,
+        lineno: error.lineno,
+        colno: error.colno,
+        error: error.error
+      });
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('🚀 [GLOBAL ERROR] Unhandled promise rejection:', {
+        reason: event.reason,
+        promise: event.promise
+      });
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
@@ -264,13 +292,15 @@ const SignupPage: React.FC = () => {
     
     console.log('🚀 [VERIFICATION DEBUG] Starting email verification...', {
       code: verificationCode,
-      userId: signUp.createdUserId
+      userId: signUp.createdUserId,
+      signUpStatus: signUp.status
     });
     
     setIsLoading(true);
     setVerificationError('');
     
     try {
+      console.log('🚀 [VERIFICATION DEBUG] Calling attemptEmailAddressVerification...');
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
@@ -280,31 +310,53 @@ const SignupPage: React.FC = () => {
         userId: result.createdUserId,
         sessionId: result.createdSessionId,
         hasErrors: result.errors?.length > 0,
-        errors: result.errors
+        errors: result.errors,
+        fullResult: result
       });
       
       if (result.status === 'complete') {
         console.log('🚀 [VERIFICATION DEBUG] User creation complete! This should trigger webhook...');
+        console.log('🚀 [VERIFICATION DEBUG] About to call setActive with session:', result.createdSessionId);
+        
         try {
-          await setActive({ session: result.createdSessionId });
+          const setActiveResult = await setActive({ session: result.createdSessionId });
+          console.log('🚀 [VERIFICATION DEBUG] setActive result:', setActiveResult);
           console.log('🚀 [VERIFICATION DEBUG] Session activated successfully');
           
           // Redirect based on role
           if (selectedRole && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+            console.log('🚀 [VERIFICATION DEBUG] Redirecting to pricing page...');
             navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
           } else {
+            console.log('🚀 [VERIFICATION DEBUG] Moving to step 3...');
             setCurrentStep(3);
           }
         } catch (setActiveError: any) {
           console.error('🚀 [VERIFICATION DEBUG] Session activation failed:', setActiveError);
+          console.error('🚀 [VERIFICATION DEBUG] SetActive error details:', {
+            message: setActiveError.message,
+            stack: setActiveError.stack,
+            errors: setActiveError.errors
+          });
           setVerificationError('Failed to activate session. Please try logging in.');
         }
+      } else {
+        console.log('🚀 [VERIFICATION DEBUG] Verification not complete, status:', result.status);
+        setVerificationError('Verification failed. Please try again.');
       }
     } catch (err: any) {
       console.error('🚀 [VERIFICATION DEBUG] Verification error:', err);
+      console.error('🚀 [VERIFICATION DEBUG] Error details:', {
+        message: err.message,
+        stack: err.stack,
+        errors: err.errors,
+        code: err.code,
+        status: err.status
+      });
       const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
       setVerificationError(errorMessage);
     } finally {
+      console.log('🚀 [VERIFICATION DEBUG] Verification process completed, setting loading to false');
       setIsLoading(false);
     }
   };
