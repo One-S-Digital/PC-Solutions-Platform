@@ -69,12 +69,21 @@ const SignupPage: React.FC = () => {
       });
     };
 
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      console.log('🚀 [GLOBAL ERROR] Page is about to reload/unload!', {
+        type: event.type,
+        returnValue: event.returnValue
+      });
+    };
+
     window.addEventListener('error', handleError);
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
@@ -540,8 +549,11 @@ const SignupPage: React.FC = () => {
                     </p>
                     <form onSubmit={(e) => {
                       console.log('🚀 [FORM DEBUG] Verification form submitted');
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('🚀 [FORM DEBUG] Form submission prevented, calling handleVerification');
                       handleVerification(e);
-                    }} className="space-y-4">
+                    }} className="space-y-4" noValidate>
                       <div>
                         <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
                           {t('common:labels.verificationCode', 'Verification Code')}
@@ -553,6 +565,9 @@ const SignupPage: React.FC = () => {
                           onChange={(e) => {
                             console.log('🚀 [FORM DEBUG] Verification code changed:', e.target.value);
                             setVerificationCode(e.target.value);
+                          }}
+                          onInvalid={(e) => {
+                            console.log('🚀 [FORM DEBUG] Input validation failed:', e);
                           }}
                           className={STANDARD_INPUT_FIELD}
                           placeholder="000000"
