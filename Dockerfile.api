@@ -18,6 +18,9 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
+# Generate Prisma client during build
+RUN cd api && pnpm prisma generate
+
 # Build the application
 RUN pnpm build
 
@@ -27,5 +30,5 @@ EXPOSE 3000
 # Set environment
 ENV NODE_ENV=production
 
-# Start the application
-CMD ["pnpm", "--filter", "api", "start:prod"]
+# Start the application with migration
+CMD ["bash", "api/scripts/start-with-migration.sh"]
