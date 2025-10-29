@@ -217,6 +217,90 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     [getToken, transformBackendUser]
   );
 
+  const triggerBackendUserSync = useCallback(
+    async () => {
+      const token = await getToken();
+
+      if (!token) {
+        throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+      }
+
+      const apiBaseUrl = apiService.apiBaseUrl;
+      const url = `${apiBaseUrl}${API_ENDPOINTS.users.sync}`;
+
+      console.group('🔄 [BACKEND SYNC] Triggering manual user sync');
+      console.log('📤 Request Details:', { url, method: 'POST' });
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }).catch(error => {
+        console.error('❌ Network error during manual sync:', error);
+        console.groupEnd();
+        throw new ApiError('Network error during manual sync', 0, 'network_error');
+      });
+
+      console.log('📥 Sync Response Status:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+      });
+
+      if (!response.ok) {
+        const bodyText = await response.text().catch(() => '');
+        console.error('❌ Manual sync failed:', { status: response.status, body: bodyText });
+        console.groupEnd();
+        throw new ApiError(bodyText || 'Failed to sync user with backend', response.status, 'backend_sync_failed');
+      }
+
+      let responseJson: any = null;
+      try {
+        responseJson = await response.json();
+      } catch (parseError) {
+        // Some responses may not include a body; treat as success.
+        console.warn('⚠️ Manual sync response was not JSON. Proceeding anyway.', parseError);
+      }
+
+      if (responseJson?.success) {
+        console.log('✅ Manual sync succeeded:', {
+          userId: responseJson.data?.id,
+          role: responseJson.data?.role,
+        });
+      } else {
+        console.warn('⚠️ Manual sync completed without success flag:', responseJson);
+      }
+
+      console.groupEnd();
+    },
+    [getToken]
+  );
+
+  const syncAndFetchBackendUser = useCallback(async (): Promise<User> => {
+    if (!clerkUserId) {
+      throw new Error('No authenticated user to load');
+    }
+
+    try {
+      return await fetchUserFromBackend(clerkUserId);
+    } catch (error) {
+      const isMissingUser =
+        (error instanceof ApiError && error.status === 404) ||
+        (error instanceof Error && error.message === 'Invalid response format from backend');
+
+      if (!isMissingUser) {
+        throw error;
+      }
+
+      console.warn('⚠️ Backend user missing, attempting manual sync...');
+      await triggerBackendUserSync();
+      return fetchUserFromBackend(clerkUserId);
+    }
+  }, [clerkUserId, fetchUserFromBackend, triggerBackendUserSync]);
+
   useEffect(() => {
     if (!clerkIsLoaded) {
       setIsLoading(true);
@@ -259,7 +343,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
 
       try {
-        const backendUser = await fetchUserFromBackend(clerkUserId);
+        const backendUser = await syncAndFetchBackendUser();
         if (cancelled) {
           return;
         }
@@ -313,7 +397,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, [clerkIsLoaded, clerkUserId, isSignedIn, fetchUserFromBackend, determineAuthErrorKey]);
+  }, [clerkIsLoaded, clerkUserId, isSignedIn, syncAndFetchBackendUser, determineAuthErrorKey]);
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
@@ -459,7 +543,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error('No authenticated user to refresh');
     }
 
-    const backendUser = await fetchUserFromBackend(clerkUserId);
+    const backendUser = await syncAndFetchBackendUser();
     setCurrentUser(backendUser);
     setAuthError(null);
     syncAttemptRef.current = {
@@ -467,7 +551,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       status: 'success',
       lastAttempt: Date.now(),
     };
-  }, [clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
+  }, [clerkIsLoaded, clerkUserId, syncAndFetchBackendUser]);
 
   return (
     <AuthContext.Provider

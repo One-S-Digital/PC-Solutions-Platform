@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole } from '@prisma/client';
+import { AppUser, UserRole } from '@prisma/client';
+import { createClerkClient } from '@clerk/clerk-sdk-node';
 
 export interface FindAllUsersParams {
   page: number;
@@ -13,27 +14,20 @@ export interface FindAllUsersParams {
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(UsersService.name);
+  private readonly clerkClient: ReturnType<typeof createClerkClient> | null;
 
-  async create(createUserDto: CreateUserDto) {
-    // Check if user exists
-    const existingUser = await this.prisma.appUser.findUnique({
-      where: { email: createUserDto.email },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+  constructor(private prisma: PrismaService) {
+    const secret = process.env.CLERK_SECRET_KEY;
+    if (secret) {
+      this.clerkClient = createClerkClient({ secretKey: secret });
+    } else {
+      this.logger.warn('CLERK_SECRET_KEY not configured. Manual Clerk sync is disabled.');
+      this.clerkClient = null;
     }
+  }
 
-    const appUser = await this.prisma.appUser.create({
-      data: {
-        clerkId: createUserDto.clerkId,
-        email: createUserDto.email,
-        role: createUserDto.role as UserRole,
-      },
-    });
-
-    // Return in User format for compatibility
+  private buildUserResponse(appUser: AppUser) {
     return {
       id: appUser.id,
       clerkId: appUser.clerkId,
@@ -55,6 +49,154 @@ export class UsersService {
       updatedAt: appUser.updatedAt,
       organizations: [],
     };
+  }
+
+  private normalizeClerkPayload(clerkData: any) {
+    if (!clerkData || typeof clerkData !== 'object') {
+      throw new Error('Invalid Clerk data payload');
+    }
+
+    const primaryId =
+      clerkData.primary_email_address_id ||
+      clerkData.primaryEmailAddressId ||
+      null;
+
+    const normalizeEmailRecord = (record: any) => {
+      if (!record || typeof record !== 'object') {
+        return null;
+      }
+      const id = record.id ?? null;
+      const email =
+        record.email_address ??
+        record.emailAddress ??
+        record.email ??
+        record.address ??
+        null;
+      const primary =
+        typeof record.primary === 'boolean'
+          ? record.primary
+          : id
+          ? id === primaryId
+          : false;
+      return {
+        id,
+        email_address: email,
+        primary,
+      };
+    };
+
+    let emailAddresses: any[] = [];
+    if (Array.isArray(clerkData.email_addresses)) {
+      emailAddresses = clerkData.email_addresses
+        .map(normalizeEmailRecord)
+        .filter((entry): entry is { id: string | null; email_address: string | null; primary: boolean } => Boolean(entry));
+    } else if (Array.isArray(clerkData.emailAddresses)) {
+      emailAddresses = clerkData.emailAddresses
+        .map(normalizeEmailRecord)
+        .filter((entry): entry is { id: string | null; email_address: string | null; primary: boolean } => Boolean(entry));
+    }
+
+    if (!emailAddresses.length && clerkData.emailAddress) {
+      const email = normalizeEmailRecord({ email_address: clerkData.emailAddress, primary: true });
+      if (email) {
+        emailAddresses = [email];
+      }
+    }
+
+    return {
+      id: clerkData.id,
+      email_addresses: emailAddresses,
+      primary_email_address_id: primaryId,
+      first_name: clerkData.first_name ?? clerkData.firstName ?? '',
+      last_name: clerkData.last_name ?? clerkData.lastName ?? '',
+      created_at: clerkData.created_at ?? clerkData.createdAt ?? new Date().toISOString(),
+      updated_at: clerkData.updated_at ?? clerkData.updatedAt ?? new Date().toISOString(),
+      public_metadata: clerkData.public_metadata ?? clerkData.publicMetadata ?? {},
+      unsafe_metadata: clerkData.unsafe_metadata ?? clerkData.unsafeMetadata ?? {},
+    };
+  }
+
+  private extractPrimaryEmail(
+    emailAddresses: Array<{ id: string | null; email_address: string | null; primary: boolean }>,
+    primaryId?: string | null,
+  ): string | null {
+    if (!Array.isArray(emailAddresses) || emailAddresses.length === 0) {
+      return null;
+    }
+
+    let target = emailAddresses.find(address => address.primary);
+    if (!target && primaryId) {
+      target = emailAddresses.find(address => address.id === primaryId);
+    }
+    if (!target) {
+      target = emailAddresses[0];
+    }
+    return target?.email_address ?? null;
+  }
+
+  private resolveRoleFromMetadata(publicMetadata: Record<string, any>, unsafeMetadata: Record<string, any>): UserRole {
+    const candidates = [
+      publicMetadata?.role,
+      unsafeMetadata?.pendingRole,
+      unsafeMetadata?.role,
+      unsafeMetadata?.signupType,
+    ];
+
+    for (const candidate of candidates) {
+      if (!candidate || typeof candidate !== 'string') {
+        continue;
+      }
+      const normalized = candidate.toUpperCase();
+      switch (normalized) {
+        case 'SUPER_ADMIN':
+          return UserRole.SUPER_ADMIN;
+        case 'ADMIN':
+          return UserRole.ADMIN;
+        case 'FOUNDATION':
+          return UserRole.FOUNDATION;
+        case 'PRODUCT_SUPPLIER':
+        case 'SUPPLIER':
+          return UserRole.PRODUCT_SUPPLIER;
+        case 'SERVICE_PROVIDER':
+          return UserRole.SERVICE_PROVIDER;
+        case 'EDUCATOR':
+          return UserRole.EDUCATOR;
+        case 'PARENT':
+          return UserRole.PARENT;
+        default:
+          break;
+      }
+    }
+
+    return UserRole.PARENT;
+  }
+
+  private ensureClerkClient() {
+    if (!this.clerkClient) {
+      throw new Error('Clerk client is not configured. Set CLERK_SECRET_KEY to enable syncing.');
+    }
+    return this.clerkClient;
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    // Check if user exists
+    const existingUser = await this.prisma.appUser.findUnique({
+      where: { email: createUserDto.email },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
+    const appUser = await this.prisma.appUser.create({
+      data: {
+        clerkId: createUserDto.clerkId,
+        email: createUserDto.email,
+        role: createUserDto.role as UserRole,
+      },
+    });
+
+    return this.buildUserResponse(appUser);
   }
 
   async findAll(params: FindAllUsersParams) {
@@ -87,27 +229,7 @@ export class UsersService {
     ]);
 
     // Convert AppUser to User format for compatibility
-    const users = appUsers.map(appUser => ({
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    }));
+    const users = appUsers.map(appUser => this.buildUserResponse(appUser));
 
     return {
       data: users,
@@ -149,27 +271,7 @@ export class UsersService {
     }
 
     // User profile doesn't exist yet, return minimal data from AppUser
-    return {
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(appUser);
   }
 
   async findOne(id: string) {
@@ -181,28 +283,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Return in User format for compatibility
-    return {
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(appUser);
   }
 
   async findByEmail(email: string) {
@@ -214,28 +295,7 @@ export class UsersService {
       return null;
     }
 
-    // Return in User format for compatibility
-    return {
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(appUser);
   }
 
   async findByOrganization(orgId: string) {
@@ -379,28 +439,7 @@ export class UsersService {
       },
     });
 
-    // Return in User format for compatibility
-    return {
-      id: updatedAppUser.id,
-      clerkId: updatedAppUser.clerkId,
-      email: updatedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: updatedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: updatedAppUser.createdAt,
-      updatedAt: updatedAppUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(updatedAppUser);
   }
 
   async assignRole(userId: string, role: UserRole) {
@@ -409,28 +448,7 @@ export class UsersService {
       data: { role },
     });
 
-    // Return in User format for compatibility
-    return {
-      id: updatedAppUser.id,
-      clerkId: updatedAppUser.clerkId,
-      email: updatedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: updatedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: updatedAppUser.createdAt,
-      updatedAt: updatedAppUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(updatedAppUser);
   }
 
   async removeRole(userId: string, role: UserRole) {
@@ -440,28 +458,7 @@ export class UsersService {
       data: { role: UserRole.PARENT }, // Default role
     });
 
-    // Return in User format for compatibility
-    return {
-      id: updatedAppUser.id,
-      clerkId: updatedAppUser.clerkId,
-      email: updatedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: updatedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: updatedAppUser.createdAt,
-      updatedAt: updatedAppUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(updatedAppUser);
   }
 
   async remove(id: string) {
@@ -477,116 +474,60 @@ export class UsersService {
       where: { id },
     });
 
-    // Return in User format for compatibility
-    return {
-      id: deletedAppUser.id,
-      clerkId: deletedAppUser.clerkId,
-      email: deletedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: deletedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: deletedAppUser.createdAt,
-      updatedAt: deletedAppUser.updatedAt,
-      organizations: [],
-    };
+    return this.buildUserResponse(deletedAppUser);
   }
 
   // Sync user with Clerk webhook
-  async syncWithClerk(clerkData: {
-    id: string;
-    email_addresses: any[];
-    first_name: string;
-    last_name: string;
-    created_at: number;
-    updated_at: number;
-  }) {
-    const email = clerkData.email_addresses[0]?.email_address;
-    if (!email) {
-      throw new Error('No email found in Clerk data');
+  async syncWithClerk(clerkPayload: any) {
+    const normalized = this.normalizeClerkPayload(clerkPayload);
+    const email = this.extractPrimaryEmail(normalized.email_addresses, normalized.primary_email_address_id);
+    const role = this.resolveRoleFromMetadata(
+      normalized.public_metadata || {},
+      normalized.unsafe_metadata || {},
+    );
+
+    const createData: any = {
+      clerkId: normalized.id,
+      role,
+    };
+
+    if (email) {
+      createData.email = email;
+    }
+
+    if (normalized.created_at) {
+      createData.createdAt = new Date(normalized.created_at);
     }
 
     try {
-      const existingUser = await this.findByClerkId(clerkData.id);
+      const updatedAppUser = await this.prisma.appUser.upsert({
+        where: { clerkId: normalized.id },
+        update: {
+          role,
+          email: email ?? undefined,
+        },
+        create: createData,
+      });
 
-      if (existingUser) {
-        // Update existing user
-        const updatedAppUser = await this.prisma.appUser.update({
-          where: { clerkId: clerkData.id },
-          data: {
-            email,
-            updatedAt: new Date(clerkData.updated_at),
-          },
-        });
-
-        // Return in User format for compatibility
-        return {
-          id: updatedAppUser.id,
-          clerkId: updatedAppUser.clerkId,
-          email: updatedAppUser.email,
-          firstName: null,
-          lastName: null,
-          role: updatedAppUser.role,
-          phoneNumber: null,
-          workExperience: null,
-          education: null,
-          certifications: [],
-          skills: [],
-          availability: null,
-          cvUrl: null,
-          stripeCustomerId: null,
-          lastActiveAt: null,
-          isActive: true,
-          createdAt: updatedAppUser.createdAt,
-          updatedAt: updatedAppUser.updatedAt,
-          organizations: [],
-        };
-      }
+      return this.buildUserResponse(updatedAppUser);
     } catch (error) {
-      // User not found, create new one
+      this.logger.error(`Failed to sync Clerk user ${normalized.id}: ${error instanceof Error ? error.message : error}`);
+      throw error;
     }
+  }
 
-    // Create new user
-    const newAppUser = await this.prisma.appUser.create({
-      data: {
-        clerkId: clerkData.id,
-        email,
-        role: UserRole.PARENT, // Default role
-        createdAt: new Date(clerkData.created_at),
-        updatedAt: new Date(clerkData.updated_at),
-      },
-    });
+  async syncCurrentUser(clerkId: string) {
+    const client = this.ensureClerkClient();
 
-    // Return in User format for compatibility
-    return {
-      id: newAppUser.id,
-      clerkId: newAppUser.clerkId,
-      email: newAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: newAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: newAppUser.createdAt,
-      updatedAt: newAppUser.updatedAt,
-      organizations: [],
-    };
+    try {
+      const clerkUser = await client.users.getUser(clerkId);
+      return this.syncWithClerk(clerkUser);
+    } catch (error: any) {
+      this.logger.error(`Failed to fetch Clerk user ${clerkId} for sync`, error);
+      if (error?.status === 404) {
+        throw new NotFoundException('Clerk user not found');
+      }
+      throw error;
+    }
   }
 }

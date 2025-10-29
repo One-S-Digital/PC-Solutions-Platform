@@ -16,6 +16,7 @@ export const API_ENDPOINTS = {
     me: '/users/me',
     update: '/users/me',
     organization: '/users/organization',
+    sync: '/users/me/sync',
   },
 
   profiles: {
