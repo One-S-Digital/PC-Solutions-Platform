@@ -50,7 +50,11 @@ const LoginPage: React.FC = () => {
 
   // Log LOGIN opened when page loads
   useEffect(() => {
-    authDebugger.log('LOGIN', 'opened', 'INFO', { provider: 'password' });
+    try {
+      authDebugger.log('LOGIN', 'opened', 'INFO', { provider: 'password' });
+    } catch (err) {
+      console.error('Debug logging error:', err);
+    }
   }, []);
 
   // Debug login page state
@@ -107,7 +111,11 @@ const LoginPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    authDebugger.log('LOGIN', 'submit', 'INFO', { email: '***@***', hasPassword: true });
+    try {
+      authDebugger.log('LOGIN', 'submit', 'INFO', { email: '***@***', hasPassword: true });
+    } catch (err) {
+      console.error('Debug logging error:', err);
+    }
 
     try {
       const result = await signIn.create({

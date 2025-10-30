@@ -23,13 +23,18 @@ const SignupPage: React.FC = () => {
   // Enable debug logging for this component
   useDebugLogger();
 
-  // Log SIGNUP opened
+  // Log SIGNUP opened (only once when component mounts)
   useEffect(() => {
-    authDebugger.log('SIGNUP', 'opened', 'INFO', { 
-      roleDetected: !!selectedRole,
-      captchaLoaded: true  // hCaptcha loads on mount
-    });
-  }, [selectedRole]);
+    try {
+      authDebugger.log('SIGNUP', 'opened', 'INFO', { 
+        roleDetected: !!selectedRole,
+        captchaLoaded: true  // hCaptcha loads on mount
+      });
+    } catch (err) {
+      console.error('Debug logging error:', err);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   // Webhook status hook
   const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling } = useWebhookStatus(signUp?.createdUserId || '');
@@ -290,11 +295,15 @@ const SignupPage: React.FC = () => {
     setIsLoading(true);
 
     // Log signup submit
-    authDebugger.log('SIGNUP', 'submit', 'INFO', { 
-      valid: true, 
-      captchaSolved: !!captchaToken,
-      role: selectedRole
-    });
+    try {
+      authDebugger.log('SIGNUP', 'submit', 'INFO', { 
+        valid: true, 
+        captchaSolved: !!captchaToken,
+        role: selectedRole
+      });
+    } catch (err) {
+      console.error('Debug logging error:', err);
+    }
 
     try {
       // Split contact person into first and last name

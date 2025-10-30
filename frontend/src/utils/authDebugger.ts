@@ -141,9 +141,10 @@ class AuthDebugger {
     result: LogResult,
     details: string | Record<string, any>
   ): void {
-    if (!this.isEnabled() || this.paused) {
-      return; // Still log to storage even if paused (UI just doesn't update)
-    }
+    try {
+      if (!this.isEnabled() || this.paused) {
+        return; // Still log to storage even if paused (UI just doesn't update)
+      }
 
     const detailsStr = typeof details === 'string' 
       ? details 
@@ -161,11 +162,15 @@ class AuthDebugger {
       `details=${detailsStr}`,
     ].join(' | ');
 
-    this.appendToLog(logLine);
-    
-    // Also log to console for immediate visibility
-    const consoleMethod = result === 'ERR' ? 'error' : result === 'OK' ? 'log' : 'info';
-    console[consoleMethod](`[AUTH DEBUG] ${category} | ${action} | ${result}`, details);
+      this.appendToLog(logLine);
+      
+      // Also log to console for immediate visibility
+      const consoleMethod = result === 'ERR' ? 'error' : result === 'OK' ? 'log' : 'info';
+      console[consoleMethod](`[AUTH DEBUG] ${category} | ${action} | ${result}`, details);
+    } catch (error) {
+      // Silent fail - don't break the app if logging fails
+      console.error('[AUTH DEBUG] Logging error:', error);
+    }
   }
 
   /**
