@@ -5,9 +5,8 @@ import { authDebugger } from './authDebugger';
  * Call this once at the top level of your app
  */
 export const initAuthDebugger = () => {
-  if (!authDebugger.isEnabled()) {
-    return;
-  }
+  // Always enable debugger by default
+  authDebugger.enable();
 
   // Log app boot
   authDebugger.logAppBoot({

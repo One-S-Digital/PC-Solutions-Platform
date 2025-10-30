@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { authDebugger } from '../../utils/authDebugger';
 
 const AuthDebugPanel: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Always visible
   const [logs, setLogs] = useState<string[]>([]);
   const [isPaused, setIsPaused] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true); // Start minimized by default
   const logContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new logs arrive
@@ -41,7 +41,8 @@ const AuthDebugPanel: React.FC = () => {
   // Check if enabled on mount and watch for changes
   useEffect(() => {
     const checkEnabled = () => {
-      setIsVisible(authDebugger.isEnabled());
+      // Always show the debugger
+      setIsVisible(true);
       setIsPaused(authDebugger.isPaused());
     };
 
@@ -50,17 +51,11 @@ const AuthDebugPanel: React.FC = () => {
     // Check every 500ms for changes
     const interval = setInterval(checkEnabled, 500);
 
-    // Hotkey to toggle visibility (Ctrl+`)
+    // Hotkey to toggle minimized state (Ctrl+`)
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === '`') {
         e.preventDefault();
-        if (authDebugger.isEnabled()) {
-          authDebugger.disable();
-          setIsVisible(false);
-        } else {
-          authDebugger.enable();
-          setIsVisible(true);
-        }
+        setIsMinimized(!isMinimized);
       }
     };
 
@@ -70,7 +65,7 @@ const AuthDebugPanel: React.FC = () => {
       clearInterval(interval);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [isMinimized]);
 
   const handleCopyAll = async () => {
     const success = await authDebugger.copyToClipboard();
@@ -98,8 +93,8 @@ const AuthDebugPanel: React.FC = () => {
   };
 
   const handleClose = () => {
-    authDebugger.disable();
-    setIsVisible(false);
+    // Just minimize instead of closing completely
+    setIsMinimized(true);
   };
 
   if (!isVisible) {
@@ -139,10 +134,10 @@ const AuthDebugPanel: React.FC = () => {
           </button>
           <button
             onClick={handleClose}
-            className="px-2 py-1 text-xs hover:bg-gray-700 rounded text-red-400"
-            title="Close (Ctrl+`)"
+            className="px-2 py-1 text-xs hover:bg-gray-700 rounded text-gray-400"
+            title="Minimize"
           >
-            ×
+            −
           </button>
         </div>
       </div>
@@ -217,7 +212,10 @@ const AuthDebugPanel: React.FC = () => {
                   <div>• Errors and warnings</div>
                 </div>
                 <div className="mt-6 text-gray-500 text-xs">
-                  Press <kbd className="px-2 py-1 bg-gray-800 rounded">Ctrl+`</kbd> to toggle
+                  Press <kbd className="px-2 py-1 bg-gray-800 rounded">Ctrl+`</kbd> to minimize
+                </div>
+                <div className="mt-2 text-gray-600 text-xs">
+                  Debugger is always active in development
                 </div>
               </div>
             ) : (
@@ -230,10 +228,15 @@ const AuthDebugPanel: React.FC = () => {
       )}
 
       {isMinimized && (
-        <div className="p-3 text-xs text-gray-400 cursor-pointer hover:bg-gray-800" onClick={() => setIsMinimized(false)}>
+        <div 
+          className="p-3 text-xs text-gray-400 cursor-pointer hover:bg-gray-800 transition-colors" 
+          onClick={() => setIsMinimized(false)}
+        >
           <div className="flex items-center gap-2">
-            <span className="text-green-400">🐛</span>
-            <span>{logs.length} log lines</span>
+            <span className="text-green-400 animate-pulse">🐛</span>
+            <span className="font-bold text-green-400">Frontend Debugger</span>
+            <span className="text-gray-600">•</span>
+            <span className="text-gray-500">{logs.length} logs</span>
             <span className="text-gray-600">• Click to expand</span>
           </div>
         </div>
