@@ -157,7 +157,11 @@ export class ClerkWebhookController {
   async handleWebhook(@Req() req: Request, @Res() res: Response) {
     // IMMEDIATE LOG - This should appear first in logs
     console.log(`\n🚨🚨🚨 WEBHOOK POST ENDPOINT CALLED - ${new Date().toISOString()} 🚨🚨🚨\n`);
+    console.log('RAW REQUEST RECEIVED - If you see this, the endpoint is being hit!');
     this.logger.log(`🚨🚨🚨 WEBHOOK POST ENDPOINT CALLED - ${new Date().toISOString()} 🚨🚨🚨`, 'ClerkWebhookController');
+    
+    // Log to stderr to ensure it appears in logs
+    process.stderr.write(`\n[WEBHOOK] Received at ${new Date().toISOString()}\n`);
     
     const requestId = Math.random().toString(36).substring(7);
     const startTime = Date.now();
@@ -545,7 +549,21 @@ ${'='.repeat(100)}`);
     });
     
     // E2E DEBUG: User details extraction
-    const primaryEmail = data.email_addresses?.[0]?.email_address || `${clerkId}@missing-email.local`;
+    // Handle test webhooks from Clerk dashboard that may have empty email_addresses array
+    let primaryEmail: string;
+    
+    if (data.email_addresses && data.email_addresses.length > 0) {
+      primaryEmail = data.email_addresses[0]?.email_address;
+    } else if (data.primary_email_address_id) {
+      // Test webhook from Clerk dashboard - has primary_email_address_id but empty email_addresses array
+      console.warn(`⚠️ [E2E DEBUG] CLERK TEST WEBHOOK DETECTED: Empty email_addresses array with primary_email_address_id`);
+      console.warn(`⚠️ [E2E DEBUG] This is a test webhook from Clerk Dashboard. Real webhooks will have actual email addresses.`);
+      primaryEmail = `test-${clerkId}@clerk-test-webhook.local`;
+    } else {
+      // Fallback for missing email
+      primaryEmail = `${clerkId}@missing-email.local`;
+    }
+    
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
 
@@ -557,13 +575,20 @@ ${'='.repeat(100)}`);
       role: validRole,
       emailAddresses: data.email_addresses,
       emailAddressesLength: data.email_addresses?.length || 0,
+      isClerkTestWebhook: !!(data.primary_email_address_id && (!data.email_addresses || data.email_addresses.length === 0)),
       emailExtraction: {
         hasEmailAddresses: !!data.email_addresses,
         emailAddressesArray: data.email_addresses,
         firstEmailAddress: data.email_addresses?.[0],
         primaryEmailId: data.primary_email_address_id,
         fallbackEmail: `${clerkId}@missing-email.local`,
+        testWebhookFallback: `test-${clerkId}@clerk-test-webhook.local`,
         finalEmail: primaryEmail,
+        extractionMethod: data.email_addresses && data.email_addresses.length > 0 
+          ? 'from_email_addresses_array' 
+          : data.primary_email_address_id 
+            ? 'test_webhook_fallback' 
+            : 'missing_email_fallback',
       },
       nameExtraction: {
         firstName: data.first_name,
