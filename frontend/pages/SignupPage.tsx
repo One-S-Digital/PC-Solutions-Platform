@@ -57,17 +57,14 @@ const SignupPage: React.FC = () => {
       const startTime = Date.now();
       
       let loopCount = 0;
-      let currentStatus = webhookStatusFromHook;
+      let currentStatus: string = 'pending';
       
       while (Date.now() - startTime < maxWaitTime) {
         loopCount++;
         await new Promise(resolve => setTimeout(resolve, pollInterval));
         
-        // Manually check status to avoid React stale closure
-        await checkWebhookStatus();
-        
-        // Get fresh status after check
-        currentStatus = webhookStatusFromHook;
+        // Manually check status and get fresh result (avoids React stale closure)
+        currentStatus = await checkWebhookStatus();
         
         const elapsed = Math.round((Date.now() - startTime) / 1000);
         console.log(`⏳ [WAIT-WEBHOOK] Loop ${loopCount} (${elapsed}s elapsed) - Status: ${currentStatus}`);

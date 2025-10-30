@@ -14,10 +14,10 @@ export const useWebhookStatus = (clerkId: string) => {
   const [isPolling, setIsPolling] = useState(false);
   const { getToken } = useAuth();
 
-  const checkWebhookStatus = useCallback(async () => {
+  const checkWebhookStatus = useCallback(async (): Promise<'pending' | 'processing' | 'ready' | 'error'> => {
     if (!clerkId) {
       console.log('⚠️ [WEBHOOK] No clerkId provided, skipping check');
-      return;
+      return 'pending';
     }
 
     try {
@@ -46,15 +46,18 @@ export const useWebhookStatus = (clerkId: string) => {
         console.log('✅ [WEBHOOK] User exists! Signup complete.');
         setStatus('ready');
         setIsPolling(false);
+        return 'ready';
       } else {
         console.log('⏳ [WEBHOOK] User not yet created, continuing to poll...');
         setStatus('processing');
         setError(null);
+        return 'processing';
       }
     } catch (err) {
       console.error('🔴 [WEBHOOK] Error checking webhook status:', err);
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Failed to check account status');
+      return 'error';
     }
   }, [clerkId, getToken]);
 
