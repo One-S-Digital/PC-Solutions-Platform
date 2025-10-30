@@ -58,25 +58,29 @@ const SignupPage: React.FC = () => {
         if (webhookStatusFromHook === 'ready') {
           debugLogger.info('VERIFICATION', 'Webhook processing complete, activating session...');
           
-          // Activate session now that user is ready
-          if (sessionId) {
-            authDebugger.log('CLERK', 'set_active', 'INFO', 'After verification');
-            await setActive({ session: sessionId });
-            authDebugger.log('CLERK', 'set_active', 'OK', '');
-            debugLogger.info('VERIFICATION', 'Session activated successfully!');
+              // Activate session now that user is ready
+              if (sessionId) {
+                console.log('🔐 [SESSION] Activating session...', { sessionId });
+                authDebugger.log('CLERK', 'set_active', 'INFO', 'After verification');
+                await setActive({ session: sessionId });
+                authDebugger.log('CLERK', 'set_active', 'OK', '');
+                debugLogger.info('VERIFICATION', 'Session activated successfully!');
+                
+                // Redirect based on role
+                const redirectTo = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole) 
+                  ? '/pricing' 
+                  : '/dashboard';
+                console.log('🚀 [NAVIGATION] Redirecting to:', redirectTo);
+                authDebugger.log('SIGNUP', 'redirect_after', 'INFO', { to: redirectTo });
             
-            // Redirect based on role
-            const redirectTo = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole) 
-              ? '/pricing' 
-              : '/dashboard';
-            authDebugger.log('SIGNUP', 'redirect_after', 'INFO', { to: redirectTo });
-            
-            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-              navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-            } else {
-              setCurrentStep(3);
-            }
-            return;
+                if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+                  console.log('🧭 [NAVIGATE] Going to /pricing');
+                  navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+                } else {
+                  console.log('🧭 [NAVIGATE] Setting currentStep to 3');
+                  setCurrentStep(3);
+                }
+                return;
           }
         } else if (webhookStatusFromHook === 'error') {
           throw new Error(webhookErrorFromHook || 'Webhook processing failed');
@@ -118,6 +122,22 @@ const SignupPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showVerificationStep, setShowVerificationStep] = useState(false);
+
+  // Log verification step changes
+  useEffect(() => {
+    if (showVerificationStep) {
+      console.log('🔔 [STATE] showVerificationStep changed to TRUE');
+      try {
+        authDebugger.log('CLERK', 'verify_step_shown', 'INFO', { 
+          showVerificationStep: true,
+          hasSignUp: !!signUp,
+          signUpStatus: signUp?.status
+        });
+      } catch (err) {
+        console.error('Debug logging error:', err);
+      }
+    }
+  }, [showVerificationStep, signUp]);
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationError, setVerificationError] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -125,6 +145,21 @@ const SignupPage: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
+
+  // Component mount logging
+  useEffect(() => {
+    console.log('🟣 [LIFECYCLE] SignupPage mounted', {
+      isLoaded,
+      isSignedIn,
+      currentStep,
+      selectedRole,
+      showVerificationStep
+    });
+    
+    return () => {
+      console.log('🟣 [LIFECYCLE] SignupPage unmounting');
+    };
+  }, []);
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -372,10 +407,17 @@ const SignupPage: React.FC = () => {
         debugLogger.info('SIGNUP', 'Email verification required, preparing verification...');
         authDebugger.log('CLERK', 'verify_start', 'INFO', '');
         try {
+          console.log('📧 [VERIFICATION] Preparing email verification...');
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
           debugLogger.info('SIGNUP', 'Email verification prepared successfully');
+          
+          console.log('🔄 [STATE] Setting showVerificationStep = true');
           setShowVerificationStep(true);
+          
+          console.log('🔄 [STATE] Setting isLoading = false');
           setIsLoading(false);
+          
+          console.log('✅ [FLOW] Email verification setup complete, waiting for user input');
           return;
         } catch (verifyError: any) {
           debugLogger.error('SIGNUP', 'Failed to prepare email verification:', verifyError);
@@ -416,6 +458,13 @@ const SignupPage: React.FC = () => {
   };
 
   const handleVerification = async (e: FormEvent) => {
+    console.log('🎯 [HANDLER] handleVerification CALLED', {
+      hasSignUp: !!signUp,
+      verificationCode,
+      isVerifying,
+      isLoading
+    });
+    
     e.preventDefault();
     
     // Log verification attempt
@@ -438,6 +487,7 @@ const SignupPage: React.FC = () => {
     });
     
     if (!signUp || !verificationCode) {
+      console.log('❌ [VALIDATION] Verification failed: missing data', { hasSignUp: !!signUp, hasCode: !!verificationCode });
       debugLogger.warn('VERIFICATION', 'Early return - missing signUp or verificationCode');
       try {
         authDebugger.log('CLERK', 'verify_attempt', 'ERROR', { reason: 'missing_code_or_signup' });
@@ -449,6 +499,7 @@ const SignupPage: React.FC = () => {
     }
 
     if (isVerifying) {
+      console.log('⏸️  [STATE] Already verifying, ignoring duplicate request');
       debugLogger.warn('VERIFICATION', 'Verification already in progress, ignoring duplicate request');
       return;
     }
@@ -459,15 +510,18 @@ const SignupPage: React.FC = () => {
       signUpStatus: signUp.status
     });
     
+    console.log('🔄 [STATE] Setting verification state: isLoading=true, isVerifying=true');
     setIsLoading(true);
     setIsVerifying(true);
     setVerificationError('');
     
     try {
+      console.log('📞 [API] Calling Clerk attemptEmailAddressVerification...');
       debugLogger.info('VERIFICATION', 'Calling attemptEmailAddressVerification...');
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
+      console.log('✅ [API] Clerk verification API returned:', { status: result.status, userId: result.createdUserId });
       
       debugLogger.info('VERIFICATION', 'Verification result:', {
         status: result.status,
@@ -488,17 +542,21 @@ const SignupPage: React.FC = () => {
       }
 
       if (result.status === 'complete') {
+        console.log('🎉 [SUCCESS] Email verification complete!');
         debugLogger.info('VERIFICATION', 'Email verification complete, waiting for webhook processing...');
         
         if (result.createdUserId) {
+          console.log('🔄 [WEBHOOK] Starting webhook polling...', { userId: result.createdUserId });
           // Start webhook status polling
           setWebhookStatus('processing');
           await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
         } else {
+          console.log('❌ [ERROR] No userId after verification');
           debugLogger.error('VERIFICATION', 'No user ID provided after verification');
           setVerificationError('Verification completed but no user was created. Please try again.');
         }
       } else {
+        console.log('⚠️  [WARNING] Verification status not complete:', result.status);
         debugLogger.warn('VERIFICATION', 'Verification not complete, status:', result.status);
         setVerificationError('Verification failed. Please try again.');
       }
@@ -525,6 +583,7 @@ const SignupPage: React.FC = () => {
       const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
       setVerificationError(errorMessage);
     } finally {
+      console.log('🔄 [STATE] Verification complete, resetting state: isLoading=false, isVerifying=false');
       debugLogger.info('VERIFICATION', 'Verification process completed, setting loading to false');
       setIsLoading(false);
       setIsVerifying(false);
@@ -776,14 +835,25 @@ const SignupPage: React.FC = () => {
                             <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
                               {t('common:labels.verificationCode', 'Verification Code')}
                             </label>
-                            <input
-                              type="text"
-                              id="verificationCode"
-                              value={verificationCode}
-                              onChange={(e) => {
-                                debugLogger.debug('FORM', 'Verification code changed:', e.target.value);
-                                setVerificationCode(e.target.value);
-                              }}
+                          <input
+                            type="text"
+                            id="verificationCode"
+                            value={verificationCode}
+                            onChange={(e) => {
+                              console.log('⌨️  [INPUT] Verification code changed:', { length: e.target.value.length });
+                              debugLogger.debug('FORM', 'Verification code changed:', e.target.value);
+                              setVerificationCode(e.target.value);
+                              
+                              // Log when code is complete
+                              if (e.target.value.length === 6) {
+                                console.log('✅ [INPUT] 6-digit code entered, ready to verify');
+                                try {
+                                  authDebugger.log('CLERK', 'verify_code_complete', 'INFO', { codeLength: 6 });
+                                } catch (err) {
+                                  console.error('Debug logging error:', err);
+                                }
+                              }
+                            }}
                               onInvalid={(e) => {
                                 debugLogger.warn('FORM', 'Input validation failed:', e);
                               }}
