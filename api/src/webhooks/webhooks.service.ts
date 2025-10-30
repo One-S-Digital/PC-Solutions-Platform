@@ -58,32 +58,41 @@ export class WebhooksService {
     const clerkId = userData.id;
     
     try {
-      this.logger.log(`Creating user: ${clerkId} (attempt ${retryCount + 1}/${maxRetries + 1})`);
+      this.logger.log(`🔵 [USER-CREATED] Creating user: ${clerkId} (attempt ${retryCount + 1}/${maxRetries + 1})`);
+      this.logger.log(`📋 [USER-CREATED] Full userData: ${JSON.stringify(userData, null, 2)}`);
+      this.logger.log(`📧 [USER-CREATED] Email: ${userData.email_addresses?.[0]?.email_address}`);
+      this.logger.log(`👤 [USER-CREATED] Name: ${userData.first_name} ${userData.last_name}`);
+      this.logger.log(`🏷️  [USER-CREATED] Metadata: unsafe=${JSON.stringify(userData.unsafe_metadata)}, public=${JSON.stringify(userData.public_metadata)}`);
       
       // Check if user already exists
       const existingAppUser = await this.usersService.findAppUserByClerkId(clerkId);
       if (existingAppUser) {
-        this.logger.log(`User already exists: ${clerkId}`);
+        this.logger.log(`⚠️  [USER-CREATED] User already exists: ${clerkId}, skipping creation`);
         return;
       }
+      
+      this.logger.log(`➡️  [USER-CREATED] User doesn't exist, proceeding with creation...`);
       
       // Create user with retry logic
       await this.createUserWithRetry(userData, retryCount);
       
-      this.logger.log(`✅ User created successfully: ${clerkId}`);
+      this.logger.log(`✅ [USER-CREATED] User created successfully: ${clerkId}`);
       
     } catch (error) {
-      this.logger.error(`❌ Failed to create user ${clerkId} (attempt ${retryCount + 1}):`, error);
+      this.logger.error(`❌ [USER-CREATED] Failed to create user ${clerkId} (attempt ${retryCount + 1}):`, error);
+      this.logger.error(`🔴 [USER-CREATED] Error stack: ${error.stack}`);
+      this.logger.error(`🔴 [USER-CREATED] Error details: ${JSON.stringify(error, null, 2)}`);
       
       if (retryCount < maxRetries) {
         // Exponential backoff: 1s, 2s, 4s
         const delay = Math.pow(2, retryCount) * 1000;
-        this.logger.warn(`Retrying user creation in ${delay}ms...`);
+        this.logger.warn(`⏰ [USER-CREATED] Retrying user creation in ${delay}ms...`);
         
         await new Promise(resolve => setTimeout(resolve, delay));
         return this.handleUserCreated(userData, retryCount + 1);
       } else {
-        this.logger.error(`❌ User creation failed after ${maxRetries + 1} attempts: ${clerkId}`);
+        this.logger.error(`❌ [USER-CREATED] User creation failed after ${maxRetries + 1} attempts: ${clerkId}`);
+        this.logger.error(`💀 [USER-CREATED] Giving up on user creation. Clerk will retry webhook.`);
         // Don't throw - let Clerk retry the webhook
       }
     }
@@ -91,16 +100,32 @@ export class WebhooksService {
 
   private async createUserWithRetry(userData: any, retryCount: number) {
     const clerkId = userData.id;
+    const email = userData.email_addresses?.[0]?.email_address;
     
     try {
+      this.logger.log(`🏗️  [CREATE] Step 1: Creating AppUser...`);
+      
+      // Extract role from metadata (fallback to PARENT if not found)
+      const pendingRole = userData.unsafe_metadata?.pendingRole || 
+                         userData.unsafe_metadata?.signupType || 
+                         userData.public_metadata?.role || 
+                         'PARENT';
+      
+      this.logger.log(`🏷️  [CREATE] Extracted role: ${pendingRole}`);
+      
+      if (!email) {
+        throw new Error('No email address found in user data');
+      }
+      
       // Create AppUser first
       const appUser = await this.usersService.createAppUser({
         clerkId,
-        email: userData.email_addresses?.[0]?.email_address,
-        role: 'PARENT', // Default role, will be updated by webhook
+        email,
+        role: pendingRole,
       });
       
-      this.logger.log(`AppUser created: ${appUser.id} for ClerkId: ${clerkId}`);
+      this.logger.log(`✅ [CREATE] Step 1 complete: AppUser created: ${appUser.id} for ClerkId: ${clerkId}`);
+      this.logger.log(`🏗️  [CREATE] Step 2: Creating User profile...`);
       
       // Create User profile
       const user = await this.usersService.syncWithClerk({
@@ -112,12 +137,14 @@ export class WebhooksService {
         updated_at: userData.updated_at,
       });
       
-      this.logger.log(`User profile created: ${user.id} for ClerkId: ${clerkId}`);
+      this.logger.log(`✅ [CREATE] Step 2 complete: User profile created: ${user.id} for ClerkId: ${clerkId}`);
+      this.logger.log(`🎉 [CREATE] All steps complete for user: ${clerkId}`);
       
       return user;
       
     } catch (error) {
-      this.logger.error(`User creation failed (attempt ${retryCount + 1}):`, error);
+      this.logger.error(`❌ [CREATE] User creation failed (attempt ${retryCount + 1}):`, error);
+      this.logger.error(`🔴 [CREATE] Failed at: ${error.message}`);
       throw error;
     }
   }
