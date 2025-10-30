@@ -11,6 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
 import { debugLogger } from '../src/utils/debugLogger';
 import { useDebugLogger } from '../src/hooks/useDebugLogger';
+import { authDebugger } from '../src/utils/authDebugger';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -46,6 +47,11 @@ const LoginPage: React.FC = () => {
 
   // Enable debug logging for this component
   useDebugLogger();
+
+  // Log LOGIN opened when page loads
+  useEffect(() => {
+    authDebugger.log('LOGIN', 'opened', 'INFO', { provider: 'password' });
+  }, []);
 
   // Debug login page state
   useEffect(() => {
@@ -101,6 +107,7 @@ const LoginPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    authDebugger.log('LOGIN', 'submit', 'INFO', { email: '***@***', hasPassword: true });
 
     try {
       const result = await signIn.create({
@@ -108,26 +115,35 @@ const LoginPage: React.FC = () => {
         password: password,
       });
 
+      authDebugger.log('CLERK', 'signin_create', 'OK', { status: result.status });
+
       if (result.status === 'complete') {
         try {
           await setActive({ session: result.createdSessionId });
+          authDebugger.log('CLERK', 'set_active', 'OK', { sessionId: 'set' });
+          authDebugger.log('LOGIN', 'redirect_after', 'INFO', { to: '/dashboard' });
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
+          authDebugger.log('CLERK', 'set_active', 'ERROR', { error: setActiveError.message });
           setError(t('common:loginPage.sessionActivationFailed'));
         }
       } else if (result.status === 'needs_first_factor') {
+        authDebugger.log('LOGIN', 'submit', 'WARN', { reason: 'two_factor_required' });
         setError(t('common:loginPage.twoFactorRequired'));
       } else {
+        authDebugger.log('LOGIN', 'submit', 'ERROR', { status: result.status, reason: 'incomplete' });
         setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
       console.error('Login error:', err);
 
       let errorMessage = t('common:errors.unknown');
+      let errorCode = 'unknown';
 
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
+        errorCode = clerkError.code;
         switch (clerkError.code) {
           case 'form_password_incorrect':
             errorMessage = t('common:loginPage.incorrectPassword', 'Incorrect password. Please try again.');
@@ -147,11 +163,13 @@ const LoginPage: React.FC = () => {
       } else if (err.message) {
         if (err.message.toLowerCase().includes('already signed in')) {
           errorMessage = t('common:loginPage.sessionAlreadyActive');
+          errorCode = 'session_exists';
         } else {
           errorMessage = err.message;
         }
       }
 
+      authDebugger.log('CLERK', 'signin_create', 'ERROR', { code: errorCode, message: errorMessage });
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
