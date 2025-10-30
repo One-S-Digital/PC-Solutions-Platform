@@ -280,7 +280,8 @@ Comprehensive procedures documented in:
 | Webhook Success Rate | ❌ 0% (failing) | ✅ 100% (expected) |
 | Schema Completeness | ⚠️ ~90% | ✅ 100% |
 | Missing Tables | 11 | 0 |
-| Missing Columns | 8+ | 0 |
+| Missing Critical Columns | 2 (stripeCustomerId, lastActiveAt) | 0 |
+| Missing Other Columns | 8+ | 0 |
 | Verification Scripts | 0 | 2 |
 | Documentation | Basic | Comprehensive |
 | Prevention Measures | None | Multiple |
