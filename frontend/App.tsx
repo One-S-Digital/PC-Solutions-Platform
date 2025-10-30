@@ -1,7 +1,8 @@
 
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
@@ -17,6 +18,8 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext'; 
 import { UserRole } from './types';
 import DebugToggle from './src/components/debug/DebugToggle';
+import AuthDebugPanel from './src/components/debug/AuthDebugPanel';
+import { authDebugger } from './src/utils/authDebugger';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -77,6 +80,21 @@ import PricingPage from './pages/PricingPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
   const { currentUser } = useAppContext();
+  const { isLoaded, isSignedIn } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (authDebugger.isEnabled()) {
+      if (!currentUser) {
+        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/login', 'no_current_user');
+      } else if (!roles.includes(currentUser.role)) {
+        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/dashboard', 'role_mismatch');
+      } else {
+        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'allow', 'role_match');
+      }
+    }
+  }, [currentUser, isLoaded, isSignedIn, roles, location.pathname]);
+
   if (!currentUser) {
     return <Navigate to="/login" replace />; // Fallback, ProtectedLayout is primary guard
   }
@@ -111,7 +129,18 @@ const RoleBasedDashboardRedirect: React.FC = () => {
 
 const ProtectedLayout: React.FC = () => {
   const { currentUser } = useAppContext();
+  const { isLoaded, isSignedIn } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    if (authDebugger.isEnabled()) {
+      if (!currentUser) {
+        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/login', 'layout_no_user');
+      } else {
+        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'allow', 'layout_has_user');
+      }
+    }
+  }, [currentUser, isLoaded, isSignedIn, location.pathname]);
 
   if (!currentUser) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -315,6 +344,7 @@ const App: React.FC = () => {
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
             <DebugToggle />
+            <AuthDebugPanel />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>
