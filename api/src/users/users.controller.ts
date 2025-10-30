@@ -75,7 +75,14 @@ export class UsersController {
 
   @Get('webhook-status/:clerkId')
   async getWebhookStatus(@Param('clerkId') clerkId: string) {
+    this.logger.log(`🔍 [WEBHOOK-STATUS] Checking status for ClerkId: ${clerkId}`);
     const appUser = await this.usersService.findAppUserByClerkId(clerkId);
+    
+    if (appUser) {
+      this.logger.log(`✅ [WEBHOOK-STATUS] User exists! AppUserId: ${appUser.id}`);
+    } else {
+      this.logger.log(`⏳ [WEBHOOK-STATUS] User not yet created (still waiting for webhook)`);
+    }
     
     return {
       success: true,

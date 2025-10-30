@@ -15,9 +15,13 @@ export const useWebhookStatus = (clerkId: string) => {
   const { getToken } = useAuth();
 
   const checkWebhookStatus = useCallback(async () => {
-    if (!clerkId) return;
+    if (!clerkId) {
+      console.log('⚠️ [WEBHOOK] No clerkId provided, skipping check');
+      return;
+    }
 
     try {
+      console.log('🔍 [WEBHOOK] Checking status for clerkId:', clerkId);
       const token = await getToken();
       const response = await fetch(`/api/users/webhook-status/${clerkId}`, {
         headers: {
@@ -26,30 +30,41 @@ export const useWebhookStatus = (clerkId: string) => {
         },
       });
 
+      console.log('📡 [WEBHOOK] API response:', { status: response.status, ok: response.ok });
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.log('❌ [WEBHOOK] API error:', { status: response.status, body: errorText });
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
+      console.log('📦 [WEBHOOK] API data:', data);
       const webhookStatus: WebhookStatus = data.data;
 
       if (webhookStatus.exists) {
+        console.log('✅ [WEBHOOK] User exists! Signup complete.');
         setStatus('ready');
         setIsPolling(false);
       } else {
+        console.log('⏳ [WEBHOOK] User not yet created, continuing to poll...');
         setStatus('processing');
         setError(null);
       }
     } catch (err) {
-      console.error('Error checking webhook status:', err);
+      console.error('🔴 [WEBHOOK] Error checking webhook status:', err);
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Failed to check account status');
     }
   }, [clerkId, getToken]);
 
   const startPolling = useCallback(() => {
-    if (isPolling) return;
+    if (isPolling) {
+      console.log('⏸️ [WEBHOOK] Already polling, skipping');
+      return;
+    }
     
+    console.log('🚀 [WEBHOOK] Starting polling for user creation...');
     setIsPolling(true);
     setStatus('processing');
     
@@ -57,19 +72,25 @@ export const useWebhookStatus = (clerkId: string) => {
     checkWebhookStatus();
     
     // Poll every 1 second
-    const interval = setInterval(checkWebhookStatus, 1000);
+    const interval = setInterval(() => {
+      console.log('🔄 [WEBHOOK] Polling attempt...');
+      checkWebhookStatus();
+    }, 1000);
     
     // Stop polling after 30 seconds
     const timeout = setTimeout(() => {
+      console.log('⏱️ [WEBHOOK] 30-second timeout reached');
       clearInterval(interval);
       setIsPolling(false);
       if (status === 'processing') {
+        console.log('❌ [WEBHOOK] Timeout - user was never created');
         setStatus('error');
         setError('Account setup timeout - please contact support');
       }
     }, 30000);
 
     return () => {
+      console.log('🛑 [WEBHOOK] Cleanup - stopping polling');
       clearInterval(interval);
       clearTimeout(timeout);
       setIsPolling(false);
