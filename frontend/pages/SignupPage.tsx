@@ -633,69 +633,73 @@ const SignupPage: React.FC = () => {
             )}
 
             {currentStep === 2 && selectedRole && (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {selectedRole !== SignupRole.PARENT && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
-                {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
-                {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
-                {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
-                {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
-                
-                {selectedRole !== SignupRole.PARENT && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
-                {selectedRole !== SignupRole.PARENT && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
+              <>
+                {!showVerificationStep && (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    {selectedRole !== SignupRole.PARENT && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
+                    {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
+                    {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
+                    {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
+                    {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
+                    
+                    {selectedRole !== SignupRole.PARENT && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
+                    {selectedRole !== SignupRole.PARENT && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
 
-                {selectedRole === SignupRole.FOUNDATION && renderField('capacity', 'labels.capacity', 'number', true)}
-                {selectedRole === SignupRole.SUPPLIER && renderField('category', 'labels.category', 'text', true, 'placeholders.category')}
-                {selectedRole === SignupRole.SERVICE_PROVIDER && renderField('serviceType', 'labels.serviceType', 'text', true, 'placeholders.serviceType')}
-                
-                {selectedRole === SignupRole.PARENT && (
-                  <>
-                    {renderField('childAge', 'labels.childAge', 'number', true)}
-                    {renderField('childStartDate', 'labels.childStartDate', 'date', true)}
-                  </>
+                    {selectedRole === SignupRole.FOUNDATION && renderField('capacity', 'labels.capacity', 'number', true)}
+                    {selectedRole === SignupRole.SUPPLIER && renderField('category', 'labels.category', 'text', true, 'placeholders.category')}
+                    {selectedRole === SignupRole.SERVICE_PROVIDER && renderField('serviceType', 'labels.serviceType', 'text', true, 'placeholders.serviceType')}
+                    
+                    {selectedRole === SignupRole.PARENT && (
+                      <>
+                        {renderField('childAge', 'labels.childAge', 'number', true)}
+                        {renderField('childStartDate', 'labels.childStartDate', 'date', true)}
+                      </>
+                    )}
+
+                    <div className="pt-2">
+                      <label htmlFor="termsAccepted" className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          id="termsAccepted" 
+                          name="termsAccepted" 
+                          checked={formData.termsAccepted} 
+                          onChange={handleChange} 
+                          className={`h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint ${errors.termsAccepted ? 'border-swiss-coral' : ''}`} 
+                        />
+                        <span className="ml-2 text-sm text-gray-600">
+                          {t('termsLabel')}{' '}
+                          <a href="#/terms" target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">
+                            {t('termsLink')}
+                          </a>.
+                        </span>
+                      </label>
+                      {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
+                    </div>
+
+                    {/* CAPTCHA Section */}
+                    <div className="pt-4">
+                      <Captcha
+                        siteKey={HCAPTCHA_SITE_KEY}
+                        theme={HCAPTCHA_THEME}
+                        size={HCAPTCHA_SIZE}
+                        onVerify={handleCaptchaVerify}
+                        onExpire={handleCaptchaExpire}
+                        onError={handleCaptchaError}
+                        className="flex justify-center"
+                      />
+                      {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
+                      <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto">
+                        {t('buttons.goBack')}
+                      </Button>
+                      <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
+                        {isLoading ? t('creatingAccount') : t('buttons.createAccount')}
+                      </Button>
+                    </div>
+                  </form>
                 )}
-
-                <div className="pt-2">
-                  <label htmlFor="termsAccepted" className="flex items-center">
-                    <input 
-                      type="checkbox" 
-                      id="termsAccepted" 
-                      name="termsAccepted" 
-                      checked={formData.termsAccepted} 
-                      onChange={handleChange} 
-                      className={`h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint ${errors.termsAccepted ? 'border-swiss-coral' : ''}`} 
-                    />
-                    <span className="ml-2 text-sm text-gray-600">
-                      {t('termsLabel')}{' '}
-                      <a href="#/terms" target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">
-                        {t('termsLink')}
-                      </a>.
-                    </span>
-                  </label>
-                  {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
-                </div>
-
-                {/* CAPTCHA Section */}
-                <div className="pt-4">
-                  <Captcha
-                    siteKey={HCAPTCHA_SITE_KEY}
-                    theme={HCAPTCHA_THEME}
-                    size={HCAPTCHA_SIZE}
-                    onVerify={handleCaptchaVerify}
-                    onExpire={handleCaptchaExpire}
-                    onError={handleCaptchaError}
-                    className="flex justify-center"
-                  />
-                  {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
-                </div>
-                
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
-                  <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto">
-                    {t('buttons.goBack')}
-                  </Button>
-                  <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
-                    {isLoading ? t('creatingAccount') : t('buttons.createAccount')}
-                  </Button>
-                </div>
 
                 {showVerificationStep && (
                   <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -716,84 +720,84 @@ const SignupPage: React.FC = () => {
                         <p className="text-sm text-gray-600 mb-4">
                           {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
                         </p>
-                    <form onSubmit={(e) => {
-                      // Log form submission
-                      try {
-                        authDebugger.log('CLERK', 'verify_form_submit', 'INFO', { 
-                          hasCode: !!verificationCode,
-                          codeLength: verificationCode.length
-                        });
-                      } catch (err) {
-                        console.error('Debug logging error:', err);
-                      }
-                      
-                      debugLogger.info('FORM', 'Verification form submitted');
-                      e.preventDefault();
-                      e.stopPropagation();
-                      debugLogger.info('FORM', 'Form submission prevented, calling handleVerification');
-                      handleVerification(e);
-                    }} className="space-y-4" noValidate>
-                      <div>
-                        <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
-                          {t('common:labels.verificationCode', 'Verification Code')}
-                        </label>
-                        <input
-                          type="text"
-                          id="verificationCode"
-                          value={verificationCode}
-                          onChange={(e) => {
-                            debugLogger.debug('FORM', 'Verification code changed:', e.target.value);
-                            setVerificationCode(e.target.value);
-                          }}
-                          onInvalid={(e) => {
-                            debugLogger.warn('FORM', 'Input validation failed:', e);
-                          }}
-                          className={STANDARD_INPUT_FIELD}
-                          placeholder="000000"
-                          maxLength={6}
-                          required
-                        />
-                        {verificationError && (
-                          <p className="text-xs text-swiss-coral mt-1">{verificationError}</p>
-                        )}
-                      </div>
-                      <Button 
-                        type="submit" 
-                        variant="primary" 
-                        size="lg" 
-                        className="w-full" 
-                        disabled={isLoading || isVerifying}
-                        onClick={() => {
-                          console.log('🚀 [FORM DEBUG] Verify button clicked', {
-                            isLoading,
-                            isVerifying,
-                            hasCode: !!verificationCode,
-                            codeLength: verificationCode.length,
-                            disabled: isLoading || isVerifying
-                          });
-                          
-                          // Log button click
+                        <form onSubmit={(e) => {
+                          // Log form submission
                           try {
-                            authDebugger.log('CLERK', 'verify_button_click', 'INFO', { 
-                              isLoading,
-                              isVerifying,
+                            authDebugger.log('CLERK', 'verify_form_submit', 'INFO', { 
                               hasCode: !!verificationCode,
-                              codeLength: verificationCode.length,
-                              disabled: isLoading || isVerifying
+                              codeLength: verificationCode.length
                             });
                           } catch (err) {
                             console.error('Debug logging error:', err);
                           }
-                        }}
-                      >
-                        {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
-                      </Button>
-                    </form>
+                          
+                          debugLogger.info('FORM', 'Verification form submitted');
+                          e.preventDefault();
+                          e.stopPropagation();
+                          debugLogger.info('FORM', 'Form submission prevented, calling handleVerification');
+                          handleVerification(e);
+                        }} className="space-y-4" noValidate>
+                          <div>
+                            <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
+                              {t('common:labels.verificationCode', 'Verification Code')}
+                            </label>
+                            <input
+                              type="text"
+                              id="verificationCode"
+                              value={verificationCode}
+                              onChange={(e) => {
+                                debugLogger.debug('FORM', 'Verification code changed:', e.target.value);
+                                setVerificationCode(e.target.value);
+                              }}
+                              onInvalid={(e) => {
+                                debugLogger.warn('FORM', 'Input validation failed:', e);
+                              }}
+                              className={STANDARD_INPUT_FIELD}
+                              placeholder="000000"
+                              maxLength={6}
+                              required
+                            />
+                            {verificationError && (
+                              <p className="text-xs text-swiss-coral mt-1">{verificationError}</p>
+                            )}
+                          </div>
+                          <Button 
+                            type="submit" 
+                            variant="primary" 
+                            size="lg" 
+                            className="w-full" 
+                            disabled={isLoading || isVerifying}
+                            onClick={() => {
+                              console.log('🚀 [FORM DEBUG] Verify button clicked', {
+                                isLoading,
+                                isVerifying,
+                                hasCode: !!verificationCode,
+                                codeLength: verificationCode.length,
+                                disabled: isLoading || isVerifying
+                              });
+                              
+                              // Log button click
+                              try {
+                                authDebugger.log('CLERK', 'verify_button_click', 'INFO', { 
+                                  isLoading,
+                                  isVerifying,
+                                  hasCode: !!verificationCode,
+                                  codeLength: verificationCode.length,
+                                  disabled: isLoading || isVerifying
+                                });
+                              } catch (err) {
+                                console.error('Debug logging error:', err);
+                              }
+                            }}
+                          >
+                            {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
+                          </Button>
+                        </form>
                       </>
                     )}
                   </div>
                 )}
-              </form>
+              </>
             )}
             
             <p className="mt-6 text-center text-sm text-gray-600">
