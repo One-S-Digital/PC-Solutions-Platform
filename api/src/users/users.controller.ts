@@ -10,6 +10,7 @@ import {
   Query,
   ParseUUIDPipe,
   Request,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -23,6 +24,8 @@ import { Public } from '../auth/decorators/public.decorator';
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
 export class UsersController {
+  private readonly logger = new Logger(UsersController.name);
+
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
