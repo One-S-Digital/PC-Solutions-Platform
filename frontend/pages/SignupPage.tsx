@@ -41,21 +41,31 @@ const SignupPage: React.FC = () => {
 
   // Wait for webhook processing to complete
   const waitForWebhookProcessing = async (userId: string, sessionId: string | null) => {
+    console.log('🎯 [WAIT-WEBHOOK] Starting wait for webhook processing...', { userId, sessionId });
+    console.log('🎯 [WAIT-WEBHOOK] Current webhookStatusFromHook:', webhookStatusFromHook);
     debugLogger.info('VERIFICATION', 'Starting webhook processing wait...', { userId, sessionId });
     
     try {
+      console.log('📞 [WAIT-WEBHOOK] Calling startPolling()...');
       // Start polling for webhook status
       startPolling();
       
+      console.log('⏰ [WAIT-WEBHOOK] Starting 30-second wait loop...');
       // Wait for webhook to complete (max 30 seconds)
       const maxWaitTime = 30000;
       const pollInterval = 1000;
       const startTime = Date.now();
       
+      let loopCount = 0;
       while (Date.now() - startTime < maxWaitTime) {
+        loopCount++;
         await new Promise(resolve => setTimeout(resolve, pollInterval));
         
+        const elapsed = Math.round((Date.now() - startTime) / 1000);
+        console.log(`⏳ [WAIT-WEBHOOK] Loop ${loopCount} (${elapsed}s elapsed) - Status: ${webhookStatusFromHook}`);
+        
         if (webhookStatusFromHook === 'ready') {
+          console.log('✅ [WAIT-WEBHOOK] Status is READY! Breaking loop...');
           debugLogger.info('VERIFICATION', 'Webhook processing complete, activating session...');
           
               // Activate session now that user is ready
@@ -83,18 +93,24 @@ const SignupPage: React.FC = () => {
                 return;
           }
         } else if (webhookStatusFromHook === 'error') {
+          console.log('❌ [WAIT-WEBHOOK] Status is ERROR!');
           throw new Error(webhookErrorFromHook || 'Webhook processing failed');
         }
       }
       
       // Timeout
+      console.log('⏱️ [WAIT-WEBHOOK] 30-second timeout reached!');
+      console.log('💀 [WAIT-WEBHOOK] Final status:', webhookStatusFromHook);
+      console.log('💀 [WAIT-WEBHOOK] User was created but polling never detected it');
       throw new Error('Account setup timeout - please contact support');
       
     } catch (error) {
+      console.log('🔴 [WAIT-WEBHOOK] Error in waitForWebhookProcessing:', error);
       debugLogger.error('VERIFICATION', 'Webhook processing failed:', error);
       setWebhookStatus('error');
       setWebhookError(error instanceof Error ? error.message : 'Account setup failed');
     } finally {
+      console.log('🛑 [WAIT-WEBHOOK] Finally block - calling stopPolling()');
       stopPolling();
     }
   };
@@ -543,10 +559,23 @@ const SignupPage: React.FC = () => {
 
       if (result.status === 'complete') {
         console.log('🎉 [SUCCESS] Email verification complete!');
+        console.log('🆔 [SUCCESS] ClerkId (createdUserId):', result.createdUserId);
+        console.log('🔑 [SUCCESS] SessionId:', result.createdSessionId);
         debugLogger.info('VERIFICATION', 'Email verification complete, waiting for webhook processing...');
         
         if (result.createdUserId) {
           console.log('🔄 [WEBHOOK] Starting webhook polling...', { userId: result.createdUserId });
+          
+          // Log to auth debugger
+          try {
+            authDebugger.log('CLERK', 'webhook_poll_start', 'INFO', { 
+              clerkId: result.createdUserId,
+              sessionId: result.createdSessionId
+            });
+          } catch (err) {
+            console.error('Debug logging error:', err);
+          }
+          
           // Start webhook status polling
           setWebhookStatus('processing');
           await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
