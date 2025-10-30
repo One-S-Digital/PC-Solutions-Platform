@@ -17,12 +17,19 @@ fi
 
 echo "🔧 Resolving any failed migrations..."
 npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix 2>/dev/null || echo "No failed migrations to resolve"
+npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing 2>/dev/null || echo "No other failed migrations"
+
+echo "📊 Current migration status:"
+npx prisma migrate status || echo "Could not get migration status"
 
 echo "🔄 Deploying database migrations..."
-npx prisma migrate deploy || {
-    echo "⚠️  Migration deployment failed or timed out"
-    echo "Migrations will be retried at application startup"
-    exit 0
-}
+if npx prisma migrate deploy; then
+    echo "✅ Migrations deployed successfully"
+else
+    echo "❌ Migration deployment failed"
+    echo "📋 Checking what went wrong..."
+    npx prisma migrate status
+    echo "⚠️  Continuing build despite migration failure..."
+fi
 
 echo "✅ Build preparation complete!"
