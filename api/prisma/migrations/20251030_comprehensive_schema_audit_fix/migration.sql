@@ -40,6 +40,24 @@ EXCEPTION
 END $$;
 
 -- =====================================================================
+-- FIX 2B: Add lastActiveAt column if missing
+-- =====================================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'users' 
+        AND column_name = 'lastActiveAt'
+    ) THEN
+        ALTER TABLE "public"."users" ADD COLUMN "lastActiveAt" TIMESTAMP(3);
+        RAISE NOTICE '✅ Added lastActiveAt column to users table';
+    ELSE
+        RAISE NOTICE '⏭️  lastActiveAt column already exists in users table';
+    END IF;
+END $$;
+
+-- =====================================================================
 -- FIX 3: Add missing columns to assets table
 -- =====================================================================
 DO $$
