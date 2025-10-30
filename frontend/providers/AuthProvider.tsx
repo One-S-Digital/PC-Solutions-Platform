@@ -280,6 +280,44 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         );
       }
 
+      // Try to get response body for debugging (DO THIS FIRST before any other checks)
+      let responseBody: any;
+      let responseText: string = '';
+      try {
+        responseText = await response.text(); // Don't use clone(), just read it once
+        console.log('📄 Response Body (raw):', responseText);
+        
+        // Log response body for debugging
+        authDebugger.log('HTTP', 'body_raw', 'INFO', { 
+          length: responseText.length,
+          preview: responseText.substring(0, 200)
+        });
+        
+        try {
+          responseBody = JSON.parse(responseText);
+          console.log('📄 Response Body (parsed):', responseBody);
+          
+          // Log parsed response structure
+          authDebugger.log('HTTP', 'body_parsed', 'INFO', {
+            hasSuccess: !!responseBody?.success,
+            successValue: responseBody?.success,
+            hasData: !!responseBody?.data,
+            dataKeys: responseBody?.data ? Object.keys(responseBody.data).join(',') : 'none',
+            isPending: responseBody?.data?.isPending || false
+          });
+        } catch (parseError) {
+          console.warn('⚠️  Response is not valid JSON:', parseError);
+          authDebugger.log('HTTP', 'parse_error', 'ERROR', { 
+            error: String(parseError)
+          });
+        }
+      } catch (bodyError) {
+        console.error('❌ Error reading response body:', bodyError);
+        authDebugger.log('HTTP', 'read_error', 'ERROR', { 
+          error: String(bodyError)
+        });
+      }
+
       if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
         console.warn('⏳ User not found (404). Waiting for webhook to create user...', {
           attempt: attempt + 1,
@@ -290,49 +328,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         console.groupEnd();
         await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
         return fetchUserFromBackend(clerkId, attempt + 1);
-      }
-
-      // Handle pending user case (200 response with isPending: true)
-      if (response.ok) {
-        const data = responseBody || await response.json();
-        if (data?.success && data?.data?.isPending) {
-          console.warn('⏳ User is pending webhook processing. Retrying...', {
-            attempt: attempt + 1,
-            maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
-            waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
-            clerkId,
-            message: data.data.message,
-          });
-          console.groupEnd();
-          
-          if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
-            await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
-            return fetchUserFromBackend(clerkId, attempt + 1);
-          } else {
-            throw new ApiError(
-              data.data.message || 'User account is being processed. Please wait a moment and refresh.',
-              202, // 202 Accepted - processing
-              'user_pending'
-            );
-          }
-        }
-      }
-
-      // Try to get response body for debugging
-      let responseBody: any;
-      let responseText: string = '';
-      try {
-        responseText = await response.clone().text();
-        console.log('📄 Response Body (raw):', responseText);
-        
-        try {
-          responseBody = JSON.parse(responseText);
-          console.log('📄 Response Body (parsed):', responseBody);
-        } catch (parseError) {
-          console.warn('⚠️  Response is not valid JSON:', parseError);
-        }
-      } catch (bodyError) {
-        console.error('❌ Error reading response body:', bodyError);
       }
 
       if (!response.ok) {
@@ -349,13 +344,50 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         );
       }
 
-      const data = responseBody || await response.json();
+      // Now we have the parsed responseBody, use it
+      const data = responseBody;
+
+      // Handle pending user case (200 response with isPending: true)
+      if (data?.success && data?.data?.isPending) {
+        console.warn('⏳ User is pending webhook processing. Retrying...', {
+          attempt: attempt + 1,
+          maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
+          waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
+          clerkId,
+          message: data.data.message,
+        });
+        authDebugger.log('HTTP', 'user_pending', 'INFO', {
+          attempt: attempt + 1,
+          message: data.data.message
+        });
+        console.groupEnd();
+        
+        if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
+          await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
+          return fetchUserFromBackend(clerkId, attempt + 1);
+        } else {
+          throw new ApiError(
+            data.data.message || 'User account is being processed. Please wait a moment and refresh.',
+            202, // 202 Accepted - processing
+            'user_pending'
+          );
+        }
+      }
 
       if (!data?.success || !data?.data) {
         console.error('❌ Invalid response format:', {
           hasSuccess: !!data?.success,
+          successValue: data?.success,
           hasData: !!data?.data,
+          dataValue: data?.data,
           fullResponse: data,
+        });
+        authDebugger.log('HTTP', 'invalid_format', 'ERROR', {
+          hasSuccess: !!data?.success,
+          successValue: data?.success,
+          hasData: !!data?.data,
+          responseType: typeof data,
+          responseKeys: data ? Object.keys(data).join(',') : 'null'
         });
         console.groupEnd();
         throw new Error('Invalid response format from backend');
@@ -365,7 +397,18 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         userId: data.data.id,
         email: data.data.email,
         role: data.data.role,
+        firstName: data.data.firstName,
+        lastName: data.data.lastName,
       });
+      
+      authDebugger.log('HTTP', 'user_sync_success', 'OK', {
+        userId: data.data.id,
+        email: data.data.email,
+        role: data.data.role,
+        hasFirstName: !!data.data.firstName,
+        hasLastName: !!data.data.lastName
+      });
+      
       console.groupEnd();
 
       return transformBackendUser(data.data);
@@ -413,12 +456,30 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
     const runSync = async () => {
       setIsLoading(true);
+      
+      console.log('🔄 [SYNC] Starting user sync...', { clerkUserId });
+      authDebugger.log('SYNC', 'start', 'INFO', { clerkUserId });
 
       try {
         const backendUser = await fetchUserFromBackend(clerkUserId);
         if (cancelled) {
+          console.log('⚠️  [SYNC] Sync cancelled');
+          authDebugger.log('SYNC', 'cancelled', 'INFO', { reason: 'component_unmounted' });
           return;
         }
+
+        console.log('✅ [SYNC] Setting user state:', {
+          userId: backendUser.id,
+          email: backendUser.email,
+          role: backendUser.role,
+          name: backendUser.name
+        });
+        
+        authDebugger.log('SYNC', 'set_user', 'OK', {
+          userId: backendUser.id,
+          email: backendUser.email,
+          role: backendUser.role
+        });
 
         setCurrentUser(backendUser);
         setAuthError(null);
@@ -427,15 +488,25 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           status: 'success',
           lastAttempt: Date.now(),
         };
+        
+        console.log('✅ [SYNC] User state updated successfully');
+        authDebugger.log('SYNC', 'complete', 'OK', { status: 'success' });
       } catch (error) {
         if (cancelled) {
+          console.log('⚠️  [SYNC] Sync cancelled during error handling');
           return;
         }
 
-        console.error('Failed to sync user with backend:', error);
+        console.error('❌ [SYNC] Failed to sync user with backend:', error);
         const errorKey = determineAuthErrorKey(error);
         setCurrentUser(null);
         setAuthError(errorKey);
+        
+        authDebugger.log('SYNC', 'error', 'ERROR', {
+          errorKey,
+          errorMessage: error instanceof Error ? error.message : String(error),
+          errorStatus: error instanceof ApiError ? error.status : undefined
+        });
 
         syncAttemptRef.current = {
           clerkId: clerkUserId,

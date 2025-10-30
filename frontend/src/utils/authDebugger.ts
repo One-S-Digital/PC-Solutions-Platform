@@ -28,7 +28,8 @@ export type LogCategory =
   | 'PERF'
   | 'ENV'
   | 'TOKEN'
-  | 'NETWORK';
+  | 'NETWORK'
+  | 'SYNC';
 
 export type LogResult = 'OK' | 'ERR' | 'ERROR' | 'INFO';
 
