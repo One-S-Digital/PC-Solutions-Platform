@@ -418,6 +418,16 @@ const SignupPage: React.FC = () => {
   const handleVerification = async (e: FormEvent) => {
     e.preventDefault();
     
+    // Log verification attempt
+    try {
+      authDebugger.log('CLERK', 'verify_attempt', 'INFO', { 
+        hasCode: !!verificationCode,
+        codeLength: verificationCode.length
+      });
+    } catch (err) {
+      console.error('Debug logging error:', err);
+    }
+    
     debugLogger.info('VERIFICATION', 'handleVerification called', {
       hasSignUp: !!signUp,
       verificationCode,
@@ -429,6 +439,11 @@ const SignupPage: React.FC = () => {
     
     if (!signUp || !verificationCode) {
       debugLogger.warn('VERIFICATION', 'Early return - missing signUp or verificationCode');
+      try {
+        authDebugger.log('CLERK', 'verify_attempt', 'ERROR', { reason: 'missing_code_or_signup' });
+      } catch (err) {
+        console.error('Debug logging error:', err);
+      }
       setVerificationError('Please enter a verification code.');
       return;
     }
@@ -464,9 +479,13 @@ const SignupPage: React.FC = () => {
       });
       
       // Log verification result
-      authDebugger.log('CLERK', 'verify_done', result.status === 'complete' ? 'OK' : 'ERROR', { 
-        status: result.status 
-      });
+      try {
+        authDebugger.log('CLERK', 'verify_done', result.status === 'complete' ? 'OK' : 'ERROR', { 
+          status: result.status 
+        });
+      } catch (err) {
+        console.error('Debug logging error:', err);
+      }
 
       if (result.status === 'complete') {
         debugLogger.info('VERIFICATION', 'Email verification complete, waiting for webhook processing...');
@@ -492,6 +511,17 @@ const SignupPage: React.FC = () => {
         code: err.code,
         status: err.status
       });
+      
+      // Log verification error
+      try {
+        authDebugger.log('CLERK', 'verify_done', 'ERROR', { 
+          code: err.errors?.[0]?.code || 'unknown',
+          message: err.message || 'Verification failed'
+        });
+      } catch (logErr) {
+        console.error('Debug logging error:', logErr);
+      }
+      
       const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
       setVerificationError(errorMessage);
     } finally {
@@ -687,6 +717,16 @@ const SignupPage: React.FC = () => {
                           {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
                         </p>
                     <form onSubmit={(e) => {
+                      // Log form submission
+                      try {
+                        authDebugger.log('CLERK', 'verify_form_submit', 'INFO', { 
+                          hasCode: !!verificationCode,
+                          codeLength: verificationCode.length
+                        });
+                      } catch (err) {
+                        console.error('Debug logging error:', err);
+                      }
+                      
                       debugLogger.info('FORM', 'Verification form submitted');
                       e.preventDefault();
                       e.stopPropagation();
@@ -724,7 +764,26 @@ const SignupPage: React.FC = () => {
                         className="w-full" 
                         disabled={isLoading || isVerifying}
                         onClick={() => {
-                          console.log('🚀 [FORM DEBUG] Verify button clicked');
+                          console.log('🚀 [FORM DEBUG] Verify button clicked', {
+                            isLoading,
+                            isVerifying,
+                            hasCode: !!verificationCode,
+                            codeLength: verificationCode.length,
+                            disabled: isLoading || isVerifying
+                          });
+                          
+                          // Log button click
+                          try {
+                            authDebugger.log('CLERK', 'verify_button_click', 'INFO', { 
+                              isLoading,
+                              isVerifying,
+                              hasCode: !!verificationCode,
+                              codeLength: verificationCode.length,
+                              disabled: isLoading || isVerifying
+                            });
+                          } catch (err) {
+                            console.error('Debug logging error:', err);
+                          }
                         }}
                       >
                         {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
