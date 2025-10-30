@@ -100,10 +100,44 @@ BEGIN
 END $$;
 
 -- =====================================================================
+-- FIX 3B: Ensure storageKey column exists (should be from init migration)
+-- =====================================================================
+DO $$
+BEGIN
+    -- Add storageKey column if missing (defensive check)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'assets' AND column_name = 'storageKey'
+    ) THEN
+        ALTER TABLE "assets" ADD COLUMN "storageKey" TEXT NOT NULL DEFAULT '';
+        RAISE NOTICE '✅ Added storageKey column to assets table';
+    ELSE
+        RAISE NOTICE '⏭️  storageKey column already exists';
+    END IF;
+END $$;
+
+-- =====================================================================
 -- FIX 4: Add missing indexes on assets table
 -- =====================================================================
-CREATE INDEX IF NOT EXISTS "assets_storageKey_idx" ON "assets"("storageKey");
-CREATE INDEX IF NOT EXISTS "assets_etag_idx" ON "assets"("etag");
+-- Only create index if column exists
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'assets' AND column_name = 'storageKey'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS "assets_storageKey_idx" ON "assets"("storageKey");
+        RAISE NOTICE '✅ Created index on storageKey';
+    END IF;
+    
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'assets' AND column_name = 'etag'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS "assets_etag_idx" ON "assets"("etag");
+        RAISE NOTICE '✅ Created index on etag';
+    END IF;
+END $$;
 
 -- =====================================================================
 -- FIX 5: Create missing admin features tables
