@@ -508,12 +508,12 @@ ${'='.repeat(100)}`);
     console.log(`👤 [E2E DEBUG] FULL USER DATA:`, JSON.stringify(data, null, 2));
     
     // E2E DEBUG: Role resolution analysis
-    const intendedRole = 
+    const rawIntendedRole = 
       data.private_metadata?.intendedRole || 
       data.unsafe_metadata?.role ||
       data.unsafe_metadata?.pendingRole ||  // Also check pendingRole from signup
       data.unsafe_metadata?.signupType ||   // Also check signupType from signup
-      'PARENT';
+      null;
     
     console.log(`👤 [E2E DEBUG] ROLE RESOLUTION ANALYSIS:`, {
       privateMetadata: data.private_metadata,
@@ -524,7 +524,7 @@ ${'='.repeat(100)}`);
         unsafeMetadataRole: data.unsafe_metadata?.role,
         unsafeMetadataPendingRole: data.unsafe_metadata?.pendingRole,
         unsafeMetadataSignupType: data.unsafe_metadata?.signupType,
-        resolvedIntendedRole: intendedRole,
+        resolvedRawIntendedRole: rawIntendedRole,
       },
       allMetadataKeys: {
         private: data.private_metadata ? Object.keys(data.private_metadata) : [],
@@ -533,8 +533,16 @@ ${'='.repeat(100)}`);
       }
     });
     
+    // Map frontend SignupRole values to backend UserRole enum
+    const intendedRole = this.mapSignupRoleToUserRole(rawIntendedRole);
+    
+    console.log(`👤 [E2E DEBUG] ROLE MAPPING:`, {
+      rawIntendedRole,
+      mappedIntendedRole: intendedRole,
+    });
+    
     // E2E DEBUG: Role validation
-    const validRole = this.isValidRole(intendedRole) ? intendedRole : 'PARENT';
+    const validRole = this.isValidRole(intendedRole) ? intendedRole : UserRole.PARENT;
     console.log(`👤 [E2E DEBUG] ROLE VALIDATION:`, {
       intendedRole,
       isValid: this.isValidRole(intendedRole),
@@ -544,7 +552,7 @@ ${'='.repeat(100)}`);
         intendedRoleType: typeof intendedRole,
         intendedRoleValue: intendedRole,
         isValidRoleResult: this.isValidRole(intendedRole),
-        fallbackRole: 'PARENT',
+        fallbackRole: UserRole.PARENT,
       }
     });
     
@@ -896,5 +904,39 @@ ${'='.repeat(100)}`);
 
   private isValidRole(role: any): boolean {
     return Object.values(UserRole).includes(role);
+  }
+
+  /**
+   * Maps frontend SignupRole values (human-readable) to backend UserRole enum values
+   * Frontend sends values like "Foundation (Daycare)", "Product Supplier", etc.
+   * Backend expects FOUNDATION, PRODUCT_SUPPLIER, etc.
+   */
+  private mapSignupRoleToUserRole(signupRole: string | null | undefined): UserRole {
+    if (!signupRole) {
+      return UserRole.PARENT;
+    }
+
+    // Mapping table from frontend SignupRole to backend UserRole
+    const roleMap: Record<string, UserRole> = {
+      'Foundation (Daycare)': UserRole.FOUNDATION,
+      'Product Supplier': UserRole.PRODUCT_SUPPLIER,
+      'Service Provider': UserRole.SERVICE_PROVIDER,
+      'Parent': UserRole.PARENT,
+      // Also support already-mapped values (in case they come pre-converted)
+      'FOUNDATION': UserRole.FOUNDATION,
+      'PRODUCT_SUPPLIER': UserRole.PRODUCT_SUPPLIER,
+      'SERVICE_PROVIDER': UserRole.SERVICE_PROVIDER,
+      'PARENT': UserRole.PARENT,
+    };
+
+    const mappedRole = roleMap[signupRole];
+    
+    if (mappedRole) {
+      console.log(`✅ [ROLE MAPPING] Successfully mapped "${signupRole}" to ${mappedRole}`);
+      return mappedRole;
+    }
+
+    console.warn(`⚠️ [ROLE MAPPING] Unknown role "${signupRole}", falling back to PARENT`);
+    return UserRole.PARENT;
   }
 }
