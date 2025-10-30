@@ -15,6 +15,9 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
     npx prisma generate
 fi
 
+echo "🔧 Resolving any failed migrations..."
+npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix 2>/dev/null || echo "No failed migrations to resolve"
+
 echo "🔄 Deploying database migrations..."
 npx prisma migrate deploy || {
     echo "⚠️  Migration deployment failed or timed out"
