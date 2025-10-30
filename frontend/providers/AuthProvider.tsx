@@ -121,6 +121,32 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       const apiBaseUrl = apiService.apiBaseUrl;
       const url = `${apiBaseUrl}${API_ENDPOINTS.users.me}`;
 
+      // Enhanced environment diagnostics
+      const envConfig = {
+        rawApiUrl: import.meta.env.VITE_API_URL,
+        computedBaseUrl: apiBaseUrl,
+        fullRequestUrl: url,
+        nodeEnv: import.meta.env.NODE_ENV,
+        mode: import.meta.env.MODE,
+        isDev: import.meta.env.DEV,
+        isProd: import.meta.env.PROD,
+      };
+
+      console.log('🔧 Environment Config:', envConfig);
+      authDebugger.log('ENV', 'config', 'INFO', envConfig);
+
+      // Token validation
+      const tokenInfo = {
+        hasToken: !!token,
+        tokenLength: token?.length || 0,
+        tokenPrefix: token?.substring(0, 20) + '...',
+        tokenType: typeof token,
+        isValidFormat: token?.startsWith('eyJ') || false, // JWT tokens start with eyJ
+      };
+
+      console.log('🔑 Token Info:', tokenInfo);
+      authDebugger.log('TOKEN', 'validate', 'INFO', tokenInfo);
+
       console.log('📤 Request Details:', {
         url,
         method: 'GET',
@@ -133,15 +159,19 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         }
       });
 
-      // Log HTTP request
+      // Log HTTP request with full details
       authDebugger.log('HTTP', 'req', 'INFO', { 
         method: 'GET', 
         url: '/api/users/me',
+        fullUrl: url,
         authHeader: true,
-        attempt: attempt + 1
+        attempt: attempt + 1,
+        timestamp: new Date().toISOString()
       });
 
       let response: Response;
+      const fetchStartTime = performance.now();
+      
       try {
         response = await fetch(url, {
           method: 'GET',
@@ -152,47 +182,102 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           },
         });
 
+        const fetchEndTime = performance.now();
+        const duration = fetchEndTime - fetchStartTime;
+
+        // Extract all CORS headers
+        const corsHeaders = {
+          'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+          'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+          'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+          'access-control-allow-headers': response.headers.get('access-control-allow-headers'),
+          'access-control-expose-headers': response.headers.get('access-control-expose-headers'),
+        };
+
         console.log('📥 Response Status:', {
           status: response.status,
           statusText: response.statusText,
           ok: response.ok,
+          type: response.type,
+          redirected: response.redirected,
+          url: response.url,
+          duration: `${duration.toFixed(2)}ms`,
           headers: {
             'content-type': response.headers.get('content-type'),
-            'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+            'content-length': response.headers.get('content-length'),
+            'server': response.headers.get('server'),
+            ...corsHeaders,
           }
         });
 
-        // Log HTTP response
+        // Log HTTP response with detailed info
         if (response.ok) {
           authDebugger.log('HTTP', 'res', 'OK', { 
             status: response.status,
-            category: 'OK'
+            category: 'OK',
+            duration: `${duration.toFixed(2)}ms`,
+            cors: corsHeaders
           });
         } else if (response.status === 401 || response.status === 403) {
           authDebugger.log('HTTP', 'res', 'ERROR', { 
             status: response.status,
-            category: 'UNAUTH'
+            category: 'UNAUTH',
+            duration: `${duration.toFixed(2)}ms`
           });
         } else if (response.status === 0) {
           authDebugger.log('HTTP', 'res', 'ERROR', { 
             status: 0,
-            category: 'NETWORK'
+            category: 'NETWORK',
+            duration: `${duration.toFixed(2)}ms`
           });
         } else {
           authDebugger.log('HTTP', 'res', 'ERROR', { 
             status: response.status,
-            category: 'HTTP_ERROR'
+            category: 'HTTP_ERROR',
+            duration: `${duration.toFixed(2)}ms`
           });
         }
       } catch (fetchError) {
-        console.error('❌ Network/Fetch Error:', fetchError);
+        const fetchEndTime = performance.now();
+        const duration = fetchEndTime - fetchStartTime;
+
+        // Enhanced error diagnostics
+        const errorDetails = {
+          errorName: fetchError instanceof Error ? fetchError.name : 'Unknown',
+          errorMessage: fetchError instanceof Error ? fetchError.message : String(fetchError),
+          errorStack: fetchError instanceof Error ? fetchError.stack : undefined,
+          duration: `${duration.toFixed(2)}ms`,
+          url: url,
+          apiBaseUrl: apiBaseUrl,
+          timestamp: new Date().toISOString(),
+          // Browser/Network diagnostics
+          online: navigator.onLine,
+          connectionType: (navigator as any).connection?.effectiveType || 'unknown',
+          userAgent: navigator.userAgent,
+          // URL parsing
+          urlParts: {
+            protocol: new URL(url).protocol,
+            hostname: new URL(url).hostname,
+            port: new URL(url).port,
+            pathname: new URL(url).pathname,
+          },
+        };
+
+        console.error('❌ Network/Fetch Error - DETAILED DIAGNOSTICS:', errorDetails);
         console.groupEnd();
+        
         authDebugger.log('HTTP', 'res', 'ERROR', { 
           status: 0,
           category: 'NETWORK',
-          error: String(fetchError)
+          error: String(fetchError),
+          details: errorDetails
         });
-        throw new ApiError('Network error during fetch', 0, 'network_error');
+        
+        throw new ApiError(
+          `Network error: ${errorDetails.errorMessage}. URL: ${url}. Online: ${errorDetails.online}`,
+          0,
+          'network_error'
+        );
       }
 
       if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {

@@ -25,9 +25,12 @@ export type LogCategory =
   | 'HTTP' 
   | 'COOKIE' 
   | 'ERROR' 
-  | 'PERF';
+  | 'PERF'
+  | 'ENV'
+  | 'TOKEN'
+  | 'NETWORK';
 
-export type LogResult = 'OK' | 'ERR' | 'INFO';
+export type LogResult = 'OK' | 'ERR' | 'ERROR' | 'INFO';
 
 interface LogEntry {
   timestamp: string;
@@ -165,7 +168,7 @@ class AuthDebugger {
       this.appendToLog(logLine);
       
       // Also log to console for immediate visibility
-      const consoleMethod = result === 'ERR' ? 'error' : result === 'OK' ? 'log' : 'info';
+      const consoleMethod = (result === 'ERR' || result === 'ERROR') ? 'error' : result === 'OK' ? 'log' : 'info';
       console[consoleMethod](`[AUTH DEBUG] ${category} | ${action} | ${result}`, details);
     } catch (error) {
       // Silent fail - don't break the app if logging fails
