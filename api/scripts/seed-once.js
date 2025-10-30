@@ -2,6 +2,12 @@
 const { PrismaClient } = require('@prisma/client');
 
 async function main() {
+  // Skip seeding during build - database may not be available
+  if (process.env.SKIP_SEED === 'true') {
+    console.log('ℹ️  Seed: Skipped (SKIP_SEED=true)');
+    return;
+  }
+
   const prisma = new PrismaClient();
   try {
     const seedClerkUserId = process.env.SEED_CLERK_USER_ID || '';
@@ -17,7 +23,6 @@ async function main() {
           siteKeywords: 'childcare, daycare, switzerland, education',
           primaryColor: '#3B82F6',
           secondaryColor: '#1E40AF',
-          // accent color might be present depending on schema; use any cast
           accentColor: '#F59E0B',
           adminPrimaryColor: '#1F2937',
           adminSecondaryColor: '#374151',
@@ -78,7 +83,6 @@ async function main() {
         });
         console.log('🌱 Seed: product created');
       } catch (err) {
-        // Skip if schema doesn't match
         console.log('⚠️ Seed: product creation skipped (schema mismatch)');
       }
     }
@@ -95,7 +99,6 @@ async function main() {
         });
         console.log('🌱 Seed: service created');
       } catch (err) {
-        // Skip if schema doesn't match
         console.log('⚠️ Seed: service creation skipped (schema mismatch)');
       }
     }
