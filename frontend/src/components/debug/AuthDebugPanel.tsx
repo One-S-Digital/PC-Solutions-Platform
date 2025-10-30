@@ -108,21 +108,25 @@ const AuthDebugPanel: React.FC = () => {
 
   return (
     <div
-      className={`fixed z-[9999] bg-gray-900 text-gray-100 border border-gray-700 rounded-lg shadow-2xl ${
-        isMinimized ? 'top-4 right-4 w-80' : 'top-4 right-4 w-[600px] h-[500px]'
+      className={`fixed z-[9999] bg-gray-900 text-gray-100 border-2 border-green-500 rounded-lg shadow-2xl ${
+        isMinimized ? 'top-4 right-4 w-80' : 'top-4 right-4 w-[700px] h-[600px]'
       }`}
-      style={{ fontFamily: 'monospace', fontSize: '11px' }}
+      style={{ 
+        fontFamily: 'monospace', 
+        fontSize: '11px',
+        boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)'
+      }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between bg-gray-800 px-3 py-2 border-b border-gray-700 cursor-move">
+      <div className="flex items-center justify-between bg-gray-800 px-3 py-2 border-b border-green-500 cursor-move">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="font-bold text-xs">Auth Debug</span>
+          <span className="font-bold text-sm text-green-400">🐛 Frontend Debugger</span>
           <span className="text-xs text-gray-400">
             flow={authDebugger.getFlowId().substring(5, 13)}
           </span>
           {isPaused && (
-            <span className="text-xs text-yellow-500 font-bold">PAUSED</span>
+            <span className="text-xs text-yellow-500 font-bold">⏸ PAUSED</span>
           )}
         </div>
         <div className="flex gap-1">
@@ -147,6 +151,7 @@ const AuthDebugPanel: React.FC = () => {
         <>
           {/* Toolbar */}
           <div className="flex gap-2 p-2 bg-gray-800 border-b border-gray-700 flex-wrap">
+            <div className="text-xs text-green-400 font-bold mr-2 self-center">📊 LOGS</div>
             <button
               onClick={handleCopyAll}
               className="px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 rounded transition-colors"
@@ -188,18 +193,32 @@ const AuthDebugPanel: React.FC = () => {
           {/* Log Display */}
           <div
             ref={logContainerRef}
-            className="overflow-auto h-[calc(100%-88px)] p-2 bg-gray-950"
+            className="overflow-auto h-[calc(100%-88px)] p-2 bg-black"
             style={{
               fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-              fontSize: '10px',
-              lineHeight: '1.4',
+              fontSize: '11px',
+              lineHeight: '1.5',
             }}
           >
             {logs.length === 0 ? (
-              <div className="text-gray-500 text-center py-8">
-                No logs yet. Authentication events will appear here.
-                <br />
-                <span className="text-xs">Use Ctrl+` to toggle panel</span>
+              <div className="text-center py-12">
+                <div className="text-4xl mb-4">🐛</div>
+                <div className="text-green-400 text-sm font-bold mb-2">
+                  Frontend Debugger Active
+                </div>
+                <div className="text-gray-500 text-xs mb-4">
+                  All frontend events will appear here
+                </div>
+                <div className="text-gray-600 text-xs space-y-1">
+                  <div>• Network requests/responses</div>
+                  <div>• Component lifecycle</div>
+                  <div>• State changes</div>
+                  <div>• User interactions</div>
+                  <div>• Errors and warnings</div>
+                </div>
+                <div className="mt-6 text-gray-500 text-xs">
+                  Press <kbd className="px-2 py-1 bg-gray-800 rounded">Ctrl+`</kbd> to toggle
+                </div>
               </div>
             ) : (
               logs.map((line, idx) => (
@@ -211,8 +230,12 @@ const AuthDebugPanel: React.FC = () => {
       )}
 
       {isMinimized && (
-        <div className="p-3 text-xs text-gray-400">
-          {logs.length} log lines • Click to expand
+        <div className="p-3 text-xs text-gray-400 cursor-pointer hover:bg-gray-800" onClick={() => setIsMinimized(false)}>
+          <div className="flex items-center gap-2">
+            <span className="text-green-400">🐛</span>
+            <span>{logs.length} log lines</span>
+            <span className="text-gray-600">• Click to expand</span>
+          </div>
         </div>
       )}
     </div>

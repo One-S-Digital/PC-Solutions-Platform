@@ -19,6 +19,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { UserRole } from './types';
 import DebugToggle from './src/components/debug/DebugToggle';
 import AuthDebugPanel from './src/components/debug/AuthDebugPanel';
+import FrontendDebugToggle from './src/components/debug/FrontendDebugToggle';
 import { authDebugger } from './src/utils/authDebugger';
 
 // New Pages
@@ -344,6 +345,7 @@ const App: React.FC = () => {
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
             <DebugToggle />
+            <FrontendDebugToggle />
             <AuthDebugPanel />
           </NotificationProvider>
         </MessagingProvider>
