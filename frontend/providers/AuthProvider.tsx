@@ -11,6 +11,7 @@ import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
 import { User } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
+import { authDebugger } from '../src/utils/authDebugger';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
@@ -65,6 +66,13 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
+  // Log Clerk SDK init
+  useEffect(() => {
+    if (clerkIsLoaded) {
+      authDebugger.log('CLERK', 'sdk_init', 'OK', '');
+    }
+  }, [clerkIsLoaded]);
+
   const transformBackendUser = useCallback((user: any): User => {
     console.log('🔄 Transforming backend user:', user);
     
@@ -106,6 +114,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       if (!token) {
         console.error('❌ No authentication token available');
         console.groupEnd();
+        authDebugger.log('HTTP', 'req', 'ERROR', { url: '/api/users/me', error: 'no_token' });
         throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
       }
 
@@ -122,6 +131,14 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           Accept: 'application/json',
           Authorization: 'Bearer ' + token.substring(0, 20) + '...',
         }
+      });
+
+      // Log HTTP request
+      authDebugger.log('HTTP', 'req', 'INFO', { 
+        method: 'GET', 
+        url: '/api/users/me',
+        authHeader: true,
+        attempt: attempt + 1
       });
 
       let response: Response;
@@ -144,9 +161,37 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
             'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
           }
         });
+
+        // Log HTTP response
+        if (response.ok) {
+          authDebugger.log('HTTP', 'res', 'OK', { 
+            status: response.status,
+            category: 'OK'
+          });
+        } else if (response.status === 401 || response.status === 403) {
+          authDebugger.log('HTTP', 'res', 'ERROR', { 
+            status: response.status,
+            category: 'UNAUTH'
+          });
+        } else if (response.status === 0) {
+          authDebugger.log('HTTP', 'res', 'ERROR', { 
+            status: 0,
+            category: 'NETWORK'
+          });
+        } else {
+          authDebugger.log('HTTP', 'res', 'ERROR', { 
+            status: response.status,
+            category: 'HTTP_ERROR'
+          });
+        }
       } catch (fetchError) {
         console.error('❌ Network/Fetch Error:', fetchError);
         console.groupEnd();
+        authDebugger.log('HTTP', 'res', 'ERROR', { 
+          status: 0,
+          category: 'NETWORK',
+          error: String(fetchError)
+        });
         throw new ApiError('Network error during fetch', 0, 'network_error');
       }
 

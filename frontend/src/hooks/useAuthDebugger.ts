@@ -14,15 +14,16 @@ export const useAuthDebugger = () => {
 
   // Log route changes
   useEffect(() => {
-    if (authDebugger.isEnabled()) {
-      authDebugger.logRouteEnter(location.pathname);
-    }
+    authDebugger.log('ROUTER', 'enter', 'INFO', { path: location.pathname });
   }, [location.pathname]);
 
   // Log Clerk state changes
   useEffect(() => {
-    if (authDebugger.isEnabled() && authIsLoaded) {
-      authDebugger.logClerkState(userIsLoaded, isSignedIn || false);
+    if (authIsLoaded) {
+      authDebugger.log('CLERK', 'state', 'INFO', { 
+        isLoaded: userIsLoaded, 
+        isSignedIn: isSignedIn || false 
+      });
     }
   }, [userIsLoaded, isSignedIn, authIsLoaded]);
 
