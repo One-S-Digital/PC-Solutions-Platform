@@ -58,6 +58,15 @@ ALTER TABLE "users" ALTER COLUMN "lastName" DROP NOT NULL;
 
 **Impact:** ✅ Handles Clerk test webhooks and real users without names
 
+#### Issue: Missing `lastActiveAt` Column
+**Fix:** Added `lastActiveAt` column
+
+```sql
+ALTER TABLE "users" ADD COLUMN "lastActiveAt" TIMESTAMP(3);
+```
+
+**Impact:** ✅ Resolves additional webhook failures
+
 ### 2. Comprehensive Schema Fix
 
 **File:** `api/prisma/migrations/20251030_comprehensive_schema_audit_fix/migration.sql`
@@ -208,7 +217,7 @@ Expected output:
 **Total Lines:** 1,500+ lines of code and documentation
 
 ### Database Changes
-- 1 critical column added (`users.stripeCustomerId`)
+- 2 critical columns added (`users.stripeCustomerId`, `users.lastActiveAt`)
 - 2 columns made nullable (`firstName`, `lastName`)
 - 11 tables created (admin features)
 - 6 columns added to existing tables
