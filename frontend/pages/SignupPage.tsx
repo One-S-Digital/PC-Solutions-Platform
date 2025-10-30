@@ -703,6 +703,24 @@ const SignupPage: React.FC = () => {
 
                 {showVerificationStep && (
                   <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    {(() => {
+                      console.log('🟡 [RENDER] Verification step rendering', {
+                        showVerificationStep,
+                        webhookStatus,
+                        verificationCode
+                      });
+                      
+                      try {
+                        authDebugger.log('CLERK', 'verify_form_render', 'INFO', { 
+                          webhookStatus,
+                          showVerificationStep: true
+                        });
+                      } catch (err) {
+                        console.error('Debug logging error:', err);
+                      }
+                      
+                      return null;
+                    })()}
                     {webhookStatus === 'processing' ? (
                       <VerificationProgress 
                         status={webhookStatus} 
@@ -721,6 +739,12 @@ const SignupPage: React.FC = () => {
                           {t('common:verifyEmailMessage', `We've sent a verification code to ${formData.email}. Please enter it below.`)}
                         </p>
                         <form onSubmit={(e) => {
+                          console.log('🔵 [FORM] onSubmit fired!');
+                          
+                          // CRITICAL: Prevent default FIRST
+                          e.preventDefault();
+                          e.stopPropagation();
+                          
                           // Log form submission
                           try {
                             authDebugger.log('CLERK', 'verify_form_submit', 'INFO', { 
@@ -732,10 +756,21 @@ const SignupPage: React.FC = () => {
                           }
                           
                           debugLogger.info('FORM', 'Verification form submitted');
-                          e.preventDefault();
-                          e.stopPropagation();
                           debugLogger.info('FORM', 'Form submission prevented, calling handleVerification');
-                          handleVerification(e);
+                          
+                          // Call handler
+                          try {
+                            handleVerification(e);
+                          } catch (err) {
+                            console.error('🔴 [FORM] handleVerification error:', err);
+                            try {
+                              authDebugger.log('CLERK', 'verify_error', 'ERROR', { 
+                                message: String(err)
+                              });
+                            } catch (logErr) {
+                              console.error('Debug logging error:', logErr);
+                            }
+                          }
                         }} className="space-y-4" noValidate>
                           <div>
                             <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700 mb-1">
@@ -767,13 +802,15 @@ const SignupPage: React.FC = () => {
                             size="lg" 
                             className="w-full" 
                             disabled={isLoading || isVerifying}
-                            onClick={() => {
-                              console.log('🚀 [FORM DEBUG] Verify button clicked', {
+                            onClick={(e) => {
+                              console.log('🟢 [BUTTON] onClick fired', {
                                 isLoading,
                                 isVerifying,
                                 hasCode: !!verificationCode,
                                 codeLength: verificationCode.length,
-                                disabled: isLoading || isVerifying
+                                disabled: isLoading || isVerifying,
+                                buttonType: (e.currentTarget as HTMLButtonElement).type,
+                                formElement: (e.currentTarget as HTMLButtonElement).form
                               });
                               
                               // Log button click
@@ -783,7 +820,9 @@ const SignupPage: React.FC = () => {
                                   isVerifying,
                                   hasCode: !!verificationCode,
                                   codeLength: verificationCode.length,
-                                  disabled: isLoading || isVerifying
+                                  disabled: isLoading || isVerifying,
+                                  buttonType: (e.currentTarget as HTMLButtonElement).type,
+                                  hasForm: !!(e.currentTarget as HTMLButtonElement).form
                                 });
                               } catch (err) {
                                 console.error('Debug logging error:', err);
