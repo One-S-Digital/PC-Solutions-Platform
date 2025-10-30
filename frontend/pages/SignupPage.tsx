@@ -37,7 +37,7 @@ const SignupPage: React.FC = () => {
   }, []); // Only run once on mount
 
   // Webhook status hook
-  const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling } = useWebhookStatus(signUp?.createdUserId || '');
+  const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling, checkWebhookStatus } = useWebhookStatus(signUp?.createdUserId || '');
 
   // Wait for webhook processing to complete
   const waitForWebhookProcessing = async (userId: string, sessionId: string | null) => {
@@ -57,14 +57,22 @@ const SignupPage: React.FC = () => {
       const startTime = Date.now();
       
       let loopCount = 0;
+      let currentStatus = webhookStatusFromHook;
+      
       while (Date.now() - startTime < maxWaitTime) {
         loopCount++;
         await new Promise(resolve => setTimeout(resolve, pollInterval));
         
-        const elapsed = Math.round((Date.now() - startTime) / 1000);
-        console.log(`⏳ [WAIT-WEBHOOK] Loop ${loopCount} (${elapsed}s elapsed) - Status: ${webhookStatusFromHook}`);
+        // Manually check status to avoid React stale closure
+        await checkWebhookStatus();
         
-        if (webhookStatusFromHook === 'ready') {
+        // Get fresh status after check
+        currentStatus = webhookStatusFromHook;
+        
+        const elapsed = Math.round((Date.now() - startTime) / 1000);
+        console.log(`⏳ [WAIT-WEBHOOK] Loop ${loopCount} (${elapsed}s elapsed) - Status: ${currentStatus}`);
+        
+        if (currentStatus === 'ready') {
           console.log('✅ [WAIT-WEBHOOK] Status is READY! Breaking loop...');
           debugLogger.info('VERIFICATION', 'Webhook processing complete, activating session...');
           
@@ -92,7 +100,7 @@ const SignupPage: React.FC = () => {
                 }
                 return;
           }
-        } else if (webhookStatusFromHook === 'error') {
+        } else if (currentStatus === 'error') {
           console.log('❌ [WAIT-WEBHOOK] Status is ERROR!');
           throw new Error(webhookErrorFromHook || 'Webhook processing failed');
         }
@@ -100,7 +108,8 @@ const SignupPage: React.FC = () => {
       
       // Timeout
       console.log('⏱️ [WAIT-WEBHOOK] 30-second timeout reached!');
-      console.log('💀 [WAIT-WEBHOOK] Final status:', webhookStatusFromHook);
+      console.log('💀 [WAIT-WEBHOOK] Final status:', currentStatus);
+      console.log('💀 [WAIT-WEBHOOK] Hook status (may be stale):', webhookStatusFromHook);
       console.log('💀 [WAIT-WEBHOOK] User was created but polling never detected it');
       throw new Error('Account setup timeout - please contact support');
       
