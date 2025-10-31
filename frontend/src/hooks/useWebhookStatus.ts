@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 
 interface WebhookStatus {
@@ -13,6 +13,16 @@ export const useWebhookStatus = (clerkId: string) => {
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   const { getToken } = useAuth();
+  
+  // Use ref to track current status for timeout callback (avoids stale closure)
+  const statusRef = useRef(status);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   const checkWebhookStatus = useCallback(async (): Promise<'pending' | 'processing' | 'ready' | 'error'> => {
     if (!clerkId) {
@@ -71,37 +81,73 @@ export const useWebhookStatus = (clerkId: string) => {
     setIsPolling(true);
     setStatus('processing');
     
+    // Clear any existing intervals/timeouts
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    
     // Initial check
     checkWebhookStatus();
     
     // Poll every 1 second
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       console.log('🔄 [WEBHOOK] Polling attempt...');
+      // Stop polling if we've reached a terminal state
+      if (statusRef.current === 'ready' || statusRef.current === 'error') {
+        console.log('🛑 [WEBHOOK] Terminal state reached, stopping polling:', statusRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        setIsPolling(false);
+        return;
+      }
       checkWebhookStatus();
     }, 1000);
     
-    // Stop polling after 30 seconds
-    const timeout = setTimeout(() => {
+    // Stop polling after 30 seconds - use statusRef to check current status
+    timeoutRef.current = setTimeout(() => {
       console.log('⏱️ [WEBHOOK] 30-second timeout reached');
-      clearInterval(interval);
+      console.log('⏱️ [WEBHOOK] Current status (from ref):', statusRef.current);
+      
+      if (intervalRef.current) clearInterval(intervalRef.current);
       setIsPolling(false);
-      if (status === 'processing') {
-        console.log('❌ [WEBHOOK] Timeout - user was never created');
+      
+      // Check the CURRENT status via ref, not the captured value
+      if (statusRef.current === 'processing' || statusRef.current === 'pending') {
+        console.log('❌ [WEBHOOK] Timeout - user was never created. Webhook may not be configured or failed.');
         setStatus('error');
-        setError('Account setup timeout - please contact support');
+        setError('Account creation is taking longer than expected. Your account may still be processing. Please try logging in, or contact support if the issue persists.');
+      } else {
+        console.log('✅ [WEBHOOK] Timeout reached but status is already:', statusRef.current);
       }
     }, 30000);
 
     return () => {
       console.log('🛑 [WEBHOOK] Cleanup - stopping polling');
-      clearInterval(interval);
-      clearTimeout(timeout);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       setIsPolling(false);
     };
-  }, [checkWebhookStatus, isPolling, status]);
+  }, [checkWebhookStatus, isPolling]);
 
   const stopPolling = useCallback(() => {
+    console.log('🛑 [WEBHOOK] stopPolling called');
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setIsPolling(false);
+  }, []);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      console.log('🧹 [WEBHOOK] Hook unmounting, cleaning up...');
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   return {

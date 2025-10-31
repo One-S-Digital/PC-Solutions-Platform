@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 
 interface VerificationProgressProps {
   status: 'pending' | 'processing' | 'ready' | 'error';
   error?: string | null;
   onRetry?: () => void;
+  showLoginLink?: boolean;
 }
 
 const VerificationProgress: React.FC<VerificationProgressProps> = ({
   status,
   error,
   onRetry,
+  showLoginLink = true,
 }) => {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
@@ -91,17 +94,45 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
         </div>
       )}
 
-      {status === 'error' && onRetry && (
+      {status === 'error' && (
         <div className="space-y-4">
-          <p className="text-sm text-gray-500">
-            If this problem persists, please contact support.
-          </p>
-          <button
-            onClick={onRetry}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Try Again
-          </button>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+            <p className="text-sm text-yellow-800 mb-2">
+              <strong>Your email verification was successful!</strong>
+            </p>
+            <p className="text-sm text-yellow-700">
+              However, account setup is taking longer than expected. This may be due to:
+            </p>
+            <ul className="text-sm text-yellow-700 list-disc list-inside mt-2 text-left">
+              <li>Backend webhook processing delay</li>
+              <li>Database connection issues</li>
+              <li>Server load</li>
+            </ul>
+          </div>
+          
+          <div className="space-y-3">
+            {showLoginLink && (
+              <Link
+                to="/login"
+                className="block w-full px-4 py-2 bg-swiss-mint text-white rounded-md hover:bg-opacity-90 transition-colors font-medium"
+              >
+                Try Logging In
+              </Link>
+            )}
+            
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+              >
+                Wait and Try Again
+              </button>
+            )}
+            
+            <p className="text-xs text-gray-500 mt-4">
+              If you can't log in after a few minutes, please contact support with the error message above.
+            </p>
+          </div>
         </div>
       )}
 
