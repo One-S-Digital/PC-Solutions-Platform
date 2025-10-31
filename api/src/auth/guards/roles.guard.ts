@@ -48,7 +48,8 @@ export class RolesGuard implements CanActivate {
     // Handle pending users - allow access to basic endpoints
     if (userContext.role === 'PENDING' || userContext.isPending) {
       // Allow access to user profile and webhook status endpoints
-      const allowedPaths = ['/users/me', '/users/webhook-status'];
+      // Note: Include /api prefix since app.setGlobalPrefix('api') is used
+      const allowedPaths = ['/api/users/me', '/api/users/webhook-status', '/users/me', '/users/webhook-status'];
       const isAllowedPath = allowedPaths.some(path => request.url.startsWith(path));
       
       if (isAllowedPath) {
