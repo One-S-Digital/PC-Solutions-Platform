@@ -36,8 +36,8 @@ const SignupPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount
 
-  // Webhook status hook
-  const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling, checkWebhookStatus } = useWebhookStatus(signUp?.createdUserId || '');
+  // Webhook status hook - no clerkId param needed, uses authenticated session
+  const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling, checkWebhookStatus } = useWebhookStatus();
 
   // Wait for webhook processing to complete
   const waitForWebhookProcessing = async (userId: string, sessionId: string | null) => {

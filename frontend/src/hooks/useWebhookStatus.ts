@@ -8,7 +8,13 @@ interface WebhookStatus {
   timestamp: string;
 }
 
-export const useWebhookStatus = (clerkId: string) => {
+/**
+ * Hook to check webhook processing status during signup.
+ * 
+ * Security: Uses authenticated user session to check status, preventing user enumeration.
+ * The backend endpoint reads clerkId from the JWT token, not from URL parameters.
+ */
+export const useWebhookStatus = () => {
   const [status, setStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
@@ -25,15 +31,18 @@ export const useWebhookStatus = (clerkId: string) => {
   }, [status]);
 
   const checkWebhookStatus = useCallback(async (): Promise<'pending' | 'processing' | 'ready' | 'error'> => {
-    if (!clerkId) {
-      console.log('⚠️ [WEBHOOK] No clerkId provided, skipping check');
-      return 'pending';
-    }
-
     try {
-      console.log('🔍 [WEBHOOK] Checking status for clerkId:', clerkId);
+      console.log('🔍 [WEBHOOK] Checking webhook status (using authenticated session)');
       const token = await getToken();
-      const response = await fetch(`/api/users/webhook-status/${clerkId}`, {
+      
+      if (!token) {
+        console.log('⚠️ [WEBHOOK] No auth token available, user may not be authenticated yet');
+        setStatus('processing');
+        return 'processing';
+      }
+      
+      // Note: No clerkId in URL - backend reads it from authenticated session
+      const response = await fetch('/api/users/webhook-status', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -69,7 +78,7 @@ export const useWebhookStatus = (clerkId: string) => {
       setError(err instanceof Error ? err.message : 'Failed to check account status');
       return 'error';
     }
-  }, [clerkId, getToken]);
+  }, [getToken]);
 
   const startPolling = useCallback(() => {
     if (isPolling) {
