@@ -2,12 +2,38 @@ import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@
 import { Reflector } from '@nestjs/core';
 import { UserRole } from '@prisma/client';
 import { ROLES_KEY } from '../decorators/roles.decorator';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { ALLOW_PENDING_KEY } from '../decorators/allow-pending.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    
+    // 1. Allow OPTIONS requests (CORS preflight)
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+    
+    // 2. Check if route is marked as @Public()
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    
+    if (isPublic) {
+      return true;
+    }
+    
+    // 3. Check if route allows pending users via @AllowPending()
+    const allowPending = this.reflector.getAllAndOverride<boolean>(ALLOW_PENDING_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    
+    // 4. Check required roles
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -17,7 +43,6 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
     const userContext = request.context;
     
     // Development mode bypass (keeping for now)
@@ -32,6 +57,7 @@ export class RolesGuard implements CanActivate {
     console.log('🔐 RolesGuard Debug:', {
       url: request.url,
       requiredRoles,
+      allowPending,
       hasContext: !!userContext,
       context: userContext,
       isDevelopment,
@@ -45,15 +71,10 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User role not found');
     }
 
-    // Handle pending users - allow access to basic endpoints
+    // 5. Handle pending users - only allow if route is marked with @AllowPending()
     if (userContext.role === 'PENDING' || userContext.isPending) {
-      // Allow access to user profile and webhook status endpoints
-      // Note: Include /api prefix since app.setGlobalPrefix('api') is used
-      const allowedPaths = ['/api/users/me', '/api/users/webhook-status', '/users/me', '/users/webhook-status'];
-      const isAllowedPath = allowedPaths.some(path => request.url.startsWith(path));
-      
-      if (isAllowedPath) {
-        console.log('🔐 RolesGuard: Allowing pending user access to', request.url);
+      if (allowPending) {
+        console.log('🔐 RolesGuard: Allowing pending user access to @AllowPending() route:', request.url);
         return true;
       } else {
         console.log('🚫 RolesGuard: Pending user denied access to', request.url);

@@ -20,6 +20,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { AllowPending } from '../auth/decorators/allow-pending.decorator';
 
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -76,8 +77,33 @@ export class UsersController {
     };
   }
 
-  @Get('webhook-status/:clerkId')
-  async getWebhookStatus(@Param('clerkId') clerkId: string) {
+  /**
+   * Check webhook processing status for the current authenticated user.
+   * Used during signup to poll whether the user.created webhook has completed.
+   * 
+   * Security: Uses authenticated user's clerkId from session, not from URL params.
+   * This prevents user enumeration and parameter tampering.
+   * 
+   * @AllowPending - Accessible to pending users (those whose webhook is still processing)
+   */
+  @Get('webhook-status')
+  @AllowPending()
+  async getWebhookStatus(@Request() request) {
+    const clerkId = request.user?.clerkId || request.context?.clerkUserId;
+    
+    if (!clerkId) {
+      this.logger.warn(`⚠️ [WEBHOOK-STATUS] No clerkId found in request context`);
+      return {
+        success: false,
+        error: 'Unauthorized - no user session found',
+        data: {
+          exists: false,
+          isPending: true,
+          timestamp: new Date().toISOString()
+        }
+      };
+    }
+    
     this.logger.log(`🔍 [WEBHOOK-STATUS] Checking status for ClerkId: ${clerkId}`);
     const appUser = await this.usersService.findAppUserByClerkId(clerkId);
     
