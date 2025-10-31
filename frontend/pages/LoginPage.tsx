@@ -70,13 +70,10 @@ const LoginPage: React.FC = () => {
     });
   }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
 
-  // Redirect if user is already logged in and backend sync is successful
-  useEffect(() => {
-    if (isSignedIn && currentUser && !isAuthLoading) {
-      console.log('✅ User authenticated and synced. Redirecting to dashboard...');
-      navigate('/dashboard', { replace: true });
-    }
-  }, [isSignedIn, currentUser, isAuthLoading, navigate]);
+  // NOTE: Removed auto-redirect for signed-in users.
+  // Instead, show "Active Session" page with Go to Dashboard and Sign Out buttons.
+  // Users can choose what to do rather than being auto-redirected.
+  // The UI already handles this in the render section (lines 254-282).
 
   // Show error when backend sync fails
   useEffect(() => {
@@ -253,19 +250,29 @@ const LoginPage: React.FC = () => {
 
         {isSignedIn && currentUser ? (
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-swiss-charcoal text-center">
-              {t('common:loginPage.alreadySignedInTitle')}
+            <div className="flex justify-center mb-4">
+              <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
+            </div>
+            <h2 className="text-2xl font-bold text-swiss-charcoal text-center">
+              {t('common:loginPage.alreadySignedInTitle', 'Active Session Detected')}
             </h2>
-            <p className="text-sm text-gray-600 text-center">
-              {t('common:loginPage.alreadySignedInDescription')}
-            </p>
-            <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800 text-center">
+                <strong>Welcome back, {currentUser.firstName || 'User'}!</strong>
+              </p>
+              <p className="text-xs text-blue-700 text-center mt-2">
+                {t('common:loginPage.alreadySignedInDescription', 'You are already logged in. Choose an option below to continue.')}
+              </p>
+            </div>
+            <div className="flex flex-col space-y-3">
               <Button
                 type="button"
+                variant="primary"
+                size="lg"
                 className="w-full"
                 onClick={() => navigate('/dashboard', { replace: true })}
               >
-                {t('common:loginPage.goToDashboard')}
+                {t('common:loginPage.goToDashboard', 'Go to Dashboard')}
               </Button>
               <Button
                 type="button"
@@ -275,8 +282,8 @@ const LoginPage: React.FC = () => {
                 disabled={isSigningOut}
               >
                 {isSigningOut
-                  ? t('common:loginPage.signingOut')
-                  : t('common:loginPage.signOutButton')}
+                  ? t('common:loginPage.signingOut', 'Signing Out...')
+                  : t('common:loginPage.signOutButton', 'Sign Out')}
               </Button>
             </div>
           </div>
