@@ -22,7 +22,19 @@ The UI for the "Active Session" page existed (lines 254-282) but was only visibl
 
 ## The Fix
 
-### 1. Removed Auto-Redirect for Already-Signed-In Users ✅
+### 1. Added Guard to Prevent Active Session UI After Fresh Login ✅
+
+**Added**: `justLoggedIn` flag to track active login process
+
+When user successfully logs in:
+1. Set `justLoggedIn = true` before calling `setActive()`
+2. This prevents Active Session UI from rendering during brief moment before `navigate()`
+3. Navigate to dashboard completes
+4. If error occurs, reset `justLoggedIn = false`
+
+This ensures Active Session UI only shows when user **arrives already logged in**, not when they **just logged in**.
+
+### 2. Removed Auto-Redirect for Already-Signed-In Users ✅
 
 **File**: `frontend/pages/LoginPage.tsx`
 
@@ -46,7 +58,7 @@ useEffect(() => {
 // The UI already handles this in the render section (lines 254-290).
 ```
 
-### 2. Enhanced "Active Session" UI ✅
+### 3. Enhanced "Active Session" UI ✅
 
 Made the active session page more prominent and user-friendly:
 
@@ -93,26 +105,39 @@ Made the active session page more prominent and user-friendly:
 
 ### Before (❌ Broken)
 
+**Scenario A - Already Logged In:**
 ```
-User navigates to /login
-  ↓
-Already signed in? 
+User navigates to /login (already signed in)
   ↓
 [Brief flash of "Active Session" page]
   ↓
-Auto-redirect to /dashboard (immediately)
+Auto-redirect to /dashboard (immediately) ❌
   ↓
 User doesn't see options
 ```
 
+**Scenario B - Fresh Login:**
+```
+User navigates to /login (not signed in)
+  ↓
+Submits credentials
+  ↓
+Login succeeds → isSignedIn=true
+  ↓
+[Brief flash of "Active Session" page] ❌
+  ↓
+Redirect to /dashboard
+```
+
 ### After (✅ Fixed)
 
+**Scenario A - Already Logged In:**
 ```
-User navigates to /login
+User navigates to /login (already signed in)
   ↓
-Already signed in?
+justLoggedIn = false (didn't just login)
   ↓
-"Active Session Detected" page shows
+"Active Session Detected" page shows ✅
   ↓
 User sees:
   - "Welcome back, [Name]!"
@@ -120,6 +145,21 @@ User sees:
   - "Sign Out" button
   ↓
 User chooses what to do
+```
+
+**Scenario B - Fresh Login:**
+```
+User navigates to /login (not signed in)
+  ↓
+Submits credentials
+  ↓
+justLoggedIn = true (set before setActive)
+  ↓
+Login succeeds → isSignedIn=true
+  ↓
+Active Session UI hidden (justLoggedIn=true) ✅
+  ↓
+Redirect directly to /dashboard
 ```
 
 ---
