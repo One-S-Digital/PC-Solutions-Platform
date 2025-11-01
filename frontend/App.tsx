@@ -15,7 +15,8 @@ import SettingsPage from './pages/SettingsPage';
 import { AppContextProvider, useAppContext } from './contexts/AppContext';
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
-import { NotificationProvider } from './contexts/NotificationContext'; 
+import { NotificationProvider } from './contexts/NotificationContext';
+import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
 import DebugToggle from './src/components/debug/DebugToggle';
 import AuthDebugPanel from './src/components/debug/AuthDebugPanel';
@@ -131,6 +132,7 @@ const RoleBasedDashboardRedirect: React.FC = () => {
 const ProtectedLayout: React.FC = () => {
   const { currentUser } = useAppContext();
   const { isLoaded, isSignedIn } = useAuth();
+  const { isLoading: isAuthLoading } = useAuthContext();
   const location = useLocation();
 
   useEffect(() => {
@@ -143,8 +145,31 @@ const ProtectedLayout: React.FC = () => {
     }
   }, [currentUser, isLoaded, isSignedIn, location.pathname]);
 
-  if (!currentUser) {
+  // Wait for Clerk to load before checking authentication
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+      </div>
+    );
+  }
+
+  // User not signed in to Clerk ? redirect to login
+  if (!isSignedIn) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Signed in to Clerk but no currentUser yet ? Wait for backend sync (show loading)
+  // This prevents premature redirect during the initial backend sync after login
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your account...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -354,7 +379,7 @@ const App: React.FC = () => {
         port: window.location.port,
       };
       
-      console.log('🚀 App Boot - Environment Config:', envConfig);
+      console.log('?? App Boot - Environment Config:', envConfig);
       authDebugger.log('ENV', 'boot', 'INFO', envConfig);
     }
   }, []);
