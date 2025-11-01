@@ -44,6 +44,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
   // Enable debug logging for this component
   useDebugLogger();
@@ -124,14 +125,20 @@ const LoginPage: React.FC = () => {
 
       if (result.status === 'complete') {
         try {
+          // Set flag to prevent showing "Active Session" UI during redirect
+          setJustLoggedIn(true);
+          
           await setActive({ session: result.createdSessionId });
           authDebugger.log('CLERK', 'set_active', 'OK', { sessionId: 'set' });
           authDebugger.log('LOGIN', 'redirect_after', 'INFO', { to: '/dashboard' });
+          
+          // Navigate immediately - don't let component re-render with "Active Session" UI
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           authDebugger.log('CLERK', 'set_active', 'ERROR', { error: setActiveError.message });
           setError(t('common:loginPage.sessionActivationFailed'));
+          setJustLoggedIn(false);
         }
       } else if (result.status === 'needs_first_factor') {
         authDebugger.log('LOGIN', 'submit', 'WARN', { reason: 'two_factor_required' });
@@ -193,6 +200,9 @@ const LoginPage: React.FC = () => {
     }
 
     try {
+      // Set flag to prevent Active Session UI from showing after OAuth completes
+      setJustLoggedIn(true);
+      
       // Use full URL for redirects (Clerk v5 requirement)
       const redirectUrl = `${window.location.origin}/dashboard`;
       
@@ -205,6 +215,7 @@ const LoginPage: React.FC = () => {
       console.error('Social login error:', error);
       const errorMessage = error.errors?.[0]?.message || t('common:loginPage.socialLoginFailed');
       setError(errorMessage);
+      setJustLoggedIn(false);
     }
   };
 
@@ -248,7 +259,7 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        {isSignedIn && currentUser ? (
+        {isSignedIn && currentUser && !justLoggedIn ? (
           <div className="space-y-6">
             <div className="flex justify-center mb-4">
               <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
@@ -287,7 +298,7 @@ const LoginPage: React.FC = () => {
               </Button>
             </div>
           </div>
-        ) : isSignedIn && !currentUser && !isAuthLoading ? (
+        ) : isSignedIn && !currentUser && !isAuthLoading && !justLoggedIn ? (
           <div className="space-y-6">
             <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
               <p className="text-sm text-yellow-800 mb-2">
