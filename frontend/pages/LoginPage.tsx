@@ -44,7 +44,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
   // Enable debug logging for this component
   useDebugLogger();
@@ -71,22 +70,8 @@ const LoginPage: React.FC = () => {
     });
   }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
 
-  // NOTE: Removed auto-redirect for signed-in users.
-  // Instead, show "Active Session" page with Go to Dashboard and Sign Out buttons.
-  // Users can choose what to do rather than being auto-redirected.
-  // The UI already handles this in the render section (lines 254-282).
-
-  // Show error when backend sync fails
-  useEffect(() => {
-    if (isSignedIn && !currentUser && !isAuthLoading) {
-      console.error('❌ User authenticated but backend sync failed');
-      if (authError) {
-        setError(t(authError));
-      } else {
-        setError(t('common:loginPage.backendSyncError'));
-      }
-    }
-  }, [isSignedIn, currentUser, isAuthLoading, authError, t]);
+  // No auto-redirects or side effects needed.
+  // Rendering is purely driven by isLoaded and isSignedIn state.
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,20 +110,17 @@ const LoginPage: React.FC = () => {
 
       if (result.status === 'complete') {
         try {
-          // Set flag to prevent showing "Active Session" UI during redirect
-          setJustLoggedIn(true);
-          
+          // Immediately activate session and navigate - no re-render in between
           await setActive({ session: result.createdSessionId });
           authDebugger.log('CLERK', 'set_active', 'OK', { sessionId: 'set' });
           authDebugger.log('LOGIN', 'redirect_after', 'INFO', { to: '/dashboard' });
           
-          // Navigate immediately - don't let component re-render with "Active Session" UI
+          // Navigate immediately - proper render gating prevents Active Session UI from showing
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           authDebugger.log('CLERK', 'set_active', 'ERROR', { error: setActiveError.message });
           setError(t('common:loginPage.sessionActivationFailed'));
-          setJustLoggedIn(false);
         }
       } else if (result.status === 'needs_first_factor') {
         authDebugger.log('LOGIN', 'submit', 'WARN', { reason: 'two_factor_required' });
@@ -200,9 +182,7 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // Set flag to prevent Active Session UI from showing after OAuth completes
-      setJustLoggedIn(true);
-      
+      // OAuth will redirect to dashboard after completion
       // Use full URL for redirects (Clerk v5 requirement)
       const redirectUrl = `${window.location.origin}/dashboard`;
       
@@ -215,7 +195,6 @@ const LoginPage: React.FC = () => {
       console.error('Social login error:', error);
       const errorMessage = error.errors?.[0]?.message || t('common:loginPage.socialLoginFailed');
       setError(errorMessage);
-      setJustLoggedIn(false);
     }
   };
 
@@ -234,6 +213,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  // STRICT RENDERING GATES - Wait for Clerk to load before showing anything
   if (!isSignInLoaded || !isAuthLoaded) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
@@ -242,24 +222,19 @@ const LoginPage: React.FC = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-      <Card className="w-full max-w-md p-8 shadow-xl">
-        <div className="text-center mb-8">
-          <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
-          <h1 className="text-2xl font-bold text-swiss-charcoal">
-            {t('common:loginPage.title', { appName: APP_NAME })}
-          </h1>
-          <p className="text-sm text-gray-500">{t('common:loginPage.subtitle')}</p>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
-            {error}
+  // SCENARIO A: Already signed in when landing on /login
+  // Show "Active Session" UI - let user choose to go to dashboard or sign out
+  if (isSignedIn && currentUser) {
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+        <Card className="w-full max-w-md p-8 shadow-xl">
+          <div className="text-center mb-8">
+            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            <h1 className="text-2xl font-bold text-swiss-charcoal">
+              {t('common:loginPage.title', { appName: APP_NAME })}
+            </h1>
           </div>
-        )}
 
-        {isSignedIn && currentUser && !justLoggedIn ? (
           <div className="space-y-6">
             <div className="flex justify-center mb-4">
               <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
@@ -298,11 +273,40 @@ const LoginPage: React.FC = () => {
               </Button>
             </div>
           </div>
-        ) : isSignedIn && !currentUser && !isAuthLoading && !justLoggedIn ? (
+
+          <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
+            <p>
+              {t('common:loginPage.noAccount')}{' '}
+              <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
+                {t('common:buttons.signup')}
+              </Link>
+            </p>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <LanguageSwitcher />
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // SCENARIO B (Edge Case): Signed in to Clerk but backend sync failed
+  if (isSignedIn && !currentUser && !isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+        <Card className="w-full max-w-md p-8 shadow-xl">
+          <div className="text-center mb-8">
+            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            <h1 className="text-2xl font-bold text-swiss-charcoal">
+              {t('common:loginPage.title', { appName: APP_NAME })}
+            </h1>
+          </div>
+
           <div className="space-y-6">
             <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
               <p className="text-sm text-yellow-800 mb-2">
-                <strong>{t('common:loginPage.backendSyncError')}</strong>
+                <strong>{t('common:loginPage.backendSyncError', 'Backend Sync Error')}</strong>
               </p>
               <p className="text-xs text-yellow-700">
                 You are authenticated, but we're having trouble connecting to the backend. 
@@ -319,14 +323,40 @@ const LoginPage: React.FC = () => {
                 disabled={isSigningOut}
               >
                 {isSigningOut
-                  ? t('common:loginPage.signingOut')
-                  : t('common:loginPage.signOutButton')}
+                  ? t('common:loginPage.signingOut', 'Signing Out...')
+                  : t('common:loginPage.signOutButton', 'Sign Out')}
               </Button>
             </div>
           </div>
-        ) : (
-          <>
-            <form onSubmit={handleLogin} className="space-y-6">
+
+          <div className="mt-6 flex justify-center">
+            <LanguageSwitcher />
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // SCENARIO C: Not signed in - Show login form
+  return (
+    <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-md p-8 shadow-xl">
+        <div className="text-center mb-8">
+          <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+          <h1 className="text-2xl font-bold text-swiss-charcoal">
+            {t('common:loginPage.title', { appName: APP_NAME })}
+          </h1>
+          <p className="text-sm text-gray-500">{t('common:loginPage.subtitle')}</p>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Login Form - Only rendered when NOT signed in */}
+        <form onSubmit={handleLogin} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('common:loginPage.emailLabel')}
@@ -411,9 +441,9 @@ const LoginPage: React.FC = () => {
                 </Button>
               </div>
             </div>
-          </>
-        )}
-        
+          </div>
+        </div>
+
         <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
           <p>
             {t('common:loginPage.noAccount')}{' '}
@@ -436,7 +466,7 @@ const LoginPage: React.FC = () => {
                 to="/parent-lead-form" 
                 className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
               >
-                <span className="mr-1">🏠</span>
+                <span className="mr-1">??</span>
                 {t('common:loginPage.findCrecheHere')}
               </Link>
             </div>
