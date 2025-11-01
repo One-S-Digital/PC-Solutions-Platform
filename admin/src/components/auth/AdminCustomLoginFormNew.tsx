@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
-import { SquaresPlusIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import { useSettings } from '../../hooks/useSettings';
 import Card from '../design-system/Card';
@@ -34,13 +34,9 @@ export default function AdminCustomLoginForm() {
     email: '',
     password: '',
   });
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (authLoaded && isSignedIn && user) {
-      navigate('/dashboard');
-    }
-  }, [authLoaded, isSignedIn, user, navigate]);
+  // No auto-redirect - use render gating instead
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +56,7 @@ export default function AdminCustomLoginForm() {
       if (result.status === 'complete') {
         // User signed in successfully, activate session and redirect to admin dashboard
         try {
+          // Immediately activate session and navigate - no re-render in between
           await setActive({ session: result.createdSessionId });
           navigate('/dashboard');
         } catch (setActiveError: any) {
@@ -124,6 +121,7 @@ export default function AdminCustomLoginForm() {
     setIsLoading(true);
 
     try {
+      // OAuth will redirect to dashboard after completion
       // Use full URL for redirects (Clerk v5 requirement)
       const redirectUrl = `${window.location.origin}/dashboard`;
       
@@ -140,6 +138,18 @@ export default function AdminCustomLoginForm() {
     }
   };
 
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      // Navigate to homepage after sign out
+      navigate('/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
+
   const updateFormData = (field: keyof AdminLoginFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -152,6 +162,7 @@ export default function AdminCustomLoginForm() {
     return null;
   };
 
+  // STRICT RENDERING GATES - Wait for Clerk to load before showing anything
   if (!isLoaded || !authLoaded) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
@@ -163,12 +174,13 @@ export default function AdminCustomLoginForm() {
     );
   }
 
-  // Show message if user is already authenticated but not redirected yet
+  // SCENARIO A: Already signed in when landing on /login
+  // Show "Active Session" UI - let user choose to go to dashboard or sign out
   if (isSignedIn && user) {
     return (
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">
-          <div className="text-center">
+          <div className="text-center mb-8">
             <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-6">
               {getAdminLogo() ? (
                 <img 
@@ -180,25 +192,62 @@ export default function AdminCustomLoginForm() {
                 <SquaresPlusIcon className="h-8 w-8 text-white" />
               )}
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-swiss-charcoal">
-              Already Logged In
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex justify-center mb-4">
+              <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
+            </div>
+            <h2 className="text-2xl font-bold text-swiss-charcoal text-center">
+              Active Admin Session
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Welcome back, {user.fullName || user.emailAddresses[0]?.emailAddress}!
-            </p>
-            <div className="mt-6">
-              <Link to="/dashboard">
-                <Button variant="primary" size="lg" className="w-full">
-                  Go to Dashboard
-                </Button>
-              </Link>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800 text-center">
+                <strong>Welcome back, {user.fullName || user.firstName || 'Admin'}!</strong>
+              </p>
+              <p className="text-xs text-blue-700 text-center mt-2">
+                You are already logged in to the admin dashboard. Choose an option below to continue.
+              </p>
+            </div>
+            <div className="flex flex-col space-y-3">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                className="w-full"
+                onClick={() => navigate('/dashboard')}
+              >
+                Go to Dashboard
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={handleSignOut}
+                disabled={isSigningOut}
+              >
+                {isSigningOut ? 'Signing Out...' : 'Sign Out'}
+              </Button>
             </div>
           </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500">
+              Admin access required - Secured by Clerk
+            </p>
+          </div>
         </Card>
+
+        <div className="mt-8 text-center">
+          <p className="text-xs text-gray-500">
+            © 2024 Pro Crèche Solutions. All rights reserved.
+          </p>
+        </div>
       </div>
     );
   }
 
+  // SCENARIO B: Not signed in - Show login form
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md p-8 shadow-xl">
