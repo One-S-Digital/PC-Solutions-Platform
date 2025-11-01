@@ -159,17 +159,23 @@ const ProtectedLayout: React.FC = () => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Signed in to Clerk but no currentUser yet ? Wait for backend sync (show loading)
-  // This prevents premature redirect during the initial backend sync after login
+  // Signed in to Clerk but no currentUser yet
   if (!currentUser) {
-    return (
-      <div className="min-h-screen bg-page-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your account...</p>
+    // Still loading from backend ? show loading screen (prevents redirect during sync)
+    if (isAuthLoading) {
+      return (
+        <div className="min-h-screen bg-page-bg flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your account...</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    
+    // Backend sync failed (not loading anymore, but no user) ? redirect to login
+    // LoginPage will detect isSignedIn=true && !currentUser && !isAuthLoading and show backend sync error UI
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return (
