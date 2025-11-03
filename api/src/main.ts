@@ -104,14 +104,12 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
-  // Disable ETag generation so dynamic endpoints (like auth) always return 200 responses
-  const httpAdapter = app.getHttpAdapter().getInstance();
-  if (httpAdapter?.set) {
-    httpAdapter.set('etag', false);
-  }
-
-  // Ensure API responses are never cached by intermediaries or browsers
-  app.use((req, res, next) => {
+  // Prevent conditional caching on API routes to avoid 304 responses for identity-dependent endpoints
+  app.use('/api', (req, res, next) => {
+    if (req.headers) {
+      delete req.headers['if-none-match'];
+      delete req.headers['if-modified-since'];
+    }
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Vary', 'Origin');
     next();

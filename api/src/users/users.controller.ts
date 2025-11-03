@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
   Query,
   ParseUUIDPipe,
   Request,
@@ -21,6 +22,7 @@ import { UserRole } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { AllowPending } from '../auth/decorators/allow-pending.decorator';
+import { NoCacheInterceptor } from '../common/interceptors/no-cache.interceptor';
 
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -52,6 +54,7 @@ export class UsersController {
   }
 
   @Get('me')
+  @UseInterceptors(NoCacheInterceptor)
   async getCurrentUser(@Request() request) {
     const user = await this.usersService.findByClerkId(request.user.clerkId);
     
