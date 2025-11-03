@@ -68,6 +68,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   // Log Clerk SDK init
   useEffect(() => {
     if (clerkIsLoaded) {
+      console.log('Clerk SDK initialized');
     }
   }, [clerkIsLoaded]);
 
@@ -130,7 +131,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       };
 
       console.log('🔧 Environment Config:', envConfig);
-
       // Token validation
       const tokenInfo = {
         hasToken: !!token,
@@ -141,6 +141,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       };
 
       console.log('🔑 Token Info:', tokenInfo);
+      console.log('Token validated:', tokenInfo);
 
       console.log('📤 Request Details:', {
         url,
@@ -152,15 +153,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           Accept: 'application/json',
           Authorization: 'Bearer ' + token.substring(0, 20) + '...',
         }
-      });
-
-      // Log HTTP request with full details
-        method: 'GET', 
-        url: '/api/users/me',
-        fullUrl: url,
-        authHeader: true,
-        attempt: attempt + 1,
-        timestamp: new Date().toISOString()
       });
 
       let response: Response;
@@ -204,29 +196,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           }
         });
 
-        // Log HTTP response with detailed info
-        if (response.ok) {
-            status: response.status,
-            category: 'OK',
-            duration: `${duration.toFixed(2)}ms`,
-            cors: corsHeaders
-          });
-        } else if (response.status === 401 || response.status === 403) {
-            status: response.status,
-            category: 'UNAUTH',
-            duration: `${duration.toFixed(2)}ms`
-          });
-        } else if (response.status === 0) {
-            status: 0,
-            category: 'NETWORK',
-            duration: `${duration.toFixed(2)}ms`
-          });
-        } else {
-            status: response.status,
-            category: 'HTTP_ERROR',
-            duration: `${duration.toFixed(2)}ms`
-          });
-        }
       } catch (fetchError) {
         const fetchEndTime = performance.now();
         const duration = fetchEndTime - fetchStartTime;
@@ -256,12 +225,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('❌ Network/Fetch Error - DETAILED DIAGNOSTICS:', errorDetails);
         console.groupEnd();
         
-          status: 0,
-          category: 'NETWORK',
-          error: String(fetchError),
-          details: errorDetails
-        });
-        
         throw new ApiError(
           `Network error: ${errorDetails.errorMessage}. URL: ${url}. Online: ${errorDetails.online}`,
           0,
@@ -276,31 +239,15 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         responseText = await response.text(); // Don't use clone(), just read it once
         console.log('📄 Response Body (raw):', responseText);
         
-        // Log response body for debugging
-          length: responseText.length,
-          preview: responseText.substring(0, 200)
-        });
-        
         try {
           responseBody = JSON.parse(responseText);
           console.log('📄 Response Body (parsed):', responseBody);
           
-          // Log parsed response structure
-            hasSuccess: !!responseBody?.success,
-            successValue: responseBody?.success,
-            hasData: !!responseBody?.data,
-            dataKeys: responseBody?.data ? Object.keys(responseBody.data).join(',') : 'none',
-            isPending: responseBody?.data?.isPending || false
-          });
         } catch (parseError) {
           console.warn('⚠️  Response is not valid JSON:', parseError);
-            error: String(parseError)
-          });
         }
       } catch (bodyError) {
         console.error('❌ Error reading response body:', bodyError);
-          error: String(bodyError)
-        });
       }
 
       if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
@@ -341,9 +288,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           clerkId,
           message: data.data.message,
         });
-          attempt: attempt + 1,
-          message: data.data.message
-        });
         console.groupEnd();
         
         if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
@@ -366,12 +310,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           dataValue: data?.data,
           fullResponse: data,
         });
-          hasSuccess: !!data?.success,
-          successValue: data?.success,
-          hasData: !!data?.data,
-          responseType: typeof data,
-          responseKeys: data ? Object.keys(data).join(',') : 'null'
-        });
         console.groupEnd();
         throw new Error('Invalid response format from backend');
       }
@@ -382,13 +320,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         role: data.data.role,
         firstName: data.data.firstName,
         lastName: data.data.lastName,
-      });
-      
-        userId: data.data.id,
-        email: data.data.email,
-        role: data.data.role,
-        hasFirstName: !!data.data.firstName,
-        hasLastName: !!data.data.lastName
       });
       
       console.groupEnd();
@@ -454,11 +385,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           role: backendUser.role,
           name: backendUser.name
         });
-        
-          userId: backendUser.id,
-          email: backendUser.email,
-          role: backendUser.role
-        });
 
         setCurrentUser(backendUser);
         setAuthError(null);
@@ -480,11 +406,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         setCurrentUser(null);
         setAuthError(errorKey);
         
-          errorKey,
-          errorMessage: error instanceof Error ? error.message : String(error),
-          errorStatus: error instanceof ApiError ? error.status : undefined
-        });
-
         syncAttemptRef.current = {
           clerkId: clerkUserId,
           status: 'error',

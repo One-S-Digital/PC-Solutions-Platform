@@ -133,10 +133,6 @@ const SignupPage: React.FC = () => {
     if (showVerificationStep) {
       console.log('🔔 [STATE] showVerificationStep changed to TRUE');
       try {
-          showVerificationStep: true,
-          hasSignUp: !!signUp,
-          signUpStatus: signUp?.status
-        });
       } catch (err) {
         console.error('Debug logging error:', err);
       }
@@ -335,10 +331,6 @@ const SignupPage: React.FC = () => {
 
     // Log signup submit
     try {
-        valid: true, 
-        captchaSolved: !!captchaToken,
-        role: selectedRole
-      });
     } catch (err) {
       console.error('Debug logging error:', err);
     }
@@ -464,9 +456,6 @@ const SignupPage: React.FC = () => {
     
     // Log verification attempt
     try {
-        hasCode: !!verificationCode,
-        codeLength: verificationCode.length
-      });
     } catch (err) {
       console.error('Debug logging error:', err);
     }
@@ -527,8 +516,6 @@ const SignupPage: React.FC = () => {
       
       // Log verification result
       try {
-          status: result.status 
-        });
       } catch (err) {
         console.error('Debug logging error:', err);
       }
@@ -544,9 +531,6 @@ const SignupPage: React.FC = () => {
           
           // Log to auth debugger
           try {
-              clerkId: result.createdUserId,
-              sessionId: result.createdSessionId
-            });
           } catch (err) {
             console.error('Debug logging error:', err);
           }
@@ -576,9 +560,6 @@ const SignupPage: React.FC = () => {
       
       // Log verification error
       try {
-          code: err.errors?.[0]?.code || 'unknown',
-          message: err.message || 'Verification failed'
-        });
       } catch (logErr) {
         console.error('Debug logging error:', logErr);
       }
@@ -773,9 +754,6 @@ const SignupPage: React.FC = () => {
                       });
                       
                       try {
-                          webhookStatus,
-                          showVerificationStep: true
-                        });
                       } catch (err) {
                         console.error('Debug logging error:', err);
                       }
@@ -808,9 +786,6 @@ const SignupPage: React.FC = () => {
                           
                           // Log form submission
                           try {
-                              hasCode: !!verificationCode,
-                              codeLength: verificationCode.length
-                            });
                           } catch (err) {
                             console.error('Debug logging error:', err);
                           }
@@ -824,8 +799,6 @@ const SignupPage: React.FC = () => {
                           } catch (err) {
                             console.error('🔴 [FORM] handleVerification error:', err);
                             try {
-                                message: String(err)
-                              });
                             } catch (logErr) {
                               console.error('Debug logging error:', logErr);
                             }
@@ -884,14 +857,6 @@ const SignupPage: React.FC = () => {
                               
                               // Log button click
                               try {
-                                  isLoading,
-                                  isVerifying,
-                                  hasCode: !!verificationCode,
-                                  codeLength: verificationCode.length,
-                                  disabled: isLoading || isVerifying,
-                                  buttonType: (e.currentTarget as HTMLButtonElement).type,
-                                  hasForm: !!(e.currentTarget as HTMLButtonElement).form
-                                });
                               } catch (err) {
                                 console.error('Debug logging error:', err);
                               }
