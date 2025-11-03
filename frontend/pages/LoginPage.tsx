@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSignIn, useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
@@ -9,8 +9,6 @@ import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon } from '@heroic
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
-import { debugLogger } from '../src/utils/debugLogger';
-import { useDebugLogger } from '../src/hooks/useDebugLogger';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -43,22 +41,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
-
-  // Enable debug logging for this component
-  useDebugLogger();
-
-  // Debug login page state
-  useEffect(() => {
-    debugLogger.info('LOGIN', 'State Check', {
-      isSignedIn,
-      hasCurrentUser: !!currentUser,
-      currentUser,
-      isAuthLoading,
-      authError,
-      isSignInLoaded,
-      isAuthLoaded,
-    });
-  }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
 
   // No auto-redirects or side effects needed.
   // Rendering is purely driven by isLoaded and isSignedIn state.
