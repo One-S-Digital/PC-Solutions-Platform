@@ -104,6 +104,19 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
+  // Disable ETag generation so dynamic endpoints (like auth) always return 200 responses
+  const httpAdapter = app.getHttpAdapter().getInstance();
+  if (httpAdapter?.set) {
+    httpAdapter.set('etag', false);
+  }
+
+  // Ensure API responses are never cached by intermediaries or browsers
+  app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Vary', 'Origin');
+    next();
+  });
+
   // CORS debugging middleware (ALWAYS enabled to debug production issues)
   app.use((req, res, next) => {
     const isPreflight = req.method === 'OPTIONS';

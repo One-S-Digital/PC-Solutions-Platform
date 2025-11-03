@@ -105,20 +105,31 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const apiBaseUrl = apiService.apiBaseUrl;
-      const url = `${apiBaseUrl}${API_ENDPOINTS.users.me}`;
+      const baseUrl = `${apiBaseUrl}${API_ENDPOINTS.users.me}`;
 
-      let response: Response;
-      const fetchStartTime = performance.now();
-      
-      try {
-        response = await fetch(url, {
+      const doFetch = async (requestUrl: string) =>
+        fetch(requestUrl, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
             Authorization: `Bearer ${token}`,
           },
+          cache: 'no-store',
         });
+
+      let response: Response;
+      let url = baseUrl;
+      const fetchStartTime = performance.now();
+      
+      try {
+        response = await doFetch(url);
+
+        if (response.status === 304) {
+          console.warn('Received 304 for /users/me, retrying with cache buster');
+          url = `${baseUrl}?cacheBust=${Date.now()}`;
+          response = await doFetch(url);
+        }
 
       } catch (fetchError) {
         const fetchEndTime = performance.now();
