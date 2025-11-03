@@ -1,6 +1,6 @@
 
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import MainLayout from './components/layout/MainLayout';
@@ -18,10 +18,6 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
-import DebugToggle from './src/components/debug/DebugToggle';
-import AuthDebugPanel from './src/components/debug/AuthDebugPanel';
-import FrontendDebugToggle from './src/components/debug/FrontendDebugToggle';
-import { authDebugger } from './src/utils/authDebugger';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -85,18 +81,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[]
   const { isLoaded, isSignedIn } = useAuth();
   const location = useLocation();
 
-  useEffect(() => {
-    if (authDebugger.isEnabled()) {
-      if (!currentUser) {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/login', 'no_current_user');
-      } else if (!roles.includes(currentUser.role)) {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/dashboard', 'role_mismatch');
-      } else {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'allow', 'role_match');
-      }
-    }
-  }, [currentUser, isLoaded, isSignedIn, roles, location.pathname]);
-
   if (!currentUser) {
     return <Navigate to="/login" replace />; // Fallback, ProtectedLayout is primary guard
   }
@@ -134,16 +118,6 @@ const ProtectedLayout: React.FC = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const { isLoading: isAuthLoading } = useAuthContext();
   const location = useLocation();
-
-  useEffect(() => {
-    if (authDebugger.isEnabled()) {
-      if (!currentUser) {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/login', 'layout_no_user');
-      } else {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'allow', 'layout_has_user');
-      }
-    }
-  }, [currentUser, isLoaded, isSignedIn, location.pathname]);
 
   // Wait for Clerk to load before checking authentication
   if (!isLoaded) {
@@ -363,33 +337,6 @@ const ProtectedLayout: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  useEffect(() => {
-    // Log app boot with environment diagnostics
-    if (authDebugger.isEnabled()) {
-      authDebugger.logAppBoot({
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-      
-      // Log environment configuration on boot
-      const envConfig = {
-        viteApiUrl: import.meta.env.VITE_API_URL,
-        nodeEnv: import.meta.env.NODE_ENV,
-        mode: import.meta.env.MODE,
-        isDev: import.meta.env.DEV,
-        isProd: import.meta.env.PROD,
-        hasClerkKey: !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-        origin: window.location.origin,
-        protocol: window.location.protocol,
-        hostname: window.location.hostname,
-        port: window.location.port,
-      };
-      
-      console.log('?? App Boot - Environment Config:', envConfig);
-      authDebugger.log('ENV', 'boot', 'INFO', envConfig);
-    }
-  }, []);
-
   return (
     <AppContextProvider>
       <CartProvider>
@@ -402,9 +349,6 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-            <DebugToggle />
-            <FrontendDebugToggle />
-            <AuthDebugPanel />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>

@@ -11,7 +11,6 @@ import { debugLogger } from '../src/utils/debugLogger';
 import { useDebugLogger } from '../src/hooks/useDebugLogger';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
-import { authDebugger } from '../src/utils/authDebugger';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 
 const SignupPage: React.FC = () => {
@@ -22,19 +21,6 @@ const SignupPage: React.FC = () => {
   
   // Enable debug logging for this component
   useDebugLogger();
-
-  // Log SIGNUP opened (only once when component mounts)
-  useEffect(() => {
-    try {
-      authDebugger.log('SIGNUP', 'opened', 'INFO', { 
-        roleDetected: !!selectedRole,
-        captchaLoaded: true  // hCaptcha loads on mount
-      });
-    } catch (err) {
-      console.error('Debug logging error:', err);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
 
   // Webhook status hook - no clerkId param needed, uses authenticated session
   const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling, checkWebhookStatus } = useWebhookStatus();
@@ -76,9 +62,7 @@ const SignupPage: React.FC = () => {
               // Activate session now that user is ready
               if (sessionId) {
                 console.log('🔐 [SESSION] Activating session...', { sessionId });
-                authDebugger.log('CLERK', 'set_active', 'INFO', 'After verification');
                 await setActive({ session: sessionId });
-                authDebugger.log('CLERK', 'set_active', 'OK', '');
                 debugLogger.info('VERIFICATION', 'Session activated successfully!');
                 
                 // Redirect based on role
@@ -86,7 +70,6 @@ const SignupPage: React.FC = () => {
                   ? '/pricing' 
                   : '/dashboard';
                 console.log('🚀 [NAVIGATION] Redirecting to:', redirectTo);
-                authDebugger.log('SIGNUP', 'redirect_after', 'INFO', { to: redirectTo });
             
                 if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
                   console.log('🧭 [NAVIGATE] Going to /pricing');
@@ -150,7 +133,6 @@ const SignupPage: React.FC = () => {
     if (showVerificationStep) {
       console.log('🔔 [STATE] showVerificationStep changed to TRUE');
       try {
-        authDebugger.log('CLERK', 'verify_step_shown', 'INFO', { 
           showVerificationStep: true,
           hasSignUp: !!signUp,
           signUpStatus: signUp?.status
@@ -353,7 +335,6 @@ const SignupPage: React.FC = () => {
 
     // Log signup submit
     try {
-      authDebugger.log('SIGNUP', 'submit', 'INFO', { 
         valid: true, 
         captchaSolved: !!captchaToken,
         role: selectedRole
@@ -400,19 +381,15 @@ const SignupPage: React.FC = () => {
       });
 
       // Log Clerk signup_create
-      authDebugger.log('CLERK', 'signup_create', 'OK', { status: result.status });
 
       if (result.status === 'complete') {
         try {
-          authDebugger.log('CLERK', 'set_active', 'INFO', 'Attempting to set active session');
           await setActive({ session: result.createdSessionId });
-          authDebugger.log('CLERK', 'set_active', 'OK', '');
           
           // Redirect based on role
           const redirectTo = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole) 
             ? '/pricing' 
             : '/dashboard';
-          authDebugger.log('SIGNUP', 'redirect_after', 'INFO', { to: redirectTo });
           
           if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
             navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
@@ -421,13 +398,11 @@ const SignupPage: React.FC = () => {
           }
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
-          authDebugger.log('CLERK', 'set_active', 'ERROR', { error: setActiveError.message });
           setErrors({ email: 'Failed to activate session. Please try logging in.' });
         }
       } else if (result.status === 'missing_requirements') {
         // Email verification required
         debugLogger.info('SIGNUP', 'Email verification required, preparing verification...');
-        authDebugger.log('CLERK', 'verify_start', 'INFO', '');
         try {
           console.log('📧 [VERIFICATION] Preparing email verification...');
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
@@ -443,14 +418,12 @@ const SignupPage: React.FC = () => {
           return;
         } catch (verifyError: any) {
           debugLogger.error('SIGNUP', 'Failed to prepare email verification:', verifyError);
-          authDebugger.log('CLERK', 'verify_start', 'ERROR', { error: String(verifyError) });
           setErrors({ email: 'Failed to send verification email. Please try again.' });
         }
       }
     } catch (err: any) {
       console.error('Signup error:', err);
       const errorCode = err.errors?.[0]?.code || 'unknown';
-      authDebugger.log('CLERK', 'signup_create', 'ERROR', { code: errorCode, message: err.message });
       let errorMessage = 'An error occurred during signup';
       
       if (err.errors && err.errors.length > 0) {
@@ -491,7 +464,6 @@ const SignupPage: React.FC = () => {
     
     // Log verification attempt
     try {
-      authDebugger.log('CLERK', 'verify_attempt', 'INFO', { 
         hasCode: !!verificationCode,
         codeLength: verificationCode.length
       });
@@ -512,7 +484,6 @@ const SignupPage: React.FC = () => {
       console.log('❌ [VALIDATION] Verification failed: missing data', { hasSignUp: !!signUp, hasCode: !!verificationCode });
       debugLogger.warn('VERIFICATION', 'Early return - missing signUp or verificationCode');
       try {
-        authDebugger.log('CLERK', 'verify_attempt', 'ERROR', { reason: 'missing_code_or_signup' });
       } catch (err) {
         console.error('Debug logging error:', err);
       }
@@ -556,7 +527,6 @@ const SignupPage: React.FC = () => {
       
       // Log verification result
       try {
-        authDebugger.log('CLERK', 'verify_done', result.status === 'complete' ? 'OK' : 'ERROR', { 
           status: result.status 
         });
       } catch (err) {
@@ -574,7 +544,6 @@ const SignupPage: React.FC = () => {
           
           // Log to auth debugger
           try {
-            authDebugger.log('CLERK', 'webhook_poll_start', 'INFO', { 
               clerkId: result.createdUserId,
               sessionId: result.createdSessionId
             });
@@ -607,7 +576,6 @@ const SignupPage: React.FC = () => {
       
       // Log verification error
       try {
-        authDebugger.log('CLERK', 'verify_done', 'ERROR', { 
           code: err.errors?.[0]?.code || 'unknown',
           message: err.message || 'Verification failed'
         });
@@ -805,7 +773,6 @@ const SignupPage: React.FC = () => {
                       });
                       
                       try {
-                        authDebugger.log('CLERK', 'verify_form_render', 'INFO', { 
                           webhookStatus,
                           showVerificationStep: true
                         });
@@ -841,7 +808,6 @@ const SignupPage: React.FC = () => {
                           
                           // Log form submission
                           try {
-                            authDebugger.log('CLERK', 'verify_form_submit', 'INFO', { 
                               hasCode: !!verificationCode,
                               codeLength: verificationCode.length
                             });
@@ -858,7 +824,6 @@ const SignupPage: React.FC = () => {
                           } catch (err) {
                             console.error('🔴 [FORM] handleVerification error:', err);
                             try {
-                              authDebugger.log('CLERK', 'verify_error', 'ERROR', { 
                                 message: String(err)
                               });
                             } catch (logErr) {
@@ -883,7 +848,6 @@ const SignupPage: React.FC = () => {
                               if (e.target.value.length === 6) {
                                 console.log('✅ [INPUT] 6-digit code entered, ready to verify');
                                 try {
-                                  authDebugger.log('CLERK', 'verify_code_complete', 'INFO', { codeLength: 6 });
                                 } catch (err) {
                                   console.error('Debug logging error:', err);
                                 }
@@ -920,7 +884,6 @@ const SignupPage: React.FC = () => {
                               
                               // Log button click
                               try {
-                                authDebugger.log('CLERK', 'verify_button_click', 'INFO', { 
                                   isLoading,
                                   isVerifying,
                                   hasCode: !!verificationCode,

@@ -11,7 +11,6 @@ import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
 import { User } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
-import { authDebugger } from '../src/utils/authDebugger';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
@@ -69,7 +68,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   // Log Clerk SDK init
   useEffect(() => {
     if (clerkIsLoaded) {
-      authDebugger.log('CLERK', 'sdk_init', 'OK', '');
     }
   }, [clerkIsLoaded]);
 
@@ -114,7 +112,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       if (!token) {
         console.error('❌ No authentication token available');
         console.groupEnd();
-        authDebugger.log('HTTP', 'req', 'ERROR', { url: '/api/users/me', error: 'no_token' });
         throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
       }
 
@@ -133,7 +130,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       };
 
       console.log('🔧 Environment Config:', envConfig);
-      authDebugger.log('ENV', 'config', 'INFO', envConfig);
 
       // Token validation
       const tokenInfo = {
@@ -145,7 +141,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       };
 
       console.log('🔑 Token Info:', tokenInfo);
-      authDebugger.log('TOKEN', 'validate', 'INFO', tokenInfo);
 
       console.log('📤 Request Details:', {
         url,
@@ -160,7 +155,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       // Log HTTP request with full details
-      authDebugger.log('HTTP', 'req', 'INFO', { 
         method: 'GET', 
         url: '/api/users/me',
         fullUrl: url,
@@ -212,26 +206,22 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
         // Log HTTP response with detailed info
         if (response.ok) {
-          authDebugger.log('HTTP', 'res', 'OK', { 
             status: response.status,
             category: 'OK',
             duration: `${duration.toFixed(2)}ms`,
             cors: corsHeaders
           });
         } else if (response.status === 401 || response.status === 403) {
-          authDebugger.log('HTTP', 'res', 'ERROR', { 
             status: response.status,
             category: 'UNAUTH',
             duration: `${duration.toFixed(2)}ms`
           });
         } else if (response.status === 0) {
-          authDebugger.log('HTTP', 'res', 'ERROR', { 
             status: 0,
             category: 'NETWORK',
             duration: `${duration.toFixed(2)}ms`
           });
         } else {
-          authDebugger.log('HTTP', 'res', 'ERROR', { 
             status: response.status,
             category: 'HTTP_ERROR',
             duration: `${duration.toFixed(2)}ms`
@@ -266,7 +256,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('❌ Network/Fetch Error - DETAILED DIAGNOSTICS:', errorDetails);
         console.groupEnd();
         
-        authDebugger.log('HTTP', 'res', 'ERROR', { 
           status: 0,
           category: 'NETWORK',
           error: String(fetchError),
@@ -288,7 +277,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('📄 Response Body (raw):', responseText);
         
         // Log response body for debugging
-        authDebugger.log('HTTP', 'body_raw', 'INFO', { 
           length: responseText.length,
           preview: responseText.substring(0, 200)
         });
@@ -298,7 +286,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           console.log('📄 Response Body (parsed):', responseBody);
           
           // Log parsed response structure
-          authDebugger.log('HTTP', 'body_parsed', 'INFO', {
             hasSuccess: !!responseBody?.success,
             successValue: responseBody?.success,
             hasData: !!responseBody?.data,
@@ -307,13 +294,11 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           });
         } catch (parseError) {
           console.warn('⚠️  Response is not valid JSON:', parseError);
-          authDebugger.log('HTTP', 'parse_error', 'ERROR', { 
             error: String(parseError)
           });
         }
       } catch (bodyError) {
         console.error('❌ Error reading response body:', bodyError);
-        authDebugger.log('HTTP', 'read_error', 'ERROR', { 
           error: String(bodyError)
         });
       }
@@ -356,7 +341,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           clerkId,
           message: data.data.message,
         });
-        authDebugger.log('HTTP', 'user_pending', 'INFO', {
           attempt: attempt + 1,
           message: data.data.message
         });
@@ -382,7 +366,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           dataValue: data?.data,
           fullResponse: data,
         });
-        authDebugger.log('HTTP', 'invalid_format', 'ERROR', {
           hasSuccess: !!data?.success,
           successValue: data?.success,
           hasData: !!data?.data,
@@ -401,7 +384,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         lastName: data.data.lastName,
       });
       
-      authDebugger.log('HTTP', 'user_sync_success', 'OK', {
         userId: data.data.id,
         email: data.data.email,
         role: data.data.role,
@@ -458,13 +440,11 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       
       console.log('🔄 [SYNC] Starting user sync...', { clerkUserId });
-      authDebugger.log('SYNC', 'start', 'INFO', { clerkUserId });
 
       try {
         const backendUser = await fetchUserFromBackend(clerkUserId);
         if (cancelled) {
           console.log('⚠️  [SYNC] Sync cancelled');
-          authDebugger.log('SYNC', 'cancelled', 'INFO', { reason: 'component_unmounted' });
           return;
         }
 
@@ -475,7 +455,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           name: backendUser.name
         });
         
-        authDebugger.log('SYNC', 'set_user', 'OK', {
           userId: backendUser.id,
           email: backendUser.email,
           role: backendUser.role
@@ -490,7 +469,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         };
         
         console.log('✅ [SYNC] User state updated successfully');
-        authDebugger.log('SYNC', 'complete', 'OK', { status: 'success' });
       } catch (error) {
         if (cancelled) {
           console.log('⚠️  [SYNC] Sync cancelled during error handling');
@@ -502,7 +480,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         setCurrentUser(null);
         setAuthError(errorKey);
         
-        authDebugger.log('SYNC', 'error', 'ERROR', {
           errorKey,
           errorMessage: error instanceof Error ? error.message : String(error),
           errorStatus: error instanceof ApiError ? error.status : undefined
