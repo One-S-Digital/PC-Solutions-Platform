@@ -350,8 +350,16 @@ const SignupPage: React.FC = () => {
       } else {
         setVerificationError('Verification failed. Please try again.');
       }
-      
-      const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
+    } catch (err: any) {
+      console.error('Verification error:', err);
+      let errorMessage = 'Invalid verification code';
+
+      if (err?.errors && err.errors.length > 0) {
+        errorMessage = err.errors[0]?.message || errorMessage;
+      } else if (err instanceof Error && err.message) {
+        errorMessage = err.message;
+      }
+
       setVerificationError(errorMessage);
     } finally {
       setIsLoading(false);
