@@ -44,6 +44,7 @@ interface AuthContextType {
   signup: (formData: any, role: any) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
   refreshCurrentUser: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -354,7 +355,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateCurrentUserInfo = useCallback(
     async (updatedInfo: Partial<User>) => {
-      
+
       if (!currentUser) {
         console.error('Cannot update user: current user is not loaded');
         return;
@@ -429,6 +430,62 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     [currentUser, getToken, transformBackendUser, clerkUserId]
   );
 
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      if (!clerkUser) {
+        throw new Error('Authenticated user is not available');
+      }
+
+      try {
+        await clerkUser.updatePassword({ currentPassword, newPassword });
+      } catch (error: any) {
+        console.error('Failed to change password via Clerk', error);
+
+        const clerkErrors = error?.errors;
+        if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
+          const message = clerkErrors
+            .map((e: any) => e?.message)
+            .filter(Boolean)
+            .join(' ');
+          throw new Error(message || 'Password update failed');
+        }
+
+        if (error instanceof Error && error.message) {
+          throw new Error(error.message);
+        }
+
+        throw new Error('Unable to update password. Please try again.');
+      }
+
+      try {
+        const token = await getToken();
+
+        if (!token) {
+          console.warn('Password change succeeded but audit token was unavailable');
+          return;
+        }
+
+        const url = `${apiService.apiBaseUrl}${API_ENDPOINTS.security.passwordChange}`;
+
+        await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            occurredAt: new Date().toISOString(),
+            method: 'clerk',
+          }),
+        });
+      } catch (auditError) {
+        console.error('Password change audit logging failed', auditError);
+      }
+    },
+    [clerkUser, getToken]
+  );
+
   const refreshCurrentUser = useCallback(async () => {
     if (!clerkIsLoaded) {
       throw new Error('Clerk is not loaded yet');
@@ -462,6 +519,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         signup,
         updateCurrentUserInfo,
         refreshCurrentUser,
+        changePassword,
       }}
     >
       {children}

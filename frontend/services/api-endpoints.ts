@@ -138,34 +138,39 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `/upload/files/${id}`,
   },
 
-  // Analytics (Admin)
-  analytics: {
-    overview: '/admin/analytics/overview',
-    users: '/admin/analytics/users',
-    organizations: '/admin/analytics/organizations',
-    products: '/admin/analytics/products',
-    jobs: '/admin/analytics/jobs',
-    revenue: '/admin/analytics/revenue',
-    system: '/admin/analytics/system',
-  },
+    // Analytics (Admin)
+    analytics: {
+      overview: '/admin/analytics/overview',
+      users: '/admin/analytics/users',
+      organizations: '/admin/analytics/organizations',
+      products: '/admin/analytics/products',
+      jobs: '/admin/analytics/jobs',
+      revenue: '/admin/analytics/revenue',
+      system: '/admin/analytics/system',
+    },
 
-  // Leads
-  leads: {
-    list: '/leads',
-    get: (id: string) => `/leads/${id}`,
-    create: '/leads',
-    update: (id: string) => `/leads/${id}`,
-    delete: (id: string) => `/leads/${id}`,
-    parentLeads: '/leads/parent-leads',
-  },
+    // Leads
+    leads: {
+      list: '/leads',
+      get: (id: string) => `/leads/${id}`,
+      create: '/leads',
+      update: (id: string) => `/leads/${id}`,
+      delete: (id: string) => `/leads/${id}`,
+      parentLeads: '/leads/parent-leads',
+    },
 
-  // Settings
-  settings: {
-    platform: '/admin/platform-settings',
-    frontend: '/admin/frontend-settings',
-    userSettings: '/settings/user',
-    organizationSettings: '/settings/organization',
-  },
+    // Security
+    security: {
+      passwordChange: '/security/password-change',
+    },
+
+    // Settings
+    settings: {
+      platform: '/admin/platform-settings',
+      frontend: '/admin/frontend-settings',
+      userSettings: '/settings/user',
+      organizationSettings: '/settings/organization',
+    },
 
   // Billing & Subscriptions
   billing: {
