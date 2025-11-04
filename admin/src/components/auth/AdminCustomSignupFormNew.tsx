@@ -25,6 +25,7 @@ export default function AdminCustomSignupForm() {
   const { user } = useUser();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [hasStartedSignup, setHasStartedSignup] = useState(false);
   const [formData, setFormData] = useState<AdminSignupFormData>({
     firstName: '',
     lastName: '',
@@ -44,10 +45,10 @@ export default function AdminCustomSignupForm() {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (authLoaded && isSignedIn && user) {
+    if (authLoaded && isSignedIn && user && !hasStartedSignup) {
       navigate('/dashboard');
     }
-  }, [authLoaded, isSignedIn, user, navigate]);
+  }, [authLoaded, isSignedIn, user, navigate, hasStartedSignup]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -94,6 +95,7 @@ export default function AdminCustomSignupForm() {
   const handleNext = () => {
     if (currentStep === 1 && validateStep1()) {
       setCurrentStep(2);
+      setHasStartedSignup(true);
     }
   };
 
@@ -108,6 +110,7 @@ export default function AdminCustomSignupForm() {
     if (!validateStep2() || !isLoaded || !signUp) return;
     
     setIsLoading(true);
+    setHasStartedSignup(true);
     
     try {
       const result = await signUp.create({
