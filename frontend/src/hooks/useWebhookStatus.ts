@@ -28,6 +28,7 @@ export const useWebhookStatus = () => {
       const token = await getToken();
       
       if (!token) {
+        console.warn('[Signup Debug] webhook-status: missing auth token, session not yet active');
         setStatus('processing');
         return 'processing';
       }
@@ -43,11 +44,17 @@ export const useWebhookStatus = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('[Signup Debug] webhook-status: non-OK response', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText,
+        });
         throw new Error(errorText || `HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
       const webhookStatus: WebhookStatus = data.data;
+      console.log('[Signup Debug] webhook-status response', webhookStatus);
 
       if (webhookStatus.exists) {
         setStatus('ready');
@@ -95,6 +102,7 @@ export const useWebhookStatus = () => {
     setIsPolling(true);
     setStatus('processing');
     setError(null);
+    console.log('[Signup Debug] webhook-status polling started');
 
     checkWebhookStatus();
 
@@ -109,6 +117,7 @@ export const useWebhookStatus = () => {
         setIsPolling(false);
         setStatus(prev => (prev === 'ready' ? 'ready' : 'error'));
         setError(prev => prev ?? 'Account setup timeout - please contact support');
+        console.warn('[Signup Debug] webhook-status polling timed out');
       }
     }, 30000);
 

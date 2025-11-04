@@ -25,6 +25,7 @@ const SignupPage: React.FC = () => {
     let stopPollingCleanup: (() => void) | undefined;
 
     try {
+      console.log('[Signup Debug] waitForWebhookProcessing: starting provisioning wait');
       stopPollingCleanup = startPolling();
 
       const maxWaitTime = 30000;
@@ -38,6 +39,10 @@ const SignupPage: React.FC = () => {
 
         const currentStatus = await checkWebhookStatus();
         setWebhookStatus(currentStatus);
+        console.log('[Signup Debug] waitForWebhookProcessing: poll result', {
+          currentStatus,
+          elapsedMs: Date.now() - startTime,
+        });
 
         if (currentStatus === 'ready') {
           if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
@@ -49,10 +54,12 @@ const SignupPage: React.FC = () => {
         }
 
         if (currentStatus === 'error') {
+          console.error('[Signup Debug] waitForWebhookProcessing: webhook status error', webhookErrorFromHook);
           throw new Error(webhookErrorFromHook || 'Webhook processing failed');
         }
       }
 
+      console.error('[Signup Debug] waitForWebhookProcessing: timed out waiting for provisioning');
       throw new Error('Account setup timeout - please contact support');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Account setup failed';
@@ -60,6 +67,7 @@ const SignupPage: React.FC = () => {
       setWebhookError(message);
       setVerificationError(message);
     } finally {
+      console.log('[Signup Debug] waitForWebhookProcessing: cleaning up polling');
       stopPollingCleanup?.();
     }
   };
@@ -332,6 +340,12 @@ const SignupPage: React.FC = () => {
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
+      console.log('[Signup Debug] handleVerification: attempt result', {
+        status: result.status,
+        createdSessionId: result.createdSessionId,
+        createdUserId: result.createdUserId,
+        errors: result.errors,
+      });
 
       if (result.status === 'complete') {
         if (!result.createdSessionId) {
@@ -341,7 +355,9 @@ const SignupPage: React.FC = () => {
         }
 
         try {
+          console.log('[Signup Debug] handleVerification: activating session');
           await setActive({ session: result.createdSessionId });
+          console.log('[Signup Debug] handleVerification: session activated successfully');
         } catch (activationError: any) {
           console.error('Session activation failed after verification:', activationError);
           setVerificationError('Verification succeeded, but session activation failed. Please try logging in.');
@@ -355,6 +371,7 @@ const SignupPage: React.FC = () => {
 
         // Start webhook status polling now that the session is active
         setWebhookStatus('processing');
+        console.log('[Signup Debug] handleVerification: starting webhook polling');
         await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
       } else {
         setVerificationError('Verification failed. Please try again.');
