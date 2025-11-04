@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 
 interface WebhookStatus {
@@ -19,6 +19,9 @@ export const useWebhookStatus = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   const { getToken } = useAuth();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isPollingRef = useRef(false);
 
   const checkWebhookStatus = useCallback(async (): Promise<'pending' | 'processing' | 'ready' | 'error'> => {
     try {
@@ -49,6 +52,7 @@ export const useWebhookStatus = () => {
       if (webhookStatus.exists) {
         setStatus('ready');
         setIsPolling(false);
+        isPollingRef.current = false;
         return 'ready';
       } else {
         setStatus('processing');
@@ -59,46 +63,63 @@ export const useWebhookStatus = () => {
       console.error('Error checking webhook status:', err);
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Failed to check account status');
+      setIsPolling(false);
+      isPollingRef.current = false;
       return 'error';
     }
   }, [getToken]);
 
-  const startPolling = useCallback(() => {
-    if (isPolling) {
-      return;
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  const stopPolling = useCallback(() => {
+    clearTimers();
+    isPollingRef.current = false;
+    setIsPolling(false);
+  }, [clearTimers]);
+
+  const startPolling = useCallback(() => {
+    if (isPollingRef.current) {
+      return stopPolling;
+    }
+
+    isPollingRef.current = true;
     setIsPolling(true);
     setStatus('processing');
-    
-    // Initial check
+    setError(null);
+
     checkWebhookStatus();
-    
-    // Poll every 1 second
-    const interval = setInterval(() => {
+
+    intervalRef.current = setInterval(() => {
       checkWebhookStatus();
     }, 1000);
-    
-    // Stop polling after 30 seconds
-    const timeout = setTimeout(() => {
-      clearInterval(interval);
-      setIsPolling(false);
-      if (status === 'processing') {
-        setStatus('error');
-        setError('Account setup timeout - please contact support');
+
+    timeoutRef.current = setTimeout(() => {
+      clearTimers();
+      if (isPollingRef.current) {
+        isPollingRef.current = false;
+        setIsPolling(false);
+        setStatus(prev => (prev === 'ready' ? 'ready' : 'error'));
+        setError(prev => prev ?? 'Account setup timeout - please contact support');
       }
     }, 30000);
 
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-      setIsPolling(false);
-    };
-  }, [checkWebhookStatus, isPolling, status]);
+    return stopPolling;
+  }, [checkWebhookStatus, clearTimers, stopPolling]);
 
-  const stopPolling = useCallback(() => {
-    setIsPolling(false);
-  }, []);
+  useEffect(() => {
+    return () => {
+      stopPolling();
+    };
+  }, [stopPolling]);
 
   return {
     status,

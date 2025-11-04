@@ -18,56 +18,49 @@ const SignupPage: React.FC = () => {
   const { isSignedIn } = useAuth();
 
   // Webhook status hook - no clerkId param needed, uses authenticated session
-  const { status: webhookStatusFromHook, error: webhookErrorFromHook, startPolling, stopPolling, checkWebhookStatus } = useWebhookStatus();
+  const { error: webhookErrorFromHook, startPolling, checkWebhookStatus } = useWebhookStatus();
 
   // Wait for webhook processing to complete
-  const waitForWebhookProcessing = async (_userId: string, sessionId: string | null) => {
-    
+  const waitForWebhookProcessing = async (_userId: string, _sessionId: string | null) => {
+    let stopPollingCleanup: (() => void) | undefined;
+
     try {
-      // Start polling for webhook status
-      startPolling();
-      
-      // Wait for webhook to complete (max 30 seconds)
+      stopPollingCleanup = startPolling();
+
       const maxWaitTime = 30000;
       const pollInterval = 1000;
       const startTime = Date.now();
-      
-      let currentStatus: string = 'pending';
-      
+
+      setWebhookError(null);
+
       while (Date.now() - startTime < maxWaitTime) {
         await new Promise(resolve => setTimeout(resolve, pollInterval));
-        
-        // Manually check status and get fresh result (avoids React stale closure)
-        currentStatus = await checkWebhookStatus();
-        
+
+        const currentStatus = await checkWebhookStatus();
+        setWebhookStatus(currentStatus);
+
         if (currentStatus === 'ready') {
-          if (sessionId) {
-            await setActive({ session: sessionId });
-
-            const redirectTo = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)
-              ? '/pricing'
-              : '/dashboard';
-
-            if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-              navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-            } else {
-              setCurrentStep(3);
-            }
-            return;
+          if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
+            navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
+          } else {
+            setCurrentStep(3);
           }
-        } else if (currentStatus === 'error') {
+          return;
+        }
+
+        if (currentStatus === 'error') {
           throw new Error(webhookErrorFromHook || 'Webhook processing failed');
         }
       }
-      
-      // Timeout
+
       throw new Error('Account setup timeout - please contact support');
-      
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Account setup failed';
       setWebhookStatus('error');
-      setWebhookError(error instanceof Error ? error.message : 'Account setup failed');
+      setWebhookError(message);
+      setVerificationError(message);
     } finally {
-      stopPolling();
+      stopPollingCleanup?.();
     }
   };
 
@@ -339,14 +332,30 @@ const SignupPage: React.FC = () => {
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
+
       if (result.status === 'complete') {
-        if (result.createdUserId) {
-          // Start webhook status polling
-          setWebhookStatus('processing');
-          await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
-        } else {
-          setVerificationError('Verification completed but no user was created. Please try again.');
+        if (!result.createdSessionId) {
+          console.error('Verification completed but no session was created.');
+          setVerificationError('Verification completed but no session was created. Please try logging in.');
+          return;
         }
+
+        try {
+          await setActive({ session: result.createdSessionId });
+        } catch (activationError: any) {
+          console.error('Session activation failed after verification:', activationError);
+          setVerificationError('Verification succeeded, but session activation failed. Please try logging in.');
+          return;
+        }
+
+        if (!result.createdUserId) {
+          setVerificationError('Verification completed but user provisioning is delayed. Please wait and try again.');
+          return;
+        }
+
+        // Start webhook status polling now that the session is active
+        setWebhookStatus('processing');
+        await waitForWebhookProcessing(result.createdUserId, result.createdSessionId);
       } else {
         setVerificationError('Verification failed. Please try again.');
       }
