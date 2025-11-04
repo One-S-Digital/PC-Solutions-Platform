@@ -1,15 +1,15 @@
-import { IsISO8601, IsOptional, IsString } from 'class-validator'
+import { IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class PasswordChangeEventDto {
   @IsOptional()
   @IsISO8601()
-  occurredAt?: string
+  occurredAt?: string;
 
   @IsOptional()
   @IsString()
-  method?: string
+  method?: string;
 
   @IsOptional()
   @IsString()
-  metadata?: string
+  metadata?: string;
 }

@@ -45,11 +45,8 @@ const SignupPage: React.FC = () => {
         });
 
         if (currentStatus === 'ready') {
-          if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-            navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-          } else {
-            setCurrentStep(3);
-          }
+          setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+          setCurrentStep(3);
           return;
         }
 
@@ -74,6 +71,8 @@ const SignupPage: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
+  const [hasStartedSignup, setHasStartedSignup] = useState(false);
+  const [successRedirect, setSuccessRedirect] = useState<{ path: string; state?: Record<string, unknown> }>({ path: '/dashboard' });
   const [formData, setFormData] = useState<SignupFormData>({
     organisationName: '',
     contactPerson: '',
@@ -104,22 +103,37 @@ const SignupPage: React.FC = () => {
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
 
-  // Redirect if user is already logged in
+  const roleRequiresPricing = (role: SignupRole | null) =>
+    role !== null && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role);
+
+  const getSuccessRedirectForRole = (role: SignupRole | null) => {
+    if (roleRequiresPricing(role) && role) {
+      return { path: '/pricing', state: { fromSignup: true, role } };
+    }
+    return { path: '/dashboard' };
+  };
+
+  const successButtonLabel = roleRequiresPricing(selectedRole)
+    ? t('goToPricingButton', 'Go to Pricing')
+    : t('goToDashboardButton');
+
+  // Redirect if user is already logged in before starting signup
   useEffect(() => {
-    if (isSignedIn) {
+    if (isSignedIn && !hasStartedSignup) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, navigate]);
+  }, [isSignedIn, hasStartedSignup, navigate]);
 
-  // Handle successful verification - redirect if user becomes authenticated
+  // Handle successful verification - redirect if user becomes authenticated after showing success
   useEffect(() => {
     if (isSignedIn && currentStep === 3) {
-      // Small delay to ensure the success message is visible
-      setTimeout(() => {
-        navigate('/dashboard', { replace: true });
+      const timeoutId = setTimeout(() => {
+        navigate(successRedirect.path, { replace: true, state: successRedirect.state });
       }, 2000);
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [isSignedIn, currentStep, navigate]);
+  }, [isSignedIn, currentStep, navigate, successRedirect]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
@@ -132,12 +146,15 @@ const SignupPage: React.FC = () => {
     setSelectedRole(role);
     setErrors({});
     setCurrentStep(2);
+    setHasStartedSignup(true);
+    setSuccessRedirect(getSuccessRedirectForRole(role));
   };
 
   const handleBackToRoleSelection = () => {
     setCurrentStep(1);
     setSelectedRole(null);
     setErrors({});
+    setSuccessRedirect({ path: '/dashboard' });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -233,6 +250,7 @@ const SignupPage: React.FC = () => {
     if (!validateStep2() || !selectedRole || !isLoaded || !signUp) return;
     
     setIsLoading(true);
+    setHasStartedSignup(true);
 
     try {
       // Split contact person into first and last name
@@ -257,25 +275,16 @@ const SignupPage: React.FC = () => {
         },
       });
 
-      if (result.status === 'complete') {
-        try {
-          await setActive({ session: result.createdSessionId });
-          
-          // Redirect based on role
-          const redirectTo = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole) 
-            ? '/pricing' 
-            : '/dashboard';
-          
-          if ([SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole)) {
-            navigate('/pricing', { state: { fromSignup: true, role: selectedRole } });
-          } else {
+        if (result.status === 'complete') {
+          try {
+            await setActive({ session: result.createdSessionId });
+            setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
             setCurrentStep(3);
+          } catch (setActiveError: any) {
+            console.error('Session activation failed:', setActiveError);
+            setErrors({ email: 'Failed to activate session. Please try logging in.' });
           }
-        } catch (setActiveError: any) {
-          console.error('Session activation failed:', setActiveError);
-          setErrors({ email: 'Failed to activate session. Please try logging in.' });
-        }
-      } else if (result.status === 'missing_requirements') {
+        } else if (result.status === 'missing_requirements') {
         // Email verification required
         try {
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
@@ -456,8 +465,13 @@ const SignupPage: React.FC = () => {
             <h1 className="text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
             <p className="text-gray-600 mt-2 mb-6">{t('submissionSuccessMessage')}</p>
             <div className="space-y-3">
-              <Button onClick={() => navigate('/dashboard')} variant="primary" size="lg" className="w-full">
-                {t('goToDashboardButton')}
+              <Button
+                onClick={() => navigate(successRedirect.path, { state: successRedirect.state })}
+                variant="primary"
+                size="lg"
+                className="w-full"
+              >
+                {successButtonLabel}
               </Button>
               <p className="text-sm text-gray-500">
                 {t('common:loginPage.alreadyAccount')}{' '}
