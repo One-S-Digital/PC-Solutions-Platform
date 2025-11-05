@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Body, UseGuards, Request, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -10,6 +10,8 @@ import { UpdateEducatorSettingsDto } from './dto/educator-settings.dto';
 import { UpdateSupplierSettingsDto } from './dto/supplier-settings.dto';
 import { UpdateServiceProviderSettingsDto } from './dto/service-provider-settings.dto';
 import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
+import { UpdatePrivacySettingsDto } from './dto/privacy-settings.dto';
+import { UpdateNotificationSettingsDto } from './dto/notification-settings.dto';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -18,26 +20,38 @@ import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
 export class SettingsController {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async getUserByClerkId(clerkUserId?: string, include?: any) {
+    if (!clerkUserId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: clerkUserId },
+      include,
+    });
+
+    if (!user) {
+      throw new NotFoundException('User record not found');
+    }
+
+    return user;
+  }
+
   @Get('foundation')
   @Roles(UserRole.FOUNDATION)
   @ApiOperation({ summary: 'Get foundation settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getFoundationSettings(@Request() req) {
-    const userId = req.context.userId;
-    
-    // Get user and organization data
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        organizations: {
-          include: {
-            organization: true
-          }
-        }
-      }
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId, {
+      organizations: {
+        include: {
+          organization: true,
+        },
+      },
     });
 
-    if (!user || !user.organizations.length) {
+    if (!user.organizations.length) {
       return {
         success: false,
         message: 'Foundation not found'
@@ -72,13 +86,14 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update foundation settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateFoundationSettings(@Request() req, @Body() settings: UpdateFoundationSettingsDto) {
-    const userId = req.context.userId;
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
     
     // Update user and organization data
     await this.prisma.$transaction(async (tx) => {
       // Update user
       await tx.user.update({
-        where: { id: userId },
+        where: { clerkId: clerkUserId },
         data: {
           email: settings.contactEmail,
         }
@@ -86,7 +101,7 @@ export class SettingsController {
 
       // Update organization
       const userOrg = await tx.userOrganization.findFirst({
-        where: { userId },
+        where: { userId: user.id },
         include: { organization: true }
       });
 
@@ -117,18 +132,8 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get educator settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getEducatorSettings(@Request() req) {
-    const userId = req.context.userId;
-    
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId }
-    });
-
-    if (!user) {
-      return {
-        success: false,
-        message: 'User not found'
-      };
-    }
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
 
     const settings = {
       firstName: user.firstName || '',
@@ -158,10 +163,11 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update educator settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
-    const userId = req.context.userId;
+    const clerkUserId = req.context.userId;
+    await this.getUserByClerkId(clerkUserId);
     
     await this.prisma.user.update({
-      where: { id: userId },
+      where: { clerkId: clerkUserId },
       data: {
         firstName: settings.firstName,
         lastName: settings.lastName,
@@ -187,20 +193,16 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get supplier settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getSupplierSettings(@Request() req) {
-    const userId = req.context.userId;
-    
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        organizations: {
-          include: {
-            organization: true
-          }
-        }
-      }
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId, {
+      organizations: {
+        include: {
+          organization: true,
+        },
+      },
     });
 
-    if (!user || !user.organizations.length) {
+    if (!user.organizations.length) {
       return {
         success: false,
         message: 'Supplier not found'
@@ -237,18 +239,19 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update supplier settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateSupplierSettings(@Request() req, @Body() settings: UpdateSupplierSettingsDto) {
-    const userId = req.context.userId;
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
     
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
-        where: { id: userId },
+        where: { clerkId: clerkUserId },
         data: {
           email: settings.contactEmail,
         }
       });
 
       const userOrg = await tx.userOrganization.findFirst({
-        where: { userId },
+        where: { userId: user.id },
         include: { organization: true }
       });
 
@@ -281,20 +284,16 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get service provider settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getServiceProviderSettings(@Request() req) {
-    const userId = req.context.userId;
-    
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        organizations: {
-          include: {
-            organization: true
-          }
-        }
-      }
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId, {
+      organizations: {
+        include: {
+          organization: true,
+        },
+      },
     });
 
-    if (!user || !user.organizations.length) {
+    if (!user.organizations.length) {
       return {
         success: false,
         message: 'Service provider not found'
@@ -329,18 +328,19 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update service provider settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateServiceProviderSettings(@Request() req, @Body() settings: UpdateServiceProviderSettingsDto) {
-    const userId = req.context.userId;
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
     
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
-        where: { id: userId },
+        where: { clerkId: clerkUserId },
         data: {
           email: settings.contactEmail,
         }
       });
 
       const userOrg = await tx.userOrganization.findFirst({
-        where: { userId },
+        where: { userId: user.id },
         include: { organization: true }
       });
 
@@ -371,18 +371,8 @@ export class SettingsController {
   @ApiOperation({ summary: 'Get parent settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getParentSettings(@Request() req) {
-    const userId = req.context.userId;
-    
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId }
-    });
-
-    if (!user) {
-      return {
-        success: false,
-        message: 'User not found'
-      };
-    }
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
 
     // For now, return basic user data since ParentLead doesn't have userId relation
     const settings = {
@@ -411,11 +401,12 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update parent settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateParentSettings(@Request() req, @Body() settings: UpdateParentSettingsDto) {
-    const userId = req.context.userId;
+    const clerkUserId = req.context.userId;
+    await this.getUserByClerkId(clerkUserId);
     
     // For now, only update basic user data since ParentLead doesn't have userId relation
     await this.prisma.user.update({
-      where: { id: userId },
+      where: { clerkId: clerkUserId },
       data: {
         firstName: settings.firstName,
         lastName: settings.lastName,
@@ -427,6 +418,123 @@ export class SettingsController {
     return {
       success: true,
       message: 'Settings updated successfully'
+    };
+  }
+
+  @Get('privacy')
+  @ApiOperation({ summary: 'Get privacy & data settings' })
+  @ApiResponse({ status: 200, description: 'Privacy settings retrieved successfully' })
+  async getPrivacySettings(@Request() req) {
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
+
+    const preferences = await this.prisma.userNotificationPreferences.findUnique({
+      where: { userId: user.id },
+    });
+
+    return {
+      success: true,
+      data: {
+        hidePubliclyToggle: preferences?.contentModeration ?? false,
+        gdprDataDeletionRequestMade: preferences?.systemAdmin ?? false,
+      },
+    };
+  }
+
+  @Patch('privacy')
+  @ApiOperation({ summary: 'Update privacy & data settings' })
+  @ApiResponse({ status: 200, description: 'Privacy settings updated successfully' })
+  async updatePrivacySettings(@Request() req, @Body() payload: UpdatePrivacySettingsDto) {
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
+
+    const updated = await this.prisma.userNotificationPreferences.upsert({
+      where: { userId: user.id },
+      update: {
+        contentModeration: payload.hidePubliclyToggle,
+        systemAdmin: payload.gdprDataDeletionRequestMade,
+      },
+      create: {
+        userId: user.id,
+        contentModeration: payload.hidePubliclyToggle,
+        systemAdmin: payload.gdprDataDeletionRequestMade,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Privacy settings updated successfully',
+      data: {
+        hidePubliclyToggle: updated.contentModeration,
+        gdprDataDeletionRequestMade: updated.systemAdmin,
+      },
+    };
+  }
+
+  @Get('notifications')
+  @ApiOperation({ summary: 'Get notification preferences' })
+  @ApiResponse({ status: 200, description: 'Notification settings retrieved successfully' })
+  async getNotificationSettings(@Request() req) {
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
+
+    const preferences = await this.prisma.userNotificationPreferences.findUnique({
+      where: { userId: user.id },
+    });
+
+    const frequencyMap: Record<string, 'Daily' | 'Weekly' | 'None'> = {
+      daily: 'Daily',
+      weekly: 'Weekly',
+      none: 'None',
+      immediate: 'Daily',
+    };
+
+    return {
+      success: true,
+      data: {
+        newRequestEmailToggle: preferences?.leadManagement ?? true,
+        digestRadio: frequencyMap[preferences?.frequency?.toLowerCase() ?? 'daily'],
+        promoRedemptionAlertsToggle: preferences?.marketing ?? false,
+      },
+    };
+  }
+
+  @Patch('notifications')
+  @ApiOperation({ summary: 'Update notification preferences' })
+  @ApiResponse({ status: 200, description: 'Notification settings updated successfully' })
+  async updateNotificationSettings(@Request() req, @Body() payload: UpdateNotificationSettingsDto) {
+    const clerkUserId = req.context.userId;
+    const user = await this.getUserByClerkId(clerkUserId);
+
+    const frequencyMap: Record<'Daily' | 'Weekly' | 'None', string> = {
+      Daily: 'daily',
+      Weekly: 'weekly',
+      None: 'none',
+    };
+
+    const updated = await this.prisma.userNotificationPreferences.upsert({
+      where: { userId: user.id },
+      update: {
+        leadManagement: payload.newRequestEmailToggle,
+        marketing: payload.promoRedemptionAlertsToggle,
+        frequency: frequencyMap[payload.digestRadio],
+      },
+      create: {
+        userId: user.id,
+        leadManagement: payload.newRequestEmailToggle,
+        marketing: payload.promoRedemptionAlertsToggle,
+        frequency: frequencyMap[payload.digestRadio],
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Notification settings updated successfully',
+      data: {
+        newRequestEmailToggle: updated.leadManagement,
+        digestRadio: payload.digestRadio,
+        promoRedemptionAlertsToggle: updated.marketing,
+      },
     };
   }
 }
