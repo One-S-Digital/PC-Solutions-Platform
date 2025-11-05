@@ -43,13 +43,24 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getFoundationSettings(@Request() req) {
     const clerkUserId = req.context.userId;
-    const user = await this.getUserByClerkId(clerkUserId, {
-      organizations: {
-        include: {
-          organization: true,
+    if (!clerkUserId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: clerkUserId },
+      include: {
+        organizations: {
+          include: {
+            organization: true,
+          },
         },
       },
     });
+
+    if (!user) {
+      throw new NotFoundException('User record not found');
+    }
 
     if (!user.organizations.length) {
       return {
@@ -194,13 +205,24 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getSupplierSettings(@Request() req) {
     const clerkUserId = req.context.userId;
-    const user = await this.getUserByClerkId(clerkUserId, {
-      organizations: {
-        include: {
-          organization: true,
+    if (!clerkUserId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: clerkUserId },
+      include: {
+        organizations: {
+          include: {
+            organization: true,
+          },
         },
       },
     });
+
+    if (!user) {
+      throw new NotFoundException('User record not found');
+    }
 
     if (!user.organizations.length) {
       return {
@@ -285,13 +307,24 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getServiceProviderSettings(@Request() req) {
     const clerkUserId = req.context.userId;
-    const user = await this.getUserByClerkId(clerkUserId, {
-      organizations: {
-        include: {
-          organization: true,
+    if (!clerkUserId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: clerkUserId },
+      include: {
+        organizations: {
+          include: {
+            organization: true,
+          },
         },
       },
     });
+
+    if (!user) {
+      throw new NotFoundException('User record not found');
+    }
 
     if (!user.organizations.length) {
       return {
