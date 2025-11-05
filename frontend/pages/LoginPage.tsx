@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
@@ -418,15 +418,15 @@ const LoginPage: React.FC = () => {
             <p className="text-sm text-gray-600 text-center mb-3">
               {t('common:loginPage.parentLookingForCreche')}
             </p>
-            <div className="text-center">
-              <Link 
-                to="/parent-lead-form" 
-                className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
-              >
-                <span className="mr-1">??</span>
-                {t('common:loginPage.findCrecheHere')}
-              </Link>
-            </div>
+              <div className="text-center">
+                <Link 
+                  to="/parent-lead-form" 
+                  className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
+                >
+                  <HomeIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                  {t('common:loginPage.findCrecheHere')}
+                </Link>
+              </div>
           </div>
         </div>
 
