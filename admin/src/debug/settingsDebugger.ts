@@ -83,8 +83,21 @@ const computeInitialEnablement = () => {
   const params = new URLSearchParams(window.location.search)
   const forced = params.has('debugSettings') || params.get('debug') === 'settings'
   if (forced) return true
-  if (!isDevBuild) return false
-  return window.localStorage?.getItem('settings-debugger-enabled') === 'true'
+
+  const stored = window.localStorage?.getItem('settings-debugger-enabled')
+  if (stored === 'true') {
+    return true
+  }
+
+  if (stored === 'false') {
+    return false
+  }
+
+  if (isDevBuild) {
+    return true
+  }
+
+  return false
 }
 
 const computeIsForceEnabled = () => {
@@ -230,7 +243,7 @@ class SettingsDebugger {
       if (value) {
         window.localStorage?.setItem('settings-debugger-enabled', 'true')
       } else {
-        window.localStorage?.removeItem('settings-debugger-enabled')
+        window.localStorage?.setItem('settings-debugger-enabled', 'false')
       }
     }
 
@@ -272,7 +285,9 @@ class SettingsDebugger {
 
     this.events = [...this.events.slice(-MAX_EVENTS + 1), newEvent]
 
-    if (this.enabled && isDevBuild) {
+    const shouldLogToConsole = this.enabled && (isDevBuild || this.forced)
+
+    if (shouldLogToConsole) {
       const prefix = `[settings-debugger][${newEvent.scope}]`
       if (newEvent.severity === 'error') {
         console.error(prefix, newEvent.message, newEvent.details ?? '')
@@ -400,5 +415,9 @@ class SettingsDebugger {
 }
 
 const settingsDebugger = new SettingsDebugger()
+
+if (isBrowser) {
+  ;(window as typeof window & { settingsDebugger?: SettingsDebugger }).settingsDebugger = settingsDebugger
+}
 
 export default settingsDebugger

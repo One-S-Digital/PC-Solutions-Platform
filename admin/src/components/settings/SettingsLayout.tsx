@@ -8,7 +8,6 @@ import NotificationSettings from './NotificationSettings'
 import IntegrationSettings from './IntegrationSettings'
 import EmailNotificationPage from '../../pages/EmailNotificationPage'
 import SystemConfigurationPage from '../../pages/SystemConfigurationPage'
-import SettingsDebugPanel from './SettingsDebugPanel'
 
 const tabs = [
   { name: 'General', component: GeneralSettings },
@@ -71,7 +70,6 @@ const SettingsLayout: React.FC = () => {
           </Tab.Group>
         </div>
 
-        <SettingsDebugPanel />
       </div>
   )
 }
