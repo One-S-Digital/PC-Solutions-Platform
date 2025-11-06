@@ -2,6 +2,7 @@ import { Controller, Get, Patch, Body, UseGuards, Request, UnauthorizedException
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
@@ -15,7 +16,7 @@ import { UpdateNotificationSettingsDto } from './dto/notification-settings.dto';
 
 @ApiTags('settings')
 @Controller('settings')
-@UseGuards()
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class SettingsController {
   constructor(private readonly prisma: PrismaService) {}
