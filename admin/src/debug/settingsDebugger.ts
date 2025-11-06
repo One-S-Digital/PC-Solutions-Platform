@@ -227,11 +227,6 @@ class SettingsDebugger {
       return
     }
 
-    if (!isDevBuild && !this.forced && value) {
-      console.warn('[settings-debugger] Enable ignored outside development mode without forced flag.')
-      return
-    }
-
     if (this.forced && !value) {
       console.warn('[settings-debugger] Cannot disable debugger while forced via query parameters.')
       return
@@ -285,7 +280,7 @@ class SettingsDebugger {
 
     this.events = [...this.events.slice(-MAX_EVENTS + 1), newEvent]
 
-    const shouldLogToConsole = this.enabled && (isDevBuild || this.forced)
+    const shouldLogToConsole = this.enabled
 
     if (shouldLogToConsole) {
       const prefix = `[settings-debugger][${newEvent.scope}]`
