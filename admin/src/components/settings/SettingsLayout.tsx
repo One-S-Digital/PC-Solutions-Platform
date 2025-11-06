@@ -58,21 +58,19 @@ const SettingsLayout: React.FC = () => {
                 </Tab>
               ))}
             </Tab.List>
-          </div>
-          
-          <Tab.Panels>
-            {tabs.map((tab, idx) => (
-              <Tab.Panel
-                key={idx}
-                className="p-6"
-              >
-                <tab.component />
-              </Tab.Panel>
-            ))}
-          </Tab.Panels>
-        </Tab.Group>
+            </div>
+
+            <Tab.Panels>
+              {tabs.map((tab, idx) => (
+                <Tab.Panel key={idx} className="p-6">
+                  <tab.component />
+                </Tab.Panel>
+              ))}
+            </Tab.Panels>
+          </Tab.Group>
+        </div>
+
       </div>
-    </div>
   )
 }
 
