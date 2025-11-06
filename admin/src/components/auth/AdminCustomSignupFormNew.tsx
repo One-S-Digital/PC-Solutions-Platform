@@ -238,9 +238,9 @@ export default function AdminCustomSignupForm() {
               type="button" 
               onClick={() => name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
               className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-              aria-label={ (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'Hide password' : 'Show password'}
+              aria-label={(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'Hide password' : 'Show password'}
             >
-              { (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
+              {(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
             </button>
           )}
         </div>
