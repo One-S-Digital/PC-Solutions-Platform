@@ -95,7 +95,10 @@ export class PrincipalService {
   async getOrDefaultNotificationPrefs(userId: string) {
     return this.prisma.userNotificationPreferences.upsert({
       where: { userId },
-      update: {},
+      update: {
+        // No-op update prevents Prisma from throwing when record exists
+        userId,
+      },
       create: {
         userId,
         emailNotifications: true,
