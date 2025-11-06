@@ -2,6 +2,7 @@ import { Controller, Get, Put, Post, Body, Param, UseGuards, Request } from '@ne
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
@@ -59,7 +60,7 @@ export class CreateOrganizationDto {
 
 @ApiTags('profiles')
 @Controller('profiles')
-@UseGuards()
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ProfileController {
   constructor(private readonly prisma: PrismaService) {}
