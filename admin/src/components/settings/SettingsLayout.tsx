@@ -8,6 +8,7 @@ import NotificationSettings from './NotificationSettings'
 import IntegrationSettings from './IntegrationSettings'
 import EmailNotificationPage from '../../pages/EmailNotificationPage'
 import SystemConfigurationPage from '../../pages/SystemConfigurationPage'
+import SettingsDebugPanel from './SettingsDebugPanel'
 
 const tabs = [
   { name: 'General', component: GeneralSettings },
@@ -58,21 +59,20 @@ const SettingsLayout: React.FC = () => {
                 </Tab>
               ))}
             </Tab.List>
-          </div>
-          
-          <Tab.Panels>
-            {tabs.map((tab, idx) => (
-              <Tab.Panel
-                key={idx}
-                className="p-6"
-              >
-                <tab.component />
-              </Tab.Panel>
-            ))}
-          </Tab.Panels>
-        </Tab.Group>
+            </div>
+
+            <Tab.Panels>
+              {tabs.map((tab, idx) => (
+                <Tab.Panel key={idx} className="p-6">
+                  <tab.component />
+                </Tab.Panel>
+              ))}
+            </Tab.Panels>
+          </Tab.Group>
+        </div>
+
+        <SettingsDebugPanel />
       </div>
-    </div>
   )
 }
 
