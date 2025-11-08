@@ -85,6 +85,14 @@ export class ClerkWebhookController {
     this.logger.log('✅ [WEBHOOK INIT] Clerk webhook controller initialized successfully');
   }
 
+  private normalizeEmail(email?: string | null): string | null {
+    if (!email) {
+      return null;
+    }
+    const trimmed = email.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
   @Get('health')
   @Public()
   healthCheck() {
@@ -558,19 +566,18 @@ ${'='.repeat(100)}`);
     
     // E2E DEBUG: User details extraction
     // Handle test webhooks from Clerk dashboard that may have empty email_addresses array
-    let primaryEmail: string;
+    let primaryEmail: string | null = null;
     
     if (data.email_addresses && data.email_addresses.length > 0) {
-      primaryEmail = data.email_addresses[0]?.email_address;
-    } else if (data.primary_email_address_id) {
+      primaryEmail = data.email_addresses[0]?.email_address ?? null;
+    } else if (data.primary_email_address_id && process.env.NODE_ENV === 'test') {
       // Test webhook from Clerk dashboard - has primary_email_address_id but empty email_addresses array
       console.warn(`⚠️ [E2E DEBUG] CLERK TEST WEBHOOK DETECTED: Empty email_addresses array with primary_email_address_id`);
       console.warn(`⚠️ [E2E DEBUG] This is a test webhook from Clerk Dashboard. Real webhooks will have actual email addresses.`);
       primaryEmail = `test-${clerkId}@clerk-test-webhook.local`;
-    } else {
-      // Fallback for missing email
-      primaryEmail = `${clerkId}@missing-email.local`;
     }
+
+    const normalizedEmail = this.normalizeEmail(primaryEmail);
     
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
@@ -590,14 +597,13 @@ ${'='.repeat(100)}`);
         emailAddressesArray: data.email_addresses,
         firstEmailAddress: data.email_addresses?.[0],
         primaryEmailId: data.primary_email_address_id,
-        fallbackEmail: `${clerkId}@missing-email.local`,
         testWebhookFallback: `test-${clerkId}@clerk-test-webhook.local`,
-        finalEmail: primaryEmail,
+        finalEmail: normalizedEmail,
         extractionMethod: data.email_addresses && data.email_addresses.length > 0 
           ? 'from_email_addresses_array' 
-          : data.primary_email_address_id 
+          : data.primary_email_address_id && process.env.NODE_ENV === 'test'
             ? 'test_webhook_fallback' 
-            : 'missing_email_fallback',
+            : 'no_email_available',
       },
       nameExtraction: {
         firstName: data.first_name,
@@ -619,12 +625,12 @@ ${'='.repeat(100)}`);
           where: { clerkId },
           create: {
             clerkId,
-            email: primaryEmail,
+            email: normalizedEmail,
             role: validRole as UserRole,
           },
           update: {
             role: validRole as UserRole,
-            email: primaryEmail,
+            email: normalizedEmail,
           },
           select: { id: true, role: true, email: true },
         });
@@ -632,16 +638,15 @@ ${'='.repeat(100)}`);
         await tx.user.upsert({
           where: { clerkId },
           update: {
-            email: primaryEmail,
+            email: normalizedEmail,
             firstName,
             lastName,
             role: validRole as UserRole,
             phoneNumber,
-            isActive: true,
           },
           create: {
             clerkId,
-            email: primaryEmail,
+            email: normalizedEmail,
             firstName,
             lastName,
             role: validRole as UserRole,
@@ -655,7 +660,7 @@ ${'='.repeat(100)}`);
         appUserId: appUser.id,
         appUserRole: appUser.role,
         clerkId,
-        email: primaryEmail,
+        email: normalizedEmail,
         role: validRole,
         hasPhone: !!phoneNumber,
       });
@@ -664,7 +669,7 @@ ${'='.repeat(100)}`);
         error: error.message,
         errorType: error.constructor.name,
         clerkId,
-        email: primaryEmail,
+      email: normalizedEmail,
         firstName,
         lastName,
         role: validRole,
@@ -749,7 +754,8 @@ ${'='.repeat(100)}`);
     this.logger.debug(`🔄 [handleUserUpdated] Full update data:`, JSON.stringify(data, null, 2));
     const unsafeRole = data.unsafe_metadata?.role;
     const publicRole = data.public_metadata?.role;
-    const primaryEmail = data.email_addresses?.[0]?.email_address || `${clerkId}@missing-email.local`;
+    const primaryEmail = data.email_addresses?.[0]?.email_address ?? null;
+    const normalizedEmail = this.normalizeEmail(primaryEmail);
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
 
@@ -783,7 +789,7 @@ ${'='.repeat(100)}`);
     this.logger.debug(`💾 [handleUserUpdated] Updating AppUser email...`);
     await this.prisma.appUser.update({
       where: { id: appUser.id },
-      data: { email: primaryEmail },
+      data: { email: normalizedEmail },
     });
     this.logger.debug(`✅ [handleUserUpdated] AppUser updated`);
 
@@ -791,7 +797,7 @@ ${'='.repeat(100)}`);
     await this.prisma.user.update({
       where: { clerkId },
       data: {
-        email: primaryEmail,
+        email: normalizedEmail,
         firstName,
         lastName,
       },
@@ -800,7 +806,7 @@ ${'='.repeat(100)}`);
         data: {
           id: appUser.id,
           clerkId,
-          email: primaryEmail,
+          email: normalizedEmail,
           firstName,
           lastName,
           role: appUser.role,

@@ -37,13 +37,18 @@ export class BillingService {
     // Create Stripe customer if doesn't exist
     let stripeCustomerId = user.stripeCustomerId;
     if (!stripeCustomerId) {
-      const customer = await this.stripe.customers.create({
-        email: user.email,
+      const customerParams: Stripe.CustomerCreateParams = {
         name: `${user.firstName} ${user.lastName}`,
         metadata: {
-          userId: userId,
+          userId,
         },
-      });
+      };
+
+      if (user.email) {
+        customerParams.email = user.email;
+      }
+
+      const customer = await this.stripe.customers.create(customerParams);
       stripeCustomerId = customer.id;
 
       // Update user with Stripe customer ID

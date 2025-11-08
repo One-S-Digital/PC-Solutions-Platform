@@ -30,7 +30,7 @@ export class ElearningController {
   @Post('courses')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR)
   createCourse(@Body() createCourseDto: CreateCourseDto, @Request() req) {
-    const createdByAppUserId = req.context.userId;
+    const createdByAppUserId = req.context.accountId ?? req.context.userId;
     return this.elearningService.createCourse(createCourseDto, createdByAppUserId);
   }
 

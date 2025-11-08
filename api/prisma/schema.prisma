@@ -124,7 +124,7 @@ enum ConversationType {
 model User {
   id        String   @id @default(uuid())
   clerkId   String   @unique
-  email     String   @unique
+  email     String?  @unique
   firstName String?
   lastName  String?
   role      UserRole

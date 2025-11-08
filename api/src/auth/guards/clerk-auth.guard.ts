@@ -127,10 +127,10 @@ export class ClerkAuthGuard implements CanActivate {
           // Don't create AppUser here - let webhook handle it
           // Set minimal context for pending users
           request.context = {
-            userId: payload.sub,
+            clerkUserId: payload.sub,
             role: 'PENDING',
             appUserId: null,
-            clerkUserId: payload.sub,
+            accountId: null,
             isPending: true,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
@@ -145,10 +145,10 @@ export class ClerkAuthGuard implements CanActivate {
           }
         } else {
           request.context = {
-            userId: payload.sub,
+            clerkUserId: payload.sub,
             role: appUser.role,
             appUserId: appUser.id,
-            clerkUserId: payload.sub,
+            accountId: appUser.id,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
           request.user = {

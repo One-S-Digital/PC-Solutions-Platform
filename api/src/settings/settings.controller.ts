@@ -44,6 +44,14 @@ export class SettingsController {
     return { profileId, accountId, clerkUserId };
   }
 
+  private normalizeEmail(email?: string | null): string | null {
+    if (!email) {
+      return null;
+    }
+    const trimmed = email.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
   // ─────────────────────────────────────────────────────────────
   // Foundation
   // ─────────────────────────────────────────────────────────────
@@ -95,19 +103,20 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateFoundationSettings(@Request() req, @Body() settings: UpdateFoundationSettingsDto) {
     const { profileId, accountId } = this.getContext(req);
+    const normalizedEmail = this.normalizeEmail(settings.contactEmail);
 
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: profileId },
         data: {
-          email: settings.contactEmail,
+          email: normalizedEmail,
         },
       });
 
       await tx.appUser.update({
         where: { id: accountId },
         data: {
-          email: settings.contactEmail,
+          email: normalizedEmail,
         },
       });
 
@@ -174,13 +183,15 @@ export class SettingsController {
   async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
     const { profileId, accountId } = this.getContext(req);
 
+    const normalizedEmail = this.normalizeEmail(settings.email);
+
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: profileId },
         data: {
           firstName: settings.firstName,
           lastName: settings.lastName,
-          email: settings.email,
+          email: normalizedEmail,
           phoneNumber: settings.phoneNumber,
           workExperience: settings.workExperience,
           education: settings.education,
@@ -191,12 +202,10 @@ export class SettingsController {
         },
       });
 
-      if (settings.email) {
-        await tx.appUser.update({
-          where: { id: accountId },
-          data: { email: settings.email },
-        });
-      }
+      await tx.appUser.update({
+        where: { id: accountId },
+        data: { email: normalizedEmail },
+      });
     });
 
     return {
@@ -258,18 +267,20 @@ export class SettingsController {
   async updateSupplierSettings(@Request() req, @Body() settings: UpdateSupplierSettingsDto) {
     const { profileId, accountId } = this.getContext(req);
 
+    const normalizedEmail = this.normalizeEmail(settings.contactEmail);
+
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: profileId },
         data: {
-          email: settings.contactEmail,
+          email: normalizedEmail,
         },
       });
 
       await tx.appUser.update({
         where: { id: accountId },
         data: {
-          email: settings.contactEmail,
+          email: normalizedEmail,
         },
       });
 
@@ -353,18 +364,20 @@ export class SettingsController {
   async updateServiceProviderSettings(@Request() req, @Body() settings: UpdateServiceProviderSettingsDto) {
     const { profileId, accountId } = this.getContext(req);
 
+    const normalizedEmail = this.normalizeEmail(settings.contactEmail);
+
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: profileId },
         data: {
-          email: settings.contactEmail,
+          email: normalizedEmail,
         },
       });
 
       await tx.appUser.update({
         where: { id: accountId },
         data: {
-          email: settings.contactEmail,
+          email: normalizedEmail,
         },
       });
 
@@ -429,23 +442,23 @@ export class SettingsController {
   async updateParentSettings(@Request() req, @Body() settings: UpdateParentSettingsDto) {
     const { profileId, accountId } = this.getContext(req);
 
+    const normalizedEmail = this.normalizeEmail(settings.email);
+
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: profileId },
         data: {
           firstName: settings.firstName,
           lastName: settings.lastName,
-          email: settings.email,
+          email: normalizedEmail,
           phoneNumber: settings.phoneNumber,
         },
       });
 
-      if (settings.email) {
-        await tx.appUser.update({
-          where: { id: accountId },
-          data: { email: settings.email },
-        });
-      }
+      await tx.appUser.update({
+        where: { id: accountId },
+        data: { email: normalizedEmail },
+      });
     });
 
     return {

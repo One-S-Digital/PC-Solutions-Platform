@@ -96,7 +96,7 @@ export class RoleManagementController {
             userId: appUser.id,
             previousRole,
             newRole: dto.role,
-            changedBy: req.context.clerkUserId ?? req.context.userId,
+            changedBy: req.context.clerkUserId ?? req.context.accountId ?? req.context.userId,
             reason: dto.reason || 'Admin role change',
           },
         });

@@ -33,13 +33,15 @@ export class EnsureProfileInterceptor implements NestInterceptor {
       accountId: appUser.id,
       profileId: user.id,
       clerkUserId: appUser.clerkId,
-      userId: appUser.clerkId,
+      userId: user.id,
       role: user.role,
     };
 
     req.user = {
       ...(req.user ?? {}),
       id: appUser.id,
+      accountId: appUser.id,
+      profileId: user.id,
       clerkId: appUser.clerkId,
       role: user.role,
       isPending: false,

@@ -28,6 +28,14 @@ export class PrincipalService {
 
   constructor(private readonly prisma: PrismaService) {}
 
+  private normalizeEmail(email?: string | null): string | null {
+    if (!email) {
+      return null;
+    }
+    const trimmed = email.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
   /**
    * Guarantees that both the `app_users` (account) and `users` (profile) rows exist.
    * Performs an atomic `upsert` on the `users` table to avoid race conditions when
@@ -58,20 +66,31 @@ export class PrincipalService {
       throw new NotFoundException('User not found in system');
     }
 
+    const normalizedEmail = this.normalizeEmail(appUser.email);
+
     const user = await this.prisma.user.upsert({
       where: { clerkId },
       update: {
-        email: appUser.email ?? undefined,
+        email: normalizedEmail,
         role: appUser.role,
       },
       create: {
         clerkId,
-        email: appUser.email ?? '',
+        email: normalizedEmail,
         role: appUser.role,
         isActive: true,
       },
       ...(include ? { include } : {}),
     } as Prisma.UserUpsertArgs);
+
+    if (appUser.email !== normalizedEmail) {
+      await this.prisma.appUser.update({
+        where: { id: appUser.id },
+        data: {
+          email: normalizedEmail,
+        },
+      });
+    }
 
     const duration = Date.now() - startTime;
 
