@@ -159,8 +159,23 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, 
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
-export type JobStatus = 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'FILLED';
 export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP';
+
+export const JobStatus = {
+    DRAFT: 'DRAFT',
+    PUBLISHED: 'PUBLISHED',
+    CLOSED: 'CLOSED',
+    FILLED: 'FILLED',
+} as const;
+export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus];
+
+export const JobContractTypeValue = {
+    FULL_TIME: 'FULL_TIME',
+    PART_TIME: 'PART_TIME',
+    CDI: 'CDI',
+    CDD: 'CDD',
+    INTERNSHIP: 'INTERNSHIP',
+} as const;
 
 export interface JobListing {
     id: string;
