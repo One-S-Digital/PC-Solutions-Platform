@@ -15,6 +15,11 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
     npx prisma generate
 fi
 
+echo "🧭 Resolving ghost migrations..."
+for ghost in 20250926_unify_asset_appuser 20251017_add_firstname_lastname_to_appuser; do
+    npx prisma migrate resolve --applied "$ghost" 2>/dev/null || echo "Ghost migration $ghost not found or already resolved"
+done
+
 echo "🔧 Resolving any failed migrations..."
 npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix 2>/dev/null || echo "No failed migrations to resolve"
 npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing 2>/dev/null || echo "No other failed migrations"
