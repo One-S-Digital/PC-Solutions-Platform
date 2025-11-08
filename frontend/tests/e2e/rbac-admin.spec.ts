@@ -36,7 +36,8 @@ test('protected routes require authentication', async ({ page }) => {
     '/dashboard',
     '/marketplace/products',
     '/recruitment/job-listings',
-    '/settings'
+    '/settings',
+    '/settings/service-provider'
   ];
   
   for (const route of protectedRoutes) {

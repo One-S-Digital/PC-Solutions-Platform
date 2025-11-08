@@ -20,11 +20,13 @@ const DashboardPage: React.FC = () => {
     { key: 'pageViews', name: t('dashboardPage.pageViews'), value: '25,678', icon: ChartBarIcon, color: 'text-swiss-coral', bgColor: 'bg-swiss-coral/10', trend: '+8%' },
   ];
 
+  const settingsPath = currentUser?.role === UserRole.SERVICE_PROVIDER ? '/settings/service-provider' : '/settings';
+
   const quickLinksData = [
     {nameKey: 'dashboardPage.browseMarketplace', path: '/marketplace', icon: ShoppingCartIcon},
     {nameKey: 'dashboardPage.postNewJob', path: '/recruitment', icon: BriefcaseIcon},
     {nameKey: 'dashboardPage.manageUsers', path: '/users', icon: UsersIcon},
-    {nameKey: 'dashboardPage.platformSettings', path: '/settings', icon: SettingsIcon},
+    {nameKey: 'dashboardPage.platformSettings', path: settingsPath, icon: SettingsIcon},
   ];
 
   const recentActivityData = [

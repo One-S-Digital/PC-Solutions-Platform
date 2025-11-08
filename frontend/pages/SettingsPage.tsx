@@ -8,7 +8,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import {
   UsersIcon, LockClosedIcon, BellAlertIcon, WalletIcon, BuildingOfficeIcon,
-  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon
+  PhoneIcon, TagIcon, ChartPieIcon, UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../components/ui/Tabs';
@@ -17,14 +17,13 @@ import Tabs from '../components/ui/Tabs';
 import CompanyProfileSettings from '../components/settings/sections/CompanyProfileSettings';
 import ContactBookingSettings from '../components/settings/sections/ContactBookingSettings';
 import NotificationPreferencesSettings from '../components/settings/sections/NotificationPreferencesSettings';
-import DefaultsSettings from '../components/settings/sections/DefaultsSettings';
 import PromoCodeManagerSettings from '../components/settings/sections/PromoCodeManagerSettings';
 import BillingSubscriptionSettings from '../components/settings/sections/BillingSubscriptionSettings';
 import AnalyticsPreferencesSettings from '../components/settings/sections/AnalyticsPreferencesSettings';
-import TeamPermissionsSettings from '../components/settings/sections/TeamPermissionsSettings';
 import PrivacyDataSettings from '../components/settings/sections/PrivacyDataSettings';
 import AccountSecuritySettings from '../components/settings/sections/AccountSecuritySettings';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import ServiceProviderSettingsPage from './ServiceProviderSettingsPage';
 
 
 export interface SettingsSectionConfig {
@@ -38,6 +37,11 @@ export interface SettingsSectionConfig {
 const SettingsPage: React.FC = () => {
   const { t } = useTranslation(['settings', 'common']);
   const { currentUser } = useAppContext();
+
+  if (currentUser?.role === UserRole.SERVICE_PROVIDER) {
+    return <ServiceProviderSettingsPage />;
+  }
+
   const { addNotification } = useNotifications();
   const { request } = useAuthenticatedApi();
   const navigate = useNavigate();
@@ -92,19 +96,6 @@ const SettingsPage: React.FC = () => {
             minimumOrderQuantity: typeof data.minimumOrderQuantity === 'number' ? data.minimumOrderQuantity : 0,
             directOrderLink: data.directOrderLink || '',
             catalogUrl: data.catalogUrl || '',
-          } as Partial<SettingsFormData>;
-        } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
-          const response = await request<{ success: boolean; data?: any }>('/settings/service-provider');
-          const data = response.success && response.data ? response.data : {};
-          roleSettings = {
-            companyName: data.companyName || '',
-            contactEmail: data.contactEmail || currentUser.email,
-            phoneNumber: data.phoneNumber || '',
-            address: data.address || '',
-            canton: data.canton || '',
-            serviceCategories: Array.isArray(data.serviceCategories) ? data.serviceCategories : [],
-            deliveryType: data.deliveryType || '',
-            bookingLink: data.bookingLink || '',
           } as Partial<SettingsFormData>;
         }
 
@@ -173,16 +164,16 @@ const SettingsPage: React.FC = () => {
     }
   }, [formData, initialFormData]);
 
-  const sections: SettingsSectionConfig[] = [
-    { id: 'accountSecurity', nameKey: 'common:settingsPage.accountSecurity', icon: UserCircleIcon, component: AccountSecuritySettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { id: 'billingSubscription', nameKey: 'common:settingsPage.billingSubscription', icon: WalletIcon, component: BillingSubscriptionSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
-    { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
-    { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
-    { id: 'companyProfile', nameKey: 'common:settingsPage.companyProfile', icon: BuildingOfficeIcon, component: CompanyProfileSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
-    { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
-    { id: 'promoCodes', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
-    { id: 'analyticsPreferences', nameKey: 'common:settingsPage.analyticsPreferences', icon: ChartPieIcon, component: AnalyticsPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
-  ];
+const sections: SettingsSectionConfig[] = [
+  { id: 'accountSecurity', nameKey: 'common:settingsPage.accountSecurity', icon: UserCircleIcon, component: AccountSecuritySettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+  { id: 'billingSubscription', nameKey: 'common:settingsPage.billingSubscription', icon: WalletIcon, component: BillingSubscriptionSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
+  { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
+  { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
+  { id: 'companyProfile', nameKey: 'common:settingsPage.companyProfile', icon: BuildingOfficeIcon, component: CompanyProfileSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
+  { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
+  { id: 'promoCodes', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
+  { id: 'analyticsPreferences', nameKey: 'common:settingsPage.analyticsPreferences', icon: ChartPieIcon, component: AnalyticsPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
+];
 
   const availableSections = sections.filter(section => currentUser && section.roles.includes(currentUser.role));
 
@@ -239,24 +230,6 @@ const SettingsPage: React.FC = () => {
               minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
               directOrderLink: payload.directOrderLink || '',
               catalogUrl: payload.catalogUrl || '',
-            }),
-          })
-        );
-      }
-
-      if (currentUser.role === UserRole.SERVICE_PROVIDER) {
-        requests.push(
-          request('/settings/service-provider', {
-            method: 'PATCH',
-            body: JSON.stringify({
-              companyName: payload.companyName || '',
-              contactEmail: payload.contactEmail || currentUser.email,
-              phoneNumber: payload.phoneNumber || '',
-              address: payload.address || '',
-              canton: payload.canton || '',
-              serviceCategories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories : [],
-              deliveryType: payload.deliveryType || '',
-              bookingLink: payload.bookingLink || '',
             }),
           })
         );
