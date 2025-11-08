@@ -1,20 +1,18 @@
 
 
 import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
-// FIX: Add VendorClient and VendorClientReason to imports
-import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, ApplicationStatus, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types';
-import { useTranslation } from 'react-i18next'; 
-import { useAuthContext } from '../providers/AuthProvider'; // Import AuthProvider hook
-import { 
+import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types';
+import { useTranslation } from 'react-i18next';
+import { useAuthContext } from '../providers/AuthProvider';
+import {
   MOCK_PARENT_LEADS,
-  MOCK_APPLICATIONS,
-  MOCK_JOB_LISTINGS,
-  MOCK_CANDIDATE_PROFILES,
   MOCK_PLATFORM_SETTINGS,
   MOCK_SERVICE_REQUESTS,
-  MOCK_VENDOR_CLIENTS
+  MOCK_VENDOR_CLIENTS,
 } from '../constants';
-import i18n from '../i18n'; // Import i18n instance
+import i18n from '../i18n';
+import { useRecruitmentApi } from '../hooks/useRecruitmentApi';
+import { ApiError } from '../services/api';
 
 interface AppContextType {
   currentUser: User | null;
@@ -31,7 +29,7 @@ interface AppContextType {
   language: SupportedLanguage;
   setLanguage: Dispatch<SetStateAction<SupportedLanguage>>;
   applications: Application[];
-  applyForJob: (job: JobListing) => { success: boolean, message: string };
+    applyForJob: (job: JobListing) => Promise<{ success: boolean; message: string }>;
   userFiles: DocumentItem[];
   addUserFile: (file: File) => void;
   deleteUserFile: (fileId: string) => void;
@@ -53,11 +51,12 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   const { currentUser, setCurrentUser, login, logout, signup, updateCurrentUserInfo: updateUserFromAuth } = useAuthContext();
   const [leads, setLeads] = useState<ParentLead[]>(MOCK_PARENT_LEADS);
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(MOCK_SERVICE_REQUESTS);
-  const [applications, setApplications] = useState<Application[]>(MOCK_APPLICATIONS);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [userFiles, setUserFiles] = useState<DocumentItem[]>([]);
   const [platformSettings, setPlatformSettings] = useState<PlatformSettings>(MOCK_PLATFORM_SETTINGS);
   // FIX: Add state for vendor clients
   const [vendorClients, setVendorClients] = useState<VendorClient[]>(MOCK_VENDOR_CLIENTS);
+  const { createApplication, listMyApplications } = useRecruitmentApi();
   const [language, setLanguage] = useState<SupportedLanguage>(() => {
     const detectedLng = i18n.language?.toUpperCase().split('-')[0];
     if (detectedLng === 'FR' || detectedLng === 'DE') {
@@ -78,16 +77,31 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   }, [language]);
 
   useEffect(() => {
-    if(currentUser?.role === UserRole.EDUCATOR) {
-        // Find the full candidate profile to get their documents
-        const profile = MOCK_CANDIDATE_PROFILES.find(p => p.email === currentUser.email);
-        if(profile) {
-            setUserFiles(profile.documents);
-        }
+    if (currentUser?.role === UserRole.EDUCATOR) {
+      setUserFiles([]);
     } else {
-        setUserFiles([]);
+      setUserFiles([]);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    const loadApplications = async () => {
+      if (!currentUser || currentUser.role !== UserRole.EDUCATOR) {
+        setApplications([]);
+        return;
+      }
+
+      try {
+        const response = await listMyApplications();
+        setApplications(response);
+      } catch (error) {
+        console.error('Failed to load applications:', error);
+        setApplications([]);
+      }
+    };
+
+    loadApplications();
+  }, [currentUser, listMyApplications]);
 
 
   useEffect(() => {
@@ -171,37 +185,28 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     return favoriteCandidateIds.includes(candidateId);
   }, [favoriteCandidateIds]);
 
-  const applyForJob = useCallback((job: JobListing): { success: boolean, message: string } => {
-    if (!currentUser || currentUser.role !== UserRole.EDUCATOR) {
-        return { success: false, message: 'Only educators can apply for jobs.'};
-    }
+  const applyForJob = useCallback(
+    async (job: JobListing): Promise<{ success: boolean; message: string }> => {
+      if (!currentUser || currentUser.role !== UserRole.EDUCATOR) {
+        return { success: false, message: 'Only educators can apply for jobs.' };
+      }
 
-    const alreadyApplied = applications.some(app => app.jobId === job.id && app.educatorId === currentUser.id);
-    if (alreadyApplied) {
-        return { success: false, message: `You have already applied for "${job.title}".`};
-    }
-
-    const newApplication: Application = {
-        id: `app_${Date.now()}`,
-        jobId: job.id,
-        jobTitle: job.title,
-        foundationName: job.foundationName,
-        educatorId: currentUser.id,
-        educatorName: currentUser.name,
-        status: ApplicationStatus.NEW,
-        applicationDate: new Date().toISOString(),
-    };
-    
-    setApplications(prev => [newApplication, ...prev]);
-
-    // Update the applicationsReceived count in the mock data
-    const jobInList = MOCK_JOB_LISTINGS.find(j => j.id === job.id);
-    if (jobInList) {
-        jobInList.applicationsReceived += 1;
-    }
-    
-    return { success: true, message: `Successfully applied for "${job.title}"!`};
-  }, [currentUser, applications]);
+      try {
+        const newApplication = await createApplication({ jobListingId: job.id });
+        setApplications((prev) => [newApplication, ...prev]);
+        return { success: true, message: `Successfully applied for "${job.title}"!` };
+      } catch (error) {
+        if (error instanceof ApiError) {
+          if (error.status === 409) {
+            return { success: false, message: `You have already applied for "${job.title}".` };
+          }
+          return { success: false, message: error.message };
+        }
+        return { success: false, message: 'An unexpected error occurred while applying for this job.' };
+      }
+    },
+    [currentUser, createApplication],
+  );
 
   const addUserFile = useCallback((file: File) => {
     const newFile: DocumentItem = {

@@ -18,17 +18,9 @@
     "activeJobsCount": "{{count}} active job openings",
     "emptyState": "No jobs found"
   },
-  "candidateCard": {
-    "viewProfile": "View Profile"
-  },
   "tabs": {
     "jobOffers": "Job Offers",
     "candidatePool": "Candidate Pool"
-  },
-  "viewApplicantsModal": {
-    "title": "Applicants for {{jobTitle}}",
-    "noApplicants": "No applicants yet",
-    "appliedOn": "Applied on {{date}}"
   },
   "jobPostModal": {
     "editTitle": "Edit Job Posting",
@@ -65,7 +57,8 @@
     "requirements": "Requirements",
     "qualifications": "Qualifications",
     "benefits": "Benefits",
-    "applyNow": "Apply Now"
+    "applyNow": "Apply Now",
+    "noDescription": "No description provided."
   },
   "buttons": {
     "postNewJob": "Post New Job",
@@ -81,12 +74,52 @@
     "location": "Location",
     "allContractTypes": "All Contract Types",
     "allStatuses": "All Statuses",
-    "allRoles": "All Roles"
+    "allRoles": "All Roles",
+    "startDate": "Start Date",
+    "applications": "Applications",
+    "startDateTbd": "To be determined",
+    "locationUnknown": "Location TBD"
   },
   "filters": {
     "location": "Location",
     "experience": "Experience",
     "availability": "Availability"
+  },
+  "jobStatus": {
+    "draft": "Draft",
+    "published": "Published",
+    "filled": "Filled",
+    "closed": "Closed"
+  },
+  "contractTypes": {
+    "fullTime": "Full-time",
+    "partTime": "Part-time",
+    "cdi": "CDI",
+    "cdd": "CDD",
+    "internship": "Internship"
+  },
+  "candidateCard": {
+    "viewProfile": "View Profile",
+    "roleUnknown": "Role not specified",
+    "availabilityUnknown": "Availability not provided",
+    "regionUnknown": "Region not specified"
+  },
+  "viewApplicantsModal": {
+    "title": "Applicants for {{jobTitle}}",
+    "noApplicants": "No applicants yet",
+    "appliedOn": "Applied on {{date}}",
+    "loading": "Loading applications...",
+    "unknownCandidate": "Candidate"
+  },
+  "errors": {
+    "loadJobsFailed": "Unable to load job listings.",
+    "saveJobFailed": "Unable to save the job listing.",
+    "deleteJobFailed": "Unable to delete the job listing.",
+    "loadCandidatesFailed": "Unable to load candidates.",
+    "loadApplicationsFailed": "Unable to load job applications."
+  },
+  "confirmations": {
+    "deleteJob": "Are you sure you want to delete this job listing?"
   },
   "confirmRemoveCandidate": "Are you sure you want to remove {{name}}?"
 }

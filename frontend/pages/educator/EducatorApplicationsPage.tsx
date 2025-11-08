@@ -8,17 +8,14 @@ import { Application, ApplicationStatus } from '../../types';
 
 const EducatorApplicationsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
-  const { currentUser, applications } = useAppContext();
-
-  const myApplications = applications.filter(app => app.educatorId === currentUser?.id);
+  const { applications } = useAppContext();
 
   const getStatusInfo = (status: ApplicationStatus) => {
     switch (status) {
-      case ApplicationStatus.NEW: return { className: 'bg-swiss-sand/30 text-amber-800', label: t('educatorApplicationsPage.status.new') };
-      case ApplicationStatus.VIEWED: return { className: 'bg-blue-100 text-blue-800', label: t('educatorApplicationsPage.status.viewed') };
-      case ApplicationStatus.INTERVIEW: return { className: 'bg-swiss-mint/20 text-swiss-mint border border-swiss-mint', label: t('educatorApplicationsPage.status.interview') };
-      case ApplicationStatus.OFFER: return { className: 'bg-swiss-mint text-white', label: t('educatorApplicationsPage.status.offer') };
-      case ApplicationStatus.DECLINED: return { className: 'bg-swiss-coral/20 text-swiss-coral', label: t('educatorApplicationsPage.status.declined') };
+      case ApplicationStatus.PENDING: return { className: 'bg-swiss-sand/30 text-amber-800', label: t('educatorApplicationsPage.status.pending') };
+      case ApplicationStatus.REVIEWED: return { className: 'bg-blue-100 text-blue-800', label: t('educatorApplicationsPage.status.reviewed') };
+      case ApplicationStatus.ACCEPTED: return { className: 'bg-swiss-mint text-white', label: t('educatorApplicationsPage.status.accepted') };
+      case ApplicationStatus.REJECTED: return { className: 'bg-swiss-coral/20 text-swiss-coral', label: t('educatorApplicationsPage.status.rejected') };
       default: return { className: 'bg-gray-100 text-gray-700', label: status };
     }
   };
@@ -42,18 +39,18 @@ const EducatorApplicationsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {myApplications.map((app) => {
+                {applications.map((app) => {
                 const statusInfo = getStatusInfo(app.status);
                 return (
                   <tr key={app.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-swiss-charcoal">{app.jobTitle}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{app.foundationName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-500">{app.foundationName ?? t('educatorApplicationsPage.unknownFoundation', 'N/A')}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${statusInfo.className}`}>
                         {statusInfo.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{new Date(app.applicationDate).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-500">{new Date(app.updatedAt || app.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => alert(`${t('educatorApplicationsPage.viewingDetailsFor')} ${app.jobTitle}`)}>
                         {t('common:buttons.viewDetails')}
@@ -65,7 +62,7 @@ const EducatorApplicationsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
-        {myApplications.length === 0 && <p className="text-center text-gray-500 py-8">{t('educatorApplicationsPage.emptyState')}</p>}
+          {applications.length === 0 && <p className="text-center text-gray-500 py-8">{t('educatorApplicationsPage.emptyState')}</p>}
       </Card>
       <p className="text-xs text-gray-500 text-center">{t('educatorApplicationsPage.footerNote')}</p>
     </div>

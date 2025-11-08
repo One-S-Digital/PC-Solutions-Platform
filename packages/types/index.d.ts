@@ -51,6 +51,14 @@ export declare const JobStatus: {
     readonly FILLED: "FILLED";
 };
 export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus];
+export declare const JobContractType: {
+    readonly FULL_TIME: "FULL_TIME";
+    readonly PART_TIME: "PART_TIME";
+    readonly CDI: "CDI";
+    readonly CDD: "CDD";
+    readonly INTERNSHIP: "INTERNSHIP";
+};
+export type JobContractType = (typeof JobContractType)[keyof typeof JobContractType];
 export declare const ServiceCategory: {
     readonly CLEANING: "CLEANING";
     readonly IT_SUPPORT: "IT_SUPPORT";

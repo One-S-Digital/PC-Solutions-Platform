@@ -159,53 +159,59 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, 
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
+export type JobStatus = 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'FILLED';
+export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP';
+
 export interface JobListing {
     id: string;
     title: string;
-    foundationId?: string;
-    foundationName: string;
-    location: string;
-    contractType: 'Full-time' | 'Part-time' | 'CDI' | 'CDD' | 'Internship';
-    startDate: string; // ISO date string
-    applicationsReceived: number;
-    status: 'Open' | 'Closed';
-    description: string;
+    foundationId: string;
+    foundationName?: string;
+    location?: string;
+    contractType: JobContractType;
+    startDate?: string;
+    status: JobStatus;
+    description?: string;
     requirements: string[];
-    responsibilities?: string[];
-    qualifications?: string[];
-    benefits?: string[];
+    responsibilities: string[];
+    qualifications: string[];
+    benefits: string[];
+    salary?: string;
     salaryRange?: string;
-    imageUrl?: string;
+    publishedAt?: string;
+    createdAt: string;
+    updatedAt: string;
+    applicationsCount: number;
 }
 
 export interface CandidateProfile {
     id: string;
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
     avatarUrl?: string;
-    currentRoleOrTitle: string;
-    location: string; // e.g., "Geneva, GE"
-    availabilityStatus: 'Available Immediately' | 'Seeking Opportunities' | 'Not Available';
-    shortBio: string;
+    currentRoleOrTitle?: string;
+    location?: string; // e.g., "Geneva, GE"
+    availabilityStatus?: 'Available Immediately' | 'Seeking Opportunities' | 'Not Available';
+    shortBio?: string;
     skills: string[];
-    workExperience: WorkExperienceItem[];
-    education: EducationItem[];
+    workExperience?: WorkExperienceItem[];
+    education?: EducationItem[];
     certifications?: CertificationItem[];
-    availabilityPreferences: {
-        days: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun')[];
-        times: 'Morning' | 'Afternoon' | 'Full-Day' | 'Flexible';
-        contractType: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
-        preferredAgeGroups: ('Infants' | 'Toddlers' | 'Preschool')[];
+    availabilityPreferences?: {
+        days?: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun')[];
+        times?: 'Morning' | 'Afternoon' | 'Full-Day' | 'Flexible';
+        contractType?: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
+        preferredAgeGroups?: ('Infants' | 'Toddlers' | 'Preschool')[];
     };
-    documents: DocumentItem[];
+    documents?: DocumentItem[];
     
     // Legacy fields for simpler list view
-    role: string;
-    availability: string;
-    preferredRegion: string;
-    experience: string;
-    languages: string[];
+    role?: string;
+    availability?: string;
+    preferredRegion?: string;
+    experience?: string;
+    languages?: string[];
 }
 
 export interface WorkExperienceItem {
@@ -407,6 +413,7 @@ export enum SignupRole {
     FOUNDATION = 'Foundation (Daycare)',
     SUPPLIER = 'Product Supplier',
     SERVICE_PROVIDER = 'Service Provider',
+    EDUCATOR = 'Educator/Candidate',
     PARENT = 'Parent',
 }
 export interface SignupFormData {
@@ -542,22 +549,23 @@ export interface AppNotification {
 }
 
 export enum ApplicationStatus {
-    NEW = 'New',
-    VIEWED = 'Viewed',
-    INTERVIEW = 'Interview',
-    OFFER = 'Offer',
-    DECLINED = 'Declined'
+    PENDING = 'PENDING',
+    REVIEWED = 'REVIEWED',
+    ACCEPTED = 'ACCEPTED',
+    REJECTED = 'REJECTED'
 }
 
 export interface Application {
     id: string;
-    jobId: string;
+    jobListingId: string;
     jobTitle: string;
-    foundationName: string;
-    educatorId: string;
-    educatorName: string;
+    foundationName?: string;
+    candidateId: string;
+    candidateName?: string;
     status: ApplicationStatus;
-    applicationDate: string; // ISO String
+    createdAt: string; // ISO String
+    updatedAt: string; // ISO String
+    coverLetter?: string;
 }
 
 

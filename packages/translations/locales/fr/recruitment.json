@@ -10,7 +10,8 @@
     "noCandidates": "Aucun candidat disponible",
     "viewProfile": "Voir le profil",
     "searchPlaceholder": "Rechercher des candidats...",
-    "filterTitle": "Filtrer les candidats"
+    "filterTitle": "Filtrer les candidats",
+    "emptyState": "Aucun candidat disponible dans le bassin"
   },
   "jobOffers": {
     "searchPlaceholder": "Rechercher des emplois...",
@@ -18,17 +19,9 @@
     "activeJobsCount": "{{count}} postes ouverts actifs",
     "emptyState": "Aucun emploi trouvé"
   },
-  "candidateCard": {
-    "viewProfile": "Voir le profil"
-  },
   "tabs": {
     "jobOffers": "Offres d'emploi",
     "candidatePool": "Bassin de candidats"
-  },
-  "viewApplicantsModal": {
-    "title": "Candidats pour {{jobTitle}}",
-    "noApplicants": "Aucun candidat pour le moment",
-    "appliedOn": "Postulé le {{date}}"
   },
   "jobPostModal": {
     "editTitle": "Modifier l'offre d'emploi",
@@ -65,7 +58,8 @@
     "requirements": "Exigences",
     "qualifications": "Qualifications",
     "benefits": "Avantages",
-    "applyNow": "Postuler maintenant"
+    "applyNow": "Postuler maintenant",
+    "noDescription": "Aucune description fournie."
   },
   "buttons": {
     "postNewJob": "Publier une nouvelle offre",
@@ -81,12 +75,52 @@
     "location": "Localisation",
     "allContractTypes": "Tous les types de contrats",
     "allStatuses": "Tous les statuts",
-    "allRoles": "Tous les rôles"
+    "allRoles": "Tous les rôles",
+    "startDate": "Date de début",
+    "applications": "Candidatures",
+    "startDateTbd": "À déterminer",
+    "locationUnknown": "Localisation à définir"
   },
   "filters": {
     "location": "Localisation",
     "experience": "Expérience",
     "availability": "Disponibilité"
+  },
+  "jobStatus": {
+    "draft": "Brouillon",
+    "published": "Publié",
+    "filled": "Pourvu",
+    "closed": "Clôturé"
+  },
+  "contractTypes": {
+    "fullTime": "Temps plein",
+    "partTime": "Temps partiel",
+    "cdi": "CDI",
+    "cdd": "CDD",
+    "internship": "Stage"
+  },
+  "candidateCard": {
+    "viewProfile": "Voir le profil",
+    "roleUnknown": "Rôle non spécifié",
+    "availabilityUnknown": "Disponibilité non fournie",
+    "regionUnknown": "Région non spécifiée"
+  },
+  "viewApplicantsModal": {
+    "title": "Candidats pour {{jobTitle}}",
+    "noApplicants": "Aucun candidat pour le moment",
+    "appliedOn": "Postulé le {{date}}",
+    "loading": "Chargement des candidatures...",
+    "unknownCandidate": "Candidat"
+  },
+  "errors": {
+    "loadJobsFailed": "Impossible de charger les offres d'emploi.",
+    "saveJobFailed": "Impossible d'enregistrer l'offre d'emploi.",
+    "deleteJobFailed": "Impossible de supprimer l'offre d'emploi.",
+    "loadCandidatesFailed": "Impossible de charger les candidats.",
+    "loadApplicationsFailed": "Impossible de charger les candidatures."
+  },
+  "confirmations": {
+    "deleteJob": "Voulez-vous vraiment supprimer cette offre d'emploi ?"
   },
   "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
 }

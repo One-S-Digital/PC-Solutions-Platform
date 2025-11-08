@@ -51,7 +51,8 @@
     "sort": "Trier",
     "yes": "Oui",
     "no": "Non",
-    "ok": "OK"
+    "ok": "OK",
+    "retry": "Réessayer"
   },
   "common": {
     "loading": "Chargement...",

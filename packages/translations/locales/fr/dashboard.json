@@ -306,14 +306,13 @@
     "applications": "Applications mes",
     "jobBoard": "Comité de Travail"
   },
-  "educatorApplicationsPage": {
-    "status": {
-      "new": "Nouveau",
-      "viewed": "viewed",
-      "interview": "Entretien",
-      "offer": "Citation",
-      "declined": "Refusé"
-    },
+    "educatorApplicationsPage": {
+      "status": {
+        "pending": "En attente",
+        "reviewed": "Consultée",
+        "accepted": "Acceptée",
+        "rejected": "Refusée"
+      },
     "table": {
       "jobTitle": "Titre d'emploi",
       "creche": "Crèche",
@@ -325,28 +324,58 @@
     "emptyState": "Dépoi de l'application Autre",
     "footerNote": "Les applications sont mises à jour en temps réel"
   },
-  "educatorJobBoardPage": {
-    "title": "Offres d'emploi",
-    "postedOn": "Publié le",
-    "searchPlaceholder": "Rechercher des emplois...",
-    "noJobsFound": "Aucune annonce trouvée"
-  },
-  "educatorProfilePage": {
-    "editProfile": "Modificateur le Profil",
-    "availability": {
-      "days": "Perc",
-      "times": "je mais",
-      "contract": "Contrat",
-      "ageGroups": "Groupes d'âge"
+    "educatorJobBoardPage": {
+      "title": "Offres d'emploi",
+      "postedOn": "Publié le",
+      "searchPlaceholder": "Rechercher des emplois...",
+      "noJobsFound": "Aucune offre trouvée",
+      "errors": {
+        "loadJobs": "Impossible de charger les offres d'emploi."
+      },
+      "unknownFoundation": "Fondation inconnue"
     },
-    "education": {
-      "graduated": "Diplôme."
+    "educatorProfilePage": {
+      "editProfile": "Modifier le profil",
+      "loadError": "Impossible de charger le profil.",
+      "saveSuccess": "Modifications du profil enregistrées !",
+      "roleUnknown": "Rôle non spécifié",
+      "locationUnknown": "Localisation non fournie",
+      "notProvided": "Non renseigné",
+      "skills": {
+        "title": "Compétences",
+        "empty": "Aucune compétence renseignée pour le moment."
+      },
+      "availability": {
+        "title": "Disponibilité",
+        "days": "Jours",
+        "times": "Créneaux",
+        "contract": "Contrat",
+        "ageGroups": "Tranches d'âge"
+      },
+      "documents": {
+        "title": "Documents",
+        "empty": "Aucun document téléchargé pour le moment."
+      },
+      "bio": {
+        "title": "À propos de moi",
+        "empty": "Aucune biographie renseignée pour le moment."
+      },
+      "experience": {
+        "title": "Expérience",
+        "empty": "Aucune expérience ajoutée pour le moment."
+      },
+      "education": {
+        "title": "Formation",
+        "graduated": "Diplômé",
+        "empty": "Aucune formation ajoutée pour le moment."
+      },
+      "certifications": {
+        "title": "Certifications",
+        "issued": "Délivrée",
+        "expires": "Expire",
+        "empty": "Aucune certification ajoutée pour le moment."
+      }
     },
-    "certifications": {
-      "issued": "Émis",
-      "expires": "Expired"
-    }
-  },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succés",
     "ticketForm": {

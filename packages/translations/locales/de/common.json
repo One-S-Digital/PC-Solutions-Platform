@@ -51,7 +51,8 @@
     "sort": "Sortieren",
     "yes": "Ja",
     "no": "Nein",
-    "ok": "OK"
+    "ok": "OK",
+    "retry": "Erneut versuchen"
   },
   "common": {
     "loading": "Laden...",

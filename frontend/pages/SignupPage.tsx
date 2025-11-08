@@ -2,7 +2,7 @@ import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth } from '@clerk/clerk-react';
-import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage } from '../types';
+import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage, UserRole } from '../types';
 import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -10,6 +10,14 @@ import Captcha from '../components/ui/Captcha';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+
+const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
+  [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
+  [SignupRole.SUPPLIER]: UserRole.PRODUCT_SUPPLIER,
+  [SignupRole.SERVICE_PROVIDER]: UserRole.SERVICE_PROVIDER,
+  [SignupRole.EDUCATOR]: UserRole.EDUCATOR,
+  [SignupRole.PARENT]: UserRole.PARENT,
+};
 
 const SignupPage: React.FC = () => {
   const { t } = useTranslation(['signup', 'common']);
@@ -117,6 +125,10 @@ const SignupPage: React.FC = () => {
     ? t('goToPricingButton', 'Go to Pricing')
     : t('goToDashboardButton');
 
+    const requiresOrganizationDetails =
+      selectedRole !== null &&
+      [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
+
   // Redirect if user is already logged in before starting signup
   useEffect(() => {
     if (isSignedIn && !hasStartedSignup) {
@@ -139,6 +151,7 @@ const SignupPage: React.FC = () => {
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
     { role: SignupRole.SERVICE_PROVIDER, nameKey: 'role.serviceProvider', icon: CogIcon },
+    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon },
     { role: SignupRole.PARENT, nameKey: 'role.parent', icon: UsersIcon },
   ];
 
@@ -177,12 +190,15 @@ const SignupPage: React.FC = () => {
     }
   };
 
-  const validateStep2 = (): boolean => {
+    const validateStep2 = (): boolean => {
     const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
     if (!selectedRole) return false;
 
-    if (selectedRole !== SignupRole.PARENT && !formData.organisationName) 
-      newErrors.organisationName = t('errors.organisationNameRequired');
+      const requiresOrganizationDetails = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
+
+      if (requiresOrganizationDetails && !formData.organisationName) {
+        newErrors.organisationName = t('errors.organisationNameRequired');
+      }
     if (!formData.contactPerson) 
       newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'errors.parentNameRequired' : 'errors.contactPersonRequired');
     if (!formData.email) 
@@ -196,10 +212,12 @@ const SignupPage: React.FC = () => {
     if (formData.password !== formData.confirmPassword) 
       newErrors.confirmPassword = t('errors.passwordsNoMatch');
     
-    if (selectedRole !== SignupRole.PARENT && !formData.phone) 
-      newErrors.phone = t('errors.phoneRequired');
-    if (selectedRole !== SignupRole.PARENT && !formData.canton) 
-      newErrors.canton = t('errors.cantonRequired');
+      if (requiresOrganizationDetails && !formData.phone) {
+        newErrors.phone = t('errors.phoneRequired');
+      }
+      if (requiresOrganizationDetails && !formData.canton) {
+        newErrors.canton = t('errors.cantonRequired');
+      }
 
     if (selectedRole === SignupRole.FOUNDATION && (formData.capacity === undefined || formData.capacity <= 0)) 
       newErrors.capacity = t('errors.capacityRequired');
@@ -252,7 +270,9 @@ const SignupPage: React.FC = () => {
     setIsLoading(true);
     setHasStartedSignup(true);
 
-    try {
+      try {
+        const pendingUserRole = selectedRole ? SIGNUP_ROLE_TO_USER_ROLE[selectedRole] : undefined;
+
       // Split contact person into first and last name
       const nameParts = formData.contactPerson.trim().split(' ');
       const firstName = nameParts[0] || '';
@@ -267,11 +287,11 @@ const SignupPage: React.FC = () => {
         unsafeMetadata: {
           // Store signup intent for backend webhook to process
           // Backend will assign actual role via publicMetadata (secure)
-          signupType: selectedRole,
-          pendingRole: selectedRole, // For backend webhook processing
-          organisationName: formData.organisationName,
-          phone: formData.phone,
-          canton: formData.canton,
+            signupType: selectedRole,
+            pendingRole: pendingUserRole,
+            organisationName: requiresOrganizationDetails ? formData.organisationName : undefined,
+            phone: formData.phone || undefined,
+            canton: formData.canton || undefined,
         },
       });
 
@@ -512,14 +532,14 @@ const SignupPage: React.FC = () => {
               <>
                 {!showVerificationStep && (
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {selectedRole !== SignupRole.PARENT && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
+                      {requiresOrganizationDetails && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
                     {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
                     {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
                     {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
                     {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
                     
-                    {selectedRole !== SignupRole.PARENT && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
-                    {selectedRole !== SignupRole.PARENT && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
+                      {requiresOrganizationDetails && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
+                      {requiresOrganizationDetails && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
 
                     {selectedRole === SignupRole.FOUNDATION && renderField('capacity', 'labels.capacity', 'number', true)}
                     {selectedRole === SignupRole.SUPPLIER && renderField('category', 'labels.category', 'text', true, 'placeholders.category')}

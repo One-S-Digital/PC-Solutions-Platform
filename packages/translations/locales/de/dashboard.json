@@ -307,14 +307,13 @@
     "applications": "Mine wendungen",
     "jobBoard": "Jobbörse"
   },
-  "educatorApplicationsPage": {
-    "status": {
-      "new": "Neu",
-      "viewed": "Gesehen",
-      "interview": "Interview",
-      "offer": "Angebot",
-      "declined": "Abgelehnt"
-    },
+    "educatorApplicationsPage": {
+      "status": {
+        "pending": "Ausstehend",
+        "reviewed": "Überprüft",
+        "accepted": "Angenommen",
+        "rejected": "Abgelehnt"
+      },
     "table": {
       "jobTitle": "Berufsbezeichnung",
       "creche": "Krippe",
@@ -326,28 +325,58 @@
     "emptyState": "Keine Anwendungen Gefunden",
     "footerNote": "Anwendungen Werden in Echtzeit AKTUALISIERT"
   },
-  "educatorJobBoardPage": {
-    "title": "Stellenangebote",
-    "postedOn": "Gepostet am",
-    "searchPlaceholder": "Stellen suchen...",
-    "noJobsFound": "Keine Stellen gefunden"
-  },
-  "educatorProfilePage": {
-    "editProfile": "Profilbärren",
-    "availability": {
-      "days": "Tage",
-      "times": "Mal",
-      "contract": "Vertag",
-      "ageGroups": "Aardert sich"
+    "educatorJobBoardPage": {
+      "title": "Stellenangebote",
+      "postedOn": "Veröffentlicht am",
+      "searchPlaceholder": "Stellen suchen...",
+      "noJobsFound": "Keine Stellen gefunden",
+      "errors": {
+        "loadJobs": "Stellenangebote können nicht geladen werden."
+      },
+      "unknownFoundation": "Unbekannte Einrichtung"
     },
-    "education": {
-      "graduated": "Abgechlossen"
+    "educatorProfilePage": {
+      "editProfile": "Profil bearbeiten",
+      "loadError": "Profil kann nicht geladen werden.",
+      "saveSuccess": "Profiländerungen gespeichert!",
+      "roleUnknown": "Rolle nicht angegeben",
+      "locationUnknown": "Standort nicht angegeben",
+      "notProvided": "Nicht angegeben",
+      "skills": {
+        "title": "Fähigkeiten",
+        "empty": "Noch keine Fähigkeiten hinterlegt."
+      },
+      "availability": {
+        "title": "Verfügbarkeit",
+        "days": "Tage",
+        "times": "Zeiten",
+        "contract": "Vertrag",
+        "ageGroups": "Altersgruppen"
+      },
+      "documents": {
+        "title": "Dokumente",
+        "empty": "Noch keine Dokumente hochgeladen."
+      },
+      "bio": {
+        "title": "Über mich",
+        "empty": "Noch keine Beschreibung hinterlegt."
+      },
+      "experience": {
+        "title": "Erfahrung",
+        "empty": "Noch keine Erfahrung hinzugefügt."
+      },
+      "education": {
+        "title": "Ausbildung",
+        "graduated": "Abgeschlossen",
+        "empty": "Noch keine Ausbildung hinzugefügt."
+      },
+      "certifications": {
+        "title": "Zertifizierungen",
+        "issued": "Ausgestellt",
+        "expires": "Gültig bis",
+        "empty": "Noch keine Zertifizierungen hinzugefügt."
+      }
     },
-    "certifications": {
-      "issued": "Ausgegeben",
-      "expires": "Läuft ab"
-    }
-  },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Support -Ticket Erfolgreich Eingereicht",
     "ticketForm": {

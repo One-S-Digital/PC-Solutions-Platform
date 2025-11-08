@@ -51,7 +51,8 @@
     "sort": "Sort",
     "yes": "Yes",
     "no": "No",
-    "ok": "OK"
+    "ok": "OK",
+    "retry": "Retry"
   },
   "common": {
     "error": "An error occurred",

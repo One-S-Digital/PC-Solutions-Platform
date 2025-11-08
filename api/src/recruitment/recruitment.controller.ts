@@ -1,14 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  ForbiddenException,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
   Query,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { RecruitmentService } from './recruitment.service';
 import { CreateJobListingDto, UpdateJobListingDto } from './dto/create-job-listing.dto';
@@ -37,12 +39,24 @@ export class RecruitmentController {
     @Query('status') status?: string,
     @Query('location') location?: string,
     @Query('search') search?: string,
+    @Query('contractType') contractType?: string,
+    @Request() req?,
   ) {
+    const normalizedContractType = contractType ? contractType.toUpperCase() : undefined;
+    const publishedOnly =
+      !foundationId &&
+      (!req?.user ||
+        [UserRole.EDUCATOR, UserRole.PARENT, UserRole.SERVICE_PROVIDER, UserRole.PRODUCT_SUPPLIER].includes(
+          req.user.role,
+        ));
+
     return this.recruitmentService.findAllJobListings({
       foundationId,
       status,
       location,
       search,
+      contractType: normalizedContractType,
+      publishedOnly,
     });
   }
 
@@ -61,6 +75,25 @@ export class RecruitmentController {
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   deleteJobListing(@Param('id') id: string) {
     return this.recruitmentService.deleteJobListing(id);
+  }
+
+  @Get('job-listings/:id/applications')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getJobListingApplications(@Param('id') id: string, @Request() req) {
+    const listing = await this.recruitmentService.findJobListingById(id);
+
+    if (!listing) {
+      throw new NotFoundException('Job listing not found');
+    }
+
+    if (
+      req.user.role === UserRole.FOUNDATION &&
+      listing.foundationId !== req.user.organizationId
+    ) {
+      throw new ForbiddenException('You can only view applications for your own job listings');
+    }
+
+    return this.recruitmentService.findJobApplicationsForJob(id);
   }
 
   // Job Application endpoints
@@ -82,6 +115,32 @@ export class RecruitmentController {
       jobListingId,
       status,
     });
+  }
+
+  @Get('applications/my')
+  @Roles(UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  getMyJobApplications(@Request() req) {
+    const candidateId = req.context.userId;
+    return this.recruitmentService.findJobApplicationsForCandidate(candidateId);
+  }
+
+  @Get('applications/job/:id')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getApplicationsForJob(@Param('id') id: string, @Request() req) {
+    const listing = await this.recruitmentService.findJobListingById(id);
+
+    if (!listing) {
+      throw new NotFoundException('Job listing not found');
+    }
+
+    if (
+      req.user.role === UserRole.FOUNDATION &&
+      listing.foundationId !== req.user.organizationId
+    ) {
+      throw new ForbiddenException('You can only view applications for your own job listings');
+    }
+
+    return this.recruitmentService.findJobApplicationsForJob(id);
   }
 
   @Get('applications/:id')

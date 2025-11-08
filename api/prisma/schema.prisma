@@ -64,6 +64,14 @@ enum JobStatus {
   FILLED
 }
 
+enum JobContractType {
+  FULL_TIME
+  PART_TIME
+  CDI
+  CDD
+  INTERNSHIP
+}
+
 enum ServiceCategory {
   CLEANING
   IT_SUPPORT
@@ -371,17 +379,23 @@ model ServiceProvider {
 }
 
 model JobListing {
-  id           String    @id @default(uuid())
-  title        String
-  description  String?
-  requirements String[]
-  benefits     String[]
-  location     String?
-  salary       String?
-  status       JobStatus @default(DRAFT)
-  foundationId String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id               String           @id @default(uuid())
+  title            String
+  description      String?
+  requirements     String[]         @default([])
+  benefits         String[]         @default([])
+  responsibilities String[]         @default([])
+  qualifications   String[]         @default([])
+  location         String?
+  salary           String?
+  salaryRange      String?
+  contractType     JobContractType  @default(FULL_TIME)
+  startDate        DateTime?
+  status           JobStatus        @default(DRAFT)
+  foundationId     String
+  publishedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
   // Relations
   foundation   Organization     @relation(fields: [foundationId], references: [id])

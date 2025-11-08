@@ -308,11 +308,10 @@
   },
   "educatorApplicationsPage": {
     "status": {
-      "new": "New",
-      "viewed": "Viewed",
-      "interview": "Interview",
-      "offer": "Offer",
-      "declined": "Declined"
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "accepted": "Accepted",
+        "rejected": "Rejected"
     },
     "table": {
       "jobTitle": "Job Title",
@@ -325,28 +324,58 @@
     "emptyState": "No applications found",
     "footerNote": "Applications are updated in real-time"
   },
-  "educatorJobBoardPage": {
-    "title": "Job Listings",
-    "postedOn": "Posted on",
-    "searchPlaceholder": "Search jobs...",
-    "noJobsFound": "No jobs found"
-  },
-  "educatorProfilePage": {
-    "editProfile": "Edit Profile",
-    "availability": {
-      "days": "Days",
-      "times": "Times",
-      "contract": "Contract",
-      "ageGroups": "Age Groups"
+    "educatorJobBoardPage": {
+      "title": "Job Listings",
+      "postedOn": "Posted on",
+      "searchPlaceholder": "Search jobs...",
+      "noJobsFound": "No jobs found",
+      "errors": {
+        "loadJobs": "Unable to load job listings."
+      },
+      "unknownFoundation": "Unknown foundation"
     },
-    "education": {
-      "graduated": "Graduated"
+    "educatorProfilePage": {
+      "editProfile": "Edit Profile",
+      "loadError": "Unable to load profile.",
+      "saveSuccess": "Profile changes saved!",
+      "roleUnknown": "Role not specified",
+      "locationUnknown": "Location not provided",
+      "notProvided": "Not provided",
+      "skills": {
+        "title": "Skills",
+        "empty": "No skills listed yet."
+      },
+      "availability": {
+        "title": "Availability",
+        "days": "Days",
+        "times": "Times",
+        "contract": "Contract",
+        "ageGroups": "Age Groups"
+      },
+      "documents": {
+        "title": "Documents",
+        "empty": "No documents uploaded yet."
+      },
+      "bio": {
+        "title": "About Me",
+        "empty": "No bio information yet."
+      },
+      "experience": {
+        "title": "Experience",
+        "empty": "No experience added yet."
+      },
+      "education": {
+        "title": "Education",
+        "graduated": "Graduated",
+        "empty": "No education added yet."
+      },
+      "certifications": {
+        "title": "Certifications",
+        "issued": "Issued",
+        "expires": "Expires",
+        "empty": "No certifications added yet."
+      }
     },
-    "certifications": {
-      "issued": "Issued",
-      "expires": "Expires"
-    }
-  },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Support ticket submitted successfully",
     "ticketForm": {

@@ -19,17 +19,9 @@
     "activeJobsCount": "{{count}} aktive Stellenangebote",
     "emptyState": "Keine Stellen gefunden"
   },
-  "candidateCard": {
-    "viewProfile": "Profil anzeigen"
-  },
   "tabs": {
     "jobOffers": "Stellenangebote",
     "candidatePool": "Kandidatenpool"
-  },
-  "viewApplicantsModal": {
-    "title": "Bewerber für {{jobTitle}}",
-    "noApplicants": "Noch keine Bewerber",
-    "appliedOn": "Beworben am {{date}}"
   },
   "jobPostModal": {
     "editTitle": "Stellenangebot bearbeiten",
@@ -66,7 +58,8 @@
     "requirements": "Anforderungen",
     "qualifications": "Qualifikationen",
     "benefits": "Vorteile",
-    "applyNow": "Jetzt bewerben"
+    "applyNow": "Jetzt bewerben",
+    "noDescription": "Keine Beschreibung verfügbar."
   },
   "buttons": {
     "postNewJob": "Neue Stelle ausschreiben",
@@ -82,12 +75,52 @@
     "location": "Standort",
     "allContractTypes": "Alle Vertragsarten",
     "allStatuses": "Alle Status",
-    "allRoles": "Alle Rollen"
+    "allRoles": "Alle Rollen",
+    "startDate": "Startdatum",
+    "applications": "Bewerbungen",
+    "startDateTbd": "Noch festzulegen",
+    "locationUnknown": "Standort wird definiert"
   },
   "filters": {
     "location": "Standort",
     "experience": "Erfahrung",
     "availability": "Verfügbarkeit"
+  },
+  "jobStatus": {
+    "draft": "Entwurf",
+    "published": "Veröffentlicht",
+    "filled": "Besetzt",
+    "closed": "Geschlossen"
+  },
+  "contractTypes": {
+    "fullTime": "Vollzeit",
+    "partTime": "Teilzeit",
+    "cdi": "Unbefristet",
+    "cdd": "Befristet",
+    "internship": "Praktikum"
+  },
+  "candidateCard": {
+    "viewProfile": "Profil anzeigen",
+    "roleUnknown": "Rolle nicht angegeben",
+    "availabilityUnknown": "Verfügbarkeit nicht angegeben",
+    "regionUnknown": "Region nicht angegeben"
+  },
+  "viewApplicantsModal": {
+    "title": "Bewerber für {{jobTitle}}",
+    "noApplicants": "Noch keine Bewerber",
+    "appliedOn": "Beworben am {{date}}",
+    "loading": "Bewerbungen werden geladen...",
+    "unknownCandidate": "Bewerber"
+  },
+  "errors": {
+    "loadJobsFailed": "Stellenangebote können nicht geladen werden.",
+    "saveJobFailed": "Stellenangebot konnte nicht gespeichert werden.",
+    "deleteJobFailed": "Stellenangebot konnte nicht gelöscht werden.",
+    "loadCandidatesFailed": "Kandidaten können nicht geladen werden.",
+    "loadApplicationsFailed": "Bewerbungen können nicht geladen werden."
+  },
+  "confirmations": {
+    "deleteJob": "Möchten Sie dieses Stellenangebot wirklich löschen?"
   },
   "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?"
 }
