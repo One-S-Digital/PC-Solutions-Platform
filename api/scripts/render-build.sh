@@ -23,6 +23,7 @@ done
 echo "🔧 Resolving any failed migrations..."
 npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix 2>/dev/null || echo "No failed migrations to resolve"
 npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing 2>/dev/null || echo "No other failed migrations"
+npx prisma migrate resolve --rolled-back 20251106001000_user_email_nullable 2>/dev/null || echo "Latest email migration not marked as failed"
 
 echo "📊 Current migration status:"
 npx prisma migrate status || echo "Could not get migration status"
