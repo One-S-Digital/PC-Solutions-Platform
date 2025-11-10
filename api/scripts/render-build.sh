@@ -15,6 +15,32 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
     npx prisma generate
 fi
 
+# Check for problematic SQL patterns in migration files (PostgreSQL <16 doesn't support ADD CONSTRAINT IF NOT EXISTS)
+echo "🔍 Checking migration files for problematic SQL patterns..."
+PROBLEMATIC_MIGRATIONS=$(find prisma/migrations -name "migration.sql" -exec sh -c 'grep -v "^[[:space:]]*--" "$1" | grep -q "ADD CONSTRAINT IF NOT EXISTS" && echo "$1"' _ {} \; 2>/dev/null || true)
+
+if [ -n "$PROBLEMATIC_MIGRATIONS" ]; then
+    echo ""
+    echo "🚨 ERROR: Found migrations with unsupported SQL syntax (ADD CONSTRAINT IF NOT EXISTS)"
+    echo "   PostgreSQL <16 does not support ADD CONSTRAINT IF NOT EXISTS."
+    echo "   Use a DO block with IF NOT EXISTS check instead."
+    echo ""
+    echo "   Problematic migration files:"
+    echo "$PROBLEMATIC_MIGRATIONS" | while read -r file; do
+        echo "     - $file"
+    done
+    echo ""
+    echo "   💡 Fix: Replace ADD CONSTRAINT IF NOT EXISTS with a DO block pattern:"
+    echo "      DO \$\$"
+    echo "      BEGIN"
+    echo "        IF NOT EXISTS (SELECT 1 FROM pg_constraint ...) THEN"
+    echo "          ALTER TABLE ... ADD CONSTRAINT ...;"
+    echo "        END IF;"
+    echo "      END \$\$;"
+    echo ""
+    exit 1
+fi
+
 # Function to check if migration folder exists
 migration_folder_exists() {
     local migration_name=$1
@@ -66,6 +92,12 @@ else
     echo "   💡 Run: git log --all --oneline -- prisma/migrations/20251108120000_recruitment_enhancements/"
     echo "   💡 Then restore the folder and run: npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements"
     exit 1
+fi
+
+# Handle the cleanup migration that may have failed due to SQL syntax error
+if migration_folder_exists "20251110123000_recruitment_enhancements_cleanup"; then
+    echo "   Found recruitment_enhancements_cleanup migration folder, checking for failed state..."
+    resolve_failed_migration "20251110123000_recruitment_enhancements_cleanup" "rolled-back" || echo "   Cleanup migration already clean"
 fi
 
 # Mark historical production-only migrations as applied so Prisma doesn't block deploys

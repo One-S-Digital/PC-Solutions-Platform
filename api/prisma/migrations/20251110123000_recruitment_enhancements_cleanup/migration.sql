@@ -72,9 +72,26 @@ CREATE TABLE IF NOT EXISTS "public"."job_listings" (
   CONSTRAINT "job_listings_pkey" PRIMARY KEY ("id")
 );
 
-ALTER TABLE "public"."job_listings"
-  ADD CONSTRAINT IF NOT EXISTS "job_listings_foundationId_fkey"
-  FOREIGN KEY ("foundationId") REFERENCES "public"."organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- Add foreign key constraint safely (PostgreSQL <16 doesn't support ADD CONSTRAINT IF NOT EXISTS)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint c
+      JOIN pg_class t ON t.oid = c.conrelid
+      JOIN pg_namespace n ON n.oid = t.relnamespace
+    WHERE n.nspname = 'public'
+      AND t.relname = 'job_listings'
+      AND c.conname = 'job_listings_foundationId_fkey'
+  ) THEN
+    ALTER TABLE public.job_listings
+      ADD CONSTRAINT job_listings_foundationId_fkey
+      FOREIGN KEY ("foundationId")
+      REFERENCES public.organizations("id")
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE;
+  END IF;
+END $$;
 
 -- 3. Ensure new columns and defaults are in place
 ALTER TABLE "public"."job_listings"
