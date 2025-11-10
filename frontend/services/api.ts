@@ -56,10 +56,10 @@ class ApiService {
     return this.baseUrl;
   }
 
-  private async getAuthHeaders(): Promise<Record<string, string>> {
-    // This will be handled by the useAuth hook in components
+  private getAuthHeaders(): Record<string, string> {
+    // Note: For file uploads, don't set Content-Type - let browser set it with boundary
+    // For regular requests, this will be overridden
     return {
-      'Content-Type': 'application/json',
       Accept: 'application/json',
     };
   }
@@ -69,11 +69,12 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const headers = await this.getAuthHeaders();
+      const headers = this.getAuthHeaders();
       
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         ...options,
         headers: {
+          'Content-Type': 'application/json',
           ...headers,
           ...options.headers,
         },
@@ -149,6 +150,7 @@ class ApiService {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       body: formData,
+      headers: this.getAuthHeaders(), // Include auth token
     });
 
     if (!response.ok) {
@@ -161,6 +163,126 @@ class ApiService {
     }
 
     return response.json();
+  }
+
+  // Upload asset with specific kind
+  async uploadAsset(
+    file: File,
+    assetKind: string,
+  ): Promise<ApiResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('assetKind', assetKind);
+
+    const response = await fetch(`${this.baseUrl}/upload/file`, {
+      method: 'POST',
+      body: formData,
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(
+        errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+        response.status,
+        errorData.code
+      );
+    }
+
+    return response.json();
+  }
+
+  // Delete asset
+  async deleteAsset(assetId: string): Promise<ApiResponse> {
+    return this.delete(`/upload/files/${assetId}`);
+  }
+
+  // Get user's assets
+  async getUserAssets(options?: { kind?: string; limit?: number }): Promise<ApiResponse> {
+    const params = new URLSearchParams();
+    if (options?.kind) params.append('kind', options.kind);
+    if (options?.limit) params.append('limit', options.limit.toString());
+    
+    const queryString = params.toString();
+    return this.get(`/upload/assets${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // ===== Content Management Methods =====
+
+  // Fetch HR Documents
+  async getHRDocuments(options?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    category?: string;
+    status?: string;
+  }): Promise<ApiResponse> {
+    const params = new URLSearchParams();
+    if (options?.page) params.append('page', options.page.toString());
+    if (options?.limit) params.append('limit', options.limit.toString());
+    if (options?.search) params.append('search', options.search);
+    if (options?.category) params.append('category', options.category);
+    if (options?.status) params.append('status', options.status);
+    
+    const queryString = params.toString();
+    return this.get(`/content/hr-documents${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // Fetch E-Learning Content
+  async getELearningContent(options?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    category?: string;
+    type?: string;
+    language?: string;
+  }): Promise<ApiResponse> {
+    const params = new URLSearchParams();
+    if (options?.page) params.append('page', options.page.toString());
+    if (options?.limit) params.append('limit', options.limit.toString());
+    if (options?.search) params.append('search', options.search);
+    if (options?.category) params.append('category', options.category);
+    if (options?.type) params.append('type', options.type);
+    if (options?.language) params.append('language', options.language);
+    
+    const queryString = params.toString();
+    return this.get(`/content/elearning${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // Fetch State Policies
+  async getStatePolicies(options?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    country?: string;
+    region?: string;
+    isCritical?: boolean;
+  }): Promise<ApiResponse> {
+    const params = new URLSearchParams();
+    if (options?.page) params.append('page', options.page.toString());
+    if (options?.limit) params.append('limit', options.limit.toString());
+    if (options?.search) params.append('search', options.search);
+    if (options?.country) params.append('country', options.country);
+    if (options?.region) params.append('region', options.region);
+    if (options?.isCritical !== undefined) params.append('isCritical', options.isCritical.toString());
+    
+    const queryString = params.toString();
+    return this.get(`/content/state-policies${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // Delete HR Document
+  async deleteHRDocument(id: string): Promise<ApiResponse> {
+    return this.delete(`/content/hr-documents/${id}`);
+  }
+
+  // Delete E-Learning Content
+  async deleteELearningContent(id: string): Promise<ApiResponse> {
+    return this.delete(`/content/elearning/${id}`);
+  }
+
+  // Delete State Policy
+  async deleteStatePolicy(id: string): Promise<ApiResponse> {
+    return this.delete(`/content/state-policies/${id}`);
   }
 }
 

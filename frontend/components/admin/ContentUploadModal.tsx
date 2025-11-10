@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
-import { UserRole, UploadableContentType, LanguageCode, Course, HRDocument, PolicyDocument, ELearningContentType, ELearningCategory, ELEARNING_CATEGORIES, HRCategory, HR_CATEGORIES, PolicyBroadCategory, POLICY_BROAD_CATEGORIES, SWISS_CANTONS, PolicyType } from '../../types';
+import { UserRole, UploadableContentType, LanguageCode, Course, HRDocument, PolicyDocument, ELearningContentType, ELearningCategory, ELEARNING_CATEGORIES, ELearningContentTypeLabels, ELEARNING_CATEGORY_LABELS, HRCategory, HR_CATEGORIES, HR_CATEGORY_LABELS, PolicyCategory, POLICY_CATEGORIES, POLICY_CATEGORY_LABELS, SWISS_CANTONS, PolicyType, POLICY_TYPES_ENUM } from '../../types';
 import { COUNTRIES_FOR_POLICIES, CountryForPolicies, REGIONS_BY_COUNTRY, STANDARD_INPUT_FIELD } from '../../constants'; // Import STANDARD_INPUT_FIELD
 import Button from '../ui/Button';
 // import Card from '../ui/Card'; // Not used directly for modal
@@ -19,7 +19,7 @@ type FormData = {
   title?: string;
   description?: string; 
   contentPreview?: string; // For PolicyDocument specific preview if needed distinct from form's description
-  category?: ELearningCategory | HRCategory | PolicyBroadCategory;
+  category?: ELearningCategory | HRCategory | PolicyCategory;
   type?: ELearningContentType; 
   policyType?: PolicyType; 
   language?: LanguageCode;
@@ -42,11 +42,54 @@ type FormData = {
 
 const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose, onSubmit, contentType, existingContent }) => {
   const { t } = useTranslation(['dashboard', 'common']); // Initialize useTranslation
+
+  const normalizeElearningType = (value: unknown): ELearningContentType => {
+    if (typeof value === 'string') {
+      const upper = value.toUpperCase();
+      if ((Object.values(ELearningContentType) as string[]).includes(upper)) {
+        return upper as ELearningContentType;
+      }
+    }
+    return ELearningContentType.COURSE;
+  };
+
+  const normalizeElearningCategory = (value: unknown): ELearningCategory => {
+    if (typeof value === 'string' && (ELEARNING_CATEGORIES as readonly string[]).includes(value)) {
+      return value as ELearningCategory;
+    }
+    return ELEARNING_CATEGORIES[0];
+  };
+
+  const normalizeHrCategory = (value: unknown): HRCategory => {
+    if (typeof value === 'string' && (HR_CATEGORIES as readonly string[]).includes(value)) {
+      return value as HRCategory;
+    }
+    return HR_CATEGORIES[0];
+  };
+
+  const normalizePolicyCategory = (value: unknown): PolicyCategory => {
+    if (typeof value === 'string' && (POLICY_CATEGORIES as readonly string[]).includes(value)) {
+      return value as PolicyCategory;
+    }
+    return POLICY_CATEGORIES[0];
+  };
+
+  const normalizePolicyType = (value: unknown): PolicyType => {
+    if (typeof value === 'string' && (POLICY_TYPES_ENUM as readonly string[]).includes(value)) {
+      return value as PolicyType;
+    }
+    return PolicyType.REGULATION;
+  };
+
   const getInitialFormState = (): FormData => ({
     title: '',
     description: '', 
     contentPreview: '',
-    category: (contentType === 'e-learning' ? ELEARNING_CATEGORIES[0] : contentType === 'hr' ? HR_CATEGORIES[0] : POLICY_BROAD_CATEGORIES[0]) as ELearningCategory | HRCategory | PolicyBroadCategory,
+    category: (contentType === 'e-learning'
+      ? ELEARNING_CATEGORIES[0]
+      : contentType === 'hr'
+        ? HR_CATEGORIES[0]
+        : POLICY_CATEGORIES[0]) as ELearningCategory | HRCategory | PolicyCategory,
     type: contentType === 'e-learning' ? ELearningContentType.COURSE : undefined, 
     policyType: contentType === 'policy' ? PolicyType.REGULATION : undefined, 
     language: 'EN',
@@ -63,6 +106,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload'); // For video upload vs URL
 
   useEffect(() => {
     if (isOpen) {
@@ -71,14 +115,18 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         const mappedData: FormData = {
           title: existingContent.title,
           description: (existingContent as Course).description || (existingContent as PolicyDocument).contentPreview || '', // E-learning has description, Policy has contentPreview
-          category: existingContent.category as any, // Assuming category types align
+          category: contentType === 'e-learning'
+            ? normalizeElearningCategory(existingContent.category)
+            : contentType === 'hr'
+              ? normalizeHrCategory(existingContent.category)
+              : normalizePolicyCategory(existingContent.category),
           language: (existingContent as any).language || 'EN',
           tags: (existingContent as any).tags || [],
           status: (existingContent as any).status || 'Draft',
         };
         if (contentType === 'e-learning') {
           const ec = existingContent as Course;
-          mappedData.type = ec.type as ELearningContentType; // Cast here
+          mappedData.type = normalizeElearningType(ec.type);
           mappedData.accessRoles = ec.accessRoles;
           mappedData.lessons = ec.lessons;
           mappedData.duration = ec.duration;
@@ -89,8 +137,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
           mappedData.version = hr.version;
         } else if (contentType === 'policy') {
           const pol = existingContent as PolicyDocument;
-          mappedData.policyType = pol.policyType;
-          mappedData.country = pol.country as CountryForPolicies;
+          mappedData.policyType = pol.policyType ? normalizePolicyType(pol.policyType) : PolicyType.REGULATION;
+          mappedData.country = (pol.country as CountryForPolicies) || COUNTRIES_FOR_POLICIES[0];
           mappedData.region = pol.region;
           mappedData.isCritical = pol.isCritical;
           mappedData.fileType = pol.fileType as 'PDF' | 'DOC';
@@ -158,6 +206,11 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     setUploadProgress(0);
 
     const submissionData: any = { ...formData };
+
+    if (contentType !== 'policy') {
+      delete submissionData.isCritical;
+    }
+
     if (contentType === 'policy' && formData.description) {
         submissionData.contentPreview = formData.description;
     }
@@ -171,12 +224,20 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         if (currentProgress >= 100) {
           clearInterval(interval);
           setTimeout(() => {
-            if (file) submissionData.fileName = file.name; 
             if (contentType === 'e-learning') {
+                submissionData.type = normalizeElearningType(submissionData.type);
+                submissionData.category = normalizeElearningCategory(submissionData.category);
                 if (submissionData.type !== ELearningContentType.COURSE) delete submissionData.lessons;
                 if (submissionData.type !== ELearningContentType.VIDEO && submissionData.type !== ELearningContentType.COURSE) delete submissionData.duration;
                 if (submissionData.type === ELearningContentType.LINK && file) { delete submissionData.fileName; }
                 else if (submissionData.type !== ELearningContentType.LINK) { delete submissionData.fileUrl; }
+            }
+            if (contentType === 'hr') {
+                submissionData.category = normalizeHrCategory(submissionData.category);
+            }
+            if (contentType === 'policy') {
+                submissionData.category = normalizePolicyCategory(submissionData.category);
+                submissionData.policyType = normalizePolicyType(submissionData.policyType);
             }
             onSubmit(submissionData, file || undefined);
             setIsUploading(false);
@@ -253,8 +314,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         </div>
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
-          <select name="category" id="category" value={formData.category} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
-            {ELEARNING_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          <select name="category" id="category" value={formData.category as ELearningCategory} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
+            {ELEARNING_CATEGORIES.map(cat => <option key={cat} value={cat}>{ELEARNING_CATEGORY_LABELS[cat] || cat}</option>)}
           </select>
         </div>
       </div>
@@ -264,9 +325,40 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{300}</p>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        {renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({value: v, label: t(`contentUploadModal.eLearningTypes.${v.toLowerCase()}` as const, v)})), t('common:contentUploadModal.labels.contentType'), true)}
+        {renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({ value: v, label: ELearningContentTypeLabels[v] })), t('common:contentUploadModal.labels.contentType'), true)}
         {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}
       </div>
+      
+      {/* Video Source Type Toggle - Only show for VIDEO type */}
+      {formData.type === ELearningContentType.VIDEO && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Video Source</label>
+          <div className="flex gap-4">
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="radio"
+                name="videoSource"
+                value="upload"
+                checked={videoSourceType === 'upload'}
+                onChange={() => setVideoSourceType('upload')}
+                className="mr-2"
+              />
+              <span className="text-sm">Upload Video File</span>
+            </label>
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="radio"
+                name="videoSource"
+                value="url"
+                checked={videoSourceType === 'url'}
+                onChange={() => setVideoSourceType('url')}
+                className="mr-2"
+              />
+              <span className="text-sm">External Video URL (YouTube, Vimeo, etc.)</span>
+            </label>
+          </div>
+        </div>
+      )}
       {(formData.type === ELearningContentType.COURSE || formData.type === ELearningContentType.VIDEO) && (
         <div>
           <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.duration')}</label>
@@ -279,10 +371,28 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
           <input type="number" name="lessons" id="lessons" value={formData.lessons || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} min="1"/>
         </div>
       )}
-      {formData.type === ELearningContentType.LINK && (
+      {/* Show URL input for LINK type OR VIDEO with URL source */}
+      {(formData.type === ELearningContentType.LINK || (formData.type === ELearningContentType.VIDEO && videoSourceType === 'url')) && (
         <div>
-          <label htmlFor="fileUrl" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.linkUrl')} <span className="text-red-500 ml-0.5">*</span></label>
-          <input type="url" name="fileUrl" id="fileUrl" value={formData.fileUrl || ''} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.linkUrl')}/>
+          <label htmlFor="fileUrl" className="block text-sm font-medium text-gray-700 mb-1">
+            {formData.type === ELearningContentType.VIDEO ? 'Video URL' : t('common:contentUploadModal.labels.linkUrl')} 
+            <span className="text-red-500 ml-0.5">*</span>
+          </label>
+          <input 
+            type="url" 
+            name="fileUrl" 
+            id="fileUrl" 
+            value={formData.fileUrl || ''} 
+            onChange={handleInputChange} 
+            required 
+            className={`${STANDARD_INPUT_FIELD} mt-1`} 
+            placeholder={formData.type === ELearningContentType.VIDEO ? "https://www.youtube.com/watch?v=..." : t('common:contentUploadModal.placeholders.linkUrl')}
+          />
+          {formData.type === ELearningContentType.VIDEO && (
+            <p className="mt-1 text-xs text-gray-500">
+              Supports YouTube, Vimeo, and direct video URLs
+            </p>
+          )}
         </div>
       )}
       <div>
@@ -317,7 +427,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category as HRCategory} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
-            {HR_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {HR_CATEGORIES.map(cat => <option key={cat} value={cat}>{HR_CATEGORY_LABELS[cat] || cat}</option>)}
           </select>
         </div>
         {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}
@@ -354,8 +464,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
           <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
-          <select name="category" id="policyCategory" value={formData.category as PolicyBroadCategory} onChange={handleInputChange} required className={policySpecificInputClass}>
-            {POLICY_BROAD_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          <select name="category" id="policyCategory" value={formData.category as PolicyCategory} onChange={handleInputChange} required className={policySpecificInputClass}>
+            {POLICY_CATEGORIES.map(c => <option key={c} value={c}>{POLICY_CATEGORY_LABELS[c] || c}</option>)}
           </select>
         </div>
          {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}
@@ -378,7 +488,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         <div>
           <label htmlFor="policyPolicyType" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.policyType')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="policyType" id="policyPolicyType" value={formData.policyType} onChange={handleInputChange} required className={policySpecificInputClass}>
-            {Object.values(PolicyType).map(pt => <option key={pt} value={pt}>{pt}</option>)}
+            {POLICY_TYPES_ENUM.map(pt => <option key={pt} value={pt}>{pt}</option>)}
           </select>
         </div>
         <div>

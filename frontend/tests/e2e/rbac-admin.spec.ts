@@ -10,8 +10,7 @@ test('non-super-admin cannot access super-admin routes', async ({ page }) => {
   // Try to access super-admin routes directly
   const adminRoutes = [
     '/admin/super-tools',
-    '/admin/system-monitoring', 
-    '/admin/platform-settings'
+    '/admin/system-monitoring'
   ];
   
   for (const route of adminRoutes) {

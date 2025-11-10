@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as express from 'express';
@@ -69,6 +69,19 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (errors) => {
+        const formatted = errors.map((error) => ({
+          field: error.property,
+          value: error.value,
+          constraints: error.constraints,
+          children: error.children,
+        }));
+        console.error('🔴 Global Validation Error:', JSON.stringify(formatted, null, 2));
+        return new BadRequestException({
+          message: 'Validation failed',
+          errors: formatted,
+        });
+      },
     }),
   );
 

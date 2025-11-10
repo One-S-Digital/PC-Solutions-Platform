@@ -5,10 +5,10 @@ import { useAppContext } from '../contexts/AppContext';
 import { DocumentItem } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { PaperClipIcon, PlusCircleIcon, DocumentIcon, EyeIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, InboxIcon } from '@heroicons/react/24/outline';
-import FileUploadModal from '../components/shared/FileUploadModal';
-import RenameFileModal from '../components/shared/RenameFileModal';
+import { PaperClipIcon, DocumentIcon, EyeIcon, ArrowDownTrayIcon, InboxIcon } from '@heroicons/react/24/outline';
+import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useTranslation } from 'react-i18next';
+import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 
 const formatBytes = (bytes: number, decimals = 2) => {
   if (bytes === 0) return '0 Bytes';
@@ -19,7 +19,7 @@ const formatBytes = (bytes: number, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-const FileCard: React.FC<{ file: DocumentItem; onDelete: (id: string) => void; onRename: (file: DocumentItem) => void }> = ({ file, onDelete, onRename }) => {
+const FileCard: React.FC<{ file: DocumentItem; onPreview: (file: DocumentItem) => void; onDownload: (file: DocumentItem) => void }> = ({ file, onPreview, onDownload }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   return (
     <Card className="p-4 flex flex-col group" hoverEffect>
@@ -31,11 +31,9 @@ const FileCard: React.FC<{ file: DocumentItem; onDelete: (id: string) => void; o
           {file.uploadDate && <span> &middot; {new Date(file.uploadDate).toLocaleDateString()}</span>}
         </div>
       </div>
-      <div className="mt-4 pt-3 border-t border-gray-200 flex justify-center space-x-1">
-        <Button variant="ghost" size="xs" title={t('fileGallery.actions.preview')} className="!p-2" onClick={() => alert(t('fileGallery.actions.preview') + ' TBD')}><EyeIcon className="w-4 h-4" /></Button>
-        <Button variant="ghost" size="xs" title={t('fileGallery.actions.download')} className="!p-2" onClick={() => alert(t('fileGallery.actions.download') + ' TBD')}><ArrowDownTrayIcon className="w-4 h-4" /></Button>
-        <Button variant="ghost" size="xs" title={t('fileGallery.actions.rename')} className="!p-2" onClick={() => onRename(file)}><PencilIcon className="w-4 h-4" /></Button>
-        <Button variant="ghost" size="xs" title={t('fileGallery.actions.delete')} className="!p-2 text-swiss-coral" onClick={() => onDelete(file.id)}><TrashIcon className="w-4 h-4" /></Button>
+      <div className="mt-4 pt-3 border-t border-gray-200 flex justify-center space-x-2">
+        <Button variant="ghost" size="xs" title={t('fileGallery.actions.preview')} className="!p-2" onClick={() => onPreview(file)}><EyeIcon className="w-4 h-4" /></Button>
+        <Button variant="ghost" size="xs" title={t('fileGallery.actions.download')} className="!p-2" onClick={() => onDownload(file)}><ArrowDownTrayIcon className="w-4 h-4" /></Button>
       </div>
     </Card>
   );
@@ -43,20 +41,27 @@ const FileCard: React.FC<{ file: DocumentItem; onDelete: (id: string) => void; o
 
 const FileGalleryPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
-  const { userFiles, deleteUserFile, renameUserFile } = useAppContext();
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
-  const [fileToRename, setFileToRename] = useState<DocumentItem | null>(null);
+  const { userFiles } = useAppContext();
+  const { authenticatedDownload } = useAuthenticatedApi();
+  const [previewFile, setPreviewFile] = useState<DocumentItem | null>(null);
 
-  const handleDelete = (fileId: string) => {
-    if (window.confirm(t('fileGallery.confirmDelete'))) {
-      deleteUserFile(fileId);
+  const handlePreview = (file: DocumentItem) => {
+    setPreviewFile(file);
+  };
+
+  const handleDownload = async (file: DocumentItem) => {
+    try {
+      await authenticatedDownload(file.url, file.name);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download file. Please try again.');
     }
   };
 
-  const handleOpenRenameModal = (file: DocumentItem) => {
-    setFileToRename(file);
-    setIsRenameModalOpen(true);
+  // Get file extension from file name
+  const getFileExtension = (fileName: string): string => {
+    const parts = fileName.split('.');
+    return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'PDF';
   };
 
   return (
@@ -66,9 +71,9 @@ const FileGalleryPage: React.FC = () => {
           <PaperClipIcon className="w-8 h-8 mr-3 text-swiss-mint" />
           {t('sidebar.fileGallery')}
         </h1>
-        <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => setIsUploadModalOpen(true)}>
-          {t('fileGallery.uploadButton')}
-        </Button>
+        <div className="text-sm text-gray-500 italic">
+          {t('fileGallery.adminUploadNote', 'Files are uploaded by administrators')}
+        </div>
       </div>
 
       {userFiles.length === 0 ? (
@@ -80,18 +85,25 @@ const FileGalleryPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {userFiles.map(file => (
-            <FileCard key={file.id} file={file} onDelete={handleDelete} onRename={handleOpenRenameModal} />
+            <FileCard 
+              key={file.id} 
+              file={file} 
+              onPreview={handlePreview}
+              onDownload={handleDownload}
+            />
           ))}
         </div>
       )}
 
-      <FileUploadModal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} />
-      <RenameFileModal 
-        isOpen={isRenameModalOpen} 
-        onClose={() => setIsRenameModalOpen(false)} 
-        onRename={renameUserFile} 
-        file={fileToRename} 
-      />
+      {previewFile && (
+        <DocumentPreviewModal
+          isOpen={!!previewFile}
+          onClose={() => setPreviewFile(null)}
+          fileUrl={previewFile.url}
+          fileName={previewFile.name}
+          fileType={getFileExtension(previewFile.name)}
+        />
+      )}
     </div>
   );
 };

@@ -19,6 +19,8 @@ import { Public } from '../auth/decorators/public.decorator';
 import { UserRole } from '@prisma/client';
 
 @Controller('admin/frontend-settings')
+// Note: ClerkAuthGuard is applied globally, so @Public() on individual routes will work
+// RolesGuard only checks roles when ClerkAuthGuard passes (or route is @Public())
 @UseGuards(RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 export class FrontendSettingsController {
@@ -36,6 +38,7 @@ export class FrontendSettingsController {
   }
 
   @Get()
+  @Public() // Allow unauthenticated access to read settings (needed for login page branding)
   getSettings() {
     return this.frontendSettingsService.getSettings().then((data) => ({
       success: true,

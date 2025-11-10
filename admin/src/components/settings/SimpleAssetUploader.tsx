@@ -7,6 +7,7 @@ interface SimpleAssetUploaderProps {
   accept?: string
   maxSize?: number
   className?: string
+  fetchDelay?: number // Delay in ms before fetching asset (to avoid rate limiting)
 }
 
 const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
@@ -14,7 +15,8 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   onUpload,
   accept = 'image/*',
   maxSize = 5 * 1024 * 1024,
-  className = ''
+  className = '',
+  fetchDelay = 0
 }) => {
   const [dragOver, setDragOver] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -23,34 +25,38 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   const [currentAsset, setCurrentAsset] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const hasFetchedRef = useRef<string | null>(null)
   const apiClient = useApiClient()
 
   // Fetch current asset if currentAssetId exists
   useEffect(() => {
-    if (currentAssetId) {
+    // Prevent refetching the same asset
+    if (currentAssetId && hasFetchedRef.current !== currentAssetId) {
+      hasFetchedRef.current = currentAssetId
       setLoading(true)
-      // Use the API client for proper authentication
+      
       const fetchAsset = async () => {
+        // Add delay to prevent rate limiting when multiple uploaders load at once
+        if (fetchDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, fetchDelay))
+        }
+        
         try {
           const response = await apiClient.get(`/upload/asset/${currentAssetId}`)
           if (response.data && response.data.success) {
             setCurrentAsset(response.data.asset)
             setPreviewUrl(response.data.asset.publicUrl)
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error('Failed to fetch current asset:', err)
-          // Fallback to direct fetch if API client fails
-          try {
-            const res = await fetch(`/api/upload/asset/${currentAssetId}`)
-            if (res.ok) {
-              const data = await res.json()
-              if (data.success && data.asset) {
-                setCurrentAsset(data.asset)
-                setPreviewUrl(data.asset.publicUrl)
-              }
-            }
-          } catch (fallbackErr) {
-            console.error('Fallback fetch also failed:', fallbackErr)
+          
+          // Handle rate limiting gracefully
+          if (err?.response?.status === 429) {
+            console.warn('Rate limit hit, will retry later')
+            setError('Rate limit exceeded. Please wait a moment and refresh.')
+            // Reset the ref so it can retry later
+            hasFetchedRef.current = null
+          } else {
             setError('Failed to load current asset')
           }
         } finally {
@@ -59,7 +65,9 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
       }
       fetchAsset()
     }
-  }, [currentAssetId, apiClient])
+    // Only depend on currentAssetId, not apiClient
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentAssetId, fetchDelay])
 
   const handleFileSelect = async (file: File) => {
     setError(null)
@@ -105,8 +113,8 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
     setIsUploading(true)
     try {
       await onUpload(file)
-      // Clear the preview URL after successful upload to show the new asset
-      setPreviewUrl(null)
+      // Keep the preview visible after successful upload
+      // Don't clear it - let the user see what they uploaded
     } catch (err) {
       console.error('❌ Upload failed in SimpleAssetUploader:', err)
       setError('Upload failed. Please try again.')

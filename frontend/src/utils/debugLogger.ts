@@ -63,7 +63,13 @@ class DebugLogger {
     this.logs.push(entry);
     this.saveLogs();
 
-    // Also log to console for immediate visibility
+    // Only log to console in development mode
+    const isDevelopment = import.meta.env.DEV;
+    if (!isDevelopment) {
+      return; // Skip console logging in production
+    }
+
+    // Also log to console for immediate visibility (only in development)
     const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
     const prefix = `[${category}] ${message}`;
     

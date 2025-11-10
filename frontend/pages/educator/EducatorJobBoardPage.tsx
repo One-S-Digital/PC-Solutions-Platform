@@ -87,8 +87,15 @@ const EducatorJobBoardPage: React.FC = () => {
     setIsDetailModalOpen(true);
   };
   
-  const handleApply = (jobToApply: JobListing) => {
-    const result = applyForJob(jobToApply);
+  const handleApply = (data: {
+    job: JobListing;
+    cvAssetId: string;
+    cvUrl: string;
+    coverLetter: string;
+  }) => {
+    // TODO: Send this to the backend API with CV asset
+    // For now, use the existing applyForJob function
+    const result = applyForJob(data.job);
     addNotification({
       title: result.success ? t('notifications.successTitle') : t('notifications.errorTitle'),
       message: result.message,

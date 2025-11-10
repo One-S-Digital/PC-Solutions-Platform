@@ -161,7 +161,6 @@ export const API_ENDPOINTS = {
 
   // Settings
   settings: {
-    platform: '/admin/platform-settings',
     frontend: '/admin/frontend-settings',
     userSettings: '/settings/user',
     organizationSettings: '/settings/organization',
@@ -176,8 +175,33 @@ export const API_ENDPOINTS = {
     invoices: '/billing/invoices',
   },
 
-  // Content Management (Admin)
+  // Content Management (Admin) - Refactored System
   content: {
+    // E-Learning Content
+    elearning: {
+      list: '/content/elearning',
+      get: (id: string) => `/content/elearning/${id}`,
+      upload: '/content/elearning',
+      update: (id: string) => `/content/elearning/${id}`,
+      delete: (id: string) => `/content/elearning/${id}`,
+    },
+    // HR Documents
+    hrDocuments: {
+      list: '/content/hr-documents',
+      get: (id: string) => `/content/hr-documents/${id}`,
+      upload: '/content/hr-documents/upload', // Note: has /upload suffix
+      update: (id: string) => `/content/hr-documents/${id}`,
+      delete: (id: string) => `/content/hr-documents/${id}`,
+    },
+    // State Policies
+    statePolicies: {
+      list: '/content/state-policies',
+      get: (id: string) => `/content/state-policies/${id}`,
+      upload: '/content/state-policies/upload', // Note: has /upload suffix
+      update: (id: string) => `/content/state-policies/${id}`,
+      delete: (id: string) => `/content/state-policies/${id}`,
+    },
+    // Legacy endpoints (deprecated)
     list: '/content-management/content',
     get: (id: string) => `/content-management/content/${id}`,
     create: '/content-management/content',

@@ -255,15 +255,41 @@ export interface Partner {
 }
 
 export type UploadableContentType = 'e-learning' | 'hr' | 'policy';
-export type ELearningContentType = 'Course' | 'Video' | 'PDF' | 'Link';
+export type ELearningContentType = 'COURSE' | 'VIDEO' | 'PDF' | 'LINK';
 export const ELearningContentType = {
-    COURSE: 'Course' as ELearningContentType,
-    VIDEO: 'Video' as ELearningContentType,
+    COURSE: 'COURSE' as ELearningContentType,
+    VIDEO: 'VIDEO' as ELearningContentType,
     PDF: 'PDF' as ELearningContentType,
-    LINK: 'Link' as ELearningContentType,
+    LINK: 'LINK' as ELearningContentType,
 };
-export type ELearningCategory = 'Safety & Hygiene' | 'Pedagogy' | 'Child Development' | 'Administration' | 'Special Needs';
-export const ELEARNING_CATEGORIES: ELearningCategory[] = ['Safety & Hygiene', 'Pedagogy', 'Child Development', 'Administration', 'Special Needs'];
+export const ELearningContentTypeLabels: Record<ELearningContentType, string> = {
+    COURSE: 'Course',
+    VIDEO: 'Video',
+    PDF: 'PDF',
+    LINK: 'External Link',
+};
+
+export const ELEARNING_CATEGORIES = [
+    'Child Development',
+    'Health & Safety',
+    'Educational Methods',
+    'Special Needs',
+    'Parental Engagement',
+    'Administration',
+    'Technology',
+    'Other',
+] as const;
+export type ELearningCategory = typeof ELEARNING_CATEGORIES[number];
+export const ELEARNING_CATEGORY_LABELS: Record<ELearningCategory, string> = {
+    'Child Development': 'Child Development',
+    'Health & Safety': 'Health & Safety',
+    'Educational Methods': 'Educational Methods',
+    'Special Needs': 'Special Needs',
+    'Parental Engagement': 'Parental Engagement',
+    'Administration': 'Administration',
+    'Technology': 'Technology & Digital Tools',
+    'Other': 'Other Content',
+};
 
 export interface Course {
     id: string;
@@ -283,8 +309,17 @@ export interface Course {
 }
 export type LanguageCode = 'EN' | 'FR' | 'DE';
 
-export type HRCategory = 'Staff Management' | 'Child & Family Onboarding' | 'Daily Operations & Compliance' | 'Policy & Legal Documents' | 'Training & Certification' | 'Templates & Letters';
-export const HR_CATEGORIES: HRCategory[] = ['Staff Management', 'Child & Family Onboarding', 'Daily Operations & Compliance', 'Policy & Legal Documents', 'Training & Certification', 'Templates & Letters'];
+export type HRCategory = 'Onboarding' | 'Policies' | 'Benefits' | 'Training' | 'Compliance' | 'Performance' | 'Other';
+export const HR_CATEGORIES: HRCategory[] = ['Onboarding', 'Policies', 'Benefits', 'Training', 'Compliance', 'Performance', 'Other'];
+export const HR_CATEGORY_LABELS: Record<HRCategory, string> = {
+  Onboarding: 'Onboarding & Orientation',
+  Policies: 'Policies & Legal',
+  Benefits: 'Benefits & Compensation',
+  Training: 'Training & Certification',
+  Compliance: 'Compliance & Safety',
+  Performance: 'Performance & Reviews',
+  Other: 'Other Resources',
+};
 
 export interface HRDocument {
     id: string;
@@ -301,20 +336,39 @@ export interface HRDocument {
     status: 'Draft' | 'Published' | 'Archived';
 }
 
-export type PolicyBroadCategory = 'Cantonal Policies' | 'National Regulations' | 'Compliance Requirements' | 'Updates & News' | 'Official Downloads';
-export const POLICY_BROAD_CATEGORIES: PolicyBroadCategory[] = ['Cantonal Policies', 'National Regulations', 'Compliance Requirements', 'Updates & News', 'Official Downloads'];
+export const POLICY_CATEGORIES = [
+    'Education Policy',
+    'Health & Safety',
+    'Labor & Employment',
+    'Child Protection',
+    'Data Privacy',
+    'Environmental',
+    'Other',
+] as const;
+export type PolicyCategory = typeof POLICY_CATEGORIES[number];
+export const POLICY_CATEGORY_LABELS: Record<PolicyCategory, string> = {
+    'Education Policy': 'Education Policy',
+    'Health & Safety': 'Health & Safety',
+    'Labor & Employment': 'Labor & Employment',
+    'Child Protection': 'Child Protection',
+    'Data Privacy': 'Data Privacy',
+    'Environmental': 'Environmental',
+    'Other': 'Other Policies',
+};
+
 export enum PolicyType {
     REGULATION = 'Regulation',
     GUIDELINE = 'Guideline',
-    NEWS = 'News Update',
-    FORM = 'Official Form',
+    STANDARD = 'Standard',
+    DIRECTIVE = 'Directive',
+    LAW = 'Law',
 }
 export const POLICY_TYPES_ENUM = Object.values(PolicyType);
 
 export interface PolicyDocument {
     id: string;
     title: string;
-    category: PolicyBroadCategory;
+    category: PolicyCategory;
     policyType?: PolicyType;
     country?: string;
     region?: string;

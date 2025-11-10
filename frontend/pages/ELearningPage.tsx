@@ -1,24 +1,23 @@
 
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // [FIX] Imported ELEARNING_CATEGORIES to use as a valid fallback.
-import { Course, UserRole, UploadableContentType, Course as CourseType, ELearningContentType, ELEARNING_CATEGORIES } from '../types';
+import { Course, UserRole, Course as CourseType, ELearningContentType, ELearningCategory, ELEARNING_CATEGORIES, ELEARNING_CATEGORY_LABELS } from '../types';
 import { MOCK_COURSES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, PlusCircleIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
-import ContentUploadModal from '../components/admin/ContentUploadModal';
 import { useTranslation } from 'react-i18next';
+import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import DocumentPreviewModal from '../components/DocumentPreviewModal';
 
 interface CourseMaterialCardProps {
   item: Course;
-  onEdit: (item: Course) => void;
-  onDelete: (id: string) => void;
-  isAdmin: boolean;
+  onPreview?: (item: Course) => void;
 }
 
-const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, onDelete, isAdmin }) => {
+const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview }) => {
   const { t } = useTranslation(['content', 'common']);
   const typeSpecifics = {
     [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
@@ -64,22 +63,29 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
             </div>
         )}
       </div>
-      <div className="bg-gray-50 p-3 mt-auto border-t flex flex-col space-y-2">
-        <Button 
-            variant={(item.type === ELearningContentType.PDF || item.type === ELearningContentType.LINK) ? 'primary' : 'outline'} 
-            size="sm" 
-            leftIcon={ActionIconElement} 
-            className="w-full"
-            onClick={handleActionClick}
-        >
-          {currentType.actionText}
-        </Button>
-        {isAdmin && (
-          <div className="flex space-x-2">
-            <Button variant="ghost" size="xs" leftIcon={PencilIcon} onClick={() => onEdit(item)} className="flex-1 text-blue-600 hover:text-blue-700">{t('common:buttons.edit')}</Button>
-            <Button variant="ghost" size="xs" leftIcon={TrashIcon} onClick={() => onDelete(item.id)} className="flex-1 text-red-600 hover:text-red-700">{t('common:buttons.delete')}</Button>
-          </div>
-        )}
+      <div className="bg-gray-50 p-3 mt-auto border-t">
+        <div className="flex flex-col space-y-2">
+          <Button 
+              variant={(item.type === ELearningContentType.PDF || item.type === ELearningContentType.LINK) ? 'primary' : 'outline'} 
+              size="sm" 
+              leftIcon={ActionIconElement} 
+              className="w-full"
+              onClick={handleActionClick}
+          >
+            {currentType.actionText}
+          </Button>
+          {item.type === ELearningContentType.PDF && item.fileUrl && onPreview && (
+            <Button 
+                variant="ghost" 
+                size="sm" 
+                leftIcon={EyeIcon} 
+                className="w-full"
+                onClick={() => onPreview(item)}
+            >
+              Preview PDF
+            </Button>
+          )}
+        </div>
       </div>
     </Card>
   );
@@ -88,15 +94,74 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
 const ELearningPage: React.FC = () => {
   const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
-  const [eLearningItems, setELearningItems] = useState<Course[]>(MOCK_COURSES);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Course | null>(null);
+  const { authenticatedRequest, authenticatedUpload } = useAuthenticatedApi();
+  const [eLearningItems, setELearningItems] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('All');
+  const [filterCategory, setFilterCategory] = useState<'All' | ELearningCategory>('All');
+  const [isLoading, setIsLoading] = useState(true);
+  const [previewItem, setPreviewItem] = useState<Course | null>(null);
 
   const isAdminOrSuperAdmin = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
 
-  const categories = useMemo(() => ['All', ...new Set(eLearningItems.map(item => item.category))], [eLearningItems]);
+  const normalizeElearningType = (value: unknown): ELearningContentType => {
+    if (typeof value === 'string') {
+      const upper = value.toUpperCase();
+      if ((Object.values(ELearningContentType) as string[]).includes(upper)) {
+        return upper as ELearningContentType;
+      }
+    }
+    return ELearningContentType.COURSE;
+  };
+
+  const normalizeElearningCategory = (value: unknown): ELearningCategory => {
+    if (typeof value === 'string' && (ELEARNING_CATEGORIES as readonly string[]).includes(value)) {
+      return value as ELearningCategory;
+    }
+    return 'Other';
+  };
+
+  // Fetch E-Learning content from API
+  useEffect(() => {
+    const fetchELearningContent = async () => {
+      try {
+        setIsLoading(true);
+        const response = await authenticatedRequest<any[]>('/content/elearning?limit=100', {
+          method: 'GET'
+        });
+
+        if (response.success && response.data) {
+          // Transform API response to match Course interface
+          const content = response.data.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            type: normalizeElearningType(item.contentType || item.type),
+            category: normalizeElearningCategory(item.category),
+            updatedDate: item.updatedAt || item.lastUpdated || new Date().toISOString(),
+            thumbnailUrl: item.thumbnailUrl || `https://picsum.photos/seed/${item.id}/300/180`,
+            language: item.language || 'EN',
+            accessRoles: item.accessRoles || [],
+            status: item.status || 'Published',
+            lessons: item.lessons,
+            duration: item.duration,
+            fileUrl: item.publicUrl || item.fileUrl || item.url,
+            tags: item.tags || [],
+          }));
+          setELearningItems(content);
+        }
+      } catch (error) {
+        console.error('Failed to fetch E-Learning content:', error);
+        // Fall back to mock data if API fails
+        setELearningItems(MOCK_COURSES);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchELearningContent();
+  }, [authenticatedRequest]);
+
+  const categories = useMemo(() => ['All', ...new Set(eLearningItems.map(item => item.category))] as Array<'All' | ELearningCategory>, [eLearningItems]);
 
   const globallyFilteredItems = useMemo(() => {
     return eLearningItems.filter(item =>
@@ -114,42 +179,13 @@ const ELearningPage: React.FC = () => {
   const linkItems = useMemo(() => globallyFilteredItems.filter(item => item.type === ELearningContentType.LINK), [globallyFilteredItems]);
 
 
-  const handleOpenUploadModal = (itemToEdit: Course | null = null) => {
-    setEditingItem(itemToEdit);
-    setIsUploadModalOpen(true);
-  };
 
-  const handleContentSubmit = (data: Partial<CourseType>, file?: File) => {
-    if (editingItem) {
-        setELearningItems(prevItems => prevItems.map(item => item.id === editingItem.id ? { ...item, ...data, fileUrl: file ? file.name : item.fileUrl, thumbnailUrl: file && (data.type === ELearningContentType.VIDEO || data.type === ELearningContentType.PDF) ? URL.createObjectURL(file) : item.thumbnailUrl, updatedDate: new Date().toISOString() } : item ));
-    } else {
-        const newContent: Course = {
-        id: `crs${Date.now()}`,
-        title: data.title || 'Untitled Course',
-        description: data.description || '',
-        type: data.type || ELearningContentType.COURSE,
-        // [FIX] Used a valid ELearningCategory as a fallback.
-        category: data.category || ELEARNING_CATEGORIES[0],
-        updatedDate: new Date().toISOString(),
-        thumbnailUrl: `https://picsum.photos/seed/new${Date.now()}/300/180`,
-        language: data.language || 'EN',
-        accessRoles: data.accessRoles || [UserRole.FOUNDATION, UserRole.EDUCATOR],
-        status: data.status || 'Published',
-        lessons: data.type === ELearningContentType.COURSE ? (data.lessons || 0) : undefined,
-        duration: (data.type === ELearningContentType.COURSE || data.type === ELearningContentType.VIDEO) ? (data.duration || undefined) : undefined,
-        fileUrl: file ? file.name : (data.type === ELearningContentType.LINK ? data.fileUrl : undefined),
-        tags: data.tags || [],
-        };
-        setELearningItems(prev => [newContent, ...prev]);
+  const handlePreview = (item: Course) => {
+    if (item.fileUrl) {
+      setPreviewItem(item);
     }
   };
 
-  const handleDeleteItem = (id: string) => {
-    if (window.confirm(t('eLearning.confirmDelete'))) {
-        setELearningItems(prevItems => prevItems.filter(item => item.id !== id));
-    }
-  };
-  
   const renderSection = (title: string, items: Course[], itemTypeName: string, Icon: React.ElementType) => (
     <section className="space-y-4">
       <h2 className="text-2xl font-semibold text-swiss-charcoal flex items-center">
@@ -163,10 +199,8 @@ const ELearningPage: React.FC = () => {
           {items.map(item => (
             <CourseMaterialCard 
                 key={item.id} 
-                item={item} 
-                onEdit={() => handleOpenUploadModal(item)}
-                onDelete={handleDeleteItem}
-                isAdmin={isAdminOrSuperAdmin}
+                item={item}
+                onPreview={handlePreview}
             />
           ))}
         </div>
@@ -179,9 +213,7 @@ const ELearningPage: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-center">
         <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('eLearning.title')}</h1>
         {isAdminOrSuperAdmin && (
-          <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => handleOpenUploadModal()}>
-            {t('eLearning.addNewContentButton')}
-          </Button>
+          <span className="text-sm text-gray-500 italic">{t('eLearning.adminUploadNote', 'Use Admin Dashboard to add/edit content')}</span>
         )}
       </div>
 
@@ -204,10 +236,14 @@ const ELearningPage: React.FC = () => {
                 <select
                     id="eLearningCategory"
                     value={filterCategory}
-                    onChange={(e) => setFilterCategory(e.target.value)}
+                    onChange={(e) => setFilterCategory(e.target.value as 'All' | ELearningCategory)}
                     className={`${STANDARD_INPUT_FIELD} w-full md:w-auto`}
                 >
-                    {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>
+                        {cat === 'All' ? t('eLearning.allCategoriesLabel', { defaultValue: 'All Categories' }) : (ELEARNING_CATEGORY_LABELS[cat] || cat)}
+                      </option>
+                    ))}
                 </select>
             </div>
         </div>
@@ -221,15 +257,14 @@ const ELearningPage: React.FC = () => {
       {renderSection(t('eLearning.videosTitle'), videoItems, t('eLearning.itemType.videos'), VideoCameraIcon)}
       {renderSection(t('eLearning.pdfsTitle'), pdfItems, t('eLearning.itemType.pdfs'), DocumentTextIcon)}
       {renderSection(t('eLearning.externalLinksTitle'), linkItems, t('eLearning.itemType.links'), LinkIcon)}
-      
 
-      {isAdminOrSuperAdmin && (
-        <ContentUploadModal
-            isOpen={isUploadModalOpen}
-            onClose={() => { setIsUploadModalOpen(false); setEditingItem(null); }}
-            onSubmit={handleContentSubmit}
-            contentType="e-learning"
-            existingContent={editingItem}
+      {previewItem && previewItem.fileUrl && (
+        <DocumentPreviewModal
+          isOpen={!!previewItem}
+          onClose={() => setPreviewItem(null)}
+          fileUrl={previewItem.fileUrl}
+          fileName={previewItem.title}
+          fileType="PDF"
         />
       )}
     </div>

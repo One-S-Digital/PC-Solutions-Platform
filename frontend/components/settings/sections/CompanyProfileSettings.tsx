@@ -5,9 +5,7 @@ import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import { BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-// Import new UI components when ready
-// import ChipInput from '../../ui/ChipInput';
-// import FileUploadZone from '../../ui/FileUploadZone';
+import FileUploadZone from '../../ui/FileUploadZone';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -55,18 +53,40 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
           />
         </div>
 
-        {/* Logo Upload - Placeholder */}
+        {/* Logo Upload */}
         <label className="form-label">{t('settingsCompanyProfile.logo')}</label>
         <div className="form-input-container">
-          {/* <FileUploadZone onFileUpload={(file) => onChange('logoUrl', 'mock-logo-url.png')} /> Placeholder */}
-           <input type="file" id="logoUrl" name="logoUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
+          {settings.logoUrl && (
+            <div className="mb-3">
+              <img src={settings.logoUrl} alt="Company Logo" className="w-24 h-24 object-cover rounded-lg border" />
+            </div>
+          )}
+          <FileUploadZone 
+            label={t('settingsCompanyProfile.uploadLogo')}
+            acceptedMimeTypes="image/*"
+            maxFileSizeMB={2}
+            assetKind="LOGO"
+            onUploadSuccess={(asset) => onChange('logoUrl', asset.url)}
+            autoUpload={true}
+          />
         </div>
         
-        {/* Cover Image Upload - Placeholder */}
+        {/* Cover Image Upload */}
         <label className="form-label">{t('settingsCompanyProfile.coverImage')}</label>
         <div className="form-input-container">
-          {/* <FileUploadZone onFileUpload={(file) => onChange('coverImageUrl', 'mock-cover-url.png')} /> Placeholder */}
-          <input type="file" id="coverImageUrl" name="coverImageUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
+          {settings.coverImageUrl && (
+            <div className="mb-3">
+              <img src={settings.coverImageUrl} alt="Cover Image" className="w-full h-32 object-cover rounded-lg border" />
+            </div>
+          )}
+          <FileUploadZone 
+            label={t('settingsCompanyProfile.uploadCoverImage')}
+            acceptedMimeTypes="image/*"
+            maxFileSizeMB={5}
+            assetKind="COVER_IMAGE"
+            onUploadSuccess={(asset) => onChange('coverImageUrl', asset.url)}
+            autoUpload={true}
+          />
         </div>
 
         {/* About Text */}

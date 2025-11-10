@@ -23,6 +23,13 @@ import AuthDebugPanel from './src/components/debug/AuthDebugPanel';
 import FrontendDebugToggle from './src/components/debug/FrontendDebugToggle';
 import { authDebugger } from './src/utils/authDebugger';
 
+// Development-only logging helper
+const devLog = (...args: any[]) => {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+};
+
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
 import PartnersPage from './pages/PartnersPage';
@@ -33,7 +40,6 @@ import ParentEnquiriesPage from './pages/parent/ParentEnquiriesPage';
 import FoundationLeadsPage from './pages/foundation/FoundationLeadsPage';
 import ContentManagementDashboardPage from './pages/admin/ContentManagementDashboardPage'; 
 import AdminSystemMonitoringPage from './pages/admin/AdminSystemMonitoringPage';
-import AdminPlatformSettingsPage from './pages/admin/AdminPlatformSettingsPage'; // Corrected relative import
 import DashboardDetailPage from './pages/DashboardDetailPage'; 
 import PartnerDetailPage from './pages/partner/PartnerDetailPage'; 
 import CandidateProfilePage from './pages/candidate/CandidateProfilePage';
@@ -248,14 +254,6 @@ const ProtectedLayout: React.FC = () => {
           } 
         />
         <Route 
-          path="/admin/platform-settings" 
-          element={
-            <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
-              <AdminPlatformSettingsPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
           path="/design-system" 
           element={
             <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
@@ -385,7 +383,7 @@ const App: React.FC = () => {
         port: window.location.port,
       };
       
-      console.log('?? App Boot - Environment Config:', envConfig);
+      devLog('🔧 App Boot - Environment Config:', envConfig);
       authDebugger.log('ENV', 'boot', 'INFO', envConfig);
     }
   }, []);

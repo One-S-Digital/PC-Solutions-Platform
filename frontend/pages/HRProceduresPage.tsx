@@ -1,26 +1,33 @@
 
 
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // [FIX] Imported HR_CATEGORIES to use as a valid fallback.
-import { HRDocument, UserRole, UploadableContentType, HRDocument as HRDocType, HR_CATEGORIES } from '../types';
+import { HRDocument, UserRole, HRDocument as HRDocType, HR_CATEGORIES, HR_CATEGORY_LABELS, HRCategory } from '../types';
 import { MOCK_HR_DOCS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card'; 
 import Button from '../components/ui/Button';
-import { DocumentTextIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, StarIcon, PlusCircleIcon, DocumentDuplicateIcon, UserPlusIcon, UsersIcon, BuildingLibraryIcon, AcademicCapIcon, HeartIcon, FolderIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, StarIcon, DocumentDuplicateIcon, UserPlusIcon, BuildingLibraryIcon, AcademicCapIcon, HeartIcon, FolderIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
-import ContentUploadModal from '../components/admin/ContentUploadModal';
+import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 
 interface HRDocumentCardProps {
   doc: HRDocument;
   onToggleFavorite: (id: string) => void;
-  onEdit: (doc: HRDocument) => void;
-  onDelete: (id: string) => void;
-  isAdmin: boolean;
+  onPreview: (doc: HRDocument) => void;
+  onDownload: (doc: HRDocument) => void;
 }
 
-const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, onEdit, onDelete, isAdmin }) => {
+const normalizeHrCategory = (value: unknown): HRCategory => {
+  if (typeof value === 'string' && HR_CATEGORIES.includes(value as HRCategory)) {
+    return value as HRCategory;
+  }
+  return 'Other';
+};
+
+const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, onPreview, onDownload }) => {
   const { t } = useTranslation(['content', 'common']);
   const fileTypeColors = {
     PDF: 'text-red-500',
@@ -36,7 +43,7 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
             <DocumentDuplicateIcon className={`w-10 h-10 ${fileTypeColors[doc.fileType] || 'text-gray-500'}`} />
             <div className="ml-3">
               <h3 className="text-lg font-semibold text-swiss-charcoal group-hover:text-swiss-mint transition-colors">{doc.title}</h3>
-              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel', { category: doc.category })}</p>
+              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel', { category: HR_CATEGORY_LABELS[doc.category as HRCategory] || doc.category })}</p>
               {doc.language && <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.languageLabel', { language: doc.language })} {doc.version && t('hrProcedures.documentCard.versionLabel', { version: doc.version })}</p>}
             </div>
           </div>
@@ -59,14 +66,8 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
         </div>
       </div>
       <div className="bg-gray-50 px-5 py-3 mt-auto border-t flex justify-end items-center space-x-2">
-        <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => alert(t('hrProcedures.documentCard.downloadingAlert', { title: doc.title }))}>{t('hrProcedures.documentCard.downloadButton')}</Button>
-        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => alert(t('hrProcedures.documentCard.previewingAlert', { title: doc.title }))} className="p-2" aria-label={t('hrProcedures.documentCard.previewButtonLabel')} title={t('hrProcedures.documentCard.previewButtonLabel')}></Button>
-        {isAdmin && (
-          <>
-            <Button variant="ghost" size="sm" leftIcon={PencilIcon} onClick={() => onEdit(doc)} className="text-blue-600 hover:text-blue-700 p-2" aria-label={t('hrProcedures.documentCard.editButtonLabel')} title={t('hrProcedures.documentCard.editButtonLabel')}></Button>
-            <Button variant="ghost" size="sm" leftIcon={TrashIcon} onClick={() => onDelete(doc.id)} className="text-red-600 hover:text-red-700 p-2" aria-label={t('hrProcedures.documentCard.deleteButtonLabel')} title={t('hrProcedures.documentCard.deleteButtonLabel')}></Button>
-          </>
-        )}
+        <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => onDownload(doc)}>{t('hrProcedures.documentCard.downloadButton')}</Button>
+        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onPreview(doc)} className="p-2" aria-label={t('hrProcedures.documentCard.previewButtonLabel')} title={t('hrProcedures.documentCard.previewButtonLabel')}></Button>
       </div>
     </Card>
   );
@@ -94,77 +95,112 @@ const CategoryDisplayCard: React.FC<{title: string, icon: React.ElementType, cou
 const HRProceduresPage: React.FC = () => {
   const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
+  const { authenticatedRequest, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [hrDocs, setHrDocs] = useState<HRDocument[]>(MOCK_HR_DOCS);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [editingDoc, setEditingDoc] = useState<HRDocument | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<HRCategory | null>(null);
+  const [hrDocs, setHrDocs] = useState<HRDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [previewDoc, setPreviewDoc] = useState<HRDocument | null>(null);
 
 
   const isAdminOrSuperAdmin = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
+
+  // Fetch HR documents from API
+  useEffect(() => {
+    const fetchHRDocuments = async () => {
+      try {
+        setIsLoading(true);
+        const response = await authenticatedRequest<any[]>('/content/hr-documents?limit=100', {
+          method: 'GET'
+        });
+
+        if (response.success && response.data) {
+          // Transform API response to match HRDocument interface
+          const documents = response.data.map((doc: any) => ({
+            id: doc.id,
+            title: doc.title,
+            category: normalizeHrCategory(doc.category),
+            fileUrl: doc.publicUrl || doc.fileUrl || doc.url || '#',
+            uploaderId: doc.uploaderId || doc.createdBy,
+            lastUpdated: doc.updatedAt || doc.lastUpdated || new Date().toISOString(),
+            fileType: doc.fileType || 'PDF',
+            tags: doc.tags || [],
+            language: doc.language,
+            version: doc.versionNumber || 'v1.0',
+            status: doc.status || 'Published',
+            isFavorite: false, // TODO: Implement favorites
+          }));
+          setHrDocs(documents);
+        }
+      } catch (error) {
+        console.error('Failed to fetch HR documents:', error);
+        // Fall back to mock data if API fails
+        setHrDocs(MOCK_HR_DOCS);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHRDocuments();
+  }, [authenticatedRequest]);
 
   const toggleFavorite = (id: string) => {
     setHrDocs(prevDocs => prevDocs.map(doc => doc.id === id ? {...doc, isFavorite: !doc.isFavorite} : doc));
   };
 
   const categoriesWithCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    hrDocs.filter(doc => doc.status === 'Published' || isAdminOrSuperAdmin).forEach(doc => {
-      counts[doc.category] = (counts[doc.category] || 0) + 1;
-    });
-    return Object.entries(counts).map(([name, count]) => ({ name, count })).filter(cat => cat.count > 0);
+    const counts: Partial<Record<HRCategory, number>> = {};
+    hrDocs
+      .filter(doc => doc.status === 'Published' || isAdminOrSuperAdmin)
+      .forEach(doc => {
+        counts[doc.category] = (counts[doc.category] || 0) + 1;
+      });
+    return (Object.entries(counts) as [HRCategory, number][]) 
+      .filter(([, count]) => count > 0)
+      .map(([category, count]) => ({ category, count }));
   }, [hrDocs, isAdminOrSuperAdmin]);
   
-  const categoryVisuals: Record<string, {icon: React.ElementType, colorClasses: string}> = {
-    'Staff Management': { icon: UsersIcon, colorClasses: 'bg-swiss-mint text-white' },
-    'Child & Family Onboarding': { icon: UserPlusIcon, colorClasses: 'bg-swiss-sand text-swiss-charcoal' },
-    'Daily Operations & Compliance': { icon: BuildingLibraryIcon, colorClasses: 'bg-swiss-teal text-white' },
-    'Policy & Legal Documents': { icon: DocumentTextIcon, colorClasses: 'bg-swiss-coral text-white' },
-    'Training & Certification': { icon: AcademicCapIcon, colorClasses: 'bg-purple-500 text-white' },
-    'Templates & Letters': { icon: HeartIcon, colorClasses: 'bg-pink-500 text-white' }
+  const categoryVisuals: Record<HRCategory, {icon: React.ElementType, colorClasses: string}> = {
+    Onboarding: { icon: UserPlusIcon, colorClasses: 'bg-swiss-sand text-swiss-charcoal' },
+    Policies: { icon: DocumentTextIcon, colorClasses: 'bg-swiss-coral text-white' },
+    Benefits: { icon: HeartIcon, colorClasses: 'bg-pink-500 text-white' },
+    Training: { icon: AcademicCapIcon, colorClasses: 'bg-purple-500 text-white' },
+    Compliance: { icon: BuildingLibraryIcon, colorClasses: 'bg-swiss-teal text-white' },
+    Performance: { icon: StarIcon, colorClasses: 'bg-yellow-400 text-swiss-charcoal' },
+    Other: { icon: FolderIcon, colorClasses: 'bg-gray-500 text-white' },
   };
 
   const filteredDocs = useMemo(() => {
-    return hrDocs.filter(doc =>
-      (isAdminOrSuperAdmin || doc.status === 'Published') &&
-      (doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       doc.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      ) &&
-      (selectedCategory === null || doc.category === selectedCategory)
-    );
+    const searchLower = searchTerm.toLowerCase();
+    return hrDocs.filter(doc => {
+      if (!(isAdminOrSuperAdmin || doc.status === 'Published')) {
+        return false;
+      }
+
+      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || doc.category;
+      const matchesSearch =
+        doc.title.toLowerCase().includes(searchLower) ||
+        doc.category.toLowerCase().includes(searchLower) ||
+        categoryLabel.toLowerCase().includes(searchLower) ||
+        doc.tags.some(tag => tag.toLowerCase().includes(searchLower));
+
+      const matchesCategory = selectedCategory === null || doc.category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
   }, [searchTerm, selectedCategory, hrDocs, isAdminOrSuperAdmin]);
 
-  const handleOpenUploadModal = (docToEdit: HRDocument | null = null) => {
-    setEditingDoc(docToEdit);
-    setIsUploadModalOpen(true);
+
+  const handlePreview = (doc: HRDocument) => {
+    setPreviewDoc(doc);
   };
 
-  const handleDocSubmit = (data: Partial<HRDocType>, file?: File) => {
-    if (editingDoc) {
-      setHrDocs(prevDocs => prevDocs.map(d => d.id === editingDoc.id ? { ...d, ...data, fileUrl: file ? file.name : d.fileUrl, lastUpdated: new Date().toISOString() } : d));
-    } else {
-      const newDoc: HRDocument = {
-        id: `hr${Date.now()}`,
-        title: data.title || 'Untitled Document',
-        // [FIX] Used a valid HRCategory as a fallback.
-        category: data.category || HR_CATEGORIES[0],
-        fileUrl: file ? file.name : '#', // Mock
-        uploaderId: currentUser?.id || 'admin000',
-        lastUpdated: new Date().toISOString(),
-        fileType: data.fileType || 'PDF',
-        tags: data.tags || ['New'],
-        language: data.language,
-        version: data.version || 'v1.0',
-        status: data.status || 'Draft',
-      };
-      setHrDocs(prev => [newDoc, ...prev]);
-    }
-  };
-
-  const handleDeleteDoc = (id: string) => {
-    if (window.confirm(t('hrProcedures.confirmDeleteDocument'))) {
-      setHrDocs(prevDocs => prevDocs.filter(d => d.id !== id));
+  const handleDownload = async (doc: HRDocument) => {
+    try {
+      await authenticatedDownload(doc.fileUrl, `${doc.title}.${doc.fileType.toLowerCase()}`);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download file. Please try again.');
     }
   };
   
@@ -176,9 +212,7 @@ const HRProceduresPage: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-center">
         <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('hrProcedures.title')}</h1>
         {isAdminOrSuperAdmin && (
-          <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => handleOpenUploadModal()}>
-            {t('hrProcedures.uploadButton')}
-          </Button>
+          <span className="text-sm text-gray-500 italic">{t('hrProcedures.adminUploadNote', 'Use Admin Dashboard to add/edit documents')}</span>
         )}
       </div>
       
@@ -200,6 +234,13 @@ const HRProceduresPage: React.FC = () => {
       </Card>
 
       <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">{t('hrProcedures.categoriesTitle')}</h2>
+      
+      {isLoading && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">{t('common:loading') || 'Loading documents...'}</p>
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <CategoryDisplayCard
           title={t('hrProcedures.allDocumentsCategory')}
@@ -208,16 +249,17 @@ const HRProceduresPage: React.FC = () => {
           colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
           onSelect={() => setSelectedCategory(null)}
         />
-        {categoriesWithCounts.map(cat => {
-          const visualConfig = categoryVisuals[cat.name] || {icon: DocumentTextIcon, colorClasses: 'bg-gray-500 text-white'};
+        {categoriesWithCounts.map(({ category, count }) => {
+          const visualConfig = categoryVisuals[category] || { icon: DocumentTextIcon, colorClasses: 'bg-gray-500 text-white' };
+          const label = HR_CATEGORY_LABELS[category] || category;
           return (
             <CategoryDisplayCard 
-              key={cat.name} 
-              title={cat.name} // Category names are keys, can be translated if they are added to JSON
+              key={category} 
+              title={label}
               icon={visualConfig.icon} 
-              count={cat.count} 
+              count={count} 
               colorClasses={visualConfig.colorClasses}
-              onSelect={() => setSelectedCategory(cat.name)}
+              onSelect={() => setSelectedCategory(category)}
             />
           );
         })}
@@ -236,7 +278,7 @@ const HRProceduresPage: React.FC = () => {
       )}
 
       <h2 className="text-2xl font-semibold text-swiss-charcoal mt-8 mb-4">
-        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: selectedCategory }) : t('hrProcedures.allDocumentsCategory')}
+        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory }) : t('hrProcedures.allDocumentsCategory')}
         <span className="text-base font-normal text-gray-500 ml-2">{t('hrProcedures.allItemsCount', { count: filteredDocs.length })}</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -245,22 +287,21 @@ const HRProceduresPage: React.FC = () => {
             key={doc.id} 
             doc={doc} 
             onToggleFavorite={toggleFavorite}
-            onEdit={() => handleOpenUploadModal(doc)}
-            onDelete={handleDeleteDoc}
-            isAdmin={isAdminOrSuperAdmin}
+            onPreview={handlePreview}
+            onDownload={handleDownload}
           />
         ))}
       </div>
-      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: selectedCategory })}</p>}
+      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory })}</p>}
       {filteredDocs.length === 0 && !selectedCategory && totalPublishedDocs > 0 && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsMatchSearch')}</p>}
 
-      {isAdminOrSuperAdmin && (
-        <ContentUploadModal
-            isOpen={isUploadModalOpen}
-            onClose={() => { setIsUploadModalOpen(false); setEditingDoc(null); }}
-            onSubmit={handleDocSubmit}
-            contentType="hr"
-            existingContent={editingDoc}
+      {previewDoc && (
+        <DocumentPreviewModal
+          isOpen={!!previewDoc}
+          onClose={() => setPreviewDoc(null)}
+          fileUrl={previewDoc.fileUrl}
+          fileName={previewDoc.title}
+          fileType={previewDoc.fileType}
         />
       )}
     </div>

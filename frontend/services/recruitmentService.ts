@@ -17,6 +17,8 @@ export interface JobListingUpdateData extends Partial<JobListingCreateData> {
 export interface ApplicationCreateData {
   jobListingId: string;
   coverLetter?: string;
+  cvAssetId?: string;
+  cvUrl?: string;
 }
 
 export interface ApplicationUpdateData {

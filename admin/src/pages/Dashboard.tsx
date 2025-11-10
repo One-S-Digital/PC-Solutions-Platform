@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { 
   Users, 
   Building2, 
@@ -7,14 +8,28 @@ import {
   ShoppingCart, 
   Heart,
   TrendingUp,
-  Activity
+  Activity,
+  GraduationCap,
+  FileText,
+  Scale,
+  PlusCircle,
+  Eye,
+  Clock,
+  AlertTriangle,
+  CheckCircle
 } from 'lucide-react'
-import { publicApi } from '../services/api'
+import { publicApi, useApiClient } from '../services/api'
+import * as api from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
+import ContentUploadModal from '../components/ContentUploadModal'
+
+type ContentType = 'e-learning' | 'hr' | 'policy';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate()
+  const apiClient = useApiClient()
   const user = {
     fullName: 'Development User'
   }
@@ -25,6 +40,14 @@ const Dashboard: React.FC = () => {
     queryFn: () => publicApi.getSystemHealth(),
     refetchInterval: 120000, // Refresh every 2 minutes instead of 30 seconds
   })
+
+  // Content Management State
+  const [isContentModalOpen, setIsContentModalOpen] = useState(false)
+  const [contentModalType, setContentModalType] = useState<ContentType>('e-learning')
+  const [eLearningCount, setELearningCount] = useState(0)
+  const [hrDocsCount, setHrDocsCount] = useState(0)
+  const [policiesCount, setPoliciesCount] = useState(0)
+  const [contentLoading, setContentLoading] = useState(true)
 
   const usersData = 42
   const usersLoading = false
@@ -71,6 +94,134 @@ const Dashboard: React.FC = () => {
   ]
 
   const systemStatus = healthData?.data?.status === 'OK'
+
+  // Fetch content counts
+  useEffect(() => {
+    const fetchContentCounts = async () => {
+      setContentLoading(true)
+      try {
+        const [eLearningRes, hrRes, policiesRes] = await Promise.all([
+          api.getELearning(apiClient, { page: 1, limit: 1 }),
+          api.getHrDocuments(apiClient, { page: 1, limit: 1 }),
+          api.getStatePolicies(apiClient, { page: 1, limit: 1 }),
+        ])
+
+        if (eLearningRes.data.success) {
+          const result = eLearningRes.data as any
+          setELearningCount(result.pagination?.total || result.data?.length || 0)
+        }
+        if (hrRes.data.success) {
+          const result = hrRes.data as any
+          setHrDocsCount(result.pagination?.total || result.data?.length || 0)
+        }
+        if (policiesRes.data.success) {
+          const result = policiesRes.data as any
+          setPoliciesCount(result.pagination?.total || result.data?.length || 0)
+        }
+      } catch (error) {
+        console.error('Failed to fetch content counts:', error)
+      } finally {
+        setContentLoading(false)
+      }
+    }
+
+    fetchContentCounts()
+  }, [apiClient])
+
+  const handleOpenContentModal = (type: ContentType) => {
+    setContentModalType(type)
+    setIsContentModalOpen(true)
+  }
+
+  const handleContentSubmit = async (data: any, file?: File, onProgress?: (progress: number) => void) => {
+    try {
+      const formData = new FormData()
+      if (file) {
+        formData.append('file', file)
+      }
+      
+      // Append all form data
+      Object.keys(data).forEach((key) => {
+        const value = data[key]
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value))
+          } else {
+            formData.append(key, String(value))
+          }
+        }
+      })
+
+      // Upload based on content type
+      if (contentModalType === 'e-learning') {
+        await api.uploadELearning(apiClient, formData, onProgress)
+      } else if (contentModalType === 'hr') {
+        await api.uploadHrDocument(apiClient, formData, onProgress)
+      } else if (contentModalType === 'policy') {
+        await api.uploadStatePolicy(apiClient, formData, onProgress)
+      }
+
+      // Refresh counts
+      const fetchCounts = async () => {
+        const [eLearningRes, hrRes, policiesRes] = await Promise.all([
+          api.getELearning(apiClient, { page: 1, limit: 1 }),
+          api.getHrDocuments(apiClient, { page: 1, limit: 1 }),
+          api.getStatePolicies(apiClient, { page: 1, limit: 1 }),
+        ])
+        if (eLearningRes.data.success) {
+          const result = eLearningRes.data as any
+          setELearningCount(result.pagination?.total || result.data?.length || 0)
+        }
+        if (hrRes.data.success) {
+          const result = hrRes.data as any
+          setHrDocsCount(result.pagination?.total || result.data?.length || 0)
+        }
+        if (policiesRes.data.success) {
+          const result = policiesRes.data as any
+          setPoliciesCount(result.pagination?.total || result.data?.length || 0)
+        }
+      }
+      fetchCounts()
+
+      alert('Content uploaded successfully!')
+    } catch (error: any) {
+      console.error('Content upload failed:', error)
+      throw error
+    }
+  }
+
+  const contentStats = [
+    {
+      name: 'E-Learning Items',
+      count: eLearningCount,
+      icon: GraduationCap,
+      loading: contentLoading,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-100',
+      link: '/content',
+      addAction: () => handleOpenContentModal('e-learning'),
+    },
+    {
+      name: 'HR Documents',
+      count: hrDocsCount,
+      icon: FileText,
+      loading: contentLoading,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+      link: '/content',
+      addAction: () => handleOpenContentModal('hr'),
+    },
+    {
+      name: 'State Policies',
+      count: policiesCount,
+      icon: Scale,
+      loading: contentLoading,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+      link: '/content',
+      addAction: () => handleOpenContentModal('policy'),
+    },
+  ]
 
   return (
     <div className="space-y-8">
@@ -138,6 +289,54 @@ const Dashboard: React.FC = () => {
         ))}
       </div>
 
+      {/* Content Management Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-swiss-charcoal">Content Management</h2>
+          <Button
+            onClick={() => navigate('/content')}
+            variant="outline"
+            className="text-sm"
+          >
+            View All Content →
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {contentStats.map((stat) => (
+            <Card key={stat.name} className="p-0 overflow-hidden relative" hoverEffect>
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
+                  <button
+                    onClick={stat.addAction}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    title={`Add ${stat.name}`}
+                  >
+                    <PlusCircle className="h-5 w-5 text-gray-400 hover:text-indigo-600" />
+                  </button>
+                </div>
+                {stat.loading ? (
+                  <div className="mt-4">
+                    <LoadingSpinner size="small" />
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-swiss-charcoal mt-4">{stat.count}</p>
+                )}
+                <p className="mt-2 text-sm text-gray-500">{stat.name}</p>
+              </div>
+              <button
+                onClick={() => navigate(stat.link)}
+                className={`block w-full px-6 py-3 text-sm font-medium text-center ${stat.bgColor} ${stat.color} hover:opacity-80 transition-opacity`}
+              >
+                View All →
+              </button>
+            </Card>
+          ))}
+        </div>
+      </div>
+
       {/* Quick Actions */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">Quick Actions</h2>
@@ -189,6 +388,14 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </Card>
+
+      {/* Content Upload Modal */}
+      <ContentUploadModal
+        isOpen={isContentModalOpen}
+        onClose={() => setIsContentModalOpen(false)}
+        onSubmit={handleContentSubmit}
+        contentType={contentModalType}
+      />
     </div>
   )
 }

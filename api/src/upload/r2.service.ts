@@ -64,6 +64,12 @@ export class R2Service {
       
       // Check if R2 is properly configured
       if (!this.isConfigured()) {
+        // Development mode fallback: store locally
+        const isDevelopment = process.env.NODE_ENV !== 'production';
+        if (isDevelopment) {
+          this.logger.warn('⚠️ R2 not configured. Using development fallback (local storage simulation)');
+          return this.uploadFileLocalFallback(file, category);
+        }
         throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
       }
 
@@ -245,6 +251,31 @@ export class R2Service {
       this.logger.error('Failed to get file info', error);
       return null;
     }
+  }
+
+  /**
+   * Development fallback: simulate file upload without R2
+   * This stores file metadata in memory and returns mock URLs
+   */
+  private uploadFileLocalFallback(
+    file: Express.Multer.File,
+    category: string,
+  ): UploadResult {
+    const key = this.generateStorageKey(file.originalname, category);
+    const mockUrl = `http://localhost:3000/uploads/${key}`;
+    
+    this.logger.log(`📦 Development fallback: Simulating upload for ${file.originalname}`);
+    this.logger.log(`   File size: ${file.size} bytes`);
+    this.logger.log(`   Mock URL: ${mockUrl}`);
+    this.logger.log(`   ⚠️  Note: File is NOT actually stored. Configure R2 for production.`);
+    
+    return {
+      key,
+      url: mockUrl,
+      filename: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+    };
   }
 
   /**

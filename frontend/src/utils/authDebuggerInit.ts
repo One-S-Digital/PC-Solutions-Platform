@@ -5,8 +5,13 @@ import { authDebugger } from './authDebugger';
  * Call this once at the top level of your app
  */
 export const initAuthDebugger = () => {
-  // Always enable debugger by default
-  authDebugger.enable();
+  // Only enable debugger in development mode OR if ?authdebug=1 is in URL
+  const isDevelopment = import.meta.env.DEV;
+  const hasDebugParam = new URLSearchParams(window.location.search).get('authdebug') === '1';
+  
+  if (isDevelopment || hasDebugParam) {
+    authDebugger.enable();
+  }
 
   // Log app boot
   authDebugger.logAppBoot({

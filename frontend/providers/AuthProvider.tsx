@@ -13,6 +13,24 @@ import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
 import { authDebugger } from '../src/utils/authDebugger';
 
+// Development-only logging helper
+const devLog = (...args: any[]) => {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+};
+
+const devWarn = (...args: any[]) => {
+  if (import.meta.env.DEV) {
+    console.warn(...args);
+  }
+};
+
+const devError = (...args: any[]) => {
+  // Always log errors, even in production
+  console.error(...args);
+};
+
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
 const WEBHOOK_RETRY_ATTEMPTS = 2;
@@ -74,7 +92,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   }, [clerkIsLoaded]);
 
   const transformBackendUser = useCallback((user: any): User => {
-    console.log('🔄 Transforming backend user:', user);
+    devLog('🔄 Transforming backend user:', user);
     
     const transformed = {
       ...user,
@@ -86,7 +104,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       memberSince: user.createdAt,
     };
     
-    console.log('✅ Transformed user:', transformed);
+    devLog('✅ Transformed user:', transformed);
     return transformed;
   }, []);
 
@@ -132,7 +150,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         isProd: import.meta.env.PROD,
       };
 
-      console.log('🔧 Environment Config:', envConfig);
+      devLog('🔧 Environment Config:', envConfig);
       authDebugger.log('ENV', 'config', 'INFO', envConfig);
 
       // Token validation
@@ -144,10 +162,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         isValidFormat: token?.startsWith('eyJ') || false, // JWT tokens start with eyJ
       };
 
-      console.log('🔑 Token Info:', tokenInfo);
+      devLog('🔑 Token Info:', tokenInfo);
       authDebugger.log('TOKEN', 'validate', 'INFO', tokenInfo);
 
-      console.log('📤 Request Details:', {
+      devLog('📤 Request Details:', {
         url,
         method: 'GET',
         clerkId,
@@ -194,7 +212,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           'access-control-expose-headers': response.headers.get('access-control-expose-headers'),
         };
 
-        console.log('📥 Response Status:', {
+        devLog('📥 Response Status:', {
           status: response.status,
           statusText: response.statusText,
           ok: response.ok,
@@ -285,7 +303,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       let responseText: string = '';
       try {
         responseText = await response.text(); // Don't use clone(), just read it once
-        console.log('📄 Response Body (raw):', responseText);
+        devLog('📄 Response Body (raw):', responseText);
         
         // Log response body for debugging
         authDebugger.log('HTTP', 'body_raw', 'INFO', { 
@@ -295,7 +313,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         
         try {
           responseBody = JSON.parse(responseText);
-          console.log('📄 Response Body (parsed):', responseBody);
+          devLog('📄 Response Body (parsed):', responseBody);
           
           // Log parsed response structure
           authDebugger.log('HTTP', 'body_parsed', 'INFO', {
@@ -393,7 +411,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('Invalid response format from backend');
       }
 
-      console.log('✅ User synced successfully:', {
+      devLog('✅ User synced successfully:', {
         userId: data.data.id,
         email: data.data.email,
         role: data.data.role,
@@ -457,18 +475,18 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     const runSync = async () => {
       setIsLoading(true);
       
-      console.log('🔄 [SYNC] Starting user sync...', { clerkUserId });
+      devLog('🔄 [SYNC] Starting user sync...', { clerkUserId });
       authDebugger.log('SYNC', 'start', 'INFO', { clerkUserId });
 
       try {
         const backendUser = await fetchUserFromBackend(clerkUserId);
         if (cancelled) {
-          console.log('⚠️  [SYNC] Sync cancelled');
+          devLog('⚠️  [SYNC] Sync cancelled');
           authDebugger.log('SYNC', 'cancelled', 'INFO', { reason: 'component_unmounted' });
           return;
         }
 
-        console.log('✅ [SYNC] Setting user state:', {
+        devLog('✅ [SYNC] Setting user state:', {
           userId: backendUser.id,
           email: backendUser.email,
           role: backendUser.role,
@@ -489,11 +507,11 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           lastAttempt: Date.now(),
         };
         
-        console.log('✅ [SYNC] User state updated successfully');
+        devLog('✅ [SYNC] User state updated successfully');
         authDebugger.log('SYNC', 'complete', 'OK', { status: 'success' });
       } catch (error) {
         if (cancelled) {
-          console.log('⚠️  [SYNC] Sync cancelled during error handling');
+          devLog('⚠️  [SYNC] Sync cancelled during error handling');
           return;
         }
 
@@ -582,7 +600,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       try {
         const token = await getToken();
-        console.log('🔑 Token obtained:', token ? 'YES' : 'NO');
+        devLog('🔑 Token obtained:', token ? 'YES' : 'NO');
 
         if (!token) {
           console.error('❌ No authentication token');
@@ -601,12 +619,12 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         delete backendData.memberSince; // Transformed field
         delete backendData.organizations; // Many-to-many relation, not direct field
         
-        console.log('🔄 Prepared data for backend:', backendData);
+        devLog('🔄 Prepared data for backend:', backendData);
 
         const apiBaseUrl = apiService.apiBaseUrl;
         const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
 
-        console.log('📤 Making PATCH request:', {
+        devLog('📤 Making PATCH request:', {
           url,
           method: 'PATCH',
           body: backendData,
@@ -627,7 +645,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify(backendData),
         });
 
-        console.log('📥 Response received:', {
+        devLog('📥 Response received:', {
           status: response.status,
           statusText: response.statusText,
           ok: response.ok,
@@ -648,7 +666,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         const data = await response.json();
-        console.log('📄 Update response:', data);
+        devLog('📄 Update response:', data);
         
         if (data?.success && data?.data) {
           const transformedUser = transformBackendUser(data.data);
@@ -661,7 +679,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
               lastAttempt: Date.now(),
             };
           }
-          console.log('✅ User updated successfully');
+          devLog('✅ User updated successfully');
           console.groupEnd();
         } else {
           console.error('❌ Invalid response format:', data);

@@ -48,8 +48,8 @@ const isDevelopmentMode = () => {
          clerkKey.includes('placeholder');
 };
 
-// Development API client (no auth required)
-const createDevApiClient = () => {
+// Development API client (with auth using getToken callback)
+const createDevApiClient = (getToken: () => Promise<string | null>) => {
   console.log('🔧 Creating development API client with baseURL:', API_BASE_URL)
   
   const devApi = axios.create({
@@ -69,13 +69,31 @@ const createDevApiClient = () => {
   });
 
   devApi.interceptors.request.use(
-    (config) => {
-      logger.log('🔧 Dev API Request:', {
-        url: config.url,
-        method: config.method,
-        hasAuth: false,
-        mode: 'development'
-      });
+    async (config) => {
+      try {
+        const token = await getToken();
+        
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+          logger.log('🔧 Dev API Request:', {
+            url: config.url,
+            method: config.method,
+            hasAuth: true,
+            mode: 'development'
+          });
+        } else {
+          // No token - might be public endpoint or user not logged in yet
+          logger.log('🔧 Dev API Request:', {
+            url: config.url,
+            method: config.method,
+            hasAuth: false,
+            mode: 'development'
+          });
+        }
+      } catch (error) {
+        logger.error('❌ Dev API token error:', error);
+      }
+      
       return config;
     },
     (error) => {
@@ -113,8 +131,8 @@ export const useApiClient = () => {
 
   return useMemo(() => {
     if (isDevelopmentMode()) {
-      logger.log('🔧 Using development API client (no auth required)');
-      return createDevApiClient();
+      logger.log('🔧 Using development API client (with Clerk auth)');
+      return createDevApiClient(getToken);
     }
 
     const apiWithAuth = axios.create({
@@ -135,27 +153,13 @@ export const useApiClient = () => {
 
     apiWithAuth.interceptors.request.use(
       async (config) => {
-        // Log all requests for debugging
-        logger.log('[REQ]', {
-          url: config.url,
-          method: config.method,
-          origin: window.location.origin,
-        });
-
         try {
           const token = await getToken()
-          console.log('🔧 Token Debug:', {
-            hasToken: !!token,
-            tokenLength: token?.length || 0,
-            tokenStart: token?.substring(0, 20) || 'none',
-            url: config.url
-          });
           
           if (token) {
             config.headers.Authorization = `Bearer ${token}`
             logger.log('✅ Admin Dashboard API token added:', {
               url: config.url,
-              tokenLength: token.length,
               hasAuth: true
             });
           } else {
@@ -165,11 +169,9 @@ export const useApiClient = () => {
             });
           }
         } catch (error) {
-          console.error('❌ Token Error:', error);
           logger.error('❌ Admin Dashboard API token error:', {
             url: config.url,
-            error: error,
-            errorMessage: (error as Error)?.message
+            error: error
           });
         }
         return config
@@ -254,42 +256,108 @@ export const apiService = {
   getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/candidates'),
 
 
-  // Content
-  getHrDocuments: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<HrDocument[]>>('/content/hr-documents'),
-  getHrDocument: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<HrDocument>>(`/hr-documents/${id}`),
-  createHrDocument: (apiClient: AxiosInstance, data: Omit<HrDocument, 'id' | 'updatedAt'>) => apiClient.post<ApiResponse<HrDocument>>('/hr-documents', data),
-  updateHrDocument: (apiClient: AxiosInstance, id: string, data: Partial<HrDocument>) => apiClient.put<ApiResponse<HrDocument>>(`/hr-documents/${id}`, data),
-  deleteHrDocument: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/hr-documents/${id}`),
-  uploadHrDocument: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<HrDocument>>('/content/hr-documents/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }),
-
-  getCourses: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Course[]>>('/content/elearning'),
-  getCourse: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Course>>(`/elearning/courses/${id}`),
-  createCourse: (apiClient: AxiosInstance, data: Omit<Course, 'id' | 'updatedDate'>) => apiClient.post<ApiResponse<Course>>('/elearning/courses', data),
-  updateCourse: (apiClient: AxiosInstance, id: string, data: Partial<Course>) => apiClient.put<ApiResponse<Course>>(`/elearning/courses/${id}`, data),
-  deleteCourse: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/elearning/courses/${id}`),
-  uploadCourseContent: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<Course>>('/content/elearning/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }),
-
-  getPolicyDocuments: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<PolicyDocument[]>>('/policy-documents'),
-  getPolicyDocument: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<PolicyDocument>>(`/policy-documents/${id}`),
-  createPolicyDocument: (apiClient: AxiosInstance, data: Omit<PolicyDocument, 'id' | 'lastUpdatedDate'>) => apiClient.post<ApiResponse<PolicyDocument>>('/policy-documents', data),
-  updatePolicyDocument: (apiClient: AxiosInstance, id: string, data: Partial<PolicyDocument>) => apiClient.put<ApiResponse<PolicyDocument>>(`/policy-documents/${id}`, data),
-  deletePolicyDocument: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/policy-documents/${id}`),
+  // Content Management - E-Learning
+  getELearning: (
+    apiClient: AxiosInstance, 
+    params?: { 
+      page?: number; 
+      limit?: number; 
+      search?: string; 
+      category?: string; 
+      type?: string; 
+      language?: string;
+      status?: string;
+    }
+  ) => apiClient.get<ApiResponse<any[]>>('/content/elearning', { params }),
   
-  // State Policies
-  getStatePolicies: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<PolicyDocument[]>>('/content/state-policies'),
-  uploadStatePolicy: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<PolicyDocument>>('/content/state-policies/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+  uploadELearning: (
+    apiClient: AxiosInstance, 
+    data: FormData, 
+    onProgress?: (progress: number) => void
+  ) => apiClient.post<ApiResponse<any>>('/content/elearning', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onProgress(progress);
+      }
     },
   }),
+  
+  updateELearning: (apiClient: AxiosInstance, id: string, data: any) => 
+    apiClient.patch<ApiResponse<any>>(`/content/elearning/${id}`, data),
+  
+  deleteELearning: (apiClient: AxiosInstance, id: string) => 
+    apiClient.delete<ApiResponse<null>>(`/content/elearning/${id}`),
+
+  // Content Management - HR Documents
+  getHrDocuments: (
+    apiClient: AxiosInstance,
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      category?: string;
+      status?: string;
+      language?: string;
+    }
+  ) => apiClient.get<ApiResponse<HrDocument[]>>('/content/hr-documents', { params }),
+  
+  uploadHrDocument: (
+    apiClient: AxiosInstance, 
+    formData: FormData,
+    onProgress?: (progress: number) => void
+  ) => apiClient.post<ApiResponse<HrDocument>>('/content/hr-documents/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onProgress(progress);
+      }
+    },
+  }),
+  
+  updateHrDocument: (apiClient: AxiosInstance, id: string, data: Partial<HrDocument>) => 
+    apiClient.patch<ApiResponse<HrDocument>>(`/content/hr-documents/${id}`, data),
+  
+  deleteHrDocument: (apiClient: AxiosInstance, id: string) => 
+    apiClient.delete<ApiResponse<null>>(`/content/hr-documents/${id}`),
+
+  // Content Management - State Policies
+  getStatePolicies: (
+    apiClient: AxiosInstance,
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      category?: string;
+      status?: string;
+      language?: string;
+      country?: string;
+      region?: string;
+      isCritical?: boolean;
+    }
+  ) => apiClient.get<ApiResponse<PolicyDocument[]>>('/content/state-policies', { params }),
+  
+  uploadStatePolicy: (
+    apiClient: AxiosInstance, 
+    formData: FormData,
+    onProgress?: (progress: number) => void
+  ) => apiClient.post<ApiResponse<PolicyDocument>>('/content/state-policies/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onProgress(progress);
+      }
+    },
+  }),
+  
+  updateStatePolicy: (apiClient: AxiosInstance, id: string, data: Partial<PolicyDocument>) => 
+    apiClient.patch<ApiResponse<PolicyDocument>>(`/content/state-policies/${id}`, data),
+  
+  deleteStatePolicy: (apiClient: AxiosInstance, id: string) => 
+    apiClient.delete<ApiResponse<null>>(`/content/state-policies/${id}`),
 
   getPolicyAlerts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<PolicyAlert[]>>('/policy-alerts'),
   getPolicyAlert: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<PolicyAlert>>(`/policy-alerts/${id}`),
@@ -317,9 +385,15 @@ export const apiService = {
   getCurrentUser: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User>>('/users/me'),
 
   // File Management
-  uploadUniversalFile: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<FileUploadResult>>('/files/upload', formData, {
+  uploadUniversalFile: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => apiClient.post<ApiResponse<FileUploadResult>>('/files/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onProgress(progress);
+      }
     },
   }),
 
@@ -338,49 +412,79 @@ export const apiService = {
   updateFrontendSettings: (apiClient: AxiosInstance, settings: Partial<FrontendSettings>) => apiClient.put<ApiResponse<FrontendSettings>>('/admin/frontend-settings', settings),
 
   // Asset Management
-  uploadAsset: (apiClient: AxiosInstance, formData: FormData) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/uploads', formData, {
+  uploadAsset: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => apiClient.post<ApiResponse<UploadedAsset>>('/admin/uploads', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        onProgress(progress);
+      }
     },
   }),
 
   // Logo and Favicon Uploads
-  uploadLogo: (apiClient: AxiosInstance, formData: FormData) => {
+  uploadLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/logo`
     console.log('🔄 API: uploadLogo called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
     })
   },
 
-  uploadFavicon: (apiClient: AxiosInstance, formData: FormData) => {
+  uploadFavicon: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/favicon`
     console.log('🔄 API: uploadFavicon called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
     })
   },
 
-  uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData) => {
+  uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-logo`
     console.log('🔄 API: uploadAdminLogo called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
     })
   },
 
-  uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData) => {
+  uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-favicon`
     console.log('🔄 API: uploadAdminFavicon called with full URL:', fullUrl)
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
       },
     })
   },
@@ -399,5 +503,21 @@ export const apiService = {
     },
   }),
 }
+
+// Export individual content functions for easier imports
+export const getELearning = apiService.getELearning;
+export const uploadELearning = apiService.uploadELearning;
+export const deleteELearning = apiService.deleteELearning;
+export const updateELearning = apiService.updateELearning;
+
+export const getHrDocuments = apiService.getHrDocuments;
+export const uploadHrDocument = apiService.uploadHrDocument;
+export const deleteHrDocument = apiService.deleteHrDocument;
+export const updateHrDocument = apiService.updateHrDocument;
+
+export const getStatePolicies = apiService.getStatePolicies;
+export const uploadStatePolicy = apiService.uploadStatePolicy;
+export const deleteStatePolicy = apiService.deleteStatePolicy;
+export const updateStatePolicy = apiService.updateStatePolicy;
 
 export default api

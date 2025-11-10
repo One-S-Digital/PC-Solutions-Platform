@@ -1,17 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { JobListing } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, ListBulletIcon, CheckBadgeIcon, SparklesIcon, BanknotesIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { MOCK_ORGANIZATIONS } from '../../constants';
 import Card from '../ui/Card';
+import JobApplicationModal from './JobApplicationModal';
 
 interface JobDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   job: JobListing;
-  onApply: (job: JobListing) => void;
+  onApply: (data: {
+    job: JobListing;
+    cvAssetId: string;
+    cvUrl: string;
+    coverLetter: string;
+  }) => void;
 }
 
 const DetailSection: React.FC<{ titleKey: string; icon: React.ElementType; children: React.ReactNode }> = ({ titleKey, icon: Icon, children }) => {
@@ -30,8 +36,19 @@ const DetailSection: React.FC<{ titleKey: string; icon: React.ElementType; child
 const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, onApply }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const foundation = MOCK_ORGANIZATIONS.find(org => org.id === job.foundationId);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
   if (!isOpen) return null;
+
+  const handleApplyClick = () => {
+    setIsApplicationModalOpen(true);
+  };
+
+  const handleApplicationSubmit = (data: any) => {
+    onApply(data);
+    setIsApplicationModalOpen(false);
+    onClose(); // Close job detail modal after successful application
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity" role="dialog" aria-modal="true">
@@ -137,9 +154,17 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
         {/* Footer */}
         <div className="px-6 py-4 bg-white border-t flex justify-end space-x-3 flex-shrink-0">
           <Button type="button" variant="light" size="lg" onClick={onClose}>{t('buttons.cancel')}</Button>
-          <Button type="button" variant="primary" size="lg" onClick={() => onApply(job)}>{t('recruitmentPage.jobDetailModal.applyNow')}</Button>
+          <Button type="button" variant="primary" size="lg" onClick={handleApplyClick}>{t('recruitmentPage.jobDetailModal.applyNow')}</Button>
         </div>
       </div>
+
+      {/* Application Modal */}
+      <JobApplicationModal
+        isOpen={isApplicationModalOpen}
+        onClose={() => setIsApplicationModalOpen(false)}
+        job={job}
+        onSubmit={handleApplicationSubmit}
+      />
     </div>
   );
 };

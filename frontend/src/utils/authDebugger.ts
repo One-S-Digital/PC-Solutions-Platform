@@ -56,11 +56,17 @@ class AuthDebugger {
 
   /**
    * Check if ?authdebug=1 is in URL and enable if so
+   * In production, ONLY enable via URL param (not by default)
    */
   private checkAndEnableFromURL(): void {
     const params = new URLSearchParams(window.location.search);
+    const isProduction = import.meta.env.PROD;
+    
     if (params.get('authdebug') === '1') {
       this.enable();
+    } else if (isProduction && this.isEnabled()) {
+      // Disable debug logging in production unless explicitly requested
+      this.disable();
     }
   }
 
@@ -146,8 +152,17 @@ class AuthDebugger {
     details: string | Record<string, any>
   ): void {
     try {
+      // Only log if explicitly enabled
       if (!this.isEnabled() || this.paused) {
-        return; // Still log to storage even if paused (UI just doesn't update)
+        return;
+      }
+
+      // NEVER log in production (unless explicitly enabled via URL)
+      const isProduction = import.meta.env.PROD;
+      const hasDebugParam = new URLSearchParams(window.location.search).get('authdebug') === '1';
+      
+      if (isProduction && !hasDebugParam) {
+        return;
       }
 
     const detailsStr = typeof details === 'string' 
@@ -168,7 +183,7 @@ class AuthDebugger {
 
       this.appendToLog(logLine);
       
-      // Also log to console for immediate visibility
+      // Also log to console for immediate visibility (only in dev or when explicitly enabled)
       const consoleMethod = (result === 'ERR' || result === 'ERROR') ? 'error' : result === 'OK' ? 'log' : 'info';
       console[consoleMethod](`[AUTH DEBUG] ${category} | ${action} | ${result}`, details);
     } catch (error) {
