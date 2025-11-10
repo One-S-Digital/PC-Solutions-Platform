@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
-  const { isLoading: isAuthLoading, authError, clearAuthError, logout } = useAuthContext();
+  const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -250,8 +250,19 @@ const LoginPage: React.FC = () => {
     );
   }
 
+  // Show loading state during sign-out to prevent flash of error screen
+  // Use global isSigningOut from AuthProvider to catch sign-out from any page
+  if (isSigningOut || isSigningOutGlobal) {
+    return (
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+      </div>
+    );
+  }
+
   // SCENARIO B (Edge Case): Signed in to Clerk but backend sync failed
-  if (isSignedIn && !currentUser && !isAuthLoading) {
+  // Don't show this screen during sign-out to prevent flash of error message
+  if (isSignedIn && !currentUser && !isAuthLoading && !isSigningOut && !isSigningOutGlobal) {
     return (
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">

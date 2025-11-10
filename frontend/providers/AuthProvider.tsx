@@ -38,6 +38,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   authError: string | null;
+  isSigningOut: boolean;
   clearAuthError: () => void;
   login: (email: string, password?: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
@@ -59,6 +60,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const syncAttemptRef = useRef<SyncAttemptState>(INITIAL_SYNC_STATE);
   const syncInFlightRef = useRef(false);
@@ -334,6 +336,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = useCallback(async () => {
     try {
+      setIsSigningOut(true);
       // Clear local user state first
       setCurrentUser(null);
       setAuthError(null);
@@ -345,6 +348,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Logout error:', error);
       // Still clear local state even if Clerk signOut fails
       setCurrentUser(null);
+    } finally {
+      setIsSigningOut(false);
     }
   }, [clerkSignOut]);
 
@@ -513,6 +518,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading,
         isAuthenticated,
         authError,
+        isSigningOut,
         clearAuthError: () => setAuthError(null),
         login,
         logout,
