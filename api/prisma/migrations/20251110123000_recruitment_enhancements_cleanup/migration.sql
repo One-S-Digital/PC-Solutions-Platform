@@ -3,52 +3,57 @@
 
 -- 1. Ensure JobContractType enum exists with expected values
 DO $$
+DECLARE
+  enum_type_oid OID;
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_type t
-    JOIN pg_namespace n ON n.oid = t.typnamespace
-    WHERE t.typname = 'JobContractType'
-      AND n.nspname = 'public'
-  ) THEN
+  -- Check if enum type exists and get its OID
+  SELECT t.oid INTO enum_type_oid
+  FROM pg_type t
+  JOIN pg_namespace n ON n.oid = t.typnamespace
+  WHERE t.typname = 'JobContractType'
+    AND n.nspname = 'public';
+
+  -- If type doesn't exist, create it with all values
+  IF enum_type_oid IS NULL THEN
     CREATE TYPE "public"."JobContractType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CDI', 'CDD', 'INTERNSHIP');
-  END IF;
+  ELSE
+    -- Type exists, check and add missing enum values
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum
+      WHERE enumtypid = enum_type_oid AND enumlabel = 'FULL_TIME'
+    ) THEN
+      ALTER TYPE "public"."JobContractType" ADD VALUE 'FULL_TIME';
+    END IF;
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum
-    WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'FULL_TIME'
-  ) THEN
-    ALTER TYPE "public"."JobContractType" ADD VALUE 'FULL_TIME';
-  END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum
+      WHERE enumtypid = enum_type_oid AND enumlabel = 'PART_TIME'
+    ) THEN
+      ALTER TYPE "public"."JobContractType" ADD VALUE 'PART_TIME';
+    END IF;
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum
-    WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'PART_TIME'
-  ) THEN
-    ALTER TYPE "public"."JobContractType" ADD VALUE 'PART_TIME';
-  END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum
+      WHERE enumtypid = enum_type_oid AND enumlabel = 'CDI'
+    ) THEN
+      ALTER TYPE "public"."JobContractType" ADD VALUE 'CDI';
+    END IF;
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum
-    WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'CDI'
-  ) THEN
-    ALTER TYPE "public"."JobContractType" ADD VALUE 'CDI';
-  END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum
+      WHERE enumtypid = enum_type_oid AND enumlabel = 'CDD'
+    ) THEN
+      ALTER TYPE "public"."JobContractType" ADD VALUE 'CDD';
+    END IF;
 
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum
-    WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'CDD'
-  ) THEN
-    ALTER TYPE "public"."JobContractType" ADD VALUE 'CDD';
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_enum
+      WHERE enumtypid = enum_type_oid AND enumlabel = 'INTERNSHIP'
+    ) THEN
+      ALTER TYPE "public"."JobContractType" ADD VALUE 'INTERNSHIP';
+    END IF;
   END IF;
-
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum
-    WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'INTERNSHIP'
-  ) THEN
-    ALTER TYPE "public"."JobContractType" ADD VALUE 'INTERNSHIP';
-  END IF;
-END $$ LANGUAGE plpgsql;
+END $$;
 
 -- 2. Ensure job_listings table exists (creates only if missing)
 CREATE TABLE IF NOT EXISTS "public"."job_listings" (
