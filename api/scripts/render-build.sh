@@ -16,18 +16,59 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
 fi
 
 echo "🔧 Resolving any failed migrations..."
+
+# Function to resolve a failed migration
+resolve_failed_migration() {
+    local migration_name=$1
+    local resolution_type=${2:-rolled-back}  # Default to rolled-back, can be 'applied'
+    echo "   Attempting to resolve: $migration_name (as $resolution_type)"
+    if npx prisma migrate resolve --$resolution_type "$migration_name" --force 2>/dev/null; then
+        echo "   ✅ Resolved: $migration_name"
+        return 0
+    else
+        echo "   ⚠️  Could not resolve: $migration_name (may not exist or already resolved)"
+        return 1
+    fi
+}
+
 # Reset recruitment enhancements migration if it failed previously so it can rerun cleanly,
 # then mark it as applied (the migration is now a no-op placeholder).
-npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "Recruitment enhancements migration already clean"
-npx prisma migrate resolve --applied 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "Recruitment enhancements migration already applied"
+resolve_failed_migration "20251108120000_recruitment_enhancements" "rolled-back" || echo "Recruitment enhancements migration already clean"
+resolve_failed_migration "20251108120000_recruitment_enhancements" "applied" || echo "Recruitment enhancements migration already applied"
+
 # Mark historical production-only migrations as applied so Prisma doesn't block deploys
-npx prisma migrate resolve --applied 20250926_unify_asset_appuser --force 2>/dev/null || echo "Asset appuser migration already applied"
-npx prisma migrate resolve --applied 20251017_add_firstname_lastname_to_appuser --force 2>/dev/null || echo "AppUser name migration already applied"
-npx prisma migrate resolve --applied 20251106000123_recreate_user_notification_preferences --force 2>/dev/null || echo "Notification preferences migration already applied"
-npx prisma migrate resolve --applied 20251106001000_user_email_nullable --force 2>/dev/null || echo "User email nullable migration already applied"
+resolve_failed_migration "20250926_unify_asset_appuser" "applied" || echo "Asset appuser migration already applied"
+resolve_failed_migration "20251017_add_firstname_lastname_to_appuser" "applied" || echo "AppUser name migration already applied"
+resolve_failed_migration "20251106000123_recreate_user_notification_preferences" "applied" || echo "Notification preferences migration already applied"
+resolve_failed_migration "20251106001000_user_email_nullable" "applied" || echo "User email nullable migration already applied"
+
 # Clean up any lingering failures from earlier hotfix migrations
-npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix --force 2>/dev/null || echo "No comprehensive schema audit migration to resolve"
-npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing --force 2>/dev/null || echo "No stripe customer id migration to resolve"
+resolve_failed_migration "20251030_comprehensive_schema_audit_fix" "rolled-back" || echo "No comprehensive schema audit migration to resolve"
+resolve_failed_migration "20251030_add_stripe_customer_id_if_missing" "rolled-back" || echo "No stripe customer id migration to resolve"
+
+# Detect and resolve any other failed migrations dynamically
+echo "🔍 Checking for additional failed migrations..."
+MIGRATION_STATUS=$(npx prisma migrate status 2>&1 || true)
+
+# Extract failed migration names from status output
+# Prisma error format: "The `20251108120000_recruitment_enhancements` migration started at ... failed"
+# Use sed for better portability (works on systems without Perl regex)
+FAILED_MIGRATIONS=$(echo "$MIGRATION_STATUS" | grep -o "The \`[^\`]*\` migration" | sed "s/The \`//;s/\` migration//" || true)
+
+# Also check for format: "migration <name> failed"
+if [ -z "$FAILED_MIGRATIONS" ]; then
+    FAILED_MIGRATIONS=$(echo "$MIGRATION_STATUS" | grep -o "migration [^ ]* failed" | sed "s/migration //;s/ failed//" || true)
+fi
+
+if [ -n "$FAILED_MIGRATIONS" ]; then
+    echo "⚠️  Found failed migrations:"
+    echo "$FAILED_MIGRATIONS" | while read -r migration; do
+        if [ -n "$migration" ]; then
+            echo "   - $migration"
+            resolve_failed_migration "$migration" "rolled-back" || true
+        fi
+    done
+fi
 
 echo "📊 Current migration status:"
 npx prisma migrate status || echo "Could not get migration status"
@@ -39,7 +80,13 @@ else
     echo "❌ Migration deployment failed"
     echo "📋 Checking what went wrong..."
     npx prisma migrate status
-    echo "⚠️  Continuing build despite migration failure..."
+    echo ""
+    echo "🚨 CRITICAL: Migration deployment failed. Build cannot continue."
+    echo "💡 To resolve manually:"
+    echo "   1. Check the migration status: npx prisma migrate status"
+    echo "   2. Resolve failed migrations: npx prisma migrate resolve --rolled-back <migration_name>"
+    echo "   3. Or mark as applied if safe: npx prisma migrate resolve --applied <migration_name>"
+    exit 1
 fi
 
 echo "✅ Build preparation complete!"
