@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -10,13 +10,14 @@ import {
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import {
-  UsersIcon,
-  LockClosedIcon,
-  BellAlertIcon,
-  WalletIcon,
-  BuildingOfficeIcon,
-  PhoneIcon,
-  AdjustmentsHorizontalIcon,
+    UsersIcon,
+    LockClosedIcon,
+    BellAlertIcon,
+    WalletIcon,
+    BuildingOfficeIcon,
+    PhoneIcon,
+    AdjustmentsHorizontalIcon,
+    EyeIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
@@ -243,6 +244,30 @@ const ServiceProviderSettingsPage: React.FC = () => {
     }
   };
 
+  const profilePath = useMemo(() => {
+    if (!currentUser) {
+      return null;
+    }
+
+    if (currentUser.orgId) {
+      return `/partner/${currentUser.orgId}`;
+    }
+
+    return '/profile';
+  }, [currentUser]);
+
+  const handleViewProfile = () => {
+    if (!profilePath) {
+      return;
+    }
+
+    if (isDirty && !window.confirm(t('settings:page.unsavedChangesPrompt'))) {
+      return;
+    }
+
+    navigate(profilePath);
+  };
+
   const scrollToSection = (sectionId: string) => {
     setActiveSectionId(sectionId);
     sectionRefs.current[sectionId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -263,23 +288,28 @@ const ServiceProviderSettingsPage: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-page-bg">
       <div className="sticky top-0 z-30 bg-page-bg/80 backdrop-blur-md px-8 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
-          <div className="flex space-x-3">
-            <Button variant="light" onClick={handleCancel}>
-              {t('common:buttons.cancel')}
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleSave}
-              disabled={!isDirty || isSaving}
-              className="bg-swiss-mint hover:bg-opacity-90"
-            >
-              {isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:buttons.saveChanges')}
-            </Button>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
+            <div className="flex items-center space-x-3">
+              {profilePath && (
+                <Button variant="outline" leftIcon={EyeIcon} onClick={handleViewProfile}>
+                  {t('common:buttons.viewProfile')}
+                </Button>
+              )}
+              <Button variant="light" onClick={handleCancel}>
+                {t('common:buttons.cancel')}
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleSave}
+                disabled={!isDirty || isSaving}
+                className="bg-swiss-mint hover:bg-opacity-90"
+              >
+                {isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:buttons.saveChanges')}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
 
       <div className="flex flex-1 overflow-hidden">
         <nav className="w-64 bg-white border-r border-gray-200 p-4 space-y-1 overflow-y-auto flex-shrink-0">

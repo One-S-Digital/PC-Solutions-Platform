@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -8,7 +8,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import {
   UsersIcon, LockClosedIcon, BellAlertIcon, WalletIcon, BuildingOfficeIcon,
-  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon
+  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, EyeIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../components/ui/Tabs';
@@ -392,13 +392,48 @@ const SettingsPage: React.FC = () => {
     </div>
   );
 
+  const profilePath = useMemo(() => {
+    if (!currentUser) {
+      return null;
+    }
+
+    switch (currentUser.role) {
+      case UserRole.FOUNDATION:
+        return '/foundation/organisation-profile';
+      case UserRole.EDUCATOR:
+        return '/educator/profile';
+      case UserRole.PRODUCT_SUPPLIER:
+      case UserRole.SERVICE_PROVIDER:
+        return currentUser.orgId ? `/partner/${currentUser.orgId}` : '/profile';
+      default:
+        return '/profile';
+    }
+  }, [currentUser]);
+
+  const handleViewProfile = () => {
+    if (!profilePath) {
+      return;
+    }
+
+    if (isDirty && !window.confirm(t('settings:page.unsavedChangesPrompt'))) {
+      return;
+    }
+
+    navigate(profilePath);
+  };
+
   return (
     <div className="flex flex-col h-full bg-page-bg">
       <div className="sticky top-0 z-30 bg-page-bg/80 backdrop-blur-md px-8 py-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
-          {availableSections.length > 1 && (
-            <div className="flex space-x-3">
+          <div className="flex items-center space-x-3">
+            {profilePath && (
+              <Button variant="outline" leftIcon={EyeIcon} onClick={handleViewProfile}>
+                {t('common:buttons.viewProfile')}
+              </Button>
+            )}
+            {availableSections.length > 1 && (
               <Button variant="light" onClick={handleCancel}>
                 {t('common:buttons.cancel')}
               </Button>
@@ -410,8 +445,8 @@ const SettingsPage: React.FC = () => {
               >
                 {isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:buttons.saveChanges')}
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
