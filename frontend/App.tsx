@@ -55,6 +55,7 @@ import ServiceProviderListingsPage from './pages/service-provider/ServiceProvide
 import ServiceProviderAnalyticsPage from './pages/service-provider/ServiceProviderAnalyticsPage';
 import ServiceProviderCompanyProfilePage from './pages/service-provider/ServiceProviderCompanyProfilePage';
 import ServiceProviderSupportPage from './pages/service-provider/ServiceProviderSupportPage';
+import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
@@ -194,7 +195,8 @@ const ProtectedLayout: React.FC = () => {
           } 
         />
         <Route path="/users/*" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><UsersPage /></ProtectedRoute>} />
-        <Route path="/settings/*" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}><SettingsPage /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER]}><SettingsPage /></ProtectedRoute>} />
+        <Route path="/settings/service-provider" element={<ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSettingsPage /></ProtectedRoute>} />
         
         {/* Admin Specific */}
         <Route 

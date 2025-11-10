@@ -117,7 +117,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/partners', nameKey: 'sidebar.partners', icon: BuildingStorefrontIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/admin/platform-settings', nameKey: 'sidebar.platformSettings', icon: AdjustmentsHorizontalIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/design-system', nameKey: 'sidebar.designSystem', icon: SwatchIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { path: '/settings', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER] },
+    { path: '/settings', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER] },
+    { path: '/settings/service-provider', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.SERVICE_PROVIDER] },
   ];
 
   const userSpecificNavItems = navItems.filter(item => 
@@ -190,7 +191,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
           }
 
           const isContentMenuForAdmin = item.isContentDashboardLink && isAdminOrSuperAdmin;
-          const pathForTopLevel = isContentMenuForAdmin ? '/admin/content-dashboard' : item.path;
+          let pathForTopLevel = isContentMenuForAdmin ? '/admin/content-dashboard' : item.path;
+
+          if (item.path === '/settings' && currentUser?.role === UserRole.SERVICE_PROVIDER) {
+            pathForTopLevel = '/settings/service-provider';
+          }
 
           return (
             <div key={item.nameKey + item.path}>
@@ -245,7 +250,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
               <p className="text-xs text-gray-600 mb-2.5">{t('sidebar.manageSubscriptionDesc')}</p>
               <button 
                 onClick={() => {
-                    navigate('/settings'); // Navigate to the main settings page
+                    const targetPath = currentUser?.role === UserRole.SERVICE_PROVIDER ? '/settings/service-provider' : '/settings';
+                    navigate(targetPath);
                     if (onLinkClick) onLinkClick();
                 }}
                 className="w-full bg-swiss-coral text-white text-sm px-4 py-2 rounded-button hover:bg-opacity-90 transition-colors shadow-soft flex items-center justify-center"
