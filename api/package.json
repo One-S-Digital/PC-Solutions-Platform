@@ -5,6 +5,9 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "prebuild": "rimraf dist && ./scripts/prebuild-db-setup.sh",
