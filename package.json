@@ -2,6 +2,7 @@
   "name": "pc-solutions-platform",
   "private": true,
   "scripts": {
+    "prebuild": "pnpm run extract:i18n-keys",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
