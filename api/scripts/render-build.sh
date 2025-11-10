@@ -20,6 +20,11 @@ echo "🔧 Resolving any failed migrations..."
 # then mark it as applied (the migration is now a no-op placeholder).
 npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "Recruitment enhancements migration already clean"
 npx prisma migrate resolve --applied 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "Recruitment enhancements migration already applied"
+# Mark historical production-only migrations as applied so Prisma doesn't block deploys
+npx prisma migrate resolve --applied 20250926_unify_asset_appuser --force 2>/dev/null || echo "Asset appuser migration already applied"
+npx prisma migrate resolve --applied 20251017_add_firstname_lastname_to_appuser --force 2>/dev/null || echo "AppUser name migration already applied"
+npx prisma migrate resolve --applied 20251106000123_recreate_user_notification_preferences --force 2>/dev/null || echo "Notification preferences migration already applied"
+npx prisma migrate resolve --applied 20251106001000_user_email_nullable --force 2>/dev/null || echo "User email nullable migration already applied"
 # Clean up any lingering failures from earlier hotfix migrations
 npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix --force 2>/dev/null || echo "No comprehensive schema audit migration to resolve"
 npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing --force 2>/dev/null || echo "No stripe customer id migration to resolve"

@@ -1,0 +1,3 @@
+-- Placeholder migration to align with production history.
+-- Original migration executed directly in production.
+-- No-op locally.
