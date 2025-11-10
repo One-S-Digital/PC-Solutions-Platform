@@ -16,8 +16,8 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
 fi
 
 echo "🔧 Resolving any failed migrations..."
-# Mark recruitment enhancements migration as applied to unblock deploys if it previously failed
-npx prisma migrate resolve --applied 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "Recruitment enhancements migration already applied"
+# Reset recruitment enhancements migration if it failed previously so it can rerun cleanly
+npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "Recruitment enhancements migration already clean"
 # Clean up any lingering failures from earlier hotfix migrations
 npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix --force 2>/dev/null || echo "No comprehensive schema audit migration to resolve"
 npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing --force 2>/dev/null || echo "No stripe customer id migration to resolve"

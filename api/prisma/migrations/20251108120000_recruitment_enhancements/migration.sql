@@ -1,4 +1,4 @@
--- Ensure JobContractType enum exists
+-- Ensure JobContractType enum exists and has the expected values
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -10,134 +10,135 @@ BEGIN
   ) THEN
     CREATE TYPE "public"."JobContractType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CDI', 'CDD', 'INTERNSHIP');
   END IF;
-END;
-$$;
 
--- Create or update job_listings table
-DO $$
-DECLARE
-  table_exists BOOLEAN;
-BEGIN
-  SELECT EXISTS (
-    SELECT 1
-    FROM information_schema.tables
-    WHERE table_schema = 'public'
-      AND table_name = 'job_listings'
-  ) INTO table_exists;
-
-  IF NOT table_exists THEN
-    CREATE TABLE "public"."job_listings" (
-      "id" TEXT NOT NULL,
-      "title" TEXT NOT NULL,
-      "description" TEXT,
-      "requirements" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
-      "benefits" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
-      "responsibilities" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
-      "qualifications" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
-      "location" TEXT,
-      "salary" TEXT,
-      "salaryRange" TEXT,
-      "contractType" "public"."JobContractType" NOT NULL DEFAULT 'FULL_TIME',
-      "startDate" TIMESTAMP(3),
-      "status" "public"."JobStatus" NOT NULL DEFAULT 'DRAFT',
-      "foundationId" TEXT NOT NULL,
-      "publishedAt" TIMESTAMP(3),
-      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      "updatedAt" TIMESTAMP(3) NOT NULL,
-      CONSTRAINT "job_listings_pkey" PRIMARY KEY ("id")
-    );
-
-    ALTER TABLE "public"."job_listings"
-      ADD CONSTRAINT "job_listings_foundationId_fkey"
-      FOREIGN KEY ("foundationId") REFERENCES "public"."organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-  ELSE
-    IF NOT EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'contractType'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ADD COLUMN "contractType" "public"."JobContractType" NOT NULL DEFAULT ''FULL_TIME''';
-    END IF;
-
-    IF NOT EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'startDate'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ADD COLUMN "startDate" TIMESTAMP(3)';
-    END IF;
-
-    IF NOT EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'responsibilities'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ADD COLUMN "responsibilities" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]';
-    END IF;
-
-    IF NOT EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'qualifications'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ADD COLUMN "qualifications" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]';
-    END IF;
-
-    IF NOT EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'salaryRange'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ADD COLUMN "salaryRange" TEXT';
-    END IF;
-
-    IF NOT EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'publishedAt'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ADD COLUMN "publishedAt" TIMESTAMP(3)';
-    END IF;
-
-    IF EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'requirements'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ALTER COLUMN "requirements" SET DEFAULT ARRAY[]::TEXT[]';
-    END IF;
-
-    IF EXISTS (
-      SELECT 1 FROM information_schema.columns
-      WHERE table_schema = 'public'
-        AND table_name = 'job_listings'
-        AND column_name = 'benefits'
-    ) THEN
-      EXECUTE 'ALTER TABLE "public"."job_listings" ALTER COLUMN "benefits" SET DEFAULT ARRAY[]::TEXT[]';
-    END IF;
+  PERFORM 1 FROM pg_enum
+  WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'FULL_TIME';
+  IF NOT FOUND THEN
+    ALTER TYPE "public"."JobContractType" ADD VALUE 'FULL_TIME';
   END IF;
-END;
-$$;
 
--- Backfill publishedAt for already published listings
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public'
-      AND table_name = 'job_listings'
-      AND column_name = 'publishedAt'
-  ) THEN
-    UPDATE "public"."job_listings"
-    SET "publishedAt" = COALESCE("publishedAt", CURRENT_TIMESTAMP)
-    WHERE "status" = 'PUBLISHED';
+  PERFORM 1 FROM pg_enum
+  WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'PART_TIME';
+  IF NOT FOUND THEN
+    ALTER TYPE "public"."JobContractType" ADD VALUE 'PART_TIME';
   END IF;
-END;
-$$;
+
+  PERFORM 1 FROM pg_enum
+  WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'CDI';
+  IF NOT FOUND THEN
+    ALTER TYPE "public"."JobContractType" ADD VALUE 'CDI';
+  END IF;
+
+  PERFORM 1 FROM pg_enum
+  WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'CDD';
+  IF NOT FOUND THEN
+    ALTER TYPE "public"."JobContractType" ADD VALUE 'CDD';
+  END IF;
+
+  PERFORM 1 FROM pg_enum
+  WHERE enumtypid = 'JobContractType'::regtype AND enumlabel = 'INTERNSHIP';
+  IF NOT FOUND THEN
+    ALTER TYPE "public"."JobContractType" ADD VALUE 'INTERNSHIP';
+  END IF;
+END $$ LANGUAGE plpgsql;
+
+-- Ensure job_listings table exists
+CREATE TABLE IF NOT EXISTS "public"."job_listings" (
+  "id" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "description" TEXT,
+  "requirements" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  "benefits" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  "responsibilities" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  "qualifications" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  "location" TEXT,
+  "salary" TEXT,
+  "salaryRange" TEXT,
+  "contractType" "public"."JobContractType" NOT NULL DEFAULT 'FULL_TIME',
+  "startDate" TIMESTAMP(3),
+  "status" "public"."JobStatus" NOT NULL DEFAULT 'DRAFT',
+  "foundationId" TEXT NOT NULL,
+  "publishedAt" TIMESTAMP(3),
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "job_listings_pkey" PRIMARY KEY ("id")
+);
+
+ALTER TABLE "public"."job_listings"
+  ADD CONSTRAINT IF NOT EXISTS "job_listings_foundationId_fkey"
+  FOREIGN KEY ("foundationId") REFERENCES "public"."organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Ensure new columns and defaults exist
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ADD COLUMN IF NOT EXISTS "contractType" "public"."JobContractType";
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "contractType" SET DEFAULT 'FULL_TIME';
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ADD COLUMN IF NOT EXISTS "startDate" TIMESTAMP(3);
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ADD COLUMN IF NOT EXISTS "responsibilities" TEXT[] DEFAULT ARRAY[]::TEXT[];
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ADD COLUMN IF NOT EXISTS "qualifications" TEXT[] DEFAULT ARRAY[]::TEXT[];
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ADD COLUMN IF NOT EXISTS "salaryRange" TEXT;
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ADD COLUMN IF NOT EXISTS "publishedAt" TIMESTAMP(3);
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "requirements" SET DEFAULT ARRAY[]::TEXT[];
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "benefits" SET DEFAULT ARRAY[]::TEXT[];
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "responsibilities" SET DEFAULT ARRAY[]::TEXT[];
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "qualifications" SET DEFAULT ARRAY[]::TEXT[];
+
+-- Backfill missing data
+UPDATE "public"."job_listings"
+SET "contractType" = 'FULL_TIME'
+WHERE "contractType" IS NULL;
+
+UPDATE "public"."job_listings"
+SET "responsibilities" = ARRAY[]::TEXT[]
+WHERE "responsibilities" IS NULL;
+
+UPDATE "public"."job_listings"
+SET "qualifications" = ARRAY[]::TEXT[]
+WHERE "qualifications" IS NULL;
+
+UPDATE "public"."job_listings"
+SET "benefits" = ARRAY[]::TEXT[]
+WHERE "benefits" IS NULL;
+
+UPDATE "public"."job_listings"
+SET "requirements" = ARRAY[]::TEXT[]
+WHERE "requirements" IS NULL;
+
+UPDATE "public"."job_listings"
+SET "publishedAt" = COALESCE("publishedAt", CURRENT_TIMESTAMP)
+WHERE "status" = 'PUBLISHED';
+
+-- Enforce NOT NULL where appropriate
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "contractType" SET NOT NULL;
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "requirements" SET NOT NULL;
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "benefits" SET NOT NULL;
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "responsibilities" SET NOT NULL;
+
+ALTER TABLE IF EXISTS "public"."job_listings"
+  ALTER COLUMN "qualifications" SET NOT NULL;
