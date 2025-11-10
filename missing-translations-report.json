@@ -1,0 +1,2320 @@
+{
+  "timestamp": "2025-11-10T15:27:04.217Z",
+  "translationRoot": "packages/translations/locales/en",
+  "namespaces": [
+    "admin",
+    "auth",
+    "common",
+    "content",
+    "dashboard",
+    "marketplace",
+    "messages",
+    "parentLeadForm",
+    "pricing",
+    "recruitment",
+    "settings",
+    "signup",
+    "users"
+  ],
+  "directoriesScanned": [
+    "frontend",
+    "admin"
+  ],
+  "totals": {
+    "filesScanned": 214,
+    "candidateKeysFound": 1544,
+    "uniqueMissingKeys": 113
+  },
+  "missingKeys": [
+    {
+      "key": "ariaLabels.gridView",
+      "namespace": null,
+      "keyPath": "ariaLabels.gridView",
+      "occurrences": [
+        {
+          "file": "frontend/pages/MarketplacePage.tsx",
+          "lines": [
+            300
+          ],
+          "snippets": [
+            {
+              "line": 300,
+              "text": "aria-label={t('ariaLabels.gridView')}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ariaLabels.listView",
+      "namespace": null,
+      "keyPath": "ariaLabels.listView",
+      "occurrences": [
+        {
+          "file": "frontend/pages/MarketplacePage.tsx",
+          "lines": [
+            310
+          ],
+          "snippets": [
+            {
+              "line": 310,
+              "text": "aria-label={t('ariaLabels.listView')}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:buttons.verifyEmail",
+      "namespace": "common",
+      "keyPath": "buttons.verifyEmail",
+      "occurrences": [
+        {
+          "file": "frontend/pages/SignupPage.tsx",
+          "lines": [
+            659
+          ],
+          "snippets": [
+            {
+              "line": 659,
+              "text": "{(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "namespace": "common",
+      "keyPath": "errors.genericErrorMessage",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/OrganizationProfileForm.tsx",
+          "lines": [
+            81,
+            165
+          ],
+          "snippets": [
+            {
+              "line": 81,
+              "text": "message: t('common:errors.genericErrorMessage'),"
+            },
+            {
+              "line": 165,
+              "text": "message: t('common:errors.genericErrorMessage'),"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/ServiceProviderSettingsPage.tsx",
+          "lines": [
+            121,
+            226
+          ],
+          "snippets": [
+            {
+              "line": 121,
+              "text": "message: t('common:errors.genericErrorMessage'),"
+            },
+            {
+              "line": 226,
+              "text": "message: t('common:errors.genericErrorMessage'),"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/SettingsPage.tsx",
+          "lines": [
+            148,
+            303
+          ],
+          "snippets": [
+            {
+              "line": 148,
+              "text": "message: t('common:errors.genericErrorMessage'),"
+            },
+            {
+              "line": 303,
+              "text": "message: t('common:errors.genericErrorMessage'),"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "namespace": "common",
+      "keyPath": "errors.genericErrorTitle",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/OrganizationProfileForm.tsx",
+          "lines": [
+            80,
+            164
+          ],
+          "snippets": [
+            {
+              "line": 80,
+              "text": "title: t('common:errors.genericErrorTitle'),"
+            },
+            {
+              "line": 164,
+              "text": "title: t('common:errors.genericErrorTitle'),"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/ServiceProviderSettingsPage.tsx",
+          "lines": [
+            120,
+            225
+          ],
+          "snippets": [
+            {
+              "line": 120,
+              "text": "title: t('common:errors.genericErrorTitle'),"
+            },
+            {
+              "line": 225,
+              "text": "title: t('common:errors.genericErrorTitle'),"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/SettingsPage.tsx",
+          "lines": [
+            147,
+            302
+          ],
+          "snippets": [
+            {
+              "line": 147,
+              "text": "title: t('common:errors.genericErrorTitle'),"
+            },
+            {
+              "line": 302,
+              "text": "title: t('common:errors.genericErrorTitle'),"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:labels.verificationCode",
+      "namespace": "common",
+      "keyPath": "labels.verificationCode",
+      "occurrences": [
+        {
+          "file": "frontend/pages/SignupPage.tsx",
+          "lines": [
+            634
+          ],
+          "snippets": [
+            {
+              "line": 634,
+              "text": "{t('common:labels.verificationCode', 'Verification Code')}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:loginPage.accountNotFound",
+      "namespace": "common",
+      "keyPath": "loginPage.accountNotFound",
+      "occurrences": [
+        {
+          "file": "frontend/pages/LoginPage.tsx",
+          "lines": [
+            106
+          ],
+          "snippets": [
+            {
+              "line": 106,
+              "text": "errorMessage = t('common:loginPage.accountNotFound', 'No account found with this email address.');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:loginPage.incorrectPassword",
+      "namespace": "common",
+      "keyPath": "loginPage.incorrectPassword",
+      "occurrences": [
+        {
+          "file": "frontend/pages/LoginPage.tsx",
+          "lines": [
+            103
+          ],
+          "snippets": [
+            {
+              "line": 103,
+              "text": "errorMessage = t('common:loginPage.incorrectPassword', 'Incorrect password. Please try again.');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "common:loginPage.invalidEmail",
+      "namespace": "common",
+      "keyPath": "loginPage.invalidEmail",
+      "occurrences": [
+        {
+          "file": "frontend/pages/LoginPage.tsx",
+          "lines": [
+            109
+          ],
+          "snippets": [
+            {
+              "line": 109,
+              "text": "errorMessage = t('common:loginPage.invalidEmail', 'Please enter a valid email address.');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorApplicationsPage.unknownFoundation",
+      "namespace": null,
+      "keyPath": "educatorApplicationsPage.unknownFoundation",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorApplicationsPage.tsx",
+          "lines": [
+            47
+          ],
+          "snippets": [
+            {
+              "line": 47,
+              "text": "<td className=\"px-6 py-4 whitespace-nowrap text-gray-500\">{app.foundationName ?? t('educatorApplicationsPage.unknownFoundation', 'N/A')}</td>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.findJobs.a",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.findJobs.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"educatorSupportPage.faq.findJobs.q\", answerKey: \"educatorSupportPage.faq.findJobs.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.findJobs.q",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.findJobs.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"educatorSupportPage.faq.findJobs.q\", answerKey: \"educatorSupportPage.faq.findJobs.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.notifications.a",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.notifications.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"educatorSupportPage.faq.notifications.q\", answerKey: \"educatorSupportPage.faq.notifications.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.notifications.q",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.notifications.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"educatorSupportPage.faq.notifications.q\", answerKey: \"educatorSupportPage.faq.notifications.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.trackApplications.a",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.trackApplications.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"educatorSupportPage.faq.trackApplications.q\", answerKey: \"educatorSupportPage.faq.trackApplications.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.trackApplications.q",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.trackApplications.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"educatorSupportPage.faq.trackApplications.q\", answerKey: \"educatorSupportPage.faq.trackApplications.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.updateProfile.a",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.updateProfile.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"educatorSupportPage.faq.updateProfile.q\", answerKey: \"educatorSupportPage.faq.updateProfile.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "educatorSupportPage.faq.updateProfile.q",
+      "namespace": null,
+      "keyPath": "educatorSupportPage.faq.updateProfile.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"educatorSupportPage.faq.updateProfile.q\", answerKey: \"educatorSupportPage.faq.updateProfile.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "errors.accountExists",
+      "namespace": null,
+      "keyPath": "errors.accountExists",
+      "occurrences": [
+        {
+          "file": "frontend/pages/SignupPage.tsx",
+          "lines": [
+            330
+          ],
+          "snippets": [
+            {
+              "line": 330,
+              "text": "errorMessage = t('errors.accountExists', 'An account with this email already exists');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "errors.passwordPwned",
+      "namespace": null,
+      "keyPath": "errors.passwordPwned",
+      "occurrences": [
+        {
+          "file": "frontend/pages/SignupPage.tsx",
+          "lines": [
+            333
+          ],
+          "snippets": [
+            {
+              "line": 333,
+              "text": "errorMessage = t('errors.passwordPwned', 'This password has been found in a data breach. Please choose a different password');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "errors.passwordWeak",
+      "namespace": null,
+      "keyPath": "errors.passwordWeak",
+      "occurrences": [
+        {
+          "file": "frontend/pages/SignupPage.tsx",
+          "lines": [
+            336
+          ],
+          "snippets": [
+            {
+              "line": 336,
+              "text": "errorMessage = t('errors.passwordWeak', 'Password is not strong enough');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.activity.jobApplication",
+      "namespace": null,
+      "keyPath": "foundationDashboard.activity.jobApplication",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            38
+          ],
+          "snippets": [
+            {
+              "line": 38,
+              "text": "{ id: 2, icon: BriefcaseIcon, textKey: 'foundationDashboard.activity.jobApplication', details: 'J. Miller for Lead Educator', time: t('dashboardPage.timeAgo.hours', { count: 1 }), color: 'text-swiss-teal' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.activity.newMessage",
+      "namespace": null,
+      "keyPath": "foundationDashboard.activity.newMessage",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            41
+          ],
+          "snippets": [
+            {
+              "line": 41,
+              "text": "{ id: 5, icon: ChatBubbleLeftEllipsisIcon, textKey: 'foundationDashboard.activity.newMessage', details: 'From candidate T. Fischer', time: t('dashboardPage.timeAgo.yesterday'), color: 'text-gray-500' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.activity.orderConfirmation",
+      "namespace": null,
+      "keyPath": "foundationDashboard.activity.orderConfirmation",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            39
+          ],
+          "snippets": [
+            {
+              "line": 39,
+              "text": "{ id: 3, icon: BanknotesIcon, textKey: 'foundationDashboard.activity.orderConfirmation', details: '#ORD123 from EcoToys', time: t('dashboardPage.timeAgo.hours', { count: 3 }), color: 'text-swiss-sand' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.activity.parentInquiry",
+      "namespace": null,
+      "keyPath": "foundationDashboard.activity.parentInquiry",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ id: 1, icon: InboxArrowDownIcon, textKey: 'foundationDashboard.activity.parentInquiry', details: 'S. Dubois for a 2-year-old', time: t('dashboardPage.timeAgo.minutes', { count: 15 }), color: 'text-swiss-mint' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.activity.serviceUpdate",
+      "namespace": null,
+      "keyPath": "foundationDashboard.activity.serviceUpdate",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            40
+          ],
+          "snippets": [
+            {
+              "line": 40,
+              "text": "{ id: 4, icon: DocumentTextIcon, textKey: 'foundationDashboard.activity.serviceUpdate', details: 'ProClean confirmed cleaning for Friday', time: t('dashboardPage.timeAgo.hours', { count: 5 }), color: 'text-swiss-coral' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.calendar.event1",
+      "namespace": null,
+      "keyPath": "foundationDashboard.calendar.event1",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            52
+          ],
+          "snippets": [
+            {
+              "line": 52,
+              "text": "{ time: '10:00', titleKey: 'foundationDashboard.calendar.event1' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.calendar.event2",
+      "namespace": null,
+      "keyPath": "foundationDashboard.calendar.event2",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            53
+          ],
+          "snippets": [
+            {
+              "line": 53,
+              "text": "{ time: '14:00', titleKey: 'foundationDashboard.calendar.event2' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.calendar.event3",
+      "namespace": null,
+      "keyPath": "foundationDashboard.calendar.event3",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            54
+          ],
+          "snippets": [
+            {
+              "line": 54,
+              "text": "{ time: '16:30', titleKey: 'foundationDashboard.calendar.event3' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickActions.browseMarketplace",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickActions.browseMarketplace",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            46
+          ],
+          "snippets": [
+            {
+              "line": 46,
+              "text": "{ labelKey: 'foundationDashboard.quickActions.browseMarketplace', onClick: () => navigate('/marketplace'), icon: ShoppingBagIcon },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickActions.postJob",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickActions.postJob",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            45
+          ],
+          "snippets": [
+            {
+              "line": 45,
+              "text": "{ labelKey: 'foundationDashboard.quickActions.postJob', onClick: () => navigate('/recruitment'), icon: BriefcaseIcon },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickActions.viewAnalytics",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickActions.viewAnalytics",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            48
+          ],
+          "snippets": [
+            {
+              "line": 48,
+              "text": "{ labelKey: 'foundationDashboard.quickActions.viewAnalytics', onClick: () => navigate('/foundation/analytics'), icon: PresentationChartLineIcon },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickActions.viewParentLeads",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickActions.viewParentLeads",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            47
+          ],
+          "snippets": [
+            {
+              "line": 47,
+              "text": "{ labelKey: 'foundationDashboard.quickActions.viewParentLeads', onClick: () => navigate('/foundation/leads'), icon: UserGroupIcon },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickStats.availableSpots",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickStats.availableSpots",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            31
+          ],
+          "snippets": [
+            {
+              "line": 31,
+              "text": "{ labelKey: 'foundationDashboard.quickStats.availableSpots', value: '5', icon: UserPlusIcon, color: 'text-swiss-sand' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickStats.enrolled",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickStats.enrolled",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            30
+          ],
+          "snippets": [
+            {
+              "line": 30,
+              "text": "{ labelKey: 'foundationDashboard.quickStats.enrolled', value: '45 / 50', trend: '+2', icon: UsersIcon, color: 'text-swiss-mint' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickStats.pendingApps",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickStats.pendingApps",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            32
+          ],
+          "snippets": [
+            {
+              "line": 32,
+              "text": "{ labelKey: 'foundationDashboard.quickStats.pendingApps', value: '3', icon: InboxArrowDownIcon, color: 'text-swiss-coral' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationDashboard.quickStats.upcomingAppointments",
+      "namespace": null,
+      "keyPath": "foundationDashboard.quickStats.upcomingAppointments",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationDashboardPage.tsx",
+          "lines": [
+            33
+          ],
+          "snippets": [
+            {
+              "line": 33,
+              "text": "{ labelKey: 'foundationDashboard.quickStats.upcomingAppointments', value: '2', icon: CalendarDaysIcon, color: 'text-swiss-teal' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.manageLeads.a",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.manageLeads.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"foundationSupportPage.faq.manageLeads.q\", answerKey: \"foundationSupportPage.faq.manageLeads.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.manageLeads.q",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.manageLeads.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"foundationSupportPage.faq.manageLeads.q\", answerKey: \"foundationSupportPage.faq.manageLeads.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.manageProfile.a",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.manageProfile.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"foundationSupportPage.faq.manageProfile.q\", answerKey: \"foundationSupportPage.faq.manageProfile.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.manageProfile.q",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.manageProfile.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"foundationSupportPage.faq.manageProfile.q\", answerKey: \"foundationSupportPage.faq.manageProfile.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.recruitment.a",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.recruitment.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"foundationSupportPage.faq.recruitment.q\", answerKey: \"foundationSupportPage.faq.recruitment.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.recruitment.q",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.recruitment.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"foundationSupportPage.faq.recruitment.q\", answerKey: \"foundationSupportPage.faq.recruitment.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.useMarketplace.a",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.useMarketplace.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"foundationSupportPage.faq.useMarketplace.q\", answerKey: \"foundationSupportPage.faq.useMarketplace.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "foundationSupportPage.faq.useMarketplace.q",
+      "namespace": null,
+      "keyPath": "foundationSupportPage.faq.useMarketplace.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/foundation/FoundationSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"foundationSupportPage.faq.useMarketplace.q\", answerKey: \"foundationSupportPage.faq.useMarketplace.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hrProcedures.noDocumentsInCategory",
+      "namespace": null,
+      "keyPath": "hrProcedures.noDocumentsInCategory",
+      "occurrences": [
+        {
+          "file": "frontend/pages/HRProceduresPage.tsx",
+          "lines": [
+            254
+          ],
+          "snippets": [
+            {
+              "line": 254,
+              "text": "{filteredDocs.length === 0 && selectedCategory && <p className=\"text-center text-gray-500 py-8\">{t('hrProcedures.noDocumentsInCategory', { category: selectedCategory })}</p>}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "labels.availabilityDate",
+      "namespace": null,
+      "keyPath": "labels.availabilityDate",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            431
+          ],
+          "snippets": [
+            {
+              "line": 431,
+              "text": "<input type=\"date\" placeholder={t('labels.availabilityDate')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.availabilityDate')} />"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "languageSwitcher.de",
+      "namespace": null,
+      "keyPath": "languageSwitcher.de",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/CompanyProfileSettings.tsx",
+          "lines": [
+            21
+          ],
+          "snippets": [
+            {
+              "line": 21,
+              "text": "{ labelKey: 'languageSwitcher.de', value: 'DE'},"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "languageSwitcher.en",
+      "namespace": null,
+      "keyPath": "languageSwitcher.en",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/CompanyProfileSettings.tsx",
+          "lines": [
+            19
+          ],
+          "snippets": [
+            {
+              "line": 19,
+              "text": "{ labelKey: 'languageSwitcher.en', value: 'EN'},"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "languageSwitcher.fr",
+      "namespace": null,
+      "keyPath": "languageSwitcher.fr",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/CompanyProfileSettings.tsx",
+          "lines": [
+            20
+          ],
+          "snippets": [
+            {
+              "line": 20,
+              "text": "{ labelKey: 'languageSwitcher.fr', value: 'FR'},"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "parentDashboard.quickActions.browseServices",
+      "namespace": null,
+      "keyPath": "parentDashboard.quickActions.browseServices",
+      "occurrences": [
+        {
+          "file": "frontend/pages/parent/ParentDashboardPage.tsx",
+          "lines": [
+            26
+          ],
+          "snippets": [
+            {
+              "line": 26,
+              "text": "{ labelKey: 'parentDashboard.quickActions.browseServices', path: '/marketplace/services', icon: WrenchScrewdriverIcon, variant: 'outline' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "parentDashboard.quickActions.findDaycare",
+      "namespace": null,
+      "keyPath": "parentDashboard.quickActions.findDaycare",
+      "occurrences": [
+        {
+          "file": "frontend/pages/parent/ParentDashboardPage.tsx",
+          "lines": [
+            23
+          ],
+          "snippets": [
+            {
+              "line": 23,
+              "text": "{ labelKey: 'parentDashboard.quickActions.findDaycare', path: '/parent-lead-form', icon: HomeIcon, variant: 'primary' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "parentDashboard.quickActions.updateProfile",
+      "namespace": null,
+      "keyPath": "parentDashboard.quickActions.updateProfile",
+      "occurrences": [
+        {
+          "file": "frontend/pages/parent/ParentDashboardPage.tsx",
+          "lines": [
+            25
+          ],
+          "snippets": [
+            {
+              "line": 25,
+              "text": "{ labelKey: 'parentDashboard.quickActions.updateProfile', path: '/settings', icon: UserCircleIcon, variant: 'outline' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "parentDashboard.quickActions.viewEnquiries",
+      "namespace": null,
+      "keyPath": "parentDashboard.quickActions.viewEnquiries",
+      "occurrences": [
+        {
+          "file": "frontend/pages/parent/ParentDashboardPage.tsx",
+          "lines": [
+            24
+          ],
+          "snippets": [
+            {
+              "line": 24,
+              "text": "{ labelKey: 'parentDashboard.quickActions.viewEnquiries', path: '/parent/enquiries', icon: ClipboardDocumentListIcon, variant: 'secondary' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitment:recruitmentPage.labels.locationUnknown",
+      "namespace": "recruitment",
+      "keyPath": "recruitmentPage.labels.locationUnknown",
+      "occurrences": [
+        {
+          "file": "frontend/pages/educator/EducatorJobBoardPage.tsx",
+          "lines": [
+            58
+          ],
+          "snippets": [
+            {
+              "line": 58,
+              "text": "<p><MapPinIcon className=\"w-4 h-4 inline mr-1.5 text-gray-400\" />{job.location ?? t('recruitment:recruitmentPage.labels.locationUnknown', 'Location TBD')}</p>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.contractTypes.cdd",
+      "namespace": null,
+      "keyPath": "recruitmentPage.contractTypes.cdd",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/JobPostModal.tsx",
+          "lines": [
+            160
+          ],
+          "snippets": [
+            {
+              "line": 160,
+              "text": "<option value=\"CDD\">{t('recruitmentPage.contractTypes.cdd', 'CDD')}</option>"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            49
+          ],
+          "snippets": [
+            {
+              "line": 49,
+              "text": "return t('recruitmentPage.contractTypes.cdd', 'CDD');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.contractTypes.cdi",
+      "namespace": null,
+      "keyPath": "recruitmentPage.contractTypes.cdi",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/JobPostModal.tsx",
+          "lines": [
+            159
+          ],
+          "snippets": [
+            {
+              "line": 159,
+              "text": "<option value=\"CDI\">{t('recruitmentPage.contractTypes.cdi', 'CDI')}</option>"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            47
+          ],
+          "snippets": [
+            {
+              "line": 47,
+              "text": "return t('recruitmentPage.contractTypes.cdi', 'CDI');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.contractTypes.fullTime",
+      "namespace": null,
+      "keyPath": "recruitmentPage.contractTypes.fullTime",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/JobPostModal.tsx",
+          "lines": [
+            157
+          ],
+          "snippets": [
+            {
+              "line": 157,
+              "text": "<option value=\"FULL_TIME\">{t('recruitmentPage.contractTypes.fullTime', 'Full-time')}</option>"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            43
+          ],
+          "snippets": [
+            {
+              "line": 43,
+              "text": "return t('recruitmentPage.contractTypes.fullTime', 'Full-time');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.contractTypes.internship",
+      "namespace": null,
+      "keyPath": "recruitmentPage.contractTypes.internship",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/JobPostModal.tsx",
+          "lines": [
+            161
+          ],
+          "snippets": [
+            {
+              "line": 161,
+              "text": "<option value=\"INTERNSHIP\">{t('recruitmentPage.contractTypes.internship', 'Internship')}</option>"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            52
+          ],
+          "snippets": [
+            {
+              "line": 52,
+              "text": "return t('recruitmentPage.contractTypes.internship', 'Internship');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.contractTypes.partTime",
+      "namespace": null,
+      "keyPath": "recruitmentPage.contractTypes.partTime",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/JobPostModal.tsx",
+          "lines": [
+            158
+          ],
+          "snippets": [
+            {
+              "line": 158,
+              "text": "<option value=\"PART_TIME\">{t('recruitmentPage.contractTypes.partTime', 'Part-time')}</option>"
+            }
+          ]
+        },
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            45
+          ],
+          "snippets": [
+            {
+              "line": 45,
+              "text": "return t('recruitmentPage.contractTypes.partTime', 'Part-time');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.jobStatus.closed",
+      "namespace": null,
+      "keyPath": "recruitmentPage.jobStatus.closed",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "return { className: 'bg-red-100 text-red-700', label: t('recruitmentPage.jobStatus.closed', 'Closed') };"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.jobStatus.draft",
+      "namespace": null,
+      "keyPath": "recruitmentPage.jobStatus.draft",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            31
+          ],
+          "snippets": [
+            {
+              "line": 31,
+              "text": "return { className: 'bg-yellow-100 text-yellow-700', label: t('recruitmentPage.jobStatus.draft', 'Draft') };"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.jobStatus.filled",
+      "namespace": null,
+      "keyPath": "recruitmentPage.jobStatus.filled",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            33
+          ],
+          "snippets": [
+            {
+              "line": 33,
+              "text": "return { className: 'bg-blue-100 text-blue-700', label: t('recruitmentPage.jobStatus.filled', 'Filled') };"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.jobStatus.published",
+      "namespace": null,
+      "keyPath": "recruitmentPage.jobStatus.published",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            29
+          ],
+          "snippets": [
+            {
+              "line": 29,
+              "text": "return { className: 'bg-green-100 text-green-700', label: t('recruitmentPage.jobStatus.published', 'Published') };"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.labels.applications",
+      "namespace": null,
+      "keyPath": "recruitmentPage.labels.applications",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            74
+          ],
+          "snippets": [
+            {
+              "line": 74,
+              "text": "<p><UserGroupIcon className=\"w-4 h-4 inline mr-2 text-gray-400\" />{t('recruitmentPage.labels.applications')}: {job.applicationsCount}</p>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.labels.locationUnknown",
+      "namespace": null,
+      "keyPath": "recruitmentPage.labels.locationUnknown",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            71
+          ],
+          "snippets": [
+            {
+              "line": 71,
+              "text": "<p><MapPinIcon className=\"w-4 h-4 inline mr-2 text-gray-400\" />{job.location ?? t('recruitmentPage.labels.locationUnknown', 'Location TBD')}</p>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.labels.startDate",
+      "namespace": null,
+      "keyPath": "recruitmentPage.labels.startDate",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            73
+          ],
+          "snippets": [
+            {
+              "line": 73,
+              "text": "<p><CalendarDaysIcon className=\"w-4 h-4 inline mr-2 text-gray-400\" />{t('recruitmentPage.labels.startDate')}: {formattedStartDate}</p>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.labels.startDateTbd",
+      "namespace": null,
+      "keyPath": "recruitmentPage.labels.startDateTbd",
+      "occurrences": [
+        {
+          "file": "frontend/pages/RecruitmentPage.tsx",
+          "lines": [
+            56
+          ],
+          "snippets": [
+            {
+              "line": 56,
+              "text": "const formattedStartDate = job.startDate ? new Date(job.startDate).toLocaleDateString() : t('recruitmentPage.labels.startDateTbd', 'To be determined');"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.loading",
+      "namespace": null,
+      "keyPath": "recruitmentPage.viewApplicantsModal.loading",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/ViewApplicantsModal.tsx",
+          "lines": [
+            45
+          ],
+          "snippets": [
+            {
+              "line": 45,
+              "text": "return <p className=\"text-gray-500 text-center py-8\">{t('recruitmentPage.viewApplicantsModal.loading', 'Loading applications...')}</p>;"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.unknownCandidate",
+      "namespace": null,
+      "keyPath": "recruitmentPage.viewApplicantsModal.unknownCandidate",
+      "occurrences": [
+        {
+          "file": "frontend/components/recruitment/ViewApplicantsModal.tsx",
+          "lines": [
+            63
+          ],
+          "snippets": [
+            {
+              "line": 63,
+              "text": "<p className=\"font-medium text-swiss-charcoal\">{application.candidateName ?? t('recruitmentPage.viewApplicantsModal.unknownCandidate', 'Candidate')}</p>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "roleManagement.userDetailDrawer.suspendUserButton",
+      "namespace": null,
+      "keyPath": "roleManagement.userDetailDrawer.suspendUserButton",
+      "occurrences": [
+        {
+          "file": "frontend/pages/UsersPage.tsx",
+          "lines": [
+            151
+          ],
+          "snippets": [
+            {
+              "line": 151,
+              "text": "<Button variant=\"danger\" className=\"w-full\" onClick={() => handleStatusUpdate('Inactive')} leftIcon={XCircleIcon}>{t('roleManagement.userDetailDrawer.suspendUserButton')}</Button>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "roleManagement.userDetailDrawer.updateRoleButton",
+      "namespace": null,
+      "keyPath": "roleManagement.userDetailDrawer.updateRoleButton",
+      "occurrences": [
+        {
+          "file": "frontend/pages/UsersPage.tsx",
+          "lines": [
+            148
+          ],
+          "snippets": [
+            {
+              "line": 148,
+              "text": "<Button variant=\"secondary\" className=\"w-full\" onClick={handleRoleUpdate}>{t('roleManagement.userDetailDrawer.updateRoleButton')}</Button>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "roleManagement.userProfileUpdated",
+      "namespace": null,
+      "keyPath": "roleManagement.userProfileUpdated",
+      "occurrences": [
+        {
+          "file": "frontend/pages/UsersPage.tsx",
+          "lines": [
+            208
+          ],
+          "snippets": [
+            {
+              "line": 208,
+              "text": "alert(t('roleManagement.userProfileUpdated', { name: updatedUser.name }));"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.listService.a",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.listService.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.listService.q\", answerKey: \"serviceProviderSupportPage.faq.listService.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.listService.q",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.listService.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.listService.q\", answerKey: \"serviceProviderSupportPage.faq.listService.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.profileInfo.a",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.profileInfo.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.profileInfo.q\", answerKey: \"serviceProviderSupportPage.faq.profileInfo.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.profileInfo.q",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.profileInfo.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.profileInfo.q\", answerKey: \"serviceProviderSupportPage.faq.profileInfo.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.respondRequests.a",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.respondRequests.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.respondRequests.q\", answerKey: \"serviceProviderSupportPage.faq.respondRequests.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.respondRequests.q",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.respondRequests.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.respondRequests.q\", answerKey: \"serviceProviderSupportPage.faq.respondRequests.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.updateAvailability.a",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.updateAvailability.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.updateAvailability.q\", answerKey: \"serviceProviderSupportPage.faq.updateAvailability.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "serviceProviderSupportPage.faq.updateAvailability.q",
+      "namespace": null,
+      "keyPath": "serviceProviderSupportPage.faq.updateAvailability.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/service-provider/ServiceProviderSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"serviceProviderSupportPage.faq.updateAvailability.q\", answerKey: \"serviceProviderSupportPage.faq.updateAvailability.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsAnalyticsPreferences.currencies.chf",
+      "namespace": null,
+      "keyPath": "settingsAnalyticsPreferences.currencies.chf",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/AnalyticsPreferencesSettings.tsx",
+          "lines": [
+            21
+          ],
+          "snippets": [
+            {
+              "line": 21,
+              "text": "const CURRENCIES = [{value: 'CHF', labelKey: 'settingsAnalyticsPreferences.currencies.chf'}, {value: 'EUR', labelKey: 'settingsAnalyticsPreferences.currencies.eur'}];"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsAnalyticsPreferences.currencies.eur",
+      "namespace": null,
+      "keyPath": "settingsAnalyticsPreferences.currencies.eur",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/AnalyticsPreferencesSettings.tsx",
+          "lines": [
+            21
+          ],
+          "snippets": [
+            {
+              "line": 21,
+              "text": "const CURRENCIES = [{value: 'CHF', labelKey: 'settingsAnalyticsPreferences.currencies.chf'}, {value: 'EUR', labelKey: 'settingsAnalyticsPreferences.currencies.eur'}];"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsContactBooking.contactMethods.email",
+      "namespace": null,
+      "keyPath": "settingsContactBooking.contactMethods.email",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/ContactBookingSettings.tsx",
+          "lines": [
+            20
+          ],
+          "snippets": [
+            {
+              "line": 20,
+              "text": "{ labelKey: 'settingsContactBooking.contactMethods.email', value: 'Email' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsContactBooking.contactMethods.phone",
+      "namespace": null,
+      "keyPath": "settingsContactBooking.contactMethods.phone",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/ContactBookingSettings.tsx",
+          "lines": [
+            21
+          ],
+          "snippets": [
+            {
+              "line": 21,
+              "text": "{ labelKey: 'settingsContactBooking.contactMethods.phone', value: 'Phone' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsContactBooking.contactMethods.platformForm",
+      "namespace": null,
+      "keyPath": "settingsContactBooking.contactMethods.platformForm",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/ContactBookingSettings.tsx",
+          "lines": [
+            22
+          ],
+          "snippets": [
+            {
+              "line": 22,
+              "text": "{ labelKey: 'settingsContactBooking.contactMethods.platformForm', value: 'Platform Form' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsContactBooking.responseTimes.lessThan24h",
+      "namespace": null,
+      "keyPath": "settingsContactBooking.responseTimes.lessThan24h",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/ContactBookingSettings.tsx",
+          "lines": [
+            26
+          ],
+          "snippets": [
+            {
+              "line": 26,
+              "text": "{ labelKey: 'settingsContactBooking.responseTimes.lessThan24h', value: '< 24 h' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsContactBooking.responseTimes.other",
+      "namespace": null,
+      "keyPath": "settingsContactBooking.responseTimes.other",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/ContactBookingSettings.tsx",
+          "lines": [
+            28
+          ],
+          "snippets": [
+            {
+              "line": 28,
+              "text": "{ labelKey: 'settingsContactBooking.responseTimes.other', value: 'Other' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsContactBooking.responseTimes.twoToThreeDays",
+      "namespace": null,
+      "keyPath": "settingsContactBooking.responseTimes.twoToThreeDays",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/ContactBookingSettings.tsx",
+          "lines": [
+            27
+          ],
+          "snippets": [
+            {
+              "line": 27,
+              "text": "{ labelKey: 'settingsContactBooking.responseTimes.twoToThreeDays', value: '2–3 d' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsNotificationPreferences.digestFrequencies.daily",
+      "namespace": null,
+      "keyPath": "settingsNotificationPreferences.digestFrequencies.daily",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/NotificationPreferencesSettings.tsx",
+          "lines": [
+            20
+          ],
+          "snippets": [
+            {
+              "line": 20,
+              "text": "{ labelKey: 'settingsNotificationPreferences.digestFrequencies.daily', value: 'Daily' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsNotificationPreferences.digestFrequencies.none",
+      "namespace": null,
+      "keyPath": "settingsNotificationPreferences.digestFrequencies.none",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/NotificationPreferencesSettings.tsx",
+          "lines": [
+            22
+          ],
+          "snippets": [
+            {
+              "line": 22,
+              "text": "{ labelKey: 'settingsNotificationPreferences.digestFrequencies.none', value: 'None' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsNotificationPreferences.digestFrequencies.weekly",
+      "namespace": null,
+      "keyPath": "settingsNotificationPreferences.digestFrequencies.weekly",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/NotificationPreferencesSettings.tsx",
+          "lines": [
+            21
+          ],
+          "snippets": [
+            {
+              "line": 21,
+              "text": "{ labelKey: 'settingsNotificationPreferences.digestFrequencies.weekly', value: 'Weekly' },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsNotificationPreferences.newRequestEmailToggleProvider",
+      "namespace": null,
+      "keyPath": "settingsNotificationPreferences.newRequestEmailToggleProvider",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/NotificationPreferencesSettings.tsx",
+          "lines": [
+            28
+          ],
+          "snippets": [
+            {
+              "line": 28,
+              "text": "const newRequestLabelKey = isProvider ? \"settingsNotificationPreferences.newRequestEmailToggleProvider\" : \"settingsNotificationPreferences.newRequestEmailToggleSupplier\";"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsNotificationPreferences.newRequestEmailToggleSupplier",
+      "namespace": null,
+      "keyPath": "settingsNotificationPreferences.newRequestEmailToggleSupplier",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/NotificationPreferencesSettings.tsx",
+          "lines": [
+            28
+          ],
+          "snippets": [
+            {
+              "line": 28,
+              "text": "const newRequestLabelKey = isProvider ? \"settingsNotificationPreferences.newRequestEmailToggleProvider\" : \"settingsNotificationPreferences.newRequestEmailToggleSupplier\";"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsPrivacyData.hidePricesHelpText",
+      "namespace": null,
+      "keyPath": "settingsPrivacyData.hidePricesHelpText",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/PrivacyDataSettings.tsx",
+          "lines": [
+            25
+          ],
+          "snippets": [
+            {
+              "line": 25,
+              "text": "const hidePubliclyHelpTextKey = userRole === UserRole.PRODUCT_SUPPLIER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsPrivacyData.hidePricesPublicly",
+      "namespace": null,
+      "keyPath": "settingsPrivacyData.hidePricesPublicly",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/PrivacyDataSettings.tsx",
+          "lines": [
+            21
+          ],
+          "snippets": [
+            {
+              "line": 21,
+              "text": "const hidePubliclyLabelKey = userRole === UserRole.PRODUCT_SUPPLIER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsPrivacyData.hideRateHelpText",
+      "namespace": null,
+      "keyPath": "settingsPrivacyData.hideRateHelpText",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/PrivacyDataSettings.tsx",
+          "lines": [
+            26
+          ],
+          "snippets": [
+            {
+              "line": 26,
+              "text": "? \"settingsPrivacyData.hidePricesHelpText\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "settingsPrivacyData.hideStartingRatePublicly",
+      "namespace": null,
+      "keyPath": "settingsPrivacyData.hideStartingRatePublicly",
+      "occurrences": [
+        {
+          "file": "frontend/components/settings/sections/PrivacyDataSettings.tsx",
+          "lines": [
+            22
+          ],
+          "snippets": [
+            {
+              "line": 22,
+              "text": "? \"settingsPrivacyData.hidePricesPublicly\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.applications",
+      "namespace": null,
+      "keyPath": "sidebar.applications",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            88
+          ],
+          "snippets": [
+            {
+              "line": 88,
+              "text": "{ path: '/educator/applications', nameKey: 'sidebar.applications', icon: ClipboardDocumentListIcon, roles: [UserRole.EDUCATOR] },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.homeFindCreche",
+      "namespace": null,
+      "keyPath": "sidebar.homeFindCreche",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            92
+          ],
+          "snippets": [
+            {
+              "line": 92,
+              "text": "{ path: '/parent-lead-form', nameKey: 'sidebar.homeFindCreche', icon: HomeIcon, roles: [UserRole.PARENT] },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.myRequests",
+      "namespace": null,
+      "keyPath": "sidebar.myRequests",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            56,
+            93
+          ],
+          "snippets": [
+            {
+              "line": 56,
+              "text": "{ path: '/service-provider/requests', nameKey: 'sidebar.myRequests', icon: InboxArrowDownIcon, roles: [UserRole.SERVICE_PROVIDER] },"
+            },
+            {
+              "line": 93,
+              "text": "{ path: '/parent/enquiries', nameKey: 'sidebar.myRequests', icon: ClipboardDocumentListIcon, roles: [UserRole.PARENT] },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.orders",
+      "namespace": null,
+      "keyPath": "sidebar.orders",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            50
+          ],
+          "snippets": [
+            {
+              "line": 50,
+              "text": "{ path: '/supplier/orders', nameKey: 'sidebar.orders', icon: ShoppingBagIcon, roles: [UserRole.PRODUCT_SUPPLIER] },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.organisationProfile",
+      "namespace": null,
+      "keyPath": "sidebar.organisationProfile",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            83
+          ],
+          "snippets": [
+            {
+              "line": 83,
+              "text": "{ path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon, roles: [UserRole.FOUNDATION] }, // Kept for Foundation, hidden for Admin/SA"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.productMarketplace",
+      "namespace": null,
+      "keyPath": "sidebar.productMarketplace",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            51
+          ],
+          "snippets": [
+            {
+              "line": 51,
+              "text": "{ path: '/supplier/product-listings', nameKey: 'sidebar.productMarketplace', icon: ListBulletIcon, roles: [UserRole.PRODUCT_SUPPLIER] },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sidebar.serviceMarketplace",
+      "namespace": null,
+      "keyPath": "sidebar.serviceMarketplace",
+      "occurrences": [
+        {
+          "file": "frontend/components/layout/Sidebar.tsx",
+          "lines": [
+            57
+          ],
+          "snippets": [
+            {
+              "line": 57,
+              "text": "{ path: '/service-provider/service-listings', nameKey: 'sidebar.serviceMarketplace', icon: WrenchScrewdriverIcon, roles: [UserRole.SERVICE_PROVIDER] },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.addProduct.a",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.addProduct.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"supplierSupportPage.faq.addProduct.q\", answerKey: \"supplierSupportPage.faq.addProduct.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.addProduct.q",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.addProduct.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            34
+          ],
+          "snippets": [
+            {
+              "line": 34,
+              "text": "{ questionKey: \"supplierSupportPage.faq.addProduct.q\", answerKey: \"supplierSupportPage.faq.addProduct.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.commissionRates.a",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.commissionRates.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"supplierSupportPage.faq.commissionRates.q\", answerKey: \"supplierSupportPage.faq.commissionRates.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.commissionRates.q",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.commissionRates.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            37
+          ],
+          "snippets": [
+            {
+              "line": 37,
+              "text": "{ questionKey: \"supplierSupportPage.faq.commissionRates.q\", answerKey: \"supplierSupportPage.faq.commissionRates.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.manageProfile.a",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.manageProfile.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"supplierSupportPage.faq.manageProfile.q\", answerKey: \"supplierSupportPage.faq.manageProfile.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.manageProfile.q",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.manageProfile.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            36
+          ],
+          "snippets": [
+            {
+              "line": 36,
+              "text": "{ questionKey: \"supplierSupportPage.faq.manageProfile.q\", answerKey: \"supplierSupportPage.faq.manageProfile.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.processOrders.a",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.processOrders.a",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"supplierSupportPage.faq.processOrders.q\", answerKey: \"supplierSupportPage.faq.processOrders.a\" },"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "supplierSupportPage.faq.processOrders.q",
+      "namespace": null,
+      "keyPath": "supplierSupportPage.faq.processOrders.q",
+      "occurrences": [
+        {
+          "file": "frontend/pages/supplier/SupplierSupportPage.tsx",
+          "lines": [
+            35
+          ],
+          "snippets": [
+            {
+              "line": 35,
+              "text": "{ questionKey: \"supplierSupportPage.faq.processOrders.q\", answerKey: \"supplierSupportPage.faq.processOrders.a\" },"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
