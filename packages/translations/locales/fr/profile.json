@@ -1,0 +1,26 @@
+{
+  "title": "Mon profil",
+  "subtitle": "Consultez les informations de votre compte et de votre organisation.",
+  "actions": {
+    "goToSettings": "Mettre à jour le profil"
+  },
+  "details": {
+    "sectionTitle": "Informations du compte",
+    "name": "Nom complet",
+    "email": "E-mail",
+    "role": "Rôle",
+    "status": "Statut",
+    "memberSince": "Membre depuis",
+    "lastActive": "Dernière activité"
+  },
+  "organization": {
+    "sectionTitle": "Organisation",
+    "name": "Nom de l'organisation",
+    "region": "Région",
+    "plan": "Offre",
+    "id": "ID de l'organisation"
+  },
+  "empty": {
+    "organization": "Aucune information d'organisation pour le moment."
+  }
+}

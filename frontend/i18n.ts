@@ -16,6 +16,7 @@ import contentEn from '@workspace/translations/locales/en/content.json';
 import messagesEn from '@workspace/translations/locales/en/messages.json';
 import adminEn from '@workspace/translations/locales/en/admin.json';
 import settingsEn from '@workspace/translations/locales/en/settings.json';
+import profileEn from '@workspace/translations/locales/en/profile.json';
 
 import commonFr from '@workspace/translations/locales/fr/common.json';
 import authFr from '@workspace/translations/locales/fr/auth.json';
@@ -30,6 +31,7 @@ import contentFr from '@workspace/translations/locales/fr/content.json';
 import messagesFr from '@workspace/translations/locales/fr/messages.json';
 import adminFr from '@workspace/translations/locales/fr/admin.json';
 import settingsFr from '@workspace/translations/locales/fr/settings.json';
+import profileFr from '@workspace/translations/locales/fr/profile.json';
 
 import commonDe from '@workspace/translations/locales/de/common.json';
 import authDe from '@workspace/translations/locales/de/auth.json';
@@ -44,6 +46,7 @@ import contentDe from '@workspace/translations/locales/de/content.json';
 import messagesDe from '@workspace/translations/locales/de/messages.json';
 import adminDe from '@workspace/translations/locales/de/admin.json';
 import settingsDe from '@workspace/translations/locales/de/settings.json';
+import profileDe from '@workspace/translations/locales/de/profile.json';
 
 i18n
   .use(LanguageDetector)
@@ -52,7 +55,7 @@ i18n
     lng: 'en',
     fallbackLng: ['en'],
     debug: false,
-    ns: ['common', 'auth', 'dashboard', 'pricing', 'signup', 'parentLeadForm', 'marketplace', 'recruitment', 'users', 'content', 'messages', 'admin', 'settings'],
+    ns: ['common', 'auth', 'dashboard', 'pricing', 'signup', 'parentLeadForm', 'marketplace', 'recruitment', 'users', 'content', 'messages', 'admin', 'settings', 'profile'],
     defaultNS: 'common',
     returnEmptyString: false,
     nsSeparator: ':',
@@ -72,6 +75,7 @@ i18n
         messages: messagesEn,
         admin: adminEn,
         settings: settingsEn,
+        profile: profileEn,
       },
       fr: {
         common: commonFr,
@@ -87,6 +91,7 @@ i18n
         messages: messagesFr,
         admin: adminFr,
         settings: settingsFr,
+        profile: profileFr,
       },
       de: {
         common: commonDe,
@@ -102,6 +107,7 @@ i18n
         messages: messagesDe,
         admin: adminDe,
         settings: settingsDe,
+        profile: profileDe,
       },
     },
     interpolation: {
