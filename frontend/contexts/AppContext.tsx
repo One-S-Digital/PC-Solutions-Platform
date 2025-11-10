@@ -57,13 +57,17 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   // FIX: Add state for vendor clients
   const [vendorClients, setVendorClients] = useState<VendorClient[]>(MOCK_VENDOR_CLIENTS);
   const { createApplication, listMyApplications } = useRecruitmentApi();
-  const [language, setLanguage] = useState<SupportedLanguage>(() => {
-    const detectedLng = i18n.language?.toUpperCase().split('-')[0];
-    if (detectedLng === 'FR' || detectedLng === 'DE') {
-      return detectedLng as SupportedLanguage;
-    }
-    return 'EN';
-  });
+    const [language, setLanguage] = useState<SupportedLanguage>(() => {
+      const browserLanguage =
+        typeof navigator !== 'undefined' ? navigator.language : undefined;
+      const rawLanguage = i18n.language ?? browserLanguage ?? 'en';
+      const normalizedLanguage = rawLanguage.toUpperCase().split('-')[0];
+
+      if (normalizedLanguage === 'FR' || normalizedLanguage === 'DE') {
+        return normalizedLanguage as SupportedLanguage;
+      }
+      return 'EN';
+    });
   const [favoriteCandidateIds, setFavoriteCandidateIds] = useState<string[]>(() => {
     const storedFavorites = localStorage.getItem('favoriteCandidateIds');
     return storedFavorites ? JSON.parse(storedFavorites) : [];
