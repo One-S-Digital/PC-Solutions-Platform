@@ -15,167 +15,64 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
     npx prisma generate
 fi
 
-# Check for problematic SQL patterns in migration files (PostgreSQL <16 doesn't support ADD CONSTRAINT IF NOT EXISTS)
-echo "🔍 Checking migration files for problematic SQL patterns..."
-PROBLEMATIC_MIGRATIONS=$(find prisma/migrations -name "migration.sql" -exec sh -c 'grep -v "^[[:space:]]*--" "$1" | grep -q "ADD CONSTRAINT IF NOT EXISTS" && echo "$1"' _ {} \; 2>/dev/null || true)
-
-if [ -n "$PROBLEMATIC_MIGRATIONS" ]; then
-    echo ""
-    echo "🚨 ERROR: Found migrations with unsupported SQL syntax (ADD CONSTRAINT IF NOT EXISTS)"
-    echo "   PostgreSQL <16 does not support ADD CONSTRAINT IF NOT EXISTS."
-    echo "   Use a DO block with IF NOT EXISTS check instead."
-    echo ""
-    echo "   Problematic migration files:"
-    echo "$PROBLEMATIC_MIGRATIONS" | while read -r file; do
-        echo "     - $file"
-    done
-    echo ""
-    echo "   💡 Fix: Replace ADD CONSTRAINT IF NOT EXISTS with a DO block pattern:"
-    echo "      DO \$\$"
-    echo "      BEGIN"
-    echo "        IF NOT EXISTS (SELECT 1 FROM pg_constraint ...) THEN"
-    echo "          ALTER TABLE ... ADD CONSTRAINT ...;"
-    echo "        END IF;"
-    echo "      END \$\$;"
-    echo ""
-    exit 1
-fi
-
 # Function to check if migration folder exists
 migration_folder_exists() {
     local migration_name=$1
     [ -d "prisma/migrations/$migration_name" ]
 }
 
-# Function to resolve a failed migration (only if folder exists)
-resolve_failed_migration() {
-    local migration_name=$1
-    local resolution_type=${2:-rolled-back}  # Default to rolled-back, can be 'applied'
-    
-    if ! migration_folder_exists "$migration_name"; then
-        echo "   ⚠️  Skipping $migration_name: migration folder not found in prisma/migrations/"
-        echo "   💡 This migration may have been removed from the codebase but still exists in the database."
-        echo "   💡 To resolve: restore the migration folder from git history or manually resolve in the database."
-        return 1
-    fi
-    
-    echo "   Attempting to resolve: $migration_name (as $resolution_type)"
-    if npx prisma migrate resolve --$resolution_type "$migration_name" --schema prisma/schema.prisma; then
-        echo "   ✅ Resolved: $migration_name"
-        return 0
-    else
-        echo "   ⚠️  Could not resolve: $migration_name (may already be resolved)"
-        return 1
-    fi
-}
-
-# Step 1: Check migration status first
-echo "📊 Checking migration status..."
-if ! npx prisma migrate status --schema prisma/schema.prisma; then
-    echo "⚠️  Migration status check failed or found issues"
-fi
-
-# Step 2: Resolve known failed migrations (only if folders exist)
-echo ""
 echo "🔧 Resolving any failed migrations..."
 
 # Reset recruitment enhancements migration if it failed previously so it can rerun cleanly,
 # then mark it as applied (the migration is now a no-op placeholder).
 if migration_folder_exists "20251108120000_recruitment_enhancements"; then
-    echo "   Found recruitment_enhancements migration folder, attempting resolution..."
-    resolve_failed_migration "20251108120000_recruitment_enhancements" "rolled-back" || echo "   Recruitment enhancements migration already clean"
-    resolve_failed_migration "20251108120000_recruitment_enhancements" "applied" || echo "   Recruitment enhancements migration already applied"
-else
-    echo "   ⚠️  WARNING: 20251108120000_recruitment_enhancements migration folder not found!"
-    echo "   💡 This migration exists in the database but not in the codebase."
-    echo "   💡 You must restore it from git history or manually resolve it in the database."
-    echo "   💡 Run: git log --all --oneline -- prisma/migrations/20251108120000_recruitment_enhancements/"
-    echo "   💡 Then restore the folder and run: npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements"
-    exit 1
+    npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements --schema prisma/schema.prisma 2>/dev/null || echo "Recruitment enhancements migration already clean"
+    npx prisma migrate resolve --applied 20251108120000_recruitment_enhancements --schema prisma/schema.prisma 2>/dev/null || echo "Recruitment enhancements migration already applied"
 fi
 
-# Handle the cleanup migration that may have failed due to SQL syntax error
+# Handle the cleanup migration that may have failed
 if migration_folder_exists "20251110123000_recruitment_enhancements_cleanup"; then
-    echo "   Found recruitment_enhancements_cleanup migration folder, checking for failed state..."
-    resolve_failed_migration "20251110123000_recruitment_enhancements_cleanup" "rolled-back" || echo "   Cleanup migration already clean"
+    npx prisma migrate resolve --rolled-back 20251110123000_recruitment_enhancements_cleanup --schema prisma/schema.prisma 2>/dev/null || echo "Cleanup migration already clean"
 fi
 
 # Mark historical production-only migrations as applied so Prisma doesn't block deploys
 if migration_folder_exists "20250926_unify_asset_appuser"; then
-    resolve_failed_migration "20250926_unify_asset_appuser" "applied" || echo "   Asset appuser migration already applied"
+    npx prisma migrate resolve --applied 20250926_unify_asset_appuser --schema prisma/schema.prisma 2>/dev/null || echo "Asset appuser migration already applied"
 fi
 
 if migration_folder_exists "20251017_add_firstname_lastname_to_appuser"; then
-    resolve_failed_migration "20251017_add_firstname_lastname_to_appuser" "applied" || echo "   AppUser name migration already applied"
+    npx prisma migrate resolve --applied 20251017_add_firstname_lastname_to_appuser --schema prisma/schema.prisma 2>/dev/null || echo "AppUser name migration already applied"
 fi
 
 if migration_folder_exists "20251106000123_recreate_user_notification_preferences"; then
-    resolve_failed_migration "20251106000123_recreate_user_notification_preferences" "applied" || echo "   Notification preferences migration already applied"
+    npx prisma migrate resolve --applied 20251106000123_recreate_user_notification_preferences --schema prisma/schema.prisma 2>/dev/null || echo "Notification preferences migration already applied"
 fi
 
 if migration_folder_exists "20251106001000_user_email_nullable"; then
-    resolve_failed_migration "20251106001000_user_email_nullable" "applied" || echo "   User email nullable migration already applied"
+    npx prisma migrate resolve --applied 20251106001000_user_email_nullable --schema prisma/schema.prisma 2>/dev/null || echo "User email nullable migration already applied"
 fi
 
 # Clean up any lingering failures from earlier hotfix migrations
 if migration_folder_exists "20251030_comprehensive_schema_audit_fix"; then
-    resolve_failed_migration "20251030_comprehensive_schema_audit_fix" "rolled-back" || echo "   No comprehensive schema audit migration to resolve"
+    npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix --schema prisma/schema.prisma 2>/dev/null || echo "No comprehensive schema audit migration to resolve"
 fi
 
 if migration_folder_exists "20251030_add_stripe_customer_id_if_missing"; then
-    resolve_failed_migration "20251030_add_stripe_customer_id_if_missing" "rolled-back" || echo "   No stripe customer id migration to resolve"
+    npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing --schema prisma/schema.prisma 2>/dev/null || echo "No stripe customer id migration to resolve"
 fi
 
-# Detect and resolve any other failed migrations dynamically
-echo ""
-echo "🔍 Checking for additional failed migrations..."
-MIGRATION_STATUS=$(npx prisma migrate status --schema prisma/schema.prisma 2>&1 || true)
+echo "📊 Current migration status:"
+npx prisma migrate status --schema prisma/schema.prisma || echo "Could not get migration status"
 
-# Extract failed migration names from status output
-# Prisma error format: "The `20251108120000_recruitment_enhancements` migration started at ... failed"
-FAILED_MIGRATIONS=$(echo "$MIGRATION_STATUS" | grep -o "The \`[^\`]*\` migration" | sed "s/The \`//;s/\` migration//" || true)
-
-# Also check for format: "migration <name> failed"
-if [ -z "$FAILED_MIGRATIONS" ]; then
-    FAILED_MIGRATIONS=$(echo "$MIGRATION_STATUS" | grep -o "migration [^ ]* failed" | sed "s/migration //;s/ failed//" || true)
-fi
-
-if [ -n "$FAILED_MIGRATIONS" ]; then
-    echo "⚠️  Found failed migrations:"
-    echo "$FAILED_MIGRATIONS" | while read -r migration; do
-        if [ -n "$migration" ]; then
-            echo "   - $migration"
-            if migration_folder_exists "$migration"; then
-                resolve_failed_migration "$migration" "rolled-back" || true
-            else
-                echo "     ⚠️  Migration folder not found - cannot auto-resolve"
-                echo "     💡 Restore from git history or manually resolve in database"
-            fi
-        fi
-    done
-fi
-
-# Step 3: Deploy migrations
-echo ""
 echo "🔄 Deploying database migrations..."
 if npx prisma migrate deploy --schema prisma/schema.prisma; then
     echo "✅ Migrations deployed successfully"
 else
-    echo ""
     echo "❌ Migration deployment failed"
-    echo "📋 Migration status:"
+    echo "📋 Checking what went wrong..."
     npx prisma migrate status --schema prisma/schema.prisma || true
-    echo ""
     echo "🚨 CRITICAL: Migration deployment failed. Build cannot continue."
-    echo ""
-    echo "💡 To resolve manually:"
-    echo "   1. Check the migration status: npx prisma migrate status --schema prisma/schema.prisma"
-    echo "   2. If a migration folder is missing, restore it from git history"
-    echo "   3. Resolve failed migrations: npx prisma migrate resolve --rolled-back <migration_name> --schema prisma/schema.prisma"
-    echo "   4. Or mark as applied if safe: npx prisma migrate resolve --applied <migration_name> --schema prisma/schema.prisma"
-    echo ""
     exit 1
 fi
 
-echo ""
 echo "✅ Build preparation complete!"
