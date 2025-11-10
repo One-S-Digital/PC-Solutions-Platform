@@ -4,7 +4,7 @@ import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
-import { JobStatus } from '@workspace/types';
+import { JobContractType, JobStatus } from '@workspace/types';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -19,12 +19,24 @@ export class RecruitmentService {
       qualifications,
       benefits,
       status,
+      contractType,
+      startDate,
       ...rest
     } = createJobListingDto;
+
+    const parsedStartDate =
+      startDate && startDate.trim()
+        ? (() => {
+            const date = new Date(startDate);
+            return Number.isNaN(date.getTime()) ? undefined : date;
+          })()
+        : undefined;
 
     return this.prisma.jobListing.create({
       data: {
         ...rest,
+        contractType: contractType ?? JobContractType.FULL_TIME,
+        startDate: parsedStartDate,
         requirements: requirements ?? [],
         responsibilities: responsibilities ?? [],
         qualifications: qualifications ?? [],
@@ -117,8 +129,18 @@ export class RecruitmentService {
       qualifications,
       benefits,
       status,
+      contractType,
+      startDate,
       ...rest
     } = updateJobListingDto;
+
+    const parsedStartDate =
+      startDate && startDate.trim()
+        ? (() => {
+            const date = new Date(startDate);
+            return Number.isNaN(date.getTime()) ? undefined : date;
+          })()
+        : undefined;
 
     const currentListing = await this.prisma.jobListing.findUnique({
       where: { id },
@@ -129,6 +151,8 @@ export class RecruitmentService {
       where: { id },
       data: {
         ...rest,
+        ...(contractType ? { contractType } : {}),
+        ...(parsedStartDate ? { startDate: parsedStartDate } : {}),
         ...(requirements ? { requirements } : {}),
         ...(responsibilities ? { responsibilities } : {}),
         ...(qualifications ? { qualifications } : {}),

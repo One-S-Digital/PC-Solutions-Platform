@@ -16,8 +16,9 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
 fi
 
 echo "🔧 Resolving any failed migrations..."
-npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix 2>/dev/null || echo "No failed migrations to resolve"
-npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing 2>/dev/null || echo "No other failed migrations"
+npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements --force 2>/dev/null || echo "No recruitment enhancements migration to resolve"
+npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix --force 2>/dev/null || echo "No failed migrations to resolve"
+npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing --force 2>/dev/null || echo "No other failed migrations"
 
 echo "📊 Current migration status:"
 npx prisma migrate status || echo "Could not get migration status"

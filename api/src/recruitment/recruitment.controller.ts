@@ -13,7 +13,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RecruitmentService } from './recruitment.service';
-import { CreateJobListingDto, UpdateJobListingDto } from './dto/create-job-listing.dto';
+import { CreateJobListingDto } from './dto/create-job-listing.dto';
+import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-job-application.dto';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
