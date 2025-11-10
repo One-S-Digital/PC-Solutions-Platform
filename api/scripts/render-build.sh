@@ -16,8 +16,48 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
 fi
 
 echo "🔧 Resolving any failed migrations..."
-npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix 2>/dev/null || echo "No failed migrations to resolve"
-npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing 2>/dev/null || echo "No other failed migrations"
+
+# Function to resolve a failed migration
+resolve_failed_migration() {
+    local migration_name=$1
+    echo "   Attempting to resolve: $migration_name"
+    if npx prisma migrate resolve --rolled-back "$migration_name" 2>/dev/null; then
+        echo "   ✅ Resolved: $migration_name"
+        return 0
+    else
+        echo "   ⚠️  Could not resolve: $migration_name (may not exist or already resolved)"
+        return 1
+    fi
+}
+
+# Resolve known failed migrations
+resolve_failed_migration "20251030_comprehensive_schema_audit_fix" || true
+resolve_failed_migration "20251030_add_stripe_customer_id_if_missing" || true
+resolve_failed_migration "20251108120000_recruitment_enhancements" || true
+
+# Detect and resolve any other failed migrations dynamically
+echo "🔍 Checking for additional failed migrations..."
+MIGRATION_STATUS=$(npx prisma migrate status 2>&1 || true)
+
+# Extract failed migration names from status output
+# Prisma error format: "The `20251108120000_recruitment_enhancements` migration started at ... failed"
+# Use sed for better portability (works on systems without Perl regex)
+FAILED_MIGRATIONS=$(echo "$MIGRATION_STATUS" | grep -o "The \`[^\`]*\` migration" | sed "s/The \`//;s/\` migration//" || true)
+
+# Also check for format: "migration <name> failed"
+if [ -z "$FAILED_MIGRATIONS" ]; then
+    FAILED_MIGRATIONS=$(echo "$MIGRATION_STATUS" | grep -o "migration [^ ]* failed" | sed "s/migration //;s/ failed//" || true)
+fi
+
+if [ -n "$FAILED_MIGRATIONS" ]; then
+    echo "⚠️  Found failed migrations:"
+    echo "$FAILED_MIGRATIONS" | while read -r migration; do
+        if [ -n "$migration" ]; then
+            echo "   - $migration"
+            resolve_failed_migration "$migration" || true
+        fi
+    done
+fi
 
 echo "📊 Current migration status:"
 npx prisma migrate status || echo "Could not get migration status"
@@ -29,7 +69,13 @@ else
     echo "❌ Migration deployment failed"
     echo "📋 Checking what went wrong..."
     npx prisma migrate status
-    echo "⚠️  Continuing build despite migration failure..."
+    echo ""
+    echo "🚨 CRITICAL: Migration deployment failed. Build cannot continue."
+    echo "💡 To resolve manually:"
+    echo "   1. Check the migration status: npx prisma migrate status"
+    echo "   2. Resolve failed migrations: npx prisma migrate resolve --rolled-back <migration_name>"
+    echo "   3. Or mark as applied if safe: npx prisma migrate resolve --applied <migration_name>"
+    exit 1
 fi
 
 echo "✅ Build preparation complete!"
