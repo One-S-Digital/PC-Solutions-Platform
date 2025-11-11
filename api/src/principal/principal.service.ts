@@ -2,25 +2,19 @@ import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@n
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, UserRole } from '@prisma/client';
 
-export interface BootstrapResult {
+type UserPayload<TInclude extends Prisma.UserInclude | undefined> = Prisma.UserGetPayload<
+  TInclude extends Prisma.UserInclude ? { include: TInclude } : {}
+>;
+
+export type BootstrapResult<TInclude extends Prisma.UserInclude | undefined = undefined> = {
   appUser: {
     id: string;
     clerkId: string;
     email: string | null;
     role: UserRole;
   };
-  user: {
-    id: string;
-    clerkId: string;
-    email: string;
-    firstName: string | null;
-    lastName: string | null;
-    role: UserRole;
-    isActive: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  } & Record<string, unknown>;
-}
+  user: UserPayload<TInclude>;
+};
 
 @Injectable()
 export class PrincipalService {
@@ -36,7 +30,7 @@ export class PrincipalService {
   async getOrBootstrapAccountAndProfile<TInclude extends Prisma.UserInclude | undefined = undefined>(
     clerkId: string | undefined,
     include?: TInclude,
-  ): Promise<BootstrapResult & (TInclude extends undefined ? {} : { user: Prisma.UserGetPayload<{ include: TInclude }> })> {
+  ): Promise<BootstrapResult<TInclude>> {
     const startTime = Date.now();
 
     if (!clerkId) {
@@ -88,8 +82,8 @@ export class PrincipalService {
 
     return {
       appUser,
-      user: user as any,
-    } as BootstrapResult & (TInclude extends undefined ? {} : { user: Prisma.UserGetPayload<{ include: TInclude }> });
+      user: user as UserPayload<TInclude>,
+    };
   }
 
   async getOrDefaultNotificationPrefs(userId: string) {

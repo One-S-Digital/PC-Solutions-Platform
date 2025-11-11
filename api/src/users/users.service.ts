@@ -349,7 +349,7 @@ export class UsersService {
 
     try {
       const result = await this.principal.getOrBootstrapAccountAndProfile(clerkId, this.userProfileInclude);
-      return this.buildUserResponse(result.user as Prisma.UserGetPayload<{ include: typeof this.userProfileInclude }>, {
+      return this.buildUserResponse(result.user, {
         id: result.appUser.id,
         clerkId: result.appUser.clerkId,
         email: result.appUser.email,
