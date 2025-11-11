@@ -20,7 +20,7 @@ async function bootstrap() {
   // Webhook body parsing debug middleware (only in development or when DEBUG_WEBHOOKS is enabled)
   if (process.env.NODE_ENV !== 'production' || process.env.DEBUG_WEBHOOKS === 'true') {
     app.use('/api/webhooks/clerk', (req, res, next) => {
-      logger.debug('Webhook request intercepted', {
+      logger.debug('Webhook request intercepted', 'WebhookMiddleware', {
         method: req.method,
         url: req.url,
         contentType: req.headers['content-type'],
@@ -96,7 +96,7 @@ async function bootstrap() {
       const isPreflight = req.method === 'OPTIONS';
       
       if (isPreflight || req.method === 'PUT' || req.method === 'PATCH') {
-        logger.debug('CORS Request', {
+        logger.debug('CORS Request', 'CORSMiddleware', {
           method: req.method,
           url: req.url,
           origin: req.headers.origin,
