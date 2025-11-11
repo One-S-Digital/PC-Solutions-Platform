@@ -309,67 +309,92 @@
     }
   },
   "settingsBillingSubscription": {
-    "yourCurrentPlan": "Einstellungen Zur VerfÜGung Stehen",
-    "upgradePlan": "Einstellungen Zur VerfÜGung Stehen",
-    "downgradePlan": "Einstellungen Zur VerfÜGung Stehen",
-    "currentPlan": "Einstellungen Zur VerfÜGung Stehen",
-    "nextInvoiceOn": "Einstellungen Zur VerfÜGung Stehen",
-    "manageSubscriptionDescription": "Einstellungen Zur VerfÜGung Stehen",
-    "managePaymentButton": "Einstellungen zum Verfüjung Stehen. ",
-    "cancelSubscription": "Einstellungen Zur VerfÜGung Stehen",
-    "stripePortalLinkNotConfigured": "Einstellungen Zur VerfÜGung Stehen",
-    "confirmCancelTitle": "Einstellungen Zur VerfÜGung Stehen",
-    "confirmCancelMessage": "Einstellungen Zur VerfÜGung Stehen",
-    "keepSubscription": "Einstellungen Zur VerfÜGung Stehen",
-    "yesCancel": "Einstellungen zum Verfüjung Stehen. ",
-    "manageSubscriptionTitle": "[DE] Manage Subscription Title"
+    "yourCurrentPlan": "Ihr Aktueller Plan",
+    "upgradePlan": "Plan Erweitern",
+    "downgradePlan": "Plan Herabstufen",
+    "currentPlan": "Aktueller Plan",
+    "nextInvoiceOn": "Nächste Rechnung am {{date}}",
+    "manageSubscriptionTitle": "Abonnement Verwalten",
+    "manageSubscriptionDescription": "Aktualisieren Sie Ihre Zahlungsmethode, sehen Sie Rechnungen ein und verwalten Sie Ihre Abonnementeinstellungen.",
+    "managePaymentButton": "Zahlungsmethode Verwalten",
+    "cancelSubscription": "Abonnement Kündigen",
+    "stripePortalLinkNotConfigured": "Zahlungsportal ist nicht konfiguriert. Bitte kontaktieren Sie den Support.",
+    "confirmCancelTitle": "Abonnement Kündigen?",
+    "confirmCancelMessage": "Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten? Sie verlieren den Zugang zu Premium-Funktionen am Ende Ihres Abrechnungszeitraums.",
+    "keepSubscription": "Abonnement Behalten",
+    "yesCancel": "Ja, Kündigen"
   },
   "settingsCompanyProfile": {
-    "regionsServed": "EinSTELLUNDCOMPANYPROFILE.regionenserien",
-    "languagesSpoken": "EinSTELLUNDCOMPANYPROFILE.LANGUAGESSPOOKEN",
-    "companyName": "[DE] Company Name",
-    "logo": "[DE] Logo",
-    "coverImage": "[DE] Cover Image",
-    "aboutText": "[DE] About Text",
-    "aboutTextLength": "[DE] About Text Length",
-    "vatNumber": "[DE] Vat Number",
-    "selectCanton": "[DE] Select Canton",
-    "cantonsHelpText": "[DE] Cantons Help Text",
-    "selectLanguage": "[DE] Select Language",
-    "languagesHelpText": "[DE] Languages Help Text"
+    "companyName": "Firmenname",
+    "logo": "Logo",
+    "coverImage": "Titelbild",
+    "aboutText": "Über",
+    "aboutTextLength": "{{length}} / 500 Zeichen",
+    "vatNumber": "Umsatzsteuer-ID",
+    "regionsServed": "Bediente Regionen",
+    "selectCanton": "Kanton Auswählen",
+    "cantonsHelpText": "Wählen Sie die Schweizer Kantone aus, in denen Sie tätig sind oder Dienstleistungen anbieten.",
+    "languagesSpoken": "Gesprochene Sprachen",
+    "selectLanguage": "Sprache Auswählen",
+    "languagesHelpText": "Wählen Sie die Sprachen aus, in denen Ihr Team kommunizieren kann."
   },
   "settingsContactBooking": {
-    "externalBookingLinkPlaceholder": "SettingScontactbooking.externalbookingLinkPlaPleholder",
-    "directOrderLinkPlaceholder": "SettingScontactbooking.DirectOrderLinkPlaplapleholder",
-    "calComLinkPlaceholder": "SettingScontactbooking.CALCOMLINKPLAPHELTER",
-    "preferredContactMethod": "[DE] Preferred Contact Method",
-    "avgResponseTime": "[DE] Avg Response Time",
-    "externalBookingLink": "[DE] External Booking Link",
-    "directOrderLink": "[DE] Direct Order Link",
-    "directOrderLinkHelpText": "[DE] Direct Order Link Help Text",
-    "calComLink": "[DE] Cal Com Link",
-    "deliveryTypeToggleRemote": "[DE] Delivery Type Toggle Remote"
+    "preferredContactMethod": "Bevorzugte Kontaktmethode",
+    "contactMethods": {
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "platformForm": "Plattformformular"
+    },
+    "avgResponseTime": "Durchschnittliche Antwortzeit",
+    "responseTimes": {
+      "lessThan24h": "Weniger als 24 Stunden",
+      "twoToThreeDays": "2-3 Tage",
+      "other": "Andere"
+    },
+    "externalBookingLink": "Externer Buchungslink",
+    "externalBookingLinkPlaceholder": "Externen Buchungslink eingeben",
+    "directOrderLink": "Direkter Bestelllink",
+    "directOrderLinkPlaceholder": "Direkten Bestelllink eingeben",
+    "directOrderLinkHelpText": "Geben Sie einen direkten Link an, über den Kunden Bestellungen außerhalb der Plattform aufgeben können.",
+    "calComLink": "Cal.com-Link",
+    "calComLinkPlaceholder": "Geben Sie Ihren Cal.com-Terminplanungslink ein",
+    "deliveryTypeToggleRemote": "Fernlieferung Anbieten"
   },
   "settingsDefaults": {
-    "autoRespondToggle": "Einstellungendefaults.AutorrespeatToggle",
-    "autoRespondHelpText": "Einstellungendefaults.Autorrespecthelptext",
-    "defaultMOQPlaceholder": "Einstellungendefaults.DefaultMoqPlaplapleholder",
-    "autoAcceptOrderQtyLimitPlaceholder": "Einstellungendefaults.AutoacceptOrderqtylimitPlaceplaceholder",
-    "defaultMOQ": "[DE] Default M O Q",
-    "autoAcceptOrderQtyLimit": "[DE] Auto Accept Order Qty Limit",
-    "defaultConsultationLength": "[DE] Default Consultation Length"
+    "autoRespondToggle": "Automatisch auf Anfragen Antworten",
+    "autoRespondHelpText": "Automatisch eine Bestätigungsnachricht senden, wenn Sie eine neue Serviceanfrage erhalten.",
+    "defaultMOQ": "Standard-Mindestbestellmenge (MOQ)",
+    "defaultMOQPlaceholder": "Mindestbestellmenge eingeben",
+    "autoAcceptOrderQtyLimit": "Automatische Bestellmengenlimit für Auto-Akzeptanz",
+    "autoAcceptOrderQtyLimitPlaceholder": "Mengenlimit für Auto-Akzeptanz eingeben",
+    "defaultConsultationLength": "Standard-Beratungsdauer",
+    "consultationLengths": {
+      "30min": "30 Minuten",
+      "60min": "60 Minuten"
+    }
   },
   "settingsNotificationPreferences": {
-    "promoRedemptionAlertsToggle": "EinstellungenenTificationPreferences",
-    "digestFrequency": "[DE] Digest Frequency"
+    "digestFrequency": "E-Mail-Zusammenfassungshäufigkeit",
+    "digestFrequencies": {
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "none": "Keine"
+    },
+    "newRequestEmailToggleProvider": "E-Mail-Benachrichtigungen für neue Serviceanfragen",
+    "newRequestEmailToggleSupplier": "E-Mail-Benachrichtigungen für neue Bestellungen",
+    "promoRedemptionAlertsToggle": "Gutscheincode-Einlösungsbenachrichtigungen"
   },
   "settingsPrivacyData": {
-    "deletionRequestSubmitted": "Einstellungensprüchedata.DeletionRequestSubMited",
-    "confirmGDPRDelete": "[DE] Confirm G D P R Delete",
-    "deletionRequestSubmittedHelpText": "[DE] Deletion Request Submitted Help Text",
-    "dataDeletion": "[DE] Data Deletion",
-    "requestDeletionHelpText": "[DE] Request Deletion Help Text",
-    "requestGDPRDeletion": "[DE] Request Data Deletion (GDPR)"
+    "confirmGDPRDelete": "Sind Sie sicher, dass Sie die Löschung der Daten anfordern möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deletionRequestSubmittedHelpText": "Ihre Anfrage zur Löschung der Daten wurde übermittelt. Unser Team wird sie innerhalb von 30 Tagen gemäß DSGVO bearbeiten.",
+    "dataDeletion": "Datenlöschung",
+    "deletionRequestSubmitted": "Löschungsanfrage Übermittelt",
+    "requestDeletionHelpText": "Löschung aller Ihrer persönlichen Daten gemäß DSGVO-Vorschriften anfordern. Dieser Vorgang kann bis zu 30 Tage dauern.",
+    "requestGDPRDeletion": "Datenlöschung Anfordern (DSGVO)",
+    "hideStartingRatePublicly": "Anfangsgehalt Öffentlich Verbergen",
+    "hideRateHelpText": "Wenn aktiviert, ist Ihr Anfangsgehalt für Kandidaten in Stellenausschreibungen nicht sichtbar.",
+    "hidePricesPublicly": "Preise Öffentlich Verbergen",
+    "hidePricesHelpText": "Wenn aktiviert, sind Ihre Produktpreise für Stiftungen auf dem Marktplatz nicht sichtbar."
   },
   "settingsPromoCodeManager": {
     "confirmDelete": "Einstellungenspromocodemanager.Confirpldelete",
@@ -828,16 +853,16 @@
   },
   "fileGallery": {
     "actions": {
-      "preview": "[DE] Preview",
-      "download": "[DE] Download",
-      "rename": "[DE] Rename",
-      "delete": "[DE] Delete"
+      "preview": "Vorschau",
+      "download": "Herunterladen",
+      "rename": "Umbenennen",
+      "delete": "Löschen"
     },
-    "confirmDelete": "[DE] Confirm Delete",
-    "uploadButton": "[DE] Upload Button",
+    "confirmDelete": "Sind Sie sicher, dass Sie diese Datei löschen möchten?",
+    "uploadButton": "Dateien Hochladen",
     "emptyState": {
-      "title": "[DE] Title",
-      "message": "[DE] Message"
+      "title": "Noch keine Dateien",
+      "message": "Laden Sie Ihre erste Datei hoch, um zu beginnen"
     }
   },
   "hrDocumentCard": {

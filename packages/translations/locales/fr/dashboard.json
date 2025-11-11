@@ -203,15 +203,19 @@
       "event3": "Session de formation"
     },
     "quickActions": {
+      "title": "Actions Rapides",
       "browseMarketplace": "Parcourir le Marché",
       "postJob": "Publier un Emploi",
       "addSpot": "Ajouter une Place",
-      "sendMessage": "Envoyer un Message"
+      "sendMessage": "Envoyer un Message",
+      "viewParentLeads": "Voir les Prospects Parents",
+      "viewAnalytics": "Voir les Analyses"
     },
     "quickMessage": {
       "title": "Message Rapide",
       "placeholder": "Tapez un message rapide..."
-    }
+    },
+    "todayAtGlance": "Aujourd'hui en un Coup d'Œil"
   },
   "foundationAnalyticsPage": {
     "title": "Analytique",
@@ -334,6 +338,7 @@
     "enquiry": {
       "title": "Mes Demandes",
       "sent": "Envoyées",
+      "responses": "Réponses",
       "responded": "Répondues",
       "pending": "En Attente",
       "button": "Voir Toutes les Demandes"
@@ -344,7 +349,13 @@
       "age": "Âge",
       "location": "Localisation",
       "languages": "Langues",
-      "specialNeeds": "Besoins Spéciaux"
+      "specialNeeds": "Besoins Spéciaux",
+      "button": "Mettre à Jour le Profil"
+    },
+    "favorites": {
+      "title": "Favoris",
+      "subtitle": "Vos crèches et services sauvegardés",
+      "button": "Voir Tous les Favoris"
     },
     "quickActions": {
       "title": "Actions Rapides",
@@ -498,6 +509,24 @@
     },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succés",
+    "faq": {
+      "updateProfile": {
+        "q": "Comment mettre à jour mon profil ?",
+        "a": "Allez sur votre page de profil pour mettre à jour vos compétences, qualifications, expérience et disponibilité. Un profil complet augmente vos chances d'être jumelé avec des postes appropriés."
+      },
+      "findJobs": {
+        "q": "Comment trouver des offres d'emploi ?",
+        "a": "Parcourez le Tableau d'Emplois pour voir tous les postes disponibles. Vous pouvez filtrer par localisation, type de contrat et autres critères. Cliquez sur un emploi pour voir les détails et postuler."
+      },
+      "trackApplications": {
+        "q": "Comment suivre mes candidatures ?",
+        "a": "Consultez toutes vos candidatures dans la section Candidatures de votre tableau de bord. Vous pouvez voir le statut de chaque candidature et toute mise à jour des employeurs."
+      },
+      "notifications": {
+        "q": "Comment gérer les notifications ?",
+        "a": "Allez dans Paramètres > Préférences de Notification pour personnaliser les notifications que vous recevez par e-mail ou dans l'application."
+      }
+    },
     "ticketForm": {
       "subjectPlaceholder": "Breve Description de Votre Problame",
       "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
@@ -516,11 +545,18 @@
       "overview": {
         "title": "Aperçu",
         "activeRequests": "Demandes Actives",
+        "completedServices": "Services Terminés",
+        "upcoming": "À Venir",
         "customerRating": "Note Client",
+        "button": "Voir les Demandes",
         "newServiceButton": "Ajouter un Nouveau Service"
       },
       "management": {
         "title": "Gestion des Services",
+        "listings": "Annonces",
+        "pending": "En Attente",
+        "categories": "Catégories",
+        "button": "Gérer les Services",
         "newServiceButton": "Ajouter un Nouveau Service",
         "tags": {
           "cleaning": "Nettoyage",
@@ -528,7 +564,9 @@
         }
       },
       "appointments": {
-        "title": "Rendez-vous à Venir"
+        "title": "Rendez-vous à Venir",
+        "with": "avec",
+        "button": "Voir Tous les Rendez-vous"
       }
     }
   },
@@ -605,14 +643,16 @@
       "sales": {
         "title": "Aperçu des Ventes",
         "totalOrders": "Total des Commandes",
+        "revenueMonth": "Revenus (Mois)",
         "revenue": "Revenus",
         "topSelling": "Meilleures Ventes",
-        "fulfilmentRate": "Taux de Réalisation",
+        "fulfillmentRate": "Taux de Réalisation",
         "button": "Voir les Analytiques"
       },
       "products": {
         "title": "Produits",
         "active": "Actifs",
+        "pending": "En Attente",
         "pendingApproval": "En Attente d'Approbation",
         "button": "Gérer les Produits"
       },
@@ -770,6 +810,7 @@
   },
   "recruitmentPage": {
     "title": "Recrutement",
+    "subtitle": "Gérer les offres d'emploi et trouver des candidats qualifiés",
     "jobDetailModal": {
       "title": "Détails de l'offre:",
       "apply": "Postuler Maintenant",
