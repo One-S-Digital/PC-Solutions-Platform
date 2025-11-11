@@ -72,15 +72,18 @@
   },
   "labels": {
     "location": "Location",
+    "region": "Region",
     "allContractTypes": "All Contract Types",
     "allStatuses": "All Statuses",
     "allRoles": "All Roles",
     "startDate": "Start Date",
     "applications": "Applications",
     "startDateTbd": "To be determined",
-    "locationUnknown": "Location TBD"
+    "locationUnknown": "Location TBD",
+    "availabilityDate": "Availability Date"
   },
   "filters": {
+    "all": "All",
     "location": "Location",
     "experience": "Experience",
     "availability": "Availability"
