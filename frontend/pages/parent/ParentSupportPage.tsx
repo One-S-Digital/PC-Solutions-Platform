@@ -16,7 +16,7 @@ const ParentSupportPage: React.FC = () => {
         </h1>
       </div>
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('supportPage.faqTitle')}</h2>
+        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('dashboard:supportPage.faqTitle')}</h2>
         <div className="space-y-3">
           <div>
             <h3 className="font-medium text-gray-800">{t('parentSupportPage.faq.matchingProcess.q')}</h3>
@@ -33,8 +33,8 @@ const ParentSupportPage: React.FC = () => {
           {/* Add more FAQs */}
         </div>
         <div className="mt-6 border-t pt-6">
-            <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('supportPage.furtherAssistanceTitle')}</h2>
-            <p className="text-gray-600 text-sm">{t('supportPage.furtherAssistanceText.0')} <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">{t('supportPage.furtherAssistanceText.1')}</a>.</p>
+            <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('dashboard:supportPage.furtherAssistanceTitle')}</h2>
+            <p className="text-gray-600 text-sm">{t('dashboard:supportPage.furtherAssistanceText.0')} <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">{t('dashboard:supportPage.furtherAssistanceText.1')}</a>.</p>
         </div>
       </Card>
     </div>

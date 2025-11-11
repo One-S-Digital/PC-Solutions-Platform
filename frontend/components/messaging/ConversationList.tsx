@@ -49,7 +49,7 @@ const ConversationList: React.FC = () => {
                 onClick={() => setFilter('all')}
                 className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${filter === 'all' ? 'bg-swiss-mint text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
             >
-                {t('filters.all')}
+                {t('messages:filters.all')}
             </button>
             <button
                 onClick={() => setFilter('unread')}

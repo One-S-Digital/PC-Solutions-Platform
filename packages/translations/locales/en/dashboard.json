@@ -910,26 +910,6 @@
       }
     }
   },
-  "serviceProviderSupportPage": {
-    "faq": {
-      "listService": {
-        "q": "How do I list a new service?",
-        "a": "Go to My Services and click 'Add New Service'. Fill in service details, set pricing, and specify availability. Services are reviewed before going live."
-      },
-      "respondRequests": {
-        "q": "How do I respond to service requests?",
-        "a": "View incoming requests in the Service Requests section. You can accept, decline, or schedule appointments directly from there."
-      },
-      "updateAvailability": {
-        "q": "How do I update my availability?",
-        "a": "Update your availability calendar in Settings > Contact & Booking. You can set your preferred working hours and days."
-      },
-      "profileInfo": {
-        "q": "How do I update my profile information?",
-        "a": "Go to Settings > Company Profile to update your business information, contact details, and service descriptions."
-      }
-    }
-  },
   "educatorSupportPage": {
     "faq": {
       "updateProfile": {
