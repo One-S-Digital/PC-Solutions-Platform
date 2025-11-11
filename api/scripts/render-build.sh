@@ -23,53 +23,43 @@ migration_folder_exists() {
 
 echo "🔧 Resolving any failed migrations..."
 
+# Batch migration resolution to reduce Prisma schema loads
+# Each resolve operation is silent unless there's an actual issue
+resolve_migration() {
+    local action=$1
+    local migration=$2
+    local message=$3
+    
+    if migration_folder_exists "$migration"; then
+        # Suppress schema loading messages and only show actual errors
+        npx prisma migrate resolve "--$action" "$migration" --schema prisma/schema.prisma >/dev/null 2>&1 || echo "$message"
+    fi
+}
+
 # Reset recruitment enhancements migration if it failed previously so it can rerun cleanly,
 # then mark it as applied (the migration is now a no-op placeholder).
-if migration_folder_exists "20251108120000_recruitment_enhancements"; then
-    npx prisma migrate resolve --rolled-back 20251108120000_recruitment_enhancements --schema prisma/schema.prisma 2>/dev/null || echo "Recruitment enhancements migration already clean"
-    npx prisma migrate resolve --applied 20251108120000_recruitment_enhancements --schema prisma/schema.prisma 2>/dev/null || echo "Recruitment enhancements migration already applied"
-fi
+resolve_migration "rolled-back" "20251108120000_recruitment_enhancements" "Recruitment enhancements migration already clean"
+resolve_migration "applied" "20251108120000_recruitment_enhancements" "Recruitment enhancements migration already applied"
 
 # Handle the cleanup migration that may have failed
-if migration_folder_exists "20251110123000_recruitment_enhancements_cleanup"; then
-    npx prisma migrate resolve --rolled-back 20251110123000_recruitment_enhancements_cleanup --schema prisma/schema.prisma 2>/dev/null || echo "Cleanup migration already clean"
-fi
+resolve_migration "rolled-back" "20251110123000_recruitment_enhancements_cleanup" "Cleanup migration already clean"
 
 # Mark historical production-only migrations as applied so Prisma doesn't block deploys
-if migration_folder_exists "20250926_unify_asset_appuser"; then
-    npx prisma migrate resolve --applied 20250926_unify_asset_appuser --schema prisma/schema.prisma 2>/dev/null || echo "Asset appuser migration already applied"
-fi
-
-if migration_folder_exists "20251017_add_firstname_lastname_to_appuser"; then
-    npx prisma migrate resolve --applied 20251017_add_firstname_lastname_to_appuser --schema prisma/schema.prisma 2>/dev/null || echo "AppUser name migration already applied"
-fi
-
-if migration_folder_exists "20251106000123_recreate_user_notification_preferences"; then
-    npx prisma migrate resolve --applied 20251106000123_recreate_user_notification_preferences --schema prisma/schema.prisma 2>/dev/null || echo "Notification preferences migration already applied"
-fi
-
-if migration_folder_exists "20251106001000_user_email_nullable"; then
-    npx prisma migrate resolve --applied 20251106001000_user_email_nullable --schema prisma/schema.prisma 2>/dev/null || echo "User email nullable migration already applied"
-fi
+resolve_migration "applied" "20250926_unify_asset_appuser" "Asset appuser migration already applied"
+resolve_migration "applied" "20251017_add_firstname_lastname_to_appuser" "AppUser name migration already applied"
+resolve_migration "applied" "20251106000123_recreate_user_notification_preferences" "Notification preferences migration already applied"
+resolve_migration "applied" "20251106001000_user_email_nullable" "User email nullable migration already applied"
 
 # Clean up any lingering failures from earlier hotfix migrations
-if migration_folder_exists "20251030_comprehensive_schema_audit_fix"; then
-    npx prisma migrate resolve --rolled-back 20251030_comprehensive_schema_audit_fix --schema prisma/schema.prisma 2>/dev/null || echo "No comprehensive schema audit migration to resolve"
-fi
-
-if migration_folder_exists "20251030_add_stripe_customer_id_if_missing"; then
-    npx prisma migrate resolve --rolled-back 20251030_add_stripe_customer_id_if_missing --schema prisma/schema.prisma 2>/dev/null || echo "No stripe customer id migration to resolve"
-fi
-
-echo "📊 Current migration status:"
-npx prisma migrate status --schema prisma/schema.prisma || echo "Could not get migration status"
+resolve_migration "rolled-back" "20251030_comprehensive_schema_audit_fix" "No comprehensive schema audit migration to resolve"
+resolve_migration "rolled-back" "20251030_add_stripe_customer_id_if_missing" "No stripe customer id migration to resolve"
 
 echo "🔄 Deploying database migrations..."
 if npx prisma migrate deploy --schema prisma/schema.prisma; then
     echo "✅ Migrations deployed successfully"
 else
     echo "❌ Migration deployment failed"
-    echo "📋 Checking what went wrong..."
+    echo "📋 Checking migration status for details..."
     npx prisma migrate status --schema prisma/schema.prisma || true
     echo "🚨 CRITICAL: Migration deployment failed. Build cannot continue."
     exit 1
