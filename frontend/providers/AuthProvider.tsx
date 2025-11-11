@@ -8,7 +8,7 @@ import React, {
   ReactNode,
 } from 'react';
 import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
-import { User } from '../types';
+import { Organization, User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
 
@@ -68,19 +68,75 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
-  const transformBackendUser = useCallback((user: any): User => {
-    const transformed = {
-      ...user,
-      name: user.firstName && user.lastName 
-        ? `${user.firstName} ${user.lastName}`.trim()
-        : user.firstName || user.lastName || 'Unknown User',
-      status: user.isActive ? 'Active' : 'Inactive',
-      lastLogin: user.lastActiveAt,
-      memberSince: user.createdAt,
-    };
-    
-    return transformed;
-  }, []);
+    const transformBackendUser = useCallback((user: any): User => {
+      const normalizedOrganizations: Array<Organization & { membershipRole?: UserRole }> = Array.isArray(user.organizations)
+        ? user.organizations.map((entry: any) => {
+            const organization = entry?.organization ?? entry ?? {};
+            const products = Array.isArray(organization.products) ? organization.products : [];
+            const services = Array.isArray(organization.services) ? organization.services : [];
+            const jobListings = Array.isArray(organization.jobListings) ? organization.jobListings : [];
+            const logoUrl = organization.logoUrl ?? organization.logoAsset?.publicUrl ?? null;
+            const coverImageUrl = organization.coverImageUrl ?? organization.coverAsset?.publicUrl ?? null;
+
+            return {
+              ...organization,
+              products,
+              services,
+              jobListings,
+              logoUrl,
+              coverImageUrl,
+              membershipRole: entry?.membershipRole ?? entry?.role,
+            };
+          })
+        : [];
+
+      const rawPrimary =
+        user.primaryOrganization?.organization ??
+        user.primaryOrganization ??
+        normalizedOrganizations[0] ??
+        null;
+
+      const primaryOrganization = rawPrimary
+        ? {
+            ...rawPrimary,
+            products: Array.isArray(rawPrimary.products) ? rawPrimary.products : [],
+            services: Array.isArray(rawPrimary.services) ? rawPrimary.services : [],
+            jobListings: Array.isArray(rawPrimary.jobListings) ? rawPrimary.jobListings : [],
+            logoUrl: rawPrimary.logoUrl ?? rawPrimary.logoAsset?.publicUrl ?? null,
+            coverImageUrl: rawPrimary.coverImageUrl ?? rawPrimary.coverAsset?.publicUrl ?? null,
+            membershipRole:
+              rawPrimary.membershipRole ??
+              user.primaryOrganization?.membershipRole ??
+              rawPrimary.role,
+          }
+        : null;
+
+      const derivedName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`.trim()
+          : user.firstName || user.lastName || user.name || user.email || 'Unknown User';
+
+      const resolvedAvatar =
+        user.avatarUrl ??
+        primaryOrganization?.logoUrl ??
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(derivedName)}&background=48CFAE&color=ffffff&size=128&rounded=true`;
+
+      return {
+        ...user,
+        name: derivedName,
+        status: user.isActive ? 'Active' : 'Inactive',
+        lastLogin: user.lastActiveAt,
+        memberSince: user.createdAt,
+        avatarUrl: resolvedAvatar,
+        orgId: user.orgId ?? primaryOrganization?.id,
+        orgName: user.orgName ?? primaryOrganization?.name,
+        orgType: user.orgType ?? primaryOrganization?.type,
+        orgLogoUrl: user.orgLogoUrl ?? primaryOrganization?.logoUrl ?? null,
+        orgCoverImageUrl: user.orgCoverImageUrl ?? primaryOrganization?.coverImageUrl ?? null,
+        organizations: normalizedOrganizations,
+        primaryOrganization,
+      };
+    }, []);
 
   const determineAuthErrorKey = useCallback((error: unknown): string => {
     if (error instanceof ApiError) {

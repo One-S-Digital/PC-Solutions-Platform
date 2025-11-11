@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -6,6 +6,8 @@ import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { UsersService } from '../users/users.service';
+import { PrincipalService } from '../principal/principal.service';
 
 export class UpdateProfileDto {
   firstName?: string;
@@ -63,24 +65,23 @@ export class CreateOrganizationDto {
 @UseGuards(ClerkAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ProfileController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usersService: UsersService,
+    private readonly principal: PrincipalService,
+  ) {}
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   async getMyProfile(@Request() req) {
-    const userId = req.context.userId;
-    
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        organizations: {
-          include: {
-            organization: true
-          }
-        }
-      }
-    });
+    const clerkId = req.context?.clerkUserId ?? req.user?.clerkId;
+
+    if (!clerkId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const user = await this.usersService.findByClerkId(clerkId);
 
     if (!user) {
       throw new Error('User not found');
@@ -88,7 +89,7 @@ export class ProfileController {
 
     return {
       success: true,
-      data: user
+      data: user,
     };
   }
 
@@ -96,59 +97,70 @@ export class ProfileController {
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   async updateMyProfile(@Request() req, @Body() updateData: UpdateProfileDto) {
-    const userId = req.context.userId;
-    
-    // Update user basic info
-    const updatedUser = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        firstName: updateData.firstName,
-        lastName: updateData.lastName,
-        phoneNumber: updateData.phoneNumber,
-        workExperience: updateData.workExperience,
-        education: updateData.education,
-        certifications: updateData.certifications,
-        skills: updateData.skills,
-        availability: updateData.availability,
-        cvUrl: updateData.cvUrl,
-      }
+    const clerkId = req.context?.clerkUserId ?? req.user?.clerkId;
+
+    if (!clerkId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkId, {
+      organizations: {
+        include: { organization: true },
+      },
     });
 
-    // If user has organizations, update them too
+    const userId = user.id;
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: updateData.firstName ?? user.firstName,
+        lastName: updateData.lastName ?? user.lastName,
+        phoneNumber: updateData.phoneNumber ?? user.phoneNumber,
+        workExperience: updateData.workExperience ?? user.workExperience,
+        education: updateData.education ?? user.education,
+        certifications: updateData.certifications ?? user.certifications,
+        skills: updateData.skills ?? user.skills,
+        availability: updateData.availability ?? user.availability,
+        cvUrl: updateData.cvUrl ?? user.cvUrl,
+      },
+    });
+
     if (this.isOrganizationRole(req.context.role)) {
       const userOrganizations = await this.prisma.userOrganization.findMany({
         where: { userId },
-        include: { organization: true }
+        include: { organization: true },
       });
 
       for (const userOrg of userOrganizations) {
+        const organization = userOrg.organization;
         await this.prisma.organization.update({
           where: { id: userOrg.organizationId },
           data: {
-            name: updateData.organizationName || userOrg.organization.name,
-            contactPerson: updateData.contactPerson || userOrg.organization.contactPerson,
-            phoneNumber: updateData.phoneNumber || userOrg.organization.phoneNumber,
-            canton: updateData.canton || userOrg.organization.canton,
-            languages: updateData.languages || userOrg.organization.languages,
-            capacity: updateData.capacity || userOrg.organization.capacity,
-            pedagogy: updateData.pedagogy || userOrg.organization.pedagogy,
-            productCategory: updateData.productCategory || userOrg.organization.productCategory,
-            serviceType: updateData.serviceType || userOrg.organization.serviceType,
-            minimumOrderQuantity: updateData.minimumOrderQuantity || userOrg.organization.minimumOrderQuantity,
-            directOrderLink: updateData.directOrderLink || userOrg.organization.directOrderLink,
-            catalogUrl: updateData.catalogUrl || userOrg.organization.catalogUrl,
-            serviceCategories: updateData.serviceCategories || userOrg.organization.serviceCategories,
-            deliveryType: updateData.deliveryType || userOrg.organization.deliveryType,
-            bookingLink: updateData.bookingLink || userOrg.organization.bookingLink,
-          }
+            name: updateData.organizationName ?? organization.name,
+            contactPerson: updateData.contactPerson ?? organization.contactPerson,
+            phoneNumber: updateData.phoneNumber ?? organization.phoneNumber,
+            canton: updateData.canton ?? organization.canton,
+            languages: updateData.languages ?? organization.languages,
+            capacity: updateData.capacity ?? organization.capacity,
+            pedagogy: updateData.pedagogy ?? organization.pedagogy,
+            productCategory: updateData.productCategory ?? organization.productCategory,
+            serviceType: updateData.serviceType ?? organization.serviceType,
+            minimumOrderQuantity: updateData.minimumOrderQuantity ?? organization.minimumOrderQuantity,
+            directOrderLink: updateData.directOrderLink ?? organization.directOrderLink,
+            catalogUrl: updateData.catalogUrl ?? organization.catalogUrl,
+            serviceCategories: updateData.serviceCategories ?? organization.serviceCategories,
+            deliveryType: updateData.deliveryType ?? organization.deliveryType,
+            bookingLink: updateData.bookingLink ?? organization.bookingLink,
+          },
         });
       }
     }
 
     return {
       success: true,
-      data: updatedUser,
-      message: 'Profile updated successfully'
+      data: await this.usersService.findByClerkId(clerkId),
+      message: 'Profile updated successfully',
     };
   }
 
@@ -156,18 +168,24 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get user organizations' })
   @ApiResponse({ status: 200, description: 'Organizations retrieved successfully' })
   async getMyOrganizations(@Request() req) {
-    const userId = req.context.userId;
-    
+    const clerkId = req.context?.clerkUserId ?? req.user?.clerkId;
+
+    if (!clerkId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkId);
+
     const organizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
+      where: { userId: user.id },
       include: {
-        organization: true
-      }
+        organization: true,
+      },
     });
 
     return {
       success: true,
-      data: organizations.map(uo => uo.organization)
+      data: organizations.map(uo => uo.organization),
     };
   }
 
@@ -175,9 +193,14 @@ export class ProfileController {
   @ApiOperation({ summary: 'Create new organization for user' })
   @ApiResponse({ status: 201, description: 'Organization created successfully' })
   async createOrganization(@Request() req, @Body() organizationData: CreateOrganizationDto) {
-    const userId = req.context.userId;
-    
-    // Create organization
+    const clerkId = req.context?.clerkUserId ?? req.user?.clerkId;
+
+    if (!clerkId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkId);
+
     const organization = await this.prisma.organization.create({
       data: {
         name: organizationData.name,
@@ -196,22 +219,21 @@ export class ProfileController {
         serviceCategories: organizationData.serviceCategories || [],
         deliveryType: organizationData.deliveryType,
         bookingLink: organizationData.bookingLink,
-      }
+      },
     });
 
-    // Link user to organization
     await this.prisma.userOrganization.create({
       data: {
-        userId,
+        userId: user.id,
         organizationId: organization.id,
         role: req.context.role,
-      }
+      },
     });
 
     return {
       success: true,
       data: organization,
-      message: 'Organization created successfully'
+      message: 'Organization created successfully',
     };
   }
 
@@ -220,27 +242,31 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get parent leads for foundation' })
   @ApiResponse({ status: 200, description: 'Parent leads retrieved successfully' })
   async getMyParentLeads(@Request() req) {
-    const userId = req.context.userId;
-    
-    // Get user's organizations
+    const clerkId = req.context?.clerkUserId ?? req.user?.clerkId;
+
+    if (!clerkId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkId);
+
     const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
+      where: { userId: user.id },
+      include: { organization: true },
     });
 
     const organizationIds = userOrganizations.map(uo => uo.organizationId);
 
-    // Get parent leads for these organizations
     const parentLeads = await this.prisma.parentLead.findMany({
       where: {
-        foundationId: { in: organizationIds }
+        foundationId: { in: organizationIds },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return {
       success: true,
-      data: parentLeads
+      data: parentLeads,
     };
   }
 
@@ -249,12 +275,17 @@ export class ProfileController {
   @ApiOperation({ summary: 'Update parent lead status' })
   @ApiResponse({ status: 200, description: 'Parent lead updated successfully' })
   async updateParentLead(@Request() req, @Param('leadId') leadId: string, @Body() updateData: { status: string }) {
-    const userId = req.context.userId;
-    
-    // Verify user has access to this lead
+    const clerkId = req.context?.clerkUserId ?? req.user?.clerkId;
+
+    if (!clerkId) {
+      throw new UnauthorizedException('Authenticated user context missing');
+    }
+
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkId);
+
     const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
+      where: { userId: user.id },
+      include: { organization: true },
     });
 
     const organizationIds = userOrganizations.map(uo => uo.organizationId);
@@ -262,8 +293,8 @@ export class ProfileController {
     const lead = await this.prisma.parentLead.findFirst({
       where: {
         id: leadId,
-        foundationId: { in: organizationIds }
-      }
+        foundationId: { in: organizationIds },
+      },
     });
 
     if (!lead) {
@@ -272,13 +303,13 @@ export class ProfileController {
 
     const updatedLead = await this.prisma.parentLead.update({
       where: { id: leadId },
-      data: { status: updateData.status }
+      data: { status: updateData.status },
     });
 
     return {
       success: true,
       data: updatedLead,
-      message: 'Parent lead updated successfully'
+      message: 'Parent lead updated successfully',
     };
   }
 

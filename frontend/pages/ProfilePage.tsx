@@ -1,9 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppContext } from '../contexts/AppContext';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
 import {
   CalendarDaysIcon,
   ArrowPathIcon,
@@ -11,6 +8,12 @@ import {
   UserCircleIcon,
   BuildingOfficeIcon,
 } from '@heroicons/react/24/outline';
+import { useAppContext } from '../contexts/AppContext';
+import { UserRole } from '../types';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import OrganizationPublicProfile from '../components/profile/OrganizationPublicProfile';
+
 const ProfilePage: React.FC = () => {
   const { currentUser } = useAppContext();
   const { t, i18n } = useTranslation(['profile', 'common']);
@@ -59,6 +62,10 @@ const ProfilePage: React.FC = () => {
     return <div className="p-6 text-center text-gray-500">{t('common:loading', 'Loading...')}</div>;
   }
 
+  const showPublicOrganizationProfile =
+    !!currentUser.primaryOrganization &&
+    [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER].includes(currentUser.role);
+
   const avatarUrl =
     currentUser.avatarUrl ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=48CFAE&color=ffffff&size=128&rounded=true`;
@@ -77,7 +84,19 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      <Card className="p-6">
+        {showPublicOrganizationProfile && (
+          <>
+            <Card className="p-6 bg-swiss-mint/5 border border-swiss-mint/40 text-sm text-swiss-charcoal">
+              {t(
+                'profile:publicViewNotice',
+                'This preview shows how your organization profile appears to other users on the platform.',
+              )}
+            </Card>
+            <OrganizationPublicProfile user={currentUser} />
+          </>
+        )}
+
+        <Card className="p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex items-start gap-4">
             <img
@@ -150,53 +169,53 @@ const ProfilePage: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <BuildingOfficeIcon className="w-5 h-5 text-swiss-mint" />
-          <h2 className="text-lg font-semibold text-swiss-charcoal">
-            {t('profile:organization.sectionTitle')}
-          </h2>
-        </div>
+        {!showPublicOrganizationProfile && (
+          <Card className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <BuildingOfficeIcon className="w-5 h-5 text-swiss-mint" />
+              <h2 className="text-lg font-semibold text-swiss-charcoal">{t('profile:organization.sectionTitle')}</h2>
+            </div>
 
-        {currentUser.orgName || currentUser.plan || currentUser.region || currentUser.orgId ? (
-          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {currentUser.orgName && (
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('profile:organization.name')}
-                </dt>
-                <dd className="text-sm text-swiss-charcoal mt-1">{currentUser.orgName}</dd>
-              </div>
+            {currentUser.orgName || currentUser.plan || currentUser.region || currentUser.orgId ? (
+              <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {currentUser.orgName && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-gray-500">
+                      {t('profile:organization.name')}
+                    </dt>
+                    <dd className="text-sm text-swiss-charcoal mt-1">{currentUser.orgName}</dd>
+                  </div>
+                )}
+                {currentUser.region && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-gray-500">
+                      {t('profile:organization.region')}
+                    </dt>
+                    <dd className="text-sm text-swiss-charcoal mt-1">{currentUser.region}</dd>
+                  </div>
+                )}
+                {currentUser.plan && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-gray-500">
+                      {t('profile:organization.plan')}
+                    </dt>
+                    <dd className="text-sm text-swiss-charcoal mt-1">{currentUser.plan}</dd>
+                  </div>
+                )}
+                {currentUser.orgId && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-gray-500">
+                      {t('profile:organization.id')}
+                    </dt>
+                    <dd className="text-sm text-swiss-charcoal mt-1 font-mono">{currentUser.orgId}</dd>
+                  </div>
+                )}
+              </dl>
+            ) : (
+              <p className="text-sm text-gray-500">{t('profile:empty.organization')}</p>
             )}
-            {currentUser.region && (
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('profile:organization.region')}
-                </dt>
-                <dd className="text-sm text-swiss-charcoal mt-1">{currentUser.region}</dd>
-              </div>
-            )}
-            {currentUser.plan && (
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('profile:organization.plan')}
-                </dt>
-                <dd className="text-sm text-swiss-charcoal mt-1">{currentUser.plan}</dd>
-              </div>
-            )}
-            {currentUser.orgId && (
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('profile:organization.id')}
-                </dt>
-                <dd className="text-sm text-swiss-charcoal mt-1 font-mono">{currentUser.orgId}</dd>
-              </div>
-            )}
-          </dl>
-        ) : (
-          <p className="text-sm text-gray-500">{t('profile:empty.organization')}</p>
+          </Card>
         )}
-      </Card>
     </div>
   );
 };

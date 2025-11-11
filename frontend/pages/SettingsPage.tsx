@@ -399,12 +399,12 @@ const SettingsPage: React.FC = () => {
 
     switch (currentUser.role) {
       case UserRole.FOUNDATION:
-        return '/foundation/organisation-profile';
+        return '/profile';
       case UserRole.EDUCATOR:
         return '/educator/profile';
       case UserRole.PRODUCT_SUPPLIER:
       case UserRole.SERVICE_PROVIDER:
-        return currentUser.orgId ? `/partner/${currentUser.orgId}` : '/profile';
+        return '/profile';
       default:
         return '/profile';
     }
