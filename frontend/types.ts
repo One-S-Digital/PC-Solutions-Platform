@@ -41,8 +41,13 @@ export interface User {
   avatarUrl?: string;
   orgId?: string;
   orgName?: string;
+  orgType?: OrganizationType;
+  orgLogoUrl?: string | null;
+  orgCoverImageUrl?: string | null;
   region?: SwissCanton | string;
   plan?: string;
+  organizations?: Array<Organization & { membershipRole?: UserRole }>;
+  primaryOrganization?: (Organization & { membershipRole?: UserRole }) | null;
 }
 
 // ... other existing types
@@ -97,6 +102,10 @@ export interface Organization {
   // Legacy field compatibility
   logoUrl?: string;
   coverImageUrl?: string;
+  products?: Product[];
+  services?: Service[];
+  jobListings?: JobListing[];
+  membershipRole?: UserRole;
 }
 
 
