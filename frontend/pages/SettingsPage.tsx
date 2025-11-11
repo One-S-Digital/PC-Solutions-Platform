@@ -433,19 +433,23 @@ const SettingsPage: React.FC = () => {
                 {t('common:buttons.viewProfile')}
               </Button>
             )}
-            {availableSections.length > 1 && (
-              <Button variant="light" onClick={handleCancel}>
-                {t('common:buttons.cancel')}
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleSave}
-                disabled={!isDirty || isSaving}
-                className="bg-swiss-mint hover:bg-opacity-90"
-              >
-                {isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:buttons.saveChanges')}
-              </Button>
-            )}
+              {availableSections.length > 1 && (
+                <>
+                  <Button variant="light" onClick={handleCancel}>
+                    {t('common:buttons.cancel')}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={handleSave}
+                    disabled={!isDirty || isSaving}
+                    className="bg-swiss-mint hover:bg-opacity-90"
+                  >
+                    {isSaving
+                      ? `${t('common:buttons.saveChanges')}...`
+                      : t('common:buttons.saveChanges')}
+                  </Button>
+                </>
+              )}
           </div>
         </div>
       </div>
