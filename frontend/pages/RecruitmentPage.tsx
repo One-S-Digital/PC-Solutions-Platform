@@ -26,34 +26,34 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
   const statusMeta = useMemo(() => {
     switch (job.status) {
       case 'PUBLISHED':
-        return { className: 'bg-green-100 text-green-700', label: t('recruitmentPage.jobStatus.published', 'Published') };
+        return { className: 'bg-green-100 text-green-700', label: t('recruitment:jobStatus.published', 'Published') };
       case 'DRAFT':
-        return { className: 'bg-yellow-100 text-yellow-700', label: t('recruitmentPage.jobStatus.draft', 'Draft') };
+        return { className: 'bg-yellow-100 text-yellow-700', label: t('recruitment:jobStatus.draft', 'Draft') };
       case 'FILLED':
-        return { className: 'bg-blue-100 text-blue-700', label: t('recruitmentPage.jobStatus.filled', 'Filled') };
+        return { className: 'bg-blue-100 text-blue-700', label: t('recruitment:jobStatus.filled', 'Filled') };
       case 'CLOSED':
       default:
-        return { className: 'bg-red-100 text-red-700', label: t('recruitmentPage.jobStatus.closed', 'Closed') };
+        return { className: 'bg-red-100 text-red-700', label: t('recruitment:jobStatus.closed', 'Closed') };
     }
   }, [job.status, t]);
 
   const contractLabel = useMemo(() => {
     switch (job.contractType) {
       case 'FULL_TIME':
-        return t('recruitmentPage.contractTypes.fullTime', 'Full-time');
+        return t('recruitment:contractTypes.fullTime', 'Full-time');
       case 'PART_TIME':
-        return t('recruitmentPage.contractTypes.partTime', 'Part-time');
+        return t('recruitment:contractTypes.partTime', 'Part-time');
       case 'CDI':
-        return t('recruitmentPage.contractTypes.cdi', 'CDI');
+        return t('recruitment:contractTypes.cdi', 'CDI');
       case 'CDD':
-        return t('recruitmentPage.contractTypes.cdd', 'CDD');
+        return t('recruitment:contractTypes.cdd', 'CDD');
       case 'INTERNSHIP':
       default:
-        return t('recruitmentPage.contractTypes.internship', 'Internship');
+        return t('recruitment:contractTypes.internship', 'Internship');
     }
   }, [job.contractType, t]);
 
-  const formattedStartDate = job.startDate ? new Date(job.startDate).toLocaleDateString() : t('recruitmentPage.labels.startDateTbd', 'To be determined');
+  const formattedStartDate = job.startDate ? new Date(job.startDate).toLocaleDateString() : t('recruitment:labels.startDateTbd', 'To be determined');
 
   return (
     <Card className="mb-4" hoverEffect>
@@ -68,14 +68,14 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
           </span>
         </div>
         <div className="mt-3 space-y-1 text-sm text-gray-600">
-          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{job.location ?? t('recruitmentPage.labels.locationUnknown', 'Location TBD')}</p>
+          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>
           <p><BriefcaseIcon className="w-4 h-4 inline mr-2 text-gray-400" />{contractLabel}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />{t('recruitmentPage.labels.startDate')}: {formattedStartDate}</p>
-          <p><UserGroupIcon className="w-4 h-4 inline mr-2 text-gray-400" />{t('recruitmentPage.labels.applications')}: {job.applicationsCount}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />{t('recruitment:labels.startDate')}: {formattedStartDate}</p>
+          <p><UserGroupIcon className="w-4 h-4 inline mr-2 text-gray-400" />{t('recruitment:labels.applications')}: {job.applicationsCount}</p>
         </div>
       </div>
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2">
-        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('buttons.viewApplicants')}</Button>
+        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('recruitment:buttons.viewApplicants')}</Button>
         <Button variant="ghost" size="sm" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(job)}>{t('common:buttons.edit')}</Button>
       </div>
     </Card>
@@ -98,7 +98,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
           <img src={candidate.avatarUrl || 'https://picsum.photos/100/100'} alt={candidate.name} className="w-16 h-16 rounded-full mr-4" />
           <div>
             <h3 className="text-xl font-semibold text-swiss-mint">{candidate.name}</h3>
-            <p className="text-sm text-gray-500">{candidate.currentRoleOrTitle ?? candidate.role ?? t('candidateCard.roleUnknown', 'Role not specified')}</p>
+            <p className="text-sm text-gray-500">{candidate.currentRoleOrTitle ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified')}</p>
           </div>
           <StarIcon
             className={`w-5 h-5 ml-auto cursor-pointer ${isFavorite ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
@@ -106,15 +106,15 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
           />
         </div>
         <div className="space-y-1 text-sm text-gray-600">
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />{candidate.availabilityStatus || candidate.availability || t('candidateCard.availabilityUnknown', 'Availability not provided')}</p>
-          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{candidate.location || candidate.preferredRegion || t('candidateCard.regionUnknown', 'Region not specified')}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />{candidate.availabilityStatus || candidate.availability || t('recruitment:candidateCard.availabilityUnknown', 'Availability not provided')}</p>
+          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{candidate.location || candidate.preferredRegion || t('recruitment:candidateCard.regionUnknown', 'Region not specified')}</p>
           {candidate.shortBio && <p className="mt-2 text-xs italic line-clamp-2">{candidate.shortBio}</p>}
           {!candidate.shortBio && candidate.experience && <p className="mt-2 text-xs italic line-clamp-2">{candidate.experience}</p>}
         </div>
       </div>
       <div className="bg-gray-50 px-4 py-3 flex justify-end items-center gap-2">
         <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => onViewProfile(candidate.id)}>
-          {t('candidateCard.viewProfile')}
+          {t('recruitment:candidateCard.viewProfile')}
         </Button>
       </div>
     </Card>
@@ -123,7 +123,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
 
 
 const RecruitmentPage: React.FC = () => {
-  const { t } = useTranslation(['recruitment', 'common']);
+  const { t } = useTranslation(['recruitment', 'dashboard', 'common']);
   const location = useLocation();
   const navigate = useNavigate();
   const {
@@ -181,7 +181,7 @@ const RecruitmentPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       setJobsError(
-        error instanceof Error ? error.message : t('errors.loadJobsFailed', 'Unable to load job listings'),
+        error instanceof Error ? error.message : t('recruitment:errors.loadJobsFailed', 'Unable to load job listings'),
       );
     } finally {
       setJobsLoading(false);
@@ -202,7 +202,7 @@ const RecruitmentPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       setCandidatesError(
-        error instanceof Error ? error.message : t('errors.loadCandidatesFailed', 'Unable to load candidates'),
+        error instanceof Error ? error.message : t('recruitment:errors.loadCandidatesFailed', 'Unable to load candidates'),
       );
     } finally {
       setCandidatesLoading(false);
@@ -277,13 +277,13 @@ const RecruitmentPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       alert(
-        error instanceof Error ? error.message : t('errors.saveJobFailed', 'Unable to save job listing'),
+        error instanceof Error ? error.message : t('recruitment:errors.saveJobFailed', 'Unable to save job listing'),
       );
     }
   };
 
   const handleDeleteJob = async (job: JobListing) => {
-    if (!window.confirm(t('confirmations.deleteJob', 'Are you sure you want to delete this job listing?'))) {
+    if (!window.confirm(t('recruitment:confirmations.deleteJob', 'Are you sure you want to delete this job listing?'))) {
       return;
     }
     try {
@@ -292,7 +292,7 @@ const RecruitmentPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       alert(
-        error instanceof Error ? error.message : t('errors.deleteJobFailed', 'Unable to delete job listing'),
+        error instanceof Error ? error.message : t('recruitment:errors.deleteJobFailed', 'Unable to delete job listing'),
       );
     }
   };
@@ -309,7 +309,7 @@ const RecruitmentPage: React.FC = () => {
       } catch (error) {
         console.error(error);
         setApplicationsError(
-          error instanceof Error ? error.message : t('errors.loadApplicationsFailed', 'Unable to load applications'),
+          error instanceof Error ? error.message : t('recruitment:errors.loadApplicationsFailed', 'Unable to load applications'),
         );
         setSelectedJobApplications([]);
       } finally {
@@ -325,12 +325,12 @@ const RecruitmentPage: React.FC = () => {
         <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
           <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <label htmlFor="searchJobs" className="sr-only">
-            {t('jobOffers.searchPlaceholder')}
+            {t('recruitment:jobOffers.searchPlaceholder')}
           </label>
           <input
             id="searchJobs"
             type="text"
-            placeholder={t('jobOffers.searchPlaceholder')}
+            placeholder={t('recruitment:jobOffers.searchPlaceholder')}
             value={searchTermJobs}
             onChange={(e) => setSearchTermJobs(e.target.value)}
             className={ICON_INPUT_FIELD}
@@ -338,7 +338,7 @@ const RecruitmentPage: React.FC = () => {
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" leftIcon={FunnelIcon} onClick={() => setShowFilters((prev) => !prev)}>
-            {t('buttons.filters')}
+            {t('recruitment:buttons.filters')}
           </Button>
           {canPostJob && (
             <Button
@@ -347,25 +347,25 @@ const RecruitmentPage: React.FC = () => {
               className="bg-swiss-mint hover:bg-opacity-90"
               onClick={() => handleOpenJobModal(null)}
             >
-              {t('buttons.postNewJob')}
+              {t('recruitment:buttons.postNewJob')}
             </Button>
           )}
         </div>
       </div>
       {showFilters && (
         <Card className="p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-2">{t('jobOffers.filterTitle')}</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('recruitment:jobOffers.filterTitle')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" placeholder={t('labels.location')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.location')} />
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allContractTypes')}>
-              <option>{t('labels.allContractTypes')}</option>
+            <input type="text" placeholder={t('recruitment:labels.location')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.location')} />
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allContractTypes')}>
+              <option>{t('recruitment:labels.allContractTypes')}</option>
             </select>
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allStatuses')}>
-              <option>{t('labels.allStatuses')}</option>
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allStatuses')}>
+              <option>{t('recruitment:labels.allStatuses')}</option>
             </select>
           </div>
           <Button variant="secondary" size="sm" className="mt-2" disabled>
-            {t('buttons.applyFilters')}
+            {t('recruitment:buttons.applyFilters')}
           </Button>
         </Card>
       )}
@@ -392,7 +392,7 @@ const RecruitmentPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-8">{t('jobOffers.emptyState')}</p>
+        <p className="text-center text-gray-500 py-8">{t('recruitment:jobOffers.emptyState')}</p>
       )}
     </div>
   );
@@ -403,12 +403,12 @@ const RecruitmentPage: React.FC = () => {
         <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
           <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <label htmlFor="searchCandidates" className="sr-only">
-            {t('candidatePool.searchPlaceholder')}
+            {t('recruitment:candidatePool.searchPlaceholder')}
           </label>
           <input
             id="searchCandidates"
             type="text"
-            placeholder={t('candidatePool.searchPlaceholder')}
+            placeholder={t('recruitment:candidatePool.searchPlaceholder')}
             value={searchTermCandidates}
             onChange={(e) => setSearchTermCandidates(e.target.value)}
             className={ICON_INPUT_FIELD}
@@ -416,25 +416,25 @@ const RecruitmentPage: React.FC = () => {
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" leftIcon={FunnelIcon} onClick={() => setShowFilters((prev) => !prev)}>
-            {t('buttons.filters')}
+            {t('recruitment:buttons.filters')}
           </Button>
         </div>
       </div>
       {showFilters && (
         <Card className="p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-2">{t('candidatePool.filterTitle')}</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('recruitment:candidatePool.filterTitle')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allRoles')}>
-              <option>{t('labels.allRoles')}</option>
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allRoles')}>
+              <option>{t('recruitment:labels.allRoles')}</option>
             </select>
-            <input type="text" placeholder={t('labels.region')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.region')} />
-            <input type="date" placeholder={t('labels.availabilityDate')} className={STANDARD_INPUT_FIELD} aria-label={t('labels.availabilityDate')} />
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('labels.allContractTypes')}>
-              <option>{t('labels.allContractTypes')}</option>
+            <input type="text" placeholder={t('recruitment:labels.region')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.region')} />
+            <input type="date" placeholder={t('recruitment:labels.availabilityDate')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.availabilityDate')} />
+            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allContractTypes')}>
+              <option>{t('recruitment:labels.allContractTypes')}</option>
             </select>
           </div>
           <Button variant="secondary" size="sm" className="mt-2" disabled>
-            {t('buttons.applyFilters')}
+            {t('recruitment:buttons.applyFilters')}
           </Button>
         </Card>
       )}
@@ -454,19 +454,22 @@ const RecruitmentPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-8">{t('candidatePool.emptyState')}</p>
+        <p className="text-center text-gray-500 py-8">{t('recruitment:candidatePool.emptyState')}</p>
       )}
     </div>
   );
 
   const tabsConfig = [
-    { label: t('tabs.jobOffers'), icon: BriefcaseIcon, content: JobOffersTab },
-    { label: t('tabs.candidatePool'), icon: UserGroupIcon, content: CandidateAvailabilityTab },
+    { label: t('recruitment:tabs.jobOffers'), icon: BriefcaseIcon, content: JobOffersTab },
+    { label: t('recruitment:tabs.candidatePool'), icon: UserGroupIcon, content: CandidateAvailabilityTab },
   ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('title')}</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboard:recruitmentPage.title')}</h1>
+        <p className="text-gray-500 mt-1">{t('dashboard:recruitmentPage.subtitle')}</p>
+      </div>
       <Tabs tabs={tabsConfig} variant="pills" activeTab={activeTabIndex} onTabChange={handleTabChange} />
       <JobPostModal
         isOpen={isJobModalOpen}

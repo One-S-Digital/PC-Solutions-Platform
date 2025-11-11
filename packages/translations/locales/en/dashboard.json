@@ -203,15 +203,19 @@
       "event3": "Training session"
     },
     "quickActions": {
+      "title": "Quick Actions",
       "browseMarketplace": "Browse Marketplace",
       "postJob": "Post Job",
       "addSpot": "Add Spot",
-      "sendMessage": "Send Message"
+      "sendMessage": "Send Message",
+      "viewParentLeads": "View Parent Leads",
+      "viewAnalytics": "View Analytics"
     },
     "quickMessage": {
       "title": "Quick Message",
       "placeholder": "Type a quick message..."
-    }
+    },
+    "todayAtGlance": "Today at a Glance"
   },
   "foundationAnalyticsPage": {
     "title": "Analytics",
@@ -328,12 +332,13 @@
     "myChildren": "My Children",
     "findCreche": "Find a Crèche"
   },
-  "parentDashboard": {
+    "parentDashboard": {
     "title": "Parent Dashboard",
     "welcomeMessage": "Welcome back! Here's an overview of your childcare search and enquiries.",
     "enquiry": {
       "title": "My Enquiries",
       "sent": "Sent",
+      "responses": "Responses",
       "responded": "Responded",
       "pending": "Pending",
       "button": "View All Enquiries"
@@ -344,7 +349,13 @@
       "age": "Age",
       "location": "Location",
       "languages": "Languages",
-      "specialNeeds": "Special Needs"
+      "specialNeeds": "Special Needs",
+      "button": "Update Profile"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "subtitle": "Your saved daycares and services",
+      "button": "View All Favorites"
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -516,11 +527,18 @@
       "overview": {
         "title": "Overview",
         "activeRequests": "Active Requests",
+        "completedServices": "Completed Services",
+        "upcoming": "Upcoming",
         "customerRating": "Customer Rating",
+        "button": "View Requests",
         "newServiceButton": "Add New Service"
       },
       "management": {
         "title": "Service Management",
+        "listings": "Listings",
+        "pending": "Pending",
+        "categories": "Categories",
+        "button": "Manage Services",
         "newServiceButton": "Add New Service",
         "tags": {
           "cleaning": "Cleaning",
@@ -528,7 +546,9 @@
         }
       },
       "appointments": {
-        "title": "Upcoming Appointments"
+        "title": "Upcoming Appointments",
+        "with": "with",
+        "button": "View All Appointments"
       }
     }
   },
@@ -606,14 +626,16 @@
       "sales": {
         "title": "Sales Overview",
         "totalOrders": "Total Orders",
+        "revenueMonth": "Revenue (Month)",
         "revenue": "Revenue",
         "topSelling": "Top Selling",
-        "fulfilmentRate": "Fulfillment Rate",
+        "fulfillmentRate": "Fulfillment Rate",
         "button": "View Analytics"
       },
       "products": {
         "title": "Products",
         "active": "Active",
+        "pending": "Pending",
         "pendingApproval": "Pending Approval",
         "button": "Manage Products"
       },
@@ -771,6 +793,7 @@
   },
   "recruitmentPage": {
     "title": "Recruitment",
+    "subtitle": "Manage job postings and find qualified candidates",
     "jobDetailModal": {
       "title": "Job Details",
       "apply": "Apply Now",
@@ -845,6 +868,102 @@
       "subjectLabel": "Subject",
       "messageLabel": "Message",
       "submitButton": "Submit Ticket"
+    }
+  },
+  "foundationSupportPage": {
+    "faq": {
+      "manageLeads": {
+        "q": "How do I manage incoming parent leads?",
+        "a": "You can view and respond to parent leads from your dashboard. Use the quick actions to mark leads as interested, not interested, or request more information."
+      },
+      "useMarketplace": {
+        "q": "How do I use the marketplace?",
+        "a": "Browse products and services from verified suppliers. Add items to your order cart and submit orders directly through the platform."
+      },
+      "manageProfile": {
+        "q": "How do I manage my organization profile?",
+        "a": "Go to Organization Profile to update your branding, contact information, opening hours, and other details that parents see."
+      },
+      "recruitment": {
+        "q": "How do I post job openings?",
+        "a": "Navigate to Recruitment > Job Listings and click 'Post New Job' to create a job posting. You can view applicants and manage the hiring process from there."
+      }
+    }
+  },
+  "supplierSupportPage": {
+    "faq": {
+      "addProduct": {
+        "q": "How do I add a new product?",
+        "a": "Go to Products and click 'Add New Product'. Fill in the product details, set pricing, and upload images. Products will be reviewed before going live."
+      },
+      "processOrders": {
+        "q": "How do I process orders?",
+        "a": "View all orders in the Orders section. You can accept, decline, or mark orders as shipped. Orders are automatically synced with the foundation's dashboard."
+      },
+      "manageProfile": {
+        "q": "How do I manage my supplier profile?",
+        "a": "Update your company information, contact details, and business hours in Settings > Company Profile."
+      },
+      "commissionRates": {
+        "q": "What are the commission rates?",
+        "a": "Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription."
+      }
+    }
+  },
+  "serviceProviderSupportPage": {
+    "faq": {
+      "listService": {
+        "q": "How do I list a new service?",
+        "a": "Go to My Services and click 'Add New Service'. Fill in service details, set pricing, and specify availability. Services are reviewed before going live."
+      },
+      "respondRequests": {
+        "q": "How do I respond to service requests?",
+        "a": "View incoming requests in the Service Requests section. You can accept, decline, or schedule appointments directly from there."
+      },
+      "updateAvailability": {
+        "q": "How do I update my availability?",
+        "a": "Update your availability calendar in Settings > Contact & Booking. You can set your preferred working hours and days."
+      },
+      "profileInfo": {
+        "q": "How do I update my profile information?",
+        "a": "Go to Settings > Company Profile to update your business information, contact details, and service descriptions."
+      }
+    }
+  },
+  "educatorSupportPage": {
+    "faq": {
+      "updateProfile": {
+        "q": "How do I update my profile?",
+        "a": "Go to your profile page to update your skills, qualifications, experience, and availability. A complete profile increases your chances of being matched with suitable positions."
+      },
+      "findJobs": {
+        "q": "How do I find job openings?",
+        "a": "Browse the Job Board to see all available positions. You can filter by location, contract type, and other criteria. Click on a job to view details and apply."
+      },
+      "trackApplications": {
+        "q": "How do I track my applications?",
+        "a": "View all your applications in the Applications section of your dashboard. You can see the status of each application and any updates from employers."
+      },
+      "notifications": {
+        "q": "How do I manage notifications?",
+        "a": "Go to Settings > Notification Preferences to customize which notifications you receive via email or in-app."
+      }
+    }
+  },
+  "parentSupportPage": {
+    "faq": {
+      "matchingProcess": {
+        "q": "How does the matching process work?",
+        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers."
+      },
+      "responseTime": {
+        "q": "How quickly will I receive responses?",
+        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard."
+      },
+      "dataSecurity": {
+        "q": "Is my personal information secure?",
+        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details."
+      }
     }
   },
     "candidatePool": {

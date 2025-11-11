@@ -548,12 +548,16 @@
     }
   },
   "settingsPrivacyData": {
-    "confirmGDPRDelete": "Confirm G D P R Delete",
-    "deletionRequestSubmittedHelpText": "Deletion Request Submitted Help Text",
+    "confirmGDPRDelete": "Are you sure you want to request data deletion? This action cannot be undone.",
+    "deletionRequestSubmittedHelpText": "Your data deletion request has been submitted. Our team will process it within 30 days as required by GDPR.",
     "dataDeletion": "Data Deletion",
     "deletionRequestSubmitted": "Deletion Request Submitted",
-    "requestDeletionHelpText": "Request Deletion Help Text",
-    "requestGDPRDeletion": "Request Data Deletion (GDPR)"
+    "requestDeletionHelpText": "Request deletion of all your personal data in accordance with GDPR regulations. This process may take up to 30 days.",
+    "requestGDPRDeletion": "Request Data Deletion (GDPR)",
+    "hideStartingRatePublicly": "Hide Starting Rate Publicly",
+    "hideRateHelpText": "When enabled, your starting rate will not be visible to candidates in job postings.",
+    "hidePricesPublicly": "Hide Prices Publicly",
+    "hidePricesHelpText": "When enabled, your product prices will not be visible to foundations in the marketplace."
   },
   "settingsAnalyticsPreferences": {
     "timeZone": "Time Zone",
@@ -566,55 +570,76 @@
     "upgradePlan": "Upgrade Plan",
     "downgradePlan": "Downgrade Plan",
     "currentPlan": "Current Plan",
-    "nextInvoiceOn": "Next Invoice On",
-    "manageSubscriptionTitle": "Manage Subscription Title",
-    "manageSubscriptionDescription": "Manage Subscription Description",
-    "managePaymentButton": "Manage Payment Button",
+    "nextInvoiceOn": "Next invoice on {{date}}",
+    "manageSubscriptionTitle": "Manage Subscription",
+    "manageSubscriptionDescription": "Update your payment method, view invoices, and manage your subscription settings.",
+    "managePaymentButton": "Manage Payment Method",
     "cancelSubscription": "Cancel Subscription",
-    "stripePortalLinkNotConfigured": "Stripe Portal Link Not Configured",
-    "confirmCancelTitle": "Confirm Cancel Title",
-    "confirmCancelMessage": "Confirm Cancel Message",
+    "stripePortalLinkNotConfigured": "Payment portal is not configured. Please contact support.",
+    "confirmCancelTitle": "Cancel Subscription?",
+    "confirmCancelMessage": "Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period.",
     "keepSubscription": "Keep Subscription",
-    "yesCancel": "Yes Cancel"
+    "yesCancel": "Yes, Cancel"
   },
   "settingsCompanyProfile": {
     "companyName": "Company Name",
     "logo": "Logo",
     "coverImage": "Cover Image",
-    "aboutText": "About Text",
-    "aboutTextLength": "About Text Length",
-    "vatNumber": "Vat Number",
+    "aboutText": "About",
+    "aboutTextLength": "{{length}} / 500 characters",
+    "vatNumber": "VAT Number",
     "regionsServed": "Regions Served",
     "selectCanton": "Select Canton",
-    "cantonsHelpText": "Cantons Help Text",
+    "cantonsHelpText": "Select the Swiss cantons where you operate or provide services.",
     "languagesSpoken": "Languages Spoken",
     "selectLanguage": "Select Language",
-    "languagesHelpText": "Languages Help Text"
+    "languagesHelpText": "Select the languages your team can communicate in."
   },
   "settingsContactBooking": {
     "preferredContactMethod": "Preferred Contact Method",
-    "avgResponseTime": "Avg Response Time",
+    "contactMethods": {
+      "email": "Email",
+      "phone": "Phone",
+      "platformForm": "Platform Form"
+    },
+    "avgResponseTime": "Average Response Time",
+    "responseTimes": {
+      "lessThan24h": "Less than 24 hours",
+      "twoToThreeDays": "2-3 days",
+      "other": "Other"
+    },
     "externalBookingLink": "External Booking Link",
     "externalBookingLinkPlaceholder": "Enter external booking link",
     "directOrderLink": "Direct Order Link",
     "directOrderLinkPlaceholder": "Enter direct order link",
-    "directOrderLinkHelpText": "Direct Order Link Help Text",
-    "calComLink": "Cal Com Link",
-    "calComLinkPlaceholder": "Enter cal com link",
-    "deliveryTypeToggleRemote": "Delivery Type Toggle Remote"
+    "directOrderLinkHelpText": "Provide a direct link where customers can place orders outside of the platform.",
+    "calComLink": "Cal.com Link",
+    "calComLinkPlaceholder": "Enter your Cal.com scheduling link",
+    "deliveryTypeToggleRemote": "Offer Remote Delivery"
   },
   "settingsDefaults": {
-    "autoRespondToggle": "Auto Respond Toggle",
-    "autoRespondHelpText": "Auto Respond Help Text",
-    "defaultMOQ": "Default M O Q",
-    "defaultMOQPlaceholder": "Enter default m o q",
-    "autoAcceptOrderQtyLimit": "Auto Accept Order Qty Limit",
-    "autoAcceptOrderQtyLimitPlaceholder": "Enter auto accept order qty limit",
-    "defaultConsultationLength": "Default Consultation Length"
+    "autoRespondToggle": "Auto-Respond to Requests",
+    "autoRespondHelpText": "Automatically send a confirmation message when you receive a new service request.",
+    "defaultMOQ": "Default Minimum Order Quantity (MOQ)",
+    "defaultMOQPlaceholder": "Enter minimum order quantity",
+    "autoAcceptOrderQtyLimit": "Auto-Accept Order Quantity Limit",
+    "autoAcceptOrderQtyLimitPlaceholder": "Enter quantity limit for auto-acceptance",
+    "defaultConsultationLength": "Default Consultation Length",
+    "consultationLengths": {
+      "30min": "30 minutes",
+      "60min": "60 minutes"
+    }
   },
   "settingsNotificationPreferences": {
-    "digestFrequency": "Digest Frequency",
-    "promoRedemptionAlertsToggle": "Promo Redemption Alerts Toggle"
+    "digestFrequency": "Email Digest Frequency",
+    "digestFrequencies": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "none": "None"
+    },
+    "newRequestEmailToggleProvider": "Email notifications for new service requests",
+    "newRequestEmailToggleSupplier": "Email notifications for new orders",
+    "promoRedemptionAlertsToggle": "Promo code redemption alerts"
   },
   "settingsPromoCodeManager": {
     "confirmDelete": "Confirm Delete",
@@ -778,11 +803,11 @@
       "rename": "Rename",
       "delete": "Delete"
     },
-    "confirmDelete": "Confirm Delete",
-    "uploadButton": "Upload Button",
+    "confirmDelete": "Are you sure you want to delete this file?",
+    "uploadButton": "Upload Files",
     "emptyState": {
-      "title": "Title",
-      "message": "Message"
+      "title": "No files yet",
+      "message": "Upload your first file to get started"
     }
   },
   "hrDocumentCard": {

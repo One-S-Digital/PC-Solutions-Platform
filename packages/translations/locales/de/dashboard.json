@@ -203,15 +203,19 @@
       "event3": "Schulungssitzung"
     },
     "quickActions": {
+      "title": "Schnellaktionen",
       "browseMarketplace": "Marktplatz durchsuchen",
       "postJob": "Stelle veröffentlichen",
       "addSpot": "Platz hinzufügen",
-      "sendMessage": "Nachricht senden"
+      "sendMessage": "Nachricht senden",
+      "viewParentLeads": "Eltern-Leads anzeigen",
+      "viewAnalytics": "Analysen anzeigen"
     },
     "quickMessage": {
       "title": "Schnelle Nachricht",
       "placeholder": "Geben Sie eine schnelle Nachricht ein..."
-    }
+    },
+    "todayAtGlance": "Heute auf einen Blick"
   },
   "foundationAnalyticsPage": {
     "title": "Analytik",
@@ -334,6 +338,7 @@
     "enquiry": {
       "title": "Meine Anfragen",
       "sent": "Gesendet",
+      "responses": "Antworten",
       "responded": "Beantwortet",
       "pending": "Ausstehend",
       "button": "Alle Anfragen anzeigen"
@@ -344,7 +349,13 @@
       "age": "Alter",
       "location": "Standort",
       "languages": "Sprachen",
-      "specialNeeds": "Besondere Bedürfnisse"
+      "specialNeeds": "Besondere Bedürfnisse",
+      "button": "Profil aktualisieren"
+    },
+    "favorites": {
+      "title": "Favoriten",
+      "subtitle": "Ihre gespeicherten Kindergärten und Dienste",
+      "button": "Alle Favoriten anzeigen"
     },
     "quickActions": {
       "title": "Schnellaktionen",
@@ -498,6 +509,24 @@
     },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Support -Ticket Erfolgreich Eingereicht",
+    "faq": {
+      "updateProfile": {
+        "q": "Wie aktualisiere ich mein Profil?",
+        "a": "Gehen Sie zu Ihrer Profilseite, um Ihre Fähigkeiten, Qualifikationen, Erfahrung und Verfügbarkeit zu aktualisieren. Ein vollständiges Profil erhöht Ihre Chancen, mit geeigneten Positionen zusammengeführt zu werden."
+      },
+      "findJobs": {
+        "q": "Wie finde ich Stellenangebote?",
+        "a": "Durchsuchen Sie die Stellenbörse, um alle verfügbaren Positionen zu sehen. Sie können nach Standort, Vertragsart und anderen Kriterien filtern. Klicken Sie auf eine Stelle, um Details anzuzeigen und sich zu bewerben."
+      },
+      "trackApplications": {
+        "q": "Wie verfolge ich meine Bewerbungen?",
+        "a": "Sehen Sie alle Ihre Bewerbungen im Bereich Bewerbungen Ihres Dashboards. Sie können den Status jeder Bewerbung und alle Updates von Arbeitgebern sehen."
+      },
+      "notifications": {
+        "q": "Wie verwalte ich Benachrichtigungen?",
+        "a": "Gehen Sie zu Einstellungen > Benachrichtigungseinstellungen, um anzupassen, welche Benachrichtigungen Sie per E-Mail oder in der App erhalten."
+      }
+    },
     "ticketForm": {
       "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
       "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
@@ -516,11 +545,18 @@
       "overview": {
         "title": "Überblick",
         "activeRequests": "Aktive Anfragen",
+        "completedServices": "Abgeschlossene Dienste",
+        "upcoming": "Bevorstehend",
         "customerRating": "Kundenbewertung",
+        "button": "Anfragen anzeigen",
         "newServiceButton": "Neuen Service hinzufügen"
       },
       "management": {
         "title": "Serviceverwaltung",
+        "listings": "Anzeigen",
+        "pending": "Ausstehend",
+        "categories": "Kategorien",
+        "button": "Dienste verwalten",
         "newServiceButton": "Neuen Service hinzufügen",
         "tags": {
           "cleaning": "Reinigung",
@@ -528,7 +564,9 @@
         }
       },
       "appointments": {
-        "title": "Bevorstehende Termine"
+        "title": "Bevorstehende Termine",
+        "with": "mit",
+        "button": "Alle Termine anzeigen"
       }
     }
   },
@@ -606,14 +644,16 @@
       "sales": {
         "title": "Verkaufsübersicht",
         "totalOrders": "Gesamtbestellungen",
+        "revenueMonth": "Umsatz (Monat)",
         "revenue": "Umsatz",
         "topSelling": "Bestseller",
-        "fulfilmentRate": "Erfüllungsrate",
+        "fulfillmentRate": "Erfüllungsrate",
         "button": "Analytik anzeigen"
       },
       "products": {
         "title": "Produkte",
         "active": "Aktiv",
+        "pending": "Ausstehend",
         "pendingApproval": "Ausstehende Genehmigung",
         "button": "Produkte verwalten"
       },
@@ -769,7 +809,8 @@
     "manage": "Kündigungen Verwalen"
   },
   "recruitmentPage": {
-    "title": "Werbung",
+    "title": "Rekrutierung",
+    "subtitle": "Stellenausschreibungen verwalten und qualifizierte Kandidaten finden",
     "jobDetailModal": {
       "title": "Jobdetails",
       "apply": "JETZT Bewerben",

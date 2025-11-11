@@ -73,15 +73,18 @@
   },
   "labels": {
     "location": "Standort",
+    "region": "Region",
     "allContractTypes": "Alle Vertragsarten",
     "allStatuses": "Alle Status",
     "allRoles": "Alle Rollen",
     "startDate": "Startdatum",
     "applications": "Bewerbungen",
     "startDateTbd": "Noch festzulegen",
-    "locationUnknown": "Standort wird definiert"
+    "locationUnknown": "Standort wird definiert",
+    "availabilityDate": "Verfügbarkeitsdatum"
   },
   "filters": {
+    "all": "Alle",
     "location": "Standort",
     "experience": "Erfahrung",
     "availability": "Verfügbarkeit"
