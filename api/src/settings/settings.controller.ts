@@ -111,12 +111,13 @@ export class SettingsController {
         },
       });
 
-      const userOrg = await tx.userOrganization.findFirst({
+      let userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // Update existing organization
         await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
@@ -127,6 +128,30 @@ export class SettingsController {
             languages: settings.languages,
             capacity: settings.capacity,
             pedagogy: settings.pedagogy,
+          },
+        });
+      } else {
+        // Create new organization if it doesn't exist
+        const newOrganization = await tx.organization.create({
+          data: {
+            name: settings.companyName,
+            type: 'FOUNDATION',
+            phoneNumber: settings.phoneNumber,
+            region: settings.address,
+            canton: settings.canton,
+            languages: settings.languages,
+            capacity: settings.capacity,
+            pedagogy: settings.pedagogy,
+            isActive: true,
+          },
+        });
+
+        // Link user to the new organization
+        await tx.userOrganization.create({
+          data: {
+            userId: profileId,
+            organizationId: newOrganization.id,
+            role: UserRole.FOUNDATION,
           },
         });
       }
@@ -273,12 +298,13 @@ export class SettingsController {
         },
       });
 
-      const userOrg = await tx.userOrganization.findFirst({
+      let userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // Update existing organization
         await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
@@ -291,6 +317,32 @@ export class SettingsController {
             minimumOrderQuantity: settings.minimumOrderQuantity,
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
+          },
+        });
+      } else {
+        // Create new organization if it doesn't exist
+        const newOrganization = await tx.organization.create({
+          data: {
+            name: settings.companyName,
+            type: 'PRODUCT_SUPPLIER',
+            phoneNumber: settings.phoneNumber,
+            region: settings.address,
+            canton: settings.canton,
+            productCategory: settings.productCategory,
+            serviceType: settings.serviceType,
+            minimumOrderQuantity: settings.minimumOrderQuantity,
+            directOrderLink: settings.directOrderLink,
+            catalogUrl: settings.catalogUrl,
+            isActive: true,
+          },
+        });
+
+        // Link user to the new organization
+        await tx.userOrganization.create({
+          data: {
+            userId: profileId,
+            organizationId: newOrganization.id,
+            role: UserRole.PRODUCT_SUPPLIER,
           },
         });
       }
@@ -368,12 +420,13 @@ export class SettingsController {
         },
       });
 
-      const userOrg = await tx.userOrganization.findFirst({
+      let userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // Update existing organization
         await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
@@ -384,6 +437,30 @@ export class SettingsController {
             serviceCategories: settings.serviceCategories,
             deliveryType: settings.deliveryType,
             bookingLink: settings.bookingLink,
+          },
+        });
+      } else {
+        // Create new organization if it doesn't exist
+        const newOrganization = await tx.organization.create({
+          data: {
+            name: settings.companyName,
+            type: 'SERVICE_PROVIDER',
+            phoneNumber: settings.phoneNumber,
+            region: settings.address,
+            canton: settings.canton,
+            serviceCategories: settings.serviceCategories,
+            deliveryType: settings.deliveryType,
+            bookingLink: settings.bookingLink,
+            isActive: true,
+          },
+        });
+
+        // Link user to the new organization
+        await tx.userOrganization.create({
+          data: {
+            userId: profileId,
+            organizationId: newOrganization.id,
+            role: UserRole.SERVICE_PROVIDER,
           },
         });
       }
