@@ -14,35 +14,21 @@ async function bootstrap() {
   });
   const logger = app.get(AppLoggerService);
   
-  // Webhook body parsing debug middleware
-  app.use('/api/webhooks/clerk', (req, res, next) => {
-    console.log('🔍 [WEBHOOK BODY DEBUG] Clerk webhook request intercepted');
-    console.log('🔍 [WEBHOOK BODY DEBUG] Before raw parser:', {
-      method: req.method,
-      url: req.url,
-      contentType: req.headers['content-type'],
-      contentLength: req.headers['content-length'],
-      hasBody: !!(req as any).body,
-      bodyType: typeof (req as any).body,
-    });
-    next();
-  });
-  
   // Raw body for webhook route
   app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
   
-  // Webhook body parsing verification middleware
-  app.use('/api/webhooks/clerk', (req, res, next) => {
-    console.log('🔍 [WEBHOOK BODY DEBUG] After raw parser:', {
-      hasBody: !!(req as any).body,
-      bodyType: typeof (req as any).body,
-      bodyConstructor: (req as any).body?.constructor?.name,
-      bodyLength: (req as any).body?.length || 0,
-      isBuffer: Buffer.isBuffer((req as any).body),
-      bodyPreview: (req as any).body ? String((req as any).body).substring(0, 200) : 'EMPTY',
+  // Webhook body parsing debug middleware (only in development or when DEBUG_WEBHOOKS is enabled)
+  if (process.env.NODE_ENV !== 'production' || process.env.DEBUG_WEBHOOKS === 'true') {
+    app.use('/api/webhooks/clerk', (req, res, next) => {
+      logger.debug('Webhook request intercepted', {
+        method: req.method,
+        url: req.url,
+        contentType: req.headers['content-type'],
+        contentLength: req.headers['content-length'],
+      });
+      next();
     });
-    next();
-  });
+  }
   
   // JSON parser for all other routes
   app.use(express.json());
@@ -104,26 +90,23 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
-  // CORS debugging middleware (ALWAYS enabled to debug production issues)
-  app.use((req, res, next) => {
-    const isPreflight = req.method === 'OPTIONS';
-    
-    if (isPreflight || req.method === 'PUT' || req.method === 'PATCH') {
-      console.log('🌐 CORS Request:', {
-        method: req.method,
-        url: req.url,
-        origin: req.headers.origin,
-        isPreflight,
-        headers: {
-          'access-control-request-method': req.headers['access-control-request-method'],
-          'access-control-request-headers': req.headers['access-control-request-headers'],
-        },
-        allowedOrigins: typeof allowedOrigins === 'boolean' ? 'all' : allowedOrigins,
-      });
-    }
-    
-    next();
-  });
+  // CORS debugging middleware (only when DEBUG_CORS is enabled)
+  if (process.env.DEBUG_CORS === 'true') {
+    app.use((req, res, next) => {
+      const isPreflight = req.method === 'OPTIONS';
+      
+      if (isPreflight || req.method === 'PUT' || req.method === 'PATCH') {
+        logger.debug('CORS Request', {
+          method: req.method,
+          url: req.url,
+          origin: req.headers.origin,
+          isPreflight,
+        });
+      }
+      
+      next();
+    });
+  }
 
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
@@ -146,7 +129,6 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0'); // Bind to all interfaces for Render
   
   logger.log(`Application is running on port ${port}`, 'Bootstrap');
-  console.log(`Server started on port ${port}`);
   if (process.env.NODE_ENV !== 'production') {
     logger.log(`Swagger documentation: http://localhost:${port}/api/docs`, 'Bootstrap');
   }
