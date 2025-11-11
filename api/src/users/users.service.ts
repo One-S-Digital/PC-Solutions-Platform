@@ -5,6 +5,33 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrincipalService } from '../principal/principal.service';
 
+const userProfileInclude = {
+  organizations: {
+    include: {
+      organization: {
+        include: {
+          logoAsset: true,
+          coverAsset: true,
+          products: {
+            include: {
+              imageAsset: true,
+            },
+          },
+          serviceProviders: {
+            include: {
+              services: true,
+            },
+          },
+          jobListings: true,
+        },
+      },
+    },
+  },
+} as const satisfies Prisma.UserInclude;
+
+type UserProfileInclude = typeof userProfileInclude;
+type UserWithProfile = Prisma.UserGetPayload<{ include: UserProfileInclude }>;
+
 export interface FindAllUsersParams {
   page: number;
   limit: number;
@@ -16,30 +43,6 @@ export interface FindAllUsersParams {
 export class UsersService {
   constructor(private prisma: PrismaService, private readonly principal: PrincipalService) {}
 
-  private readonly userProfileInclude = {
-    organizations: {
-      include: {
-        organization: {
-          include: {
-            logoAsset: true,
-            coverAsset: true,
-            products: {
-              include: {
-                imageAsset: true,
-              },
-            },
-            serviceProviders: {
-              include: {
-                services: true,
-              },
-            },
-            jobListings: true,
-          },
-        },
-      },
-    },
-  } satisfies Prisma.UserInclude;
-
   private serializeDate(value: Date | string | null | undefined): string | null | undefined {
     if (value instanceof Date) {
       return value.toISOString();
@@ -48,7 +51,7 @@ export class UsersService {
   }
 
   private buildUserResponse(
-    user: Prisma.UserGetPayload<{ include: typeof this.userProfileInclude }>,
+    user: UserWithProfile | null,
     appUser: { id: string; clerkId: string; email: string | null; role: UserRole },
   ) {
     if (!user) {
@@ -348,7 +351,10 @@ export class UsersService {
     }
 
     try {
-      const result = await this.principal.getOrBootstrapAccountAndProfile(clerkId, this.userProfileInclude);
+      const result = await this.principal.getOrBootstrapAccountAndProfile<typeof userProfileInclude>(
+        clerkId,
+        userProfileInclude,
+      );
       return this.buildUserResponse(result.user, {
         id: result.appUser.id,
         clerkId: result.appUser.clerkId,
