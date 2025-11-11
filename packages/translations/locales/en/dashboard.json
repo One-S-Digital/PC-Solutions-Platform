@@ -67,7 +67,14 @@
     "parentLeads": "Parent Leads",
     "ordersAppointments": "Orders & Appointments",
     "supportFAQ": "Support & FAQ",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "organisationProfile": "Organization Profile",
+    "orders": "Orders",
+    "productMarketplace": "Product Marketplace",
+    "myRequests": "My Requests",
+    "serviceMarketplace": "Service Marketplace",
+    "homeFindCreche": "Home / Find Crèche",
+    "applications": "Applications"
   },
   "navbar": {
     "notificationsCount": "{{count}} notifications",
@@ -172,7 +179,45 @@
     "recentActivity": "Recent Activity",
     "quickActions": "Quick Actions"
   },
+  "foundationDashboard": {
+    "title": "Foundation Dashboard",
+    "welcomeMessage": "Welcome back! Here's an overview of your daycare operations.",
+    "quickStats": {
+      "title": "Quick Stats",
+      "enrolled": "Enrolled",
+      "availableSpots": "Available Spots",
+      "pendingApps": "Pending Applications",
+      "upcomingAppointments": "Upcoming Appointments"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "parentInquiry": "New parent inquiry received",
+      "jobApplication": "New job application submitted",
+      "orderConfirmation": "Order confirmation received",
+      "serviceUpdate": "Service request updated",
+      "newMessage": "New message received"
+    },
+    "calendar": {
+      "event1": "Staff meeting",
+      "event2": "Parent consultation",
+      "event3": "Training session"
+    },
+    "quickActions": {
+      "browseMarketplace": "Browse Marketplace",
+      "postJob": "Post Job",
+      "addSpot": "Add Spot",
+      "sendMessage": "Send Message"
+    },
+    "quickMessage": {
+      "title": "Quick Message",
+      "placeholder": "Type a quick message..."
+    }
+  },
   "foundationAnalyticsPage": {
+    "title": "Analytics",
+    "leadFunnel": "Lead Funnel",
+    "trainingStatus": "Training Status",
+    "monthlyEnrollment": "Monthly Enrollment",
     "mockDataVisualization": "Mock Data Visualization",
     "spendingByCategory": "Spending by Category",
     "parentLeadConversion": "Parent Lead Conversion",
@@ -219,6 +264,7 @@
     "serviceAppointmentsTab": "Service Appointments"
   },
   "foundationOrganisationProfilePage": {
+    "title": "Organization Profile",
     "mock": {
       "pedagogyStatement": "Our pedagogy is based on the principles of respect, creativity, and individual development. We believe in providing a nurturing environment where children can explore, learn, and grow at their own pace."
     },
@@ -253,6 +299,24 @@
   },
   "foundationSupportPage": {
     "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "faq": {
+      "manageLeads": {
+        "q": "How do I manage incoming parent leads?",
+        "a": "You can view and respond to parent leads from your dashboard. Use the quick actions to mark leads as interested, not interested, or request more information."
+      },
+      "useMarketplace": {
+        "q": "How do I use the marketplace?",
+        "a": "Browse products and services from verified suppliers. Add items to your order cart and submit orders directly through the platform."
+      },
+      "manageProfile": {
+        "q": "How do I manage my organization profile?",
+        "a": "Go to Organization Profile to update your branding, contact information, opening hours, and other details that parents see."
+      },
+      "recruitment": {
+        "q": "How do I post job openings?",
+        "a": "Navigate to Recruitment > Job Listings and click 'Post New Job' to create a job posting. You can view applicants and manage the hiring process from there."
+      }
+    },
     "ticketForm": {
       "subjectPlaceholder": "Brief description of your issue",
       "messagePlaceholder": "Please provide detailed information about your issue"
@@ -263,6 +327,32 @@
     "welcome": "Welcome to your parent dashboard",
     "myChildren": "My Children",
     "findCreche": "Find a Crèche"
+  },
+  "parentDashboard": {
+    "title": "Parent Dashboard",
+    "welcomeMessage": "Welcome back! Here's an overview of your childcare search and enquiries.",
+    "enquiry": {
+      "title": "My Enquiries",
+      "sent": "Sent",
+      "responded": "Responded",
+      "pending": "Pending",
+      "button": "View All Enquiries"
+    },
+    "childProfile": {
+      "title": "Child Profile",
+      "name": "Name",
+      "age": "Age",
+      "location": "Location",
+      "languages": "Languages",
+      "specialNeeds": "Special Needs"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "findDaycare": "Find Daycare",
+      "enquiries": "My Enquiries",
+      "updateProfile": "Update Profile",
+      "browseServices": "Browse Services"
+    }
   },
   "parentEnquiriesPage": {
     "accessDenied": {
@@ -290,13 +380,16 @@
   "parentSupportPage": {
     "faq": {
       "matchingProcess": {
-        "q": "How does the matching process work?"
+        "q": "How does the matching process work?",
+        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers."
       },
       "responseTime": {
-        "q": "How quickly will I receive responses?"
+        "q": "How quickly will I receive responses?",
+        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard."
       },
       "dataSecurity": {
-        "q": "Is my personal information secure?"
+        "q": "Is my personal information secure?",
+        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details."
       }
     }
   },
@@ -306,7 +399,34 @@
     "applications": "My Applications",
     "jobBoard": "Job Board"
   },
+  "educatorDashboard": {
+    "title": "Educator Dashboard",
+    "welcome": "Welcome back! Here's an overview of your job applications and profile.",
+    "profileCompletion": {
+      "title": "Complete Your Profile",
+      "subtitle": "Complete your profile to increase your chances of getting hired",
+      "button": "Complete Profile"
+    },
+    "applicationStatus": {
+      "title": "Application Status",
+      "submitted": "Submitted",
+      "viewed": "Viewed",
+      "interviews": "Interviews",
+      "offers": "Offers",
+      "button": "View All Applications"
+    },
+    "skills": {
+      "title": "Skills & Qualifications",
+      "subtitle": "Keep your skills and qualifications up to date",
+      "button": "Update Skills"
+    },
+    "recommendations": {
+      "title": "Recommended Jobs",
+      "match": "Match"
+    }
+  },
   "educatorApplicationsPage": {
+    "title": "My Applications",
     "status": {
         "pending": "Pending",
         "reviewed": "Reviewed",
@@ -389,12 +509,40 @@
     "services": "My Services",
     "requests": "Service Requests"
   },
+  "serviceProviderDashboard": {
+    "title": "Service Provider Dashboard",
+    "welcomeMessage": "Welcome back! Here's an overview of your service requests and appointments.",
+    "widgets": {
+      "overview": {
+        "title": "Overview",
+        "activeRequests": "Active Requests",
+        "customerRating": "Customer Rating",
+        "newServiceButton": "Add New Service"
+      },
+      "management": {
+        "title": "Service Management",
+        "newServiceButton": "Add New Service",
+        "tags": {
+          "cleaning": "Cleaning",
+          "workshops": "Workshops"
+        }
+      },
+      "appointments": {
+        "title": "Upcoming Appointments"
+      }
+    }
+  },
   "serviceProviderAnalyticsPage": {
+    "title": "Analytics",
+    "serviceRequestsTrend": "Service Requests Trend",
+    "serviceViews": "Service Views",
+    "requestDistributionByCanton": "Request Distribution by Canton",
     "serviceRequestsPerWeek": "Service Requests Per Week",
     "topViewedServices": "Top Viewed Services",
     "requestsByCanton": "Requests by Canton"
   },
   "serviceProviderListingsPage": {
+    "title": "My Services",
     "card": {
       "category": "Category",
       "delivery": "Delivery"
@@ -409,6 +557,7 @@
     }
   },
   "serviceProviderRequestsPage": {
+    "title": "Service Requests",
     "filterByStatus": "Filter by Status",
     "table": {
       "requestId": "Request ID",
@@ -421,6 +570,24 @@
   },
   "serviceProviderSupportPage": {
     "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "faq": {
+      "listService": {
+        "q": "How do I list a new service?",
+        "a": "Go to My Services and click 'Add New Service'. Fill in service details, set pricing, and specify availability. Services are reviewed before going live."
+      },
+      "respondRequests": {
+        "q": "How do I respond to service requests?",
+        "a": "View incoming requests in the Service Requests section. You can accept, decline, or schedule appointments directly from there."
+      },
+      "updateAvailability": {
+        "q": "How do I update my availability?",
+        "a": "Update your availability calendar in Settings > Contact & Booking. You can set your preferred working hours and days."
+      },
+      "profileInfo": {
+        "q": "How do I update my profile information?",
+        "a": "Go to Settings > Company Profile to update your business information, contact details, and service descriptions."
+      }
+    },
     "ticketForm": {
       "subjectPlaceholder": "Brief description of your issue",
       "messagePlaceholder": "Please provide detailed information about your issue"
@@ -432,7 +599,37 @@
     "products": "My Products",
     "orders": "Orders"
   },
+  "supplierDashboard": {
+    "title": "Supplier Dashboard",
+    "welcomeMessage": "Welcome back! Here's an overview of your product sales and orders.",
+    "widgets": {
+      "sales": {
+        "title": "Sales Overview",
+        "totalOrders": "Total Orders",
+        "revenue": "Revenue",
+        "topSelling": "Top Selling",
+        "fulfilmentRate": "Fulfillment Rate",
+        "button": "View Analytics"
+      },
+      "products": {
+        "title": "Products",
+        "active": "Active",
+        "pendingApproval": "Pending Approval",
+        "button": "Manage Products"
+      },
+      "orders": {
+        "title": "Orders",
+        "pending": "Pending",
+        "button": "View Orders"
+      }
+    },
+    "recentOrdersTitle": "Recent Orders",
+    "noRecentOrders": "No recent orders"
+  },
   "supplierAnalyticsPage": {
+    "orderRequestsTrend": "Order Requests Trend",
+    "productViews": "Product Views",
+    "requestsDistribution": "Requests Distribution",
     "datePickerLabel": "Select Date Range",
     "exportCsvAlert": "CSV export started",
     "exportCsvButton": "Export CSV",
@@ -448,6 +645,7 @@
     }
   },
   "supplierProductListingsPage": {
+    "title": "Product Listings",
     "addProductAlert": "Product added successfully",
     "addProductButton": "Add New Product",
     "searchPlaceholder": "Search products...",
@@ -461,6 +659,7 @@
     "emptyState": "No products found"
   },
   "supplierOrdersPage": {
+    "title": "Orders",
     "filterByStatus": "Filter by Status",
     "table": {
       "orderId": "Order ID",
@@ -476,6 +675,24 @@
   },
   "supplierSupportPage": {
     "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "faq": {
+      "addProduct": {
+        "q": "How do I add a new product?",
+        "a": "Go to Products and click 'Add New Product'. Fill in the product details, set pricing, and upload images. Products will be reviewed before going live."
+      },
+      "processOrders": {
+        "q": "How do I process orders?",
+        "a": "View all orders in the Orders section. You can accept, decline, or mark orders as shipped. Orders are automatically synced with the foundation's dashboard."
+      },
+      "manageProfile": {
+        "q": "How do I manage my supplier profile?",
+        "a": "Update your company information, contact details, and business hours in Settings > Company Profile."
+      },
+      "commissionRates": {
+        "q": "What are the commission rates?",
+        "a": "Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription."
+      }
+    },
     "ticketForm": {
       "subjectPlaceholder": "Brief description of your issue",
       "messagePlaceholder": "Please provide detailed information about your issue"
@@ -613,6 +830,23 @@
       "region": "Region",
       "availabilityDate": "Availability Date"
     },
+  "filters": {
+    "all": "All"
+  },
+  "supportPage": {
+    "faqTitle": "Frequently Asked Questions",
+    "furtherAssistanceTitle": "Need Further Assistance?",
+    "furtherAssistanceText": {
+      "0": "If you can't find the answer you're looking for, our support team is here to help.",
+      "1": "Submit a support ticket below and we'll get back to you as soon as possible."
+    },
+    "submitTicketTitle": "Submit a Support Ticket",
+    "ticketForm": {
+      "subjectLabel": "Subject",
+      "messageLabel": "Message",
+      "submitButton": "Submit Ticket"
+    }
+  },
     "candidatePool": {
       "searchPlaceholder": "Search candidates...",
       "filterTitle": "Filter Candidates",
