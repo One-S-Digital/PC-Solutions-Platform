@@ -5,10 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon } from '@heroicons/react/24/outline';
+import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
+import { MOCK_ROLE_LOGIN_OPTIONS, getMockUserByRole } from '../mock/mockUsers';
+import { UserRole } from '../types';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -33,7 +35,16 @@ const LoginPage: React.FC = () => {
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
-  const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
+  const {
+    isLoading: isAuthLoading,
+    authError,
+    clearAuthError,
+    logout,
+    isSigningOut: isSigningOutGlobal,
+    isMockLoginEnabled,
+    isUsingMockLogin,
+    startMockLogin,
+  } = useAuthContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -157,6 +168,24 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const handleMockLogin = (role: UserRole) => {
+    if (!isMockLoginEnabled) {
+      return;
+    }
+    setError('');
+    clearAuthError();
+
+    const mockUser = getMockUserByRole(role);
+    if (!mockUser) {
+      console.warn(`Mock login requested for unsupported role: ${role}`);
+      setError('Mock login is not available for this role yet.');
+      return;
+    }
+
+    startMockLogin(mockUser);
+    navigate('/dashboard', { replace: true });
+  };
+
   const handleLogout = async () => {
     setError('');
     clearAuthError();
@@ -172,83 +201,102 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // STRICT RENDERING GATES - Wait for Clerk to load before showing anything
-  if (!isSignInLoaded || !isAuthLoaded) {
-    return (
-      <div className="min-h-screen bg-page-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
-      </div>
-    );
-  }
+    // STRICT RENDERING GATES - Wait for Clerk to load before showing anything unless mock login is enabled
+    if ((!isSignInLoaded || !isAuthLoaded) && !isMockLoginEnabled) {
+      return (
+        <div className="min-h-screen bg-page-bg flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+        </div>
+      );
+    }
 
-  // SCENARIO A: Already signed in when landing on /login
-  // Show "Active Session" UI - let user choose to go to dashboard or sign out
-  if (isSignedIn && currentUser) {
-    return (
-      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-        <Card className="w-full max-w-md p-8 shadow-xl">
-          <div className="text-center mb-8">
-            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
-            <h1 className="text-2xl font-bold text-swiss-charcoal">
-              {t('common:loginPage.title', { appName: APP_NAME })}
-            </h1>
-          </div>
+    const hasActiveSession = Boolean(currentUser && (isSignedIn || isUsingMockLogin));
 
-          <div className="space-y-6">
-            <div className="flex justify-center mb-4">
-              <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
+    // SCENARIO A: Already signed in when landing on /login
+    // Show "Active Session" UI - let user choose to go to dashboard or sign out
+    if (hasActiveSession && currentUser) {
+      const sessionTitle = isUsingMockLogin
+        ? 'Mock Session Active'
+        : t('common:loginPage.alreadySignedInTitle', 'Active Session Detected');
+      const sessionDescription = isUsingMockLogin
+        ? 'You are previewing the platform with a mock account. Choose an option below to continue.'
+        : t(
+            'common:loginPage.alreadySignedInDescription',
+            'You are already logged in. Choose an option below to continue.',
+          );
+      const sessionFooterNote = isUsingMockLogin
+        ? 'Mock session: authentication bypass enabled for sandbox use.'
+        : t('common:loginPage.noAccount');
+
+      return (
+        <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+          <Card className="w-full max-w-md p-8 shadow-xl">
+            <div className="text-center mb-8">
+              <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+              <h1 className="text-2xl font-bold text-swiss-charcoal">
+                {t('common:loginPage.title', { appName: APP_NAME })}
+              </h1>
             </div>
-            <h2 className="text-2xl font-bold text-swiss-charcoal text-center">
-              {t('common:loginPage.alreadySignedInTitle', 'Active Session Detected')}
-            </h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800 text-center">
-                <strong>Welcome back, {currentUser.firstName || 'User'}!</strong>
-              </p>
-              <p className="text-xs text-blue-700 text-center mt-2">
-                {t('common:loginPage.alreadySignedInDescription', 'You are already logged in. Choose an option below to continue.')}
-              </p>
-            </div>
-            <div className="flex flex-col space-y-3">
-              <Button
-                type="button"
-                variant="primary"
-                size="lg"
-                className="w-full"
-                onClick={() => navigate('/dashboard', { replace: true })}
-              >
-                {t('common:loginPage.goToDashboard', 'Go to Dashboard')}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                className="w-full"
-                onClick={handleLogout}
-                disabled={isSigningOut}
-              >
-                {isSigningOut
-                  ? t('common:loginPage.signingOut', 'Signing Out...')
-                  : t('common:loginPage.signOutButton', 'Sign Out')}
-              </Button>
-            </div>
-          </div>
 
-          <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
-            <p>
-              {t('common:loginPage.noAccount')}{' '}
-              <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
-                {t('common:buttons.signup')}
-              </Link>
-            </p>
-          </div>
+            <div className="space-y-6">
+              <div className="flex justify-center mb-4">
+                <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
+              </div>
+              <h2 className="text-2xl font-bold text-swiss-charcoal text-center">
+                {sessionTitle}
+              </h2>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-800 text-center">
+                  <strong>Welcome back, {currentUser.firstName || 'User'}!</strong>
+                </p>
+                <p className="text-xs text-blue-700 text-center mt-2">
+                  {sessionDescription}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-3">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  onClick={() => navigate('/dashboard', { replace: true })}
+                >
+                  {t('common:loginPage.goToDashboard', 'Go to Dashboard')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-full"
+                  onClick={handleLogout}
+                  disabled={isSigningOut}
+                >
+                  {isSigningOut
+                    ? t('common:loginPage.signingOut', 'Signing Out...')
+                    : t('common:loginPage.signOutButton', 'Sign Out')}
+                </Button>
+              </div>
+            </div>
 
-          <div className="mt-6 flex justify-center">
-            <LanguageSwitcher />
-          </div>
-        </Card>
-      </div>
-    );
-  }
+            <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
+              {isUsingMockLogin ? (
+                <p className="text-xs text-gray-500">{sessionFooterNote}</p>
+              ) : (
+                <p>
+                  {sessionFooterNote}{' '}
+                  <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
+                    {t('common:buttons.signup')}
+                  </Link>
+                </p>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-center">
+              <LanguageSwitcher />
+            </div>
+          </Card>
+        </div>
+      );
+    }
 
   // Show loading state during sign-out to prevent flash of error screen
   // Use global isSigningOut from AuthProvider to catch sign-out from any page
@@ -411,6 +459,39 @@ const LoginPage: React.FC = () => {
                 </Button>
               </div>
             </div>
+
+          {isMockLoginEnabled && (
+            <div className="mt-8">
+              <div className="rounded-lg border border-dashed border-swiss-mint/50 bg-swiss-mint/5 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-swiss-mint">Quick role preview</p>
+                <p className="mt-2 text-xs text-gray-600">
+                  Launch a mock session to explore different user dashboards instantly.
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {MOCK_ROLE_LOGIN_OPTIONS.map((option) => (
+                    <Button
+                      key={option.role}
+                      type="button"
+                      variant="light"
+                      size="md"
+                      className="w-full items-start justify-between text-left"
+                      rightIcon={ArrowRightIcon}
+                      onClick={() => handleMockLogin(option.role)}
+                      data-role={`mock-login-${option.role.toLowerCase()}`}
+                    >
+                      <span className="flex flex-col items-start">
+                        <span className="font-medium text-swiss-charcoal">{option.label}</span>
+                        <span className="text-xs text-gray-500">{option.description}</span>
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-gray-500">
+                Mock sessions skip real authentication and do not persist updates.
+              </p>
+            </div>
+          )}
 
         <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
           <p>

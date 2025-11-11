@@ -81,15 +81,15 @@ import ProfilePage from './pages/ProfilePage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
   const { currentUser } = useAppContext();
-  const { isLoaded, isSignedIn } = useAuth();
-  const location = useLocation();
 
   if (!currentUser) {
-    return <Navigate to="/login" replace />; // Fallback, ProtectedLayout is primary guard
+    return <Navigate to="/login" replace />;
   }
+
   if (!roles.includes(currentUser.role)) {
-    return <Navigate to="/dashboard" replace />; // Redirect to their own dashboard if role mismatches
+    return <Navigate to="/dashboard" replace />;
   }
+
   return children;
 };
 
@@ -119,11 +119,13 @@ const RoleBasedDashboardRedirect: React.FC = () => {
 const ProtectedLayout: React.FC = () => {
   const { currentUser } = useAppContext();
   const { isLoaded, isSignedIn } = useAuth();
-  const { isLoading: isAuthLoading } = useAuthContext();
+  const { isLoading: isAuthLoading, isUsingMockLogin } = useAuthContext();
   const location = useLocation();
 
-  // Wait for Clerk to load before checking authentication
-  if (!isLoaded) {
+  const shouldBypassClerkChecks = isUsingMockLogin;
+
+  // Wait for Clerk to load before checking authentication (unless using mock session)
+  if (!isLoaded && !shouldBypassClerkChecks) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
@@ -131,15 +133,15 @@ const ProtectedLayout: React.FC = () => {
     );
   }
 
-  // User not signed in to Clerk ? redirect to login
-  if (!isSignedIn) {
+  // User not signed in to Clerk? redirect to login unless mock session is active
+  if (!isSignedIn && !shouldBypassClerkChecks) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Signed in to Clerk but no currentUser yet
   if (!currentUser) {
-    // Still loading from backend ? show loading screen (prevents redirect during sync)
-    if (isAuthLoading) {
+    // Still loading from backend or establishing mock session? show loading screen (prevents redirect during sync)
+    if (isAuthLoading || shouldBypassClerkChecks) {
       return (
         <div className="min-h-screen bg-page-bg flex items-center justify-center">
           <div className="text-center">

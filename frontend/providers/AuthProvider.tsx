@@ -12,6 +12,33 @@ import { User } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
 
+const MOCK_AUTH_STORAGE_KEY = 'mock-auth-user';
+
+const resolveMockLoginEnabled = (): boolean => {
+  const flag = import.meta.env.VITE_ENABLE_MOCK_LOGIN;
+  if (flag === 'true') {
+    return true;
+  }
+  if (flag === 'false') {
+    return false;
+  }
+  return import.meta.env.DEV;
+};
+
+const mergeUserProfile = (user: User, updates: Partial<User>): User => {
+  const merged: User = { ...user, ...updates };
+
+  if (updates.firstName !== undefined || updates.lastName !== undefined) {
+    const newFirstName = updates.firstName ?? user.firstName;
+    const newLastName = updates.lastName ?? user.lastName;
+    merged.name = `${newFirstName} ${newLastName}`.trim();
+  } else if (updates.name) {
+    merged.name = updates.name;
+  }
+
+  return merged;
+};
+
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
 const WEBHOOK_RETRY_ATTEMPTS = 2;
@@ -37,6 +64,8 @@ interface AuthContextType {
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isMockLoginEnabled: boolean;
+  isUsingMockLogin: boolean;
   authError: string | null;
   isSigningOut: boolean;
   clearAuthError: () => void;
@@ -46,6 +75,7 @@ interface AuthContextType {
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
   refreshCurrentUser: () => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  startMockLogin: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,18 +85,32 @@ interface AuthProviderProps {
 }
 
 const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
+  const isMockLoginEnabled = resolveMockLoginEnabled();
   const { user: clerkUser, isLoaded: clerkIsLoaded } = useUser();
   const { getToken, signOut: clerkSignOut, isSignedIn } = useAuth();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [mockSessionUser, setMockSessionUser] = useState<User | null>(() => {
+    if (!isMockLoginEnabled || typeof window === 'undefined') {
+      return null;
+    }
+    try {
+      const stored = window.localStorage.getItem(MOCK_AUTH_STORAGE_KEY);
+      return stored ? (JSON.parse(stored) as User) : null;
+    } catch (error) {
+      console.warn('Failed to restore mock session user from storage', error);
+      return null;
+    }
+  });
 
   const syncAttemptRef = useRef<SyncAttemptState>(INITIAL_SYNC_STATE);
   const syncInFlightRef = useRef(false);
 
   const clerkUserId = clerkUser?.id ?? null;
-  const isAuthenticated = Boolean(clerkUser && isSignedIn);
+  const isMockSessionActive = Boolean(isMockLoginEnabled && mockSessionUser);
+  const isAuthenticated = Boolean(isMockSessionActive || (clerkUser && isSignedIn));
 
   const transformBackendUser = useCallback((user: any): User => {
     const transformed = {
@@ -96,6 +140,17 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
     return BACKEND_SYNC_ERROR_KEY;
   }, []);
+
+  useEffect(() => {
+    if (!isMockLoginEnabled || typeof window === 'undefined') {
+      return;
+    }
+    if (mockSessionUser) {
+      window.localStorage.setItem(MOCK_AUTH_STORAGE_KEY, JSON.stringify(mockSessionUser));
+    } else {
+      window.localStorage.removeItem(MOCK_AUTH_STORAGE_KEY);
+    }
+  }, [mockSessionUser, isMockLoginEnabled]);
 
   const fetchUserFromBackend = useCallback(
     async (clerkId: string, attempt = 0): Promise<User> => {
@@ -228,6 +283,18 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   useEffect(() => {
+    if (isMockSessionActive && mockSessionUser) {
+      setCurrentUser(mockSessionUser);
+      setAuthError(null);
+      setIsLoading(false);
+      syncAttemptRef.current = {
+        clerkId: mockSessionUser.clerkId ?? 'mock-session',
+        status: 'success',
+        lastAttempt: Date.now(),
+      };
+      return;
+    }
+
     if (!clerkIsLoaded) {
       setIsLoading(true);
       return;
@@ -326,7 +393,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, [clerkIsLoaded, clerkUserId, isSignedIn, fetchUserFromBackend, determineAuthErrorKey]);
+    }, [isMockSessionActive, mockSessionUser, clerkIsLoaded, clerkUserId, isSignedIn, fetchUserFromBackend, determineAuthErrorKey]);
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     // Clerk handles authentication, this is just for compatibility
@@ -334,7 +401,55 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return { success: true };
   };
 
+  const startMockLogin = useCallback(
+    (user: User) => {
+      if (!isMockLoginEnabled) {
+        console.warn('Mock login attempted but the feature flag is disabled.');
+        return;
+      }
+
+      const nowIso = new Date().toISOString();
+      const normalizedUser: User = mergeUserProfile(
+        {
+          ...user,
+          id: user.id ?? `mock-${user.role.toLowerCase()}-user`,
+          clerkId: user.clerkId ?? `mock-${user.role.toLowerCase()}-clerk`,
+          isActive: user.isActive ?? true,
+          createdAt: user.createdAt ?? nowIso,
+          updatedAt: nowIso,
+          lastLogin: nowIso,
+          lastActiveAt: nowIso,
+          memberSince: user.memberSince ?? user.createdAt ?? nowIso,
+          status: user.status ?? 'Active',
+        },
+        {},
+      );
+
+      setMockSessionUser(normalizedUser);
+      setCurrentUser(normalizedUser);
+      setAuthError(null);
+      setIsLoading(false);
+      setIsSigningOut(false);
+      syncAttemptRef.current = {
+        clerkId: normalizedUser.clerkId ?? 'mock-session',
+        status: 'success',
+        lastAttempt: Date.now(),
+      };
+    },
+    [isMockLoginEnabled],
+  );
+
   const logout = useCallback(async () => {
+    if (isMockSessionActive) {
+      setIsSigningOut(true);
+      setMockSessionUser(null);
+      setCurrentUser(null);
+      setAuthError(null);
+      syncAttemptRef.current = INITIAL_SYNC_STATE;
+      setIsSigningOut(false);
+      return;
+    }
+
     try {
       setIsSigningOut(true);
       // Clear local user state first
@@ -351,7 +466,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setIsSigningOut(false);
     }
-  }, [clerkSignOut]);
+  }, [clerkSignOut, isMockSessionActive]);
 
   const signup = async (formData: any, role: any): Promise<{ success: boolean; message?: string; redirectTo?: string }> => {
     // Clerk handles signup, this is just for compatibility
@@ -360,11 +475,21 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateCurrentUserInfo = useCallback(
     async (updatedInfo: Partial<User>) => {
+        if (isMockSessionActive && mockSessionUser) {
+          const updatedUser = mergeUserProfile(mockSessionUser, {
+            ...updatedInfo,
+            updatedAt: new Date().toISOString(),
+          });
+          setMockSessionUser(updatedUser);
+          setCurrentUser(updatedUser);
+          setAuthError(null);
+          return;
+        }
 
-      if (!currentUser) {
-        console.error('Cannot update user: current user is not loaded');
-        return;
-      }
+        if (!currentUser) {
+          console.error('Cannot update user: current user is not loaded');
+          return;
+        }
 
       try {
         const token = await getToken();
@@ -432,11 +557,15 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         throw error;
       }
     },
-    [currentUser, getToken, transformBackendUser, clerkUserId]
+      [isMockSessionActive, mockSessionUser, currentUser, getToken, transformBackendUser, clerkUserId]
   );
 
   const changePassword = useCallback(
     async (currentPassword: string, newPassword: string) => {
+      if (isMockSessionActive) {
+        throw new Error('Password changes are disabled while using a mock login session.');
+      }
+
       if (!clerkUser) {
         throw new Error('Authenticated user is not available');
       }
@@ -488,10 +617,21 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('Password change audit logging failed', auditError);
       }
     },
-    [clerkUser, getToken]
+      [isMockSessionActive, clerkUser, getToken]
   );
 
   const refreshCurrentUser = useCallback(async () => {
+    if (isMockSessionActive && mockSessionUser) {
+      setCurrentUser(mockSessionUser);
+      setAuthError(null);
+      syncAttemptRef.current = {
+        clerkId: mockSessionUser.clerkId ?? 'mock-session',
+        status: 'success',
+        lastAttempt: Date.now(),
+      };
+      return;
+    }
+
     if (!clerkIsLoaded) {
       throw new Error('Clerk is not loaded yet');
     }
@@ -508,7 +648,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       status: 'success',
       lastAttempt: Date.now(),
     };
-  }, [clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
+  }, [isMockSessionActive, mockSessionUser, clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
 
   return (
     <AuthContext.Provider
@@ -517,10 +657,13 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         setCurrentUser,
         isLoading,
         isAuthenticated,
+        isMockLoginEnabled,
+        isUsingMockLogin: isMockSessionActive,
         authError,
         isSigningOut,
         clearAuthError: () => setAuthError(null),
         login,
+        startMockLogin,
         logout,
         signup,
         updateCurrentUserInfo,
