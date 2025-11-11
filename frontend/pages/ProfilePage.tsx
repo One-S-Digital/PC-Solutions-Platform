@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,6 +9,7 @@ import {
   BuildingOfficeIcon,
 } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
+import { useAuthContext } from '../providers/AuthProvider';
 import { UserRole } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -16,8 +17,32 @@ import OrganizationPublicProfile from '../components/profile/OrganizationPublicP
 
 const ProfilePage: React.FC = () => {
   const { currentUser } = useAppContext();
+  const { refreshCurrentUser } = useAuthContext();
   const { t, i18n } = useTranslation(['profile', 'common']);
   const navigate = useNavigate();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Refresh user data when the profile page loads to ensure we have the latest organization data
+  useEffect(() => {
+    const refreshUserData = async () => {
+      if (!currentUser) return;
+      
+      // Only refresh if user should have an organization profile but doesn't have primaryOrganization
+      const shouldHaveOrgProfile = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER].includes(currentUser.role);
+      if (shouldHaveOrgProfile && !currentUser.primaryOrganization) {
+        setIsRefreshing(true);
+        try {
+          await refreshCurrentUser();
+        } catch (error) {
+          console.error('Failed to refresh user data:', error);
+        } finally {
+          setIsRefreshing(false);
+        }
+      }
+    };
+
+    refreshUserData();
+  }, [currentUser?.id, refreshCurrentUser]);
 
   const locale = i18n.language || 'en';
 
@@ -62,9 +87,11 @@ const ProfilePage: React.FC = () => {
     return <div className="p-6 text-center text-gray-500">{t('common:loading', 'Loading...')}</div>;
   }
 
-  const showPublicOrganizationProfile =
-    !!currentUser.primaryOrganization &&
+  const shouldShowPublicOrganizationProfile =
     [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER].includes(currentUser.role);
+  
+  const hasPrimaryOrganization = !!currentUser.primaryOrganization;
+  const showPublicOrganizationProfile = shouldShowPublicOrganizationProfile && hasPrimaryOrganization;
 
   const avatarUrl =
     currentUser.avatarUrl ||
@@ -84,15 +111,44 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-        {showPublicOrganizationProfile && (
+        {shouldShowPublicOrganizationProfile && (
           <>
-            <Card className="p-6 bg-swiss-mint/5 border border-swiss-mint/40 text-sm text-swiss-charcoal">
-              {t(
-                'profile:publicViewNotice',
-                'This preview shows how your organization profile appears to other users on the platform.',
-              )}
-            </Card>
-            <OrganizationPublicProfile user={currentUser} />
+            {hasPrimaryOrganization ? (
+              <>
+                <Card className="p-6 bg-swiss-mint/5 border border-swiss-mint/40 text-sm text-swiss-charcoal">
+                  {t(
+                    'profile:publicViewNotice',
+                    'This preview shows how your organization profile appears to other users on the platform.',
+                  )}
+                </Card>
+                <OrganizationPublicProfile user={currentUser} />
+              </>
+            ) : (
+              <Card className="p-6 bg-yellow-50 border border-yellow-200 text-sm text-yellow-800">
+                <div className="flex items-start gap-3">
+                  <BuildingOfficeIcon className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium mb-1">
+                      {t('profile:organization.setupRequired', 'Organization Profile Setup Required')}
+                    </p>
+                    <p className="text-yellow-700">
+                      {t(
+                        'profile:organization.setupMessage',
+                        'Your organization profile is not yet set up. Complete your organization information in Settings to see your public profile preview here.',
+                      )}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/settings')}
+                      className="mt-3"
+                    >
+                      {t('profile:actions.goToSettings', 'Go to Settings')}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
           </>
         )}
 

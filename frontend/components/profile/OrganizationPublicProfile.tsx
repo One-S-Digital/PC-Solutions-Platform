@@ -34,11 +34,12 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ u
   }
 
   const role = user.role;
+  const organizationName = organization.name || user.orgName || 'Organization';
   const coverImageUrl =
-    organization.coverImageUrl ?? `https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80`;
+    organization.coverImageUrl ?? user.orgCoverImageUrl ?? `https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80`;
   const logoUrl =
-    organization.logoUrl ??
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(organization.name)}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
+    organization.logoUrl ?? user.orgLogoUrl ??
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(organizationName)}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
 
   const tagList = useMemo(() => {
     if (role === UserRole.SERVICE_PROVIDER) {
@@ -71,9 +72,9 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ u
         </div>
         <div className="p-6 pt-28 sm:pt-6 sm:pl-36 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-swiss-charcoal">{organization.name}</h1>
+            <h1 className="text-3xl font-bold text-swiss-charcoal">{organization.name || user.orgName || t('profile:organization.unnamed', 'Unnamed Organization')}</h1>
             <p className="text-gray-500 capitalize">
-              {organization.type?.toString()?.replace(/_/g, ' ').toLowerCase()}
+              {organization.type?.toString()?.replace(/_/g, ' ').toLowerCase() || user.orgType?.toString()?.replace(/_/g, ' ').toLowerCase() || ''}
             </p>
             {!!tagList.length && (
               <div className="mt-3 flex flex-wrap gap-2">
