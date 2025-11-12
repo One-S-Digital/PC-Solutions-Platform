@@ -44,6 +44,11 @@ resolve_migration "applied" "20251108120000_recruitment_enhancements" "Recruitme
 # Handle the cleanup migration that may have failed
 resolve_migration "rolled-back" "20251110123000_recruitment_enhancements_cleanup" "Cleanup migration already clean"
 
+# Handle the regions_served migration that may have failed
+# This migration adds regionsServed array column and migrates canton data
+# Mark as rolled-back so it can be retried (the migration SQL is idempotent with IF NOT EXISTS)
+resolve_migration "rolled-back" "20251220000001_add_regions_served_to_organizations" "Regions served migration already clean"
+
 # NOTE: Removed old stable migration checks for faster builds (~15s reduction)
 # These migrations are stable and have been applied for months:
 # - 20250926_unify_asset_appuser (Sept 2025)
