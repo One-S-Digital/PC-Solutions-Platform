@@ -402,6 +402,10 @@
         "q": "MES Informations Personnelles Sont-Ellies Sécurisés?",
         "a": "Oui, nous prenons la sécurité des données au sérieux. Vos informations sont cryptées et partagées uniquement avec les garderies auprès desquelles vous avez fait une demande. Lisez notre Politique de Confidentialité pour plus de détails."
       }
+    },
+    "ticketForm": {
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
   "educatorDashboardPage": {

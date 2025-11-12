@@ -402,6 +402,10 @@
         "q": "Is my personal information secure?",
         "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details."
       }
+    },
+    "ticketForm": {
+      "subjectPlaceholder": "Brief description of your issue",
+      "messagePlaceholder": "Please provide detailed information about your issue"
     }
   },
   "educatorDashboardPage": {
@@ -509,6 +513,24 @@
     },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Support ticket submitted successfully",
+    "faq": {
+      "updateProfile": {
+        "q": "How do I update my profile?",
+        "a": "Go to your profile page to update your skills, qualifications, experience, and availability. A complete profile increases your chances of being matched with suitable positions."
+      },
+      "findJobs": {
+        "q": "How do I find job openings?",
+        "a": "Browse the Job Board to see all available positions. You can filter by location, contract type, and other criteria. Click on a job to view details and apply."
+      },
+      "trackApplications": {
+        "q": "How do I track my job applications?",
+        "a": "View all your applications in the My Applications section. You can see the status of each application and any updates from employers."
+      },
+      "notifications": {
+        "q": "How do I manage notifications?",
+        "a": "Go to Settings > Notification Preferences to customize which notifications you receive via email or in-app."
+      }
+    },
     "ticketForm": {
       "subjectPlaceholder": "Brief description of your issue",
       "messagePlaceholder": "Please provide detailed information about your issue"
@@ -907,26 +929,6 @@
       "commissionRates": {
         "q": "What are the commission rates?",
         "a": "Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription."
-      }
-    }
-  },
-  "educatorSupportPage": {
-    "faq": {
-      "updateProfile": {
-        "q": "How do I update my profile?",
-        "a": "Go to your profile page to update your skills, qualifications, experience, and availability. A complete profile increases your chances of being matched with suitable positions."
-      },
-      "findJobs": {
-        "q": "How do I find job openings?",
-        "a": "Browse the Job Board to see all available positions. You can filter by location, contract type, and other criteria. Click on a job to view details and apply."
-      },
-      "trackApplications": {
-        "q": "How do I track my applications?",
-        "a": "View all your applications in the Applications section of your dashboard. You can see the status of each application and any updates from employers."
-      },
-      "notifications": {
-        "q": "How do I manage notifications?",
-        "a": "Go to Settings > Notification Preferences to customize which notifications you receive via email or in-app."
       }
     }
   },

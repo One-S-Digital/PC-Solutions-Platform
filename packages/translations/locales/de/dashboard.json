@@ -402,6 +402,10 @@
         "q": "Sind Meine Persücher DATEN SCHICHENTERT?",
         "a": "Ja, wir nehmen Datensicherheit ernst. Ihre Informationen sind verschlüsselt und werden nur mit Kindergärten geteilt, bei denen Sie eine Anfrage gestellt haben. Lesen Sie unsere Datenschutzrichtlinie für weitere Details."
       }
+    },
+    "ticketForm": {
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "educatorDashboardPage": {
