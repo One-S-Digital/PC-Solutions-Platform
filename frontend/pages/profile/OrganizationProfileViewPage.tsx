@@ -40,6 +40,13 @@ const OrganizationProfileViewPage: React.FC = () => {
         if (response.success && response.data) {
           // Transform the API response to match Organization type
           const orgData = response.data;
+          console.log('🔍 OrganizationProfileViewPage - Raw API response:', orgData);
+          
+          // For service providers, check if deliveryType/bookingLink are in the serviceProviders relation
+          const serviceProviderData = (orgData as any).serviceProviders?.[0];
+          const deliveryType = orgData.deliveryType || serviceProviderData?.deliveryType || null;
+          const bookingLink = orgData.bookingLink || serviceProviderData?.bookingLink || null;
+          
           // Store raw data for accessing members
           const transformedOrg: Organization & { __rawData?: any } = {
             __rawData: orgData,
@@ -62,8 +69,8 @@ const OrganizationProfileViewPage: React.FC = () => {
             directOrderLink: orgData.directOrderLink,
             catalogUrl: orgData.catalogUrl,
             serviceCategories: orgData.serviceCategories || [],
-            deliveryType: orgData.deliveryType,
-            bookingLink: orgData.bookingLink,
+            deliveryType: deliveryType,
+            bookingLink: bookingLink,
             isActive: orgData.isActive ?? true,
             createdAt: orgData.createdAt,
             updatedAt: orgData.updatedAt,
@@ -103,6 +110,7 @@ const OrganizationProfileViewPage: React.FC = () => {
             ) || [],
             jobListings: (orgData as any).jobListings || [],
           };
+          console.log('🔍 OrganizationProfileViewPage - Transformed organization:', transformedOrg);
           setOrganization(transformedOrg);
         } else {
           setError('Organization not found');

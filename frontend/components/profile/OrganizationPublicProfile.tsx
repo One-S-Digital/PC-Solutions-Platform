@@ -50,10 +50,28 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
     );
   }
 
+  // Debug: Log organization data
+  console.log('🔍 OrganizationPublicProfile - organization prop:', organization);
+  console.log('🔍 OrganizationPublicProfile - organization.type:', organization.type);
+  console.log('🔍 OrganizationPublicProfile - organization fields:', {
+    vatNumber: organization.vatNumber,
+    regionsServed: organization.regionsServed,
+    languages: organization.languages,
+    contactPerson: organization.contactPerson,
+    phoneNumber: organization.phoneNumber,
+    serviceType: organization.serviceType,
+    serviceCategories: organization.serviceCategories,
+    deliveryType: organization.deliveryType,
+    bookingLink: organization.bookingLink,
+  });
+
   // Determine role from organization type or user role
   const role = user?.role || (organization.type === 'FOUNDATION' ? UserRole.FOUNDATION : 
                               organization.type === 'PRODUCT_SUPPLIER' ? UserRole.PRODUCT_SUPPLIER : 
                               UserRole.SERVICE_PROVIDER);
+  
+  console.log('🔍 OrganizationPublicProfile - determined role:', role);
+  console.log('🔍 OrganizationPublicProfile - is SERVICE_PROVIDER?', role === UserRole.SERVICE_PROVIDER);
   
   const organizationName = organization.name || user?.orgName || 'Organization';
   const coverImageUrl =
