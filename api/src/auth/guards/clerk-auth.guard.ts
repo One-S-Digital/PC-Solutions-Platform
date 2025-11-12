@@ -52,6 +52,13 @@ export class ClerkAuthGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    
+    // Allow OPTIONS requests (CORS preflight) - they don't have auth headers
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+    
     // Check if route is public
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -62,7 +69,6 @@ export class ClerkAuthGuard implements CanActivate {
       return true;
     }
     
-    const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
     
     if (!authHeader?.startsWith('Bearer ')) {

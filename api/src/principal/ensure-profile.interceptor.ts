@@ -17,6 +17,11 @@ export class EnsureProfileInterceptor implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
 
+    // Skip OPTIONS requests (CORS preflight) - they don't have auth headers
+    if (req.method === 'OPTIONS') {
+      return next.handle();
+    }
+
     const clerkUserId: string | undefined = req?.context?.clerkUserId ?? req?.context?.userId ?? req?.user?.clerkId;
 
     if (!clerkUserId) {
