@@ -2707,36 +2707,798 @@ VITE_API_URL=https://your-api.onrender.com
 
 ---
 
+## 🚀 Future-Proofing Enhancements
+
+### 1. Advanced Caching Strategy
+
+#### Precompute & Store Bundles in Redis
+
+```typescript
+// api/src/static-translation/static-translation.service.ts
+
+/**
+ * Precompute translation bundles for all (lang, ns) combinations
+ * Run as a scheduled job or on-demand after bulk updates
+ */
+async precomputeBundles(): Promise<void> {
+  const languages = ['en', 'fr', 'de'];
+  const namespaces = await this.getAllNamespaces('en'); // Get all namespaces
+
+  for (const lang of languages) {
+    for (const ns of namespaces) {
+      const { data, etag } = await this.getByNamespace(lang, ns);
+      
+      // Store in Redis with longer TTL for precomputed bundles
+      const cacheKey = `static:precomputed:${lang}:${ns}`;
+      await this.cacheManager.set(
+        cacheKey,
+        { data, etag },
+        24 * 60 * 60 * 1000, // 24 hours
+      );
+    }
+  }
+
+  this.logger.log(`Precomputed ${languages.length * namespaces.length} translation bundles`);
+}
+
+/**
+ * Get precomputed bundle if available, otherwise compute on-demand
+ */
+async getByNamespaceWithPrecompute(
+  lang: string,
+  namespace: string,
+): Promise<{ data: Record<string, any>; etag: string }> {
+  const precomputedKey = `static:precomputed:${lang}:${namespace}`;
+  const precomputed = await this.cacheManager.get<{ data: Record<string, any>; etag: string }>(
+    precomputedKey,
+  );
+
+  if (precomputed) {
+    return precomputed;
+  }
+
+  // Fallback to on-demand computation
+  return this.getByNamespace(lang, namespace);
+}
+```
+
+#### Scheduled Precomputation Job
+
+```typescript
+// api/src/static-translation/static-translation-scheduler.service.ts
+
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { StaticTranslationService } from './static-translation.service';
+
+@Injectable()
+export class StaticTranslationScheduler {
+  constructor(private translationService: StaticTranslationService) {}
+
+  // Precompute bundles every hour
+  @Cron(CronExpression.EVERY_HOUR)
+  async precomputeBundles() {
+    await this.translationService.precomputeBundles();
+  }
+
+  // Also precompute after any bulk update
+  async onBulkUpdate() {
+    await this.translationService.precomputeBundles();
+  }
+}
+```
+
+### 2. Field-Level Hashes for Granular Change Detection
+
+```prisma
+// Enhanced EntityTranslation with field-level tracking
+model EntityTranslation {
+  // ... existing fields ...
+  
+  // Add field-level hash tracking
+  fieldHashes Json? // Store hash per field: { "title": "abc123", "description": "def456" }
+  
+  // Track which fields changed
+  changedFields String[] // Array of field names that changed
+}
+```
+
+```typescript
+// Only re-translate fields that actually changed
+async saveEntityWithTranslations(...) {
+  // ... existing code ...
+  
+  // Calculate field-level hashes
+  const fieldHashes: Record<string, string> = {};
+  const changedFields: string[] = [];
+  
+  for (const field of translatableFields) {
+    const text = payload[field];
+    if (text) {
+      const hash = crypto.createHash('sha256').update(text).digest('hex');
+      fieldHashes[field] = hash;
+      
+      // Check if field changed
+      const existing = await this.prisma.entityTranslation.findUnique({
+        where: {
+          entityType_entityId_lang_field: {
+            entityType,
+            entityId,
+            lang: sourceLang,
+            field,
+          },
+        },
+      });
+      
+      if (!existing || existing.sourceHash !== hash) {
+        changedFields.push(field);
+      }
+    }
+  }
+  
+  // Only enqueue translation for changed fields
+  if (changedFields.length > 0) {
+    await this.translationQueue.add('translate-entity', {
+      entityType,
+      entityId,
+      sourceLang: detection.lang,
+      fields: changedFields, // Only translate changed fields
+      fieldHashes,
+    });
+  }
+}
+```
+
+### 3. Queue Partitioning & Autoscaling
+
+```typescript
+// api/src/translation/translation-queue.module.ts
+
+BullModule.registerQueue({
+  name: 'translation',
+  // ... existing config ...
+  processors: [
+    {
+      name: 'translate-entity',
+      concurrency: 5, // Process 5 jobs concurrently
+    },
+  ],
+  // Partition by language for better load distribution
+  defaultJobOptions: {
+    // ... existing options ...
+    // Add job ID based on entity + language for idempotency
+    jobId: (job) => {
+      const data = job.data as TranslationJobData;
+      return `${data.entityType}:${data.entityId}:${data.sourceLang}:${Date.now()}`;
+    },
+  },
+}),
+
+// Separate queues per language for better scaling
+BullModule.registerQueue({
+  name: 'translation-en',
+  // Process English translations
+}),
+
+BullModule.registerQueue({
+  name: 'translation-fr',
+  // Process French translations
+}),
+
+BullModule.registerQueue({
+  name: 'translation-de',
+  // Process German translations
+}),
+```
+
+#### Autoscaling Workers
+
+```typescript
+// api/src/translation/queue-monitor.service.ts
+
+@Injectable()
+export class QueueMonitorService {
+  constructor(
+    @InjectQueue('translation') private translationQueue: Queue,
+  ) {}
+
+  /**
+   * Monitor queue depth and trigger autoscaling
+   */
+  @Cron(CronExpression.EVERY_MINUTE)
+  async monitorQueueDepth() {
+    const waiting = await this.translationQueue.getWaitingCount();
+    const active = await this.translationQueue.getActiveCount();
+    const total = waiting + active;
+
+    // Alert if queue depth exceeds threshold
+    if (total > 1000) {
+      this.logger.warn(`Queue depth critical: ${total} jobs waiting/active`);
+      // TODO: Trigger autoscaling (e.g., via Render API, Kubernetes HPA, etc.)
+    }
+
+    // Metrics for dashboard
+    // TODO: Send to monitoring system (Prometheus, DataDog, etc.)
+  }
+}
+```
+
+### 4. MT Provider Throttling
+
+```typescript
+// api/src/translation/mt-throttle.service.ts
+
+import { Injectable } from '@nestjs/common';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
+
+@Injectable()
+export class MTThrottleService {
+  private readonly deeplLimiter: RateLimiterMemory;
+  private readonly googleLimiter: RateLimiterMemory;
+
+  constructor() {
+    // DeepL: 500,000 chars/month free, ~16,666 chars/day
+    // Pro: 5M chars/month, ~166,666 chars/day
+    this.deeplLimiter = new RateLimiterMemory({
+      points: 5000, // Characters per minute
+      duration: 60,
+    });
+
+    // Google: 500,000 chars/day free
+    this.googleLimiter = new RateLimiterMemory({
+      points: 10000, // Characters per minute
+      duration: 60,
+    });
+  }
+
+  async throttleDeepL(characters: number): Promise<void> {
+    try {
+      await this.deeplLimiter.consume('deepl', characters);
+    } catch (rejRes) {
+      throw new Error(
+        `DeepL rate limit exceeded. Retry after ${Math.ceil(rejRes.msBeforeNext / 1000)}s`,
+      );
+    }
+  }
+
+  async throttleGoogle(characters: number): Promise<void> {
+    try {
+      await this.googleLimiter.consume('google', characters);
+    } catch (rejRes) {
+      throw new Error(
+        `Google rate limit exceeded. Retry after ${Math.ceil(rejRes.msBeforeNext / 1000)}s`,
+      );
+    }
+  }
+}
+
+// Use in translation processor:
+await this.mtThrottle.throttleDeepL(sourceText.length);
+const translated = await this.deepLService.translate(...);
+```
+
+### 5. SSR Preloading (For Future SSR Migration)
+
+```typescript
+// frontend/src/i18n/ssr-preload.ts
+// Note: Currently using Vite/SPA, but prepare for future SSR migration
+
+export async function preloadTranslationsForRoute(
+  locale: string,
+  route: string,
+): Promise<void> {
+  // Map routes to required namespaces
+  const routeNamespaces: Record<string, string[]> = {
+    '/dashboard': ['common', 'dashboard'],
+    '/auth/login': ['common', 'auth'],
+    '/products': ['common', 'marketplace'],
+    // ... more routes
+  };
+
+  const namespaces = routeNamespaces[route] || ['common'];
+  
+  // Preload in parallel
+  await Promise.all(
+    namespaces.map((ns) => i18n.loadNamespaces(ns))
+  );
+}
+
+// For Next.js SSR (future):
+// export async function getServerSideTranslations(locale: string, namespaces: string[]) {
+//   const translations = await fetchTranslationsFromAPI(locale, namespaces);
+//   return translations;
+// }
+```
+
+### 6. SEO: Localized Sitemaps & hreflang
+
+```typescript
+// api/src/seo/sitemap.service.ts
+
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+
+@Injectable()
+export class SitemapService {
+  constructor(private prisma: PrismaService) {}
+
+  /**
+   * Generate sitemap with hreflang tags
+   */
+  async generateSitemap(): Promise<string> {
+    const baseUrl = process.env.FRONTEND_URL || 'https://pc-solutions.ch';
+    const languages = ['en', 'fr', 'de'];
+
+    // Get all public pages
+    const pages = await this.getPublicPages();
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">`;
+
+    for (const page of pages) {
+      xml += `
+  <url>
+    <loc>${baseUrl}${page.path}</loc>`;
+
+      // Add hreflang for each language
+      for (const lang of languages) {
+        xml += `
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}/${lang}${page.path}" />`;
+      }
+
+      // Default language
+      xml += `
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${page.path}" />
+    <lastmod>${page.updatedAt.toISOString()}</lastmod>
+    <changefreq>${page.changefreq || 'weekly'}</changefreq>
+    <priority>${page.priority || '0.8'}</priority>
+  </url>`;
+    }
+
+    xml += `
+</urlset>`;
+
+    return xml;
+  }
+
+  private async getPublicPages(): Promise<Array<{
+    path: string;
+    updatedAt: Date;
+    changefreq?: string;
+    priority?: number;
+  }>> {
+    // Get dynamic pages (products, articles, etc.)
+    const products = await this.prisma.product.findMany({
+      where: { published: true },
+      select: { id: true, updatedAt: true },
+    });
+
+    return [
+      { path: '/', updatedAt: new Date(), priority: 1.0 },
+      { path: '/products', updatedAt: new Date(), priority: 0.9 },
+      ...products.map((p) => ({
+        path: `/products/${p.id}`,
+        updatedAt: p.updatedAt,
+        priority: 0.8,
+      })),
+    ];
+  }
+}
+
+// Controller endpoint
+@Get('sitemap.xml')
+async getSitemap(@Res() res: Response) {
+  const sitemap = await this.sitemapService.generateSitemap();
+  res.setHeader('Content-Type', 'application/xml');
+  res.send(sitemap);
+}
+```
+
+### 7. Pseudolocalization Mode
+
+```typescript
+// frontend/src/i18n/pseudolocalization.ts
+
+/**
+ * Pseudolocalization: Transform translations to catch UI issues
+ * - Shows text expansion (German-like)
+ * - Highlights concatenation issues
+ * - Makes missing translations obvious
+ */
+export function pseudolocalize(text: string): string {
+  // Add brackets to show boundaries
+  let result = `[${text}]`;
+
+  // Expand text (simulate German being 30% longer)
+  result = result.replace(/([a-zA-Z])/g, (match) => {
+    // Duplicate some characters to simulate expansion
+    if (Math.random() > 0.7) {
+      return match + match.toLowerCase();
+    }
+    return match;
+  });
+
+  // Add accents to catch encoding issues
+  result = result.replace(/a/g, 'à').replace(/e/g, 'é').replace(/i/g, 'î');
+
+  return result;
+}
+
+// Enable in staging via environment variable
+if (import.meta.env.VITE_PSEUDOLOCALIZE === 'true') {
+  i18n.on('languageChanged', (lng) => {
+    // Wrap translation function
+    const originalT = i18n.t;
+    i18n.t = function (key: string, options?: any) {
+      const translated = originalT.call(this, key, options);
+      return pseudolocalize(translated);
+    };
+  });
+}
+```
+
+### 8. Comprehensive Observability Dashboard
+
+```typescript
+// api/src/translation/translation-metrics.service.ts
+
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+
+@Injectable()
+export class TranslationMetricsService {
+  constructor(
+    private prisma: PrismaService,
+    @InjectQueue('translation') private translationQueue: Queue,
+  ) {}
+
+  /**
+   * Get comprehensive metrics for dashboard
+   */
+  async getMetrics(): Promise<{
+    queue: {
+      waiting: number;
+      active: number;
+      completed: number;
+      failed: number;
+      delayed: number;
+    };
+    mt: {
+      latency: {
+        p50: number;
+        p95: number;
+        p99: number;
+      };
+      errorRate: number;
+      costToday: number;
+      charactersToday: number;
+    };
+    cache: {
+      hitRatio: number;
+      missCount: number;
+    };
+    api: {
+      ttfB: {
+        p50: number;
+        p95: number;
+        p99: number;
+      };
+      requestsToday: number;
+    };
+  }> {
+    // Queue metrics
+    const [waiting, active, completed, failed, delayed] = await Promise.all([
+      this.translationQueue.getWaitingCount(),
+      this.translationQueue.getActiveCount(),
+      this.translationQueue.getCompletedCount(),
+      this.translationQueue.getFailedCount(),
+      this.translationQueue.getDelayedCount(),
+    ]);
+
+    // MT metrics (from cost tracking)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const mtUsage = await this.prisma.mTCostTracking.findMany({
+      where: { date: { gte: today } },
+    });
+
+    const costToday = mtUsage.reduce((sum, r) => sum + Number(r.cost), 0);
+    const charactersToday = mtUsage.reduce((sum, r) => sum + r.characters, 0);
+
+    // TODO: Calculate latency percentiles from logs/metrics
+    // This would require storing request timestamps
+    const latency = {
+      p50: 0, // Calculate from stored metrics
+      p95: 0,
+      p99: 0,
+    };
+
+    // Cache metrics (from Redis)
+    // TODO: Track cache hits/misses in Redis
+    const cache = {
+      hitRatio: 0.85, // Calculate from cache stats
+      missCount: 0,
+    };
+
+    // API TTFB metrics
+    // TODO: Track response times for /static-translations endpoint
+    const api = {
+      ttfB: {
+        p50: 0,
+        p95: 0,
+        p99: 0,
+      },
+      requestsToday: 0,
+    };
+
+    return {
+      queue: { waiting, active, completed, failed, delayed },
+      mt: {
+        latency,
+        errorRate: failed / (completed + failed) || 0,
+        costToday,
+        charactersToday,
+      },
+      cache,
+      api,
+    };
+  }
+}
+
+// Controller endpoint
+@Get('admin/metrics')
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+async getMetrics() {
+  return this.metricsService.getMetrics();
+}
+```
+
+### 9. Enhanced Alerting System
+
+```typescript
+// api/src/translation/translation-alerts.service.ts
+
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { TranslationMetricsService } from './translation-metrics.service';
+import { CostTrackingService } from './cost-tracking.service';
+
+@Injectable()
+export class TranslationAlertsService {
+  private readonly logger = new Logger(TranslationAlertsService.name);
+
+  constructor(
+    private metricsService: TranslationMetricsService,
+    private costTracking: CostTrackingService,
+  ) {}
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  async checkAlerts() {
+    const metrics = await this.metricsService.getMetrics();
+
+    // Queue backlog alert
+    if (metrics.queue.waiting > 1000) {
+      await this.sendAlert({
+        type: 'queue_backlog',
+        severity: 'critical',
+        message: `Translation queue backlog: ${metrics.queue.waiting} jobs waiting`,
+        data: metrics.queue,
+      });
+    }
+
+    // Cache miss spike alert
+    if (metrics.cache.hitRatio < 0.7) {
+      await this.sendAlert({
+        type: 'cache_miss_spike',
+        severity: 'warning',
+        message: `Cache hit ratio dropped to ${(metrics.cache.hitRatio * 100).toFixed(1)}%`,
+        data: metrics.cache,
+      });
+    }
+
+    // Cost overrun alert (handled in CostTrackingService, but log here too)
+    const usage = await this.costTracking.getMonthlyUsage();
+    const budget = parseFloat(process.env.MT_MONTHLY_BUDGET_CHF || '500');
+    const percentage = (usage.totalCost / budget) * 100;
+
+    if (percentage >= 100) {
+      await this.sendAlert({
+        type: 'cost_overrun',
+        severity: 'critical',
+        message: `MT budget exceeded: CHF ${usage.totalCost.toFixed(2)} / CHF ${budget}`,
+        data: usage,
+      });
+    } else if (percentage >= 80) {
+      await this.sendAlert({
+        type: 'cost_warning',
+        severity: 'warning',
+        message: `MT budget at ${percentage.toFixed(1)}%: CHF ${usage.totalCost.toFixed(2)} / CHF ${budget}`,
+        data: usage,
+      });
+    }
+
+    // MT error rate alert
+    if (metrics.mt.errorRate > 0.05) {
+      await this.sendAlert({
+        type: 'mt_error_rate',
+        severity: 'warning',
+        message: `MT error rate: ${(metrics.mt.errorRate * 100).toFixed(1)}%`,
+        data: metrics.mt,
+      });
+    }
+  }
+
+  private async sendAlert(alert: {
+    type: string;
+    severity: 'info' | 'warning' | 'critical';
+    message: string;
+    data: any;
+  }): Promise<void> {
+    this.logger[alert.severity === 'critical' ? 'error' : 'warn'](alert.message, alert.data);
+
+    // TODO: Send to alerting system (PagerDuty, Slack, email, etc.)
+    // Example:
+    // await this.slackService.sendAlert(alert);
+    // await this.emailService.sendAlert(alert);
+  }
+}
+```
+
+### 10. Dashboard UI Component
+
+```typescript
+// admin/src/pages/TranslationMetrics.tsx
+
+export default function TranslationMetrics() {
+  const [metrics, setMetrics] = useState(null);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const response = await fetch('/api/static-translations/admin/metrics');
+      const data = await response.json();
+      setMetrics(data);
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!metrics) return <div>Loading...</div>;
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Translation Metrics</h1>
+
+      {/* Queue Metrics */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <MetricCard title="Waiting" value={metrics.queue.waiting} />
+        <MetricCard title="Active" value={metrics.queue.active} />
+        <MetricCard title="Completed" value={metrics.queue.completed} />
+        <MetricCard title="Failed" value={metrics.queue.failed} />
+      </div>
+
+      {/* MT Metrics */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <MetricCard title="Cost Today" value={`CHF ${metrics.mt.costToday.toFixed(2)}`} />
+        <MetricCard title="Characters Today" value={metrics.mt.charactersToday.toLocaleString()} />
+        <MetricCard title="Error Rate" value={`${(metrics.mt.errorRate * 100).toFixed(1)}%`} />
+        <MetricCard title="Cache Hit Ratio" value={`${(metrics.cache.hitRatio * 100).toFixed(1)}%`} />
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-2 gap-4">
+        <QueueDepthChart data={metrics.queue} />
+        <CostChart data={metrics.mt} />
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
 ## 📊 Monitoring & Observability
 
 ### Metrics to Track
 
 1. **Static Translations**
-   - API response times
-   - Cache hit rates
-   - Missing translation keys
+   - API response times (p50, p95, p99 TTFB)
+   - Cache hit rates (Redis, IndexedDB, HTTP)
+   - Missing translation keys by namespace
+   - ETag hit rate (304 responses)
 
 2. **Dynamic Translations**
-   - Queue depth
-   - Job processing time
-   - MT API costs
-   - Translation coverage
+   - Queue depth (waiting, active, delayed)
+   - Job processing time (p50, p95, p99)
+   - MT API costs (daily, monthly, by provider)
+   - Translation coverage (% of entities translated)
+   - Translation Memory hit rate
+
+3. **System Health**
+   - Redis connection status
+   - Database query performance
+   - Worker availability
+   - API error rates
 
 ### Logging
 
 ```typescript
-// Log translation requests
+// Structured logging with correlation IDs
+this.logger.log('Translation request', {
+  correlationId: req.id,
+  lang,
+  namespace,
+  responseTime: Date.now() - startTime,
+  cacheHit: true,
+});
+
 // Log queue job status
-// Log MT API errors
-// Log cache misses
+this.logger.log('Translation job completed', {
+  jobId: job.id,
+  entityType,
+  entityId,
+  duration: Date.now() - job.timestamp,
+  success: true,
+});
+
+// Log MT API errors with context
+this.logger.error('DeepL translation failed', {
+  error: error.message,
+  sourceLang,
+  targetLang,
+  textLength: sourceText.length,
+  retryCount: job.attemptsMade,
+});
 ```
 
 ### Alerts
 
-- Queue depth > 1000
-- MT API errors > 5%
+**Critical Alerts:**
+- Queue depth > 1000 (immediate action required)
+- MT budget exceeded (100%)
+- Cache hit rate < 70% (performance degradation)
+- Worker unavailability > 5 minutes
+
+**Warning Alerts:**
+- Queue depth > 500
+- MT budget at 80%
 - Cache hit rate < 80%
-- Missing translations > 10%
+- MT error rate > 5%
+- API p95 TTFB > 500ms
+
+**Info Alerts:**
+- Translation Memory hit rate < 50%
+- Missing translations > 10% in any namespace
+- Daily cost > 20% of monthly budget
+
+### Dashboard Components
+
+1. **Queue Health Dashboard**
+   - Real-time queue depth graph
+   - Job processing rate
+   - Failed jobs breakdown
+   - Worker utilization
+
+2. **MT Cost Dashboard**
+   - Daily/monthly cost trends
+   - Cost by provider
+   - Cost by language pair
+   - Budget progress bar
+
+3. **Performance Dashboard**
+   - API response time percentiles
+   - Cache hit ratio trends
+   - Translation Memory effectiveness
+   - Request volume
+
+4. **Quality Dashboard**
+   - Translation coverage by entity type
+   - Missing translations by namespace
+   - Review status breakdown
+   - Approval rate
 
 ---
 
@@ -2805,16 +3567,39 @@ This enhanced unified plan provides:
 - Proper fallback chain (fr-CH → fr → en)
 - ICU formatting for dates, currency, numbers
 
+#### ✅ Future-Proofing Enhancements
+- **Precomputed bundles**: Redis-backed precomputation for all (lang, ns) combinations
+- **Field-level hashes**: Granular change detection to only re-translate changed fields
+- **Queue partitioning**: Separate queues per language for better scaling
+- **Autoscaling workers**: Queue depth monitoring with autoscaling triggers
+- **MT provider throttling**: Rate limiting per provider to prevent quota exhaustion
+- **SSR preloading**: Route-based namespace preloading (ready for SSR migration)
+- **SEO optimization**: Localized sitemaps with hreflang tags
+- **Pseudolocalization**: Staging mode to catch UI issues early
+- **Comprehensive observability**: Full metrics dashboard with queue, MT, cache, and API metrics
+- **Enhanced alerting**: Multi-level alerts (critical, warning, info) with automated notifications
+
 ### Implementation Timeline
 
-**Total Implementation Time**: 10-12 days (enhanced from 7-10)
+**Total Implementation Time**: 12-15 days (core) + 3-5 days (future-proofing)
 
+**Phase 1: Core Implementation (12-15 days)**
 - **Days 1-2**: Database schema + migrations
 - **Days 2-4**: Backend services (static, dynamic, TM, cost tracking)
 - **Days 4-6**: Frontend runtime loading + version support
 - **Days 6-8**: Admin UI with governance features
 - **Days 8-10**: Security, PII stripping, testing
-- **Days 10-12**: Deployment, monitoring setup, documentation
+- **Days 10-12**: Deployment, basic monitoring, documentation
+- **Days 12-15**: Bug fixes, optimization, production hardening
+
+**Phase 2: Future-Proofing (3-5 days, can be done incrementally)**
+- Precomputed bundles + scheduled jobs
+- Queue partitioning + autoscaling setup
+- MT provider throttling
+- SEO sitemaps + hreflang
+- Comprehensive observability dashboard
+- Enhanced alerting system
+- Pseudolocalization mode
 
 ### Key Improvements Over Original Plan
 
@@ -2828,6 +3613,14 @@ This enhanced unified plan provides:
 | Release management | ❌ None | ✅ Version releases + promotion |
 | Audit logging | ❌ None | ✅ Full audit trail |
 | Language mapping | ⚠️ Basic | ✅ EN-GB normalization |
+| Precomputed bundles | ❌ None | ✅ Redis-backed precomputation |
+| Field-level hashes | ❌ None | ✅ Granular change detection |
+| Queue partitioning | ❌ Single queue | ✅ Language-based partitioning |
+| Autoscaling | ❌ Manual | ✅ Queue depth-based autoscaling |
+| MT throttling | ❌ None | ✅ Provider-specific rate limiting |
+| SEO optimization | ❌ None | ✅ Sitemaps + hreflang |
+| Pseudolocalization | ❌ None | ✅ Staging mode support |
+| Observability | ⚠️ Basic logs | ✅ Comprehensive dashboard + alerts |
 
 ### Environment Variables Required
 
