@@ -514,12 +514,12 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 1 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {rolesConfig.map(({ role, nameKey, icon: Icon }) => (
+                {rolesConfig.map(({ role, nameKey, icon: Icon }, index) => (
                   <button 
                     key={role} 
                     onClick={() => handleRoleSelect(role)} 
                     aria-pressed={selectedRole === role}
-                    className="p-6 border-2 rounded-lg text-center transition-all duration-200 ease-in-out hover:shadow-lg hover:border-swiss-mint hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint border-gray-300 bg-white"
+                    className={`p-6 border-2 rounded-lg text-center transition-all duration-200 ease-in-out hover:shadow-lg hover:border-swiss-mint hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint border-gray-300 bg-white ${index === rolesConfig.length - 1 ? 'sm:col-span-2' : ''}`}
                   >
                     <Icon className="w-10 h-10 mx-auto mb-2 text-gray-400" />
                     <span className="block font-semibold text-swiss-charcoal">{t(nameKey)}</span>
