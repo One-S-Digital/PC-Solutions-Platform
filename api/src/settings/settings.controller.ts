@@ -188,6 +188,8 @@ export class SettingsController {
         skills: user.skills ?? [],
         availability: user.availability ?? '',
         cvUrl: user.cvUrl ?? '',
+        shortBio: user.shortBio ?? '',
+        avatarAssetId: user.avatarAssetId ?? '',
       },
     };
   }
@@ -209,11 +211,13 @@ export class SettingsController {
           phoneNumber: settings.phoneNumber,
           workExperience: settings.workExperience,
           education: settings.education,
-          certifications: settings.certifications,
-          skills: settings.skills,
-          availability: settings.availability,
-          cvUrl: settings.cvUrl,
-        },
+        certifications: settings.certifications,
+        skills: settings.skills,
+        availability: settings.availability,
+        cvUrl: settings.cvUrl,
+        shortBio: settings.shortBio,
+        avatarAssetId: settings.avatarAssetId,
+      },
       });
 
       if (settings.email) {

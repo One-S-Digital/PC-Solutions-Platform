@@ -12,10 +12,13 @@ import {
 } from '@heroicons/react/24/outline';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
-import { User, UserRole, Product, Service, JobListing } from '../../types';
+import { User, UserRole, Product, Service, JobListing, Organization } from '../../types';
 
 type OrganizationPublicProfileProps = {
-  user: User;
+  user?: User; // Optional - for backward compatibility
+  organization?: Organization; // New - direct organization data
+  organizationId?: string; // New - fetch by ID (not implemented yet, for future use)
+  showActions?: boolean; // New - show/hide action buttons
 };
 
 const SectionTitle: React.FC<{ icon: React.ElementType; title: string }> = ({ icon: Icon, title }) => (
@@ -25,20 +28,30 @@ const SectionTitle: React.FC<{ icon: React.ElementType; title: string }> = ({ ic
   </h2>
 );
 
-const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ user }) => {
+const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ 
+  user, 
+  organization: organizationProp, 
+  showActions = true 
+}) => {
   const { t } = useTranslation(['profile', 'common']);
-  const organization = user.primaryOrganization;
+  
+  // Support both ways: from user.primaryOrganization or direct organization prop
+  const organization = organizationProp || user?.primaryOrganization;
 
   if (!organization) {
     return null;
   }
 
-  const role = user.role;
-  const organizationName = organization.name || user.orgName || 'Organization';
+  // Determine role from organization type or user role
+  const role = user?.role || (organization.type === 'FOUNDATION' ? UserRole.FOUNDATION : 
+                              organization.type === 'PRODUCT_SUPPLIER' ? UserRole.PRODUCT_SUPPLIER : 
+                              UserRole.SERVICE_PROVIDER);
+  
+  const organizationName = organization.name || user?.orgName || 'Organization';
   const coverImageUrl =
-    organization.coverImageUrl ?? user.orgCoverImageUrl ?? `https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80`;
+    organization.coverImageUrl ?? user?.orgCoverImageUrl ?? `https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80`;
   const logoUrl =
-    organization.logoUrl ?? user.orgLogoUrl ??
+    organization.logoUrl ?? user?.orgLogoUrl ??
     `https://ui-avatars.com/api/?name=${encodeURIComponent(organizationName)}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
 
   const tagList = useMemo(() => {
@@ -72,9 +85,9 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ u
         </div>
         <div className="p-6 pt-28 sm:pt-6 sm:pl-36 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-swiss-charcoal">{organization.name || user.orgName || t('profile:organization.unnamed', 'Unnamed Organization')}</h1>
+            <h1 className="text-3xl font-bold text-swiss-charcoal">{organization.name || user?.orgName || t('profile:organization.unnamed', 'Unnamed Organization')}</h1>
             <p className="text-gray-500 capitalize">
-              {organization.type?.toString()?.replace(/_/g, ' ').toLowerCase() || user.orgType?.toString()?.replace(/_/g, ' ').toLowerCase() || ''}
+              {organization.type?.toString()?.replace(/_/g, ' ').toLowerCase() || user?.orgType?.toString()?.replace(/_/g, ' ').toLowerCase() || ''}
             </p>
             {!!tagList.length && (
               <div className="mt-3 flex flex-wrap gap-2">
@@ -86,24 +99,26 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ u
               </div>
             )}
           </div>
-            <div className="flex flex-wrap gap-2">
-              {organization.directOrderLink && (
-                <Button
-                  variant="secondary"
-                  onClick={() => window.open(organization.directOrderLink!, '_blank', 'noopener,noreferrer')}
-                >
-                  {t('profile:organization.actions.directOrder', { defaultValue: 'Direct Order' })}
-                </Button>
-              )}
-              {organization.bookingLink && (
-                <Button
-                  variant="outline"
-                  onClick={() => window.open(organization.bookingLink!, '_blank', 'noopener,noreferrer')}
-                >
-                  {t('profile:organization.actions.bookNow', { defaultValue: 'Book Now' })}
-                </Button>
-              )}
-            </div>
+            {showActions && (
+              <div className="flex flex-wrap gap-2">
+                {organization.directOrderLink && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => window.open(organization.directOrderLink!, '_blank', 'noopener,noreferrer')}
+                  >
+                    {t('profile:organization.actions.directOrder', { defaultValue: 'Direct Order' })}
+                  </Button>
+                )}
+                {organization.bookingLink && (
+                  <Button
+                    variant="outline"
+                    onClick={() => window.open(organization.bookingLink!, '_blank', 'noopener,noreferrer')}
+                  >
+                    {t('profile:organization.actions.bookNow', { defaultValue: 'Book Now' })}
+                  </Button>
+                )}
+              </div>
+            )}
         </div>
       </Card>
 
@@ -145,12 +160,20 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ u
                   </a>
                 </p>
               )}
-              <p className="flex items-center gap-2">
-                <EnvelopeIcon className="w-4 h-4 text-gray-400" />
-                <a href={`mailto:${user.email}`} className="hover:text-swiss-mint">
-                  {user.email}
-                </a>
-              </p>
+              {user?.email && (
+                <p className="flex items-center gap-2">
+                  <EnvelopeIcon className="w-4 h-4 text-gray-400" />
+                  <a href={`mailto:${user.email}`} className="hover:text-swiss-mint">
+                    {user.email}
+                  </a>
+                </p>
+              )}
+              {organization.contactPerson && !user?.email && (
+                <p className="flex items-center gap-2">
+                  <EnvelopeIcon className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-600">{organization.contactPerson}</span>
+                </p>
+              )}
               {organization.bookingLink && (
                 <p className="flex items-center gap-2">
                   <GlobeAltIcon className="w-4 h-4 text-gray-400" />

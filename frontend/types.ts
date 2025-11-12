@@ -644,6 +644,9 @@ interface BaseSettings {
     teamMembers?: TeamMember[];
     hidePubliclyToggle?: boolean;
     gdprDataDeletionRequestMade?: boolean;
+    // Educator-specific fields
+    shortBio?: string;
+    avatarAssetId?: string;
 }
 
 // Supplier-specific settings

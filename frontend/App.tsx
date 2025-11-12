@@ -77,6 +77,8 @@ import ParentDashboardPage from './pages/parent/ParentDashboardPage';
 import ParentSupportPage from './pages/parent/ParentSupportPage';
 import PricingPage from './pages/PricingPage';
 import ProfilePage from './pages/ProfilePage';
+import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
+import EducatorProfileViewPage from './pages/profile/EducatorProfileViewPage';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
@@ -204,6 +206,23 @@ const ProtectedLayout: React.FC = () => {
             element={
               <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Frontend-facing profile routes */}
+          <Route
+            path="/profile/organization/:id"
+            element={
+              <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.EDUCATOR, UserRole.PARENT]}>
+                <OrganizationProfileViewPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/educator/:id"
+            element={
+              <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
+                <EducatorProfileViewPage />
               </ProtectedRoute>
             }
           />

@@ -145,6 +145,11 @@ model User {
   skills         String[] // Array of skills
   availability   String? // Availability information
   cvUrl          String? // URL to CV document
+  shortBio       String? // Short bio/description for profile
+
+  // Avatar asset relation
+  avatarAssetId  String?
+  avatarAsset    Asset?   @relation("UserAvatar", fields: [avatarAssetId], references: [id])
 
   // Stripe integration
   stripeCustomerId String? @unique
@@ -281,6 +286,9 @@ model Asset {
   // Organization asset relations
   organizationLogos  Organization[] @relation("OrganizationLogo")
   organizationCovers Organization[] @relation("OrganizationCover")
+
+  // User asset relations
+  userAvatars User[] @relation("UserAvatar")
 
   // Product relations
   products Product[]

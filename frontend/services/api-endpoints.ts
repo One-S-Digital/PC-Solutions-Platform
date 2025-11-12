@@ -22,6 +22,7 @@ export const API_ENDPOINTS = {
     get: '/profiles/me',
     update: '/profiles/me',
     organization: '/profiles/organization',
+    organizationById: (id: string) => `/profiles/organization/${id}`,
   },
 
   // Dashboard data

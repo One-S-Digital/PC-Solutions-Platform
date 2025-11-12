@@ -105,6 +105,23 @@ const ProfilePage: React.FC = () => {
           <p className="mt-2 text-sm text-gray-500 max-w-2xl">{t('profile:subtitle')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          {/* View Frontend-Facing Profile Button */}
+          {currentUser.role === UserRole.EDUCATOR && currentUser.id && (
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(`/profile/educator/${currentUser.id}`)}
+            >
+              {t('profile:actions.viewPublicProfile', 'View Public Profile')}
+            </Button>
+          )}
+          {shouldShowPublicOrganizationProfile && hasPrimaryOrganization && currentUser.primaryOrganization?.id && (
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(`/profile/organization/${currentUser.primaryOrganization!.id}`)}
+            >
+              {t('profile:actions.viewOrganizationProfile', 'View Organization Profile')}
+            </Button>
+          )}
           <Button variant="light" onClick={() => navigate('/settings')}>
             {t('profile:actions.goToSettings')}
           </Button>
@@ -116,10 +133,23 @@ const ProfilePage: React.FC = () => {
             {hasPrimaryOrganization ? (
               <>
                 <Card className="p-6 bg-swiss-mint/5 border border-swiss-mint/40 text-sm text-swiss-charcoal">
-                  {t(
-                    'profile:publicViewNotice',
-                    'This preview shows how your organization profile appears to other users on the platform.',
-                  )}
+                  <div className="flex items-start justify-between gap-4">
+                    <p>
+                      {t(
+                        'profile:publicViewNotice',
+                        'This preview shows how your organization profile appears to other users on the platform.',
+                      )}
+                    </p>
+                    {currentUser.primaryOrganization?.id && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate(`/profile/organization/${currentUser.primaryOrganization!.id}`)}
+                      >
+                        {t('profile:actions.viewFullProfile', 'View Full Profile')}
+                      </Button>
+                    )}
+                  </div>
                 </Card>
                 <OrganizationPublicProfile user={currentUser} />
               </>

@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrincipalService } from '../principal/principal.service';
 
 const userProfileInclude = {
+  avatarAsset: true,
   organizations: {
     include: {
       organization: {
@@ -69,6 +70,8 @@ export class UsersService {
         skills: [],
         availability: null,
         cvUrl: null,
+        shortBio: null,
+        avatarAssetId: null,
         stripeCustomerId: null,
         lastActiveAt: null,
         isActive: true,
@@ -204,6 +207,8 @@ export class UsersService {
       skills: user.skills ?? [],
       availability: user.availability,
       cvUrl: user.cvUrl,
+      shortBio: user.shortBio,
+      avatarAssetId: user.avatarAssetId,
       stripeCustomerId: user.stripeCustomerId,
       lastActiveAt: this.serializeDate(user.lastActiveAt),
       isActive: user.isActive,
@@ -214,7 +219,7 @@ export class UsersService {
       status: user.isActive ? 'Active' : 'Inactive',
       memberSince: this.serializeDate(user.createdAt),
       lastLogin: this.serializeDate(user.lastActiveAt),
-      avatarUrl: primaryOrganization?.logoUrl ?? null,
+      avatarUrl: user.avatarAsset?.publicUrl ?? primaryOrganization?.logoUrl ?? null,
       orgId: primaryOrganization?.id,
       orgName: primaryOrganization?.name,
       orgType: primaryOrganization?.type,

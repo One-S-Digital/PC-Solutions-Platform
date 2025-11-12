@@ -36,4 +36,10 @@ export class UpdateEducatorSettingsDto {
 
   @IsString()
   cvUrl: string;
+
+  @IsString()
+  shortBio?: string;
+
+  @IsString()
+  avatarAssetId?: string;
 }

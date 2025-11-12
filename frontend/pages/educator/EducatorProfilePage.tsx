@@ -1,5 +1,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { STANDARD_INPUT_FIELD } from '../../constants';
@@ -34,6 +35,7 @@ const SectionCard: React.FC<{ titleKey: string; icon: React.ElementType; childre
 
 const EducatorProfilePage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
+  const navigate = useNavigate();
   const { currentUser } = useAppContext();
   const { getCandidateById } = useRecruitmentApi();
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
@@ -103,6 +105,14 @@ const EducatorProfilePage: React.FC = () => {
         </h1>
         <div className="flex space-x-2">
             {isEditing && <Button variant="light" onClick={() => setIsEditing(false)}>{t('common:buttons.cancel')}</Button>}
+            {!isEditing && profile && (
+              <Button 
+                variant="outline" 
+                onClick={() => navigate(`/profile/educator/${profile.id}`)}
+              >
+                {t('educatorProfilePage.viewPublicProfile', 'View Public Profile')}
+              </Button>
+            )}
             <Button variant="primary" leftIcon={isEditing ? undefined : PencilSquareIcon} onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
                 {isEditing ? t('common:buttons.saveChanges') : t('educatorProfilePage.editProfile')}
             </Button>

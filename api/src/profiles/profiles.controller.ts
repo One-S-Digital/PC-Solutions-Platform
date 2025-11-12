@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -19,6 +19,8 @@ export class UpdateProfileDto {
   skills?: string[];
   availability?: string;
   cvUrl?: string;
+  shortBio?: string;
+  avatarAssetId?: string;
   // Organization fields
   organizationName?: string;
   contactPerson?: string;
@@ -81,7 +83,22 @@ export class ProfileController {
       throw new UnauthorizedException('Authenticated user context missing');
     }
 
-    const user = await this.usersService.findByClerkId(clerkId);
+    const user = await this.prisma.user.findFirst({
+      where: { clerkId },
+      include: {
+        avatarAsset: true,
+        organizations: {
+          include: {
+            organization: {
+              include: {
+                logoAsset: true,
+                coverAsset: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (!user) {
       throw new Error('User not found');
@@ -123,6 +140,8 @@ export class ProfileController {
         skills: updateData.skills ?? user.skills,
         availability: updateData.availability ?? user.availability,
         cvUrl: updateData.cvUrl ?? user.cvUrl,
+        shortBio: updateData.shortBio !== undefined ? updateData.shortBio : user.shortBio,
+        avatarAssetId: updateData.avatarAssetId !== undefined ? updateData.avatarAssetId : user.avatarAssetId,
       },
     });
 
@@ -267,6 +286,49 @@ export class ProfileController {
     return {
       success: true,
       data: parentLeads,
+    };
+  }
+
+  @Get('organization/:id')
+  @ApiOperation({ summary: 'Get organization profile by ID' })
+  @ApiResponse({ status: 200, description: 'Organization profile retrieved successfully' })
+  async getOrganizationProfile(@Param('id') id: string) {
+    const organization = await this.prisma.organization.findUnique({
+      where: { id },
+      include: {
+        products: {
+          where: { isActive: true },
+          include: {
+            imageAsset: true,
+          },
+        },
+        services: {
+          where: { isActive: true },
+        },
+        jobListings: {
+          where: { status: 'PUBLISHED' },
+        },
+        logoAsset: true,
+        coverAsset: true,
+        members: {
+          include: {
+            user: {
+              include: {
+                avatarAsset: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    return {
+      success: true,
+      data: organization,
     };
   }
 

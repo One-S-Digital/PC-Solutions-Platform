@@ -106,6 +106,23 @@ const SettingsPage: React.FC = () => {
             deliveryType: data.deliveryType || '',
             bookingLink: data.bookingLink || '',
           } as Partial<SettingsFormData>;
+        } else if (currentUser.role === UserRole.EDUCATOR) {
+          const response = await request<{ success: boolean; data?: any }>('/settings/educator');
+          const data = response.success && response.data ? response.data : {};
+          roleSettings = {
+            firstName: data.firstName || currentUser.firstName || '',
+            lastName: data.lastName || currentUser.lastName || '',
+            email: data.email || currentUser.email || '',
+            phoneNumber: data.phoneNumber || '',
+            workExperience: data.workExperience || '',
+            education: data.education || '',
+            certifications: Array.isArray(data.certifications) ? data.certifications : [],
+            skills: Array.isArray(data.skills) ? data.skills : [],
+            availability: data.availability || '',
+            cvUrl: data.cvUrl || '',
+            shortBio: data.shortBio || '',
+            avatarAssetId: data.avatarAssetId || '',
+          } as Partial<SettingsFormData>;
         }
 
         const [privacyResponse, notificationResponse] = await Promise.all([
@@ -262,6 +279,28 @@ const SettingsPage: React.FC = () => {
         );
       }
 
+      if (currentUser.role === UserRole.EDUCATOR) {
+        requests.push(
+          request('/settings/educator', {
+            method: 'PATCH',
+            body: JSON.stringify({
+              firstName: payload.firstName || '',
+              lastName: payload.lastName || '',
+              email: payload.email || currentUser.email,
+              phoneNumber: payload.phoneNumber || '',
+              workExperience: payload.workExperience || '',
+              education: payload.education || '',
+              certifications: Array.isArray(payload.certifications) ? payload.certifications : [],
+              skills: Array.isArray(payload.skills) ? payload.skills : [],
+              availability: payload.availability || '',
+              cvUrl: payload.cvUrl || '',
+              shortBio: payload.shortBio || '',
+              avatarAssetId: payload.avatarAssetId || '',
+            }),
+          })
+        );
+      }
+
       requests.push(
         request('/settings/privacy', {
           method: 'PATCH',
@@ -399,12 +438,19 @@ const SettingsPage: React.FC = () => {
 
     switch (currentUser.role) {
       case UserRole.FOUNDATION:
-        return '/profile';
+        // Link to frontend-facing organization profile if available, otherwise own profile
+        return currentUser.primaryOrganization?.id 
+          ? `/profile/organization/${currentUser.primaryOrganization.id}`
+          : '/profile';
       case UserRole.EDUCATOR:
-        return '/educator/profile';
+        // Link to frontend-facing educator profile
+        return currentUser.id ? `/profile/educator/${currentUser.id}` : '/educator/profile';
       case UserRole.PRODUCT_SUPPLIER:
       case UserRole.SERVICE_PROVIDER:
-        return '/profile';
+        // Link to frontend-facing organization profile if available, otherwise own profile
+        return currentUser.primaryOrganization?.id 
+          ? `/profile/organization/${currentUser.primaryOrganization.id}`
+          : '/profile';
       default:
         return '/profile';
     }
