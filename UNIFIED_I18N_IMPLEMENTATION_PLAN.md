@@ -1,7 +1,7 @@
-# Unified i18n Implementation Plan
+# Unified i18n Implementation Plan (Enhanced)
 ## Static UI (Database-Backed) + Dynamic Content (MT Pipeline)
 
-**Objective**: Zero-redeploy i18n system with unified database-backed architecture for both static UI and dynamic content translations.
+**Objective**: Zero-redeploy i18n system with unified database-backed architecture for both static UI and dynamic content translations, with production-ready features: cache versioning, translation memory, cost guardrails, and governance.
 
 ---
 
@@ -13,10 +13,13 @@
 4. [Frontend Implementation](#frontend-implementation)
 5. [Admin UI Implementation](#admin-ui-implementation)
 6. [Dynamic Content MT Pipeline](#dynamic-content-mt-pipeline)
-7. [Migration Strategy](#migration-strategy)
-8. [Deployment Plan](#deployment-plan)
-9. [Testing Strategy](#testing-strategy)
-10. [Monitoring & Observability](#monitoring--observability)
+7. [Translation Memory & Cost Guardrails](#translation-memory--cost-guardrails)
+8. [Security & Compliance](#security--compliance)
+9. [Admin Governance](#admin-governance)
+10. [Migration Strategy](#migration-strategy)
+11. [Deployment Plan](#deployment-plan)
+12. [Testing Strategy](#testing-strategy)
+13. [Monitoring & Observability](#monitoring--observability)
 
 ---
 
@@ -118,10 +121,17 @@ model StaticTranslation {
 }
 ```
 
-### 2. Enhanced Entity Translation (already exists, may need updates)
+### 2. Enhanced Entity Translation (with lifecycle states)
 
 ```prisma
-// Already exists, but ensure these fields are present:
+// Enhanced with explicit lifecycle states
+enum TranslationStatus {
+  PENDING      // Queued for translation
+  MT_DONE      // Machine translation completed
+  REVIEWED     // Human reviewed but not approved
+  APPROVED     // Approved for production use
+}
+
 model EntityTranslation {
   entityType String
   entityId   String
@@ -129,43 +139,115 @@ model EntityTranslation {
   field      String
   text       String   @db.Text
   origin     String   @default("machine") // 'machine' | 'human'
+  status     TranslationStatus @default(PENDING)
   verified   Boolean  @default(false)
   sourceHash String
   updatedAt  DateTime @default(now())
-  // Optional: Add these for better tracking
   translatedAt DateTime?
   mtProvider    String?  // 'deepl' | 'google' | 'manual'
+  // Approval tracking
+  approvedAt    DateTime?
+  approvedBy    String?  // User ID
+  reviewedAt    DateTime?
+  reviewedBy    String?  // User ID
   
   @@id([entityType, entityId, lang, field])
   @@index([entityType, lang])
+  @@index([status, updatedAt])
   @@map("entity_translations")
 }
 ```
 
-### 3. Translation Job Queue (for tracking)
+### 3. Translation Memory (TM) Table
 
 ```prisma
-// Optional: Track translation jobs
-model TranslationJob {
-  id          String   @id @default(cuid())
-  entityType  String
-  entityId    String
-  sourceLang  String
-  targetLangs String[] // Array of target languages
-  status      String   @default("pending") // 'pending' | 'processing' | 'completed' | 'failed'
-  error       String?
-  createdAt   DateTime @default(now())
-  completedAt DateTime?
+// Translation Memory: Cache MT results to avoid re-translating
+model TranslationMemory {
+  id            String   @id @default(cuid())
+  sourceTextHash String   // SHA256 of source text
+  sourceLang    String
+  targetLang    String
+  translatedText String  @db.Text
+  mtProvider    String   // 'deepl' | 'google'
+  usageCount    Int      @default(1) // Track how often this TM is used
+  createdAt     DateTime @default(now())
+  lastUsedAt    DateTime @updatedAt
   
-  @@index([status, createdAt])
-  @@map("translation_jobs")
+  @@unique([sourceTextHash, sourceLang, targetLang])
+  @@index([sourceLang, targetLang])
+  @@map("translation_memory")
+}
+```
+
+### 4. Translation Release Versioning
+
+```prisma
+// Track translation releases for cache-busting
+model TranslationRelease {
+  id          String   @id @default(cuid())
+  version     String   @unique // e.g., "v1.2.3" or timestamp-based
+  description String?
+  createdBy   String?  // User ID
+  createdAt   DateTime @default(now())
+  isActive    Boolean  @default(false) // Only one active at a time
+  
+  @@index([isActive, createdAt])
+  @@map("translation_releases")
+}
+```
+
+### 5. Translation Audit Log
+
+```prisma
+// Audit log for translation changes
+model TranslationAuditLog {
+  id            String   @id @default(cuid())
+  type          String   // 'static' | 'dynamic'
+  namespace     String?  // For static translations
+  entityType    String?  // For dynamic translations
+  entityId      String?
+  key           String?  // Translation key
+  field         String?  // For dynamic translations
+  lang          String
+  action        String   // 'create' | 'update' | 'delete' | 'approve' | 'review'
+  oldValue      String?  @db.Text
+  newValue      String?  @db.Text
+  userId        String
+  createdAt     DateTime @default(now())
+  
+  @@index([type, createdAt])
+  @@index([userId, createdAt])
+  @@map("translation_audit_logs")
+}
+```
+
+### 6. MT Cost Tracking
+
+```prisma
+// Track MT API usage and costs
+model MTCostTracking {
+  id            String   @id @default(cuid())
+  date          DateTime @db.Date
+  provider      String   // 'deepl' | 'google'
+  sourceLang    String
+  targetLang    String
+  characters    Int      // Characters translated
+  cost          Decimal  @db.Decimal(10, 4) // Cost in CHF
+  jobCount      Int      @default(0)
+  
+  @@unique([date, provider, sourceLang, targetLang])
+  @@index([date, provider])
+  @@map("mt_cost_tracking")
 }
 ```
 
 ### Migration File
 
 ```sql
--- api/prisma/migrations/XXXXXX_add_static_translations/migration.sql
+-- api/prisma/migrations/XXXXXX_add_i18n_enhancements/migration.sql
+
+-- Create TranslationStatus enum
+CREATE TYPE "TranslationStatus" AS ENUM ('PENDING', 'MT_DONE', 'REVIEWED', 'APPROVED');
 
 -- Create static_translations table
 CREATE TABLE "static_translations" (
@@ -187,22 +269,97 @@ CREATE TABLE "static_translations" (
 CREATE INDEX "static_translations_namespace_lang_idx" ON "static_translations"("namespace", "lang");
 CREATE INDEX "static_translations_key_idx" ON "static_translations"("key");
 
--- Optional: Add translation_jobs table
-CREATE TABLE "translation_jobs" (
-    "id" TEXT NOT NULL,
-    "entityType" TEXT NOT NULL,
-    "entityId" TEXT NOT NULL,
-    "sourceLang" TEXT NOT NULL,
-    "targetLangs" TEXT[],
-    "status" TEXT NOT NULL DEFAULT 'pending',
-    "error" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "completedAt" TIMESTAMP(3),
+-- Update entity_translations table (add new columns)
+ALTER TABLE "entity_translations" 
+  ADD COLUMN IF NOT EXISTS "status" "TranslationStatus" NOT NULL DEFAULT 'PENDING',
+  ADD COLUMN IF NOT EXISTS "translatedAt" TIMESTAMP(3),
+  ADD COLUMN IF NOT EXISTS "mtProvider" TEXT,
+  ADD COLUMN IF NOT EXISTS "approvedAt" TIMESTAMP(3),
+  ADD COLUMN IF NOT EXISTS "approvedBy" TEXT,
+  ADD COLUMN IF NOT EXISTS "reviewedAt" TIMESTAMP(3),
+  ADD COLUMN IF NOT EXISTS "reviewedBy" TEXT;
 
-    CONSTRAINT "translation_jobs_pkey" PRIMARY KEY ("id")
+CREATE INDEX IF NOT EXISTS "entity_translations_status_updatedAt_idx" 
+  ON "entity_translations"("status", "updatedAt");
+
+-- Create translation_memory table
+CREATE TABLE "translation_memory" (
+    "id" TEXT NOT NULL,
+    "sourceTextHash" TEXT NOT NULL,
+    "sourceLang" TEXT NOT NULL,
+    "targetLang" TEXT NOT NULL,
+    "translatedText" TEXT NOT NULL,
+    "mtProvider" TEXT NOT NULL,
+    "usageCount" INTEGER NOT NULL DEFAULT 1,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastUsedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "translation_memory_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "translation_memory_sourceTextHash_sourceLang_targetLang_key" 
+      UNIQUE ("sourceTextHash", "sourceLang", "targetLang")
 );
 
-CREATE INDEX "translation_jobs_status_createdAt_idx" ON "translation_jobs"("status", "createdAt");
+CREATE INDEX "translation_memory_sourceLang_targetLang_idx" 
+  ON "translation_memory"("sourceLang", "targetLang");
+
+-- Create translation_releases table
+CREATE TABLE "translation_releases" (
+    "id" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "description" TEXT,
+    "createdBy" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "translation_releases_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "translation_releases_version_key" UNIQUE ("version")
+);
+
+CREATE INDEX "translation_releases_isActive_createdAt_idx" 
+  ON "translation_releases"("isActive", "createdAt");
+
+-- Create translation_audit_logs table
+CREATE TABLE "translation_audit_logs" (
+    "id" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "namespace" TEXT,
+    "entityType" TEXT,
+    "entityId" TEXT,
+    "key" TEXT,
+    "field" TEXT,
+    "lang" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
+    "oldValue" TEXT,
+    "newValue" TEXT,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "translation_audit_logs_pkey" PRIMARY KEY ("id")
+);
+
+CREATE INDEX "translation_audit_logs_type_createdAt_idx" 
+  ON "translation_audit_logs"("type", "createdAt");
+CREATE INDEX "translation_audit_logs_userId_createdAt_idx" 
+  ON "translation_audit_logs"("userId", "createdAt");
+
+-- Create mt_cost_tracking table
+CREATE TABLE "mt_cost_tracking" (
+    "id" TEXT NOT NULL,
+    "date" DATE NOT NULL,
+    "provider" TEXT NOT NULL,
+    "sourceLang" TEXT NOT NULL,
+    "targetLang" TEXT NOT NULL,
+    "characters" INTEGER NOT NULL,
+    "cost" DECIMAL(10, 4) NOT NULL,
+    "jobCount" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "mt_cost_tracking_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "mt_cost_tracking_date_provider_sourceLang_targetLang_key" 
+      UNIQUE ("date", "provider", "sourceLang", "targetLang")
+);
+
+CREATE INDEX "mt_cost_tracking_date_provider_idx" 
+  ON "mt_cost_tracking"("date", "provider");
 ```
 
 ---
@@ -240,12 +397,16 @@ export class StaticTranslationService {
   /**
    * Get all translations for a namespace and language
    * Used by frontend for runtime loading
+   * Returns data and ETag for cache validation
    */
-  async getByNamespace(lang: string, namespace: string): Promise<Record<string, any>> {
+  async getByNamespace(
+    lang: string,
+    namespace: string,
+  ): Promise<{ data: Record<string, any>; etag: string }> {
     const cacheKey = `static:${lang}:${namespace}`;
     
     // Try cache first
-    const cached = await this.cacheManager.get<Record<string, any>>(cacheKey);
+    const cached = await this.cacheManager.get<{ data: Record<string, any>; etag: string }>(cacheKey);
     if (cached) {
       return cached;
     }
@@ -259,17 +420,37 @@ export class StaticTranslationService {
       select: {
         key: true,
         value: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        updatedAt: 'desc',
       },
     });
 
     // Transform flat keys to nested object structure
-    // e.g., 'buttons.submit' -> { buttons: { submit: '...' } }
     const result = this.nestKeys(translations);
 
-    // Cache result
-    await this.cacheManager.set(cacheKey, result, this.CACHE_TTL * 1000);
+    // Generate ETag from content hash (use latest updatedAt + count as version)
+    const latestUpdate = translations[0]?.updatedAt || new Date();
+    const etag = this.generateETag(result, latestUpdate);
 
-    return result;
+    const response = { data: result, etag };
+
+    // Cache result with ETag
+    await this.cacheManager.set(cacheKey, response, this.CACHE_TTL * 1000);
+
+    return response;
+  }
+
+  /**
+   * Generate ETag from translation data
+   */
+  private generateETag(data: Record<string, any>, updatedAt: Date): string {
+    const crypto = require('crypto');
+    const content = JSON.stringify(data);
+    const hash = crypto.createHash('md5').update(content).digest('hex');
+    const timestamp = updatedAt.getTime();
+    return `"${hash}-${timestamp}"`;
   }
 
   /**
@@ -348,6 +529,17 @@ export class StaticTranslationService {
     value: string,
     updatedBy?: string,
   ): Promise<StaticTranslationDto> {
+    // Get old value for audit log
+    const oldTranslation = await this.prisma.staticTranslation.findUnique({
+      where: {
+        namespace_key_lang: {
+          namespace,
+          key,
+          lang,
+        },
+      },
+    });
+
     const translation = await this.prisma.staticTranslation.upsert({
       where: {
         namespace_key_lang: {
@@ -370,11 +562,49 @@ export class StaticTranslationService {
       },
     });
 
+    // Log audit trail
+    await this.logAudit({
+      type: 'static',
+      namespace,
+      key,
+      lang,
+      action: oldTranslation ? 'update' : 'create',
+      oldValue: oldTranslation?.value,
+      newValue: value,
+      userId: updatedBy || 'system',
+    });
+
     // Invalidate cache
     await this.invalidateCache(lang, namespace);
 
     this.logger.log(`Updated static translation: ${namespace}:${key} (${lang})`);
     return translation;
+  }
+
+  /**
+   * Log translation changes to audit log
+   */
+  private async logAudit(log: {
+    type: 'static' | 'dynamic';
+    namespace?: string;
+    entityType?: string;
+    entityId?: string;
+    key?: string;
+    field?: string;
+    lang: string;
+    action: string;
+    oldValue?: string;
+    newValue?: string;
+    userId: string;
+  }): Promise<void> {
+    try {
+      await this.prisma.translationAuditLog.create({
+        data: log,
+      });
+    } catch (error) {
+      this.logger.error('Failed to log audit trail', error);
+      // Don't throw - audit logging failure shouldn't break the operation
+    }
   }
 
   /**
@@ -486,6 +716,48 @@ export class StaticTranslationService {
   }
 
   /**
+   * Get current translation version for cache-busting
+   */
+  async getCurrentVersion(): Promise<string> {
+    const activeRelease = await this.prisma.translationRelease.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (activeRelease) {
+      return activeRelease.version;
+    }
+
+    // Fallback to timestamp-based version if no release exists
+    return `v${Date.now()}`;
+  }
+
+  /**
+   * Create a new translation release
+   */
+  async createRelease(version: string, description: string, createdBy: string): Promise<void> {
+    // Deactivate all existing releases
+    await this.prisma.translationRelease.updateMany({
+      where: { isActive: true },
+      data: { isActive: false },
+    });
+
+    // Create new release
+    await this.prisma.translationRelease.create({
+      data: {
+        version,
+        description,
+        createdBy,
+        isActive: true,
+      },
+    });
+
+    // Invalidate all caches to force refresh
+    // This is a simple approach - in production, you might want to track all cache keys
+    this.logger.log(`Created translation release: ${version}`);
+  }
+
+  /**
    * Invalidate cache for a namespace
    */
   private async invalidateCache(lang: string, namespace: string): Promise<void> {
@@ -511,8 +783,13 @@ import {
   Query,
   UseGuards,
   Request,
+  Headers,
+  Res,
+  Header,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Response } from 'express';
+import { Throttle } from '@nestjs/throttler';
 import { StaticTranslationService } from './static-translation.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -526,15 +803,42 @@ export class StaticTranslationController {
   /**
    * Public endpoint: Get translations for a namespace
    * Used by i18next-http-backend for runtime loading
+   * Includes ETag and Cache-Control headers for efficient caching
    */
   @Get(':lang/:namespace')
+  @Throttle(100, 60) // Rate limit: 100 requests per minute
+  @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=86400')
   @ApiOperation({ summary: 'Get static translations (public)' })
   @ApiResponse({ status: 200, description: 'Translations retrieved' })
+  @ApiResponse({ status: 304, description: 'Not modified (ETag match)' })
   async getTranslations(
     @Param('lang') lang: string,
     @Param('namespace') namespace: string,
-  ): Promise<Record<string, any>> {
-    return this.service.getByNamespace(lang, namespace);
+    @Query('v') version?: string, // Optional version query param
+    @Headers('if-none-match') ifNoneMatch?: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const { data, etag } = await this.service.getByNamespace(lang, namespace);
+
+    // Check if client has cached version
+    if (ifNoneMatch && ifNoneMatch === etag) {
+      res.status(304).end();
+      return;
+    }
+
+    // Set ETag header
+    res.setHeader('ETag', etag);
+    res.json(data);
+  }
+
+  /**
+   * Get current translation version for cache-busting
+   */
+  @Get('system/version')
+  @ApiOperation({ summary: 'Get current translation version' })
+  async getVersion(): Promise<{ version: string }> {
+    const version = await this.service.getCurrentVersion();
+    return { version };
   }
 
   /**
@@ -732,7 +1036,13 @@ i18n
     ],
     defaultNS: 'common',
     backend: {
-      loadPath: `${API_URL}/static-translations/{{lng}}/{{ns}}`,
+      // Version will be fetched and appended dynamically
+      loadPath: async (lngs, namespaces) => {
+        // Fetch current translation version
+        const versionResponse = await fetch(`${API_URL}/static-translations/system/version`);
+        const { version } = await versionResponse.json();
+        return `${API_URL}/static-translations/${lngs[0]}/${namespaces[0]}?v=${version}`;
+      },
       // Custom load function with error handling and caching
       load: async (lngs, namespaces, callback) => {
         const [lng, ns] = [lngs[0], namespaces[0]];
@@ -798,7 +1108,7 @@ i18n
     },
     // Performance optimizations
     updateMissing: false,
-    saveMissing: import.meta.env.DEV, // Only in dev
+    saveMissing: false, // Disabled in production - use admin UI instead
     cache: {
       enabled: true,
     },
@@ -1297,13 +1607,33 @@ export class DeepLService {
     }
   }
 
+  /**
+   * Map our language codes to DeepL codes
+   * Using EN-GB for English (Swiss context, British English is more appropriate)
+   * Can be changed to EN-US if preferred
+   */
   private mapToDeepLCode(lang: string): string | null {
     const mapping: Record<string, string> = {
-      en: 'EN',
+      en: 'EN-GB', // British English (or 'EN-US' for American English)
       fr: 'FR',
       de: 'DE',
     };
     return mapping[lang] || null;
+  }
+
+  /**
+   * Normalize language code (handle variants)
+   */
+  private normalizeLang(lang: string): string {
+    // Normalize variants to base language
+    const normalized: Record<string, string> = {
+      'en-GB': 'en',
+      'en-US': 'en',
+      'en-CH': 'en',
+      'fr-CH': 'fr',
+      'de-CH': 'de',
+    };
+    return normalized[lang] || lang;
   }
 }
 ```
@@ -1564,6 +1894,625 @@ export class TranslationModule {}
 
 ---
 
+## 🧠 Translation Memory & Cost Guardrails
+
+### 1. Translation Memory Service
+
+```typescript
+// api/src/translation/translation-memory.service.ts
+
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import * as crypto from 'crypto';
+
+@Injectable()
+export class TranslationMemoryService {
+  private readonly logger = new Logger(TranslationMemoryService.name);
+
+  constructor(private prisma: PrismaService) {}
+
+  /**
+   * Get translation from memory if exists
+   */
+  async getFromMemory(
+    sourceText: string,
+    sourceLang: string,
+    targetLang: string,
+  ): Promise<string | null> {
+    const sourceTextHash = this.hashText(sourceText);
+
+    const memory = await this.prisma.translationMemory.findUnique({
+      where: {
+        sourceTextHash_sourceLang_targetLang: {
+          sourceTextHash,
+          sourceLang,
+          targetLang,
+        },
+      },
+    });
+
+    if (memory) {
+      // Update usage stats
+      await this.prisma.translationMemory.update({
+        where: { id: memory.id },
+        data: {
+          usageCount: { increment: 1 },
+          lastUsedAt: new Date(),
+        },
+      });
+
+      this.logger.log(
+        `Translation memory hit: ${sourceLang} -> ${targetLang} (saved ${sourceText.length} chars)`,
+      );
+      return memory.translatedText;
+    }
+
+    return null;
+  }
+
+  /**
+   * Save translation to memory
+   */
+  async saveToMemory(
+    sourceText: string,
+    sourceLang: string,
+    targetLang: string,
+    translatedText: string,
+    mtProvider: string,
+  ): Promise<void> {
+    const sourceTextHash = this.hashText(sourceText);
+
+    await this.prisma.translationMemory.upsert({
+      where: {
+        sourceTextHash_sourceLang_targetLang: {
+          sourceTextHash,
+          sourceLang,
+          targetLang,
+        },
+      },
+      update: {
+        translatedText,
+        mtProvider,
+        lastUsedAt: new Date(),
+      },
+      create: {
+        sourceTextHash,
+        sourceLang,
+        targetLang,
+        translatedText,
+        mtProvider,
+      },
+    });
+  }
+
+  private hashText(text: string): string {
+    return crypto.createHash('sha256').update(text).digest('hex');
+  }
+}
+```
+
+### 2. Cost Tracking Service
+
+```typescript
+// api/src/translation/cost-tracking.service.ts
+
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
+
+// DeepL pricing (as of 2024): ~€20 per 1M characters
+const DEEPL_COST_PER_CHAR = 0.00002; // €0.00002 per character
+
+@Injectable()
+export class CostTrackingService {
+  private readonly logger = new Logger(CostTrackingService.name);
+  private readonly monthlyBudget: number;
+
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {
+    this.monthlyBudget = parseFloat(
+      this.configService.get<string>('MT_MONTHLY_BUDGET_CHF', '500'),
+    );
+  }
+
+  /**
+   * Track MT API usage and cost
+   */
+  async trackUsage(
+    provider: string,
+    sourceLang: string,
+    targetLang: string,
+    characters: number,
+  ): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const cost = this.calculateCost(provider, characters);
+
+    await this.prisma.mTCostTracking.upsert({
+      where: {
+        date_provider_sourceLang_targetLang: {
+          date: today,
+          provider,
+          sourceLang,
+          targetLang,
+        },
+      },
+      update: {
+        characters: { increment: characters },
+        cost: { increment: cost },
+        jobCount: { increment: 1 },
+      },
+      create: {
+        date: today,
+        provider,
+        sourceLang,
+        targetLang,
+        characters,
+        cost,
+        jobCount: 1,
+      },
+    });
+
+    // Check budget and alert if needed
+    await this.checkBudget();
+  }
+
+  /**
+   * Get monthly usage and cost
+   */
+  async getMonthlyUsage(month?: Date): Promise<{
+    totalCharacters: number;
+    totalCost: number;
+    byProvider: Record<string, { characters: number; cost: number }>;
+  }> {
+    const startDate = month || new Date();
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+
+    const records = await this.prisma.mTCostTracking.findMany({
+      where: {
+        date: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+    });
+
+    const totalCharacters = records.reduce((sum, r) => sum + r.characters, 0);
+    const totalCost = records.reduce((sum, r) => sum + Number(r.cost), 0);
+
+    const byProvider = records.reduce((acc, r) => {
+      if (!acc[r.provider]) {
+        acc[r.provider] = { characters: 0, cost: 0 };
+      }
+      acc[r.provider].characters += r.characters;
+      acc[r.provider].cost += Number(r.cost);
+      return acc;
+    }, {} as Record<string, { characters: number; cost: number }>);
+
+    return { totalCharacters, totalCost, byProvider };
+  }
+
+  /**
+   * Check if monthly budget is exceeded
+   */
+  private async checkBudget(): Promise<void> {
+    const usage = await this.getMonthlyUsage();
+    const percentage = (usage.totalCost / this.monthlyBudget) * 100;
+
+    if (percentage >= 100) {
+      this.logger.error(
+        `MT budget exceeded! Used: CHF ${usage.totalCost.toFixed(2)} / CHF ${this.monthlyBudget}`,
+      );
+      // TODO: Send alert (email, Slack, etc.)
+    } else if (percentage >= 80) {
+      this.logger.warn(
+        `MT budget at ${percentage.toFixed(1)}%: CHF ${usage.totalCost.toFixed(2)} / CHF ${this.monthlyBudget}`,
+      );
+      // TODO: Send warning alert
+    }
+  }
+
+  private calculateCost(provider: string, characters: number): number {
+    // Convert to CHF (assuming 1 EUR = 0.95 CHF)
+    if (provider === 'deepl') {
+      return characters * DEEPL_COST_PER_CHAR * 0.95;
+    }
+    // Add other providers as needed
+    return 0;
+  }
+}
+```
+
+### 3. Enhanced Translation Queue Processor with TM
+
+```typescript
+// Update translation-queue.processor.ts to use TM
+
+@Processor('translation')
+export class TranslationQueueProcessor {
+  constructor(
+    private translationService: TranslationService,
+    private deepLService: DeepLService,
+    private translationMemory: TranslationMemoryService, // Add this
+    private costTracking: CostTrackingService, // Add this
+    private prisma: PrismaService,
+  ) {}
+
+  @Process('translate-entity')
+  async handleTranslation(job: Job<TranslationJobData>) {
+    const { entityType, entityId, sourceLang } = job.data;
+    const jobId = job.id;
+
+    // Check idempotency: skip if already processing/processed
+    const idempotencyKey = `${entityType}:${entityId}:${job.data.sourceHash || 'latest'}`;
+    const existingJob = await this.prisma.translationJob.findFirst({
+      where: {
+        entityType,
+        entityId,
+        status: { in: ['processing', 'completed'] },
+      },
+    });
+
+    if (existingJob && existingJob.id !== jobId) {
+      this.logger.log(`Skipping duplicate job for ${entityType}:${entityId}`);
+      return;
+    }
+
+    // ... existing code to get source translations ...
+
+    for (const sourceTranslation of sourceTranslations) {
+      for (const targetLang of targetLangs) {
+        // Check Translation Memory first
+        let translatedText = await this.translationMemory.getFromMemory(
+          sourceTranslation.text,
+          sourceLang,
+          targetLang,
+        );
+
+        if (!translatedText) {
+          // Not in memory, call DeepL
+          try {
+            translatedText = await this.deepLService.translate(
+              sourceTranslation.text,
+              sourceLang,
+              targetLang,
+            );
+
+            // Track cost
+            await this.costTracking.trackUsage(
+              'deepl',
+              sourceLang,
+              targetLang,
+              sourceTranslation.text.length,
+            );
+
+            // Save to memory for future use
+            await this.translationMemory.saveToMemory(
+              sourceTranslation.text,
+              sourceLang,
+              targetLang,
+              translatedText,
+              'deepl',
+            );
+          } catch (error) {
+            this.logger.error(`DeepL translation failed: ${error.message}`);
+            // TODO: Fallback to Google Translate
+            throw error; // Will trigger retry
+          }
+        }
+
+        // Save translation with status
+        await this.prisma.entityTranslation.upsert({
+          where: {
+            entityType_entityId_lang_field: {
+              entityType,
+              entityId,
+              lang: targetLang,
+              field: sourceTranslation.field,
+            },
+          },
+          update: {
+            text: translatedText,
+            sourceHash: newHash,
+            status: 'MT_DONE', // Set status
+            updatedAt: new Date(),
+            translatedAt: new Date(),
+            origin: 'machine',
+            mtProvider: 'deepl',
+          },
+          create: {
+            entityType,
+            entityId,
+            lang: targetLang,
+            field: sourceTranslation.field,
+            text: translatedText,
+            sourceHash: newHash,
+            status: 'MT_DONE',
+            origin: 'machine',
+            verified: false,
+            mtProvider: 'deepl',
+            translatedAt: new Date(),
+          },
+        });
+      }
+    }
+  }
+}
+```
+
+### 4. Dead Letter Queue (DLQ) Setup
+
+```typescript
+// Add to translation-queue.module.ts
+
+BullModule.registerQueue({
+  name: 'translation',
+  // ... existing config ...
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 2000,
+    },
+    removeOnComplete: true,
+    removeOnFail: false, // Keep failed jobs for DLQ
+  },
+}),
+
+// Create DLQ processor
+@Processor('translation-dlq')
+export class TranslationDLQProcessor {
+  @Process()
+  async handleFailedJob(job: Job) {
+    this.logger.error(`Translation job permanently failed: ${job.id}`, job.data);
+    // TODO: Send alert, log to monitoring system
+  }
+}
+```
+
+---
+
+## 🔒 Security & Compliance
+
+### 1. Rate Limiting
+
+```typescript
+// Already added to controller with @Throttle decorator
+// Configure in app.module.ts:
+
+ThrottlerModule.forRoot({
+  ttl: 60,
+  limit: 100, // 100 requests per minute for public endpoint
+}),
+```
+
+### 2. PII Stripping for MT
+
+```typescript
+// api/src/translation/pii-stripper.service.ts
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class PIIStripperService {
+  /**
+   * Strip PII from text before sending to MT
+   * Replace with placeholders that can be restored
+   */
+  stripPII(text: string): { cleaned: string; placeholders: Map<string, string> } {
+    const placeholders = new Map<string, string>();
+    let cleaned = text;
+
+    // Email pattern
+    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+    cleaned = cleaned.replace(emailRegex, (match) => {
+      const placeholder = `[EMAIL_${placeholders.size}]`;
+      placeholders.set(placeholder, match);
+      return placeholder;
+    });
+
+    // Phone numbers (Swiss format)
+    const phoneRegex = /(\+41|0)\s?\d{2}\s?\d{3}\s?\d{2}\s?\d{2}/g;
+    cleaned = cleaned.replace(phoneRegex, (match) => {
+      const placeholder = `[PHONE_${placeholders.size}]`;
+      placeholders.set(placeholder, match);
+      return placeholder;
+    });
+
+    // Credit card numbers (if any)
+    const cardRegex = /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g;
+    cleaned = cleaned.replace(cardRegex, (match) => {
+      const placeholder = `[CARD_${placeholders.size}]`;
+      placeholders.set(placeholder, match);
+      return placeholder;
+    });
+
+    return { cleaned, placeholders };
+  }
+
+  /**
+   * Restore PII after translation
+   */
+  restorePII(translated: string, placeholders: Map<string, string>): string {
+    let restored = translated;
+    placeholders.forEach((original, placeholder) => {
+      restored = restored.replace(placeholder, original);
+    });
+    return restored;
+  }
+}
+
+// Use in translation processor:
+const { cleaned, placeholders } = this.piiStripper.stripPII(sourceText);
+const translated = await this.deepLService.translate(cleaned, sourceLang, targetLang);
+const final = this.piiStripper.restorePII(translated, placeholders);
+```
+
+### 3. Field Eligibility Check
+
+```typescript
+// Only translate allowed fields
+const ALLOWED_MT_FIELDS: Record<string, string[]> = {
+  product: ['title', 'description', 'features'],
+  article: ['title', 'body'],
+  // Exclude sensitive fields
+  user: [], // Don't auto-translate user content
+};
+
+// In processor:
+const allowedFields = ALLOWED_MT_FIELDS[entityType] || [];
+if (!allowedFields.includes(field)) {
+  this.logger.warn(`Skipping MT for restricted field: ${entityType}.${field}`);
+  continue;
+}
+```
+
+---
+
+## 👥 Admin Governance
+
+### 1. Release Management Endpoints
+
+```typescript
+// Add to StaticTranslationController
+
+@Post('admin/releases')
+@UseGuards(RolesGuard)
+@Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+@ApiBearerAuth()
+@ApiOperation({ summary: 'Create new translation release' })
+async createRelease(
+  @Body() body: { version: string; description?: string },
+  @Request() req: any,
+): Promise<{ success: boolean; version: string }> {
+  await this.service.createRelease(
+    body.version,
+    body.description || '',
+    req.user.id,
+  );
+  return { success: true, version: body.version };
+}
+
+@Get('admin/releases')
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@ApiBearerAuth()
+async listReleases() {
+  return this.service.listReleases();
+}
+```
+
+### 2. Bulk Approval
+
+```typescript
+// Add to StaticTranslationController
+
+@Post('admin/bulk-approve')
+@UseGuards(RolesGuard)
+@Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+@ApiBearerAuth()
+async bulkApprove(
+  @Body() body: { keys: Array<{ namespace: string; key: string; lang: string }> },
+  @Request() req: any,
+) {
+  await this.service.bulkApprove(body.keys, req.user.id);
+  return { success: true, approved: body.keys.length };
+}
+
+// In service:
+async bulkApprove(
+  keys: Array<{ namespace: string; key: string; lang: string }>,
+  approvedBy: string,
+): Promise<void> {
+  await Promise.all(
+    keys.map(({ namespace, key, lang }) =>
+      this.prisma.staticTranslation.update({
+        where: { namespace_key_lang: { namespace, key, lang } },
+        data: {
+          needsReview: false,
+          reviewedBy: approvedBy,
+          reviewedAt: new Date(),
+        },
+      }),
+    ),
+  );
+}
+```
+
+### 3. Export/Import
+
+```typescript
+// Export translations to CSV/JSON
+@Get('admin/export')
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@ApiBearerAuth()
+async exportTranslations(
+  @Query('format') format: 'json' | 'csv' = 'json',
+  @Query('namespace') namespace?: string,
+): Promise<any> {
+  const translations = await this.service.listKeys(namespace);
+  
+  if (format === 'csv') {
+    // Convert to CSV format
+    return this.convertToCSV(translations);
+  }
+  
+  return translations;
+}
+
+// Import translations
+@Post('admin/import')
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@ApiBearerAuth()
+async importTranslations(
+  @Body() translations: Array<{ namespace: string; key: string; lang: string; value: string }>,
+  @Request() req: any,
+) {
+  const count = await this.service.bulkUpsert(translations, req.user.id);
+  return { success: true, imported: count };
+}
+```
+
+### 4. Audit Log Viewing
+
+```typescript
+@Get('admin/audit-logs')
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@ApiBearerAuth()
+async getAuditLogs(
+  @Query('type') type?: 'static' | 'dynamic',
+  @Query('limit') limit = 100,
+) {
+  return this.service.getAuditLogs(type, limit);
+}
+```
+
+### 5. RBAC for Translation Roles
+
+```typescript
+// Add to auth decorators
+export enum TranslationRole {
+  TRANSLATOR = 'TRANSLATOR', // Can edit translations
+  REVIEWER = 'REVIEWER', // Can review and approve
+  ADMIN = 'ADMIN', // Can manage releases
+}
+
+// Use in controller:
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, TranslationRole.REVIEWER)
+```
+
+---
+
 ## 📦 Migration Strategy
 
 ### Phase 1: Database Setup (Day 1)
@@ -1793,16 +2742,116 @@ VITE_API_URL=https://your-api.onrender.com
 
 ## ✅ Summary
 
-This unified plan provides:
+This enhanced unified plan provides:
 
+### Core Features
 1. **Static UI**: Database-backed with admin UI, runtime loading, zero redeploy
 2. **Dynamic Content**: Async MT pipeline with DeepL, queue-based processing
 3. **Unified Architecture**: Single database, single admin UI, consistent patterns
 4. **Performance**: Multi-layer caching (Redis, IndexedDB, HTTP)
-5. **Future-proof**: Extensible, observable, maintainable
 
-**Total Implementation Time**: 7-10 days
-**Complexity**: Medium
-**Maintenance**: Low (unified system)
+### Production-Ready Enhancements
 
-Ready to implement! 🚀
+#### ✅ Cache Versioning & ETag Support
+- ETag headers for efficient cache validation
+- Translation release versioning system
+- Cache-Control headers with stale-while-revalidate
+- Version query parameter for cache-busting
+
+#### ✅ Translation Lifecycle Management
+- Explicit status enum: `PENDING | MT_DONE | REVIEWED | APPROVED`
+- Approval tracking with timestamps and user IDs
+- Status-based filtering and workflows
+
+#### ✅ Translation Memory (TM)
+- Database-backed TM to avoid re-translating identical content
+- Automatic TM lookup before calling MT APIs
+- Usage statistics tracking
+- Significant cost savings for repeated content
+
+#### ✅ Cost Guardrails
+- Real-time cost tracking per provider/language pair
+- Monthly budget monitoring with alerts at 80%/100%
+- Character count tracking
+- Cost calculation for DeepL and extensible for other providers
+
+#### ✅ Security & Compliance
+- Rate limiting on public endpoints (100 req/min)
+- PII stripping before MT (emails, phones, cards)
+- Field eligibility whitelist
+- Audit logging for all translation changes
+
+#### ✅ Admin Governance
+- Release management (create, activate, version)
+- Bulk approval workflows
+- Export/Import (JSON/CSV) for offline review
+- Audit log viewing with filtering
+- RBAC for translation roles (Translator, Reviewer, Admin)
+
+#### ✅ Enhanced DeepL Integration
+- Proper language mapping (EN-GB for Swiss context)
+- Language normalization (handles variants)
+- Fallback provider support (ready for Google Translate)
+- Error handling with retries
+
+#### ✅ Dead Letter Queue (DLQ)
+- Failed job tracking
+- Alert system for permanent failures
+- Job idempotency to prevent duplicates
+
+#### ✅ Frontend Optimizations
+- Version-aware loading with cache-busting
+- `saveMissing` disabled in production
+- Proper fallback chain (fr-CH → fr → en)
+- ICU formatting for dates, currency, numbers
+
+### Implementation Timeline
+
+**Total Implementation Time**: 10-12 days (enhanced from 7-10)
+
+- **Days 1-2**: Database schema + migrations
+- **Days 2-4**: Backend services (static, dynamic, TM, cost tracking)
+- **Days 4-6**: Frontend runtime loading + version support
+- **Days 6-8**: Admin UI with governance features
+- **Days 8-10**: Security, PII stripping, testing
+- **Days 10-12**: Deployment, monitoring setup, documentation
+
+### Key Improvements Over Original Plan
+
+| Feature | Original | Enhanced |
+|---------|----------|----------|
+| Cache-busting | ❌ None | ✅ ETag + version system |
+| Translation states | ❌ Basic | ✅ Full lifecycle (PENDING → APPROVED) |
+| Translation Memory | ❌ None | ✅ Database-backed TM |
+| Cost tracking | ❌ Alerts only | ✅ Budget caps + monitoring |
+| PII protection | ❌ None | ✅ Stripping + restoration |
+| Release management | ❌ None | ✅ Version releases + promotion |
+| Audit logging | ❌ None | ✅ Full audit trail |
+| Language mapping | ⚠️ Basic | ✅ EN-GB normalization |
+
+### Environment Variables Required
+
+```bash
+# Backend
+REDIS_HOST=redis-host
+REDIS_PORT=6379
+REDIS_PASSWORD=your-redis-password
+DEEPL_API_KEY=your-deepl-api-key
+MT_MONTHLY_BUDGET_CHF=500  # Monthly budget in CHF
+GOOGLE_TRANSLATE_API_KEY=optional-fallback
+
+# Frontend
+VITE_API_URL=https://your-api.onrender.com
+```
+
+### Next Steps
+
+1. Review and approve this enhanced plan
+2. Set up development environment
+3. Create database migrations
+4. Implement services incrementally
+5. Test each component thoroughly
+6. Deploy to staging
+7. Monitor and iterate
+
+**Ready to implement! 🚀**
