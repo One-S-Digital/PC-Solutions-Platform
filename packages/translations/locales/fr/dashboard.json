@@ -873,7 +873,8 @@
       "allRoles": "Tous les Rôles",
       "region": "Région",
       "availabilityDate": "Date Disponibilité"
-    },
+    }
+  },
   "filters": {
     "all": "Tous"
   },
@@ -889,16 +890,6 @@
       "subjectLabel": "Sujet",
       "messageLabel": "Message",
       "submitButton": "Soumettre le Ticket"
-    }
-  },
-    "candidatePool": {
-      "searchPlaceholder": "Rechercher Les Candidats ...",
-      "filterTitle": "Filtrer les candidats",
-      "emptyState": "Aucun candidat trouvé"
-    },
-    "tabs": {
-      "jobOffers": "Offres Postées",
-      "candidatePool": "Pool de Candidats"
     }
   },
   "messagesPage": {

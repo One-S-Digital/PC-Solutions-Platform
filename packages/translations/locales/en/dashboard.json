@@ -874,7 +874,8 @@
       "allRoles": "All Roles",
       "region": "Region",
       "availabilityDate": "Availability Date"
-    },
+    }
+  },
   "filters": {
     "all": "All"
   },
@@ -930,16 +931,6 @@
         "q": "What are the commission rates?",
         "a": "Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription."
       }
-    }
-  },
-    "candidatePool": {
-      "searchPlaceholder": "Search candidates...",
-      "filterTitle": "Filter Candidates",
-      "emptyState": "No candidates found"
-    },
-    "tabs": {
-      "jobOffers": "Job Offers",
-      "candidatePool": "Candidate Pool"
     }
   },
   "messagesPage": {

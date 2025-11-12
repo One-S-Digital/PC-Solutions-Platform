@@ -873,7 +873,8 @@
       "allRoles": "Alle Rollen",
       "region": "Region",
       "availabilityDate": "VerfinsBarkEeupsdatum"
-    },
+    }
+  },
   "filters": {
     "all": "Alle"
   },
@@ -889,16 +890,6 @@
       "subjectLabel": "Betreff",
       "messageLabel": "Nachricht",
       "submitButton": "Ticket Senden"
-    }
-  },
-    "candidatePool": {
-      "searchPlaceholder": "Solche Kandidaten ...",
-      "filterTitle": "Filterkandidaten",
-      "emptyState": "Keine Kandidaten gefunden"
-    },
-    "tabs": {
-      "jobOffers": "STELLENANGEBOTE",
-      "candidatePool": "Kandidatenpool"
     }
   },
   "messagesPage": {
