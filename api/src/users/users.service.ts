@@ -161,6 +161,7 @@ export class UsersService {
         contactPerson: org.contactPerson,
         phoneNumber: org.phoneNumber,
         canton: org.canton,
+        regionsServed: org.regionsServed ?? (org.canton ? [org.canton] : []),
         languages: org.languages ?? [],
         capacity: org.capacity,
         pedagogy: org.pedagogy ?? [],

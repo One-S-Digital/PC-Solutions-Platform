@@ -103,17 +103,17 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
     : (organization.canton ? [organization.canton] : []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="organization-public-profile">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Sidebar - Organization Info */}
         <div className="lg:col-span-1 space-y-6">
           {/* Organization Details */}
-          <Card className="p-6 space-y-4">
+          <Card className="p-6 space-y-4" data-testid="organization-details-card">
             <SectionTitle
               icon={BuildingOfficeIcon}
               title={t('profile:organization.organizationDetails', { defaultValue: 'Organization Details' })}
             />
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-sm" data-testid="organization-details-content">
               {organization.vatNumber ? (
                 <div>
                   <p className="text-xs text-gray-500 mb-1">{t('profile:organization.vatNumber', { defaultValue: 'VAT Number' })}</p>
