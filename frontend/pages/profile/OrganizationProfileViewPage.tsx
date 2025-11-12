@@ -38,16 +38,14 @@ const OrganizationProfileViewPage: React.FC = () => {
         const response = await request<{ success: boolean; data: Organization }>(`/profiles/organization/${id}`);
         
         if (response.success && response.data) {
-          // Transform the API response to match Organization type
           const orgData = response.data;
-          console.log('🔍 OrganizationProfileViewPage - Raw API response:', orgData);
           
           // For service providers, check if deliveryType/bookingLink are in the serviceProviders relation
           const serviceProviderData = (orgData as any).serviceProviders?.[0];
           const deliveryType = orgData.deliveryType || serviceProviderData?.deliveryType || null;
           const bookingLink = orgData.bookingLink || serviceProviderData?.bookingLink || null;
           
-          // Store raw data for accessing members
+          // Transform the API response to match Organization type
           const transformedOrg: Organization & { __rawData?: any } = {
             __rawData: orgData,
             id: orgData.id,
@@ -110,7 +108,6 @@ const OrganizationProfileViewPage: React.FC = () => {
             ) || [],
             jobListings: (orgData as any).jobListings || [],
           };
-          console.log('🔍 OrganizationProfileViewPage - Transformed organization:', transformedOrg);
           setOrganization(transformedOrg);
         } else {
           setError('Organization not found');
@@ -237,11 +234,7 @@ const OrganizationProfileViewPage: React.FC = () => {
       </Card>
 
       {/* Organization Details */}
-      {(() => {
-        console.log('🔍 OrganizationProfileViewPage - About to render OrganizationPublicProfile');
-        console.log('🔍 OrganizationProfileViewPage - organization:', organization);
-        return <OrganizationPublicProfile organization={organization} showActions={true} />;
-      })()}
+      <OrganizationPublicProfile organization={organization} showActions={true} />
     </div>
   );
 };
