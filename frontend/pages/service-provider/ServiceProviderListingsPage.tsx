@@ -140,7 +140,7 @@ const ServiceProviderListingsPage: React.FC = () => {
             onChange={(e) => setFilterCategory(e.target.value as ServiceCategory | 'All')}
             className={STANDARD_INPUT_FIELD}
           >
-            {serviceCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {serviceCategories.map(cat => <option key={cat} value={cat}>{cat === 'All' ? t('dashboard:filters.all') : cat}</option>)}
           </select>
         </div>
       </Card>

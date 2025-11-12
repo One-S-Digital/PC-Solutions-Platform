@@ -86,7 +86,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onEdit, o
 };
 
 const ELearningPage: React.FC = () => {
-  const { t } = useTranslation(['content', 'common']);
+  const { t } = useTranslation(['content', 'common', 'dashboard']);
   const { currentUser } = useAppContext();
   const [eLearningItems, setELearningItems] = useState<Course[]>(MOCK_COURSES);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -207,7 +207,7 @@ const ELearningPage: React.FC = () => {
                     onChange={(e) => setFilterCategory(e.target.value)}
                     className={`${STANDARD_INPUT_FIELD} w-full md:w-auto`}
                 >
-                    {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    {categories.map(cat => <option key={cat} value={cat}>{cat === 'All' ? t('dashboard:filters.all') : cat}</option>)}
                 </select>
             </div>
         </div>

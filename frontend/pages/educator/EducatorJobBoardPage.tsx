@@ -163,7 +163,7 @@ const EducatorJobBoardPage: React.FC = () => {
             <select id="filterCanton" value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD}>
               {cantons.map((c) => (
                 <option key={c} value={c}>
-                  {c}
+                  {c === 'All' ? t('dashboard:filters.all') : c}
                 </option>
               ))}
             </select>

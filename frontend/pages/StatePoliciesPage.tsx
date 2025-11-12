@@ -80,7 +80,7 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onEdit, on
 };
 
 const StatePoliciesPage: React.FC = () => {
-  const { t } = useTranslation(['content', 'common']);
+  const { t } = useTranslation(['content', 'common', 'dashboard']);
   const { currentUser } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCanton, setFilterCanton] = useState('All');
@@ -244,16 +244,16 @@ const StatePoliciesPage: React.FC = () => {
             />
           </div>
           <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Canton">
-            <option value="All">All Cantons/Regions</option>
-            {cantons.map(c => <option key={c} value={c}>{c}</option>)}
+            <option value="All">{t('dashboard:filters.all')}</option>
+            {cantons.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Type">
-            <option value="All">All Policy Types</option>
-            {policyTypeOptions.map(pt => <option key={pt} value={pt}>{pt}</option>)}
+            <option value="All">{t('dashboard:filters.all')}</option>
+            {policyTypeOptions.filter(pt => pt !== 'All').map(pt => <option key={pt} value={pt}>{pt}</option>)}
           </select>
            <select value={filterBroadCategory} onChange={(e) => setFilterBroadCategory(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Broad Category">
-            <option value="All">All Broad Categories</option>
-            {policyBroadCategories.map(pt => <option key={pt} value={pt}>{pt}</option>)}
+            <option value="All">{t('dashboard:filters.all')}</option>
+            {policyBroadCategories.filter(pt => pt !== 'All').map(pt => <option key={pt} value={pt}>{pt}</option>)}
           </select>
         </div>
       </Card>
