@@ -155,7 +155,10 @@
     "frShort": "FR",
     "frLong": "Français",
     "deShort": "DE",
-    "deLong": "Allemand"
+    "deLong": "Allemand",
+    "en": "Anglais",
+    "fr": "Français",
+    "de": "Allemand"
   },
   "recruitment": {
     "addCandidate": "recrutement."

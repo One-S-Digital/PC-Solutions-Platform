@@ -586,7 +586,10 @@
     "frShort": "FR",
     "frLong": "Französisch",
     "deShort": "DE",
-    "deLong": "Deutsch"
+    "deLong": "Deutsch",
+    "en": "Englisch",
+    "fr": "Französisch",
+    "de": "Deutsch"
   },
   "welcome": "[DE] Welcome",
   "error": "[DE] An error occurred",

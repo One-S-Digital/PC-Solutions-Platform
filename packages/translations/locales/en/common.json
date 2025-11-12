@@ -277,7 +277,10 @@
     "frShort": "FR",
     "frLong": "Français",
     "deShort": "DE",
-    "deLong": "Deutsch"
+    "deLong": "Deutsch",
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
   },
   "settingsPage": {
     "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
