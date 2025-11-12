@@ -49,6 +49,15 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
     );
   }
 
+  // Ensure we have at least basic organization data
+  if (!organization.id || !organization.name) {
+    return (
+      <Card className="p-6">
+        <p className="text-gray-500 text-center">Invalid organization data.</p>
+      </Card>
+    );
+  }
+
   // Determine role
   const role = user?.role || 
     (organization.type === 'FOUNDATION' ? UserRole.FOUNDATION : 
@@ -68,8 +77,9 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   const pedagogy = Array.isArray(organization.pedagogy) ? organization.pedagogy : [];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="space-y-6 w-full">
+      {/* Organization Details Section - Always Visible */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         {/* Left Sidebar */}
         <div className="lg:col-span-1 space-y-6">
           {/* Organization Details Card */}

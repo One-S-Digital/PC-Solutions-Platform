@@ -174,7 +174,7 @@ const OrganizationProfileViewPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6 lg:p-8">
       <Button variant="ghost" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon} className="mb-0">
         {t('common:buttons.goBack', 'Go Back')}
       </Button>
@@ -233,8 +233,16 @@ const OrganizationProfileViewPage: React.FC = () => {
         </div>
       </Card>
 
-      {/* Organization Details */}
-      <OrganizationPublicProfile organization={organization} showActions={true} />
+      {/* Organization Details - Always visible */}
+      <div className="w-full">
+        {organization ? (
+          <OrganizationPublicProfile organization={organization} showActions={true} />
+        ) : (
+          <Card className="p-6">
+            <p className="text-gray-500 text-center">Loading organization details...</p>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
