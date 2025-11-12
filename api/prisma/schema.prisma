@@ -213,7 +213,8 @@ model Organization {
   // Additional fields from onboarding guide
   contactPerson        String?
   phoneNumber          String?
-  canton               String?
+  canton               String? // Legacy single canton field
+  regionsServed        String[] // Multiple cantons/regions served
   languages            String[] // Languages spoken/offered
   capacity             Int? // For foundations - number of children
   pedagogy             String[] // Educational approaches for foundations

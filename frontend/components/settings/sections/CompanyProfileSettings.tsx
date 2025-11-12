@@ -292,19 +292,26 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
             <label className="form-label">
-              {t('common:settingsCompanyProfile.regionsServed', 'Canton')}
+              {t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}
             </label>
             <div className="form-input-container">
-              <select
-                value={settings.canton || ''}
-                onChange={(e) => onChange('canton', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-              >
-                <option value="">{t('settings:companyProfile.selectCanton', 'Select Canton')}</option>
+              <p className="text-xs text-gray-500 mb-2">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>
+              <div className="flex flex-wrap gap-2">
                 {SWISS_CANTONS.map(canton => (
-                  <option key={canton} value={canton}>{canton}</option>
+                  <button
+                    key={canton}
+                    type="button"
+                    onClick={() => handleMultiSelectChange('regionsServed', canton)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-150 ${
+                      (settings.regionsServed || []).includes(canton)
+                        ? 'bg-swiss-mint text-white border-swiss-mint'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
+                    }`}
+                  >
+                    {canton}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
 
             <label className="form-label">

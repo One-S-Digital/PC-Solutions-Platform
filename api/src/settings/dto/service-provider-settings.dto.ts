@@ -28,6 +28,11 @@ export class UpdateServiceProviderSettingsDto {
   @IsOptional()
   canton?: string;
 
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  regionsServed?: string[];
+
   @IsString()
   @IsOptional()
   description?: string;

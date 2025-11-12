@@ -78,7 +78,8 @@ export interface Organization {
   // Additional organization fields
   contactPerson?: string;
   phoneNumber?: string;
-  canton?: string;
+  canton?: string; // Legacy single canton field
+  regionsServed?: string[]; // Multiple cantons/regions
   languages?: string[];
   capacity?: number;
   pedagogy?: string[];

@@ -9,6 +9,10 @@ import {
   ShoppingCartIcon,
   ListBulletIcon,
   AcademicCapIcon,
+  BuildingOfficeIcon,
+  IdentificationIcon,
+  LinkIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
@@ -70,155 +74,287 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   const products: Product[] = Array.isArray(organization.products) ? organization.products : [];
   const services: Service[] = Array.isArray(organization.services) ? organization.services : [];
   const jobListings: JobListing[] = Array.isArray(organization.jobListings) ? organization.jobListings : [];
+  
+  // Get regions served - support both array and single canton
+  const regionsServed = Array.isArray(organization.regionsServed) 
+    ? organization.regionsServed 
+    : (organization.canton ? [organization.canton] : []);
 
   return (
     <div className="space-y-6">
-      <Card className="overflow-hidden">
-        <div className="h-48 bg-gray-200 relative">
-          <img src={coverImageUrl} alt={`${organization.name} cover`} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          <img
-            src={logoUrl}
-            alt={`${organization.name} logo`}
-            className="absolute bottom-4 left-6 w-24 h-24 rounded-full border-4 border-white shadow-lg bg-white object-cover"
-          />
-        </div>
-        <div className="p-6 pt-28 sm:pt-6 sm:pl-36 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-swiss-charcoal">{organization.name || user?.orgName || t('profile:organization.unnamed', 'Unnamed Organization')}</h1>
-            <p className="text-gray-500 capitalize">
-              {organization.type?.toString()?.replace(/_/g, ' ').toLowerCase() || user?.orgType?.toString()?.replace(/_/g, ' ').toLowerCase() || ''}
-            </p>
-            {!!tagList.length && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {tagList.slice(0, 6).map(tag => (
-                  <span key={tag} className="text-xs bg-swiss-mint/10 text-swiss-mint px-2 py-1 rounded-full">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-            {showActions && (
-              <div className="flex flex-wrap gap-2">
-                {organization.directOrderLink && (
-                  <Button
-                    variant="secondary"
-                    onClick={() => window.open(organization.directOrderLink!, '_blank', 'noopener,noreferrer')}
-                  >
-                    {t('profile:organization.actions.directOrder', { defaultValue: 'Direct Order' })}
-                  </Button>
-                )}
-                {organization.bookingLink && (
-                  <Button
-                    variant="outline"
-                    onClick={() => window.open(organization.bookingLink!, '_blank', 'noopener,noreferrer')}
-                  >
-                    {t('profile:organization.actions.bookNow', { defaultValue: 'Book Now' })}
-                  </Button>
-                )}
-              </div>
-            )}
-        </div>
-      </Card>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="space-y-6">
-            <Card className="p-5 space-y-3">
-              <SectionTitle
-                icon={MapPinIcon}
-                title={t('profile:organization.sectionTitle', { defaultValue: 'Organization' })}
-              />
-            <div className="space-y-2 text-sm text-gray-600">
-              {organization.region && <p>{organization.region}</p>}
-              {organization.canton && (
-                <p className="flex items-center gap-2">
-                  <TagIcon className="w-4 h-4 text-gray-400" />
-                  {organization.canton}
-                </p>
+        {/* Left Sidebar - Organization Info */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Organization Details */}
+          <Card className="p-6 space-y-4">
+            <SectionTitle
+              icon={BuildingOfficeIcon}
+              title={t('profile:organization.organizationDetails', { defaultValue: 'Organization Details' })}
+            />
+            <div className="space-y-3 text-sm">
+              {organization.vatNumber && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.vatNumber', { defaultValue: 'VAT Number' })}</p>
+                  <p className="text-gray-700 font-medium">{organization.vatNumber}</p>
+                </div>
               )}
-                {typeof organization.capacity === 'number' && (
-                <p className="flex items-center gap-2">
-                  <AcademicCapIcon className="w-4 h-4 text-gray-400" />
-                    {t('profile:organization.capacity', {
-                      defaultValue: 'Capacity: {{count}}',
-                      count: organization.capacity,
-                    })}
-                </p>
+              
+              {regionsServed.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">{t('profile:organization.regionsServed', { defaultValue: 'Regions Served' })}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {regionsServed.map((region, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-swiss-mint/10 text-swiss-mint border border-swiss-mint/20"
+                      >
+                        <MapPinIcon className="w-3 h-3 mr-1" />
+                        {region}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {organization.languages && organization.languages.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">{t('profile:organization.languages', { defaultValue: 'Languages' })}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {organization.languages.map((lang, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-swiss-teal/10 text-swiss-teal border border-swiss-teal/20"
+                      >
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {typeof organization.capacity === 'number' && role === UserRole.FOUNDATION && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.capacity', { defaultValue: 'Capacity' })}</p>
+                  <p className="text-gray-700 font-medium flex items-center gap-2">
+                    <AcademicCapIcon className="w-4 h-4 text-gray-400" />
+                    {organization.capacity} {t('profile:organization.children', { defaultValue: 'children' })}
+                  </p>
+                </div>
+              )}
+
+              {organization.pedagogy && organization.pedagogy.length > 0 && role === UserRole.FOUNDATION && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">{t('profile:organization.pedagogy', { defaultValue: 'Pedagogical Approaches' })}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {organization.pedagogy.map((approach, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200"
+                      >
+                        {approach}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </Card>
 
-            <Card className="p-5 space-y-3">
-              <SectionTitle icon={PhoneIcon} title={t('profile:organization.contact', { defaultValue: 'Contact' })} />
-            <div className="space-y-2 text-sm text-gray-600">
+          {/* Contact Information */}
+          <Card className="p-6 space-y-4">
+            <SectionTitle icon={PhoneIcon} title={t('profile:organization.contact', { defaultValue: 'Contact' })} />
+            <div className="space-y-3 text-sm">
+              {organization.contactPerson && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.contactPerson', { defaultValue: 'Contact Person' })}</p>
+                  <p className="text-gray-700 font-medium flex items-center gap-2">
+                    <UserIcon className="w-4 h-4 text-gray-400" />
+                    {organization.contactPerson}
+                  </p>
+                </div>
+              )}
+
               {organization.phoneNumber && (
-                <p className="flex items-center gap-2">
-                  <PhoneIcon className="w-4 h-4 text-gray-400" />
-                  <a href={`tel:${organization.phoneNumber}`} className="hover:text-swiss-mint">
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.phone', { defaultValue: 'Phone' })}</p>
+                  <a 
+                    href={`tel:${organization.phoneNumber}`} 
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2"
+                  >
+                    <PhoneIcon className="w-4 h-4" />
                     {organization.phoneNumber}
                   </a>
-                </p>
+                </div>
               )}
+
               {user?.email && (
-                <p className="flex items-center gap-2">
-                  <EnvelopeIcon className="w-4 h-4 text-gray-400" />
-                  <a href={`mailto:${user.email}`} className="hover:text-swiss-mint">
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.email', { defaultValue: 'Email' })}</p>
+                  <a 
+                    href={`mailto:${user.email}`} 
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2"
+                  >
+                    <EnvelopeIcon className="w-4 h-4" />
                     {user.email}
                   </a>
-                </p>
+                </div>
               )}
-              {organization.contactPerson && !user?.email && (
-                <p className="flex items-center gap-2">
-                  <EnvelopeIcon className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">{organization.contactPerson}</span>
-                </p>
-              )}
+
               {organization.bookingLink && (
-                <p className="flex items-center gap-2">
-                  <GlobeAltIcon className="w-4 h-4 text-gray-400" />
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.website', { defaultValue: 'Website / Booking' })}</p>
                   <a
                     href={organization.bookingLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-swiss-mint truncate"
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
                   >
-                    {organization.bookingLink}
+                    <GlobeAltIcon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{organization.bookingLink}</span>
                   </a>
-                </p>
+                </div>
+              )}
+
+              {organization.directOrderLink && role === UserRole.PRODUCT_SUPPLIER && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.directOrder', { defaultValue: 'Direct Order' })}</p>
+                  <a
+                    href={organization.directOrderLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
+                  >
+                    <LinkIcon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{organization.directOrderLink}</span>
+                  </a>
+                </div>
+              )}
+
+              {organization.catalogUrl && role === UserRole.PRODUCT_SUPPLIER && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.catalog', { defaultValue: 'Catalog' })}</p>
+                  <a
+                    href={organization.catalogUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
+                  >
+                    <LinkIcon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{t('profile:organization.viewCatalog', { defaultValue: 'View Catalog' })}</span>
+                  </a>
+                </div>
               )}
             </div>
           </Card>
+
+          {/* Supplier/Service Provider Specific Info */}
+          {(role === UserRole.PRODUCT_SUPPLIER || role === UserRole.SERVICE_PROVIDER) && (
+            <Card className="p-6 space-y-4">
+              <SectionTitle
+                icon={IdentificationIcon}
+                title={t('profile:organization.businessInfo', { defaultValue: 'Business Information' })}
+              />
+              <div className="space-y-3 text-sm">
+                {organization.productCategory && role === UserRole.PRODUCT_SUPPLIER && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.productCategory', { defaultValue: 'Product Category' })}</p>
+                    <p className="text-gray-700 font-medium">{organization.productCategory}</p>
+                  </div>
+                )}
+
+                {typeof organization.minimumOrderQuantity === 'number' && role === UserRole.PRODUCT_SUPPLIER && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.minOrderQty', { defaultValue: 'Minimum Order Quantity' })}</p>
+                    <p className="text-gray-700 font-medium">{organization.minimumOrderQuantity}</p>
+                  </div>
+                )}
+
+                {organization.serviceType && role === UserRole.SERVICE_PROVIDER && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.serviceType', { defaultValue: 'Service Type' })}</p>
+                    <p className="text-gray-700 font-medium">{organization.serviceType}</p>
+                  </div>
+                )}
+
+                {organization.serviceCategories && organization.serviceCategories.length > 0 && role === UserRole.SERVICE_PROVIDER && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">{t('profile:organization.serviceCategories', { defaultValue: 'Service Categories' })}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {organization.serviceCategories.map((category, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200"
+                        >
+                          {category.replace(/_/g, ' ')}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {organization.deliveryType && role === UserRole.SERVICE_PROVIDER && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.deliveryType', { defaultValue: 'Delivery Type' })}</p>
+                    <p className="text-gray-700 font-medium">{organization.deliveryType}</p>
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
         </div>
 
+        {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-6">
+          {/* About Section */}
           {organization.description && (
             <Card className="p-6 space-y-3">
               <SectionTitle icon={GlobeAltIcon} title={t('profile:organization.about', { defaultValue: 'About' })} />
-              <p className="text-sm text-gray-600 whitespace-pre-line">{organization.description}</p>
+              <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{organization.description}</p>
             </Card>
           )}
 
+          {/* Products Section - Suppliers */}
           {role === UserRole.PRODUCT_SUPPLIER && (
             <Card className="p-6 space-y-4">
-                <SectionTitle
-                  icon={ShoppingCartIcon}
-                  title={t('profile:organization.products', { defaultValue: 'Products' })}
-                />
-              {products.length ? (
+              <SectionTitle
+                icon={ShoppingCartIcon}
+                title={t('profile:organization.products', { defaultValue: 'Products' })}
+              />
+              {products.length > 0 ? (
                 <div className="grid gap-4">
                   {products.map(product => (
-                    <div key={product.id} className="flex gap-4 border border-gray-100 rounded-lg p-4">
-                      <div className="flex-1">
+                    <div key={product.id} className="flex gap-4 border border-gray-100 rounded-lg p-4 hover:border-swiss-mint/50 transition-colors">
+                      {product.imageUrl && (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.title}
+                          className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-swiss-charcoal">{product.title}</h3>
                         {product.category && (
-                          <p className="text-xs uppercase tracking-wide text-gray-400">{product.category}</p>
+                          <p className="text-xs uppercase tracking-wide text-gray-400 mt-1">{product.category}</p>
                         )}
-                        {product.description && <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>}
+                        {product.description && (
+                          <p className="text-sm text-gray-600 mt-2 line-clamp-2">{product.description}</p>
+                        )}
+                        {product.tags && product.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {product.tags.slice(0, 3).map((tag, index) => (
+                              <span
+                                key={index}
+                                className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       {typeof product.price === 'number' && (
-                        <div className="text-right">
-                          <span className="text-swiss-mint font-semibold">CHF {product.price.toFixed(2)}</span>
+                        <div className="text-right flex-shrink-0">
+                          <span className="text-swiss-mint font-semibold text-lg">CHF {product.price.toFixed(2)}</span>
                         </div>
                       )}
                     </div>
@@ -232,32 +368,51 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             </Card>
           )}
 
+          {/* Services Section - Service Providers */}
           {role === UserRole.SERVICE_PROVIDER && (
             <Card className="p-6 space-y-4">
-                <SectionTitle
-                  icon={ListBulletIcon}
-                  title={t('profile:organization.services', { defaultValue: 'Services' })}
-                />
-              {services.length ? (
+              <SectionTitle
+                icon={ListBulletIcon}
+                title={t('profile:organization.services', { defaultValue: 'Services' })}
+              />
+              {services.length > 0 ? (
                 <div className="grid gap-4">
                   {services.map(service => (
-                    <div key={service.id} className="flex flex-col gap-1 border border-gray-100 rounded-lg p-4">
-                      <h3 className="font-semibold text-swiss-charcoal">{service.title}</h3>
-                      <p className="text-xs uppercase tracking-wide text-gray-400">
-                        {service.category?.toString()?.replace(/_/g, ' ')}
-                      </p>
-                      {service.description && <p className="text-sm text-gray-600 mt-1">{service.description}</p>}
-                      {(service.price || service.deliveryType) && (
+                    <div key={service.id} className="flex flex-col gap-2 border border-gray-100 rounded-lg p-4 hover:border-swiss-mint/50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-swiss-charcoal">{service.title}</h3>
+                          <p className="text-xs uppercase tracking-wide text-gray-400 mt-1">
+                            {service.category?.toString()?.replace(/_/g, ' ')}
+                          </p>
+                        </div>
+                        {service.price && (
+                          <span className="text-swiss-mint font-semibold ml-4">
+                            CHF {service.price.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      {service.description && (
+                        <p className="text-sm text-gray-600">{service.description}</p>
+                      )}
+                      {(service.deliveryType || service.bookingLink) && (
                         <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-2">
-                          {service.price && (
-                            <span className="inline-flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
-                              CHF {service.price.toFixed(2)}
-                            </span>
-                          )}
                           {service.deliveryType && (
                             <span className="inline-flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
+                              <MapPinIcon className="w-3 h-3" />
                               {service.deliveryType}
                             </span>
+                          )}
+                          {service.bookingLink && (
+                            <a
+                              href={service.bookingLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 bg-swiss-mint/10 text-swiss-mint rounded-full px-2 py-1 hover:bg-swiss-mint/20"
+                            >
+                              <LinkIcon className="w-3 h-3" />
+                              {t('profile:organization.bookService', { defaultValue: 'Book Now' })}
+                            </a>
                           )}
                         </div>
                       )}
@@ -272,31 +427,85 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             </Card>
           )}
 
+          {/* Job Listings Section - Foundations */}
           {role === UserRole.FOUNDATION && (
             <Card className="p-6 space-y-4">
-                <SectionTitle
-                  icon={AcademicCapIcon}
-                  title={t('profile:organization.openRoles', { defaultValue: 'Open Roles' })}
-                />
-              {jobListings.length ? (
+              <SectionTitle
+                icon={AcademicCapIcon}
+                title={t('profile:organization.openRoles', { defaultValue: 'Open Roles' })}
+              />
+              {jobListings.length > 0 ? (
                 <div className="grid gap-4">
                   {jobListings.map(job => (
-                    <div key={job.id} className="border border-gray-100 rounded-lg p-4 space-y-1">
-                      <h3 className="font-semibold text-swiss-charcoal">{job.title}</h3>
-                      {job.location && <p className="text-xs text-gray-400">{job.location}</p>}
-                      {job.description && <p className="text-sm text-gray-600 mt-1 line-clamp-2">{job.description}</p>}
+                    <div key={job.id} className="border border-gray-100 rounded-lg p-4 space-y-2 hover:border-swiss-mint/50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-swiss-charcoal">{job.title}</h3>
+                          {job.location && (
+                            <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                              <MapPinIcon className="w-3 h-3" />
+                              {job.location}
+                            </p>
+                          )}
+                        </div>
+                        {job.salary && (
+                          <span className="text-swiss-mint font-semibold text-sm ml-4">
+                            {job.salary}
+                          </span>
+                        )}
+                      </div>
+                      {job.description && (
+                        <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+                      )}
+                      {job.contractType && (
+                        <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                          {job.contractType}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
               ) : (
-                  <p className="text-sm text-gray-500">
-                    {t('profile:organization.empty.jobListings', { defaultValue: 'No job listings published yet.' })}
-                  </p>
+                <p className="text-sm text-gray-500">
+                  {t('profile:organization.empty.jobListings', { defaultValue: 'No job listings published yet.' })}
+                </p>
               )}
             </Card>
           )}
         </div>
       </div>
+
+      {/* Action Buttons */}
+      {showActions && (
+        <Card className="p-6">
+          <div className="flex flex-wrap gap-3 justify-center">
+            {organization.directOrderLink && role === UserRole.PRODUCT_SUPPLIER && (
+              <Button
+                variant="secondary"
+                onClick={() => window.open(organization.directOrderLink!, '_blank', 'noopener,noreferrer')}
+              >
+                {t('profile:organization.actions.directOrder', { defaultValue: 'Direct Order' })}
+              </Button>
+            )}
+            {organization.bookingLink && (
+              <Button
+                variant="outline"
+                onClick={() => window.open(organization.bookingLink!, '_blank', 'noopener,noreferrer')}
+              >
+                {t('profile:organization.actions.bookNow', { defaultValue: 'Book Now' })}
+              </Button>
+            )}
+            {organization.catalogUrl && role === UserRole.PRODUCT_SUPPLIER && (
+              <Button
+                variant="outline"
+                onClick={() => window.open(organization.catalogUrl!, '_blank', 'noopener,noreferrer')}
+              >
+                {t('profile:organization.actions.viewCatalog', { defaultValue: 'View Catalog' })}
+              </Button>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
