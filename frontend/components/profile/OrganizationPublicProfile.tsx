@@ -43,8 +43,31 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   const organization = organizationProp || user?.primaryOrganization;
 
   if (!organization) {
-    return null;
+    return (
+      <Card className="p-6">
+        <p className="text-gray-500 text-center">No organization data available.</p>
+      </Card>
+    );
   }
+
+  // Debug: Log organization data to help troubleshoot
+  console.log('OrganizationPublicProfile - organization data:', {
+    id: organization.id,
+    name: organization.name,
+    type: organization.type,
+    description: organization.description,
+    vatNumber: organization.vatNumber,
+    contactPerson: organization.contactPerson,
+    phoneNumber: organization.phoneNumber,
+    regionsServed: organization.regionsServed,
+    languages: organization.languages,
+    capacity: organization.capacity,
+    pedagogy: organization.pedagogy,
+    productCategory: organization.productCategory,
+    serviceType: organization.serviceType,
+    serviceCategories: organization.serviceCategories,
+    deliveryType: organization.deliveryType,
+  });
 
   // Determine role from organization type or user role
   const role = user?.role || (organization.type === 'FOUNDATION' ? UserRole.FOUNDATION : 
@@ -92,16 +115,21 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
               title={t('profile:organization.organizationDetails', { defaultValue: 'Organization Details' })}
             />
             <div className="space-y-3 text-sm">
-              {organization.vatNumber && (
+              {organization.vatNumber ? (
                 <div>
                   <p className="text-xs text-gray-500 mb-1">{t('profile:organization.vatNumber', { defaultValue: 'VAT Number' })}</p>
                   <p className="text-gray-700 font-medium">{organization.vatNumber}</p>
                 </div>
+              ) : (
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.vatNumber', { defaultValue: 'VAT Number' })}</p>
+                  <p className="text-gray-400 italic">—</p>
+                </div>
               )}
               
-              {regionsServed.length > 0 && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-2">{t('profile:organization.regionsServed', { defaultValue: 'Regions Served' })}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-2">{t('profile:organization.regionsServed', { defaultValue: 'Regions Served' })}</p>
+                {regionsServed.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {regionsServed.map((region, index) => (
                       <span
@@ -113,12 +141,14 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       </span>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p className="text-gray-400 italic text-xs">No regions specified</p>
+                )}
+              </div>
 
-              {organization.languages && organization.languages.length > 0 && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-2">{t('profile:organization.languages', { defaultValue: 'Languages' })}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-2">{t('profile:organization.languages', { defaultValue: 'Languages' })}</p>
+                {organization.languages && organization.languages.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {organization.languages.map((lang, index) => (
                       <span
@@ -129,33 +159,43 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       </span>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p className="text-gray-400 italic text-xs">No languages specified</p>
+                )}
+              </div>
 
-              {typeof organization.capacity === 'number' && role === UserRole.FOUNDATION && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.capacity', { defaultValue: 'Capacity' })}</p>
-                  <p className="text-gray-700 font-medium flex items-center gap-2">
-                    <AcademicCapIcon className="w-4 h-4 text-gray-400" />
-                    {organization.capacity} {t('profile:organization.children', { defaultValue: 'children' })}
-                  </p>
-                </div>
-              )}
-
-              {organization.pedagogy && organization.pedagogy.length > 0 && role === UserRole.FOUNDATION && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-2">{t('profile:organization.pedagogy', { defaultValue: 'Pedagogical Approaches' })}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {organization.pedagogy.map((approach, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200"
-                      >
-                        {approach}
-                      </span>
-                    ))}
+              {role === UserRole.FOUNDATION && (
+                <>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.capacity', { defaultValue: 'Capacity' })}</p>
+                    {typeof organization.capacity === 'number' ? (
+                      <p className="text-gray-700 font-medium flex items-center gap-2">
+                        <AcademicCapIcon className="w-4 h-4 text-gray-400" />
+                        {organization.capacity} {t('profile:organization.children', { defaultValue: 'children' })}
+                      </p>
+                    ) : (
+                      <p className="text-gray-400 italic text-xs">—</p>
+                    )}
                   </div>
-                </div>
+
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">{t('profile:organization.pedagogy', { defaultValue: 'Pedagogical Approaches' })}</p>
+                    {organization.pedagogy && organization.pedagogy.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {organization.pedagogy.map((approach, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200"
+                          >
+                            {approach}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 italic text-xs">No pedagogical approaches specified</p>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </Card>
@@ -164,19 +204,21 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
           <Card className="p-6 space-y-4">
             <SectionTitle icon={PhoneIcon} title={t('profile:organization.contact', { defaultValue: 'Contact' })} />
             <div className="space-y-3 text-sm">
-              {organization.contactPerson && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.contactPerson', { defaultValue: 'Contact Person' })}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">{t('profile:organization.contactPerson', { defaultValue: 'Contact Person' })}</p>
+                {organization.contactPerson ? (
                   <p className="text-gray-700 font-medium flex items-center gap-2">
                     <UserIcon className="w-4 h-4 text-gray-400" />
                     {organization.contactPerson}
                   </p>
-                </div>
-              )}
+                ) : (
+                  <p className="text-gray-400 italic text-xs">—</p>
+                )}
+              </div>
 
-              {organization.phoneNumber && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.phone', { defaultValue: 'Phone' })}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">{t('profile:organization.phone', { defaultValue: 'Phone' })}</p>
+                {organization.phoneNumber ? (
                   <a 
                     href={`tel:${organization.phoneNumber}`} 
                     className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2"
@@ -184,12 +226,14 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     <PhoneIcon className="w-4 h-4" />
                     {organization.phoneNumber}
                   </a>
-                </div>
-              )}
+                ) : (
+                  <p className="text-gray-400 italic text-xs">—</p>
+                )}
+              </div>
 
-              {user?.email && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.email', { defaultValue: 'Email' })}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">{t('profile:organization.email', { defaultValue: 'Email' })}</p>
+                {user?.email ? (
                   <a 
                     href={`mailto:${user.email}`} 
                     className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2"
@@ -197,8 +241,10 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     <EnvelopeIcon className="w-4 h-4" />
                     {user.email}
                   </a>
-                </div>
-              )}
+                ) : (
+                  <p className="text-gray-400 italic text-xs">—</p>
+                )}
+              </div>
 
               {organization.bookingLink && (
                 <div>
@@ -215,34 +261,38 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                 </div>
               )}
 
-              {organization.directOrderLink && role === UserRole.PRODUCT_SUPPLIER && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.directOrder', { defaultValue: 'Direct Order' })}</p>
-                  <a
-                    href={organization.directOrderLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
-                  >
-                    <LinkIcon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{organization.directOrderLink}</span>
-                  </a>
-                </div>
-              )}
+              {role === UserRole.PRODUCT_SUPPLIER && (
+                <>
+                  {organization.directOrderLink && (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.directOrder', { defaultValue: 'Direct Order' })}</p>
+                      <a
+                        href={organization.directOrderLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
+                      >
+                        <LinkIcon className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{organization.directOrderLink}</span>
+                      </a>
+                    </div>
+                  )}
 
-              {organization.catalogUrl && role === UserRole.PRODUCT_SUPPLIER && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.catalog', { defaultValue: 'Catalog' })}</p>
-                  <a
-                    href={organization.catalogUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
-                  >
-                    <LinkIcon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{t('profile:organization.viewCatalog', { defaultValue: 'View Catalog' })}</span>
-                  </a>
-                </div>
+                  {organization.catalogUrl && (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.catalog', { defaultValue: 'Catalog' })}</p>
+                      <a
+                        href={organization.catalogUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
+                      >
+                        <LinkIcon className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{t('profile:organization.viewCatalog', { defaultValue: 'View Catalog' })}</span>
+                      </a>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </Card>
@@ -255,48 +305,66 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                 title={t('profile:organization.businessInfo', { defaultValue: 'Business Information' })}
               />
               <div className="space-y-3 text-sm">
-                {organization.productCategory && role === UserRole.PRODUCT_SUPPLIER && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.productCategory', { defaultValue: 'Product Category' })}</p>
-                    <p className="text-gray-700 font-medium">{organization.productCategory}</p>
-                  </div>
-                )}
-
-                {typeof organization.minimumOrderQuantity === 'number' && role === UserRole.PRODUCT_SUPPLIER && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.minOrderQty', { defaultValue: 'Minimum Order Quantity' })}</p>
-                    <p className="text-gray-700 font-medium">{organization.minimumOrderQuantity}</p>
-                  </div>
-                )}
-
-                {organization.serviceType && role === UserRole.SERVICE_PROVIDER && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.serviceType', { defaultValue: 'Service Type' })}</p>
-                    <p className="text-gray-700 font-medium">{organization.serviceType}</p>
-                  </div>
-                )}
-
-                {organization.serviceCategories && organization.serviceCategories.length > 0 && role === UserRole.SERVICE_PROVIDER && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-2">{t('profile:organization.serviceCategories', { defaultValue: 'Service Categories' })}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {organization.serviceCategories.map((category, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200"
-                        >
-                          {category.replace(/_/g, ' ')}
-                        </span>
-                      ))}
+                {role === UserRole.PRODUCT_SUPPLIER && (
+                  <>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.productCategory', { defaultValue: 'Product Category' })}</p>
+                      {organization.productCategory ? (
+                        <p className="text-gray-700 font-medium">{organization.productCategory}</p>
+                      ) : (
+                        <p className="text-gray-400 italic text-xs">—</p>
+                      )}
                     </div>
-                  </div>
+
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.minOrderQty', { defaultValue: 'Minimum Order Quantity' })}</p>
+                      {typeof organization.minimumOrderQuantity === 'number' ? (
+                        <p className="text-gray-700 font-medium">{organization.minimumOrderQuantity}</p>
+                      ) : (
+                        <p className="text-gray-400 italic text-xs">—</p>
+                      )}
+                    </div>
+                  </>
                 )}
 
-                {organization.deliveryType && role === UserRole.SERVICE_PROVIDER && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.deliveryType', { defaultValue: 'Delivery Type' })}</p>
-                    <p className="text-gray-700 font-medium">{organization.deliveryType}</p>
-                  </div>
+                {role === UserRole.SERVICE_PROVIDER && (
+                  <>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.serviceType', { defaultValue: 'Service Type' })}</p>
+                      {organization.serviceType ? (
+                        <p className="text-gray-700 font-medium">{organization.serviceType}</p>
+                      ) : (
+                        <p className="text-gray-400 italic text-xs">—</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">{t('profile:organization.serviceCategories', { defaultValue: 'Service Categories' })}</p>
+                      {organization.serviceCategories && organization.serviceCategories.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {organization.serviceCategories.map((category, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200"
+                            >
+                              {category.replace(/_/g, ' ')}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400 italic text-xs">No service categories specified</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.deliveryType', { defaultValue: 'Delivery Type' })}</p>
+                      {organization.deliveryType ? (
+                        <p className="text-gray-700 font-medium">{organization.deliveryType}</p>
+                      ) : (
+                        <p className="text-gray-400 italic text-xs">—</p>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             </Card>
@@ -306,12 +374,14 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-6">
           {/* About Section */}
-          {organization.description && (
-            <Card className="p-6 space-y-3">
-              <SectionTitle icon={GlobeAltIcon} title={t('profile:organization.about', { defaultValue: 'About' })} />
+          <Card className="p-6 space-y-3">
+            <SectionTitle icon={GlobeAltIcon} title={t('profile:organization.about', { defaultValue: 'About' })} />
+            {organization.description ? (
               <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{organization.description}</p>
-            </Card>
-          )}
+            ) : (
+              <p className="text-sm text-gray-400 italic">No description provided.</p>
+            )}
+          </Card>
 
           {/* Products Section - Suppliers */}
           {role === UserRole.PRODUCT_SUPPLIER && (

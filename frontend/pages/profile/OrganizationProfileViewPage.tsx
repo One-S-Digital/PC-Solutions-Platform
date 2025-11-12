@@ -40,7 +40,9 @@ const OrganizationProfileViewPage: React.FC = () => {
         if (response.success && response.data) {
           // Transform the API response to match Organization type
           const orgData = response.data;
-          const transformedOrg: Organization = {
+          // Store raw data for accessing members
+          const transformedOrg: Organization & { __rawData?: any } = {
+            __rawData: orgData,
             id: orgData.id,
             name: orgData.name,
             type: orgData.type,
@@ -119,8 +121,9 @@ const OrganizationProfileViewPage: React.FC = () => {
   const handleSendMessage = () => {
     if (!organization || !currentUser) return;
     
-    // Find the primary contact user for this organization
-    const primaryMember = (organization as any).members?.[0]?.user;
+    // Find the primary contact user for this organization from the API response
+    const orgData = (organization as any).__rawData || organization;
+    const primaryMember = orgData.members?.[0]?.user;
     if (primaryMember) {
       const conversationId = startOrGetConversation(
         primaryMember.id,
@@ -210,7 +213,7 @@ const OrganizationProfileViewPage: React.FC = () => {
                 <p className="text-gray-600 mt-3 max-w-2xl">{organization.description}</p>
               )}
             </div>
-            {currentUser && currentUser.id !== (organization as any).members?.[0]?.user?.id && (
+            {currentUser && currentUser.id !== (organization as any).__rawData?.members?.[0]?.user?.id && (
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="primary"
