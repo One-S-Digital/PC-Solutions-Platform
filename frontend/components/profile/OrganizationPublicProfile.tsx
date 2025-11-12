@@ -50,25 +50,6 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
     );
   }
 
-  // Debug: Log organization data to help troubleshoot
-  console.log('OrganizationPublicProfile - organization data:', {
-    id: organization.id,
-    name: organization.name,
-    type: organization.type,
-    description: organization.description,
-    vatNumber: organization.vatNumber,
-    contactPerson: organization.contactPerson,
-    phoneNumber: organization.phoneNumber,
-    regionsServed: organization.regionsServed,
-    languages: organization.languages,
-    capacity: organization.capacity,
-    pedagogy: organization.pedagogy,
-    productCategory: organization.productCategory,
-    serviceType: organization.serviceType,
-    serviceCategories: organization.serviceCategories,
-    deliveryType: organization.deliveryType,
-  });
-
   // Determine role from organization type or user role
   const role = user?.role || (organization.type === 'FOUNDATION' ? UserRole.FOUNDATION : 
                               organization.type === 'PRODUCT_SUPPLIER' ? UserRole.PRODUCT_SUPPLIER : 
@@ -246,9 +227,9 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                 )}
               </div>
 
-              {organization.bookingLink && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('profile:organization.website', { defaultValue: 'Website / Booking' })}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">{t('profile:organization.website', { defaultValue: 'Website / Booking' })}</p>
+                {organization.bookingLink ? (
                   <a
                     href={organization.bookingLink}
                     target="_blank"
@@ -258,14 +239,16 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     <GlobeAltIcon className="w-4 h-4 flex-shrink-0" />
                     <span className="truncate">{organization.bookingLink}</span>
                   </a>
-                </div>
-              )}
+                ) : (
+                  <p className="text-gray-400 italic text-xs">No website/booking link provided</p>
+                )}
+              </div>
 
               {role === UserRole.PRODUCT_SUPPLIER && (
                 <>
-                  {organization.directOrderLink && (
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.directOrder', { defaultValue: 'Direct Order' })}</p>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.directOrder', { defaultValue: 'Direct Order' })}</p>
+                    {organization.directOrderLink ? (
                       <a
                         href={organization.directOrderLink}
                         target="_blank"
@@ -275,12 +258,14 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         <LinkIcon className="w-4 h-4 flex-shrink-0" />
                         <span className="truncate">{organization.directOrderLink}</span>
                       </a>
-                    </div>
-                  )}
+                    ) : (
+                      <p className="text-gray-400 italic text-xs">No direct order link provided</p>
+                    )}
+                  </div>
 
-                  {organization.catalogUrl && (
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">{t('profile:organization.catalog', { defaultValue: 'Catalog' })}</p>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">{t('profile:organization.catalog', { defaultValue: 'Catalog' })}</p>
+                    {organization.catalogUrl ? (
                       <a
                         href={organization.catalogUrl}
                         target="_blank"
@@ -290,8 +275,10 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         <LinkIcon className="w-4 h-4 flex-shrink-0" />
                         <span className="truncate">{t('profile:organization.viewCatalog', { defaultValue: 'View Catalog' })}</span>
                       </a>
-                    </div>
-                  )}
+                    ) : (
+                      <p className="text-gray-400 italic text-xs">No catalog link provided</p>
+                    )}
+                  </div>
                 </>
               )}
             </div>
