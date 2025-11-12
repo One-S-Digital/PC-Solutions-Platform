@@ -55,7 +55,7 @@ resolve_migration "rolled-back" "20251110123000_recruitment_enhancements_cleanup
 # If deployment issues occur, these can be re-added temporarily.
 
 echo "🔄 Deploying database migrations..."
-if npx prisma migrate deploy --schema prisma/schema.prisma --skip-generate; then
+if npx prisma migrate deploy --schema prisma/schema.prisma; then
     echo "✅ Migrations deployed successfully"
 else
     echo "❌ Migration deployment failed"

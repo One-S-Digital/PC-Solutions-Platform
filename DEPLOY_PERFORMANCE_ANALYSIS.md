@@ -274,9 +274,9 @@ PRISMA_BINARIES_MIRROR=https://binaries.prisma.sh
    - Only checking recent/problematic migrations now
    - Old migrations documented in comments for reference
 
-2. **Added --skip-generate flag** (~1-2s reduction)
-   - Prisma client already generated in postinstall
-   - No need to regenerate during migration deploy
+2. ~~**Added --skip-generate flag**~~ (REVERTED - flag doesn't exist)
+   - Attempted optimization but `prisma migrate deploy` doesn't support --skip-generate
+   - Prisma client generation happens in postinstall hook instead
 
 3. **Moved build deps to devDependencies** (cache size reduction)
    - Moved `@nestjs/cli` to devDependencies
@@ -288,7 +288,7 @@ PRISMA_BINARIES_MIRROR=https://binaries.prisma.sh
    - Uses filtered pnpm install: `--filter=api --filter=@workspace/types --prod`
    - Available as `pnpm run build:render:optimized`
 
-**Expected Improvement:** ~17-20 seconds reduction (from ~104s to ~84-87s pre-build)
+**Expected Improvement:** ~15 seconds reduction (from ~104s to ~89s pre-build)
 
 ### To Enable Full Optimization
 
@@ -307,10 +307,10 @@ This will enable the filtered install and provide an additional 20-25s reduction
 ## Implementation Plan
 
 ### Phase 1: Quick Wins ✅ COMPLETED
-1. ✅ Remove old migration checks from render-build.sh
-2. ✅ Move `rimraf` and `@nestjs/cli` to devDependencies
-3. ✅ Add --skip-generate to migrate deploy
-4. ✅ Create optimized build script with filtered install
+1. ✅ Remove old migration checks from render-build.sh (~15s savings)
+2. ✅ Move `rimraf` and `@nestjs/cli` to devDependencies (cache size reduction)
+3. ❌ Add --skip-generate to migrate deploy (REVERTED - flag doesn't exist)
+4. ✅ Create optimized build script with filtered install (ready to use)
 
 ### Phase 2: Filtered Install (2-3 hours)
 1. Test filtered pnpm install locally
