@@ -58,7 +58,12 @@ export class SettingsController {
     const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       organizations: {
         include: {
-          organization: true,
+          organization: {
+            include: {
+              logoAsset: true,
+              coverAsset: true,
+            },
+          },
         },
       },
     });
@@ -80,11 +85,16 @@ export class SettingsController {
         companyName: organization.name,
         contactEmail: user.email,
         phoneNumber: organization.phoneNumber ?? '',
+        contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
         canton: organization.canton ?? '',
+        description: organization.description ?? '',
+        vatNumber: organization.vatNumber ?? '',
         languages: organization.languages ?? [],
         capacity: organization.capacity ?? 0,
         pedagogy: organization.pedagogy ?? [],
+        logoUrl: (organization as any).logoAsset?.publicUrl ?? null,
+        coverImageUrl: (organization as any).coverAsset?.publicUrl ?? null,
       },
     };
   }
@@ -123,11 +133,14 @@ export class SettingsController {
           data: {
             name: settings.companyName,
             phoneNumber: settings.phoneNumber,
+            contactPerson: settings.contactPerson,
             region: settings.address,
             canton: settings.canton,
-            languages: settings.languages,
+            description: settings.description,
+            vatNumber: settings.vatNumber,
+            languages: settings.languages ?? [],
             capacity: settings.capacity,
-            pedagogy: settings.pedagogy,
+            pedagogy: settings.pedagogy ?? [],
           },
         });
       } else {
@@ -137,11 +150,14 @@ export class SettingsController {
             name: settings.companyName,
             type: 'FOUNDATION',
             phoneNumber: settings.phoneNumber,
+            contactPerson: settings.contactPerson,
             region: settings.address,
             canton: settings.canton,
-            languages: settings.languages,
+            description: settings.description,
+            vatNumber: settings.vatNumber,
+            languages: settings.languages ?? [],
             capacity: settings.capacity,
-            pedagogy: settings.pedagogy,
+            pedagogy: settings.pedagogy ?? [],
             isActive: true,
           },
         });
@@ -247,7 +263,12 @@ export class SettingsController {
     const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       organizations: {
         include: {
-          organization: true,
+          organization: {
+            include: {
+              logoAsset: true,
+              coverAsset: true,
+            },
+          },
         },
       },
     });
@@ -269,13 +290,19 @@ export class SettingsController {
         companyName: organization.name,
         contactEmail: user.email,
         phoneNumber: organization.phoneNumber ?? '',
+        contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
         canton: organization.canton ?? '',
+        description: organization.description ?? '',
+        vatNumber: organization.vatNumber ?? '',
+        languages: organization.languages ?? [],
         productCategory: organization.productCategory ?? '',
         serviceType: organization.serviceType ?? '',
         minimumOrderQuantity: organization.minimumOrderQuantity ?? 0,
         directOrderLink: organization.directOrderLink ?? '',
         catalogUrl: organization.catalogUrl ?? '',
+        logoUrl: (organization as any).logoAsset?.publicUrl ?? null,
+        coverImageUrl: (organization as any).coverAsset?.publicUrl ?? null,
       },
     };
   }
@@ -314,8 +341,12 @@ export class SettingsController {
           data: {
             name: settings.companyName,
             phoneNumber: settings.phoneNumber,
+            contactPerson: settings.contactPerson,
             region: settings.address,
             canton: settings.canton,
+            description: settings.description,
+            vatNumber: settings.vatNumber,
+            languages: settings.languages ?? [],
             productCategory: settings.productCategory,
             serviceType: settings.serviceType,
             minimumOrderQuantity: settings.minimumOrderQuantity,
@@ -371,7 +402,12 @@ export class SettingsController {
     const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       organizations: {
         include: {
-          organization: true,
+          organization: {
+            include: {
+              logoAsset: true,
+              coverAsset: true,
+            },
+          },
         },
       },
     });
@@ -393,11 +429,18 @@ export class SettingsController {
         companyName: organization.name,
         contactEmail: user.email,
         phoneNumber: organization.phoneNumber ?? '',
+        contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
         canton: organization.canton ?? '',
+        description: organization.description ?? '',
+        vatNumber: organization.vatNumber ?? '',
+        languages: organization.languages ?? [],
+        serviceType: organization.serviceType ?? '',
         serviceCategories: organization.serviceCategories ?? [],
         deliveryType: organization.deliveryType ?? '',
         bookingLink: organization.bookingLink ?? '',
+        logoUrl: (organization as any).logoAsset?.publicUrl ?? null,
+        coverImageUrl: (organization as any).coverAsset?.publicUrl ?? null,
       },
     };
   }
@@ -436,9 +479,14 @@ export class SettingsController {
           data: {
             name: settings.companyName,
             phoneNumber: settings.phoneNumber,
+            contactPerson: settings.contactPerson,
             region: settings.address,
             canton: settings.canton,
-            serviceCategories: settings.serviceCategories,
+            description: settings.description,
+            vatNumber: settings.vatNumber,
+            languages: settings.languages ?? [],
+            serviceType: settings.serviceType,
+            serviceCategories: settings.serviceCategories ?? [],
             deliveryType: settings.deliveryType,
             bookingLink: settings.bookingLink,
           },

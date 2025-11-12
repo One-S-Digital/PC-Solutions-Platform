@@ -623,7 +623,13 @@ interface BaseSettings {
     logoUrl?: string;
     coverImageUrl?: string;
     aboutText?: string;
+    description?: string; // Alias for aboutText
     vatNumber?: string;
+    contactPerson?: string;
+    phoneNumber?: string;
+    contactEmail?: string;
+    address?: string;
+    canton?: string;
     regionsServed?: SwissCanton[];
     languagesSpoken?: SupportedLanguage[];
     preferredContactMethod?: PreferredContactMethod;
@@ -644,6 +650,18 @@ interface BaseSettings {
     teamMembers?: TeamMember[];
     hidePubliclyToggle?: boolean;
     gdprDataDeletionRequestMade?: boolean;
+    // Foundation-specific fields
+    capacity?: number;
+    pedagogy?: string[];
+    // Supplier-specific fields
+    productCategory?: string;
+    minimumOrderQuantity?: number;
+    catalogUrl?: string;
+    // Service Provider-specific fields
+    serviceType?: string;
+    serviceCategories?: string[];
+    deliveryType?: string;
+    bookingLink?: string;
     // Educator-specific fields
     shortBio?: string;
     avatarAssetId?: string;
