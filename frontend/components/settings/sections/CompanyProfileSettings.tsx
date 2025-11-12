@@ -16,9 +16,9 @@ interface CompanyProfileSettingsProps {
 }
 
 const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLanguage }[] = [
-    { labelKey: 'languageSwitcher.en', value: 'EN'},
-    { labelKey: 'languageSwitcher.fr', value: 'FR'},
-    { labelKey: 'languageSwitcher.de', value: 'DE'},
+    { labelKey: 'common:languageSwitcher.en', value: 'EN'},
+    { labelKey: 'common:languageSwitcher.fr', value: 'FR'},
+    { labelKey: 'common:languageSwitcher.de', value: 'DE'},
 ];
 
 const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ settings, onChange, userRole }) => {
@@ -42,7 +42,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
     <SettingsSectionWrapper title={t('settings:page.companyProfile')} icon={BuildingOfficeIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Company Name */}
-        <label htmlFor="companyName" className="form-label md:pt-2">{t('settingsCompanyProfile.companyName')} <span className="text-swiss-coral">*</span></label>
+        <label htmlFor="companyName" className="form-label md:pt-2">{t('common:settingsCompanyProfile.companyName')} <span className="text-swiss-coral">*</span></label>
         <div className="form-input-container">
           <input
             type="text"
@@ -56,21 +56,21 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
         </div>
 
         {/* Logo Upload - Placeholder */}
-        <label className="form-label">{t('settingsCompanyProfile.logo')}</label>
+        <label className="form-label">{t('common:settingsCompanyProfile.logo')}</label>
         <div className="form-input-container">
           {/* <FileUploadZone onFileUpload={(file) => onChange('logoUrl', 'mock-logo-url.png')} /> Placeholder */}
            <input type="file" id="logoUrl" name="logoUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
         </div>
         
         {/* Cover Image Upload - Placeholder */}
-        <label className="form-label">{t('settingsCompanyProfile.coverImage')}</label>
+        <label className="form-label">{t('common:settingsCompanyProfile.coverImage')}</label>
         <div className="form-input-container">
           {/* <FileUploadZone onFileUpload={(file) => onChange('coverImageUrl', 'mock-cover-url.png')} /> Placeholder */}
           <input type="file" id="coverImageUrl" name="coverImageUrl" className={`${STANDARD_INPUT_FIELD} p-0 file:mr-4 file:py-2 file:px-4 file:rounded-l-button file:border-0 file:text-sm file:font-semibold file:bg-swiss-teal/10 file:text-swiss-teal hover:file:bg-swiss-teal/20`} />
         </div>
 
         {/* About Text */}
-        <label htmlFor="aboutText" className="form-label md:pt-2">{t('settingsCompanyProfile.aboutText')}</label>
+        <label htmlFor="aboutText" className="form-label md:pt-2">{t('common:settingsCompanyProfile.aboutText')}</label>
         <div className="form-input-container">
           <textarea
             id="aboutText"
@@ -81,11 +81,11 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
             maxLength={500}
             className={STANDARD_INPUT_FIELD}
           />
-          <p className="text-xs text-gray-400 text-right mt-1">{t('settingsCompanyProfile.aboutTextLength', { length: settings.aboutText?.length || 0 })}</p>
+          <p className="text-xs text-gray-400 text-right mt-1">{t('common:settingsCompanyProfile.aboutTextLength', { length: settings.aboutText?.length || 0 })}</p>
         </div>
 
         {/* VAT Number */}
-        <label htmlFor="vatNumber" className="form-label md:pt-2">{t('settingsCompanyProfile.vatNumber')}</label>
+        <label htmlFor="vatNumber" className="form-label md:pt-2">{t('common:settingsCompanyProfile.vatNumber')}</label>
         <div className="form-input-container">
           <input
             type="text"
@@ -98,10 +98,10 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
         </div>
 
         {/* Regions Served (Multi-select pills) */}
-        <label className="form-label">{t('settingsCompanyProfile.regionsServed')}</label>
+        <label className="form-label">{t('common:settingsCompanyProfile.regionsServed')}</label>
         <div className="form-input-container">
-            {/* <ChipInput selectedChips={settings.regionsServed || []} availableOptions={SWISS_CANTONS} onChange={(newChips) => onChange('regionsServed', newChips)} placeholder={t('settingsCompanyProfile.selectCanton')} /> */}
-            <p className="text-xs text-gray-500 mb-2">{t('settingsCompanyProfile.cantonsHelpText')}</p>
+            {/* <ChipInput selectedChips={settings.regionsServed || []} availableOptions={SWISS_CANTONS} onChange={(newChips) => onChange('regionsServed', newChips)} placeholder={t('common:settingsCompanyProfile.selectCanton')} /> */}
+            <p className="text-xs text-gray-500 mb-2">{t('common:settingsCompanyProfile.cantonsHelpText')}</p>
             <div className="flex flex-wrap gap-2">
                 {SWISS_CANTONS.map(canton => (
                     <button
@@ -117,10 +117,10 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
         </div>
 
         {/* Languages Spoken */}
-        <label className="form-label">{t('settingsCompanyProfile.languagesSpoken')}</label>
+        <label className="form-label">{t('common:settingsCompanyProfile.languagesSpoken')}</label>
         <div className="form-input-container">
-            {/* <ChipInput selectedChips={settings.languagesSpoken || []} availableOptions={['EN', 'FR', 'DE']} onChange={(newChips) => onChange('languagesSpoken', newChips)} placeholder={t('settingsCompanyProfile.selectLanguage')} /> */}
-             <p className="text-xs text-gray-500 mb-2">{t('settingsCompanyProfile.languagesHelpText')}</p>
+            {/* <ChipInput selectedChips={settings.languagesSpoken || []} availableOptions={['EN', 'FR', 'DE']} onChange={(newChips) => onChange('languagesSpoken', newChips)} placeholder={t('common:settingsCompanyProfile.selectLanguage')} /> */}
+             <p className="text-xs text-gray-500 mb-2">{t('common:settingsCompanyProfile.languagesHelpText')}</p>
              <div className="flex flex-wrap gap-2">
                 {translatedLanguageOptions.map(lang => (
                     <button

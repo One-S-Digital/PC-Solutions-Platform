@@ -18,8 +18,8 @@ interface DefaultsSettingsProps {
 }
 
 const CONSULTATION_LENGTHS: {labelKey: string, value: ConsultationLength}[] = [
-    {labelKey: 'settingsDefaults.consultationLengths.30min', value: '30 min'},
-    {labelKey: 'settingsDefaults.consultationLengths.60min', value: '60 min'},
+    {labelKey: 'common:settingsDefaults.consultationLengths.30min', value: '30 min'},
+    {labelKey: 'common:settingsDefaults.consultationLengths.60min', value: '60 min'},
 ];
 
 const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange, userRole }) => {
@@ -31,7 +31,7 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
     <SettingsSectionWrapper title={t('settings:page.defaults')} icon={AdjustmentsHorizontalIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Auto-respond Toggle (off by default) */}
-        <label htmlFor="autoRespondToggle" className="form-label md:pt-2">{t('settingsDefaults.autoRespondToggle')}</label>
+        <label htmlFor="autoRespondToggle" className="form-label md:pt-2">{t('common:settingsDefaults.autoRespondToggle')}</label>
         <div className="form-input-container">
           {/* <ToggleSwitch id="autoRespondToggle" checked={settings.autoRespondToggle} onChange={(checked) => onChange('autoRespondToggle', checked)} /> */}
            <button
@@ -40,18 +40,18 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
                 className={`relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none transition-colors duration-200 ease-in-out ${settings.autoRespondToggle ? 'bg-swiss-mint' : 'bg-gray-200'}`}
                 role="switch"
                 aria-checked={!!settings.autoRespondToggle}
-                aria-label={t('settingsDefaults.autoRespondToggle')}
+                aria-label={t('common:settingsDefaults.autoRespondToggle')}
             >
-                <span className="sr-only">{t('settingsDefaults.autoRespondToggle')}</span>
+                <span className="sr-only">{t('common:settingsDefaults.autoRespondToggle')}</span>
                 <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${settings.autoRespondToggle ? 'translate-x-6' : 'translate-x-1'}`}></span>
             </button>
-          <p className="text-xs text-gray-500 mt-1">{t('settingsDefaults.autoRespondHelpText')}</p>
+          <p className="text-xs text-gray-500 mt-1">{t('common:settingsDefaults.autoRespondHelpText')}</p>
         </div>
 
         {/* Supplier Extras */}
         {isSupplier && (
           <>
-            <label htmlFor="defaultMOQ" className="form-label md:pt-2">{t('settingsDefaults.defaultMOQ')}</label>
+            <label htmlFor="defaultMOQ" className="form-label md:pt-2">{t('common:settingsDefaults.defaultMOQ')}</label>
             <div className="form-input-container">
               <input
                 type="number"
@@ -60,11 +60,11 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
                 value={settings.defaultMOQ || ''}
                 onChange={(e) => onChange('defaultMOQ', e.target.value ? parseInt(e.target.value) : undefined)}
                 className={`${STANDARD_INPUT_FIELD} w-32`}
-                placeholder={t('settingsDefaults.defaultMOQPlaceholder')}
+                placeholder={t('common:settingsDefaults.defaultMOQPlaceholder')}
               />
             </div>
 
-            <label htmlFor="autoAcceptOrderQtyLimit" className="form-label md:pt-2">{t('settingsDefaults.autoAcceptOrderQtyLimit')}</label>
+            <label htmlFor="autoAcceptOrderQtyLimit" className="form-label md:pt-2">{t('common:settingsDefaults.autoAcceptOrderQtyLimit')}</label>
             <div className="form-input-container">
               <input
                 type="number"
@@ -73,7 +73,7 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
                 value={settings.autoAcceptOrderQtyLimit || ''}
                 onChange={(e) => onChange('autoAcceptOrderQtyLimit', e.target.value ? parseInt(e.target.value) : undefined)}
                 className={`${STANDARD_INPUT_FIELD} w-32`}
-                placeholder={t('settingsDefaults.autoAcceptOrderQtyLimitPlaceholder')}
+                placeholder={t('common:settingsDefaults.autoAcceptOrderQtyLimitPlaceholder')}
               />
             </div>
           </>
@@ -82,7 +82,7 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
         {/* Service Provider Extras */}
         {isProvider && (
           <>
-            <label className="form-label md:pt-2">{t('settingsDefaults.defaultConsultationLength')}</label>
+            <label className="form-label md:pt-2">{t('common:settingsDefaults.defaultConsultationLength')}</label>
             <div className="form-input-container">
               {/* <RadioPills options={CONSULTATION_LENGTHS} selectedValue={providerSettings.defaultConsultationLength} onChange={(val) => onChange('defaultConsultationLength', val as ConsultationLength)} /> */}
                 <div className="flex space-x-2">
