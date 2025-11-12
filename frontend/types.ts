@@ -647,6 +647,14 @@ interface BaseSettings {
     // Educator-specific fields
     shortBio?: string;
     avatarAssetId?: string;
+    firstName?: string;
+    lastName?: string;
+    workExperience?: string;
+    education?: string;
+    certifications?: string[];
+    skills?: string[];
+    availability?: string;
+    cvUrl?: string;
 }
 
 // Supplier-specific settings

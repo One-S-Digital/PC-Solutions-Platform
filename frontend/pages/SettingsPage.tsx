@@ -24,6 +24,7 @@ import AnalyticsPreferencesSettings from '../components/settings/sections/Analyt
 import TeamPermissionsSettings from '../components/settings/sections/TeamPermissionsSettings';
 import PrivacyDataSettings from '../components/settings/sections/PrivacyDataSettings';
 import AccountSecuritySettings from '../components/settings/sections/AccountSecuritySettings';
+import EducatorProfileSettings from '../components/settings/sections/EducatorProfileSettings';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 
 
@@ -192,6 +193,7 @@ const SettingsPage: React.FC = () => {
 
   const sections: SettingsSectionConfig[] = [
     { id: 'accountSecurity', nameKey: 'common:settingsPage.accountSecurity', icon: UserCircleIcon, component: AccountSecuritySettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { id: 'educatorProfile', nameKey: 'common:settingsPage.educatorProfile', icon: UserCircleIcon, component: EducatorProfileSettings, roles: [UserRole.EDUCATOR] },
     { id: 'billingSubscription', nameKey: 'common:settingsPage.billingSubscription', icon: WalletIcon, component: BillingSubscriptionSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
     { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
     { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
