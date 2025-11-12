@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -230,7 +230,9 @@ const SettingsPage: React.FC = () => {
     { id: 'analyticsPreferences', nameKey: 'common:settingsPage.analyticsPreferences', icon: ChartPieIcon, component: AnalyticsPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
   ];
 
-  const availableSections = sections.filter(section => currentUser && section.roles.includes(currentUser.role));
+  const availableSections = useMemo(() => {
+    return sections.filter(section => currentUser && section.roles.includes(currentUser.role));
+  }, [currentUser?.role]);
 
   useEffect(() => {
     if (availableSections.length > 0 && !activeSectionId) {
@@ -238,9 +240,9 @@ const SettingsPage: React.FC = () => {
     }
   }, [availableSections, activeSectionId]);
 
-  const handleFormChange = (field: keyof SettingsFormData, value: any) => {
+  const handleFormChange = useCallback((field: keyof SettingsFormData, value: any) => {
     setFormData(prev => (prev ? { ...prev, [field]: value } : null));
-  };
+  }, []);
 
   const handleSave = async () => {
     if (!formData || !currentUser) {
@@ -414,8 +416,11 @@ const SettingsPage: React.FC = () => {
 
   const userRole = currentUser.role;
 
-  const renderFoundationLayout = () => {
-    const tabsConfig = availableSections.map(section => ({
+  const tabsConfig = useMemo(() => {
+    if (userRole !== UserRole.FOUNDATION) {
+      return [];
+    }
+    return availableSections.map(section => ({
       label: t(section.nameKey),
       icon: section.icon,
       content: (
@@ -424,6 +429,9 @@ const SettingsPage: React.FC = () => {
         </div>
       ),
     }));
+  }, [availableSections, formData, userRole, t, handleFormChange]);
+
+  const renderFoundationLayout = () => {
     const activeTabIndex = availableSections.findIndex(section => section.id === activeSectionId);
 
     return (
