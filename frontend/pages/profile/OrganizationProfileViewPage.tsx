@@ -83,7 +83,21 @@ const OrganizationProfileViewPage: React.FC = () => {
               imageAssetId: p.imageAssetId,
               imageUrl: p.imageAsset?.publicUrl ?? null,
             })) || [],
-            services: (orgData as any).services || [],
+            services: ((orgData as any).serviceProviders || []).flatMap((provider: any) =>
+              (provider.services || []).map((service: any) => ({
+                id: service.id,
+                title: service.title,
+                description: service.description,
+                category: service.category,
+                price: service.price,
+                isActive: service.isActive,
+                providerId: service.providerId,
+                createdAt: service.createdAt,
+                updatedAt: service.updatedAt,
+                deliveryType: provider.deliveryType || null,
+                bookingLink: provider.bookingLink || null,
+              }))
+            ) || [],
             jobListings: (orgData as any).jobListings || [],
           };
           setOrganization(transformedOrg);

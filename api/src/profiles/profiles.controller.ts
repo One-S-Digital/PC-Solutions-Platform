@@ -302,8 +302,12 @@ export class ProfileController {
             imageAsset: true,
           },
         },
-        services: {
-          where: { isActive: true },
+        serviceProviders: {
+          include: {
+            services: {
+              where: { isActive: true },
+            },
+          },
         },
         jobListings: {
           where: { status: 'PUBLISHED' },
