@@ -37,18 +37,28 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   organization: organizationProp, 
   showActions = true 
 }) => {
-  const { t } = useTranslation(['profile', 'common']);
-  
-  // Support both ways: from user.primaryOrganization or direct organization prop
-  const organization = organizationProp || user?.primaryOrganization;
+  try {
+    const { t } = useTranslation(['profile', 'common']);
+    
+    // Debug: Log what we receive
+    console.log('🔍 OrganizationPublicProfile - START RENDER');
+    console.log('🔍 OrganizationPublicProfile - organizationProp:', organizationProp);
+    console.log('🔍 OrganizationPublicProfile - user:', user);
+    console.log('🔍 OrganizationPublicProfile - user?.primaryOrganization:', user?.primaryOrganization);
+    
+    // Support both ways: from user.primaryOrganization or direct organization prop
+    const organization = organizationProp || user?.primaryOrganization;
+    
+    console.log('🔍 OrganizationPublicProfile - resolved organization:', organization);
 
-  if (!organization) {
-    return (
-      <Card className="p-6">
-        <p className="text-gray-500 text-center">No organization data available.</p>
-      </Card>
-    );
-  }
+    if (!organization) {
+      console.log('🔍 OrganizationPublicProfile - NO ORGANIZATION, returning early');
+      return (
+        <Card className="p-6">
+          <p className="text-gray-500 text-center">No organization data available.</p>
+        </Card>
+      );
+    }
 
   // Debug: Log organization data
   console.log('🔍 OrganizationPublicProfile - organization prop:', organization);
@@ -583,6 +593,14 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
       )}
     </div>
   );
+  } catch (error) {
+    console.error('🔍 OrganizationPublicProfile - ERROR:', error);
+    return (
+      <Card className="p-6">
+        <p className="text-red-500 text-center">Error rendering organization profile: {error instanceof Error ? error.message : 'Unknown error'}</p>
+      </Card>
+    );
+  }
 };
 
 export default OrganizationPublicProfile;

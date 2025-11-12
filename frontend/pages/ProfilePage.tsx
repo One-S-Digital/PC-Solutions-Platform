@@ -92,6 +92,11 @@ const ProfilePage: React.FC = () => {
   
   const hasPrimaryOrganization = !!currentUser.primaryOrganization;
   const showPublicOrganizationProfile = shouldShowPublicOrganizationProfile && hasPrimaryOrganization;
+  
+  console.log('🔍 ProfilePage - shouldShowPublicOrganizationProfile:', shouldShowPublicOrganizationProfile);
+  console.log('🔍 ProfilePage - hasPrimaryOrganization:', hasPrimaryOrganization);
+  console.log('🔍 ProfilePage - showPublicOrganizationProfile:', showPublicOrganizationProfile);
+  console.log('🔍 ProfilePage - currentUser.role:', currentUser.role);
 
   const avatarUrl =
     currentUser.avatarUrl ||
@@ -151,7 +156,12 @@ const ProfilePage: React.FC = () => {
                     )}
                   </div>
                 </Card>
-                <OrganizationPublicProfile user={currentUser} />
+                {(() => {
+                  console.log('🔍 ProfilePage - About to render OrganizationPublicProfile');
+                  console.log('🔍 ProfilePage - currentUser:', currentUser);
+                  console.log('🔍 ProfilePage - currentUser.primaryOrganization:', currentUser.primaryOrganization);
+                  return <OrganizationPublicProfile user={currentUser} />;
+                })()}
               </>
             ) : (
               <Card className="p-6 bg-yellow-50 border border-yellow-200 text-sm text-yellow-800">

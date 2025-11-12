@@ -237,7 +237,11 @@ const OrganizationProfileViewPage: React.FC = () => {
       </Card>
 
       {/* Organization Details */}
-      <OrganizationPublicProfile organization={organization} showActions={true} />
+      {(() => {
+        console.log('🔍 OrganizationProfileViewPage - About to render OrganizationPublicProfile');
+        console.log('🔍 OrganizationProfileViewPage - organization:', organization);
+        return <OrganizationPublicProfile organization={organization} showActions={true} />;
+      })()}
     </div>
   );
 };
