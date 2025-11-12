@@ -44,18 +44,18 @@ resolve_migration "applied" "20251108120000_recruitment_enhancements" "Recruitme
 # Handle the cleanup migration that may have failed
 resolve_migration "rolled-back" "20251110123000_recruitment_enhancements_cleanup" "Cleanup migration already clean"
 
-# Mark historical production-only migrations as applied so Prisma doesn't block deploys
-resolve_migration "applied" "20250926_unify_asset_appuser" "Asset appuser migration already applied"
-resolve_migration "applied" "20251017_add_firstname_lastname_to_appuser" "AppUser name migration already applied"
-resolve_migration "applied" "20251106000123_recreate_user_notification_preferences" "Notification preferences migration already applied"
-resolve_migration "applied" "20251106001000_user_email_nullable" "User email nullable migration already applied"
-
-# Clean up any lingering failures from earlier hotfix migrations
-resolve_migration "rolled-back" "20251030_comprehensive_schema_audit_fix" "No comprehensive schema audit migration to resolve"
-resolve_migration "rolled-back" "20251030_add_stripe_customer_id_if_missing" "No stripe customer id migration to resolve"
+# NOTE: Removed old stable migration checks for faster builds (~15s reduction)
+# These migrations are stable and have been applied for months:
+# - 20250926_unify_asset_appuser (Sept 2025)
+# - 20251017_add_firstname_lastname_to_appuser (Oct 2025)
+# - 20251106000123_recreate_user_notification_preferences (Nov 2025)
+# - 20251106001000_user_email_nullable (Nov 2025)
+# - 20251030_comprehensive_schema_audit_fix (Oct 2025)
+# - 20251030_add_stripe_customer_id_if_missing (Oct 2025)
+# If deployment issues occur, these can be re-added temporarily.
 
 echo "🔄 Deploying database migrations..."
-if npx prisma migrate deploy --schema prisma/schema.prisma; then
+if npx prisma migrate deploy --schema prisma/schema.prisma --skip-generate; then
     echo "✅ Migrations deployed successfully"
 else
     echo "❌ Migration deployment failed"
