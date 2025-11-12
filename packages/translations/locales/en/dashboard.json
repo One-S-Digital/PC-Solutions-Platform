@@ -930,22 +930,6 @@
       }
     }
   },
-  "parentSupportPage": {
-    "faq": {
-      "matchingProcess": {
-        "q": "How does the matching process work?",
-        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers."
-      },
-      "responseTime": {
-        "q": "How quickly will I receive responses?",
-        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard."
-      },
-      "dataSecurity": {
-        "q": "Is my personal information secure?",
-        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details."
-      }
-    }
-  },
     "candidatePool": {
       "searchPlaceholder": "Search candidates...",
       "filterTitle": "Filter Candidates",

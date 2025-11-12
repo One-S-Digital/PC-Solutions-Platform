@@ -322,8 +322,8 @@
       }
     },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Bescheidenheit ihrer Probleme",
-      "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "parentDashboardPage": {
@@ -528,8 +528,8 @@
       }
     },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
-      "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "serviceProviderDashboardPage": {
@@ -627,8 +627,8 @@
       }
     },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
-      "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "supplierDashboardPage": {
@@ -733,8 +733,8 @@
       }
     },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
-      "messagePlaceholder": "Bittte geben Sie detaillierte Information zu ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "adminContentManagementDashboardPage": {

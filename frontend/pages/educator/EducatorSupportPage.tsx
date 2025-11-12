@@ -43,7 +43,7 @@ const EducatorSupportPage: React.FC = () => {
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Support ticket submitted by Educator:", { subject: ticketSubject, message: ticketMessage });
-    alert(t('educatorSupportPage.ticketSubmittedAlert'));
+    alert(t('dashboard:educatorSupportPage.ticketSubmittedAlert'));
     setTicketSubject('');
     setTicketMessage('');
   };
@@ -79,7 +79,7 @@ const EducatorSupportPage: React.FC = () => {
               onChange={(e) => setTicketSubject(e.target.value)}
               required
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('educatorSupportPage.ticketForm.subjectPlaceholder')}
+              placeholder={t('dashboard:educatorSupportPage.ticketForm.subjectPlaceholder')}
             />
           </div>
           <div>
@@ -91,7 +91,7 @@ const EducatorSupportPage: React.FC = () => {
               required
               rows={5}
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('educatorSupportPage.ticketForm.messagePlaceholder')}
+              placeholder={t('dashboard:educatorSupportPage.ticketForm.messagePlaceholder')}
             />
           </div>
           <div>

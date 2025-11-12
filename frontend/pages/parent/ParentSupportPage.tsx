@@ -19,16 +19,16 @@ const ParentSupportPage: React.FC = () => {
         <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('dashboard:supportPage.faqTitle')}</h2>
         <div className="space-y-3">
           <div>
-            <h3 className="font-medium text-gray-800">{t('parentSupportPage.faq.matchingProcess.q')}</h3>
-            <p className="text-gray-600 text-sm">{t('parentSupportPage.faq.matchingProcess.a')}</p>
+            <h3 className="font-medium text-gray-800">{t('dashboard:parentSupportPage.faq.matchingProcess.q')}</h3>
+            <p className="text-gray-600 text-sm">{t('dashboard:parentSupportPage.faq.matchingProcess.a')}</p>
           </div>
           <div>
-            <h3 className="font-medium text-gray-800">{t('parentSupportPage.faq.responseTime.q')}</h3>
-            <p className="text-gray-600 text-sm">{t('parentSupportPage.faq.responseTime.a')}</p>
+            <h3 className="font-medium text-gray-800">{t('dashboard:parentSupportPage.faq.responseTime.q')}</h3>
+            <p className="text-gray-600 text-sm">{t('dashboard:parentSupportPage.faq.responseTime.a')}</p>
           </div>
           <div>
-            <h3 className="font-medium text-gray-800">{t('parentSupportPage.faq.dataSecurity.q')}</h3>
-            <p className="text-gray-600 text-sm">{t('parentSupportPage.faq.dataSecurity.a')}</p>
+            <h3 className="font-medium text-gray-800">{t('dashboard:parentSupportPage.faq.dataSecurity.q')}</h3>
+            <p className="text-gray-600 text-sm">{t('dashboard:parentSupportPage.faq.dataSecurity.a')}</p>
           </div>
           {/* Add more FAQs */}
         </div>
