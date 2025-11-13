@@ -22,8 +22,8 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
   const typeSpecifics = {
     [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
     [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearning.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
-    [ELearningContentType.PDF]: { icon: DocumentTextIcon, actionText: t('eLearning.actions.downloadPdf'), actionIcon: ArrowDownTrayIcon, color: 'text-swiss-coral' },
-    [ELearningContentType.LINK]: { icon: LinkIcon, actionText: t('eLearning.actions.openLink'), actionIcon: ArrowTopRightOnSquareIcon, color: 'text-purple-600' },
+    [ELearningContentType.PDF]: { icon: DocumentTextIcon, actionText: t('eLearning.actions.viewPdf', 'View PDF'), actionIcon: EyeIcon, color: 'text-swiss-coral' },
+    [ELearningContentType.LINK]: { icon: LinkIcon, actionText: t('eLearning.actions.viewLink', 'View Link'), actionIcon: EyeIcon, color: 'text-purple-600' },
   };
   
   const currentItemTypeKey = Object.values(ELearningContentType).find(v => v.toLowerCase() === item.type.toLowerCase()) || ELearningContentType.COURSE;
@@ -33,12 +33,11 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
   const ActionIconElement = currentType.actionIcon; 
 
   const handleActionClick = () => {
-    if (item.type === ELearningContentType.LINK && item.fileUrl) {
-        window.open(item.fileUrl, '_blank');
-    } else if (item.fileUrl && (item.type === ELearningContentType.PDF || item.type === ELearningContentType.VIDEO)) {
-         window.open(item.fileUrl, '_blank'); 
+    // Use preview for all content types that have a fileUrl
+    if (item.fileUrl && onPreview) {
+      onPreview(item);
     } else {
-        alert(`${t('eLearning.viewingAlert')} ${item.title}`); 
+      alert(`${t('eLearning.viewingAlert')} ${item.title}`); 
     }
   };
 
@@ -64,28 +63,28 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
         )}
       </div>
       <div className="bg-gray-50 p-3 mt-auto border-t">
-        <div className="flex flex-col space-y-2">
+        {item.fileUrl && onPreview ? (
           <Button 
-              variant={(item.type === ELearningContentType.PDF || item.type === ELearningContentType.LINK) ? 'primary' : 'outline'} 
-              size="sm" 
-              leftIcon={ActionIconElement} 
-              className="w-full"
-              onClick={handleActionClick}
+            variant="primary" 
+            size="sm" 
+            leftIcon={EyeIcon} 
+            className="w-full"
+            onClick={handleActionClick}
           >
             {currentType.actionText}
           </Button>
-          {item.type === ELearningContentType.PDF && item.fileUrl && onPreview && (
-            <Button 
-                variant="ghost" 
-                size="sm" 
-                leftIcon={EyeIcon} 
-                className="w-full"
-                onClick={() => onPreview(item)}
-            >
-              Preview PDF
-            </Button>
-          )}
-        </div>
+        ) : (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            leftIcon={ActionIconElement} 
+            className="w-full"
+            onClick={handleActionClick}
+            disabled={!item.fileUrl}
+          >
+            {currentType.actionText}
+          </Button>
+        )}
       </div>
     </Card>
   );
@@ -264,7 +263,7 @@ const ELearningPage: React.FC = () => {
           onClose={() => setPreviewItem(null)}
           fileUrl={previewItem.fileUrl}
           fileName={previewItem.title}
-          fileType="PDF"
+          fileType={previewItem.type}
         />
       )}
     </div>

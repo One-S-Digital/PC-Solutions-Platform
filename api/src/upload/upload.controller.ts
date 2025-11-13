@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CloudflareR2Service } from './cloudflare-r2.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
@@ -65,6 +65,17 @@ export class UploadController {
    * Proxy endpoint to download files with proper CORS headers
    * GET /api/upload/download/*
    */
+  @Options('download/*')
+  async downloadFileOptions(@Res() res: Response) {
+    // Handle CORS preflight for video streaming
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS, HEAD');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Accept-Ranges');
+    res.setHeader('Access-Control-Max-Age', '86400'); // Cache for 24 hours
+    res.status(200).send();
+  }
+
   @Get('download/*')
   async downloadFile(
     @Req() req: Request,
@@ -95,15 +106,32 @@ export class UploadController {
       // Get the file from R2
       const fileStream = await this.r2Service.getFileStream(storageKey);
       
-      // Set CORS headers
+      // Set CORS headers for video streaming and downloads
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS, HEAD');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range');
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Accept-Ranges');
       
-      // Set content disposition to trigger download
+      const contentType = fileStream.contentType || 'application/octet-stream';
       const filename = storageKey.split('/').pop() || 'download';
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-      res.setHeader('Content-Type', fileStream.contentType || 'application/octet-stream');
+      
+      // For video/audio files, use inline to allow streaming playback
+      // For other files, use attachment to trigger download
+      const isStreamableMedia = contentType.startsWith('video/') || contentType.startsWith('audio/');
+      
+      if (isStreamableMedia) {
+        // Enable video/audio streaming
+        res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+        res.setHeader('Accept-Ranges', 'bytes'); // Enable range requests for seeking
+      } else {
+        // Trigger download for documents and other files
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      }
+      
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Length', fileStream.size.toString());
+      
+      this.logger.log(`Serving file: ${filename} (${contentType}, ${fileStream.size} bytes, ${isStreamableMedia ? 'inline streaming' : 'download'})`);
       
       // Stream the file
       fileStream.stream.pipe(res);

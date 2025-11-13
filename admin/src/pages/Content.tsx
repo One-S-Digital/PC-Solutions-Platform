@@ -9,6 +9,7 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import ContentUploadModal from '../components/ContentUploadModal';
+import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useApiClient } from '../services/api';
 import * as api from '../services/api';
 import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
@@ -41,6 +42,9 @@ export default function Content() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContentType, setModalContentType] = useState<ContentType>('e-learning');
   const [editingContent, setEditingContent] = useState<any>(null);
+  
+  // Preview modal state
+  const [previewContent, setPreviewContent] = useState<UploadedContent | null>(null);
   
   // Content data
   const [eLearningContent, setELearningContent] = useState<UploadedContent[]>([]);
@@ -301,12 +305,12 @@ export default function Content() {
     }
   };
 
-  const handleView = (url: string | undefined) => {
-    if (!url || url.trim() === '') {
+  const handleView = (content: UploadedContent) => {
+    if (!content.fileUrl && !content.publicUrl) {
       alert('No file URL available for this content');
       return;
     }
-    window.open(url, '_blank');
+    setPreviewContent(content);
   };
 
   const handleSearch = (contentType: ContentType, value: string) => {
@@ -458,7 +462,7 @@ export default function Content() {
                     item={item}
                     onEdit={() => handleOpenModal('e-learning', item)}
                     onDelete={() => handleDelete('e-learning', item.id)}
-                    onView={() => handleView(item.fileUrl || item.publicUrl)}
+                    onView={() => handleView(item)}
                   />
                 ))}
               </div>
@@ -525,7 +529,7 @@ export default function Content() {
                     item={item}
                     onEdit={() => handleOpenModal('hr', item)}
                     onDelete={() => handleDelete('hr', item.id)}
-                    onView={() => handleView(item.publicUrl)}
+                    onView={() => handleView(item)}
                   />
                 ))}
               </div>
@@ -592,7 +596,7 @@ export default function Content() {
                     item={item}
                     onEdit={() => handleOpenModal('policy', item)}
                     onDelete={() => handleDelete('policy', item.id)}
-                    onView={() => handleView(item.publicUrl)}
+                    onView={() => handleView(item)}
                   />
                 ))}
               </div>
@@ -616,6 +620,17 @@ export default function Content() {
         contentType={modalContentType}
         existingContent={editingContent}
       />
+
+      {/* Preview Modal */}
+      {previewContent && (
+        <DocumentPreviewModal
+          isOpen={!!previewContent}
+          onClose={() => setPreviewContent(null)}
+          fileUrl={previewContent.fileUrl || previewContent.publicUrl}
+          fileName={previewContent.title}
+          fileType={previewContent.type || 'document'}
+        />
+      )}
     </div>
   );
 }

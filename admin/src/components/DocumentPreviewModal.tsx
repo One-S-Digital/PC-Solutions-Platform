@@ -1,8 +1,5 @@
-import React from 'react';
 import { XMarkIcon, ArrowDownTrayIcon, LinkIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import Button from './ui/Button';
-import { useTranslation } from 'react-i18next';
-import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import { useAuth } from '@clerk/clerk-react';
 
 interface DocumentPreviewModalProps {
   isOpen: boolean;
@@ -12,16 +9,15 @@ interface DocumentPreviewModalProps {
   fileType: string;
 }
 
-const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
+export default function DocumentPreviewModal({
   isOpen,
   onClose,
   fileUrl,
   fileName,
   fileType,
-}) => {
-  const { t } = useTranslation(['content', 'common']);
-  const { authenticatedDownload } = useAuthenticatedApi();
-
+}: DocumentPreviewModalProps) {
+  const { getToken } = useAuth();
+  
   if (!isOpen) return null;
 
   // Debug logging
@@ -29,10 +25,67 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
 
   const handleDownload = async () => {
     try {
-      await authenticatedDownload(fileUrl, fileName);
+      console.log('🔽 Starting download:', { fileUrl, fileName });
+      
+      // Get authentication token
+      const token = await getToken();
+      
+      if (!token) {
+        throw new Error('Authentication token not available');
+      }
+      
+      // Check if this is already a backend proxy URL or external URL
+      const isProxyUrl = fileUrl.includes('/api/upload/download/');
+      const isExternalUrl = fileUrl.startsWith('http') && !fileUrl.includes('localhost');
+      
+      let downloadUrl = fileUrl;
+      
+      // If it's an external R2 URL, route through backend proxy
+      if (isExternalUrl && !isProxyUrl) {
+        // Extract the storage key from R2 URL
+        // Example: https://assets.example.com/elearning/xxx/file.pdf -> elearning/xxx/file.pdf
+        const urlObj = new URL(fileUrl);
+        const storageKey = urlObj.pathname.substring(1); // Remove leading slash
+        
+        // Use backend proxy endpoint
+        const apiUrl = import.meta.env.VITE_API_URL || '/api';
+        downloadUrl = `${apiUrl}/upload/download/${storageKey}`;
+        
+        console.log('📡 Using backend proxy:', { original: fileUrl, proxy: downloadUrl });
+      }
+      
+      // Fetch the file through proxy with authentication
+      const response = await fetch(downloadUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      // Convert to blob and download
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Create a temporary anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      
+      console.log('✅ Download successful');
     } catch (error) {
-      console.error('Download failed:', error);
-      alert('Failed to download file. Please try again.');
+      console.error('❌ Download failed:', error);
+      alert(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}. Opening in new tab instead.`);
+      // Fallback to opening in new tab if download fails
+      window.open(fileUrl, '_blank');
     }
   };
 
@@ -40,12 +93,12 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
     const normalizedFileType = fileType.toUpperCase();
 
     // Check if fileUrl is valid
-    if (!fileUrl || fileUrl === '#' || fileUrl.startsWith('/hr-procedures') || fileUrl.startsWith('/state-policies')) {
+    if (!fileUrl || fileUrl === '#') {
       return (
         <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
-          <p className="text-lg mb-4">{t('preview.invalidUrl', 'Invalid file URL')}</p>
+          <p className="text-lg mb-4">Invalid file URL</p>
           <p className="text-sm mb-2">URL: {fileUrl || 'Not provided'}</p>
-          <p className="text-sm mb-6">{t('preview.uploadIssue', 'The document may not have been uploaded correctly')}</p>
+          <p className="text-sm mb-6">The document may not have been uploaded correctly</p>
         </div>
       );
     }
@@ -58,8 +111,6 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
     
     // Video Preview (uploaded files, direct video URLs, YouTube, Vimeo)
     if (normalizedFileType === 'VIDEO' || ['MP4', 'WEBM', 'OGG', 'MOV', 'AVI'].includes(normalizedFileType) || isVideoFile || isYouTube || isVimeo) {
-      // Check if it's a YouTube, Vimeo, or other embedded video URL
-      
       if (isYouTube || isVimeo) {
         // Embed external video in iframe
         let embedUrl = fileUrl;
@@ -68,20 +119,13 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
         if (isYouTube) {
           let videoId = null;
           
-          // Handle youtu.be short URLs
           if (fileUrl.includes('youtu.be/')) {
             videoId = fileUrl.split('youtu.be/')[1]?.split('?')[0]?.split('/')[0];
-          }
-          // Handle youtube.com/watch?v= URLs
-          else if (fileUrl.includes('watch?v=')) {
+          } else if (fileUrl.includes('watch?v=')) {
             videoId = fileUrl.split('v=')[1]?.split('&')[0];
-          }
-          // Handle youtube.com/embed/ URLs (already in embed format)
-          else if (fileUrl.includes('/embed/')) {
+          } else if (fileUrl.includes('/embed/')) {
             videoId = fileUrl.split('/embed/')[1]?.split('?')[0];
-          }
-          // Handle youtube.com/v/ URLs
-          else if (fileUrl.includes('/v/')) {
+          } else if (fileUrl.includes('/v/')) {
             videoId = fileUrl.split('/v/')[1]?.split('?')[0];
           }
           
@@ -136,7 +180,6 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
             }}
           >
             <source src={fileUrl} type={mimeType} />
-            {/* Fallback without type attribute */}
             <source src={fileUrl} />
             Your browser does not support the video tag.
           </video>
@@ -146,7 +189,6 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
 
     // External Link Preview (iframe for websites)
     if (normalizedFileType === 'LINK' || normalizedFileType === 'URL' || (fileUrl.startsWith('http') && !isVideoFile)) {
-      // Check if it's a general external link (not a video or embedded content)
       const isEmbeddableVideo = ['youtube.com', 'youtu.be', 'vimeo.com'].some(domain => fileUrl.includes(domain));
       const isPDF = fileUrl.toLowerCase().includes('.pdf');
       
@@ -157,17 +199,15 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
               <div className="flex items-center flex-1 min-w-0">
                 <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
                 <p className="text-sm text-blue-800 truncate">
-                  {t('preview.externalLink', 'External Link')}: {fileUrl}
+                  External Link: {fileUrl}
                 </p>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
+              <button
                 onClick={() => window.open(fileUrl, '_blank')}
-                className="ml-2 flex-shrink-0"
+                className="ml-2 flex-shrink-0 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
               >
-                {t('preview.openInNewTab', 'Open in New Tab')}
-              </Button>
+                Open in New Tab
+              </button>
             </div>
             <div className="flex-1 w-full relative">
               <iframe
@@ -182,15 +222,14 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
                 <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
                 <p className="text-sm text-gray-700 mb-2">
-                  {t('preview.iframeNote', 'Some websites may not display in preview due to security policies.')}
+                  Some websites may not display in preview due to security policies.
                 </p>
-                <Button
-                  variant="primary"
-                  size="sm"
+                <button
                   onClick={() => window.open(fileUrl, '_blank')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
-                  {t('preview.openInNewTab', 'Open in New Tab')}
-                </Button>
+                  Open in New Tab
+                </button>
               </div>
             </div>
           </div>
@@ -225,7 +264,6 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
 
     // DOCX, XLSX, and other Office formats
     if (['DOCX', 'DOC', 'XLSX', 'XLS', 'PPTX', 'PPT'].includes(normalizedFileType)) {
-      // Use Microsoft Office Online Viewer
       const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
       return (
         <iframe
@@ -250,11 +288,15 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
     // Default fallback - show download message
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
-        <p className="text-lg mb-4">{t('preview.noPreviewAvailable', 'Preview not available for this file type')}</p>
-        <p className="text-sm mb-6">{t('preview.downloadToView', 'Please download the file to view it')}</p>
-        <Button variant="primary" leftIcon={ArrowDownTrayIcon} onClick={handleDownload}>
-          {t('preview.downloadButton', 'Download File')}
-        </Button>
+        <p className="text-lg mb-4">Preview not available for this file type</p>
+        <p className="text-sm mb-6">Please download the file to view it</p>
+        <button
+          onClick={handleDownload}
+          className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2 hover:bg-blue-700"
+        >
+          <ArrowDownTrayIcon className="w-4 h-4" />
+          <span>Download File</span>
+        </button>
       </div>
     );
   };
@@ -276,18 +318,17 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
             <p className="text-sm text-gray-500">{fileType.toUpperCase()}</p>
           </div>
           <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              leftIcon={ArrowDownTrayIcon}
+            <button
               onClick={handleDownload}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded flex items-center space-x-1 hover:bg-gray-50"
             >
-              {t('common:download', 'Download')}
-            </Button>
+              <ArrowDownTrayIcon className="w-4 h-4" />
+              <span>Download</span>
+            </button>
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label={t('common:close', 'Close')}
+              aria-label="Close"
             >
               <XMarkIcon className="w-6 h-6" />
             </button>
@@ -301,7 +342,5 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
       </div>
     </div>
   );
-};
-
-export default DocumentPreviewModal;
+}
 
