@@ -12,6 +12,7 @@ import StatePoliciesPage from './pages/StatePoliciesPage';
 import ELearningPage from './pages/ELearningPage';
 import UsersPage from './pages/UsersPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfileEditPage from './pages/ProfileEditPage';
 import { AppContextProvider, useAppContext } from './contexts/AppContext';
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
@@ -227,6 +228,7 @@ const ProtectedLayout: React.FC = () => {
             }
           />
         <Route path="/settings" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER]}><SettingsPage /></ProtectedRoute>} />
+        <Route path="/settings/profile" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}><ProfileEditPage /></ProtectedRoute>} />
         <Route path="/settings/service-provider" element={<ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSettingsPage /></ProtectedRoute>} />
         
         {/* Admin Specific */}

@@ -8,13 +8,12 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import {
   UsersIcon, LockClosedIcon, BellAlertIcon, WalletIcon, BuildingOfficeIcon,
-  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, EyeIcon
+  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../components/ui/Tabs';
 
 // Section specific components
-import CompanyProfileSettings from '../components/settings/sections/CompanyProfileSettings';
 import ContactBookingSettings from '../components/settings/sections/ContactBookingSettings';
 import NotificationPreferencesSettings from '../components/settings/sections/NotificationPreferencesSettings';
 import DefaultsSettings from '../components/settings/sections/DefaultsSettings';
@@ -24,7 +23,6 @@ import AnalyticsPreferencesSettings from '../components/settings/sections/Analyt
 import TeamPermissionsSettings from '../components/settings/sections/TeamPermissionsSettings';
 import PrivacyDataSettings from '../components/settings/sections/PrivacyDataSettings';
 import AccountSecuritySettings from '../components/settings/sections/AccountSecuritySettings';
-import EducatorProfileSettings from '../components/settings/sections/EducatorProfileSettings';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 
 
@@ -134,24 +132,6 @@ const SettingsPage: React.FC = () => {
             deliveryType: data.deliveryType || org?.deliveryType || '',
             bookingLink: data.bookingLink || org?.bookingLink || '',
           } as Partial<SettingsFormData>;
-        } else if (currentUser.role === UserRole.EDUCATOR) {
-          const response = await request<{ success: boolean; data?: any }>('/settings/educator');
-          const data = response.success && response.data ? response.data : {};
-          roleSettings = {
-            firstName: data.firstName || currentUser.firstName || '',
-            lastName: data.lastName || currentUser.lastName || '',
-            email: data.email || currentUser.email || '',
-            phoneNumber: data.phoneNumber || '',
-            workExperience: data.workExperience || '',
-            education: data.education || '',
-            certifications: Array.isArray(data.certifications) ? data.certifications : [],
-            skills: Array.isArray(data.skills) ? data.skills : [],
-            availability: data.availability || '',
-            cvUrl: data.cvUrl || '',
-            shortBio: data.shortBio || '',
-            avatarAssetId: data.avatarAssetId || '',
-          } as Partial<SettingsFormData>;
-        }
 
         const [privacyResponse, notificationResponse] = await Promise.all([
           request<{ success: boolean; data?: any }>('/settings/privacy'),
@@ -220,11 +200,9 @@ const SettingsPage: React.FC = () => {
 
   const sections: SettingsSectionConfig[] = [
     { id: 'accountSecurity', nameKey: 'common:settingsPage.accountSecurity', icon: UserCircleIcon, component: AccountSecuritySettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { id: 'educatorProfile', nameKey: 'common:settingsPage.educatorProfile', icon: UserCircleIcon, component: EducatorProfileSettings, roles: [UserRole.EDUCATOR] },
     { id: 'billingSubscription', nameKey: 'common:settingsPage.billingSubscription', icon: WalletIcon, component: BillingSubscriptionSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
     { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
     { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
-    { id: 'companyProfile', nameKey: 'common:settingsPage.companyProfile', icon: BuildingOfficeIcon, component: CompanyProfileSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
     { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
     { id: 'promoCodes', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
     { id: 'analyticsPreferences', nameKey: 'common:settingsPage.analyticsPreferences', icon: ChartPieIcon, component: AnalyticsPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
@@ -323,27 +301,6 @@ const SettingsPage: React.FC = () => {
         );
       }
 
-      if (currentUser.role === UserRole.EDUCATOR) {
-        requests.push(
-          request('/settings/educator', {
-            method: 'PATCH',
-            body: JSON.stringify({
-              firstName: payload.firstName || '',
-              lastName: payload.lastName || '',
-              email: payload.email || currentUser.email,
-              phoneNumber: payload.phoneNumber || '',
-              workExperience: payload.workExperience || '',
-              education: payload.education || '',
-              certifications: Array.isArray(payload.certifications) ? payload.certifications : [],
-              skills: Array.isArray(payload.skills) ? payload.skills : [],
-              availability: payload.availability || '',
-              cvUrl: payload.cvUrl || '',
-              shortBio: payload.shortBio || '',
-              avatarAssetId: payload.avatarAssetId || '',
-            }),
-          })
-        );
-      }
 
       requests.push(
         request('/settings/privacy', {
@@ -475,42 +432,6 @@ const SettingsPage: React.FC = () => {
     </div>
   );
 
-  const profilePath = useMemo(() => {
-    if (!currentUser) {
-      return null;
-    }
-
-    switch (currentUser.role) {
-      case UserRole.FOUNDATION:
-        // Link to frontend-facing organization profile if available, otherwise own profile
-        return currentUser.primaryOrganization?.id 
-          ? `/profile/organization/${currentUser.primaryOrganization.id}`
-          : '/profile';
-      case UserRole.EDUCATOR:
-        // Link to frontend-facing educator profile
-        return currentUser.id ? `/profile/educator/${currentUser.id}` : '/educator/profile';
-      case UserRole.PRODUCT_SUPPLIER:
-      case UserRole.SERVICE_PROVIDER:
-        // Link to frontend-facing organization profile if available, otherwise own profile
-        return currentUser.primaryOrganization?.id 
-          ? `/profile/organization/${currentUser.primaryOrganization.id}`
-          : '/profile';
-      default:
-        return '/profile';
-    }
-  }, [currentUser]);
-
-  const handleViewProfile = () => {
-    if (!profilePath) {
-      return;
-    }
-
-    if (isDirty && !window.confirm(t('settings:page.unsavedChangesPrompt'))) {
-      return;
-    }
-
-    navigate(profilePath);
-  };
 
   return (
     <div className="flex flex-col h-full bg-page-bg">
@@ -518,11 +439,13 @@ const SettingsPage: React.FC = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
           <div className="flex items-center space-x-3">
-            {profilePath && (
-              <Button variant="outline" leftIcon={EyeIcon} onClick={handleViewProfile}>
-                {t('common:buttons.viewProfile')}
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              leftIcon={PencilSquareIcon}
+              onClick={() => navigate('/settings/profile')}
+            >
+              {t('common:buttons.editProfile', 'Edit Profile')}
+            </Button>
               {availableSections.length > 1 && (
                 <>
                   <Button variant="light" onClick={handleCancel}>
