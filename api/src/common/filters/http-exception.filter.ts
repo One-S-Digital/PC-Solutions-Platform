@@ -28,15 +28,61 @@ export class AllExceptionsFilter implements ExceptionFilter {
           : (exceptionResponse as any)?.message ?? message;
     }
 
-    this.logger.error('Exception caught', {
+    // Enhanced error logging with full details
+    const errorDetails: any = {
       status,
       message,
       path: request?.url,
       method: request?.method,
-      ...(process.env.NODE_ENV !== 'production' && {
-        stack: exception instanceof Error ? exception.stack : undefined,
-      }),
-    });
+      timestamp: new Date().toISOString(),
+    };
+
+    // Always log error details (sanitized for production)
+    if (exception instanceof Error) {
+      errorDetails.errorName = exception.name;
+      errorDetails.errorMessage = exception.message;
+      errorDetails.errorStack = exception.stack;
+    }
+
+    // Prisma-specific error details
+    if ((exception as any)?.code) {
+      errorDetails.prismaCode = (exception as any).code;
+      errorDetails.prismaMeta = (exception as any).meta;
+    }
+
+    // Additional error properties
+    if (exception && typeof exception === 'object') {
+      const errorObj = exception as any;
+      errorDetails.errorProperties = Object.keys(errorObj).filter(
+        key => !['stack', 'message', 'name'].includes(key)
+      );
+      
+      // Log specific known error properties
+      if (errorObj.code) errorDetails.code = errorObj.code;
+      if (errorObj.meta) errorDetails.meta = errorObj.meta;
+      if (errorObj.cause) errorDetails.cause = errorObj.cause;
+    }
+
+    // Log full error details
+    this.logger.error('🔍 [DEBUG] Exception caught - Full Details', errorDetails);
+
+    // Also log in a more readable format
+    console.error('🔍 [DEBUG] ========== EXCEPTION DETAILS ==========');
+    console.error('🔍 [DEBUG] Status:', status);
+    console.error('🔍 [DEBUG] Message:', message);
+    console.error('🔍 [DEBUG] Path:', request?.url);
+    console.error('🔍 [DEBUG] Method:', request?.method);
+    if (exception instanceof Error) {
+      console.error('🔍 [DEBUG] Error Name:', exception.name);
+      console.error('🔍 [DEBUG] Error Message:', exception.message);
+      console.error('🔍 [DEBUG] Error Stack:', exception.stack);
+    }
+    if ((exception as any)?.code) {
+      console.error('🔍 [DEBUG] Prisma Code:', (exception as any).code);
+      console.error('🔍 [DEBUG] Prisma Meta:', JSON.stringify((exception as any).meta, null, 2));
+    }
+    console.error('🔍 [DEBUG] Full Error Object:', JSON.stringify(exception, Object.getOwnPropertyNames(exception), 2));
+    console.error('🔍 [DEBUG] ========================================');
 
     // Set CORS headers to match main.ts configuration
     // This ensures error responses include CORS headers, preventing browser CORS errors
