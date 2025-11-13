@@ -132,6 +132,7 @@ const SettingsPage: React.FC = () => {
             deliveryType: data.deliveryType || org?.deliveryType || '',
             bookingLink: data.bookingLink || org?.bookingLink || '',
           } as Partial<SettingsFormData>;
+        }
 
         const [privacyResponse, notificationResponse] = await Promise.all([
           request<{ success: boolean; data?: any }>('/settings/privacy'),
