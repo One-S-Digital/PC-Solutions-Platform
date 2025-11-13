@@ -17,14 +17,13 @@ import {
     BuildingOfficeIcon,
     PhoneIcon,
     AdjustmentsHorizontalIcon,
-    EyeIcon,
+    PencilSquareIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 import AccountSecuritySettings from '../components/settings/sections/AccountSecuritySettings';
 import BillingSubscriptionSettings from '../components/settings/sections/BillingSubscriptionSettings';
 import PrivacyDataSettings from '../components/settings/sections/PrivacyDataSettings';
-import CompanyProfileSettings from '../components/settings/sections/CompanyProfileSettings';
 import ContactBookingSettings from '../components/settings/sections/ContactBookingSettings';
 import DefaultsSettings from '../components/settings/sections/DefaultsSettings';
 import NotificationPreferencesSettings from '../components/settings/sections/NotificationPreferencesSettings';
@@ -152,7 +151,6 @@ const ServiceProviderSettingsPage: React.FC = () => {
     { id: 'billingSubscription', nameKey: 'common:settingsPage.billingSubscription', icon: WalletIcon, component: BillingSubscriptionSettings },
     { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings },
     { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings },
-    { id: 'companyProfile', nameKey: 'common:settingsPage.companyProfile', icon: BuildingOfficeIcon, component: CompanyProfileSettings },
     { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings },
     { id: 'defaults', nameKey: 'settings:page.defaults', icon: AdjustmentsHorizontalIcon, component: DefaultsSettings },
   ];
@@ -244,29 +242,6 @@ const ServiceProviderSettingsPage: React.FC = () => {
     }
   };
 
-  const profilePath = useMemo(() => {
-    if (!currentUser) {
-      return null;
-    }
-
-    if (currentUser.orgId) {
-      return `/partner/${currentUser.orgId}`;
-    }
-
-    return '/profile';
-  }, [currentUser]);
-
-  const handleViewProfile = () => {
-    if (!profilePath) {
-      return;
-    }
-
-    if (isDirty && !window.confirm(t('settings:page.unsavedChangesPrompt'))) {
-      return;
-    }
-
-    navigate(profilePath);
-  };
 
   const scrollToSection = (sectionId: string) => {
     setActiveSectionId(sectionId);
@@ -291,11 +266,13 @@ const ServiceProviderSettingsPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
             <div className="flex items-center space-x-3">
-              {profilePath && (
-                <Button variant="outline" leftIcon={EyeIcon} onClick={handleViewProfile}>
-                  {t('common:buttons.viewProfile')}
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                leftIcon={PencilSquareIcon}
+                onClick={() => navigate('/settings/profile')}
+              >
+                {t('common:buttons.editProfile', 'Edit Profile')}
+              </Button>
               <Button variant="light" onClick={handleCancel}>
                 {t('common:buttons.cancel')}
               </Button>
