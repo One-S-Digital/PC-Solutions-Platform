@@ -426,40 +426,66 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
         WHERE table_schema = 'public' 
-        AND table_name = 'app_users' 
+        AND table_name = 'AppUser' 
         AND column_name = 'email'
     ) THEN
-        ALTER TABLE "public"."app_users" ADD COLUMN "email" TEXT;
-        CREATE UNIQUE INDEX IF NOT EXISTS "app_users_email_key" ON "public"."app_users"("email");
-        RAISE NOTICE '✅ Added email column to app_users table';
+        ALTER TABLE "AppUser" ADD COLUMN "email" TEXT;
+        CREATE UNIQUE INDEX IF NOT EXISTS "AppUser_email_key" ON "AppUser"("email");
+        RAISE NOTICE '✅ Added email column to AppUser table';
     ELSE
-        RAISE NOTICE '⏭️  email column already exists in app_users table';
+        RAISE NOTICE '⏭️  email column already exists in AppUser table';
+    END IF;
+
+    -- Add clerkId column if missing (checking for both clerkId and clerkUserId)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'AppUser' 
+        AND column_name = 'clerkId'
+    ) THEN
+        -- Check if clerkUserId exists and rename it, or add new clerkId
+        IF EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_schema = 'public' 
+            AND table_name = 'AppUser' 
+            AND column_name = 'clerkUserId'
+        ) THEN
+            -- Rename clerkUserId to clerkId
+            ALTER TABLE "AppUser" RENAME COLUMN "clerkUserId" TO "clerkId";
+            RAISE NOTICE '✅ Renamed clerkUserId to clerkId in AppUser table';
+        ELSE
+            ALTER TABLE "AppUser" ADD COLUMN "clerkId" TEXT;
+            CREATE UNIQUE INDEX IF NOT EXISTS "AppUser_clerkId_key" ON "AppUser"("clerkId");
+            RAISE NOTICE '✅ Added clerkId column to AppUser table';
+        END IF;
+    ELSE
+        RAISE NOTICE '⏭️  clerkId column already exists in AppUser table';
     END IF;
 
     -- Add role column if missing
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
         WHERE table_schema = 'public' 
-        AND table_name = 'app_users' 
+        AND table_name = 'AppUser' 
         AND column_name = 'role'
     ) THEN
-        ALTER TABLE "public"."app_users" ADD COLUMN "role" "UserRole" NOT NULL DEFAULT 'PARENT';
-        RAISE NOTICE '✅ Added role column to app_users table';
+        ALTER TABLE "AppUser" ADD COLUMN "role" "UserRole" NOT NULL DEFAULT 'PARENT';
+        RAISE NOTICE '✅ Added role column to AppUser table';
     ELSE
-        RAISE NOTICE '⏭️  role column already exists in app_users table';
+        RAISE NOTICE '⏭️  role column already exists in AppUser table';
     END IF;
 
     -- Add updatedAt column if missing
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
         WHERE table_schema = 'public' 
-        AND table_name = 'app_users' 
+        AND table_name = 'AppUser' 
         AND column_name = 'updatedAt'
     ) THEN
-        ALTER TABLE "public"."app_users" ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
-        RAISE NOTICE '✅ Added updatedAt column to app_users table';
+        ALTER TABLE "AppUser" ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+        RAISE NOTICE '✅ Added updatedAt column to AppUser table';
     ELSE
-        RAISE NOTICE '⏭️  updatedAt column already exists in app_users table';
+        RAISE NOTICE '⏭️  updatedAt column already exists in AppUser table';
     END IF;
 
     RAISE NOTICE '✅ ✅ ✅ All AppUser model columns verified/added ✅ ✅ ✅';
