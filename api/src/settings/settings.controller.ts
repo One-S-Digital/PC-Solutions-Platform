@@ -562,8 +562,9 @@ export class SettingsController {
           this.logger.log('🔍 [DEBUG] Step 3: UserOrganization query result', {
             found: !!userOrg,
             hasOrganization: !!userOrg?.organization,
-            userOrgId: userOrg?.id,
+            userId: userOrg?.userId,
             organizationId: userOrg?.organizationId,
+            role: userOrg?.role,
             organizationName: userOrg?.organization?.name,
           });
 
@@ -716,7 +717,9 @@ export class SettingsController {
             });
             
             this.logger.log('🔍 [DEBUG] Step 5: UserOrganization link created successfully', {
-              userOrgId: newUserOrg.id,
+              userId: newUserOrg.userId,
+              organizationId: newUserOrg.organizationId,
+              role: newUserOrg.role,
             });
           }
 
