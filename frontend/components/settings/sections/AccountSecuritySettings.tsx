@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { SettingsFormData, UserRole } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
-import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import Button from '../../ui/Button';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
@@ -50,6 +50,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
   
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPersonalInfo(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -72,6 +73,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
     const handleUpdatePassword = async (e: React.FormEvent) => {
       e.preventDefault();
       setPasswordError(null);
+      setPasswordSuccess(false);
 
       if (passwordInfo.newPassword !== passwordInfo.confirmNewPassword) {
         addNotification({ title: t('common:forms.passwordsDoNotMatch'), message: '', type: 'error' });
@@ -87,11 +89,23 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
 
       try {
         await changePassword(passwordInfo.currentPassword, passwordInfo.newPassword);
-        addNotification({ title: t('common:settingsAccountSecurity.notifications.passwordChanged'), message: '', type: 'success' });
+        // Show success notification
+        addNotification({ 
+          title: t('common:settingsAccountSecurity.notifications.passwordChanged'), 
+          message: t('common:settingsAccountSecurity.notifications.passwordChangedMessage', 'Your password has been successfully updated. You can now use your new password to sign in.'),
+          type: 'success' 
+        });
+        // Clear form and show success state
         setPasswordInfo({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
+        setPasswordSuccess(true);
+        // Clear success message after 10 seconds
+        setTimeout(() => {
+          setPasswordSuccess(false);
+        }, 10000);
       } catch (error) {
         const message = error instanceof Error ? error.message : t('common:errors.unknown');
         setPasswordError(message);
+        setPasswordSuccess(false);
         addNotification({ title: message, message: '', type: 'error' });
       } finally {
         setIsUpdatingPassword(false);
@@ -185,9 +199,28 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
             </div>
           </div>
             <div className="mt-4 space-y-2">
-               <Button type="submit" variant="secondary" disabled={isUpdatingPassword}>
-                 {isUpdatingPassword ? 'Updating...' : t('common:settingsAccountSecurity.changePassword.updatePasswordButton')}
+               <Button type="submit" variant="secondary" disabled={isUpdatingPassword || passwordSuccess}>
+                 {isUpdatingPassword ? 'Updating...' : passwordSuccess ? t('common:settingsAccountSecurity.changePassword.passwordUpdated', 'Password Updated') : t('common:settingsAccountSecurity.changePassword.updatePasswordButton')}
                </Button>
+               
+               {/* Success Message */}
+               {passwordSuccess && (
+                 <div className="mt-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+                   <div className="flex items-start">
+                     <CheckCircleIcon className="h-5 w-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
+                     <div className="flex-1">
+                       <p className="text-sm font-medium text-green-800">
+                         {t('common:settingsAccountSecurity.notifications.passwordChanged')}
+                       </p>
+                       <p className="text-sm text-green-700 mt-1">
+                         {t('common:settingsAccountSecurity.notifications.passwordChangedMessage', 'Your password has been successfully updated. You can now use your new password to sign in.')}
+                       </p>
+                     </div>
+                   </div>
+                 </div>
+               )}
+
+               {/* Error Message */}
                {passwordError && (
                  <div className="mt-2">
                    <p className="text-sm text-swiss-coral font-medium">{passwordError}</p>

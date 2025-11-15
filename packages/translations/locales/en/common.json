@@ -527,7 +527,8 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Personal information updated successfully",
-      "passwordChanged": "Password changed successfully"
+      "passwordChanged": "Password changed successfully",
+      "passwordChangedMessage": "Your password has been successfully updated. You can now use your new password to sign in."
     },
     "dangerZone": {
       "finalConfirmation": "Are you absolutely sure you want to delete your account? This action cannot be undone.",
@@ -551,7 +552,8 @@
       "currentPasswordLabel": "Current Password",
       "newPasswordLabel": "New Password",
       "confirmNewPasswordLabel": "Confirm New Password",
-      "updatePasswordButton": "Update Password"
+      "updatePasswordButton": "Update Password",
+      "passwordUpdated": "Password Updated"
     }
   },
   "settingsPrivacyData": {
