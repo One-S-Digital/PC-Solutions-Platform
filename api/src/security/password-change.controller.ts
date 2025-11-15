@@ -67,6 +67,23 @@ export class PasswordChangeController {
         message: 'Password change recorded',
       };
     } catch (error) {
+      // Log the actual error for debugging
+      console.error('Failed to record password change event:', error);
+      console.error('Error details:', {
+        userId: user.id,
+        action: 'PASSWORD_CHANGE',
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+      });
+      
+      // Re-throw with more context if it's a known error
+      if (error instanceof Error) {
+        throw new HttpException(
+          `Failed to record password change event: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+      
       throw new HttpException('Failed to record password change event', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
