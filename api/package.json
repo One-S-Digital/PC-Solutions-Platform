@@ -11,11 +11,11 @@
   "scripts": {
     "postinstall": "prisma generate",
     "prebuild": "rimraf dist",
+    "prebuild:migrate": "prisma migrate deploy || echo '⚠️  Migrations skipped (DATABASE_URL not set or migration failed)'",
     "build": "nest build",
     "build:render": "SKIP_SEED=true ./scripts/render-build.sh && SKIP_SEED=true node ./scripts/seed-once.js && pnpm run build",
     "build:render:optimized": "SKIP_SEED=true ./scripts/render-build-optimized.sh && SKIP_SEED=true node ./scripts/seed-once.js && pnpm run build",
     "build:with-migration": "prisma migrate deploy && nest build",
-    "prebuild:migrate": "prisma migrate deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
