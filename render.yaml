@@ -23,7 +23,7 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: cd api && pnpm install && bash scripts/render-migrate.sh && pnpm run build
+    buildCommand: cd api && pnpm install && pnpm run build
     startCommand: cd api && pnpm run start:prod
     envVars:
       - key: NODE_ENV
