@@ -7,7 +7,7 @@ import React, {
   useState,
   ReactNode,
 } from 'react';
-import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
+import { useUser, useAuth, ClerkProvider, useClerk } from '@clerk/clerk-react';
 import { Organization, User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
@@ -57,6 +57,7 @@ interface AuthProviderProps {
 const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const { user: clerkUser, isLoaded: clerkIsLoaded } = useUser();
   const { getToken, signOut: clerkSignOut, isSignedIn } = useAuth();
+  const clerk = useClerk();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -498,21 +499,76 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       try {
-        // Clerk may require additional verification for password changes
-        // Try to update password directly first
-        await clerkUser.updatePassword({ currentPassword, newPassword });
+        // First, try to update password directly
+        // Clerk's updatePassword should handle verification automatically if currentPassword is provided
+        await clerkUser.updatePassword({ 
+          currentPassword, 
+          newPassword,
+          signOutOfOtherSessions: false,
+        });
       } catch (error: any) {
         console.error('Failed to change password via Clerk', error);
 
         // Handle the specific "additional verification" error
         const errorMessage = error?.message || '';
-        if (errorMessage.includes('additional verification') || errorMessage.includes('verification')) {
-          // Clerk requires additional verification - this typically means the user needs to
-          // re-authenticate or complete MFA verification
-          throw new Error(
-            'Additional verification is required to change your password. ' +
-            'Please sign out and sign back in, or complete any required multi-factor authentication, then try again.'
-          );
+        const errorCode = error?.code || error?.status || '';
+        
+        // If Clerk requires additional verification, we need to prepare and complete verification first
+        if (
+          errorMessage.includes('additional verification') || 
+          errorMessage.includes('verification') ||
+          errorCode === 403 ||
+          error?.status === 403
+        ) {
+          try {
+            // Prepare verification with password strategy
+            const verification = await clerkUser.prepareVerification({
+              strategy: 'password',
+            });
+
+            // Attempt to verify with current password
+            if (verification.status === 'unverified') {
+              const verified = await verification.attemptVerification({
+                password: currentPassword,
+              });
+
+              if (verified.status === 'verified') {
+                // Verification successful, now try password update again
+                await clerkUser.updatePassword({ 
+                  currentPassword, 
+                  newPassword,
+                  signOutOfOtherSessions: false,
+                });
+                return; // Success, exit early
+              }
+            } else if (verification.status === 'verified') {
+              // Already verified, try password update again
+              await clerkUser.updatePassword({ 
+                currentPassword, 
+                newPassword,
+                signOutOfOtherSessions: false,
+              });
+              return; // Success, exit early
+            }
+
+            // If we get here, verification didn't work as expected
+            throw new Error(
+              'Verification completed but password update still failed. ' +
+              'Please try signing out and signing back in, then attempt the password change again.'
+            );
+          } catch (verifyError: any) {
+            // Handle verification-specific errors
+            if (verifyError?.message?.includes('incorrect') || verifyError?.message?.includes('password')) {
+              throw new Error('The current password you entered is incorrect. Please try again.');
+            }
+            
+            // Re-throw verification errors with context
+            throw new Error(
+              'Additional verification is required to change your password. ' +
+              'Please ensure you entered your current password correctly, or sign out and sign back in, then try again. ' +
+              `Error: ${verifyError?.message || 'Verification failed'}`
+            );
+          }
         }
 
         // Handle incorrect current password
