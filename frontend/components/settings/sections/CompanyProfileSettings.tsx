@@ -193,6 +193,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.companyName || ''}
                 onChange={(e) => onChange('companyName', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}
                 required
               />
             </div>
@@ -250,6 +251,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.contactPerson || ''}
                 onChange={(e) => onChange('contactPerson', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:companyProfile.contactPersonPlaceholder', 'Enter contact person name')}
               />
             </div>
 
@@ -277,6 +279,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.contactEmail || currentUser?.email || ''}
                 onChange={(e) => onChange('contactEmail', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:companyProfile.contactEmailPlaceholder', 'Enter contact email address')}
               />
             </div>
           </div>
@@ -360,6 +363,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.capacity || ''}
                     onChange={(e) => onChange('capacity', e.target.value ? parseInt(e.target.value) : 0)}
                     className={STANDARD_INPUT_FIELD}
+                    placeholder={t('settings:companyProfile.capacityPlaceholder', 'Enter number of children')}
                   />
                 </div>
 
@@ -425,6 +429,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.minimumOrderQuantity || ''}
                     onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value) : 0)}
                     className={STANDARD_INPUT_FIELD}
+                    placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}
                   />
                 </div>
 
@@ -522,6 +527,9 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                       <option key={option} value={option}>{option}</option>
                     ))}
                   </select>
+                  {!settings.deliveryType && (
+                    <p className="text-xs text-gray-500 mt-1">{t('settings:companyProfile.deliveryTypeHint', 'Choose how you deliver your services')}</p>
+                  )}
                 </div>
 
                 <label htmlFor="bookingLink" className="form-label md:pt-2">

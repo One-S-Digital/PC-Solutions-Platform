@@ -146,6 +146,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 value={profileData.firstName}
                 onChange={(e) => handleFieldChange('firstName', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}
               />
             </div>
 
@@ -159,6 +160,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 value={profileData.lastName}
                 onChange={(e) => handleFieldChange('lastName', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}
               />
             </div>
 
@@ -172,6 +174,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 value={profileData.email}
                 onChange={(e) => handleFieldChange('email', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:educatorProfile.emailPlaceholder', 'Enter your email address')}
               />
             </div>
 
@@ -185,6 +188,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 value={profileData.phoneNumber}
                 onChange={(e) => handleFieldChange('phoneNumber', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:educatorProfile.phoneNumberPlaceholder', '+41 XX XXX XX XX')}
               />
             </div>
           </div>
