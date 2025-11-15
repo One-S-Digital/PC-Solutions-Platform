@@ -498,10 +498,29 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       try {
+        // Clerk may require additional verification for password changes
+        // Try to update password directly first
         await clerkUser.updatePassword({ currentPassword, newPassword });
       } catch (error: any) {
         console.error('Failed to change password via Clerk', error);
 
+        // Handle the specific "additional verification" error
+        const errorMessage = error?.message || '';
+        if (errorMessage.includes('additional verification') || errorMessage.includes('verification')) {
+          // Clerk requires additional verification - this typically means the user needs to
+          // re-authenticate or complete MFA verification
+          throw new Error(
+            'Additional verification is required to change your password. ' +
+            'Please sign out and sign back in, or complete any required multi-factor authentication, then try again.'
+          );
+        }
+
+        // Handle incorrect current password
+        if (errorMessage.includes('current password') || errorMessage.includes('incorrect')) {
+          throw new Error('The current password you entered is incorrect. Please try again.');
+        }
+
+        // Handle Clerk-specific errors
         const clerkErrors = error?.errors;
         if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
           const message = clerkErrors

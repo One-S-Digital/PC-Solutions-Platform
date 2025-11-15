@@ -159,6 +159,12 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
         {/* Change Password Section */}
           <form onSubmit={handleUpdatePassword}>
           <h3 className="text-lg font-medium text-gray-900">{t('common:settingsAccountSecurity.changePassword.title')}</h3>
+          <div className="mt-2 mb-4">
+            <p className="text-sm text-gray-600">
+              For security reasons, you may need to sign out and sign back in before changing your password. 
+              If you encounter a verification error, please sign out and sign back in, then try again.
+            </p>
+          </div>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
             <label htmlFor="currentPassword" className="form-label md:pt-2">{t('common:settingsAccountSecurity.changePassword.currentPasswordLabel')}</label>
             <div className="form-input-container relative">
@@ -183,7 +189,14 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                  {isUpdatingPassword ? 'Updating...' : t('common:settingsAccountSecurity.changePassword.updatePasswordButton')}
                </Button>
                {passwordError && (
-                 <p className="text-sm text-swiss-coral">{passwordError}</p>
+                 <div className="mt-2">
+                   <p className="text-sm text-swiss-coral font-medium">{passwordError}</p>
+                   {passwordError.includes('verification') && (
+                     <p className="text-sm text-gray-600 mt-1">
+                       Tip: Try signing out and signing back in, then attempt to change your password again.
+                     </p>
+                   )}
+                 </div>
                )}
              </div>
         </form>
