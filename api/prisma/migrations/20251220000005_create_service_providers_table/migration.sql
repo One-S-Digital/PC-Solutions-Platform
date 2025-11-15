@@ -7,10 +7,11 @@ BEGIN
     -- Check if ServiceCategory enum exists, create if not
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'ServiceCategory') THEN
         CREATE TYPE "public"."ServiceCategory" AS ENUM (
-            'EDUCATION',
-            'CARE',
-            'SUPPORT',
+            'CLEANING',
+            'IT_SUPPORT',
+            'MAINTENANCE',
             'CONSULTING',
+            'TRAINING',
             'OTHER'
         );
         RAISE NOTICE '✅ Created ServiceCategory enum';
