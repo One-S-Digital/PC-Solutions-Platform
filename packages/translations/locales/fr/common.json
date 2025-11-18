@@ -466,6 +466,19 @@
     "imageHelpText": "Téléchargez une image JPG ou PNG (max. 5 Mo). Elle apparaîtra dans la marketplace.",
     "currentImage": "Image actuelle"
   },
+  "serviceCategories": {
+    "CLEANING": "Nettoyage et maintenance",
+    "IT_SUPPORT": "Support informatique",
+    "MAINTENANCE": "Maintenance technique",
+    "CONSULTING": "Conseil",
+    "TRAINING": "Formation et accompagnement",
+    "OTHER": "Autre"
+  },
+  "serviceDeliveryTypes": {
+    "On-site": "Sur site",
+    "Remote": "À distance",
+    "Hybrid": "Hybride"
+  },
   "supplierCard": {
     "specializesIn": "[FR] Specializes In",
     "viewProfileAndProducts": "[FR] View Profile And Products"

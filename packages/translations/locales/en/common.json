@@ -504,6 +504,19 @@
     "imageHelpText": "Upload a JPG or PNG (max 5 MB). This image appears on your marketplace card.",
     "currentImage": "Current image"
   },
+  "serviceCategories": {
+    "CLEANING": "Cleaning & Maintenance",
+    "IT_SUPPORT": "IT & Technical Support",
+    "MAINTENANCE": "Facilities Maintenance",
+    "CONSULTING": "Consulting",
+    "TRAINING": "Training & Coaching",
+    "OTHER": "Other"
+  },
+  "serviceDeliveryTypes": {
+    "On-site": "On-site",
+    "Remote": "Remote",
+    "Hybrid": "Hybrid"
+  },
   "addPromoCodeModal": {
     "placeholder": "Placeholder"
   },

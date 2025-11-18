@@ -725,6 +725,19 @@
     "imageHelpText": "Laden Sie ein JPG oder PNG (max. 5 MB) hoch. Es wird auf der Marketplace-Karte angezeigt.",
     "currentImage": "Aktuelles Bild"
   },
+  "serviceCategories": {
+    "CLEANING": "Reinigung & Wartung",
+    "IT_SUPPORT": "IT- und Techniksupport",
+    "MAINTENANCE": "Gebäudetechnik",
+    "CONSULTING": "Beratung",
+    "TRAINING": "Training & Schulung",
+    "OTHER": "Sonstiges"
+  },
+  "serviceDeliveryTypes": {
+    "On-site": "Vor Ort",
+    "Remote": "Remote",
+    "Hybrid": "Hybrid"
+  },
   "policyAlertModal": {
     "labels": {
       "title": "[DE] Title",
