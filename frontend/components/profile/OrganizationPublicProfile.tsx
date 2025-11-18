@@ -16,6 +16,7 @@ import {
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { User, UserRole, Product, Service, JobListing, Organization } from '../../types';
+import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 
 type OrganizationPublicProfileProps = {
   user?: User;
@@ -347,29 +348,31 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       <p className="text-xs text-gray-500 mb-2 font-medium">
                         {t('profile:organization.serviceCategories', { defaultValue: 'Service Categories' })}
                       </p>
-                      {serviceCategories.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {serviceCategories.map((category, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200"
-                            >
-                              {String(category).replace(/_/g, ' ')}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-gray-400 italic text-xs">No service categories specified</p>
-                      )}
+                        {serviceCategories.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {serviceCategories.map((category, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200"
+                              >
+                                {formatServiceCategory(t, category)}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-400 italic text-xs">{t('profile:organization.noServiceCategories', { defaultValue: 'No service categories specified' })}</p>
+                        )}
                     </div>
 
                     <div>
                       <p className="text-xs text-gray-500 mb-1 font-medium">
                         {t('profile:organization.deliveryType', { defaultValue: 'Delivery Type' })}
                       </p>
-                      <p className="text-gray-700">
-                        {organization.deliveryType || <span className="text-gray-400 italic text-xs">Not specified</span>}
-                      </p>
+                        <p className="text-gray-700">
+                          {organization.deliveryType
+                            ? formatServiceDeliveryType(t, organization.deliveryType)
+                            : <span className="text-gray-400 italic text-xs">{t('profile:organization.deliveryTypeNotSpecified', { defaultValue: 'Not specified' })}</span>}
+                        </p>
                     </div>
                   </>
                 )}
@@ -459,9 +462,9 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h3 className="font-semibold text-swiss-charcoal">{service.title}</h3>
-                          <p className="text-xs uppercase tracking-wide text-gray-400 mt-1">
-                            {service.category?.toString()?.replace(/_/g, ' ')}
-                          </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatServiceCategory(t, service.category)}
+                            </p>
                         </div>
                         {service.price && (
                           <span className="text-swiss-mint font-semibold ml-4">
@@ -474,10 +477,10 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       )}
                       {(service.deliveryType || service.bookingLink) && (
                         <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-2">
-                          {service.deliveryType && (
+                            {service.deliveryType && (
                             <span className="inline-flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
                               <MapPinIcon className="w-3 h-3" />
-                              {service.deliveryType}
+                                {formatServiceDeliveryType(t, service.deliveryType)}
                             </span>
                           )}
                           {service.bookingLink && (

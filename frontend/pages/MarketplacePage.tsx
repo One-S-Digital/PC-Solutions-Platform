@@ -12,10 +12,12 @@ import SupplierCard from '../components/marketplace/SupplierCard';
 import { useAppContext } from '../contexts/AppContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatServiceCategory } from '../utils/serviceFormatting';
 
 // ServiceCard now includes a function to book an appointment
 const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: string) => void, onBookAppointment: (service: Service) => void }> = ({ service, onViewProvider, onBookAppointment }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+    const { t } = useTranslation(['dashboard', 'common']);
+    const localizedCategory = formatServiceCategory(t, service.category);
   return (
   <Card className="flex flex-col group" hoverEffect>
      <div className="relative overflow-hidden aspect-video cursor-pointer" onClick={() => onViewProvider(service.providerId)}>
@@ -28,8 +30,8 @@ const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: str
         <button onClick={() => onViewProvider(service.providerId)} className="hover:underline focus:outline-none">{service.providerName}</button>
       </div>
       <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
-      <div className="text-xs text-gray-500 mb-1">
-        <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceCard.categoryLabel', { category: service.category })}
+        <div className="text-xs text-gray-500 mb-1">
+          <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('common:marketplacePage.serviceCard.categoryLabel')}: {localizedCategory}
       </div>
       {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
        <div className="mb-4">
@@ -246,7 +248,15 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => {setCategoryFilter(e.target.value);}}
                 className={STANDARD_INPUT_FIELD}
             >
-                {currentCategories.map(cat => <option key={cat} value={cat}>{cat === 'All' ? t('dashboard:filters.all') : cat}</option>)}
+                {currentCategories.map(cat => (
+                  <option key={cat} value={cat}>
+                    {cat === 'All'
+                      ? t('dashboard:filters.all')
+                      : activeTabIndex === 1
+                        ? formatServiceCategory(t, cat)
+                        : cat}
+                  </option>
+                ))}
             </select>
           </div>
           <div>

@@ -7,6 +7,7 @@ import { Service, ServiceCategory, SERVICE_CATEGORIES } from '../../types';
 import ServiceUploadModal from '../../components/service-provider/ServiceUploadModal';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 
 interface ServiceCardProps {
   service: Service;
@@ -16,7 +17,9 @@ interface ServiceCardProps {
 
 const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDelete }) => {
     const { t } = useTranslation(['dashboard', 'common']);
-    return (
+      const categoryLabel = formatServiceCategory(t, service.category);
+      const deliveryLabel = formatServiceDeliveryType(t, service.deliveryType);
+      return (
         <Card className="flex flex-col group" hoverEffect>
             <div className="relative overflow-hidden aspect-[16/10]">
             <img src={service.imageUrl || `https://picsum.photos/seed/${service.id}/400/250`} alt={service.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -24,7 +27,7 @@ const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDe
             <div className="p-5 flex flex-col flex-grow">
             <h3 className="text-lg font-semibold text-swiss-charcoal mb-1 group-hover:text-swiss-teal transition-colors">{service.title}</h3>
             <p className="text-xs text-gray-500 mb-2">
-                <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceProviderListingsPage.card.category')}: {service.category} | <WrenchScrewdriverIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceProviderListingsPage.card.delivery')}: {service.deliveryType || 'N/A'}
+                <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceProviderListingsPage.card.category')}: {categoryLabel} | <WrenchScrewdriverIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceProviderListingsPage.card.delivery')}: {deliveryLabel}
             </p>
             <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
             {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
@@ -51,7 +54,7 @@ const ServiceProviderListingsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
   
-  const serviceCategories: (ServiceCategory | 'All')[] = ['All', ...new Set(MOCK_SERVICES.map(s => s.category))];
+    const serviceCategories: (ServiceCategory | 'All')[] = ['All', ...new Set(MOCK_SERVICES.map(s => s.category))];
 
 
   const handleOpenModal = (service: Service | null = null) => {
@@ -85,14 +88,14 @@ const ServiceProviderListingsPage: React.FC = () => {
       );
     } else {
       // Add new service
-      const newService: Service = {
+        const newService: Service = {
         id: `srv-${Date.now()}`,
         providerId,
         providerName,
         providerLogo,
         title: data.title || 'Untitled Service',
         description: data.description || '',
-        category: data.category || 'Other',
+          category: data.category || ServiceCategory.OTHER,
         availability: data.availability || 'By appointment',
         tags: data.tags || [],
         deliveryType: data.deliveryType || 'On-site',
@@ -135,12 +138,16 @@ const ServiceProviderListingsPage: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className={STANDARD_INPUT_FIELD}
           />
-          <select
+            <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value as ServiceCategory | 'All')}
             className={STANDARD_INPUT_FIELD}
           >
-            {serviceCategories.map(cat => <option key={cat} value={cat}>{cat === 'All' ? t('dashboard:filters.all') : cat}</option>)}
+              {serviceCategories.map(cat => (
+                <option key={cat} value={cat}>
+                  {cat === 'All' ? t('dashboard:filters.all') : formatServiceCategory(t, cat)}
+                </option>
+              ))}
           </select>
         </div>
       </Card>

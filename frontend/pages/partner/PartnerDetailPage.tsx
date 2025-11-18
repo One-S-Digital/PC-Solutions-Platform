@@ -15,6 +15,7 @@ import { ArrowLeftIcon, BuildingStorefrontIcon, CogIcon, ShoppingCartIcon, TagIc
 import { useTranslation } from 'react-i18next';
 import { useMessaging } from '../../contexts/MessagingContext';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
+import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 
 
 interface ProductItemProps {
@@ -277,8 +278,11 @@ const PartnerDetailPage: React.FC = () => {
                      <Card key={service.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 group hover:shadow-md transition-shadow">
                       <img src={service.imageUrl || `https://picsum.photos/seed/${service.id}/100/100`} alt={service.title} className="w-full sm:w-24 h-24 object-cover rounded-md flex-shrink-0" />
                       <div className="flex-grow">
-                        <h3 className="text-md font-semibold text-swiss-charcoal group-hover:text-swiss-teal">{service.title}</h3>
-                        <p className="text-xs text-gray-500">{service.category} - {service.deliveryType}</p>
+                          <h3 className="text-md font-semibold text-swiss-charcoal group-hover:text-swiss-teal">{service.title}</h3>
+                          <p className="text-xs text-gray-500">
+                            {formatServiceCategory(t, service.category)}
+                            {service.deliveryType && <> • {formatServiceDeliveryType(t, service.deliveryType)}</>}
+                          </p>
                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
                          {service.priceInfo && <p className="text-md font-semibold text-swiss-mint mt-1.5">{service.priceInfo}</p>}
                       </div>
