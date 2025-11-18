@@ -124,9 +124,15 @@ const EducatorJobBoardPage: React.FC = () => {
     setSelectedJob(job);
     setIsDetailModalOpen(true);
   };
-
-  const handleApply = async (jobToApply: JobListing) => {
-    const result = await applyForJob(jobToApply);
+  
+  const handleApply = async (data: {
+    job: JobListing;
+    cvAssetId: string;
+    cvUrl: string;
+    coverLetter: string;
+  }) => {
+    // TODO: submit cvAssetId/cvUrl/coverLetter to backend
+    const result = await applyForJob(data.job);
     addNotification({
       title: result.success ? t('notifications.successTitle') : t('notifications.errorTitle'),
       message: result.message,

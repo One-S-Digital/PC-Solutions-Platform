@@ -8,6 +8,14 @@ export class CreateJobApplicationDto {
   @IsOptional()
   @IsString()
   coverLetter?: string;
+
+  @IsOptional()
+  @IsString()
+  cvAssetId?: string;
+
+  @IsOptional()
+  @IsString()
+  cvUrl?: string;
 }
 
 export class UpdateJobApplicationDto {

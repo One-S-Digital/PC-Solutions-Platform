@@ -11,12 +11,19 @@ export class ClerkAuthGuard implements CanActivate {
   private readonly authorizedParties: string[];
   private readonly jwtKey?: string;
   private readonly authDebug: boolean;
+  private readonly secretKey: string;
 
   constructor(
     private configService: ConfigService,
     private reflector: Reflector,
     private prisma: PrismaService,
   ) {
+    // Get Clerk secret key
+    this.secretKey = this.configService.get<string>('CLERK_SECRET_KEY', '');
+    if (!this.secretKey) {
+      throw new Error('CLERK_SECRET_KEY is not configured');
+    }
+
     // Determine issuer based on Clerk instance
     const publishableKey = this.configService.get<string>('CLERK_PUBLISHABLE_KEY', '');
     if (publishableKey.includes('test')) {
@@ -89,6 +96,7 @@ export class ClerkAuthGuard implements CanActivate {
     
     try {
       const options: any = {
+        secretKey: this.secretKey,
         authorizedParties: this.authorizedParties.length > 0 ? this.authorizedParties : undefined,
         clockSkewInMs: 60_000,
       };
@@ -108,6 +116,7 @@ export class ClerkAuthGuard implements CanActivate {
         console.log('🔐 Auth Debug:', {
           path: req.url,
           method: req.method,
+          hasSecretKey: !!this.secretKey,
           hasJwtKey: !!this.jwtKey,
           configuredIssuer: this.issuer,
           tokenIssuer: decodedPayload?.iss,

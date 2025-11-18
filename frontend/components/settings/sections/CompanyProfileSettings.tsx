@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
@@ -17,6 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import FileUploadZone from '../../ui/FileUploadZone';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -60,8 +61,6 @@ const DELIVERY_TYPE_OPTIONS = [
 const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common', 'settings']);
   const { currentUser } = useAppContext();
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
   
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (settings[field] as string[] || []) as Array<SwissCanton | SupportedLanguage | string>;
@@ -91,24 +90,6 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   const coverImageUrl = settings.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingLogo(true);
-    // TODO: Implement actual file upload
-    alert('Logo upload functionality will be implemented with file upload service');
-    setUploadingLogo(false);
-  };
-
-  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingCover(true);
-    // TODO: Implement actual file upload
-    alert('Cover image upload functionality will be implemented with file upload service');
-    setUploadingCover(false);
-  };
-
   return (
     <SettingsSectionWrapper title={t('settings:page.companyProfile', 'Organization Profile')} icon={BuildingOfficeIcon}>
       <div className="space-y-8">
@@ -119,7 +100,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
             {t('settings:companyProfile.images', 'Logo & Cover Image')}
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Logo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -132,13 +113,14 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   className="w-24 h-24 rounded-lg border-2 border-gray-200 object-cover"
                 />
                 <div className="flex-1">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    disabled={uploadingLogo}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-swiss-mint file:text-white hover:file:bg-swiss-teal disabled:opacity-50"
-                  />
+                    <FileUploadZone
+                      label={t('settings:companyProfile.uploadLogo', 'Upload Logo')}
+                      acceptedMimeTypes="image/*"
+                      maxFileSizeMB={2}
+                      assetKind="LOGO"
+                      autoUpload
+                      onUploadSuccess={(asset) => onChange('logoUrl', asset.url)}
+                    />
                   <p className="mt-1 text-xs text-gray-500">
                     {t('settings:companyProfile.logoHint', 'JPG, PNG or GIF. Max size 2MB')}
                   </p>
@@ -158,13 +140,14 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   className="w-32 h-20 rounded-lg border-2 border-gray-200 object-cover"
                 />
                 <div className="flex-1">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCoverUpload}
-                    disabled={uploadingCover}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-swiss-mint file:text-white hover:file:bg-swiss-teal disabled:opacity-50"
-                  />
+                    <FileUploadZone
+                      label={t('settings:companyProfile.uploadCoverImage', 'Upload Cover Image')}
+                      acceptedMimeTypes="image/*"
+                      maxFileSizeMB={5}
+                      assetKind="COVER_IMAGE"
+                      autoUpload
+                      onUploadSuccess={(asset) => onChange('coverImageUrl', asset.url)}
+                    />
                   <p className="mt-1 text-xs text-gray-500">
                     {t('settings:companyProfile.coverHint', 'Recommended: 1600x400px')}
                   </p>

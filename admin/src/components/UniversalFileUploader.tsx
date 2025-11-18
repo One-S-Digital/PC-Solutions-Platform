@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, Check, AlertCircle, File, Image, Video, FileText, Info, Tag } from 'lucide-react';
 import { apiService, useApiClient } from '../services/api';
-
+import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
 import { FileTypeInfo } from '../types/api';
 
 
@@ -63,6 +63,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
   className = '',
 }) => {
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -139,6 +140,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
     }
 
     setUploading(true);
+    setUploadProgress(0);
     setError(null);
 
     try {
@@ -160,16 +162,34 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         formData.append('accessRoles', JSON.stringify(accessRoles));
       }
 
-      const response = await apiService.uploadUniversalFile(apiClient, formData);
+      const result = await retryWithBackoff(
+        async () => apiService.uploadUniversalFile(apiClient, formData, (progress) => {
+          setUploadProgress(progress);
+        }),
+        {
+          ...RetryPresets.upload,
+          onRetry: (error, attempt, delay) => {
+            console.log(`Upload retry attempt ${attempt} after ${delay}ms:`, error.message);
+            setUploadProgress(0); // Reset progress on retry
+          },
+        }
+      );
+
+      if (!result.success) {
+        throw result.error;
+      }
+
+      const response = result.data;
       
-      if (response.data.success) {
+      if (response?.data.success) {
         const assetData = response.data.data;
+        setUploadProgress(100);
         onAssetChange(assetData);
         setShowUrlInput(false);
         setFileDescription('');
         setError(null);
       } else {
-        setError(response.data.message || 'Upload failed');
+        setError(response?.data.message || 'Upload failed');
       }
 
 
@@ -180,6 +200,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
 
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -473,9 +494,20 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         />
 
         {uploading ? (
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
-            <p className="text-sm text-gray-600">Uploading...</p>
+          <div className="flex flex-col items-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="w-full max-w-xs">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Uploading...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </div>
           </div>
         ) : currentAsset ? (
           <div className="flex flex-col items-center">

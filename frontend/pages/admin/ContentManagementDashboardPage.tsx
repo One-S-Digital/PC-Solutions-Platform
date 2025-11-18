@@ -1,14 +1,15 @@
 
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 // [FIX] Imported ELEARNING_CATEGORIES and HR_CATEGORIES for valid default values.
-import { UserRole, Course, HRDocument, PolicyDocument, UploadableContentType, ELEARNING_CATEGORIES, HR_CATEGORIES } from '../../types';
-import { MOCK_COURSES, MOCK_HR_DOCS, MOCK_POLICY_DOCS } from '../../constants';
+import { UserRole, Course, HRDocument, PolicyDocument, UploadableContentType, ELEARNING_CATEGORIES, HR_CATEGORIES, ELearningContentType, ELearningCategory, HRCategory, PolicyCategory, POLICY_CATEGORIES } from '../../types';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { AcademicCapIcon, DocumentTextIcon, NewspaperIcon, PlusCircleIcon, EyeIcon, ClockIcon, ExclamationTriangleIcon, CheckCircleIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
 import ContentUploadModal from '../../components/admin/ContentUploadModal';
+import DocumentPreviewModal from '../../components/DocumentPreviewModal';
 
 interface ContentStat {
   name: string;
@@ -31,13 +32,107 @@ interface RecentActivityItem {
 
 const ContentManagementDashboardPage: React.FC = () => {
   const { currentUser } = useAppContext();
-  // In a real app, these would come from context or API calls
-  const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
-  const [hrDocs, setHrDocs] = useState<HRDocument[]>(MOCK_HR_DOCS);
-  const [policies, setPolicies] = useState<PolicyDocument[]>(MOCK_POLICY_DOCS);
+  const { authenticatedRequest } = useAuthenticatedApi();
+  const navigate = useNavigate();
+  
+  // Fetch real data from API instead of mocks
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [hrDocs, setHrDocs] = useState<HRDocument[]>([]);
+  const [policies, setPolicies] = useState<PolicyDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadContentType, setUploadContentType] = useState<UploadableContentType>('e-learning');
+  const [previewActivity, setPreviewActivity] = useState<RecentActivityItem | null>(null);
+  const [previewFileUrl, setPreviewFileUrl] = useState<string>('');
+  const [previewFileType, setPreviewFileType] = useState<string>('PDF');
+
+  // Fetch all content on mount
+  useEffect(() => {
+    const fetchAllContent = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch E-Learning content
+        const eLearningResponse = await authenticatedRequest<any[]>('/content/elearning?limit=100', {
+          method: 'GET'
+        });
+        if (eLearningResponse.success && eLearningResponse.data) {
+          const content = eLearningResponse.data.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            type: item.contentType || item.type || 'Course',
+            category: item.category || ELEARNING_CATEGORIES[0],
+            updatedDate: item.updatedAt || new Date().toISOString(),
+            thumbnailUrl: item.thumbnailUrl || `https://picsum.photos/seed/${item.id}/300/180`,
+            language: item.language || 'EN',
+            accessRoles: item.accessRoles || [],
+            status: item.status || 'Published',
+            lessons: item.lessons,
+            duration: item.duration,
+            fileUrl: item.publicUrl || item.fileUrl || item.url,
+            tags: item.tags || [],
+          }));
+          setCourses(content);
+        }
+
+        // Fetch HR Documents
+        const hrResponse = await authenticatedRequest<any[]>('/content/hr-documents?limit=100', {
+          method: 'GET'
+        });
+        if (hrResponse.success && hrResponse.data) {
+          const documents = hrResponse.data.map((doc: any) => ({
+            id: doc.id,
+            title: doc.title,
+            category: doc.category || HR_CATEGORIES[0],
+            fileUrl: doc.publicUrl || doc.fileUrl || doc.url || '#',
+            uploaderId: doc.uploaderId || doc.createdBy,
+            lastUpdated: doc.updatedAt || new Date().toISOString(),
+            fileType: doc.fileType || 'PDF',
+            tags: doc.tags || [],
+            language: doc.language,
+            version: doc.versionNumber || 'v1.0',
+            status: doc.status || 'Published',
+            isFavorite: false,
+          }));
+          setHrDocs(documents);
+        }
+
+        // Fetch State Policies
+        const policiesResponse = await authenticatedRequest<any[]>('/content/state-policies?limit=100', {
+          method: 'GET'
+        });
+        if (policiesResponse.success && policiesResponse.data) {
+          const policyDocs = policiesResponse.data.map((policy: any) => ({
+            id: policy.id,
+            title: policy.title,
+            category: policy.category || POLICY_CATEGORIES[0],
+            policyType: policy.policyType,
+            country: policy.country,
+            region: policy.region,
+            tags: policy.tags || [],
+            publishedDate: policy.createdAt || new Date().toISOString(),
+            lastUpdatedDate: policy.updatedAt || new Date().toISOString(),
+            effectiveDate: policy.effectiveDate,
+            contentPreview: policy.contentPreview || policy.description,
+            externalLink: policy.externalLink,
+            fileUrl: policy.publicUrl || policy.fileUrl || policy.url,
+            fileType: policy.fileType,
+            status: policy.status || 'Published',
+            isCritical: policy.isCritical || false,
+            language: policy.language,
+          }));
+          setPolicies(policyDocs);
+        }
+      } catch (error) {
+        console.error('Failed to fetch content:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllContent();
+  }, [authenticatedRequest]);
 
   const contentStats: ContentStat[] = [
     { name: 'E-Learning Items', count: courses.length, icon: AcademicCapIcon, color: 'text-swiss-mint', link: '/e-learning', addLinkType: 'e-learning' },
@@ -55,6 +150,54 @@ const ContentManagementDashboardPage: React.FC = () => {
   const handleOpenUploadModal = (type: UploadableContentType) => {
     setUploadContentType(type);
     setIsUploadModalOpen(true);
+  };
+
+  const handleViewActivity = (activity: RecentActivityItem) => {
+    // Find the actual content item to get the file URL
+    let fileUrl = '';
+    let fileType = 'PDF';
+    
+    if (activity.type === 'e-learning') {
+      const course = courses.find(c => c.id === activity.id);
+      if (course?.fileUrl) {
+        fileUrl = course.fileUrl;
+        // Determine file type from course type
+        if (course.type === 'VIDEO' || course.type === 'Video') {
+          fileType = 'VIDEO';
+        } else if (course.type === 'PDF') {
+          fileType = 'PDF';
+        } else {
+          // For COURSE or LINK, navigate instead of preview
+          window.open(course.fileUrl, '_blank');
+          return;
+        }
+      }
+    } else if (activity.type === 'hr') {
+      const doc = hrDocs.find(d => d.id === activity.id);
+      if (doc?.fileUrl) {
+        fileUrl = doc.fileUrl;
+        fileType = doc.fileType || 'PDF';
+      }
+    } else if (activity.type === 'policy') {
+      const policy = policies.find(p => p.id === activity.id);
+      if (policy?.fileUrl) {
+        fileUrl = policy.fileUrl;
+        fileType = policy.fileType || 'PDF';
+      } else if (policy?.externalLink) {
+        // Open external link
+        window.open(policy.externalLink, '_blank');
+        return;
+      }
+    }
+    
+    // If we have a file URL, open preview modal
+    if (fileUrl) {
+      setPreviewActivity(activity);
+      setPreviewFileUrl(fileUrl);
+      setPreviewFileType(fileType);
+    } else {
+      alert(`No preview available for ${activity.title}`);
+    }
   };
 
   const handleContentSubmit = (data: Partial<Course | HRDocument | PolicyDocument>, file?: File) => {
@@ -141,7 +284,14 @@ const ContentManagementDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-swiss-charcoal">Content Management Dashboard</h1>
+      <h1 className="text-3xl font-bold text-swiss-charcoal">Dashboard</h1>
+
+      {isLoading && (
+        <div className="text-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-swiss-mint"></div>
+          <p className="mt-2 text-sm text-gray-500">Loading content statistics...</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {contentStats.map((stat) => (
@@ -191,7 +341,7 @@ const ContentManagementDashboardPage: React.FC = () => {
                       {activity.status && <span className={`font-medium ${activity.status === 'Critical' ? 'text-red-600' : activity.status === 'Draft' ? 'text-gray-600' : 'text-green-600'}`}>{activity.status}</span>} by {activity.user} - {new Date(activity.date).toLocaleDateString()}
                     </p>
                   </div>
-                  <Button variant="ghost" size="xs" leftIcon={EyeIcon} onClick={() => alert(`Viewing ${activity.title}`)}>View</Button>
+                  <Button variant="ghost" size="xs" leftIcon={EyeIcon} onClick={() => handleViewActivity(activity)}>View</Button>
                 </li>
               ))}
             </ul>
@@ -220,6 +370,20 @@ const ContentManagementDashboardPage: React.FC = () => {
         onSubmit={handleContentSubmit}
         contentType={uploadContentType}
       />
+
+      {previewActivity && previewFileUrl && (
+        <DocumentPreviewModal
+          isOpen={!!previewActivity}
+          onClose={() => {
+            setPreviewActivity(null);
+            setPreviewFileUrl('');
+            setPreviewFileType('PDF');
+          }}
+          fileUrl={previewFileUrl}
+          fileName={previewActivity.title}
+          fileType={previewFileType}
+        />
+      )}
     </div>
   );
 };

@@ -41,6 +41,7 @@ enum AssetKind {
   FRONTEND_OG_IMAGE
   ADMIN_LOGO
   ADMIN_FAVICON
+  ELEARNING
 }
 
 enum SubscriptionStatus {
@@ -275,8 +276,42 @@ model Asset {
   etag         String? // ETag from R2/S3 for verification
   checksum     String? // SHA-256 checksum (base64) for integrity
   version      Int       @default(1) // Version for response/schema changes
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+
+  // Content categorization fields
+  category    String? // HR_DOCUMENT, ELEARNING, STATE_POLICY, etc.
+  title       String?
+  description String?
+  metadata    Json? // Legacy/flexible metadata (deprecated, use typed fields below)
+
+  // Typed content fields (replaces JSON metadata)
+  contentType    String? // COURSE, VIDEO, PDF, LINK (for e-learning)
+  language       String? // EN, FR, DE
+  accessRoles    String[] @default([]) // Array of UserRole values
+  status         String?  @default("Draft") // Draft, Published, Archived, etc.
+  contentPreview String? // Short preview/description for listing
+  tags           String[] @default([]) // Searchable tags
+
+  // E-Learning specific fields
+  duration        String? // e.g., "2 hours, 30 minutes"
+  lessons         Int? // Number of lessons (for COURSE type)
+  videoSourceType String? // 'upload' or 'url' (for VIDEO type)
+
+  // HR Document specific fields
+  fileType      String? // PDF, DOCX, XLSX, etc.
+  versionNumber String? // Document version
+  effectiveDate DateTime? // When document becomes effective
+  reviewDate    DateTime? // Next review date
+
+  // State Policy specific fields
+  country        String? // Switzerland, Germany, Austria, France
+  region         String? // Canton/State/Region
+  policyType     String? // Regulation, Guideline, Standard, Directive, Law
+  isCritical     Boolean   @default(false) // Critical policy flag
+  expirationDate DateTime? // Policy expiration date
+  externalLink   String? // Link to official policy document
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations - after migration, points to AppUser
   uploader AppUser @relation("AssetUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
@@ -304,6 +339,13 @@ model Asset {
 
   @@index([storageKey])
   @@index([etag])
+  @@index([category])
+  @@index([contentType])
+  @@index([language])
+  @@index([status])
+  @@index([country])
+  @@index([region])
+  @@index([isCritical])
   @@map("assets")
 }
 

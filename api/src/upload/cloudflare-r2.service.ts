@@ -2,7 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { AssetKind } from '@workspace/types';
+import { AssetKind } from '@prisma/client';
 import { createHash } from 'crypto';
 
 export interface UploadResult {
@@ -64,7 +64,7 @@ export class CloudflareR2Service {
     assetKind: AssetKind,
     appUserId: string,
   ): Promise<PresignedUploadData> {
-    const key = this.generateStorageKey(filename, assetKind, appUserId);
+    const key = this.generateStorageKey(filename, assetKind, appUserId, undefined);
     
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
@@ -100,6 +100,7 @@ export class CloudflareR2Service {
     file: Express.Multer.File,
     assetKind: AssetKind,
     appUserId: string,
+    subcategory?: string,
   ): Promise<UploadResult> {
     try {
       // Validate file first
@@ -107,10 +108,16 @@ export class CloudflareR2Service {
       
       // Check if R2 is properly configured
       if (!this.isConfigured()) {
+        // Development mode fallback: store locally
+        const isDevelopment = process.env.NODE_ENV !== 'production';
+        if (isDevelopment) {
+          this.logger.warn('⚠️ R2 not configured. Using development fallback (local storage simulation)');
+          return this.uploadFileLocalFallback(file, assetKind, appUserId, subcategory);
+        }
         throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
       }
 
-      const key = this.generateStorageKey(file.originalname, assetKind, appUserId);
+      const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory);
       
       // Calculate SHA-256 checksum
       const checksum = this.calculateChecksum(file.buffer);
@@ -252,6 +259,7 @@ export class CloudflareR2Service {
       FRONTEND_OG_IMAGE: 5 * 1024 * 1024, // 5MB
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
+      ELEARNING: 100 * 1024 * 1024, // 100MB - for videos, PDFs, courses
     };
 
     const allowedTypes = {
@@ -268,6 +276,15 @@ export class CloudflareR2Service {
       FRONTEND_OG_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
       ADMIN_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
       ADMIN_FAVICON: ['image/x-icon', 'image/png', 'image/jpeg'],
+      ELEARNING: [
+        'application/pdf',
+        'video/mp4',
+        'video/quicktime',
+        'video/x-msvideo', // AVI
+        'video/webm',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      ],
     };
 
     const maxSize = maxSizes[assetKind];
@@ -291,9 +308,20 @@ export class CloudflareR2Service {
   /**
    * Generate storage key for file organization
    */
-  private generateStorageKey(filename: string, assetKind: AssetKind, appUserId: string): string {
+  private generateStorageKey(
+    filename: string, 
+    assetKind: AssetKind, 
+    appUserId: string,
+    subcategory?: string,
+  ): string {
     const timestamp = Date.now();
     const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const sanitizedSubcategory = subcategory ? subcategory.replace(/[^a-zA-Z0-9-]/g, '_').toLowerCase() : null;
+
+    // If subcategory provided, use it as a subfolder
+    if (sanitizedSubcategory) {
+      return `${assetKind.toLowerCase()}/${sanitizedSubcategory}/${appUserId}/${timestamp}-${sanitizedFilename}`;
+    }
 
     return `${assetKind.toLowerCase()}/${appUserId}/${timestamp}-${sanitizedFilename}`;
   }
@@ -353,6 +381,84 @@ export class CloudflareR2Service {
       this.logger.error('Failed to get file info', error);
       return null;
     }
+  }
+
+  /**
+   * Get file as a stream for proxying/downloading
+   */
+  async getFileStream(key: string): Promise<{ stream: any; contentType: string; size: number }> {
+    // Check if R2 is configured
+    if (!this.isConfigured()) {
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      if (isDevelopment) {
+        this.logger.warn(`⚠️ R2 not configured. Cannot download file: ${key}`);
+        this.logger.warn('File downloads require R2 to be properly configured.');
+        this.logger.warn('Files uploaded in development mode without R2 are not actually stored.');
+        throw new BadRequestException(
+          'File downloads are not available in development mode without R2 configuration. ' +
+          'Please configure R2_ENDPOINT, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY environment variables.'
+        );
+      }
+      throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
+    }
+
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+
+      const response = await this.s3Client.send(command);
+      
+      if (!response.Body) {
+        throw new Error('File body is empty');
+      }
+
+      return {
+        stream: response.Body as any, // AWS SDK returns a readable stream
+        contentType: response.ContentType || 'application/octet-stream',
+        size: response.ContentLength || 0,
+      };
+    } catch (error) {
+      this.logger.error('Failed to get file stream');
+      this.logger.error(`Error details: ${error.message || error}`);
+      this.logger.error(`Attempted to fetch key: ${key}`);
+      this.logger.error(`Bucket: ${this.bucketName}`);
+      
+      // Check if it's a NoSuchKey error (file doesn't exist)
+      if (error.name === 'NoSuchKey' || error.message?.includes('NoSuchKey')) {
+        throw new BadRequestException(`File not found: ${key}`);
+      }
+      
+      throw new BadRequestException(`Failed to get file stream: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Development fallback: simulate file upload without R2
+   * This stores file metadata in memory and returns mock URLs
+   */
+  private uploadFileLocalFallback(
+    file: Express.Multer.File,
+    assetKind: AssetKind,
+    appUserId: string,
+    subcategory?: string,
+  ): UploadResult {
+    const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory);
+    const mockUrl = `http://localhost:3000/uploads/${key}`;
+    
+    this.logger.log(`📦 Development fallback: Simulating upload for ${file.originalname}`);
+    this.logger.log(`   File size: ${file.size} bytes`);
+    this.logger.log(`   Mock URL: ${mockUrl}`);
+    this.logger.log(`   ⚠️  Note: File is NOT actually stored. Configure R2 for production.`);
+    
+    return {
+      key,
+      url: mockUrl,
+      filename: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+    };
   }
 
   /**

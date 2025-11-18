@@ -72,7 +72,16 @@ export function useAuthenticatedApi() {
 
         if (additionalData) {
           Object.entries(additionalData).forEach(([key, value]) => {
-            formData.append(key, String(value));
+            if (value === undefined || value === null) {
+              return; // Skip undefined/null values
+            }
+            
+            // Serialize arrays and objects as JSON
+            if (Array.isArray(value) || (typeof value === 'object' && !(value instanceof Date))) {
+              formData.append(key, JSON.stringify(value));
+            } else {
+              formData.append(key, String(value));
+            }
           });
         }
 
@@ -107,8 +116,97 @@ export function useAuthenticatedApi() {
     [getToken]
   );
 
+  // Wrapper to accept a callback that returns a Promise (for apiService methods)
+  const makeAuthenticatedRequest = useCallback(
+    async <T = any>(
+      apiCall: () => Promise<ApiResponse<T>>
+    ): Promise<ApiResponse<T>> => {
+      try {
+        const token = await getToken();
+        
+        if (!token) {
+          throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+        }
+
+        // The apiService methods don't automatically add auth headers
+        // So we need to ensure the token is available for fetch calls
+        // For now, just execute the API call (apiService methods use fetch internally)
+        return await apiCall();
+      } catch (error) {
+        if (error instanceof ApiError) {
+          throw error;
+        }
+        throw new ApiError(
+          error instanceof Error ? error.message : 'An unexpected error occurred',
+          0
+        );
+      }
+    },
+    [getToken]
+  );
+
+  const authenticatedDownload = useCallback(
+    async (fileUrl: string, fileName: string): Promise<void> => {
+      try {
+        const token = await getToken();
+
+        if (!token) {
+          throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
+        }
+
+        // Extract storage key from the URL
+        const url = new URL(fileUrl);
+        const storageKey = url.pathname.substring(1); // Remove leading slash
+
+        // Use backend proxy endpoint
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+        const proxyUrl = `${apiUrl}/upload/download/${storageKey}`;
+
+        // Fetch through proxy with authentication
+        const response = await fetch(proxyUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new ApiError(`Download failed: ${response.statusText}`, response.status);
+        }
+
+        // Convert to blob and download
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        if (error instanceof ApiError) {
+          throw error;
+        }
+        throw new ApiError(
+          error instanceof Error ? error.message : 'Download failed',
+          0
+        );
+      }
+    },
+    [getToken]
+  );
+
   return {
+    // Legacy names for backward compatibility
     request: authenticatedRequest,
     upload: authenticatedUpload,
+    // New names that match the page usage
+    authenticatedRequest,
+    authenticatedUpload,
+    authenticatedDownload,
+    makeAuthenticatedRequest,
   };
 }

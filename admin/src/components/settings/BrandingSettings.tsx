@@ -307,19 +307,30 @@ const BrandingSettings: React.FC = () => {
                 onUpload={(file: File) => handleUploadAndUpdate('logo', file)}
                 accept="image/*"
                 maxSize={5 * 1024 * 1024}
+                fetchDelay={0}
               />
               {uploadingAssets.logo && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading logo...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">Uploading logo...</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.logo && (
-                <div className="mt-2 flex justify-end">
-                  <Button
-                    onClick={() => handleSaveAsset('logo')}
-                    variant="primary"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Logo'}
-                  </Button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">✓ Logo uploaded! Click "Save Logo" below to apply changes.</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('logo')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? 'Saving...' : 'Save Logo'}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -333,19 +344,30 @@ const BrandingSettings: React.FC = () => {
                 onUpload={(file: File) => handleUploadAndUpdate('adminLogo', file)}
                 accept="image/*"
                 maxSize={5 * 1024 * 1024}
+                fetchDelay={300}
               />
               {uploadingAssets.adminLogo && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading admin logo...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">Uploading admin logo...</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.adminLogo && (
-                <div className="mt-2 flex justify-end">
-                  <Button
-                    onClick={() => handleSaveAsset('adminLogo')}
-                    variant="primary"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Admin Logo'}
-                  </Button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">✓ Admin logo uploaded! Click "Save Admin Logo" below to apply changes.</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('adminLogo')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? 'Saving...' : 'Save Admin Logo'}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -359,19 +381,30 @@ const BrandingSettings: React.FC = () => {
                 onUpload={(file: File) => handleUploadAndUpdate('favicon', file)}
                 accept="image/x-icon,image/png"
                 maxSize={1 * 1024 * 1024}
+                fetchDelay={600}
               />
               {uploadingAssets.favicon && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading favicon...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">Uploading favicon...</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.favicon && (
-                <div className="mt-2 flex justify-end">
-                  <Button
-                    onClick={() => handleSaveAsset('favicon')}
-                    variant="primary"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Favicon'}
-                  </Button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">✓ Favicon uploaded! Click "Save Favicon" below to apply changes.</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('favicon')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? 'Saving...' : 'Save Favicon'}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -385,19 +418,30 @@ const BrandingSettings: React.FC = () => {
                 onUpload={(file: File) => handleUploadAndUpdate('adminFavicon', file)}
                 accept="image/x-icon,image/png"
                 maxSize={1 * 1024 * 1024}
+                fetchDelay={900}
               />
               {uploadingAssets.adminFavicon && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading admin favicon...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">Uploading admin favicon...</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.adminFavicon && (
-                <div className="mt-2 flex justify-end">
-                  <Button
-                    onClick={() => handleSaveAsset('adminFavicon')}
-                    variant="primary"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Admin Favicon'}
-                  </Button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">✓ Admin favicon uploaded! Click "Save Admin Favicon" below to apply changes.</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('adminFavicon')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? 'Saving...' : 'Save Admin Favicon'}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
