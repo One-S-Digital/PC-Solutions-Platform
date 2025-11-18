@@ -1,10 +1,27 @@
-# Translation Keys Not Loading - Rebuild Required
+# Translation Keys Not Loading - Fixed
 
 ## Issue
 Translation keys are showing as raw strings (e.g., `supportPage.furtherAssistanceTitle`, `filters.all`) on the frontend instead of translated text.
 
-## Root Cause
-The translation strings were added to the JSON files in merge #152 (commit 6dc45c219), but the frontend application has not been rebuilt since then. The frontend loads translations at build time by importing JSON files in `i18n.ts`, so it needs to be rebuilt to pick up the new translations.
+## Root Cause (FIXED)
+The `packages/translations/package.json` had incomplete `exports` field. It only exported 4 translation files (common, auth, dashboard, pricing) but `frontend/i18n.ts` imports 15 translation files. The missing exports prevented the Docker build from properly bundling all translation files into the frontend build.
+
+**Missing exports:**
+- signup.json
+- parentLeadForm.json
+- marketplace.json
+- recruitment.json
+- users.json
+- content.json
+- messages.json
+- admin.json
+- settings.json
+- profile.json
+
+## Fix Applied
+Updated `/workspace/packages/translations/package.json` to export all translation files for all languages (en, fr, de).
+
+**Commit:** `784b58cb3 - Fix missing translation file exports in package.json`
 
 ## Translation Keys Added in Merge #152
 The following keys were added to `packages/translations/locales/{en,fr,de}/dashboard.json`:
@@ -31,25 +48,22 @@ The following keys were added to `packages/translations/locales/{en,fr,de}/dashb
 }
 ```
 
-## Solution
-Rebuild and redeploy the frontend service:
+## Solution - Action Required
+Now that the fix is committed, you need to deploy it:
 
-### Option 1: Manual Redeploy on Render
+### Step 1: Push the fix to remote
+```bash
+git push origin cursor/investigate-frontend-loading-errors-after-merge-2985
+```
+
+### Step 2: Redeploy with Build Cache Cleared
 1. Go to your Render dashboard
 2. Find the frontend service
-3. Click "Manual Deploy" > "Deploy latest commit"
+3. Click "Manual Deploy" > **Clear build cache & deploy**
+   - ⚠️ **IMPORTANT:** Check "Clear build cache" option to ensure pnpm reinstalls packages with the updated exports
+4. Deploy the latest commit (784b58cb3)
 
-### Option 2: Trigger via Git Push
-1. Make a small change (e.g., update a comment or version)
-2. Commit and push to trigger the CI/CD pipeline
-
-### Option 3: Local Build Test (Optional)
-To verify locally before deploying:
-```bash
-cd /workspace/frontend
-npm install
-npm run build
-```
+The build cache clearing is crucial because pnpm may have cached the old package.json without all the exports.
 
 ## Affected Pages
 - Service Provider Support Page
