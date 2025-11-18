@@ -101,7 +101,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
               <div>
                 <label htmlFor="regionScope" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.regionScope")} *</label>
                 <select name="regionScope" id="regionScope" value={formData.regionScope} onChange={handleChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
-                  {cantonOptions.map(canton => <option key={canton} value={canton}>{canton === 'All' ? t('dashboard:filters.all') : canton}</option>)}
+                  {cantonOptions.map(canton => <option key={canton} value={canton}>{canton === 'All' ? t('common:filters.all') : canton}</option>)}
                 </select>
               </div>
             </div>

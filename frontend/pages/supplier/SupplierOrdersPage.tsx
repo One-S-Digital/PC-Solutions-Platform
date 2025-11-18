@@ -66,7 +66,7 @@ const SupplierOrdersPage: React.FC = () => {
                     size="sm"
                     onClick={() => setStatusFilter(status)}
                 >
-                    {status === 'All' ? t('dashboard:filters.all') : t(`orderStatus.${status.toLowerCase().replace(/\s/g, '')}` as const, status)}
+                    {status === 'All' ? t('common:filters.all') : t(`orderStatus.${status.toLowerCase().replace(/\s/g, '')}` as const, status)}
                 </Button>
             ))}
         </div>

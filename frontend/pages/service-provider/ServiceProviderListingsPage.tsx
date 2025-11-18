@@ -145,7 +145,7 @@ const ServiceProviderListingsPage: React.FC = () => {
           >
               {serviceCategories.map(cat => (
                 <option key={cat} value={cat}>
-                  {cat === 'All' ? t('dashboard:filters.all') : formatServiceCategory(t, cat)}
+                  {cat === 'All' ? t('common:filters.all') : formatServiceCategory(t, cat)}
                 </option>
               ))}
           </select>

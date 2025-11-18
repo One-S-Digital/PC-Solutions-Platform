@@ -248,10 +248,10 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => {setCategoryFilter(e.target.value);}}
                 className={STANDARD_INPUT_FIELD}
             >
-                {currentCategories.map(cat => (
+                    {currentCategories.map(cat => (
                   <option key={cat} value={cat}>
                     {cat === 'All'
-                      ? t('dashboard:filters.all')
+                      ? t('common:filters.all')
                       : activeTabIndex === 1
                         ? formatServiceCategory(t, cat)
                         : cat}
@@ -267,7 +267,7 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => setRegionFilter(e.target.value)}
                 className={STANDARD_INPUT_FIELD}
             >
-                {allRegions.map(reg => <option key={reg} value={reg}>{reg === 'All' ? t('dashboard:filters.all') : reg}</option>)}
+                {allRegions.map(reg => <option key={reg} value={reg}>{reg === 'All' ? t('common:filters.all') : reg}</option>)}
             </select>
           </div>
           {activeTabIndex === 0 && (
@@ -280,7 +280,7 @@ const MarketplacePage: React.FC = () => {
                     onChange={(e) => setTagFilter(e.target.value)}
                     className={STANDARD_INPUT_FIELD}
                 >
-                    {(currentTags as string[]).map(tag => <option key={tag} value={tag}>{tag === 'All' ? t('dashboard:filters.all') : tag}</option>)}
+                    {(currentTags as string[]).map(tag => <option key={tag} value={tag}>{tag === 'All' ? t('common:filters.all') : tag}</option>)}
                 </select>
               </div>
                <div>

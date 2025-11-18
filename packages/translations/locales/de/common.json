@@ -993,17 +993,22 @@
     }
   },
   "supportPage": {
-    "faqTitle": "[DE] Faq Title",
-    "furtherAssistanceTitle": "[DE] Further Assistance Title",
-    "furtherAssistanceText": {
-      "0": "[DE] 0",
-      "1": "[DE] Our support team is here to help you."
-    },
-    "submitTicketTitle": "[DE] Submit Ticket Title",
+    "faqTitle": "Häufig Gestellte Fragen",
+    "furtherAssistanceTitle": "Benötigen Sie Weitere Hilfe?",
+    "furtherAssistanceText": "Wenn Sie die gesuchte Antwort nicht finden, ist unser Support-Team hier, um Ihnen zu helfen. Kontaktieren Sie uns unter",
+    "emailLinkText": "support@procrechesolutions.com",
+    "orSubmitTicket": "oder senden Sie unten ein Support-Ticket.",
+    "submitTicketTitle": "Support-Ticket Senden",
     "ticketForm": {
-      "subjectLabel": "[DE] Subject",
-      "messageLabel": "[DE] Message"
+      "subjectLabel": "Betreff",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messageLabel": "Nachricht",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+      "submitButton": "Ticket Senden"
     }
+  },
+  "filters": {
+    "all": "Alle"
   },
   "foundationAnalyticsPage": {
     "title": "[DE] Title"

@@ -244,15 +244,15 @@ const StatePoliciesPage: React.FC = () => {
             />
           </div>
           <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Canton">
-            <option value="All">{t('dashboard:filters.all')}</option>
+            <option value="All">{t('common:filters.all')}</option>
             {cantons.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Type">
-            <option value="All">{t('dashboard:filters.all')}</option>
+            <option value="All">{t('common:filters.all')}</option>
             {policyTypeOptions.filter(pt => pt !== 'All').map(pt => <option key={pt} value={pt}>{pt}</option>)}
           </select>
            <select value={filterBroadCategory} onChange={(e) => setFilterBroadCategory(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Broad Category">
-            <option value="All">{t('dashboard:filters.all')}</option>
+            <option value="All">{t('common:filters.all')}</option>
             {policyBroadCategories.filter(pt => pt !== 'All').map(pt => <option key={pt} value={pt}>{pt}</option>)}
           </select>
         </div>

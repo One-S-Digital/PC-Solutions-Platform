@@ -207,7 +207,7 @@ const ELearningPage: React.FC = () => {
                     onChange={(e) => setFilterCategory(e.target.value)}
                     className={`${STANDARD_INPUT_FIELD} w-full md:w-auto`}
                 >
-                    {categories.map(cat => <option key={cat} value={cat}>{cat === 'All' ? t('dashboard:filters.all') : cat}</option>)}
+                    {categories.map(cat => <option key={cat} value={cat}>{cat === 'All' ? t('common:filters.all') : cat}</option>)}
                 </select>
             </div>
         </div>

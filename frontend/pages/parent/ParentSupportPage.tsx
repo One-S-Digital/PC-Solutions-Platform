@@ -15,8 +15,8 @@ const ParentSupportPage: React.FC = () => {
           {t('sidebar.supportFAQ')}
         </h1>
       </div>
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('dashboard:supportPage.faqTitle')}</h2>
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('common:supportPage.faqTitle')}</h2>
         <div className="space-y-3">
           <div>
             <h3 className="font-medium text-gray-800">{t('dashboard:parentSupportPage.faq.matchingProcess.q')}</h3>
@@ -33,13 +33,13 @@ const ParentSupportPage: React.FC = () => {
           {/* Add more FAQs */}
         </div>
         <div className="mt-6 border-t pt-6">
-            <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('dashboard:supportPage.furtherAssistanceTitle')}</h2>
+            <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('common:supportPage.furtherAssistanceTitle')}</h2>
             <p className="text-gray-600 text-sm">
-              {t('dashboard:supportPage.furtherAssistanceText')}{' '}
+              {t('common:supportPage.furtherAssistanceText')}{' '}
               <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">
-                {t('dashboard:supportPage.emailLinkText')}
+                {t('common:supportPage.emailLinkText')}
               </a>{' '}
-              {t('dashboard:supportPage.orSubmitTicket')}
+              {t('common:supportPage.orSubmitTicket')}
             </p>
         </div>
       </Card>

@@ -56,28 +56,28 @@ const ServiceProviderSupportPage: React.FC = () => {
       </h1>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4 flex items-center">
-          <QuestionMarkCircleIcon className="w-6 h-6 mr-2 text-swiss-teal" />
-          {t('dashboard:supportPage.faqTitle')}
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-4 flex items-center">
+            <QuestionMarkCircleIcon className="w-6 h-6 mr-2 text-swiss-teal" />
+            {t('common:supportPage.faqTitle')}
         </h2>
         {faqs.map(faq => <FAQItem key={faq.questionKey} questionKey={faq.questionKey} answerKey={faq.answerKey} />)}
-         <div className="mt-6 border-t pt-6">
-            <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('dashboard:supportPage.furtherAssistanceTitle')}</h2>
-            <p className="text-gray-600 text-sm">
-              {t('dashboard:supportPage.furtherAssistanceText')}{' '}
-              <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">
-                {t('dashboard:supportPage.emailLinkText')}
-              </a>{' '}
-              {t('dashboard:supportPage.orSubmitTicket')}
-            </p>
+           <div className="mt-6 border-t pt-6">
+              <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('common:supportPage.furtherAssistanceTitle')}</h2>
+              <p className="text-gray-600 text-sm">
+                {t('common:supportPage.furtherAssistanceText')}{' '}
+                <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">
+                  {t('common:supportPage.emailLinkText')}
+                </a>{' '}
+                {t('common:supportPage.orSubmitTicket')}
+              </p>
         </div>
       </Card>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('dashboard:supportPage.submitTicketTitle')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('common:supportPage.submitTicketTitle')}</h2>
         <form onSubmit={handleTicketSubmit} className="space-y-4">
           <div>
-            <label htmlFor="ticketSubjectSp" className="block text-sm font-medium text-gray-700 mb-1">{t('dashboard:supportPage.ticketForm.subjectLabel')}</label>
+            <label htmlFor="ticketSubjectSp" className="block text-sm font-medium text-gray-700 mb-1">{t('common:supportPage.ticketForm.subjectLabel')}</label>
             <input
               type="text"
               id="ticketSubjectSp"
@@ -85,11 +85,11 @@ const ServiceProviderSupportPage: React.FC = () => {
               onChange={(e) => setTicketSubject(e.target.value)}
               required
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('dashboard:supportPage.ticketForm.subjectPlaceholder')}
+              placeholder={t('common:supportPage.ticketForm.subjectPlaceholder')}
             />
           </div>
           <div>
-            <label htmlFor="ticketMessageSp" className="block text-sm font-medium text-gray-700 mb-1">{t('dashboard:supportPage.ticketForm.messageLabel')}</label>
+            <label htmlFor="ticketMessageSp" className="block text-sm font-medium text-gray-700 mb-1">{t('common:supportPage.ticketForm.messageLabel')}</label>
             <textarea
               id="ticketMessageSp"
               value={ticketMessage}
@@ -97,7 +97,7 @@ const ServiceProviderSupportPage: React.FC = () => {
               required
               rows={5}
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('dashboard:supportPage.ticketForm.messagePlaceholder')}
+              placeholder={t('common:supportPage.ticketForm.messagePlaceholder')}
             />
           </div>
           <div>
