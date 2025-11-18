@@ -881,14 +881,15 @@
   "supportPage": {
     "faqTitle": "Frequently Asked Questions",
     "furtherAssistanceTitle": "Need Further Assistance?",
-    "furtherAssistanceText": {
-      "0": "If you can't find the answer you're looking for, our support team is here to help.",
-      "1": "Submit a support ticket below and we'll get back to you as soon as possible."
-    },
+    "furtherAssistanceText": "If you can't find the answer you're looking for, our support team is here to help. Contact us at",
+    "emailLinkText": "support@procrechesolutions.com",
+    "orSubmitTicket": "or submit a support ticket below.",
     "submitTicketTitle": "Submit a Support Ticket",
     "ticketForm": {
       "subjectLabel": "Subject",
+      "subjectPlaceholder": "Brief description of your issue",
       "messageLabel": "Message",
+      "messagePlaceholder": "Please provide detailed information about your issue",
       "submitButton": "Submit Ticket"
     }
   },

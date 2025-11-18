@@ -1,18 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { PricingPlan, UserRole } from '../types';
 
-const isDev = process.env.NODE_ENV !== 'production';
-
 export const usePricingTranslations = () => {
   const { t } = useTranslation(['pricing', 'common']);
 
   const translatePricingKey = (key: string) => {
     const namespacedKey = `pricingPage.${key}`;
     const value = t(namespacedKey);
-    if (isDev && value === namespacedKey) {
-      // eslint-disable-next-line no-console
-      console.warn(`[i18n] Missing pricing translation for key: ${namespacedKey}`);
-    }
     return value === namespacedKey ? '' : value;
   };
 

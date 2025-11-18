@@ -34,7 +34,13 @@ const ParentSupportPage: React.FC = () => {
         </div>
         <div className="mt-6 border-t pt-6">
             <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('dashboard:supportPage.furtherAssistanceTitle')}</h2>
-            <p className="text-gray-600 text-sm">{t('dashboard:supportPage.furtherAssistanceText.0')} <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">{t('dashboard:supportPage.furtherAssistanceText.1')}</a>.</p>
+            <p className="text-gray-600 text-sm">
+              {t('dashboard:supportPage.furtherAssistanceText')}{' '}
+              <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">
+                {t('dashboard:supportPage.emailLinkText')}
+              </a>{' '}
+              {t('dashboard:supportPage.orSubmitTicket')}
+            </p>
         </div>
       </Card>
     </div>

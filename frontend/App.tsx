@@ -19,7 +19,6 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
-import StringScannerOverlay from './components/devtools/StringScannerOverlay';
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -384,7 +383,6 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-            <StringScannerOverlay />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>

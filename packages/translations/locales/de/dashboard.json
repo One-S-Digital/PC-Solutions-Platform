@@ -880,14 +880,15 @@
   "supportPage": {
     "faqTitle": "Häufig Gestellte Fragen",
     "furtherAssistanceTitle": "Benötigen Sie Weitere Hilfe?",
-    "furtherAssistanceText": {
-      "0": "Wenn Sie die gesuchte Antwort nicht finden, ist unser Support-Team hier, um Ihnen zu helfen.",
-      "1": "Senden Sie unten ein Support-Ticket und wir werden Ihnen so schnell wie möglich antworten."
-    },
+    "furtherAssistanceText": "Wenn Sie die gesuchte Antwort nicht finden, ist unser Support-Team hier, um Ihnen zu helfen. Kontaktieren Sie uns unter",
+    "emailLinkText": "support@procrechesolutions.com",
+    "orSubmitTicket": "oder senden Sie unten ein Support-Ticket.",
     "submitTicketTitle": "Support-Ticket Senden",
     "ticketForm": {
       "subjectLabel": "Betreff",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
       "messageLabel": "Nachricht",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
       "submitButton": "Ticket Senden"
     }
   },
