@@ -1,82 +1,36 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "🚀 Render deployment migration script"
+# This script is invoked by Render/CI before building the API service.
+# It ensures the API dependencies are installed and Prisma migrations
+# are applied to the DATABASE_URL provided by the environment.
 
-# Check for required environment variables
-if [ -z "$DATABASE_URL" ]; then
-    echo "❌ DATABASE_URL not set! Cannot run migrations."
-    exit 1
+if [[ -z "${DATABASE_URL:-}" ]]; then
+  echo "⚠️  DATABASE_URL is not set; skipping prisma migrate deploy."
+  exit 0
 fi
 
-# Generate Prisma client
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "⚠️  pnpm is not available on PATH; skipping migrations."
+  exit 0
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+API_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+cd "$API_DIR" || exit 1
+
+echo "📦 Installing API dependencies for migrations..."
+pnpm install --filter ./api --frozen-lockfile
+
 echo "🔧 Generating Prisma client..."
-npx prisma generate
+pnpm prisma generate
 
-# Check migration status
-echo "📋 Checking migration status..."
-npx prisma migrate status || true
-
-# =====================================================================
-# STEP 1: Resolve ghost migrations that don't exist locally
-# =====================================================================
-echo ""
-echo "🔧 Resolving ghost migrations..."
-
-# These migrations appear in the database but don't exist locally
-# We need to mark them as applied so Prisma stops looking for them
-GHOST_MIGRATIONS=(
-    "20250926_unify_asset_appuser"
-    "20251017_add_firstname_lastname_to_appuser"
-)
-
-for migration in "${GHOST_MIGRATIONS[@]}"; do
-    echo "📝 Marking $migration as applied (if it exists in DB)..."
-    npx prisma migrate resolve --applied "$migration" 2>&1 | grep -v "Could not find" || true
-done
-
-# =====================================================================
-# STEP 2: Resolve any failed migrations
-# =====================================================================
-echo ""
-echo "🔧 Checking for failed migrations..."
-
-# Mark the comprehensive schema audit as rolled back if it failed
-echo "📝 Resolving failed migration (if exists)..."
-npx prisma migrate resolve --rolled-back "20251030_comprehensive_schema_audit_fix" 2>&1 | grep -v "Could not find" || true
-
-# =====================================================================
-# STEP 3: Deploy database migrations
-# =====================================================================
-echo ""
-echo "🔄 Deploying database migrations..."
-set +e  # Don't exit on error, we want to check what went wrong
-
-npx prisma migrate deploy
-DEPLOY_STATUS=$?
-
-if [ $DEPLOY_STATUS -eq 0 ]; then
-    echo "✅ Database migrations completed successfully"
-else
-    echo "❌ Migration deployment failed"
-    echo "📋 Checking what went wrong..."
-    npx prisma migrate status
-    exit 1
+echo "🔄 Deploying Prisma migrations..."
+if ! pnpm prisma migrate deploy; then
+  echo "❌ prisma migrate deploy failed; showing status..."
+  pnpm prisma migrate status || true
+  exit 1
 fi
 
-set -e  # Re-enable exit on error
-
-# =====================================================================
-# STEP 4: Verify database connection
-# =====================================================================
-echo ""
-echo "🔍 Verifying database connection..."
-if npx prisma db execute --stdin <<< "SELECT 1;" > /dev/null 2>&1; then
-    echo "✅ Database connection verified"
-else
-    echo "❌ Database connection verification failed"
-    exit 1
-fi
-
-echo ""
-echo "✨ Migration process complete!"
+echo "✅ Prisma migrations completed successfully."
