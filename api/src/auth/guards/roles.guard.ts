@@ -53,7 +53,7 @@ export class RolesGuard implements CanActivate {
     }
     
     // Debug
-    // eslint-disable-next-line no-console
+     
     console.log('🔐 RolesGuard Debug:', {
       url: request.url,
       requiredRoles,

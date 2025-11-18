@@ -134,7 +134,7 @@ export class ClerkAuthGuard implements CanActivate {
 
       // Populate request.context (user role from AppUser), so RolesGuard can authorize
       try {
-        let appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
+        const appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
         if (!appUser) {
           if (this.authDebug) {
             console.log('🔐 Auth Debug: AppUser missing, user may be pending webhook processing', { userId: payload.sub });

@@ -125,7 +125,7 @@ export class SettingsController {
         },
       });
 
-      let userOrg = await tx.userOrganization.findFirst({
+      const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
@@ -336,7 +336,7 @@ export class SettingsController {
         },
       });
 
-      let userOrg = await tx.userOrganization.findFirst({
+      const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
@@ -554,7 +554,7 @@ export class SettingsController {
             userId: profileId,
           });
           
-          let userOrg = await tx.userOrganization.findFirst({
+          const userOrg = await tx.userOrganization.findFirst({
             where: { userId: profileId },
             include: { organization: true },
           });

@@ -39,7 +39,7 @@ async function bootstrap() {
   // Resolve compression middleware across CJS/ESM export shapes
   let compressionFn: any;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     const mod = require('compression');
     compressionFn = (mod && mod.default) ? mod.default : mod;
   } catch (err) {
