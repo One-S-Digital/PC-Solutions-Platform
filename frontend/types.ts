@@ -162,7 +162,7 @@ export interface Service {
   availability?: string;
   tags?: string[];
   imageUrl?: string;
-  deliveryType?: string;
+  deliveryType?: ServiceDeliveryType;
   priceInfo?: string;
 }
 export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, ServiceCategory.IT_SUPPORT, ServiceCategory.MAINTENANCE, ServiceCategory.CONSULTING, ServiceCategory.TRAINING, ServiceCategory.OTHER];

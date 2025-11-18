@@ -355,11 +355,12 @@
       "normal": "Normal"
     },
     "fileUpload": {
-      "browse": "Browse",
-      "dragAndDrop": "Drag and drop files here",
-      "eLearningAllowedTypes": "E Learning Allowed Types",
-      "selected": "Selected",
-      "hrPolicyAllowedTypes": "PDF, DOC, DOCX"
+      "browse": "Browse files",
+      "browseNoFileChosen": "No file selected",
+      "dragAndDrop": "or drag and drop",
+      "eLearningAllowedTypes": "Supported formats: PDF, MP4, MP3, ZIP",
+      "selected": "{{fileName}} selected",
+      "hrPolicyAllowedTypes": "Supported formats: PDF, DOC, DOCX"
     },
     "buttons": {
       "uploading": "Uploading",
@@ -483,25 +484,25 @@
     "notes": "No tes"
   },
   "serviceUploadModal": {
-    "editTitle": "Edit Title",
+    "addTitle": "Add New Service",
+    "editTitle": "Edit Service",
     "labels": {
-      "title": "Title",
+      "title": "Service title",
       "description": "Description",
       "category": "Category",
-      "deliveryType": "Delivery Type",
-      "availability": "Availability",
-      "priceInfo": "Price Info",
+      "deliveryType": "Delivery type",
+      "availability": "Availability & schedule",
+      "priceInfo": "Pricing details",
       "tags": "Tags",
-      "image": "Image"
+      "image": "Service image"
     },
     "placeholders": {
-      "availability": "Availability",
-      "priceInfo": "Price Info",
-      "tags": "Tags"
+      "availability": "e.g., Weekdays 9:00-18:00 or By appointment",
+      "priceInfo": "e.g., CHF 150/hour or Contact for quote",
+      "tags": "Comma-separated keywords (cleaning, eco, bilingual)"
     },
-    "imageHelpText": "Image Help Text",
-    "currentImage": "Current Image",
-    "addTitle": "Add Service"
+    "imageHelpText": "Upload a JPG or PNG (max 5 MB). This image appears on your marketplace card.",
+    "currentImage": "Current image"
   },
   "addPromoCodeModal": {
     "placeholder": "Placeholder"

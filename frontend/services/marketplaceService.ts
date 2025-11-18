@@ -1,5 +1,5 @@
 import { apiService, ApiResponse } from './api';
-import { Product, Service } from '../types';
+import { Product, Service, ServiceCategory, ServiceDeliveryType } from '../types';
 import { API_ENDPOINTS } from './api-endpoints';
 
 export interface ProductCreateData {
@@ -16,11 +16,18 @@ export interface ProductUpdateData extends Partial<ProductCreateData> {}
 export interface ServiceCreateData {
   title: string;
   description?: string;
-  category: string;
+  category: ServiceCategory | string;
   price?: number;
+  priceInfo?: string;
+  availability?: string;
+  deliveryType?: ServiceDeliveryType;
+  tags?: string[];
+  imageUrl?: string;
 }
 
-export interface ServiceUpdateData extends Partial<ServiceCreateData> {}
+export interface ServiceUpdateData extends Partial<ServiceCreateData> {
+  isActive?: boolean;
+}
 
 class MarketplaceService {
   // Products
@@ -85,7 +92,7 @@ class MarketplaceService {
     });
     
     const response = await apiService.get<{ services: Service[]; pagination: any }>(
-      `/services?${params.toString()}`
+      `${API_ENDPOINTS.marketplace.services.list}?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch services');
@@ -97,7 +104,7 @@ class MarketplaceService {
   }
 
   async getServiceById(id: string): Promise<Service> {
-    const response = await apiService.get<Service>(`/services/${id}`);
+    const response = await apiService.get<Service>(API_ENDPOINTS.marketplace.services.get(id));
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch service');
     }
@@ -105,7 +112,7 @@ class MarketplaceService {
   }
 
   async createService(data: ServiceCreateData): Promise<Service> {
-    const response = await apiService.post<Service>('/services', data);
+    const response = await apiService.post<Service>(API_ENDPOINTS.marketplace.services.create, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to create service');
     }
@@ -113,7 +120,7 @@ class MarketplaceService {
   }
 
   async updateService(id: string, data: ServiceUpdateData): Promise<Service> {
-    const response = await apiService.put<Service>(`/services/${id}`, data);
+    const response = await apiService.put<Service>(API_ENDPOINTS.marketplace.services.update(id), data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update service');
     }
@@ -121,7 +128,7 @@ class MarketplaceService {
   }
 
   async deleteService(id: string): Promise<void> {
-    const response = await apiService.delete(`/services/${id}`);
+    const response = await apiService.delete(API_ENDPOINTS.marketplace.services.delete(id));
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete service');
     }
@@ -143,14 +150,13 @@ class MarketplaceService {
   private transformService(service: any): Service {
     return {
       ...service,
-      // Legacy fields for UI compatibility
-      providerName: service.provider?.organization?.name,
-      providerLogo: service.provider?.organization?.logoAsset?.publicUrl,
-      availability: 'Available', // Default availability
-      tags: [], // Default empty tags
-      imageUrl: undefined, // Services don't have images by default
-      deliveryType: service.provider?.deliveryType || 'On-site',
-      priceInfo: service.price ? `CHF ${service.price}` : 'Contact for pricing',
+      providerName: service.provider?.organization?.name ?? service.providerName,
+      providerLogo: service.provider?.organization?.logoAsset?.publicUrl ?? service.providerLogo,
+      availability: service.availability ?? 'Available on request',
+      tags: service.tags ?? [],
+      imageUrl: service.imageUrl ?? undefined,
+      deliveryType: service.deliveryType ?? service.provider?.deliveryType ?? 'On-site',
+      priceInfo: service.priceInfo ?? (service.price ? `CHF ${service.price}` : 'Contact for pricing'),
     };
   }
 }

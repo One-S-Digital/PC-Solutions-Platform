@@ -685,11 +685,12 @@
       "normal": "[DE] Normal"
     },
     "fileUpload": {
-      "browse": "[DE] Browse",
-      "dragAndDrop": "[DE] Drag and drop files here",
-      "eLearningAllowedTypes": "[DE] E Learning Allowed Types",
-      "selected": "[DE] Selected",
-      "hrPolicyAllowedTypes": "[DE] PDF, DOC, DOCX"
+      "browse": "Datei auswählen",
+      "browseNoFileChosen": "Keine Datei ausgewählt",
+      "dragAndDrop": "oder per Drag & Drop ablegen",
+      "eLearningAllowedTypes": "Unterstützte Formate: PDF, MP4, MP3, ZIP",
+      "selected": "{{fileName}} ausgewählt",
+      "hrPolicyAllowedTypes": "Unterstützte Formate: PDF, DOC, DOCX"
     },
     "buttons": {
       "uploading": "[DE] Uploading",
@@ -702,6 +703,27 @@
       "link": "[DE] Link",
       "policy": "[DE] Policy"
     }
+  },
+  "serviceUploadModal": {
+    "addTitle": "Service hinzufügen",
+    "editTitle": "Service bearbeiten",
+    "labels": {
+      "title": "Servicetitel",
+      "description": "Beschreibung",
+      "category": "Kategorie",
+      "deliveryType": "Leistungsart",
+      "availability": "Verfügbarkeit & Zeiten",
+      "priceInfo": "Preisinformationen",
+      "tags": "Tags",
+      "image": "Servicebild"
+    },
+    "placeholders": {
+      "availability": "z. B. Mo-Fr 09:00-18:00 oder nach Vereinbarung",
+      "priceInfo": "z. B. CHF 150/Stunde oder Preis auf Anfrage",
+      "tags": "Stichwörter, getrennt durch Kommas (reinigung, bio, ...)"
+    },
+    "imageHelpText": "Laden Sie ein JPG oder PNG (max. 5 MB) hoch. Es wird auf der Marketplace-Karte angezeigt.",
+    "currentImage": "Aktuelles Bild"
   },
   "policyAlertModal": {
     "labels": {

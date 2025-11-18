@@ -44,7 +44,7 @@ describe('Marketplace Adapters', () => {
     const apiServiceData = {
       id: 'serv_123',
       title: 'Consultation pédagogique',
-      description: 'Services d'expertise en pédagogie',
+        description: "Services d'expertise en pédagogie",
       provider: {
         organization: {
           name: 'Édu-Services SA',
@@ -55,23 +55,11 @@ describe('Marketplace Adapters', () => {
       price: 150
     };
 
-    const expectedService = {
-      id: 'serv_123',
-      title: 'Consultation pédagogique',
-      providerName: 'Édu-Services SA',
-      providerLogo: '/logos/edu-services.jpg',
-      availability: 'Available',
-      tags: [],
-      imageUrl: undefined,
-      deliveryType: 'On-site',
-      priceInfo: 'CHF 150'
-    };
-
     const transformService = (service: any) => ({
       ...service,
       providerName: service.provider?.organization?.name,
       providerLogo: service.provider?.organization?.logoAsset?.publicUrl,
-      availability: 'Available',
+      availability: service.availability ?? 'Available on request',
       tags: [],
       imageUrl: undefined,
       deliveryType: service.provider?.deliveryType || 'On-site',
@@ -82,6 +70,7 @@ describe('Marketplace Adapters', () => {
 
     expect(result.title).toBe('Consultation pédagogique');
     expect(result.providerName).toBe('Édu-Services SA');
+    expect(result.availability).toBe('Available on request');
     expect(result.deliveryType).toBe('On-site');
     expect(result.priceInfo).toBe('CHF 150');
     expect(result.tags).toEqual([]);

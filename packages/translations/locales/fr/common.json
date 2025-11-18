@@ -354,11 +354,12 @@
       "normal": "[FR] Normal"
     },
     "fileUpload": {
-      "browse": "[FR] Browse",
-      "dragAndDrop": "[FR] Drag and drop files here",
-      "eLearningAllowedTypes": "[FR] E Learning Allowed Types",
-      "selected": "[FR] Selected",
-      "hrPolicyAllowedTypes": "[FR] PDF, DOC, DOCX"
+      "browse": "Choisir un fichier",
+      "browseNoFileChosen": "Aucun fichier sélectionné",
+      "dragAndDrop": "ou glisser-déposer",
+      "eLearningAllowedTypes": "Formats acceptés : PDF, MP4, MP3, ZIP",
+      "selected": "{{fileName}} sélectionné",
+      "hrPolicyAllowedTypes": "Formats acceptés : PDF, DOC, DOCX"
     },
     "buttons": {
       "uploading": "[FR] Uploading",
@@ -443,6 +444,27 @@
     "preferredDateLabel": "[FR] Preferred Date",
     "notesLabel": "[FR] No tes",
     "submitButton": "[FR] Submit Button"
+  },
+  "serviceUploadModal": {
+    "addTitle": "Ajouter un service",
+    "editTitle": "Modifier le service",
+    "labels": {
+      "title": "Titre du service",
+      "description": "Description",
+      "category": "Catégorie",
+      "deliveryType": "Mode de prestation",
+      "availability": "Disponibilité et horaires",
+      "priceInfo": "Informations tarifaires",
+      "tags": "Mots-clés",
+      "image": "Visuel du service"
+    },
+    "placeholders": {
+      "availability": "ex. : Lun-ven 9h00-18h00 ou Sur rendez-vous",
+      "priceInfo": "ex. : CHF 150/heure ou Prix sur demande",
+      "tags": "Mots-clés séparés par des virgules (nettoyage, écologique, ...)"
+    },
+    "imageHelpText": "Téléchargez une image JPG ou PNG (max. 5 Mo). Elle apparaîtra dans la marketplace.",
+    "currentImage": "Image actuelle"
   },
   "supplierCard": {
     "specializesIn": "[FR] Specializes In",

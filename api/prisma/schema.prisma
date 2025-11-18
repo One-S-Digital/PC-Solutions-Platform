@@ -148,8 +148,8 @@ model User {
   shortBio       String? // Short bio/description for profile
 
   // Avatar asset relation
-  avatarAssetId  String?
-  avatarAsset    Asset?   @relation("UserAvatar", fields: [avatarAssetId], references: [id])
+  avatarAssetId String?
+  avatarAsset   Asset?  @relation("UserAvatar", fields: [avatarAssetId], references: [id])
 
   // Stripe integration
   stripeCustomerId String? @unique
@@ -162,11 +162,11 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  organizations UserOrganization[]
-  applications  JobApplication[]
-  subscriptions UserSubscription[]
+  organizations     UserOrganization[]
+  applications      JobApplication[]
+  subscriptions     UserSubscription[]
   mainSubscriptions Subscription[] // Main subscription model
-  licenses      License[]
+  licenses          License[]
 
   // E-Learning relations
   courseEnrollments CourseEnrollment[]
@@ -192,12 +192,12 @@ model User {
   notificationPreferences UserNotificationPreferences? @relation("NotificationPreferences")
 
   // New admin features relations
-  contentItems            ContentItem[]                @relation("ContentUploader")
-  policyAlerts            PolicyAlert[]                @relation("PolicyAlertCreator")
-  auditLogs               AuditLog[]                   @relation("AuditLogActor")
-  platformSettingsUpdates PlatformSettings[]           @relation("PlatformSettingsUpdater")
-  apiKeys                 ApiKey[]                     @relation("ApiKeyCreator")
-  webhooks                Webhook[]                    @relation("WebhookCreator")
+  contentItems            ContentItem[]      @relation("ContentUploader")
+  policyAlerts            PolicyAlert[]      @relation("PolicyAlertCreator")
+  auditLogs               AuditLog[]         @relation("AuditLogActor")
+  platformSettingsUpdates PlatformSettings[] @relation("PlatformSettingsUpdater")
+  apiKeys                 ApiKey[]           @relation("ApiKeyCreator")
+  webhooks                Webhook[]          @relation("WebhookCreator")
 
   @@map("users")
 }
@@ -229,7 +229,7 @@ model Organization {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isActive   Boolean  @default(true)
+  isActive  Boolean  @default(true)
 
   // Asset relations
   logoAssetId  String?
@@ -264,7 +264,7 @@ model UserOrganization {
 }
 
 model Asset {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   kind         AssetKind
   filename     String
   publicUrl    String
@@ -274,15 +274,12 @@ model Asset {
   uploadedById String
   etag         String? // ETag from R2/S3 for verification
   checksum     String? // SHA-256 checksum (base64) for integrity
-  version      Int      @default(1) // Version for response/schema changes
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  version      Int       @default(1) // Version for response/schema changes
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   // Relations - after migration, points to AppUser
   uploader AppUser @relation("AssetUploadedBy", fields: [uploadedById], references: [id], onDelete: Restrict)
-
-  @@index([storageKey])
-  @@index([etag])
 
   // Organization asset relations
   organizationLogos  Organization[] @relation("OrganizationLogo")
@@ -305,6 +302,8 @@ model Asset {
   adminLogos       FrontendSettings[] @relation("AdminLogo")
   adminFavicons    FrontendSettings[] @relation("AdminFavicon")
 
+  @@index([storageKey])
+  @@index([etag])
   @@map("assets")
 }
 
@@ -355,15 +354,20 @@ model Catalog {
 }
 
 model Service {
-  id          String          @id @default(uuid())
-  title       String
-  description String?
-  category    ServiceCategory
-  price       Float?
-  isActive    Boolean         @default(true)
-  providerId  String
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id           String          @id @default(uuid())
+  title        String
+  description  String?
+  category     ServiceCategory
+  price        Float?
+  priceInfo    String?
+  availability String?
+  deliveryType String?         @default("On-site")
+  tags         String[]        @default([])
+  imageUrl     String?
+  isActive     Boolean         @default(true)
+  providerId   String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 
   // Relations
   provider ServiceProvider  @relation(fields: [providerId], references: [id])
@@ -388,23 +392,23 @@ model ServiceProvider {
 }
 
 model JobListing {
-  id               String           @id @default(uuid())
+  id               String          @id @default(uuid())
   title            String
   description      String?
-  requirements     String[]         @default([])
-  benefits         String[]         @default([])
-  responsibilities String[]         @default([])
-  qualifications   String[]         @default([])
+  requirements     String[]        @default([])
+  benefits         String[]        @default([])
+  responsibilities String[]        @default([])
+  qualifications   String[]        @default([])
   location         String?
   salary           String?
   salaryRange      String?
-  contractType     JobContractType  @default(FULL_TIME)
+  contractType     JobContractType @default(FULL_TIME)
   startDate        DateTime?
-  status           JobStatus        @default(DRAFT)
+  status           JobStatus       @default(DRAFT)
   foundationId     String
   publishedAt      DateTime?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 
   // Relations
   foundation   Organization     @relation(fields: [foundationId], references: [id])
@@ -432,16 +436,16 @@ model JobApplication {
 
 model Subscription {
   id                   String             @id @default(uuid())
-  userId               String?            // Optional user ID for user-based subscriptions
-  organizationId       String?            // Optional organization ID for org-based subscriptions
+  userId               String? // Optional user ID for user-based subscriptions
+  organizationId       String? // Optional organization ID for org-based subscriptions
   planId               String
   stripeSubscriptionId String?            @unique
-  stripeCustomerId     String?            // Stripe customer ID
+  stripeCustomerId     String? // Stripe customer ID
   tier                 SubscriptionTier
   status               SubscriptionStatus @default(ACTIVE)
   currentPeriodStart   DateTime?
   currentPeriodEnd     DateTime?
-  cancelAtPeriodEnd    Boolean           @default(false)
+  cancelAtPeriodEnd    Boolean            @default(false)
   canceledAt           DateTime?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
@@ -970,10 +974,10 @@ model FrontendSettings {
   updatedAt DateTime @updatedAt
 
   // Relations
-  logoAsset      Asset? @relation("FrontendLogo", fields: [logoAssetId], references: [id])
-  faviconAsset   Asset? @relation("FrontendFavicon", fields: [faviconAssetId], references: [id])
-  ogImageAsset   Asset? @relation("FrontendOgImage", fields: [ogImageAssetId], references: [id])
-  adminLogoAsset Asset? @relation("AdminLogo", fields: [adminLogoAssetId], references: [id])
+  logoAsset         Asset? @relation("FrontendLogo", fields: [logoAssetId], references: [id])
+  faviconAsset      Asset? @relation("FrontendFavicon", fields: [faviconAssetId], references: [id])
+  ogImageAsset      Asset? @relation("FrontendOgImage", fields: [ogImageAssetId], references: [id])
+  adminLogoAsset    Asset? @relation("AdminLogo", fields: [adminLogoAssetId], references: [id])
   adminFaviconAsset Asset? @relation("AdminFavicon", fields: [adminFaviconAssetId], references: [id])
 
   @@map("frontend_settings")
@@ -1265,16 +1269,16 @@ model MaintenanceSchedule {
 
 // New Role Management Tables
 model AppUser {
-  id          String    @id @default(uuid())
-  clerkId     String    @unique
-  email       String?   @unique
-  role        UserRole  @default(PARENT)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String?  @unique
+  role      UserRole @default(PARENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  assets      Asset[]   @relation("AssetUploadedBy")
-  roleHistory AppUserRoleHistory[]
-  createdCourses Course[] @relation("CourseCreator")
+  assets         Asset[]              @relation("AssetUploadedBy")
+  roleHistory    AppUserRoleHistory[]
+  createdCourses Course[]             @relation("CourseCreator")
 }
 
 model AppUserRoleHistory {
@@ -1305,27 +1309,27 @@ model Outbox {
 
 // Platform Settings and Configuration
 model PlatformSettings {
-  id                    String   @id @default(uuid())
-  platformName          String   @default("ProCrèche Solutions Suisse")
-  platformDescription   String?
-  platformVersion       String   @default("1.0.0")
-  maintenanceMode       Boolean  @default(false)
-  maintenanceMessage    String?  // Custom message during maintenance
-  registrationEnabled   Boolean  @default(true)
-  emailVerificationRequired Boolean @default(true)
-  maxFileUploadSize     Int      @default(10485760) // 10MB in bytes
-  allowedFileTypes      String[] @default(["jpg", "jpeg", "png", "pdf", "doc", "docx"])
-  sessionTimeout        Int      @default(3600) // 1 hour in seconds
-  passwordMinLength     Int      @default(8)
-  passwordRequireSpecial Boolean @default(true)
-  twoFactorRequired     Boolean  @default(false)
-  apiRateLimit          Int      @default(1000) // requests per hour
-  backupFrequency       String   @default("daily") // daily, weekly, monthly
-  logRetentionDays      Int      @default(90)
-  revision              Int      @default(1) // For optimistic locking
-  updatedBy             String?  // User ID who made last update
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                        String   @id @default(uuid())
+  platformName              String   @default("ProCrèche Solutions Suisse")
+  platformDescription       String?
+  platformVersion           String   @default("1.0.0")
+  maintenanceMode           Boolean  @default(false)
+  maintenanceMessage        String? // Custom message during maintenance
+  registrationEnabled       Boolean  @default(true)
+  emailVerificationRequired Boolean  @default(true)
+  maxFileUploadSize         Int      @default(10485760) // 10MB in bytes
+  allowedFileTypes          String[] @default(["jpg", "jpeg", "png", "pdf", "doc", "docx"])
+  sessionTimeout            Int      @default(3600) // 1 hour in seconds
+  passwordMinLength         Int      @default(8)
+  passwordRequireSpecial    Boolean  @default(true)
+  twoFactorRequired         Boolean  @default(false)
+  apiRateLimit              Int      @default(1000) // requests per hour
+  backupFrequency           String   @default("daily") // daily, weekly, monthly
+  logRetentionDays          Int      @default(90)
+  revision                  Int      @default(1) // For optimistic locking
+  updatedBy                 String? // User ID who made last update
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 
   // Relations
   updater User? @relation("PlatformSettingsUpdater", fields: [updatedBy], references: [id])
@@ -1336,12 +1340,12 @@ model PlatformSettings {
 // Audit Logging for Compliance and Debugging
 model AuditLog {
   id        String   @id @default(uuid())
-  entity    String   // e.g., "PolicyAlert", "ContentItem", "User"
-  entityId  String   // ID of the entity that was modified
-  action    String   // "create", "update", "delete", "upsert"
-  actorId   String?  // User ID who performed the action
-  diff      Json?    // Before/after snapshot
-  metadata  Json?    // Request context (IP, traceId, userAgent, etc.)
+  entity    String // e.g., "PolicyAlert", "ContentItem", "User"
+  entityId  String // ID of the entity that was modified
+  action    String // "create", "update", "delete", "upsert"
+  actorId   String? // User ID who performed the action
+  diff      Json? // Before/after snapshot
+  metadata  Json? // Request context (IP, traceId, userAgent, etc.)
   createdAt DateTime @default(now())
 
   // Relations
@@ -1356,14 +1360,14 @@ model AuditLog {
 
 // System Monitoring and Health Checks
 model SystemHealthCheck {
-  id          String   @id @default(uuid())
-  serviceName String
-  status      String   // healthy, degraded, down
-  responseTime Int?    // milliseconds
-  lastChecked DateTime @default(now())
+  id           String   @id @default(uuid())
+  serviceName  String
+  status       String // healthy, degraded, down
+  responseTime Int? // milliseconds
+  lastChecked  DateTime @default(now())
   errorMessage String?
-  metadata    Json?    // Additional health check data
-  createdAt   DateTime @default(now())
+  metadata     Json? // Additional health check data
+  createdAt    DateTime @default(now())
 
   @@map("system_health_checks")
 }
@@ -1372,26 +1376,26 @@ model SystemMetrics {
   id          String   @id @default(uuid())
   metricName  String
   metricValue Float
-  unit        String?  // bytes, seconds, count, etc.
+  unit        String? // bytes, seconds, count, etc.
   timestamp   DateTime @default(now())
-  metadata    Json?    // Additional metric data
+  metadata    Json? // Additional metric data
   createdAt   DateTime @default(now())
 
   @@map("system_metrics")
 }
 
 model SystemAlert {
-  id          String   @id @default(uuid())
-  alertType   String   // error, warning, info
-  title       String
-  message     String
-  severity    String   // low, medium, high, critical
-  isResolved  Boolean  @default(false)
-  resolvedAt  DateTime?
-  resolvedBy  String?
-  metadata    Json?    // Additional alert data
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(uuid())
+  alertType  String // error, warning, info
+  title      String
+  message    String
+  severity   String // low, medium, high, critical
+  isResolved Boolean   @default(false)
+  resolvedAt DateTime?
+  resolvedBy String?
+  metadata   Json? // Additional alert data
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@map("system_alerts")
 }
@@ -1401,7 +1405,7 @@ model ContentItem {
   id          String   @id @default(uuid())
   title       String
   description String?
-  contentType String   // document, image, video, audio, other
+  contentType String // document, image, video, audio, other
   fileUrl     String?
   fileSize    Int?
   mimeType    String?
@@ -1438,17 +1442,17 @@ model ContentCategory {
 
 // Policy Alert System
 model PolicyAlert {
-  id          String   @id @default(uuid())
-  title       String
-  message     String
-  alertType   String   // info, warning, critical
-  regions     String[] // Array of region codes (CH, DE, FR, etc.)
-  isActive    Boolean  @default(true)
-  startDate   DateTime @default(now())
-  endDate     DateTime?
-  createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String    @id @default(uuid())
+  title     String
+  message   String
+  alertType String // info, warning, critical
+  regions   String[] // Array of region codes (CH, DE, FR, etc.)
+  isActive  Boolean   @default(true)
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  createdBy String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   // Relations
   creator User @relation("PolicyAlertCreator", fields: [createdBy], references: [id])
@@ -1458,16 +1462,16 @@ model PolicyAlert {
 
 // API Key Management
 model ApiKey {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
-  keyHash     String   @unique
+  keyHash     String    @unique
   permissions String[] // Array of permission strings
-  isActive    Boolean  @default(true)
+  isActive    Boolean   @default(true)
   lastUsedAt  DateTime?
   expiresAt   DateTime?
   createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Relations
   creator User @relation("ApiKeyCreator", fields: [createdBy], references: [id])
@@ -1477,35 +1481,35 @@ model ApiKey {
 
 // Webhook Management
 model Webhook {
-  id          String   @id @default(uuid())
-  name        String
-  url         String
-  events      String[] // Array of event types
-  secret      String?  // Webhook secret for verification
-  isActive    Boolean  @default(true)
+  id            String    @id @default(uuid())
+  name          String
+  url           String
+  events        String[] // Array of event types
+  secret        String? // Webhook secret for verification
+  isActive      Boolean   @default(true)
   lastTriggered DateTime?
-  failureCount Int     @default(0)
-  createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  failureCount  Int       @default(0)
+  createdBy     String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
-  creator User @relation("WebhookCreator", fields: [createdBy], references: [id])
+  creator User         @relation("WebhookCreator", fields: [createdBy], references: [id])
   logs    WebhookLog[]
 
   @@map("webhooks")
 }
 
 model WebhookLog {
-  id          String   @id @default(uuid())
-  webhookId   String
-  event       String
-  payload     Json
-  response    Json?
-  statusCode  Int?
-  success     Boolean
+  id           String   @id @default(uuid())
+  webhookId    String
+  event        String
+  payload      Json
+  response     Json?
+  statusCode   Int?
+  success      Boolean
   errorMessage String?
-  triggeredAt DateTime @default(now())
+  triggeredAt  DateTime @default(now())
 
   // Relations
   webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
