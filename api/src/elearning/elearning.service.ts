@@ -336,7 +336,7 @@ export class ElearningService {
 
     // Calculate score
     let correctAnswers = 0;
-    let totalQuestions = quiz.questions.length;
+    const totalQuestions = quiz.questions.length;
 
     for (const question of quiz.questions) {
       const userAnswer = answers.find(a => a.questionId === question.id);

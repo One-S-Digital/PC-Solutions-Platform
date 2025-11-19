@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
+import { JobContractType, JobStatus } from '@workspace/types';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class RecruitmentService {
@@ -11,9 +13,36 @@ export class RecruitmentService {
 
   // Job Listing Management
   async createJobListing(createJobListingDto: CreateJobListingDto, foundationId: string) {
+    const {
+      requirements,
+      responsibilities,
+      qualifications,
+      benefits,
+      status,
+      contractType,
+      startDate,
+      ...rest
+    } = createJobListingDto;
+
+    const parsedStartDate =
+      startDate && startDate.trim()
+        ? (() => {
+            const date = new Date(startDate);
+            return Number.isNaN(date.getTime()) ? undefined : date;
+          })()
+        : undefined;
+
     return this.prisma.jobListing.create({
       data: {
-        ...createJobListingDto,
+        ...rest,
+        contractType: contractType ?? JobContractType.FULL_TIME,
+        startDate: parsedStartDate,
+        requirements: requirements ?? [],
+        responsibilities: responsibilities ?? [],
+        qualifications: qualifications ?? [],
+        benefits: benefits ?? [],
+        status: status ?? JobStatus.DRAFT,
+        publishedAt: status === JobStatus.PUBLISHED ? new Date() : null,
         foundationId,
       },
       include: {
@@ -32,6 +61,8 @@ export class RecruitmentService {
     status?: string;
     location?: string;
     search?: string;
+    contractType?: string;
+    publishedOnly?: boolean;
   }) {
     const where: any = {};
 
@@ -47,12 +78,20 @@ export class RecruitmentService {
       where.location = { contains: filters.location, mode: 'insensitive' };
     }
 
+    if (filters?.contractType) {
+      where.contractType = filters.contractType;
+    }
+
     if (filters?.search) {
       where.OR = [
         { title: { contains: filters.search, mode: 'insensitive' } },
         { description: { contains: filters.search, mode: 'insensitive' } },
         { requirements: { has: filters.search } },
       ];
+    }
+
+    if (filters?.publishedOnly) {
+      where.status = JobStatus.PUBLISHED;
     }
 
     return this.prisma.jobListing.findMany({
@@ -84,9 +123,50 @@ export class RecruitmentService {
   }
 
   async updateJobListing(id: string, updateJobListingDto: UpdateJobListingDto) {
+    const {
+      requirements,
+      responsibilities,
+      qualifications,
+      benefits,
+      status,
+      contractType,
+      startDate,
+      ...rest
+    } = updateJobListingDto;
+
+    const parsedStartDate =
+      startDate && startDate.trim()
+        ? (() => {
+            const date = new Date(startDate);
+            return Number.isNaN(date.getTime()) ? undefined : date;
+          })()
+        : undefined;
+
+    const currentListing = await this.prisma.jobListing.findUnique({
+      where: { id },
+      select: { status: true, publishedAt: true },
+    });
+
     return this.prisma.jobListing.update({
       where: { id },
-      data: updateJobListingDto,
+      data: {
+        ...rest,
+        ...(contractType ? { contractType } : {}),
+        ...(parsedStartDate ? { startDate: parsedStartDate } : {}),
+        ...(requirements ? { requirements } : {}),
+        ...(responsibilities ? { responsibilities } : {}),
+        ...(qualifications ? { qualifications } : {}),
+        ...(benefits ? { benefits } : {}),
+        ...(status
+          ? {
+              status,
+              publishedAt:
+                status === JobStatus.PUBLISHED
+                  ? currentListing?.publishedAt ?? new Date()
+                  : null,
+            }
+          : {}),
+      },
       include: {
         foundation: true,
         applications: {
@@ -109,20 +189,27 @@ export class RecruitmentService {
     createJobApplicationDto: CreateJobApplicationDto,
     candidateId: string,
   ) {
-    return this.prisma.jobApplication.create({
-      data: {
-        ...createJobApplicationDto,
-        candidateId,
-      },
-      include: {
-        jobListing: {
-          include: {
-            foundation: true,
-          },
+    try {
+      return await this.prisma.jobApplication.create({
+        data: {
+          ...createJobApplicationDto,
+          candidateId,
         },
-        candidate: true,
-      },
-    });
+        include: {
+          jobListing: {
+            include: {
+              foundation: true,
+            },
+          },
+          candidate: true,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('You have already applied for this job.');
+      }
+      throw error;
+    }
   }
 
   async findAllJobApplications(filters?: {
@@ -190,6 +277,35 @@ export class RecruitmentService {
   async deleteJobApplication(id: string) {
     return this.prisma.jobApplication.delete({
       where: { id },
+    });
+  }
+
+  async findJobApplicationsForJob(jobListingId: string) {
+    return this.prisma.jobApplication.findMany({
+      where: { jobListingId },
+      include: {
+        candidate: true,
+        jobListing: {
+          include: {
+            foundation: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findJobApplicationsForCandidate(candidateId: string) {
+    return this.prisma.jobApplication.findMany({
+      where: { candidateId },
+      include: {
+        jobListing: {
+          include: {
+            foundation: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

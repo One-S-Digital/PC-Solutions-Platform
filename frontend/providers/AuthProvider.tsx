@@ -7,29 +7,10 @@ import React, {
   useState,
   ReactNode,
 } from 'react';
-import { useUser, useAuth, ClerkProvider } from '@clerk/clerk-react';
-import { User } from '../types';
+import { useUser, useAuth, ClerkProvider, useClerk } from '@clerk/clerk-react';
+import { Organization, User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
-import { authDebugger } from '../src/utils/authDebugger';
-
-// Development-only logging helper
-const devLog = (...args: any[]) => {
-  if (import.meta.env.DEV) {
-    console.log(...args);
-  }
-};
-
-const devWarn = (...args: any[]) => {
-  if (import.meta.env.DEV) {
-    console.warn(...args);
-  }
-};
-
-const devError = (...args: any[]) => {
-  // Always log errors, even in production
-  console.error(...args);
-};
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
@@ -57,12 +38,14 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   authError: string | null;
+  isSigningOut: boolean;
   clearAuthError: () => void;
   login: (email: string, password?: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   signup: (formData: any, role: any) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
   refreshCurrentUser: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,9 +57,11 @@ interface AuthProviderProps {
 const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const { user: clerkUser, isLoaded: clerkIsLoaded } = useUser();
   const { getToken, signOut: clerkSignOut, isSignedIn } = useAuth();
+  const clerk = useClerk();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const syncAttemptRef = useRef<SyncAttemptState>(INITIAL_SYNC_STATE);
   const syncInFlightRef = useRef(false);
@@ -84,29 +69,75 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
-  // Log Clerk SDK init
-  useEffect(() => {
-    if (clerkIsLoaded) {
-      authDebugger.log('CLERK', 'sdk_init', 'OK', '');
-    }
-  }, [clerkIsLoaded]);
+    const transformBackendUser = useCallback((user: any): User => {
+      const normalizedOrganizations: Array<Organization & { membershipRole?: UserRole }> = Array.isArray(user.organizations)
+        ? user.organizations.map((entry: any) => {
+            const organization = entry?.organization ?? entry ?? {};
+            const products = Array.isArray(organization.products) ? organization.products : [];
+            const services = Array.isArray(organization.services) ? organization.services : [];
+            const jobListings = Array.isArray(organization.jobListings) ? organization.jobListings : [];
+            const logoUrl = organization.logoUrl ?? organization.logoAsset?.publicUrl ?? null;
+            const coverImageUrl = organization.coverImageUrl ?? organization.coverAsset?.publicUrl ?? null;
 
-  const transformBackendUser = useCallback((user: any): User => {
-    devLog('🔄 Transforming backend user:', user);
-    
-    const transformed = {
-      ...user,
-      name: user.firstName && user.lastName 
-        ? `${user.firstName} ${user.lastName}`.trim()
-        : user.firstName || user.lastName || 'Unknown User',
-      status: user.isActive ? 'Active' : 'Inactive',
-      lastLogin: user.lastActiveAt,
-      memberSince: user.createdAt,
-    };
-    
-    devLog('✅ Transformed user:', transformed);
-    return transformed;
-  }, []);
+            return {
+              ...organization,
+              products,
+              services,
+              jobListings,
+              logoUrl,
+              coverImageUrl,
+              membershipRole: entry?.membershipRole ?? entry?.role,
+            };
+          })
+        : [];
+
+      const rawPrimary =
+        user.primaryOrganization?.organization ??
+        user.primaryOrganization ??
+        normalizedOrganizations[0] ??
+        null;
+
+      const primaryOrganization = rawPrimary
+        ? {
+            ...rawPrimary,
+            products: Array.isArray(rawPrimary.products) ? rawPrimary.products : [],
+            services: Array.isArray(rawPrimary.services) ? rawPrimary.services : [],
+            jobListings: Array.isArray(rawPrimary.jobListings) ? rawPrimary.jobListings : [],
+            logoUrl: rawPrimary.logoUrl ?? rawPrimary.logoAsset?.publicUrl ?? null,
+            coverImageUrl: rawPrimary.coverImageUrl ?? rawPrimary.coverAsset?.publicUrl ?? null,
+            membershipRole:
+              rawPrimary.membershipRole ??
+              user.primaryOrganization?.membershipRole ??
+              rawPrimary.role,
+          }
+        : null;
+
+      const derivedName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`.trim()
+          : user.firstName || user.lastName || user.name || user.email || 'Unknown User';
+
+      const resolvedAvatar =
+        user.avatarUrl ??
+        primaryOrganization?.logoUrl ??
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(derivedName)}&background=48CFAE&color=ffffff&size=128&rounded=true`;
+
+      return {
+        ...user,
+        name: derivedName,
+        status: user.isActive ? 'Active' : 'Inactive',
+        lastLogin: user.lastActiveAt,
+        memberSince: user.createdAt,
+        avatarUrl: resolvedAvatar,
+        orgId: user.orgId ?? primaryOrganization?.id,
+        orgName: user.orgName ?? primaryOrganization?.name,
+        orgType: user.orgType ?? primaryOrganization?.type,
+        orgLogoUrl: user.orgLogoUrl ?? primaryOrganization?.logoUrl ?? null,
+        orgCoverImageUrl: user.orgCoverImageUrl ?? primaryOrganization?.coverImageUrl ?? null,
+        organizations: normalizedOrganizations,
+        primaryOrganization,
+      };
+    }, []);
 
   const determineAuthErrorKey = useCallback((error: unknown): string => {
     if (error instanceof ApiError) {
@@ -127,65 +158,14 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     async (clerkId: string, attempt = 0): Promise<User> => {
       const token = await getToken();
 
-      console.group(`🔄 [BACKEND SYNC] Attempt ${attempt + 1}/${WEBHOOK_RETRY_ATTEMPTS + 1}`);
       
       if (!token) {
-        console.error('❌ No authentication token available');
-        console.groupEnd();
-        authDebugger.log('HTTP', 'req', 'ERROR', { url: '/api/users/me', error: 'no_token' });
+        console.error('Authentication token not available');
         throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
       }
 
       const apiBaseUrl = apiService.apiBaseUrl;
       const url = `${apiBaseUrl}${API_ENDPOINTS.users.me}`;
-
-      // Enhanced environment diagnostics
-      const envConfig = {
-        rawApiUrl: import.meta.env.VITE_API_URL,
-        computedBaseUrl: apiBaseUrl,
-        fullRequestUrl: url,
-        nodeEnv: import.meta.env.NODE_ENV,
-        mode: import.meta.env.MODE,
-        isDev: import.meta.env.DEV,
-        isProd: import.meta.env.PROD,
-      };
-
-      devLog('🔧 Environment Config:', envConfig);
-      authDebugger.log('ENV', 'config', 'INFO', envConfig);
-
-      // Token validation
-      const tokenInfo = {
-        hasToken: !!token,
-        tokenLength: token?.length || 0,
-        tokenPrefix: token?.substring(0, 20) + '...',
-        tokenType: typeof token,
-        isValidFormat: token?.startsWith('eyJ') || false, // JWT tokens start with eyJ
-      };
-
-      devLog('🔑 Token Info:', tokenInfo);
-      authDebugger.log('TOKEN', 'validate', 'INFO', tokenInfo);
-
-      devLog('📤 Request Details:', {
-        url,
-        method: 'GET',
-        clerkId,
-        tokenPrefix: token.substring(0, 20) + '...',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: 'Bearer ' + token.substring(0, 20) + '...',
-        }
-      });
-
-      // Log HTTP request with full details
-      authDebugger.log('HTTP', 'req', 'INFO', { 
-        method: 'GET', 
-        url: '/api/users/me',
-        fullUrl: url,
-        authHeader: true,
-        attempt: attempt + 1,
-        timestamp: new Date().toISOString()
-      });
 
       let response: Response;
       const fetchStartTime = performance.now();
@@ -200,61 +180,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           },
         });
 
-        const fetchEndTime = performance.now();
-        const duration = fetchEndTime - fetchStartTime;
-
-        // Extract all CORS headers
-        const corsHeaders = {
-          'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
-          'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
-          'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
-          'access-control-allow-headers': response.headers.get('access-control-allow-headers'),
-          'access-control-expose-headers': response.headers.get('access-control-expose-headers'),
-        };
-
-        devLog('📥 Response Status:', {
-          status: response.status,
-          statusText: response.statusText,
-          ok: response.ok,
-          type: response.type,
-          redirected: response.redirected,
-          url: response.url,
-          duration: `${duration.toFixed(2)}ms`,
-          headers: {
-            'content-type': response.headers.get('content-type'),
-            'content-length': response.headers.get('content-length'),
-            'server': response.headers.get('server'),
-            ...corsHeaders,
-          }
-        });
-
-        // Log HTTP response with detailed info
-        if (response.ok) {
-          authDebugger.log('HTTP', 'res', 'OK', { 
-            status: response.status,
-            category: 'OK',
-            duration: `${duration.toFixed(2)}ms`,
-            cors: corsHeaders
-          });
-        } else if (response.status === 401 || response.status === 403) {
-          authDebugger.log('HTTP', 'res', 'ERROR', { 
-            status: response.status,
-            category: 'UNAUTH',
-            duration: `${duration.toFixed(2)}ms`
-          });
-        } else if (response.status === 0) {
-          authDebugger.log('HTTP', 'res', 'ERROR', { 
-            status: 0,
-            category: 'NETWORK',
-            duration: `${duration.toFixed(2)}ms`
-          });
-        } else {
-          authDebugger.log('HTTP', 'res', 'ERROR', { 
-            status: response.status,
-            category: 'HTTP_ERROR',
-            duration: `${duration.toFixed(2)}ms`
-          });
-        }
       } catch (fetchError) {
         const fetchEndTime = performance.now();
         const duration = fetchEndTime - fetchStartTime;
@@ -281,15 +206,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           },
         };
 
-        console.error('❌ Network/Fetch Error - DETAILED DIAGNOSTICS:', errorDetails);
-        console.groupEnd();
-        
-        authDebugger.log('HTTP', 'res', 'ERROR', { 
-          status: 0,
-          category: 'NETWORK',
-          error: String(fetchError),
-          details: errorDetails
-        });
+        console.error('Network request failed while fetching user data', errorDetails);
         
         throw new ApiError(
           `Network error: ${errorDetails.errorMessage}. URL: ${url}. Online: ${errorDetails.online}`,
@@ -303,58 +220,27 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       let responseText: string = '';
       try {
         responseText = await response.text(); // Don't use clone(), just read it once
-        devLog('📄 Response Body (raw):', responseText);
-        
-        // Log response body for debugging
-        authDebugger.log('HTTP', 'body_raw', 'INFO', { 
-          length: responseText.length,
-          preview: responseText.substring(0, 200)
-        });
         
         try {
           responseBody = JSON.parse(responseText);
-          devLog('📄 Response Body (parsed):', responseBody);
           
-          // Log parsed response structure
-          authDebugger.log('HTTP', 'body_parsed', 'INFO', {
-            hasSuccess: !!responseBody?.success,
-            successValue: responseBody?.success,
-            hasData: !!responseBody?.data,
-            dataKeys: responseBody?.data ? Object.keys(responseBody.data).join(',') : 'none',
-            isPending: responseBody?.data?.isPending || false
-          });
         } catch (parseError) {
-          console.warn('⚠️  Response is not valid JSON:', parseError);
-          authDebugger.log('HTTP', 'parse_error', 'ERROR', { 
-            error: String(parseError)
-          });
         }
       } catch (bodyError) {
-        console.error('❌ Error reading response body:', bodyError);
-        authDebugger.log('HTTP', 'read_error', 'ERROR', { 
-          error: String(bodyError)
-        });
+        console.error('Failed to read response body:', bodyError);
       }
 
       if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
-        console.warn('⏳ User not found (404). Waiting for webhook to create user...', {
-          attempt: attempt + 1,
-          maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
-          waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
-          clerkId,
-        });
-        console.groupEnd();
         await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
         return fetchUserFromBackend(clerkId, attempt + 1);
       }
 
       if (!response.ok) {
-        console.error('❌ Backend returned error:', {
+        console.error('Backend returned error:', {
           status: response.status,
           statusText: response.statusText,
           body: responseBody || responseText,
         });
-        console.groupEnd();
         throw new ApiError(
           responseBody?.message || `Failed to fetch user: ${response.statusText}`, 
           response.status,
@@ -367,18 +253,6 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Handle pending user case (200 response with isPending: true)
       if (data?.success && data?.data?.isPending) {
-        console.warn('⏳ User is pending webhook processing. Retrying...', {
-          attempt: attempt + 1,
-          maxAttempts: WEBHOOK_RETRY_ATTEMPTS,
-          waitTime: WEBHOOK_RETRY_DELAY_MS + 'ms',
-          clerkId,
-          message: data.data.message,
-        });
-        authDebugger.log('HTTP', 'user_pending', 'INFO', {
-          attempt: attempt + 1,
-          message: data.data.message
-        });
-        console.groupEnd();
         
         if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
           await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
@@ -393,41 +267,17 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (!data?.success || !data?.data) {
-        console.error('❌ Invalid response format:', {
+        console.error('Invalid response format:', {
           hasSuccess: !!data?.success,
           successValue: data?.success,
           hasData: !!data?.data,
           dataValue: data?.data,
           fullResponse: data,
         });
-        authDebugger.log('HTTP', 'invalid_format', 'ERROR', {
-          hasSuccess: !!data?.success,
-          successValue: data?.success,
-          hasData: !!data?.data,
-          responseType: typeof data,
-          responseKeys: data ? Object.keys(data).join(',') : 'null'
-        });
-        console.groupEnd();
         throw new Error('Invalid response format from backend');
       }
 
-      devLog('✅ User synced successfully:', {
-        userId: data.data.id,
-        email: data.data.email,
-        role: data.data.role,
-        firstName: data.data.firstName,
-        lastName: data.data.lastName,
-      });
       
-      authDebugger.log('HTTP', 'user_sync_success', 'OK', {
-        userId: data.data.id,
-        email: data.data.email,
-        role: data.data.role,
-        hasFirstName: !!data.data.firstName,
-        hasLastName: !!data.data.lastName
-      });
-      
-      console.groupEnd();
 
       return transformBackendUser(data.data);
     },
@@ -475,29 +325,13 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     const runSync = async () => {
       setIsLoading(true);
       
-      devLog('🔄 [SYNC] Starting user sync...', { clerkUserId });
-      authDebugger.log('SYNC', 'start', 'INFO', { clerkUserId });
 
       try {
         const backendUser = await fetchUserFromBackend(clerkUserId);
         if (cancelled) {
-          devLog('⚠️  [SYNC] Sync cancelled');
-          authDebugger.log('SYNC', 'cancelled', 'INFO', { reason: 'component_unmounted' });
           return;
         }
 
-        devLog('✅ [SYNC] Setting user state:', {
-          userId: backendUser.id,
-          email: backendUser.email,
-          role: backendUser.role,
-          name: backendUser.name
-        });
-        
-        authDebugger.log('SYNC', 'set_user', 'OK', {
-          userId: backendUser.id,
-          email: backendUser.email,
-          role: backendUser.role
-        });
 
         setCurrentUser(backendUser);
         setAuthError(null);
@@ -507,25 +341,16 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           lastAttempt: Date.now(),
         };
         
-        devLog('✅ [SYNC] User state updated successfully');
-        authDebugger.log('SYNC', 'complete', 'OK', { status: 'success' });
       } catch (error) {
         if (cancelled) {
-          devLog('⚠️  [SYNC] Sync cancelled during error handling');
           return;
         }
 
-        console.error('❌ [SYNC] Failed to sync user with backend:', error);
+        console.error('Failed to sync user with backend:', error);
         const errorKey = determineAuthErrorKey(error);
         setCurrentUser(null);
         setAuthError(errorKey);
         
-        authDebugger.log('SYNC', 'error', 'ERROR', {
-          errorKey,
-          errorMessage: error instanceof Error ? error.message : String(error),
-          errorStatus: error instanceof ApiError ? error.status : undefined
-        });
-
         syncAttemptRef.current = {
           clerkId: clerkUserId,
           status: 'error',
@@ -568,6 +393,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = useCallback(async () => {
     try {
+      setIsSigningOut(true);
       // Clear local user state first
       setCurrentUser(null);
       setAuthError(null);
@@ -579,6 +405,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Logout error:', error);
       // Still clear local state even if Clerk signOut fails
       setCurrentUser(null);
+    } finally {
+      setIsSigningOut(false);
     }
   }, [clerkSignOut]);
 
@@ -589,22 +417,17 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateCurrentUserInfo = useCallback(
     async (updatedInfo: Partial<User>) => {
-      console.group('🔄 [UPDATE USER] Starting update');
-      console.log('📝 Data to update:', updatedInfo);
-      
+
       if (!currentUser) {
-        console.error('❌ No current user - cannot update');
-        console.groupEnd();
+        console.error('Cannot update user: current user is not loaded');
         return;
       }
 
       try {
         const token = await getToken();
-        devLog('🔑 Token obtained:', token ? 'YES' : 'NO');
 
         if (!token) {
-          console.error('❌ No authentication token');
-          console.groupEnd();
+          console.error('Authentication token not available');
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
         }
 
@@ -619,21 +442,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         delete backendData.memberSince; // Transformed field
         delete backendData.organizations; // Many-to-many relation, not direct field
         
-        devLog('🔄 Prepared data for backend:', backendData);
 
         const apiBaseUrl = apiService.apiBaseUrl;
         const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
 
-        devLog('📤 Making PATCH request:', {
-          url,
-          method: 'PATCH',
-          body: backendData,
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: 'Bearer ' + token.substring(0, 20) + '...',
-          }
-        });
 
         const response = await fetch(url, {
           method: 'PATCH',
@@ -645,28 +457,17 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify(backendData),
         });
 
-        devLog('📥 Response received:', {
-          status: response.status,
-          statusText: response.statusText,
-          ok: response.ok,
-          headers: {
-            'content-type': response.headers.get('content-type'),
-            'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
-          }
-        });
 
         if (!response.ok) {
           const errorBody = await response.text();
-          console.error('❌ Update failed:', {
+          console.error('Update request failed:', {
             status: response.status,
             body: errorBody,
           });
-          console.groupEnd();
           throw new ApiError('Failed to update user', response.status);
         }
 
         const data = await response.json();
-        devLog('📄 Update response:', data);
         
         if (data?.success && data?.data) {
           const transformedUser = transformBackendUser(data.data);
@@ -679,20 +480,146 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
               lastAttempt: Date.now(),
             };
           }
-          devLog('✅ User updated successfully');
-          console.groupEnd();
         } else {
-          console.error('❌ Invalid response format:', data);
-          console.groupEnd();
+          console.error('Invalid response format received from update request:', data);
           throw new Error('Invalid response format');
         }
       } catch (error) {
-        console.error('❌ Failed to update user:', error);
-        console.groupEnd();
+        console.error('Failed to update user:', error);
         throw error;
       }
     },
     [currentUser, getToken, transformBackendUser, clerkUserId]
+  );
+
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      if (!clerkUser) {
+        throw new Error('Authenticated user is not available');
+      }
+
+      try {
+        // First, try to update password directly
+        // Clerk's updatePassword should handle verification automatically if currentPassword is provided
+        await clerkUser.updatePassword({ 
+          currentPassword, 
+          newPassword,
+          signOutOfOtherSessions: false,
+        });
+      } catch (error: any) {
+        console.error('Failed to change password via Clerk', error);
+
+        // Handle the specific "additional verification" error
+        const errorMessage = error?.message || '';
+        const errorCode = error?.code || error?.status || '';
+        
+        // If Clerk requires additional verification, we need to prepare and complete verification first
+        if (
+          errorMessage.includes('additional verification') || 
+          errorMessage.includes('verification') ||
+          errorCode === 403 ||
+          error?.status === 403
+        ) {
+          try {
+            // Prepare verification with password strategy
+            const verification = await clerkUser.prepareVerification({
+              strategy: 'password',
+            });
+
+            // Attempt to verify with current password
+            if (verification.status === 'unverified') {
+              const verified = await verification.attemptVerification({
+                password: currentPassword,
+              });
+
+              if (verified.status === 'verified') {
+                // Verification successful, now try password update again
+                await clerkUser.updatePassword({ 
+                  currentPassword, 
+                  newPassword,
+                  signOutOfOtherSessions: false,
+                });
+                return; // Success, exit early
+              }
+            } else if (verification.status === 'verified') {
+              // Already verified, try password update again
+              await clerkUser.updatePassword({ 
+                currentPassword, 
+                newPassword,
+                signOutOfOtherSessions: false,
+              });
+              return; // Success, exit early
+            }
+
+            // If we get here, verification didn't work as expected
+            throw new Error(
+              'Verification completed but password update still failed. ' +
+              'Please try signing out and signing back in, then attempt the password change again.'
+            );
+          } catch (verifyError: any) {
+            // Handle verification-specific errors
+            if (verifyError?.message?.includes('incorrect') || verifyError?.message?.includes('password')) {
+              throw new Error('The current password you entered is incorrect. Please try again.');
+            }
+            
+            // Re-throw verification errors with context
+            throw new Error(
+              'Additional verification is required to change your password. ' +
+              'Please ensure you entered your current password correctly, or sign out and sign back in, then try again. ' +
+              `Error: ${verifyError?.message || 'Verification failed'}`
+            );
+          }
+        }
+
+        // Handle incorrect current password
+        if (errorMessage.includes('current password') || errorMessage.includes('incorrect')) {
+          throw new Error('The current password you entered is incorrect. Please try again.');
+        }
+
+        // Handle Clerk-specific errors
+        const clerkErrors = error?.errors;
+        if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
+          const message = clerkErrors
+            .map((e: any) => e?.message)
+            .filter(Boolean)
+            .join(' ');
+          throw new Error(message || 'Password update failed');
+        }
+
+        if (error instanceof Error && error.message) {
+          throw new Error(error.message);
+        }
+
+        throw new Error('Unable to update password. Please try again.');
+      }
+
+      try {
+        const token = await getToken();
+
+        if (!token) {
+          console.warn('Password change succeeded but audit token was unavailable');
+          return;
+        }
+
+        const url = `${apiService.apiBaseUrl}${API_ENDPOINTS.security.passwordChange}`;
+
+        await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            occurredAt: new Date().toISOString(),
+            method: 'clerk',
+          }),
+        });
+      } catch (auditError) {
+        console.error('Password change audit logging failed', auditError);
+      }
+    },
+    [clerkUser, getToken]
   );
 
   const refreshCurrentUser = useCallback(async () => {
@@ -722,12 +649,14 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading,
         isAuthenticated,
         authError,
+        isSigningOut,
         clearAuthError: () => setAuthError(null),
         login,
         logout,
         signup,
         updateCurrentUserInfo,
         refreshCurrentUser,
+        changePassword,
       }}
     >
       {children}

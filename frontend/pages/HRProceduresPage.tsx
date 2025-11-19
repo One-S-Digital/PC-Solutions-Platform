@@ -12,6 +12,7 @@ import { useAppContext } from '../contexts/AppContext';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import { formatCategory } from '../utils/serviceFormatting';
 
 interface HRDocumentCardProps {
   doc: HRDocument;
@@ -43,7 +44,7 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
             <DocumentDuplicateIcon className={`w-10 h-10 ${fileTypeColors[doc.fileType] || 'text-gray-500'}`} />
             <div className="ml-3">
               <h3 className="text-lg font-semibold text-swiss-charcoal group-hover:text-swiss-mint transition-colors">{doc.title}</h3>
-              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel', { category: HR_CATEGORY_LABELS[doc.category as HRCategory] || doc.category })}</p>
+              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel', { category: HR_CATEGORY_LABELS[doc.category as HRCategory] || formatCategory(doc.category) })}</p>
               {doc.language && <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.languageLabel', { language: doc.language })} {doc.version && t('hrProcedures.documentCard.versionLabel', { version: doc.version })}</p>}
             </div>
           </div>
@@ -52,7 +53,7 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
           </button>
         </div>
         <p className="text-xs text-gray-500 mb-1">
-          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString() })}
+          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString(i18n.language) })}
         </p>
         <div className="my-2">
           {doc.tags.map(tag => (
@@ -177,7 +178,7 @@ const HRProceduresPage: React.FC = () => {
         return false;
       }
 
-      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || doc.category;
+      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || formatCategory(doc.category);
       const matchesSearch =
         doc.title.toLowerCase().includes(searchLower) ||
         doc.category.toLowerCase().includes(searchLower) ||
@@ -278,7 +279,7 @@ const HRProceduresPage: React.FC = () => {
       )}
 
       <h2 className="text-2xl font-semibold text-swiss-charcoal mt-8 mb-4">
-        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory }) : t('hrProcedures.allDocumentsCategory')}
+        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: HR_CATEGORY_LABELS[selectedCategory] || formatCategory(selectedCategory) }) : t('hrProcedures.allDocumentsCategory')}
         <span className="text-base font-normal text-gray-500 ml-2">{t('hrProcedures.allItemsCount', { count: filteredDocs.length })}</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -292,7 +293,7 @@ const HRProceduresPage: React.FC = () => {
           />
         ))}
       </div>
-      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory })}</p>}
+      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: HR_CATEGORY_LABELS[selectedCategory] || formatCategory(selectedCategory) })}</p>}
       {filteredDocs.length === 0 && !selectedCategory && totalPublishedDocs > 0 && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsMatchSearch')}</p>}
 
       {previewDoc && (

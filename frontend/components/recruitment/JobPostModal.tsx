@@ -1,20 +1,21 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
-import { JobListing } from '../../types';
+import { JobListing, JobStatus } from '../../types';
 import { STANDARD_INPUT_FIELD } from '../../constants';
 import Button from '../ui/Button';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
+import { JobListingInput } from '../../hooks/useRecruitmentApi';
 
 interface JobPostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<JobListing, 'id' | 'applicationsReceived' | 'status'>) => void;
+  onSubmit: (data: JobListingInput) => void;
   existingJob?: JobListing | null;
 }
 
-type JobFormData = Omit<JobListing, 'id' | 'applicationsReceived' | 'status' | 'foundationName'>;
+type JobFormData = JobListingInput;
 
 const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, existingJob }) => {
   const { t } = useTranslation(['dashboard', 'common']);
@@ -23,7 +24,7 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
   const initialFormState: JobFormData = {
     title: '',
     location: '',
-    contractType: 'Full-time',
+    contractType: 'FULL_TIME',
     startDate: new Date().toISOString().split('T')[0],
     description: '',
     requirements: [''],
@@ -31,23 +32,32 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
     qualifications: [''],
     benefits: [''],
     salaryRange: '',
+    salary: '',
+    status: JobStatus.PUBLISHED,
   };
 
   const [formData, setFormData] = useState<JobFormData>(initialFormState);
 
   useEffect(() => {
     if (isOpen) {
-      if (existingJob) {
-        setFormData({
-          ...existingJob,
-          startDate: existingJob.startDate ? new Date(existingJob.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-          responsibilities: existingJob.responsibilities?.length ? existingJob.responsibilities : [''],
-          qualifications: existingJob.qualifications?.length ? existingJob.qualifications : [''],
-          benefits: existingJob.benefits?.length ? existingJob.benefits : [''],
-        });
-      } else {
+        if (existingJob) {
+          setFormData({
+            title: existingJob.title,
+            description: existingJob.description ?? '',
+            requirements: existingJob.requirements.length ? existingJob.requirements : [''],
+            responsibilities: existingJob.responsibilities.length ? existingJob.responsibilities : [''],
+            qualifications: existingJob.qualifications.length ? existingJob.qualifications : [''],
+            benefits: existingJob.benefits.length ? existingJob.benefits : [''],
+            location: existingJob.location ?? '',
+            salary: existingJob.salary ?? '',
+            salaryRange: existingJob.salaryRange ?? '',
+            contractType: existingJob.contractType ?? 'FULL_TIME',
+            startDate: existingJob.startDate ? existingJob.startDate.split('T')[0] : '',
+            status: existingJob.status ?? JobStatus.DRAFT,
+          });
+          return;
+        }
         setFormData(initialFormState);
-      }
     }
   }, [isOpen, existingJob]);
 
@@ -76,11 +86,18 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
         alert("Cannot post job. Foundation details are missing.");
         return;
     }
-    const finalData = {
-        ...formData,
-        foundationName: currentUser.orgName
+    const sanitizedData: JobListingInput = {
+      ...formData,
+      requirements: formData.requirements.filter((item) => item.trim().length > 0),
+      responsibilities: formData.responsibilities.filter((item) => item.trim().length > 0),
+      qualifications: formData.qualifications.filter((item) => item.trim().length > 0),
+      benefits: formData.benefits.filter((item) => item.trim().length > 0),
+      startDate: formData.startDate || undefined,
+      salary: formData.salary || undefined,
+      salaryRange: formData.salaryRange || undefined,
+      status: formData.status ?? JobStatus.PUBLISHED,
     };
-    onSubmit(finalData);
+    onSubmit(sanitizedData);
     onClose();
   };
 
@@ -136,8 +153,12 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
               </div>
               <div>
                 <label htmlFor="contractType" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.contractType')} *</label>
-                <select name="contractType" id="contractType" value={formData.contractType} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
-                  {['Full-time', 'Part-time', 'CDI', 'CDD', 'Internship'].map(type => <option key={type} value={type}>{type}</option>)}
+              <select name="contractType" id="contractType" value={formData.contractType} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
+                <option value="FULL_TIME">{t('recruitmentPage.contractTypes.fullTime', 'Full-time')}</option>
+                <option value="PART_TIME">{t('recruitmentPage.contractTypes.partTime', 'Part-time')}</option>
+                <option value="CDI">{t('recruitmentPage.contractTypes.cdi', 'CDI')}</option>
+                <option value="CDD">{t('recruitmentPage.contractTypes.cdd', 'CDD')}</option>
+                <option value="INTERNSHIP">{t('recruitmentPage.contractTypes.internship', 'Internship')}</option>
                 </select>
               </div>
               <div>

@@ -12,10 +12,12 @@ import SupplierCard from '../components/marketplace/SupplierCard';
 import { useAppContext } from '../contexts/AppContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatServiceCategory } from '../utils/serviceFormatting';
 
 // ServiceCard now includes a function to book an appointment
 const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: string) => void, onBookAppointment: (service: Service) => void }> = ({ service, onViewProvider, onBookAppointment }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+    const { t } = useTranslation(['dashboard', 'common']);
+    const localizedCategory = formatServiceCategory(t, service.category);
   return (
   <Card className="flex flex-col group" hoverEffect>
      <div className="relative overflow-hidden aspect-video cursor-pointer" onClick={() => onViewProvider(service.providerId)}>
@@ -28,8 +30,8 @@ const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: str
         <button onClick={() => onViewProvider(service.providerId)} className="hover:underline focus:outline-none">{service.providerName}</button>
       </div>
       <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
-      <div className="text-xs text-gray-500 mb-1">
-        <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceCard.categoryLabel', { category: service.category })}
+        <div className="text-xs text-gray-500 mb-1">
+          <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('common:marketplacePage.serviceCard.categoryLabel')}: {localizedCategory}
       </div>
       {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
        <div className="mb-4">
@@ -50,7 +52,7 @@ const getActiveTabFromPath = (path: string) => {
 };
 
 const MarketplacePage: React.FC = () => {
-  const { t } = useTranslation(['marketplace', 'common']);
+  const { t } = useTranslation(['marketplace', 'common', 'dashboard']);
   const { currentUser, submitServiceRequest } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
@@ -114,7 +116,18 @@ const MarketplacePage: React.FC = () => {
   const supplierProductCategories = useMemo(() => {
     const categories = new Set<string>();
     productSuppliers.forEach(supplier => {
-      MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).forEach(p => categories.add(p.category));
+      // Check organization product categories
+      if (supplier.productCategories) {
+        supplier.productCategories.forEach(cat => categories.add(cat));
+      }
+      // Also check product categories
+      MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).forEach(p => {
+        if (p.categories) {
+          p.categories.forEach(cat => categories.add(cat));
+        } else if (p.category) {
+          categories.add(p.category);
+        }
+      });
     });
     return ['All', ...Array.from(categories).sort()];
   }, [productSuppliers]);
@@ -127,7 +140,17 @@ const MarketplacePage: React.FC = () => {
     return ['All', ...Array.from(tags).sort()];
   }, [productSuppliers]);
   
-  const serviceProviderCategories = useMemo(() => ['All', ...new Set(MOCK_SERVICES.map(s => s.category))], []);
+  const serviceProviderCategories = useMemo(() => {
+    const categories = new Set<string>();
+    MOCK_SERVICES.forEach(s => {
+      if (s.categories) {
+        s.categories.forEach(cat => categories.add(cat));
+      } else if (s.category) {
+        categories.add(String(s.category));
+      }
+    });
+    return ['All', ...Array.from(categories).sort()];
+  }, []);
   const allRegions = useMemo(() => ['All', ...new Set(MOCK_ORGANIZATIONS.map(org => org.region).sort())], []);
 
   const currentCategories = activeTabIndex === 0 ? supplierProductCategories : serviceProviderCategories;
@@ -135,18 +158,33 @@ const MarketplacePage: React.FC = () => {
 
   const filteredSuppliers = useMemo(() => {
     return productSuppliers
-      .filter(supplier =>
-        (supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         (supplier.tags && supplier.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))) ||
-         MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
+      .filter(supplier => {
+        // Search filter
+        const matchesSearch = supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (supplier.tags && supplier.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+          (supplier.productCategories && supplier.productCategories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+          MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
             p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            p.category.toLowerCase().includes(searchTerm.toLowerCase())
-         )
-        ) &&
-        (regionFilter === 'All' || supplier.region === regionFilter) &&
-        (categoryFilter === 'All' || MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => p.category === categoryFilter)) &&
-        (tagFilter === 'All' || (supplier.tags && supplier.tags.includes(tagFilter)))
-      )
+            (p.categories && p.categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+            (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        
+        // Region filter
+        const matchesRegion = regionFilter === 'All' || supplier.region === regionFilter;
+        
+        // Category filter - check both organization and product categories
+        const matchesCategory = categoryFilter === 'All' || 
+          (supplier.productCategories && supplier.productCategories.includes(categoryFilter)) ||
+          MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
+            (p.categories && p.categories.includes(categoryFilter)) ||
+            p.category === categoryFilter
+          );
+        
+        // Tag filter
+        const matchesTag = tagFilter === 'All' || (supplier.tags && supplier.tags.includes(tagFilter));
+        
+        return matchesSearch && matchesRegion && matchesCategory && matchesTag;
+      })
       .sort((a, b) => {
         switch (sortOption) {
           case 'name_asc': return a.name.localeCompare(b.name);
@@ -158,11 +196,19 @@ const MarketplacePage: React.FC = () => {
   }, [searchTerm, regionFilter, categoryFilter, tagFilter, sortOption, productSuppliers]);
 
   const filteredServices = useMemo(() =>
-    MOCK_SERVICES.filter(s =>
-      s.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (categoryFilter === 'All' || s.category === categoryFilter) &&
-      (regionFilter === 'All' || serviceProviders.find(p => p.id === s.providerId)?.region === regionFilter)
-    ), [searchTerm, categoryFilter, regionFilter, serviceProviders]);
+    MOCK_SERVICES.filter(s => {
+      const matchesSearch = s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (s.categories && s.categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase())));
+      
+      const matchesCategory = categoryFilter === 'All' || 
+        (s.categories && s.categories.includes(categoryFilter)) ||
+        String(s.category) === categoryFilter;
+      
+      const matchesRegion = regionFilter === 'All' || 
+        serviceProviders.find(p => p.id === s.providerId)?.region === regionFilter;
+      
+      return matchesSearch && matchesCategory && matchesRegion;
+    }), [searchTerm, categoryFilter, regionFilter, serviceProviders]);
 
 
   const handleViewPartner = (partnerId: string) => {
@@ -246,7 +292,15 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => {setCategoryFilter(e.target.value);}}
                 className={STANDARD_INPUT_FIELD}
             >
-                {currentCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    {currentCategories.map(cat => (
+                  <option key={cat} value={cat}>
+                    {cat === 'All'
+                      ? t('common:filters.all')
+                      : activeTabIndex === 1
+                        ? formatServiceCategory(t, cat)
+                        : cat}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
@@ -257,7 +311,7 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => setRegionFilter(e.target.value)}
                 className={STANDARD_INPUT_FIELD}
             >
-                {allRegions.map(reg => <option key={reg} value={reg}>{reg}</option>)}
+                {allRegions.map(reg => <option key={reg} value={reg}>{reg === 'All' ? t('common:filters.all') : reg}</option>)}
             </select>
           </div>
           {activeTabIndex === 0 && (
@@ -270,7 +324,7 @@ const MarketplacePage: React.FC = () => {
                     onChange={(e) => setTagFilter(e.target.value)}
                     className={STANDARD_INPUT_FIELD}
                 >
-                    {(currentTags as string[]).map(tag => <option key={tag} value={tag}>{tag}</option>)}
+                    {(currentTags as string[]).map(tag => <option key={tag} value={tag}>{tag === 'All' ? t('common:filters.all') : tag}</option>)}
                 </select>
               </div>
                <div>

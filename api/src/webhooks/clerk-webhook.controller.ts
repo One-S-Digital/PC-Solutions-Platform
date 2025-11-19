@@ -574,6 +574,7 @@ ${'='.repeat(100)}`);
     
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
+    const phoneNumber = data.phone_numbers?.[0]?.phone_number || null;
 
     console.log(`👤 [E2E DEBUG] USER DETAILS EXTRACTED:`, {
       clerkId,
@@ -608,72 +609,58 @@ ${'='.repeat(100)}`);
 
     // E2E DEBUG: Database operations with comprehensive logging
     console.log(`💾 [E2E DEBUG] STARTING DATABASE OPERATIONS...`);
-    
+
     let appUser: any;
-    
+
     try {
-      console.log(`💾 [E2E DEBUG] UPSERTING APPUSER IN DATABASE...`);
-      appUser = await this.prisma.appUser.upsert({
-        where: { clerkId },
-        create: {
-          clerkId,
-          email: primaryEmail,
-          role: validRole as UserRole,
-        },
-        update: {
-          role: validRole as UserRole,
-          email: primaryEmail,
-        },
-        select: { id: true, role: true },
+      await this.prisma.$transaction(async (tx) => {
+        console.log(`💾 [E2E DEBUG] UPSERTING APPUSER + USER IN TRANSACTION...`);
+        appUser = await tx.appUser.upsert({
+          where: { clerkId },
+          create: {
+            clerkId,
+            email: primaryEmail,
+            role: validRole as UserRole,
+          },
+          update: {
+            role: validRole as UserRole,
+            email: primaryEmail,
+          },
+          select: { id: true, role: true, email: true },
+        });
+
+        await tx.user.upsert({
+          where: { clerkId },
+          update: {
+            email: primaryEmail,
+            firstName,
+            lastName,
+            role: validRole as UserRole,
+            phoneNumber,
+            isActive: true,
+          },
+          create: {
+            clerkId,
+            email: primaryEmail,
+            firstName,
+            lastName,
+            role: validRole as UserRole,
+            phoneNumber,
+            isActive: true,
+          },
+        });
       });
-      console.log(`✅ [E2E DEBUG] APPUSER UPSERTED SUCCESSFULLY:`, {
+
+      console.log(`✅ [E2E DEBUG] APPUSER & USER UPSERTED SUCCESSFULLY:`, {
         appUserId: appUser.id,
         appUserRole: appUser.role,
         clerkId,
         email: primaryEmail,
         role: validRole,
+        hasPhone: !!phoneNumber,
       });
     } catch (error) {
-      console.error(`❌ [E2E DEBUG] FAILED TO UPSERT APPUSER:`, {
-        error: error.message,
-        errorType: error.constructor.name,
-        clerkId,
-        email: primaryEmail,
-        role: validRole,
-        stack: error.stack,
-      });
-      throw error;
-    }
-
-    try {
-      console.log(`💾 [E2E DEBUG] UPSERTING USER IN DATABASE...`);
-      await this.prisma.user.upsert({
-        where: { clerkId },
-        create: {
-          id: appUser.id,
-          clerkId,
-          email: primaryEmail,
-          firstName,
-          lastName,
-          role: validRole as UserRole,
-        },
-        update: {
-          email: primaryEmail,
-          firstName,
-          lastName,
-          role: validRole as UserRole,
-        },
-      });
-      console.log(`✅ [E2E DEBUG] USER UPSERTED SUCCESSFULLY:`, {
-        userId: appUser.id,
-        clerkId,
-        email: primaryEmail,
-        firstName,
-        lastName,
-        role: validRole,
-      });
-    } catch (error) {
-      console.error(`❌ [E2E DEBUG] FAILED TO UPSERT USER:`, {
+      console.error(`❌ [E2E DEBUG] FAILED TO UPSERT ACCOUNT/PROFILE:`, {
         error: error.message,
         errorType: error.constructor.name,
         clerkId,

@@ -3,6 +3,8 @@ import {
   IsEmail,
   IsInt,
   IsString,
+  IsOptional,
+  IsArray,
   Min,
 } from 'class-validator';
 
@@ -14,28 +16,58 @@ export class UpdateSupplierSettingsDto {
   contactEmail: string;
 
   @IsString()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @IsString()
-  address: string;
+  @IsOptional()
+  contactPerson?: string;
 
   @IsString()
-  canton: string;
+  @IsOptional()
+  address?: string;
 
   @IsString()
-  productCategory: string;
+  @IsOptional()
+  canton?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  regionsServed?: string[];
 
   @IsString()
-  serviceType: string;
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  vatNumber?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  languages?: string[];
+
+  @IsString()
+  @IsOptional()
+  productCategory?: string;
+
+  @IsString()
+  @IsOptional()
+  serviceType?: string;
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  minimumOrderQuantity: number;
+  @IsOptional()
+  minimumOrderQuantity?: number;
 
   @IsString()
-  directOrderLink: string;
+  @IsOptional()
+  directOrderLink?: string;
 
   @IsString()
-  catalogUrl: string;
+  @IsOptional()
+  catalogUrl?: string;
 }

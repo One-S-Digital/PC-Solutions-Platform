@@ -1,6 +1,6 @@
 
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import MainLayout from './components/layout/MainLayout';
@@ -12,16 +12,13 @@ import StatePoliciesPage from './pages/StatePoliciesPage';
 import ELearningPage from './pages/ELearningPage';
 import UsersPage from './pages/UsersPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfileEditPage from './pages/ProfileEditPage';
 import { AppContextProvider, useAppContext } from './contexts/AppContext';
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
-import DebugToggle from './src/components/debug/DebugToggle';
-import AuthDebugPanel from './src/components/debug/AuthDebugPanel';
-import FrontendDebugToggle from './src/components/debug/FrontendDebugToggle';
-import { authDebugger } from './src/utils/authDebugger';
 
 // Development-only logging helper
 const devLog = (...args: any[]) => {
@@ -65,6 +62,7 @@ import ServiceProviderListingsPage from './pages/service-provider/ServiceProvide
 import ServiceProviderAnalyticsPage from './pages/service-provider/ServiceProviderAnalyticsPage';
 import ServiceProviderCompanyProfilePage from './pages/service-provider/ServiceProviderCompanyProfilePage';
 import ServiceProviderSupportPage from './pages/service-provider/ServiceProviderSupportPage';
+import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
@@ -84,24 +82,15 @@ import EducatorSupportPage from './pages/educator/EducatorSupportPage';
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
 import ParentSupportPage from './pages/parent/ParentSupportPage';
 import PricingPage from './pages/PricingPage';
+import ProfilePage from './pages/ProfilePage';
+import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
+import EducatorProfileViewPage from './pages/profile/EducatorProfileViewPage';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
   const { currentUser } = useAppContext();
   const { isLoaded, isSignedIn } = useAuth();
   const location = useLocation();
-
-  useEffect(() => {
-    if (authDebugger.isEnabled()) {
-      if (!currentUser) {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/login', 'no_current_user');
-      } else if (!roles.includes(currentUser.role)) {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/dashboard', 'role_mismatch');
-      } else {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'allow', 'role_match');
-      }
-    }
-  }, [currentUser, isLoaded, isSignedIn, roles, location.pathname]);
 
   if (!currentUser) {
     return <Navigate to="/login" replace />; // Fallback, ProtectedLayout is primary guard
@@ -140,16 +129,6 @@ const ProtectedLayout: React.FC = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const { isLoading: isAuthLoading } = useAuthContext();
   const location = useLocation();
-
-  useEffect(() => {
-    if (authDebugger.isEnabled()) {
-      if (!currentUser) {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'redirect:/login', 'layout_no_user');
-      } else {
-        authDebugger.logGuardCheck('protected', isLoaded, isSignedIn || false, 'allow', 'layout_has_user');
-      }
-    }
-  }, [currentUser, isLoaded, isSignedIn, location.pathname]);
 
   // Wait for Clerk to load before checking authentication
   if (!isLoaded) {
@@ -218,15 +197,44 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/hr-procedures" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><HRProceduresPage /></ProtectedRoute>} />
         <Route path="/state-policies" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.EDUCATOR, UserRole.PARENT]}><StatePoliciesPage /></ProtectedRoute>} />
         <Route path="/e-learning" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><ELearningPage /></ProtectedRoute>} />
-        <Route path="/partners" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><PartnersPage /></ProtectedRoute>} />
-        <Route path="/partner/:partnerId" element={ 
-            <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
-              <PartnerDetailPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/users/*" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><UsersPage /></ProtectedRoute>} />
-        <Route path="/settings/*" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}><SettingsPage /></ProtectedRoute>} />
+          <Route path="/partners" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><PartnersPage /></ProtectedRoute>} />
+          <Route
+            path="/partner/:partnerId"
+            element={
+              <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
+                <PartnerDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/users/*" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><UsersPage /></ProtectedRoute>} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Frontend-facing profile routes */}
+          <Route
+            path="/profile/organization/:id"
+            element={
+              <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.EDUCATOR, UserRole.PARENT]}>
+                <OrganizationProfileViewPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/educator/:id"
+            element={
+              <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
+                <EducatorProfileViewPage />
+              </ProtectedRoute>
+            }
+          />
+        <Route path="/settings" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER]}><SettingsPage /></ProtectedRoute>} />
+        <Route path="/settings/profile" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}><ProfileEditPage /></ProtectedRoute>} />
+        <Route path="/settings/service-provider" element={<ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSettingsPage /></ProtectedRoute>} />
         
         {/* Admin Specific */}
         <Route 
@@ -295,8 +303,8 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/service-provider/analytics" element={
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderAnalyticsPage /></ProtectedRoute>
         } />
-          <Route path="/service-provider/company-profile" element={ // This route is effectively replaced by /settings
-          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><Navigate to="/settings" replace /></ProtectedRoute>
+          <Route path="/service-provider/company-profile" element={ // This route is effectively replaced by /settings/service-provider
+          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><Navigate to="/settings/service-provider" replace /></ProtectedRoute>
         } />
         <Route path="/service-provider/support" element={
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSupportPage /></ProtectedRoute>
@@ -361,33 +369,6 @@ const ProtectedLayout: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  useEffect(() => {
-    // Log app boot with environment diagnostics
-    if (authDebugger.isEnabled()) {
-      authDebugger.logAppBoot({
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-      
-      // Log environment configuration on boot
-      const envConfig = {
-        viteApiUrl: import.meta.env.VITE_API_URL,
-        nodeEnv: import.meta.env.NODE_ENV,
-        mode: import.meta.env.MODE,
-        isDev: import.meta.env.DEV,
-        isProd: import.meta.env.PROD,
-        hasClerkKey: !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-        origin: window.location.origin,
-        protocol: window.location.protocol,
-        hostname: window.location.hostname,
-        port: window.location.port,
-      };
-      
-      devLog('🔧 App Boot - Environment Config:', envConfig);
-      authDebugger.log('ENV', 'boot', 'INFO', envConfig);
-    }
-  }, []);
-
   return (
     <AppContextProvider>
       <CartProvider>
@@ -400,9 +381,6 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-            <DebugToggle />
-            <FrontendDebugToggle />
-            <AuthDebugPanel />
           </NotificationProvider>
         </MessagingProvider>
       </CartProvider>

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
 import { Product, StockStatus } from '../../types';
 import { MOCK_PRODUCTS, ICON_INPUT_FIELD } from '../../constants';
+import { formatCategory } from '../../utils/serviceFormatting';
 
 const SupplierProductListingsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
@@ -88,7 +89,7 @@ const SupplierProductListingsPage: React.FC = () => {
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{product.title}</div>
-                        <div className="text-sm text-gray-500">{product.category}</div>
+                        <div className="text-sm text-gray-500">{formatCategory(product.category)}</div>
                       </div>
                     </div>
                   </td>

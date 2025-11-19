@@ -67,7 +67,14 @@
     "parentLeads": "Prospects parents",
     "ordersAppointments": "Commandes et rendez-vous",
     "supportFAQ": "Support et FAQ",
-    "analytics": "Analytique"
+    "analytics": "Analytique",
+    "organisationProfile": "Profil de l'Organisation",
+    "orders": "Commandes",
+    "productMarketplace": "Marché des Produits",
+    "myRequests": "Mes Demandes",
+    "serviceMarketplace": "Marché des Services",
+    "homeFindCreche": "Accueil / Trouver une Crèche",
+    "applications": "Candidatures"
   },
   "navbar": {
     "notificationsCount": "Notifications  : {{count}}",
@@ -172,7 +179,49 @@
     "recentActivity": "Dernière activité",
     "quickActions": "Actions Rapides"
   },
+  "foundationDashboard": {
+    "title": "Tableau de Bord de la Fondation",
+    "welcomeMessage": "Bon retour ! Voici un aperçu de vos opérations de garderie.",
+    "quickStats": {
+      "title": "Statistiques Rapides",
+      "enrolled": "Inscrits",
+      "availableSpots": "Places Disponibles",
+      "pendingApps": "Candidatures en Attente",
+      "upcomingAppointments": "Rendez-vous à Venir"
+    },
+    "activity": {
+      "title": "Activité Récente",
+      "parentInquiry": "Nouvelle demande parent reçue",
+      "jobApplication": "Nouvelle candidature soumise",
+      "orderConfirmation": "Confirmation de commande reçue",
+      "serviceUpdate": "Demande de service mise à jour",
+      "newMessage": "Nouveau message reçu"
+    },
+    "calendar": {
+      "event1": "Réunion du personnel",
+      "event2": "Consultation parentale",
+      "event3": "Session de formation"
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "browseMarketplace": "Parcourir le Marché",
+      "postJob": "Publier un Emploi",
+      "addSpot": "Ajouter une Place",
+      "sendMessage": "Envoyer un Message",
+      "viewParentLeads": "Voir les Prospects Parents",
+      "viewAnalytics": "Voir les Analyses"
+    },
+    "quickMessage": {
+      "title": "Message Rapide",
+      "placeholder": "Tapez un message rapide..."
+    },
+    "todayAtGlance": "Aujourd'hui en un Coup d'Œil"
+  },
   "foundationAnalyticsPage": {
+    "title": "Analytique",
+    "leadFunnel": "Entonnoir de Prospects",
+    "trainingStatus": "Statut de Formation",
+    "monthlyEnrollment": "Inscription Mensuelle",
     "mockDataVisualization": "Visualisation des Donnés simulés",
     "spendingByCategory": "Dépenses par catégorie",
     "parentLeadConversion": "Conversion de plomb parent",
@@ -219,6 +268,7 @@
     "serviceAppointmentsTab": "Rendez-vous de service"
   },
   "foundationOrganisationProfilePage": {
+    "title": "Profil de l'Organisation",
     "mock": {
       "pedagogyStatement": "Notre-Pédagogie est Basée sur les Principes de Respect, de Créativité et de Développement Individual."
     },
@@ -253,9 +303,27 @@
   },
   "foundationSupportPage": {
     "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC SUCCILS",
+    "faq": {
+      "manageLeads": {
+        "q": "Comment gérer les prospects parents entrants ?",
+        "a": "Vous pouvez consulter et répondre aux prospects parents depuis votre tableau de bord. Utilisez les actions rapides pour marquer les prospects comme intéressés, non intéressés ou demander plus d'informations."
+      },
+      "useMarketplace": {
+        "q": "Comment utiliser le marché ?",
+        "a": "Parcourez les produits et services des fournisseurs vérifiés. Ajoutez des articles à votre panier de commande et soumettez des commandes directement via la plateforme."
+      },
+      "manageProfile": {
+        "q": "Comment gérer mon profil d'organisation ?",
+        "a": "Allez dans Profil de l'Organisation pour mettre à jour votre image de marque, vos informations de contact, vos heures d'ouverture et autres détails que les parents voient."
+      },
+      "recruitment": {
+        "q": "Comment publier des offres d'emploi ?",
+        "a": "Naviguez vers Recrutement > Offres d'Emploi et cliquez sur 'Publier un Nouvel Emploi' pour créer une offre d'emploi. Vous pouvez consulter les candidats et gérer le processus d'embauche depuis là."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Breve Description de Votre Problame",
-      "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
   "parentDashboardPage": {
@@ -263,6 +331,39 @@
     "welcome": "Bienvenue dans le tableau de bord de Tableau de Bord",
     "myChildren": "Mes enfants",
     "findCreche": "Dépassement de la crèche"
+  },
+  "parentDashboard": {
+    "title": "Tableau de Bord Parent",
+    "welcomeMessage": "Bon retour ! Voici un aperçu de votre recherche de garde d'enfants et de vos demandes.",
+    "enquiry": {
+      "title": "Mes Demandes",
+      "sent": "Envoyées",
+      "responses": "Réponses",
+      "responded": "Répondues",
+      "pending": "En Attente",
+      "button": "Voir Toutes les Demandes"
+    },
+    "childProfile": {
+      "title": "Profil de l'Enfant",
+      "name": "Nom",
+      "age": "Âge",
+      "location": "Localisation",
+      "languages": "Langues",
+      "specialNeeds": "Besoins Spéciaux",
+      "button": "Mettre à Jour le Profil"
+    },
+    "favorites": {
+      "title": "Favoris",
+      "subtitle": "Vos crèches et services sauvegardés",
+      "button": "Voir Tous les Favoris"
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "findDaycare": "Trouver une Garderie",
+      "enquiries": "Mes Demandes",
+      "updateProfile": "Mettre à Jour le Profil",
+      "browseServices": "Parcourir les Services"
+    }
   },
   "parentEnquiriesPage": {
     "accessDenied": {
@@ -290,14 +391,21 @@
   "parentSupportPage": {
     "faq": {
       "matchingProcess": {
-        "q": "Commentaire Fonctionne le Processus de correspondance?"
+        "q": "Commentaire Fonctionne le Processus de correspondance?",
+        "a": "Notre système fait correspondre les besoins de votre enfant avec des garderies appropriées en fonction de la localisation, de l'âge, des besoins spéciaux et de la disponibilité. Vous recevrez des réponses des fournisseurs correspondants."
       },
       "responseTime": {
-        "q": "À quelle vitesse vais-je recevoir des réponsses?"
+        "q": "À quelle vitesse vais-je recevoir des réponsses?",
+        "a": "La plupart des garderies répondent dans les 2-3 jours ouvrables. Vous pouvez suivre le statut de vos demandes dans votre tableau de bord."
       },
       "dataSecurity": {
-        "q": "MES Informations Personnelles Sont-Ellies Sécurisés?"
+        "q": "MES Informations Personnelles Sont-Ellies Sécurisés?",
+        "a": "Oui, nous prenons la sécurité des données au sérieux. Vos informations sont cryptées et partagées uniquement avec les garderies auprès desquelles vous avez fait une demande. Lisez notre Politique de Confidentialité pour plus de détails."
       }
+    },
+    "ticketForm": {
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
   "educatorDashboardPage": {
@@ -306,14 +414,40 @@
     "applications": "Applications mes",
     "jobBoard": "Comité de Travail"
   },
-  "educatorApplicationsPage": {
-    "status": {
-      "new": "Nouveau",
-      "viewed": "viewed",
-      "interview": "Entretien",
-      "offer": "Citation",
-      "declined": "Refusé"
+  "educatorDashboard": {
+    "title": "Tableau de Bord de l'Éducateur",
+    "welcome": "Bon retour ! Voici un aperçu de vos candidatures et de votre profil.",
+    "profileCompletion": {
+      "title": "Complétez Votre Profil",
+      "subtitle": "Complétez votre profil pour augmenter vos chances d'être embauché",
+      "button": "Compléter le Profil"
     },
+    "applicationStatus": {
+      "title": "Statut des Candidatures",
+      "submitted": "Soumises",
+      "viewed": "Consultées",
+      "interviews": "Entretiens",
+      "offers": "Offres",
+      "button": "Voir Toutes les Candidatures"
+    },
+    "skills": {
+      "title": "Compétences et Qualifications",
+      "subtitle": "Gardez vos compétences et qualifications à jour",
+      "button": "Mettre à Jour les Compétences"
+    },
+    "recommendations": {
+      "title": "Emplois Recommandés",
+      "match": "Correspondance"
+    }
+  },
+    "educatorApplicationsPage": {
+      "title": "Mes Candidatures",
+      "status": {
+        "pending": "En attente",
+        "reviewed": "Consultée",
+        "accepted": "Acceptée",
+        "rejected": "Refusée"
+      },
     "table": {
       "jobTitle": "Titre d'emploi",
       "creche": "Crèche",
@@ -325,33 +459,81 @@
     "emptyState": "Dépoi de l'application Autre",
     "footerNote": "Les applications sont mises à jour en temps réel"
   },
-  "educatorJobBoardPage": {
-    "title": "Offres d'emploi",
-    "postedOn": "Publié le",
-    "searchPlaceholder": "Rechercher des emplois...",
-    "noJobsFound": "Aucune annonce trouvée"
-  },
-  "educatorProfilePage": {
-    "editProfile": "Modificateur le Profil",
-    "availability": {
-      "days": "Perc",
-      "times": "je mais",
-      "contract": "Contrat",
-      "ageGroups": "Groupes d'âge"
+    "educatorJobBoardPage": {
+      "title": "Offres d'emploi",
+      "postedOn": "Publié le",
+      "searchPlaceholder": "Rechercher des emplois...",
+      "noJobsFound": "Aucune offre trouvée",
+      "errors": {
+        "loadJobs": "Impossible de charger les offres d'emploi."
+      },
+      "unknownFoundation": "Fondation inconnue"
     },
-    "education": {
-      "graduated": "Diplôme."
+    "educatorProfilePage": {
+      "editProfile": "Modifier le profil",
+      "loadError": "Impossible de charger le profil.",
+      "saveSuccess": "Modifications du profil enregistrées !",
+      "roleUnknown": "Rôle non spécifié",
+      "locationUnknown": "Localisation non fournie",
+      "notProvided": "Non renseigné",
+      "skills": {
+        "title": "Compétences",
+        "empty": "Aucune compétence renseignée pour le moment."
+      },
+      "availability": {
+        "title": "Disponibilité",
+        "days": "Jours",
+        "times": "Créneaux",
+        "contract": "Contrat",
+        "ageGroups": "Tranches d'âge"
+      },
+      "documents": {
+        "title": "Documents",
+        "empty": "Aucun document téléchargé pour le moment."
+      },
+      "bio": {
+        "title": "À propos de moi",
+        "empty": "Aucune biographie renseignée pour le moment."
+      },
+      "experience": {
+        "title": "Expérience",
+        "empty": "Aucune expérience ajoutée pour le moment."
+      },
+      "education": {
+        "title": "Formation",
+        "graduated": "Diplômé",
+        "empty": "Aucune formation ajoutée pour le moment."
+      },
+      "certifications": {
+        "title": "Certifications",
+        "issued": "Délivrée",
+        "expires": "Expire",
+        "empty": "Aucune certification ajoutée pour le moment."
+      }
     },
-    "certifications": {
-      "issued": "Émis",
-      "expires": "Expired"
-    }
-  },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succés",
+    "faq": {
+      "updateProfile": {
+        "q": "Comment mettre à jour mon profil ?",
+        "a": "Allez sur votre page de profil pour mettre à jour vos compétences, qualifications, expérience et disponibilité. Un profil complet augmente vos chances d'être jumelé avec des postes appropriés."
+      },
+      "findJobs": {
+        "q": "Comment trouver des offres d'emploi ?",
+        "a": "Parcourez le Tableau d'Emplois pour voir tous les postes disponibles. Vous pouvez filtrer par localisation, type de contrat et autres critères. Cliquez sur un emploi pour voir les détails et postuler."
+      },
+      "trackApplications": {
+        "q": "Comment suivre mes candidatures ?",
+        "a": "Consultez toutes vos candidatures dans la section Candidatures de votre tableau de bord. Vous pouvez voir le statut de chaque candidature et toute mise à jour des employeurs."
+      },
+      "notifications": {
+        "q": "Comment gérer les notifications ?",
+        "a": "Allez dans Paramètres > Préférences de Notification pour personnaliser les notifications que vous recevez par e-mail ou dans l'application."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Breve Description de Votre Problame",
-      "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
   "serviceProviderDashboardPage": {
@@ -360,12 +542,49 @@
     "services": "Services MES:",
     "requests": "Exige le service"
   },
+  "serviceProviderDashboard": {
+    "title": "Tableau de Bord du Fournisseur de Services",
+    "welcomeMessage": "Bon retour ! Voici un aperçu de vos demandes de services et rendez-vous.",
+    "widgets": {
+      "overview": {
+        "title": "Aperçu",
+        "activeRequests": "Demandes Actives",
+        "completedServices": "Services Terminés",
+        "upcoming": "À Venir",
+        "customerRating": "Note Client",
+        "button": "Voir les Demandes",
+        "newServiceButton": "Ajouter un Nouveau Service"
+      },
+      "management": {
+        "title": "Gestion des Services",
+        "listings": "Annonces",
+        "pending": "En Attente",
+        "categories": "Catégories",
+        "button": "Gérer les Services",
+        "newServiceButton": "Ajouter un Nouveau Service",
+        "tags": {
+          "cleaning": "Nettoyage",
+          "workshops": "Ateliers"
+        }
+      },
+      "appointments": {
+        "title": "Rendez-vous à Venir",
+        "with": "avec",
+        "button": "Voir Tous les Rendez-vous"
+      }
+    }
+  },
   "serviceProviderAnalyticsPage": {
+    "title": "Analytique",
+    "serviceRequestsTrend": "Tendance des Demandes de Services",
+    "serviceViews": "Vues de Services",
+    "requestDistributionByCanton": "Distribution des Demandes par Canton",
     "serviceRequestsPerWeek": "Exige de service par sémene",
     "topViewedServices": "Services visualisés",
     "requestsByCanton": "Exige de canton"
   },
   "serviceProviderListingsPage": {
+    "title": "Mes Services",
     "card": {
       "category": "Catégorie",
       "delivery": "Libaison"
@@ -392,9 +611,27 @@
   },
   "serviceProviderSupportPage": {
     "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC SUCCILS",
+    "faq": {
+      "listService": {
+        "q": "Comment lister un nouveau service ?",
+        "a": "Allez dans Mes Services et cliquez sur 'Ajouter un Nouveau Service'. Remplissez les détails du service, définissez le prix et spécifiez la disponibilité. Les services sont examinés avant d'être mis en ligne."
+      },
+      "respondRequests": {
+        "q": "Comment répondre aux demandes de services ?",
+        "a": "Consultez les demandes entrantes dans la section Demandes de Services. Vous pouvez accepter, refuser ou planifier des rendez-vous directement depuis là."
+      },
+      "updateAvailability": {
+        "q": "Comment mettre à jour ma disponibilité ?",
+        "a": "Mettez à jour votre calendrier de disponibilité dans Paramètres > Contact et Réservation. Vous pouvez définir vos heures et jours de travail préférés."
+      },
+      "profileInfo": {
+        "q": "Comment mettre à jour mes informations de profil ?",
+        "a": "Allez dans Paramètres > Profil de l'Entreprise pour mettre à jour les informations de votre entreprise, vos coordonnées et vos descriptions de services."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "BReve Description de Votre Problame",
-      "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
   "supplierDashboardPage": {
@@ -403,7 +640,39 @@
     "products": "Mes Produits",
     "orders": "Commandement"
   },
+  "supplierDashboard": {
+    "title": "Tableau de Bord Fournisseur",
+    "welcomeMessage": "Bon retour ! Voici un aperçu de vos ventes de produits et commandes.",
+    "widgets": {
+      "sales": {
+        "title": "Aperçu des Ventes",
+        "totalOrders": "Total des Commandes",
+        "revenueMonth": "Revenus (Mois)",
+        "revenue": "Revenus",
+        "topSelling": "Meilleures Ventes",
+        "fulfillmentRate": "Taux de Réalisation",
+        "button": "Voir les Analytiques"
+      },
+      "products": {
+        "title": "Produits",
+        "active": "Actifs",
+        "pending": "En Attente",
+        "pendingApproval": "En Attente d'Approbation",
+        "button": "Gérer les Produits"
+      },
+      "orders": {
+        "title": "Commandes",
+        "pending": "En Attente",
+        "button": "Voir les Commandes"
+      }
+    },
+    "recentOrdersTitle": "Commandes Récentes",
+    "noRecentOrders": "Aucune commande récente"
+  },
   "supplierAnalyticsPage": {
+    "orderRequestsTrend": "Tendance des Demandes de Commandes",
+    "productViews": "Vues de Produits",
+    "requestsDistribution": "Distribution des Demandes",
     "datePickerLabel": "Sélectionner La Page de Dates",
     "exportCsvAlert": "Exportation du Rapport en CSV ... (à Venir)",
     "exportCsvButton": "Exportateur en csv",
@@ -419,6 +688,7 @@
     }
   },
   "supplierProductListingsPage": {
+    "title": "Liste des Produits",
     "addProductAlert": "La Fonctionnalité du Modal / Forulaire 'Ajouter Un Produit' SERA IMPLÉMENTÉE.",
     "addProductButton": "Ajouter un nouveau produit",
     "searchPlaceholder": "RECHERCHER PAR NOM DE PRODUIT ...",
@@ -432,6 +702,7 @@
     "emptyState": "AUCUN PRODUITS TRUVÉ."
   },
   "supplierOrdersPage": {
+    "title": "Commandes",
     "filterByStatus": "Filtratrice par statt",
     "table": {
       "orderId": "Commande d'identité",
@@ -447,9 +718,27 @@
   },
   "supplierSupportPage": {
     "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succès",
+    "faq": {
+      "addProduct": {
+        "q": "Comment ajouter un nouveau produit ?",
+        "a": "Allez dans Produits et cliquez sur 'Ajouter un Nouveau Produit'. Remplissez les détails du produit, définissez le prix et téléchargez des images. Les produits seront examinés avant d'être mis en ligne."
+      },
+      "processOrders": {
+        "q": "Comment traiter les commandes ?",
+        "a": "Consultez toutes les commandes dans la section Commandes. Vous pouvez accepter, refuser ou marquer les commandes comme expédiées. Les commandes sont automatiquement synchronisées avec le tableau de bord de la fondation."
+      },
+      "manageProfile": {
+        "q": "Comment gérer mon profil de fournisseur ?",
+        "a": "Mettez à jour les informations de votre entreprise, vos coordonnées et vos heures d'ouverture dans Paramètres > Profil de l'Entreprise."
+      },
+      "commissionRates": {
+        "q": "Quels sont les taux de commission ?",
+        "a": "Les taux de commission varient selon la catégorie de produit et le plan d'abonnement. Consultez les détails de votre abonnement dans Paramètres > Facturation et Abonnement."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Breve Description de Votre Problame",
-      "messagePlaceholder": "Veuillez Fournir des Informations Détaises sur Votre Problherme"
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
   "adminContentManagementDashboardPage": {
@@ -525,6 +814,7 @@
   },
   "recruitmentPage": {
     "title": "Recrutement",
+    "subtitle": "Gérer les offres d'emploi et trouver des candidats qualifiés",
     "jobDetailModal": {
       "title": "Détails de l'offre:",
       "apply": "Postuler Maintenant",
@@ -584,6 +874,24 @@
       "region": "Région",
       "availabilityDate": "Date Disponibilité"
     },
+  "filters": {
+    "all": "Tous"
+  },
+  "supportPage": {
+    "faqTitle": "Questions Fréquemment Posées",
+    "furtherAssistanceTitle": "Besoin d'Aide Supplémentaire ?",
+    "furtherAssistanceText": "Si vous ne trouvez pas la réponse que vous cherchez, notre équipe de support est là pour vous aider. Contactez-nous à",
+    "emailLinkText": "support@procrechesolutions.com",
+    "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
+    "submitTicketTitle": "Soumettre un Ticket de Support",
+    "ticketForm": {
+      "subjectLabel": "Sujet",
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+      "submitButton": "Soumettre le Ticket"
+    }
+  },
     "candidatePool": {
       "searchPlaceholder": "Rechercher Les Candidats ...",
       "filterTitle": "Filtrer les candidats",

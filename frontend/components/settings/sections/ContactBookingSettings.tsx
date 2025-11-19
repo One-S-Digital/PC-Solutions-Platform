@@ -17,15 +17,15 @@ interface ContactBookingSettingsProps {
 }
 
 const PREFERRED_CONTACT_METHODS: { labelKey: string, value: PreferredContactMethod }[] = [
-  { labelKey: 'settingsContactBooking.contactMethods.email', value: 'Email' },
-  { labelKey: 'settingsContactBooking.contactMethods.phone', value: 'Phone' },
-  { labelKey: 'settingsContactBooking.contactMethods.platformForm', value: 'Platform Form' },
+  { labelKey: 'common:settingsContactBooking.contactMethods.email', value: 'Email' },
+  { labelKey: 'common:settingsContactBooking.contactMethods.phone', value: 'Phone' },
+  { labelKey: 'common:settingsContactBooking.contactMethods.platformForm', value: 'Platform Form' },
 ];
 
 const AVG_RESPONSE_TIMES: { labelKey: string, value: AvgResponseType }[] = [
-  { labelKey: 'settingsContactBooking.responseTimes.lessThan24h', value: '< 24 h' },
-  { labelKey: 'settingsContactBooking.responseTimes.twoToThreeDays', value: '2–3 d' },
-  { labelKey: 'settingsContactBooking.responseTimes.other', value: 'Other' },
+  { labelKey: 'common:settingsContactBooking.responseTimes.lessThan24h', value: '< 24 h' },
+  { labelKey: 'common:settingsContactBooking.responseTimes.twoToThreeDays', value: '2–3 d' },
+  { labelKey: 'common:settingsContactBooking.responseTimes.other', value: 'Other' },
 ];
 
 const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ settings, onChange, userRole }) => {
@@ -39,7 +39,7 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
     <SettingsSectionWrapper title={t('settings:page.contactBooking')} icon={PhoneIcon}>
       <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
         {/* Preferred Contact Method */}
-        <label className="form-label md:pt-2">{t('settingsContactBooking.preferredContactMethod')} <span className="text-swiss-coral">*</span></label>
+        <label className="form-label md:pt-2">{t('common:settingsContactBooking.preferredContactMethod')} <span className="text-swiss-coral">*</span></label>
         <div className="form-input-container">
           {/* <RadioPills options={PREFERRED_CONTACT_METHODS} selectedValue={settings.preferredContactMethod} onChange={(val) => onChange('preferredContactMethod', val as PreferredContactMethod)} /> */}
           <div className="flex space-x-2">
@@ -57,7 +57,7 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
         </div>
 
         {/* Avg. Response Time Badge */}
-        <label htmlFor="avgResponseType" className="form-label md:pt-2">{t('settingsContactBooking.avgResponseTime')} <span className="text-swiss-coral">*</span></label>
+        <label htmlFor="avgResponseType" className="form-label md:pt-2">{t('common:settingsContactBooking.avgResponseTime')} <span className="text-swiss-coral">*</span></label>
         <div className="form-input-container">
           <select
             id="avgResponseType"
@@ -72,7 +72,7 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
         </div>
 
         {/* External Booking Link */}
-        <label htmlFor="externalBookingLink" className="form-label md:pt-2">{t('settingsContactBooking.externalBookingLink')}</label>
+        <label htmlFor="externalBookingLink" className="form-label md:pt-2">{t('common:settingsContactBooking.externalBookingLink')}</label>
         <div className="form-input-container">
           <input
             type="url"
@@ -81,14 +81,14 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
             value={settings.externalBookingLink || ''}
             onChange={(e) => onChange('externalBookingLink', e.target.value)}
             className={STANDARD_INPUT_FIELD}
-            placeholder={t('settingsContactBooking.externalBookingLinkPlaceholder')}
+            placeholder={t('common:settingsContactBooking.externalBookingLinkPlaceholder')}
           />
         </div>
 
         {/* Direct Order Link for Suppliers */}
         {isSupplier && (
           <>
-            <label htmlFor="directOrderLink" className="form-label md:pt-2">{t('settingsContactBooking.directOrderLink')}</label>
+            <label htmlFor="directOrderLink" className="form-label md:pt-2">{t('common:settingsContactBooking.directOrderLink')}</label>
             <div className="form-input-container">
               <input
                 type="url"
@@ -97,9 +97,9 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
                 value={settings.directOrderLink || ''}
                 onChange={(e) => onChange('directOrderLink', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder={t('settingsContactBooking.directOrderLinkPlaceholder')}
+                placeholder={t('common:settingsContactBooking.directOrderLinkPlaceholder')}
               />
-               <p className="text-xs text-gray-500 mt-1">{t('settingsContactBooking.directOrderLinkHelpText')}</p>
+               <p className="text-xs text-gray-500 mt-1">{t('common:settingsContactBooking.directOrderLinkHelpText')}</p>
             </div>
           </>
         )}
@@ -109,7 +109,7 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
         {isProvider && (
           <>
             {/* Cal.com / Calendly Link */}
-            <label htmlFor="calComLink" className="form-label md:pt-2">{t('settingsContactBooking.calComLink')}</label>
+            <label htmlFor="calComLink" className="form-label md:pt-2">{t('common:settingsContactBooking.calComLink')}</label>
             <div className="form-input-container">
               <input
                 type="url"
@@ -118,12 +118,12 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
                 value={settings.calComLink || ''}
                 onChange={(e) => onChange('calComLink', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder={t('settingsContactBooking.calComLinkPlaceholder')}
+                placeholder={t('common:settingsContactBooking.calComLinkPlaceholder')}
               />
             </div>
 
             {/* Delivery Type Toggle: Remote */}
-            <label htmlFor="deliveryTypeToggleRemote" className="form-label md:pt-2">{t('settingsContactBooking.deliveryTypeToggleRemote')}</label>
+            <label htmlFor="deliveryTypeToggleRemote" className="form-label md:pt-2">{t('common:settingsContactBooking.deliveryTypeToggleRemote')}</label>
             <div className="form-input-container">
               {/* <ToggleSwitch id="deliveryTypeToggleRemote" checked={providerSettings.deliveryTypeToggleRemote} onChange={(checked) => onChange('deliveryTypeToggleRemote', checked)} /> */}
                 <button
@@ -132,9 +132,9 @@ const ContactBookingSettings: React.FC<ContactBookingSettingsProps> = ({ setting
                     className={`relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none transition-colors duration-200 ease-in-out ${settings.deliveryTypeToggleRemote ? 'bg-swiss-mint' : 'bg-gray-200'}`}
                     role="switch"
                     aria-checked={!!settings.deliveryTypeToggleRemote}
-                     aria-label={t('settingsContactBooking.deliveryTypeToggleRemote')}
+                     aria-label={t('common:settingsContactBooking.deliveryTypeToggleRemote')}
                 >
-                    <span className="sr-only">{t('settingsContactBooking.deliveryTypeToggleRemote')}</span>
+                    <span className="sr-only">{t('common:settingsContactBooking.deliveryTypeToggleRemote')}</span>
                     <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${settings.deliveryTypeToggleRemote ? 'translate-x-6' : 'translate-x-1'}`}></span>
                 </button>
             </div>

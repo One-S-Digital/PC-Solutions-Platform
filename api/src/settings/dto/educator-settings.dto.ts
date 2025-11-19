@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsEmail,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -36,4 +37,12 @@ export class UpdateEducatorSettingsDto {
 
   @IsString()
   cvUrl: string;
+
+  @IsOptional()
+  @IsString()
+  shortBio?: string;
+
+  @IsOptional()
+  @IsString()
+  avatarAssetId?: string;
 }

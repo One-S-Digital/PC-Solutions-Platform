@@ -25,6 +25,7 @@ export default function AdminCustomSignupForm() {
   const { user } = useUser();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [hasStartedSignup, setHasStartedSignup] = useState(false);
   const [formData, setFormData] = useState<AdminSignupFormData>({
     firstName: '',
     lastName: '',
@@ -44,10 +45,10 @@ export default function AdminCustomSignupForm() {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (authLoaded && isSignedIn && user) {
+    if (authLoaded && isSignedIn && user && !hasStartedSignup) {
       navigate('/dashboard');
     }
-  }, [authLoaded, isSignedIn, user, navigate]);
+  }, [authLoaded, isSignedIn, user, navigate, hasStartedSignup]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -94,6 +95,7 @@ export default function AdminCustomSignupForm() {
   const handleNext = () => {
     if (currentStep === 1 && validateStep1()) {
       setCurrentStep(2);
+      setHasStartedSignup(true);
     }
   };
 
@@ -108,6 +110,7 @@ export default function AdminCustomSignupForm() {
     if (!validateStep2() || !isLoaded || !signUp) return;
     
     setIsLoading(true);
+    setHasStartedSignup(true);
     
     try {
       const result = await signUp.create({
@@ -235,9 +238,9 @@ export default function AdminCustomSignupForm() {
               type="button" 
               onClick={() => name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
               className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-              aria-label={ (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'Hide password' : 'Show password'}
+              aria-label={(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'Hide password' : 'Show password'}
             >
-              { (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
+              {(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
             </button>
           )}
         </div>

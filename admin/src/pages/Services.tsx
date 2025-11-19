@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 
 import EditServiceModal from '../components/services/EditServiceModal'
 import { Service } from '../types/api'
+import { formatServiceCategory } from '../utils/serviceFormatting'
 
 
 const Services: React.FC = () => {
@@ -140,7 +141,7 @@ const Services: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{service.title}</h3>
-                    <p className="text-sm text-gray-600">{service.category}</p>
+                    <p className="text-sm text-gray-600">{formatServiceCategory(t, service.category)}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">

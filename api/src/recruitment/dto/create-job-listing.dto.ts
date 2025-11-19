@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
-import { JobStatus } from '@workspace/types';
+import { IsArray, IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
+import { JobContractType, JobStatus } from '@workspace/types';
 
 export class CreateJobListingDto {
   @IsString()
@@ -17,34 +17,12 @@ export class CreateJobListingDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  benefits?: string[];
-
-  @IsOptional()
-  @IsString()
-  location?: string;
-
-  @IsOptional()
-  @IsString()
-  salary?: string;
-
-  @IsOptional()
-  @IsEnum(JobStatus)
-  status?: JobStatus;
-}
-
-export class UpdateJobListingDto {
-  @IsOptional()
-  @IsString()
-  title?: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
+  responsibilities?: string[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  requirements?: string[];
+  qualifications?: string[];
 
   @IsOptional()
   @IsArray()
@@ -58,6 +36,18 @@ export class UpdateJobListingDto {
   @IsOptional()
   @IsString()
   salary?: string;
+
+  @IsOptional()
+  @IsString()
+  salaryRange?: string;
+
+  @IsOptional()
+  @IsEnum(JobContractType)
+  contractType?: JobContractType;
+
+  @IsOptional()
+  @IsISO8601()
+  startDate?: string;
 
   @IsOptional()
   @IsEnum(JobStatus)

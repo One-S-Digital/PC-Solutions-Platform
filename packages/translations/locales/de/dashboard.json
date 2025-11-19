@@ -67,7 +67,14 @@
     "parentLeads": "Eltern-Leads",
     "ordersAppointments": "Bestellungen & Termine",
     "supportFAQ": "Support & FAQ",
-    "analytics": "Analytik"
+    "analytics": "Analytik",
+    "organisationProfile": "Organisationsprofil",
+    "orders": "Bestellungen",
+    "productMarketplace": "Produktmarktplatz",
+    "myRequests": "Meine Anfragen",
+    "serviceMarketplace": "Servicemarktplatz",
+    "homeFindCreche": "Startseite / Krippe finden",
+    "applications": "Bewerbungen"
   },
   "navbar": {
     "notificationsCount": "BENachrichtigungen: {{count}}",
@@ -172,7 +179,49 @@
     "recentActivity": "Jüngste Aktivität",
     "quickActions": "SCHNELLE AKTIONEN"
   },
+  "foundationDashboard": {
+    "title": "Foundation-Dashboard",
+    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindertagesstätten-Operationen.",
+    "quickStats": {
+      "title": "Schnellstatistiken",
+      "enrolled": "Eingeschrieben",
+      "availableSpots": "Verfügbare Plätze",
+      "pendingApps": "Ausstehende Bewerbungen",
+      "upcomingAppointments": "Bevorstehende Termine"
+    },
+    "activity": {
+      "title": "Letzte Aktivität",
+      "parentInquiry": "Neue Elternanfrage erhalten",
+      "jobApplication": "Neue Bewerbung eingereicht",
+      "orderConfirmation": "Bestellbestätigung erhalten",
+      "serviceUpdate": "Serviceanfrage aktualisiert",
+      "newMessage": "Neue Nachricht erhalten"
+    },
+    "calendar": {
+      "event1": "Mitarbeitertreffen",
+      "event2": "Elternberatung",
+      "event3": "Schulungssitzung"
+    },
+    "quickActions": {
+      "title": "Schnellaktionen",
+      "browseMarketplace": "Marktplatz durchsuchen",
+      "postJob": "Stelle veröffentlichen",
+      "addSpot": "Platz hinzufügen",
+      "sendMessage": "Nachricht senden",
+      "viewParentLeads": "Eltern-Leads anzeigen",
+      "viewAnalytics": "Analysen anzeigen"
+    },
+    "quickMessage": {
+      "title": "Schnelle Nachricht",
+      "placeholder": "Geben Sie eine schnelle Nachricht ein..."
+    },
+    "todayAtGlance": "Heute auf einen Blick"
+  },
   "foundationAnalyticsPage": {
+    "title": "Analytik",
+    "leadFunnel": "Lead-Trichter",
+    "trainingStatus": "Schulungsstatus",
+    "monthlyEnrollment": "Monatliche Einschreibung",
     "mockDataVisualization": "ScheindatenvisualiSierung",
     "spendingByCategory": "Ausgaben Nachkategorie",
     "parentLeadConversion": "Eltern -Lead -konvertierung",
@@ -219,6 +268,7 @@
     "serviceAppointmentsTab": "Service -temin"
   },
   "foundationOrganisationProfilePage": {
+    "title": "Organisationsprofil",
     "mock": {
       "pedagogyStatement": "Unere Pädagogik Basiert auf den Prinzipien von resp."
     },
@@ -253,9 +303,27 @@
   },
   "foundationSupportPage": {
     "ticketSubmittedAlert": "Support -Ticket Erfolgreich Eingereicht",
+    "faq": {
+      "manageLeads": {
+        "q": "Wie verwalte ich eingehende Eltern-Leads?",
+        "a": "Sie können Eltern-Leads von Ihrem Dashboard aus anzeigen und darauf antworten. Verwenden Sie die Schnellaktionen, um Leads als interessiert, nicht interessiert zu markieren oder weitere Informationen anzufordern."
+      },
+      "useMarketplace": {
+        "q": "Wie nutze ich den Marktplatz?",
+        "a": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Lieferanten. Fügen Sie Artikel zu Ihrem Bestellwagen hinzu und senden Sie Bestellungen direkt über die Plattform."
+      },
+      "manageProfile": {
+        "q": "Wie verwalte ich mein Organisationsprofil?",
+        "a": "Gehen Sie zu Organisationsprofil, um Ihr Branding, Ihre Kontaktinformationen, Öffnungszeiten und andere Details zu aktualisieren, die Eltern sehen."
+      },
+      "recruitment": {
+        "q": "Wie veröffentliche ich Stellenangebote?",
+        "a": "Navigieren Sie zu Rekrutierung > Stellenangebote und klicken Sie auf 'Neue Stelle veröffentlichen', um eine Stellenausschreibung zu erstellen. Sie können Bewerber anzeigen und den Einstellungsprozess von dort aus verwalten."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Bescheidenheit ihrer Probleme",
-      "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "parentDashboardPage": {
@@ -263,6 +331,39 @@
     "welcome": "Willkommen in Ihrem Eltern Dashboard",
     "myChildren": "Mein Kinder",
     "findCreche": "Findendsi"
+  },
+  "parentDashboard": {
+    "title": "Eltern-Dashboard",
+    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindergartensuche und Anfragen.",
+    "enquiry": {
+      "title": "Meine Anfragen",
+      "sent": "Gesendet",
+      "responses": "Antworten",
+      "responded": "Beantwortet",
+      "pending": "Ausstehend",
+      "button": "Alle Anfragen anzeigen"
+    },
+    "childProfile": {
+      "title": "Kinderprofil",
+      "name": "Name",
+      "age": "Alter",
+      "location": "Standort",
+      "languages": "Sprachen",
+      "specialNeeds": "Besondere Bedürfnisse",
+      "button": "Profil aktualisieren"
+    },
+    "favorites": {
+      "title": "Favoriten",
+      "subtitle": "Ihre gespeicherten Kindergärten und Dienste",
+      "button": "Alle Favoriten anzeigen"
+    },
+    "quickActions": {
+      "title": "Schnellaktionen",
+      "findDaycare": "Kindergarten finden",
+      "enquiries": "Meine Anfragen",
+      "updateProfile": "Profil aktualisieren",
+      "browseServices": "Dienste durchsuchen"
+    }
   },
   "parentEnquiriesPage": {
     "accessDenied": {
@@ -291,14 +392,20 @@
     "faq": {
       "matchingProcess": {
         "q": "Wie Funktionterer der Matching-Prozess?",
-        "a": "Usser Algorithmuscerspricht den Bedür"
+        "a": "Unser System passt die Bedürfnisse Ihres Kindes an geeignete Kindergärten basierend auf Standort, Alter, besonderen Anforderungen und Verfügbarkeit an. Sie erhalten Antworten von passenden Anbietern."
       },
       "responseTime": {
-        "q": "Wie schnell erhalte ich Antworten?"
+        "q": "Wie schnell erhalte ich Antworten?",
+        "a": "Die meisten Kindergärten antworten innerhalb von 2-3 Werktagen. Sie können den Status Ihrer Anfragen in Ihrem Dashboard verfolgen."
       },
       "dataSecurity": {
-        "q": "Sind Meine Persücher DATEN SCHICHENTERT?"
+        "q": "Sind Meine Persücher DATEN SCHICHENTERT?",
+        "a": "Ja, wir nehmen Datensicherheit ernst. Ihre Informationen sind verschlüsselt und werden nur mit Kindergärten geteilt, bei denen Sie eine Anfrage gestellt haben. Lesen Sie unsere Datenschutzrichtlinie für weitere Details."
       }
+    },
+    "ticketForm": {
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "educatorDashboardPage": {
@@ -307,14 +414,40 @@
     "applications": "Mine wendungen",
     "jobBoard": "Jobbörse"
   },
-  "educatorApplicationsPage": {
-    "status": {
-      "new": "Neu",
-      "viewed": "Gesehen",
-      "interview": "Interview",
-      "offer": "Angebot",
-      "declined": "Abgelehnt"
+  "educatorDashboard": {
+    "title": "Pädagogen-Dashboard",
+    "welcome": "Willkommen zurück! Hier ist eine Übersicht über Ihre Bewerbungen und Ihr Profil.",
+    "profileCompletion": {
+      "title": "Vervollständigen Sie Ihr Profil",
+      "subtitle": "Vervollständigen Sie Ihr Profil, um Ihre Chancen auf eine Einstellung zu erhöhen",
+      "button": "Profil vervollständigen"
     },
+    "applicationStatus": {
+      "title": "Bewerbungsstatus",
+      "submitted": "Eingereicht",
+      "viewed": "Angesehen",
+      "interviews": "Vorstellungsgespräche",
+      "offers": "Angebote",
+      "button": "Alle Bewerbungen anzeigen"
+    },
+    "skills": {
+      "title": "Fähigkeiten und Qualifikationen",
+      "subtitle": "Halten Sie Ihre Fähigkeiten und Qualifikationen auf dem neuesten Stand",
+      "button": "Fähigkeiten aktualisieren"
+    },
+    "recommendations": {
+      "title": "Empfohlene Jobs",
+      "match": "Übereinstimmung"
+    }
+  },
+    "educatorApplicationsPage": {
+      "title": "Meine Bewerbungen",
+      "status": {
+        "pending": "Ausstehend",
+        "reviewed": "Überprüft",
+        "accepted": "Angenommen",
+        "rejected": "Abgelehnt"
+      },
     "table": {
       "jobTitle": "Berufsbezeichnung",
       "creche": "Krippe",
@@ -326,33 +459,81 @@
     "emptyState": "Keine Anwendungen Gefunden",
     "footerNote": "Anwendungen Werden in Echtzeit AKTUALISIERT"
   },
-  "educatorJobBoardPage": {
-    "title": "Stellenangebote",
-    "postedOn": "Gepostet am",
-    "searchPlaceholder": "Stellen suchen...",
-    "noJobsFound": "Keine Stellen gefunden"
-  },
-  "educatorProfilePage": {
-    "editProfile": "Profilbärren",
-    "availability": {
-      "days": "Tage",
-      "times": "Mal",
-      "contract": "Vertag",
-      "ageGroups": "Aardert sich"
+    "educatorJobBoardPage": {
+      "title": "Stellenangebote",
+      "postedOn": "Veröffentlicht am",
+      "searchPlaceholder": "Stellen suchen...",
+      "noJobsFound": "Keine Stellen gefunden",
+      "errors": {
+        "loadJobs": "Stellenangebote können nicht geladen werden."
+      },
+      "unknownFoundation": "Unbekannte Einrichtung"
     },
-    "education": {
-      "graduated": "Abgechlossen"
+    "educatorProfilePage": {
+      "editProfile": "Profil bearbeiten",
+      "loadError": "Profil kann nicht geladen werden.",
+      "saveSuccess": "Profiländerungen gespeichert!",
+      "roleUnknown": "Rolle nicht angegeben",
+      "locationUnknown": "Standort nicht angegeben",
+      "notProvided": "Nicht angegeben",
+      "skills": {
+        "title": "Fähigkeiten",
+        "empty": "Noch keine Fähigkeiten hinterlegt."
+      },
+      "availability": {
+        "title": "Verfügbarkeit",
+        "days": "Tage",
+        "times": "Zeiten",
+        "contract": "Vertrag",
+        "ageGroups": "Altersgruppen"
+      },
+      "documents": {
+        "title": "Dokumente",
+        "empty": "Noch keine Dokumente hochgeladen."
+      },
+      "bio": {
+        "title": "Über mich",
+        "empty": "Noch keine Beschreibung hinterlegt."
+      },
+      "experience": {
+        "title": "Erfahrung",
+        "empty": "Noch keine Erfahrung hinzugefügt."
+      },
+      "education": {
+        "title": "Ausbildung",
+        "graduated": "Abgeschlossen",
+        "empty": "Noch keine Ausbildung hinzugefügt."
+      },
+      "certifications": {
+        "title": "Zertifizierungen",
+        "issued": "Ausgestellt",
+        "expires": "Gültig bis",
+        "empty": "Noch keine Zertifizierungen hinzugefügt."
+      }
     },
-    "certifications": {
-      "issued": "Ausgegeben",
-      "expires": "Läuft ab"
-    }
-  },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Support -Ticket Erfolgreich Eingereicht",
+    "faq": {
+      "updateProfile": {
+        "q": "Wie aktualisiere ich mein Profil?",
+        "a": "Gehen Sie zu Ihrer Profilseite, um Ihre Fähigkeiten, Qualifikationen, Erfahrung und Verfügbarkeit zu aktualisieren. Ein vollständiges Profil erhöht Ihre Chancen, mit geeigneten Positionen zusammengeführt zu werden."
+      },
+      "findJobs": {
+        "q": "Wie finde ich Stellenangebote?",
+        "a": "Durchsuchen Sie die Stellenbörse, um alle verfügbaren Positionen zu sehen. Sie können nach Standort, Vertragsart und anderen Kriterien filtern. Klicken Sie auf eine Stelle, um Details anzuzeigen und sich zu bewerben."
+      },
+      "trackApplications": {
+        "q": "Wie verfolge ich meine Bewerbungen?",
+        "a": "Sehen Sie alle Ihre Bewerbungen im Bereich Bewerbungen Ihres Dashboards. Sie können den Status jeder Bewerbung und alle Updates von Arbeitgebern sehen."
+      },
+      "notifications": {
+        "q": "Wie verwalte ich Benachrichtigungen?",
+        "a": "Gehen Sie zu Einstellungen > Benachrichtigungseinstellungen, um anzupassen, welche Benachrichtigungen Sie per E-Mail oder in der App erhalten."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
-      "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "serviceProviderDashboardPage": {
@@ -361,12 +542,49 @@
     "services": "Mine Dienste",
     "requests": "Serviceanfragen"
   },
+  "serviceProviderDashboard": {
+    "title": "Dienstanbieter-Dashboard",
+    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Serviceanfragen und Termine.",
+    "widgets": {
+      "overview": {
+        "title": "Überblick",
+        "activeRequests": "Aktive Anfragen",
+        "completedServices": "Abgeschlossene Dienste",
+        "upcoming": "Bevorstehend",
+        "customerRating": "Kundenbewertung",
+        "button": "Anfragen anzeigen",
+        "newServiceButton": "Neuen Service hinzufügen"
+      },
+      "management": {
+        "title": "Serviceverwaltung",
+        "listings": "Anzeigen",
+        "pending": "Ausstehend",
+        "categories": "Kategorien",
+        "button": "Dienste verwalten",
+        "newServiceButton": "Neuen Service hinzufügen",
+        "tags": {
+          "cleaning": "Reinigung",
+          "workshops": "Workshops"
+        }
+      },
+      "appointments": {
+        "title": "Bevorstehende Termine",
+        "with": "mit",
+        "button": "Alle Termine anzeigen"
+      }
+    }
+  },
   "serviceProviderAnalyticsPage": {
+    "title": "Analytik",
+    "serviceRequestsTrend": "Serviceanfragen-Trend",
+    "serviceViews": "Serviceaufrufe",
+    "requestDistributionByCanton": "Anfragenverteilung nach Kanton",
     "serviceRequestsPerWeek": "Serviceanfragen pro woche",
     "topViewedServices": "Top BRACHTETETETETETE",
     "requestsByCanton": "Anfragen von Kanton"
   },
   "serviceProviderListingsPage": {
+    "title": "Meine Dienste",
     "card": {
       "category": "Kategorie",
       "delivery": "Lieferung"
@@ -381,6 +599,7 @@
     }
   },
   "serviceProviderRequestsPage": {
+    "title": "Serviceanfragen",
     "filterByStatus": "Nach Status Filtern:",
     "table": {
       "requestId": "Anfage-id",
@@ -393,9 +612,27 @@
   },
   "serviceProviderSupportPage": {
     "ticketSubmittedAlert": "Support -Ticket Erfolgreich Eingereicht",
+    "faq": {
+      "listService": {
+        "q": "Wie liste ich einen neuen Service auf?",
+        "a": "Gehen Sie zu Meine Dienste und klicken Sie auf 'Neuen Service hinzufügen'. Füllen Sie die Servicedetails aus, legen Sie den Preis fest und geben Sie die Verfügbarkeit an. Dienste werden vor der Veröffentlichung überprüft."
+      },
+      "respondRequests": {
+        "q": "Wie antworte ich auf Serviceanfragen?",
+        "a": "Zeigen Sie eingehende Anfragen im Bereich Serviceanfragen an. Sie können Anfragen annehmen, ablehnen oder Termine direkt von dort aus planen."
+      },
+      "updateAvailability": {
+        "q": "Wie aktualisiere ich meine Verfügbarkeit?",
+        "a": "Aktualisieren Sie Ihren Verfügbarkeitskalender in Einstellungen > Kontakt und Buchung. Sie können Ihre bevorzugten Arbeitszeiten und -tage festlegen."
+      },
+      "profileInfo": {
+        "q": "Wie aktualisiere ich meine Profilinformationen?",
+        "a": "Gehen Sie zu Einstellungen > Unternehmensprofil, um Ihre Unternehmensinformationen, Kontaktdaten und Servicebeschreibungen zu aktualisieren."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
-      "messagePlaceholder": "Bittte Geben Sie detaillierte Informationen zu Ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "supplierDashboardPage": {
@@ -404,7 +641,39 @@
     "products": "Mine produkte",
     "orders": "Begeben"
   },
+  "supplierDashboard": {
+    "title": "Lieferanten-Dashboard",
+    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Produktverkäufe und Bestellungen.",
+    "widgets": {
+      "sales": {
+        "title": "Verkaufsübersicht",
+        "totalOrders": "Gesamtbestellungen",
+        "revenueMonth": "Umsatz (Monat)",
+        "revenue": "Umsatz",
+        "topSelling": "Bestseller",
+        "fulfillmentRate": "Erfüllungsrate",
+        "button": "Analytik anzeigen"
+      },
+      "products": {
+        "title": "Produkte",
+        "active": "Aktiv",
+        "pending": "Ausstehend",
+        "pendingApproval": "Ausstehende Genehmigung",
+        "button": "Produkte verwalten"
+      },
+      "orders": {
+        "title": "Bestellungen",
+        "pending": "Ausstehend",
+        "button": "Bestellungen anzeigen"
+      }
+    },
+    "recentOrdersTitle": "Letzte Bestellungen",
+    "noRecentOrders": "Keine letzten Bestellungen"
+  },
   "supplierAnalyticsPage": {
+    "orderRequestsTrend": "Bestellanfragen-Trend",
+    "productViews": "Produktaufrufe",
+    "requestsDistribution": "Anfragenverteilung",
     "datePickerLabel": "Datumsbereich Auswählen",
     "exportCsvAlert": "CSV-Bericht Wird Exportiert ... (Demnächst Verfügbar)",
     "exportCsvButton": "ALS CSV Exportieren",
@@ -433,6 +702,7 @@
     "emptyState": "Keine Produkte Gefunden."
   },
   "supplierOrdersPage": {
+    "title": "Bestellungen",
     "filterByStatus": "Nach Status Filtern",
     "table": {
       "orderId": "Begben",
@@ -448,9 +718,27 @@
   },
   "supplierSupportPage": {
     "ticketSubmittedAlert": "UNTERSTUtzung Ticket Erfolgreich Eingereeicht",
+    "faq": {
+      "addProduct": {
+        "q": "Wie füge ich ein neues Produkt hinzu?",
+        "a": "Gehen Sie zu Produkte und klicken Sie auf 'Neues Produkt hinzufügen'. Füllen Sie die Produktdetails aus, legen Sie den Preis fest und laden Sie Bilder hoch. Produkte werden vor der Veröffentlichung überprüft."
+      },
+      "processOrders": {
+        "q": "Wie bearbeite ich Bestellungen?",
+        "a": "Zeigen Sie alle Bestellungen im Bereich Bestellungen an. Sie können Bestellungen annehmen, ablehnen oder als versandt markieren. Bestellungen werden automatisch mit dem Dashboard der Stiftung synchronisiert."
+      },
+      "manageProfile": {
+        "q": "Wie verwalte ich mein Lieferantenprofil?",
+        "a": "Aktualisieren Sie Ihre Unternehmensinformationen, Kontaktdaten und Geschäftszeiten in Einstellungen > Unternehmensprofil."
+      },
+      "commissionRates": {
+        "q": "Wie hoch sind die Provisionen?",
+        "a": "Die Provisionen variieren je nach Produktkategorie und Abonnementplan. Überprüfen Sie Ihre Abonnementdetails in Einstellungen > Abrechnung und Abonnement."
+      }
+    },
     "ticketForm": {
-      "subjectPlaceholder": "Kurze Be bechibung ihres Probleme",
-      "messagePlaceholder": "Bittte geben Sie detaillierte Information zu ihrem Problem a"
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an"
     }
   },
   "adminContentManagementDashboardPage": {
@@ -525,7 +813,8 @@
     "manage": "Kündigungen Verwalen"
   },
   "recruitmentPage": {
-    "title": "Werbung",
+    "title": "Rekrutierung",
+    "subtitle": "Stellenausschreibungen verwalten und qualifizierte Kandidaten finden",
     "jobDetailModal": {
       "title": "Jobdetails",
       "apply": "JETZT Bewerben",
@@ -585,6 +874,24 @@
       "region": "Region",
       "availabilityDate": "VerfinsBarkEeupsdatum"
     },
+  "filters": {
+    "all": "Alle"
+  },
+  "supportPage": {
+    "faqTitle": "Häufig Gestellte Fragen",
+    "furtherAssistanceTitle": "Benötigen Sie Weitere Hilfe?",
+    "furtherAssistanceText": "Wenn Sie die gesuchte Antwort nicht finden, ist unser Support-Team hier, um Ihnen zu helfen. Kontaktieren Sie uns unter",
+    "emailLinkText": "support@procrechesolutions.com",
+    "orSubmitTicket": "oder senden Sie unten ein Support-Ticket.",
+    "submitTicketTitle": "Support-Ticket Senden",
+    "ticketForm": {
+      "subjectLabel": "Betreff",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messageLabel": "Nachricht",
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+      "submitButton": "Ticket Senden"
+    }
+  },
     "candidatePool": {
       "searchPlaceholder": "Solche Kandidaten ...",
       "filterTitle": "Filterkandidaten",

@@ -265,11 +265,15 @@ async function seedSampleContent() {
         title: 'Early Childhood Educator',
         description: 'We are looking for a passionate educator to join our team',
         requirements: ['Early childhood education degree', 'French language proficiency'],
+        responsibilities: ['Plan and deliver engaging activities', 'Collaborate with parents and caregivers'],
+        qualifications: ['Bachelor’s degree in Early Childhood Education or equivalent'],
         location: 'Lausanne, Vaud',
-        salaryMin: 4500,
-        salaryMax: 5500,
+        salaryRange: 'CHF 4,500 - CHF 5,500',
+        contractType: 'FULL_TIME',
+        startDate: new Date(),
         status: 'PUBLISHED',
-        organizationId: foundationOrg.id,
+        publishedAt: new Date(),
+        foundationId: foundationOrg.id,
       },
     });
   }

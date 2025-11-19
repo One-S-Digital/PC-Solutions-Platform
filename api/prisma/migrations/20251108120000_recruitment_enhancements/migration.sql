@@ -1,0 +1,2 @@
+-- Migration intentionally left blank.
+-- See 20251110123000_recruitment_enhancements_cleanup for the replacement migration.

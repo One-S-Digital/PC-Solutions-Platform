@@ -4,7 +4,8 @@ services:
     name: pc-solutions-frontend
     env: node
     plan: starter
-    buildCommand: cd frontend && pnpm install && pnpm run build
+    branch: merge/pcs-development-integration
+    buildCommand: cd frontend && pnpm install --frozen-lockfile=false && pnpm run build:render
     startCommand: cd frontend && pnpm run start
     envVars:
       - key: NODE_ENV
@@ -23,7 +24,7 @@ services:
     name: pc-solutions-api
     env: node
     plan: starter
-    buildCommand: cd api && pnpm install && bash scripts/render-migrate.sh && pnpm run build
+    buildCommand: cd api && pnpm install && pnpm run build
     startCommand: cd api && pnpm run start:prod
     envVars:
       - key: NODE_ENV
@@ -44,7 +45,8 @@ services:
     name: pc-solutions-admin
     env: node
     plan: starter
-    buildCommand: cd admin && pnpm install && pnpm run build
+    branch: merge/pcs-development-integration
+    buildCommand: cd admin && pnpm install --frozen-lockfile=false && pnpm run build
     startCommand: cd admin && pnpm run start
     envVars:
       - key: NODE_ENV

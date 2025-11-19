@@ -26,18 +26,18 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
     
     let actionButton;
     if (isCurrentPlan) {
-        actionButton = <Button variant="secondary" size="md" className="w-full" disabled>{t('settingsBillingSubscription.yourCurrentPlan')}</Button>;
+        actionButton = <Button variant="secondary" size="md" className="w-full" disabled>{t('common:settingsBillingSubscription.yourCurrentPlan')}</Button>;
     } else if (thisPlanOrder > currentPlanOrder) {
-        actionButton = <Button variant="primary" size="md" className="w-full" onClick={() => onSelectPlan(plan.name)}>{t('settingsBillingSubscription.upgradePlan')}</Button>;
+        actionButton = <Button variant="primary" size="md" className="w-full" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.upgradePlan')}</Button>;
     } else {
-        actionButton = <Button variant="outline" size="md" className="w-full" onClick={() => onSelectPlan(plan.name)}>{t('settingsBillingSubscription.downgradePlan')}</Button>;
+        actionButton = <Button variant="outline" size="md" className="w-full" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.downgradePlan')}</Button>;
     }
 
     return (
         <Card className={`flex flex-col p-6 border-2 ${isCurrentPlan ? 'border-swiss-mint shadow-lg' : 'border-gray-200'} relative`} hoverEffect={!isCurrentPlan}>
              {isCurrentPlan && (
                 <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase bg-swiss-mint rounded-full">{t('settingsBillingSubscription.yourCurrentPlan')}</span>
+                    <span className="px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase bg-swiss-mint rounded-full">{t('common:settingsBillingSubscription.yourCurrentPlan')}</span>
                 </div>
             )}
             <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {translatedPlan.name}</h3>
@@ -77,9 +77,9 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
     return (
         <SettingsSectionWrapper title={t('settings:page.billingSubscription')} icon={WalletIcon}>
              <div className="p-4 border rounded-lg bg-gray-50">
-                <h3 className="text-md font-medium text-gray-700">{t('settingsBillingSubscription.currentPlan')}</h3>
+                <h3 className="text-md font-medium text-gray-700">{t('common:settingsBillingSubscription.currentPlan')}</h3>
                 <p className="text-2xl font-semibold text-swiss-mint mt-1">{settings.currentTier || 'N/A'}</p>
-                 {settings.nextInvoiceDate && <p className="text-sm text-gray-500 mt-0.5">{t('settingsBillingSubscription.nextInvoiceOn', { date: new Date(settings.nextInvoiceDate).toLocaleDateString() })}</p>}
+                 {settings.nextInvoiceDate && <p className="text-sm text-gray-500 mt-0.5">{t('common:settingsBillingSubscription.nextInvoiceOn', { date: new Date(settings.nextInvoiceDate).toLocaleDateString(i18n.language) })}</p>}
             </div>
         </SettingsSectionWrapper>
     );
@@ -94,8 +94,8 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
         </div>
 
         <Card className="p-6">
-            <h3 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('settingsBillingSubscription.manageSubscriptionTitle')}</h3>
-            <p className="text-sm text-gray-500 mb-4">{t('settingsBillingSubscription.manageSubscriptionDescription')}</p>
+            <h3 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('common:settingsBillingSubscription.manageSubscriptionTitle')}</h3>
+            <p className="text-sm text-gray-500 mb-4">{t('common:settingsBillingSubscription.manageSubscriptionDescription')}</p>
             <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                     variant="secondary" 
@@ -103,27 +103,27 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
                     onClick={() => window.open(settings.stripePortalLink || '#', '_blank')}
                     disabled={!settings.stripePortalLink}
                 >
-                    {t('settingsBillingSubscription.managePaymentButton')}
+                    {t('common:settingsBillingSubscription.managePaymentButton')}
                 </Button>
                  <Button 
                     variant="danger" 
                     leftIcon={XCircleIcon}
                     onClick={() => setIsCancelModalOpen(true)}
                 >
-                    {t('settingsBillingSubscription.cancelSubscription')}
+                    {t('common:settingsBillingSubscription.cancelSubscription')}
                 </Button>
             </div>
-             {!settings.stripePortalLink && <p className="text-xs text-gray-400 mt-2">{t('settingsBillingSubscription.stripePortalLinkNotConfigured')}</p>}
+             {!settings.stripePortalLink && <p className="text-xs text-gray-400 mt-2">{t('common:settingsBillingSubscription.stripePortalLinkNotConfigured')}</p>}
         </Card>
 
         {isCancelModalOpen && (
           <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
               <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-                  <h3 className="text-lg font-semibold mb-2 text-swiss-coral">{t('settingsBillingSubscription.confirmCancelTitle')}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{t('settingsBillingSubscription.confirmCancelMessage')}</p>
+                  <h3 className="text-lg font-semibold mb-2 text-swiss-coral">{t('common:settingsBillingSubscription.confirmCancelTitle')}</h3>
+                  <p className="text-sm text-gray-600 mb-4">{t('common:settingsBillingSubscription.confirmCancelMessage')}</p>
                   <div className="flex justify-end space-x-2">
-                      <Button variant="light" onClick={() => setIsCancelModalOpen(false)}>{t('settingsBillingSubscription.keepSubscription')}</Button>
-                      <Button variant="danger" onClick={() => alert('Subscription cancelled (mock action)')}>{t('settingsBillingSubscription.yesCancel')}</Button>
+                      <Button variant="light" onClick={() => setIsCancelModalOpen(false)}>{t('common:settingsBillingSubscription.keepSubscription')}</Button>
+                      <Button variant="danger" onClick={() => alert('Subscription cancelled (mock action)')}>{t('common:settingsBillingSubscription.yesCancel')}</Button>
                   </div>
               </div>
           </div>

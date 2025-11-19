@@ -2,13 +2,14 @@ import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 
 @ApiTags('dashboard')
 @Controller('dashboard')
-@UseGuards()
+@UseGuards(ClerkAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class DashboardController {
   constructor(private readonly prisma: PrismaService) {}

@@ -1,0 +1,26 @@
+{
+  "title": "Mein Profil",
+  "subtitle": "Überprüfen Sie Ihre Konto- und Organisationsinformationen.",
+  "actions": {
+    "goToSettings": "Profil aktualisieren"
+  },
+  "details": {
+    "sectionTitle": "Kontodaten",
+    "name": "Vollständiger Name",
+    "email": "E-Mail",
+    "role": "Rolle",
+    "status": "Status",
+    "memberSince": "Mitglied seit",
+    "lastActive": "Zuletzt aktiv"
+  },
+  "organization": {
+    "sectionTitle": "Organisation",
+    "name": "Name der Organisation",
+    "region": "Region",
+    "plan": "Tarif",
+    "id": "Organisations-ID"
+  },
+  "empty": {
+    "organization": "Noch keine Organisationsinformationen verfügbar."
+  }
+}

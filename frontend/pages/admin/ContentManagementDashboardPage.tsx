@@ -338,7 +338,7 @@ const ContentManagementDashboardPage: React.FC = () => {
                         <span className="text-xs text-gray-400 ml-1">({activity.type})</span>
                     </p>
                     <p className="text-xs text-gray-500">
-                      {activity.status && <span className={`font-medium ${activity.status === 'Critical' ? 'text-red-600' : activity.status === 'Draft' ? 'text-gray-600' : 'text-green-600'}`}>{activity.status}</span>} by {activity.user} - {new Date(activity.date).toLocaleDateString()}
+                      {activity.status && <span className={`font-medium ${activity.status === 'Critical' ? 'text-red-600' : activity.status === 'Draft' ? 'text-gray-600' : 'text-green-600'}`}>{activity.status}</span>} by {activity.user} - {new Date(activity.date).toLocaleDateString(i18n.language)}
                     </p>
                   </div>
                   <Button variant="ghost" size="xs" leftIcon={EyeIcon} onClick={() => handleViewActivity(activity)}>View</Button>

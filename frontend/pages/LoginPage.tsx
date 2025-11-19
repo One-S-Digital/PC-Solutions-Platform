@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSignIn, useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
-import { debugLogger } from '../src/utils/debugLogger';
-import { useDebugLogger } from '../src/hooks/useDebugLogger';
-import { authDebugger } from '../src/utils/authDebugger';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -36,7 +33,7 @@ const LoginPage: React.FC = () => {
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
-  const { isLoading: isAuthLoading, authError, clearAuthError, logout } = useAuthContext();
+  const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,31 +41,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
-
-  // Enable debug logging for this component
-  useDebugLogger();
-
-  // Log LOGIN opened when page loads
-  useEffect(() => {
-    try {
-      authDebugger.log('LOGIN', 'opened', 'INFO', { provider: 'password' });
-    } catch (err) {
-      console.error('Debug logging error:', err);
-    }
-  }, []);
-
-  // Debug login page state
-  useEffect(() => {
-    debugLogger.info('LOGIN', 'State Check', {
-      isSignedIn,
-      hasCurrentUser: !!currentUser,
-      currentUser,
-      isAuthLoading,
-      authError,
-      isSignInLoaded,
-      isAuthLoaded,
-    });
-  }, [isSignedIn, currentUser, isAuthLoading, authError, isSignInLoaded, isAuthLoaded]);
 
   // No auto-redirects or side effects needed.
   // Rendering is purely driven by isLoaded and isSignedIn state.
@@ -94,11 +66,6 @@ const LoginPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    try {
-      authDebugger.log('LOGIN', 'submit', 'INFO', { email: '***@***', hasPassword: true });
-    } catch (err) {
-      console.error('Debug logging error:', err);
-    }
 
     try {
       const result = await signIn.create({
@@ -106,27 +73,20 @@ const LoginPage: React.FC = () => {
         password: password,
       });
 
-      authDebugger.log('CLERK', 'signin_create', 'OK', { status: result.status });
-
       if (result.status === 'complete') {
         try {
           // Immediately activate session and navigate - no re-render in between
           await setActive({ session: result.createdSessionId });
-          authDebugger.log('CLERK', 'set_active', 'OK', { sessionId: 'set' });
-          authDebugger.log('LOGIN', 'redirect_after', 'INFO', { to: '/dashboard' });
           
           // Navigate immediately - proper render gating prevents Active Session UI from showing
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
-          authDebugger.log('CLERK', 'set_active', 'ERROR', { error: setActiveError.message });
           setError(t('common:loginPage.sessionActivationFailed'));
         }
       } else if (result.status === 'needs_first_factor') {
-        authDebugger.log('LOGIN', 'submit', 'WARN', { reason: 'two_factor_required' });
         setError(t('common:loginPage.twoFactorRequired'));
       } else {
-        authDebugger.log('LOGIN', 'submit', 'ERROR', { status: result.status, reason: 'incomplete' });
         setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
@@ -163,7 +123,6 @@ const LoginPage: React.FC = () => {
         }
       }
 
-      authDebugger.log('CLERK', 'signin_create', 'ERROR', { code: errorCode, message: errorMessage });
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -291,8 +250,19 @@ const LoginPage: React.FC = () => {
     );
   }
 
+  // Show loading state during sign-out to prevent flash of error screen
+  // Use global isSigningOut from AuthProvider to catch sign-out from any page
+  if (isSigningOut || isSigningOutGlobal) {
+    return (
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+      </div>
+    );
+  }
+
   // SCENARIO B (Edge Case): Signed in to Clerk but backend sync failed
-  if (isSignedIn && !currentUser && !isAuthLoading) {
+  // Don't show this screen during sign-out to prevent flash of error message
+  if (isSignedIn && !currentUser && !isAuthLoading && !isSigningOut && !isSigningOutGlobal) {
     return (
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">
@@ -459,15 +429,15 @@ const LoginPage: React.FC = () => {
             <p className="text-sm text-gray-600 text-center mb-3">
               {t('common:loginPage.parentLookingForCreche')}
             </p>
-            <div className="text-center">
-              <Link 
-                to="/parent-lead-form" 
-                className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
-              >
-                <span className="mr-1">??</span>
-                {t('common:loginPage.findCrecheHere')}
-              </Link>
-            </div>
+              <div className="text-center">
+                <Link 
+                  to="/parent-lead-form" 
+                  className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
+                >
+                  <HomeIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                  {t('common:loginPage.findCrecheHere')}
+                </Link>
+              </div>
           </div>
         </div>
 

@@ -20,10 +20,10 @@ const FAQItem: React.FC<FAQItemProps> = ({ questionKey, answerKey }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex justify-between items-center w-full text-left"
       >
-        <h3 className="text-md font-medium text-swiss-charcoal">{t(questionKey)}</h3>
+        <h3 className="text-md font-medium text-swiss-charcoal">{t(`dashboard:${questionKey}`)}</h3>
         {isOpen ? <ChevronUpIcon className="w-5 h-5 text-swiss-teal" /> : <ChevronDownIcon className="w-5 h-5 text-gray-400" />}
       </button>
-      {isOpen && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">{t(answerKey)}</p>}
+      {isOpen && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">{t(`dashboard:${answerKey}`)}</p>}
     </div>
   );
 };
@@ -43,7 +43,7 @@ const SupplierSupportPage: React.FC = () => {
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Support ticket submitted:", { subject: ticketSubject, message: ticketMessage });
-    alert(t('supplierSupportPage.ticketSubmittedAlert'));
+    alert(t('dashboard:supplierSupportPage.ticketSubmittedAlert'));
     setTicketSubject('');
     setTicketMessage('');
   };
@@ -56,22 +56,28 @@ const SupplierSupportPage: React.FC = () => {
       </h1>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4 flex items-center">
-          <QuestionMarkCircleIcon className="w-6 h-6 mr-2 text-swiss-teal" />
-          {t('supportPage.faqTitle')}
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-4 flex items-center">
+            <QuestionMarkCircleIcon className="w-6 h-6 mr-2 text-swiss-teal" />
+            {t('common:supportPage.faqTitle')}
         </h2>
         {faqs.map(faq => <FAQItem key={faq.questionKey} questionKey={faq.questionKey} answerKey={faq.answerKey} />)}
         <div className="mt-6 border-t pt-6">
-            <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('supportPage.furtherAssistanceTitle')}</h2>
-            <p className="text-gray-600 text-sm">{t('supportPage.furtherAssistanceText.0')} <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">{t('supportPage.furtherAssistanceText.1')}</a>.</p>
+              <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('common:supportPage.furtherAssistanceTitle')}</h2>
+            <p className="text-gray-600 text-sm">
+                {t('common:supportPage.furtherAssistanceText')}{' '}
+              <a href="mailto:support@procrechesolutions.com" className="text-swiss-mint hover:underline">
+                  {t('common:supportPage.emailLinkText')}
+              </a>{' '}
+                {t('common:supportPage.orSubmitTicket')}
+            </p>
         </div>
       </Card>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('supportPage.submitTicketTitle')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('common:supportPage.submitTicketTitle')}</h2>
         <form onSubmit={handleTicketSubmit} className="space-y-4">
           <div>
-            <label htmlFor="ticketSubject" className="block text-sm font-medium text-gray-700 mb-1">{t('supportPage.ticketForm.subjectLabel')}</label>
+              <label htmlFor="ticketSubject" className="block text-sm font-medium text-gray-700 mb-1">{t('common:supportPage.ticketForm.subjectLabel')}</label>
             <input
               type="text"
               id="ticketSubject"
@@ -79,11 +85,11 @@ const SupplierSupportPage: React.FC = () => {
               onChange={(e) => setTicketSubject(e.target.value)}
               required
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('supplierSupportPage.ticketForm.subjectPlaceholder')}
+                placeholder={t('common:supportPage.ticketForm.subjectPlaceholder')}
             />
           </div>
           <div>
-            <label htmlFor="ticketMessage" className="block text-sm font-medium text-gray-700 mb-1">{t('supportPage.ticketForm.messageLabel')}</label>
+              <label htmlFor="ticketMessage" className="block text-sm font-medium text-gray-700 mb-1">{t('common:supportPage.ticketForm.messageLabel')}</label>
             <textarea
               id="ticketMessage"
               value={ticketMessage}
@@ -91,7 +97,7 @@ const SupplierSupportPage: React.FC = () => {
               required
               rows={5}
               className={STANDARD_INPUT_FIELD}
-              placeholder={t('supplierSupportPage.ticketForm.messagePlaceholder')}
+                placeholder={t('common:supportPage.ticketForm.messagePlaceholder')}
             />
           </div>
           <div>

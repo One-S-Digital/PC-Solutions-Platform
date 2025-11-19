@@ -1,3 +1,5 @@
+> **Status**: Legacy specification. This document covers the previously proposed e-learning platform and has been replaced by the streamlined system documented in [E-Learning Module Overview (Current Build)](./e-learning-module-overview.md).
+
 # E-Learning Platform Specification
 
 ## Overview

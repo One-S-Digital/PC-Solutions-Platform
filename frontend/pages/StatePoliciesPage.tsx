@@ -10,7 +10,8 @@ import { useAppContext } from '../contexts/AppContext';
 import PolicyAlertModal from '../components/admin/PolicyAlertModal';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useTranslation } from 'react-i18next';
-import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi'; 
+import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import { formatCategory } from '../utils/serviceFormatting'; 
 
 interface PolicyDocumentCardProps {
   doc: PolicyDocument;
@@ -46,7 +47,7 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
             </div>
         )}
         <h3 className="text-lg font-semibold text-swiss-charcoal mb-1">{doc.title}</h3>
-        <p className="text-xs text-gray-500 mb-2">Category: {POLICY_CATEGORY_LABELS[doc.category] || doc.category} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
+        <p className="text-xs text-gray-500 mb-2">Category: {POLICY_CATEGORY_LABELS[doc.category] || formatCategory(doc.category)} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
         {doc.status && (
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full inline-flex items-center ${statusColors[doc.status] || 'bg-gray-100 text-gray-700'}`}>
             {statusIcons[doc.status] || <InformationCircleIcon className="w-4 h-4 inline mr-1" />} {doc.status}
@@ -55,9 +56,9 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
         {doc.policyType && <p className="text-xs text-gray-500 mt-1">Type: {doc.policyType}</p>}
         <p className="text-sm text-gray-600 my-3 line-clamp-3">{doc.contentPreview}</p>
         <div className="text-xs text-gray-500 space-y-1">
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Published: {new Date(doc.publishedDate).toLocaleDateString()}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Updated: {new Date(doc.lastUpdatedDate).toLocaleDateString()}</p>
-          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Effective: {new Date(doc.effectiveDate).toLocaleDateString()}</p>}
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Published: {new Date(doc.publishedDate).toLocaleDateString(i18n.language)}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Updated: {new Date(doc.lastUpdatedDate).toLocaleDateString(i18n.language)}</p>
+          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Effective: {new Date(doc.effectiveDate).toLocaleDateString(i18n.language)}</p>}
         </div>
         <div className="mt-3">
           {doc.tags.map(tag => (
@@ -93,7 +94,7 @@ const normalizePolicyType = (value: unknown): PolicyType | undefined => {
 };
 
 const StatePoliciesPage: React.FC = () => {
-  const { t } = useTranslation(['content', 'common']);
+  const { t } = useTranslation(['content', 'common', 'dashboard']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
   const [searchTerm, setSearchTerm] = useState('');
@@ -278,15 +279,15 @@ const StatePoliciesPage: React.FC = () => {
             />
           </div>
           <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Canton">
-            <option value="All">All Cantons/Regions</option>
-            {cantons.map(c => <option key={c} value={c}>{c}</option>)}
+            <option value="All">{t('common:filters.all')}</option>
+            {cantons.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value as 'All' | PolicyType)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Type">
             {policyTypeOptions.map(pt => (
               <option key={pt} value={pt}>{pt === 'All' ? 'All Policy Types' : pt}</option>
             ))}
           </select>
-           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Category">
+          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Category">
             {policyCategoryOptions.map(pt => (
               <option key={pt} value={pt}>{pt === 'All' ? 'All Categories' : (POLICY_CATEGORY_LABELS[pt] || pt)}</option>
             ))}

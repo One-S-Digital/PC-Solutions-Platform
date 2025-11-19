@@ -1,0 +1,26 @@
+{
+  "title": "My Profile",
+  "subtitle": "Review your account details and organization information.",
+  "actions": {
+    "goToSettings": "Update Profile"
+  },
+  "details": {
+    "sectionTitle": "Account Details",
+    "name": "Full Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "memberSince": "Member Since",
+    "lastActive": "Last Active"
+  },
+  "organization": {
+    "sectionTitle": "Organization",
+    "name": "Organization Name",
+    "region": "Region",
+    "plan": "Plan",
+    "id": "Organization ID"
+  },
+  "empty": {
+    "organization": "No organization information available yet."
+  }
+}

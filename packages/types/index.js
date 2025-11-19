@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
+exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobContractType = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
 // User Roles
 exports.UserRole = {
     SUPER_ADMIN: 'SUPER_ADMIN',
@@ -53,6 +53,14 @@ exports.JobStatus = {
     PUBLISHED: 'PUBLISHED',
     CLOSED: 'CLOSED',
     FILLED: 'FILLED',
+};
+// Job Contract Types
+exports.JobContractType = {
+    FULL_TIME: 'FULL_TIME',
+    PART_TIME: 'PART_TIME',
+    CDI: 'CDI',
+    CDD: 'CDD',
+    INTERNSHIP: 'INTERNSHIP',
 };
 // Service Categories
 exports.ServiceCategory = {

@@ -1,8 +1,37 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole } from '@prisma/client';
+import { PrincipalService } from '../principal/principal.service';
+
+const userProfileInclude = {
+  avatarAsset: true,
+  organizations: {
+    include: {
+      organization: {
+        include: {
+          logoAsset: true,
+          coverAsset: true,
+          products: {
+            include: {
+              imageAsset: true,
+            },
+          },
+          serviceProviders: {
+            include: {
+              services: true,
+            },
+          },
+          jobListings: true,
+        },
+      },
+    },
+  },
+} as const satisfies Prisma.UserInclude;
+
+type UserProfileInclude = typeof userProfileInclude;
+type UserWithProfile = Prisma.UserGetPayload<{ include: UserProfileInclude }>;
 
 export interface FindAllUsersParams {
   page: number;
@@ -13,7 +42,197 @@ export interface FindAllUsersParams {
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private readonly principal: PrincipalService) {}
+
+  private serializeDate(value: Date | string | null | undefined): string | null | undefined {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return value;
+  }
+
+  private buildUserResponse(
+    user: UserWithProfile | null,
+    appUser: { id: string; clerkId: string; email: string | null; role: UserRole },
+  ) {
+    if (!user) {
+      return {
+        id: appUser.id,
+        clerkId: appUser.clerkId,
+        email: appUser.email,
+        firstName: null,
+        lastName: null,
+        role: appUser.role,
+        phoneNumber: null,
+        workExperience: null,
+        education: null,
+        certifications: [],
+        skills: [],
+        availability: null,
+        cvUrl: null,
+        shortBio: null,
+        avatarAssetId: null,
+        stripeCustomerId: null,
+        lastActiveAt: null,
+        isActive: true,
+        createdAt: null,
+        updatedAt: null,
+        organizations: [],
+        name: appUser.email ?? 'Unknown User',
+        status: 'Active',
+        memberSince: null,
+        lastLogin: null,
+        avatarUrl: null,
+        orgId: undefined,
+        orgName: undefined,
+        orgType: undefined,
+        orgLogoUrl: null,
+        orgCoverImageUrl: null,
+        primaryOrganization: null,
+      };
+    }
+
+    const organizations = (user.organizations ?? []).map(userOrg => {
+      const org = userOrg.organization as any;
+
+      const products = (org.products ?? []).map((product: any) => ({
+        id: product.id,
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags ?? [],
+        status: product.status,
+        isActive: product.isActive,
+        supplierId: product.supplierId,
+        createdAt: this.serializeDate(product.createdAt),
+        updatedAt: this.serializeDate(product.updatedAt),
+        imageAssetId: product.imageAssetId,
+        imageUrl: product.imageAsset?.publicUrl ?? null,
+      }));
+
+      const services = (org.serviceProviders ?? []).flatMap((provider: any) =>
+        (provider.services ?? []).map((service: any) => ({
+          id: service.id,
+          title: service.title,
+          description: service.description,
+          category: service.category,
+          price: service.price,
+          priceInfo: service.priceInfo,
+          availability: service.availability,
+          tags: service.tags ?? [],
+          imageUrl: service.imageUrl,
+          isActive: service.isActive,
+          providerId: service.providerId,
+          createdAt: this.serializeDate(service.createdAt),
+          updatedAt: this.serializeDate(service.updatedAt),
+          deliveryType: service.deliveryType ?? provider.deliveryType ?? null,
+          bookingLink: provider.bookingLink ?? org.bookingLink ?? null,
+        })),
+      );
+
+      const jobListings = (org.jobListings ?? []).map((job: any) => ({
+        id: job.id,
+        title: job.title,
+        description: job.description,
+        requirements: job.requirements ?? [],
+        responsibilities: job.responsibilities ?? [],
+        qualifications: job.qualifications ?? [],
+        benefits: job.benefits ?? [],
+        location: job.location,
+        salary: job.salary,
+        salaryRange: job.salaryRange,
+        contractType: job.contractType,
+        startDate: this.serializeDate(job.startDate),
+        status: job.status,
+        foundationId: job.foundationId,
+        publishedAt: this.serializeDate(job.publishedAt),
+        createdAt: this.serializeDate(job.createdAt),
+        updatedAt: this.serializeDate(job.updatedAt),
+        applicationsCount: job.applicationsCount ?? 0,
+      }));
+
+      const logoUrl = org.logoAsset?.publicUrl ?? null;
+      const coverImageUrl = org.coverAsset?.publicUrl ?? null;
+
+      return {
+        id: org.id,
+        name: org.name,
+        type: org.type,
+        region: org.region,
+        description: org.description,
+        vatNumber: org.vatNumber,
+        contactPerson: org.contactPerson,
+        phoneNumber: org.phoneNumber,
+        canton: org.canton,
+        regionsServed: org.regionsServed ?? (org.canton ? [org.canton] : []),
+        languages: org.languages ?? [],
+        capacity: org.capacity,
+        pedagogy: org.pedagogy ?? [],
+        productCategory: org.productCategory,
+        serviceType: org.serviceType,
+        minimumOrderQuantity: org.minimumOrderQuantity,
+        directOrderLink: org.directOrderLink,
+        catalogUrl: org.catalogUrl,
+        serviceCategories: org.serviceCategories ?? [],
+        deliveryType: org.deliveryType,
+        bookingLink: org.bookingLink,
+        bookingLinkOverride: org.bookingLink,
+        createdAt: this.serializeDate(org.createdAt),
+        updatedAt: this.serializeDate(org.updatedAt),
+        isActive: org.isActive,
+        logoAssetId: org.logoAssetId,
+        coverAssetId: org.coverAssetId,
+        logoUrl,
+        coverImageUrl,
+        products,
+        services,
+        jobListings,
+        membershipRole: userOrg.role,
+      };
+    });
+
+    const primaryOrganization = organizations[0] ?? null;
+    const firstName = user.firstName ?? undefined;
+    const lastName = user.lastName ?? undefined;
+    const fullName =
+      firstName || lastName ? `${firstName ?? ''} ${lastName ?? ''}`.trim().replace(/\s+/g, ' ') : undefined;
+
+    return {
+      id: user.id,
+      clerkId: user.clerkId,
+      email: user.email ?? appUser.email,
+      firstName,
+      lastName,
+      role: user.role,
+      phoneNumber: user.phoneNumber,
+      workExperience: user.workExperience,
+      education: user.education,
+      certifications: user.certifications ?? [],
+      skills: user.skills ?? [],
+      availability: user.availability,
+      cvUrl: user.cvUrl,
+      shortBio: user.shortBio,
+      avatarAssetId: user.avatarAssetId,
+      stripeCustomerId: user.stripeCustomerId,
+      lastActiveAt: this.serializeDate(user.lastActiveAt),
+      isActive: user.isActive,
+      createdAt: this.serializeDate(user.createdAt),
+      updatedAt: this.serializeDate(user.updatedAt),
+      organizations,
+      name: fullName ?? user.email ?? appUser.email ?? 'Unknown User',
+      status: user.isActive ? 'Active' : 'Inactive',
+      memberSince: this.serializeDate(user.createdAt),
+      lastLogin: this.serializeDate(user.lastActiveAt),
+      avatarUrl: user.avatarAsset?.publicUrl ?? primaryOrganization?.logoUrl ?? null,
+      orgId: primaryOrganization?.id,
+      orgName: primaryOrganization?.name,
+      orgType: primaryOrganization?.type,
+      orgLogoUrl: primaryOrganization?.logoUrl ?? null,
+      orgCoverImageUrl: primaryOrganization?.coverImageUrl ?? null,
+      primaryOrganization,
+    };
+  }
 
   async create(createUserDto: CreateUserDto) {
     // Check if user exists
@@ -137,55 +356,25 @@ export class UsersService {
   }
 
   async findByClerkId(clerkId: string) {
-    // First check if AppUser exists (required for auth)
-    const appUser = await this.prisma.appUser.findUnique({
-      where: { clerkId },
-    });
-
-    if (!appUser) {
+    if (!clerkId) {
       return null;
     }
 
-    // Try to get full User profile
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { clerkId },
+      const result = await this.principal.getOrBootstrapAccountAndProfile<typeof userProfileInclude>(
+        clerkId,
+        userProfileInclude,
+      );
+      return this.buildUserResponse(result.user, {
+        id: result.appUser.id,
+        clerkId: result.appUser.clerkId,
+        email: result.appUser.email,
+        role: result.appUser.role,
       });
-
-      if (user) {
-        // Return full User profile with organizations as empty array
-        return {
-          ...user,
-          organizations: [],
-        };
-      }
     } catch (error) {
-      // Log error but continue to return AppUser minimal data
-      console.error('Error querying User table:', error);
+      console.error('[UsersService] Failed to load user by clerkId', { clerkId, error });
+      return null;
     }
-
-    // User profile doesn't exist yet, return minimal data from AppUser
-    return {
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    };
   }
 
   async findOne(id: string) {
@@ -331,13 +520,9 @@ export class UsersService {
         });
       }
 
-      // Return full User profile
-      const result = {
-        ...user,
-        organizations: [],
-      };
-      console.log('📤 [BACKEND UPDATE] Returning user data:', result);
-      return result;
+        // Return full User profile
+        console.log('📤 [BACKEND UPDATE] Returning user data via enriched response');
+        return this.findByClerkId(clerkId);
     } catch (error) {
       console.error('Error updating User profile:', error);
       // If User table operations fail, fall back to updating AppUser only
@@ -351,30 +536,9 @@ export class UsersService {
         });
       }
       
-      // Return AppUser data in User format
-      const fallbackResult = {
-        id: appUser.id,
-        clerkId: appUser.clerkId,
-        email: appUser.email,
-        firstName: null,
-        lastName: null,
-        role: appUser.role,
-        phoneNumber: null,
-        workExperience: null,
-        education: null,
-        certifications: [],
-        skills: [],
-        availability: null,
-        cvUrl: null,
-        stripeCustomerId: null,
-        lastActiveAt: null,
-        isActive: true,
-        createdAt: appUser.createdAt,
-        updatedAt: appUser.updatedAt,
-        organizations: [],
-      };
-      console.log('📤 [BACKEND UPDATE] Returning fallback user data:', fallbackResult);
-      return fallbackResult;
+        // Return AppUser data in User format
+        console.log('📤 [BACKEND UPDATE] Returning fallback user data via enriched response');
+        return this.findByClerkId(clerkId);
     }
   }
 

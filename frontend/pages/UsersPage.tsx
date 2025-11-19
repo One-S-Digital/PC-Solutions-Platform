@@ -58,7 +58,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.region || 'N/A'}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'N/A'}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.lastLogin ? new Date(user.lastLogin).toLocaleDateString(i18n.language) : 'N/A'}</td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         {isSuperAdmin ? (
           <div className="flex space-x-2 justify-end">

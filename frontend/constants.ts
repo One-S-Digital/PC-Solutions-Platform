@@ -238,3 +238,50 @@ export const MOCK_PROVIDER_SETTINGS: ProviderSettings = {
 // Empty mock data for production (fetched from API)
 export const MOCK_PARTNERS: Partner[] = [];
 export const MOCK_LOG_ENTRIES: LogEntry[] = [];
+
+// Build timestamp to force cache refresh: 2025-11-19T11:44:00Z
+// Suggested Service Categories (users can add custom ones)
+export const SUGGESTED_SERVICE_CATEGORIES = [
+  'Cleaning & Maintenance',
+  'IT & Technical Support',
+  'Facilities Maintenance',
+  'Consulting',
+  'Training & Coaching',
+  'Catering',
+  'Security Services',
+  'Landscaping & Gardening',
+  'Transportation',
+  'Pest Control',
+  'HVAC Services',
+  'Plumbing',
+  'Electrical Services',
+  'Accounting & Finance',
+  'Legal Services',
+  'Marketing & Design',
+  'Photography & Videography',
+  'Event Planning',
+  'Other',
+] as const;
+
+// Suggested Product Categories (users can add custom ones)
+export const SUGGESTED_PRODUCT_CATEGORIES = [
+  'Educational Toys',
+  'Furniture',
+  'Books & Learning Materials',
+  'Art & Craft Supplies',
+  'Outdoor Play Equipment',
+  'Safety & Hygiene Products',
+  'Kitchen & Dining',
+  'Bedding & Textiles',
+  'Technology & Electronics',
+  'Musical Instruments',
+  'Sports Equipment',
+  'Sensory & Therapy Tools',
+  'Office Supplies',
+  'Cleaning Supplies',
+  'Food & Snacks',
+  'Baby Care Products',
+  'First Aid & Medical',
+  'Storage & Organization',
+  'Other',
+] as const;

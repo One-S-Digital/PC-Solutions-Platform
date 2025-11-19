@@ -17,15 +17,15 @@ interface NotificationPreferencesSettingsProps {
 }
 
 const DIGEST_FREQUENCIES: { labelKey: string, value: DigestFrequency }[] = [
-  { labelKey: 'settingsNotificationPreferences.digestFrequencies.daily', value: 'Daily' },
-  { labelKey: 'settingsNotificationPreferences.digestFrequencies.weekly', value: 'Weekly' },
-  { labelKey: 'settingsNotificationPreferences.digestFrequencies.none', value: 'None' },
+  { labelKey: 'common:settingsNotificationPreferences.digestFrequencies.daily', value: 'Daily' },
+  { labelKey: 'common:settingsNotificationPreferences.digestFrequencies.weekly', value: 'Weekly' },
+  { labelKey: 'common:settingsNotificationPreferences.digestFrequencies.none', value: 'None' },
 ];
 
 const NotificationPreferencesSettings: React.FC<NotificationPreferencesSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const isProvider = userRole === UserRole.SERVICE_PROVIDER;
-  const newRequestLabelKey = isProvider ? "settingsNotificationPreferences.newRequestEmailToggleProvider" : "settingsNotificationPreferences.newRequestEmailToggleSupplier";
+  const newRequestLabelKey = isProvider ? "common:settingsNotificationPreferences.newRequestEmailToggleProvider" : "common:settingsNotificationPreferences.newRequestEmailToggleSupplier";
 
   return (
     <SettingsSectionWrapper title={t('settings:page.notificationPreferences')} icon={BellAlertIcon}>
@@ -48,7 +48,7 @@ const NotificationPreferencesSettings: React.FC<NotificationPreferencesSettingsP
         </div>
 
         {/* Daily/Weekly Digest Radio */}
-        <label className="form-label md:pt-2">{t('settingsNotificationPreferences.digestFrequency')} <span className="text-swiss-coral">*</span></label>
+        <label className="form-label md:pt-2">{t('common:settingsNotificationPreferences.digestFrequency')} <span className="text-swiss-coral">*</span></label>
         <div className="form-input-container">
           {/* <RadioPills options={DIGEST_FREQUENCIES} selectedValue={settings.digestRadio} onChange={(val) => onChange('digestRadio', val as DigestFrequency)} /> */}
            <div className="flex space-x-2">
@@ -66,7 +66,7 @@ const NotificationPreferencesSettings: React.FC<NotificationPreferencesSettingsP
         </div>
 
         {/* Promo Redemption Alerts Toggle */}
-        <label htmlFor="promoRedemptionAlertsToggle" className="form-label md:pt-2">{t('settingsNotificationPreferences.promoRedemptionAlertsToggle')} <span className="text-swiss-coral">*</span></label>
+        <label htmlFor="promoRedemptionAlertsToggle" className="form-label md:pt-2">{t('common:settingsNotificationPreferences.promoRedemptionAlertsToggle')} <span className="text-swiss-coral">*</span></label>
         <div className="form-input-container">
           {/* <ToggleSwitch id="promoRedemptionAlertsToggle" checked={settings.promoRedemptionAlertsToggle} onChange={(checked) => onChange('promoRedemptionAlertsToggle', checked)} /> */}
            <button
@@ -75,9 +75,9 @@ const NotificationPreferencesSettings: React.FC<NotificationPreferencesSettingsP
                 className={`relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none transition-colors duration-200 ease-in-out ${settings.promoRedemptionAlertsToggle ? 'bg-swiss-mint' : 'bg-gray-200'}`}
                 role="switch"
                 aria-checked={!!settings.promoRedemptionAlertsToggle}
-                aria-label={t('settingsNotificationPreferences.promoRedemptionAlertsToggle')}
+                aria-label={t('common:settingsNotificationPreferences.promoRedemptionAlertsToggle')}
             >
-                <span className="sr-only">{t('settingsNotificationPreferences.promoRedemptionAlertsToggle')}</span>
+                <span className="sr-only">{t('common:settingsNotificationPreferences.promoRedemptionAlertsToggle')}</span>
                 <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ease-in-out ${settings.promoRedemptionAlertsToggle ? 'translate-x-6' : 'translate-x-1'}`}></span>
             </button>
         </div>

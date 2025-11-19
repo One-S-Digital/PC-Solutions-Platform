@@ -11,6 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import { formatCategory } from '../utils/serviceFormatting';
 
 interface CourseMaterialCardProps {
   item: Course;
@@ -53,7 +54,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
         {item.type === ELearningContentType.COURSE && item.lessons && <p className="text-xs text-gray-500">{t('eLearning.lessonsCount', { count: item.lessons })}</p>}
         {(item.type === ELearningContentType.VIDEO || item.type === ELearningContentType.COURSE) && item.duration && <p className="text-xs text-gray-500">{t('eLearning.durationLabel')}: {item.duration}</p>}
         {item.language && <p className="text-xs text-gray-500">{t('eLearning.languageLabel')}: {item.language}</p>}
-        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}</p>
+        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString(i18n.language)}</p>
          {item.tags && item.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
                 {item.tags.slice(0, 3).map(tag => (
@@ -91,7 +92,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
 };
 
 const ELearningPage: React.FC = () => {
-  const { t } = useTranslation(['content', 'common']);
+  const { t } = useTranslation(['content', 'common', 'dashboard']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest, authenticatedUpload } = useAuthenticatedApi();
   const [eLearningItems, setELearningItems] = useState<Course[]>([]);
@@ -237,13 +238,15 @@ const ELearningPage: React.FC = () => {
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value as 'All' | ELearningCategory)}
                     className={`${STANDARD_INPUT_FIELD} w-full md:w-auto`}
-                >
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>
-                        {cat === 'All' ? t('eLearning.allCategoriesLabel', { defaultValue: 'All Categories' }) : (ELEARNING_CATEGORY_LABELS[cat] || cat)}
-                      </option>
-                    ))}
-                </select>
+                  >
+                      {categories.map(cat => (
+                        <option key={cat} value={cat}>
+                          {cat === 'All'
+                            ? t('eLearning.allCategoriesLabel', { defaultValue: 'All Categories' })
+                            : (ELEARNING_CATEGORY_LABELS[cat] || formatCategory(cat))}
+                        </option>
+                      ))}
+                  </select>
             </div>
         </div>
       </Card>

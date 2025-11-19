@@ -19,17 +19,17 @@ interface PrivacyDataSettingsProps {
 const PrivacyDataSettings: React.FC<PrivacyDataSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const hidePubliclyLabelKey = userRole === UserRole.PRODUCT_SUPPLIER 
-    ? "settingsPrivacyData.hidePricesPublicly" 
-    : "settingsPrivacyData.hideStartingRatePublicly";
+    ? "common:settingsPrivacyData.hidePricesPublicly" 
+    : "common:settingsPrivacyData.hideStartingRatePublicly";
 
   const hidePubliclyHelpTextKey = userRole === UserRole.PRODUCT_SUPPLIER
-    ? "settingsPrivacyData.hidePricesHelpText"
-    : "settingsPrivacyData.hideRateHelpText";
+    ? "common:settingsPrivacyData.hidePricesHelpText"
+    : "common:settingsPrivacyData.hideRateHelpText";
 
   const handleDataDeletionRequest = () => {
-    if (window.confirm(t('settingsPrivacyData.confirmGDPRDelete'))) {
+    if (window.confirm(t('common:settingsPrivacyData.confirmGDPRDelete'))) {
       onChange('gdprDataDeletionRequestMade', true);
-      alert(t('settingsPrivacyData.deletionRequestSubmittedHelpText'));
+      alert(t('common:settingsPrivacyData.deletionRequestSubmittedHelpText'));
       // In a real app, this would trigger a backend process.
     }
   };
@@ -58,7 +58,7 @@ const PrivacyDataSettings: React.FC<PrivacyDataSettingsProps> = ({ settings, onC
         </div>
 
         {/* GDPR Data Deletion Request Button */}
-        <label className="form-label md:pt-2">{t('settingsPrivacyData.dataDeletion')}</label>
+        <label className="form-label md:pt-2">{t('common:settingsPrivacyData.dataDeletion')}</label>
         <div className="form-input-container">
           <Button 
             variant="danger" 
@@ -66,13 +66,13 @@ const PrivacyDataSettings: React.FC<PrivacyDataSettingsProps> = ({ settings, onC
             onClick={handleDataDeletionRequest}
             disabled={!!settings.gdprDataDeletionRequestMade}
           >
-            {settings.gdprDataDeletionRequestMade ? t('settingsPrivacyData.deletionRequestSubmitted') : t('settingsPrivacyData.requestGDPRDeletion')}
+            {settings.gdprDataDeletionRequestMade ? t('common:settingsPrivacyData.deletionRequestSubmitted') : t('common:settingsPrivacyData.requestGDPRDeletion')}
           </Button>
           {settings.gdprDataDeletionRequestMade && (
-            <p className="text-xs text-yellow-600 mt-1">{t('settingsPrivacyData.deletionRequestSubmittedHelpText')}</p>
+            <p className="text-xs text-yellow-600 mt-1">{t('common:settingsPrivacyData.deletionRequestSubmittedHelpText')}</p>
           )}
           {!settings.gdprDataDeletionRequestMade && (
-             <p className="text-xs text-gray-500 mt-1">{t('settingsPrivacyData.requestDeletionHelpText')}</p>
+             <p className="text-xs text-gray-500 mt-1">{t('common:settingsPrivacyData.requestDeletionHelpText')}</p>
           )}
         </div>
       </div>

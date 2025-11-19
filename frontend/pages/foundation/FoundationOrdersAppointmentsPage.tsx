@@ -111,7 +111,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                       {order.items.map(item => `${item.productName} (${item.quantity})`).join(', ')}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">CHF {order.totalAmount.toFixed(2)}</td>
-                    <td className="px-4 py-2 whitespace-nowrap">{new Date(order.requestDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-2 whitespace-nowrap">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getOrderStatusClass(order.status)}`}>
                         {t(`orderStatus.${order.status.toLowerCase().replace(/\s/g, '')}` as const, order.status)}
@@ -171,7 +171,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">{req.serviceName}</td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      {req.appointmentDate ? new Date(req.appointmentDate).toLocaleDateString() : (req.preferredDate ? `${new Date(req.preferredDate).toLocaleDateString()} (${t('foundationOrdersAppointmentsPage.preferredAbbr')})` : t('foundationOrdersAppointmentsPage.notApplicable'))}
+                      {req.appointmentDate ? new Date(req.appointmentDate).toLocaleDateString(i18n.language) : (req.preferredDate ? `${new Date(req.preferredDate).toLocaleDateString(i18n.language)} (${t('foundationOrdersAppointmentsPage.preferredAbbr')})` : t('foundationOrdersAppointmentsPage.notApplicable'))}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getServiceStatusClass(req.status)}`}>

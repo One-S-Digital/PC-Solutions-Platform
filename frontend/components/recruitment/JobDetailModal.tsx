@@ -4,7 +4,6 @@ import { JobListing } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, ListBulletIcon, CheckBadgeIcon, SparklesIcon, BanknotesIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { MOCK_ORGANIZATIONS } from '../../constants';
 import Card from '../ui/Card';
 import JobApplicationModal from './JobApplicationModal';
 
@@ -34,8 +33,31 @@ const DetailSection: React.FC<{ titleKey: string; icon: React.ElementType; child
 };
 
 const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, onApply }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
-  const foundation = MOCK_ORGANIZATIONS.find(org => org.id === job.foundationId);
+  const { t, i18n } = useTranslation(['dashboard', 'common', 'recruitment']);
+
+  const contractLabel = React.useMemo(() => {
+    switch (job.contractType) {
+      case 'FULL_TIME':
+        return t('recruitment:contractTypes.fullTime', 'Full-time');
+      case 'PART_TIME':
+        return t('recruitment:contractTypes.partTime', 'Part-time');
+      case 'CDI':
+        return t('recruitment:contractTypes.cdi', 'CDI');
+      case 'CDD':
+        return t('recruitment:contractTypes.cdd', 'CDD');
+      case 'INTERNSHIP':
+        return t('recruitment:contractTypes.internship', 'Internship');
+      case 'FREELANCE':
+        return t('recruitment:contractTypes.freelance', 'Freelance');
+      default:
+        return job.contractType || t('recruitment:contractTypes.unknown', 'Unknown');
+    }
+  }, [job.contractType, t]);
+
+  const formattedStartDate = job.startDate
+    ? new Date(job.startDate).toLocaleDateString(i18n.language)
+    : t('recruitment:labels.startDateTbd', 'To be determined');
+
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
   if (!isOpen) return null;
@@ -56,7 +78,11 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
         {/* Header */}
         <div className="flex justify-between items-start px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
           <div className="flex items-center">
-            <img src={foundation?.logoUrl || `https://ui-avatars.com/api/?name=${job.foundationName.replace(' ', '+')}`} alt={`${job.foundationName} logo`} className="w-16 h-16 rounded-lg mr-4 border bg-white" />
+              <img
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(job.foundationName || job.title)}`}
+                alt={`${job.foundationName} logo`}
+                className="w-16 h-16 rounded-lg mr-4 border bg-white"
+              />
             <div>
               <h2 className="text-2xl font-bold text-swiss-charcoal">{job.title}</h2>
               <p className="text-md text-gray-600">{job.foundationName}</p>
@@ -73,8 +99,10 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
             {/* Left/Main Column */}
             <div className="lg:col-span-2 space-y-6">
               <Card className="p-6">
-                <DetailSection titleKey="recruitmentPage.jobDetailModal.jobDescription" icon={ListBulletIcon}>
-                  <p className="text-sm text-gray-700 whitespace-pre-line">{job.description}</p>
+                  <DetailSection titleKey="recruitmentPage.jobDetailModal.jobDescription" icon={ListBulletIcon}>
+                    <p className="text-sm text-gray-700 whitespace-pre-line">
+                      {job.description ?? t('recruitment:jobDetailModal.noDescription', 'No description provided.')}
+                    </p>
                 </DetailSection>
 
                 {job.responsibilities && job.responsibilities.length > 0 && (
@@ -119,21 +147,21 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
                         <MapPinIcon className="w-5 h-5 mr-3 text-gray-400 flex-shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium text-gray-500">{t('recruitmentPage.jobDetailModal.location')}</p>
-                            <p className="text-gray-800 font-semibold">{job.location}</p>
+                              <p className="text-gray-800 font-semibold">{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>
                         </div>
                     </div>
                      <div className="flex items-start">
                         <BriefcaseIcon className="w-5 h-5 mr-3 text-gray-400 flex-shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium text-gray-500">{t('recruitmentPage.jobDetailModal.contractType')}</p>
-                            <p className="text-gray-800 font-semibold">{job.contractType}</p>
+                              <p className="text-gray-800 font-semibold">{contractLabel}</p>
                         </div>
                     </div>
                      <div className="flex items-start">
                         <CalendarDaysIcon className="w-5 h-5 mr-3 text-gray-400 flex-shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium text-gray-500">{t('recruitmentPage.jobDetailModal.startDate')}</p>
-                            <p className="text-gray-800 font-semibold">{new Date(job.startDate).toLocaleDateString()}</p>
+                              <p className="text-gray-800 font-semibold">{formattedStartDate}</p>
                         </div>
                     </div>
                      {job.salaryRange && (

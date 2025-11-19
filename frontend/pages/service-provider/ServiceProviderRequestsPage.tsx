@@ -66,7 +66,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
                     size="sm"
                     onClick={() => setStatusFilter(status)}
                 >
-                    {status === 'All' ? t('filters.all') : t(`serviceStatus.${status.toLowerCase().replace(/\s/g, '')}` as const, status)}
+                    {status === 'All' ? t('common:filters.all') : t(`serviceStatus.${status.toLowerCase().replace(/\s/g, '')}` as const, status)}
                 </Button>
             ))}
         </div>
@@ -89,7 +89,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-swiss-teal">{req.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{getFoundationName(req.foundationOrgId)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{req.serviceName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(req.requestDate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(req.requestDate).toLocaleDateString(i18n.language)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(req.status)}`}>
                       {t(`serviceStatus.${req.status.toLowerCase().replace(/\s/g, '')}` as const, req.status)}

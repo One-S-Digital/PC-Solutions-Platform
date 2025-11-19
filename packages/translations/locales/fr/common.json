@@ -8,6 +8,10 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "viewDetails": "Voir les détails",
+    "viewProfile": "Voir le profil",
+    "editProfile": "Modifier le profil",
+    "profileUpdated": "Profil mis à jour !",
+    "saving": "Enregistrement",
     "goBack": "Retour",
     "login": "Log In",
     "signup": "S'inscrire",
@@ -51,7 +55,8 @@
     "sort": "Trier",
     "yes": "Oui",
     "no": "Non",
-    "ok": "OK"
+    "ok": "OK",
+    "retry": "Réessayer"
   },
   "common": {
     "loading": "Chargement...",
@@ -153,7 +158,10 @@
     "frShort": "FR",
     "frLong": "Français",
     "deShort": "DE",
-    "deLong": "Allemand"
+    "deLong": "Allemand",
+    "en": "Anglais",
+    "fr": "Français",
+    "de": "Allemand"
   },
   "recruitment": {
     "addCandidate": "recrutement."
@@ -289,6 +297,7 @@
     "noSectionsAvailable": "[FR] No settings sections available",
     "analyticsPreferences": "[FR] Analytics Preferences",
     "companyProfile": "[FR] Company Profile",
+    "profile": "Modifier le profil",
     "contactBooking": "[FR] Contact Booking",
     "defaults": "[FR] Defaults",
     "notificationPreferences": "[FR] No tification Preferences",
@@ -345,11 +354,12 @@
       "normal": "[FR] Normal"
     },
     "fileUpload": {
-      "browse": "[FR] Browse",
-      "dragAndDrop": "[FR] Drag and drop files here",
-      "eLearningAllowedTypes": "[FR] E Learning Allowed Types",
-      "selected": "[FR] Selected",
-      "hrPolicyAllowedTypes": "[FR] PDF, DOC, DOCX"
+      "browse": "Choisir un fichier",
+      "browseNoFileChosen": "Aucun fichier sélectionné",
+      "dragAndDrop": "ou glisser-déposer",
+      "eLearningAllowedTypes": "Formats acceptés : PDF, MP4, MP3, ZIP",
+      "selected": "{{fileName}} sélectionné",
+      "hrPolicyAllowedTypes": "Formats acceptés : PDF, DOC, DOCX"
     },
     "buttons": {
       "uploading": "[FR] Uploading",
@@ -434,6 +444,40 @@
     "preferredDateLabel": "[FR] Preferred Date",
     "notesLabel": "[FR] No tes",
     "submitButton": "[FR] Submit Button"
+  },
+  "serviceUploadModal": {
+    "addTitle": "Ajouter un service",
+    "editTitle": "Modifier le service",
+    "labels": {
+      "title": "Titre du service",
+      "description": "Description",
+      "category": "Catégorie",
+      "deliveryType": "Mode de prestation",
+      "availability": "Disponibilité et horaires",
+      "priceInfo": "Informations tarifaires",
+      "tags": "Mots-clés",
+      "image": "Visuel du service"
+    },
+    "placeholders": {
+      "availability": "ex. : Lun-ven 9h00-18h00 ou Sur rendez-vous",
+      "priceInfo": "ex. : CHF 150/heure ou Prix sur demande",
+      "tags": "Mots-clés séparés par des virgules (nettoyage, écologique, ...)"
+    },
+    "imageHelpText": "Téléchargez une image JPG ou PNG (max. 5 Mo). Elle apparaîtra dans la marketplace.",
+    "currentImage": "Image actuelle"
+  },
+  "serviceCategories": {
+    "CLEANING": "Nettoyage et maintenance",
+    "IT_SUPPORT": "Support informatique",
+    "MAINTENANCE": "Maintenance technique",
+    "CONSULTING": "Conseil",
+    "TRAINING": "Formation et accompagnement",
+    "OTHER": "Autre"
+  },
+  "serviceDeliveryTypes": {
+    "On-site": "Sur site",
+    "Remote": "À distance",
+    "Hybrid": "Hybride"
   },
   "supplierCard": {
     "specializesIn": "[FR] Specializes In",
@@ -545,12 +589,16 @@
     }
   },
   "settingsPrivacyData": {
-    "confirmGDPRDelete": "[FR] Confirm G D P R Delete",
-    "deletionRequestSubmittedHelpText": "[FR] Deletion Request Submitted Help Text",
-    "dataDeletion": "[FR] Data Deletion",
-    "deletionRequestSubmitted": "[FR] Deletion Request Submitted",
-    "requestDeletionHelpText": "[FR] Request Deletion Help Text",
-    "requestGDPRDeletion": "[FR] Request Data Deletion (GDPR)"
+    "confirmGDPRDelete": "Êtes-vous sûr de vouloir demander la suppression des données ? Cette action est irréversible.",
+    "deletionRequestSubmittedHelpText": "Votre demande de suppression de données a été soumise. Notre équipe la traitera dans les 30 jours conformément au RGPD.",
+    "dataDeletion": "Suppression des Données",
+    "deletionRequestSubmitted": "Demande de Suppression Soumise",
+    "requestDeletionHelpText": "Demander la suppression de toutes vos données personnelles conformément aux réglementations RGPD. Ce processus peut prendre jusqu'à 30 jours.",
+    "requestGDPRDeletion": "Demander la Suppression des Données (RGPD)",
+    "hideStartingRatePublicly": "Masquer le Taux de Départ Publiquement",
+    "hideRateHelpText": "Lorsqu'il est activé, votre taux de départ ne sera pas visible pour les candidats dans les offres d'emploi.",
+    "hidePricesPublicly": "Masquer les Prix Publiquement",
+    "hidePricesHelpText": "Lorsqu'il est activé, les prix de vos produits ne seront pas visibles pour les fondations sur le marché."
   },
   "settingsAnalyticsPreferences": {
     "timeZone": "[FR] Time Zone",
@@ -559,59 +607,80 @@
     "benchmarkDataHelpText": "[FR] Benchmark Data Help Text"
   },
   "settingsBillingSubscription": {
-    "yourCurrentPlan": "[FR] Your Current Plan",
-    "upgradePlan": "[FR] Upgrade Plan",
-    "downgradePlan": "[FR] Downgrade Plan",
-    "currentPlan": "[FR] Current Plan",
-    "nextInvoiceOn": "[FR] Next Invoice On",
-    "manageSubscriptionTitle": "[FR] Manage Subscription Title",
-    "manageSubscriptionDescription": "[FR] Manage Subscription Description",
-    "managePaymentButton": "[FR] Manage Payment Button",
-    "cancelSubscription": "[FR] Cancel Subscription",
-    "stripePortalLinkNotConfigured": "[FR] Stripe Portal Link Not Configured",
-    "confirmCancelTitle": "[FR] Confirm Cancel Title",
-    "confirmCancelMessage": "[FR] Confirm Cancel Message",
-    "keepSubscription": "[FR] Keep Subscription",
-    "yesCancel": "[FR] Yes Cancel"
+    "yourCurrentPlan": "Votre Plan Actuel",
+    "upgradePlan": "Passer à un Plan Supérieur",
+    "downgradePlan": "Passer à un Plan Inférieur",
+    "currentPlan": "Plan Actuel",
+    "nextInvoiceOn": "Prochaine facture le {{date}}",
+    "manageSubscriptionTitle": "Gérer l'Abonnement",
+    "manageSubscriptionDescription": "Mettez à jour votre méthode de paiement, consultez les factures et gérez les paramètres de votre abonnement.",
+    "managePaymentButton": "Gérer la Méthode de Paiement",
+    "cancelSubscription": "Annuler l'Abonnement",
+    "stripePortalLinkNotConfigured": "Le portail de paiement n'est pas configuré. Veuillez contacter le support.",
+    "confirmCancelTitle": "Annuler l'Abonnement ?",
+    "confirmCancelMessage": "Êtes-vous sûr de vouloir annuler votre abonnement ? Vous perdrez l'accès aux fonctionnalités premium à la fin de votre période de facturation.",
+    "keepSubscription": "Garder l'Abonnement",
+    "yesCancel": "Oui, Annuler"
   },
   "settingsCompanyProfile": {
-    "companyName": "[FR] Company Name",
-    "logo": "[FR] Logo",
-    "coverImage": "[FR] Cover Image",
-    "aboutText": "[FR] About Text",
-    "aboutTextLength": "[FR] About Text Length",
-    "vatNumber": "[FR] Vat Number",
-    "regionsServed": "[FR] Regions Served",
-    "selectCanton": "[FR] Select Canton",
-    "cantonsHelpText": "[FR] Cantons Help Text",
-    "languagesSpoken": "[FR] Languages Spoken",
-    "selectLanguage": "[FR] Select Language",
-    "languagesHelpText": "[FR] Languages Help Text"
+    "companyName": "Nom de l'Entreprise",
+    "logo": "Logo",
+    "coverImage": "Image de Couverture",
+    "aboutText": "À Propos",
+    "aboutTextLength": "{{length}} / 500 caractères",
+    "vatNumber": "Numéro de TVA",
+    "regionsServed": "Régions Desservies",
+    "selectCanton": "Sélectionner un Canton",
+    "cantonsHelpText": "Sélectionnez les cantons suisses où vous opérez ou fournissez des services.",
+    "languagesSpoken": "Langues Parlées",
+    "selectLanguage": "Sélectionner une Langue",
+    "languagesHelpText": "Sélectionnez les langues dans lesquelles votre équipe peut communiquer."
   },
   "settingsContactBooking": {
-    "preferredContactMethod": "[FR] Preferred Contact Method",
-    "avgResponseTime": "[FR] Avg Response Time",
-    "externalBookingLink": "[FR] External Booking Link",
-    "externalBookingLinkPlaceholder": "[FR] Enter external booking link",
-    "directOrderLink": "[FR] Direct Order Link",
-    "directOrderLinkPlaceholder": "[FR] Enter direct order link",
-    "directOrderLinkHelpText": "[FR] Direct Order Link Help Text",
-    "calComLink": "[FR] Cal Com Link",
-    "calComLinkPlaceholder": "[FR] Enter cal com link",
-    "deliveryTypeToggleRemote": "[FR] Delivery Type Toggle Remote"
+    "preferredContactMethod": "Méthode de Contact Préférée",
+    "contactMethods": {
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "platformForm": "Formulaire de la Plateforme"
+    },
+    "avgResponseTime": "Temps de Réponse Moyen",
+    "responseTimes": {
+      "lessThan24h": "Moins de 24 heures",
+      "twoToThreeDays": "2-3 jours",
+      "other": "Autre"
+    },
+    "externalBookingLink": "Lien de Réservation Externe",
+    "externalBookingLinkPlaceholder": "Entrez le lien de réservation externe",
+    "directOrderLink": "Lien de Commande Directe",
+    "directOrderLinkPlaceholder": "Entrez le lien de commande directe",
+    "directOrderLinkHelpText": "Fournissez un lien direct où les clients peuvent passer des commandes en dehors de la plateforme.",
+    "calComLink": "Lien Cal.com",
+    "calComLinkPlaceholder": "Entrez votre lien de planification Cal.com",
+    "deliveryTypeToggleRemote": "Offrir la Livraison à Distance"
   },
   "settingsDefaults": {
-    "autoRespondToggle": "[FR] Auto Respond Toggle",
-    "autoRespondHelpText": "[FR] Auto Respond Help Text",
-    "defaultMOQ": "[FR] Default M O Q",
-    "defaultMOQPlaceholder": "[FR] Enter default m o q",
-    "autoAcceptOrderQtyLimit": "[FR] Auto Accept Order Qty Limit",
-    "autoAcceptOrderQtyLimitPlaceholder": "[FR] Enter auto accept order qty limit",
-    "defaultConsultationLength": "[FR] Default Consultation Length"
+    "autoRespondToggle": "Répondre Automatiquement aux Demandes",
+    "autoRespondHelpText": "Envoyer automatiquement un message de confirmation lorsque vous recevez une nouvelle demande de service.",
+    "defaultMOQ": "Quantité Minimale de Commande (MOQ) par Défaut",
+    "defaultMOQPlaceholder": "Entrez la quantité minimale de commande",
+    "autoAcceptOrderQtyLimit": "Limite de Quantité d'Auto-Acceptation de Commande",
+    "autoAcceptOrderQtyLimitPlaceholder": "Entrez la limite de quantité pour l'auto-acceptation",
+    "defaultConsultationLength": "Durée de Consultation par Défaut",
+    "consultationLengths": {
+      "30min": "30 minutes",
+      "60min": "60 minutes"
+    }
   },
   "settingsNotificationPreferences": {
-    "digestFrequency": "[FR] Digest Frequency",
-    "promoRedemptionAlertsToggle": "[FR] Promo Redemption Alerts Toggle"
+    "digestFrequency": "Fréquence du Résumé par E-mail",
+    "digestFrequencies": {
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "none": "Aucun"
+    },
+    "newRequestEmailToggleProvider": "Notifications par e-mail pour les nouvelles demandes de service",
+    "newRequestEmailToggleSupplier": "Notifications par e-mail pour les nouvelles commandes",
+    "promoRedemptionAlertsToggle": "Alertes de Rédemption de Code Promo"
   },
   "settingsPromoCodeManager": {
     "confirmDelete": "[FR] Confirm Delete",
@@ -770,16 +839,16 @@
   },
   "fileGallery": {
     "actions": {
-      "preview": "[FR] Preview",
-      "download": "[FR] Download",
-      "rename": "[FR] Rename",
-      "delete": "[FR] Delete"
+      "preview": "Aperçu",
+      "download": "Télécharger",
+      "rename": "Renommer",
+      "delete": "Supprimer"
     },
-    "confirmDelete": "[FR] Confirm Delete",
-    "uploadButton": "[FR] Upload Button",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fichier ?",
+    "uploadButton": "Télécharger des Fichiers",
     "emptyState": {
-      "title": "[FR] Title",
-      "message": "[FR] Message"
+      "title": "Aucun fichier pour le moment",
+      "message": "Téléchargez votre premier fichier pour commencer"
     }
   },
   "hrDocumentCard": {
@@ -868,17 +937,22 @@
     }
   },
   "supportPage": {
-    "faqTitle": "[FR] Faq Title",
-    "furtherAssistanceTitle": "[FR] Further Assistance Title",
-    "furtherAssistanceText": {
-      "0": "[FR] 0",
-      "1": "[FR] Our support team is here to help you."
-    },
-    "submitTicketTitle": "[FR] Submit Ticket Title",
+    "faqTitle": "Questions Fréquemment Posées",
+    "furtherAssistanceTitle": "Besoin d'Aide Supplémentaire ?",
+    "furtherAssistanceText": "Si vous ne trouvez pas la réponse que vous cherchez, notre équipe de support est là pour vous aider. Contactez-nous à",
+    "emailLinkText": "support@procrechesolutions.com",
+    "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
+    "submitTicketTitle": "Soumettre un Ticket de Support",
     "ticketForm": {
-      "subjectLabel": "[FR] Subject",
-      "messageLabel": "[FR] Message"
+      "subjectLabel": "Sujet",
+      "subjectPlaceholder": "Brève description de votre problème",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+      "submitButton": "Soumettre le Ticket"
     }
+  },
+  "filters": {
+    "all": "Tous"
   },
   "foundationAnalyticsPage": {
     "title": "[FR] Title"

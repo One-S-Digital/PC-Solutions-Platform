@@ -73,13 +73,13 @@ const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ r
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('serviceRequestDetailModal.date')}</span><span className="font-semibold">{new Date(request.requestDate).toLocaleDateString()}</span></div>
+            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('serviceRequestDetailModal.date')}</span><span className="font-semibold">{new Date(request.requestDate).toLocaleDateString(i18n.language)}</span></div>
             <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('serviceRequestDetailModal.status')}</span><span className="font-semibold">{t(`serviceStatus.${request.status.toLowerCase().replace(/\s/g, '')}` as const, request.status)}</span></div>
           </div>
           
           <div className="p-3 bg-gray-50 rounded-md">
             <span className="block text-xs text-gray-500">{t('serviceRequestDetailModal.preferredDate')}</span>
-            <span className="font-semibold">{request.preferredDate ? new Date(request.preferredDate).toLocaleDateString() : t('serviceRequestDetailModal.noPreferredDate')}</span>
+            <span className="font-semibold">{request.preferredDate ? new Date(request.preferredDate).toLocaleDateString(i18n.language) : t('serviceRequestDetailModal.noPreferredDate')}</span>
           </div>
 
           {request.notes && (

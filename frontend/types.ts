@@ -41,8 +41,13 @@ export interface User {
   avatarUrl?: string;
   orgId?: string;
   orgName?: string;
+  orgType?: OrganizationType;
+  orgLogoUrl?: string | null;
+  orgCoverImageUrl?: string | null;
   region?: SwissCanton | string;
   plan?: string;
+  organizations?: Array<Organization & { membershipRole?: UserRole }>;
+  primaryOrganization?: (Organization & { membershipRole?: UserRole }) | null;
 }
 
 // ... other existing types
@@ -73,11 +78,13 @@ export interface Organization {
   // Additional organization fields
   contactPerson?: string;
   phoneNumber?: string;
-  canton?: string;
+  canton?: string; // Legacy single canton field
+  regionsServed?: string[]; // Multiple cantons/regions
   languages?: string[];
   capacity?: number;
   pedagogy?: string[];
-  productCategory?: string;
+  productCategory?: string; // Legacy single category
+  productCategories?: string[]; // New: flexible product category tags
   serviceType?: string;
   minimumOrderQuantity?: number;
   directOrderLink?: string;
@@ -97,6 +104,10 @@ export interface Organization {
   // Legacy field compatibility
   logoUrl?: string;
   coverImageUrl?: string;
+  products?: Product[];
+  services?: Service[];
+  jobListings?: JobListing[];
+  membershipRole?: UserRole;
 }
 
 
@@ -106,7 +117,8 @@ export interface Product {
   title: string;
   description?: string;
   price?: number;
-  category?: string;
+  category?: string; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   tags: string[];
   status: string; // ACTIVE, INACTIVE, PENDING, REJECTED
   isActive: boolean;
@@ -139,7 +151,8 @@ export interface Service {
   id: string;
   title: string;
   description?: string;
-  category: ServiceCategory;
+  category: ServiceCategory; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   price?: number;
   isActive: boolean;
   providerId: string;
@@ -152,60 +165,81 @@ export interface Service {
   availability?: string;
   tags?: string[];
   imageUrl?: string;
-  deliveryType?: string;
+  deliveryType?: ServiceDeliveryType;
   priceInfo?: string;
 }
 export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, ServiceCategory.IT_SUPPORT, ServiceCategory.MAINTENANCE, ServiceCategory.CONSULTING, ServiceCategory.TRAINING, ServiceCategory.OTHER];
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
+export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP';
+
+export const JobStatus = {
+    DRAFT: 'DRAFT',
+    PUBLISHED: 'PUBLISHED',
+    CLOSED: 'CLOSED',
+    FILLED: 'FILLED',
+} as const;
+export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus];
+
+export const JobContractTypeValue = {
+    FULL_TIME: 'FULL_TIME',
+    PART_TIME: 'PART_TIME',
+    CDI: 'CDI',
+    CDD: 'CDD',
+    INTERNSHIP: 'INTERNSHIP',
+} as const;
+
 export interface JobListing {
     id: string;
     title: string;
-    foundationId?: string;
-    foundationName: string;
-    location: string;
-    contractType: 'Full-time' | 'Part-time' | 'CDI' | 'CDD' | 'Internship';
-    startDate: string; // ISO date string
-    applicationsReceived: number;
-    status: 'Open' | 'Closed';
-    description: string;
+    foundationId: string;
+    foundationName?: string;
+    location?: string;
+    contractType: JobContractType;
+    startDate?: string;
+    status: JobStatus;
+    description?: string;
     requirements: string[];
-    responsibilities?: string[];
-    qualifications?: string[];
-    benefits?: string[];
+    responsibilities: string[];
+    qualifications: string[];
+    benefits: string[];
+    salary?: string;
     salaryRange?: string;
-    imageUrl?: string;
+    publishedAt?: string;
+    createdAt: string;
+    updatedAt: string;
+    applicationsCount: number;
 }
 
 export interface CandidateProfile {
     id: string;
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
     avatarUrl?: string;
-    currentRoleOrTitle: string;
-    location: string; // e.g., "Geneva, GE"
-    availabilityStatus: 'Available Immediately' | 'Seeking Opportunities' | 'Not Available';
-    shortBio: string;
+    currentRoleOrTitle?: string;
+    location?: string; // e.g., "Geneva, GE"
+    availabilityStatus?: 'Available Immediately' | 'Seeking Opportunities' | 'Not Available';
+    shortBio?: string;
     skills: string[];
-    workExperience: WorkExperienceItem[];
-    education: EducationItem[];
+    workExperience?: WorkExperienceItem[];
+    education?: EducationItem[];
     certifications?: CertificationItem[];
-    availabilityPreferences: {
-        days: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun')[];
-        times: 'Morning' | 'Afternoon' | 'Full-Day' | 'Flexible';
-        contractType: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
-        preferredAgeGroups: ('Infants' | 'Toddlers' | 'Preschool')[];
+    availabilityPreferences?: {
+        days?: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun')[];
+        times?: 'Morning' | 'Afternoon' | 'Full-Day' | 'Flexible';
+        contractType?: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
+        preferredAgeGroups?: ('Infants' | 'Toddlers' | 'Preschool')[];
     };
-    documents: DocumentItem[];
+    documents?: DocumentItem[];
     
     // Legacy fields for simpler list view
-    role: string;
-    availability: string;
-    preferredRegion: string;
-    experience: string;
-    languages: string[];
+    role?: string;
+    availability?: string;
+    preferredRegion?: string;
+    experience?: string;
+    languages?: string[];
 }
 
 export interface WorkExperienceItem {
@@ -461,6 +495,7 @@ export enum SignupRole {
     FOUNDATION = 'Foundation (Daycare)',
     SUPPLIER = 'Product Supplier',
     SERVICE_PROVIDER = 'Service Provider',
+    EDUCATOR = 'Educator/Candidate',
     PARENT = 'Parent',
 }
 export interface SignupFormData {
@@ -596,22 +631,23 @@ export interface AppNotification {
 }
 
 export enum ApplicationStatus {
-    NEW = 'New',
-    VIEWED = 'Viewed',
-    INTERVIEW = 'Interview',
-    OFFER = 'Offer',
-    DECLINED = 'Declined'
+    PENDING = 'PENDING',
+    REVIEWED = 'REVIEWED',
+    ACCEPTED = 'ACCEPTED',
+    REJECTED = 'REJECTED'
 }
 
 export interface Application {
     id: string;
-    jobId: string;
+    jobListingId: string;
     jobTitle: string;
-    foundationName: string;
-    educatorId: string;
-    educatorName: string;
+    foundationName?: string;
+    candidateId: string;
+    candidateName?: string;
     status: ApplicationStatus;
-    applicationDate: string; // ISO String
+    createdAt: string; // ISO String
+    updatedAt: string; // ISO String
+    coverLetter?: string;
 }
 
 
@@ -645,7 +681,13 @@ interface BaseSettings {
     logoUrl?: string;
     coverImageUrl?: string;
     aboutText?: string;
+    description?: string; // Alias for aboutText
     vatNumber?: string;
+    contactPerson?: string;
+    phoneNumber?: string;
+    contactEmail?: string;
+    address?: string;
+    canton?: string;
     regionsServed?: SwissCanton[];
     languagesSpoken?: SupportedLanguage[];
     preferredContactMethod?: PreferredContactMethod;
@@ -666,6 +708,30 @@ interface BaseSettings {
     teamMembers?: TeamMember[];
     hidePubliclyToggle?: boolean;
     gdprDataDeletionRequestMade?: boolean;
+    // Foundation-specific fields
+    capacity?: number;
+    pedagogy?: string[];
+    // Supplier-specific fields
+    productCategory?: string; // Legacy single category
+    productCategories?: string[]; // New: flexible product category tags
+    minimumOrderQuantity?: number;
+    catalogUrl?: string;
+    // Service Provider-specific fields
+    serviceType?: string;
+    serviceCategories?: string[];
+    deliveryType?: string;
+    bookingLink?: string;
+    // Educator-specific fields
+    shortBio?: string;
+    avatarAssetId?: string;
+    firstName?: string;
+    lastName?: string;
+    workExperience?: string;
+    education?: string;
+    certifications?: string[];
+    skills?: string[];
+    availability?: string;
+    cvUrl?: string;
 }
 
 // Supplier-specific settings
