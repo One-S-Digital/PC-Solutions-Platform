@@ -3,6 +3,7 @@ import { UserRole, User, Product, Service, JobListing, CandidateProfile, Partner
 
 // Re-export SWISS_CANTONS so it can be imported from this module
 export { SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES };
+export { SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES };
 
 export const APP_NAME = "Pro Crèche Solutions";
 
