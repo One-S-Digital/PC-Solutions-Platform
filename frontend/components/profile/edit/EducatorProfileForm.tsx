@@ -91,7 +91,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
                     if (file) handleAvatarUpload(file);
                   }}
                   disabled={uploadingAvatar}
-                  className="hidden"
+                  className="sr-only"
                 />
               </label>
               {uploadingAvatar && (

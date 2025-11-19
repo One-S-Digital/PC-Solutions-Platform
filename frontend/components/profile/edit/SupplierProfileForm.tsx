@@ -258,7 +258,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
               id="minimumOrderQuantity"
               min="0"
               value={formData.minimumOrderQuantity || ''}
-              onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value) : 0)}
+              onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
               className={STANDARD_INPUT_FIELD}
               placeholder="0"
             />

@@ -33,7 +33,7 @@ const DetailSection: React.FC<{ titleKey: string; icon: React.ElementType; child
 };
 
 const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, onApply }) => {
-  const { t } = useTranslation(['dashboard', 'common', 'recruitment']);
+  const { t, i18n } = useTranslation(['dashboard', 'common', 'recruitment']);
 
   const contractLabel = React.useMemo(() => {
     switch (job.contractType) {
@@ -46,13 +46,16 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
       case 'CDD':
         return t('recruitment:contractTypes.cdd', 'CDD');
       case 'INTERNSHIP':
-      default:
         return t('recruitment:contractTypes.internship', 'Internship');
+      case 'FREELANCE':
+        return t('recruitment:contractTypes.freelance', 'Freelance');
+      default:
+        return job.contractType || t('recruitment:contractTypes.unknown', 'Unknown');
     }
   }, [job.contractType, t]);
 
   const formattedStartDate = job.startDate
-    ? new Date(job.startDate).toLocaleDateString()
+    ? new Date(job.startDate).toLocaleDateString(i18n.language)
     : t('recruitment:labels.startDateTbd', 'To be determined');
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);

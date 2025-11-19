@@ -55,7 +55,7 @@ const ConversationList: React.FC = () => {
                 onClick={() => setFilter('unread')}
                 className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${filter === 'unread' ? 'bg-swiss-mint text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
             >
-                {t('filters.unread')}
+                {t('messages:filters.unread')}
             </button>
         </div>
       </div>

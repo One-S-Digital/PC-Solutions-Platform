@@ -59,7 +59,7 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
             accept="image/*"
             onChange={handleFileChange}
             disabled={uploading}
-            className="hidden"
+            className="sr-only"
           />
         </label>
       </div>

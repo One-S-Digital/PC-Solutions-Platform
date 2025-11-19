@@ -303,8 +303,8 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/service-provider/analytics" element={
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderAnalyticsPage /></ProtectedRoute>
         } />
-          <Route path="/service-provider/company-profile" element={ // This route is effectively replaced by /settings
-          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><Navigate to="/settings" replace /></ProtectedRoute>
+          <Route path="/service-provider/company-profile" element={ // This route is effectively replaced by /settings/service-provider
+          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><Navigate to="/settings/service-provider" replace /></ProtectedRoute>
         } />
         <Route path="/service-provider/support" element={
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSupportPage /></ProtectedRoute>

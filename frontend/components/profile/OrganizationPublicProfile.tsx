@@ -466,7 +466,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                               {formatServiceCategory(t, service.category)}
                             </p>
                         </div>
-                        {service.price && (
+                        {typeof service.price === 'number' && (
                           <span className="text-swiss-mint font-semibold ml-4">
                             CHF {service.price.toFixed(2)}
                           </span>
