@@ -238,6 +238,8 @@ export const MOCK_PROVIDER_SETTINGS: ProviderSettings = {
 // Empty mock data for production (fetched from API)
 export const MOCK_PARTNERS: Partner[] = [];
 export const MOCK_LOG_ENTRIES: LogEntry[] = [];
+
+// Build timestamp to force cache refresh: 2025-11-19T11:44:00Z
 // Suggested Service Categories (users can add custom ones)
 export const SUGGESTED_SERVICE_CATEGORIES = [
   'Cleaning & Maintenance',
