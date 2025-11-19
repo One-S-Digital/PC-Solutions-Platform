@@ -414,7 +414,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-swiss-charcoal">{product.title}</h3>
                         {product.category && (
-                          <p className="text-xs uppercase tracking-wide text-gray-400 mt-1">{product.category}</p>
+                          <p className="text-xs tracking-wide text-gray-400 mt-1">{product.category}</p>
                         )}
                         {product.description && (
                           <p className="text-sm text-gray-600 mt-2 line-clamp-2">{product.description}</p>
