@@ -178,7 +178,7 @@ const HRProceduresPage: React.FC = () => {
         return false;
       }
 
-      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || doc.category;
+      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || formatCategory(doc.category);
       const matchesSearch =
         doc.title.toLowerCase().includes(searchLower) ||
         doc.category.toLowerCase().includes(searchLower) ||
