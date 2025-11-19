@@ -18,6 +18,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import FileUploadZone from '../../ui/FileUploadZone';
+import { formatServiceCategory } from '../../../utils/serviceFormatting';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -489,7 +490,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                             : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                         }`}
                       >
-                        {option.replace(/_/g, ' ')}
+                        {formatServiceCategory(t, option)}
                       </button>
                     ))}
                   </div>
