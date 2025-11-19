@@ -219,7 +219,8 @@ model Organization {
   languages            String[] // Languages spoken/offered
   capacity             Int? // For foundations - number of children
   pedagogy             String[] // Educational approaches for foundations
-  productCategory      String? // For suppliers
+  productCategory      String? // For suppliers - legacy single category
+  productCategories    String[] @default([]) // For suppliers - new flexible category tags
   serviceType          String? // For service providers
   minimumOrderQuantity Int? // For suppliers
   directOrderLink      String? // For suppliers
@@ -354,7 +355,8 @@ model Product {
   title       String
   description String?
   price       Float?
-  category    String?
+  category    String? // Keep for backward compatibility
+  categories  String[] @default([]) // New flexible categories as tags
   tags        String[]
   status      String   @default("ACTIVE") // ACTIVE, INACTIVE, PENDING, REJECTED
   isActive    Boolean  @default(true)
@@ -399,7 +401,8 @@ model Service {
   id           String          @id @default(uuid())
   title        String
   description  String?
-  category     ServiceCategory
+  category     ServiceCategory // Keep for backward compatibility
+  categories   String[]        @default([]) // New flexible categories as tags
   price        Float?
   priceInfo    String?
   availability String?

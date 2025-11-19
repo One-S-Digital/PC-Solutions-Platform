@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
+import ChipInput from '../../ui/ChipInput';
 import { 
   BuildingOfficeIcon, 
   PhotoIcon, 
@@ -18,7 +19,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import FileUploadZone from '../../ui/FileUploadZone';
-import { formatServiceCategory } from '../../../utils/serviceFormatting';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -44,6 +44,7 @@ const PEDAGOGY_OPTIONS = [
   'Other'
 ];
 
+// Legacy enum options for backward compatibility
 const SERVICE_CATEGORIES_OPTIONS = [
   'CLEANING',
   'IT_SUPPORT',
@@ -388,18 +389,20 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 {t('settings:companyProfile.supplierInfo', 'Supplier Information')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
-                <label htmlFor="productCategory" className="form-label md:pt-2">
-                  {t('settings:companyProfile.productCategory', 'Product Category')}
+                <label className="form-label">
+                  {t('settings:companyProfile.productCategories', 'Product Categories')}
                 </label>
                 <div className="form-input-container">
-                  <input
-                    type="text"
-                    id="productCategory"
-                    value={settings.productCategory || ''}
-                    onChange={(e) => onChange('productCategory', e.target.value)}
-                    className={STANDARD_INPUT_FIELD}
-                    placeholder={t('settings:companyProfile.productCategoryPlaceholder', 'e.g., Educational Toys, Furniture')}
+                  <ChipInput<string>
+                    selectedChips={settings.productCategories || []}
+                    availableOptions={[...SUGGESTED_PRODUCT_CATEGORIES]}
+                    onChange={(categories) => onChange('productCategories', categories)}
+                    placeholder={t('settings:companyProfile.productCategoriesPlaceholder', 'Type or select categories...')}
+                    allowCustomValues={true}
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('settings:companyProfile.productCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
+                  </p>
                 </div>
 
                 <label htmlFor="minimumOrderQuantity" className="form-label md:pt-2">
@@ -477,23 +480,16 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   {t('settings:companyProfile.serviceCategories', 'Service Categories')}
                 </label>
                 <div className="form-input-container">
-                  <p className="text-xs text-gray-500 mb-2">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {SERVICE_CATEGORIES_OPTIONS.map(option => (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => handleMultiSelectChange('serviceCategories', option)}
-                        className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-150 ${
-                          (settings.serviceCategories || []).includes(option)
-                            ? 'bg-swiss-mint text-white border-swiss-mint'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
-                        }`}
-                      >
-                        {formatServiceCategory(t, option)}
-                      </button>
-                    ))}
-                  </div>
+                  <ChipInput<string>
+                    selectedChips={settings.serviceCategories || []}
+                    availableOptions={[...SUGGESTED_SERVICE_CATEGORIES]}
+                    onChange={(categories) => onChange('serviceCategories', categories)}
+                    placeholder={t('settings:companyProfile.serviceCategoriesPlaceholder', 'Type or select categories...')}
+                    allowCustomValues={true}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('settings:companyProfile.serviceCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
+                  </p>
                 </div>
 
                 <label htmlFor="deliveryType" className="form-label md:pt-2">

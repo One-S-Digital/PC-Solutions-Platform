@@ -116,7 +116,18 @@ const MarketplacePage: React.FC = () => {
   const supplierProductCategories = useMemo(() => {
     const categories = new Set<string>();
     productSuppliers.forEach(supplier => {
-      MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).forEach(p => categories.add(p.category));
+      // Check organization product categories
+      if (supplier.productCategories) {
+        supplier.productCategories.forEach(cat => categories.add(cat));
+      }
+      // Also check product categories
+      MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).forEach(p => {
+        if (p.categories) {
+          p.categories.forEach(cat => categories.add(cat));
+        } else if (p.category) {
+          categories.add(p.category);
+        }
+      });
     });
     return ['All', ...Array.from(categories).sort()];
   }, [productSuppliers]);
@@ -129,7 +140,17 @@ const MarketplacePage: React.FC = () => {
     return ['All', ...Array.from(tags).sort()];
   }, [productSuppliers]);
   
-  const serviceProviderCategories = useMemo(() => ['All', ...new Set(MOCK_SERVICES.map(s => s.category))], []);
+  const serviceProviderCategories = useMemo(() => {
+    const categories = new Set<string>();
+    MOCK_SERVICES.forEach(s => {
+      if (s.categories) {
+        s.categories.forEach(cat => categories.add(cat));
+      } else if (s.category) {
+        categories.add(String(s.category));
+      }
+    });
+    return ['All', ...Array.from(categories).sort()];
+  }, []);
   const allRegions = useMemo(() => ['All', ...new Set(MOCK_ORGANIZATIONS.map(org => org.region).sort())], []);
 
   const currentCategories = activeTabIndex === 0 ? supplierProductCategories : serviceProviderCategories;
@@ -137,18 +158,33 @@ const MarketplacePage: React.FC = () => {
 
   const filteredSuppliers = useMemo(() => {
     return productSuppliers
-      .filter(supplier =>
-        (supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         (supplier.tags && supplier.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))) ||
-         MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
+      .filter(supplier => {
+        // Search filter
+        const matchesSearch = supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (supplier.tags && supplier.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+          (supplier.productCategories && supplier.productCategories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+          MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
             p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            p.category.toLowerCase().includes(searchTerm.toLowerCase())
-         )
-        ) &&
-        (regionFilter === 'All' || supplier.region === regionFilter) &&
-        (categoryFilter === 'All' || MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => p.category === categoryFilter)) &&
-        (tagFilter === 'All' || (supplier.tags && supplier.tags.includes(tagFilter)))
-      )
+            (p.categories && p.categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+            (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        
+        // Region filter
+        const matchesRegion = regionFilter === 'All' || supplier.region === regionFilter;
+        
+        // Category filter - check both organization and product categories
+        const matchesCategory = categoryFilter === 'All' || 
+          (supplier.productCategories && supplier.productCategories.includes(categoryFilter)) ||
+          MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
+            (p.categories && p.categories.includes(categoryFilter)) ||
+            p.category === categoryFilter
+          );
+        
+        // Tag filter
+        const matchesTag = tagFilter === 'All' || (supplier.tags && supplier.tags.includes(tagFilter));
+        
+        return matchesSearch && matchesRegion && matchesCategory && matchesTag;
+      })
       .sort((a, b) => {
         switch (sortOption) {
           case 'name_asc': return a.name.localeCompare(b.name);
@@ -160,11 +196,19 @@ const MarketplacePage: React.FC = () => {
   }, [searchTerm, regionFilter, categoryFilter, tagFilter, sortOption, productSuppliers]);
 
   const filteredServices = useMemo(() =>
-    MOCK_SERVICES.filter(s =>
-      s.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (categoryFilter === 'All' || s.category === categoryFilter) &&
-      (regionFilter === 'All' || serviceProviders.find(p => p.id === s.providerId)?.region === regionFilter)
-    ), [searchTerm, categoryFilter, regionFilter, serviceProviders]);
+    MOCK_SERVICES.filter(s => {
+      const matchesSearch = s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (s.categories && s.categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase())));
+      
+      const matchesCategory = categoryFilter === 'All' || 
+        (s.categories && s.categories.includes(categoryFilter)) ||
+        String(s.category) === categoryFilter;
+      
+      const matchesRegion = regionFilter === 'All' || 
+        serviceProviders.find(p => p.id === s.providerId)?.region === regionFilter;
+      
+      return matchesSearch && matchesCategory && matchesRegion;
+    }), [searchTerm, categoryFilter, regionFilter, serviceProviders]);
 
 
   const handleViewPartner = (partnerId: string) => {

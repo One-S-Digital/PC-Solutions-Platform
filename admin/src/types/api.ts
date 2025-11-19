@@ -123,7 +123,8 @@ export interface Product {
   brochureUrl?: string;
   brochureAssetId?: string;
   description: string;
-  category: string;
+  category: string; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   tags: string[];
   imageUrl?: string;
   imageAssetId?: string;
@@ -140,7 +141,8 @@ export interface Service {
   providerName: string;
   providerLogo?: string;
   description: string;
-  category: ServiceCategory;
+  category: ServiceCategory; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   availability: string;
   tags: string[];
   imageUrl?: string;

@@ -83,7 +83,8 @@ export interface Organization {
   languages?: string[];
   capacity?: number;
   pedagogy?: string[];
-  productCategory?: string;
+  productCategory?: string; // Legacy single category
+  productCategories?: string[]; // New: flexible product category tags
   serviceType?: string;
   minimumOrderQuantity?: number;
   directOrderLink?: string;
@@ -116,7 +117,8 @@ export interface Product {
   title: string;
   description?: string;
   price?: number;
-  category?: string;
+  category?: string; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   tags: string[];
   status: string; // ACTIVE, INACTIVE, PENDING, REJECTED
   isActive: boolean;
@@ -149,7 +151,8 @@ export interface Service {
   id: string;
   title: string;
   description?: string;
-  category: ServiceCategory;
+  category: ServiceCategory; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   price?: number;
   isActive: boolean;
   providerId: string;
@@ -709,7 +712,8 @@ interface BaseSettings {
     capacity?: number;
     pedagogy?: string[];
     // Supplier-specific fields
-    productCategory?: string;
+    productCategory?: string; // Legacy single category
+    productCategories?: string[]; // New: flexible product category tags
     minimumOrderQuantity?: number;
     catalogUrl?: string;
     // Service Provider-specific fields

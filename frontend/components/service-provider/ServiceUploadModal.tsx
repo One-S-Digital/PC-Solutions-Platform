@@ -1,7 +1,8 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { Service, ServiceCategory, SERVICE_CATEGORIES, ServiceDeliveryType, SERVICE_DELIVERY_TYPES } from '../../types';
-import { STANDARD_INPUT_FIELD } from '../../constants';
+import { STANDARD_INPUT_FIELD, SUGGESTED_SERVICE_CATEGORIES } from '../../constants';
 import Button from '../ui/Button';
+import ChipInput from '../ui/ChipInput';
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
     title: '',
     description: '',
     category: SERVICE_CATEGORIES[0],
+    categories: [],
     availability: '',
     tags: [],
     deliveryType: SERVICE_DELIVERY_TYPES[0],
@@ -36,10 +38,11 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
   useEffect(() => {
     if (isOpen) {
       if (existingService) {
-        // When editing, pre-fill the form. Tags need to be converted to string for input.
+        // When editing, pre-fill the form
         setFormData({
           ...existingService,
-          tags: existingService.tags || [], // Ensure tags is an array
+          categories: existingService.categories || [],
+          tags: existingService.tags || [],
         });
       } else {
         setFormData(initialFormState);
@@ -101,19 +104,27 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
               {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{500}</p>}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-              <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('common:serviceUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
-                  <select name="category" id="category" value={formData.category} onChange={handleInputChange} required className={STANDARD_INPUT_FIELD}>
-                    {SERVICE_CATEGORIES.map(cat => <option key={cat} value={cat}>{t(`common:serviceCategories.${cat}`, cat)}</option>)}
-                </select>
-              </div>
-              <div>
-                  <label htmlFor="deliveryType" className="block text-sm font-medium text-gray-700 mb-1">{t('common:serviceUploadModal.labels.deliveryType')}</label>
-                  <select name="deliveryType" id="deliveryType" value={formData.deliveryType} onChange={handleInputChange} className={STANDARD_INPUT_FIELD}>
-                    {SERVICE_DELIVERY_TYPES.map(type => <option key={type} value={type}>{t(`common:serviceDeliveryTypes.${type}`, type)}</option>)}
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('common:serviceUploadModal.labels.categories', 'Service Categories')} <span className="text-red-500 ml-0.5">*</span>
+              </label>
+              <ChipInput<string>
+                selectedChips={formData.categories || []}
+                availableOptions={[...SUGGESTED_SERVICE_CATEGORIES]}
+                onChange={(categories) => setFormData(prev => ({ ...prev, categories }))}
+                placeholder={t('common:serviceUploadModal.placeholders.categories', 'Type or select categories...')}
+                allowCustomValues={true}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {t('common:serviceUploadModal.categoriesHelpText', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="deliveryType" className="block text-sm font-medium text-gray-700 mb-1">{t('common:serviceUploadModal.labels.deliveryType')}</label>
+              <select name="deliveryType" id="deliveryType" value={formData.deliveryType} onChange={handleInputChange} className={STANDARD_INPUT_FIELD}>
+                {SERVICE_DELIVERY_TYPES.map(type => <option key={type} value={type}>{t(`common:serviceDeliveryTypes.${type}`, type)}</option>)}
+              </select>
             </div>
 
             <div>
