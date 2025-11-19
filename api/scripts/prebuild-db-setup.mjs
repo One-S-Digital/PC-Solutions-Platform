@@ -63,17 +63,65 @@ const parseJsonOutput = (raw) => {
 
 const getFailedMigrations = () => {
   try {
+    // First try JSON format
     const raw = runPrisma(
       ['migrate', 'status', '--schema', SCHEMA_PATH, '--json'],
       { silent: true, allowFailure: true },
     );
-    if (!raw) {
-      return [];
+    if (raw) {
+      try {
+        const parsed = parseJsonOutput(raw);
+        if (Array.isArray(parsed.failedMigrationNames) && parsed.failedMigrationNames.length > 0) {
+          log(`📋 Detected failed migrations via JSON: ${parsed.failedMigrationNames.join(', ')}`);
+          return parsed.failedMigrationNames;
+        }
+      } catch (parseError) {
+        warn(`⚠️  Could not parse JSON status, trying text format...`);
+      }
     }
-    const parsed = parseJsonOutput(raw);
-    return Array.isArray(parsed.failedMigrationNames) ? parsed.failedMigrationNames : [];
+    
+    // Fallback: try text format and parse it
+    const textRaw = runPrisma(
+      ['migrate', 'status', '--schema', SCHEMA_PATH],
+      { silent: true, allowFailure: true },
+    );
+    
+    if (textRaw) {
+      const failedMigrations = [];
+      const lines = textRaw.split('\n');
+      
+      for (const line of lines) {
+        // Match patterns like "Following migration have failed:" followed by migration names
+        // or "The `20251119100000_add_categories_array_fields` migration ... failed"
+        if (line.includes('have failed:') || line.includes('Following migration')) {
+          continue; // Header line
+        }
+        
+        // Look for migration names (format: YYYYMMDDHHMMSS_name)
+        const migrationMatch = line.match(/(\d{14}_[a-z_]+)/i);
+        if (migrationMatch && (line.includes('failed') || line.toLowerCase().includes('failed'))) {
+          failedMigrations.push(migrationMatch[1]);
+        }
+        
+        // Also match the specific format in the error message
+        if (line.includes('migration started at') && line.includes('failed')) {
+          const nameMatch = line.match(/`([^`]+)`/);
+          if (nameMatch) {
+            failedMigrations.push(nameMatch[1]);
+          }
+        }
+      }
+      
+      if (failedMigrations.length > 0) {
+        const unique = [...new Set(failedMigrations)];
+        log(`📋 Detected failed migrations via text parsing: ${unique.join(', ')}`);
+        return unique;
+      }
+    }
+    
+    return [];
   } catch (error) {
-    warn(`⚠️  Unable to detect failed migrations automatically: ${error.message}`);
+    warn(`⚠️  Unable to detect failed migrations: ${error.message}`);
     return [];
   }
 };
@@ -178,14 +226,20 @@ const handleFailedMigration = (migration) => {
 };
 
 log('🔧 Running database pre-build cleanup...');
+log(`📍 Database URL: ${process.env.DATABASE_URL ? '[SET]' : '[NOT SET]'}`);
+log(`📍 Schema path: ${SCHEMA_PATH}`);
 
 const failedMigrations = getFailedMigrations();
 
 if (failedMigrations.length === 0) {
   log('✅ No failed migrations detected.');
 } else {
-  log('❗ Detected failed migrations. Attempting automatic cleanup...');
-  failedMigrations.forEach(handleFailedMigration);
+  log(`❗ Detected ${failedMigrations.length} failed migration(s). Attempting automatic cleanup...`);
+  failedMigrations.forEach((migration) => {
+    log(`   🔄 Processing: ${migration}`);
+    handleFailedMigration(migration);
+  });
+  log('✅ Failed migrations processed.');
 }
 
 log('✅ Database pre-build cleanup complete.');
