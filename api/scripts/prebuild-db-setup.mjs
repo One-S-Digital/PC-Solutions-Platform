@@ -109,11 +109,65 @@ $$;
   );
 };
 
+const ensureCategoriesColumns = () => {
+  const sql = `
+DO $$
+BEGIN
+    -- Add categories column to products table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'products' AND column_name = 'categories'
+    ) THEN
+        ALTER TABLE "products" ADD COLUMN "categories" TEXT[] DEFAULT ARRAY[]::TEXT[];
+        
+        -- Migrate existing data
+        UPDATE "products" SET "categories" = ARRAY["category"] 
+        WHERE "category" IS NOT NULL AND "category" != '';
+    END IF;
+
+    -- Add categories column to services table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'services' AND column_name = 'categories'
+    ) THEN
+        ALTER TABLE "services" ADD COLUMN "categories" TEXT[] DEFAULT ARRAY[]::TEXT[];
+        
+        -- Migrate existing data
+        UPDATE "services" SET "categories" = ARRAY["category"::text] 
+        WHERE "category" IS NOT NULL;
+    END IF;
+
+    -- Add productCategories column to organizations table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'organizations' AND column_name = 'productCategories'
+    ) THEN
+        ALTER TABLE "organizations" ADD COLUMN "productCategories" TEXT[] DEFAULT ARRAY[]::TEXT[];
+        
+        -- Migrate existing data
+        UPDATE "organizations" SET "productCategories" = ARRAY["productCategory"] 
+        WHERE "productCategory" IS NOT NULL AND "productCategory" != '';
+    END IF;
+END
+$$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const handleFailedMigration = (migration) => {
   switch (migration) {
     case '20251104140358_add_asset_metadata_field':
       log(`   • Resolving ${migration} (metadata column)`);
       ensureMetadataColumn();
+      resolveMigration('applied', migration);
+      break;
+    case '20251119100000_add_categories_array_fields':
+      log(`   • Resolving ${migration} (categories columns)`);
+      ensureCategoriesColumns();
       resolveMigration('applied', migration);
       break;
     default:
