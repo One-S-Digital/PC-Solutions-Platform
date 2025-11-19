@@ -44,12 +44,13 @@ export class RecruitmentController {
     @Request() req?,
   ) {
     const normalizedContractType = contractType ? contractType.toUpperCase() : undefined;
-    const publishedOnly =
-      !foundationId &&
-      (!req?.user ||
-        [UserRole.EDUCATOR, UserRole.PARENT, UserRole.SERVICE_PROVIDER, UserRole.PRODUCT_SUPPLIER].includes(
-          req.user.role,
-        ));
+    const isPublicRole = !req?.user || [
+      UserRole.EDUCATOR,
+      UserRole.PARENT,
+      UserRole.SERVICE_PROVIDER,
+      UserRole.PRODUCT_SUPPLIER,
+    ].includes(req.user.role);
+    const publishedOnly = isPublicRole;
 
     return this.recruitmentService.findAllJobListings({
       foundationId,

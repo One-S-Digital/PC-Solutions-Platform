@@ -20,9 +20,6 @@ API_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 cd "$API_DIR" || exit 1
 
-echo "📦 Installing API dependencies for migrations..."
-pnpm install --filter ./api --frozen-lockfile
-
 echo "🔧 Generating Prisma client..."
 pnpm prisma generate
 

@@ -178,6 +178,13 @@ export class PrincipalService {
       None: 'none',
     };
 
+    const reverseMap: Record<string, 'Daily' | 'Weekly' | 'None'> = {
+      daily: 'Daily',
+      weekly: 'Weekly',
+      none: 'None',
+      immediate: 'Daily', // fallback
+    };
+
     const updated = await this.prisma.userNotificationPreferences.upsert({
       where: { userId },
       update: {
@@ -195,7 +202,7 @@ export class PrincipalService {
 
     return {
       newRequestEmailToggle: updated.leadManagement,
-      digestRadio: data.digestRadio ?? 'Daily',
+      digestRadio: updated.frequency ? reverseMap[updated.frequency] ?? 'Daily' : 'Daily',
       promoRedemptionAlertsToggle: updated.marketing,
     };
   }

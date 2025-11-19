@@ -169,7 +169,7 @@ BEGIN
         ALTER TABLE "products" ADD COLUMN "categories" TEXT[] DEFAULT ARRAY[]::TEXT[];
         
         -- Migrate existing data
-        UPDATE "products" SET "categories" = ARRAY["category"] 
+        UPDATE "products" SET "categories" = ARRAY[category] 
         WHERE "category" IS NOT NULL AND "category" != '';
     END IF;
 
@@ -181,7 +181,7 @@ BEGIN
         ALTER TABLE "services" ADD COLUMN "categories" TEXT[] DEFAULT ARRAY[]::TEXT[];
         
         -- Migrate existing data
-        UPDATE "services" SET "categories" = ARRAY["category"::text] 
+        UPDATE "services" SET "categories" = ARRAY[category::text] 
         WHERE "category" IS NOT NULL;
     END IF;
 
@@ -193,7 +193,7 @@ BEGIN
         ALTER TABLE "organizations" ADD COLUMN "productCategories" TEXT[] DEFAULT ARRAY[]::TEXT[];
         
         -- Migrate existing data
-        UPDATE "organizations" SET "productCategories" = ARRAY["productCategory"] 
+        UPDATE "organizations" SET "productCategories" = ARRAY[productCategory] 
         WHERE "productCategory" IS NOT NULL AND "productCategory" != '';
     END IF;
 END
