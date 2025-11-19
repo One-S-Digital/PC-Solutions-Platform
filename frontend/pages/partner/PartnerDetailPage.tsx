@@ -15,7 +15,7 @@ import { ArrowLeftIcon, BuildingStorefrontIcon, CogIcon, ShoppingCartIcon, TagIc
 import { useTranslation } from 'react-i18next';
 import { useMessaging } from '../../contexts/MessagingContext';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
-import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
+import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 
 
 interface ProductItemProps {
@@ -52,7 +52,7 @@ const ProductItemCard: React.FC<ProductItemProps> = ({ product, partner, isFound
       <img src={product.imageUrl || `https://picsum.photos/seed/${product.id}/100/100`} alt={product.title} className="w-full sm:w-24 h-24 object-cover rounded-md flex-shrink-0" />
       <div className="flex-grow">
         <h3 className="text-md font-semibold text-swiss-charcoal group-hover:text-swiss-mint">{product.title}</h3>
-        <p className="text-xs text-gray-500">{product.category}</p>
+        <p className="text-xs text-gray-500">{formatCategory(product.category)}</p>
         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
         <div className="flex items-center space-x-3 mt-1.5">
           {product.price && <p className="text-md font-semibold text-swiss-teal">CHF {product.price.toFixed(2)}</p>}

@@ -11,6 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import { formatCategory } from '../utils/serviceFormatting';
 
 interface CourseMaterialCardProps {
   item: Course;
@@ -242,7 +243,7 @@ const ELearningPage: React.FC = () => {
                         <option key={cat} value={cat}>
                           {cat === 'All'
                             ? t('eLearning.allCategoriesLabel', { defaultValue: 'All Categories' })
-                            : (ELEARNING_CATEGORY_LABELS[cat] || cat)}
+                            : (ELEARNING_CATEGORY_LABELS[cat] || formatCategory(cat))}
                         </option>
                       ))}
                   </select>

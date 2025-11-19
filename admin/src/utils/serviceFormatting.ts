@@ -1,12 +1,18 @@
 import { TFunction } from 'i18next';
 import { ServiceCategory, ServiceDeliveryType } from '../types';
 
-const humanize = (value: string) =>
+export const humanize = (value: string) =>
   value
     .replace(/_/g, ' ')
     .trim()
     .toLowerCase()
     .replace(/\b\w/g, char => char.toUpperCase());
+
+// Format any category string to proper case (not uppercase)
+export const formatCategory = (category: string | null | undefined): string => {
+  if (!category) return '';
+  return humanize(String(category));
+};
 
 export const formatServiceCategory = (
   t: TFunction,

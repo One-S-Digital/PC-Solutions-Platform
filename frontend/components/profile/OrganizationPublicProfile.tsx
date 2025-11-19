@@ -16,7 +16,7 @@ import {
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { User, UserRole, Product, Service, JobListing, Organization } from '../../types';
-import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
+import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 
 type OrganizationPublicProfileProps = {
   user?: User;
@@ -316,7 +316,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         {t('profile:organization.productCategory', { defaultValue: 'Product Category' })}
                       </p>
                       <p className="text-gray-700">
-                        {organization.productCategory || <span className="text-gray-400 italic text-xs">Not specified</span>}
+                        {organization.productCategory ? formatCategory(organization.productCategory) : <span className="text-gray-400 italic text-xs">Not specified</span>}
                       </p>
                     </div>
 
@@ -414,7 +414,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-swiss-charcoal">{product.title}</h3>
                         {product.category && (
-                          <p className="text-xs tracking-wide text-gray-400 mt-1">{product.category}</p>
+                          <p className="text-xs tracking-wide text-gray-400 mt-1">{formatCategory(product.category)}</p>
                         )}
                         {product.description && (
                           <p className="text-sm text-gray-600 mt-2 line-clamp-2">{product.description}</p>
