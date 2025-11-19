@@ -121,6 +121,13 @@ enum ConversationType {
   SUPPORT
 }
 
+enum TranslationStatus {
+  PENDING
+  MT_DONE
+  REVIEWED
+  APPROVED
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -264,7 +271,8 @@ model Asset {
   version      Int       @default(1) // Version for response/schema changes
 
   // Content categorization fields
-  category    String? // HR_DOCUMENT, ELEARNING, STATE_POLICY, etc.
+  category       String? // HR_DOCUMENT, ELEARNING, STATE_POLICY, etc. (content type)
+  contentCategory String? // Child Development, Onboarding, Education Policy, etc. (actual category)
   title       String?
   description String?
   metadata    Json? // Legacy/flexible metadata (deprecated, use typed fields below)
@@ -323,6 +331,7 @@ model Asset {
   @@index([storageKey])
   @@index([etag])
   @@index([category])
+  @@index([contentCategory])
   @@index([contentType])
   @@index([language])
   @@index([status])
@@ -546,6 +555,51 @@ model ParentLead {
 }
 
 // Translation tables for i18n
+
+// Static UI translations (buttons, labels, messages)
+model StaticTranslation {
+  namespace   String
+  key         String
+  lang        String
+  value       String    @db.Text
+  updatedAt   DateTime  @updatedAt
+  updatedBy   String?
+  createdAt   DateTime  @default(now())
+  needsReview Boolean   @default(false)
+  reviewedBy  String?
+  reviewedAt  DateTime?
+
+  @@id([namespace, key, lang])
+  @@index([namespace, lang])
+  @@index([key])
+  @@map("static_translations")
+}
+
+// Enhanced Entity Translation with lifecycle states
+model EntityTranslation {
+  entityType   String
+  entityId     String
+  lang         String
+  field        String
+  text         String            @db.Text
+  origin       String            @default("machine")
+  status       TranslationStatus @default(PENDING)
+  verified     Boolean           @default(false)
+  sourceHash   String
+  updatedAt    DateTime          @updatedAt
+  translatedAt DateTime?
+  mtProvider   String?
+  approvedAt   DateTime?
+  approvedBy   String?
+  reviewedAt   DateTime?
+  reviewedBy   String?
+
+  @@id([entityType, entityId, lang, field])
+  @@index([entityType, lang])
+  @@index([status, updatedAt])
+  @@map("entity_translations")
+}
+
 model EntitySource {
   entityType String
   entityId   String
@@ -557,19 +611,71 @@ model EntitySource {
   @@map("entity_sources")
 }
 
-model EntityTranslation {
-  entityType String
-  entityId   String
-  lang       String
-  field      String
-  text       String
-  origin     String   @default("machine")
-  verified   Boolean  @default(false)
-  sourceHash String
-  updatedAt  DateTime @default(now())
+// Translation Memory: Cache MT results to avoid re-translating
+model TranslationMemory {
+  id             String   @id @default(cuid())
+  sourceTextHash String
+  sourceLang     String
+  targetLang     String
+  translatedText String   @db.Text
+  mtProvider     String
+  usageCount     Int      @default(1)
+  createdAt      DateTime @default(now())
+  lastUsedAt     DateTime @updatedAt
 
-  @@id([entityType, entityId, lang, field])
-  @@map("entity_translations")
+  @@unique([sourceTextHash, sourceLang, targetLang])
+  @@index([sourceLang, targetLang])
+  @@map("translation_memory")
+}
+
+// Track translation releases for cache-busting
+model TranslationRelease {
+  id          String   @id @default(cuid())
+  version     String   @unique
+  description String?
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  isActive    Boolean  @default(false)
+
+  @@index([isActive, createdAt])
+  @@map("translation_releases")
+}
+
+// Audit log for translation changes
+model TranslationAuditLog {
+  id         String   @id @default(cuid())
+  type       String // 'static' | 'dynamic'
+  namespace  String?
+  entityType String?
+  entityId   String?
+  key        String?
+  field      String?
+  lang       String
+  action     String // 'create' | 'update' | 'delete' | 'approve' | 'review'
+  oldValue   String?  @db.Text
+  newValue   String?  @db.Text
+  userId     String
+  createdAt  DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([userId, createdAt])
+  @@map("translation_audit_logs")
+}
+
+// Track MT API usage and costs
+model MTCostTracking {
+  id         String   @id @default(cuid())
+  date       DateTime @db.Date
+  provider   String
+  sourceLang String
+  targetLang String
+  characters Int
+  cost       Decimal  @db.Decimal(10, 4)
+  jobCount   Int      @default(0)
+
+  @@unique([date, provider, sourceLang, targetLang])
+  @@index([date, provider])
+  @@map("mt_cost_tracking")
 }
 
 // Subscription System Models

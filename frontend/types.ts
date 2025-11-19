@@ -306,6 +306,7 @@ export interface Course {
     status: 'Draft' | 'Published' | 'Archived';
     fileUrl?: string; // For PDF, Video, Link types
     tags?: string[];
+    contentPreview?: string;
 }
 export type LanguageCode = 'EN' | 'FR' | 'DE';
 
@@ -334,6 +335,7 @@ export interface HRDocument {
     language?: LanguageCode;
     version?: string;
     status: 'Draft' | 'Published' | 'Archived';
+    contentPreview?: string;
 }
 
 export const POLICY_CATEGORIES = [

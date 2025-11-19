@@ -1,6 +1,8 @@
 import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -16,7 +18,10 @@ import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
 @UseGuards()
 @ApiBearerAuth()
 export class SettingsController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly translationService: TranslationService,
+  ) {}
 
   @Get('foundation')
   @Roles(UserRole.FOUNDATION)
@@ -91,7 +96,7 @@ export class SettingsController {
       });
 
       if (userOrg) {
-        await tx.organization.update({
+        const updatedOrg = await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: settings.companyName,
@@ -103,6 +108,22 @@ export class SettingsController {
             pedagogy: settings.pedagogy,
           }
         });
+
+        // Update translations if translatable fields changed
+        if (settings.companyName !== undefined) {
+          const translatableFields = FIELDS_BY_ENTITY.organization || ['name', 'description'];
+          const translationPayload: Record<string, any> = {
+            name: updatedOrg.name,
+            description: updatedOrg.description || '',
+          };
+          
+          await this.translationService.saveEntityWithTranslations(
+            'organization',
+            updatedOrg.id,
+            translationPayload,
+            translatableFields,
+          );
+        }
       }
     });
 

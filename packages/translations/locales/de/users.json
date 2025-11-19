@@ -42,6 +42,42 @@
     "title": "Rollenverwaltung",
     "search": "Benutzer suchen...",
     "addNewUser": "Neuen Benutzer hinzufügen",
-    "noUsersFound": "Keine Benutzer für diese Rolle gefunden"
+    "noUsersFound": "Keine Benutzer für diese Rolle gefunden",
+    "allUsersTitle": "Alle Benutzer",
+    "rolePageTitle": "{{role}} Benutzer",
+    "searchPlaceholder": "Benutzer suchen...",
+    "addNewUserButton": "Neuen Benutzer hinzufügen",
+    "addNewUserTBD": "Funktion zum Hinzufügen von Benutzern kommt bald",
+    "filtersButton": "Filter",
+    "filtersTBD": "Filterfunktion kommt bald",
+    "emptyState": "Keine Benutzer gefunden",
+    "confirmDeleteUser": "Möchten Sie diesen Benutzer wirklich löschen?",
+    "cannotDeleteOwnAccount": "Sie können Ihr eigenes Konto nicht löschen",
+    "userProfileUpdated": "Profil von {{name}} erfolgreich aktualisiert",
+    "status": {
+      "pending": "Ausstehend",
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "table": {
+      "nameOrg": "Name / Organisation",
+      "role": "Rolle",
+      "region": "Region",
+      "status": "Status",
+      "lastLogin": "Letzte Anmeldung",
+      "actions": "Aktionen"
+    },
+    "userDetailDrawer": {
+      "title": "Benutzerdetails",
+      "roleLabel": "Rolle",
+      "statusLabel": "Status",
+      "regionLabel": "Region",
+      "lastLoginLabel": "Letzte Anmeldung",
+      "orgLabel": "Organisation",
+      "adminActionsTitle": "Administratoraktionen",
+      "activateUserButton": "Benutzer aktivieren",
+      "changeRoleLabel": "Rolle ändern",
+      "cannotModifyOwnAccount": "Sie können Ihr eigenes Konto nicht ändern"
+    }
   }
 }

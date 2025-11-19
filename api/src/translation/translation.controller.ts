@@ -1,6 +1,8 @@
 import { Controller, Get, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { TranslationService } from './translation.service';
+import { DeepLService } from './deepl.service';
+import { ConfigService } from '@nestjs/config';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -10,7 +12,11 @@ import { UserRole } from '@prisma/client';
 @Controller('translation')
 @UseGuards(RolesGuard)
 export class TranslationController {
-  constructor(private translationService: TranslationService) {}
+  constructor(
+    private translationService: TranslationService,
+    private deepLService: DeepLService,
+    private configService: ConfigService,
+  ) {}
 
   @Get('entity/:entityType/:entityId')
   @ApiOperation({ summary: 'Get translated entity fields' })
@@ -105,6 +111,45 @@ export class TranslationController {
       lang,
       fields: resolvedFields,
       metadata,
+    };
+  }
+
+  @Get('diagnostics/deepl')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Check DeepL service status and configuration (Admin only)' })
+  @ApiResponse({ status: 200, description: 'DeepL diagnostics retrieved successfully' })
+  async getDeepLDiagnostics() {
+    const apiKey = this.configService.get<string>('DEEPL_API_KEY');
+    const hasApiKey = !!apiKey;
+    const isAvailable = this.deepLService.isAvailable();
+    
+    let testResult = null;
+    if (isAvailable) {
+      try {
+        // Test translation
+        const testTranslation = await this.deepLService.translate('Hello', 'en', 'fr');
+        testResult = {
+          success: true,
+          testText: 'Hello',
+          translatedText: testTranslation,
+          sourceLang: 'en',
+          targetLang: 'fr',
+        };
+      } catch (error) {
+        testResult = {
+          success: false,
+          error: error.message,
+        };
+      }
+    }
+
+    return {
+      configured: hasApiKey,
+      apiKeyPresent: hasApiKey,
+      apiKeyLength: apiKey ? apiKey.length : 0,
+      available: isAvailable,
+      testResult,
+      timestamp: new Date().toISOString(),
     };
   }
 

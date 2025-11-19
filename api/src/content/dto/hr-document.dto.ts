@@ -239,5 +239,9 @@ export class GetHrDocumentsQueryDto {
   @IsOptional()
   @IsEnum(LanguageCode)
   language?: LanguageCode;
+
+  @IsOptional()
+  @IsString()
+  lang?: string; // Language for translation resolution (en, fr, de)
 }
 

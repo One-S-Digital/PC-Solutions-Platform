@@ -1,6 +1,9 @@
-import { Controller, Get, Put, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
+import { ProfilesService } from './profiles.service';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -62,7 +65,11 @@ export class CreateOrganizationDto {
 @UseGuards()
 @ApiBearerAuth()
 export class ProfileController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly profilesService: ProfilesService,
+    private readonly translationService: TranslationService,
+  ) {}
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
@@ -121,7 +128,7 @@ export class ProfileController {
       });
 
       for (const userOrg of userOrganizations) {
-        await this.prisma.organization.update({
+        const updatedOrg = await this.prisma.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: updateData.organizationName || userOrg.organization.name,
@@ -141,6 +148,21 @@ export class ProfileController {
             bookingLink: updateData.bookingLink || userOrg.organization.bookingLink,
           }
         });
+
+        // Save/update organization translations
+        const translatableFields = FIELDS_BY_ENTITY.organization || ['name', 'description'];
+        const translationPayload: Record<string, any> = {
+          name: updatedOrg.name,
+          description: (updatedOrg as any).description || '',
+        };
+        if (translationPayload.name || translationPayload.description) {
+          await this.translationService.saveEntityWithTranslations(
+            'organization',
+            updatedOrg.id,
+            translationPayload,
+            translatableFields,
+          );
+        }
       }
     }
 
@@ -154,7 +176,7 @@ export class ProfileController {
   @Get('me/organizations')
   @ApiOperation({ summary: 'Get user organizations' })
   @ApiResponse({ status: 200, description: 'Organizations retrieved successfully' })
-  async getMyOrganizations(@Request() req) {
+  async getMyOrganizations(@Request() req, @Query('lang') lang?: string) {
     const userId = req.context.userId;
     
     const organizations = await this.prisma.userOrganization.findMany({
@@ -164,9 +186,32 @@ export class ProfileController {
       }
     });
 
+    // Resolve translations if language is specified
+    let orgData = organizations.map(uo => uo.organization);
+    if (lang && lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.organization || ['name', 'description'];
+      
+      orgData = await Promise.all(
+        orgData.map(async (org) => {
+          const translatedFields = await this.translationService.resolveEntity(
+            'organization',
+            org.id,
+            translatableFields,
+            lang,
+          );
+          
+          return {
+            ...org,
+            name: translatedFields.name || org.name,
+            description: translatedFields.description || org.description,
+          };
+        }),
+      );
+    }
+
     return {
       success: true,
-      data: organizations.map(uo => uo.organization)
+      data: orgData
     };
   }
 
@@ -176,9 +221,10 @@ export class ProfileController {
   async createOrganization(@Request() req, @Body() organizationData: CreateOrganizationDto) {
     const userId = req.context.userId;
     
-    // Create organization
-    const organization = await this.prisma.organization.create({
-      data: {
+    // Use ProfilesService which handles translation integration
+    const organization = await this.profilesService.createOrganization(
+      userId,
+      {
         name: organizationData.name,
         type: this.mapStringToOrganizationType(organizationData.type),
         contactPerson: organizationData.contactPerson,
@@ -195,17 +241,9 @@ export class ProfileController {
         serviceCategories: organizationData.serviceCategories || [],
         deliveryType: organizationData.deliveryType,
         bookingLink: organizationData.bookingLink,
-      }
-    });
-
-    // Link user to organization
-    await this.prisma.userOrganization.create({
-      data: {
-        userId,
-        organizationId: organization.id,
-        role: req.context.role,
-      }
-    });
+      },
+      req.context.role,
+    );
 
     return {
       success: true,

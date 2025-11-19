@@ -277,5 +277,9 @@ export class GetElearningQueryDto {
   @IsOptional()
   @IsEnum(ContentStatus)
   status?: ContentStatus;
+
+  @IsOptional()
+  @IsString()
+  lang?: string; // Language for translation resolution (en, fr, de)
 }
 

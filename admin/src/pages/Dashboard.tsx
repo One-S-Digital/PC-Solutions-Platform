@@ -24,12 +24,14 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
 import ContentUploadModal from '../components/ContentUploadModal'
+import { useTranslation } from 'react-i18next'
 
 type ContentType = 'e-learning' | 'hr' | 'policy';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const apiClient = useApiClient()
+  const { t } = useTranslation('dashboard')
   const user = {
     fullName: 'Development User'
   }
@@ -60,7 +62,7 @@ const Dashboard: React.FC = () => {
 
   const stats = [
     {
-      name: 'Total Users',
+      name: t('sidebar.allUsersTitle', 'Total Users'),
       value: usersData || 0,
       icon: Users,
       loading: usersLoading,
@@ -68,7 +70,7 @@ const Dashboard: React.FC = () => {
       bgColor: 'bg-swiss-mint/10',
     },
     {
-      name: 'Organizations',
+      name: t('sidebar.foundations', 'Organizations'),
       value: orgsData || 0,
       icon: Building2,
       loading: orgsLoading,
@@ -76,7 +78,7 @@ const Dashboard: React.FC = () => {
       bgColor: 'bg-swiss-sand/20',
     },
     {
-      name: 'Products',
+      name: t('sidebar.products', 'Products'),
       value: productsData || 0,
       icon: Package,
       loading: productsLoading,
@@ -84,7 +86,7 @@ const Dashboard: React.FC = () => {
       bgColor: 'bg-swiss-teal/10',
     },
     {
-      name: 'Parent Leads',
+      name: t('sidebar.parentLeads', 'Parent Leads'),
       value: leadsData || 0,
       icon: Heart,
       loading: leadsLoading,
@@ -192,7 +194,7 @@ const Dashboard: React.FC = () => {
 
   const contentStats = [
     {
-      name: 'E-Learning Items',
+      name: t('eLearningPage.title', 'E-Learning Items'),
       count: eLearningCount,
       icon: GraduationCap,
       loading: contentLoading,
@@ -202,7 +204,7 @@ const Dashboard: React.FC = () => {
       addAction: () => handleOpenContentModal('e-learning'),
     },
     {
-      name: 'HR Documents',
+      name: t('hrProceduresPage.title', 'HR Documents'),
       count: hrDocsCount,
       icon: FileText,
       loading: contentLoading,
@@ -212,7 +214,7 @@ const Dashboard: React.FC = () => {
       addAction: () => handleOpenContentModal('hr'),
     },
     {
-      name: 'State Policies',
+      name: t('statePoliciesPage.title', 'State Policies'),
       count: policiesCount,
       icon: Scale,
       loading: contentLoading,
@@ -227,8 +229,8 @@ const Dashboard: React.FC = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-swiss-charcoal">Admin Dashboard</h1>
-        <p className="mt-1 text-gray-500">Welcome back, {user?.fullName}. Here's what's happening with your platform.</p>
+        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('sidebar.dashboard')}</h1>
+        <p className="mt-1 text-gray-500">{t('dashboardPage.welcome', { name: user?.fullName })}</p>
       </div>
 
       {/* System Status */}
@@ -236,12 +238,12 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className={`w-3 h-3 rounded-full ${systemStatus ? 'bg-swiss-mint' : 'bg-red-500'} animate-pulse`}></div>
-            <h2 className="text-lg font-semibold text-swiss-charcoal">System Status</h2>
+            <h2 className="text-lg font-semibold text-swiss-charcoal">{t('adminSystemMonitoringPage.overallStatus.title', 'System Status')}</h2>
           </div>
           <div className="flex items-center space-x-2">
             <Activity className="h-5 w-5 text-gray-400" />
             <span className="text-sm text-gray-600">
-              {systemStatus ? 'All systems operational' : 'System issues detected'}
+              {systemStatus ? t('adminSystemMonitoringPage.overallStatus.operational','All systems operational') : t('adminSystemMonitoringPage.overallStatus.down','System issues detected')}
             </span>
           </div>
         </div>
@@ -249,20 +251,20 @@ const Dashboard: React.FC = () => {
         {healthData?.data && (
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-gray-500">Environment:</span>
+              <span className="text-gray-500">{t('adminSystemMonitoringPage.metadata.environment','Environment')}:</span>
               <span className="ml-2 font-medium text-swiss-charcoal">{healthData.data.environment}</span>
             </div>
             <div>
-              <span className="text-gray-500">Uptime:</span>
+              <span className="text-gray-500">{t('adminSystemMonitoringPage.serverPerformance.uptimeDays','Uptime')}:</span>
               <span className="ml-2 font-medium text-swiss-charcoal">{Math.floor(healthData.data.uptime / 60)}m</span>
             </div>
             <div>
-              <span className="text-gray-500">Backend API:</span>
-              <span className="ml-2 font-medium text-swiss-mint">Connected</span>
+              <span className="text-gray-500">{t('adminSystemMonitoringPage.components.api','API')}:</span>
+              <span className="ml-2 font-medium text-swiss-mint">{t('adminSystemMonitoringPage.overallStatus.operational','Connected')}</span>
             </div>
             <div>
-              <span className="text-gray-500">Database:</span>
-              <span className="ml-2 font-medium text-swiss-mint">Connected</span>
+              <span className="text-gray-500">{t('adminSystemMonitoringPage.components.database','Database')}:</span>
+              <span className="ml-2 font-medium text-swiss-mint">{t('adminSystemMonitoringPage.overallStatus.operational','Connected')}</span>
             </div>
           </div>
         )}
@@ -292,13 +294,13 @@ const Dashboard: React.FC = () => {
       {/* Content Management Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-swiss-charcoal">Content Management</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('adminContentManagementDashboardPage.title','Content Management')}</h2>
           <Button
             onClick={() => navigate('/content')}
             variant="outline"
             className="text-sm"
           >
-            View All Content →
+            {t('hrProceduresPage.backToCategoriesButton','View All Content')} →
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -312,7 +314,7 @@ const Dashboard: React.FC = () => {
                   <button
                     onClick={stat.addAction}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    title={`Add ${stat.name}`}
+                    title={t('buttons.add', 'Add') + ' ' + stat.name}
                   >
                     <PlusCircle className="h-5 w-5 text-gray-400 hover:text-indigo-600" />
                   </button>
@@ -330,7 +332,7 @@ const Dashboard: React.FC = () => {
                 onClick={() => navigate(stat.link)}
                 className={`block w-full px-6 py-3 text-sm font-medium text-center ${stat.bgColor} ${stat.color} hover:opacity-80 transition-opacity`}
               >
-                View All →
+                {t('navbar.viewAll','View All')} →
               </button>
             </Card>
           ))}

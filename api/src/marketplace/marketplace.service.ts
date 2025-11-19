@@ -7,17 +7,20 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CreateCatalogDto, UpdateCatalogDto } from './dto/create-catalog.dto';
 import { CsvProcessingService } from './csv-processing.service';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 @Injectable()
 export class MarketplaceService {
   constructor(
     private prisma: PrismaService,
     private csvProcessingService: CsvProcessingService,
+    private translationService: TranslationService,
   ) {}
 
   // Product Management
   async createProduct(createProductDto: CreateProductDto, supplierId: string) {
-    return this.prisma.product.create({
+    const product = await this.prisma.product.create({
       data: {
         ...createProductDto,
         supplierId,
@@ -27,6 +30,25 @@ export class MarketplaceService {
         imageAsset: true,
       },
     });
+
+    // Save translatable fields and trigger translation
+    const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
+    const translationPayload: Record<string, any> = {
+      title: product.title,
+      description: product.description || '',
+    };
+    
+    // Only save translations if there's translatable content
+    if (translationPayload.title || translationPayload.description) {
+      await this.translationService.saveEntityWithTranslations(
+        'product',
+        product.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return product;
   }
 
   async findAllProducts(filters?: {
@@ -34,6 +56,7 @@ export class MarketplaceService {
     supplierId?: string;
     isActive?: boolean;
     search?: string;
+    lang?: string;
   }) {
     const where: any = {};
 
@@ -57,7 +80,7 @@ export class MarketplaceService {
       ];
     }
 
-    return this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       where,
       include: {
         supplier: true,
@@ -65,10 +88,34 @@ export class MarketplaceService {
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Resolve translations if language is specified
+    if (filters?.lang && filters.lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
+      const productsWithTranslations = await Promise.all(
+        products.map(async (product) => {
+          const translatedFields = await this.translationService.resolveEntity(
+            'product',
+            product.id,
+            translatableFields,
+            filters.lang!,
+          );
+          
+          return {
+            ...product,
+            title: translatedFields.title || product.title,
+            description: translatedFields.description || product.description,
+          };
+        }),
+      );
+      return productsWithTranslations;
+    }
+
+    return products;
   }
 
-  async findProductById(id: string) {
-    return this.prisma.product.findUnique({
+  async findProductById(id: string, lang?: string) {
+    const product = await this.prisma.product.findUnique({
       where: { id },
       include: {
         supplier: true,
@@ -80,10 +127,33 @@ export class MarketplaceService {
         },
       },
     });
+
+    if (!product) {
+      return null;
+    }
+
+    // Resolve translations if language is specified
+    if (lang && lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
+      const translatedFields = await this.translationService.resolveEntity(
+        'product',
+        product.id,
+        translatableFields,
+        lang,
+      );
+      
+      return {
+        ...product,
+        title: translatedFields.title || product.title,
+        description: translatedFields.description || product.description,
+      };
+    }
+
+    return product;
   }
 
   async updateProduct(id: string, updateProductDto: UpdateProductDto) {
-    return this.prisma.product.update({
+    const product = await this.prisma.product.update({
       where: { id },
       data: updateProductDto,
       include: {
@@ -91,6 +161,26 @@ export class MarketplaceService {
         imageAsset: true,
       },
     });
+
+    // Update translations if translatable fields changed
+    const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
+    const hasTranslatableChanges = updateProductDto.title !== undefined || updateProductDto.description !== undefined;
+    
+    if (hasTranslatableChanges) {
+      const translationPayload: Record<string, any> = {
+        title: product.title,
+        description: product.description || '',
+      };
+      
+      await this.translationService.saveEntityWithTranslations(
+        'product',
+        product.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return product;
   }
 
   async deleteProduct(id: string) {
@@ -101,7 +191,7 @@ export class MarketplaceService {
 
   // Service Management
   async createService(createServiceDto: CreateServiceDto, providerId: string) {
-    return this.prisma.service.create({
+    const service = await this.prisma.service.create({
       data: {
         ...createServiceDto,
         providerId,
@@ -114,6 +204,25 @@ export class MarketplaceService {
         },
       },
     });
+
+    // Save translatable fields and trigger translation
+    const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
+    const translationPayload: Record<string, any> = {
+      title: service.title,
+      description: service.description || '',
+    };
+    
+    // Only save translations if there's translatable content
+    if (translationPayload.title || translationPayload.description) {
+      await this.translationService.saveEntityWithTranslations(
+        'service',
+        service.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return service;
   }
 
   async findAllServices(filters?: {
@@ -121,6 +230,7 @@ export class MarketplaceService {
     providerId?: string;
     isActive?: boolean;
     search?: string;
+    lang?: string;
   }) {
     const where: any = {};
 
@@ -143,7 +253,7 @@ export class MarketplaceService {
       ];
     }
 
-    return this.prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where,
       include: {
         provider: {
@@ -154,10 +264,34 @@ export class MarketplaceService {
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Resolve translations if language is specified
+    if (filters?.lang && filters.lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
+      const servicesWithTranslations = await Promise.all(
+        services.map(async (service) => {
+          const translatedFields = await this.translationService.resolveEntity(
+            'service',
+            service.id,
+            translatableFields,
+            filters.lang!,
+          );
+          
+          return {
+            ...service,
+            title: translatedFields.title || service.title,
+            description: translatedFields.description || service.description,
+          };
+        }),
+      );
+      return servicesWithTranslations;
+    }
+
+    return services;
   }
 
-  async findServiceById(id: string) {
-    return this.prisma.service.findUnique({
+  async findServiceById(id: string, lang?: string) {
+    const service = await this.prisma.service.findUnique({
       where: { id },
       include: {
         provider: {
@@ -172,10 +306,33 @@ export class MarketplaceService {
         },
       },
     });
+
+    if (!service) {
+      return null;
+    }
+
+    // Resolve translations if language is specified
+    if (lang && lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
+      const translatedFields = await this.translationService.resolveEntity(
+        'service',
+        service.id,
+        translatableFields,
+        lang,
+      );
+      
+      return {
+        ...service,
+        title: translatedFields.title || service.title,
+        description: translatedFields.description || service.description,
+      };
+    }
+
+    return service;
   }
 
   async updateService(id: string, updateServiceDto: UpdateServiceDto) {
-    return this.prisma.service.update({
+    const service = await this.prisma.service.update({
       where: { id },
       data: updateServiceDto,
       include: {
@@ -186,6 +343,26 @@ export class MarketplaceService {
         },
       },
     });
+
+    // Update translations if translatable fields changed
+    const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
+    const hasTranslatableChanges = updateServiceDto.title !== undefined || updateServiceDto.description !== undefined;
+    
+    if (hasTranslatableChanges) {
+      const translationPayload: Record<string, any> = {
+        title: service.title,
+        description: service.description || '',
+      };
+      
+      await this.translationService.saveEntityWithTranslations(
+        'service',
+        service.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return service;
   }
 
   async deleteService(id: string) {

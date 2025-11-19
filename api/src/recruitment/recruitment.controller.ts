@@ -27,8 +27,10 @@ export class RecruitmentController {
   @Post('job-listings')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   createJobListing(@Body() createJobListingDto: CreateJobListingDto, @Request() req) {
-    const foundationId = req.user.organizationId;
-    return this.recruitmentService.createJobListing(createJobListingDto, foundationId);
+    const foundationId = createJobListingDto.foundationId || req.user.organizationId;
+    const userRole = req.user?.role;
+    const userId = req.user?.id || req.context?.userId;
+    return this.recruitmentService.createJobListing(createJobListingDto, foundationId, userRole, userId);
   }
 
   @Get('job-listings')
@@ -37,18 +39,20 @@ export class RecruitmentController {
     @Query('status') status?: string,
     @Query('location') location?: string,
     @Query('search') search?: string,
+    @Query('lang') lang?: string,
   ) {
     return this.recruitmentService.findAllJobListings({
       foundationId,
       status,
       location,
       search,
+      lang,
     });
   }
 
   @Get('job-listings/:id')
-  findJobListingById(@Param('id') id: string) {
-    return this.recruitmentService.findJobListingById(id);
+  findJobListingById(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.recruitmentService.findJobListingById(id, lang);
   }
 
   @Patch('job-listings/:id')
@@ -76,17 +80,19 @@ export class RecruitmentController {
     @Query('candidateId') candidateId?: string,
     @Query('jobListingId') jobListingId?: string,
     @Query('status') status?: string,
+    @Query('lang') lang?: string,
   ) {
     return this.recruitmentService.findAllJobApplications({
       candidateId,
       jobListingId,
       status,
+      lang,
     });
   }
 
   @Get('applications/:id')
-  findJobApplicationById(@Param('id') id: string) {
-    return this.recruitmentService.findJobApplicationById(id);
+  findJobApplicationById(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.recruitmentService.findJobApplicationById(id, lang);
   }
 
   @Patch('applications/:id')

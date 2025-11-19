@@ -7,6 +7,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudflareR2Service } from '../upload/cloudflare-r2.service';
 import { AssetKind } from '@prisma/client';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 import {
   UploadElearningDto,
   UpdateElearningDto,
@@ -47,6 +49,7 @@ export class ContentService {
   constructor(
     private prisma: PrismaService,
     private r2Service: CloudflareR2Service,
+    private translationService: TranslationService,
   ) {}
 
   /**
@@ -83,19 +86,31 @@ export class ContentService {
       }
     }
 
-    // Check for duplicate title
-    const existingContent = await this.prisma.asset.findFirst({
+    // Ensure unique title by auto-suffixing duplicates for e-learning
+    const elBaseTitle = dto.title?.trim();
+    if (!elBaseTitle) {
+      throw new BadRequestException('Title is required');
+    }
+    const elExisting = await this.prisma.asset.findMany({
       where: {
-        title: dto.title,
         uploadedById: userId,
         category: 'ELEARNING',
+        title: { startsWith: elBaseTitle },
       },
+      select: { title: true },
     });
-
-    if (existingContent) {
-      throw new BadRequestException(
-        'E-learning content with this title already exists',
-      );
+    if (elExisting.length > 0) {
+      let maxSuffix = 1;
+      const exactMatch = elExisting.some(a => a.title === elBaseTitle);
+      if (exactMatch) maxSuffix = 2;
+      for (const a of elExisting) {
+        const match = a.title.match(new RegExp(`^${elBaseTitle.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')} \\((\\d+)\\)$`));
+        if (match && match[1]) {
+          const n = parseInt(match[1], 10);
+          if (!Number.isNaN(n) && n >= maxSuffix) maxSuffix = n + 1;
+        }
+      }
+      if (maxSuffix > 1) dto.title = `${elBaseTitle} (${maxSuffix})`;
     }
 
     let uploadResult: { url: string; key: string } | undefined;
@@ -115,7 +130,8 @@ export class ContentService {
       const asset = await this.prisma.asset.create({
         data: {
           kind: AssetKind.ELEARNING, // Use ELEARNING kind
-          category: 'ELEARNING',
+          category: 'ELEARNING', // Content type
+          contentCategory: dto.category, // Actual category (Child Development, etc.)
           filename: file?.originalname || dto.title,
           publicUrl: uploadResult?.url || dto.fileUrl || '',
           storageKey: uploadResult?.key || `link-${Date.now()}`,
@@ -152,6 +168,37 @@ export class ContentService {
 
       this.logger.log(`E-learning content created: ${asset.id}`);
 
+      // Save translatable fields and trigger translation (non-blocking)
+      const translatableFields = FIELDS_BY_ENTITY.elearning || ['title', 'description', 'content_preview'];
+      const translationPayload: Record<string, any> = {
+        title: asset.title || '',
+        description: asset.description || '',
+        content_preview: asset.contentPreview || '',
+      };
+      
+      // Log what we're saving
+      const fieldsWithValues = Object.keys(translationPayload).filter(k => translationPayload[k] && translationPayload[k].trim().length > 0);
+      this.logger.log(`Saving translations for e-learning ${asset.id} with fields: ${fieldsWithValues.join(', ')}`);
+      this.logger.debug(`Translation payload:`, {
+        title: translationPayload.title ? `${translationPayload.title.substring(0, 50)}...` : 'empty',
+        description: translationPayload.description ? `${translationPayload.description.substring(0, 50)}...` : 'empty',
+        content_preview: translationPayload.content_preview ? `${translationPayload.content_preview.substring(0, 50)}...` : 'empty',
+      });
+      
+      if (translationPayload.title || translationPayload.description || translationPayload.content_preview) {
+        // Don't await - let it run in background to avoid blocking the response
+        this.translationService.saveEntityWithTranslations(
+          'elearning',
+          asset.id,
+          translationPayload,
+          translatableFields,
+        ).then(() => {
+          this.logger.log(`Successfully saved translations for e-learning ${asset.id}`);
+        }).catch((error) => {
+          this.logger.error(`Failed to save translations for e-learning ${asset.id}:`, error);
+        });
+      }
+
       return {
         success: true,
         data: this.transformElearningAsset(asset),
@@ -178,7 +225,7 @@ export class ContentService {
   async getElearningContent(
     query: GetElearningQueryDto,
   ): Promise<PaginatedResponse<any>> {
-    const { page = 1, limit = 20, search, category, type, language, status } = query;
+    const { page = 1, limit = 20, search, category, type, language, status, lang } = query;
     const skip = (page - 1) * limit;
 
     // Build where clause
@@ -187,7 +234,7 @@ export class ContentService {
     };
 
     if (category) {
-      where.title = { contains: category, mode: 'insensitive' };
+      where.contentCategory = category;
     }
 
     if (type) {
@@ -231,9 +278,43 @@ export class ContentService {
         this.prisma.asset.count({ where }),
       ]);
 
+      // Resolve translations if language is specified
+      let transformedItems = items.map((item) => this.transformElearningAsset(item));
+      if (lang && lang !== 'en') {
+        const translatableFields = FIELDS_BY_ENTITY.elearning || ['title', 'description', 'content_preview'];
+        this.logger.debug(`Resolving translations for ${transformedItems.length} e-learning items in language: ${lang}`);
+        transformedItems = await Promise.all(
+          transformedItems.map(async (item) => {
+            const translatedFields = await this.translationService.resolveEntity(
+              'elearning',
+              item.id,
+              translatableFields,
+              lang,
+            );
+            
+            this.logger.debug(`E-learning ${item.id} translations resolved:`, {
+              title: translatedFields.title ? 'found' : 'missing',
+              description: translatedFields.description ? 'found' : 'missing',
+              content_preview: translatedFields.content_preview ? 'found' : 'missing',
+            });
+            
+            return {
+              ...item,
+              title: translatedFields.title || item.title,
+              description: translatedFields.description !== undefined 
+                ? translatedFields.description 
+                : (item.description || ''),
+              contentPreview: translatedFields.content_preview !== undefined
+                ? translatedFields.content_preview
+                : (item.contentPreview || ''),
+            };
+          }),
+        );
+      }
+
       return {
         success: true,
-        data: items.map((item) => this.transformElearningAsset(item)),
+        data: transformedItems,
         pagination: {
           page,
           limit,
@@ -274,7 +355,7 @@ export class ContentService {
           ...(dto.title && { title: dto.title }),
           ...(dto.description && { description: dto.description }),
           ...(dto.contentPreview && { contentPreview: dto.contentPreview }),
-          ...(dto.category && { category: dto.category }),
+          ...(dto.category && { contentCategory: dto.category }),
           ...(dto.type && { contentType: dto.type }),
           ...(dto.language && { language: dto.language }),
           ...(dto.accessRoles && { accessRoles: dto.accessRoles }),
@@ -297,6 +378,31 @@ export class ContentService {
       });
 
       this.logger.log(`E-learning content updated: ${id}`);
+
+      // Update translations if translatable fields changed - do this asynchronously to not block the response
+      const hasTranslatableChanges = dto.title !== undefined || dto.description !== undefined || dto.contentPreview !== undefined;
+      if (hasTranslatableChanges) {
+        const translatableFields = FIELDS_BY_ENTITY.elearning || ['title', 'description', 'content_preview'];
+        const translationPayload: Record<string, any> = {
+          title: updatedAsset.title || '',
+          description: updatedAsset.description || '',
+          content_preview: updatedAsset.contentPreview || '',
+        };
+        
+        // Log what we're saving
+        const fieldsWithValues = Object.keys(translationPayload).filter(k => translationPayload[k] && translationPayload[k].trim().length > 0);
+        this.logger.log(`Updating translations for e-learning ${updatedAsset.id} with fields: ${fieldsWithValues.join(', ')}`);
+        
+        // Don't await - let translations happen in background
+        this.translationService.saveEntityWithTranslations(
+          'elearning',
+          updatedAsset.id,
+          translationPayload,
+          translatableFields,
+        ).catch((error) => {
+          this.logger.error(`Failed to save translations for elearning:${updatedAsset.id}: ${error.message}`);
+        });
+      }
 
       return {
         success: true,
@@ -386,19 +492,43 @@ export class ContentService {
       );
     }
 
-    // Check for duplicate
-    const existingDoc = await this.prisma.asset.findFirst({
+    // Ensure unique title by auto-suffixing duplicates: "Title (2)", "Title (3)", ...
+    const baseTitle = dto.title?.trim();
+    if (!baseTitle) {
+      throw new BadRequestException('Title is required');
+    }
+
+    // Find existing titles starting with the same base
+    const existingWithSamePrefix = await this.prisma.asset.findMany({
       where: {
-        title: dto.title,
         uploadedById: userId,
         category: 'HR_DOCUMENT',
+        title: { startsWith: baseTitle },
       },
+      select: { title: true },
     });
 
-    if (existingDoc) {
-      throw new BadRequestException(
-        'HR document with this title already exists',
-      );
+    if (existingWithSamePrefix.length > 0) {
+      // Extract numeric suffixes of the form "Title (N)"
+      let maxSuffix = 1;
+      const exactMatch = existingWithSamePrefix.some(a => a.title === baseTitle);
+      if (exactMatch) {
+        maxSuffix = 2; // at least "(2)" if exact base exists
+      }
+
+      for (const a of existingWithSamePrefix) {
+        const match = a.title.match(new RegExp(`^${baseTitle.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')} \\((\\d+)\\)$`));
+        if (match && match[1]) {
+          const n = parseInt(match[1], 10);
+          if (!Number.isNaN(n) && n >= maxSuffix) {
+            maxSuffix = n + 1;
+          }
+        }
+      }
+
+      if (maxSuffix > 1) {
+        dto.title = `${baseTitle} (${maxSuffix})`;
+      }
     }
 
     let uploadResult: { url: string; key: string } | undefined;
@@ -414,7 +544,8 @@ export class ContentService {
       const asset = await this.prisma.asset.create({
         data: {
           kind: AssetKind.DOCUMENT,
-          category: 'HR_DOCUMENT',
+          category: 'HR_DOCUMENT', // Content type
+          contentCategory: dto.category, // Actual category (Onboarding, etc.)
           filename: file.originalname,
           publicUrl: uploadResult.url,
           storageKey: uploadResult.key,
@@ -451,6 +582,30 @@ export class ContentService {
 
       this.logger.log(`HR document created: ${asset.id}`);
 
+      // Save translatable fields and trigger translation (non-blocking)
+      const translatableFields = FIELDS_BY_ENTITY.hr_document || ['title', 'description', 'content_preview'];
+      const translationPayload: Record<string, any> = {
+        title: asset.title || '',
+        description: asset.description || '',
+        content_preview: asset.contentPreview || '',
+      };
+      
+      // Log what we're saving
+      const fieldsWithValues = Object.keys(translationPayload).filter(k => translationPayload[k] && translationPayload[k].trim().length > 0);
+      this.logger.log(`Saving translations for HR document ${asset.id} with fields: ${fieldsWithValues.join(', ')}`);
+      
+      if (translationPayload.title || translationPayload.description || translationPayload.content_preview) {
+        // Don't await - let it run in background to avoid blocking the response
+        this.translationService.saveEntityWithTranslations(
+          'hr_document',
+          asset.id,
+          translationPayload,
+          translatableFields,
+        ).catch((error) => {
+          this.logger.error(`Failed to save translations for HR document ${asset.id}:`, error);
+        });
+      }
+
       return {
         success: true,
         data: this.transformHrDocumentAsset(asset),
@@ -477,7 +632,7 @@ export class ContentService {
   async getHrDocuments(
     query: GetHrDocumentsQueryDto,
   ): Promise<PaginatedResponse<any>> {
-    const { page = 1, limit = 20, search, category, status, language } = query;
+    const { page = 1, limit = 20, search, category, status, language, lang } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {
@@ -485,7 +640,7 @@ export class ContentService {
     };
 
     if (category) {
-      where.title = { contains: category, mode: 'insensitive' };
+      where.contentCategory = category;
     }
 
     if (status) {
@@ -525,9 +680,43 @@ export class ContentService {
         this.prisma.asset.count({ where }),
       ]);
 
+      // Resolve translations if language is specified
+      let transformedItems = items.map((item) => this.transformHrDocumentAsset(item));
+      if (lang && lang !== 'en') {
+        const translatableFields = FIELDS_BY_ENTITY.hr_document || ['title', 'description', 'content_preview'];
+        this.logger.debug(`Resolving translations for ${transformedItems.length} HR documents in language: ${lang}`);
+        transformedItems = await Promise.all(
+          transformedItems.map(async (item) => {
+            const translatedFields = await this.translationService.resolveEntity(
+              'hr_document',
+              item.id,
+              translatableFields,
+              lang,
+            );
+            
+            this.logger.debug(`HR document ${item.id} translations resolved:`, {
+              title: translatedFields.title ? 'found' : 'missing',
+              description: translatedFields.description ? 'found' : 'missing',
+              content_preview: translatedFields.content_preview ? 'found' : 'missing',
+            });
+            
+            return {
+              ...item,
+              title: translatedFields.title || item.title,
+              description: translatedFields.description !== undefined 
+                ? translatedFields.description 
+                : (item.description || ''),
+              contentPreview: translatedFields.content_preview !== undefined
+                ? translatedFields.content_preview
+                : (item.contentPreview || ''),
+            };
+          }),
+        );
+      }
+
       return {
         success: true,
-        data: items.map((item) => this.transformHrDocumentAsset(item)),
+        data: transformedItems,
         pagination: {
           page,
           limit,
@@ -568,7 +757,7 @@ export class ContentService {
           ...(dto.title && { title: dto.title }),
           ...(dto.description && { description: dto.description }),
           ...(dto.contentPreview && { contentPreview: dto.contentPreview }),
-          ...(dto.category && { category: dto.category }),
+          ...(dto.category && { contentCategory: dto.category }),
           ...(dto.language && { language: dto.language }),
           ...(dto.accessRoles && { accessRoles: dto.accessRoles }),
           ...(dto.status && { status: dto.status }),
@@ -591,6 +780,31 @@ export class ContentService {
       });
 
       this.logger.log(`HR document updated: ${id}`);
+
+      // Update translations if translatable fields changed
+      const hasTranslatableChanges = dto.title !== undefined || dto.description !== undefined || dto.contentPreview !== undefined;
+      if (hasTranslatableChanges) {
+        const translatableFields = FIELDS_BY_ENTITY.hr_document || ['title', 'description', 'content_preview'];
+        const translationPayload: Record<string, any> = {
+          title: updatedAsset.title || '',
+          description: updatedAsset.description || '',
+          content_preview: updatedAsset.contentPreview || '',
+        };
+        
+        // Log what we're saving
+        const fieldsWithValues = Object.keys(translationPayload).filter(k => translationPayload[k] && translationPayload[k].trim().length > 0);
+        this.logger.log(`Updating translations for HR document ${updatedAsset.id} with fields: ${fieldsWithValues.join(', ')}`);
+        
+        // Don't await - let translations happen in background
+        this.translationService.saveEntityWithTranslations(
+          'hr_document',
+          updatedAsset.id,
+          translationPayload,
+          translatableFields,
+        ).catch((error) => {
+          this.logger.error(`Failed to save translations for hr_document:${updatedAsset.id}: ${error.message}`);
+        });
+      }
 
       return {
         success: true,
@@ -682,20 +896,32 @@ export class ContentService {
       }
     }
 
-    // Check for duplicate
-    const existingPolicy = await this.prisma.asset.findFirst({
+    // Ensure unique title by auto-suffixing duplicates for state policies within country+region
+    const spBaseTitle = dto.title?.trim();
+    if (!spBaseTitle) {
+      throw new BadRequestException('Title is required');
+    }
+    const spExisting = await this.prisma.asset.findMany({
       where: {
-        title: dto.title,
+        category: 'STATE_POLICY',
         country: dto.country,
         region: dto.region,
-        category: 'STATE_POLICY',
+        title: { startsWith: spBaseTitle },
       },
+      select: { title: true },
     });
-
-    if (existingPolicy) {
-      throw new BadRequestException(
-        'State policy with this title already exists for this region',
-      );
+    if (spExisting.length > 0) {
+      let maxSuffix = 1;
+      const exactMatch = spExisting.some(a => a.title === spBaseTitle);
+      if (exactMatch) maxSuffix = 2;
+      for (const a of spExisting) {
+        const match = a.title.match(new RegExp(`^${spBaseTitle.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')} \\((\\d+)\\)$`));
+        if (match && match[1]) {
+          const n = parseInt(match[1], 10);
+          if (!Number.isNaN(n) && n >= maxSuffix) maxSuffix = n + 1;
+        }
+      }
+      if (maxSuffix > 1) dto.title = `${spBaseTitle} (${maxSuffix})`;
     }
 
     let uploadResult: { url: string; key: string } | undefined;
@@ -713,7 +939,8 @@ export class ContentService {
       const asset = await this.prisma.asset.create({
         data: {
           kind: AssetKind.DOCUMENT,
-          category: 'STATE_POLICY',
+          category: 'STATE_POLICY', // Content type
+          contentCategory: dto.category, // Actual category (Education Policy, etc.)
           filename: file?.originalname || dto.title,
           publicUrl: uploadResult?.url || dto.externalLink || '',
           storageKey: uploadResult?.key || `policy-${Date.now()}`,
@@ -755,6 +982,30 @@ export class ContentService {
 
       this.logger.log(`State policy created: ${asset.id}`);
 
+      // Save translatable fields and trigger translation (non-blocking)
+      const translatableFields = FIELDS_BY_ENTITY.state_policy || ['title', 'description', 'content_preview'];
+      const translationPayload: Record<string, any> = {
+        title: asset.title || '',
+        description: asset.description || '',
+        content_preview: asset.contentPreview || '',
+      };
+      
+      // Log what we're saving
+      const fieldsWithValues = Object.keys(translationPayload).filter(k => translationPayload[k] && translationPayload[k].trim().length > 0);
+      this.logger.log(`Saving translations for state policy ${asset.id} with fields: ${fieldsWithValues.join(', ')}`);
+      
+      if (translationPayload.title || translationPayload.description || translationPayload.content_preview) {
+        // Don't await - let it run in background to avoid blocking the response
+        this.translationService.saveEntityWithTranslations(
+          'state_policy',
+          asset.id,
+          translationPayload,
+          translatableFields,
+        ).catch((error) => {
+          this.logger.error(`Failed to save translations for state policy ${asset.id}:`, error);
+        });
+      }
+
       return {
         success: true,
         data: this.transformStatePolicyAsset(asset),
@@ -791,6 +1042,7 @@ export class ContentService {
       country, 
       region,
       isCritical,
+      lang,
     } = query;
     const skip = (page - 1) * limit;
 
@@ -799,7 +1051,7 @@ export class ContentService {
     };
 
     if (category) {
-      where.title = { contains: category, mode: 'insensitive' };
+      where.contentCategory = category;
     }
 
     if (status) {
@@ -851,9 +1103,43 @@ export class ContentService {
         this.prisma.asset.count({ where }),
       ]);
 
+      // Resolve translations if language is specified
+      let transformedItems = items.map((item) => this.transformStatePolicyAsset(item));
+      if (lang && lang !== 'en') {
+        const translatableFields = FIELDS_BY_ENTITY.state_policy || ['title', 'description', 'content_preview'];
+        this.logger.debug(`Resolving translations for ${transformedItems.length} state policies in language: ${lang}`);
+        transformedItems = await Promise.all(
+          transformedItems.map(async (item) => {
+            const translatedFields = await this.translationService.resolveEntity(
+              'state_policy',
+              item.id,
+              translatableFields,
+              lang,
+            );
+            
+            this.logger.debug(`State policy ${item.id} translations resolved:`, {
+              title: translatedFields.title ? 'found' : 'missing',
+              description: translatedFields.description ? 'found' : 'missing',
+              content_preview: translatedFields.content_preview ? 'found' : 'missing',
+            });
+            
+            return {
+              ...item,
+              title: translatedFields.title || item.title,
+              description: translatedFields.description !== undefined 
+                ? translatedFields.description 
+                : (item.description || ''),
+              contentPreview: translatedFields.content_preview !== undefined
+                ? translatedFields.content_preview
+                : (item.contentPreview || ''),
+            };
+          }),
+        );
+      }
+
       return {
         success: true,
-        data: items.map((item) => this.transformStatePolicyAsset(item)),
+        data: transformedItems,
         pagination: {
           page,
           limit,
@@ -894,7 +1180,7 @@ export class ContentService {
           ...(dto.title && { title: dto.title }),
           ...(dto.description && { description: dto.description }),
           ...(dto.contentPreview && { contentPreview: dto.contentPreview }),
-          ...(dto.category && { category: dto.category }),
+          ...(dto.category && { contentCategory: dto.category }),
           ...(dto.language && { language: dto.language }),
           ...(dto.country && { country: dto.country }),
           ...(dto.region && { region: dto.region }),
@@ -922,6 +1208,34 @@ export class ContentService {
       });
 
       this.logger.log(`State policy updated: ${id}`);
+
+      // Update translations if translatable fields changed
+      const hasTranslatableChanges = 
+        dto.title !== undefined || 
+        dto.description !== undefined ||
+        dto.contentPreview !== undefined;
+      if (hasTranslatableChanges) {
+        const translatableFields = FIELDS_BY_ENTITY.state_policy || ['title', 'description', 'content_preview'];
+        const translationPayload: Record<string, any> = {
+          title: updatedAsset.title || '',
+          description: updatedAsset.description || '',
+          content_preview: updatedAsset.contentPreview || '',
+        };
+        
+        // Log what we're saving
+        const fieldsWithValues = Object.keys(translationPayload).filter(k => translationPayload[k] && translationPayload[k].trim().length > 0);
+        this.logger.log(`Updating translations for state policy ${updatedAsset.id} with fields: ${fieldsWithValues.join(', ')}`);
+        
+        // Don't await - let translations happen in background
+        this.translationService.saveEntityWithTranslations(
+          'state_policy',
+          updatedAsset.id,
+          translationPayload,
+          translatableFields,
+        ).catch((error) => {
+          this.logger.error(`Failed to save translations for state_policy:${updatedAsset.id}: ${error.message}`);
+        });
+      }
 
       return {
         success: true,
@@ -992,7 +1306,7 @@ export class ContentService {
       description: asset.description,
       contentPreview: asset.contentPreview,
       type: asset.contentType,
-      category: asset.category,
+      category: asset.contentCategory || asset.category, // Use contentCategory, fallback to category for backwards compatibility
       language: asset.language,
       accessRoles: asset.accessRoles || [],
       status: asset.status,
@@ -1016,7 +1330,7 @@ export class ContentService {
       title: asset.title,
       description: asset.description,
       contentPreview: asset.contentPreview,
-      category: asset.category,
+      category: asset.contentCategory || asset.category, // Use contentCategory, fallback to category for backwards compatibility
       language: asset.language,
       accessRoles: asset.accessRoles || [],
       status: asset.status,
@@ -1041,7 +1355,7 @@ export class ContentService {
       title: asset.title,
       description: asset.description,
       contentPreview: asset.contentPreview,
-      category: asset.category,
+      category: asset.contentCategory || asset.category, // Use contentCategory, fallback to category for backwards compatibility
       language: asset.language,
       country: asset.country,
       region: asset.region,

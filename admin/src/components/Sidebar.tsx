@@ -19,9 +19,11 @@ import {
   X,
   Shield,
   Palette,
+  Globe,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
+import { useTranslation } from 'react-i18next'
 
 interface SidebarProps {
   sidebarOpen: boolean
@@ -29,26 +31,28 @@ interface SidebarProps {
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Organizations', href: '/organizations', icon: Building2 },
-  { name: 'Products', href: '/products', icon: Package },
-  { name: 'Services', href: '/services', icon: Wrench },
-  { name: 'Job Listings', href: '/job-listings', icon: Briefcase },
-  { name: 'Candidates', href: '/candidates', icon: UserCheck },
-  { name: 'Parent Leads', href: '/parent-leads', icon: Heart },
-  { name: 'Orders', href: '/orders', icon: ShoppingCart },
-  { name: 'Content', href: '/content', icon: FileText },
-  { name: 'Messaging', href: '/messaging', icon: MessageSquare },
-  { name: 'System Monitor', href: '/system', icon: Monitor },
-  { name: 'Design System', href: '/design-system', icon: Palette },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { key: 'dashboard', href: '/dashboard', icon: BarChart3 },
+  { key: 'users', href: '/users', icon: Users },
+  { key: 'foundations', href: '/organizations', icon: Building2 },
+  { key: 'products', href: '/products', icon: Package },
+  { key: 'services', href: '/services', icon: Wrench },
+  { key: 'jobListings', href: '/job-listings', icon: Briefcase },
+  { key: 'candidatePool', href: '/candidates', icon: UserCheck },
+  { key: 'parentLeads', href: '/parent-leads', icon: Heart },
+  { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
+  { key: 'content', href: '/content', icon: FileText },
+  { key: 'messages', href: '/messaging', icon: MessageSquare },
+  { key: 'systemMonitoring', href: '/system', icon: Monitor },
+  { key: 'translations', href: '/translations', icon: Globe },
+  { key: 'designSystem', href: '/design-system', icon: Palette },
+  { key: 'settings', href: '/settings', icon: Settings },
 ]
 
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation()
   const { settings } = useSettings()
+  const { t } = useTranslation('dashboard')
 
   const getAdminLogo = () => {
     if (settings?.adminLogoAsset?.url) {
@@ -80,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           const isActive = location.pathname === item.href
           return (
             <NavLink
-              key={item.name}
+              key={item.key}
               to={item.href}
               className={clsx(
                 'group flex items-center px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
@@ -95,7 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
                 )}
               />
-              {item.name}
+              {t(`sidebar.${item.key}`)}
             </NavLink>
           )
         })}

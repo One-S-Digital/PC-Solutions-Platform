@@ -73,7 +73,11 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   useEffect(() => {
     const newLangCode = language.toLowerCase();
     if (i18n.language !== newLangCode) {
-      i18n.changeLanguage(newLangCode);
+      // Change language immediately - translations should already be preloaded
+      // If not, i18next will use fallback resources and load in background
+      i18n.changeLanguage(newLangCode).catch((err) => {
+        console.error('Failed to change language:', err);
+      });
     }
   }, [language]);
 

@@ -336,5 +336,9 @@ export class GetStatePoliciesQueryDto {
   @Transform(({ value }) => value === 'true' || value === '1')
   @IsBoolean()
   isCritical?: boolean;
+
+  @IsOptional()
+  @IsString()
+  lang?: string; // Language for translation resolution (en, fr, de)
 }
 

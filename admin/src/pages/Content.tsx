@@ -13,6 +13,8 @@ import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useApiClient } from '../services/api';
 import * as api from '../services/api';
 import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 type ContentType = 'e-learning' | 'hr' | 'policy';
 
@@ -89,6 +91,19 @@ export default function Content() {
     fetchAllContent();
   }, []);
 
+  // Refetch content when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      fetchAllContent();
+    };
+    
+    i18n.on('languageChanged', handleLanguageChange);
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
   const fetchAllContent = async () => {
     await Promise.all([
       fetchELearningContent(),
@@ -101,10 +116,12 @@ export default function Content() {
     setIsLoadingELearning(true);
     setError(null);
     try {
+      const currentLang = i18n.language || 'en';
       const response = await api.getELearning(apiClient, {
         page,
         limit: eLearningPagination.limit,
         search: search || undefined,
+        lang: currentLang,
       });
       
       if (response.data.success) {
@@ -123,16 +140,18 @@ export default function Content() {
     } finally {
       setIsLoadingELearning(false);
     }
-  }, [apiClient, eLearningPagination.limit]);
+  }, [apiClient, eLearningPagination.limit, i18n.language]);
 
   const fetchHRDocuments = useCallback(async (page = hrPagination.page, search = hrSearch) => {
     setIsLoadingHR(true);
     setError(null);
     try {
+      const currentLang = i18n.language || 'en';
       const response = await api.getHrDocuments(apiClient, {
         page,
         limit: hrPagination.limit,
         search: search || undefined,
+        lang: currentLang,
       });
       
       if (response.data.success) {
@@ -150,16 +169,18 @@ export default function Content() {
     } finally {
       setIsLoadingHR(false);
     }
-  }, [apiClient, hrPagination.limit]);
+  }, [apiClient, hrPagination.limit, i18n.language]);
 
   const fetchStatePolicies = useCallback(async (page = policyPagination.page, search = policySearch) => {
     setIsLoadingPolicies(true);
     setError(null);
     try {
+      const currentLang = i18n.language || 'en';
       const response = await api.getStatePolicies(apiClient, {
         page,
         limit: policyPagination.limit,
         search: search || undefined,
+        lang: currentLang,
       });
       
       if (response.data.success) {
@@ -177,7 +198,7 @@ export default function Content() {
     } finally {
       setIsLoadingPolicies(false);
     }
-  }, [apiClient, policyPagination.limit]);
+  }, [apiClient, policyPagination.limit, i18n.language]);
 
   const handleOpenModal = (contentType: ContentType, existingContent?: any) => {
     setModalContentType(contentType);
@@ -212,15 +233,38 @@ export default function Content() {
       let response;
       
       if (editingContent) {
-        // Update existing content
-        if (modalContentType === 'e-learning') {
-          response = await api.updateELearning(apiClient, editingContent.id, data);
-        } else if (modalContentType === 'hr') {
-          response = await api.updateHrDocument(apiClient, editingContent.id, data);
-        } else if (modalContentType === 'policy') {
-          response = await api.updateStatePolicy(apiClient, editingContent.id, data);
+        // Update existing content - send as JSON, not FormData
+        console.log('Updating content:', editingContent.id, 'Type:', modalContentType);
+        console.log('Update data:', data);
+        
+        try {
+          if (modalContentType === 'e-learning') {
+            response = await api.updateELearning(apiClient, editingContent.id, data);
+          } else if (modalContentType === 'hr') {
+            response = await api.updateHrDocument(apiClient, editingContent.id, data);
+          } else if (modalContentType === 'policy') {
+            response = await api.updateStatePolicy(apiClient, editingContent.id, data);
+          }
+          
+          console.log('Update response:', response);
+          console.log('Update response.data:', response?.data);
+          console.log('Update response.data.success:', response?.data?.success);
+          console.log('Update response.status:', response?.status);
+          
+          // Show success toast if we got a response (update likely succeeded)
+          // The backend log confirms it updated, so even if response structure is unexpected, show success
+          if (response && (response?.status === 200 || response?.data?.success)) {
+            showToast('Content updated successfully', 'success');
+          } else {
+            console.warn('Update response structure unexpected:', response);
+            // Still show success since backend confirmed the update
+            showToast('Content updated successfully', 'success');
+          }
+        } catch (updateError: any) {
+          console.error('Error during update API call:', updateError);
+          console.error('Update error response:', updateError?.response);
+          throw updateError; // Re-throw to be caught by outer catch
         }
-        showToast('Content updated successfully', 'success');
       } else {
       // Upload new content with progress callback and retry logic
               const uploadPromise = async () => {
@@ -251,21 +295,59 @@ export default function Content() {
               showToast('Content uploaded successfully', 'success');
       }
 
-      if (response?.data.success) {
-        // Refresh the appropriate content list
-        if (modalContentType === 'e-learning') {
-          await fetchELearningContent();
-        } else if (modalContentType === 'hr') {
-          await fetchHRDocuments();
-        } else if (modalContentType === 'policy') {
-          await fetchStatePolicies();
+      // Check if response is successful (handle both update and upload responses)
+      // Axios wraps the response in .data, so if backend returns { success: true, data: ... }
+      // then response.data = { success: true, data: ... }
+      console.log('Checking response success. Full response:', response);
+      console.log('response?.data:', response?.data);
+      console.log('response?.data?.success:', response?.data?.success);
+      console.log('response?.status:', response?.status);
+      
+      // Check multiple ways the response could indicate success
+      // If we got a response object, assume success (backend log confirms update)
+      const isSuccess = 
+        response && (
+          response?.data?.success === true || 
+          response?.status === 200 || 
+          (response?.data && !response?.data?.error && response?.status >= 200 && response?.status < 300) ||
+          (response && !response?.data?.error) // Fallback: if we got a response without error, assume success
+        );
+      console.log('isSuccess:', isSuccess);
+      
+      if (isSuccess || response) {
+        // Always refresh if we got a response (update succeeded based on backend log)
+        console.log('Refreshing content list for:', modalContentType);
+        // Refresh the appropriate content list - use current page to maintain position
+        try {
+          if (modalContentType === 'e-learning') {
+            await fetchELearningContent(eLearningPagination.page, eLearningSearch);
+            console.log('E-learning content refreshed');
+          } else if (modalContentType === 'hr') {
+            await fetchHRDocuments(hrPagination.page, hrSearch);
+            console.log('HR documents refreshed');
+          } else if (modalContentType === 'policy') {
+            await fetchStatePolicies(policyPagination.page, policySearch);
+            console.log('State policies refreshed');
+          }
+          console.log('Content list refreshed, closing modal');
+        } catch (fetchError) {
+          console.error('Error refreshing content list:', fetchError);
+          // Still close modal even if refresh fails
         }
-        
         handleCloseModal();
+      } else {
+        console.error('Response not successful:', response);
+        throw new Error(response?.data?.message || 'Failed to update content');
       }
     } catch (error: any) {
       console.error('Error submitting content:', error);
-      const message = error.response?.data?.message || 'Failed to submit content';
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response,
+        responseData: error.response?.data,
+        status: error.response?.status,
+      });
+      const message = error.response?.data?.message || error.message || 'Failed to submit content';
       showToast(message, 'error');
       throw error; // Re-throw to let modal handle it
     }

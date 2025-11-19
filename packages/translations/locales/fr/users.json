@@ -42,6 +42,42 @@
     "title": "Gestion des rôles",
     "search": "Rechercher des utilisateurs...",
     "addNewUser": "Ajouter un nouvel utilisateur",
-    "noUsersFound": "Aucun utilisateur trouvé pour ce rôle"
+    "noUsersFound": "Aucun utilisateur trouvé pour ce rôle",
+    "allUsersTitle": "Tous les utilisateurs",
+    "rolePageTitle": "Utilisateurs {{role}}",
+    "searchPlaceholder": "Rechercher des utilisateurs...",
+    "addNewUserButton": "Ajouter un nouvel utilisateur",
+    "addNewUserTBD": "Fonctionnalité d'ajout d'utilisateur à venir",
+    "filtersButton": "Filtres",
+    "filtersTBD": "Fonctionnalité de filtres à venir",
+    "emptyState": "Aucun utilisateur trouvé",
+    "confirmDeleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+    "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
+    "userProfileUpdated": "Profil de {{name}} mis à jour avec succès",
+    "status": {
+      "pending": "En attente",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "table": {
+      "nameOrg": "Nom / Organisation",
+      "role": "Rôle",
+      "region": "Région",
+      "status": "Statut",
+      "lastLogin": "Dernière connexion",
+      "actions": "Actions"
+    },
+    "userDetailDrawer": {
+      "title": "Détails de l'utilisateur",
+      "roleLabel": "Rôle",
+      "statusLabel": "Statut",
+      "regionLabel": "Région",
+      "lastLoginLabel": "Dernière connexion",
+      "orgLabel": "Organisation",
+      "adminActionsTitle": "Actions administrateur",
+      "activateUserButton": "Activer l'utilisateur",
+      "changeRoleLabel": "Changer le rôle",
+      "cannotModifyOwnAccount": "Vous ne pouvez pas modifier votre propre compte"
+    }
   }
 }

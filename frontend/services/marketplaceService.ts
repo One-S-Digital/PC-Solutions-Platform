@@ -1,6 +1,7 @@
 import { apiService, ApiResponse } from './api';
 import { Product, Service } from '../types';
 import { API_ENDPOINTS } from './api-endpoints';
+import i18n from '../i18n';
 
 export interface ProductCreateData {
   title: string;
@@ -25,11 +26,13 @@ export interface ServiceUpdateData extends Partial<ServiceCreateData> {}
 class MarketplaceService {
   // Products
   async getProducts(page = 1, limit = 20, category?: string, search?: string): Promise<{ products: Product[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(category && { category }),
       ...(search && { search }),
+      lang: currentLang,
     });
     
     const response = await apiService.get<{ products: Product[]; pagination: any }>(
@@ -45,7 +48,10 @@ class MarketplaceService {
   }
 
   async getProductById(id: string): Promise<Product> {
-    const response = await apiService.get<Product>(API_ENDPOINTS.marketplace.products.get(id));
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<Product>(
+      `${API_ENDPOINTS.marketplace.products.get(id)}?lang=${currentLang}`
+    );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch product');
     }
@@ -77,11 +83,13 @@ class MarketplaceService {
 
   // Services
   async getServices(page = 1, limit = 20, category?: string, search?: string): Promise<{ services: Service[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(category && { category }),
       ...(search && { search }),
+      lang: currentLang,
     });
     
     const response = await apiService.get<{ services: Service[]; pagination: any }>(
@@ -97,7 +105,8 @@ class MarketplaceService {
   }
 
   async getServiceById(id: string): Promise<Service> {
-    const response = await apiService.get<Service>(`/services/${id}`);
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<Service>(`/services/${id}?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch service');
     }

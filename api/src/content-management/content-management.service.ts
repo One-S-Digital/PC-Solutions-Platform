@@ -3,12 +3,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateContentItemDto, UpdateContentItemDto, CreateContentCategoryDto } from './dto/content-management.dto';
 import { ContentItem, ContentCategory } from '@prisma/client';
 import { R2Service } from '../upload/r2.service';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 @Injectable()
 export class ContentManagementService {
   constructor(
     private prisma: PrismaService,
     private r2Service: R2Service,
+    private translationService: TranslationService,
   ) {}
 
   async getContentItems(options: {
@@ -106,7 +109,7 @@ export class ContentManagementService {
     }
 
     try {
-      return await this.prisma.contentItem.create({
+      const item = await this.prisma.contentItem.create({
         data: {
           ...createDto,
           fileUrl,
@@ -124,6 +127,26 @@ export class ContentManagementService {
           },
         },
       });
+
+      // Save translatable fields and trigger translation for content items
+      const translatableFields = FIELDS_BY_ENTITY.content || ['title', 'body', 'excerpt', 'description'];
+      const translationPayload: Record<string, any> = {
+        title: item.title as any,
+        description: (item as any).description || '',
+        body: (item as any).body || '',
+        excerpt: (item as any).excerpt || '',
+      };
+
+      if (translationPayload.title || translationPayload.description || translationPayload.body || translationPayload.excerpt) {
+        await this.translationService.saveEntityWithTranslations(
+          'content',
+          item.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
+
+      return item;
     } catch (error) {
       // If DB operation fails and we uploaded a file, clean it up
       if (uploadResult) {
@@ -167,7 +190,7 @@ export class ContentManagementService {
       mimeType = file.mimetype;
     }
 
-    return this.prisma.contentItem.update({
+    const updated = await this.prisma.contentItem.update({
       where: { id },
       data: {
         ...updateDto,
@@ -186,6 +209,32 @@ export class ContentManagementService {
         },
       },
     });
+
+    // Update translations if translatable fields changed
+    const translatableFields = FIELDS_BY_ENTITY.content || ['title', 'body', 'excerpt', 'description'];
+    const hasTranslatableChanges =
+      (updateDto as any).title !== undefined ||
+      (updateDto as any).description !== undefined ||
+      (updateDto as any).body !== undefined ||
+      (updateDto as any).excerpt !== undefined;
+
+    if (hasTranslatableChanges) {
+      const translationPayload: Record<string, any> = {
+        title: updated.title as any,
+        description: (updated as any).description || '',
+        body: (updated as any).body || '',
+        excerpt: (updated as any).excerpt || '',
+      };
+
+      await this.translationService.saveEntityWithTranslations(
+        'content',
+        updated.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return updated;
   }
 
   async deleteContentItem(id: string): Promise<void> {
