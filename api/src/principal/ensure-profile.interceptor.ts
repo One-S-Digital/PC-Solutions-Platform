@@ -4,6 +4,7 @@ import {
   Injectable,
   Logger,
   NestInterceptor,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { PrincipalService } from './principal.service';
@@ -25,10 +26,11 @@ export class EnsureProfileInterceptor implements NestInterceptor {
     const clerkUserId: string | undefined = req?.context?.clerkUserId ?? req?.context?.userId ?? req?.user?.clerkId;
 
     if (!clerkUserId) {
-      this.logger.warn('EnsureProfileInterceptor: missing clerkUserId in request context', {
+      this.logger.error('EnsureProfileInterceptor: missing clerkUserId in request context', {
         path: req?.url,
         hasContext: !!req?.context,
       });
+      throw new UnauthorizedException('Missing user authentication');
     }
 
     const { appUser, user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId);

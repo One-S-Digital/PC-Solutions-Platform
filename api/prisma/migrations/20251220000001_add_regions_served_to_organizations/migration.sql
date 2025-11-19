@@ -15,7 +15,7 @@ BEGIN
     ) THEN
         -- Migrate canton data to regionsServed
         UPDATE "organizations" 
-        SET "regionsServed" = ARRAY["canton"]::TEXT[]
+        SET "regionsServed" = ARRAY[canton]::TEXT[]
         WHERE "canton" IS NOT NULL 
           AND "canton" != '' 
           AND ("regionsServed" IS NULL OR array_length("regionsServed", 1) IS NULL OR array_length("regionsServed", 1) = 0);

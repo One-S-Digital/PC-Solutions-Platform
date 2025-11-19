@@ -28,7 +28,7 @@ BEGIN
         RAISE NOTICE 'Added categories column to products table';
         
         -- Migrate existing data
-        UPDATE "products" SET "categories" = ARRAY["category"] 
+        UPDATE "products" SET "categories" = ARRAY[category] 
         WHERE "category" IS NOT NULL AND "category" != '';
         RAISE NOTICE 'Migrated existing product categories';
     ELSE
@@ -44,7 +44,7 @@ BEGIN
         RAISE NOTICE 'Added categories column to services table';
         
         -- Migrate existing data
-        UPDATE "services" SET "categories" = ARRAY["category"::text] 
+        UPDATE "services" SET "categories" = ARRAY[category::text] 
         WHERE "category" IS NOT NULL;
         RAISE NOTICE 'Migrated existing service categories';
     ELSE
@@ -60,7 +60,7 @@ BEGIN
         RAISE NOTICE 'Added productCategories column to organizations table';
         
         -- Migrate existing data
-        UPDATE "organizations" SET "productCategories" = ARRAY["productCategory"] 
+        UPDATE "organizations" SET "productCategories" = ARRAY[productCategory] 
         WHERE "productCategory" IS NOT NULL AND "productCategory" != '';
         RAISE NOTICE 'Migrated existing organization product categories';
     ELSE

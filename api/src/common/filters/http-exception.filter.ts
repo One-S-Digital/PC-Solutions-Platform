@@ -79,9 +79,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
     if ((exception as any)?.code) {
       console.error('🔍 [DEBUG] Prisma Code:', (exception as any).code);
-      console.error('🔍 [DEBUG] Prisma Meta:', JSON.stringify((exception as any).meta, null, 2));
+      try {
+        console.error('🔍 [DEBUG] Prisma Meta:', JSON.stringify((exception as any).meta, null, 2));
+      } catch {
+        console.error('🔍 [DEBUG] Prisma Meta: [Unable to stringify]');
+      }
     }
-    console.error('🔍 [DEBUG] Full Error Object:', JSON.stringify(exception, Object.getOwnPropertyNames(exception), 2));
+    try {
+      console.error('🔍 [DEBUG] Full Error Object:', JSON.stringify(exception, Object.getOwnPropertyNames(exception), 2));
+    } catch {
+      console.error('🔍 [DEBUG] Full Error Object: [Circular reference or non-serializable]');
+    }
     console.error('🔍 [DEBUG] ========================================');
 
     // Set CORS headers to match main.ts configuration

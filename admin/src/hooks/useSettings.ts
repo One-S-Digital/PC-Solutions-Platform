@@ -383,7 +383,7 @@ export const useSettings = () => {
       setSaving(true)
       setError(null)
 
-      const updatedSettings = { ...settings, ...updates }
+      const updatedSettings = { ...(settings || {}), ...updates }
       console.log('📝 Updated settings object:', updatedSettings)
 
       // Filter out non-updatable fields to prevent validation errors
