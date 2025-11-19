@@ -63,7 +63,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
                 <p className="font-medium text-swiss-charcoal">{application.candidateName ?? t('recruitmentPage.viewApplicantsModal.unknownCandidate', 'Candidate')}</p>
                 <p className="text-xs text-gray-500">
                   {t('recruitmentPage.viewApplicantsModal.appliedOn', {
-                    date: new Date(application.createdAt).toLocaleDateString(),
+                    date: new Date(application.createdAt).toLocaleDateString(i18n.language),
                   })}
                 </p>
               </div>

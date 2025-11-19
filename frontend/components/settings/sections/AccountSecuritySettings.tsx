@@ -160,7 +160,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
             </div>
             <div className="form-label md:pt-2">{t('common:settingsAccountSecurity.personalInfo.memberSinceLabel')}</div>
             <div className="form-input-container">
-              <p className="text-gray-500 pt-2">{currentUser?.memberSince ? new Date(currentUser.memberSince).toLocaleDateString() : 'N/A'}</p>
+              <p className="text-gray-500 pt-2">{currentUser?.memberSince ? new Date(currentUser.memberSince).toLocaleDateString(i18n.language) : 'N/A'}</p>
             </div>
           </div>
            <div className="mt-4">

@@ -258,7 +258,7 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
               id="capacity"
               min="0"
               value={formData.capacity || ''}
-              onChange={(e) => onChange('capacity', e.target.value ? parseInt(e.target.value) : 0)}
+              onChange={(e) => onChange('capacity', e.target.value ? parseInt(e.target.value, 10) : 0)}
               className={STANDARD_INPUT_FIELD}
               placeholder="0"
             />

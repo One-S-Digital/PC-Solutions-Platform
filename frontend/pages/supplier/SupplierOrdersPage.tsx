@@ -88,7 +88,7 @@ const SupplierOrdersPage: React.FC = () => {
                 <tr key={order.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedOrder(order)}>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-swiss-teal">{order.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{getFoundationName(order.foundationOrgId)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(order.requestDate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">CHF {order.totalAmount.toFixed(2)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(order.status)}`}>

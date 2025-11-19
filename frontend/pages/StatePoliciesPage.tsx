@@ -56,9 +56,9 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
         {doc.policyType && <p className="text-xs text-gray-500 mt-1">Type: {doc.policyType}</p>}
         <p className="text-sm text-gray-600 my-3 line-clamp-3">{doc.contentPreview}</p>
         <div className="text-xs text-gray-500 space-y-1">
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Published: {new Date(doc.publishedDate).toLocaleDateString()}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Updated: {new Date(doc.lastUpdatedDate).toLocaleDateString()}</p>
-          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Effective: {new Date(doc.effectiveDate).toLocaleDateString()}</p>}
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Published: {new Date(doc.publishedDate).toLocaleDateString(i18n.language)}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Updated: {new Date(doc.lastUpdatedDate).toLocaleDateString(i18n.language)}</p>
+          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Effective: {new Date(doc.effectiveDate).toLocaleDateString(i18n.language)}</p>}
         </div>
         <div className="mt-3">
           {doc.tags.map(tag => (

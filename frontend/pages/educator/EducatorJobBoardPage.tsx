@@ -56,7 +56,7 @@ const EducatorJobCard: React.FC<EducatorJobCardProps> = ({ job, onViewDetails })
         </div>
         <div className="text-sm text-gray-600 space-y-1 mb-3">
           <p><MapPinIcon className="w-4 h-4 inline mr-1.5 text-gray-400" />{job.location ?? t('recruitment:recruitmentPage.labels.locationUnknown', 'Location TBD')}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1.5 text-gray-400" />{t('educatorJobBoardPage.postedOn', { date: new Date(postedDate).toLocaleDateString() })}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1.5 text-gray-400" />{t('educatorJobBoardPage.postedOn', { date: new Date(postedDate).toLocaleDateString(i18n.language) })}</p>
         </div>
         <p className="text-xs text-gray-500 line-clamp-2 mb-3">{job.description}</p>
       </div>

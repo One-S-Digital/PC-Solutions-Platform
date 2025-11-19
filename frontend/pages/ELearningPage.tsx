@@ -54,7 +54,7 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
         {item.type === ELearningContentType.COURSE && item.lessons && <p className="text-xs text-gray-500">{t('eLearning.lessonsCount', { count: item.lessons })}</p>}
         {(item.type === ELearningContentType.VIDEO || item.type === ELearningContentType.COURSE) && item.duration && <p className="text-xs text-gray-500">{t('eLearning.durationLabel')}: {item.duration}</p>}
         {item.language && <p className="text-xs text-gray-500">{t('eLearning.languageLabel')}: {item.language}</p>}
-        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}</p>
+        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString(i18n.language)}</p>
          {item.tags && item.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
                 {item.tags.slice(0, 3).map(tag => (

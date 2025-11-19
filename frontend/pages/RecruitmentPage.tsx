@@ -53,7 +53,7 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
     }
   }, [job.contractType, t]);
 
-  const formattedStartDate = job.startDate ? new Date(job.startDate).toLocaleDateString() : t('recruitment:labels.startDateTbd', 'To be determined');
+  const formattedStartDate = job.startDate ? new Date(job.startDate).toLocaleDateString(i18n.language) : t('recruitment:labels.startDateTbd', 'To be determined');
 
   return (
     <Card className="mb-4" hoverEffect>

@@ -94,8 +94,8 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
       
       <div className="text-sm text-gray-700 space-y-1">
         <p><strong>{t('leadCard.childAge')}:</strong> {lead.childAge}</p>
-        <p><strong>{t('leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString()}</p>
-        <p><strong>{t('leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString()}</p>
+        <p><strong>{t('leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>
+        <p><strong>{t('leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>
         {lead.specialNeeds && <p><strong>{t('leadCard.notes')}:</strong> <span className="italic">{lead.specialNeeds}</span></p>}
       </div>
 

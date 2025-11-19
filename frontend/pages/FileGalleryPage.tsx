@@ -28,7 +28,7 @@ const FileCard: React.FC<{ file: DocumentItem; onPreview: (file: DocumentItem) =
         <p className="text-sm font-semibold text-swiss-charcoal text-center truncate" title={file.name}>{file.name}</p>
         <div className="text-xs text-gray-500 text-center mt-1">
           <span>{file.size ? formatBytes(file.size) : ''}</span>
-          {file.uploadDate && <span> &middot; {new Date(file.uploadDate).toLocaleDateString()}</span>}
+          {file.uploadDate && <span> &middot; {new Date(file.uploadDate).toLocaleDateString(i18n.language)}</span>}
         </div>
       </div>
       <div className="mt-4 pt-3 border-t border-gray-200 flex justify-center space-x-2">

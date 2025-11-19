@@ -346,7 +346,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     id="capacity"
                     min="0"
                     value={settings.capacity || ''}
-                    onChange={(e) => onChange('capacity', e.target.value ? parseInt(e.target.value) : 0)}
+                    onChange={(e) => onChange('capacity', e.target.value ? parseInt(e.target.value, 10) : 0)}
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('settings:companyProfile.capacityPlaceholder', 'Enter number of children')}
                   />
@@ -414,7 +414,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     id="minimumOrderQuantity"
                     min="0"
                     value={settings.minimumOrderQuantity || ''}
-                    onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value) : 0)}
+                    onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}
                   />

@@ -77,7 +77,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                     {getDiscountText(promo)}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{new Date(promo.expiryDate).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{new Date(promo.expiryDate).toLocaleDateString(i18n.language)}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm">
                      <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         promo.status === 'Active' ? 'bg-green-100 text-green-700' :

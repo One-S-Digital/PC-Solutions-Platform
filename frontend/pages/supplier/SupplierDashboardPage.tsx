@@ -184,7 +184,7 @@ const SupplierDashboardPage: React.FC = () => {
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 whitespace-nowrap font-medium text-swiss-teal">{order.id.split('-')[1]}</td>
                     <td className="px-4 py-3 whitespace-nowrap">{getFoundationName(order.foundationOrgId)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">{new Date(order.requestDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">CHF {order.totalAmount.toFixed(2)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(order.status)}`}>

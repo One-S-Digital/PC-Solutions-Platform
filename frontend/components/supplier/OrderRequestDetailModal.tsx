@@ -54,7 +54,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
         <div className="p-6 max-h-[70vh] overflow-y-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
             <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.orderId')}</span><span className="font-semibold">{order.id}</span></div>
-            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.date')}</span><span className="font-semibold">{new Date(order.requestDate).toLocaleDateString()}</span></div>
+            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.date')}</span><span className="font-semibold">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>
             <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.status')}</span><span className="font-semibold">{t(`orderStatus.${order.status.toLowerCase().replace(/\s/g, '')}` as const, order.status)}</span></div>
             <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.total')}</span><span className="font-semibold">CHF {order.totalAmount.toFixed(2)}</span></div>
           </div>

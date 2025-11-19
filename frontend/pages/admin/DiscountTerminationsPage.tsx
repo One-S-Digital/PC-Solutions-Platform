@@ -65,7 +65,7 @@ const DiscountTerminationsPage: React.FC = () => {
                                     <tr key={vc.id}>
                                         <td className="px-4 py-3 font-medium">{getVendorName(vc.vendorId)}</td>
                                         <td className="px-4 py-3">{getDaycareName(vc.orgId)}</td>
-                                        <td className="px-4 py-3">{new Date(vc.markedAt).toLocaleDateString()}</td>
+                                        <td className="px-4 py-3">{new Date(vc.markedAt).toLocaleDateString(i18n.language)}</td>
                                         <td className="px-4 py-3">{vc.reason ? t(`vendorClientReasons.${vc.reason.replace(/\s+/g, '')}`, vc.reason) : 'N/A'}</td>
                                         <td className="px-4 py-3 space-x-2">
                                             {terminationQueue.includes(vc) && (

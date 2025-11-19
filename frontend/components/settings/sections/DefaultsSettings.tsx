@@ -58,7 +58,7 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
                 id="defaultMOQ"
                 name="defaultMOQ"
                 value={settings.defaultMOQ || ''}
-                onChange={(e) => onChange('defaultMOQ', e.target.value ? parseInt(e.target.value) : undefined)}
+                onChange={(e) => onChange('defaultMOQ', e.target.value ? parseInt(e.target.value, 10) : undefined)}
                 className={`${STANDARD_INPUT_FIELD} w-32`}
                 placeholder={t('common:settingsDefaults.defaultMOQPlaceholder')}
               />
@@ -71,7 +71,7 @@ const DefaultsSettings: React.FC<DefaultsSettingsProps> = ({ settings, onChange,
                 id="autoAcceptOrderQtyLimit"
                 name="autoAcceptOrderQtyLimit"
                 value={settings.autoAcceptOrderQtyLimit || ''}
-                onChange={(e) => onChange('autoAcceptOrderQtyLimit', e.target.value ? parseInt(e.target.value) : undefined)}
+                onChange={(e) => onChange('autoAcceptOrderQtyLimit', e.target.value ? parseInt(e.target.value, 10) : undefined)}
                 className={`${STANDARD_INPUT_FIELD} w-32`}
                 placeholder={t('common:settingsDefaults.autoAcceptOrderQtyLimitPlaceholder')}
               />

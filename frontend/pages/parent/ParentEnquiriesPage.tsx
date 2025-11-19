@@ -67,8 +67,8 @@ const ParentEnquiriesPage: React.FC = () => {
               <h2 className="text-xl font-semibold text-swiss-teal mb-1">
                 {t('parentEnquiriesPage.card.title', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : ''})}
               </h2>
-              <p className="text-sm text-gray-500">{t('parentEnquiriesPage.card.submitted')}: {new Date(lead.submissionDate).toLocaleDateString()}</p>
-              <p className="text-sm text-gray-500">{t('parentEnquiriesPage.card.childInfo', { age: lead.childAge, date: new Date(lead.desiredStartDate).toLocaleDateString()})}</p>
+              <p className="text-sm text-gray-500">{t('parentEnquiriesPage.card.submitted')}: {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>
+              <p className="text-sm text-gray-500">{t('parentEnquiriesPage.card.childInfo', { age: lead.childAge, date: new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)})}</p>
             </div>
             <div className={`mt-2 md:mt-0 px-3 py-1 text-sm font-medium rounded-full inline-block ${getStatusColor(lead.mainStatus)}`}>
               {lead.mainStatus}

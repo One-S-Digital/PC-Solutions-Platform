@@ -79,7 +79,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
              <div className="p-4 border rounded-lg bg-gray-50">
                 <h3 className="text-md font-medium text-gray-700">{t('common:settingsBillingSubscription.currentPlan')}</h3>
                 <p className="text-2xl font-semibold text-swiss-mint mt-1">{settings.currentTier || 'N/A'}</p>
-                 {settings.nextInvoiceDate && <p className="text-sm text-gray-500 mt-0.5">{t('common:settingsBillingSubscription.nextInvoiceOn', { date: new Date(settings.nextInvoiceDate).toLocaleDateString() })}</p>}
+                 {settings.nextInvoiceDate && <p className="text-sm text-gray-500 mt-0.5">{t('common:settingsBillingSubscription.nextInvoiceOn', { date: new Date(settings.nextInvoiceDate).toLocaleDateString(i18n.language) })}</p>}
             </div>
         </SettingsSectionWrapper>
     );

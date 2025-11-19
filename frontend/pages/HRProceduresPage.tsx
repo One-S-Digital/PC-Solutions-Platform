@@ -53,7 +53,7 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
           </button>
         </div>
         <p className="text-xs text-gray-500 mb-1">
-          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString() })}
+          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString(i18n.language) })}
         </p>
         <div className="my-2">
           {doc.tags.map(tag => (
