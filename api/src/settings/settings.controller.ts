@@ -830,10 +830,14 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Privacy settings retrieved successfully' })
   async getPrivacySettings(@Request() req) {
     const { profileId } = this.getContext(req);
-    const data = await this.principal.getPrivacyPrefs(profileId);
+    const prefs = await this.principal.getPrivacyPrefs(profileId);
+    // Map to consistent front-end shape
     return {
       success: true,
-      data,
+      data: {
+        hidePubliclyToggle: prefs.contentModeration,
+        gdprDataDeletionRequestMade: prefs.systemAdmin,
+      },
     };
   }
 
@@ -843,6 +847,7 @@ export class SettingsController {
   async updatePrivacySettings(@Request() req, @Body() payload: UpdatePrivacySettingsDto) {
     const { profileId } = this.getContext(req);
     const updated = await this.principal.updatePrivacyPrefs(profileId, payload);
+    // Return consistent front-end shape
     return {
       success: true,
       message: 'Privacy settings updated successfully',
