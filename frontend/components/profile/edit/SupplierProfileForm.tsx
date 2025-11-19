@@ -93,7 +93,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
                     if (file) handleLogoUpload(file);
                   }}
                   disabled={uploadingLogo}
-                  className="hidden"
+                  className="sr-only"
                 />
               </label>
               {uploadingLogo && (

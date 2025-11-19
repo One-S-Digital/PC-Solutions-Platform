@@ -107,7 +107,7 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
                     if (file) handleLogoUpload(file);
                   }}
                   disabled={uploadingLogo}
-                  className="hidden"
+                  className="sr-only"
                 />
               </label>
               {uploadingLogo && (
