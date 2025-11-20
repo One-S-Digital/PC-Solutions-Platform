@@ -7,6 +7,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CreateCatalogDto, UpdateCatalogDto } from './dto/create-catalog.dto';
 import { CsvProcessingService } from './csv-processing.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MarketplaceService {
@@ -35,26 +36,41 @@ export class MarketplaceService {
     isActive?: boolean;
     search?: string;
   }) {
-    const where: any = {};
+    const where: Prisma.ProductWhereInput = {};
+    const andClauses: Prisma.ProductWhereInput[] = [];
 
     if (filters?.category) {
-      where.category = filters.category;
+      andClauses.push({
+        OR: [
+          { category: filters.category },
+          { primaryCategory: filters.category },
+          { categories: { has: filters.category } },
+        ],
+      });
     }
 
     if (filters?.supplierId) {
-      where.supplierId = filters.supplierId;
+      andClauses.push({ supplierId: filters.supplierId });
     }
 
     if (filters?.isActive !== undefined) {
-      where.isActive = filters.isActive;
+      andClauses.push({ isActive: filters.isActive });
     }
 
     if (filters?.search) {
-      where.OR = [
-        { title: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
-        { tags: { has: filters.search } },
-      ];
+      andClauses.push({
+        OR: [
+          { title: { contains: filters.search, mode: 'insensitive' } },
+          { description: { contains: filters.search, mode: 'insensitive' } },
+          { sku: { contains: filters.search, mode: 'insensitive' } },
+          { vendorSku: { contains: filters.search, mode: 'insensitive' } },
+          { tags: { has: filters.search } },
+        ],
+      });
+    }
+
+    if (andClauses.length > 0) {
+      where.AND = andClauses;
     }
 
     return this.prisma.product.findMany({

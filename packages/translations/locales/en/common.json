@@ -56,7 +56,8 @@
     "yes": "Yes",
     "no": "No",
     "ok": "OK",
-    "retry": "Retry"
+    "retry": "Retry",
+    "refresh": "Refresh"
   },
   "common": {
     "error": "An error occurred",

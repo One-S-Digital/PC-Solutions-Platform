@@ -111,29 +111,75 @@ export interface Organization {
 }
 
 
+export type ProductAvailabilityStatus = 'ACTIVE' | 'INACTIVE' | 'DRAFT' | 'OUT_OF_STOCK';
+
+export interface AssetSummary {
+  id: string;
+  publicUrl?: string;
+  url?: string;
+}
+
 export interface Product {
   // Core Prisma Product fields
   id: string;
   title: string;
+  subtitle?: string;
   description?: string;
   price?: number;
+  priceCurrency?: string;
   category?: string; // Legacy single category
-  categories?: string[]; // New: flexible category tags
+  primaryCategory?: string;
+  categories?: string[]; // Flexible category tags
   tags: string[];
+  productHighlights?: string[];
+  unitOfMeasure?: string;
   status: string; // ACTIVE, INACTIVE, PENDING, REJECTED
+  availabilityStatus?: ProductAvailabilityStatus;
   isActive: boolean;
+  sku?: string;
+  vendorSku?: string;
+  ean?: string;
+  minOrderQuantity?: number;
+  maxOrderQuantity?: number;
+  stockStatus?: string;
+  deliveryLeadTimeDays?: number;
+  restockCadence?: string;
+  usageNotes?: string;
+  packagingDetails?: string;
+  materials?: string;
+  complianceTags?: string[];
+  allergens?: string[];
+  ageRanges?: string[];
+  deliveryMethods?: string[];
+  deliveryFees?: Array<{ method: string; fee: number; currency?: string }>;
+  supportedCantons?: string[];
+  visibilityStart?: string;
+  visibilityEnd?: string;
+  volumePricing?: Array<{ minQuantity: number; price: number }>;
+  variants?: Array<{
+    name: string;
+    sku?: string;
+    price?: number;
+    stockQuantity?: number;
+    stockStatus?: string;
+    imageAssetId?: string;
+    attributes?: string[];
+  }>;
+  galleryAssetIds?: string[];
+  specSheetAssetId?: string;
+  msdsAssetId?: string;
   supplierId: string;
   createdAt: string;
   updatedAt: string;
   
   // Asset relation
   imageAssetId?: string;
+  imageAsset?: AssetSummary | null;
   
   // Legacy frontend fields for compatibility
   supplierName?: string;
   supplierLogo?: string;
   imageUrl?: string;
-  stockStatus?: string;
 }
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock' | 'On Demand';
 
