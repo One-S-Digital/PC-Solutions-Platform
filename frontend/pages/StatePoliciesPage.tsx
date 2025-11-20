@@ -94,7 +94,7 @@ const normalizePolicyType = (value: unknown): PolicyType | undefined => {
 };
 
 const StatePoliciesPage: React.FC = () => {
-  const { t } = useTranslation(['content', 'common', 'dashboard']);
+  const { t, i18n } = useTranslation(['content', 'common', 'dashboard']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
   const [searchTerm, setSearchTerm] = useState('');

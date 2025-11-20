@@ -19,7 +19,7 @@ interface CourseMaterialCardProps {
 }
 
 const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview }) => {
-  const { t } = useTranslation(['content', 'common']);
+  const { t, i18n } = useTranslation(['content', 'common']);
   const typeSpecifics = {
     [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
     [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearning.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },

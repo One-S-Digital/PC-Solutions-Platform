@@ -8,7 +8,7 @@ import { ClipboardDocumentListIcon, ClockIcon, CheckCircleIcon, InformationCircl
 import { useTranslation } from 'react-i18next';
 
 const ParentEnquiriesPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser, leads } = useAppContext();
 
   if (!currentUser || currentUser.role !== 'Parent') {

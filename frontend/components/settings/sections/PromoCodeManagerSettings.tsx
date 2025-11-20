@@ -17,7 +17,7 @@ interface PromoCodeManagerSettingsProps {
 }
 
 const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPromo, setEditingPromo] = useState<PromoCode | null>(null);
 

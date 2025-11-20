@@ -13,7 +13,7 @@ import { useMessaging } from '../../contexts/MessagingContext';
 import { useNavigate } from 'react-router-dom';
 
 const FoundationOrdersAppointmentsPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser, serviceRequests } = useAppContext();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const { startOrGetConversation } = useMessaging();
