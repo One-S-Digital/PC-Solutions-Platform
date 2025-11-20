@@ -131,7 +131,7 @@ export class PrincipalService {
     userId: string,
     data: { hidePubliclyToggle?: boolean; gdprDataDeletionRequestMade?: boolean },
   ) {
-    return this.prisma.userNotificationPreferences.upsert({
+    const prefs = await this.prisma.userNotificationPreferences.upsert({
       where: { userId },
       update: {
         contentModeration: data.hidePubliclyToggle,
@@ -141,8 +141,13 @@ export class PrincipalService {
         userId,
         contentModeration: data.hidePubliclyToggle ?? false,
         systemAdmin: data.gdprDataDeletionRequestMade ?? false,
-      },
-    });
+        },
+      });
+
+    return {
+      hidePubliclyToggle: prefs.contentModeration ?? false,
+      gdprDataDeletionRequestMade: prefs.systemAdmin ?? false,
+    };
   }
 
   async getNotificationSettings(userId: string) {
