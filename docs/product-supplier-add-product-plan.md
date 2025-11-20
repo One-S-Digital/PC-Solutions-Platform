@@ -13,68 +13,60 @@
 
 ## 3. Prisma & Data Model
 ### Schema updates (`api/prisma/schema.prisma`)
-- Extend `Product` with:
-  - **Essentials:** `subtitle`, `primaryCategory`, `categories String[]`, `ageRanges String[]`, `unitOfMeasure`, `usageNotes`.
-  - **Inventory:** `sku`, `ean`, `variantStrategy`, `minOrderQuantity`, `maxOrderQuantity`, `availabilityStatus` (enum), `leadTimeDays`, `restockCadence`, `packagingDetails`.
-  - **Pricing:** `price`, `priceCurrency`, `volumePricing Json`, `subscriptionOptions Json`.
-  - **Compliance:** `complianceTags String[]`, `certificationAssetIds String[]`, `allergens String[]`, `materialComposition`, `expiryDate`.
-  - **Logistics:** `deliveryMethods String[]`, `deliveryFees Json`, `supportedCantons String[]`, `visibilityStart/End`.
-  - **Media:** `galleryAssetIds String[]`, `specSheetAssetId`, `msdsAssetId`.
-- Optional new tables:
-  - `ProductVariant` (variantId, attributes Json, price, stock, assetId).
-  - `ProductDocument` (type enum, assetId, productId).
-- Update `@prisma/client` enums for `AvailabilityStatus`, `DeliveryMethod`, `AgeRange`.
+- Extend `Product` with the exact fields shipped in this PR:
+  - **Essentials:** `subtitle`, `description`, `primaryCategory`, `categories String[] @default([])`, `tags String[] @default([])`, `productHighlights String[] @default([])`, `unitOfMeasure`.
+  - **Lifecycle:** `status` (legacy string), `availabilityStatus ProductAvailabilityStatus @default(ACTIVE)`, `isActive Boolean @default(true)`.
+  - **Pricing & inventory:** `price`, `priceCurrency @default("CHF")`, `minOrderQuantity`, `maxOrderQuantity`, `stockStatus`, `deliveryLeadTimeDays`, `restockCadence`, `volumePricing Json?`, `variants Json?`.
+  - **Logistics & compliance:** `deliveryMethods String[] @default([])`, `deliveryFees Json?`, `supportedCantons String[] @default([])`, `visibilityStart`, `visibilityEnd`, `usageNotes`, `packagingDetails`, `materials`, `complianceTags String[] @default([])`, `allergens String[] @default([])`, `ageRanges String[] @default([])`.
+  - **Catalog metadata:** `sku`, `vendorSku`, `ean`, `primaryCategory`, `galleryAssetIds String[] @default([])`, `imageAssetId`, `specSheetAssetId`, `msdsAssetId`.
+  - **Relationships:** keep `supplierId` relation + optional `imageAsset` relation for the hero asset.
+- Add the `ProductAvailabilityStatus` enum (`ACTIVE | INACTIVE | DRAFT | OUT_OF_STOCK`) and re-use it consistently in DTOs/frontend types.
 
 ### Migration workflow
-1. `pnpm --filter api prisma migrate dev --name add_product_metadata`.
-2. Update seed data with representative products (variants, compliance combos) for QA demos.
-3. Regenerate Prisma client (`pnpm --filter api prisma generate`) and ensure downstream packages recompile via Turbo.
+1. Generate the concrete migration that now lives at `api/prisma/migrations/20251120120000_expand_product_metadata` (`pnpm --filter api prisma migrate dev --name expand_product_metadata` during local work).
+2. Run `pnpm --filter api prisma generate` (or `turbo run build --filter=api`) so the new Prisma client includes the enum + fields.
+3. Seed data remains optional; use `prisma studio` for ad-hoc QA records that exercise variants, delivery fees, and compliance tags.
 
 ## 4. Prebuild & DB Wiring
-- Existing script: `api/scripts/prebuild-db-setup.mjs` (called from `api` `prebuild` script) auto-resolves failed migrations and backfills columns.
-- Extend `handleFailedMigration` with the new migration name (e.g., `20251121094500_add_product_metadata`). For skipped migrations in production, add helper SQL blocks similar to `ensureCategoriesColumns`.
-- Required env vars: `DATABASE_URL` (always) and `SHADOW_DATABASE_URL` for `prisma migrate dev`. Document these in `ENVIRONMENT_SETUP.md` + deployment docs.
-- Validation commands for CI/docs:
-  - `pnpm --filter api db:status`
-  - `pnpm --filter api db:verify`
-  - `pnpm --filter api db:migrate`
-- Mention fallback `pnpm --filter api prisma db push` for ephemeral preview DBs (not for prod).
+- Existing script: `api/scripts/prebuild-db-setup.mjs` (invoked by the `api` package `prebuild` hook) auto-heals failed or skipped migrations.
+- Add a dedicated handler for `20251120120000_expand_product_metadata` that:
+  - Creates the `ProductAvailabilityStatus` enum when missing.
+  - Runs the same `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` statements as the Prisma migration to backfill columns safely.
+  - Marks the migration as applied via the script’s `resolveMigration` helper.
+- Required env vars: `DATABASE_URL` (for migrations/healing) and `SHADOW_DATABASE_URL` when running `prisma migrate dev` locally.
+- Recommended verification commands:
+  - `pnpm --filter api prisma migrate status`
+  - `pnpm --filter api prisma migrate deploy`
+  - `pnpm --filter api prisma generate`
+- Only fall back to `pnpm --filter api prisma db push` for ephemeral preview environments where schema drift is acceptable.
 
 ## 5. Backend API Enhancements
 - **DTOs (`api/src/marketplace/dto/create-product.dto.ts`):**
-  - Add class-validator rules for every field (length, numeric ranges, enum membership).
-  - Nested DTOs: `ProductVariantDto`, `VolumeTierDto`, `DeliveryFeeDto`, `ComplianceCertificateDto`.
-  - Custom validators: `MinLessThanMax`, `DistinctArray`.
+  - Capture every new field with `class-validator` decorators (length, numeric ranges, enums).
+  - Nested DTOs: `VolumePricingTierDto`, `DeliveryFeeDto`, `ProductVariantDto`.
+  - Arrays validated with `@IsArray()` + `@ValidateNested({ each: true })` so malformed payloads are rejected.
+  - `UpdateProductDto` simply extends `PartialType(CreateProductDto)` to stay in sync.
 - **Service (`api/src/marketplace/marketplace.service.ts`):**
-  - Persist nested relations inside `createProduct`/`updateProduct`.
-  - Enforce ownership (supplier org) on write operations.
-  - Enhance filters to handle arrays (category, canton, compliance) + search by SKU/EAN.
-  - Add `paginate` support (skip/take from query params).
-- **Controller (`api/src/marketplace/marketplace.controller.ts`):**
-  - `GET /marketplace/products/supplier` – fetch supplier’s own listings.
-  - `PATCH /marketplace/products/:id/status` – quick publish/unpublish toggle.
-  - Ensure routes are decorated with `@Roles(UserRole.PRODUCT_SUPPLIER, ...)`.
-- **Testing:** add unit tests for DTO validation and service logic (mock Prisma). Extend e2e specs to cover nested payloads.
+  - Expand `findAllProducts` filters using `Prisma.ProductWhereInput` so category/primaryCategory/array matches, SKU/EAN-style searches, and supplier scoping compose cleanly.
+  - Always include `supplier` + `imageAsset` to satisfy the supplier dashboard needs.
+- **Controller (existing marketplace routes):**
+  - Reuse `POST /marketplace/products`, `PATCH /marketplace/products/:id`, `DELETE /marketplace/products/:id`, and `GET /marketplace/products` for supplier CRUD plus listing.
+  - Guard routes with supplier role policies (already wired in the module) and ensure `supplierId` is injected server-side where possible.
+- **Testing:** extend the DTO unit tests and marketplace service specs to cover new shapes (volume pricing, variants, delivery fees). Add e2e coverage for create/update/toggle flows when time allows.
 
 ## 6. Frontend Implementation
-- **Types & Services:**
-  - Update `frontend/types.ts` with the expanded `Product` shape plus helper interfaces for variants/pricing.
-  - New `frontend/services/productService.ts` using `useAuthenticatedApi` to hit the new endpoints. Provide React Query hooks (`useSupplierProducts`, `useProductMutation`).
-- **Product listings page (`frontend/pages/supplier/ProductListingsPage.tsx`):**
-  - Replace mock data with API fetch; show loading/empty states.
-  - Wire “Add product” button to the new modal.
+- **Types & constants:**
+  - Extend `frontend/types.ts` with the richer `Product` interface, related helper types (`ProductAvailabilityStatus`, `AssetSummary`, variant/pricing structures), and reuse existing unions like `StockStatus`.
+  - Add suggested chip lists (`SUGGESTED_PRODUCT_COMPLIANCE_TAGS`, `SUGGESTED_PRODUCT_AGE_RANGES`, `SUGGESTED_PRODUCT_DELIVERY_METHODS`) in `frontend/constants.ts`.
+- **Supplier listings page (`frontend/pages/supplier/SupplierProductListingsPage.tsx`):**
+  - Fetch live data from `/marketplace/products?supplierId=...`, show loading/error notifications, and expose client-side search.
+  - Surface CRUD actions (create, edit, visibility toggle, delete) with optimistic UI updates and fallbacks to `loadProducts()`.
+  - Wire the “Add product” CTA + row actions to open the modal pre-filled with the selected product.
 - **`ProductUploadModal`:**
-  - Base on `ServiceUploadModal` but split into sections (Essentials, Inventory, Pricing, Compliance, Logistics, Media).
-  - Use `ChipInput` seeded by `SUGGESTED_PRODUCT_CATEGORIES`, allow custom values.
-  - Variant builder subcomponent (dynamic rows with per-variant price/stock/images).
-  - Volume pricing editor (threshold + price). Validate ascending thresholds.
-  - Compliance toggles (chips for EN-71, CE, fire-retardant, allergen-free, organic, etc.) + optional asset uploads for certificates or MSDS.
-  - Delivery coverage uses canton chips; delivery fee matrix per method.
-  - Provide summary sidebar showing readiness per section.
-- **Marketplace display:**
-  - Update supplier cards/product cards to show new badges (age range, compliance tags, MOQ).
-  - Filter UI additions (category multi-select, compliance, canton).
-- **Translations:** add `productUploadModal.*` keys to `packages/translations/locales/*/dashboard.json`. Run `pnpm translate:simple` if needed.
+  - New multi-section modal covering basics, categories/compliance, pricing/inventory, logistics/delivery, and media/document uploads.
+  - Uses `ChipInput`, `FileUploadZone`, nested repeaters for volume pricing, variants, and delivery fees, and hydrates from existing product data.
+  - Includes accessibility fixes (close button labels, aria-labels for destructive buttons) and keeps the submit button inside the `<form>` so native submission works.
+- **Translations:** extend `packages/translations/locales/*/dashboard.json` with `supplierProductListingsPage` notices and `productUploadModal.*`, plus add `common.buttons.refresh` and `common.order.*` keys for new toasts and alerts.
 
 ## 7. Testing & QA
 - **Backend:** unit + e2e covering product create/update/delete, validation edge cases, filtering.
@@ -87,6 +79,6 @@
 - **Regression:** confirm Service Provider flows unaffected; shared components must remain backwards compatible.
 
 ## 8. Rollout & Documentation
-- Update `DEPLOYMENT_CHECKLIST.md` and `RELEASE_NOTES` (if any) to mention the new feature, migration, and prebuild safeguards.
-- Add onboarding instructions for suppliers in `docs/onboarding-guide.md` (steps to add first product, required docs).
-- Communicate schema/API changes to frontend team via this doc + Slack/Notion as needed.
+- Update `DEPLOYMENT_CHECKLIST.md` / release notes to call out the `20251120120000_expand_product_metadata` migration, the prebuild auto-heal, and the new supplier UI.
+- Document supplier onboarding (required assets, recommended metadata) in `docs/onboarding-guide.md`.
+- Share this plan plus the updated API contract with dependent teams (marketplace consumers, reporting) so they can start ingesting the richer product data.

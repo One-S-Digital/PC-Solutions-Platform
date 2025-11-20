@@ -1063,8 +1063,10 @@
   "serviceProvider": {
     "noServicesFound": "No services found"
   },
-  "Title and Message are required.": "Title and Message are required.",
-  "Cannot submit order. User not logged in, supplier info missing, or cart is empty.": "Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
+  "order": {
+    "titleAndMessageRequired": "Title and message are required.",
+    "cannotSubmitMissingInfo": "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
+  },
   "orderStatus": {
     "pending": "Pending",
     "approved": "Approved",

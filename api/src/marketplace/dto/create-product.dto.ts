@@ -10,6 +10,7 @@ import {
   MaxLength,
   ValidateNested,
   IsDateString,
+  IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
@@ -70,6 +71,7 @@ class ProductVariantDto {
 
 export class CreateProductDto {
   @IsString()
+  @IsNotEmpty()
   @MaxLength(120)
   title: string;
 
@@ -193,6 +195,7 @@ export class CreateProductDto {
   deliveryMethods?: string[];
 
   @IsOptional()
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => DeliveryFeeDto)
   deliveryFees?: DeliveryFeeDto[];
@@ -211,11 +214,13 @@ export class CreateProductDto {
   visibilityEnd?: string;
 
   @IsOptional()
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => VolumePricingTierDto)
   volumePricing?: VolumePricingTierDto[];
 
   @IsOptional()
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductVariantDto)
   variants?: ProductVariantDto[];

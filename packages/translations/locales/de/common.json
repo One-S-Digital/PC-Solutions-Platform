@@ -1104,13 +1104,9 @@
   "serviceProvider": {
     "noServicesFound": "[DE] No services found"
   },
-  "Title and Message are required": {
-    "": "[DE] Title and Message are required."
-  },
-  "Cannot submit order": {
-    " User not logged in, supplier info missing, or cart is empty": {
-      "": "[DE] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
-    }
+  "order": {
+    "titleAndMessageRequired": "[DE] Title and message are required.",
+    "cannotSubmitMissingInfo": "[DE] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "orderStatus": {
     "pending": "[DE] Pending",
