@@ -21,7 +21,7 @@ interface FoundationJobListingCardProps {
 }
 
 const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job, onEdit, onViewApplicants }) => {
-  const { t } = useTranslation(['recruitment', 'common']);
+  const { t, i18n } = useTranslation(['recruitment', 'common']);
 
   const statusMeta = useMemo(() => {
     switch (job.status) {

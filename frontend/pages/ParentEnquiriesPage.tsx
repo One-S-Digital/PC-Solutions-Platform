@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 
 const ParentEnquiriesPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser, leads } = useAppContext();
   const { startOrGetConversation } = useMessaging();
   const navigate = useNavigate();

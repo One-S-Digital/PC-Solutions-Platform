@@ -29,7 +29,7 @@ const normalizeHrCategory = (value: unknown): HRCategory => {
 };
 
 const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, onPreview, onDownload }) => {
-  const { t } = useTranslation(['content', 'common']);
+  const { t, i18n } = useTranslation(['content', 'common']);
   const fileTypeColors = {
     PDF: 'text-red-500',
     DOCX: 'text-blue-500',

@@ -10,7 +10,7 @@ import { MOCK_ORDERS, MOCK_PRODUCTS, MOCK_ORGANIZATIONS } from '../../constants'
 import { OrderRequestStatus } from '../../types';
 
 const SupplierDashboardPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
 

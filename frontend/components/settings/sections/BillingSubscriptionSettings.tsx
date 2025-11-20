@@ -16,7 +16,7 @@ interface BillingSubscriptionSettingsProps {
 }
 
 const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelectPlan: (planName: string) => void }> = ({ plan, currentPlanName, onSelectPlan }) => {
-    const { t } = useTranslation(['dashboard', 'common']);
+    const { t, i18n } = useTranslation(['dashboard', 'common']);
     const { translatePlan } = usePricingTranslations();
     const translatedPlan = translatePlan(plan);
     const isCurrentPlan = plan.name === currentPlanName;
