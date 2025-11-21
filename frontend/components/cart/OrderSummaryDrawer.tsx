@@ -31,7 +31,12 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
 
   const handleSubmitOrder = () => {
     if (!currentUser || !cartSupplierInfo || cartItems.length === 0) {
-      alert(t("Cannot submit order. User not logged in, supplier info missing, or cart is empty."));
+      alert(
+        t(
+          'common:order.cannotSubmitMissingInfo',
+          'Cannot submit order. User not logged in, supplier info missing, or cart is empty.',
+        ),
+      );
       return;
     }
     setIsSubmitting(true);
