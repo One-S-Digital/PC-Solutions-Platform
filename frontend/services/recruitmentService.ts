@@ -1,5 +1,6 @@
 import { apiService, ApiResponse } from './api';
 import { JobListing, Application, JobStatus, ApplicationStatus } from '../types';
+import i18n from '../i18n';
 
 export interface JobListingCreateData {
   title: string;
@@ -28,27 +29,30 @@ export interface ApplicationUpdateData {
 class RecruitmentService {
   // Job Listings
   async getJobListings(page = 1, limit = 20, status?: JobStatus, search?: string): Promise<{ jobListings: JobListing[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(status && { status }),
       ...(search && { search }),
+      lang: currentLang,
     });
     
     const response = await apiService.get<{ jobListings: JobListing[]; pagination: any }>(
-      `/job-listings?${params.toString()}`
+      `/recruitment/job-listings?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch job listings');
     }
     return {
-      jobListings: response.data.jobListings.map(job => this.transformJobListing(job)),
+      jobListings: (response.data.jobListings || response.data || []).map((job: any) => this.transformJobListing(job)),
       pagination: response.data.pagination,
     };
   }
 
   async getJobListingById(id: string): Promise<JobListing> {
-    const response = await apiService.get<JobListing>(`/job-listings/${id}`);
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<JobListing>(`/recruitment/job-listings/${id}?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch job listing');
     }
@@ -56,7 +60,7 @@ class RecruitmentService {
   }
 
   async createJobListing(data: JobListingCreateData): Promise<JobListing> {
-    const response = await apiService.post<JobListing>('/job-listings', data);
+    const response = await apiService.post<JobListing>('/recruitment/job-listings', data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to create job listing');
     }
@@ -64,7 +68,7 @@ class RecruitmentService {
   }
 
   async updateJobListing(id: string, data: JobListingUpdateData): Promise<JobListing> {
-    const response = await apiService.put<JobListing>(`/job-listings/${id}`, data);
+    const response = await apiService.put<JobListing>(`/recruitment/job-listings/${id}`, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update job listing');
     }
@@ -72,7 +76,7 @@ class RecruitmentService {
   }
 
   async deleteJobListing(id: string): Promise<void> {
-    const response = await apiService.delete(`/job-listings/${id}`);
+    const response = await apiService.delete(`/recruitment/job-listings/${id}`);
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete job listing');
     }
@@ -80,26 +84,29 @@ class RecruitmentService {
 
   // Applications
   async getApplications(page = 1, limit = 20, jobListingId?: string): Promise<{ applications: Application[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(jobListingId && { jobListingId }),
+      lang: currentLang,
     });
     
     const response = await apiService.get<{ applications: Application[]; pagination: any }>(
-      `/applications?${params.toString()}`
+      `/recruitment/applications?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch applications');
     }
     return {
-      applications: response.data.applications.map(app => this.transformApplication(app)),
+      applications: (response.data.applications || response.data || []).map((app: any) => this.transformApplication(app)),
       pagination: response.data.pagination,
     };
   }
 
   async getApplicationById(id: string): Promise<Application> {
-    const response = await apiService.get<Application>(`/applications/${id}`);
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<Application>(`/recruitment/applications/${id}?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch application');
     }
@@ -107,7 +114,7 @@ class RecruitmentService {
   }
 
   async createApplication(data: ApplicationCreateData): Promise<Application> {
-    const response = await apiService.post<Application>('/applications', data);
+    const response = await apiService.post<Application>('/recruitment/applications', data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to create application');
     }
@@ -115,7 +122,7 @@ class RecruitmentService {
   }
 
   async updateApplication(id: string, data: ApplicationUpdateData): Promise<Application> {
-    const response = await apiService.put<Application>(`/applications/${id}`, data);
+    const response = await apiService.put<Application>(`/recruitment/applications/${id}`, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update application');
     }
@@ -123,7 +130,7 @@ class RecruitmentService {
   }
 
   async deleteApplication(id: string): Promise<void> {
-    const response = await apiService.delete(`/applications/${id}`);
+    const response = await apiService.delete(`/recruitment/applications/${id}`);
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete application');
     }
@@ -131,11 +138,12 @@ class RecruitmentService {
 
   // Get applications for a specific job listing
   async getJobApplications(jobListingId: string): Promise<Application[]> {
-    const response = await apiService.get<Application[]>(`/job-listings/${jobListingId}/applications`);
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<Application[]>(`/recruitment/job-listings/${jobListingId}/applications?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch job applications');
     }
-    return response.data.map(app => this.transformApplication(app));
+    return (response.data || []).map((app: any) => this.transformApplication(app));
   }
 
   // Transform job listing data to include legacy fields for UI compatibility

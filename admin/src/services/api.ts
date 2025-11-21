@@ -267,6 +267,7 @@ export const apiService = {
       type?: string; 
       language?: string;
       status?: string;
+      lang?: string; // Language for translation resolution (en, fr, de)
     }
   ) => apiClient.get<ApiResponse<any[]>>('/content/elearning', { params }),
   
@@ -300,6 +301,7 @@ export const apiService = {
       category?: string;
       status?: string;
       language?: string;
+      lang?: string; // Language for translation resolution (en, fr, de)
     }
   ) => apiClient.get<ApiResponse<HrDocument[]>>('/content/hr-documents', { params }),
   
@@ -336,6 +338,7 @@ export const apiService = {
       country?: string;
       region?: string;
       isCritical?: boolean;
+      lang?: string; // Language for translation resolution (en, fr, de)
     }
   ) => apiClient.get<ApiResponse<PolicyDocument[]>>('/content/state-policies', { params }),
   
@@ -501,6 +504,117 @@ export const apiService = {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+  }),
+
+  // Translations
+  getTranslationKeys: (
+    apiClient: AxiosInstance,
+    params?: { namespace?: string; lang?: string; search?: string; page?: number; limit?: number }
+  ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/keys', { params }),
+
+  getTranslation: (
+    apiClient: AxiosInstance,
+    namespace: string,
+    key: string,
+    lang: string
+  ) => apiClient.get<ApiResponse<any>>(`/static-translations/admin/${namespace}/${key}/${lang}`),
+
+  updateTranslation: (
+    apiClient: AxiosInstance,
+    namespace: string,
+    key: string,
+    lang: string,
+    value: string
+  ) => apiClient.put<ApiResponse<any>>(`/static-translations/admin/${namespace}/${key}/${lang}`, { value }),
+
+  bulkUpdateTranslations: (
+    apiClient: AxiosInstance,
+    translations: Array<{ namespace: string; key: string; lang: string; value: string }>
+  ) => apiClient.post<ApiResponse<{ updated: number }>>('/static-translations/admin/bulk', translations),
+
+  deleteTranslation: (
+    apiClient: AxiosInstance,
+    namespace: string,
+    key: string,
+    lang: string
+  ) => apiClient.delete<ApiResponse<{ success: boolean }>>(`/static-translations/admin/${namespace}/${key}/${lang}`),
+
+  markTranslationReviewed: (
+    apiClient: AxiosInstance,
+    namespace: string,
+    key: string,
+    lang: string
+  ) => apiClient.post<ApiResponse<{ success: boolean }>>(`/static-translations/admin/${namespace}/${key}/${lang}/review`),
+
+  getNamespaces: (
+    apiClient: AxiosInstance,
+    params?: { lang?: string }
+  ) => apiClient.get<ApiResponse<string[]>>('/static-translations/admin/namespaces', { params }),
+
+  createTranslationRelease: (
+    apiClient: AxiosInstance,
+    version: string,
+    description?: string
+  ) => apiClient.post<ApiResponse<{ success: boolean; version: string }>>('/static-translations/admin/releases', {
+    version,
+    description,
+  }),
+
+  translateMissing: (
+    apiClient: AxiosInstance,
+    sourceLang: string,
+    targetLang: string,
+    namespace?: string,
+    keys?: string[],
+    force?: boolean
+  ) => apiClient.post<ApiResponse<{ success: boolean; translated: number }>>('/static-translations/admin/translate-missing', {
+    sourceLang,
+    targetLang,
+    namespace,
+    keys,
+    force,
+  }, {
+    timeout: 300000, // 5 minutes timeout for translation operations (can take a while for large batches)
+  }),
+
+  bulkApproveTranslations: (
+    apiClient: AxiosInstance,
+    keys: Array<{ namespace: string; key: string; lang: string }>
+  ) => apiClient.post<ApiResponse<{ success: boolean; approved: number }>>('/static-translations/admin/bulk-approve', { keys }),
+
+  exportTranslations: (
+    apiClient: AxiosInstance,
+    params?: { namespace?: string; format?: 'json' | 'csv' }
+  ) => {
+    if (params?.format === 'csv') {
+      // For CSV, we need to get the raw response as text
+      return apiClient.get('/static-translations/admin/export', { 
+        params,
+        responseType: 'text' // Important: get response as text for CSV
+      });
+    }
+    // For JSON, get as normal JSON response
+    return apiClient.get<ApiResponse<any[]>>('/static-translations/admin/export', { params });
+  },
+
+  importTranslations: (
+    apiClient: AxiosInstance,
+    translations: Array<{ namespace: string; key: string; lang: string; value: string }>
+  ) => apiClient.post<ApiResponse<{ success: boolean; imported: number }>>('/static-translations/admin/import', translations),
+
+  getAuditLogs: (
+    apiClient: AxiosInstance,
+    params?: { type?: 'static' | 'dynamic'; limit?: number }
+  ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/audit-logs', { params }),
+
+  listReleases: (
+    apiClient: AxiosInstance
+  ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/releases'),
+
+  cleanupPrefixes: (
+    apiClient: AxiosInstance
+  ) => apiClient.post<ApiResponse<{ success: boolean; cleaned: number; affected: number }>>('/static-translations/admin/cleanup-prefixes', {}, {
+    timeout: 300000, // 5 minutes timeout for cleanup operations (can take a while for large datasets)
   }),
 }
 

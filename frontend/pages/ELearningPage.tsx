@@ -11,7 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
-import { formatCategory } from '../utils/serviceFormatting';
+import i18n from '../i18n';
 
 interface CourseMaterialCardProps {
   item: Course;
@@ -19,7 +19,7 @@ interface CourseMaterialCardProps {
 }
 
 const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview }) => {
-  const { t, i18n } = useTranslation(['content', 'common']);
+  const { t } = useTranslation(['content', 'common']);
   const typeSpecifics = {
     [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
     [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearning.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
@@ -50,11 +50,19 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
           <IconElement className={`w-6 h-6 mr-2 ${currentType.color}`} />
           <h3 className={`text-lg font-semibold ${currentType.color}`}>{item.title}</h3>
         </div>
-        <p className="text-sm text-gray-600 mb-1 flex-grow line-clamp-3">{item.description}</p>
+        {item.category && (
+          <p className="text-xs text-gray-500 mb-1">{t('eLearning.categoryLabel')}: {ELEARNING_CATEGORY_LABELS[item.category] || item.category}</p>
+        )}
+        {item.contentPreview && (
+          <p className="text-sm text-gray-600 mb-2 flex-grow line-clamp-3">{item.contentPreview}</p>
+        )}
+        {!item.contentPreview && (
+          <p className="text-sm text-gray-600 mb-1 flex-grow line-clamp-3">{item.description}</p>
+        )}
         {item.type === ELearningContentType.COURSE && item.lessons && <p className="text-xs text-gray-500">{t('eLearning.lessonsCount', { count: item.lessons })}</p>}
         {(item.type === ELearningContentType.VIDEO || item.type === ELearningContentType.COURSE) && item.duration && <p className="text-xs text-gray-500">{t('eLearning.durationLabel')}: {item.duration}</p>}
         {item.language && <p className="text-xs text-gray-500">{t('eLearning.languageLabel')}: {item.language}</p>}
-        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString(i18n.language)}</p>
+        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}</p>
          {item.tags && item.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
                 {item.tags.slice(0, 3).map(tag => (
@@ -91,13 +99,32 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
   );
 };
 
+const ELearningTypeDisplayCard: React.FC<{title: string, icon: React.ElementType, count: number, colorClasses: string, onSelect: () => void}> = ({title, icon: Icon, count, colorClasses, onSelect}) => {
+  const { t } = useTranslation(['content', 'common']);
+  return (
+    <div 
+      className={`p-5 cursor-pointer rounded-card shadow-soft hover:shadow-lg transition-shadow duration-200 ease-in-out ${colorClasses}`} 
+      onClick={onSelect}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}
+      aria-label={`View ${title}`}
+    >
+      <Icon className="w-10 h-10 mb-3 text-current"/>
+      <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
+      <p className="text-sm opacity-80 text-current">{count} {count === 1 ? 'item' : 'items'}</p>
+    </div>
+  );
+};
+
 const ELearningPage: React.FC = () => {
-  const { t } = useTranslation(['content', 'common', 'dashboard']);
+  const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest, authenticatedUpload } = useAuthenticatedApi();
   const [eLearningItems, setELearningItems] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<'All' | ELearningCategory>('All');
+  const [filterType, setFilterType] = useState<'All' | ELearningContentType>('All');
   const [isLoading, setIsLoading] = useState(true);
   const [previewItem, setPreviewItem] = useState<Course | null>(null);
 
@@ -114,8 +141,19 @@ const ELearningPage: React.FC = () => {
   };
 
   const normalizeElearningCategory = (value: unknown): ELearningCategory => {
-    if (typeof value === 'string' && (ELEARNING_CATEGORIES as readonly string[]).includes(value)) {
-      return value as ELearningCategory;
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      // Try exact match first
+      if ((ELEARNING_CATEGORIES as readonly string[]).includes(trimmed)) {
+        return trimmed as ELearningCategory;
+      }
+      // Try case-insensitive match
+      const found = ELEARNING_CATEGORIES.find(
+        cat => cat.toLowerCase() === trimmed.toLowerCase()
+      );
+      if (found) {
+        return found;
+      }
     }
     return 'Other';
   };
@@ -125,7 +163,8 @@ const ELearningPage: React.FC = () => {
     const fetchELearningContent = async () => {
       try {
         setIsLoading(true);
-        const response = await authenticatedRequest<any[]>('/content/elearning?limit=100', {
+        const currentLang = i18n.language || 'en';
+        const response = await authenticatedRequest<any[]>(`/content/elearning?limit=100&lang=${currentLang}`, {
           method: 'GET'
         });
 
@@ -146,6 +185,7 @@ const ELearningPage: React.FC = () => {
             duration: item.duration,
             fileUrl: item.publicUrl || item.fileUrl || item.url,
             tags: item.tags || [],
+            contentPreview: item.contentPreview || item.description,
           }));
           setELearningItems(content);
         }
@@ -159,11 +199,12 @@ const ELearningPage: React.FC = () => {
     };
 
     fetchELearningContent();
-  }, [authenticatedRequest]);
+  }, [authenticatedRequest, i18n.language]);
 
-  const categories = useMemo(() => ['All', ...new Set(eLearningItems.map(item => item.category))] as Array<'All' | ELearningCategory>, [eLearningItems]);
+  const categories = useMemo(() => ['All', ...ELEARNING_CATEGORIES] as Array<'All' | ELearningCategory>, []);
 
-  const globallyFilteredItems = useMemo(() => {
+  // Filter by category and search (but not by type) for calculating type counts
+  const categoryAndSearchFilteredItems = useMemo(() => {
     return eLearningItems.filter(item =>
       (isAdminOrSuperAdmin || item.status !== 'Draft') &&
       (item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -173,10 +214,37 @@ const ELearningPage: React.FC = () => {
     );
   }, [searchTerm, filterCategory, eLearningItems, currentUser, isAdminOrSuperAdmin]);
 
-  const courseItems = useMemo(() => globallyFilteredItems.filter(item => item.type === ELearningContentType.COURSE), [globallyFilteredItems]);
-  const videoItems = useMemo(() => globallyFilteredItems.filter(item => item.type === ELearningContentType.VIDEO), [globallyFilteredItems]);
-  const pdfItems = useMemo(() => globallyFilteredItems.filter(item => item.type === ELearningContentType.PDF), [globallyFilteredItems]);
-  const linkItems = useMemo(() => globallyFilteredItems.filter(item => item.type === ELearningContentType.LINK), [globallyFilteredItems]);
+  // Filter by category, search, AND type for displaying content
+  const globallyFilteredItems = useMemo(() => {
+    return categoryAndSearchFilteredItems.filter(item =>
+      (filterType === 'All' || item.type === filterType)
+    );
+  }, [categoryAndSearchFilteredItems, filterType]);
+
+  // Calculate type counts from items filtered by category/search (not by type)
+  const courseItems = useMemo(() => categoryAndSearchFilteredItems.filter(item => item.type === ELearningContentType.COURSE), [categoryAndSearchFilteredItems]);
+  const videoItems = useMemo(() => categoryAndSearchFilteredItems.filter(item => item.type === ELearningContentType.VIDEO), [categoryAndSearchFilteredItems]);
+  const pdfItems = useMemo(() => categoryAndSearchFilteredItems.filter(item => item.type === ELearningContentType.PDF), [categoryAndSearchFilteredItems]);
+  const linkItems = useMemo(() => categoryAndSearchFilteredItems.filter(item => item.type === ELearningContentType.LINK), [categoryAndSearchFilteredItems]);
+
+  const typeVisuals: Record<ELearningContentType, {icon: React.ElementType, colorClasses: string, label: string}> = {
+    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white', label: t('eLearning.coursesTitle') },
+    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, colorClasses: 'bg-red-500 text-white', label: t('eLearning.videosTitle') },
+    [ELearningContentType.PDF]: { icon: DocumentTextIcon, colorClasses: 'bg-orange-500 text-white', label: t('eLearning.pdfsTitle') },
+    [ELearningContentType.LINK]: { icon: LinkIcon, colorClasses: 'bg-purple-500 text-white', label: t('eLearning.externalLinksTitle') },
+  };
+
+  const typeCounts = useMemo(() => {
+    const counts = {
+      [ELearningContentType.COURSE]: courseItems.length,
+      [ELearningContentType.VIDEO]: videoItems.length,
+      [ELearningContentType.PDF]: pdfItems.length,
+      [ELearningContentType.LINK]: linkItems.length,
+    };
+    return counts;
+  }, [courseItems.length, videoItems.length, pdfItems.length, linkItems.length]);
+
+  const totalItems = useMemo(() => categoryAndSearchFilteredItems.length, [categoryAndSearchFilteredItems]);
 
 
 
@@ -238,27 +306,65 @@ const ELearningPage: React.FC = () => {
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value as 'All' | ELearningCategory)}
                     className={`${STANDARD_INPUT_FIELD} w-full md:w-auto`}
-                  >
-                      {categories.map(cat => (
-                        <option key={cat} value={cat}>
-                          {cat === 'All'
-                            ? t('eLearning.allCategoriesLabel', { defaultValue: 'All Categories' })
-                            : (ELEARNING_CATEGORY_LABELS[cat] || formatCategory(cat))}
-                        </option>
-                      ))}
-                  </select>
+                >
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>
+                        {cat === 'All' ? t('eLearning.allCategoriesLabel', { defaultValue: 'All Categories' }) : (ELEARNING_CATEGORY_LABELS[cat] || cat)}
+                      </option>
+                    ))}
+                </select>
             </div>
         </div>
       </Card>
-      
-      {globallyFilteredItems.length === 0 && (
-          <p className="text-center text-gray-500 py-8 text-lg">{t('eLearning.noContentFound')}</p>
-      )}
 
-      {renderSection(t('eLearning.coursesTitle'), courseItems, t('eLearning.itemType.courses'), AcademicCapIcon)}
-      {renderSection(t('eLearning.videosTitle'), videoItems, t('eLearning.itemType.videos'), VideoCameraIcon)}
-      {renderSection(t('eLearning.pdfsTitle'), pdfItems, t('eLearning.itemType.pdfs'), DocumentTextIcon)}
-      {renderSection(t('eLearning.externalLinksTitle'), linkItems, t('eLearning.itemType.links'), LinkIcon)}
+      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">Content Types</h2>
+      
+      {isLoading && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">{t('common:loading') || 'Loading content...'}</p>
+        </div>
+      )}
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <ELearningTypeDisplayCard
+          title="All Content"
+          icon={AcademicCapIcon}
+          count={totalItems}
+          colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
+          onSelect={() => setFilterType('All')}
+        />
+        {Object.entries(typeVisuals).map(([type, visual]) => (
+          <ELearningTypeDisplayCard
+            key={type}
+            title={visual.label}
+            icon={visual.icon}
+            count={typeCounts[type as ELearningContentType]}
+            colorClasses={visual.colorClasses}
+            onSelect={() => setFilterType(type as ELearningContentType)}
+          />
+        ))}
+      </div>
+
+      {globallyFilteredItems.length === 0 ? (
+        <p className="text-center text-gray-500 py-8 text-lg">{t('eLearning.noContentFound')}</p>
+      ) : filterType === 'All' ? (
+        <div className="space-y-8">
+          {courseItems.length > 0 && renderSection(t('eLearning.coursesTitle'), courseItems, t('eLearning.itemType.courses'), AcademicCapIcon)}
+          {videoItems.length > 0 && renderSection(t('eLearning.videosTitle'), videoItems, t('eLearning.itemType.videos'), VideoCameraIcon)}
+          {pdfItems.length > 0 && renderSection(t('eLearning.pdfsTitle'), pdfItems, t('eLearning.itemType.pdfs'), DocumentTextIcon)}
+          {linkItems.length > 0 && renderSection(t('eLearning.externalLinksTitle'), linkItems, t('eLearning.itemType.links'), LinkIcon)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {globallyFilteredItems.map(item => (
+            <CourseMaterialCard 
+              key={item.id} 
+              item={item}
+              onPreview={handlePreview}
+            />
+          ))}
+        </div>
+      )}
 
       {previewItem && previewItem.fileUrl && (
         <DocumentPreviewModal

@@ -1,6 +1,35 @@
 {
   "eLearning": {
     "title": "E-Learning",
+    "coursesTitle": "Kurse",
+    "videosTitle": "Videos",
+    "pdfsTitle": "PDF-Dokumente",
+    "externalLinksTitle": "Externe Links",
+    "addNewContentButton": "Neuen Inhalt hinzufügen",
+    "noContentFound": "Kein Inhalt verfügbar",
+    "noItemsFound": "Keine Elemente gefunden",
+    "categoryLabel": "Kategorie",
+    "languageLabel": "Sprache",
+    "durationLabel": "Dauer",
+    "updatedLabel": "Aktualisiert",
+    "viewingAlert": "Anzeigen",
+    "lessonsCount": "{{count}} Lektionen",
+    "searchPlaceholder": "Inhalt durchsuchen...",
+    "itemType": {
+      "courses": "Kurse",
+      "videos": "Videos",
+      "pdfs": "PDFs",
+      "links": "Links"
+    },
+    "actions": {
+      "viewCourse": "Kurs anzeigen",
+      "watchVideo": "Video ansehen",
+      "downloadPdf": "PDF herunterladen",
+      "openLink": "Link öffnen",
+      "viewPdf": "PDF anzeigen",
+      "viewLink": "Link anzeigen"
+    },
+    "confirmDelete": "Möchten Sie dieses Element wirklich löschen?",
     "tabs": {
       "courses": "Kurse",
       "videos": "Videos",
@@ -15,6 +44,33 @@
   },
   "hrProcedures": {
     "title": "HR-Verfahren",
+    "categoriesTitle": "HR-Dokumentkategorien",
+    "documentsInCategoryTitle": "{{category}} Dokumente",
+    "allDocumentsCategory": "Alle Dokumente",
+    "allItemsCount": "{{count}} Dokumente",
+    "noDocumentsAvailable": "Keine Dokumente verfügbar",
+    "noDocumentsMatchSearch": "Keine Dokumente entsprechen Ihrer Suche",
+    "confirmDeleteDocument": "Möchten Sie dieses Dokument wirklich löschen?",
+    "backToCategoriesButton": "Zurück zu Kategorien",
+    "searchPlaceholder": "Dokumente durchsuchen...",
+    "uploadButton": "Dokument hochladen",
+    "categoryDisplay": {
+      "documentsCount": "{{count}} Dokumente",
+      "viewCategoryAria": "{{title}} anzeigen"
+    },
+    "documentCard": {
+      "categoryLabel": "Kategorie",
+      "languageLabel": "Sprache",
+      "lastUpdatedLabel": "Zuletzt aktualisiert",
+      "versionLabel": "Version",
+      "downloadButton": "Herunterladen",
+      "previewButtonLabel": "Vorschau",
+      "editButtonLabel": "Bearbeiten",
+      "deleteButtonLabel": "Löschen",
+      "toggleFavoriteLabel": "Favorit umschalten",
+      "downloadingAlert": "Herunterladen...",
+      "previewingAlert": "Vorschau..."
+    },
     "uploadButton": {
       "label": "Dokument hochladen"
     },
@@ -50,6 +106,13 @@
     "buttons": {
       "manageAlerts": "Warnungen verwalten",
       "addEditPolicy": "Richtlinie hinzufügen/bearbeiten"
+    },
+    "labels": {
+      "category": "Kategorie",
+      "type": "Typ",
+      "published": "Veröffentlicht",
+      "updated": "Aktualisiert",
+      "effective": "Wirksam"
     }
   },
   "contentManagementDashboard": {

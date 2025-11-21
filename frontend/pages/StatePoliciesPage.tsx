@@ -4,14 +4,13 @@ import { PolicyDocument, UserRole, PolicyAlert, PolicyAlertType, PolicyDocument 
 import { MOCK_POLICY_DOCS, MOCK_POLICY_ALERTS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import Tabs from '../components/ui/Tabs';
-import { NewspaperIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, DocumentTextIcon, InformationCircleIcon, PlusCircleIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
+import { NewspaperIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, DocumentTextIcon, InformationCircleIcon, PlusCircleIcon, ShieldExclamationIcon, AcademicCapIcon, HeartIcon, ShieldCheckIcon, LockClosedIcon, GlobeAltIcon, FolderIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import PolicyAlertModal from '../components/admin/PolicyAlertModal';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
-import { formatCategory } from '../utils/serviceFormatting'; 
+import i18n from '../i18n'; 
 
 interface PolicyDocumentCardProps {
   doc: PolicyDocument;
@@ -20,6 +19,7 @@ interface PolicyDocumentCardProps {
 }
 
 const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview, onDownload }) => {
+  const { t } = useTranslation(['content', 'common']);
   const statusColors: Record<string, string> = {
     Approved: 'bg-green-100 text-green-700',
     Published: 'bg-green-100 text-green-700', // Treat Published same as Approved for color
@@ -47,18 +47,18 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
             </div>
         )}
         <h3 className="text-lg font-semibold text-swiss-charcoal mb-1">{doc.title}</h3>
-        <p className="text-xs text-gray-500 mb-2">Category: {POLICY_CATEGORY_LABELS[doc.category] || formatCategory(doc.category)} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
+        <p className="text-xs text-gray-500 mb-2">{t('content:statePoliciesPage.labels.category')}: {POLICY_CATEGORY_LABELS[doc.category] || doc.category} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
         {doc.status && (
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full inline-flex items-center ${statusColors[doc.status] || 'bg-gray-100 text-gray-700'}`}>
             {statusIcons[doc.status] || <InformationCircleIcon className="w-4 h-4 inline mr-1" />} {doc.status}
           </span>
         )}
-        {doc.policyType && <p className="text-xs text-gray-500 mt-1">Type: {doc.policyType}</p>}
+        {doc.policyType && <p className="text-xs text-gray-500 mt-1">{t('content:statePoliciesPage.labels.type')}: {doc.policyType}</p>}
         <p className="text-sm text-gray-600 my-3 line-clamp-3">{doc.contentPreview}</p>
         <div className="text-xs text-gray-500 space-y-1">
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Published: {new Date(doc.publishedDate).toLocaleDateString(i18n.language)}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Updated: {new Date(doc.lastUpdatedDate).toLocaleDateString(i18n.language)}</p>
-          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Effective: {new Date(doc.effectiveDate).toLocaleDateString(i18n.language)}</p>}
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />{t('content:statePoliciesPage.labels.published')}: {new Date(doc.publishedDate).toLocaleDateString()}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />{t('content:statePoliciesPage.labels.updated')}: {new Date(doc.lastUpdatedDate).toLocaleDateString()}</p>
+          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />{t('content:statePoliciesPage.labels.effective')}: {new Date(doc.effectiveDate).toLocaleDateString()}</p>}
         </div>
         <div className="mt-3">
           {doc.tags.map(tag => (
@@ -79,9 +79,38 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
   );
 };
 
+const PolicyCategoryDisplayCard: React.FC<{title: string, icon: React.ElementType, count: number, colorClasses: string, onSelect: () => void}> = ({title, icon: Icon, count, colorClasses, onSelect}) => {
+  const { t } = useTranslation(['content', 'common']);
+  return (
+    <div 
+      className={`p-5 cursor-pointer rounded-card shadow-soft hover:shadow-lg transition-shadow duration-200 ease-in-out ${colorClasses}`} 
+      onClick={onSelect}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}
+      aria-label={`View ${title} policies`}
+    >
+      <Icon className="w-10 h-10 mb-3 text-current"/>
+      <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
+      <p className="text-sm opacity-80 text-current">{count} {count === 1 ? 'policy' : 'policies'}</p>
+    </div>
+  );
+};
+
 const normalizePolicyCategory = (value: unknown): PolicyCategory => {
-  if (typeof value === 'string' && (POLICY_CATEGORIES as readonly string[]).includes(value)) {
-    return value as PolicyCategory;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    // Try exact match first
+    if ((POLICY_CATEGORIES as readonly string[]).includes(trimmed)) {
+      return trimmed as PolicyCategory;
+    }
+    // Try case-insensitive match
+    const found = POLICY_CATEGORIES.find(
+      cat => cat.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (found) {
+      return found;
+    }
   }
   return 'Other';
 };
@@ -94,7 +123,7 @@ const normalizePolicyType = (value: unknown): PolicyType | undefined => {
 };
 
 const StatePoliciesPage: React.FC = () => {
-  const { t, i18n } = useTranslation(['content', 'common', 'dashboard']);
+  const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
   const [searchTerm, setSearchTerm] = useState('');
@@ -117,7 +146,8 @@ const StatePoliciesPage: React.FC = () => {
     const fetchStatePolicies = async () => {
       try {
         setIsLoading(true);
-        const response = await authenticatedRequest<any[]>('/content/state-policies?limit=100', {
+        const currentLang = i18n.language || 'en';
+        const response = await authenticatedRequest<any[]>(`/content/state-policies?limit=100&lang=${currentLang}`, {
           method: 'GET'
         });
 
@@ -154,12 +184,38 @@ const StatePoliciesPage: React.FC = () => {
     };
 
     fetchStatePolicies();
-  }, [authenticatedRequest]);
+  }, [authenticatedRequest, i18n.language]);
 
   const cantons = ['All', ...new Set(policyDocs.map(d => d.region).filter(Boolean) as string[])];
   const policyTypeOptions: Array<'All' | PolicyType> = ['All', ...POLICY_TYPES_ENUM];
   const policyCategoryOptions: Array<'All' | PolicyCategory> = ['All', ...POLICY_CATEGORIES];
 
+  const categoriesWithCounts = useMemo(() => {
+    const counts: Partial<Record<PolicyCategory, number>> = {};
+    policyDocs
+      .filter(doc => doc.status === 'Published' || doc.status === 'Approved' || isAdminOrSuperAdmin)
+      .forEach(doc => {
+        counts[doc.category] = (counts[doc.category] || 0) + 1;
+      });
+    return (Object.entries(counts) as [PolicyCategory, number][]) 
+      .filter(([, count]) => count > 0)
+      .map(([category, count]) => ({ category, count }));
+  }, [policyDocs, isAdminOrSuperAdmin]);
+
+  const categoryVisuals: Record<PolicyCategory, {icon: React.ElementType, colorClasses: string}> = {
+    'Education Policy': { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white' },
+    'Health & Safety': { icon: ShieldCheckIcon, colorClasses: 'bg-green-500 text-white' },
+    'Labor & Employment': { icon: DocumentTextIcon, colorClasses: 'bg-orange-500 text-white' },
+    'Child Protection': { icon: HeartIcon, colorClasses: 'bg-pink-500 text-white' },
+    'Data Privacy': { icon: LockClosedIcon, colorClasses: 'bg-purple-500 text-white' },
+    'Environmental': { icon: GlobeAltIcon, colorClasses: 'bg-emerald-500 text-white' },
+    'Other': { icon: FolderIcon, colorClasses: 'bg-gray-500 text-white' },
+  };
+
+  const totalPublishedPolicies = useMemo(() => 
+    policyDocs.filter(doc => doc.status === 'Published' || doc.status === 'Approved' || isAdminOrSuperAdmin).length, 
+    [policyDocs, isAdminOrSuperAdmin]
+  );
 
   const filteredDocs = useMemo(() => {
     return policyDocs.filter(doc =>
@@ -222,24 +278,6 @@ const StatePoliciesPage: React.FC = () => {
   };
 
 
-  const tabsContent = (category: PolicyCategory) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-      {filteredDocs.filter(doc => doc.category === category).map(doc => (
-        <PolicyDocumentCard 
-            key={doc.id} 
-            doc={doc}
-            onPreview={handlePreview}
-            onDownload={handleDownload}
-        />
-      ))}
-      {filteredDocs.filter(doc => doc.category === category).length === 0 && <p className="text-center text-gray-500 py-8 col-span-full">No documents found in this category for current filters.</p>}
-    </div>
-  );
-  
-  const policyTabs = POLICY_CATEGORIES.map(category => ({
-    label: POLICY_CATEGORY_LABELS[category] || category,
-    content: tabsContent(category),
-  }));
 
 
   return (
@@ -279,15 +317,15 @@ const StatePoliciesPage: React.FC = () => {
             />
           </div>
           <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Canton">
-            <option value="All">{t('common:filters.all')}</option>
-            {cantons.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+            <option value="All">All Cantons/Regions</option>
+            {cantons.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value as 'All' | PolicyType)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Type">
             {policyTypeOptions.map(pt => (
               <option key={pt} value={pt}>{pt === 'All' ? 'All Policy Types' : pt}</option>
             ))}
           </select>
-          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Category">
+           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Category">
             {policyCategoryOptions.map(pt => (
               <option key={pt} value={pt}>{pt === 'All' ? 'All Categories' : (POLICY_CATEGORY_LABELS[pt] || pt)}</option>
             ))}
@@ -295,7 +333,65 @@ const StatePoliciesPage: React.FC = () => {
         </div>
       </Card>
 
-      <Tabs tabs={policyTabs} variant="line" />
+      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">Policy Categories</h2>
+      
+      {isLoading && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">{t('common:loading') || 'Loading policies...'}</p>
+        </div>
+      )}
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+        <PolicyCategoryDisplayCard
+          title="All Policies"
+          icon={FolderIcon}
+          count={totalPublishedPolicies}
+          colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
+          onSelect={() => setFilterCategory('All')}
+        />
+        {categoriesWithCounts.map(({ category, count }) => {
+          const visualConfig = categoryVisuals[category] || { icon: FolderIcon, colorClasses: 'bg-gray-500 text-white' };
+          const label = POLICY_CATEGORY_LABELS[category] || category;
+          return (
+            <PolicyCategoryDisplayCard 
+              key={category} 
+              title={label}
+              icon={visualConfig.icon} 
+              count={count} 
+              colorClasses={visualConfig.colorClasses}
+              onSelect={() => setFilterCategory(category)}
+            />
+          );
+        })}
+        {categoriesWithCounts.length === 0 && totalPublishedPolicies > 0 && (
+            <p className="text-center text-gray-500 py-8 col-span-full">No policies match current filters</p>
+        )}
+        {totalPublishedPolicies === 0 && <p className="text-center text-gray-500 py-8 col-span-full">No policies available</p>}
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-semibold text-swiss-charcoal mb-4">
+          {filterCategory === 'All' 
+            ? 'All Policies' 
+            : `${POLICY_CATEGORY_LABELS[filterCategory] || filterCategory} Policies`}
+          <span className="text-base font-normal text-gray-500 ml-2">
+            ({filteredDocs.length} {filteredDocs.length === 1 ? 'policy' : 'policies'})
+          </span>
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredDocs.map(doc => (
+            <PolicyDocumentCard 
+              key={doc.id} 
+              doc={doc}
+              onPreview={handlePreview}
+              onDownload={handleDownload}
+            />
+          ))}
+          {filteredDocs.length === 0 && (
+            <p className="text-center text-gray-500 py-8 col-span-full">No policies found for current filters.</p>
+          )}
+        </div>
+      </div>
 
       {isAdminOrSuperAdmin && (
         <>

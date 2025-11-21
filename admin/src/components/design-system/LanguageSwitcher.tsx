@@ -1,26 +1,22 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useAppContext } from '../../contexts/AppContext';
-import { SupportedLanguage } from '../../types';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { UKFlagIcon, FrenchFlagIcon, GermanFlagIcon } from '../icons/CustomIcons';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
 
 const LanguageSwitcher: React.FC = () => {
-  const { t } = useTranslation(); 
-  const { language, setLanguage } = useAppContext();
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Use keys that will be defined in translation files
-  const languages: { code: SupportedLanguage; labelKey: string; nameKey: string; flag: React.ElementType }[] = [
-    { code: 'EN', labelKey: 'languageSwitcher.enShort', nameKey: 'languageSwitcher.enLong', flag: UKFlagIcon },
-    { code: 'FR', labelKey: 'languageSwitcher.frShort', nameKey: 'languageSwitcher.frLong', flag: FrenchFlagIcon },
-    { code: 'DE', labelKey: 'languageSwitcher.deShort', nameKey: 'languageSwitcher.deLong', flag: GermanFlagIcon },
+  // Available languages for admin
+  const languages: { code: 'EN' | 'FR' | 'DE'; labelKey: string; nameKey: string }[] = [
+    { code: 'EN', labelKey: 'languageSwitcher.enShort', nameKey: 'languageSwitcher.enLong' },
+    { code: 'FR', labelKey: 'languageSwitcher.frShort', nameKey: 'languageSwitcher.frLong' },
+    { code: 'DE', labelKey: 'languageSwitcher.deShort', nameKey: 'languageSwitcher.deLong' },
   ];
 
-  const currentLanguageDetails = languages.find(lang => lang.code === language) || languages[0];
-  const CurrentFlagIcon = currentLanguageDetails.flag;
+  const currentCode = (i18n.language || 'en').toUpperCase().slice(0, 2) as 'EN' | 'FR' | 'DE';
+  const currentLanguageDetails = languages.find((l) => l.code === currentCode) || languages[0];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -34,14 +30,18 @@ const LanguageSwitcher: React.FC = () => {
     };
   }, []);
 
-  const handleLanguageSelect = (langCode: SupportedLanguage) => {
-    setLanguage(langCode); 
+  const handleLanguageSelect = (langCode: 'EN' | 'FR' | 'DE') => {
+    const code = langCode.toLowerCase();
+    i18n.changeLanguage(code);
+    try {
+      localStorage.setItem('admin_lang', code);
+    } catch {}
     setIsOpen(false);
   };
   
   const getLabel = (lang: typeof languages[0]) => {
     // Fallback to code if key not found or t function not ready
-    return t(lang.labelKey, lang.code); 
+    return t(lang.labelKey, lang.code);
   };
   
   const getName = (lang: typeof languages[0]) => {
@@ -59,7 +59,6 @@ const LanguageSwitcher: React.FC = () => {
           aria-expanded={isOpen}
           aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: getName(currentLanguageDetails) })}
         >
-          <CurrentFlagIcon className="w-5 h-auto mr-2" />
           {getLabel(currentLanguageDetails)}
           <ChevronDownIcon className="ml-1.5 h-5 w-5 text-gray-400" />
         </button>
@@ -73,8 +72,7 @@ const LanguageSwitcher: React.FC = () => {
         >
           <div className="py-1" role="none">
             {languages.map((lang) => {
-              const FlagIcon = lang.flag;
-              const isCurrent = language === lang.code;
+              const isCurrent = currentCode === lang.code;
               return (
                 <button
                   key={lang.code}
@@ -85,7 +83,6 @@ const LanguageSwitcher: React.FC = () => {
                   role="menuitem"
                   aria-current={isCurrent ? "page" : undefined}
                 >
-                  <FlagIcon className="w-5 h-auto mr-3" />
                   {getName(lang)} ({getLabel(lang)})
                 </button>
               );

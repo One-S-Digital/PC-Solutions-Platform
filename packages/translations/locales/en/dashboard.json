@@ -50,6 +50,7 @@
     "serviceProviders": "Service Providers",
     "parents": "Parents",
     "content": "Content",
+    "translations": "Translations",
     "hrProcedures": "HR Procedures",
     "statePolicies": "State Policies",
     "discountTerminations": "Discount Terminations",
@@ -773,7 +774,9 @@
     "title": "Content Management",
     "content": "Content Overview",
     "policies": "Policy Management",
-    "announcements": "Announcements"
+    "announcements": "Announcements",
+    "addContent": "Add Content",
+    "editContent": "Edit Content"
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
@@ -866,7 +869,19 @@
       "salaryRange": "Salary Range",
       "salaryRangePlaceholder": "e.g., CHF 4,500 - 5,500",
       "description": "Job Description",
-      "postJob": "Post Job"
+      "postJob": "Post Job",
+      "responsibilities": "Responsibilities",
+      "responsibilityPlaceholder": "Responsibility",
+      "addResponsibility": "Add Responsibility",
+      "qualifications": "Qualifications",
+      "qualificationPlaceholder": "Qualification",
+      "addQualification": "Add Qualification",
+      "benefits": "Benefits",
+      "benefitPlaceholder": "Benefit",
+      "addBenefit": "Add Benefit",
+      "requirements": "Requirements",
+      "requirementPlaceholder": "Requirement",
+      "addRequirement": "Add Requirement"
     },
     "viewApplicantsModal": {
       "title": "View Applicants",
@@ -1028,6 +1043,46 @@
     "title": "State Policies",
     "policies": "Policy Documents",
     "compliance": "Compliance Status"
+  },
+  "content": {
+    "type": "Content Type",
+    "videoSource": "Video Source",
+    "uploadVideo": "Upload Video File",
+    "externalVideoUrl": "External Video URL (YouTube, Vimeo, etc.)",
+    "videoUrl": "Video URL",
+    "linkUrl": "Link URL",
+    "supportsVideoHelp": "Supports YouTube, Vimeo, and direct video URLs",
+    "accessRoles": "Access Roles",
+    "numLessons": "Number of Lessons",
+    "preview": "Content Preview",
+    "fileType": "File Type",
+    "version": "Version",
+    "effectiveDate": "Effective Date",
+    "reviewDate": "Review Date",
+    "country": "Country",
+    "region": "Region/Canton",
+    "policyType": "Policy Type",
+    "criticality": "Criticality",
+    "markCritical": "Mark as Critical",
+    "critical": "Critical",
+    "normal": "Normal",
+    "expirationDate": "Expiration Date",
+    "policyLink": "Link to Official Policy (optional)",
+    "currentFile": "Current File: {{url}}",
+    "uploadTypeFile": "Upload {{type}} File",
+    "uploadFile": "Upload File",
+    "browse": "Browse",
+    "orDragDrop": "or drag and drop",
+    "allowedEl": "PDF, MP4, DOCX files allowed",
+    "allowedHr": "PDF, DOCX files allowed",
+    "selected": "Selected:",
+    "uploading": "Uploading...",
+    "upload": "Upload"
+  },
+  "common": {
+    "title": "Title",
+    "description": "Description",
+    "status": "Status"
   },
   "hrProceduresPage": {
     "title": "HR Procedures",

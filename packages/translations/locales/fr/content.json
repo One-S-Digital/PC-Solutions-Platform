@@ -1,6 +1,35 @@
 {
   "eLearning": {
     "title": "E-Learning",
+    "coursesTitle": "Cours",
+    "videosTitle": "Vidéos",
+    "pdfsTitle": "Documents PDF",
+    "externalLinksTitle": "Liens externes",
+    "addNewContentButton": "Ajouter du nouveau contenu",
+    "noContentFound": "Aucun contenu disponible",
+    "noItemsFound": "Aucun élément trouvé",
+    "categoryLabel": "Catégorie",
+    "languageLabel": "Langue",
+    "durationLabel": "Durée",
+    "updatedLabel": "Mis à jour",
+    "viewingAlert": "Affichage",
+    "lessonsCount": "{{count}} leçons",
+    "searchPlaceholder": "Rechercher du contenu...",
+    "itemType": {
+      "courses": "Cours",
+      "videos": "Vidéos",
+      "pdfs": "PDFs",
+      "links": "Liens"
+    },
+    "actions": {
+      "viewCourse": "Voir le cours",
+      "watchVideo": "Regarder la vidéo",
+      "downloadPdf": "Télécharger le PDF",
+      "openLink": "Ouvrir le lien",
+      "viewPdf": "Voir le PDF",
+      "viewLink": "Voir le lien"
+    },
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
     "tabs": {
       "courses": "Cours",
       "videos": "Vidéos",
@@ -15,6 +44,33 @@
   },
   "hrProcedures": {
     "title": "Procédures RH",
+    "categoriesTitle": "Catégories de documents RH",
+    "documentsInCategoryTitle": "Documents {{category}}",
+    "allDocumentsCategory": "Tous les documents",
+    "allItemsCount": "{{count}} documents",
+    "noDocumentsAvailable": "Aucun document disponible",
+    "noDocumentsMatchSearch": "Aucun document ne correspond à votre recherche",
+    "confirmDeleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
+    "backToCategoriesButton": "Retour aux catégories",
+    "searchPlaceholder": "Rechercher des documents...",
+    "uploadButton": "Télécharger un document",
+    "categoryDisplay": {
+      "documentsCount": "{{count}} documents",
+      "viewCategoryAria": "Voir {{title}}"
+    },
+    "documentCard": {
+      "categoryLabel": "Catégorie",
+      "languageLabel": "Langue",
+      "lastUpdatedLabel": "Dernière mise à jour",
+      "versionLabel": "Version",
+      "downloadButton": "Télécharger",
+      "previewButtonLabel": "Aperçu",
+      "editButtonLabel": "Modifier",
+      "deleteButtonLabel": "Supprimer",
+      "toggleFavoriteLabel": "Basculer le favori",
+      "downloadingAlert": "Téléchargement...",
+      "previewingAlert": "Aperçu..."
+    },
     "uploadButton": {
       "label": "Télécharger un document"
     },
@@ -50,6 +106,13 @@
     "buttons": {
       "manageAlerts": "Gérer les alertes",
       "addEditPolicy": "Ajouter/Modifier une politique"
+    },
+    "labels": {
+      "category": "Catégorie",
+      "type": "Type",
+      "published": "Publié",
+      "updated": "Mis à jour",
+      "effective": "Effectif"
     }
   },
   "contentManagementDashboard": {

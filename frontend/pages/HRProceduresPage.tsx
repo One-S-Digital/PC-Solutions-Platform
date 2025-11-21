@@ -12,7 +12,7 @@ import { useAppContext } from '../contexts/AppContext';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
-import { formatCategory } from '../utils/serviceFormatting';
+import i18n from '../i18n';
 
 interface HRDocumentCardProps {
   doc: HRDocument;
@@ -22,14 +22,25 @@ interface HRDocumentCardProps {
 }
 
 const normalizeHrCategory = (value: unknown): HRCategory => {
-  if (typeof value === 'string' && HR_CATEGORIES.includes(value as HRCategory)) {
-    return value as HRCategory;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    // Try exact match first
+    if (HR_CATEGORIES.includes(trimmed as HRCategory)) {
+      return trimmed as HRCategory;
+    }
+    // Try case-insensitive match
+    const found = HR_CATEGORIES.find(
+      cat => cat.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (found) {
+      return found;
+    }
   }
   return 'Other';
 };
 
 const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, onPreview, onDownload }) => {
-  const { t, i18n } = useTranslation(['content', 'common']);
+  const { t } = useTranslation(['content', 'common']);
   const fileTypeColors = {
     PDF: 'text-red-500',
     DOCX: 'text-blue-500',
@@ -44,16 +55,19 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
             <DocumentDuplicateIcon className={`w-10 h-10 ${fileTypeColors[doc.fileType] || 'text-gray-500'}`} />
             <div className="ml-3">
               <h3 className="text-lg font-semibold text-swiss-charcoal group-hover:text-swiss-mint transition-colors">{doc.title}</h3>
-              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel', { category: HR_CATEGORY_LABELS[doc.category as HRCategory] || formatCategory(doc.category) })}</p>
-              {doc.language && <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.languageLabel', { language: doc.language })} {doc.version && t('hrProcedures.documentCard.versionLabel', { version: doc.version })}</p>}
+              <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.categoryLabel')}: {HR_CATEGORY_LABELS[doc.category as HRCategory] || doc.category}</p>
+              {doc.language && <p className="text-xs text-gray-500">{t('hrProcedures.documentCard.languageLabel')}: {doc.language} {doc.version && `${t('hrProcedures.documentCard.versionLabel')}: ${doc.version}`}</p>}
             </div>
           </div>
           <button onClick={() => onToggleFavorite(doc.id)} className="text-gray-300 hover:text-yellow-400 focus:outline-none" aria-label={t('hrProcedures.documentCard.toggleFavoriteLabel')}>
             <StarIcon className={`w-6 h-6 transition-colors ${doc.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400 hover:text-yellow-300'}`} />
           </button>
         </div>
+        {doc.contentPreview && (
+          <p className="text-sm text-gray-600 mb-2 line-clamp-3">{doc.contentPreview}</p>
+        )}
         <p className="text-xs text-gray-500 mb-1">
-          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel', { date: new Date(doc.lastUpdated).toLocaleDateString(i18n.language) })}
+          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel')}: {new Date(doc.lastUpdated).toLocaleDateString()}
         </p>
         <div className="my-2">
           {doc.tags.map(tag => (
@@ -111,7 +125,8 @@ const HRProceduresPage: React.FC = () => {
     const fetchHRDocuments = async () => {
       try {
         setIsLoading(true);
-        const response = await authenticatedRequest<any[]>('/content/hr-documents?limit=100', {
+        const currentLang = i18n.language || 'en';
+        const response = await authenticatedRequest<any[]>(`/content/hr-documents?limit=100&lang=${currentLang}`, {
           method: 'GET'
         });
 
@@ -130,6 +145,7 @@ const HRProceduresPage: React.FC = () => {
             version: doc.versionNumber || 'v1.0',
             status: doc.status || 'Published',
             isFavorite: false, // TODO: Implement favorites
+            contentPreview: doc.contentPreview || doc.description,
           }));
           setHrDocs(documents);
         }
@@ -143,7 +159,7 @@ const HRProceduresPage: React.FC = () => {
     };
 
     fetchHRDocuments();
-  }, [authenticatedRequest]);
+  }, [authenticatedRequest, i18n.language]);
 
   const toggleFavorite = (id: string) => {
     setHrDocs(prevDocs => prevDocs.map(doc => doc.id === id ? {...doc, isFavorite: !doc.isFavorite} : doc));
@@ -178,7 +194,7 @@ const HRProceduresPage: React.FC = () => {
         return false;
       }
 
-      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || formatCategory(doc.category);
+      const categoryLabel = HR_CATEGORY_LABELS[doc.category] || doc.category;
       const matchesSearch =
         doc.title.toLowerCase().includes(searchLower) ||
         doc.category.toLowerCase().includes(searchLower) ||
@@ -270,16 +286,8 @@ const HRProceduresPage: React.FC = () => {
          {totalPublishedDocs === 0 && <p className="text-center text-gray-500 py-8 col-span-full">{t('hrProcedures.noDocumentsAvailable')}</p>}
       </div>
       
-      {selectedCategory && (
-        <div className="my-4">
-        <Button variant="outline" onClick={() => setSelectedCategory(null)} className="text-sm">
-          {t('hrProcedures.backToCategoriesButton')}
-        </Button>
-        </div>
-      )}
-
       <h2 className="text-2xl font-semibold text-swiss-charcoal mt-8 mb-4">
-        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: HR_CATEGORY_LABELS[selectedCategory] || formatCategory(selectedCategory) }) : t('hrProcedures.allDocumentsCategory')}
+        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory }) : t('hrProcedures.allDocumentsCategory')}
         <span className="text-base font-normal text-gray-500 ml-2">{t('hrProcedures.allItemsCount', { count: filteredDocs.length })}</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -293,7 +301,7 @@ const HRProceduresPage: React.FC = () => {
           />
         ))}
       </div>
-      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: HR_CATEGORY_LABELS[selectedCategory] || formatCategory(selectedCategory) })}</p>}
+      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory })}</p>}
       {filteredDocs.length === 0 && !selectedCategory && totalPublishedDocs > 0 && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsMatchSearch')}</p>}
 
       {previewDoc && (

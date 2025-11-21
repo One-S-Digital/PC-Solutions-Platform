@@ -39,18 +39,20 @@ export class MarketplaceController {
     @Query('supplierId') supplierId?: string,
     @Query('isActive') isActive?: string,
     @Query('search') search?: string,
+    @Query('lang') lang?: string,
   ) {
     return this.marketplaceService.findAllProducts({
       category,
       supplierId,
       isActive: isActive ? isActive === 'true' : undefined,
       search,
+      lang,
     });
   }
 
   @Get('products/:id')
-  findProductById(@Param('id') id: string) {
-    return this.marketplaceService.findProductById(id);
+  findProductById(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.marketplaceService.findProductById(id, lang);
   }
 
   @Patch('products/:id')
@@ -79,18 +81,20 @@ export class MarketplaceController {
     @Query('providerId') providerId?: string,
     @Query('isActive') isActive?: string,
     @Query('search') search?: string,
+    @Query('lang') lang?: string,
   ) {
     return this.marketplaceService.findAllServices({
       category,
       providerId,
       isActive: isActive ? isActive === 'true' : undefined,
       search,
+      lang,
     });
   }
 
   @Get('services/:id')
-  findServiceById(@Param('id') id: string) {
-    return this.marketplaceService.findServiceById(id);
+  findServiceById(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.marketplaceService.findServiceById(id, lang);
   }
 
   @Patch('services/:id')

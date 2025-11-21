@@ -84,6 +84,13 @@
     "buttons": {
       "manageAlerts": "Manage Alerts",
       "addEditPolicy": "Add/Edit Policy"
+    },
+    "labels": {
+      "category": "Category",
+      "type": "Type",
+      "published": "Published",
+      "updated": "Updated",
+      "effective": "Effective"
     }
   },
   "contentManagementDashboard": {

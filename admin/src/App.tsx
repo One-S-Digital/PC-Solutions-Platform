@@ -17,6 +17,7 @@ import MessagingPage from './pages/Messaging';
 import SystemMonitorPage from './pages/SystemMonitor';
 import SettingsPage from './pages/Settings';
 import DesignSystemPage from './pages/DesignSystem';
+import TranslationsPage from './pages/Translations';
 import AccessDeniedPage from './pages/AccessDenied';
 
 // Create a client
@@ -56,6 +57,7 @@ function App() {
           <Route path="content" element={<ContentPage />} />
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
+          <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="design-system" element={<DesignSystemPage />} />
 

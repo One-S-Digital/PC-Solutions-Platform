@@ -6,6 +6,7 @@ import { useAppContext } from '../../contexts/AppContext';
 // [FIX] Imported ELEARNING_CATEGORIES and HR_CATEGORIES for valid default values.
 import { UserRole, Course, HRDocument, PolicyDocument, UploadableContentType, ELEARNING_CATEGORIES, HR_CATEGORIES, ELearningContentType, ELearningCategory, HRCategory, PolicyCategory, POLICY_CATEGORIES } from '../../types';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import i18n from '../../i18n';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { AcademicCapIcon, DocumentTextIcon, NewspaperIcon, PlusCircleIcon, EyeIcon, ClockIcon, ExclamationTriangleIcon, CheckCircleIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
@@ -55,7 +56,8 @@ const ContentManagementDashboardPage: React.FC = () => {
       setIsLoading(true);
       try {
         // Fetch E-Learning content
-        const eLearningResponse = await authenticatedRequest<any[]>('/content/elearning?limit=100', {
+        const currentLang = i18n.language || 'en';
+        const eLearningResponse = await authenticatedRequest<any[]>(`/content/elearning?limit=100&lang=${currentLang}`, {
           method: 'GET'
         });
         if (eLearningResponse.success && eLearningResponse.data) {
@@ -79,7 +81,7 @@ const ContentManagementDashboardPage: React.FC = () => {
         }
 
         // Fetch HR Documents
-        const hrResponse = await authenticatedRequest<any[]>('/content/hr-documents?limit=100', {
+        const hrResponse = await authenticatedRequest<any[]>(`/content/hr-documents?limit=100&lang=${currentLang}`, {
           method: 'GET'
         });
         if (hrResponse.success && hrResponse.data) {
@@ -101,7 +103,7 @@ const ContentManagementDashboardPage: React.FC = () => {
         }
 
         // Fetch State Policies
-        const policiesResponse = await authenticatedRequest<any[]>('/content/state-policies?limit=100', {
+        const policiesResponse = await authenticatedRequest<any[]>(`/content/state-policies?limit=100&lang=${currentLang}`, {
           method: 'GET'
         });
         if (policiesResponse.success && policiesResponse.data) {
@@ -134,7 +136,7 @@ const ContentManagementDashboardPage: React.FC = () => {
     };
 
     fetchAllContent();
-  }, [authenticatedRequest]);
+  }, [authenticatedRequest, i18n.language]);
 
   const contentStats: ContentStat[] = [
     { name: 'E-Learning Items', count: courses.length, icon: AcademicCapIcon, color: 'text-swiss-mint', link: '/e-learning', addLinkType: 'e-learning' },

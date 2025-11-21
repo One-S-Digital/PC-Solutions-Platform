@@ -7,7 +7,7 @@ export const FIELDS_BY_ENTITY: Record<string, string[]> = {
   user: ['display_name', 'bio'],
   
   // Organization fields
-  organization: ['name', 'description', 'about'],
+  organization: ['name', 'description'],
   
   // Service provider fields
   service_provider: ['name', 'about', 'services'],
@@ -19,13 +19,23 @@ export const FIELDS_BY_ENTITY: Record<string, string[]> = {
   service: ['title', 'description'],
   
   // Job application fields
-  job_application: ['headline', 'cover_letter', 'portfolio_summary'],
+  job_application: ['cover_letter'],
   
-  // Job posting fields
-  job_posting: ['title', 'description', 'requirements'],
+  // Job posting fields (job_listing in database)
+  job_listing: ['title', 'description', 'requirements'],
+  job_posting: ['title', 'description', 'requirements'], // Alias for compatibility
   
-  // Content fields
+  // Content fields (generic)
   content: ['title', 'body', 'excerpt'],
+  
+  // E-learning content (stored in Asset table with category ELEARNING)
+  elearning: ['title', 'description', 'content_preview'],
+  
+  // HR documents (stored in Asset table with category HR_DOCUMENT)
+  hr_document: ['title', 'description', 'content_preview'],
+  
+  // State policies (stored in Asset table with category STATE_POLICY)
+  state_policy: ['title', 'description', 'content_preview'],
   
   // Event fields
   event: ['title', 'description'],

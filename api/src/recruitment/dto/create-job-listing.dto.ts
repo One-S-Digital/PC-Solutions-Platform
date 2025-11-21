@@ -5,6 +5,11 @@ export class CreateJobListingDto {
   @IsString()
   title: string;
 
+  // Optional foundation override (used by ADMIN/SUPER_ADMIN in dev/testing)
+  @IsOptional()
+  @IsString()
+  foundationId?: string;
+
   @IsOptional()
   @IsString()
   description?: string;

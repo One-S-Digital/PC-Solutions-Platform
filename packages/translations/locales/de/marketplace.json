@@ -6,16 +6,42 @@
   "labels": {
     "searchByName": "Nach Namen suchen",
     "categoryFilter": "Nach Kategorie filtern",
-    "regionFilter": "Nach Region filtern"
+    "regionFilter": "Nach Region filtern",
+    "category": "Kategorie",
+    "region": "Region",
+    "supplierTags": "Tags",
+    "sortBy": "Sortieren nach"
   },
   "messages": {
     "noProductSuppliers": "Keine Produktlieferanten gefunden",
     "noServiceProviders": "Keine Dienstleister gefunden",
+    "noServices": "Keine Dienste gefunden",
     "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, Ihre Filter anzupassen."
   },
   "buttons": {
     "resetFilters": "Filter zurücksetzen",
     "viewDetails": "Details anzeigen",
-    "contact": "Lieferanten kontaktieren"
+    "contact": "Lieferanten kontaktieren",
+    "partnerOnboarding": "Partner-Onboarding"
+  },
+  "serviceCard": {
+    "categoryLabel": "{{category}}",
+    "bookAppointment": "Termin vereinbaren",
+    "viewProvider": "Anbieter anzeigen"
+  },
+  "searchPlaceholder": "{{activeTabLabel}} suchen...",
+  "infoAlert": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Schweizer Anbietern",
+  "subtitles": {
+    "productSuppliers": "Durchsuchen Sie Produkte von verifizierten Lieferanten",
+    "serviceProviders": "Entdecken Sie professionelle Dienstleistungen für Ihre Kindertagesstätte"
+  },
+  "sortOptions": {
+    "nameAsc": "Name (A-Z)",
+    "nameDesc": "Name (Z-A)",
+    "ratingDesc": "Höchste Bewertung"
+  },
+  "emptyStates": {
+    "noProductSuppliers": "Keine Produktlieferanten gefunden",
+    "noServices": "Keine Dienste gefunden"
   }
 }

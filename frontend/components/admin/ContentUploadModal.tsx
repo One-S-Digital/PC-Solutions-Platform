@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'; // Import useTranslation
 interface ContentUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Partial<Course | HRDocument | PolicyDocument>, file?: File) => void;
+  onSubmit: (data: Partial<Course | HRDocument | PolicyDocument>, file?: File) => Promise<void>;
   contentType: UploadableContentType;
   existingContent?: Course | HRDocument | PolicyDocument | null; // Added for editing
 }
@@ -216,47 +216,73 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     }
 
 
-    if (file || (contentType === 'e-learning' && formData.type === ELearningContentType.LINK && formData.fileUrl) || existingContent) { 
+    // Normalize submission data
+    if (contentType === 'e-learning') {
+        submissionData.type = normalizeElearningType(submissionData.type);
+        submissionData.category = normalizeElearningCategory(submissionData.category);
+        if (submissionData.type !== ELearningContentType.COURSE) delete submissionData.lessons;
+        if (submissionData.type !== ELearningContentType.VIDEO && submissionData.type !== ELearningContentType.COURSE) delete submissionData.duration;
+        if (submissionData.type === ELearningContentType.LINK && file) { delete submissionData.fileName; }
+        else if (submissionData.type !== ELearningContentType.LINK) { delete submissionData.fileUrl; }
+    }
+    if (contentType === 'hr') {
+        submissionData.category = normalizeHrCategory(submissionData.category);
+    }
+    if (contentType === 'policy') {
+        submissionData.category = normalizePolicyCategory(submissionData.category);
+        submissionData.policyType = normalizePolicyType(submissionData.policyType);
+    }
+
+    // If updating existing content without a new file, submit immediately
+    if (existingContent && !file) {
+      try {
+        await onSubmit(submissionData, undefined);
+        setIsUploading(false);
+        onClose();
+      } catch (error) {
+        setIsUploading(false);
+        // Error handling is done in the parent component
+      }
+    } else if (file || (contentType === 'e-learning' && formData.type === ELearningContentType.LINK && formData.fileUrl)) { 
+      // Only show progress for actual file uploads
       let currentProgress = 0;
       const interval = setInterval(() => {
         currentProgress += 20;
         setUploadProgress(currentProgress);
         if (currentProgress >= 100) {
           clearInterval(interval);
-          setTimeout(() => {
-            if (contentType === 'e-learning') {
-                submissionData.type = normalizeElearningType(submissionData.type);
-                submissionData.category = normalizeElearningCategory(submissionData.category);
-                if (submissionData.type !== ELearningContentType.COURSE) delete submissionData.lessons;
-                if (submissionData.type !== ELearningContentType.VIDEO && submissionData.type !== ELearningContentType.COURSE) delete submissionData.duration;
-                if (submissionData.type === ELearningContentType.LINK && file) { delete submissionData.fileName; }
-                else if (submissionData.type !== ELearningContentType.LINK) { delete submissionData.fileUrl; }
+          setTimeout(async () => {
+            try {
+              await onSubmit(submissionData, file || undefined);
+              setIsUploading(false);
+              onClose();
+            } catch (error) {
+              setIsUploading(false);
+              // Error handling is done in the parent component
             }
-            if (contentType === 'hr') {
-                submissionData.category = normalizeHrCategory(submissionData.category);
-            }
-            if (contentType === 'policy') {
-                submissionData.category = normalizePolicyCategory(submissionData.category);
-                submissionData.policyType = normalizePolicyType(submissionData.policyType);
-            }
-            onSubmit(submissionData, file || undefined);
-            setIsUploading(false);
-            onClose();
           }, 500);
         }
       }, 200);
     } else if (contentType === 'policy' && (formData.externalLink || formData.description)) { 
-       onSubmit(submissionData);
-       setIsUploading(false);
-       onClose();
+       try {
+         await onSubmit(submissionData);
+         setIsUploading(false);
+         onClose();
+       } catch (error) {
+         setIsUploading(false);
+       }
     } else if (contentType !== 'e-learning' || formData.type !== ELearningContentType.LINK) {
       alert(t('common:contentUploadModal.error.selectFileOrLink'));
       setIsUploading(false);
       return;
     } else { 
-       onSubmit(submissionData); 
-       setIsUploading(false);
-       onClose();
+       try {
+         await onSubmit(submissionData);
+         setIsUploading(false);
+         onClose();
+       } catch (error) {
+         setIsUploading(false);
+       }
     }
   };
 

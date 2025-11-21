@@ -1,5 +1,6 @@
 import { apiService, ApiResponse } from './api';
 import { Organization, OrganizationType } from '../types';
+import i18n from '../i18n';
 
 export interface OrganizationCreateData {
   name: string;
@@ -28,8 +29,9 @@ export interface OrganizationUpdateData extends Partial<OrganizationCreateData> 
 class OrganizationService {
   // Get all organizations
   async getOrganizations(page = 1, limit = 20): Promise<{ organizations: Organization[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/organizations?page=${page}&limit=${limit}`
+      `/organizations?page=${page}&limit=${limit}&lang=${currentLang}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch organizations');
@@ -42,7 +44,8 @@ class OrganizationService {
 
   // Get organization by ID
   async getOrganizationById(id: string): Promise<Organization> {
-    const response = await apiService.get<Organization>(`/organizations/${id}`);
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<Organization>(`/organizations/${id}?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch organization');
     }
@@ -77,7 +80,8 @@ class OrganizationService {
 
   // Get user's organizations
   async getUserOrganizations(): Promise<Organization[]> {
-    const response = await apiService.get<Organization[]>('/organizations/my');
+    const currentLang = i18n.language || 'en';
+    const response = await apiService.get<Organization[]>(`/organizations/my?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch user organizations');
     }
