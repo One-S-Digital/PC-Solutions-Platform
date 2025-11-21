@@ -613,14 +613,13 @@ const SupplierProductListingsPage: React.FC = () => {
             </div>
           )}
         </Card>
-      </div>
-      <ProductUploadModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSubmit={handleSubmitProduct}
-        initialProduct={editingProduct}
-        isSubmitting={isSubmitting}
-      />
+        <ProductUploadModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSubmit={handleSubmitProduct}
+          initialProduct={editingProduct}
+          isSubmitting={isSubmitting}
+        />
     </div>
   );
 };
