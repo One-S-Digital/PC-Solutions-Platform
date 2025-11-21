@@ -403,11 +403,11 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
 
     return (
       <div
-        className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 py-6"
+        className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 py-6 overflow-y-auto"
         onClick={onClose}
       >
         <div
-          className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh]"
+          className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] min-h-0 overflow-hidden"
           onClick={(event) => event.stopPropagation()}
         >
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
@@ -432,7 +432,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
             </button>
           </div>
 
-          <form className="flex-1 flex flex-col" onSubmit={handleSubmit}>
+          <form className="flex-1 flex flex-col min-h-0" onSubmit={handleSubmit}>
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-8">
               <Section
                 title={sectionLabel('basics', 'Product basics')}
