@@ -61,22 +61,47 @@ const parseJsonOutput = (raw) => {
   return JSON.parse(trimmed.slice(jsonStart));
 };
 
+let cachedJsonStatusSupport;
+
+const prismaMigrateStatusSupportsJson = () => {
+  if (typeof cachedJsonStatusSupport === 'boolean') {
+    return cachedJsonStatusSupport;
+  }
+
+  try {
+    const helpOutput = runPrisma(
+      ['migrate', 'status', '--help'],
+      { silent: true },
+    );
+    cachedJsonStatusSupport = /\B--json\b/.test(helpOutput) || /--output(?:\s+|\=)json/.test(helpOutput);
+  } catch (error) {
+    cachedJsonStatusSupport = false;
+    warn(`⚠️  Unable to determine Prisma CLI JSON support: ${error.message}`);
+  }
+
+  return cachedJsonStatusSupport;
+};
+
 const getFailedMigrations = () => {
   try {
-    // First try JSON format
-    const raw = runPrisma(
-      ['migrate', 'status', '--schema', SCHEMA_PATH, '--json'],
-      { silent: true, allowFailure: true },
-    );
-    if (raw) {
-      try {
-        const parsed = parseJsonOutput(raw);
-        if (Array.isArray(parsed.failedMigrationNames) && parsed.failedMigrationNames.length > 0) {
-          log(`📋 Detected failed migrations via JSON: ${parsed.failedMigrationNames.join(', ')}`);
-          return parsed.failedMigrationNames;
+    const supportsJson = prismaMigrateStatusSupportsJson();
+
+    if (supportsJson) {
+      // First try JSON format if supported
+      const raw = runPrisma(
+        ['migrate', 'status', '--schema', SCHEMA_PATH, '--json'],
+        { silent: true, allowFailure: true },
+      );
+      if (raw) {
+        try {
+          const parsed = parseJsonOutput(raw);
+          if (Array.isArray(parsed.failedMigrationNames) && parsed.failedMigrationNames.length > 0) {
+            log(`📋 Detected failed migrations via JSON: ${parsed.failedMigrationNames.join(', ')}`);
+            return parsed.failedMigrationNames;
+          }
+        } catch (parseError) {
+          warn(`⚠️  Could not parse JSON status, trying text format...`);
         }
-      } catch (parseError) {
-        warn(`⚠️  Could not parse JSON status, trying text format...`);
       }
     }
     

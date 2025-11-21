@@ -18,10 +18,38 @@ export class MarketplaceService {
 
   // Product Management
   async createProduct(createProductDto: CreateProductDto, supplierId: string) {
+    const {
+      imageAssetId,
+      deliveryFees,
+      volumePricing,
+      variants,
+      ...productData
+    } = createProductDto;
+    const toJsonValue = <T>(value: T | undefined) =>
+      value === undefined ? undefined : (value as unknown as Prisma.InputJsonValue);
+
     return this.prisma.product.create({
       data: {
-        ...createProductDto,
-        supplierId,
+        ...productData,
+        ...(toJsonValue(deliveryFees) !== undefined && {
+          deliveryFees: toJsonValue(deliveryFees),
+        }),
+        ...(toJsonValue(volumePricing) !== undefined && {
+          volumePricing: toJsonValue(volumePricing),
+        }),
+        ...(toJsonValue(variants) !== undefined && {
+          variants: toJsonValue(variants),
+        }),
+        supplier: {
+          connect: { id: supplierId },
+        },
+        ...(imageAssetId
+          ? {
+              imageAsset: {
+                connect: { id: imageAssetId },
+              },
+            }
+          : {}),
       },
       include: {
         supplier: true,
