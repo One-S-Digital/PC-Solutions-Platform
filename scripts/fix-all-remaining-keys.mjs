@@ -59,16 +59,17 @@ signupKeys.forEach(key => {
   }
 });
 
-// Fix 3: Add error messages to common
-const errorMessages = [
-  "Title and Message are required.",
-  "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
-];
+// Fix 3: Add structured order error messages to common
+const orderErrorMap = {
+  'order.titleAndMessageRequired': 'Title and message are required.',
+  'order.cannotSubmitMissingInfo': 'Cannot submit order. User not logged in, supplier info missing, or cart is empty.',
+};
 
-errorMessages.forEach(msg => {
-  if (!translations.common[msg]) {
-    translations.common[msg] = msg;
-    console.log(`✅ Added error message: "${msg.substring(0, 50)}..."`);
+Object.entries(orderErrorMap).forEach(([key, value]) => {
+  const existing = key.split('.').reduce((acc, part) => acc && acc[part], translations.common);
+  if (!existing) {
+    setNested(translations.common, key, value);
+    console.log(`✅ Added: common.${key} = "${value}"`);
   }
 });
 

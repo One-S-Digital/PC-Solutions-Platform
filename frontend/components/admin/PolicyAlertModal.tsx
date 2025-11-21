@@ -54,7 +54,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.message) {
-        alert(t("Title and Message are required."));
+        alert(t('common:order.titleAndMessageRequired', 'Title and message are required.'));
         return;
     }
     onSubmit({

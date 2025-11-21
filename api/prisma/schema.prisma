@@ -351,28 +351,66 @@ model Asset {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  price       Float?
-  category    String? // Keep for backward compatibility
-  categories  String[] @default([]) // New flexible categories as tags
-  tags        String[]
-  status      String   @default("ACTIVE") // ACTIVE, INACTIVE, PENDING, REJECTED
-  isActive    Boolean  @default(true)
-  supplierId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 String                     @id @default(uuid())
+  title              String
+  subtitle           String?
+  description        String?
+  price              Float?
+  priceCurrency      String?                    @default("CHF")
+  category           String? // Keep for backward compatibility
+  primaryCategory    String?
+  categories         String[]                   @default([]) // Flexible categories as tags
+  tags               String[]                   @default([])
+  productHighlights  String[]                   @default([])
+  unitOfMeasure      String?
+  status             String                     @default("ACTIVE") // ACTIVE, INACTIVE, PENDING, REJECTED
+  availabilityStatus ProductAvailabilityStatus  @default(ACTIVE)
+  isActive           Boolean                    @default(true)
+  sku                String?
+  vendorSku          String?
+  ean                String?
+  minOrderQuantity   Int?
+  maxOrderQuantity   Int?
+  stockStatus        String?
+  deliveryLeadTimeDays Int?
+  restockCadence     String?
+  usageNotes         String?
+  packagingDetails   String?
+  materials          String?
+  complianceTags     String[]                   @default([])
+  allergens          String[]                   @default([])
+  ageRanges          String[]                   @default([])
+  deliveryMethods    String[]                   @default([])
+  deliveryFees       Json?
+  supportedCantons   String[]                   @default([])
+  visibilityStart    DateTime?
+  visibilityEnd      DateTime?
+  volumePricing      Json?
+  variants           Json?
+  supplierId         String
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
 
-  // Asset relations
-  imageAssetId String?
-  imageAsset   Asset?  @relation(fields: [imageAssetId], references: [id])
+  // Asset references
+  imageAssetId     String?
+  galleryAssetIds  String[] @default([])
+  specSheetAssetId String?
+  msdsAssetId      String?
+
+  imageAsset Asset? @relation(fields: [imageAssetId], references: [id])
 
   // Relations
   supplier Organization @relation(fields: [supplierId], references: [id])
   orders   OrderItem[]
 
   @@map("products")
+}
+
+enum ProductAvailabilityStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+  OUT_OF_STOCK
 }
 
 model Catalog {

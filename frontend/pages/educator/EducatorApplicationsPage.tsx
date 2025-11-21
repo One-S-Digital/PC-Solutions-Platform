@@ -7,7 +7,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { Application, ApplicationStatus } from '../../types';
 
 const EducatorApplicationsPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { applications } = useAppContext();
 
   const getStatusInfo = (status: ApplicationStatus) => {

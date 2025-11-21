@@ -23,7 +23,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
   isLoading,
   error,
 }) => {
-  const { t } = useTranslation(['dashboard', 'common', 'recruitment']);
+  const { t, i18n } = useTranslation(['dashboard', 'common', 'recruitment']);
   const navigate = useNavigate();
   const { startOrGetConversation } = useMessaging();
 

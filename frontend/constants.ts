@@ -285,3 +285,30 @@ export const SUGGESTED_PRODUCT_CATEGORIES = [
   'Storage & Organization',
   'Other',
 ] as const;
+
+export const SUGGESTED_PRODUCT_COMPLIANCE_TAGS = [
+  'EN-71 Certified',
+  'CE Marked',
+  'FSC Certified',
+  'Fire-Retardant',
+  'BPA-Free',
+  'Allergen-Free',
+  'Organic Materials',
+  'Recycled Materials',
+  'Hypoallergenic',
+  'Food Grade',
+] as const;
+
+export const SUGGESTED_PRODUCT_AGE_RANGES = [
+  'Infant (0-18 months)',
+  'Toddler (18-36 months)',
+  'Preschool (3-6 years)',
+  'School-age (6-12 years)',
+] as const;
+
+export const SUGGESTED_PRODUCT_DELIVERY_METHODS = [
+  'Courier Delivery',
+  'Supplier Delivery',
+  'Pickup',
+  'Installation Included',
+] as const;

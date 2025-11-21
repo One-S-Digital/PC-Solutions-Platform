@@ -61,22 +61,47 @@ const parseJsonOutput = (raw) => {
   return JSON.parse(trimmed.slice(jsonStart));
 };
 
+let cachedJsonStatusSupport;
+
+const prismaMigrateStatusSupportsJson = () => {
+  if (typeof cachedJsonStatusSupport === 'boolean') {
+    return cachedJsonStatusSupport;
+  }
+
+  try {
+    const helpOutput = runPrisma(
+      ['migrate', 'status', '--help'],
+      { silent: true },
+    );
+    cachedJsonStatusSupport = /\B--json\b/.test(helpOutput) || /--output(?:\s+|\=)json/.test(helpOutput);
+  } catch (error) {
+    cachedJsonStatusSupport = false;
+    warn(`⚠️  Unable to determine Prisma CLI JSON support: ${error.message}`);
+  }
+
+  return cachedJsonStatusSupport;
+};
+
 const getFailedMigrations = () => {
   try {
-    // First try JSON format
-    const raw = runPrisma(
-      ['migrate', 'status', '--schema', SCHEMA_PATH, '--json'],
-      { silent: true, allowFailure: true },
-    );
-    if (raw) {
-      try {
-        const parsed = parseJsonOutput(raw);
-        if (Array.isArray(parsed.failedMigrationNames) && parsed.failedMigrationNames.length > 0) {
-          log(`📋 Detected failed migrations via JSON: ${parsed.failedMigrationNames.join(', ')}`);
-          return parsed.failedMigrationNames;
+    const supportsJson = prismaMigrateStatusSupportsJson();
+
+    if (supportsJson) {
+      // First try JSON format if supported
+      const raw = runPrisma(
+        ['migrate', 'status', '--schema', SCHEMA_PATH, '--json'],
+        { silent: true, allowFailure: true },
+      );
+      if (raw) {
+        try {
+          const parsed = parseJsonOutput(raw);
+          if (Array.isArray(parsed.failedMigrationNames) && parsed.failedMigrationNames.length > 0) {
+            log(`📋 Detected failed migrations via JSON: ${parsed.failedMigrationNames.join(', ')}`);
+            return parsed.failedMigrationNames;
+          }
+        } catch (parseError) {
+          warn(`⚠️  Could not parse JSON status, trying text format...`);
         }
-      } catch (parseError) {
-        warn(`⚠️  Could not parse JSON status, trying text format...`);
       }
     }
     
@@ -206,6 +231,61 @@ $$;
   );
 };
 
+const ensureProductMetadataColumns = () => {
+  const sql = `
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'ProductAvailabilityStatus'
+    ) THEN
+        CREATE TYPE "ProductAvailabilityStatus" AS ENUM ('ACTIVE', 'INACTIVE', 'DRAFT', 'OUT_OF_STOCK');
+    END IF;
+END
+$$;
+
+ALTER TABLE "products"
+    ADD COLUMN IF NOT EXISTS "subtitle" TEXT,
+    ADD COLUMN IF NOT EXISTS "priceCurrency" TEXT NOT NULL DEFAULT 'CHF',
+    ADD COLUMN IF NOT EXISTS "primaryCategory" TEXT,
+    ADD COLUMN IF NOT EXISTS "productHighlights" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "unitOfMeasure" TEXT,
+    ADD COLUMN IF NOT EXISTS "availabilityStatus" "ProductAvailabilityStatus" NOT NULL DEFAULT 'ACTIVE',
+    ADD COLUMN IF NOT EXISTS "sku" TEXT,
+    ADD COLUMN IF NOT EXISTS "vendorSku" TEXT,
+    ADD COLUMN IF NOT EXISTS "ean" TEXT,
+    ADD COLUMN IF NOT EXISTS "minOrderQuantity" INTEGER,
+    ADD COLUMN IF NOT EXISTS "maxOrderQuantity" INTEGER,
+    ADD COLUMN IF NOT EXISTS "stockStatus" TEXT,
+    ADD COLUMN IF NOT EXISTS "deliveryLeadTimeDays" INTEGER,
+    ADD COLUMN IF NOT EXISTS "restockCadence" TEXT,
+    ADD COLUMN IF NOT EXISTS "usageNotes" TEXT,
+    ADD COLUMN IF NOT EXISTS "packagingDetails" TEXT,
+    ADD COLUMN IF NOT EXISTS "materials" TEXT,
+    ADD COLUMN IF NOT EXISTS "complianceTags" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "allergens" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "ageRanges" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "deliveryMethods" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "deliveryFees" JSONB,
+    ADD COLUMN IF NOT EXISTS "supportedCantons" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "visibilityStart" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "visibilityEnd" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "volumePricing" JSONB,
+    ADD COLUMN IF NOT EXISTS "variants" JSONB,
+    ADD COLUMN IF NOT EXISTS "galleryAssetIds" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "specSheetAssetId" TEXT,
+    ADD COLUMN IF NOT EXISTS "msdsAssetId" TEXT;
+
+ALTER TABLE "products"
+    ALTER COLUMN "tags" SET DEFAULT ARRAY[]::TEXT[],
+    ALTER COLUMN "categories" SET DEFAULT ARRAY[]::TEXT[];
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const handleFailedMigration = (migration) => {
   switch (migration) {
     case '20251104140358_add_asset_metadata_field':
@@ -216,6 +296,11 @@ const handleFailedMigration = (migration) => {
     case '20251119100000_add_categories_array_fields':
       log(`   • Resolving ${migration} (categories columns)`);
       ensureCategoriesColumns();
+      resolveMigration('applied', migration);
+      break;
+    case '20251120120000_expand_product_metadata':
+      log(`   • Resolving ${migration} (product metadata columns)`);
+      ensureProductMetadataColumns();
       resolveMigration('applied', migration);
       break;
     default:

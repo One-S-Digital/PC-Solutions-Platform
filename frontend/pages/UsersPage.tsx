@@ -17,7 +17,7 @@ interface UserRowProps {
 }
 
 const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isSuperAdmin }) => {
-  const { t } = useTranslation(['users', 'common']);
+  const { t, i18n } = useTranslation(['users', 'common']);
   const { currentUser } = useAppContext();
   const statusColors = {
     Active: 'bg-green-100 text-green-700',

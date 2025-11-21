@@ -9,7 +9,7 @@ import Button from '../../components/ui/Button';
 import { TagIcon, CheckCircleIcon, ShieldExclamationIcon, InboxIcon } from '@heroicons/react/24/outline';
 
 const DiscountTerminationsPage: React.FC = () => {
-    const { t } = useTranslation(['admin', 'common']);
+    const { t, i18n } = useTranslation(['admin', 'common']);
     const { vendorClients, updateVendorClientStatus } = useAppContext();
 
     // Mock: In a real app, this would be based on actual organization status.

@@ -7,6 +7,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CreateCatalogDto, UpdateCatalogDto } from './dto/create-catalog.dto';
 import { CsvProcessingService } from './csv-processing.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MarketplaceService {
@@ -17,10 +18,38 @@ export class MarketplaceService {
 
   // Product Management
   async createProduct(createProductDto: CreateProductDto, supplierId: string) {
+    const {
+      imageAssetId,
+      deliveryFees,
+      volumePricing,
+      variants,
+      ...productData
+    } = createProductDto;
+    const toJsonValue = <T>(value: T | undefined) =>
+      value === undefined ? undefined : (value as unknown as Prisma.InputJsonValue);
+
     return this.prisma.product.create({
       data: {
-        ...createProductDto,
-        supplierId,
+        ...productData,
+        ...(toJsonValue(deliveryFees) !== undefined && {
+          deliveryFees: toJsonValue(deliveryFees),
+        }),
+        ...(toJsonValue(volumePricing) !== undefined && {
+          volumePricing: toJsonValue(volumePricing),
+        }),
+        ...(toJsonValue(variants) !== undefined && {
+          variants: toJsonValue(variants),
+        }),
+        supplier: {
+          connect: { id: supplierId },
+        },
+        ...(imageAssetId
+          ? {
+              imageAsset: {
+                connect: { id: imageAssetId },
+              },
+            }
+          : {}),
       },
       include: {
         supplier: true,
@@ -35,26 +64,41 @@ export class MarketplaceService {
     isActive?: boolean;
     search?: string;
   }) {
-    const where: any = {};
+    const where: Prisma.ProductWhereInput = {};
+    const andClauses: Prisma.ProductWhereInput[] = [];
 
     if (filters?.category) {
-      where.category = filters.category;
+      andClauses.push({
+        OR: [
+          { category: filters.category },
+          { primaryCategory: filters.category },
+          { categories: { has: filters.category } },
+        ],
+      });
     }
 
     if (filters?.supplierId) {
-      where.supplierId = filters.supplierId;
+      andClauses.push({ supplierId: filters.supplierId });
     }
 
     if (filters?.isActive !== undefined) {
-      where.isActive = filters.isActive;
+      andClauses.push({ isActive: filters.isActive });
     }
 
     if (filters?.search) {
-      where.OR = [
-        { title: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
-        { tags: { has: filters.search } },
-      ];
+      andClauses.push({
+        OR: [
+          { title: { contains: filters.search, mode: 'insensitive' } },
+          { description: { contains: filters.search, mode: 'insensitive' } },
+          { sku: { contains: filters.search, mode: 'insensitive' } },
+          { vendorSku: { contains: filters.search, mode: 'insensitive' } },
+          { tags: { has: filters.search } },
+        ],
+      });
+    }
+
+    if (andClauses.length > 0) {
+      where.AND = andClauses;
     }
 
     return this.prisma.product.findMany({

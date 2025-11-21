@@ -20,7 +20,7 @@ const formatBytes = (bytes: number, decimals = 2) => {
 };
 
 const FileCard: React.FC<{ file: DocumentItem; onPreview: (file: DocumentItem) => void; onDownload: (file: DocumentItem) => void }> = ({ file, onPreview, onDownload }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   return (
     <Card className="p-4 flex flex-col group" hoverEffect>
       <div className="flex-grow">

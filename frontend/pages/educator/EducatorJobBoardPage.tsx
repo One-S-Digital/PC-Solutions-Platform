@@ -17,7 +17,7 @@ interface EducatorJobCardProps {
 }
 
 const EducatorJobCard: React.FC<EducatorJobCardProps> = ({ job, onViewDetails }) => {
-  const { t } = useTranslation(['dashboard', 'common', 'recruitment']);
+  const { t, i18n } = useTranslation(['dashboard', 'common', 'recruitment']);
 
   const contractTypeMeta = useMemo(() => {
     switch (job.contractType) {

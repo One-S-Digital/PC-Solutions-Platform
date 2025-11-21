@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
 // [FIX] Imported ELEARNING_CATEGORIES and HR_CATEGORIES for valid default values.
 import { UserRole, Course, HRDocument, PolicyDocument, UploadableContentType, ELEARNING_CATEGORIES, HR_CATEGORIES, ELearningContentType, ELearningCategory, HRCategory, PolicyCategory, POLICY_CATEGORIES } from '../../types';
@@ -34,6 +35,7 @@ const ContentManagementDashboardPage: React.FC = () => {
   const { currentUser } = useAppContext();
   const { authenticatedRequest } = useAuthenticatedApi();
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
   
   // Fetch real data from API instead of mocks
   const [courses, setCourses] = useState<Course[]>([]);
