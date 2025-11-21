@@ -4,17 +4,21 @@ import { TranslationService } from './translation.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { TranslationQueueModule } from './translation-queue.module';
+import { BullModule } from '@nestjs/bull';
+import { TranslationQueueProcessor } from './translation-queue.processor';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
-    TranslationQueueModule, // Add queue module - exports DeepLService
+    TranslationQueueModule, 
+     BullModule.registerQueue({
+      name: 'translations', }),
   ],
   controllers: [TranslationController],
-  providers: [TranslationService],
+  providers: [TranslationService,TranslationQueueProcessor],
   exports: [TranslationService],
 })
 export class TranslationModule {
-  // DeepLService is available via TranslationQueueModule export
+  
 }

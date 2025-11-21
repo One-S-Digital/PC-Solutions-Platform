@@ -42,17 +42,16 @@ export class MarketplaceController {
     @Query('lang') lang?: string,
   ) {
     return this.marketplaceService.findAllProducts({
-      category,
-      supplierId,
+      category: category || undefined,
+      supplierId: supplierId || undefined,
       isActive: isActive ? isActive === 'true' : undefined,
-      search,
-      lang,
+      search: search || undefined,
+      lang: lang || 'en',
     });
   }
-
   @Get('products/:id')
   findProductById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.marketplaceService.findProductById(id, lang);
+  return this.marketplaceService.findProductById(id, lang || 'en');
   }
 
   @Patch('products/:id')
@@ -74,7 +73,6 @@ export class MarketplaceController {
     const providerId = req.user.serviceProviderId;
     return this.marketplaceService.createService(createServiceDto, providerId);
   }
-
   @Get('services')
   findAllServices(
     @Query('category') category?: string,
@@ -84,17 +82,17 @@ export class MarketplaceController {
     @Query('lang') lang?: string,
   ) {
     return this.marketplaceService.findAllServices({
-      category,
-      providerId,
+      category: category || undefined,
+      providerId: providerId || undefined,
       isActive: isActive ? isActive === 'true' : undefined,
-      search,
-      lang,
+      search: search || undefined,
+      lang: lang || 'en',
     });
   }
 
   @Get('services/:id')
   findServiceById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.marketplaceService.findServiceById(id, lang);
+  return this.marketplaceService.findServiceById(id, lang || 'en');
   }
 
   @Patch('services/:id')
