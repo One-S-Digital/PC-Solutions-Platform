@@ -106,6 +106,13 @@
     "buttons": {
       "manageAlerts": "Gérer les alertes",
       "addEditPolicy": "Ajouter/Modifier une politique"
+    },
+    "labels": {
+      "category": "Catégorie",
+      "type": "Type",
+      "published": "Publié",
+      "updated": "Mis à jour",
+      "effective": "Effectif"
     }
   },
   "contentManagementDashboard": {

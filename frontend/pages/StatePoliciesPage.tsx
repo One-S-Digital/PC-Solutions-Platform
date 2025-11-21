@@ -19,6 +19,7 @@ interface PolicyDocumentCardProps {
 }
 
 const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview, onDownload }) => {
+  const { t } = useTranslation(['content', 'common']);
   const statusColors: Record<string, string> = {
     Approved: 'bg-green-100 text-green-700',
     Published: 'bg-green-100 text-green-700', // Treat Published same as Approved for color
@@ -46,18 +47,18 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
             </div>
         )}
         <h3 className="text-lg font-semibold text-swiss-charcoal mb-1">{doc.title}</h3>
-        <p className="text-xs text-gray-500 mb-2">Category: {POLICY_CATEGORY_LABELS[doc.category] || doc.category} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
+        <p className="text-xs text-gray-500 mb-2">{t('content:statePoliciesPage.labels.category')}: {POLICY_CATEGORY_LABELS[doc.category] || doc.category} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
         {doc.status && (
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full inline-flex items-center ${statusColors[doc.status] || 'bg-gray-100 text-gray-700'}`}>
             {statusIcons[doc.status] || <InformationCircleIcon className="w-4 h-4 inline mr-1" />} {doc.status}
           </span>
         )}
-        {doc.policyType && <p className="text-xs text-gray-500 mt-1">Type: {doc.policyType}</p>}
+        {doc.policyType && <p className="text-xs text-gray-500 mt-1">{t('content:statePoliciesPage.labels.type')}: {doc.policyType}</p>}
         <p className="text-sm text-gray-600 my-3 line-clamp-3">{doc.contentPreview}</p>
         <div className="text-xs text-gray-500 space-y-1">
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Published: {new Date(doc.publishedDate).toLocaleDateString()}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Updated: {new Date(doc.lastUpdatedDate).toLocaleDateString()}</p>
-          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />Effective: {new Date(doc.effectiveDate).toLocaleDateString()}</p>}
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />{t('content:statePoliciesPage.labels.published')}: {new Date(doc.publishedDate).toLocaleDateString()}</p>
+          <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />{t('content:statePoliciesPage.labels.updated')}: {new Date(doc.lastUpdatedDate).toLocaleDateString()}</p>
+          {doc.effectiveDate && <p><CalendarDaysIcon className="w-4 h-4 inline mr-1" />{t('content:statePoliciesPage.labels.effective')}: {new Date(doc.effectiveDate).toLocaleDateString()}</p>}
         </div>
         <div className="mt-3">
           {doc.tags.map(tag => (

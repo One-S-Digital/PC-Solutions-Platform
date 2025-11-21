@@ -106,6 +106,13 @@
     "buttons": {
       "manageAlerts": "Warnungen verwalten",
       "addEditPolicy": "Richtlinie hinzufügen/bearbeiten"
+    },
+    "labels": {
+      "category": "Kategorie",
+      "type": "Typ",
+      "published": "Veröffentlicht",
+      "updated": "Aktualisiert",
+      "effective": "Wirksam"
     }
   },
   "contentManagementDashboard": {

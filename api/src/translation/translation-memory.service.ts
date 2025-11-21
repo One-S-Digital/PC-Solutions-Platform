@@ -82,6 +82,37 @@ export class TranslationMemoryService {
     });
   }
 
+  /**
+   * Delete bad translation from memory (when translation equals source)
+   */
+  async deleteFromMemory(
+    sourceText: string,
+    sourceLang: string,
+    targetLang: string,
+  ): Promise<void> {
+    const sourceTextHash = this.hashText(sourceText);
+
+    try {
+      await this.prisma.translationMemory.delete({
+        where: {
+          sourceTextHash_sourceLang_targetLang: {
+            sourceTextHash,
+            sourceLang,
+            targetLang,
+          },
+        },
+      });
+      this.logger.log(
+        `Deleted bad translation from memory: ${sourceLang} -> ${targetLang}`,
+      );
+    } catch (error) {
+      // Ignore if not found
+      if (error.code !== 'P2025') {
+        this.logger.error(`Failed to delete from translation memory: ${error.message}`);
+      }
+    }
+  }
+
   private hashText(text: string): string {
     return crypto.createHash('sha256').update(text).digest('hex');
   }

@@ -29,6 +29,12 @@ export class TranslationService {
     @InjectQueue('translation') private translationQueue?: Queue,
     @Optional() private deepLService?: DeepLService,
   ) {
+    if (this.translationQueue) {
+      this.logger.log('Translation queue injected successfully');
+    } else {
+      this.logger.error('Translation queue NOT injected - translations will NOT be processed! Check Redis connection and queue module setup.');
+    }
+    
     if (this.deepLService) {
       this.logger.log('DeepLService injected successfully');
       if (this.deepLService.isAvailable()) {
@@ -149,23 +155,23 @@ export class TranslationService {
     let queueSucceeded = false;
     if (this.translationQueue) {
       try {
-        await this.translationQueue.add(
-          'translate-entity',
-          {
-            entityType,
-            entityId,
-            sourceLang: detection.lang,
+      await this.translationQueue.add(
+        'translate-entity',
+        {
+          entityType,
+          entityId,
+          sourceLang: detection.lang,
+        },
+        {
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 2000,
           },
-          {
-            attempts: 3,
-            backoff: {
-              type: 'exponential',
-              delay: 2000,
-            },
-            removeOnComplete: true,
-            removeOnFail: false,
-          },
-        );
+          removeOnComplete: true,
+          removeOnFail: false,
+        },
+      );
         this.logger.log(`Enqueued translation job for ${entityType}:${entityId}`);
         queueSucceeded = true;
       } catch (error) {
@@ -174,33 +180,10 @@ export class TranslationService {
       }
     }
 
-    // If queue failed or DeepL is available, process synchronously in background
-    // This ensures translations happen even if queue isn't working
-    if (!queueSucceeded && this.deepLService && this.deepLService.isAvailable()) {
-      this.logger.log(`Processing translations synchronously with DeepL for ${entityType}:${entityId}`);
-      // Don't await - let it run in background to not block the response
-      this.translateEntity(entityType, entityId).catch((error) => {
-        this.logger.error(`Synchronous translation failed for ${entityType}:${entityId}: ${error.message}`);
-      });
-    } else if (this.deepLService && this.deepLService.isAvailable()) {
-      // Queue succeeded, but also process with DeepL as a safety net
-      this.logger.log(`DeepL available, processing translations synchronously as safety net for ${entityType}:${entityId}`);
-      this.translateEntity(entityType, entityId).catch((error) => {
-        this.logger.error(`Synchronous translation failed for ${entityType}:${entityId}: ${error.message}`);
-      });
-    } else {
-      if (!this.deepLService) {
-        this.logger.warn(`DeepL service not injected for ${entityType}:${entityId}`);
-      } else if (!this.deepLService.isAvailable()) {
-        this.logger.warn(`DeepL service not available for ${entityType}:${entityId}`);
-      }
-      if (!this.translationQueue && !queueSucceeded) {
-        // Only use placeholder fallback if queue not available AND DeepL not available
-        this.logger.warn('Translation queue not available and DeepL not available, processing with placeholder');
-        this.translateEntity(entityType, entityId).catch((error) => {
-          this.logger.error(`Placeholder translation failed for ${entityType}:${entityId}: ${error.message}`);
-        });
-      }
+    // According to plan: ONLY enqueue, never translate synchronously
+    // If queue failed, log error but don't block - translations will be created when queue is available
+    if (!queueSucceeded) {
+      this.logger.error(`Failed to enqueue translation for ${entityType}:${entityId} - translations will be created when queue is available`);
     }
   }
 
@@ -234,6 +217,12 @@ export class TranslationService {
       },
     });
 
+    this.logger.debug(`translateEntity: Found ${sourceTranslations.length} source translations for ${entityType}:${entityId} in ${sourceLang}`);
+    if (sourceTranslations.length === 0) {
+      this.logger.warn(`translateEntity: No source translations found for ${entityType}:${entityId} in ${sourceLang}, cannot translate`);
+      return;
+    }
+
     for (const sourceTranslation of sourceTranslations) {
       const newHash = sourceTranslation.sourceHash;
 
@@ -251,8 +240,15 @@ export class TranslationService {
         });
 
         if (existingTranslation && existingTranslation.sourceHash === newHash) {
-          // Translation is up to date, skip
+          // Check if the translation text is actually different from the source text
+          // If they're the same, it means the translation was saved incorrectly and needs to be fixed
+          if (existingTranslation.text !== sourceTranslation.text) {
+            // Translation is up to date and correct, skip
           continue;
+          } else {
+            // Translation text matches source text - this is wrong, force re-translation
+            this.logger.warn(`Translation text matches source text for ${entityType}:${entityId} ${sourceTranslation.field} ${targetLang}, forcing re-translation`);
+          }
         }
 
         // Translate the text
@@ -261,6 +257,14 @@ export class TranslationService {
           sourceLang,
           targetLang,
         );
+
+        this.logger.debug(`Translation result for ${entityType}:${entityId} ${sourceTranslation.field} ${sourceLang}->${targetLang}: "${sourceTranslation.text.substring(0, 50)}..." -> "${translatedText.substring(0, 50)}..."`);
+
+        // Don't save if translation is the same as source (indicates translation failed)
+        if (translatedText === sourceTranslation.text && sourceLang !== targetLang) {
+          this.logger.warn(`Translation result matches source text for ${entityType}:${entityId} ${sourceTranslation.field} ${sourceLang}->${targetLang}. This indicates translation failed. Skipping save.`);
+          continue; // Skip saving this translation
+        }
 
         // Save the translation
         await this.prisma.entityTranslation.upsert({
@@ -316,7 +320,7 @@ export class TranslationService {
     });
 
     if (translation) {
-      this.logger.debug(`Found translation for ${entityType}:${entityId} field:${field} lang:${lang}`);
+      this.logger.debug(`Found translation for ${entityType}:${entityId} field:${field} lang:${lang}: "${translation.text.substring(0, 50)}${translation.text.length > 50 ? '...' : ''}"`);
       return translation.text;
     }
     
@@ -384,165 +388,139 @@ export class TranslationService {
     let hasMissingTranslations = false;
 
     // First pass: try to resolve existing translations
+    // Also check if translations are incorrect (text matches source)
+    let hasIncorrectTranslations = false;
+    const sourceRecord = await this.prisma.entitySource.findUnique({
+      where: {
+        entityType_entityId: {
+          entityType,
+          entityId,
+        },
+      },
+    });
+
     for (const field of fields) {
       const text = await this.resolveField(entityType, entityId, field, lang);
       result[field] = text;
+      
       if (!text && lang !== 'en') {
         hasMissingTranslations = true;
-      }
-    }
-
-    // If we have missing translations, create them immediately for instant display
-    // This ensures translations appear right away when language is changed
-    if (hasMissingTranslations && lang !== 'en') {
-      this.logger.log(`Missing translations detected for ${entityType}:${entityId} in ${lang}, creating immediately`);
-      
-      // First, check if source translations exist for all fields - if not, backfill them
-      const sourceRecord = await this.prisma.entitySource.findUnique({
-        where: {
-          entityType_entityId: {
-            entityType,
-            entityId,
-          },
-        },
-      });
-
-      if (sourceRecord) {
-        // Check which source translations are missing
-        const existingSourceTranslations = await this.prisma.entityTranslation.findMany({
+      } else if (text && lang !== 'en' && sourceRecord) {
+        // Check if translation text matches source text (which means it's wrong)
+        const sourceTranslation = await this.prisma.entityTranslation.findUnique({
           where: {
-            entityType,
-            entityId,
-            lang: sourceRecord.sourceLang,
+            entityType_entityId_lang_field: {
+              entityType,
+              entityId,
+              lang: sourceRecord.sourceLang,
+              field,
+            },
           },
         });
         
-        const existingFields = new Set(existingSourceTranslations.map(t => t.field));
-        const missingSourceFields = fields.filter(field => !existingFields.has(field));
-        
-        // If source translations are missing, we need to backfill them from the actual content
-        // This happens for older content that was created before content_preview was added
-        if (missingSourceFields.length > 0) {
-          this.logger.log(`Missing source translations for ${entityType}:${entityId} fields: ${missingSourceFields.join(', ')}, attempting to backfill`);
+        if (sourceTranslation && text === sourceTranslation.text) {
+          // Translation text matches source text - this could mean:
+          // 1. DeepL already tried and returned source text (untranslatable, e.g., "Test30")
+          // 2. Translation was saved incorrectly
+          // Check if we've already attempted translation by checking if translation record exists
+          const existingTranslation = await this.prisma.entityTranslation.findUnique({
+            where: {
+              entityType_entityId_lang_field: {
+                entityType,
+                entityId,
+                lang,
+                field,
+              },
+            },
+          });
           
-          // Try to fetch the actual content to backfill source translations
-          // This is a best-effort attempt - if we can't fetch it, we'll skip those fields
-          try {
-            let contentData: any = null;
-            
-            // Map entity types to database queries
-            if (entityType === 'elearning' || entityType === 'hr_document' || entityType === 'state_policy') {
-              const asset = await this.prisma.asset.findUnique({
-                where: { id: entityId },
-                select: {
-                  title: true,
-                  description: true,
-                  contentPreview: true,
-                },
-              });
-              
-              if (asset) {
-                contentData = {
-                  title: asset.title || '',
-                  description: asset.description || '',
-                  content_preview: asset.contentPreview || '',
-                };
-              }
-            }
-            
-            // Save missing source translations if we have the data
-            if (contentData) {
-              for (const field of missingSourceFields) {
-                // Map translation field names to database field names
-                const dbFieldMap: Record<string, string> = {
-                  'content_preview': 'content_preview', // Already mapped in contentData
-                  'title': 'title',
-                  'description': 'description',
-                };
-                const dbField = dbFieldMap[field] || field;
-                const fieldValue = contentData[dbField] || '';
-                if (fieldValue && typeof fieldValue === 'string' && fieldValue.trim().length > 0) {
-                  const sourceHash = crypto.createHash('sha256').update(fieldValue).digest('hex');
-                  await this.prisma.entityTranslation.upsert({
-                    where: {
-                      entityType_entityId_lang_field: {
-                        entityType,
-                        entityId,
-                        lang: sourceRecord.sourceLang,
-                        field,
-                      },
-                    },
-                    update: {
-                      text: fieldValue,
-                      sourceHash,
-                      updatedAt: new Date(),
-                    },
-                    create: {
-                      entityType,
-                      entityId,
-                      lang: sourceRecord.sourceLang,
-                      field,
-                      text: fieldValue,
-                      sourceHash,
-                      origin: 'machine',
-                      verified: false,
-                    },
-                  });
-                  this.logger.log(`Backfilled source translation for ${entityType}:${entityId} field:${field}`);
-                }
-              }
-            }
-          } catch (backfillError) {
-            this.logger.warn(`Failed to backfill source translations for ${entityType}:${entityId}: ${backfillError.message}`);
+          // If translation record exists with source text, it means DeepL already tried and failed
+          // Don't queue again - treat as "untranslatable" and let frontend use source text
+          if (existingTranslation && existingTranslation.text === sourceTranslation.text) {
+            this.logger.debug(`Translation for ${entityType}:${entityId} ${field} ${lang} appears untranslatable (DeepL returned source text). Not queuing for retry.`);
+            // Return empty string so frontend falls back to source text, but don't queue new job
+            result[field] = '';
+            // Don't set hasMissingTranslations or hasIncorrectTranslations - we've already tried
+          } else {
+            // Translation doesn't exist yet or is different - queue for translation
+            this.logger.warn(`Incorrect translation detected for ${entityType}:${entityId} ${field} ${lang}: translation text matches source text, clearing and queuing for background fix`);
+            hasIncorrectTranslations = true;
+            result[field] = '';
+            hasMissingTranslations = true;
           }
         }
       }
-      
-      // Use DeepL directly for instant translations (don't wait for queue)
-      if (this.deepLService && this.deepLService.isAvailable()) {
-        try {
-          // Create translations synchronously so they're available immediately
-          await this.translateEntity(entityType, entityId);
-          this.logger.log(`Created translations immediately for ${entityType}:${entityId} in ${lang}`);
-          
-          // Re-resolve translations now that they're created
-          for (const field of fields) {
-            if (!result[field] || result[field].trim() === '') {
-              const translatedText = await this.resolveField(entityType, entityId, field, lang);
-              if (translatedText) {
-                result[field] = translatedText;
-              }
-            }
-          }
-        } catch (error) {
-          this.logger.error(`Failed to create translations immediately for ${entityType}:${entityId}: ${error.message}`);
-          // Fall back to background processing
-          this.translateEntity(entityType, entityId).catch((err) => {
-            this.logger.error(`Background translation also failed for ${entityType}:${entityId}: ${err.message}`);
-          });
-        }
+    }
+    
+    // Queue incorrect translations for background fix (non-blocking)
+    if (hasIncorrectTranslations) {
+      if (!this.translationQueue) {
+        this.logger.error(`Translation queue not available for fixing ${entityType}:${entityId} - incorrect translations will NOT be fixed!`);
       } else {
-        // DeepL not available, try queue as fallback
-        if (this.translationQueue) {
-          this.translationQueue.add(
+        try {
+          const jobPromise = this.translationQueue.add(
             'translate-entity',
-            {
-              entityType,
-              entityId,
-            },
-            {
-              attempts: 3,
-              backoff: {
-                type: 'exponential',
-                delay: 2000,
-              },
-              removeOnComplete: true,
-              removeOnFail: false,
-            },
-          ).catch((error) => {
-            this.logger.warn(`Failed to enqueue translation job for ${entityType}:${entityId}: ${error.message}`);
+            { entityType, entityId },
+            { removeOnComplete: true, removeOnFail: false }
+          );
+          
+          jobPromise.then((job) => {
+            this.logger.log(`✅ Successfully queued translation fix job ${job.id} for ${entityType}:${entityId}`);
+          }).catch((error) => {
+            this.logger.error(`❌ Failed to queue translation fix for ${entityType}:${entityId}: ${error.message}`, error.stack);
           });
+        } catch (error) {
+          this.logger.error(`❌ Exception while queuing translation fix for ${entityType}:${entityId}: ${error.message}`, error.stack);
         }
+      }
+    }
+
+    // According to plan: resolveEntity should ONLY return existing translations
+    // Missing translations should be queued for background processing (non-blocking)
+    // This ensures API responses are fast and translations happen async via queue
+    if (hasMissingTranslations && lang !== 'en') {
+      this.logger.log(`Missing translations detected for ${entityType}:${entityId} in ${lang}, queuing for background processing`);
+      
+      // Queue translation job for background processing (non-blocking)
+      // According to plan: ALL translation creation must be async via queue
+      if (!this.translationQueue) {
+        this.logger.error(`Translation queue not available for ${entityType}:${entityId} - translations will NOT be processed!`);
+        return;
+      }
+      
+      // Log that we're attempting to queue
+      this.logger.debug(`Attempting to queue translation job for ${entityType}:${entityId}`);
+      
+      try {
+        const jobPromise = this.translationQueue.add(
+          'translate-entity',
+          { entityType, entityId },
+          { 
+            attempts: 3,
+            backoff: {
+              type: 'exponential',
+              delay: 2000,
+            },
+            removeOnComplete: true,
+            removeOnFail: false,
+          }
+        );
+        
+        // Handle both promise resolution and errors
+        jobPromise
+          .then((job) => {
+            this.logger.log(`✅ Successfully queued translation job ${job?.id || 'unknown'} for ${entityType}:${entityId}`);
+          })
+          .catch((error) => {
+            this.logger.error(`❌ Failed to queue translation for ${entityType}:${entityId}: ${error?.message || String(error)}`, error?.stack);
+          });
+          
+        // Also check if it's already rejected synchronously
+        if (jobPromise && typeof (jobPromise as any).catch === 'function') {
+          // Promise exists, will be handled by .then/.catch above
+        }
+      } catch (error) {
+        this.logger.error(`❌ Exception while queuing translation for ${entityType}:${entityId}: ${error?.message || String(error)}`, error?.stack);
       }
     }
 

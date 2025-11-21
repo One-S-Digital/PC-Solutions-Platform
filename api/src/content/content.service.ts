@@ -298,15 +298,20 @@ export class ContentService {
               content_preview: translatedFields.content_preview ? 'found' : 'missing',
             });
             
+            // Treat empty strings as missing translations (fallback to source)
+            const finalTitle = (translatedFields.title && translatedFields.title.trim()) || item.title;
+            const finalDescription = (translatedFields.description && translatedFields.description.trim()) 
+              ? translatedFields.description.trim()
+              : (item.description || '');
+            const finalContentPreview = (translatedFields.content_preview && translatedFields.content_preview.trim())
+              ? translatedFields.content_preview.trim()
+              : (item.contentPreview || '');
+            
             return {
               ...item,
-              title: translatedFields.title || item.title,
-              description: translatedFields.description !== undefined 
-                ? translatedFields.description 
-                : (item.description || ''),
-              contentPreview: translatedFields.content_preview !== undefined
-                ? translatedFields.content_preview
-                : (item.contentPreview || ''),
+              title: finalTitle,
+              description: finalDescription,
+              contentPreview: finalContentPreview,
             };
           }),
         );
@@ -700,15 +705,20 @@ export class ContentService {
               content_preview: translatedFields.content_preview ? 'found' : 'missing',
             });
             
+            // Treat empty strings as missing translations (fallback to source)
+            const finalTitle = (translatedFields.title && translatedFields.title.trim()) || item.title;
+            const finalDescription = (translatedFields.description && translatedFields.description.trim()) 
+              ? translatedFields.description.trim()
+              : (item.description || '');
+            const finalContentPreview = (translatedFields.content_preview && translatedFields.content_preview.trim())
+              ? translatedFields.content_preview.trim()
+              : (item.contentPreview || '');
+            
             return {
               ...item,
-              title: translatedFields.title || item.title,
-              description: translatedFields.description !== undefined 
-                ? translatedFields.description 
-                : (item.description || ''),
-              contentPreview: translatedFields.content_preview !== undefined
-                ? translatedFields.content_preview
-                : (item.contentPreview || ''),
+              title: finalTitle,
+              description: finalDescription,
+              contentPreview: finalContentPreview,
             };
           }),
         );
@@ -1117,24 +1127,41 @@ export class ContentService {
               lang,
             );
             
+            // Treat empty strings as missing translations (fallback to source)
+            const finalTitle = (translatedFields.title && translatedFields.title.trim()) || item.title;
+            const finalDescription = (translatedFields.description && translatedFields.description.trim()) 
+              ? translatedFields.description.trim()
+              : (item.description || '');
+            const finalContentPreview = (translatedFields.content_preview && translatedFields.content_preview.trim())
+              ? translatedFields.content_preview.trim()
+              : (item.contentPreview || '');
+            
             this.logger.debug(`State policy ${item.id} translations resolved:`, {
               title: translatedFields.title ? 'found' : 'missing',
               description: translatedFields.description ? 'found' : 'missing',
               content_preview: translatedFields.content_preview ? 'found' : 'missing',
+              finalTitle: finalTitle.substring(0, 50),
+              finalDescription: finalDescription.substring(0, 50),
+              finalContentPreview: finalContentPreview.substring(0, 50),
             });
             
             return {
               ...item,
-              title: translatedFields.title || item.title,
-              description: translatedFields.description !== undefined 
-                ? translatedFields.description 
-                : (item.description || ''),
-              contentPreview: translatedFields.content_preview !== undefined
-                ? translatedFields.content_preview
-                : (item.contentPreview || ''),
+              title: finalTitle,
+              description: finalDescription,
+              contentPreview: finalContentPreview,
             };
           }),
         );
+      }
+
+      // Log first item's title to verify translations are in response
+      if (transformedItems.length > 0 && lang && lang !== 'en') {
+        this.logger.debug(`State policies API response sample (lang=${lang}):`, {
+          firstItemId: transformedItems[0].id,
+          firstItemTitle: transformedItems[0].title?.substring(0, 50),
+          firstItemContentPreview: transformedItems[0].contentPreview?.substring(0, 50),
+        });
       }
 
       return {

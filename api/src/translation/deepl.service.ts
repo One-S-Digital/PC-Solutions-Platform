@@ -57,6 +57,7 @@ export class DeepLService implements OnModuleInit {
     text: string,
     sourceLang: string,
     targetLang: string,
+    retries: number = 3,
   ): Promise<string> {
     // Wait for initialization if it's still in progress
     if (this.initializationPromise) {
@@ -69,33 +70,53 @@ export class DeepLService implements OnModuleInit {
       return this.placeholderTranslation(text, sourceLang, targetLang);
     }
 
-    try {
-      // Map our language codes to DeepL codes
-      const sourceLangCode = this.mapToDeepLCode(sourceLang, true); // true = is source
-      const targetLangCode = this.mapToDeepLCode(targetLang, false); // false = is target
+    // Map our language codes to DeepL codes
+    const sourceLangCode = this.mapToDeepLCode(sourceLang, true); // true = is source
+    const targetLangCode = this.mapToDeepLCode(targetLang, false); // false = is target
 
-      if (!sourceLangCode || !targetLangCode) {
-        throw new Error(`Unsupported language pair: ${sourceLang} -> ${targetLang}`);
-      }
-
-      const result = await this.translator.translateText(
-        text,
-        sourceLangCode,
-        targetLangCode,
-      );
-
-      return result.text;
-    } catch (error) {
-      this.logger.error(`DeepL translation failed: ${error.message}`, error.stack);
-      // Fallback to placeholder on error
-      return this.placeholderTranslation(text, sourceLang, targetLang);
+    if (!sourceLangCode || !targetLangCode) {
+      throw new Error(`Unsupported language pair: ${sourceLang} -> ${targetLang}`);
     }
+
+    // Retry logic with exponential backoff for rate limiting
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const result = await this.translator.translateText(
+          text,
+          sourceLangCode,
+          targetLangCode,
+        );
+
+        return result.text;
+      } catch (error) {
+        const isRateLimit = error.message?.includes('Too many requests') || 
+                           error.message?.includes('rate limit') ||
+                           error.message?.includes('high load');
+        
+        if (isRateLimit && attempt < retries - 1) {
+          // Exponential backoff: 2^attempt seconds (1s, 2s, 4s)
+          const delay = Math.pow(2, attempt) * 1000;
+          this.logger.warn(`DeepL rate limit hit (attempt ${attempt + 1}/${retries}). Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue; // Retry
+        }
+
+        // If it's not a rate limit, or we've exhausted retries, throw
+        this.logger.error(`DeepL translation failed: ${error.message}`, error.stack);
+        // Fallback to placeholder on error
+        return this.placeholderTranslation(text, sourceLang, targetLang);
+      }
+    }
+
+    // Should never reach here, but just in case
+    return this.placeholderTranslation(text, sourceLang, targetLang);
   }
 
   async translateBatch(
     texts: string[],
     sourceLang: string,
     targetLang: string,
+    retries: number = 3,
   ): Promise<string[]> {
     // Wait for initialization if it's still in progress
     if (this.initializationPromise) {
@@ -106,25 +127,44 @@ export class DeepLService implements OnModuleInit {
       return texts.map((text) => this.placeholderTranslation(text, sourceLang, targetLang));
     }
 
-    try {
-      const sourceLangCode = this.mapToDeepLCode(sourceLang, true); // true = is source
-      const targetLangCode = this.mapToDeepLCode(targetLang, false); // false = is target
+    const sourceLangCode = this.mapToDeepLCode(sourceLang, true); // true = is source
+    const targetLangCode = this.mapToDeepLCode(targetLang, false); // false = is target
 
-      if (!sourceLangCode || !targetLangCode) {
-        throw new Error(`Unsupported language pair: ${sourceLang} -> ${targetLang}`);
-      }
-
-      const results = await this.translator.translateText(
-        texts,
-        sourceLangCode,
-        targetLangCode,
-      );
-
-      return results.map((r: any) => r.text);
-    } catch (error) {
-      this.logger.error(`DeepL batch translation failed: ${error.message}`, error.stack);
-      return texts.map((text) => this.placeholderTranslation(text, sourceLang, targetLang));
+    if (!sourceLangCode || !targetLangCode) {
+      throw new Error(`Unsupported language pair: ${sourceLang} -> ${targetLang}`);
     }
+
+    // Retry logic with exponential backoff for rate limiting
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const results = await this.translator.translateText(
+          texts,
+          sourceLangCode,
+          targetLangCode,
+        );
+
+        return results.map((r: any) => r.text);
+      } catch (error) {
+        const isRateLimit = error.message?.includes('Too many requests') || 
+                           error.message?.includes('rate limit') ||
+                           error.message?.includes('high load');
+        
+        if (isRateLimit && attempt < retries - 1) {
+          // Exponential backoff: 2^attempt seconds (1s, 2s, 4s)
+          const delay = Math.pow(2, attempt) * 1000;
+          this.logger.warn(`DeepL rate limit hit in batch (attempt ${attempt + 1}/${retries}). Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue; // Retry
+        }
+
+        // If it's not a rate limit, or we've exhausted retries, fallback
+        this.logger.error(`DeepL batch translation failed: ${error.message}`, error.stack);
+        return texts.map((text) => this.placeholderTranslation(text, sourceLang, targetLang));
+      }
+    }
+
+    // Should never reach here, but just in case
+    return texts.map((text) => this.placeholderTranslation(text, sourceLang, targetLang));
   }
 
   /**
