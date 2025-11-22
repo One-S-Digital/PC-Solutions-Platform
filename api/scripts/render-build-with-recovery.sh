@@ -1,6 +1,32 @@
 #!/bin/bash
 set -euo pipefail
 
+CONTENT_CATEGORY_MIGRATION_ID="20251117145622_add_content_category_field"
+
+check_content_category_column() {
+    local tmp result
+    tmp=$(mktemp)
+    if ! npx prisma db execute --stdin >"$tmp" 2>&1 <<'EOSQL'
+SELECT 
+    CASE 
+        WHEN EXISTS (
+            SELECT 1 
+            FROM information_schema.columns 
+            WHERE table_name = 'assets' 
+              AND column_name = 'contentCategory'
+        ) 
+        THEN 'assets.contentCategory EXISTS'
+        ELSE 'assets.contentCategory MISSING'
+    END as assets_check;
+EOSQL
+    then
+        :
+    fi
+    result=$(cat "$tmp")
+    rm -f "$tmp"
+    echo "$result"
+}
+
 echo "🚀 Starting Render build with migration recovery..."
 
 if [ -z "${DATABASE_URL:-}" ]; then
@@ -53,9 +79,7 @@ else
             # Verify columns exist in database
             echo "🔍 Verifying database schema..."
             VERIFY_TMP=$(mktemp)
-            if ! npx prisma db execute --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'; then
-                :
-            fi
+            if ! npx prisma db execute --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'
 SELECT 
     CASE 
         WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'categories') 
@@ -73,6 +97,9 @@ SELECT
         ELSE 'organizations.productCategories MISSING'
     END as orgs_check;
 EOSQL
+            then
+                :
+            fi
             VERIFY_RESULT=$(cat "$VERIFY_TMP")
             rm -f "$VERIFY_TMP"
             
@@ -85,6 +112,45 @@ EOSQL
                 echo "✅ Build can continue - schema is correct"
             else
                 echo "❌ Columns are missing from database"
+                echo "📋 Final migration status:"
+                npx prisma migrate status --schema prisma/schema.prisma || true
+                exit 1
+            fi
+        fi
+    elif echo "$MIGRATION_STATUS" | grep -q "$CONTENT_CATEGORY_MIGRATION_ID"; then
+        echo "🔧 Detected pending content category migration, attempting automatic fix..."
+        CONTENT_STATUS=$(check_content_category_column)
+        echo "$CONTENT_STATUS"
+
+        if echo "$CONTENT_STATUS" | grep -q "MISSING"; then
+            echo "🛠️  Column missing, applying manual schema patch..."
+            if npx prisma db execute --stdin <<'EOSQL'
+ALTER TABLE "assets" ADD COLUMN IF NOT EXISTS "contentCategory" TEXT;
+CREATE INDEX IF NOT EXISTS "assets_contentCategory_idx" ON "assets"("contentCategory");
+EOSQL
+            then
+                echo "✅ Manual content category patch applied"
+            else
+                echo "⚠️  Manual patch execution reported an error, proceeding with verification"
+            fi
+        else
+            echo "✅ Column already present, migration likely already applied"
+        fi
+
+        echo "🔄 Retrying migration deployment after content category fix..."
+        if npx prisma migrate deploy --schema prisma/schema.prisma; then
+            echo "✅ Migrations deployed successfully after content category fix"
+        else
+            echo "⚠️  Migration still failing, verifying schema state..."
+            CONTENT_STATUS=$(check_content_category_column)
+            echo "$CONTENT_STATUS"
+
+            if echo "$CONTENT_STATUS" | grep -q "EXISTS" && ! echo "$CONTENT_STATUS" | grep -q "MISSING"; then
+                echo "✅ Column confirmed, marking migration as applied..."
+                npx prisma migrate resolve --applied "$CONTENT_CATEGORY_MIGRATION_ID" --schema prisma/schema.prisma || true
+                echo "✅ Build can continue - schema is correct"
+            else
+                echo "❌ Content category column still missing after fix attempt"
                 echo "📋 Final migration status:"
                 npx prisma migrate status --schema prisma/schema.prisma || true
                 exit 1
