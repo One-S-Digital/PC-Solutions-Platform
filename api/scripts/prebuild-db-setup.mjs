@@ -403,12 +403,24 @@ log('🔁 Ensuring translation infrastructure is present...');
 ensureTranslationInfrastructure();
 
 const failedMigrations = getFailedMigrations();
+const forcedMigrationsEnv = process.env.FORCE_RESOLVE_MIGRATIONS || '';
+const forcedMigrations = forcedMigrationsEnv
+  .split(',')
+  .map((migration) => migration.trim())
+  .filter(Boolean);
+const forcedOnly = forcedMigrations.filter((migration) => !failedMigrations.includes(migration));
+const migrationsToProcess = [...new Set([...failedMigrations, ...forcedMigrations])];
 
-if (failedMigrations.length === 0) {
+if (migrationsToProcess.length === 0) {
   log('✅ No failed migrations detected.');
 } else {
-  log(`❗ Detected ${failedMigrations.length} failed migration(s). Attempting automatic cleanup...`);
-  failedMigrations.forEach((migration) => {
+  if (failedMigrations.length > 0) {
+    log(`❗ Detected ${failedMigrations.length} failed migration(s). Attempting automatic cleanup...`);
+  }
+  if (forcedOnly.length > 0) {
+    log(`⚙️  Force-resolving migration(s): ${forcedOnly.join(', ')}`);
+  }
+  migrationsToProcess.forEach((migration) => {
     log(`   🔄 Processing: ${migration}`);
     handleFailedMigration(migration);
   });
