@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { apiService } from '@/services/api';
 
 interface WebhookStatus {
   exists: boolean;
@@ -25,21 +26,21 @@ export const useWebhookStatus = () => {
 
   const checkWebhookStatus = useCallback(async (): Promise<'pending' | 'processing' | 'ready' | 'error'> => {
     try {
-      const token = await getToken();
-      
-      if (!token) {
-        console.warn('[Signup Debug] webhook-status: missing auth token, session not yet active');
-        setStatus('processing');
-        return 'processing';
-      }
-      
-      // Note: No clerkId in URL - backend reads it from authenticated session
-      const response = await fetch('/api/users/webhook-status', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+        const token = await getToken();
+
+        if (!token) {
+          console.warn('[Signup Debug] webhook-status: missing auth token, session not yet active');
+          setStatus('processing');
+          return 'processing';
+        }
+
+        // Note: No clerkId in URL - backend reads it from authenticated session
+        const response = await fetch(`${apiService.apiBaseUrl}/users/webhook-status`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
 
       if (!response.ok) {

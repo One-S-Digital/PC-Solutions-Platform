@@ -31,9 +31,10 @@
     "announcements": "Annonces Publicitaires",
     "notifications": "Notifications"
   },
-  "sidebar": {
-    "billingSubscription": "Facturation et avis",
-    "dashboard": "Tableau de Bord",
+    "sidebar": {
+      "billingSubscription": "Facturation et avis",
+      "dashboard": "Tableau de Bord",
+      "dashboardHome": "Accueil du tableau de bord",
     "marketplace": "1, Place du marché",
     "products": "Produits",
     "services": "Services",
@@ -327,45 +328,46 @@
       "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
-  "parentDashboardPage": {
-    "title": "Tableau de Bord Parent",
-    "welcome": "Bienvenue dans le tableau de bord de Tableau de Bord",
-    "myChildren": "Mes enfants",
-    "findCreche": "Dépassement de la crèche"
-  },
-  "parentDashboard": {
-    "title": "Tableau de Bord Parent",
-    "welcomeMessage": "Bon retour ! Voici un aperçu de votre recherche de garde d'enfants et de vos demandes.",
-    "enquiry": {
-      "title": "Mes Demandes",
-      "sent": "Envoyées",
-      "responses": "Réponses",
-      "responded": "Répondues",
-      "pending": "En Attente",
-      "button": "Voir Toutes les Demandes"
+    "parentDashboardPage": {
+      "title": "Tableau de Bord Parent",
+      "welcome": "Bienvenue dans le tableau de bord de Tableau de Bord",
+      "myChildren": "Mes enfants",
+      "findCreche": "Dépassement de la crèche"
     },
-    "childProfile": {
-      "title": "Profil de l'Enfant",
-      "name": "Nom",
-      "age": "Âge",
-      "location": "Localisation",
-      "languages": "Langues",
-      "specialNeeds": "Besoins Spéciaux",
-      "button": "Mettre à Jour le Profil"
+    "parentDashboard": {
+      "title": "Tableau de Bord Parent",
+      "welcomeMessage": "Bon retour ! Voici un aperçu de votre recherche de garde d'enfants et de vos demandes.",
+      "enquiry": {
+        "title": "Mes Demandes",
+        "sent": "Envoyées",
+        "responses": "Réponses",
+        "responded": "Répondues",
+        "pending": "En Attente",
+        "button": "Voir Toutes les Demandes"
+      },
+      "childProfile": {
+        "title": "Profil de l'Enfant",
+        "name": "Nom",
+        "age": "Âge",
+        "location": "Localisation",
+        "languages": "Langues",
+        "specialNeeds": "Besoins Spéciaux",
+        "button": "Mettre à Jour le Profil"
+      },
+      "favorites": {
+        "title": "Favoris",
+        "subtitle": "Vos crèches et services sauvegardés",
+        "button": "Voir Tous les Favoris"
+      },
+      "quickActions": {
+        "title": "Actions Rapides",
+        "findDaycare": "Trouver une Garderie",
+        "viewEnquiries": "Voir les demandes",
+        "enquiries": "Mes Demandes",
+        "updateProfile": "Mettre à Jour le Profil",
+        "browseServices": "Parcourir les Services"
+      }
     },
-    "favorites": {
-      "title": "Favoris",
-      "subtitle": "Vos crèches et services sauvegardés",
-      "button": "Voir Tous les Favoris"
-    },
-    "quickActions": {
-      "title": "Actions Rapides",
-      "findDaycare": "Trouver une Garderie",
-      "enquiries": "Mes Demandes",
-      "updateProfile": "Mettre à Jour le Profil",
-      "browseServices": "Parcourir les Services"
-    }
-  },
   "parentEnquiriesPage": {
     "accessDenied": {
       "title": "Accès refusé",

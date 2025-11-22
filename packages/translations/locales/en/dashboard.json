@@ -31,9 +31,10 @@
     "announcements": "Announcements",
     "notifications": "Notifications"
   },
-  "sidebar": {
+    "sidebar": {
     "billingSubscription": "Billing & Subscription",
     "dashboard": "Dashboard",
+      "dashboardHome": "Dashboard Home",
     "marketplace": "Marketplace",
     "products": "Products",
     "services": "Services",
@@ -361,6 +362,7 @@
     "quickActions": {
       "title": "Quick Actions",
       "findDaycare": "Find Daycare",
+        "viewEnquiries": "View Enquiries",
       "enquiries": "My Enquiries",
       "updateProfile": "Update Profile",
       "browseServices": "Browse Services"

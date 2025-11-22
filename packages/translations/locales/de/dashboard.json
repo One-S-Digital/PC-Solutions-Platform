@@ -31,9 +31,10 @@
     "announcements": "Ankündigungen",
     "notifications": "BENachrichtigungen"
   },
-  "sidebar": {
-    "billingSubscription": "Fakturierung & Abo",
-    "dashboard": "Armaturenbrett",
+    "sidebar": {
+      "billingSubscription": "Fakturierung & Abo",
+      "dashboard": "Armaturenbrett",
+      "dashboardHome": "Dashboard-Startseite",
     "marketplace": "Marktplatz",
     "products": "Produkte",
     "services": "Dienstleistungen",
@@ -333,39 +334,40 @@
     "myChildren": "Mein Kinder",
     "findCreche": "Findendsi"
   },
-  "parentDashboard": {
-    "title": "Eltern-Dashboard",
-    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindergartensuche und Anfragen.",
-    "enquiry": {
-      "title": "Meine Anfragen",
-      "sent": "Gesendet",
-      "responses": "Antworten",
-      "responded": "Beantwortet",
-      "pending": "Ausstehend",
-      "button": "Alle Anfragen anzeigen"
+    "parentDashboard": {
+      "title": "Eltern-Dashboard",
+      "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindergartensuche und Anfragen.",
+      "enquiry": {
+        "title": "Meine Anfragen",
+        "sent": "Gesendet",
+        "responses": "Antworten",
+        "responded": "Beantwortet",
+        "pending": "Ausstehend",
+        "button": "Alle Anfragen anzeigen"
+      },
+      "childProfile": {
+        "title": "Kinderprofil",
+        "name": "Name",
+        "age": "Alter",
+        "location": "Standort",
+        "languages": "Sprachen",
+        "specialNeeds": "Besondere Bedürfnisse",
+        "button": "Profil aktualisieren"
+      },
+      "favorites": {
+        "title": "Favoriten",
+        "subtitle": "Ihre gespeicherten Kindergärten und Dienste",
+        "button": "Alle Favoriten anzeigen"
+      },
+      "quickActions": {
+        "title": "Schnellaktionen",
+        "findDaycare": "Kindergarten finden",
+        "viewEnquiries": "Anfragen anzeigen",
+        "enquiries": "Meine Anfragen",
+        "updateProfile": "Profil aktualisieren",
+        "browseServices": "Dienste durchsuchen"
+      }
     },
-    "childProfile": {
-      "title": "Kinderprofil",
-      "name": "Name",
-      "age": "Alter",
-      "location": "Standort",
-      "languages": "Sprachen",
-      "specialNeeds": "Besondere Bedürfnisse",
-      "button": "Profil aktualisieren"
-    },
-    "favorites": {
-      "title": "Favoriten",
-      "subtitle": "Ihre gespeicherten Kindergärten und Dienste",
-      "button": "Alle Favoriten anzeigen"
-    },
-    "quickActions": {
-      "title": "Schnellaktionen",
-      "findDaycare": "Kindergarten finden",
-      "enquiries": "Meine Anfragen",
-      "updateProfile": "Profil aktualisieren",
-      "browseServices": "Dienste durchsuchen"
-    }
-  },
   "parentEnquiriesPage": {
     "accessDenied": {
       "title": "Zugriff verweigert",

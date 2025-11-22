@@ -21,11 +21,13 @@
     "childAge": "Enter age in months",
     "startDate": "Select date",
     "specialRequirements": "Please describe any special requirements, dietary needs, medical conditions, or other important information about your child..."
-  },
-  "buttons": {
-    "submitEnquiry": "Submit Enquiry",
-    "viewMyEnquiries": "View My Enquiries"
-  },
+    },
+    "buttons": {
+      "submitEnquiry": "Submit Enquiry",
+      "viewMyEnquiries": "View My Enquiries",
+      "backToDashboard": "Back to dashboard",
+      "backToHome": "Back to home"
+    },
   "messages": {
     "submitting": "Submitting your enquiry...",
     "success": "Your enquiry has been submitted successfully!",
