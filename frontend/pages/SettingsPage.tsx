@@ -371,6 +371,7 @@ const SettingsPage: React.FC = () => {
   }
 
   const userRole = currentUser.role;
+  const showEditProfileButton = userRole !== UserRole.PARENT;
 
   const renderFoundationLayout = () => {
     const tabsConfig = availableSections.map(section => ({
@@ -437,16 +438,18 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-page-bg">
       <div className="sticky top-0 z-30 bg-page-bg/80 backdrop-blur-md px-8 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
           <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              leftIcon={PencilSquareIcon}
-              onClick={() => navigate('/settings/profile')}
-            >
-              {t('common:buttons.editProfile', 'Edit Profile')}
-            </Button>
+              {showEditProfileButton && (
+                <Button
+                  variant="outline"
+                  leftIcon={PencilSquareIcon}
+                  onClick={() => navigate('/settings/profile')}
+                >
+                  {t('common:buttons.editProfile', 'Edit Profile')}
+                </Button>
+              )}
               {availableSections.length > 1 && (
                 <>
                   <Button variant="light" onClick={handleCancel}>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAppContext } from '../../contexts/AppContext';
-import { ParentLead, LeadMainStatus, FoundationLeadResponseStatus } from '../../types';
+import { ParentLead, LeadMainStatus, FoundationLeadResponseStatus, UserRole } from '../../types';
 import Card from '../../components/ui/Card';
 import { ClipboardDocumentListIcon, ClockIcon, CheckCircleIcon, InformationCircleIcon, InboxIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ const ParentEnquiriesPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser, leads } = useAppContext();
 
-  if (!currentUser || currentUser.role !== 'Parent') {
+  if (!currentUser || currentUser.role !== UserRole.PARENT) {
     return (
       <div className="text-center p-10">
         <h1 className="text-2xl font-bold text-swiss-charcoal">{t('parentEnquiriesPage.accessDenied.title')}</h1>
