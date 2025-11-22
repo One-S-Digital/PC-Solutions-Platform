@@ -286,11 +286,91 @@ ALTER TABLE "products"
   );
 };
 
+const ensureTranslationInfrastructure = () => {
+  const sql = `
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'TranslationStatus'
+    ) THEN
+        CREATE TYPE "TranslationStatus" AS ENUM ('PENDING', 'MT_DONE', 'REVIEWED', 'APPROVED');
+    END IF;
+END
+$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'entity_translations'
+    ) THEN
+        CREATE TABLE "entity_translations" (
+            "entityType" TEXT NOT NULL,
+            "entityId" TEXT NOT NULL,
+            "lang" TEXT NOT NULL,
+            "field" TEXT NOT NULL,
+            "text" TEXT NOT NULL,
+            "origin" TEXT NOT NULL DEFAULT 'machine',
+            "verified" BOOLEAN NOT NULL DEFAULT false,
+            "sourceHash" TEXT NOT NULL,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            "approvedAt" TIMESTAMP(3),
+            "approvedBy" TEXT,
+            "mtProvider" TEXT,
+            "reviewedAt" TIMESTAMP(3),
+            "reviewedBy" TEXT,
+            "status" "TranslationStatus" NOT NULL DEFAULT 'PENDING',
+            "translatedAt" TIMESTAMP(3),
+            CONSTRAINT "entity_translations_pkey" PRIMARY KEY ("entityType","entityId","lang","field")
+        );
+    END IF;
+END
+$$;
+
+ALTER TABLE "entity_translations"
+    ADD COLUMN IF NOT EXISTS "approvedAt" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "approvedBy" TEXT,
+    ADD COLUMN IF NOT EXISTS "mtProvider" TEXT,
+    ADD COLUMN IF NOT EXISTS "reviewedAt" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "reviewedBy" TEXT,
+    ADD COLUMN IF NOT EXISTS "status" "TranslationStatus" NOT NULL DEFAULT 'PENDING',
+    ADD COLUMN IF NOT EXISTS "translatedAt" TIMESTAMP(3);
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'entity_translations'
+          AND column_name = 'updatedAt'
+          AND column_default IS NOT NULL
+    ) THEN
+        ALTER TABLE "entity_translations"
+        ALTER COLUMN "updatedAt" DROP DEFAULT;
+    END IF;
+END
+$$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const handleFailedMigration = (migration) => {
   switch (migration) {
     case '20251104140358_add_asset_metadata_field':
       log(`   • Resolving ${migration} (metadata column)`);
       ensureMetadataColumn();
+      resolveMigration('applied', migration);
+      break;
+    case '20251114140526_add_i18n_translation_tables':
+      log(`   • Resolving ${migration} (translation infrastructure)`);
+      ensureTranslationInfrastructure();
       resolveMigration('applied', migration);
       break;
     case '20251119100000_add_categories_array_fields':
@@ -313,6 +393,9 @@ const handleFailedMigration = (migration) => {
 log('🔧 Running database pre-build cleanup...');
 log(`📍 Database URL: ${process.env.DATABASE_URL ? '[SET]' : '[NOT SET]'}`);
 log(`📍 Schema path: ${SCHEMA_PATH}`);
+
+log('🔁 Ensuring translation infrastructure is present...');
+ensureTranslationInfrastructure();
 
 const failedMigrations = getFailedMigrations();
 

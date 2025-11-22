@@ -52,7 +52,10 @@ else
             
             # Verify columns exist in database
             echo "🔍 Verifying database schema..."
-            VERIFY_RESULT=$(npx prisma db execute --stdin <<'EOSQL' 2>&1) || true
+            VERIFY_TMP=$(mktemp)
+            if ! npx prisma db execute --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'; then
+                :
+            fi
 SELECT 
     CASE 
         WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'categories') 
@@ -70,6 +73,8 @@ SELECT
         ELSE 'organizations.productCategories MISSING'
     END as orgs_check;
 EOSQL
+            VERIFY_RESULT=$(cat "$VERIFY_TMP")
+            rm -f "$VERIFY_TMP"
             
             echo "$VERIFY_RESULT"
             
@@ -86,10 +91,23 @@ EOSQL
             fi
         fi
     else
-        echo "❌ Migration deployment failed for unknown reason"
-        echo "📋 Migration status:"
-        npx prisma migrate status --schema prisma/schema.prisma || true
-        exit 1
+        echo "🩹 Attempting automatic repair by rerunning pre-build cleanup..."
+        if node ./scripts/prebuild-db-setup.mjs; then
+            echo "🔄 Retrying migration deployment after automatic repair..."
+            if npx prisma migrate deploy --schema prisma/schema.prisma; then
+                echo "✅ Migrations deployed successfully after automatic repair"
+            else
+                echo "❌ Migration deployment failed after automatic repair attempts"
+                echo "📋 Migration status:"
+                npx prisma migrate status --schema prisma/schema.prisma || true
+                exit 1
+            fi
+        else
+            echo "⚠️  Automatic repair script encountered an issue"
+            echo "📋 Migration status:"
+            npx prisma migrate status --schema prisma/schema.prisma || true
+            exit 1
+        fi
     fi
 fi
 
