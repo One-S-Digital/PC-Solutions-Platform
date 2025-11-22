@@ -33,18 +33,23 @@ const runPrisma = (args, { silent = false, allowFailure = false, input } = {}) =
     throw result.error;
   }
 
+  const stdout = typeof result.stdout === 'string' ? result.stdout : '';
+  const stderr = typeof result.stderr === 'string' ? result.stderr : '';
+  const stdoutTrimmed = stdout.trim();
+  const stderrTrimmed = stderr.trim();
+  const combinedOutput = [stdoutTrimmed, stderrTrimmed].filter(Boolean).join('\n');
+
   if (result.status !== 0) {
-    const output = (result.stderr || result.stdout || '').trim();
     if (allowFailure) {
-      if (output) {
-        warn(output);
+      if (combinedOutput) {
+        warn(combinedOutput);
       }
-      return '';
+      return stdoutTrimmed || stderrTrimmed;
     }
-    throw new Error(`prisma ${args.join(' ')} failed${output ? `: ${output}` : ''}`);
+    throw new Error(`prisma ${args.join(' ')} failed${combinedOutput ? `: ${combinedOutput}` : ''}`);
   }
 
-  return (result.stdout || '').trim();
+  return stdoutTrimmed;
 };
 
 const parseJsonOutput = (raw) => {

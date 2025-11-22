@@ -1,6 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+API_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PRISMA_SCHEMA_PATH="$API_DIR/prisma/schema.prisma"
+
+cd "$API_DIR"
+
 echo "🔧 Fixing categories migration..."
 
 if [ -z "${DATABASE_URL:-}" ]; then
@@ -10,13 +16,13 @@ fi
 
 # First, try to mark the failed migration as rolled back
 echo "📋 Marking failed migration as rolled back..."
-npx prisma migrate resolve --rolled-back "20251119100000_add_categories_array_fields" || {
+npx prisma migrate resolve --schema "$PRISMA_SCHEMA_PATH" --rolled-back "20251119100000_add_categories_array_fields" || {
     echo "⚠️  Migration not found in failed state, continuing..."
 }
 
 # Execute the SQL to ensure columns exist
 echo "🔄 Ensuring category columns exist..."
-npx prisma db execute --stdin << 'EOF'
+npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin << 'EOF'
 DO $$
 BEGIN
     -- Add categories column to products table
@@ -72,6 +78,6 @@ EOF
 
 # Mark the migration as applied
 echo "✅ Marking migration as applied..."
-npx prisma migrate resolve --applied "20251119100000_add_categories_array_fields"
+npx prisma migrate resolve --schema "$PRISMA_SCHEMA_PATH" --applied "20251119100000_add_categories_array_fields"
 
 echo "✅ Categories migration fixed successfully!"

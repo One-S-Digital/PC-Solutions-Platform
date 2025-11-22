@@ -1,4 +1,11 @@
 #!/bin/bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+API_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PRISMA_SCHEMA_PATH="$API_DIR/prisma/schema.prisma"
+
+cd "$API_DIR"
 
 echo "🚀 Starting API with database migration..."
 
@@ -15,7 +22,7 @@ max_attempts=30
 attempt=1
 
 while [ $attempt -le $max_attempts ]; do
-    if npx prisma db execute --stdin <<< "SELECT 1;" > /dev/null 2>&1; then
+    if npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin <<< "SELECT 1;" > /dev/null 2>&1; then
         echo "✅ Database connection successful"
         break
     else
@@ -32,7 +39,7 @@ fi
 
 # Run database migrations
 echo "🔄 Running database migrations..."
-if npx prisma migrate deploy; then
+if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
     echo "✅ Database migrations completed successfully"
 else
     echo "❌ Database migration failed"
