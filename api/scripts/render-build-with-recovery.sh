@@ -53,9 +53,7 @@ else
             # Verify columns exist in database
             echo "🔍 Verifying database schema..."
             VERIFY_TMP=$(mktemp)
-            if ! npx prisma db execute --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'; then
-                :
-            fi
+            if ! npx prisma db execute --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'
 SELECT 
     CASE 
         WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'categories') 
@@ -73,6 +71,9 @@ SELECT
         ELSE 'organizations.productCategories MISSING'
     END as orgs_check;
 EOSQL
+            then
+                :
+            fi
             VERIFY_RESULT=$(cat "$VERIFY_TMP")
             rm -f "$VERIFY_TMP"
             
