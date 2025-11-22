@@ -4,7 +4,7 @@ import { useAppContext } from '../contexts/AppContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants'; 
-import { PuzzlePieceIcon } from '@heroicons/react/24/outline';
+import { PuzzlePieceIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { UserRole } from '../types'; 
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ const ParentLeadFormPage: React.FC = () => {
   const { t } = useTranslation(['parentLeadForm', 'common']);
   const { submitParentLead, currentUser } = useAppContext(); 
   const navigate = useNavigate();
+  const isParentUser = currentUser?.role === UserRole.PARENT;
   const [formData, setFormData] = useState({
     canton: '',
     municipality: '',
@@ -25,6 +26,9 @@ const ParentLeadFormPage: React.FC = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [unauthenticatedSuccess, setUnauthenticatedSuccess] = useState(false); // New state
+  const backButtonLabel = isParentUser
+    ? t('parentLeadForm:buttons.backToDashboard', 'Back to dashboard')
+    : t('parentLeadForm:buttons.backToHome', 'Back to home');
 
   useEffect(() => {
     if (currentUser && currentUser.role !== UserRole.PARENT) {
@@ -67,9 +71,38 @@ const ParentLeadFormPage: React.FC = () => {
     setSubmitted(true);
   };
 
+  const handleBackClick = () => {
+    if (isParentUser) {
+      navigate('/parent/dashboard');
+      return;
+    }
+
+    if (typeof window !== 'undefined' && window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+
+  const BackButton = ({ maxWidthClass }: { maxWidthClass: string }) => (
+    <div className={`w-full ${maxWidthClass} mb-4 self-start`}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        leftIcon={ArrowLeftIcon}
+        onClick={handleBackClick}
+        className="px-0 text-swiss-teal hover:text-swiss-mint"
+      >
+        {backButtonLabel}
+      </Button>
+    </div>
+  );
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-swiss-light-gray flex flex-col items-center justify-center p-4">
+        <BackButton maxWidthClass="max-w-lg" />
         <Card className="w-full max-w-lg p-8 text-center">
             <PuzzlePieceIcon className="h-16 w-16 text-swiss-mint mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-swiss-charcoal mb-4">{t('parentLeadForm:messages.success')}</h1>
@@ -95,6 +128,7 @@ const ParentLeadFormPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-6">
+      <BackButton maxWidthClass="max-w-2xl" />
       <div className="text-center mb-8">
         <PuzzlePieceIcon className="h-12 w-12 text-swiss-mint mx-auto mb-2" />
         <h1 className="text-3xl font-bold text-swiss-charcoal">{APP_NAME} - {t('title')}</h1>
