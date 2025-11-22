@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # Comprehensive Role System Testing Script
-set -e
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+API_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCHEMA_PATH="$API_DIR/prisma/schema.prisma"
+
+cd "$API_DIR"
 
 echo "🧪 Role System Comprehensive Testing"
 echo "===================================="
@@ -38,7 +44,7 @@ run_test() {
 run_test "Environment Setup" "[ -f .env.test ] && echo 'Test environment configured'"
 
 # 2. Database Connection
-run_test "Database Connection" "npx prisma db execute --sql 'SELECT 1' > /dev/null 2>&1"
+run_test "Database Connection" "npx prisma db execute --schema $SCHEMA_PATH --sql 'SELECT 1' > /dev/null 2>&1"
 
 # 3. Schema Validation
 run_test "Schema Validation" "npx prisma validate"

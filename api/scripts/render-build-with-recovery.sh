@@ -1,12 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+API_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PRISMA_SCHEMA_PATH="$API_DIR/prisma/schema.prisma"
+
+cd "$API_DIR"
+
 CONTENT_CATEGORY_MIGRATION_ID="20251117145622_add_content_category_field"
 
 check_content_category_column() {
     local tmp result
     tmp=$(mktemp)
-    if ! npx prisma db execute --stdin >"$tmp" 2>&1 <<'EOSQL'
+    if ! npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin >"$tmp" 2>&1 <<'EOSQL'
 SELECT 
     CASE 
         WHEN EXISTS (
@@ -47,7 +53,7 @@ node ./scripts/prebuild-db-setup.mjs || {
 }
 
 echo "🔄 Step 2: Deploying database migrations..."
-if npx prisma migrate deploy --schema prisma/schema.prisma; then
+if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
     echo "✅ Migrations deployed successfully"
 else
     MIGRATION_EXIT_CODE=$?
@@ -55,7 +61,7 @@ else
     
     # Get migration status
     echo "📋 Checking migration status..."
-    MIGRATION_STATUS=$(npx prisma migrate status --schema prisma/schema.prisma 2>&1) || true
+    MIGRATION_STATUS=$(npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" 2>&1) || true
     echo "$MIGRATION_STATUS"
     
     # Check if categories migration failed (multiple patterns)
@@ -71,7 +77,7 @@ else
         
         # Retry migration deployment after fix
         echo "🔄 Retrying migration deployment..."
-        if npx prisma migrate deploy --schema prisma/schema.prisma; then
+        if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
             echo "✅ Migrations deployed successfully after recovery"
         else
             echo "⚠️  Migration still showing issues, checking if columns exist..."
@@ -79,7 +85,7 @@ else
             # Verify columns exist in database
             echo "🔍 Verifying database schema..."
             VERIFY_TMP=$(mktemp)
-            if ! npx prisma db execute --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'
+            if ! npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'
 SELECT 
     CASE 
         WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'categories') 
@@ -108,12 +114,12 @@ EOSQL
             # If columns exist, mark migration as applied and continue
             if echo "$VERIFY_RESULT" | grep -q "EXISTS" && ! echo "$VERIFY_RESULT" | grep -q "MISSING"; then
                 echo "✅ Columns exist in database, marking migration as applied..."
-                npx prisma migrate resolve --applied "20251119100000_add_categories_array_fields" --schema prisma/schema.prisma || true
+                npx prisma migrate resolve --applied "20251119100000_add_categories_array_fields" --schema "$PRISMA_SCHEMA_PATH" || true
                 echo "✅ Build can continue - schema is correct"
             else
                 echo "❌ Columns are missing from database"
                 echo "📋 Final migration status:"
-                npx prisma migrate status --schema prisma/schema.prisma || true
+                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
                 exit 1
             fi
         fi
@@ -124,7 +130,7 @@ EOSQL
 
         if echo "$CONTENT_STATUS" | grep -q "MISSING"; then
             echo "🛠️  Column missing, applying manual schema patch..."
-            if npx prisma db execute --stdin <<'EOSQL'
+            if npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin <<'EOSQL'
 ALTER TABLE "assets" ADD COLUMN IF NOT EXISTS "contentCategory" TEXT;
 CREATE INDEX IF NOT EXISTS "assets_contentCategory_idx" ON "assets"("contentCategory");
 EOSQL
@@ -138,7 +144,7 @@ EOSQL
         fi
 
         echo "🔄 Retrying migration deployment after content category fix..."
-        if npx prisma migrate deploy --schema prisma/schema.prisma; then
+        if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
             echo "✅ Migrations deployed successfully after content category fix"
         else
             echo "⚠️  Migration still failing, verifying schema state..."
@@ -147,12 +153,12 @@ EOSQL
 
             if echo "$CONTENT_STATUS" | grep -q "EXISTS" && ! echo "$CONTENT_STATUS" | grep -q "MISSING"; then
                 echo "✅ Column confirmed, marking migration as applied..."
-                npx prisma migrate resolve --applied "$CONTENT_CATEGORY_MIGRATION_ID" --schema prisma/schema.prisma || true
+                npx prisma migrate resolve --applied "$CONTENT_CATEGORY_MIGRATION_ID" --schema "$PRISMA_SCHEMA_PATH" || true
                 echo "✅ Build can continue - schema is correct"
             else
                 echo "❌ Content category column still missing after fix attempt"
                 echo "📋 Final migration status:"
-                npx prisma migrate status --schema prisma/schema.prisma || true
+                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
                 exit 1
             fi
         fi
@@ -160,18 +166,18 @@ EOSQL
         echo "🩹 Attempting automatic repair by rerunning pre-build cleanup..."
         if node ./scripts/prebuild-db-setup.mjs; then
             echo "🔄 Retrying migration deployment after automatic repair..."
-            if npx prisma migrate deploy --schema prisma/schema.prisma; then
+            if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
                 echo "✅ Migrations deployed successfully after automatic repair"
             else
                 echo "❌ Migration deployment failed after automatic repair attempts"
                 echo "📋 Migration status:"
-                npx prisma migrate status --schema prisma/schema.prisma || true
+                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
                 exit 1
             fi
         else
             echo "⚠️  Automatic repair script encountered an issue"
             echo "📋 Migration status:"
-            npx prisma migrate status --schema prisma/schema.prisma || true
+            npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
             exit 1
         fi
     fi
