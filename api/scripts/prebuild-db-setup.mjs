@@ -373,11 +373,11 @@ const handleFailedMigration = (migration) => {
       ensureMetadataColumn();
       resolveMigration('applied', migration);
       break;
-    case '20251114140526_add_i18n_translation_tables':
-      log(`   • Resolving ${migration} (translation infrastructure)`);
-      ensureTranslationInfrastructure();
-      resolveMigration('applied', migration);
-      break;
+    // case '20251114140526_add_i18n_translation_tables':
+    //   log(`   • Resolving ${migration} (translation infrastructure)`);
+    //   ensureTranslationInfrastructure();
+    //   resolveMigration('applied', migration);
+    //   break;
     case '20251119100000_add_categories_array_fields':
       log(`   • Resolving ${migration} (categories columns)`);
       ensureCategoriesColumns();
@@ -399,8 +399,8 @@ log('🔧 Running database pre-build cleanup...');
 log(`📍 Database URL: ${process.env.DATABASE_URL ? '[SET]' : '[NOT SET]'}`);
 log(`📍 Schema path: ${SCHEMA_PATH}`);
 
-log('🔁 Ensuring translation infrastructure is present...');
-ensureTranslationInfrastructure();
+// log('🔁 Ensuring translation infrastructure is present...');
+// ensureTranslationInfrastructure();
 
 const failedMigrations = getFailedMigrations();
 const forcedMigrationsEnv = process.env.FORCE_RESOLVE_MIGRATIONS || '';

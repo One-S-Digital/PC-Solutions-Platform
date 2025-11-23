@@ -139,24 +139,24 @@ EOSQL
                 exit 1
             fi
         fi
-    elif echo "$MIGRATION_LAST_OUTPUT" | grep -q "$TRANSLATION_MIGRATION_ID" || echo "$MIGRATION_STATUS" | grep -q "$TRANSLATION_MIGRATION_ID"; then
-        echo "🔧 Detected failed translation infrastructure migration, attempting automatic fix..."
-        if FORCE_RESOLVE_MIGRATIONS="$TRANSLATION_MIGRATION_ID" node ./scripts/prebuild-db-setup.mjs; then
-            echo "🔄 Retrying migration deployment after translation fix..."
-            if run_prisma_migrate_deploy; then
-                echo "✅ Migrations deployed successfully after translation fix"
-            else
-                echo "❌ Translation migration still failing"
-                echo "📋 Final migration status:"
-                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
-                exit 1
-            fi
-        else
-            echo "⚠️  Translation recovery script encountered an issue"
-            echo "📋 Migration status:"
-            npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
-            exit 1
-        fi
+    # elif echo "$MIGRATION_LAST_OUTPUT" | grep -q "$TRANSLATION_MIGRATION_ID" || echo "$MIGRATION_STATUS" | grep -q "$TRANSLATION_MIGRATION_ID"; then
+    #     echo "🔧 Detected failed translation infrastructure migration, attempting automatic fix..."
+    #     if FORCE_RESOLVE_MIGRATIONS="$TRANSLATION_MIGRATION_ID" node ./scripts/prebuild-db-setup.mjs; then
+    #         echo "🔄 Retrying migration deployment after translation fix..."
+    #         if run_prisma_migrate_deploy; then
+    #             echo "✅ Migrations deployed successfully after translation fix"
+    #         else
+    #             echo "❌ Translation migration still failing"
+    #             echo "📋 Final migration status:"
+    #             npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
+    #             exit 1
+    #         fi
+    #     else
+    #         echo "⚠️  Translation recovery script encountered an issue"
+    #         echo "📋 Migration status:"
+    #         npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
+    #         exit 1
+    #     fi
     elif echo "$MIGRATION_STATUS" | grep -q "$CONTENT_CATEGORY_MIGRATION_ID"; then
         echo "🔧 Detected pending content category migration, attempting automatic fix..."
         CONTENT_STATUS=$(check_content_category_column)
