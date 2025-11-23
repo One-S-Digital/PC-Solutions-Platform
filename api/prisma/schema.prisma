@@ -514,6 +514,8 @@ model JobApplication {
   jobListingId String
   candidateId  String
   coverLetter  String?
+  cvUrl        String?
+  cvAssetId    String?
   status       ApplicationStatus @default(PENDING)
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt

@@ -15,7 +15,7 @@ test('parent lead form validates and submits to backend', async ({ page }) => {
   // Fill child information
   await page.selectOption('select[name="canton"]', 'VD');
   await page.fill('input[name="municipality"]', 'Lausanne');
-  await page.fill('select,name="childAge"], '2');
+  await page.fill('select[name="childAge"]', '2');
   await page.fill('input[name="desiredStartDate"]', '2024-03-01');
 
   // Intercept submit endpoint to confirm payload shape
