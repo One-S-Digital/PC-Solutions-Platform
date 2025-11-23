@@ -303,6 +303,47 @@ This error occurs when the Google Social Connection is enabled in Clerk but not 
    - Copy the **Client ID** and **Client Secret** from Google to your Clerk Dashboard.
 6. Save the changes in Clerk.
 
+### Step-by-Step: Configuring Google OAuth Credentials
+
+To enable Google SSO for production or custom domains, follow these detailed steps:
+
+#### 1. Create a Google Cloud Project
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Click the project dropdown at the top and select **New Project**.
+3. Name your project (e.g., "PC Solutions Auth") and click **Create**.
+
+#### 2. Configure OAuth Consent Screen
+1. In the left sidebar, go to **APIs & Services > OAuth consent screen**.
+2. Select **External** (unless you only want users from your own Google Workspace organization).
+3. Click **Create**.
+4. Fill in the required fields:
+   - **App name**: Your app's name (e.g., "PC Solutions Platform").
+   - **User support email**: Your email address.
+   - **Developer contact information**: Your email address.
+5. Click **Save and Continue** through the Scopes and Test Users sections (defaults are usually fine for basic login).
+6. Return to the dashboard.
+
+#### 3. Create OAuth Client ID
+1. In the left sidebar, go to **APIs & Services > Credentials**.
+2. Click **+ CREATE CREDENTIALS** and select **OAuth client ID**.
+3. Select **Web application** as the Application type.
+4. Name it (e.g., "Clerk Production").
+5. Under **Authorized redirect URIs**:
+   - Go to your Clerk Dashboard > Social Connections > Google.
+   - Copy the **Authorized redirect URI** value (e.g., `https://clerk.your-domain.com/v1/oauth/callback`).
+   - Paste it into the Google Console's "Authorized redirect URIs" field.
+6. Click **Create**.
+
+#### 4. Connect to Clerk
+1. After creating the credentials, Google will show a modal with your **Client ID** and **Client Secret**.
+2. Copy the **Client ID**.
+3. Paste it into the **Client ID** field in your Clerk Dashboard (Google settings).
+4. Copy the **Client Secret**.
+5. Paste it into the **Client Secret** field in your Clerk Dashboard.
+6. Click **Save** in Clerk.
+
+> **Note**: It may take a few minutes for Google credentials to propagate. If you still see errors immediately after setup, wait 5 minutes and try again.
+
 ## Next Steps
 
 1. **User Profile Management**: Implement profile editing
