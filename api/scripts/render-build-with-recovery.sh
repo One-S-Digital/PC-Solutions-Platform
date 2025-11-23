@@ -63,6 +63,9 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
 fi
 
 echo "🧹 Step 1: Pre-build cleanup and failed migration resolution..."
+node ./scripts/fix-asset-url-constraint.mjs || {
+    echo "⚠️  Asset URL constraint fix failed (ignoring)"
+}
 node ./scripts/prebuild-db-setup.mjs || {
     echo "❌ Pre-build database cleanup failed"
     exit 1
