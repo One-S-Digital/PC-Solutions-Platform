@@ -912,14 +912,20 @@ export interface PlatformSettings {
     metadataDescription: string;
     logoUrl?: string;
     faviconUrl?: string;
+    /**
+     * Platform configuration settings
+     */
     // Add fields found in MOCK_PLATFORM_SETTINGS to fix potential type errors if they exist
     enableUserRegistration?: boolean;
     enableEmailNotifications?: boolean;
     enableSmsNotifications?: boolean;
     enableMaintenanceMode?: boolean;
+    /** Maximum file upload size in bytes */
     maxFileUploadSize?: number;
+    /** Supported file types (MIME types, e.g., 'image/png', 'application/pdf') */
     supportedFileTypes?: string[];
     enablePublicRegistration?: boolean;
+    /** Array of enabled language codes (e.g., ['en', 'fr', 'de']) */
     enabledLanguages?: string[];
     defaultLanguage?: string;
     enableCaptcha?: boolean;
@@ -963,12 +969,20 @@ export interface FrontendSettings {
 
 // ACTIVE CLIENT FEATURE TYPES
 export enum VendorClientReason {
-    NEW = 'New Client',
-    TRIAL = 'Trial',
-    CONTRACT = 'Contract',
-    PAUSED = 'Paused',
-    TERMINATED = 'Terminated',
+    NEW = 'NEW',
+    TRIAL = 'TRIAL',
+    CONTRACT = 'CONTRACT',
+    PAUSED = 'PAUSED',
+    TERMINATED = 'TERMINATED',
 }
+
+export const VendorClientReasonLabels: Record<VendorClientReason, string> = {
+    [VendorClientReason.NEW]: 'New Client',
+    [VendorClientReason.TRIAL]: 'Trial',
+    [VendorClientReason.CONTRACT]: 'Contract',
+    [VendorClientReason.PAUSED]: 'Paused',
+    [VendorClientReason.TERMINATED]: 'Terminated',
+};
 
 export interface VendorClient {
     id: string;

@@ -25,7 +25,13 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
-  const { settings } = useFrontendSettings();
+  const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
+
+  useEffect(() => {
+    if (settingsError) {
+      console.warn('Failed to load frontend settings:', settingsError);
+    }
+  }, [settingsError]);
 
   // Webhook status hook - no clerkId param needed, uses authenticated session
   const { error: webhookErrorFromHook, startPolling, checkWebhookStatus } = useWebhookStatus();

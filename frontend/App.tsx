@@ -382,6 +382,9 @@ const FrontendSettingsManager: React.FC = () => {
           document.head.appendChild(link);
         }
         link.href = settings.faviconAsset.publicUrl;
+        link.onerror = () => {
+          console.warn('Failed to load favicon:', settings.faviconAsset?.publicUrl);
+        };
       }
 
       if (settings.siteName) {

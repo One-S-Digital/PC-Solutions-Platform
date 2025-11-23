@@ -33,7 +33,7 @@ const translateUserRole = (role: UserRole, t: TFunction): string => {
 const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
-  const { settings } = useFrontendSettings();
+  const { settings, loading, error } = useFrontendSettings();
   const navigate = useNavigate();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'sidebar.content': true, // Corrected key
@@ -41,6 +41,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     'sidebar.users': true, // Corrected key
     'sidebar.recruitment': true, // Corrected key
   });
+
+  React.useEffect(() => {
+    if (error) {
+      console.warn('Failed to load frontend settings:', error);
+    }
+  }, [error]);
 
   const toggleMenu = (nameKey: string) => { 
     setOpenMenus(prev => ({ ...prev, [nameKey]: !prev[nameKey] }));

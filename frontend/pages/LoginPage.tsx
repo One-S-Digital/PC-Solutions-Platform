@@ -35,7 +35,13 @@ const LoginPage: React.FC = () => {
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
   const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
-  const { settings } = useFrontendSettings();
+  const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
+  
+  useEffect(() => {
+    if (settingsError) {
+      console.warn('Failed to load frontend settings:', settingsError);
+    }
+  }, [settingsError]);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
