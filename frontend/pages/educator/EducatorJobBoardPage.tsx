@@ -131,8 +131,11 @@ const EducatorJobBoardPage: React.FC = () => {
     cvUrl: string;
     coverLetter: string;
   }) => {
-    // TODO: submit cvAssetId/cvUrl/coverLetter to backend
-    const result = await applyForJob(data.job);
+    const result = await applyForJob(data.job, {
+      cvAssetId: data.cvAssetId,
+      cvUrl: data.cvUrl,
+      coverLetter: data.coverLetter,
+    });
     addNotification({
       title: result.success ? t('notifications.successTitle') : t('notifications.errorTitle'),
       message: result.message,

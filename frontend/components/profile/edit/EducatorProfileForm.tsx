@@ -3,17 +3,21 @@ import { SettingsFormData } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
-import AvatarSection from './shared/AvatarSection';
 import CoverImageSection from './shared/CoverImageSection';
+import ContactDetailsSection from './shared/ContactDetailsSection';
+import FileUploadZone from '../../ui/FileUploadZone';
 import {
   UserCircleIcon,
   BriefcaseIcon,
   AcademicCapIcon,
   StarIcon,
   CalendarDaysIcon,
-  PaperClipIcon,
   CameraIcon,
+  PaperClipIcon,
+  DocumentTextIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
+import Button from '../../ui/Button';
 
 interface EducatorProfileFormProps {
   formData: SettingsFormData;
@@ -38,7 +42,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
 
   const handleAvatarUpload = async (file: File) => {
     setUploadingAvatar(true);
-    // TODO: Implement actual file upload
+    // TODO: Implement actual file upload with API
     setTimeout(() => {
       alert('Avatar upload functionality will be implemented with file upload service');
       setUploadingAvatar(false);
@@ -47,11 +51,21 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
 
   const handleCoverUpload = async (file: File) => {
     setUploadingCover(true);
-    // TODO: Implement actual file upload
+    // TODO: Implement actual file upload with API
     setTimeout(() => {
       alert('Cover image upload functionality will be implemented with file upload service');
       setUploadingCover(false);
     }, 500);
+  };
+
+  const handleCvUpload = (asset: any) => {
+    onChange('cvUrl', asset.url);
+    // We might want to store cvAssetId as well if the backend supports it in settings
+    // onChange('cvAssetId', asset.id);
+  };
+
+  const handleRemoveCv = () => {
+    onChange('cvUrl', '');
   };
 
   const avatarUrl = currentUser?.avatarUrl || 
@@ -64,7 +78,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
 
   return (
     <div className="space-y-6">
-      {/* Cover Image Section - Facebook-like */}
+      {/* Cover Image Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <CoverImageSection
           coverImageUrl={coverImageUrl}
@@ -72,7 +86,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
           uploading={uploadingCover}
         />
         
-        {/* Profile Picture Overlay - Facebook style */}
+        {/* Profile Picture Overlay */}
         <div className="relative px-6 pb-6">
           <div className="flex items-end -mt-16 mb-4">
             <div className="relative group">
@@ -143,36 +157,15 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
               placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}
             />
           </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settings:educatorProfile.email', 'Email')}
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email || ''}
-              onChange={(e) => onChange('email', e.target.value)}
-              className={STANDARD_INPUT_FIELD}
-              placeholder="email@example.com"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settings:educatorProfile.phoneNumber', 'Phone Number')}
-            </label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              value={formData.phoneNumber || ''}
-              onChange={(e) => onChange('phoneNumber', e.target.value)}
-              className={STANDARD_INPUT_FIELD}
-              placeholder="+41 XX XXX XX XX"
-            />
-          </div>
         </div>
       </div>
+
+      {/* Contact Information - Using Shared Component */}
+      <ContactDetailsSection 
+        formData={formData} 
+        onChange={onChange} 
+        showContactPerson={false} // Educators don't need a separate "Contact Person" field as they are the person
+      />
 
       {/* Bio Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -321,26 +314,58 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
         </div>
       </div>
 
-      {/* CV URL */}
+      {/* CV / Resume Upload */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <PaperClipIcon className="w-5 h-5 mr-2 text-swiss-mint" />
           {t('settings:educatorProfile.cv', 'CV / Resume')}
         </h3>
         <div>
-          <label htmlFor="cvUrl" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('settings:educatorProfile.cvUrl', 'CV URL')}
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t('settings:educatorProfile.cvUpload', 'Upload CV')}
           </label>
-          <input
-            type="url"
-            id="cvUrl"
-            value={formData.cvUrl || ''}
-            onChange={(e) => onChange('cvUrl', e.target.value)}
-            className={STANDARD_INPUT_FIELD}
-            placeholder={t('settings:educatorProfile.cvUrlPlaceholder', 'https://example.com/cv.pdf')}
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            {t('settings:educatorProfile.cvUrlHint', 'Link to your CV or resume document')}
+          
+          {formData.cvUrl ? (
+            <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center">
+                <DocumentTextIcon className="w-6 h-6 text-green-600 mr-3" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {/* Extract filename from URL or show generic name */}
+                    {formData.cvUrl.split('/').pop() || 'CV Document'}
+                  </p>
+                  <a 
+                    href={formData.cvUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-xs text-green-700 hover:underline"
+                  >
+                    View Document
+                  </a>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleRemoveCv}
+                leftIcon={XMarkIcon}
+              >
+                {t('common:buttons.remove', 'Remove')}
+              </Button>
+            </div>
+          ) : (
+            <FileUploadZone
+              label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}
+              acceptedMimeTypes=".pdf,.doc,.docx"
+              maxFileSizeMB={5}
+              assetKind="CV"
+              onUploadSuccess={handleCvUpload}
+              autoUpload={true}
+            />
+          )}
+          <p className="mt-2 text-xs text-gray-500">
+            {t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}
           </p>
         </div>
       </div>

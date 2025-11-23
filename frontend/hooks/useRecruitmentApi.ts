@@ -29,6 +29,8 @@ export interface JobListingInput {
 export interface JobApplicationInput {
   jobListingId: string;
   coverLetter?: string;
+  cvUrl?: string;
+  cvAssetId?: string;
 }
 
 const transformJobListing = (data: any): JobListing => ({

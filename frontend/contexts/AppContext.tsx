@@ -29,7 +29,7 @@ interface AppContextType {
   language: SupportedLanguage;
   setLanguage: Dispatch<SetStateAction<SupportedLanguage>>;
   applications: Application[];
-    applyForJob: (job: JobListing) => Promise<{ success: boolean; message: string }>;
+  applyForJob: (job: JobListing, applicationData?: { cvUrl?: string; cvAssetId?: string; coverLetter?: string }) => Promise<{ success: boolean; message: string }>;
   userFiles: DocumentItem[];
   addUserFile: (file: File) => void;
   deleteUserFile: (fileId: string) => void;
@@ -190,13 +190,16 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   }, [favoriteCandidateIds]);
 
   const applyForJob = useCallback(
-    async (job: JobListing): Promise<{ success: boolean; message: string }> => {
+    async (job: JobListing, applicationData?: { cvUrl?: string; cvAssetId?: string; coverLetter?: string }): Promise<{ success: boolean; message: string }> => {
       if (!currentUser || currentUser.role !== UserRole.EDUCATOR) {
         return { success: false, message: 'Only educators can apply for jobs.' };
       }
 
       try {
-        const newApplication = await createApplication({ jobListingId: job.id });
+        const newApplication = await createApplication({ 
+          jobListingId: job.id,
+          ...applicationData
+        });
         setApplications((prev) => [newApplication, ...prev]);
         return { success: true, message: `Successfully applied for "${job.title}"!` };
       } catch (error) {
