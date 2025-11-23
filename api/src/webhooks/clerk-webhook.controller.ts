@@ -908,11 +908,13 @@ ${'='.repeat(100)}`);
       'Foundation (Daycare)': UserRole.FOUNDATION,
       'Product Supplier': UserRole.PRODUCT_SUPPLIER,
       'Service Provider': UserRole.SERVICE_PROVIDER,
+      'Educator/Candidate': UserRole.EDUCATOR,
       'Parent': UserRole.PARENT,
       // Also support already-mapped values (in case they come pre-converted)
       'FOUNDATION': UserRole.FOUNDATION,
       'PRODUCT_SUPPLIER': UserRole.PRODUCT_SUPPLIER,
       'SERVICE_PROVIDER': UserRole.SERVICE_PROVIDER,
+      'EDUCATOR': UserRole.EDUCATOR,
       'PARENT': UserRole.PARENT,
     };
 
