@@ -8,6 +8,8 @@ PRISMA_SCHEMA_PATH="$API_DIR/prisma/schema.prisma"
 cd "$API_DIR"
 
 CONTENT_CATEGORY_MIGRATION_ID="20251117145622_add_content_category_field"
+TRANSLATION_MIGRATION_ID="20251114140526_add_i18n_translation_tables"
+MIGRATION_LAST_OUTPUT=""
 
 check_content_category_column() {
     local tmp result
@@ -33,6 +35,20 @@ EOSQL
     echo "$result"
 }
 
+run_prisma_migrate_deploy() {
+    local output exit_code
+    if output=$(npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH" 2>&1); then
+        MIGRATION_LAST_OUTPUT="$output"
+        printf '%s\n' "$output"
+        return 0
+    else
+        exit_code=$?
+        MIGRATION_LAST_OUTPUT="$output"
+        printf '%s\n' "$output"
+        return $exit_code
+    fi
+}
+
 echo "🚀 Starting Render build with migration recovery..."
 
 if [ -z "${DATABASE_URL:-}" ]; then
@@ -53,7 +69,7 @@ node ./scripts/prebuild-db-setup.mjs || {
 }
 
 echo "🔄 Step 2: Deploying database migrations..."
-if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
+if run_prisma_migrate_deploy; then
     echo "✅ Migrations deployed successfully"
 else
     MIGRATION_EXIT_CODE=$?
@@ -77,7 +93,7 @@ else
         
         # Retry migration deployment after fix
         echo "🔄 Retrying migration deployment..."
-        if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
+        if run_prisma_migrate_deploy; then
             echo "✅ Migrations deployed successfully after recovery"
         else
             echo "⚠️  Migration still showing issues, checking if columns exist..."
@@ -123,6 +139,24 @@ EOSQL
                 exit 1
             fi
         fi
+    elif echo "$MIGRATION_LAST_OUTPUT" | grep -q "$TRANSLATION_MIGRATION_ID" || echo "$MIGRATION_STATUS" | grep -q "$TRANSLATION_MIGRATION_ID"; then
+        echo "🔧 Detected failed translation infrastructure migration, attempting automatic fix..."
+        if FORCE_RESOLVE_MIGRATIONS="$TRANSLATION_MIGRATION_ID" node ./scripts/prebuild-db-setup.mjs; then
+            echo "🔄 Retrying migration deployment after translation fix..."
+            if run_prisma_migrate_deploy; then
+                echo "✅ Migrations deployed successfully after translation fix"
+            else
+                echo "❌ Translation migration still failing"
+                echo "📋 Final migration status:"
+                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
+                exit 1
+            fi
+        else
+            echo "⚠️  Translation recovery script encountered an issue"
+            echo "📋 Migration status:"
+            npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
+            exit 1
+        fi
     elif echo "$MIGRATION_STATUS" | grep -q "$CONTENT_CATEGORY_MIGRATION_ID"; then
         echo "🔧 Detected pending content category migration, attempting automatic fix..."
         CONTENT_STATUS=$(check_content_category_column)
@@ -144,7 +178,7 @@ EOSQL
         fi
 
         echo "🔄 Retrying migration deployment after content category fix..."
-        if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
+        if run_prisma_migrate_deploy; then
             echo "✅ Migrations deployed successfully after content category fix"
         else
             echo "⚠️  Migration still failing, verifying schema state..."
@@ -166,7 +200,7 @@ EOSQL
         echo "🩹 Attempting automatic repair by rerunning pre-build cleanup..."
         if node ./scripts/prebuild-db-setup.mjs; then
             echo "🔄 Retrying migration deployment after automatic repair..."
-            if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then
+            if run_prisma_migrate_deploy; then
                 echo "✅ Migrations deployed successfully after automatic repair"
             else
                 echo "❌ Migration deployment failed after automatic repair attempts"
