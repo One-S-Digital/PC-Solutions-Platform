@@ -284,6 +284,11 @@ class ApiService {
   async deleteStatePolicy(id: string): Promise<ApiResponse> {
     return this.delete(`/content/state-policies/${id}`);
   }
+
+  // Complete Profile (for OAuth users)
+  async completeProfile(data: any): Promise<ApiResponse> {
+    return this.post('/auth/complete-profile', data);
+  }
 }
 
 // Create a singleton instance

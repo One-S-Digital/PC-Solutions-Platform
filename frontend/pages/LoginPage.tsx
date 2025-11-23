@@ -143,7 +143,8 @@ const LoginPage: React.FC = () => {
     try {
       // OAuth will redirect to dashboard after completion
       // Use full URL for redirects (Clerk v5 requirement)
-      const redirectUrl = `${window.location.origin}/dashboard`;
+      // REDIRECT TO SIGNUP so we can handle "Resume Signup" for new users
+      const redirectUrl = `${window.location.origin}/signup`;
       
       await signIn.authenticateWithRedirect({
         strategy: provider,

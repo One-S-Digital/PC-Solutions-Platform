@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useSignUp, useAuth } from '@clerk/clerk-react';
+import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage, UserRole } from '../types';
 import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
 import Button from '../components/ui/Button';
@@ -10,6 +10,8 @@ import Captcha from '../components/ui/Captcha';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import { apiService } from '../services/api';
+import { useAuthContext } from '../providers/AuthProvider';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -24,6 +26,8 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
+  const { user: clerkUser } = useUser();
+  const { currentUser, refreshCurrentUser, isLoading: isAuthLoading } = useAuthContext();
 
   // Webhook status hook - no clerkId param needed, uses authenticated session
   const { error: webhookErrorFromHook, startPolling, checkWebhookStatus } = useWebhookStatus();
@@ -110,6 +114,7 @@ const SignupPage: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
+  const [resumeSignupMode, setResumeSignupMode] = useState(false);
 
   const roleRequiresPricing = (role: SignupRole | null) =>
     role !== null && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role);
@@ -129,23 +134,43 @@ const SignupPage: React.FC = () => {
       selectedRole !== null &&
       [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
 
-  // Redirect if user is already logged in before starting signup
+  // Check for Resume Signup Mode (Signed in with Google, but no DB profile)
   useEffect(() => {
-    if (isSignedIn && !hasStartedSignup) {
+    if (isLoaded && !isAuthLoading && isSignedIn && !currentUser && clerkUser) {
+        console.log('Detecting Resume Signup Mode');
+        setResumeSignupMode(true);
+        
+        // Auto-fill email from Clerk
+        const email = clerkUser.emailAddresses[0]?.emailAddress || '';
+        const firstName = clerkUser.firstName || '';
+        const lastName = clerkUser.lastName || '';
+        
+        setFormData(prev => ({
+            ...prev,
+            email,
+            contactPerson: firstName && lastName ? `${firstName} ${lastName}` : prev.contactPerson
+        }));
+    }
+  }, [isLoaded, isAuthLoading, isSignedIn, currentUser, clerkUser]);
+
+  // Redirect if user is already fully logged in
+  useEffect(() => {
+    if (isSignedIn && currentUser && !hasStartedSignup && !resumeSignupMode) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, hasStartedSignup, navigate]);
+  }, [isSignedIn, currentUser, hasStartedSignup, navigate, resumeSignupMode]);
 
   // Handle successful verification - redirect if user becomes authenticated after showing success
   useEffect(() => {
-    if (isSignedIn && currentStep === 3) {
+    // Only auto-redirect in standard flow. In resume flow, we handle redirect manually after API call.
+    if (isSignedIn && currentStep === 3 && !resumeSignupMode) {
       const timeoutId = setTimeout(() => {
         navigate(successRedirect.path, { replace: true, state: successRedirect.state });
       }, 2000);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [isSignedIn, currentStep, navigate, successRedirect]);
+  }, [isSignedIn, currentStep, navigate, successRedirect, resumeSignupMode]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
@@ -201,16 +226,21 @@ const SignupPage: React.FC = () => {
       }
     if (!formData.contactPerson) 
       newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'errors.parentNameRequired' : 'errors.contactPersonRequired');
+    
     if (!formData.email) 
       newErrors.email = t('errors.emailRequired');
     else if (!/\S+@\S+\.\S+/.test(formData.email)) 
       newErrors.email = t('errors.emailInvalid');
-    if (!formData.password) 
-      newErrors.password = t('errors.passwordRequired');
-    else if (formData.password.length < 8) 
-      newErrors.password = t('errors.passwordTooShort');
-    if (formData.password !== formData.confirmPassword) 
-      newErrors.confirmPassword = t('errors.passwordsNoMatch');
+
+    // Password validation only for standard signup
+    if (!resumeSignupMode) {
+        if (!formData.password) 
+            newErrors.password = t('errors.passwordRequired');
+        else if (formData.password.length < 8) 
+            newErrors.password = t('errors.passwordTooShort');
+        if (formData.password !== formData.confirmPassword) 
+            newErrors.confirmPassword = t('errors.passwordsNoMatch');
+    }
     
       if (requiresOrganizationDetails && !formData.phone) {
         newErrors.phone = t('errors.phoneRequired');
@@ -236,15 +266,15 @@ const SignupPage: React.FC = () => {
     if (!formData.termsAccepted) 
       newErrors.termsAccepted = t('errors.termsRequired');
 
-    // CAPTCHA validation
-    if (!captchaToken) {
+    // CAPTCHA validation (skip for resume mode or if already verified)
+    if (!captchaToken && !resumeSignupMode) {
       setCaptchaError(t('errors.captchaRequired'));
     } else {
       setCaptchaError('');
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0 && captchaToken !== null;
+    return Object.keys(newErrors).length === 0 && (captchaToken !== null || resumeSignupMode);
   };
 
   const handleCaptchaVerify = (token: string) => {
@@ -265,10 +295,40 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validateStep2() || !selectedRole || !isLoaded || !signUp) return;
+    if (!validateStep2() || !selectedRole) return;
     
     setIsLoading(true);
     setHasStartedSignup(true);
+
+    // RESUME SIGNUP MODE (OAuth Completion)
+    if (resumeSignupMode) {
+        try {
+            const userRole = SIGNUP_ROLE_TO_USER_ROLE[selectedRole];
+            
+            await apiService.completeProfile({
+                role: userRole,
+                organisationName: formData.organisationName,
+                phone: formData.phone,
+                canton: formData.canton,
+                // Add other fields as needed by your backend DTO
+            });
+
+            // Refresh the user context to pull in the new role/data
+            await refreshCurrentUser();
+            
+            setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+            setCurrentStep(3);
+        } catch (err: any) {
+            console.error('Complete profile error:', err);
+            setErrors({ email: err.message || 'Failed to complete profile' });
+        } finally {
+            setIsLoading(false);
+        }
+        return;
+    }
+
+    // STANDARD SIGNUP MODE
+    if (!isLoaded || !signUp) return;
 
       try {
         const pendingUserRole = selectedRole ? SIGNUP_ROLE_TO_USER_ROLE[selectedRole] : undefined;
@@ -448,6 +508,8 @@ const SignupPage: React.FC = () => {
             onChange={handleChange}
             className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}
             placeholder={placeholderKey ? t(placeholderKey) : ''} 
+            // Disable email input in resume mode
+            disabled={name === 'email' && resumeSignupMode}
           />
           {(name === 'password' || name === 'confirmPassword') && (
             <button 
@@ -493,12 +555,15 @@ const SignupPage: React.FC = () => {
               >
                 {successButtonLabel}
               </Button>
-              <p className="text-sm text-gray-500">
-                {t('common:loginPage.alreadyAccount')}{' '}
-                <Link to="/login" className="font-medium text-swiss-mint hover:underline">
-                  {t('common:buttons.login')}
-                </Link>
-              </p>
+              {/* Hide login link in success step if resuming signup, as they are already logged in */}
+              {!resumeSignupMode && (
+                <p className="text-sm text-gray-500">
+                    {t('common:loginPage.alreadyAccount')}{' '}
+                    <Link to="/login" className="font-medium text-swiss-mint hover:underline">
+                    {t('common:buttons.login')}
+                    </Link>
+                </p>
+              )}
             </div>
           </div>
         ) : (
@@ -507,6 +572,11 @@ const SignupPage: React.FC = () => {
               <SquaresPlusIcon className="w-12 h-12 text-swiss-mint mx-auto mb-2" />
               <h1 className="text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
               <p className="text-sm text-gray-500 mt-1">{progressText}</p>
+              {resumeSignupMode && (
+                <div className="mt-2 p-2 bg-blue-50 text-blue-700 rounded text-sm">
+                    {t('completeProfileMessage', 'Please complete your profile to continue.')}
+                </div>
+              )}
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
               <div className="bg-swiss-mint h-2 rounded-full transition-all duration-300 ease-in-out" style={{ width: currentStep === 1 ? '50%' : '100%' }}></div>
@@ -535,8 +605,14 @@ const SignupPage: React.FC = () => {
                       {requiresOrganizationDetails && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
                     {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
                     {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
-                    {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
-                    {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
+                    
+                    {/* Only show password fields in standard signup mode */}
+                    {!resumeSignupMode && (
+                        <>
+                            {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
+                            {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
+                        </>
+                    )}
                     
                       {requiresOrganizationDetails && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
                       {requiresOrganizationDetails && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
@@ -572,26 +648,28 @@ const SignupPage: React.FC = () => {
                       {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
                     </div>
 
-                    {/* CAPTCHA Section */}
-                    <div className="pt-4">
-                      <Captcha
-                        siteKey={HCAPTCHA_SITE_KEY}
-                        theme={HCAPTCHA_THEME}
-                        size={HCAPTCHA_SIZE}
-                        onVerify={handleCaptchaVerify}
-                        onExpire={handleCaptchaExpire}
-                        onError={handleCaptchaError}
-                        className="flex justify-center"
-                      />
-                      {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
-                    </div>
+                    {/* CAPTCHA Section - Hide in resume mode */}
+                    {!resumeSignupMode && (
+                        <div className="pt-4">
+                        <Captcha
+                            siteKey={HCAPTCHA_SITE_KEY}
+                            theme={HCAPTCHA_THEME}
+                            size={HCAPTCHA_SIZE}
+                            onVerify={handleCaptchaVerify}
+                            onExpire={handleCaptchaExpire}
+                            onError={handleCaptchaError}
+                            className="flex justify-center"
+                        />
+                        {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
+                        </div>
+                    )}
                     
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
                       <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto">
                         {t('buttons.goBack')}
                       </Button>
                       <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
-                        {isLoading ? t('creatingAccount') : t('buttons.createAccount')}
+                        {isLoading ? t('creatingAccount') : (resumeSignupMode ? t('completeProfile', 'Complete Profile') : t('buttons.createAccount'))}
                       </Button>
                     </div>
                   </form>
@@ -599,10 +677,6 @@ const SignupPage: React.FC = () => {
 
                 {showVerificationStep && (
                   <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    {(() => {
-                      
-                      return null;
-                    })()}
                     {webhookStatus === 'processing' ? (
                       <VerificationProgress 
                         status={webhookStatus} 
@@ -666,12 +740,15 @@ const SignupPage: React.FC = () => {
               </>
             )}
             
-            <p className="mt-6 text-center text-sm text-gray-600">
-              {t('common:loginPage.alreadyAccount')}{' '}
-              <Link to="/login" className="font-medium text-swiss-mint hover:underline">
-                {t('common:buttons.login')}
-              </Link>
-            </p>
+            {/* Hide "Already have an account?" in resume mode */}
+            {!resumeSignupMode && (
+                <p className="mt-6 text-center text-sm text-gray-600">
+                {t('common:loginPage.alreadyAccount')}{' '}
+                <Link to="/login" className="font-medium text-swiss-mint hover:underline">
+                    {t('common:buttons.login')}
+                </Link>
+                </p>
+            )}
           </>
         )}
       </Card>

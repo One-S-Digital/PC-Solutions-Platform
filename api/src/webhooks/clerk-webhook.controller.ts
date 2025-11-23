@@ -540,6 +540,12 @@ ${'='.repeat(100)}`);
       rawIntendedRole,
       mappedIntendedRole: intendedRole,
     });
+
+    if (!intendedRole) {
+        console.log(`⚠️ [E2E DEBUG] NO ROLE DETECTED. Skipping automatic user creation.`);
+        console.log(`ℹ️ [E2E DEBUG] User ${clerkId} will need to complete onboarding to select a role.`);
+        return;
+    }
     
     // E2E DEBUG: Role validation
     const validRole = this.isValidRole(intendedRole) ? intendedRole : UserRole.PARENT;
@@ -898,9 +904,9 @@ ${'='.repeat(100)}`);
    * Frontend sends values like "Foundation (Daycare)", "Product Supplier", etc.
    * Backend expects FOUNDATION, PRODUCT_SUPPLIER, etc.
    */
-  private mapSignupRoleToUserRole(signupRole: string | null | undefined): UserRole {
+  private mapSignupRoleToUserRole(signupRole: string | null | undefined): UserRole | null {
     if (!signupRole) {
-      return UserRole.PARENT;
+      return null;
     }
 
     // Mapping table from frontend SignupRole to backend UserRole
@@ -923,7 +929,7 @@ ${'='.repeat(100)}`);
       return mappedRole;
     }
 
-    console.warn(`⚠️ [ROLE MAPPING] Unknown role "${signupRole}", falling back to PARENT`);
-    return UserRole.PARENT;
+    console.warn(`⚠️ [ROLE MAPPING] Unknown role "${signupRole}", returning null`);
+    return null;
   }
 }
