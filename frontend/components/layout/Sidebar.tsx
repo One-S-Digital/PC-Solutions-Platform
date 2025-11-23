@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
+import { useFrontendSettings } from '../../hooks/useFrontendSettings';
 import { UserRole } from '../../types';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { TFunction } from 'i18next'; // Import TFunction for typing
@@ -32,6 +33,7 @@ const translateUserRole = (role: UserRole, t: TFunction): string => {
 const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
+  const { settings } = useFrontendSettings();
   const navigate = useNavigate();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'sidebar.content': true, // Corrected key
@@ -158,16 +160,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       {isMobileView && (
         <div className="flex justify-between items-center h-20 px-4 border-b border-gray-200/80">
             <div className="flex items-center">
-                <SquaresPlusIcon className="h-8 w-8 text-swiss-mint mr-2" />
-                <h1 className="text-xl font-bold text-swiss-charcoal">{t('appName')}</h1>
+                {settings?.logoAsset?.publicUrl ? (
+                  <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-8 w-auto mr-2" />
+                ) : (
+                  <SquaresPlusIcon className="h-8 w-8 text-swiss-mint mr-2" />
+                )}
+                <h1 className="text-xl font-bold text-swiss-charcoal">{settings?.siteName || t('appName')}</h1>
             </div>
           {/* Close button for mobile view - managed by MainLayout now */}
         </div>
       )}
       {!isMobileView && (
         <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80"> 
-            <SquaresPlusIcon className="h-9 w-9 text-swiss-mint mr-2.5" />
-            <h1 className="text-2xl font-bold text-swiss-charcoal">{t('appName')}</h1>
+            {settings?.logoAsset?.publicUrl ? (
+              <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-9 w-auto mr-2.5" />
+            ) : (
+              <SquaresPlusIcon className="h-9 w-9 text-swiss-mint mr-2.5" />
+            )}
+            <h1 className="text-2xl font-bold text-swiss-charcoal">{settings?.siteName || t('appName')}</h1>
         </div>
       )}
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto"> 

@@ -912,6 +912,53 @@ export interface PlatformSettings {
     metadataDescription: string;
     logoUrl?: string;
     faviconUrl?: string;
+    // Add fields found in MOCK_PLATFORM_SETTINGS to fix potential type errors if they exist
+    enableUserRegistration?: boolean;
+    enableEmailNotifications?: boolean;
+    enableSmsNotifications?: boolean;
+    enableMaintenanceMode?: boolean;
+    maxFileUploadSize?: number;
+    supportedFileTypes?: string[];
+    enablePublicRegistration?: boolean;
+    enabledLanguages?: string[];
+    defaultLanguage?: string;
+    enableCaptcha?: boolean;
+    requireEmailVerification?: boolean;
+}
+
+export interface Asset {
+  id: string;
+  publicUrl: string;
+  filename: string;
+  mimeType?: string;
+  size?: number;
+}
+
+export interface FrontendSettings {
+  siteName: string;
+  siteDescription?: string;
+  siteKeywords?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  instagramUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  googleAnalyticsId?: string;
+  googleTagManagerId?: string;
+  privacyPolicyUrl?: string;
+  termsOfServiceUrl?: string;
+  cookiePolicyUrl?: string;
+  enableDarkMode?: boolean;
+  defaultTheme?: string;
+  logoAsset?: Asset;
+  faviconAsset?: Asset;
+  ogImageAsset?: Asset;
 }
 
 // ACTIVE CLIENT FEATURE TYPES
