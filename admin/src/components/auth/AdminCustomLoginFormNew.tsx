@@ -252,7 +252,17 @@ export default function AdminCustomLoginForm() {
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
-          <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+          <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-6">
+            {getAdminLogo() ? (
+              <img 
+                src={getAdminLogo()} 
+                alt="Admin Logo" 
+                className="h-8 w-8 object-contain"
+              />
+            ) : (
+              <SquaresPlusIcon className="h-8 w-8 text-white" />
+            )}
+          </div>
           <h1 className="text-2xl font-bold text-swiss-charcoal">Admin Dashboard</h1>
           <p className="text-sm text-gray-500">Pro Crèche Solutions Management Portal</p>
         </div>

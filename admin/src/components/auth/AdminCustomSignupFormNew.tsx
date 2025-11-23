@@ -6,6 +6,7 @@ import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, CheckCircleIcon 
 import Button from '../design-system/Button';
 import Card from '../design-system/Card';
 import { STANDARD_INPUT_FIELD } from '../../constants/design-system';
+import { useSettings } from '../../hooks/useSettings';
 
 interface AdminSignupFormData {
   firstName: string;
@@ -23,6 +24,7 @@ export default function AdminCustomSignupForm() {
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { user } = useUser();
+  const { settings } = useSettings();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [hasStartedSignup, setHasStartedSignup] = useState(false);
@@ -252,6 +254,13 @@ export default function AdminCustomSignupForm() {
   const progressText = currentStep === 1 ? 'Step 1 of 2: Basic Information' : 'Step 2 of 2: Account Details';
   const formTitle = currentStep === 1 ? 'Create Admin Account' : 'Set Up Your Account';
 
+  const getAdminLogo = () => {
+    if (settings?.adminLogoAsset?.url) {
+      return settings.adminLogoAsset.url;
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4">
       <Card className="w-full max-w-2xl p-8 shadow-xl">
@@ -267,7 +276,17 @@ export default function AdminCustomSignupForm() {
         ) : (
         <>
             <div className="text-center mb-2">
-                <SquaresPlusIcon className="w-12 h-12 text-swiss-mint mx-auto mb-2" />
+                <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-2">
+                  {getAdminLogo() ? (
+                    <img 
+                      src={getAdminLogo()} 
+                      alt="Admin Logo" 
+                      className="h-8 w-8 object-contain"
+                    />
+                  ) : (
+                    <SquaresPlusIcon className="h-8 w-8 text-white" />
+                  )}
+                </div>
                 <h1 className="text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
                 <p className="text-sm text-gray-500 mt-1">{progressText}</p>
             </div>
