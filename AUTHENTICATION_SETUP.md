@@ -283,6 +283,26 @@ curl -H "Authorization: Bearer <admin_jwt_token>" \
 - Use Clerk dashboard to verify user data
 - Test JWT tokens with online tools
 
+### Google SSO Error: "Missing required parameter: client_id"
+
+If you encounter the error `Error 400: invalid_request Missing required parameter: client_id` when attempting to sign up or log in with Google:
+
+**Cause:**
+This error occurs when the Google Social Connection is enabled in Clerk but not properly configured with Google Cloud credentials. This is common when:
+1. You are running the application on a domain other than `localhost` (e.g., a cloud IDE url, `ngrok`, or production domain).
+2. You are using a Clerk Production instance but haven't configured Google OAuth credentials.
+3. You are using a Clerk Development instance with "Shared Credentials" on a non-localhost domain (Clerk's shared credentials only work on localhost).
+
+**Solution:**
+1. Go to your [Clerk Dashboard](https://dashboard.clerk.com).
+2. Navigate to **User & Authentication > Social Connections**.
+3. Click on the **Google** provider settings.
+4. Ensure **Use custom credentials** is enabled (required for production or non-localhost development).
+5. You must create a Project in [Google Cloud Console](https://console.cloud.google.com/), set up OAuth 2.0 credentials, and:
+   - Copy the **Authorized redirect URI** from Clerk to your Google OAuth Client configuration.
+   - Copy the **Client ID** and **Client Secret** from Google to your Clerk Dashboard.
+6. Save the changes in Clerk.
+
 ## Next Steps
 
 1. **User Profile Management**: Implement profile editing
