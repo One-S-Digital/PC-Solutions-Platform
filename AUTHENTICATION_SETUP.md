@@ -345,6 +345,42 @@ To enable Google SSO for production or custom domains, follow these detailed ste
 
 > **Note**: It may take a few minutes for Google credentials to propagate. If you still see errors immediately after setup, wait 5 minutes and try again.
 
+### Step-by-Step: Configuring Facebook OAuth Credentials
+
+To enable Facebook SSO for production or custom domains, follow these detailed steps:
+
+#### 1. Create a Facebook App
+1. Go to [Facebook for Developers](https://developers.facebook.com/).
+2. Log in and click **My Apps** in the top right.
+3. Click **Create App**.
+4. Select **Authenticate and request data from users with Facebook Login** (or "Consumer" if using the older wizard) and click **Next**.
+5. Enter your **App Name** (e.g., "PC Solutions Platform") and **App Contact Email**.
+6. Click **Create app**.
+
+#### 2. Set Up Facebook Login
+1. In the App Dashboard, find **Facebook Login** under "Add products to your app" and click **Set Up**.
+2. Select **Web** as the platform.
+3. Enter your **Site URL** (e.g., `https://dash.procrechesolutions.com`) and click **Save**.
+4. In the left sidebar, under **Facebook Login**, click **Settings**.
+5. Find **Valid OAuth Redirect URIs**.
+6. Go to your Clerk Dashboard > Social Connections > Facebook.
+7. Copy the **Authorized redirect URI** value.
+8. Paste it into the **Valid OAuth Redirect URIs** field in Facebook.
+9. Click **Save Changes**.
+
+#### 3. Connect to Clerk
+1. In the Facebook App Dashboard sidebar, go to **App settings > Basic**.
+2. Copy the **App ID**.
+3. Paste it into the **Client ID** field in your Clerk Dashboard (Facebook settings).
+4. Click **Show** next to **App Secret**, copy it.
+5. Paste it into the **Client Secret** field in your Clerk Dashboard.
+6. Click **Save** in Clerk.
+
+#### 4. Go Live
+1. By default, your Facebook app is in "Development" mode (only you can log in).
+2. To allow public users, toggle the **App Mode** switch at the top of the dashboard to **Live**.
+3. You may need to provide a Privacy Policy URL and Terms of Service URL in **App settings > Basic** before switching to Live.
+
 ## Next Steps
 
 1. **User Profile Management**: Implement profile editing
