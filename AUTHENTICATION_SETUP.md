@@ -332,6 +332,7 @@ To enable Google SSO for production or custom domains, follow these detailed ste
    - Go to your Clerk Dashboard > Social Connections > Google.
    - Copy the **Authorized redirect URI** value (e.g., `https://clerk.your-domain.com/v1/oauth/callback`).
    - Paste it into the Google Console's "Authorized redirect URIs" field.
+   > **Note**: You generally do **not** need to add "Authorized JavaScript origins" when using Clerk with the redirect flow. The "Authorized redirect URI" is the critical setting.
 6. Click **Create**.
 
 #### 4. Connect to Clerk
