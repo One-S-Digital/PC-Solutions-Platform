@@ -171,7 +171,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
                 ) : (
                   <SquaresPlusIcon className="h-8 w-8 text-swiss-mint mr-2" />
                 )}
-                <h1 className="text-xl font-bold text-swiss-charcoal">{settings?.siteName || t('appName')}</h1>
             </div>
           {/* Close button for mobile view - managed by MainLayout now */}
         </div>
@@ -183,7 +182,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
             ) : (
               <SquaresPlusIcon className="h-9 w-9 text-swiss-mint mr-2.5" />
             )}
-            <h1 className="text-2xl font-bold text-swiss-charcoal">{settings?.siteName || t('appName')}</h1>
         </div>
       )}
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto"> 
