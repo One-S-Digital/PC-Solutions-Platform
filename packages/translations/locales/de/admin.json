@@ -17,22 +17,6 @@
       "becomePartner": "Partner werden"
     }
   },
-  "platformSettings": {
-    "title": "Plattformeinstellungen",
-    "general": {
-      "title": "Allgemeine Einstellungen",
-      "platformName": "Plattformname",
-      "platformDescription": "Plattformbeschreibung"
-    },
-    "branding": {
-      "title": "Branding",
-      "logo": "Logo",
-      "favicon": "Favicon"
-    },
-    "buttons": {
-      "saveChanges": "Änderungen speichern"
-    }
-  },
   "designSystem": {
     "title": "Designsystem",
     "sections": {
@@ -174,6 +158,399 @@
       "integrations": "Integrationen",
       "emailTemplates": "E-Mail-Vorlagen",
       "systemConfig": "Systemkonfiguration"
+    },
+    "general": {
+      "title": "Allgemeine Einstellungen",
+      "description": "Grundlegende Informationen zu Ihrer Anwendung",
+      "siteName": "Seitenname",
+      "siteNamePlaceholder": "Seitennamen eingeben",
+      "contactEmail": "Kontakt-E-Mail",
+      "contactEmailPlaceholder": "kontakt@beispiel.com",
+      "siteDescription": "Seitenbeschreibung",
+      "siteDescriptionPlaceholder": "Seitenbeschreibung eingeben",
+      "contactPhone": "Kontakttelefon",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "saveChanges": "Änderungen speichern",
+      "saving": "Speichern...",
+      "platformSettings": {
+        "title": "Plattformeinstellungen",
+        "maintenanceMode": "Wartungsmodus",
+        "maintenanceModeActive": "Plattform befindet sich derzeit im Wartungsmodus",
+        "maintenanceModeInactive": "Plattform ist betriebsbereit",
+        "maintenanceMessage": "Wartungsnachricht",
+        "maintenanceMessagePlaceholder": "Wartungsnachricht für Benutzer eingeben...",
+        "updateMessage": "Nachricht aktualisieren",
+        "updating": "Aktualisieren..."
+      }
+    },
+    "content": {
+      "title": "Inhaltseinstellungen",
+      "description": "Verwalten Sie Ihre Homepage-Inhalte und den Hero-Bereich",
+      "heroImage": {
+        "title": "Hero-Bild"
+      },
+      "heroContent": {
+        "title": "Hero-Inhalt",
+        "heroTitle": "Hero-Titel",
+        "heroTitlePlaceholder": "Hero-Titel eingeben",
+        "heroSubtitle": "Hero-Untertitel",
+        "heroSubtitlePlaceholder": "Hero-Untertitel eingeben",
+        "buttonText": "Button-Text",
+        "buttonTextPlaceholder": "Loslegen",
+        "buttonLink": "Button-Link",
+        "buttonLinkPlaceholder": "https://beispiel.com"
+      },
+      "saveChanges": "Änderungen speichern",
+      "saving": "Speichern..."
+    },
+    "branding": {
+      "title": "Branding-Einstellungen",
+      "description": "Passen Sie Ihre Markenfarben, Logos und visuelle Identität an",
+      "brandColors": {
+        "title": "Markenfarben",
+        "primaryColor": "Primärfarbe",
+        "secondaryColor": "Sekundärfarbe",
+        "accentColor": "Akzentfarbe"
+      },
+      "adminColors": {
+        "title": "Admin-Dashboard-Farben",
+        "adminPrimaryColor": "Admin-Primärfarbe",
+        "adminSecondaryColor": "Admin-Sekundärfarbe",
+        "adminAccentColor": "Admin-Akzentfarbe"
+      },
+      "logosAssets": {
+        "title": "Logos & Assets",
+        "mainLogo": "Hauptlogo",
+        "adminLogo": "Admin-Logo",
+        "favicon": "Favicon",
+        "adminFavicon": "Admin-Favicon"
+      },
+      "uploading": {
+        "logo": "Logo wird hochgeladen...",
+        "adminLogo": "Admin-Logo wird hochgeladen...",
+        "favicon": "Favicon wird hochgeladen...",
+        "adminFavicon": "Admin-Favicon wird hochgeladen..."
+      },
+      "uploaded": {
+        "logo": "✓ Logo hochgeladen! Klicken Sie unten auf \"Logo speichern\", um die Änderungen zu übernehmen.",
+        "adminLogo": "✓ Admin-Logo hochgeladen! Klicken Sie unten auf \"Admin-Logo speichern\", um die Änderungen zu übernehmen.",
+        "favicon": "✓ Favicon hochgeladen! Klicken Sie unten auf \"Favicon speichern\", um die Änderungen zu übernehmen.",
+        "adminFavicon": "✓ Admin-Favicon hochgeladen! Klicken Sie unten auf \"Admin-Favicon speichern\", um die Änderungen zu übernehmen."
+      },
+      "saveColors": "Farben speichern",
+      "saveAdminColors": "Admin-Farben speichern",
+      "saveLogo": "Logo speichern",
+      "saveAdminLogo": "Admin-Logo speichern",
+      "saveFavicon": "Favicon speichern",
+      "saveAdminFavicon": "Admin-Favicon speichern",
+      "saving": "Speichern...",
+      "noAssetToSave": "Kein Asset zum Speichern. Bitte laden Sie zuerst eine Datei hoch.",
+      "assetSaved": "{{assetType}} erfolgreich gespeichert!",
+      "assetUploaded": "{{assetType}} erfolgreich hochgeladen!",
+      "assetUploadFailed": "Fehler beim Hochladen von {{assetType}}. Bitte versuchen Sie es erneut.",
+      "assetSaveFailed": "Fehler beim Speichern von {{assetType}}. Bitte versuchen Sie es erneut.",
+      "brandColorsSaved": "Markenfarben erfolgreich gespeichert!",
+      "brandColorsSaveFailed": "Fehler beim Speichern der Markenfarben. Bitte versuchen Sie es erneut."
+    },
+    "notifications": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "E-Mail-Benachrichtigungen und SMTP-Einstellungen konfigurieren",
+      "emailNotifications": {
+        "title": "E-Mail-Benachrichtigungen",
+        "newUserRegistrations": "Neue Benutzerregistrierungen",
+        "newUserRegistrationsDesc": "Benachrichtigung erhalten, wenn sich neue Benutzer registrieren",
+        "applicationSubmissions": "Bewerbungseingaben",
+        "applicationSubmissionsDesc": "Benachrichtigung erhalten, wenn Bewerbungen eingereicht werden"
+      },
+      "smtp": {
+        "title": "SMTP-Konfiguration",
+        "notificationEmail": "Benachrichtigungs-E-Mail",
+        "notificationEmailPlaceholder": "benachrichtigungen@beispiel.com",
+        "smtpHost": "SMTP-Host",
+        "smtpHostPlaceholder": "smtp.gmail.com",
+        "smtpPort": "SMTP-Port",
+        "smtpPortPlaceholder": "587",
+        "smtpUser": "SMTP-Benutzername",
+        "smtpUserPlaceholder": "ihre-email@gmail.com",
+        "smtpPassword": "SMTP-Passwort",
+        "smtpPasswordPlaceholder": "••••••••"
+      },
+      "saveSmtpSettings": "SMTP-Einstellungen speichern",
+      "saving": "Speichern..."
+    },
+    "integrations": {
+      "title": "Integrationseinstellungen",
+      "description": "Drittanbieter-Integrationen und API-Schlüssel konfigurieren",
+      "authentication": {
+        "title": "Authentifizierung (Clerk)",
+        "clerkPublishableKey": "Clerk Publishable Key",
+        "clerkPublishableKeyPlaceholder": "pk_test_...",
+        "clerkSecretKey": "Clerk Secret Key",
+        "clerkSecretKeyPlaceholder": "sk_test_..."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "googleAnalyticsId": "Google Analytics ID",
+        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
+        "facebookPixelId": "Facebook Pixel ID",
+        "facebookPixelIdPlaceholder": "123456789012345"
+      },
+      "saveIntegrationSettings": "Integrationseinstellungen speichern",
+      "saving": "Speichern..."
+    },
+    "systemConfig": {
+      "title": "Systemkonfiguration",
+      "refresh": "Aktualisieren",
+      "loading": "Systemkonfiguration wird geladen...",
+      "tabs": {
+        "systemSettings": "Systemeinstellungen",
+        "integrations": "Integrationen",
+        "maintenance": "Wartung",
+        "systemHealth": "Systemgesundheit",
+        "emailTemplates": "E-Mail-Vorlagen"
+      },
+      "systemSettings": {
+        "title": "Systemeinstellungen",
+        "createSetting": "Einstellung erstellen",
+        "tableHeaders": {
+          "key": "Schlüssel",
+          "value": "Wert",
+          "category": "Kategorie",
+          "type": "Typ",
+          "actions": "Aktionen"
+        },
+        "badges": {
+          "encrypted": "Verschlüsselt",
+          "public": "Öffentlich"
+        },
+        "buttons": {
+          "edit": "Bearbeiten",
+          "view": "Anzeigen"
+        },
+        "createModal": {
+          "title": "Systemeinstellung erstellen",
+          "key": "Schlüssel",
+          "category": "Kategorie",
+          "value": "Wert",
+          "description": "Beschreibung",
+          "encrypted": "Verschlüsselt",
+          "public": "Öffentlich",
+          "create": "Einstellung erstellen",
+          "cancel": "Abbrechen",
+          "categories": {
+            "general": "Allgemein",
+            "security": "Sicherheit",
+            "email": "E-Mail",
+            "payment": "Zahlung",
+            "storage": "Speicher"
+          }
+        },
+        "alerts": {
+          "created": "Systemeinstellung erfolgreich erstellt!",
+          "createFailed": "Fehler beim Erstellen der Einstellung: {{message}}"
+        }
+      },
+      "integrations": {
+        "title": "Integrationen",
+        "createIntegration": "Integration erstellen",
+        "tableHeaders": {
+          "name": "Name",
+          "type": "Typ",
+          "provider": "Anbieter",
+          "status": "Status",
+          "lastSync": "Letzte Synchronisierung",
+          "actions": "Aktionen"
+        },
+        "status": {
+          "active": "Aktiv",
+          "inactive": "Inaktiv",
+          "never": "Nie"
+        },
+        "buttons": {
+          "test": "Testen",
+          "sync": "Synchronisieren"
+        },
+        "createModal": {
+          "title": "Integration erstellen",
+          "name": "Name",
+          "type": "Typ",
+          "provider": "Anbieter",
+          "webhookUrl": "Webhook-URL (Optional)",
+          "create": "Integration erstellen",
+          "cancel": "Abbrechen",
+          "types": {
+            "auth": "Authentifizierung",
+            "payment": "Zahlung",
+            "email": "E-Mail",
+            "storage": "Speicher",
+            "analytics": "Analytics",
+            "other": "Andere"
+          }
+        },
+        "alerts": {
+          "created": "Integration erfolgreich erstellt!",
+          "createFailed": "Fehler beim Erstellen der Integration: {{message}}"
+        }
+      },
+      "maintenance": {
+        "title": "Wartungsmodus",
+        "schedules": {
+          "title": "Wartungspläne",
+          "createSchedule": "Wartungsplan erstellen"
+        },
+        "status": {
+          "enabled": "Aktiviert",
+          "disabled": "Deaktiviert"
+        },
+        "estimatedEnd": "Geschätztes Ende: {{date}}",
+        "buttons": {
+          "enable": "Wartung aktivieren",
+          "disable": "Wartung deaktivieren"
+        },
+        "tableHeaders": {
+          "name": "Name",
+          "description": "Beschreibung",
+          "scheduledStart": "Geplanter Start",
+          "scheduledEnd": "Geplantes Ende",
+          "status": "Status",
+          "actions": "Aktionen"
+        },
+        "createModal": {
+          "title": "Wartungsplan erstellen",
+          "name": "Name",
+          "description": "Beschreibung",
+          "scheduledStart": "Geplanter Start",
+          "scheduledEnd": "Geplantes Ende",
+          "create": "Plan erstellen",
+          "cancel": "Abbrechen"
+        },
+        "alerts": {
+          "enabled": "Wartungsmodus erfolgreich aktiviert!",
+          "disabled": "Wartungsmodus erfolgreich deaktiviert!",
+          "enableFailed": "Fehler beim Aktivieren des Wartungsmodus: {{message}}",
+          "disableFailed": "Fehler beim Deaktivieren des Wartungsmodus: {{message}}",
+          "scheduleCreated": "Wartungsplan erfolgreich erstellt!",
+          "scheduleFailed": "Fehler beim Erstellen des Plans: {{message}}"
+        }
+      },
+      "systemHealth": {
+        "overview": {
+          "title": "Systemgesundheitsübersicht",
+          "database": "Datenbank",
+          "storage": "Speicher",
+          "externalServices": "Externe Dienste"
+        },
+        "labels": {
+          "systemStatus": "Systemstatus",
+          "databaseResponse": "Datenbankantwort",
+          "activeServices": "Aktive Dienste",
+          "storageUsed": "Verwendeter Speicher",
+          "status": "Status",
+          "responseTime": "Antwortzeit",
+          "connections": "Verbindungen",
+          "usedSpace": "Verwendeter Speicherplatz"
+        }
+      },
+      "emailTemplates": {
+        "title": "E-Mail-Vorlagen",
+        "createTemplate": "Vorlage erstellen",
+        "goToTemplates": "Zu E-Mail-Vorlagen gehen",
+        "description": "E-Mail-Vorlagen für Benachrichtigungen verwalten"
+      }
+    },
+    "emailNotifications": {
+      "title": "E-Mail-Benachrichtigungen",
+      "loading": "E-Mail-Benachrichtigungen werden geladen...",
+      "refresh": "Aktualisieren",
+      "sendEmail": "E-Mail senden",
+      "tabs": {
+        "templates": "Vorlagen",
+        "analytics": "Analytics",
+        "logs": "E-Mail-Protokolle",
+        "send": "E-Mail senden"
+      },
+      "analytics": {
+        "labels": {
+          "emailsSent": "Gesendete E-Mails",
+          "deliveryRate": "Zustellrate",
+          "openRate": "Öffnungsrate",
+          "clickRate": "Klickrate",
+          "totalSent": "Gesamt gesendet",
+          "delivered": "Zugestellt",
+          "opened": "Geöffnet",
+          "clicked": "Geklickt"
+        },
+        "performance": {
+          "title": "E-Mail-Leistung"
+        },
+        "eventsBreakdown": {
+          "title": "Ereignisaufschlüsselung"
+        }
+      },
+      "templates": {
+        "title": "E-Mail-Vorlagen",
+        "createTemplate": "Vorlage erstellen",
+        "tableHeaders": {
+          "name": "Name",
+          "event": "Ereignis",
+          "category": "Kategorie",
+          "subject": "Betreff",
+          "status": "Status",
+          "updated": "Aktualisiert",
+          "actions": "Aktionen"
+        },
+        "status": {
+          "active": "Aktiv",
+          "inactive": "Inaktiv"
+        },
+        "buttons": {
+          "edit": "Bearbeiten",
+          "preview": "Vorschau"
+        }
+      },
+      "logs": {
+        "title": "E-Mail-Protokolle",
+        "tableHeaders": {
+          "event": "Ereignis",
+          "recipient": "Empfänger",
+          "status": "Status",
+          "sentAt": "Gesendet um",
+          "error": "Fehler"
+        }
+      },
+      "send": {
+        "title": "E-Mail senden",
+        "eventType": "Ereignistyp",
+        "selectEventType": "Ereignistyp auswählen",
+        "recipientEmail": "Empfänger-E-Mail(s)",
+        "recipientEmailPlaceholder": "benutzer@beispiel.com oder benutzer1@beispiel.com, benutzer2@beispiel.com",
+        "recipientEmailHint": "Für Massensendungen mehrere E-Mails durch Kommas trennen",
+        "recipientName": "Empfängername (Optional)",
+        "recipientNamePlaceholder": "Max Mustermann",
+        "templateVariables": "Vorlagenvariablen (JSON)",
+        "templateVariablesPlaceholder": "{\"firstName\": \"Max\", \"lastName\": \"Mustermann\", \"verificationUrl\": \"https://...\"}",
+        "templateVariablesHint": "Vorlagenvariablen als JSON eingeben. Häufige Variablen: firstName, lastName, verificationUrl, resetUrl, etc.",
+        "buttons": {
+          "sendEmail": "E-Mail senden",
+          "sendBulkEmail": "Massen-E-Mail senden"
+        },
+        "eventTypes": {
+          "account_verification": "Kontoüberprüfung",
+          "password_reset": "Passwort zurücksetzen",
+          "welcome_email": "Willkommens-E-Mail",
+          "job_application_received": "Bewerbung erhalten",
+          "new_message": "Neue Nachricht",
+          "order_confirmation": "Bestellbestätigung",
+          "subscription_activation": "Abonnementaktivierung",
+          "system_maintenance": "Systemwartung"
+        },
+        "alerts": {
+          "sent": "E-Mail erfolgreich gesendet!",
+          "sendFailed": "Fehler beim Senden der E-Mail: {{message}}",
+          "bulkSent": "Massen-E-Mail gesendet! Gesendet: {{sent}}, Fehlgeschlagen: {{failed}}",
+          "bulkFailed": "Fehler beim Senden der Massen-E-Mails: {{message}}"
+        }
+      }
     }
   }
 }

@@ -3,8 +3,10 @@ import { useSettings } from '../../hooks/useSettings'
 import { useAssetUpload } from '../../hooks/useAssetUpload'
 import SimpleAssetUploader from './SimpleAssetUploader'
 import LoadingSpinner from '../ui/LoadingSpinner'
+import { useTranslation } from 'react-i18next'
 
 const ContentSettings: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, loading, error, saving } = useSettings()
   const { uploadAsset } = useAssetUpload()
 
@@ -34,9 +36,9 @@ const ContentSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-semibold text-swiss-charcoal">Content Settings</h3>
+        <h3 className="text-xl font-semibold text-swiss-charcoal">{t('admin:settings.content.title')}</h3>
         <p className="mt-1 text-gray-500">
-          Manage your homepage content and hero section
+          {t('admin:settings.content.description')}
         </p>
       </div>
 
@@ -49,7 +51,7 @@ const ContentSettings: React.FC = () => {
       <div className="space-y-6">
         {/* Hero Image */}
         <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Hero Image</h4>
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.content.heroImage.title')}</h4>
           <SimpleAssetUploader
             currentAssetId={settings?.heroImageAssetId}
             onUpload={handleHeroImageUpload}
@@ -60,11 +62,11 @@ const ContentSettings: React.FC = () => {
 
         {/* Hero Content */}
         <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Hero Content</h4>
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.content.heroContent.title')}</h4>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="heroTitle" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                Hero Title
+                {t('admin:settings.content.heroContent.heroTitle')}
               </label>
               <input
                 type="text"
@@ -72,13 +74,13 @@ const ContentSettings: React.FC = () => {
                 id="heroTitle"
                 defaultValue={settings?.heroTitle || ''}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="Enter hero title"
+                placeholder={t('admin:settings.content.heroContent.heroTitlePlaceholder')}
               />
             </div>
 
             <div>
               <label htmlFor="heroSubtitle" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                Hero Subtitle
+                {t('admin:settings.content.heroContent.heroSubtitle')}
               </label>
               <textarea
                 name="heroSubtitle"
@@ -86,14 +88,14 @@ const ContentSettings: React.FC = () => {
                 rows={3}
                 defaultValue={settings?.heroSubtitle || ''}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                placeholder="Enter hero subtitle"
+                placeholder={t('admin:settings.content.heroContent.heroSubtitlePlaceholder')}
               />
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="heroButtonText" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Button Text
+                  {t('admin:settings.content.heroContent.buttonText')}
                 </label>
                 <input
                   type="text"
@@ -101,13 +103,13 @@ const ContentSettings: React.FC = () => {
                   id="heroButtonText"
                   defaultValue={settings?.heroButtonText || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="Get Started"
+                  placeholder={t('admin:settings.content.heroContent.buttonTextPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="heroButtonLink" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Button Link
+                  {t('admin:settings.content.heroContent.buttonLink')}
                 </label>
                 <input
                   type="url"
@@ -115,7 +117,7 @@ const ContentSettings: React.FC = () => {
                   id="heroButtonLink"
                   defaultValue={settings?.heroButtonLink || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="https://example.com"
+                  placeholder={t('admin:settings.content.heroContent.buttonLinkPlaceholder')}
                 />
               </div>
             </div>
@@ -126,7 +128,7 @@ const ContentSettings: React.FC = () => {
                 disabled={saving}
                 className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? t('admin:settings.content.saving') : t('admin:settings.content.saveChanges')}
               </button>
             </div>
           </form>

@@ -17,22 +17,6 @@
       "becomePartner": "Become a Partner"
     }
   },
-  "platformSettings": {
-    "title": "Platform Settings",
-    "general": {
-      "title": "General Settings",
-      "platformName": "Platform Name",
-      "platformDescription": "Platform Description"
-    },
-    "branding": {
-      "title": "Branding",
-      "logo": "Logo",
-      "favicon": "Favicon"
-    },
-    "buttons": {
-      "saveChanges": "Save Changes"
-    }
-  },
   "designSystem": {
     "title": "Design System",
     "description": "Comprehensive design system and component library for ProCrèche Solutions",
@@ -114,19 +98,6 @@
       "logoAlt": "Partner logo",
       "partnerType": "Partner Type",
       "learnMoreButton": "Learn More"
-    }
-  },
-  "platformSettings": {
-    "title": "Platform Settings",
-    "general": {
-      "title": "General Settings",
-      "nameLabel": "Platform Name",
-      "descriptionLabel": "Platform Description"
-    },
-    "branding": {
-      "title": "Branding",
-      "logoLabel": "Logo",
-      "faviconLabel": "Favicon"
     }
   },
   "discountTerminations": {
@@ -250,6 +221,399 @@
       "integrations": "Integrations",
       "emailTemplates": "Email Templates",
       "systemConfig": "System Config"
+    },
+    "general": {
+      "title": "General Settings",
+      "description": "Basic information about your application",
+      "siteName": "Site Name",
+      "siteNamePlaceholder": "Enter site name",
+      "contactEmail": "Contact Email",
+      "contactEmailPlaceholder": "contact@example.com",
+      "siteDescription": "Site Description",
+      "siteDescriptionPlaceholder": "Enter site description",
+      "contactPhone": "Contact Phone",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "platformSettings": {
+        "title": "Platform Settings",
+        "maintenanceMode": "Maintenance Mode",
+        "maintenanceModeActive": "Platform is currently in maintenance mode",
+        "maintenanceModeInactive": "Platform is operational",
+        "maintenanceMessage": "Maintenance Message",
+        "maintenanceMessagePlaceholder": "Enter maintenance message for users...",
+        "updateMessage": "Update Message",
+        "updating": "Updating..."
+      }
+    },
+    "content": {
+      "title": "Content Settings",
+      "description": "Manage your homepage content and hero section",
+      "heroImage": {
+        "title": "Hero Image"
+      },
+      "heroContent": {
+        "title": "Hero Content",
+        "heroTitle": "Hero Title",
+        "heroTitlePlaceholder": "Enter hero title",
+        "heroSubtitle": "Hero Subtitle",
+        "heroSubtitlePlaceholder": "Enter hero subtitle",
+        "buttonText": "Button Text",
+        "buttonTextPlaceholder": "Get Started",
+        "buttonLink": "Button Link",
+        "buttonLinkPlaceholder": "https://example.com"
+      },
+      "saveChanges": "Save Changes",
+      "saving": "Saving..."
+    },
+    "branding": {
+      "title": "Branding Settings",
+      "description": "Customize your brand colors, logos, and visual identity",
+      "brandColors": {
+        "title": "Brand Colors",
+        "primaryColor": "Primary Color",
+        "secondaryColor": "Secondary Color",
+        "accentColor": "Accent Color"
+      },
+      "adminColors": {
+        "title": "Admin Dashboard Colors",
+        "adminPrimaryColor": "Admin Primary Color",
+        "adminSecondaryColor": "Admin Secondary Color",
+        "adminAccentColor": "Admin Accent Color"
+      },
+      "logosAssets": {
+        "title": "Logos & Assets",
+        "mainLogo": "Main Logo",
+        "adminLogo": "Admin Logo",
+        "favicon": "Favicon",
+        "adminFavicon": "Admin Favicon"
+      },
+      "uploading": {
+        "logo": "Uploading logo...",
+        "adminLogo": "Uploading admin logo...",
+        "favicon": "Uploading favicon...",
+        "adminFavicon": "Uploading admin favicon..."
+      },
+      "uploaded": {
+        "logo": "✓ Logo uploaded! Click \"Save Logo\" below to apply changes.",
+        "adminLogo": "✓ Admin logo uploaded! Click \"Save Admin Logo\" below to apply changes.",
+        "favicon": "✓ Favicon uploaded! Click \"Save Favicon\" below to apply changes.",
+        "adminFavicon": "✓ Admin favicon uploaded! Click \"Save Admin Favicon\" below to apply changes."
+      },
+      "saveColors": "Save Colors",
+      "saveAdminColors": "Save Admin Colors",
+      "saveLogo": "Save Logo",
+      "saveAdminLogo": "Save Admin Logo",
+      "saveFavicon": "Save Favicon",
+      "saveAdminFavicon": "Save Admin Favicon",
+      "saving": "Saving...",
+      "noAssetToSave": "No asset to save. Please upload a file first.",
+      "assetSaved": "{{assetType}} saved successfully!",
+      "assetUploaded": "{{assetType}} uploaded successfully!",
+      "assetUploadFailed": "Failed to upload {{assetType}}. Please try again.",
+      "assetSaveFailed": "Failed to save {{assetType}}. Please try again.",
+      "brandColorsSaved": "Brand colors saved successfully!",
+      "brandColorsSaveFailed": "Failed to save brand colors. Please try again."
+    },
+    "notifications": {
+      "title": "Notification Settings",
+      "description": "Configure email notifications and SMTP settings",
+      "emailNotifications": {
+        "title": "Email Notifications",
+        "newUserRegistrations": "New User Registrations",
+        "newUserRegistrationsDesc": "Get notified when new users register",
+        "applicationSubmissions": "Application Submissions",
+        "applicationSubmissionsDesc": "Get notified when applications are submitted"
+      },
+      "smtp": {
+        "title": "SMTP Configuration",
+        "notificationEmail": "Notification Email",
+        "notificationEmailPlaceholder": "notifications@example.com",
+        "smtpHost": "SMTP Host",
+        "smtpHostPlaceholder": "smtp.gmail.com",
+        "smtpPort": "SMTP Port",
+        "smtpPortPlaceholder": "587",
+        "smtpUser": "SMTP Username",
+        "smtpUserPlaceholder": "your-email@gmail.com",
+        "smtpPassword": "SMTP Password",
+        "smtpPasswordPlaceholder": "••••••••"
+      },
+      "saveSmtpSettings": "Save SMTP Settings",
+      "saving": "Saving..."
+    },
+    "integrations": {
+      "title": "Integration Settings",
+      "description": "Configure third-party integrations and API keys",
+      "authentication": {
+        "title": "Authentication (Clerk)",
+        "clerkPublishableKey": "Clerk Publishable Key",
+        "clerkPublishableKeyPlaceholder": "pk_test_...",
+        "clerkSecretKey": "Clerk Secret Key",
+        "clerkSecretKeyPlaceholder": "sk_test_..."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "googleAnalyticsId": "Google Analytics ID",
+        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
+        "facebookPixelId": "Facebook Pixel ID",
+        "facebookPixelIdPlaceholder": "123456789012345"
+      },
+      "saveIntegrationSettings": "Save Integration Settings",
+      "saving": "Saving..."
+    },
+    "systemConfig": {
+      "title": "System Configuration",
+      "refresh": "Refresh",
+      "loading": "Loading system configuration...",
+      "tabs": {
+        "systemSettings": "System Settings",
+        "integrations": "Integrations",
+        "maintenance": "Maintenance",
+        "systemHealth": "System Health",
+        "emailTemplates": "Email Templates"
+      },
+      "systemSettings": {
+        "title": "System Settings",
+        "createSetting": "Create Setting",
+        "tableHeaders": {
+          "key": "Key",
+          "value": "Value",
+          "category": "Category",
+          "type": "Type",
+          "actions": "Actions"
+        },
+        "badges": {
+          "encrypted": "Encrypted",
+          "public": "Public"
+        },
+        "buttons": {
+          "edit": "Edit",
+          "view": "View"
+        },
+        "createModal": {
+          "title": "Create System Setting",
+          "key": "Key",
+          "category": "Category",
+          "value": "Value",
+          "description": "Description",
+          "encrypted": "Encrypted",
+          "public": "Public",
+          "create": "Create Setting",
+          "cancel": "Cancel",
+          "categories": {
+            "general": "General",
+            "security": "Security",
+            "email": "Email",
+            "payment": "Payment",
+            "storage": "Storage"
+          }
+        },
+        "alerts": {
+          "created": "System setting created successfully!",
+          "createFailed": "Failed to create setting: {{message}}"
+        }
+      },
+      "integrations": {
+        "title": "Integrations",
+        "createIntegration": "Create Integration",
+        "tableHeaders": {
+          "name": "Name",
+          "type": "Type",
+          "provider": "Provider",
+          "status": "Status",
+          "lastSync": "Last Sync",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "never": "Never"
+        },
+        "buttons": {
+          "test": "Test",
+          "sync": "Sync"
+        },
+        "createModal": {
+          "title": "Create Integration",
+          "name": "Name",
+          "type": "Type",
+          "provider": "Provider",
+          "webhookUrl": "Webhook URL (Optional)",
+          "create": "Create Integration",
+          "cancel": "Cancel",
+          "types": {
+            "auth": "Authentication",
+            "payment": "Payment",
+            "email": "Email",
+            "storage": "Storage",
+            "analytics": "Analytics",
+            "other": "Other"
+          }
+        },
+        "alerts": {
+          "created": "Integration created successfully!",
+          "createFailed": "Failed to create integration: {{message}}"
+        }
+      },
+      "maintenance": {
+        "title": "Maintenance Mode",
+        "schedules": {
+          "title": "Maintenance Schedules",
+          "createSchedule": "Create Schedule"
+        },
+        "status": {
+          "enabled": "Enabled",
+          "disabled": "Disabled"
+        },
+        "estimatedEnd": "Estimated end: {{date}}",
+        "buttons": {
+          "enable": "Enable Maintenance",
+          "disable": "Disable Maintenance"
+        },
+        "tableHeaders": {
+          "name": "Name",
+          "description": "Description",
+          "scheduledStart": "Scheduled Start",
+          "scheduledEnd": "Scheduled End",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "createModal": {
+          "title": "Create Maintenance Schedule",
+          "name": "Name",
+          "description": "Description",
+          "scheduledStart": "Scheduled Start",
+          "scheduledEnd": "Scheduled End",
+          "create": "Create Schedule",
+          "cancel": "Cancel"
+        },
+        "alerts": {
+          "enabled": "Maintenance mode enabled successfully!",
+          "disabled": "Maintenance mode disabled successfully!",
+          "enableFailed": "Failed to enable maintenance mode: {{message}}",
+          "disableFailed": "Failed to disable maintenance mode: {{message}}",
+          "scheduleCreated": "Maintenance schedule created successfully!",
+          "scheduleFailed": "Failed to create schedule: {{message}}"
+        }
+      },
+      "systemHealth": {
+        "overview": {
+          "title": "System Health Overview",
+          "database": "Database",
+          "storage": "Storage",
+          "externalServices": "External Services"
+        },
+        "labels": {
+          "systemStatus": "System Status",
+          "databaseResponse": "Database Response",
+          "activeServices": "Active Services",
+          "storageUsed": "Storage Used",
+          "status": "Status",
+          "responseTime": "Response Time",
+          "connections": "Connections",
+          "usedSpace": "Used Space"
+        }
+      },
+      "emailTemplates": {
+        "title": "Email Templates",
+        "createTemplate": "Create Template",
+        "goToTemplates": "Go to Email Templates",
+        "description": "Manage email templates for notifications"
+      }
+    },
+    "emailNotifications": {
+      "title": "Email Notifications",
+      "loading": "Loading email notifications...",
+      "refresh": "Refresh",
+      "sendEmail": "Send Email",
+      "tabs": {
+        "templates": "Templates",
+        "analytics": "Analytics",
+        "logs": "Email Logs",
+        "send": "Send Email"
+      },
+      "analytics": {
+        "labels": {
+          "emailsSent": "Emails Sent",
+          "deliveryRate": "Delivery Rate",
+          "openRate": "Open Rate",
+          "clickRate": "Click Rate",
+          "totalSent": "Total Sent",
+          "delivered": "Delivered",
+          "opened": "Opened",
+          "clicked": "Clicked"
+        },
+        "performance": {
+          "title": "Email Performance"
+        },
+        "eventsBreakdown": {
+          "title": "Events Breakdown"
+        }
+      },
+      "templates": {
+        "title": "Email Templates",
+        "createTemplate": "Create Template",
+        "tableHeaders": {
+          "name": "Name",
+          "event": "Event",
+          "category": "Category",
+          "subject": "Subject",
+          "status": "Status",
+          "updated": "Updated",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "buttons": {
+          "edit": "Edit",
+          "preview": "Preview"
+        }
+      },
+      "logs": {
+        "title": "Email Logs",
+        "tableHeaders": {
+          "event": "Event",
+          "recipient": "Recipient",
+          "status": "Status",
+          "sentAt": "Sent At",
+          "error": "Error"
+        }
+      },
+      "send": {
+        "title": "Send Email",
+        "eventType": "Event Type",
+        "selectEventType": "Select Event Type",
+        "recipientEmail": "Recipient Email(s)",
+        "recipientEmailPlaceholder": "user@example.com or user1@example.com, user2@example.com",
+        "recipientEmailHint": "For bulk sending, separate multiple emails with commas",
+        "recipientName": "Recipient Name (Optional)",
+        "recipientNamePlaceholder": "John Doe",
+        "templateVariables": "Template Variables (JSON)",
+        "templateVariablesPlaceholder": "{\"firstName\": \"John\", \"lastName\": \"Doe\", \"verificationUrl\": \"https://...\"}",
+        "templateVariablesHint": "Enter template variables as JSON. Common variables: firstName, lastName, verificationUrl, resetUrl, etc.",
+        "buttons": {
+          "sendEmail": "Send Email",
+          "sendBulkEmail": "Send Bulk Email"
+        },
+        "eventTypes": {
+          "account_verification": "Account Verification",
+          "password_reset": "Password Reset",
+          "welcome_email": "Welcome Email",
+          "job_application_received": "Job Application Received",
+          "new_message": "New Message",
+          "order_confirmation": "Order Confirmation",
+          "subscription_activation": "Subscription Activation",
+          "system_maintenance": "System Maintenance"
+        },
+        "alerts": {
+          "sent": "Email sent successfully!",
+          "sendFailed": "Failed to send email: {{message}}",
+          "bulkSent": "Bulk email sent! Sent: {{sent}}, Failed: {{failed}}",
+          "bulkFailed": "Failed to send bulk emails: {{message}}"
+        }
+      }
     }
   }
 }

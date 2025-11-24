@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { useTranslation } from 'react-i18next';
 import { 
   AdminCard, 
   AdminButton, 
@@ -45,6 +46,7 @@ interface EmailLog {
 }
 
 export default function EmailNotificationPage() {
+  const { t } = useTranslation(['admin', 'common']);
   const { getToken } = useAuth();
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [analytics, setAnalytics] = useState<EmailAnalytics | null>(null);
@@ -151,11 +153,11 @@ export default function EmailNotificationPage() {
         throw new Error('Failed to send email');
       }
 
-      alert('Email sent successfully!');
+      alert(t('admin:settings.emailNotifications.send.alerts.sent'));
       setSendForm({ event: '', recipient: '', recipientName: '', payload: '' });
       fetchEmailLogs();
     } catch (err: any) {
-      alert(`Failed to send email: ${err.message}`);
+      alert(t('admin:settings.emailNotifications.send.alerts.sendFailed', { message: err.message }));
     }
   };
 
@@ -183,11 +185,11 @@ export default function EmailNotificationPage() {
       }
 
       const result = await response.json();
-      alert(`Bulk email sent! Sent: ${result.sent}, Failed: ${result.failed}`);
+      alert(t('admin:settings.emailNotifications.send.alerts.bulkSent', { sent: result.sent, failed: result.failed }));
       setSendForm({ event: '', recipient: '', recipientName: '', payload: '' });
       fetchEmailLogs();
     } catch (err: any) {
-      alert(`Failed to send bulk emails: ${err.message}`);
+      alert(t('admin:settings.emailNotifications.send.alerts.bulkFailed', { message: err.message }));
     }
   };
 
@@ -221,7 +223,7 @@ export default function EmailNotificationPage() {
       <div className="min-h-screen admin-app flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-accent mx-auto mb-4"></div>
-          <p className="text-admin-muted">Loading email notifications...</p>
+          <p className="text-admin-muted">{t('admin:settings.emailNotifications.loading')}</p>
         </div>
       </div>
     );
@@ -234,7 +236,7 @@ export default function EmailNotificationPage() {
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-6 w-1.5 rounded-full bg-admin-accent"></div>
-            <h1 className="text-admin-text font-semibold tracking-tight">Email Notifications</h1>
+            <h1 className="text-admin-text font-semibold tracking-tight">{t('admin:settings.emailNotifications.title')}</h1>
           </div>
           
           <div className="flex items-center gap-3">
@@ -243,7 +245,7 @@ export default function EmailNotificationPage() {
               size="sm"
               onClick={() => setActiveTab('send')}
             >
-              Send Email
+              {t('admin:settings.emailNotifications.sendEmail')}
             </AdminButton>
             <AdminButton 
               variant="outline" 
@@ -254,7 +256,7 @@ export default function EmailNotificationPage() {
                 fetchEmailLogs();
               }}
             >
-              Refresh
+              {t('admin:settings.emailNotifications.refresh')}
             </AdminButton>
           </div>
         </div>
@@ -266,25 +268,25 @@ export default function EmailNotificationPage() {
         {analytics && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <AdminMetric
-              label="Emails Sent"
+              label={t('admin:settings.emailNotifications.analytics.labels.emailsSent')}
               value={analytics.totalSent.toLocaleString()}
               change={{ value: 5, type: 'increase' }}
               icon="📧"
             />
             <AdminMetric
-              label="Delivery Rate"
+              label={t('admin:settings.emailNotifications.analytics.labels.deliveryRate')}
               value={`${analytics.deliveryRate.toFixed(1)}%`}
               change={{ value: 2, type: 'increase' }}
               icon="✅"
             />
             <AdminMetric
-              label="Open Rate"
+              label={t('admin:settings.emailNotifications.analytics.labels.openRate')}
               value={`${analytics.openRate.toFixed(1)}%`}
               change={{ value: 3, type: 'increase' }}
               icon="👁️"
             />
             <AdminMetric
-              label="Click Rate"
+              label={t('admin:settings.emailNotifications.analytics.labels.clickRate')}
               value={`${analytics.clickRate.toFixed(1)}%`}
               change={{ value: 1, type: 'increase' }}
               icon="🖱️"
@@ -296,10 +298,10 @@ export default function EmailNotificationPage() {
         <div className="mb-6">
           <nav className="-mb-px flex space-x-8">
             {[
-              { id: 'templates', label: 'Templates' },
-              { id: 'analytics', label: 'Analytics' },
-              { id: 'logs', label: 'Email Logs' },
-              { id: 'send', label: 'Send Email' },
+              { id: 'templates', label: t('admin:settings.emailNotifications.tabs.templates') },
+              { id: 'analytics', label: t('admin:settings.emailNotifications.tabs.analytics') },
+              { id: 'logs', label: t('admin:settings.emailNotifications.tabs.logs') },
+              { id: 'send', label: t('admin:settings.emailNotifications.tabs.send') },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -320,22 +322,22 @@ export default function EmailNotificationPage() {
         {activeTab === 'templates' && (
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-admin-text">Email Templates</h3>
+              <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.emailNotifications.templates.title')}</h3>
               <AdminButton variant="primary" size="sm">
-                Create Template
+                {t('admin:settings.emailNotifications.templates.createTemplate')}
               </AdminButton>
             </div>
             
             <AdminTable>
               <AdminTableHeader>
                 <AdminTableRow>
-                  <AdminTableHeaderCell>Name</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Event</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Category</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Subject</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Updated</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Actions</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.name')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.event')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.category')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.subject')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.status')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.updated')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.actions')}</AdminTableHeaderCell>
                 </AdminTableRow>
               </AdminTableHeader>
               <AdminTableBody>
@@ -353,7 +355,7 @@ export default function EmailNotificationPage() {
                     <AdminTableCell>{template.subject}</AdminTableCell>
                     <AdminTableCell>
                       <AdminBadge variant={template.isActive ? 'low' : 'medium'}>
-                        {template.isActive ? 'Active' : 'Inactive'}
+                        {template.isActive ? t('admin:settings.emailNotifications.templates.status.active') : t('admin:settings.emailNotifications.templates.status.inactive')}
                       </AdminBadge>
                     </AdminTableCell>
                     <AdminTableCell>
@@ -362,10 +364,10 @@ export default function EmailNotificationPage() {
                     <AdminTableCell>
                       <div className="flex gap-2">
                         <AdminButton variant="outline" size="sm">
-                          Edit
+                          {t('admin:settings.emailNotifications.templates.buttons.edit')}
                         </AdminButton>
                         <AdminButton variant="secondary" size="sm">
-                          Preview
+                          {t('admin:settings.emailNotifications.templates.buttons.preview')}
                         </AdminButton>
                       </div>
                     </AdminTableCell>
@@ -380,29 +382,29 @@ export default function EmailNotificationPage() {
         {activeTab === 'analytics' && analytics && (
           <div className="space-y-6">
             <AdminCard className="p-6">
-              <h3 className="text-lg font-semibold text-admin-text mb-4">Email Performance</h3>
+              <h3 className="text-lg font-semibold text-admin-text mb-4">{t('admin:settings.emailNotifications.analytics.performance.title')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-admin-text mb-1">Total Sent</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.analytics.labels.totalSent')}</label>
                   <p className="text-2xl font-bold text-admin-text">{analytics.totalSent.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-admin-text mb-1">Delivered</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.analytics.labels.delivered')}</label>
                   <p className="text-2xl font-bold text-admin-text">{analytics.totalDelivered.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-admin-text mb-1">Opened</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.analytics.labels.opened')}</label>
                   <p className="text-2xl font-bold text-admin-text">{analytics.totalOpened.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-admin-text mb-1">Clicked</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.analytics.labels.clicked')}</label>
                   <p className="text-2xl font-bold text-admin-text">{analytics.totalClicked.toLocaleString()}</p>
                 </div>
               </div>
             </AdminCard>
 
             <AdminCard className="p-6">
-              <h3 className="text-lg font-semibold text-admin-text mb-4">Events Breakdown</h3>
+              <h3 className="text-lg font-semibold text-admin-text mb-4">{t('admin:settings.emailNotifications.analytics.eventsBreakdown.title')}</h3>
               <div className="space-y-3">
                 {analytics.eventsBreakdown.map((event) => (
                   <div key={event.event} className="flex items-center justify-between">
@@ -419,24 +421,24 @@ export default function EmailNotificationPage() {
         {activeTab === 'logs' && (
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-admin-text">Email Logs</h3>
+              <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.emailNotifications.logs.title')}</h3>
               <AdminButton 
                 variant="outline" 
                 size="sm"
                 onClick={fetchEmailLogs}
               >
-                Refresh
+                {t('admin:settings.emailNotifications.refresh')}
               </AdminButton>
             </div>
             
             <AdminTable>
               <AdminTableHeader>
                 <AdminTableRow>
-                  <AdminTableHeaderCell>Event</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Recipient</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Sent At</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Error</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.event')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.recipient')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.status')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.sentAt')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.error')}</AdminTableHeaderCell>
                 </AdminTableRow>
               </AdminTableHeader>
               <AdminTableBody>
@@ -469,64 +471,64 @@ export default function EmailNotificationPage() {
         {/* Send Email Tab */}
         {activeTab === 'send' && (
           <AdminCard className="p-6">
-            <h3 className="text-lg font-semibold text-admin-text mb-6">Send Email</h3>
+            <h3 className="text-lg font-semibold text-admin-text mb-6">{t('admin:settings.emailNotifications.send.title')}</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-admin-text mb-1">Event Type</label>
+                <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.send.eventType')}</label>
                 <select 
                   className="admin-input w-full px-3 py-2"
                   value={sendForm.event}
                   onChange={(e) => setSendForm(prev => ({ ...prev, event: e.target.value }))}
                 >
-                  <option value="">Select Event Type</option>
-                  <option value="account_verification">Account Verification</option>
-                  <option value="password_reset">Password Reset</option>
-                  <option value="welcome_email">Welcome Email</option>
-                  <option value="job_application_received">Job Application Received</option>
-                  <option value="new_message">New Message</option>
-                  <option value="order_confirmation">Order Confirmation</option>
-                  <option value="subscription_activation">Subscription Activation</option>
-                  <option value="system_maintenance">System Maintenance</option>
+                  <option value="">{t('admin:settings.emailNotifications.send.selectEventType')}</option>
+                  <option value="account_verification">{t('admin:settings.emailNotifications.send.eventTypes.account_verification')}</option>
+                  <option value="password_reset">{t('admin:settings.emailNotifications.send.eventTypes.password_reset')}</option>
+                  <option value="welcome_email">{t('admin:settings.emailNotifications.send.eventTypes.welcome_email')}</option>
+                  <option value="job_application_received">{t('admin:settings.emailNotifications.send.eventTypes.job_application_received')}</option>
+                  <option value="new_message">{t('admin:settings.emailNotifications.send.eventTypes.new_message')}</option>
+                  <option value="order_confirmation">{t('admin:settings.emailNotifications.send.eventTypes.order_confirmation')}</option>
+                  <option value="subscription_activation">{t('admin:settings.emailNotifications.send.eventTypes.subscription_activation')}</option>
+                  <option value="system_maintenance">{t('admin:settings.emailNotifications.send.eventTypes.system_maintenance')}</option>
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-admin-text mb-1">Recipient Email(s)</label>
+                <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.send.recipientEmail')}</label>
                 <input 
                   type="text"
                   className="admin-input w-full px-3 py-2"
-                  placeholder="user@example.com or user1@example.com, user2@example.com"
+                  placeholder={t('admin:settings.emailNotifications.send.recipientEmailPlaceholder')}
                   value={sendForm.recipient}
                   onChange={(e) => setSendForm(prev => ({ ...prev, recipient: e.target.value }))}
                 />
                 <p className="text-xs text-admin-muted mt-1">
-                  For bulk sending, separate multiple emails with commas
+                  {t('admin:settings.emailNotifications.send.recipientEmailHint')}
                 </p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-admin-text mb-1">Recipient Name (Optional)</label>
+                <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.send.recipientName')}</label>
                 <input 
                   type="text"
                   className="admin-input w-full px-3 py-2"
-                  placeholder="John Doe"
+                  placeholder={t('admin:settings.emailNotifications.send.recipientNamePlaceholder')}
                   value={sendForm.recipientName}
                   onChange={(e) => setSendForm(prev => ({ ...prev, recipientName: e.target.value }))}
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-admin-text mb-1">Template Variables (JSON)</label>
+                <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.emailNotifications.send.templateVariables')}</label>
                 <textarea 
                   className="admin-input w-full px-3 py-2"
                   rows={6}
-                  placeholder='{"firstName": "John", "lastName": "Doe", "verificationUrl": "https://..."}'
+                  placeholder={t('admin:settings.emailNotifications.send.templateVariablesPlaceholder')}
                   value={sendForm.payload}
                   onChange={(e) => setSendForm(prev => ({ ...prev, payload: e.target.value }))}
                 />
                 <p className="text-xs text-admin-muted mt-1">
-                  Enter template variables as JSON. Common variables: firstName, lastName, verificationUrl, resetUrl, etc.
+                  {t('admin:settings.emailNotifications.send.templateVariablesHint')}
                 </p>
               </div>
               
@@ -536,14 +538,14 @@ export default function EmailNotificationPage() {
                   onClick={handleSendEmail}
                   disabled={!sendForm.event || !sendForm.recipient}
                 >
-                  Send Email
+                  {t('admin:settings.emailNotifications.send.buttons.sendEmail')}
                 </AdminButton>
                 <AdminButton 
                   variant="secondary"
                   onClick={handleBulkSend}
                   disabled={!sendForm.event || !sendForm.recipient}
                 >
-                  Send Bulk Email
+                  {t('admin:settings.emailNotifications.send.buttons.sendBulkEmail')}
                 </AdminButton>
               </div>
             </div>

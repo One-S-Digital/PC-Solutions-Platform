@@ -17,22 +17,6 @@
       "becomePartner": "Devenir partenaire"
     }
   },
-  "platformSettings": {
-    "title": "Paramètres de la plateforme",
-    "general": {
-      "title": "Paramètres généraux",
-      "platformName": "Nom de la plateforme",
-      "platformDescription": "Description de la plateforme"
-    },
-    "branding": {
-      "title": "Image de marque",
-      "logo": "Logo",
-      "favicon": "Favicon"
-    },
-    "buttons": {
-      "saveChanges": "Enregistrer les modifications"
-    }
-  },
   "designSystem": {
     "title": "Système de design",
     "sections": {
@@ -174,6 +158,399 @@
       "integrations": "Intégrations",
       "emailTemplates": "Modèles d'e-mail",
       "systemConfig": "Configuration système"
+    },
+    "general": {
+      "title": "Paramètres généraux",
+      "description": "Informations de base sur votre application",
+      "siteName": "Nom du site",
+      "siteNamePlaceholder": "Entrez le nom du site",
+      "contactEmail": "E-mail de contact",
+      "contactEmailPlaceholder": "contact@exemple.com",
+      "siteDescription": "Description du site",
+      "siteDescriptionPlaceholder": "Entrez la description du site",
+      "contactPhone": "Téléphone de contact",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "platformSettings": {
+        "title": "Paramètres de la plateforme",
+        "maintenanceMode": "Mode maintenance",
+        "maintenanceModeActive": "La plateforme est actuellement en mode maintenance",
+        "maintenanceModeInactive": "La plateforme est opérationnelle",
+        "maintenanceMessage": "Message de maintenance",
+        "maintenanceMessagePlaceholder": "Entrez le message de maintenance pour les utilisateurs...",
+        "updateMessage": "Mettre à jour le message",
+        "updating": "Mise à jour..."
+      }
+    },
+    "content": {
+      "title": "Paramètres de contenu",
+      "description": "Gérez le contenu de votre page d'accueil et la section hero",
+      "heroImage": {
+        "title": "Image hero"
+      },
+      "heroContent": {
+        "title": "Contenu hero",
+        "heroTitle": "Titre hero",
+        "heroTitlePlaceholder": "Entrez le titre hero",
+        "heroSubtitle": "Sous-titre hero",
+        "heroSubtitlePlaceholder": "Entrez le sous-titre hero",
+        "buttonText": "Texte du bouton",
+        "buttonTextPlaceholder": "Commencer",
+        "buttonLink": "Lien du bouton",
+        "buttonLinkPlaceholder": "https://exemple.com"
+      },
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement..."
+    },
+    "branding": {
+      "title": "Paramètres de marque",
+      "description": "Personnalisez les couleurs de votre marque, les logos et l'identité visuelle",
+      "brandColors": {
+        "title": "Couleurs de marque",
+        "primaryColor": "Couleur primaire",
+        "secondaryColor": "Couleur secondaire",
+        "accentColor": "Couleur d'accent"
+      },
+      "adminColors": {
+        "title": "Couleurs du tableau de bord administrateur",
+        "adminPrimaryColor": "Couleur primaire admin",
+        "adminSecondaryColor": "Couleur secondaire admin",
+        "adminAccentColor": "Couleur d'accent admin"
+      },
+      "logosAssets": {
+        "title": "Logos et ressources",
+        "mainLogo": "Logo principal",
+        "adminLogo": "Logo admin",
+        "favicon": "Favicon",
+        "adminFavicon": "Favicon admin"
+      },
+      "uploading": {
+        "logo": "Téléchargement du logo...",
+        "adminLogo": "Téléchargement du logo admin...",
+        "favicon": "Téléchargement du favicon...",
+        "adminFavicon": "Téléchargement du favicon admin..."
+      },
+      "uploaded": {
+        "logo": "✓ Logo téléchargé ! Cliquez sur \"Enregistrer le logo\" ci-dessous pour appliquer les modifications.",
+        "adminLogo": "✓ Logo admin téléchargé ! Cliquez sur \"Enregistrer le logo admin\" ci-dessous pour appliquer les modifications.",
+        "favicon": "✓ Favicon téléchargé ! Cliquez sur \"Enregistrer le favicon\" ci-dessous pour appliquer les modifications.",
+        "adminFavicon": "✓ Favicon admin téléchargé ! Cliquez sur \"Enregistrer le favicon admin\" ci-dessous pour appliquer les modifications."
+      },
+      "saveColors": "Enregistrer les couleurs",
+      "saveAdminColors": "Enregistrer les couleurs admin",
+      "saveLogo": "Enregistrer le logo",
+      "saveAdminLogo": "Enregistrer le logo admin",
+      "saveFavicon": "Enregistrer le favicon",
+      "saveAdminFavicon": "Enregistrer le favicon admin",
+      "saving": "Enregistrement...",
+      "noAssetToSave": "Aucune ressource à enregistrer. Veuillez d'abord télécharger un fichier.",
+      "assetSaved": "{{assetType}} enregistré avec succès !",
+      "assetUploaded": "{{assetType}} téléchargé avec succès !",
+      "assetUploadFailed": "Échec du téléchargement de {{assetType}}. Veuillez réessayer.",
+      "assetSaveFailed": "Échec de l'enregistrement de {{assetType}}. Veuillez réessayer.",
+      "brandColorsSaved": "Couleurs de marque enregistrées avec succès !",
+      "brandColorsSaveFailed": "Échec de l'enregistrement des couleurs de marque. Veuillez réessayer."
+    },
+    "notifications": {
+      "title": "Paramètres de notification",
+      "description": "Configurer les notifications par e-mail et les paramètres SMTP",
+      "emailNotifications": {
+        "title": "Notifications par e-mail",
+        "newUserRegistrations": "Nouvelles inscriptions d'utilisateurs",
+        "newUserRegistrationsDesc": "Être notifié lors de nouvelles inscriptions",
+        "applicationSubmissions": "Soumissions de candidatures",
+        "applicationSubmissionsDesc": "Être notifié lors de soumissions de candidatures"
+      },
+      "smtp": {
+        "title": "Configuration SMTP",
+        "notificationEmail": "E-mail de notification",
+        "notificationEmailPlaceholder": "notifications@exemple.com",
+        "smtpHost": "Hôte SMTP",
+        "smtpHostPlaceholder": "smtp.gmail.com",
+        "smtpPort": "Port SMTP",
+        "smtpPortPlaceholder": "587",
+        "smtpUser": "Nom d'utilisateur SMTP",
+        "smtpUserPlaceholder": "votre-email@gmail.com",
+        "smtpPassword": "Mot de passe SMTP",
+        "smtpPasswordPlaceholder": "••••••••"
+      },
+      "saveSmtpSettings": "Enregistrer les paramètres SMTP",
+      "saving": "Enregistrement..."
+    },
+    "integrations": {
+      "title": "Paramètres d'intégration",
+      "description": "Configurer les intégrations tierces et les clés API",
+      "authentication": {
+        "title": "Authentification (Clerk)",
+        "clerkPublishableKey": "Clé publique Clerk",
+        "clerkPublishableKeyPlaceholder": "pk_test_...",
+        "clerkSecretKey": "Clé secrète Clerk",
+        "clerkSecretKeyPlaceholder": "sk_test_..."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "googleAnalyticsId": "ID Google Analytics",
+        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
+        "facebookPixelId": "ID Facebook Pixel",
+        "facebookPixelIdPlaceholder": "123456789012345"
+      },
+      "saveIntegrationSettings": "Enregistrer les paramètres d'intégration",
+      "saving": "Enregistrement..."
+    },
+    "systemConfig": {
+      "title": "Configuration système",
+      "refresh": "Actualiser",
+      "loading": "Chargement de la configuration système...",
+      "tabs": {
+        "systemSettings": "Paramètres système",
+        "integrations": "Intégrations",
+        "maintenance": "Maintenance",
+        "systemHealth": "Santé du système",
+        "emailTemplates": "Modèles d'e-mail"
+      },
+      "systemSettings": {
+        "title": "Paramètres système",
+        "createSetting": "Créer un paramètre",
+        "tableHeaders": {
+          "key": "Clé",
+          "value": "Valeur",
+          "category": "Catégorie",
+          "type": "Type",
+          "actions": "Actions"
+        },
+        "badges": {
+          "encrypted": "Chiffré",
+          "public": "Public"
+        },
+        "buttons": {
+          "edit": "Modifier",
+          "view": "Voir"
+        },
+        "createModal": {
+          "title": "Créer un paramètre système",
+          "key": "Clé",
+          "category": "Catégorie",
+          "value": "Valeur",
+          "description": "Description",
+          "encrypted": "Chiffré",
+          "public": "Public",
+          "create": "Créer le paramètre",
+          "cancel": "Annuler",
+          "categories": {
+            "general": "Général",
+            "security": "Sécurité",
+            "email": "E-mail",
+            "payment": "Paiement",
+            "storage": "Stockage"
+          }
+        },
+        "alerts": {
+          "created": "Paramètre système créé avec succès !",
+          "createFailed": "Échec de la création du paramètre : {{message}}"
+        }
+      },
+      "integrations": {
+        "title": "Intégrations",
+        "createIntegration": "Créer une intégration",
+        "tableHeaders": {
+          "name": "Nom",
+          "type": "Type",
+          "provider": "Fournisseur",
+          "status": "Statut",
+          "lastSync": "Dernière synchronisation",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Actif",
+          "inactive": "Inactif",
+          "never": "Jamais"
+        },
+        "buttons": {
+          "test": "Tester",
+          "sync": "Synchroniser"
+        },
+        "createModal": {
+          "title": "Créer une intégration",
+          "name": "Nom",
+          "type": "Type",
+          "provider": "Fournisseur",
+          "webhookUrl": "URL Webhook (Optionnel)",
+          "create": "Créer l'intégration",
+          "cancel": "Annuler",
+          "types": {
+            "auth": "Authentification",
+            "payment": "Paiement",
+            "email": "E-mail",
+            "storage": "Stockage",
+            "analytics": "Analytics",
+            "other": "Autre"
+          }
+        },
+        "alerts": {
+          "created": "Intégration créée avec succès !",
+          "createFailed": "Échec de la création de l'intégration : {{message}}"
+        }
+      },
+      "maintenance": {
+        "title": "Mode maintenance",
+        "schedules": {
+          "title": "Plannings de maintenance",
+          "createSchedule": "Créer un planning"
+        },
+        "status": {
+          "enabled": "Activé",
+          "disabled": "Désactivé"
+        },
+        "estimatedEnd": "Fin estimée : {{date}}",
+        "buttons": {
+          "enable": "Activer la maintenance",
+          "disable": "Désactiver la maintenance"
+        },
+        "tableHeaders": {
+          "name": "Nom",
+          "description": "Description",
+          "scheduledStart": "Début prévu",
+          "scheduledEnd": "Fin prévue",
+          "status": "Statut",
+          "actions": "Actions"
+        },
+        "createModal": {
+          "title": "Créer un planning de maintenance",
+          "name": "Nom",
+          "description": "Description",
+          "scheduledStart": "Début prévu",
+          "scheduledEnd": "Fin prévue",
+          "create": "Créer le planning",
+          "cancel": "Annuler"
+        },
+        "alerts": {
+          "enabled": "Mode maintenance activé avec succès !",
+          "disabled": "Mode maintenance désactivé avec succès !",
+          "enableFailed": "Échec de l'activation du mode maintenance : {{message}}",
+          "disableFailed": "Échec de la désactivation du mode maintenance : {{message}}",
+          "scheduleCreated": "Planning de maintenance créé avec succès !",
+          "scheduleFailed": "Échec de la création du planning : {{message}}"
+        }
+      },
+      "systemHealth": {
+        "overview": {
+          "title": "Vue d'ensemble de la santé du système",
+          "database": "Base de données",
+          "storage": "Stockage",
+          "externalServices": "Services externes"
+        },
+        "labels": {
+          "systemStatus": "Statut du système",
+          "databaseResponse": "Réponse de la base de données",
+          "activeServices": "Services actifs",
+          "storageUsed": "Stockage utilisé",
+          "status": "Statut",
+          "responseTime": "Temps de réponse",
+          "connections": "Connexions",
+          "usedSpace": "Espace utilisé"
+        }
+      },
+      "emailTemplates": {
+        "title": "Modèles d'e-mail",
+        "createTemplate": "Créer un modèle",
+        "goToTemplates": "Aller aux modèles d'e-mail",
+        "description": "Gérer les modèles d'e-mail pour les notifications"
+      }
+    },
+    "emailNotifications": {
+      "title": "Notifications par e-mail",
+      "loading": "Chargement des notifications par e-mail...",
+      "refresh": "Actualiser",
+      "sendEmail": "Envoyer un e-mail",
+      "tabs": {
+        "templates": "Modèles",
+        "analytics": "Analytics",
+        "logs": "Journaux d'e-mail",
+        "send": "Envoyer un e-mail"
+      },
+      "analytics": {
+        "labels": {
+          "emailsSent": "E-mails envoyés",
+          "deliveryRate": "Taux de livraison",
+          "openRate": "Taux d'ouverture",
+          "clickRate": "Taux de clic",
+          "totalSent": "Total envoyé",
+          "delivered": "Livré",
+          "opened": "Ouvert",
+          "clicked": "Cliqué"
+        },
+        "performance": {
+          "title": "Performances des e-mails"
+        },
+        "eventsBreakdown": {
+          "title": "Répartition des événements"
+        }
+      },
+      "templates": {
+        "title": "Modèles d'e-mail",
+        "createTemplate": "Créer un modèle",
+        "tableHeaders": {
+          "name": "Nom",
+          "event": "Événement",
+          "category": "Catégorie",
+          "subject": "Sujet",
+          "status": "Statut",
+          "updated": "Mis à jour",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Actif",
+          "inactive": "Inactif"
+        },
+        "buttons": {
+          "edit": "Modifier",
+          "preview": "Aperçu"
+        }
+      },
+      "logs": {
+        "title": "Journaux d'e-mail",
+        "tableHeaders": {
+          "event": "Événement",
+          "recipient": "Destinataire",
+          "status": "Statut",
+          "sentAt": "Envoyé à",
+          "error": "Erreur"
+        }
+      },
+      "send": {
+        "title": "Envoyer un e-mail",
+        "eventType": "Type d'événement",
+        "selectEventType": "Sélectionner le type d'événement",
+        "recipientEmail": "E-mail(s) du destinataire",
+        "recipientEmailPlaceholder": "utilisateur@exemple.com ou utilisateur1@exemple.com, utilisateur2@exemple.com",
+        "recipientEmailHint": "Pour l'envoi en masse, séparer plusieurs e-mails par des virgules",
+        "recipientName": "Nom du destinataire (Optionnel)",
+        "recipientNamePlaceholder": "Jean Dupont",
+        "templateVariables": "Variables de modèle (JSON)",
+        "templateVariablesPlaceholder": "{\"firstName\": \"Jean\", \"lastName\": \"Dupont\", \"verificationUrl\": \"https://...\"}",
+        "templateVariablesHint": "Entrer les variables de modèle en JSON. Variables courantes : firstName, lastName, verificationUrl, resetUrl, etc.",
+        "buttons": {
+          "sendEmail": "Envoyer un e-mail",
+          "sendBulkEmail": "Envoyer un e-mail en masse"
+        },
+        "eventTypes": {
+          "account_verification": "Vérification du compte",
+          "password_reset": "Réinitialisation du mot de passe",
+          "welcome_email": "E-mail de bienvenue",
+          "job_application_received": "Candidature reçue",
+          "new_message": "Nouveau message",
+          "order_confirmation": "Confirmation de commande",
+          "subscription_activation": "Activation de l'abonnement",
+          "system_maintenance": "Maintenance du système"
+        },
+        "alerts": {
+          "sent": "E-mail envoyé avec succès !",
+          "sendFailed": "Échec de l'envoi de l'e-mail : {{message}}",
+          "bulkSent": "E-mail en masse envoyé ! Envoyé : {{sent}}, Échoué : {{failed}}",
+          "bulkFailed": "Échec de l'envoi des e-mails en masse : {{message}}"
+        }
+      }
     }
   }
 }

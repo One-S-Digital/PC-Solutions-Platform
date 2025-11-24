@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { useTranslation } from 'react-i18next';
 import { 
   AdminCard, 
   AdminButton, 
@@ -84,6 +85,7 @@ interface SystemHealth {
 }
 
 export default function SystemConfigurationPage() {
+  const { t } = useTranslation(['admin', 'common']);
   const { getToken } = useAuth();
   const [activeTab, setActiveTab] = useState<'settings' | 'integrations' | 'maintenance' | 'health' | 'templates'>('settings');
   const [settings, setSettings] = useState<SystemSetting[]>([]);
@@ -241,7 +243,7 @@ export default function SystemConfigurationPage() {
         throw new Error('Failed to create system setting');
       }
 
-      alert('System setting created successfully!');
+      alert(t('admin:settings.systemConfig.systemSettings.alerts.created'));
       setNewSetting({
         key: '',
         value: '',
@@ -253,7 +255,7 @@ export default function SystemConfigurationPage() {
       setShowCreateSetting(false);
       fetchSettings();
     } catch (err: any) {
-      alert(`Failed to create setting: ${err.message}`);
+      alert(t('admin:settings.systemConfig.systemSettings.alerts.createFailed', { message: err.message }));
     }
   };
 
@@ -273,7 +275,7 @@ export default function SystemConfigurationPage() {
         throw new Error('Failed to create integration');
       }
 
-      alert('Integration created successfully!');
+      alert(t('admin:settings.systemConfig.integrations.alerts.created'));
       setNewIntegration({
         name: '',
         type: 'other',
@@ -285,7 +287,7 @@ export default function SystemConfigurationPage() {
       setShowCreateIntegration(false);
       fetchIntegrations();
     } catch (err: any) {
-      alert(`Failed to create integration: ${err.message}`);
+      alert(t('admin:settings.systemConfig.integrations.alerts.createFailed', { message: err.message }));
     }
   };
 
@@ -305,7 +307,7 @@ export default function SystemConfigurationPage() {
         throw new Error('Failed to create maintenance schedule');
       }
 
-      alert('Maintenance schedule created successfully!');
+      alert(t('admin:settings.systemConfig.maintenance.alerts.scheduleCreated'));
       setNewSchedule({
         name: '',
         description: '',
@@ -315,7 +317,7 @@ export default function SystemConfigurationPage() {
       setShowCreateSchedule(false);
       fetchMaintenanceSchedules();
     } catch (err: any) {
-      alert(`Failed to create schedule: ${err.message}`);
+      alert(t('admin:settings.systemConfig.maintenance.alerts.scheduleFailed', { message: err.message }));
     }
   };
 
@@ -339,10 +341,10 @@ export default function SystemConfigurationPage() {
         throw new Error('Failed to enable maintenance mode');
       }
 
-      alert('Maintenance mode enabled successfully!');
+      alert(t('admin:settings.systemConfig.maintenance.alerts.enabled'));
       fetchMaintenanceMode();
     } catch (err: any) {
-      alert(`Failed to enable maintenance mode: ${err.message}`);
+      alert(t('admin:settings.systemConfig.maintenance.alerts.enableFailed', { message: err.message }));
     }
   };
 
@@ -358,10 +360,10 @@ export default function SystemConfigurationPage() {
         throw new Error('Failed to disable maintenance mode');
       }
 
-      alert('Maintenance mode disabled successfully!');
+      alert(t('admin:settings.systemConfig.maintenance.alerts.disabled'));
       fetchMaintenanceMode();
     } catch (err: any) {
-      alert(`Failed to disable maintenance mode: ${err.message}`);
+      alert(t('admin:settings.systemConfig.maintenance.alerts.disableFailed', { message: err.message }));
     }
   };
 
@@ -385,7 +387,7 @@ export default function SystemConfigurationPage() {
       <div className="min-h-screen admin-app flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-accent mx-auto mb-4"></div>
-          <p className="text-admin-muted">Loading system configuration...</p>
+          <p className="text-admin-muted">{t('admin:settings.systemConfig.loading')}</p>
         </div>
       </div>
     );
@@ -398,7 +400,7 @@ export default function SystemConfigurationPage() {
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-6 w-1.5 rounded-full bg-admin-accent"></div>
-            <h1 className="text-admin-text font-semibold tracking-tight">System Configuration</h1>
+            <h1 className="text-admin-text font-semibold tracking-tight">{t('admin:settings.systemConfig.title')}</h1>
           </div>
           
           <div className="flex items-center gap-3">
@@ -413,7 +415,7 @@ export default function SystemConfigurationPage() {
                 fetchSystemHealth();
               }}
             >
-              Refresh
+              {t('admin:settings.systemConfig.refresh')}
             </AdminButton>
           </div>
         </div>
@@ -425,25 +427,25 @@ export default function SystemConfigurationPage() {
         {systemHealth && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <AdminMetric
-              label="System Status"
+              label={t('admin:settings.systemConfig.systemHealth.labels.systemStatus')}
               value={systemHealth.status.toUpperCase()}
               change={{ value: 0, type: 'neutral' }}
               icon="🔧"
             />
             <AdminMetric
-              label="Database Response"
+              label={t('admin:settings.systemConfig.systemHealth.labels.databaseResponse')}
               value={`${systemHealth.database.responseTime}ms`}
               change={{ value: 0, type: 'neutral' }}
               icon="🗄️"
             />
             <AdminMetric
-              label="Active Services"
+              label={t('admin:settings.systemConfig.systemHealth.labels.activeServices')}
               value={`${systemHealth.services.filter(s => s.status === 'up').length}/${systemHealth.services.length}`}
               change={{ value: 0, type: 'neutral' }}
               icon="⚡"
             />
             <AdminMetric
-              label="Storage Used"
+              label={t('admin:settings.systemConfig.systemHealth.labels.storageUsed')}
               value={`${Math.round((systemHealth.storage.usedSpace / systemHealth.storage.totalSpace) * 100)}%`}
               change={{ value: 0, type: 'neutral' }}
               icon="💾"
@@ -455,11 +457,11 @@ export default function SystemConfigurationPage() {
         <div className="mb-6">
           <nav className="-mb-px flex space-x-8">
             {[
-              { id: 'settings', label: 'System Settings' },
-              { id: 'integrations', label: 'Integrations' },
-              { id: 'maintenance', label: 'Maintenance' },
-              { id: 'health', label: 'System Health' },
-              { id: 'templates', label: 'Email Templates' },
+              { id: 'settings', label: t('admin:settings.systemConfig.tabs.systemSettings') },
+              { id: 'integrations', label: t('admin:settings.systemConfig.tabs.integrations') },
+              { id: 'maintenance', label: t('admin:settings.systemConfig.tabs.maintenance') },
+              { id: 'health', label: t('admin:settings.systemConfig.tabs.systemHealth') },
+              { id: 'templates', label: t('admin:settings.systemConfig.tabs.emailTemplates') },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -480,24 +482,24 @@ export default function SystemConfigurationPage() {
         {activeTab === 'settings' && (
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-admin-text">System Settings</h3>
+              <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.systemSettings.title')}</h3>
               <AdminButton 
                 variant="primary" 
                 size="sm"
                 onClick={() => setShowCreateSetting(true)}
               >
-                Create Setting
+                {t('admin:settings.systemConfig.systemSettings.createSetting')}
               </AdminButton>
             </div>
             
             <AdminTable>
               <AdminTableHeader>
                 <AdminTableRow>
-                  <AdminTableHeaderCell>Key</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Value</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Category</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Type</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Actions</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.key')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.value')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.category')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.type')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.actions')}</AdminTableHeaderCell>
                 </AdminTableRow>
               </AdminTableHeader>
               <AdminTableBody>
@@ -519,17 +521,17 @@ export default function SystemConfigurationPage() {
                     </AdminTableCell>
                     <AdminTableCell>
                       <div className="flex gap-1">
-                        {setting.isEncrypted && <AdminBadge variant="high">Encrypted</AdminBadge>}
-                        {setting.isPublic && <AdminBadge variant="medium">Public</AdminBadge>}
+                        {setting.isEncrypted && <AdminBadge variant="high">{t('admin:settings.systemConfig.systemSettings.badges.encrypted')}</AdminBadge>}
+                        {setting.isPublic && <AdminBadge variant="medium">{t('admin:settings.systemConfig.systemSettings.badges.public')}</AdminBadge>}
                       </div>
                     </AdminTableCell>
                     <AdminTableCell>
                       <div className="flex gap-2">
                         <AdminButton variant="outline" size="sm">
-                          Edit
+                          {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
                         </AdminButton>
                         <AdminButton variant="secondary" size="sm">
-                          View
+                          {t('admin:settings.systemConfig.systemSettings.buttons.view')}
                         </AdminButton>
                       </div>
                     </AdminTableCell>
@@ -544,25 +546,25 @@ export default function SystemConfigurationPage() {
         {activeTab === 'integrations' && (
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-admin-text">Integrations</h3>
+              <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.integrations.title')}</h3>
               <AdminButton 
                 variant="primary" 
                 size="sm"
                 onClick={() => setShowCreateIntegration(true)}
               >
-                Create Integration
+                {t('admin:settings.systemConfig.integrations.createIntegration')}
               </AdminButton>
             </div>
             
             <AdminTable>
               <AdminTableHeader>
                 <AdminTableRow>
-                  <AdminTableHeaderCell>Name</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Type</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Provider</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Last Sync</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>Actions</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.name')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.type')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.provider')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.status')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.lastSync')}</AdminTableHeaderCell>
+                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.actions')}</AdminTableHeaderCell>
                 </AdminTableRow>
               </AdminTableHeader>
               <AdminTableBody>
@@ -579,21 +581,21 @@ export default function SystemConfigurationPage() {
                     </AdminTableCell>
                     <AdminTableCell>
                       <AdminBadge variant={integration.isActive ? 'low' : 'medium'}>
-                        {integration.isActive ? 'Active' : 'Inactive'}
+                        {integration.isActive ? t('admin:settings.systemConfig.integrations.status.active') : t('admin:settings.systemConfig.integrations.status.inactive')}
                       </AdminBadge>
                     </AdminTableCell>
                     <AdminTableCell>
                       <div className="text-sm text-admin-text">
-                        {integration.lastSyncAt ? new Date(integration.lastSyncAt).toLocaleString() : 'Never'}
+                        {integration.lastSyncAt ? new Date(integration.lastSyncAt).toLocaleString() : t('admin:settings.systemConfig.integrations.status.never')}
                       </div>
                     </AdminTableCell>
                     <AdminTableCell>
                       <div className="flex gap-2">
                         <AdminButton variant="outline" size="sm">
-                          Test
+                          {t('admin:settings.systemConfig.integrations.buttons.test')}
                         </AdminButton>
                         <AdminButton variant="secondary" size="sm">
-                          Sync
+                          {t('admin:settings.systemConfig.integrations.buttons.sync')}
                         </AdminButton>
                       </div>
                     </AdminTableCell>
@@ -609,7 +611,7 @@ export default function SystemConfigurationPage() {
           <div className="space-y-6">
             <AdminCard className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-admin-text">Maintenance Mode</h3>
+                <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.maintenance.title')}</h3>
                 <div className="flex gap-2">
                   {maintenanceMode?.isEnabled ? (
                     <AdminButton 
@@ -617,7 +619,7 @@ export default function SystemConfigurationPage() {
                       size="sm"
                       onClick={handleDisableMaintenance}
                     >
-                      Disable Maintenance
+                      {t('admin:settings.systemConfig.maintenance.buttons.disable')}
                     </AdminButton>
                   ) : (
                     <AdminButton 
@@ -625,7 +627,7 @@ export default function SystemConfigurationPage() {
                       size="sm"
                       onClick={handleEnableMaintenance}
                     >
-                      Enable Maintenance
+                      {t('admin:settings.systemConfig.maintenance.buttons.enable')}
                     </AdminButton>
                   )}
                 </div>
@@ -635,11 +637,11 @@ export default function SystemConfigurationPage() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <AdminBadge variant={maintenanceMode.isEnabled ? 'critical' : 'low'}>
-                      {maintenanceMode.isEnabled ? 'Enabled' : 'Disabled'}
+                      {maintenanceMode.isEnabled ? t('admin:settings.systemConfig.maintenance.status.enabled') : t('admin:settings.systemConfig.maintenance.status.disabled')}
                     </AdminBadge>
                     {maintenanceMode.estimatedEndTime && (
                       <span className="text-sm text-admin-text">
-                        Estimated end: {new Date(maintenanceMode.estimatedEndTime).toLocaleString()}
+                        {t('admin:settings.systemConfig.maintenance.estimatedEnd', { date: new Date(maintenanceMode.estimatedEndTime).toLocaleString() })}
                       </span>
                     )}
                   </div>
@@ -650,25 +652,25 @@ export default function SystemConfigurationPage() {
 
             <AdminCard className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-admin-text">Maintenance Schedules</h3>
+                <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.maintenance.schedules.title')}</h3>
                 <AdminButton 
                   variant="primary" 
                   size="sm"
                   onClick={() => setShowCreateSchedule(true)}
                 >
-                  Create Schedule
+                  {t('admin:settings.systemConfig.maintenance.schedules.createSchedule')}
                 </AdminButton>
               </div>
               
               <AdminTable>
                 <AdminTableHeader>
                   <AdminTableRow>
-                    <AdminTableHeaderCell>Name</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>Description</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>Scheduled Start</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>Scheduled End</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>Status</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>Actions</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.name')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.description')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.scheduledStart')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.scheduledEnd')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.status')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.actions')}</AdminTableHeaderCell>
                   </AdminTableRow>
                 </AdminTableHeader>
                 <AdminTableBody>
@@ -692,16 +694,16 @@ export default function SystemConfigurationPage() {
                       </AdminTableCell>
                       <AdminTableCell>
                         <AdminBadge variant={schedule.isActive ? 'low' : 'medium'}>
-                          {schedule.isActive ? 'Active' : 'Inactive'}
+                          {schedule.isActive ? t('admin:settings.systemConfig.integrations.status.active') : t('admin:settings.systemConfig.integrations.status.inactive')}
                         </AdminBadge>
                       </AdminTableCell>
                       <AdminTableCell>
                         <div className="flex gap-2">
                           <AdminButton variant="outline" size="sm">
-                            Edit
+                            {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
                           </AdminButton>
                           <AdminButton variant="secondary" size="sm">
-                            View
+                            {t('admin:settings.systemConfig.systemSettings.buttons.view')}
                           </AdminButton>
                         </div>
                       </AdminTableCell>
@@ -717,39 +719,39 @@ export default function SystemConfigurationPage() {
         {activeTab === 'health' && systemHealth && (
           <div className="space-y-6">
             <AdminCard className="p-6">
-              <h3 className="text-lg font-semibold text-admin-text mb-4">System Health Overview</h3>
+              <h3 className="text-lg font-semibold text-admin-text mb-4">{t('admin:settings.systemConfig.systemHealth.overview.title')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium text-admin-text mb-2">Database</h4>
+                  <h4 className="font-medium text-admin-text mb-2">{t('admin:settings.systemConfig.systemHealth.overview.database')}</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-admin-text">Status</span>
+                      <span className="text-admin-text">{t('admin:settings.systemConfig.systemHealth.labels.status')}</span>
                       <AdminBadge variant={getStatusColor(systemHealth.database.status)}>
                         {systemHealth.database.status}
                       </AdminBadge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-admin-text">Response Time</span>
+                      <span className="text-admin-text">{t('admin:settings.systemConfig.systemHealth.labels.responseTime')}</span>
                       <span className="text-admin-text">{systemHealth.database.responseTime}ms</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-admin-text">Connections</span>
+                      <span className="text-admin-text">{t('admin:settings.systemConfig.systemHealth.labels.connections')}</span>
                       <span className="text-admin-text">{systemHealth.database.connections}</span>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium text-admin-text mb-2">Storage</h4>
+                  <h4 className="font-medium text-admin-text mb-2">{t('admin:settings.systemConfig.systemHealth.overview.storage')}</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-admin-text">Status</span>
+                      <span className="text-admin-text">{t('admin:settings.systemConfig.systemHealth.labels.status')}</span>
                       <AdminBadge variant={getStatusColor(systemHealth.storage.status)}>
                         {systemHealth.storage.status}
                       </AdminBadge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-admin-text">Used Space</span>
+                      <span className="text-admin-text">{t('admin:settings.systemConfig.systemHealth.labels.usedSpace')}</span>
                       <span className="text-admin-text">
                         {Math.round((systemHealth.storage.usedSpace / systemHealth.storage.totalSpace) * 100)}%
                       </span>
@@ -760,7 +762,7 @@ export default function SystemConfigurationPage() {
             </AdminCard>
 
             <AdminCard className="p-6">
-              <h3 className="text-lg font-semibold text-admin-text mb-4">External Services</h3>
+              <h3 className="text-lg font-semibold text-admin-text mb-4">{t('admin:settings.systemConfig.systemHealth.overview.externalServices')}</h3>
               <div className="space-y-3">
                 {systemHealth.services.map((service) => (
                   <div key={service.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
@@ -784,18 +786,18 @@ export default function SystemConfigurationPage() {
         {activeTab === 'templates' && (
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-admin-text">Email Templates</h3>
+              <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.emailTemplates.title')}</h3>
               <AdminButton variant="primary" size="sm">
-                Create Template
+                {t('admin:settings.systemConfig.emailTemplates.createTemplate')}
               </AdminButton>
             </div>
             
             <div className="text-center py-8">
               <div className="text-4xl mb-4">📧</div>
-              <h4 className="text-lg font-medium text-admin-text mb-2">Email Templates</h4>
-              <p className="text-admin-muted mb-4">Manage email templates for notifications</p>
+              <h4 className="text-lg font-medium text-admin-text mb-2">{t('admin:settings.systemConfig.emailTemplates.title')}</h4>
+              <p className="text-admin-muted mb-4">{t('admin:settings.systemConfig.emailTemplates.description')}</p>
               <AdminButton variant="primary">
-                Go to Email Templates
+                {t('admin:settings.systemConfig.emailTemplates.goToTemplates')}
               </AdminButton>
             </div>
           </AdminCard>
@@ -805,12 +807,12 @@ export default function SystemConfigurationPage() {
         {showCreateSetting && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-              <h3 className="text-lg font-semibold text-admin-text mb-4">Create System Setting</h3>
+              <h3 className="text-lg font-semibold text-admin-text mb-4">{t('admin:settings.systemConfig.systemSettings.createModal.title')}</h3>
               
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-admin-text mb-1">Key</label>
+                    <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.systemConfig.systemSettings.createModal.key')}</label>
                     <input
                       type="text"
                       className="admin-input w-full px-3 py-2"
@@ -819,23 +821,23 @@ export default function SystemConfigurationPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-admin-text mb-1">Category</label>
+                    <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.systemConfig.systemSettings.createModal.category')}</label>
                     <select
                       className="admin-input w-full px-3 py-2"
                       value={newSetting.category}
                       onChange={(e) => setNewSetting(prev => ({ ...prev, category: e.target.value }))}
                     >
-                      <option value="general">General</option>
-                      <option value="security">Security</option>
-                      <option value="email">Email</option>
-                      <option value="payment">Payment</option>
-                      <option value="storage">Storage</option>
+                      <option value="general">{t('admin:settings.systemConfig.systemSettings.createModal.categories.general')}</option>
+                      <option value="security">{t('admin:settings.systemConfig.systemSettings.createModal.categories.security')}</option>
+                      <option value="email">{t('admin:settings.systemConfig.systemSettings.createModal.categories.email')}</option>
+                      <option value="payment">{t('admin:settings.systemConfig.systemSettings.createModal.categories.payment')}</option>
+                      <option value="storage">{t('admin:settings.systemConfig.systemSettings.createModal.categories.storage')}</option>
                     </select>
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-admin-text mb-1">Value</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.systemConfig.systemSettings.createModal.value')}</label>
                   <textarea
                     className="admin-input w-full px-3 py-2"
                     rows={3}
@@ -845,7 +847,7 @@ export default function SystemConfigurationPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-admin-text mb-1">Description</label>
+                  <label className="block text-sm font-medium text-admin-text mb-1">{t('admin:settings.systemConfig.systemSettings.createModal.description')}</label>
                   <textarea
                     className="admin-input w-full px-3 py-2"
                     rows={2}
@@ -862,7 +864,7 @@ export default function SystemConfigurationPage() {
                       checked={newSetting.isEncrypted}
                       onChange={(e) => setNewSetting(prev => ({ ...prev, isEncrypted: e.target.checked }))}
                     />
-                    Encrypted
+                    {t('admin:settings.systemConfig.systemSettings.createModal.encrypted')}
                   </label>
                   <label className="flex items-center">
                     <input
@@ -871,17 +873,17 @@ export default function SystemConfigurationPage() {
                       checked={newSetting.isPublic}
                       onChange={(e) => setNewSetting(prev => ({ ...prev, isPublic: e.target.checked }))}
                     />
-                    Public
+                    {t('admin:settings.systemConfig.systemSettings.createModal.public')}
                   </label>
                 </div>
               </div>
               
               <div className="flex gap-3 mt-6">
                 <AdminButton variant="primary" onClick={handleCreateSetting}>
-                  Create Setting
+                  {t('admin:settings.systemConfig.systemSettings.createModal.create')}
                 </AdminButton>
                 <AdminButton variant="outline" onClick={() => setShowCreateSetting(false)}>
-                  Cancel
+                  {t('admin:settings.systemConfig.systemSettings.createModal.cancel')}
                 </AdminButton>
               </div>
             </div>

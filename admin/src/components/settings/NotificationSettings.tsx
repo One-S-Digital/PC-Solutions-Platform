@@ -1,8 +1,10 @@
 import React from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import LoadingSpinner from '../ui/LoadingSpinner'
+import { useTranslation } from 'react-i18next'
 
 const NotificationSettings: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, loading, error, saving } = useSettings()
 
   const handleToggle = async (setting: string, value: boolean) => {
@@ -29,9 +31,9 @@ const NotificationSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-semibold text-swiss-charcoal">Notification Settings</h3>
+        <h3 className="text-xl font-semibold text-swiss-charcoal">{t('admin:settings.notifications.title')}</h3>
         <p className="mt-1 text-gray-500">
-          Configure email notifications and SMTP settings
+          {t('admin:settings.notifications.description')}
         </p>
       </div>
 
@@ -44,15 +46,15 @@ const NotificationSettings: React.FC = () => {
       <div className="space-y-6">
         {/* Email Notifications */}
         <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Email Notifications</h4>
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.notifications.emailNotifications.title')}</h4>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium text-swiss-charcoal">
-                  New User Registrations
+                  {t('admin:settings.notifications.emailNotifications.newUserRegistrations')}
                 </label>
                 <p className="text-sm text-gray-500">
-                  Get notified when new users register
+                  {t('admin:settings.notifications.emailNotifications.newUserRegistrationsDesc')}
                 </p>
               </div>
               <button
@@ -73,10 +75,10 @@ const NotificationSettings: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium text-swiss-charcoal">
-                  Application Submissions
+                  {t('admin:settings.notifications.emailNotifications.applicationSubmissions')}
                 </label>
                 <p className="text-sm text-gray-500">
-                  Get notified when applications are submitted
+                  {t('admin:settings.notifications.emailNotifications.applicationSubmissionsDesc')}
                 </p>
               </div>
               <button
@@ -98,12 +100,12 @@ const NotificationSettings: React.FC = () => {
 
         {/* SMTP Configuration */}
         <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">SMTP Configuration</h4>
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.notifications.smtp.title')}</h4>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label htmlFor="notificationEmail" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Notification Email
+                  {t('admin:settings.notifications.smtp.notificationEmail')}
                 </label>
                 <input
                   type="email"
@@ -111,13 +113,13 @@ const NotificationSettings: React.FC = () => {
                   id="notificationEmail"
                   defaultValue={settings?.notificationEmail || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="notifications@example.com"
+                  placeholder={t('admin:settings.notifications.smtp.notificationEmailPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="smtpHost" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  SMTP Host
+                  {t('admin:settings.notifications.smtp.smtpHost')}
                 </label>
                 <input
                   type="text"
@@ -125,13 +127,13 @@ const NotificationSettings: React.FC = () => {
                   id="smtpHost"
                   defaultValue={settings?.smtpHost || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="smtp.gmail.com"
+                  placeholder={t('admin:settings.notifications.smtp.smtpHostPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="smtpPort" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  SMTP Port
+                  {t('admin:settings.notifications.smtp.smtpPort')}
                 </label>
                 <input
                   type="number"
@@ -139,13 +141,13 @@ const NotificationSettings: React.FC = () => {
                   id="smtpPort"
                   defaultValue={settings?.smtpPort || 587}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="587"
+                  placeholder={t('admin:settings.notifications.smtp.smtpPortPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="smtpUser" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  SMTP Username
+                  {t('admin:settings.notifications.smtp.smtpUser')}
                 </label>
                 <input
                   type="text"
@@ -153,13 +155,13 @@ const NotificationSettings: React.FC = () => {
                   id="smtpUser"
                   defaultValue={settings?.smtpUser || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="your-email@gmail.com"
+                  placeholder={t('admin:settings.notifications.smtp.smtpUserPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="smtpPassword" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  SMTP Password
+                  {t('admin:settings.notifications.smtp.smtpPassword')}
                 </label>
                 <input
                   type="password"
@@ -167,7 +169,7 @@ const NotificationSettings: React.FC = () => {
                   id="smtpPassword"
                   defaultValue={settings?.smtpPassword || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="••••••••"
+                  placeholder={t('admin:settings.notifications.smtp.smtpPasswordPlaceholder')}
                 />
               </div>
             </div>
@@ -178,7 +180,7 @@ const NotificationSettings: React.FC = () => {
                 disabled={saving}
                 className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {saving ? 'Saving...' : 'Save SMTP Settings'}
+                {saving ? t('admin:settings.notifications.saving') : t('admin:settings.notifications.saveSmtpSettings')}
               </button>
             </div>
           </form>

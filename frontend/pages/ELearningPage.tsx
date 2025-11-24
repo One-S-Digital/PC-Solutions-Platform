@@ -6,7 +6,7 @@ import { Course, UserRole, Course as CourseType, ELearningContentType, ELearning
 import { MOCK_COURSES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon, StarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
@@ -16,14 +16,17 @@ import i18n from '../i18n';
 interface CourseMaterialCardProps {
   item: Course;
   onPreview?: (item: Course) => void;
+  onDownload?: (item: Course) => void;
+  onToggleFavorite?: (id: string) => void;
+  isFavorite?: boolean;
 }
 
-const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview }) => {
+const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview, onDownload, onToggleFavorite, isFavorite = false }) => {
   const { t } = useTranslation(['content', 'common']);
   const typeSpecifics = {
-    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-swiss-mint' },
-    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearning.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-swiss-teal' },
-    [ELearningContentType.PDF]: { icon: DocumentTextIcon, actionText: t('eLearning.actions.viewPdf', 'View PDF'), actionIcon: EyeIcon, color: 'text-swiss-coral' },
+    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, actionText: t('eLearning.actions.viewCourse'), actionIcon: EyeIcon, color: 'text-purple-500' },
+    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, actionText: t('eLearning.actions.watchVideo'), actionIcon: PlayIcon, color: 'text-red-500' },
+    [ELearningContentType.PDF]: { icon: DocumentTextIcon, actionText: t('eLearning.actions.viewPdf', 'View PDF'), actionIcon: EyeIcon, color: 'text-orange-500' },
     [ELearningContentType.LINK]: { icon: LinkIcon, actionText: t('eLearning.actions.viewLink', 'View Link'), actionIcon: EyeIcon, color: 'text-purple-600' },
   };
   
@@ -31,10 +34,8 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
   const currentType = typeSpecifics[currentItemTypeKey];
 
   const IconElement = currentType.icon; 
-  const ActionIconElement = currentType.actionIcon; 
 
-  const handleActionClick = () => {
-    // Use preview for all content types that have a fileUrl
+  const handlePreview = () => {
     if (item.fileUrl && onPreview) {
       onPreview(item);
     } else {
@@ -42,58 +43,69 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
     }
   };
 
+  const handleDownload = () => {
+    if (onDownload) {
+      onDownload(item);
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    if (onToggleFavorite) {
+      onToggleFavorite(item.id);
+    }
+  };
+
   return (
-    <Card className="flex flex-col" hoverEffect>
-      <img src={item.thumbnailUrl || `https://picsum.photos/seed/${item.id}/300/180`} alt={item.title} className="w-full h-40 object-cover"/>
-      <div className="p-4 flex-grow flex flex-col">
-        <div className="flex items-center mb-2">
-          <IconElement className={`w-6 h-6 mr-2 ${currentType.color}`} />
-          <h3 className={`text-lg font-semibold ${currentType.color}`}>{item.title}</h3>
-        </div>
-        {item.category && (
-          <p className="text-xs text-gray-500 mb-1">{t('eLearning.categoryLabel')}: {ELEARNING_CATEGORY_LABELS[item.category] || item.category}</p>
-        )}
-        {item.contentPreview && (
-          <p className="text-sm text-gray-600 mb-2 flex-grow line-clamp-3">{item.contentPreview}</p>
-        )}
-        {!item.contentPreview && (
-          <p className="text-sm text-gray-600 mb-1 flex-grow line-clamp-3">{item.description}</p>
-        )}
-        {item.type === ELearningContentType.COURSE && item.lessons && <p className="text-xs text-gray-500">{t('eLearning.lessonsCount', { count: item.lessons })}</p>}
-        {(item.type === ELearningContentType.VIDEO || item.type === ELearningContentType.COURSE) && item.duration && <p className="text-xs text-gray-500">{t('eLearning.durationLabel')}: {item.duration}</p>}
-        {item.language && <p className="text-xs text-gray-500">{t('eLearning.languageLabel')}: {item.language}</p>}
-        <p className="text-xs text-gray-500 mt-1">{t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}</p>
-         {item.tags && item.tags.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-                {item.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">{tag}</span>
-                ))}
+    <Card className="flex flex-col group" hoverEffect>
+      <div className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center mb-3">
+            <IconElement className={`w-10 h-10 ${currentType.color}`} />
+            <div className="ml-3">
+              <h3 className="text-lg font-semibold text-swiss-charcoal group-hover:text-swiss-mint transition-colors">{item.title}</h3>
+              {item.category && (
+                <p className="text-xs text-gray-500">{t('eLearning.categoryLabel')}: {ELEARNING_CATEGORY_LABELS[item.category] || item.category}</p>
+              )}
+              {item.language && (
+                <p className="text-xs text-gray-500">{t('eLearning.languageLabel')}: {item.language} {item.type === ELearningContentType.COURSE && item.lessons && ` • ${t('eLearning.lessonsCount', { count: item.lessons })}`}</p>
+              )}
             </div>
+          </div>
+          {onToggleFavorite && (
+            <button onClick={handleToggleFavorite} className="text-gray-300 hover:text-yellow-400 focus:outline-none" aria-label={t('eLearning.toggleFavoriteLabel', 'Toggle favorite')}>
+              <StarIcon className={`w-6 h-6 transition-colors ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400 hover:text-yellow-300'}`} />
+            </button>
+          )}
+        </div>
+        {item.contentPreview && (
+          <p className="text-sm text-gray-600 mb-2 line-clamp-3">{item.contentPreview}</p>
+        )}
+        {!item.contentPreview && item.description && (
+          <p className="text-sm text-gray-600 mb-2 line-clamp-3">{item.description}</p>
+        )}
+        <p className="text-xs text-gray-500 mb-1">
+          <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('eLearning.updatedLabel')}: {new Date(item.updatedDate).toLocaleDateString()}
+        </p>
+        {item.tags && item.tags.length > 0 && (
+          <div className="my-2">
+            {item.tags.map(tag => (
+              <span key={tag} className={`text-xs px-2 py-0.5 rounded-full mr-1 mb-1 inline-block ${
+                tag === 'Mandatory' ? 'bg-red-100 text-red-700' : 
+                tag === 'New' ? 'bg-blue-100 text-blue-700' : 
+                tag === 'Updated' ? 'bg-yellow-100 text-yellow-700' :
+                tag === 'Critical' ? 'bg-orange-100 text-orange-700' :
+                'bg-gray-100 text-gray-700'}`}>{tag}</span>
+            ))}
+          </div>
         )}
       </div>
-      <div className="bg-gray-50 p-3 mt-auto border-t">
-        {item.fileUrl && onPreview ? (
-          <Button 
-            variant="primary" 
-            size="sm" 
-            leftIcon={EyeIcon} 
-            className="w-full"
-            onClick={handleActionClick}
-          >
-            {currentType.actionText}
-          </Button>
-        ) : (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            leftIcon={ActionIconElement} 
-            className="w-full"
-            onClick={handleActionClick}
-            disabled={!item.fileUrl}
-          >
-            {currentType.actionText}
+      <div className="bg-gray-50 px-5 py-3 mt-auto border-t flex justify-end items-center space-x-2">
+        {onDownload && item.fileUrl && (
+          <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={handleDownload}>
+            {t('eLearning.downloadButton', 'Download')}
           </Button>
         )}
+        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={handlePreview} className="p-2" aria-label={t('eLearning.previewButtonLabel', 'Preview')} title={t('eLearning.previewButtonLabel', 'Preview')}></Button>
       </div>
     </Card>
   );
@@ -120,8 +132,9 @@ const ELearningTypeDisplayCard: React.FC<{title: string, icon: React.ElementType
 const ELearningPage: React.FC = () => {
   const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
-  const { authenticatedRequest, authenticatedUpload } = useAuthenticatedApi();
+  const { authenticatedRequest, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
   const [eLearningItems, setELearningItems] = useState<Course[]>([]);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<'All' | ELearningCategory>('All');
   const [filterType, setFilterType] = useState<'All' | ELearningContentType>('All');
@@ -254,6 +267,30 @@ const ELearningPage: React.FC = () => {
     }
   };
 
+  const handleDownload = async (item: Course) => {
+    try {
+      if (item.fileUrl) {
+        const fileExtension = item.fileUrl.split('.').pop() || 'pdf';
+        await authenticatedDownload(item.fileUrl, `${item.title}.${fileExtension}`);
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert(t('eLearning.downloadFailed', 'Failed to download file. Please try again.'));
+    }
+  };
+
+  const toggleFavorite = (id: string) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(id)) {
+        newFavorites.delete(id);
+      } else {
+        newFavorites.add(id);
+      }
+      return newFavorites;
+    });
+  };
+
   const renderSection = (title: string, items: Course[], itemTypeName: string, Icon: React.ElementType) => (
     <section className="space-y-4">
       <h2 className="text-2xl font-semibold text-swiss-charcoal flex items-center">
@@ -263,12 +300,15 @@ const ELearningPage: React.FC = () => {
       {items.length === 0 ? (
         <p className="text-center text-gray-500 py-8">{t('eLearning.noItemsFound', { itemType: itemTypeName.toLowerCase() })}</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map(item => (
             <CourseMaterialCard 
                 key={item.id} 
                 item={item}
                 onPreview={handlePreview}
+                onDownload={handleDownload}
+                onToggleFavorite={toggleFavorite}
+                isFavorite={favorites.has(item.id)}
             />
           ))}
         </div>
@@ -355,12 +395,15 @@ const ELearningPage: React.FC = () => {
           {linkItems.length > 0 && renderSection(t('eLearning.externalLinksTitle'), linkItems, t('eLearning.itemType.links'), LinkIcon)}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {globallyFilteredItems.map(item => (
             <CourseMaterialCard 
               key={item.id} 
               item={item}
               onPreview={handlePreview}
+              onDownload={handleDownload}
+              onToggleFavorite={toggleFavorite}
+              isFavorite={favorites.has(item.id)}
             />
           ))}
         </div>
