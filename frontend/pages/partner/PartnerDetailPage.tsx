@@ -187,7 +187,7 @@ const PartnerDetailPage: React.FC = () => {
         <div className="h-48 bg-gray-200 relative">
           <img src={partner.coverImageUrl || `https://picsum.photos/seed/${partner.id}Cover/1200/300`} alt={`${partner.name} cover`} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          <img src={partner.logoUrl || `https://picsum.photos/seed/${partner.id}/100/100`} alt={`${partner.name} logo`} className="absolute bottom-4 left-6 w-24 h-24 rounded-full border-4 border-white shadow-lg bg-white" />
+          <img src={partner.logoUrl || `https://picsum.photos/seed/${partner.id}/100/100`} alt={`${partner.name} logo`} className="absolute bottom-4 left-6 w-28 h-28 rounded-full border-4 border-white shadow-lg bg-white" />
         </div>
         <div className="p-6 pt-28 sm:pt-6 sm:pl-36 flex flex-col sm:flex-row items-center sm:items-start justify-between">
             <div>

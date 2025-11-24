@@ -81,7 +81,7 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
               <img
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(job.foundationName || job.title)}`}
                 alt={`${job.foundationName} logo`}
-                className="w-16 h-16 rounded-lg mr-4 border bg-white"
+                className="w-20 h-20 rounded-lg mr-4 border bg-white"
               />
             <div>
               <h2 className="text-2xl font-bold text-swiss-charcoal">{job.title}</h2>

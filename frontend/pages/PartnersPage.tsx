@@ -11,7 +11,7 @@ const PartnerCard: React.FC<{ partner: Partner }> = ({ partner }) => {
   const { t } = useTranslation(['admin', 'common']);
   return (
     <Card className="text-center p-6 transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105" hoverEffect={false}>
-      <img src={partner.logoUrl} alt={t('partners.partnerCard.logoAlt', { name: partner.name })} className="h-16 mx-auto mb-4 object-contain grayscale hover:grayscale-0 transition-all duration-300" />
+      <img src={partner.logoUrl} alt={t('partners.partnerCard.logoAlt', { name: partner.name })} className="h-20 mx-auto mb-4 object-contain grayscale hover:grayscale-0 transition-all duration-300" />
       <h3 className="text-xl font-semibold text-swiss-charcoal mb-2">{partner.name}</h3>
       <p className="text-sm text-gray-600 mb-1">{t('partners.partnerCard.partnerType', { type: partner.type })}</p>
       {partner.countryRegion && <p className="text-xs text-gray-500 mb-3">{partner.countryRegion}</p>}

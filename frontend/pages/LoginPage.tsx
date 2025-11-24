@@ -200,10 +200,10 @@ const LoginPage: React.FC = () => {
               <img 
                 src={settings.logoAsset.publicUrl} 
                 alt={settings.siteName || APP_NAME} 
-                className="h-16 w-auto mx-auto mb-3" 
+                className="h-20 w-auto mx-auto mb-3" 
               />
             ) : (
-              <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+              <SquaresPlusIcon className="h-14 w-14 text-swiss-mint mx-auto mb-3" />
             )}
             <h1 className="text-2xl font-bold text-swiss-charcoal">
               {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
@@ -287,10 +287,10 @@ const LoginPage: React.FC = () => {
               <img 
                 src={settings.logoAsset.publicUrl} 
                 alt={settings.siteName || APP_NAME} 
-                className="h-16 w-auto mx-auto mb-3" 
+                className="h-20 w-auto mx-auto mb-3" 
               />
             ) : (
-              <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+              <SquaresPlusIcon className="h-14 w-14 text-swiss-mint mx-auto mb-3" />
             )}
             <h1 className="text-2xl font-bold text-swiss-charcoal">
               {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
@@ -340,10 +340,10 @@ const LoginPage: React.FC = () => {
             <img 
               src={settings.logoAsset.publicUrl} 
               alt={settings.siteName || APP_NAME} 
-              className="h-16 w-auto mx-auto mb-3" 
+              className="h-20 w-auto mx-auto mb-3" 
             />
           ) : (
-            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            <SquaresPlusIcon className="h-14 w-14 text-swiss-mint mx-auto mb-3" />
           )}
           <h1 className="text-2xl font-bold text-swiss-charcoal">
             {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}

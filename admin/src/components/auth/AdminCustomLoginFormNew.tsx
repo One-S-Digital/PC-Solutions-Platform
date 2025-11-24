@@ -175,15 +175,15 @@ export default function AdminCustomLoginForm() {
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">
           <div className="text-center mb-8">
-            <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-6">
+            <div className="mx-auto h-20 w-20 bg-swiss-mint rounded-full flex items-center justify-center mb-6">
               {getAdminLogo(settings) ? (
                 <img 
                   src={getAdminLogo(settings)!} 
                   alt="Admin Logo" 
-                  className="h-8 w-8 object-contain"
+                  className="h-10 w-10 object-contain"
                 />
               ) : (
-                <SquaresPlusIcon className="h-8 w-8 text-white" />
+                <SquaresPlusIcon className="h-10 w-10 text-white" />
               )}
             </div>
           </div>
@@ -246,15 +246,15 @@ export default function AdminCustomLoginForm() {
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
-          <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-6">
+          <div className="mx-auto h-20 w-20 bg-swiss-mint rounded-full flex items-center justify-center mb-6">
             {getAdminLogo(settings) ? (
               <img 
                 src={getAdminLogo(settings)!} 
                 alt="Admin Logo" 
-                className="h-8 w-8 object-contain"
+                className="h-10 w-10 object-contain"
               />
             ) : (
-              <SquaresPlusIcon className="h-8 w-8 text-white" />
+              <SquaresPlusIcon className="h-10 w-10 text-white" />
             )}
           </div>
           <h1 className="text-2xl font-bold text-swiss-charcoal">Admin Dashboard</h1>
