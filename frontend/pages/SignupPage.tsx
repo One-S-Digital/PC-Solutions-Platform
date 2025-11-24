@@ -11,6 +11,9 @@ import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
+import { useAuthContext } from '../providers/AuthProvider';
+import { apiService } from '../services/api';
+import { API_ENDPOINTS } from '../services/api-endpoints';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -24,7 +27,8 @@ const SignupPage: React.FC = () => {
   const { t } = useTranslation(['signup', 'common']);
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, getToken } = useAuth();
+  const { currentUser, refreshCurrentUser } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
 
   useEffect(() => {
@@ -137,12 +141,13 @@ const SignupPage: React.FC = () => {
       selectedRole !== null &&
       [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
 
-  // Redirect if user is already logged in before starting signup
+  // Redirect if user is already logged in AND has a backend profile (currentUser is set)
+  // If currentUser is null, it means they need to complete their profile (e.g. after Google Sign Up)
   useEffect(() => {
-    if (isSignedIn && !hasStartedSignup) {
+    if (isSignedIn && currentUser && !hasStartedSignup) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, hasStartedSignup, navigate]);
+  }, [isSignedIn, currentUser, hasStartedSignup, navigate]);
 
   // Handle successful verification - redirect if user becomes authenticated after showing success
   useEffect(() => {
@@ -271,9 +276,65 @@ const SignupPage: React.FC = () => {
     console.error('CAPTCHA error:', error);
   };
 
+  const handleCompleteProfile = async () => {
+    setIsLoading(true);
+    try {
+       const token = await getToken();
+       
+       if (!token) {
+           throw new Error('Authentication token not available');
+       }
+
+       const payload = {
+           role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
+           organisationName: formData.organisationName || undefined,
+           contactPerson: formData.contactPerson || undefined,
+           phone: formData.phone || undefined,
+           canton: formData.canton || undefined,
+           capacity: formData.capacity,
+           category: formData.category || undefined,
+           serviceType: formData.serviceType || undefined,
+           childAge: formData.childAge,
+           childStartDate: formData.childStartDate || undefined,
+       };
+
+       const response = await fetch(`${apiService.apiBaseUrl}${API_ENDPOINTS.users.completeProfile}`, {
+           method: 'POST',
+           headers: {
+               'Authorization': `Bearer ${token}`,
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(payload)
+       });
+       
+       if (response.ok) {
+           await refreshCurrentUser();
+           setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+           setCurrentStep(3);
+       } else {
+           const errorData = await response.json().catch(() => ({}));
+           throw new Error(errorData.message || 'Failed to complete profile');
+       }
+    } catch (err: any) {
+        console.error('Profile completion error:', err);
+        setErrors({ email: err.message || 'An error occurred while completing your profile' });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validateStep2() || !selectedRole || !isLoaded || !signUp) return;
+    if (!validateStep2() || !selectedRole) return;
+    
+    // If user is already authenticated (e.g. via Google) but missing profile
+    // we call the backend to complete the profile instead of creating a new Clerk user
+    if (isSignedIn && !currentUser) {
+        await handleCompleteProfile();
+        return;
+    }
+
+    if (!isLoaded || !signUp) return;
     
     setIsLoading(true);
     setHasStartedSignup(true);
