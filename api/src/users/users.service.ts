@@ -247,37 +247,49 @@ export class UsersService {
       console.log(`⚠️ [COMPLETE PROFILE] User already exists, updating role...`);
       // Update role if it's different
       if (existingUser.role !== dto.role) {
-        await this.prisma.appUser.update({
-          where: { id: existingUser.id },
-          data: { role: dto.role },
+        await this.prisma.$transaction(async (tx) => {
+          await tx.appUser.update({
+            where: { id: existingUser.id },
+            data: { role: dto.role },
+          });
+          
+          // Only update user record if it exists
+          const userRecord = await tx.user.findUnique({ where: { clerkId } });
+          if (userRecord) {
+            await tx.user.update({
+              where: { clerkId },
+              data: { role: dto.role },
+            });
+          }
         });
       }
     } else {
       console.log(`🆕 [COMPLETE PROFILE] Creating new user with role ${dto.role}`);
-      // Create AppUser
-      const appUser = await this.prisma.appUser.create({
-        data: {
-          clerkId,
-          email,
-          role: dto.role,
-        },
-      });
-
-      // Create User profile
+      // Create AppUser and User atomically
       const nameParts = dto.contactPerson ? dto.contactPerson.trim().split(' ') : [];
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      await this.prisma.user.create({
-        data: {
-          clerkId,
-          email,
-          role: dto.role,
-          firstName: firstName || null,
-          lastName: lastName || null,
-          phoneNumber: dto.phone,
-          isActive: true,
-        },
+      await this.prisma.$transaction(async (tx) => {
+        const appUser = await tx.appUser.create({
+          data: {
+            clerkId,
+            email,
+            role: dto.role,
+          },
+        });
+
+        await tx.user.create({
+          data: {
+            clerkId,
+            email,
+            role: dto.role,
+            firstName: firstName || null,
+            lastName: lastName || null,
+            phoneNumber: dto.phone,
+            isActive: true,
+          },
+        });
       });
       
       // If organization details are provided, we should ideally create the organization here

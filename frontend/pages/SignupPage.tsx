@@ -285,16 +285,26 @@ const SignupPage: React.FC = () => {
            throw new Error('Authentication token not available');
        }
 
+       const payload = {
+           role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
+           organisationName: formData.organisationName || undefined,
+           contactPerson: formData.contactPerson || undefined,
+           phone: formData.phone || undefined,
+           canton: formData.canton || undefined,
+           capacity: formData.capacity,
+           category: formData.category || undefined,
+           serviceType: formData.serviceType || undefined,
+           childAge: formData.childAge,
+           childStartDate: formData.childStartDate || undefined,
+       };
+
        const response = await fetch(`${apiService.apiBaseUrl}${API_ENDPOINTS.users.completeProfile}`, {
            method: 'POST',
            headers: {
                'Authorization': `Bearer ${token}`,
                'Content-Type': 'application/json'
            },
-           body: JSON.stringify({
-               role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
-               ...formData
-           })
+           body: JSON.stringify(payload)
        });
        
        if (response.ok) {

@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsNotEmpty, IsInt, Min } from 'class-validator';
 import { UserRole } from '@prisma/client';
+import { Type } from 'class-transformer';
 
 export class CompleteProfileDto {
   @IsEnum(UserRole)
@@ -23,6 +24,9 @@ export class CompleteProfileDto {
   canton?: string;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
   capacity?: number;
 
   @IsString()
@@ -34,6 +38,9 @@ export class CompleteProfileDto {
   serviceType?: string;
 
   @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Type(() => Number)
   childAge?: number;
 
   @IsString()
