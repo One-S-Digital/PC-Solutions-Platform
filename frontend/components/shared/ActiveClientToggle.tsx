@@ -84,7 +84,7 @@ const ActiveClientToggle: React.FC<ActiveClientToggleProps> = ({ vendorId, orgId
             </div>
             <p className="text-xs text-gray-600 mt-2">{t('activeClientToggle.subtext')}</p>
             <Button onClick={handleSave} disabled={!isDirty} variant="secondary" size="sm" className="w-full mt-4">
-                {t('buttons.saveChanges')}
+                {t('common:buttons.saveChanges')}
             </Button>
         </Card>
     );

@@ -67,7 +67,7 @@ const NotificationsPage: React.FC = () => {
                   size="sm" 
                   className="!p-2 text-gray-400 hover:text-swiss-coral"
                   onClick={() => removeNotification(notif.id)}
-                  aria-label={t('buttons.dismiss')}
+                  aria-label={t('common:buttons.dismiss')}
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </Button>

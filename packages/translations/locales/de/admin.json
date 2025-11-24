@@ -78,5 +78,102 @@
     "buttons": {
       "becomePartner": "Partner werden"
     }
+  },
+  "organizations": {
+    "title": "Organisationen",
+    "subtitle": "Kindertagesstätten und Organisationen verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Organisationen suchen...",
+    "addButton": "Organisation hinzufügen",
+    "emptyState": {
+      "title": "Keine Organisationen gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Organisation hinzuzufügen."
+    },
+    "error": {
+      "title": "Fehler beim Laden der Organisationen",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "staffMembers": "Mitarbeiter"
+  },
+  "jobListings": {
+    "title": "Stellenangebote",
+    "subtitle": "Stellenangebote und Rekrutierung verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Stellen suchen...",
+    "addButton": "Stelle veröffentlichen",
+    "statusFilter": {
+      "all": "Alle Status",
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "closed": "Geschlossen"
+    },
+    "emptyState": {
+      "title": "Keine Stellenangebote gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Stelle zu veröffentlichen."
+    },
+    "error": {
+      "title": "Fehler beim Laden der Stellenangebote",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
+  },
+  "candidates": {
+    "title": "Kandidaten",
+    "subtitle": "Bewerber und Kandidaten verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Kandidaten suchen...",
+    "addButton": "Kandidat hinzufügen",
+    "statusFilter": {
+      "all": "Alle Status"
+    },
+    "emptyState": {
+      "title": "Keine Kandidaten gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder einen neuen Kandidaten hinzuzufügen."
+    },
+    "table": {
+      "candidate": "KANDIDAT",
+      "position": "POSITION",
+      "experience": "ERFAHRUNG",
+      "status": "STATUS",
+      "appliedDate": "BEWERBUNGSDATUM"
+    }
+  },
+  "products": {
+    "title": "Produkte",
+    "subtitle": "Produkte und Lieferungen verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Produkte suchen...",
+    "addButton": "Produkt hinzufügen",
+    "categoryFilter": {
+      "all": "Alle Kategorien"
+    },
+    "emptyState": {
+      "title": "Keine Produkte gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder ein neues Produkt hinzuzufügen."
+    },
+    "error": {
+      "title": "Fehler beim Laden der Produkte",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalten Sie Ihre Anwendungseinstellungen und Präferenzen",
+    "tabs": {
+      "general": "Allgemein",
+      "branding": "Branding",
+      "content": "Inhalt",
+      "notifications": "Benachrichtigungen",
+      "integrations": "Integrationen",
+      "emailTemplates": "E-Mail-Vorlagen",
+      "systemConfig": "Systemkonfiguration"
+    }
   }
 }

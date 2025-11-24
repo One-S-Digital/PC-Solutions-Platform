@@ -72,7 +72,7 @@ const DashboardPage: React.FC = () => {
                     className={`font-medium ${stat.color} hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-current rounded`}
                     aria-label={t('dashboardPage.viewDetailsFor', { name: stat.name })}
                 >
-                    {t('buttons.viewDetails')} &rarr;
+                    {t('common:buttons.viewDetails')} &rarr;
                 </button>
             </div>
           </Card>

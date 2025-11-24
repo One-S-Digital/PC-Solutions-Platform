@@ -185,7 +185,7 @@ const ParentLeadFormPage: React.FC = () => {
           </div>
 
           <div className="pt-2">
-            <Button type="submit" variant="primary" size="lg" className="w-full">{t('buttons.submitEnquiry')}</Button>
+            <Button type="submit" variant="primary" size="lg" className="w-full">{t('common:buttons.submitEnquiry')}</Button>
           </div>
         </form>
       </Card>

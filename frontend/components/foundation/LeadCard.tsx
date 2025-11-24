@@ -149,7 +149,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                 placeholder={t('leadCard.questionPlaceholder')}
               />
               <div className="mt-2 flex justify-end space-x-2">
-                <Button variant="ghost" size="sm" onClick={() => setShowResponseInput(false)}>{t('buttons.cancel')}</Button>
+                <Button variant="ghost" size="sm" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>
                 <Button 
                     variant="secondary" 
                     size="sm" 

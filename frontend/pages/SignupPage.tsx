@@ -588,10 +588,10 @@ const SignupPage: React.FC = () => {
                     
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
                       <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto">
-                        {t('buttons.goBack')}
+                        {t('common:buttons.goBack')}
                       </Button>
                       <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
-                        {isLoading ? t('creatingAccount') : t('buttons.createAccount')}
+                        {isLoading ? t('signup:creatingAccount', 'Creating Account...') : t('common:buttons.createAccount')}
                       </Button>
                     </div>
                   </form>

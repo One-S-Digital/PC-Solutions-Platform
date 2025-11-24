@@ -112,7 +112,7 @@ const ParentEnquiriesPage: React.FC = () => {
                             <div className="flex justify-between items-end mt-1">
                                 <p className="text-xs text-gray-600 italic flex-grow pr-4">{t('parentEnquiriesPage.card.message')}: {response.messageToParent}</p>
                                 <Button variant="ghost" size="xs" leftIcon={ChatBubbleLeftEllipsisIcon} onClick={() => handleMessageFoundation(response.foundationId, response.foundationName)}>
-                                    {t('buttons.sendMessage')}
+                                    {t('common:buttons.sendMessage')}
                                 </Button>
                             </div>
                         )}

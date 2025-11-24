@@ -26,7 +26,7 @@ const OrderRequestModal: React.FC<OrderRequestModalProps> = ({ product, isOpen, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (quantity < 1) {
-        alert("Quantity must be at least 1."); // Consider translating this alert
+        alert(t('common:forms.enterValue', 'Quantity must be at least 1.'));
         return;
     }
     onSubmitOrder({
@@ -46,7 +46,7 @@ const OrderRequestModal: React.FC<OrderRequestModalProps> = ({ product, isOpen, 
       <Card className="w-full max-w-lg bg-white p-0 shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <h2 id="orderRequestModalTitle" className="text-xl font-semibold text-swiss-charcoal">{t('orderRequestModal.title', { productTitle: product.title })}</h2>
-          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label={t('buttons.close')}>
+          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label={t('common:buttons.close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -98,8 +98,8 @@ const OrderRequestModal: React.FC<OrderRequestModalProps> = ({ product, isOpen, 
             </div>
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-            <Button type="button" variant="light" onClick={onClose}>{t('buttons.cancel')}</Button>
-            <Button type="submit" variant="primary">{t('buttons.submitRequest')}</Button>
+            <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
+            <Button type="submit" variant="primary">{t('common:buttons.submitRequest')}</Button>
           </div>
         </form>
       </Card>

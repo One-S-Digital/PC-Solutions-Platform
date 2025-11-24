@@ -65,7 +65,7 @@ const MessagesPage: React.FC = () => {
             {t('dashboard:sidebar.messages')}
         </h1>
         <Button variant="primary" leftIcon={PlusIcon} onClick={() => setIsGroupModalOpen(true)}>
-            {t('buttons.newGroup')}
+            {t('messages:buttons.newGroup')}
         </Button>
       </div>
       
@@ -82,10 +82,10 @@ const MessagesPage: React.FC = () => {
           ) : (
             <div className="flex-grow flex flex-col items-center justify-center text-center p-10 bg-white">
               <InboxIcon className="w-20 h-20 text-gray-300 mb-4" />
-              <h2 className="text-xl font-semibold text-swiss-charcoal">{t('emptyState.noConversationSelectedTitle')}</h2>
-              <p className="text-gray-500">{t('emptyState.noConversationSelectedSubtitle')}</p>
+              <h2 className="text-xl font-semibold text-swiss-charcoal">{t('messages:emptyState.noConversationSelectedTitle')}</h2>
+              <p className="text-gray-500">{t('messages:emptyState.noConversationSelectedSubtitle')}</p>
               {conversations.length === 0 && (
-                <p className="text-sm text-gray-400 mt-2">{t('emptyState.noConversationsYet')}</p>
+                <p className="text-sm text-gray-400 mt-2">{t('messages:emptyState.noConversationsYet')}</p>
               )}
             </div>
           )}

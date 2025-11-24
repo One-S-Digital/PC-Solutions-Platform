@@ -106,7 +106,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
           )}
         </div>
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">
-          <Button type="button" variant="light" onClick={onClose}>{t('buttons.close')}</Button>
+          <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.close')}</Button>
           {renderActions()}
         </div>
       </div>

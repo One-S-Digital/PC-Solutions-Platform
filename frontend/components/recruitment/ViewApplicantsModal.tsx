@@ -70,7 +70,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="secondary" size="xs" leftIcon={ChatBubbleLeftEllipsisIcon} onClick={() => handleSendMessage(application)}>
-                {t('buttons.sendMessage')}
+                {t('common:buttons.sendMessage')}
               </Button>
               <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => handleViewProfile(application.candidateId)}>
                 {t('candidateCard.viewProfile')}
@@ -89,7 +89,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
           <h2 className="text-xl font-semibold text-swiss-charcoal">
             {t('recruitmentPage.viewApplicantsModal.title', { jobTitle: job.title })}
           </h2>
-          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('buttons.close')}>
+          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('common:buttons.close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -100,7 +100,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
 
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end">
           <Button type="button" variant="light" onClick={onClose}>
-            {t('buttons.close')}
+            {t('common:buttons.close')}
           </Button>
         </div>
       </div>

@@ -135,7 +135,7 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
           <h2 className="text-xl font-semibold text-swiss-charcoal">
             {existingJob ? t('recruitmentPage.jobPostModal.editTitle') : t('recruitmentPage.jobPostModal.addTitle')}
           </h2>
-          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('buttons.close')}>
+          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('common:buttons.close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -182,8 +182,8 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
 
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">
-            <Button type="button" variant="light" onClick={onClose}>{t('buttons.cancel')}</Button>
-            <Button type="submit" variant="primary">{existingJob ? t('buttons.saveChanges') : t('recruitmentPage.jobPostModal.postJob')}</Button>
+            <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
+            <Button type="submit" variant="primary">{existingJob ? t('common:buttons.saveChanges') : t('recruitmentPage.jobPostModal.postJob')}</Button>
           </div>
         </form>
       </div>

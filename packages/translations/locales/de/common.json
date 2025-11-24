@@ -146,7 +146,7 @@
     "archived": "Archiviert"
   },
   "appName": "Procrèche Solutions Suisse",
-  "loading": "[DE] Loading",
+  "loading": "Laden...",
   "hidePassword": "Passwort Verbergen",
   "showPassword": "Passwort anzeigen",
   "signIn": "Anmelden",
@@ -246,8 +246,8 @@
     "unknownUser": "MessagePage.unnownownuser",
     "noMessagesYet": "MessagePage.nomessAgessyet",
     "conversationFallbackTitle": "[DE] Conversation Fallback Title",
-    "attachFile": "[DE] Attach File",
-    "addEmoji": "[DE] Add Emoji",
+    "attachFile": "Datei anhängen",
+    "addEmoji": "Emoji hinzufügen",
     "typeMessagePlaceholder": "[DE] Enter type message",
     "searchPlaceholder": "[DE] Enter search",
     "youPrefix": "[DE] You Prefix"
@@ -1045,17 +1045,21 @@
     }
   },
   "userRoles": {
-    "Product Supplier": "[DE] Product  Supplier",
-    "parent": "[DE] Parent",
-    "educator": "[DE] Educator",
-    "foundation": "[DE] Foundation",
-    "admin": "[DE] Administrator",
-    "productSupplier": "[DE] Product Supplier",
-    "serviceProvider": "[DE] Service Provider",
-    "Service Provider": "[DE] Service Provider",
-    "PARENT": "[DE] Parent",
-    "EDUCATOR": "[DE] Educator",
-    "FOUNDATION": "[DE] Foundation"
+    "Product Supplier": "Produktlieferant",
+    "parent": "Elternteil",
+    "educator": "Erzieher",
+    "foundation": "Stiftung",
+    "admin": "Administrator",
+    "productSupplier": "Produktlieferant",
+    "serviceProvider": "Dienstleister",
+    "Service Provider": "Dienstleister",
+    "PARENT": "Elternteil",
+    "EDUCATOR": "Erzieher",
+    "FOUNDATION": "Stiftung",
+    "ADMIN": "Administrator",
+    "PRODUCT_SUPPLIER": "Produktlieferant",
+    "SERVICE_PROVIDER": "Dienstleister",
+    "SUPER_ADMIN": "Super Administrator"
   },
   "serviceProviderAnalyticsPage": {
     "title": "[DE] Title"

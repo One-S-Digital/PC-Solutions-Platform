@@ -37,6 +37,7 @@ import marketplaceEn from '@workspace/translations/locales/en/marketplace.json';
 import usersEn from '@workspace/translations/locales/en/users.json';
 import adminEn from '@workspace/translations/locales/en/admin.json';
 import signupEn from '@workspace/translations/locales/en/signup.json';
+import settingsEn from '@workspace/translations/locales/en/settings.json';
 
 import commonFr from '@workspace/translations/locales/fr/common.json';
 import authFr from '@workspace/translations/locales/fr/auth.json';
@@ -47,6 +48,7 @@ import marketplaceFr from '@workspace/translations/locales/fr/marketplace.json';
 import usersFr from '@workspace/translations/locales/fr/users.json';
 import adminFr from '@workspace/translations/locales/fr/admin.json';
 import signupFr from '@workspace/translations/locales/fr/signup.json';
+import settingsFr from '@workspace/translations/locales/fr/settings.json';
 
 import commonDe from '@workspace/translations/locales/de/common.json';
 import authDe from '@workspace/translations/locales/de/auth.json';
@@ -57,6 +59,7 @@ import marketplaceDe from '@workspace/translations/locales/de/marketplace.json';
 import usersDe from '@workspace/translations/locales/de/users.json';
 import adminDe from '@workspace/translations/locales/de/admin.json';
 import signupDe from '@workspace/translations/locales/de/signup.json';
+import settingsDe from '@workspace/translations/locales/de/settings.json';
 
 // Fallback resources (used when API is unavailable)
 // Strip prefixes from all fallback resources before using them
@@ -71,6 +74,7 @@ const fallbackResources = {
     users: stripPrefixes(usersEn),
     admin: stripPrefixes(adminEn),
     signup: stripPrefixes(signupEn),
+    settings: stripPrefixes(settingsEn),
   },
   fr: {
     common: stripPrefixes(commonFr),
@@ -82,6 +86,7 @@ const fallbackResources = {
     users: stripPrefixes(usersFr),
     admin: stripPrefixes(adminFr),
     signup: stripPrefixes(signupFr),
+    settings: stripPrefixes(settingsFr),
   },
   de: {
     common: stripPrefixes(commonDe),
@@ -93,6 +98,7 @@ const fallbackResources = {
     users: stripPrefixes(usersDe),
     admin: stripPrefixes(adminDe),
     signup: stripPrefixes(signupDe),
+    settings: stripPrefixes(settingsDe),
   },
 };
 
@@ -237,7 +243,7 @@ i18n
 
           // Fallback to bundled translations
           try {
-            let fallback = fallbackResources[lng as keyof typeof fallbackResources]?.[ns as 'common' | 'auth' | 'dashboard'];
+            let fallback = fallbackResources[lng as keyof typeof fallbackResources]?.[ns as keyof typeof fallbackResources['en']];
             if (!fallback) {
               // Try to import from packages/translations
               try {

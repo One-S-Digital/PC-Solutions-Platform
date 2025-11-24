@@ -1013,7 +1013,11 @@
     "Service Provider": "Service Provider",
     "PARENT": "Parent",
     "EDUCATOR": "Educator",
-    "FOUNDATION": "Foundation"
+    "FOUNDATION": "Foundation",
+    "ADMIN": "Administrator",
+    "PRODUCT_SUPPLIER": "Product Supplier",
+    "SERVICE_PROVIDER": "Service Provider",
+    "SUPER_ADMIN": "Super Administrator"
   },
   "serviceProviderAnalyticsPage": {
     "title": "Title"

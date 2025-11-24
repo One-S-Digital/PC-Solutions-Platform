@@ -73,10 +73,10 @@ const ChatWindow: React.FC = () => {
       {/* Message Input Area */}
       <div className="border-t border-gray-200 p-4 bg-gray-50">
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
-          <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('attachFile')} onClick={() => alert(t('attachFile') + ' TBD')}>
+          <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('common:attachFile')} onClick={() => alert(t('common:attachFile') + ' TBD')}>
             <PaperClipIcon className="w-5 h-5" />
           </Button>
-           <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('addEmoji')} onClick={() => alert(t('addEmoji') + ' TBD')}>
+           <Button type="button" variant="ghost" className="!p-2 text-gray-500 hover:text-swiss-teal" aria-label={t('common:addEmoji')} onClick={() => alert(t('common:addEmoji') + ' TBD')}>
             <FaceSmileIcon className="w-5 h-5" />
           </Button>
           <input
@@ -88,7 +88,7 @@ const ChatWindow: React.FC = () => {
             autoFocus
             aria-label={t('typeMessagePlaceholder')}
           />
-          <Button type="submit" variant="primary" size="md" className="!p-2.5" aria-label={t('buttons.sendMessage')}>
+          <Button type="submit" variant="primary" size="md" className="!p-2.5" aria-label={t('common:buttons.sendMessage')}>
             <PaperAirplaneIcon className="w-5 h-5" />
           </Button>
         </form>

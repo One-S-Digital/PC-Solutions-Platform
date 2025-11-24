@@ -88,10 +88,10 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium space-x-2">
                     <Button variant="ghost" size="xs" onClick={() => { setEditingPromo(promo); setIsModalOpen(true); }}>
-                        <PencilSquareIcon className="w-4 h-4"/> {t('buttons.edit')}
+                        <PencilSquareIcon className="w-4 h-4"/> {t('common:buttons.edit')}
                     </Button>
                     <Button variant="ghost" size="xs" className="text-swiss-coral" onClick={() => handleDeletePromo(promo.id)}>
-                        <TrashIcon className="w-4 h-4"/> {t('buttons.delete')}
+                        <TrashIcon className="w-4 h-4"/> {t('common:buttons.delete')}
                     </Button>
                   </td>
                 </tr>
@@ -114,7 +114,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
                   <h3 className="text-lg font-semibold mb-4">{editingPromo ? t('settingsPromoCodeManager.addEditModal.editTitle') : t('settingsPromoCodeManager.addEditModal.addTitle')}</h3>
                   <p className="text-sm text-gray-600 mb-4">{t('settingsPromoCodeManager.addEditModal.placeholder')}</p>
                   <div className="flex justify-end space-x-2">
-                      <Button variant="light" onClick={() => setIsModalOpen(false)}>{t('buttons.cancel')}</Button>
+                      <Button variant="light" onClick={() => setIsModalOpen(false)}>{t('common:buttons.cancel')}</Button>
                       <Button variant="primary" onClick={() => { /* Mock submit */ setIsModalOpen(false); }}>{t('settingsPromoCodeManager.addEditModal.save')}</Button>
                   </div>
               </div>

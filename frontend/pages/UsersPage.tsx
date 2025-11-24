@@ -51,7 +51,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t(`userRoles.${user.role}`, user.role)}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t(`common:userRoles.${user.role}`, user.role)}</td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[user.status || 'Pending']}`}>
           {user.status ? t(`usersPage.status.${user.status.toLowerCase()}`, user.status) : t('roleManagement.status.pending', 'Pending')}
@@ -123,7 +123,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
           <p className="text-center text-sm text-gray-500 mb-4">{user.email}</p>
           
           <div className="space-y-2 text-sm">
-            <p><strong>{t('roleManagement.userDetailDrawer.roleLabel')}</strong> {t(`userRoles.${user.role}`, user.role)}</p>
+            <p><strong>{t('roleManagement.userDetailDrawer.roleLabel')}</strong> {t(`common:userRoles.${user.role}`, user.role)}</p>
             <p><strong>{t('roleManagement.userDetailDrawer.statusLabel')}</strong> {user.status ? t(`usersPage.status.${user.status.toLowerCase()}`, user.status) : 'N/A'}</p>
             <p><strong>{t('roleManagement.userDetailDrawer.regionLabel')}</strong> {user.region || 'N/A'}</p>
             <p><strong>{t('roleManagement.userDetailDrawer.lastLoginLabel')}</strong> {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A'}</p>
@@ -143,7 +143,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
                                 onChange={(e) => setSelectedRole(e.target.value as UserRole)} 
                                 className={`${STANDARD_INPUT_FIELD} w-full mb-2`}
                             > 
-                                {Object.values(UserRole).map(r => <option key={r} value={r}>{t(`userRoles.${r}`, r)}</option>)}
+                                {Object.values(UserRole).map(r => <option key={r} value={r}>{t(`common:userRoles.${r}`, r)}</option>)}
                             </select>
                             <Button variant="secondary" className="w-full" onClick={handleRoleUpdate}>{t('roleManagement.userDetailDrawer.updateRoleButton')}</Button>
                         </div>
@@ -174,7 +174,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const pageTitle = roleFilter ? t('roleManagement.rolePageTitle', { role: t(`userRoles.${roleFilter}`, roleFilter) }) : t('roleManagement.allUsersTitle');
+  const pageTitle = roleFilter ? t('roleManagement.rolePageTitle', { role: t(`common:userRoles.${roleFilter}`, roleFilter) }) : t('roleManagement.allUsersTitle');
   
   const filteredUsers = useMemo(() => {
     return usersData.filter(user =>

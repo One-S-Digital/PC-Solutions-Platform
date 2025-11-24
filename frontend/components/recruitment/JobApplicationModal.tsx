@@ -83,7 +83,7 @@ const JobApplicationModal: React.FC<JobApplicationModalProps> = ({
             onClick={handleClose}
             disabled={isSubmitting}
             className="p-1 rounded-full text-gray-400 hover:text-gray-600 disabled:opacity-50"
-            aria-label={t('buttons.close')}
+            aria-label={t('common:buttons.close')}
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -157,7 +157,7 @@ const JobApplicationModal: React.FC<JobApplicationModalProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              {t('buttons.cancel')}
+              {t('common:buttons.cancel')}
             </Button>
             <Button
               type="submit"

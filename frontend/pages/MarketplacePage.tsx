@@ -260,7 +260,7 @@ const MarketplacePage: React.FC = () => {
                  <p className="text-gray-500 mt-1">{t('subtitles.serviceProviders')}</p>
             }
         </div>
-        {currentUser?.role === UserRole.ADMIN && <Button variant="secondary" leftIcon={FunnelIcon} size="md" onClick={() => alert("Partner Onboarding TBD")}>{t('buttons.partnerOnboarding')}</Button>}
+        {currentUser?.role === UserRole.ADMIN && <Button variant="secondary" leftIcon={FunnelIcon} size="md" onClick={() => alert("Partner Onboarding TBD")}>{t('marketplace:buttons.partnerOnboarding')}</Button>}
       </div>
       
       <div className="bg-swiss-teal/5 border-l-4 border-swiss-teal text-swiss-teal p-4 rounded-card flex items-start" role="alert">
@@ -366,7 +366,7 @@ const MarketplacePage: React.FC = () => {
                     <ListBulletIcon className="w-5 h-5"/>
                 </Button>
             </div>
-            <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setCategoryFilter('All'); setRegionFilter('All'); setTagFilter('All'); setSortOption('name_asc');}}>{t('buttons.resetFilters')}</Button>
+            <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setCategoryFilter('All'); setRegionFilter('All'); setTagFilter('All'); setSortOption('name_asc');}}>{t('common:buttons.resetFilters')}</Button>
         </div>
       </Card>
 

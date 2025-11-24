@@ -53,8 +53,8 @@ const RenameFileModal: React.FC<RenameFileModalProps> = ({ isOpen, onClose, onRe
             />
           </div>
           <div className="px-6 py-4 bg-gray-50 text-right space-x-2">
-            <Button type="button" variant="light" onClick={onClose}>{t('buttons.cancel')}</Button>
-            <Button type="submit" variant="primary">{t('buttons.save')}</Button>
+            <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
+            <Button type="submit" variant="primary">{t('common:buttons.save')}</Button>
           </div>
         </form>
       </div>

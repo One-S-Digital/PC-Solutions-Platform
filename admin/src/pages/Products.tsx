@@ -16,12 +16,14 @@ import logger from '../utils/logger'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import EditProductModal from '../components/products/EditProductModal'
 import { Product } from '../types/api'
 
 
 const Products: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
 
@@ -66,8 +68,8 @@ const Products: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load products</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:products.error.title')}</div>
+        <p className="text-gray-600">{t('admin:products.error.description')}</p>
       </div>
     )
   }
@@ -79,15 +81,15 @@ const Products: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Package className="h-8 w-8 mr-3 text-swiss-teal" />
-            Products
+            {t('admin:products.title')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage products and supplies ({products.length} total)
+            {t('admin:products.subtitle', { count: products.length })}
           </p>
         </div>
         <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
           <Plus className="h-4 w-4 mr-2" />
-          Add Product
+          {t('admin:products.addButton')}
         </button>
       </div>
 
@@ -99,7 +101,7 @@ const Products: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t('admin:products.searchPlaceholder')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -112,7 +114,7 @@ const Products: React.FC = () => {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
-              <option value="">All Categories</option>
+              <option value="">{t('admin:products.categoryFilter.all')}</option>
               <option value="Educational">Educational</option>
               <option value="Safety">Safety</option>
               <option value="Nutrition">Nutrition</option>
@@ -161,7 +163,7 @@ const Products: React.FC = () => {
                               className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                             >
                               <Edit className="h-4 w-4 mr-2" />
-                              Edit
+                              {t('admin:products.actions.edit')}
                             </button>
                           )}
                         </Menu.Item>
@@ -171,7 +173,7 @@ const Products: React.FC = () => {
                               className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
+                              {t('admin:products.actions.delete')}
                             </button>
                           )}
                         </Menu.Item>
@@ -201,8 +203,8 @@ const Products: React.FC = () => {
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-          <p className="text-gray-600">Try adjusting your search criteria or add a new product.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:products.emptyState.title')}</h3>
+          <p className="text-gray-600">{t('admin:products.emptyState.description')}</p>
         </div>
       )}
     </div>

@@ -126,7 +126,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
                                 <p className="text-xs text-gray-500">{notif.message}</p>
                               </Link>
                                 <button onClick={() => removeNotification(notif.id)} className="text-xs text-gray-400 hover:text-red-500 mt-1 float-right">
-                                  {t('buttons.dismiss')}
+                                  {t('common:buttons.dismiss')}
                                 </button>
                           </div>
                       ))}

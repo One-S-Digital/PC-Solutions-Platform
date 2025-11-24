@@ -9,7 +9,7 @@ import { TranslationQueueModule } from './translation-queue.module';
   imports: [
     PrismaModule,
     AuthModule,
-    TranslationQueueModule, 
+    TranslationQueueModule,
   ],
   controllers: [TranslationController],
   providers: [TranslationService],

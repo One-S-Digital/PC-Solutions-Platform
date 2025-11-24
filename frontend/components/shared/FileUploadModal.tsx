@@ -150,7 +150,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
           )}
         </div>
         <div className="px-6 py-4 bg-gray-50 text-right space-x-2">
-          <Button variant="light" onClick={onClose} disabled={isUploading}>{t('buttons.cancel')}</Button>
+          <Button variant="light" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>
           <Button variant="primary" onClick={handleUpload} disabled={filesToUpload.length === 0 || isUploading}>
             {isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}
           </Button>

@@ -427,7 +427,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
           {Object.values(UserRole).filter(r => [UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.ADMIN, UserRole.PARENT].includes(r)).map(role => (
             <label key={role} className="flex items-center">
               <input type="checkbox" name="accessRoles" value={role} checked={(formData.accessRoles || []).includes(role)} onChange={handleInputChange} className="h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint" />
-              <span className="ml-2 text-sm text-gray-600">{t(`userRoles.${role}`, role)}</span>
+              <span className="ml-2 text-sm text-gray-600">{t(`common:userRoles.${role}`, role)}</span>
             </label>
           ))}
         </div>

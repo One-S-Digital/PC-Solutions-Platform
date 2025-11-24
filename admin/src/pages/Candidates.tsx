@@ -20,7 +20,7 @@ import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const Candidates: React.FC = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
   const apiClient = useApiClient()
@@ -79,15 +79,15 @@ const Candidates: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <UserCheck className="h-8 w-8 mr-3 text-swiss-teal" />
-            Candidates
+            {t('admin:candidates.title')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage job applicants and candidates ({candidates.length} total)
+            {t('admin:candidates.subtitle', { count: candidates.length })}
           </p>
         </div>
         <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
           <Plus className="h-4 w-4 mr-2" />
-          {t('recruitment.addCandidate')}
+          {t('admin:candidates.addButton')}
         </button>
       </div>
 
@@ -99,7 +99,7 @@ const Candidates: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search candidates..."
+                placeholder={t('admin:candidates.searchPlaceholder')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -112,7 +112,7 @@ const Candidates: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
-              <option value="">All Status</option>
+              <option value="">{t('admin:candidates.statusFilter.all')}</option>
               {statusOptions.map((status) => (
                 <option key={status} value={status}>
                   {status}
@@ -130,19 +130,19 @@ const Candidates: React.FC = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Candidate
+                  {t('admin:candidates.table.candidate')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Position
+                  {t('admin:candidates.table.position')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Experience
+                  {t('admin:candidates.table.experience')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {t('admin:candidates.table.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Applied Date
+                  {t('admin:candidates.table.appliedDate')}
                 </th>
                 <th className="relative px-6 py-3">
                   <span className="sr-only">Actions</span>
@@ -260,8 +260,8 @@ const Candidates: React.FC = () => {
         {filteredCandidates.length === 0 && (
           <div className="text-center py-12">
             <UserCheck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No candidates found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or add a new candidate.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:candidates.emptyState.title')}</h3>
+            <p className="text-gray-600">{t('admin:candidates.emptyState.description')}</p>
           </div>
         )}
       </div>

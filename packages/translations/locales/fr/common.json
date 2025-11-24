@@ -486,8 +486,8 @@
   "messagesPage": {
     "selectConversationToView": "[FR] Select Conversation To View",
     "conversationFallbackTitle": "[FR] Conversation Fallback Title",
-    "attachFile": "[FR] Attach File",
-    "addEmoji": "[FR] Add Emoji",
+    "attachFile": "Joindre un fichier",
+    "addEmoji": "Ajouter un emoji",
     "typeMessagePlaceholder": "[FR] Enter type message",
     "searchPlaceholder": "[FR] Enter search",
     "unknownUser": "[FR] Unknown User",
@@ -1020,17 +1020,21 @@
     }
   },
   "userRoles": {
-    "Product Supplier": "[FR] Product  Supplier",
-    "parent": "[FR] Parent",
-    "educator": "[FR] Educator",
-    "foundation": "[FR] Foundation",
-    "admin": "[FR] Administrator",
-    "productSupplier": "[FR] Product Supplier",
-    "serviceProvider": "[FR] Service Provider",
-    "Service Provider": "[FR] Service Provider",
-    "PARENT": "[FR] Parent",
-    "EDUCATOR": "[FR] Educator",
-    "FOUNDATION": "[FR] Foundation"
+    "Product Supplier": "Fournisseur de produits",
+    "parent": "Parent",
+    "educator": "Éducateur",
+    "foundation": "Fondation",
+    "admin": "Administrateur",
+    "productSupplier": "Fournisseur de produits",
+    "serviceProvider": "Prestataire de services",
+    "Service Provider": "Prestataire de services",
+    "PARENT": "Parent",
+    "EDUCATOR": "Éducateur",
+    "FOUNDATION": "Fondation",
+    "ADMIN": "Administrateur",
+    "PRODUCT_SUPPLIER": "Fournisseur de produits",
+    "SERVICE_PROVIDER": "Prestataire de services",
+    "SUPER_ADMIN": "Super Administrateur"
   },
   "serviceProviderAnalyticsPage": {
     "title": "[FR] Title"

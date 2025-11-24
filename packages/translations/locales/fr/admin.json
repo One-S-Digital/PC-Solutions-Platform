@@ -78,5 +78,102 @@
     "buttons": {
       "becomePartner": "Devenir partenaire"
     }
+  },
+  "organizations": {
+    "title": "Organisations",
+    "subtitle": "Gérer les crèches et organisations ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des organisations...",
+    "addButton": "Ajouter une organisation",
+    "emptyState": {
+      "title": "Aucune organisation trouvée",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez une nouvelle organisation."
+    },
+    "error": {
+      "title": "Échec du chargement des organisations",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "staffMembers": "membres du personnel"
+  },
+  "jobListings": {
+    "title": "Offres d'emploi",
+    "subtitle": "Gérer les offres d'emploi et le recrutement ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des emplois...",
+    "addButton": "Publier une offre",
+    "statusFilter": {
+      "all": "Tous les statuts",
+      "active": "Actif",
+      "paused": "En pause",
+      "closed": "Fermé"
+    },
+    "emptyState": {
+      "title": "Aucune offre d'emploi trouvée",
+      "description": "Essayez d'ajuster vos critères de recherche ou publiez une nouvelle offre."
+    },
+    "error": {
+      "title": "Échec du chargement des offres d'emploi",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
+  "candidates": {
+    "title": "Candidats",
+    "subtitle": "Gérer les candidats et postulants ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des candidats...",
+    "addButton": "Ajouter un candidat",
+    "statusFilter": {
+      "all": "Tous les statuts"
+    },
+    "emptyState": {
+      "title": "Aucun candidat trouvé",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez un nouveau candidat."
+    },
+    "table": {
+      "candidate": "CANDIDAT",
+      "position": "POSTE",
+      "experience": "EXPÉRIENCE",
+      "status": "STATUT",
+      "appliedDate": "DATE DE CANDIDATURE"
+    }
+  },
+  "products": {
+    "title": "Produits",
+    "subtitle": "Gérer les produits et fournitures ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des produits...",
+    "addButton": "Ajouter un produit",
+    "categoryFilter": {
+      "all": "Toutes les catégories"
+    },
+    "emptyState": {
+      "title": "Aucun produit trouvé",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez un nouveau produit."
+    },
+    "error": {
+      "title": "Échec du chargement des produits",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérer les paramètres et préférences de votre application",
+    "tabs": {
+      "general": "Général",
+      "branding": "Image de marque",
+      "content": "Contenu",
+      "notifications": "Notifications",
+      "integrations": "Intégrations",
+      "emailTemplates": "Modèles d'e-mail",
+      "systemConfig": "Configuration système"
+    }
   }
 }

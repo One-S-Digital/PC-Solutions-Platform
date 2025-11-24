@@ -17,8 +17,10 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { Organization } from '../types/api'
+import { useTranslation } from 'react-i18next'
 
 const Organizations: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const apiClient = useApiClient()
 
@@ -45,8 +47,8 @@ const Organizations: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load organizations</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:organizations.error.title')}</div>
+        <p className="text-gray-600">{t('admin:organizations.error.description')}</p>
       </div>
     )
   }
@@ -58,15 +60,15 @@ const Organizations: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Building2 className="h-8 w-8 mr-3 text-swiss-teal" />
-            Organizations
+            {t('admin:organizations.title')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage daycare centers and organizations ({organizations.length} total)
+            {t('admin:organizations.subtitle', { count: organizations.length })}
           </p>
         </div>
         <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
           <Plus className="h-4 w-4 mr-2" />
-          Add Organization
+          {t('admin:organizations.addButton')}
         </button>
       </div>
 
@@ -76,7 +78,7 @@ const Organizations: React.FC = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search organizations..."
+            placeholder={t('admin:organizations.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -119,7 +121,7 @@ const Organizations: React.FC = () => {
                             className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                           >
                             <Edit className="h-4 w-4 mr-2" />
-                            Edit
+                            {t('admin:organizations.actions.edit')}
                           </button>
                         )}
                       </Menu.Item>
@@ -129,7 +131,7 @@ const Organizations: React.FC = () => {
                             className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
+                            {t('admin:organizations.actions.delete')}
                           </button>
                         )}
                       </Menu.Item>
@@ -154,7 +156,7 @@ const Organizations: React.FC = () => {
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <Users className="h-4 w-4 mr-2" />
-                {org.userCount || 0} staff members
+                {org.userCount || 0} {t('admin:organizations.staffMembers')}
               </div>
             </div>
           </div>
@@ -164,8 +166,8 @@ const Organizations: React.FC = () => {
       {filteredOrgs.length === 0 && (
         <div className="text-center py-12">
           <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No organizations found</h3>
-          <p className="text-gray-600">Try adjusting your search criteria or add a new organization.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:organizations.emptyState.title')}</h3>
+          <p className="text-gray-600">{t('admin:organizations.emptyState.description')}</p>
         </div>
       )}
     </div>

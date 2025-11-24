@@ -88,7 +88,7 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
               <p className="text-md text-gray-600">{job.foundationName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('buttons.close')}>
+          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('common:buttons.close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -181,7 +181,7 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
 
         {/* Footer */}
         <div className="px-6 py-4 bg-white border-t flex justify-end space-x-3 flex-shrink-0">
-          <Button type="button" variant="light" size="lg" onClick={onClose}>{t('buttons.cancel')}</Button>
+          <Button type="button" variant="light" size="lg" onClick={onClose}>{t('common:buttons.cancel')}</Button>
           <Button type="button" variant="primary" size="lg" onClick={handleApplyClick}>{t('recruitmentPage.jobDetailModal.applyNow')}</Button>
         </div>
       </div>

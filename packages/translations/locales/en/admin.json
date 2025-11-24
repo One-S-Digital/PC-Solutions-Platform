@@ -154,5 +154,102 @@
       "sendNotices": "Send Notices",
       "sendNoticesAlert": "Notice sending functionality coming soon"
     }
+  },
+  "organizations": {
+    "title": "Organizations",
+    "subtitle": "Manage daycare centers and organizations ({{count}} total)",
+    "searchPlaceholder": "Search organizations...",
+    "addButton": "Add Organization",
+    "emptyState": {
+      "title": "No organizations found",
+      "description": "Try adjusting your search criteria or add a new organization."
+    },
+    "error": {
+      "title": "Failed to load organizations",
+      "description": "Please check your connection and try again."
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "staffMembers": "staff members"
+  },
+  "jobListings": {
+    "title": "Job Listings",
+    "subtitle": "Manage job postings and recruitment ({{count}} total)",
+    "searchPlaceholder": "Search jobs...",
+    "addButton": "Post Job",
+    "statusFilter": {
+      "all": "All Status",
+      "active": "Active",
+      "paused": "Paused",
+      "closed": "Closed"
+    },
+    "emptyState": {
+      "title": "No job listings found",
+      "description": "Try adjusting your search criteria or post a new job."
+    },
+    "error": {
+      "title": "Failed to load job listings",
+      "description": "Please check your connection and try again."
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "candidates": {
+    "title": "Candidates",
+    "subtitle": "Manage job applicants and candidates ({{count}} total)",
+    "searchPlaceholder": "Search candidates...",
+    "addButton": "Add Candidate",
+    "statusFilter": {
+      "all": "All Status"
+    },
+    "emptyState": {
+      "title": "No candidates found",
+      "description": "Try adjusting your search criteria or add a new candidate."
+    },
+    "table": {
+      "candidate": "CANDIDATE",
+      "position": "POSITION",
+      "experience": "EXPERIENCE",
+      "status": "STATUS",
+      "appliedDate": "APPLIED DATE"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Manage products and supplies ({{count}} total)",
+    "searchPlaceholder": "Search products...",
+    "addButton": "Add Product",
+    "categoryFilter": {
+      "all": "All Categories"
+    },
+    "emptyState": {
+      "title": "No products found",
+      "description": "Try adjusting your search criteria or add a new product."
+    },
+    "error": {
+      "title": "Failed to load products",
+      "description": "Please check your connection and try again."
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your application settings and preferences",
+    "tabs": {
+      "general": "General",
+      "branding": "Branding",
+      "content": "Content",
+      "notifications": "Notifications",
+      "integrations": "Integrations",
+      "emailTemplates": "Email Templates",
+      "systemConfig": "System Config"
+    }
   }
 }

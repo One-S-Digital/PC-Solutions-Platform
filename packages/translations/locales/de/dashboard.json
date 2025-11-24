@@ -2,9 +2,9 @@
   "welcome": "Willkommen in Ihrem Admin-Dashboard!",
   "dashboardPage": {
     "welcome": "Willkommen Zurück, {{Name}}!",
-    "defaultUser": "Benzutzer",
+    "defaultUser": "Benutzer",
     "overviewSubtitle": "Hierkriegskriegs -Hute -MIT {{Appname}} Passierert",
-    "activeUsers": "Aktiver Benzutzer",
+    "activeUsers": "Aktiver Benutzer",
     "newOrders": "Neue Beellungen",
     "openJobs": "Offene Stellen",
     "pageViews": "SITzenenaufrufe",
@@ -12,7 +12,7 @@
     "quickLinks": "Schnellzugriffe",
     "browseMarketplace": "Marktplatz durchsuchen",
     "postNewJob": "Neue Stelle Ausschleiben",
-    "manageUsers": "Benzutzer Verwalen",
+    "manageUsers": "Benutzer Verwalten",
     "platformSettings": "Plattform-Einstellungen",
     "activityLina": "Lina Meier Hut ein Neue Stelle \"Kinderkrankenschwester\" Vertuffentlich",
     "activityEcoToys": "Ecotoys Gmbh Hut Das Produkt \"Holzbauste\" -Aktualissert",
@@ -23,7 +23,7 @@
       "minutes": "{{count}} minuten",
       "hours": "{{count}} Stunden",
       "yesterday": "Gestern",
-      "days": "[DE] {{count}} days ago"
+      "days": "vor {{count}} Tagen"
     },
     "upcomingMeetings": "Bevorstehende Treffen",
     "quickActions": "SCHNELLE AKTIONEN",
@@ -43,12 +43,12 @@
     "candidatePool": "Talentpool",
     "eLearning": "E-Learning",
     "messages": "Nachricht",
-    "users": "Benzutzer",
-    "allUsers": "Alle Benzutzer",
+    "users": "Benutzer",
+    "allUsers": "Alle Benutzer",
     "admins": "Administratoren",
     "foundations": "Stiftungen",
-    "productSuppliers": "Produktlieberanten",
-    "serviceProviders": "Dienstlister",
+    "productSuppliers": "Produktlieferanten",
+    "serviceProviders": "Dienstleister",
     "parents": "Eltern",
     "content": "Inhalation",
     "translations": "Übersetzungen",
@@ -109,12 +109,12 @@
       "noProductSuppliers": "Keine Produktlieferanten Verefar"
     },
     "subtitles": {
-      "productSuppliers": "Produktlieberanten",
-      "serviceProviders": "Dienstliste"
+      "productSuppliers": "Produktlieferanten",
+      "serviceProviders": "Dienstleister"
     },
     "tabs": {
-      "productSuppliers": "Produktlieberanten",
-      "serviceProviders": "Dienstlister"
+      "productSuppliers": "Produktlieferanten",
+      "serviceProviders": "Dienstleister"
     },
     "buttons": {
       "partnerOnboarding": "Partner-Onboarding"
@@ -796,7 +796,7 @@
     },
     "appPerformance": {
       "title": "Anwendungsleistung",
-      "activeUsers": "Aktiver Benzutzer",
+      "activeUsers": "Aktiver Benutzer",
       "requestsPerMinute": "Anfragen/min.",
       "avgResponseTime": "Ø Antwortzeit",
       "errorRate": "Fehlerrate"
@@ -1047,7 +1047,7 @@
       "suspended": "[DE] Suspended"
     },
     "userDetailDrawer": {
-      "title": "Benzutzerdetails",
+      "title": "Benutzerdetails",
       "roleLabel": "Rolle",
       "statusLabel": "Status",
       "regionLabel": "Region",
@@ -1056,13 +1056,13 @@
       "adminActionsTitle": "Admin-actionen",
       "changeRoleLabel": "Rolle Ästen",
       "updateRoleButton": "Rolle Aktualienen",
-      "suspendUserButton": "Benzutzer Suspendieren",
+      "suspendUserButton": "Benutzer Suspendieren",
       "activateUserButton": "Benutzer aktivieren",
       "cannotModifyOwnAccount": "Sie Könsnen Ihr -Igen"
     },
     "rolePageTitle": "Rollenmanagement",
-    "allUsersTitle": "Alle Benzutzer",
-    "confirmDeleteUser": "Sind Sieicher, Dass sie Diesen Benzutzer Löschen Möchen?",
+    "allUsersTitle": "Alle Benutzer",
+    "confirmDeleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?",
     "userProfileUpdated": "BenzuderProfil Erfolgreich Aktualissert",
     "addNewUserTBD": "Fügen Sie Einen Neuen Benzuder Tbd Hinzu",
     "addNewUserButton": "Neuen Benzuder Hintzügen",
@@ -1077,7 +1077,7 @@
       "lastLogin": "Ledzte Login",
       "actions": "AKTIONEN"
     },
-    "emptyState": "Kein Benzutzer Gefunden"
+    "emptyState": "Kein Benutzer gefunden"
   },
   "partnersPage": {
     "partnerCard": {
@@ -1184,7 +1184,7 @@
     },
     "View Favorites TBD": "Favoriten tbd anzegen",
     "Could not find a user associated with this organization to message.": "Es Konten Keinen Benzuder Findden, der Dieder -Organisierung Zuur nachricht Zugeordnet Ist.",
-    "User organization details are missing.": "Die Details der Benzutzerorganisation FEHLEN.",
+    "User organization details are missing.": "Die Details der Benutzerorganisation fehlen.",
     "sidebar.parentLeads": "Elternleitungen",
     "sidebar.products": "Produkte",
     "sidebar.services": "Dienstleistungen",
@@ -1202,7 +1202,7 @@
     "Search candidates...": "Solche Kandidaten ...",
     "Search content...": "Inhalieren Sie Sinyen ...",
     "No documents found in this category for current filters.": "Keine Dokumente Im Dieser Kategorie für Aktuelle Filter.",
-    "No custom alerts created yet.": "Noch Keide Benzutzerdefinierten Warnungen Erstent."
+    "No custom alerts created yet.": "Noch keine benutzerdefinierten Warnungen erstellt."
   },
   "dashboardDetailPage": {
     "activeUsers": {

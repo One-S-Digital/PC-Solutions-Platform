@@ -121,7 +121,7 @@ const DashboardDetailPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} aria-label={t('buttons.goBack')}>
+        <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} aria-label={t('common:buttons.goBack')}>
           <ArrowLeftIcon className="h-5 w-5" />
         </Button>
         <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboardDetailPage.detailsFor', { pageDisplayTitle })}</h1>
@@ -153,7 +153,7 @@ const DashboardDetailPage: React.FC = () => {
 
       <div className="mt-8 text-center">
         <Button variant="primary" onClick={() => navigate('/dashboard')} leftIcon={ArrowLeftIcon}>
-          {t('buttons.goBack')}
+          {t('common:buttons.goBack')}
         </Button>
       </div>
     </div>

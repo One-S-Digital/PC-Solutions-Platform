@@ -179,7 +179,7 @@ const PartnerDetailPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <Button variant="ghost" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon} className="mb-0">
-        {t('buttons.goBack')}
+        {t('common:buttons.goBack')}
       </Button>
 
       {/* Header Section */}
@@ -192,7 +192,7 @@ const PartnerDetailPage: React.FC = () => {
         <div className="p-6 pt-28 sm:pt-6 sm:pl-36 flex flex-col sm:flex-row items-center sm:items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold text-swiss-charcoal">{partner.name}</h1>
-              <p className="text-gray-500">{partner.type === 'supplier' ? t('userRoles.Product Supplier') : t('userRoles.Service Provider')}</p>
+              <p className="text-gray-500">{partner.type === 'supplier' ? t('common:userRoles.Product Supplier') : t('common:userRoles.Service Provider')}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {(partner.tags || []).map(tag => (
                   <span key={tag} className="text-xs bg-swiss-teal/10 text-swiss-teal px-2 py-1 rounded-full">{tag}</span>
@@ -202,7 +202,7 @@ const PartnerDetailPage: React.FC = () => {
              {isFoundationUser && (
                  <div className="mt-4 sm:mt-0 sm:ml-auto flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center flex-shrink-0">
                     <Button variant="outline" leftIcon={EnvelopeIcon} size="md" className="w-full sm:w-auto" onClick={handleSendMessage}>
-                        {t('buttons.sendMessage')}
+                        {t('common:buttons.sendMessage')}
                     </Button>
                  </div>
              )}

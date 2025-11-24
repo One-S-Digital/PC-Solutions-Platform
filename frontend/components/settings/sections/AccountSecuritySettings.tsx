@@ -156,7 +156,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
             </div>
             <div className="form-label md:pt-2">{t('common:settingsAccountSecurity.personalInfo.accountTypeLabel')}</div>
             <div className="form-input-container">
-              <p className="text-gray-500 pt-2">{t(`userRoles.${userRole}`, userRole)}</p>
+              <p className="text-gray-500 pt-2">{t(`common:userRoles.${userRole}`, userRole)}</p>
             </div>
             <div className="form-label md:pt-2">{t('common:settingsAccountSecurity.personalInfo.memberSinceLabel')}</div>
             <div className="form-input-container">

@@ -37,11 +37,11 @@ const ConversationList: React.FC = () => {
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder={t('searchPlaceholder')}
+              placeholder={t('messages:searchPlaceholder')}
               className={`${ICON_INPUT_FIELD} w-full text-sm`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label={t('searchPlaceholder')}
+              aria-label={t('messages:searchPlaceholder')}
             />
         </div>
         <div className="flex space-x-2">
@@ -61,7 +61,7 @@ const ConversationList: React.FC = () => {
       </div>
       <div className="flex-grow overflow-y-auto p-2 space-y-1">
         {filteredConversations.length === 0 && (
-          <p className="text-center text-sm text-gray-400 py-10">{t('noConversationsFound')}</p>
+          <p className="text-center text-sm text-gray-400 py-10">{t('messages:noConversationsFound')}</p>
         )}
         {filteredConversations.map(conv => (
           <ConversationListItem
