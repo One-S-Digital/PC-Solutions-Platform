@@ -601,7 +601,7 @@
   "next": "[DE] Next",
   "back": "[DE] Back",
   "loginPage": {
-    "title": "Willkommen bei {{appName}}",
+    "title": "",
     "subtitle": "Melden Sie sich in Ihrem Konto an",
     "emailLabel": "E-Mail-Adresse",
     "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
