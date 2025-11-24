@@ -302,37 +302,23 @@ i18n
 
 // Preload critical namespaces for all languages on app init
 export const preloadCriticalNamespaces = async () => {
-  const critical = ['common', 'auth', 'dashboard'];
   const languages = ['en', 'fr', 'de'];
   
-  // Preload all critical namespaces for all languages
-  await Promise.all(
-    languages.flatMap((lng) =>
-      critical.map((ns) =>
-        i18n.loadNamespaces(ns, { lng }).catch((err) => {
-          console.warn(`Failed to preload namespace ${ns} for ${lng}:`, err);
-        })
-      )
-    )
-  );
+  try {
+    // Preload default namespaces for all supported languages
+    await i18n.loadLanguages(languages);
+  } catch (err) {
+    console.warn('Failed to preload languages:', err);
+  }
 };
 
 // Preload all namespaces for a specific language (for immediate switching)
 export const preloadLanguage = async (lng: string) => {
-  const namespaces = [
-    'common', 'auth', 'dashboard', 'settings', 'billing',
-    'elearning', 'supplier', 'hr', 'emails', 'marketplace',
-    'recruitment', 'users', 'content', 'messages', 'admin',
-    'profile', 'signup', 'pricing', 'parentLeadForm',
-  ];
-  
-  await Promise.all(
-    namespaces.map((ns) =>
-      i18n.loadNamespaces(ns, { lng }).catch((err) => {
-        console.warn(`Failed to preload namespace ${ns} for ${lng}:`, err);
-      })
-    )
-  );
+  try {
+    await i18n.loadLanguages(lng);
+  } catch (err) {
+    console.warn(`Failed to preload language ${lng}:`, err);
+  }
 };
 
 export default i18n;
