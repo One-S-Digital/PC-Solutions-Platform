@@ -152,7 +152,7 @@
   "back": "Back",
   "appName": "ProCrèche Solutions Suisse",
   "loginPage": {
-    "title": "Welcome to {{appName}}",
+    "title": "",
     "subtitle": "Sign in to your account",
     "emailLabel": "Email Address",
     "emailPlaceholder": "Enter your email",

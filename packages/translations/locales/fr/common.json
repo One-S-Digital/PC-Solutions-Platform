@@ -256,7 +256,7 @@
     "info": "[FR] Info"
   },
   "loginPage": {
-    "title": "Bienvenue sur {{appName}}",
+    "title": "",
     "subtitle": "Connectez-vous à votre compte",
     "emailLabel": "Adresse e-mail",
     "emailPlaceholder": "Entrez votre e-mail",
