@@ -62,7 +62,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
           <div className="mb-4">
             <h3 className="font-semibold mb-2">{t('supplierOrdersPage.table.foundation')}</h3>
             <div className="flex items-center p-3 border rounded-md">
-              <img src={daycare?.logoUrl} alt={daycare?.name} className="w-10 h-10 rounded-full mr-3"/>
+              <img src={daycare?.logoUrl} alt={daycare?.name} className="w-12 h-12 rounded-full mr-3"/>
               <div>
                 <p className="font-medium">{daycare?.name}</p>
                 <p className="text-xs text-gray-500">{daycare?.region}</p>
