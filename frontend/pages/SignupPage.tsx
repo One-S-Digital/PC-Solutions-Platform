@@ -10,6 +10,7 @@ import Captcha from '../components/ui/Captcha';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import { useFrontendSettings } from '../hooks/useFrontendSettings';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -24,6 +25,13 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
+  const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
+
+  useEffect(() => {
+    if (settingsError) {
+      console.warn('Failed to load frontend settings:', settingsError);
+    }
+  }, [settingsError]);
 
   // Webhook status hook - no clerkId param needed, uses authenticated session
   const { error: webhookErrorFromHook, startPolling, checkWebhookStatus } = useWebhookStatus();
@@ -504,7 +512,15 @@ const SignupPage: React.FC = () => {
         ) : (
           <>
             <div className="text-center mb-2">
-              <SquaresPlusIcon className="w-12 h-12 text-swiss-mint mx-auto mb-2" />
+              {settings?.logoAsset?.publicUrl ? (
+                <img 
+                  src={settings.logoAsset.publicUrl} 
+                  alt={settings.siteName || APP_NAME} 
+                  className="h-16 w-auto mx-auto mb-2" 
+                />
+              ) : (
+                <SquaresPlusIcon className="w-12 h-12 text-swiss-mint mx-auto mb-2" />
+              )}
               <h1 className="text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
               <p className="text-sm text-gray-500 mt-1">{progressText}</p>
             </div>

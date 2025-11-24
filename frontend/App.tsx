@@ -19,6 +19,7 @@ import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
+import { useFrontendSettings } from './hooks/useFrontendSettings';
 
 // Development-only logging helper
 const devLog = (...args: any[]) => {
@@ -368,9 +369,37 @@ const ProtectedLayout: React.FC = () => {
   );
 };
 
+const FrontendSettingsManager: React.FC = () => {
+  const { settings } = useFrontendSettings();
+
+  React.useEffect(() => {
+    if (settings) {
+      if (settings.faviconAsset?.publicUrl) {
+        let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = settings.faviconAsset.publicUrl;
+        link.onerror = () => {
+          console.warn('Failed to load favicon:', settings.faviconAsset?.publicUrl);
+        };
+      }
+
+      if (settings.siteName) {
+        document.title = settings.siteName;
+      }
+    }
+  }, [settings]);
+
+  return null;
+};
+
 const App: React.FC = () => {
   return (
     <AppContextProvider>
+      <FrontendSettingsManager />
       <CartProvider>
         <MessagingProvider>
           <NotificationProvider>

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AdminLayout } from './components/AdminLayout';
 import { AdminLoginPage, AdminSignupPage, AdminProtectedRoute } from './components/auth/AdminAuthComponents';
+import { useSettings } from './hooks/useSettings';
 import Dashboard from './pages/Dashboard';
 import UsersPage from './pages/Users';
 import OrganizationsPage from './pages/Organizations';
@@ -30,9 +31,36 @@ const queryClient = new QueryClient({
   },
 });
 
+const FrontendSettingsManager: React.FC = () => {
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    if (settings) {
+      // Update favicon if admin favicon is present
+      if (settings.adminFaviconAsset?.url) {
+        let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = settings.adminFaviconAsset.url;
+      }
+
+      // Optionally update title - though Admin might want fixed title
+      if (settings.siteName) {
+        document.title = `${settings.siteName} - Admin`;
+      }
+    }
+  }, [settings]);
+
+  return null;
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <FrontendSettingsManager />
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />

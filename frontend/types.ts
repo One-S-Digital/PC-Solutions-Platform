@@ -912,16 +912,77 @@ export interface PlatformSettings {
     metadataDescription: string;
     logoUrl?: string;
     faviconUrl?: string;
+    /**
+     * Platform configuration settings
+     */
+    // Add fields found in MOCK_PLATFORM_SETTINGS to fix potential type errors if they exist
+    enableUserRegistration?: boolean;
+    enableEmailNotifications?: boolean;
+    enableSmsNotifications?: boolean;
+    enableMaintenanceMode?: boolean;
+    /** Maximum file upload size in bytes */
+    maxFileUploadSize?: number;
+    /** Supported file types (MIME types, e.g., 'image/png', 'application/pdf') */
+    supportedFileTypes?: string[];
+    enablePublicRegistration?: boolean;
+    /** Array of enabled language codes (e.g., ['en', 'fr', 'de']) */
+    enabledLanguages?: string[];
+    defaultLanguage?: string;
+    enableCaptcha?: boolean;
+    requireEmailVerification?: boolean;
+}
+
+export interface Asset {
+  id: string;
+  publicUrl: string;
+  filename: string;
+  mimeType?: string;
+  size?: number;
+}
+
+export interface FrontendSettings {
+  siteName: string;
+  siteDescription?: string;
+  siteKeywords?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  instagramUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  googleAnalyticsId?: string;
+  googleTagManagerId?: string;
+  privacyPolicyUrl?: string;
+  termsOfServiceUrl?: string;
+  cookiePolicyUrl?: string;
+  enableDarkMode?: boolean;
+  defaultTheme?: string;
+  logoAsset?: Asset;
+  faviconAsset?: Asset;
+  ogImageAsset?: Asset;
 }
 
 // ACTIVE CLIENT FEATURE TYPES
 export enum VendorClientReason {
-    NEW = 'New Client',
-    TRIAL = 'Trial',
-    CONTRACT = 'Contract',
-    PAUSED = 'Paused',
-    TERMINATED = 'Terminated',
+    NEW = 'NEW',
+    TRIAL = 'TRIAL',
+    CONTRACT = 'CONTRACT',
+    PAUSED = 'PAUSED',
+    TERMINATED = 'TERMINATED',
 }
+
+export const VendorClientReasonLabels: Record<VendorClientReason, string> = {
+    [VendorClientReason.NEW]: 'New Client',
+    [VendorClientReason.TRIAL]: 'Trial',
+    [VendorClientReason.CONTRACT]: 'Contract',
+    [VendorClientReason.PAUSED]: 'Paused',
+    [VendorClientReason.TERMINATED]: 'Terminated',
+};
 
 export interface VendorClient {
     id: string;

@@ -9,6 +9,7 @@ import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon } fro
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
+import { useFrontendSettings } from '../hooks/useFrontendSettings';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -34,6 +35,13 @@ const LoginPage: React.FC = () => {
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
   const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
+  const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
+  
+  useEffect(() => {
+    if (settingsError) {
+      console.warn('Failed to load frontend settings:', settingsError);
+    }
+  }, [settingsError]);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -188,9 +196,17 @@ const LoginPage: React.FC = () => {
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">
           <div className="text-center mb-8">
-            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            {settings?.logoAsset?.publicUrl ? (
+              <img 
+                src={settings.logoAsset.publicUrl} 
+                alt={settings.siteName || APP_NAME} 
+                className="h-16 w-auto mx-auto mb-3" 
+              />
+            ) : (
+              <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            )}
             <h1 className="text-2xl font-bold text-swiss-charcoal">
-              {t('common:loginPage.title', { appName: APP_NAME })}
+              {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
             </h1>
           </div>
 
@@ -267,9 +283,17 @@ const LoginPage: React.FC = () => {
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">
           <div className="text-center mb-8">
-            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            {settings?.logoAsset?.publicUrl ? (
+              <img 
+                src={settings.logoAsset.publicUrl} 
+                alt={settings.siteName || APP_NAME} 
+                className="h-16 w-auto mx-auto mb-3" 
+              />
+            ) : (
+              <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+            )}
             <h1 className="text-2xl font-bold text-swiss-charcoal">
-              {t('common:loginPage.title', { appName: APP_NAME })}
+              {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
             </h1>
           </div>
 
@@ -312,9 +336,17 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
-          <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+          {settings?.logoAsset?.publicUrl ? (
+            <img 
+              src={settings.logoAsset.publicUrl} 
+              alt={settings.siteName || APP_NAME} 
+              className="h-16 w-auto mx-auto mb-3" 
+            />
+          ) : (
+            <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-3" />
+          )}
           <h1 className="text-2xl font-bold text-swiss-charcoal">
-            {t('common:loginPage.title', { appName: APP_NAME })}
+            {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
           </h1>
           <p className="text-sm text-gray-500">{t('common:loginPage.subtitle')}</p>
         </div>
