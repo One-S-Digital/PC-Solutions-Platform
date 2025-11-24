@@ -167,9 +167,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         <div className="flex justify-between items-center h-20 px-4 border-b border-gray-200/80">
             <div className="flex items-center">
                 {settings?.logoAsset?.publicUrl ? (
-                  <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[50px] w-auto mr-2" />
+                  <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[63px] w-auto mr-2" />
                 ) : (
-                  <SquaresPlusIcon className="h-[50px] w-[50px] text-swiss-mint mr-2" />
+                  <SquaresPlusIcon className="h-[63px] w-[63px] text-swiss-mint mr-2" />
                 )}
             </div>
           {/* Close button for mobile view - managed by MainLayout now */}
@@ -178,9 +178,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       {!isMobileView && (
         <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80"> 
             {settings?.logoAsset?.publicUrl ? (
-              <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[55px] w-auto mr-2.5" />
+              <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[69px] w-auto mr-2.5" />
             ) : (
-              <SquaresPlusIcon className="h-[55px] w-[55px] text-swiss-mint mr-2.5" />
+              <SquaresPlusIcon className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
             )}
         </div>
       )}

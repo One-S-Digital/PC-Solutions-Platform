@@ -68,11 +68,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <img
             src={getAdminLogo()}
             alt="Admin Logo"
-            className="h-[55px] w-[55px] object-contain mr-2.5"
+            className="h-[69px] w-[69px] object-contain mr-2.5"
           />
         ) : (
-          <div className="h-[55px] w-[55px] bg-swiss-mint mr-2.5 flex items-center justify-center rounded">
-            <Shield className="h-[30px] w-[30px] text-white" />
+          <div className="h-[69px] w-[69px] bg-swiss-mint mr-2.5 flex items-center justify-center rounded">
+            <Shield className="h-[38px] w-[38px] text-white" />
           </div>
         )}
         <h1 className="text-2xl font-bold text-swiss-charcoal">Admin</h1>
