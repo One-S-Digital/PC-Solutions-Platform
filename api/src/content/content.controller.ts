@@ -207,7 +207,7 @@ export class ContentController {
    */
 
   @Get('state-policies')
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.FOUNDATION, UserRole.PARENT, UserRole.PRODUCT_SUPPLIER)
   async getStatePolicies(
     @Query(new ValidationPipe({ transform: true, whitelist: true }))
     query: GetStatePoliciesQueryDto,
