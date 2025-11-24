@@ -15,6 +15,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
@@ -28,6 +29,14 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
   constructor(private readonly usersService: UsersService) {}
+
+  @Post('complete-profile')
+  async completeProfile(@Request() request, @Body() completeProfileDto: CompleteProfileDto) {
+    const clerkId = request.user.clerkId;
+    const email = request.user.email;
+    
+    return this.usersService.completeProfile(clerkId, email, completeProfileDto);
+  }
 
   @Post()
   @Roles(UserRole.SUPER_ADMIN)

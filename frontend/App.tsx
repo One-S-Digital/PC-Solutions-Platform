@@ -159,9 +159,9 @@ const ProtectedLayout: React.FC = () => {
       );
     }
     
-    // Backend sync failed (not loading anymore, but no user) ? redirect to login
-    // LoginPage will detect isSignedIn=true && !currentUser && !isAuthLoading and show backend sync error UI
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Backend sync failed (not loading anymore, but no user) ? redirect to signup
+    // This handles the case where a user authenticated via OAuth but hasn't completed their profile
+    return <Navigate to="/signup" state={{ from: location, isPending: true }} replace />;
   }
 
   return (

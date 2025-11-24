@@ -532,6 +532,14 @@ ${'='.repeat(100)}`);
         public: data.public_metadata ? Object.keys(data.public_metadata) : [],
       }
     });
+
+    // If no role is specified (e.g. Google Sign Up), skip automatic creation
+    // The user will be redirected to the signup page to complete their profile
+    if (!rawIntendedRole) {
+      this.logger.log(`⚠️ [USER CREATION] No role specified for user ${clerkId} (likely OAuth). Skipping automatic backend creation.`);
+      console.log(`⚠️ [USER CREATION] Skipping creation for ${clerkId} - waiting for role selection on frontend.`);
+      return;
+    }
     
     // Map frontend SignupRole values to backend UserRole enum
     const intendedRole = this.mapSignupRoleToUserRole(rawIntendedRole);

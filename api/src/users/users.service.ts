@@ -3,6 +3,7 @@ import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { PrincipalService } from '../principal/principal.service';
 
 const userProfileInclude = {
@@ -232,6 +233,63 @@ export class UsersService {
       orgCoverImageUrl: primaryOrganization?.coverImageUrl ?? null,
       primaryOrganization,
     };
+  }
+
+  async completeProfile(clerkId: string, email: string, dto: CompleteProfileDto) {
+    console.log(`👤 [COMPLETE PROFILE] Completing profile for ${clerkId}`);
+    
+    // Check if user already exists
+    const existingUser = await this.prisma.appUser.findUnique({
+      where: { clerkId },
+    });
+
+    if (existingUser) {
+      console.log(`⚠️ [COMPLETE PROFILE] User already exists, updating role...`);
+      // Update role if it's different
+      if (existingUser.role !== dto.role) {
+        await this.prisma.appUser.update({
+          where: { id: existingUser.id },
+          data: { role: dto.role },
+        });
+      }
+    } else {
+      console.log(`🆕 [COMPLETE PROFILE] Creating new user with role ${dto.role}`);
+      // Create AppUser
+      const appUser = await this.prisma.appUser.create({
+        data: {
+          clerkId,
+          email,
+          role: dto.role,
+        },
+      });
+
+      // Create User profile
+      const nameParts = dto.contactPerson ? dto.contactPerson.trim().split(' ') : [];
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      await this.prisma.user.create({
+        data: {
+          clerkId,
+          email,
+          role: dto.role,
+          firstName: firstName || null,
+          lastName: lastName || null,
+          phoneNumber: dto.phone,
+          isActive: true,
+        },
+      });
+      
+      // If organization details are provided, we should ideally create the organization here
+      // This is a simplification
+      if (dto.organisationName) {
+         // Logic to create organization would go here
+         // For now we rely on the user updating their profile/org later or implement a separate flow
+         console.log(`🏢 [COMPLETE PROFILE] Organization name provided: ${dto.organisationName}`);
+      }
+    }
+
+    return this.findByClerkId(clerkId);
   }
 
   async create(createUserDto: CreateUserDto) {
