@@ -68,18 +68,20 @@ const Dashboard: React.FC = () => {
   const [contentLoading, setContentLoading] = useState(true)
 
   // Extract real data from analytics response
-  const usersData = analyticsData?.data?.users?.totalUsers ?? 0
+  // API returns { success, data: { users: {...}, organizations: {...}, ... } }
+  const analyticsResult = analyticsData?.data?.data
+  const usersData = analyticsResult?.users?.totalUsers ?? 0
   const usersLoading = analyticsLoading
-  const orgsData = analyticsData?.data?.organizations?.totalOrganizations ?? 0
+  const orgsData = analyticsResult?.organizations?.totalOrganizations ?? 0
   const orgsLoading = analyticsLoading
-  const productsData = analyticsData?.data?.products?.totalProducts ?? 0
+  const productsData = analyticsResult?.products?.totalProducts ?? 0
   const productsLoading = analyticsLoading
   const leadsData = parentLeadsData?.data?.data?.length ?? 0
   const leadsLoading = parentLeadsLoading
 
   // Extract job analytics data
-  const totalJobs = analyticsData?.data?.jobs?.totalJobs ?? 0
-  const totalApplications = analyticsData?.data?.jobs?.totalApplications ?? 0
+  const totalJobs = analyticsResult?.jobs?.totalJobs ?? 0
+  const totalApplications = analyticsResult?.jobs?.totalApplications ?? 0
 
   const stats = [
     {
