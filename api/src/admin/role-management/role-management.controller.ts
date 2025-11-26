@@ -8,11 +8,13 @@ import {
   HttpCode,
   Get,
   Query,
-  BadRequestException
+  BadRequestException,
+  Logger
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../../auth/decorators/roles.decorator';
+import { RoleSyncService } from '../../sync/role-sync.service';
 
 interface ChangeRoleDto {
   role: UserRole;
@@ -21,7 +23,12 @@ interface ChangeRoleDto {
 
 @Controller('admin/role-management')
 export class RoleManagementController {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(RoleManagementController.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private roleSyncService: RoleSyncService,
+  ) {}
 
   @Get('users/:clerkId')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
@@ -64,52 +71,39 @@ export class RoleManagementController {
       throw new ForbiddenException('Only SUPER_ADMIN can promote to SUPER_ADMIN');
     }
 
-    // Execute in transaction
-    await this.prisma.$transaction(async (tx) => {
-      // Get or create user
-      let appUser = await tx.appUser.findUnique({
-        where: { clerkId: targetClerkId },
+    const changedBy = req.context.clerkUserId ?? req.context.userId ?? 'system';
+
+    // Check if user exists, create if not
+    let appUser = await this.prisma.appUser.findUnique({
+      where: { clerkId: targetClerkId },
+    });
+
+    if (!appUser) {
+      // Create user if doesn't exist
+      this.logger.log(`Creating new user for clerkId: ${targetClerkId} with role ${dto.role}`);
+      appUser = await this.prisma.appUser.create({
+        data: {
+          clerkId: targetClerkId,
+          role: dto.role,
+        },
       });
 
-      if (!appUser) {
-        // Create user if doesn't exist
-        appUser = await tx.appUser.create({
-          data: {
-            clerkId: targetClerkId,
-            role: dto.role,
-          },
-        });
-      }
-
-      const previousRole = appUser.role;
-
-      // Update role
-      if (previousRole !== dto.role) {
-        await tx.appUser.update({
-          where: { id: appUser.id },
-          data: { role: dto.role },
-        });
-
-        // Create history entry
-        await tx.appUserRoleHistory.create({
-          data: {
-            userId: appUser.id,
-            previousRole,
-            newRole: dto.role,
-            changedBy: req.context.clerkUserId ?? req.context.userId,
-            reason: dto.reason || 'Admin role change',
-          },
-        });
-
-        // Create outbox entry for Clerk sync
-        await tx.outbox.create({
-          data: {
-            topic: 'mirror.role',
-            payload: { clerkUserId: targetClerkId, role: dto.role },
-          },
-        });
-      }
-    });
+      // Still need to create outbox entry for new user
+      await this.prisma.outbox.create({
+        data: {
+          topic: 'mirror.role',
+          payload: { clerkUserId: targetClerkId, role: dto.role },
+        },
+      });
+    } else {
+      // Use RoleSyncService for existing user role change
+      await this.roleSyncService.changeRoleByClerkId({
+        clerkId: targetClerkId,
+        newRole: dto.role,
+        changedBy,
+        reason: dto.reason || 'Admin role change',
+      });
+    }
 
     return;
   }

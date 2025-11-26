@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { PrincipalService } from '../principal/principal.service';
+import { RoleSyncService } from '../sync/role-sync.service';
 
 const userProfileInclude = {
   avatarAsset: true,
@@ -43,7 +44,13 @@ export interface FindAllUsersParams {
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private readonly principal: PrincipalService) {}
+  private readonly logger = new Logger(UsersService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private readonly principal: PrincipalService,
+    private readonly roleSyncService: RoleSyncService,
+  ) {}
 
   private serializeDate(value: Date | string | null | undefined): string | null | undefined {
     if (value instanceof Date) {
@@ -236,7 +243,7 @@ export class UsersService {
   }
 
   async completeProfile(clerkId: string, email: string, dto: CompleteProfileDto) {
-    console.log(`👤 [COMPLETE PROFILE] Completing profile for ${clerkId}`);
+    this.logger.log(`👤 [COMPLETE PROFILE] Completing profile for ${clerkId}`);
     
     // Check if user already exists
     const existingUser = await this.prisma.appUser.findUnique({
@@ -244,23 +251,14 @@ export class UsersService {
     });
 
     if (existingUser) {
-      console.log(`⚠️ [COMPLETE PROFILE] User already exists, updating role...`);
-      // Update role if it's different
+      this.logger.log(`⚠️ [COMPLETE PROFILE] User already exists, updating role...`);
+      // Update role if it's different - use RoleSyncService for proper Clerk sync
       if (existingUser.role !== dto.role) {
-        await this.prisma.$transaction(async (tx) => {
-          await tx.appUser.update({
-            where: { id: existingUser.id },
-            data: { role: dto.role },
-          });
-          
-          // Only update user record if it exists
-          const userRecord = await tx.user.findUnique({ where: { clerkId } });
-          if (userRecord) {
-            await tx.user.update({
-              where: { clerkId },
-              data: { role: dto.role },
-            });
-          }
+        await this.roleSyncService.changeRole({
+          appUserId: existingUser.id,
+          newRole: dto.role,
+          changedBy: clerkId,
+          reason: 'Profile completion role update',
         });
       }
     } else {
@@ -612,7 +610,7 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string) {
     const appUser = await this.prisma.appUser.findUnique({
       where: { id },
     });
@@ -621,14 +619,28 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
+    // Check if role is changing - if so, use RoleSyncService for proper Clerk sync
+    const isRoleChanging = updateUserDto.role && updateUserDto.role !== appUser.role;
+
     // Update both AppUser and User profile in a transaction for data consistency
     const result = await this.prisma.$transaction(async (tx) => {
-      // Update AppUser table
+      // Handle role change through RoleSyncService (includes Clerk sync)
+      if (isRoleChanging) {
+        await this.roleSyncService.changeRole({
+          appUserId: id,
+          newRole: updateUserDto.role as UserRole,
+          changedBy: changedBy || 'system',
+          reason: 'Admin user update',
+          tx,
+        });
+      }
+
+      // Update AppUser table (non-role fields)
       const updatedAppUser = await tx.appUser.update({
         where: { id },
         data: {
           email: updateUserDto.email || appUser.email,
-          role: updateUserDto.role as UserRole || appUser.role,
+          // Role is already handled by RoleSyncService above
         },
       });
 
@@ -644,7 +656,7 @@ export class UsersService {
         if (updateUserDto.firstName !== undefined) userUpdateData.firstName = updateUserDto.firstName;
         if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
         if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
-        if (updateUserDto.role !== undefined) userUpdateData.role = updateUserDto.role as UserRole;
+        // Role is already handled by RoleSyncService
 
         if (Object.keys(userUpdateData).length > 0) {
           userProfile = await tx.user.update({
@@ -661,6 +673,9 @@ export class UsersService {
 
     const { updatedAppUser, userProfile } = result;
 
+    // Fetch the latest role (in case it was updated by RoleSyncService)
+    const latestAppUser = await this.prisma.appUser.findUnique({ where: { id } });
+
     // Return in User format for compatibility
     return {
       id: updatedAppUser.id,
@@ -668,7 +683,7 @@ export class UsersService {
       email: updatedAppUser.email,
       firstName: userProfile?.firstName || null,
       lastName: userProfile?.lastName || null,
-      role: updatedAppUser.role,
+      role: latestAppUser?.role || updatedAppUser.role,
       phoneNumber: userProfile?.phoneNumber || null,
       workExperience: null,
       education: null,
@@ -685,11 +700,23 @@ export class UsersService {
     };
   }
 
-  async assignRole(userId: string, role: UserRole) {
-    const updatedAppUser = await this.prisma.appUser.update({
-      where: { id: userId },
-      data: { role },
+  async assignRole(userId: string, role: UserRole, changedBy?: string) {
+    // Use RoleSyncService for proper Clerk sync
+    await this.roleSyncService.changeRole({
+      appUserId: userId,
+      newRole: role,
+      changedBy: changedBy || 'system',
+      reason: 'Role assignment',
     });
+
+    // Fetch updated user
+    const updatedAppUser = await this.prisma.appUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!updatedAppUser) {
+      throw new NotFoundException('User not found');
+    }
 
     // Return in User format for compatibility
     return {
@@ -715,12 +742,23 @@ export class UsersService {
     };
   }
 
-  async removeRole(userId: string, role: UserRole) {
-    // Note: This could set to a default role instead of removing
-    const updatedAppUser = await this.prisma.appUser.update({
-      where: { id: userId },
-      data: { role: UserRole.PARENT }, // Default role
+  async removeRole(userId: string, role: UserRole, changedBy?: string) {
+    // Use RoleSyncService for proper Clerk sync - sets to default PARENT role
+    await this.roleSyncService.changeRole({
+      appUserId: userId,
+      newRole: UserRole.PARENT,
+      changedBy: changedBy || 'system',
+      reason: `Role removal (was: ${role})`,
     });
+
+    // Fetch updated user
+    const updatedAppUser = await this.prisma.appUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!updatedAppUser) {
+      throw new NotFoundException('User not found');
+    }
 
     // Return in User format for compatibility
     return {

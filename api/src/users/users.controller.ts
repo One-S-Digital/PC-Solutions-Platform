@@ -147,8 +147,13 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(UserRole.SUPER_ADMIN)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() request,
+  ) {
+    const changedBy = request.user?.clerkId || request.context?.clerkUserId || 'system';
+    return this.usersService.update(id, updateUserDto, changedBy);
   }
 
   @Delete(':id')
@@ -162,8 +167,10 @@ export class UsersController {
   assignRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('role') role: UserRole,
+    @Request() request,
   ) {
-    return this.usersService.assignRole(id, role);
+    const changedBy = request.user?.clerkId || request.context?.clerkUserId || 'system';
+    return this.usersService.assignRole(id, role, changedBy);
   }
 
   @Delete(':id/roles/:role')
@@ -171,8 +178,10 @@ export class UsersController {
   removeRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('role') role: UserRole,
+    @Request() request,
   ) {
-    return this.usersService.removeRole(id, role);
+    const changedBy = request.user?.clerkId || request.context?.clerkUserId || 'system';
+    return this.usersService.removeRole(id, role, changedBy);
   }
 
   @Get('search/email')
