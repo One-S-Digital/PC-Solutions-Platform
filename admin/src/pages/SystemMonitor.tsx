@@ -107,28 +107,12 @@ const SystemMonitor: React.FC = () => {
     }
   })
 
-  // Mock system metrics data
-  const mockMetrics = {
-    server: {
-      cpu: 45,
-      memory: 68,
-      disk: 34,
-      uptime: '5d 12h 23m',
-      load: 0.75
-    },
-    database: {
-      connections: 24,
-      maxConnections: 100,
-      queryTime: 12.5,
-      storage: 78
-    },
-    application: {
-      activeUsers: 156,
-      requestsPerMinute: 342,
-      responseTime: 89,
-      errorRate: 0.2
-    }
-  }
+  // Note: Real system metrics require backend monitoring infrastructure
+  // These values will be populated when monitoring APIs are available
+  // For now, we use health check data as the primary source of truth
+  const realMetricsAvailable = !!systemMetrics?.data
+  const realAlertsAvailable = !!systemAlerts?.data
+  const realLogsAvailable = !!errorLogs?.data
 
   const systemStatus = healthData?.data?.status === 'OK'
 
@@ -349,30 +333,30 @@ const SystemMonitor: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricCard
               title="CPU Usage"
-              value={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
-              unit="%"
+              value={realMetricsAvailable ? (systemMetrics?.data?.cpu ?? 'N/A') : 'N/A'}
+              unit={realMetricsAvailable && systemMetrics?.data?.cpu ? '%' : ''}
               icon={Cpu}
               color="blue"
-              percentage={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
+              percentage={realMetricsAvailable ? systemMetrics?.data?.cpu : undefined}
             />
             <MetricCard
               title="Memory Usage"
-              value={systemMetrics?.data?.memory || mockMetrics.server.memory}
-              unit="%"
+              value={realMetricsAvailable ? (systemMetrics?.data?.memory ?? 'N/A') : 'N/A'}
+              unit={realMetricsAvailable && systemMetrics?.data?.memory ? '%' : ''}
               icon={Activity}
               color="green"
-              percentage={systemMetrics?.data?.memory || mockMetrics.server.memory}
+              percentage={realMetricsAvailable ? systemMetrics?.data?.memory : undefined}
             />
             <MetricCard
               title="Active Alerts"
-              value={systemAlerts?.data?.filter((alert: any) => alert.status === 'active').length || 0}
+              value={realAlertsAvailable ? systemAlerts?.data?.filter((alert: any) => alert.status === 'active').length : 0}
               icon={AlertTriangle}
               color="red"
             />
             <MetricCard
               title="Error Rate"
-              value={systemMetrics?.data?.errorRate || mockMetrics.application.errorRate}
-              unit="%"
+              value={realMetricsAvailable ? (systemMetrics?.data?.errorRate ?? 'N/A') : 'N/A'}
+              unit={realMetricsAvailable && systemMetrics?.data?.errorRate !== undefined ? '%' : ''}
               icon={TrendingUp}
               color="yellow"
             />
@@ -385,34 +369,41 @@ const SystemMonitor: React.FC = () => {
           {/* Server Metrics */}
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Server Performance</h2>
+            {!realMetricsAvailable && (
+              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  System metrics require backend monitoring infrastructure. Currently showing available health data.
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
                 title="CPU Usage"
-                value={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
-                unit="%"
+                value={realMetricsAvailable ? (systemMetrics?.data?.cpu ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.cpu ? '%' : ''}
                 icon={Cpu}
                 color="blue"
-                percentage={systemMetrics?.data?.cpu || mockMetrics.server.cpu}
+                percentage={realMetricsAvailable ? systemMetrics?.data?.cpu : undefined}
               />
               <MetricCard
                 title="Memory Usage"
-                value={systemMetrics?.data?.memory || mockMetrics.server.memory}
-                unit="%"
+                value={realMetricsAvailable ? (systemMetrics?.data?.memory ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.memory ? '%' : ''}
                 icon={Activity}
                 color="green"
-                percentage={systemMetrics?.data?.memory || mockMetrics.server.memory}
+                percentage={realMetricsAvailable ? systemMetrics?.data?.memory : undefined}
               />
               <MetricCard
                 title="Disk Usage"
-                value={systemMetrics?.data?.disk || mockMetrics.server.disk}
-                unit="%"
+                value={realMetricsAvailable ? (systemMetrics?.data?.disk ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.disk ? '%' : ''}
                 icon={HardDrive}
                 color="yellow"
-                percentage={systemMetrics?.data?.disk || mockMetrics.server.disk}
+                percentage={realMetricsAvailable ? systemMetrics?.data?.disk : undefined}
               />
               <MetricCard
                 title="Uptime"
-                value={systemMetrics?.data?.uptime || mockMetrics.server.uptime}
+                value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                 icon={Clock}
                 color="purple"
               />
@@ -425,31 +416,31 @@ const SystemMonitor: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
                 title="Active Connections"
-                value={`${systemMetrics?.data?.dbConnections || mockMetrics.database.connections}/${systemMetrics?.data?.maxConnections || mockMetrics.database.maxConnections}`}
+                value={realMetricsAvailable && systemMetrics?.data?.dbConnections ? `${systemMetrics.data.dbConnections}/${systemMetrics.data.maxConnections || 100}` : 'N/A'}
                 icon={Database}
                 color="blue"
-                percentage={((systemMetrics?.data?.dbConnections || mockMetrics.database.connections) / (systemMetrics?.data?.maxConnections || mockMetrics.database.maxConnections)) * 100}
+                percentage={realMetricsAvailable && systemMetrics?.data?.dbConnections ? (systemMetrics.data.dbConnections / (systemMetrics.data.maxConnections || 100)) * 100 : undefined}
               />
               <MetricCard
                 title="Avg Query Time"
-                value={systemMetrics?.data?.queryTime || mockMetrics.database.queryTime}
-                unit="ms"
+                value={realMetricsAvailable ? (systemMetrics?.data?.queryTime ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.queryTime ? 'ms' : ''}
                 icon={Activity}
                 color="green"
               />
               <MetricCard
                 title="Storage Used"
-                value={systemMetrics?.data?.storage || mockMetrics.database.storage}
-                unit="%"
+                value={realMetricsAvailable ? (systemMetrics?.data?.storage ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.storage ? '%' : ''}
                 icon={HardDrive}
                 color="yellow"
-                percentage={systemMetrics?.data?.storage || mockMetrics.database.storage}
+                percentage={realMetricsAvailable ? systemMetrics?.data?.storage : undefined}
               />
               <MetricCard
                 title="Connection Health"
-                value="Healthy"
-                icon={CheckCircle}
-                color="green"
+                value={systemStatus ? 'Healthy' : 'Unknown'}
+                icon={systemStatus ? CheckCircle : AlertCircle}
+                color={systemStatus ? 'green' : 'yellow'}
               />
             </div>
           </div>
@@ -460,27 +451,27 @@ const SystemMonitor: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
                 title="Active Users"
-                value={systemMetrics?.data?.activeUsers || mockMetrics.application.activeUsers}
+                value={realMetricsAvailable ? (systemMetrics?.data?.activeUsers ?? 'N/A') : 'N/A'}
                 icon={Users}
                 color="blue"
               />
               <MetricCard
                 title="Requests/min"
-                value={systemMetrics?.data?.requestsPerMinute || mockMetrics.application.requestsPerMinute}
+                value={realMetricsAvailable ? (systemMetrics?.data?.requestsPerMinute ?? 'N/A') : 'N/A'}
                 icon={TrendingUp}
                 color="green"
               />
               <MetricCard
                 title="Response Time"
-                value={systemMetrics?.data?.responseTime || mockMetrics.application.responseTime}
-                unit="ms"
+                value={realMetricsAvailable ? (systemMetrics?.data?.responseTime ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.responseTime ? 'ms' : ''}
                 icon={Wifi}
                 color="yellow"
               />
               <MetricCard
                 title="Error Rate"
-                value={systemMetrics?.data?.errorRate || mockMetrics.application.errorRate}
-                unit="%"
+                value={realMetricsAvailable ? (systemMetrics?.data?.errorRate ?? 'N/A') : 'N/A'}
+                unit={realMetricsAvailable && systemMetrics?.data?.errorRate !== undefined ? '%' : ''}
                 icon={AlertTriangle}
                 color="red"
               />
@@ -621,6 +612,14 @@ const SystemMonitor: React.FC = () => {
               </h2>
             </div>
 
+            {!performanceMetrics?.data && (
+              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  Performance analytics require backend monitoring infrastructure to be configured.
+                </p>
+              </div>
+            )}
+
             {performanceLoading ? (
               <div className="flex items-center justify-center py-8">
                 <LoadingSpinner size="large" />
@@ -629,29 +628,28 @@ const SystemMonitor: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
                   title="Response Time"
-                  value={performanceMetrics?.data?.avgResponseTime || '45ms'}
-                  unit="ms"
+                  value={performanceMetrics?.data?.avgResponseTime ?? 'N/A'}
+                  unit={performanceMetrics?.data?.avgResponseTime ? 'ms' : ''}
                   icon={Zap}
                   color="blue"
                 />
                 <MetricCard
                   title="Throughput"
-                  value={performanceMetrics?.data?.requestsPerSecond || '1,250'}
-                  unit="req/s"
+                  value={performanceMetrics?.data?.requestsPerSecond ?? 'N/A'}
+                  unit={performanceMetrics?.data?.requestsPerSecond ? 'req/s' : ''}
                   icon={TrendingUp}
                   color="green"
                 />
                 <MetricCard
                   title="Error Rate"
-                  value={performanceMetrics?.data?.errorRate || '0.2'}
-                  unit="%"
+                  value={performanceMetrics?.data?.errorRate ?? 'N/A'}
+                  unit={performanceMetrics?.data?.errorRate !== undefined ? '%' : ''}
                   icon={AlertCircle}
                   color="red"
                 />
                 <MetricCard
                   title="Uptime"
-                  value={performanceMetrics?.data?.uptime || '99.9'}
-                  unit="%"
+                  value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                   icon={CheckCircle}
                   color="green"
                 />
@@ -668,6 +666,14 @@ const SystemMonitor: React.FC = () => {
               </h2>
             </div>
 
+            {!userAnalytics?.data && (
+              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  User analytics require tracking infrastructure to be configured. See the main Dashboard for available user statistics.
+                </p>
+              </div>
+            )}
+
             {analyticsLoading ? (
               <div className="flex items-center justify-center py-8">
                 <LoadingSpinner size="large" />
@@ -676,26 +682,26 @@ const SystemMonitor: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
                   title="Active Users"
-                  value={userAnalytics?.data?.activeUsers || '156'}
+                  value={userAnalytics?.data?.activeUsers ?? 'N/A'}
                   icon={Users}
                   color="blue"
                 />
                 <MetricCard
                   title="New Users Today"
-                  value={userAnalytics?.data?.newUsersToday || '12'}
+                  value={userAnalytics?.data?.newUsersToday ?? 'N/A'}
                   icon={TrendingUp}
                   color="green"
                 />
                 <MetricCard
                   title="Session Duration"
-                  value={userAnalytics?.data?.avgSessionDuration || '24m'}
-                  unit="min"
+                  value={userAnalytics?.data?.avgSessionDuration ?? 'N/A'}
+                  unit={userAnalytics?.data?.avgSessionDuration ? 'min' : ''}
                   icon={Clock}
                   color="purple"
                 />
                 <MetricCard
                   title="Page Views"
-                  value={userAnalytics?.data?.pageViews || '2,847'}
+                  value={userAnalytics?.data?.pageViews ?? 'N/A'}
                   icon={Eye}
                   color="yellow"
                 />
@@ -703,7 +709,7 @@ const SystemMonitor: React.FC = () => {
             )}
           </div>
 
-          {/* Geographic Analytics */}
+          {/* Geographic Analytics Notice */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
@@ -712,56 +718,11 @@ const SystemMonitor: React.FC = () => {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="font-medium text-gray-900">Top Regions</h3>
-                <div className="space-y-3">
-                  {[
-                    { region: 'Zurich', users: 45, percentage: 28.8 },
-                    { region: 'Geneva', users: 32, percentage: 20.5 },
-                    { region: 'Basel', users: 28, percentage: 17.9 },
-                    { region: 'Bern', users: 24, percentage: 15.4 },
-                    { region: 'Lucerne', users: 18, percentage: 11.5 }
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{item.region}</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-20 bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-swiss-teal h-2 rounded-full"
-                            style={{ width: `${item.percentage}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">{item.users}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-medium text-gray-900">Device Types</h3>
-                <div className="space-y-3">
-                  {[
-                    { device: 'Desktop', users: 89, percentage: 57.1 },
-                    { device: 'Mobile', users: 45, percentage: 28.8 },
-                    { device: 'Tablet', users: 22, percentage: 14.1 }
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{item.device}</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-20 bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-swiss-mint h-2 rounded-full"
-                            style={{ width: `${item.percentage}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">{item.users}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="text-sm text-gray-600 text-center">
+                Geographic analytics require user location tracking to be implemented.
+                This feature will display user distribution by region once the tracking infrastructure is configured.
+              </p>
             </div>
           </div>
         </div>
@@ -778,6 +739,14 @@ const SystemMonitor: React.FC = () => {
               </h2>
             </div>
 
+            {!securityMetrics?.data && (
+              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  Security metrics require security monitoring infrastructure to be configured.
+                </p>
+              </div>
+            )}
+
             {securityLoading ? (
               <div className="flex items-center justify-center py-8">
                 <LoadingSpinner size="large" />
@@ -786,25 +755,25 @@ const SystemMonitor: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
                   title="Failed Logins"
-                  value={securityMetrics?.data?.failedLogins || '3'}
+                  value={securityMetrics?.data?.failedLogins ?? 'N/A'}
                   icon={AlertTriangle}
                   color="red"
                 />
                 <MetricCard
                   title="Blocked IPs"
-                  value={securityMetrics?.data?.blockedIPs || '0'}
+                  value={securityMetrics?.data?.blockedIPs ?? 'N/A'}
                   icon={Shield}
                   color="blue"
                 />
                 <MetricCard
-                  title="SSL Status"
-                  value="Valid"
-                  icon={CheckCircle}
-                  color="green"
+                  title="API Health"
+                  value={systemStatus ? 'Healthy' : 'Unknown'}
+                  icon={systemStatus ? CheckCircle : AlertCircle}
+                  color={systemStatus ? 'green' : 'yellow'}
                 />
                 <MetricCard
                   title="Last Scan"
-                  value={securityMetrics?.data?.lastScan || '2h ago'}
+                  value={securityMetrics?.data?.lastScan ?? 'N/A'}
                   icon={Settings}
                   color="purple"
                 />
@@ -812,52 +781,18 @@ const SystemMonitor: React.FC = () => {
             )}
           </div>
 
-          {/* Security Events */}
+          {/* Security Events Notice */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">Recent Security Events</h2>
             </div>
 
-            <div className="space-y-4">
-              {[
-                {
-                  type: 'Failed Login',
-                  description: 'Multiple failed login attempts from 192.168.1.100',
-                  severity: 'warning',
-                  timestamp: '2 minutes ago'
-                },
-                {
-                  type: 'Suspicious Activity',
-                  description: 'Unusual API request pattern detected',
-                  severity: 'info',
-                  timestamp: '15 minutes ago'
-                },
-                {
-                  type: 'Security Scan',
-                  description: 'Automated security scan completed successfully',
-                  severity: 'success',
-                  timestamp: '2 hours ago'
-                },
-                {
-                  type: 'Certificate Check',
-                  description: 'SSL certificate validation passed',
-                  severity: 'success',
-                  timestamp: '4 hours ago'
-                }
-              ].map((event, index) => (
-                <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
-                  <div className={`w-3 h-3 rounded-full ${
-                    event.severity === 'warning' ? 'bg-yellow-500' :
-                    event.severity === 'info' ? 'bg-blue-500' :
-                    event.severity === 'success' ? 'bg-green-500' : 'bg-gray-500'
-                  }`} />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{event.type}</p>
-                    <p className="text-sm text-gray-500">{event.description}</p>
-                  </div>
-                  <span className="text-sm text-gray-400">{event.timestamp}</span>
-                </div>
-              ))}
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="text-sm text-gray-600 text-center">
+                Security event logging requires audit infrastructure to be configured.
+                When enabled, this section will display recent security events such as failed logins, 
+                suspicious activity, and security scans.
+              </p>
             </div>
           </div>
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import React, { useState, useEffect } from 'react'
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
   Plus, 
@@ -9,14 +9,16 @@ import {
   Trash2,
   MoreVertical,
   Shield,
-  Building2
+  Building2,
+  X,
+  AlertTriangle
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 
 import logger from '../utils/logger'
 
 import { User } from '../types/api'
-import { UserRole } from '../types'
+import { UserRole, UserStatus } from '../types'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
@@ -24,11 +26,222 @@ import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 
+// Edit User Modal Component
+interface EditUserModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onSave: (user: User) => Promise<void>
+  isLoading: boolean
+}
+
+const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading }) => {
+  const [formData, setFormData] = useState<Partial<User>>({})
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (user && isOpen) {
+      setFormData({
+        id: user.id,
+        name: user.name || '',
+        email: user.email || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        role: user.role,
+        status: user.status,
+      })
+      setError(null)
+    }
+  }, [user, isOpen])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    
+    if (!formData.email) {
+      setError('Email is required')
+      return
+    }
+    
+    try {
+      // Merge formData with existing user to preserve required fields
+      await onSave({ ...user, ...formData } as User)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update user')
+    }
+  }
+
+  if (!isOpen || !user) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Edit User</h2>
+          <button 
+            onClick={onClose} 
+            className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            disabled={isLoading}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <input
+                  type="text"
+                  className={STANDARD_INPUT_FIELD}
+                  value={formData.firstName || ''}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  placeholder="First name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <input
+                  type="text"
+                  className={STANDARD_INPUT_FIELD}
+                  value={formData.lastName || ''}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  placeholder="Last name"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
+              <input
+                type="email"
+                className={STANDARD_INPUT_FIELD}
+                value={formData.email || ''}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="Email address"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={formData.role || ''}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+              >
+                <option value={UserRole.SUPER_ADMIN}>Super Admin</option>
+                <option value={UserRole.ADMIN}>Admin</option>
+                <option value={UserRole.FOUNDATION}>Foundation</option>
+                <option value={UserRole.PRODUCT_SUPPLIER}>Product Supplier</option>
+                <option value={UserRole.SERVICE_PROVIDER}>Service Provider</option>
+                <option value={UserRole.EDUCATOR}>Educator</option>
+                <option value={UserRole.PARENT}>Parent</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={formData.status || UserStatus.ACTIVE}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as UserStatus })}
+              >
+                <option value={UserStatus.ACTIVE}>Active</option>
+                <option value={UserStatus.PENDING}>Pending</option>
+                <option value={UserStatus.INACTIVE}>Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+            >
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Delete Confirmation Modal Component
+interface DeleteConfirmModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onConfirm: () => Promise<void>
+  isLoading: boolean
+}
+
+const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
+  if (!isOpen || !user) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+            <AlertTriangle className="w-6 h-6 text-red-600" />
+          </div>
+          
+          <div className="mt-4 text-center">
+            <h3 className="text-lg font-semibold text-gray-900">Delete User</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete <span className="font-medium">{user.name || user.email}</span>? 
+              This action cannot be undone and will permanently remove all associated data.
+            </p>
+          </div>
+        </div>
+
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isLoading}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
+          >
+            {isLoading ? 'Deleting...' : 'Delete User'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const Users: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
@@ -42,6 +255,36 @@ const Users: React.FC = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     staleTime: 5 * 60 * 1000,
+  })
+
+  // Update user mutation
+  const updateUserMutation = useMutation({
+    mutationFn: (updatedUser: User) => apiService.updateUser(apiClient, updatedUser.id, updatedUser),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setIsEditModalOpen(false)
+      setSelectedUser(null)
+      logger.log('User updated successfully')
+    },
+    onError: (error) => {
+      logger.error('Failed to update user:', error)
+      throw error
+    },
+  })
+
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => apiService.deleteUser(apiClient, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setIsDeleteModalOpen(false)
+      setSelectedUser(null)
+      logger.log('User deleted successfully')
+    },
+    onError: (error) => {
+      logger.error('Failed to delete user:', error)
+      throw error
+    },
   })
 
   const users: User[] = usersResponse?.data?.data || []
@@ -65,16 +308,39 @@ const Users: React.FC = () => {
     return matchesSearch && matchesRole
   })
 
+  // Handle opening edit modal
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user)
+    setIsEditModalOpen(true)
+  }
 
+  // Handle opening delete modal
+  const handleDeleteClick = (user: User) => {
+    setSelectedUser(user)
+    setIsDeleteModalOpen(true)
+  }
+
+  // Handle saving user updates
   const handleUpdateUser = async (updatedUser: User) => {
-    try {
-      await apiService.updateUser(apiClient, updatedUser.id, updatedUser)
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-      setIsEditModalOpen(false)
-    } catch (error) {
-      logger.error('Failed to update user:', error)
-      // You might want to show an error message to the user
+    await updateUserMutation.mutateAsync(updatedUser)
+  }
+
+  // Handle confirming delete
+  const handleConfirmDelete = async () => {
+    if (selectedUser) {
+      await deleteUserMutation.mutateAsync(selectedUser.id)
     }
+  }
+
+  // Handle closing modals
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setSelectedUser(null)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+    setSelectedUser(null)
   }
 
 
@@ -243,6 +509,7 @@ const Users: React.FC = () => {
                             <Menu.Item>
                               {({ active }) => (
                                 <button
+                                  onClick={() => handleEditUser(user)}
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Edit className="h-4 w-4 mr-2" />
@@ -253,6 +520,7 @@ const Users: React.FC = () => {
                             <Menu.Item>
                               {({ active }) => (
                                 <button
+                                  onClick={() => handleDeleteClick(user)}
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
@@ -279,6 +547,24 @@ const Users: React.FC = () => {
           </div>
         )}
       </Card>
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        user={selectedUser}
+        onSave={handleUpdateUser}
+        isLoading={updateUserMutation.isPending}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        user={selectedUser}
+        onConfirm={handleConfirmDelete}
+        isLoading={deleteUserMutation.isPending}
+      />
     </div>
   )
 }

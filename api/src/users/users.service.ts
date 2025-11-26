@@ -621,23 +621,55 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const updatedAppUser = await this.prisma.appUser.update({
-      where: { id },
-      data: {
-        email: updateUserDto.email || appUser.email,
-        role: updateUserDto.role as UserRole || appUser.role,
-      },
+    // Update both AppUser and User profile in a transaction for data consistency
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Update AppUser table
+      const updatedAppUser = await tx.appUser.update({
+        where: { id },
+        data: {
+          email: updateUserDto.email || appUser.email,
+          role: updateUserDto.role as UserRole || appUser.role,
+        },
+      });
+
+      // Also try to update the User profile table if it exists
+      let userProfile = null;
+      const existingUser = await tx.user.findUnique({
+        where: { clerkId: appUser.clerkId },
+      });
+
+      if (existingUser) {
+        const userUpdateData: any = {};
+        if (updateUserDto.email !== undefined) userUpdateData.email = updateUserDto.email;
+        if (updateUserDto.firstName !== undefined) userUpdateData.firstName = updateUserDto.firstName;
+        if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
+        if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
+        if (updateUserDto.role !== undefined) userUpdateData.role = updateUserDto.role as UserRole;
+
+        if (Object.keys(userUpdateData).length > 0) {
+          userProfile = await tx.user.update({
+            where: { clerkId: appUser.clerkId },
+            data: userUpdateData,
+          });
+        } else {
+          userProfile = existingUser;
+        }
+      }
+
+      return { updatedAppUser, userProfile };
     });
+
+    const { updatedAppUser, userProfile } = result;
 
     // Return in User format for compatibility
     return {
       id: updatedAppUser.id,
       clerkId: updatedAppUser.clerkId,
       email: updatedAppUser.email,
-      firstName: null,
-      lastName: null,
+      firstName: userProfile?.firstName || null,
+      lastName: userProfile?.lastName || null,
       role: updatedAppUser.role,
-      phoneNumber: null,
+      phoneNumber: userProfile?.phoneNumber || null,
       workExperience: null,
       education: null,
       certifications: [],
@@ -723,8 +755,24 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const deletedAppUser = await this.prisma.appUser.delete({
-      where: { id },
+    // Delete both User profile and AppUser in a transaction for data consistency
+    const deletedAppUser = await this.prisma.$transaction(async (tx) => {
+      // Try to delete the User profile table first (if it exists)
+      // Using deleteMany to avoid errors if profile doesn't exist
+      const deleteResult = await tx.user.deleteMany({
+        where: { clerkId: appUser.clerkId },
+      });
+      
+      if (deleteResult.count > 0) {
+        console.log(`Deleted User profile for clerkId: ${appUser.clerkId}`);
+      } else {
+        console.log(`User profile not found for clerkId: ${appUser.clerkId}`);
+      }
+
+      // Delete AppUser
+      return await tx.appUser.delete({
+        where: { id },
+      });
     });
 
     // Return in User format for compatibility
