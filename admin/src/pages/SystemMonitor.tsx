@@ -649,8 +649,7 @@ const SystemMonitor: React.FC = () => {
                 />
                 <MetricCard
                   title="Uptime"
-                  value={healthData?.data?.uptime ? '99.9' : 'N/A'}
-                  unit={healthData?.data?.uptime ? '%' : ''}
+                  value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                   icon={CheckCircle}
                   color="green"
                 />
@@ -767,8 +766,8 @@ const SystemMonitor: React.FC = () => {
                   color="blue"
                 />
                 <MetricCard
-                  title="SSL Status"
-                  value={systemStatus ? 'Valid' : 'Unknown'}
+                  title="API Health"
+                  value={systemStatus ? 'Healthy' : 'Unknown'}
                   icon={systemStatus ? CheckCircle : AlertCircle}
                   color={systemStatus ? 'green' : 'yellow'}
                 />

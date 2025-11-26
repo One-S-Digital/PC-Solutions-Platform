@@ -4,7 +4,20 @@ import axiosRetry from 'axios-retry'
 import { useAuth } from '@clerk/clerk-react'
 import { useMemo } from 'react'
 import logger from '../utils/logger'
-import { User, Organization, Product, Service, ApiResponse } from '../types/api'
+import { 
+  User, 
+  Organization, 
+  Product, 
+  Service, 
+  ApiResponse,
+  AnalyticsOverview,
+  UserAnalytics,
+  OrgAnalytics,
+  ProductAnalytics,
+  JobAnalytics,
+  RevenueAnalytics,
+  SystemUsageAnalytics
+} from '../types/api'
 import { AxiosInstance } from 'axios'
 
 

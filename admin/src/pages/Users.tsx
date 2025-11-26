@@ -64,7 +64,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     }
     
     try {
-      await onSave(formData as User)
+      // Merge formData with existing user to preserve required fields
+      await onSave({ ...user, ...formData } as User)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update user')
     }

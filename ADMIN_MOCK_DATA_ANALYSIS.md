@@ -97,6 +97,7 @@ Located at: `api/src/analytics/analytics.controller.ts`
 | `GET /admin/analytics/system` | System usage | Available for future use |
 
 ### Health API
+
 | Endpoint | Description | Used By |
 |----------|-------------|---------|
 | `GET /health` | System health status, uptime, environment | Dashboard.tsx ✅, SystemMonitor.tsx ✅ |
