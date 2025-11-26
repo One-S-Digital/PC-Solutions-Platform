@@ -16,9 +16,10 @@ import {
   Eye,
   Clock,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Briefcase
 } from 'lucide-react'
-import { publicApi, useApiClient } from '../services/api'
+import { publicApi, useApiClient, apiService } from '../services/api'
 import * as api from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
@@ -43,6 +44,21 @@ const Dashboard: React.FC = () => {
     refetchInterval: 120000, // Refresh every 2 minutes instead of 30 seconds
   })
 
+  // Fetch real-time analytics overview data
+  const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
+    queryKey: ['admin-analytics-overview'],
+    queryFn: () => apiService.getAnalyticsOverview(apiClient),
+    refetchInterval: 60000, // Refresh every minute
+    enabled: !!apiClient,
+  })
+
+  // Fetch parent leads count separately since it's not in analytics
+  const { data: parentLeadsData, isLoading: parentLeadsLoading } = useQuery({
+    queryKey: ['parent-leads-count'],
+    queryFn: () => apiService.getParentLeads(apiClient),
+    enabled: !!apiClient,
+  })
+
   // Content Management State
   const [isContentModalOpen, setIsContentModalOpen] = useState(false)
   const [contentModalType, setContentModalType] = useState<ContentType>('e-learning')
@@ -51,14 +67,19 @@ const Dashboard: React.FC = () => {
   const [policiesCount, setPoliciesCount] = useState(0)
   const [contentLoading, setContentLoading] = useState(true)
 
-  const usersData = 42
-  const usersLoading = false
-  const orgsData = 8
-  const orgsLoading = false
-  const productsData = 15
-  const productsLoading = false
-  const leadsData = 23
-  const leadsLoading = false
+  // Extract real data from analytics response
+  const usersData = analyticsData?.data?.users?.totalUsers ?? 0
+  const usersLoading = analyticsLoading
+  const orgsData = analyticsData?.data?.organizations?.totalOrganizations ?? 0
+  const orgsLoading = analyticsLoading
+  const productsData = analyticsData?.data?.products?.totalProducts ?? 0
+  const productsLoading = analyticsLoading
+  const leadsData = parentLeadsData?.data?.data?.length ?? 0
+  const leadsLoading = parentLeadsLoading
+
+  // Extract job analytics data
+  const totalJobs = analyticsData?.data?.jobs?.totalJobs ?? 0
+  const totalApplications = analyticsData?.data?.jobs?.totalApplications ?? 0
 
   const stats = [
     {
@@ -68,6 +89,7 @@ const Dashboard: React.FC = () => {
       loading: usersLoading,
       color: 'text-swiss-mint',
       bgColor: 'bg-swiss-mint/10',
+      link: '/users',
     },
     {
       name: t('sidebar.foundations', 'Organizations'),
@@ -76,6 +98,7 @@ const Dashboard: React.FC = () => {
       loading: orgsLoading,
       color: 'text-swiss-sand',
       bgColor: 'bg-swiss-sand/20',
+      link: '/organizations',
     },
     {
       name: t('sidebar.products', 'Products'),
@@ -84,6 +107,7 @@ const Dashboard: React.FC = () => {
       loading: productsLoading,
       color: 'text-swiss-teal',
       bgColor: 'bg-swiss-teal/10',
+      link: '/products',
     },
     {
       name: t('sidebar.parentLeads', 'Parent Leads'),
@@ -92,7 +116,30 @@ const Dashboard: React.FC = () => {
       loading: leadsLoading,
       color: 'text-swiss-coral',
       bgColor: 'bg-swiss-coral/10',
+      link: '/parent-leads',
     }
+  ]
+
+  // Additional job stats
+  const jobStats = [
+    {
+      name: t('sidebar.jobListings', 'Job Listings'),
+      value: totalJobs,
+      icon: Briefcase,
+      loading: analyticsLoading,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-100',
+      link: '/job-listings',
+    },
+    {
+      name: t('applications', 'Applications'),
+      value: totalApplications,
+      icon: FileText,
+      loading: analyticsLoading,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+      link: '/candidates',
+    },
   ]
 
   const systemStatus = healthData?.data?.status === 'OK'
@@ -273,7 +320,38 @@ const Dashboard: React.FC = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <Card key={stat.name} className="p-0 overflow-hidden" hoverEffect>
+          <Card 
+            key={stat.name} 
+            className="p-0 overflow-hidden cursor-pointer" 
+            hoverEffect 
+            onClick={() => stat.link && navigate(stat.link)}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
+                {stat.loading ? (
+                  <LoadingSpinner size="small" />
+                ) : (
+                  <p className="text-2xl font-bold text-swiss-charcoal">{stat.value}</p>
+                )}
+              </div>
+              <p className="mt-4 text-sm text-gray-500">{stat.name}</p>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Job Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {jobStats.map((stat) => (
+          <Card 
+            key={stat.name} 
+            className="p-0 overflow-hidden cursor-pointer" 
+            hoverEffect
+            onClick={() => stat.link && navigate(stat.link)}
+          >
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className={`p-3 rounded-lg ${stat.bgColor}`}>
@@ -369,25 +447,51 @@ const Dashboard: React.FC = () => {
         </div>
       </Card>
 
-      {/* Recent Activity */}
+      {/* Platform Summary */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">Recent Activity</h2>
+        <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">{t('platformSummary', 'Platform Summary')}</h2>
         <div className="space-y-4">
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
-            <span className="text-gray-600">System started successfully</span>
-            <span className="text-gray-400">• Just now</span>
-          </div>
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-swiss-sand rounded-full"></div>
-            <span className="text-gray-600">Admin dashboard accessed by {user?.fullName}</span>
-            <span className="text-gray-400">• Just now</span>
-          </div>
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-            <span className="text-gray-600">Backend API health check passed</span>
-            <span className="text-gray-400">• 30 seconds ago</span>
-          </div>
+          {systemStatus && (
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
+              <span className="text-gray-600">{t('systemHealthy', 'All systems operational')}</span>
+              <span className="text-gray-400">• {t('live', 'Live')}</span>
+            </div>
+          )}
+          {!analyticsLoading && usersData > 0 && (
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
+              <span className="text-gray-600">{usersData} {t('registeredUsers', 'registered users in the platform')}</span>
+              <span className="text-gray-400">• {t('total', 'Total')}</span>
+            </div>
+          )}
+          {!analyticsLoading && orgsData > 0 && (
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-swiss-sand rounded-full"></div>
+              <span className="text-gray-600">{orgsData} {t('activeOrganizations', 'active organizations')}</span>
+              <span className="text-gray-400">• {t('total', 'Total')}</span>
+            </div>
+          )}
+          {!analyticsLoading && totalJobs > 0 && (
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+              <span className="text-gray-600">{totalJobs} {t('jobsPosted', 'job listings posted')}</span>
+              <span className="text-gray-400">• {totalApplications} {t('applications', 'applications')}</span>
+            </div>
+          )}
+          {!analyticsLoading && productsData > 0 && (
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-swiss-teal rounded-full"></div>
+              <span className="text-gray-600">{productsData} {t('productsAvailable', 'products in catalog')}</span>
+              <span className="text-gray-400">• {t('total', 'Total')}</span>
+            </div>
+          )}
+          {analyticsLoading && (
+            <div className="flex items-center space-x-3 text-sm">
+              <LoadingSpinner size="small" />
+              <span className="text-gray-600">{t('loadingStats', 'Loading platform statistics...')}</span>
+            </div>
+          )}
         </div>
       </Card>
 

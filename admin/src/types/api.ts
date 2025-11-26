@@ -366,6 +366,61 @@ export interface DbHealth {
   status: 'OK' | 'ERROR';
   details?: string;
 }
+
+// Admin Analytics Types - Real-time dashboard statistics
+export interface UserAnalytics {
+  totalUsers: number;
+  activeUsers: number;
+  registrations: Array<{ date: string; count: number }>;
+  usersByRole: Array<{ role: string; count: number }>;
+}
+
+export interface OrgAnalytics {
+  totalOrganizations: number;
+  activeOrganizations: number;
+  registrations: Array<{ date: string; count: number }>;
+  orgsByType: Array<{ type: string; count: number }>;
+}
+
+export interface ProductAnalytics {
+  totalProducts: number;
+  newProducts: number;
+  productsByCategory: Array<{ category: string; count: number }>;
+  productsByStatus: Array<{ status: string; count: number }>;
+}
+
+export interface JobAnalytics {
+  totalJobs: number;
+  totalApplications: number;
+  newJobs: number;
+  newApplications: number;
+  jobsByStatus: Array<{ status: string; count: number }>;
+}
+
+export interface RevenueAnalytics {
+  totalSubscriptions: number;
+  activeSubscriptions: number;
+  totalRevenue: number;
+  revenueByPlan: Array<{ planName: string; count: number; revenue: number }>;
+}
+
+export interface SystemUsageAnalytics {
+  apiRequests: number;
+  dbConnections: number;
+  slowQueries: number;
+  storageUsed: number;
+}
+
+export interface AnalyticsOverview {
+  users: UserAnalytics;
+  organizations: OrgAnalytics;
+  products: ProductAnalytics;
+  jobs: JobAnalytics;
+  revenue: RevenueAnalytics;
+  system: SystemUsageAnalytics;
+  lastUpdated: string;
+}
+
 export interface LegacyUploadResult {
   id: string;
   url: string;

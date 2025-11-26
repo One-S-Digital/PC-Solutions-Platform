@@ -493,10 +493,25 @@ export const apiService = {
   },
 
   // Health Check
-
   getSettingsHealth: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<SettingsHealth>>('/admin/settings/health'),
   getSystemHealth: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<SystemHealth>>('/health'),
   getDbHealth: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<DbHealth>>('/health/db'),
+
+  // Admin Analytics - Real-time dashboard statistics
+  getAnalyticsOverview: (apiClient: AxiosInstance) => 
+    apiClient.get<ApiResponse<AnalyticsOverview>>('/admin/analytics/overview'),
+  getUserAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+    apiClient.get<ApiResponse<UserAnalytics>>('/admin/analytics/users', { params: { timeRange } }),
+  getOrganizationAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+    apiClient.get<ApiResponse<OrgAnalytics>>('/admin/analytics/organizations', { params: { timeRange } }),
+  getProductAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+    apiClient.get<ApiResponse<ProductAnalytics>>('/admin/analytics/products', { params: { timeRange } }),
+  getJobAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+    apiClient.get<ApiResponse<JobAnalytics>>('/admin/analytics/jobs', { params: { timeRange } }),
+  getRevenueAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+    apiClient.get<ApiResponse<RevenueAnalytics>>('/admin/analytics/revenue', { params: { timeRange } }),
+  getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+    apiClient.get<ApiResponse<SystemUsageAnalytics>>('/admin/analytics/system', { params: { timeRange } }),
 
 
   // Legacy upload (keeping for compatibility)
