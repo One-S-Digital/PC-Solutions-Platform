@@ -30,6 +30,14 @@ export class UsersController {
 
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Extract the changedBy identifier from a request object.
+   * Used for audit trail when modifying user roles.
+   */
+  private getChangedBy(request: any): string {
+    return request.user?.clerkId || request.context?.clerkUserId || 'system';
+  }
+
   @Post('complete-profile')
   async completeProfile(@Request() request, @Body() completeProfileDto: CompleteProfileDto) {
     const clerkId = request.user.clerkId;
@@ -147,8 +155,12 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(UserRole.SUPER_ADMIN)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() request,
+  ) {
+    return this.usersService.update(id, updateUserDto, this.getChangedBy(request));
   }
 
   @Delete(':id')
@@ -162,8 +174,9 @@ export class UsersController {
   assignRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('role') role: UserRole,
+    @Request() request,
   ) {
-    return this.usersService.assignRole(id, role);
+    return this.usersService.assignRole(id, role, this.getChangedBy(request));
   }
 
   @Delete(':id/roles/:role')
@@ -171,8 +184,9 @@ export class UsersController {
   removeRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('role') role: UserRole,
+    @Request() request,
   ) {
-    return this.usersService.removeRole(id, role);
+    return this.usersService.removeRole(id, role, this.getChangedBy(request));
   }
 
   @Get('search/email')
