@@ -79,21 +79,34 @@ export class RoleManagementController {
     });
 
     if (!appUser) {
-      // Create user if doesn't exist
+      // Create user if doesn't exist - wrap in transaction for atomicity
       this.logger.log(`Creating new user for clerkId: ${targetClerkId} with role ${dto.role}`);
-      appUser = await this.prisma.appUser.create({
-        data: {
-          clerkId: targetClerkId,
-          role: dto.role,
-        },
-      });
+      await this.prisma.$transaction(async (tx) => {
+        appUser = await tx.appUser.create({
+          data: {
+            clerkId: targetClerkId,
+            role: dto.role,
+          },
+        });
 
-      // Still need to create outbox entry for new user
-      await this.prisma.outbox.create({
-        data: {
-          topic: 'mirror.role',
-          payload: { clerkUserId: targetClerkId, role: dto.role },
-        },
+        // Create role history for audit trail
+        await tx.appUserRoleHistory.create({
+          data: {
+            userId: appUser.id,
+            previousRole: null as any, // No previous role for new user
+            newRole: dto.role,
+            changedBy,
+            reason: dto.reason || 'Initial user creation',
+          },
+        });
+
+        // Create outbox entry for Clerk sync
+        await tx.outbox.create({
+          data: {
+            topic: 'mirror.role',
+            payload: { clerkUserId: targetClerkId, role: dto.role },
+          },
+        });
       });
     } else {
       // Use RoleSyncService for existing user role change

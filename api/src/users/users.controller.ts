@@ -30,6 +30,14 @@ export class UsersController {
 
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Extract the changedBy identifier from a request object.
+   * Used for audit trail when modifying user roles.
+   */
+  private getChangedBy(request: any): string {
+    return request.user?.clerkId || request.context?.clerkUserId || 'system';
+  }
+
   @Post('complete-profile')
   async completeProfile(@Request() request, @Body() completeProfileDto: CompleteProfileDto) {
     const clerkId = request.user.clerkId;
@@ -152,8 +160,7 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
     @Request() request,
   ) {
-    const changedBy = request.user?.clerkId || request.context?.clerkUserId || 'system';
-    return this.usersService.update(id, updateUserDto, changedBy);
+    return this.usersService.update(id, updateUserDto, this.getChangedBy(request));
   }
 
   @Delete(':id')
@@ -169,8 +176,7 @@ export class UsersController {
     @Param('role') role: UserRole,
     @Request() request,
   ) {
-    const changedBy = request.user?.clerkId || request.context?.clerkUserId || 'system';
-    return this.usersService.assignRole(id, role, changedBy);
+    return this.usersService.assignRole(id, role, this.getChangedBy(request));
   }
 
   @Delete(':id/roles/:role')
@@ -180,8 +186,7 @@ export class UsersController {
     @Param('role') role: UserRole,
     @Request() request,
   ) {
-    const changedBy = request.user?.clerkId || request.context?.clerkUserId || 'system';
-    return this.usersService.removeRole(id, role, changedBy);
+    return this.usersService.removeRole(id, role, this.getChangedBy(request));
   }
 
   @Get('search/email')

@@ -2,6 +2,13 @@ import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole, Prisma } from '@prisma/client';
 
+/**
+ * Outbox topic constants for message queue processing
+ */
+export const OUTBOX_TOPICS = {
+  MIRROR_ROLE: 'mirror.role',
+} as const;
+
 export interface RoleChangeOptions {
   /** The AppUser ID (UUID) */
   appUserId: string;
@@ -95,7 +102,7 @@ export class RoleSyncService {
     // 4. Create Outbox entry for Clerk sync
     await prismaClient.outbox.create({
       data: {
-        topic: 'mirror.role',
+        topic: OUTBOX_TOPICS.MIRROR_ROLE,
         payload: { clerkUserId: appUser.clerkId, role: newRole },
       },
     });

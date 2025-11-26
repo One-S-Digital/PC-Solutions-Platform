@@ -262,8 +262,8 @@ export class UsersService {
         });
       }
     } else {
-      console.log(`🆕 [COMPLETE PROFILE] Creating new user with role ${dto.role}`);
-      // Create AppUser and User atomically
+      this.logger.log(`🆕 [COMPLETE PROFILE] Creating new user with role ${dto.role}`);
+      // Create AppUser and User atomically with audit trail and Clerk sync
       const nameParts = dto.contactPerson ? dto.contactPerson.trim().split(' ') : [];
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
@@ -274,6 +274,25 @@ export class UsersService {
             clerkId,
             email,
             role: dto.role,
+          },
+        });
+
+        // Create role history for audit trail
+        await tx.appUserRoleHistory.create({
+          data: {
+            userId: appUser.id,
+            previousRole: null as any, // No previous role for new user
+            newRole: dto.role,
+            changedBy: clerkId,
+            reason: 'Profile completion - new user',
+          },
+        });
+
+        // Create outbox entry for Clerk sync
+        await tx.outbox.create({
+          data: {
+            topic: 'mirror.role',
+            payload: { clerkUserId: clerkId, role: dto.role },
           },
         });
 
@@ -295,7 +314,7 @@ export class UsersService {
       if (dto.organisationName) {
          // Logic to create organization would go here
          // For now we rely on the user updating their profile/org later or implement a separate flow
-         console.log(`🏢 [COMPLETE PROFILE] Organization name provided: ${dto.organisationName}`);
+         this.logger.log(`🏢 [COMPLETE PROFILE] Organization name provided: ${dto.organisationName}`);
       }
     }
 
