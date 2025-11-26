@@ -1,9 +1,10 @@
-import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query } from '@nestjs/common';
+import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Post, UploadedFile, UseInterceptors, Body, Query } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudflareR2Service } from './cloudflare-r2.service';
+import { UploadService } from './upload.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { PrismaService } from '../prisma/prisma.service';
-import { UploadService } from './upload.service';
 import { AssetKind } from '@workspace/types';
 
 @Controller('upload')
@@ -13,9 +14,63 @@ export class UploadController {
 
   constructor(
     private readonly r2Service: CloudflareR2Service,
-    private readonly prisma: PrismaService,
     private readonly uploadService: UploadService,
+    private readonly prisma: PrismaService,
   ) {}
+
+  /**
+   * Upload file and create asset record
+   * POST /api/upload/file
+   */
+  @Post('file')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('assetKind') assetKind: string,
+    @Req() req: Request,
+    @Body('conversationId') conversationId?: string,
+  ) {
+    try {
+      if (!file) {
+        throw new BadRequestException('No file provided');
+      }
+
+      if (!req.context?.appUserId) {
+        throw new BadRequestException('User not authenticated');
+      }
+
+      // Validate assetKind
+      const validAssetKind = assetKind as AssetKind;
+      if (!Object.values(AssetKind).includes(validAssetKind)) {
+        throw new BadRequestException(`Invalid assetKind. Must be one of: ${Object.values(AssetKind).join(', ')}`);
+      }
+
+      this.logger.log(`Uploading file: ${file.originalname} (${validAssetKind}) for user ${req.context.appUserId}${conversationId ? ` in conversation ${conversationId}` : ''}`);
+
+      const result = await this.uploadService.uploadFile(file, req.context.appUserId, validAssetKind, conversationId);
+
+      return {
+        success: true,
+        asset: {
+          id: result.asset.id,
+          filename: result.asset.filename,
+          publicUrl: result.asset.publicUrl,
+          url: result.asset.publicUrl, // Alias for compatibility
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+          contentType: result.asset.contentType,
+          kind: result.asset.kind,
+        },
+        publicUrl: result.publicUrl,
+      };
+    } catch (error) {
+      this.logger.error('File upload failed', error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to upload file');
+    }
+  }
 
   /**
    * Get asset metadata by ID

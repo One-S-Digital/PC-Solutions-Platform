@@ -497,13 +497,17 @@
   },
   "createGroupChatModal": {
     "error": {
-      "minParticipants": "[FR] Min Participants"
+      "minParticipants": "Veuillez sélectionner au moins un participant pour démarrer une conversation. Vous serez automatiquement ajouté comme participant.",
+      "invalidParticipants": "Veuillez sélectionner des participants valides. Les comptes système et vous-même ne peuvent pas être ajoutés aux conversations."
     },
-    "title": "[FR] Title",
-    "groupNameLabel": "[FR] Group Name",
-    "groupNamePlaceholder": "[FR] Enter group name",
-    "selectParticipantsLabel": "[FR] Select Participants",
-    "createButton": "[FR] Create Button"
+    "title": "Créer un groupe de discussion",
+    "titleNewChat": "Créer une conversation",
+    "groupNameLabel": "Nom du groupe",
+    "groupNamePlaceholder": "Entrez le nom du groupe",
+    "selectParticipantsLabel": "Sélectionner les participants",
+    "createButton": "Créer",
+    "loadingUsers": "Chargement des utilisateurs...",
+    "noUsersAvailable": "Aucun utilisateur disponible"
   },
   "serviceRequestDetailModal": {
     "markAsCompleted": "[FR] Mark As Completed",

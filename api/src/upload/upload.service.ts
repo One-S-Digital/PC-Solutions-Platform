@@ -271,10 +271,10 @@ export class UploadService {
   /**
    * Upload file and create asset record
    */
-  async uploadFile(file: Express.Multer.File, uploadedById: string, kind: AssetKind) {
+  async uploadFile(file: Express.Multer.File, uploadedById: string, kind: AssetKind, conversationId?: string) {
     try {
       // Upload to R2
-      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedById);
+      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedById, undefined, conversationId);
 
       // Create asset record
       const asset = await this.createAsset({

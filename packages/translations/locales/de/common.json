@@ -770,13 +770,17 @@
   },
   "createGroupChatModal": {
     "error": {
-      "minParticipants": "[DE] Min Participants"
+      "minParticipants": "Bitte wählen Sie mindestens einen Teilnehmer aus, um eine Konversation zu starten. Sie werden automatisch als Teilnehmer hinzugefügt.",
+      "invalidParticipants": "Bitte wählen Sie gültige Teilnehmer aus. Systemkonten und Sie selbst können nicht zu Konversationen hinzugefügt werden."
     },
-    "title": "[DE] Title",
-    "groupNameLabel": "[DE] Group Name",
-    "groupNamePlaceholder": "[DE] Enter group name",
-    "selectParticipantsLabel": "[DE] Select Participants",
-    "createButton": "[DE] Create Button"
+    "title": "Gruppenchat erstellen",
+    "titleNewChat": "Chat erstellen",
+    "groupNameLabel": "Gruppenname",
+    "groupNamePlaceholder": "Gruppenname eingeben",
+    "selectParticipantsLabel": "Teilnehmer auswählen",
+    "createButton": "Erstellen",
+    "loadingUsers": "Benutzer werden geladen...",
+    "noUsersAvailable": "Keine Benutzer verfügbar"
   },
   "serviceUploadModal": {
     "editTitle": "[DE] Edit Title",

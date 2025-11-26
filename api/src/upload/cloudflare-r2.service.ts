@@ -101,6 +101,7 @@ export class CloudflareR2Service {
     assetKind: AssetKind,
     appUserId: string,
     subcategory?: string,
+    conversationId?: string,
   ): Promise<UploadResult> {
     try {
       // Validate file first
@@ -112,12 +113,12 @@ export class CloudflareR2Service {
         const isDevelopment = process.env.NODE_ENV !== 'production';
         if (isDevelopment) {
           this.logger.warn('⚠️ R2 not configured. Using development fallback (local storage simulation)');
-          return this.uploadFileLocalFallback(file, assetKind, appUserId, subcategory);
+          return this.uploadFileLocalFallback(file, assetKind, appUserId, subcategory, conversationId);
         }
         throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
       }
 
-      const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory);
+      const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
       
       // Calculate SHA-256 checksum
       const checksum = this.calculateChecksum(file.buffer);
@@ -315,10 +316,18 @@ export class CloudflareR2Service {
     assetKind: AssetKind, 
     appUserId: string,
     subcategory?: string,
+    conversationId?: string,
   ): string {
     const timestamp = Date.now();
     const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
     const sanitizedSubcategory = subcategory ? subcategory.replace(/[^a-zA-Z0-9-]/g, '_').toLowerCase() : null;
+
+    // Special handling for message attachments - organize by conversation
+    // If conversationId is provided, use messages folder structure
+    if (conversationId) {
+      const sanitizedConversationId = conversationId.replace(/[^a-zA-Z0-9-]/g, '_');
+      return `messages/${sanitizedConversationId}/${timestamp}-${sanitizedFilename}`;
+    }
 
     // If subcategory provided, use it as a subfolder
     if (sanitizedSubcategory) {
@@ -445,8 +454,9 @@ export class CloudflareR2Service {
     assetKind: AssetKind,
     appUserId: string,
     subcategory?: string,
+    conversationId?: string,
   ): UploadResult {
-    const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory);
+    const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
     const mockUrl = `http://localhost:3000/uploads/${key}`;
     
     this.logger.log(`📦 Development fallback: Simulating upload for ${file.originalname}`);

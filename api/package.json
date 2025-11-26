@@ -47,7 +47,8 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "db:init": "./scripts/init-database.sh",
-    "import:translations": "ts-node scripts/import-static-translations.ts"
+    "import:translations": "ts-node scripts/import-static-translations.ts",
+    "create:test-users": "ts-node scripts/create-test-users.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.888.0",

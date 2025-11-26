@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsUrl } from 'class-validator';
 import { ConversationType, MessageType } from '@workspace/types';
 
 export class CreateConversationDto {
@@ -29,4 +29,20 @@ export class CreateMessageDto {
   @IsOptional()
   @IsEnum(MessageType)
   messageType?: MessageType;
+
+  @IsOptional()
+  @IsString()
+  fileUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  fileName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  fileSize?: number;
+
+  @IsOptional()
+  @IsString()
+  mimeType?: string;
 }

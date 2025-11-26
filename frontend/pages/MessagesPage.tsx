@@ -26,9 +26,7 @@ const MessagesPage: React.FC = () => {
   const { currentUser } = useAppContext();
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadUserConversations();
-  }, [loadUserConversations]);
+  // Removed duplicate loadUserConversations call - MessagingContext already loads on mount
 
   useEffect(() => {
     if (paramConversationId && paramConversationId !== activeConversationId) {
@@ -65,7 +63,7 @@ const MessagesPage: React.FC = () => {
             {t('dashboard:sidebar.messages')}
         </h1>
         <Button variant="primary" leftIcon={PlusIcon} onClick={() => setIsGroupModalOpen(true)}>
-            {t('messages:buttons.newGroup')}
+            {t('messages:buttons.newChat', 'New Chat')}
         </Button>
       </div>
       

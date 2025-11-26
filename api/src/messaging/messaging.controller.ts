@@ -25,9 +25,24 @@ export class MessagingController {
 
   // Conversation Management
   @Post('conversations')
-  createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
-    const creatorId = req.context.userId;
-    return this.messagingService.createConversation(createConversationDto, creatorId);
+  async createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
+    try {
+      // req.context.userId is the Clerk ID, but we need AppUser ID or Clerk ID
+      // Use appUserId if available, otherwise use clerkId (userId) and look it up
+      const creatorId = req.context.appUserId || req.context.userId;
+      console.log('🔵 [Controller] createConversation called:', {
+        creatorId,
+        participantIds: createConversationDto.participantIds,
+        type: createConversationDto.type,
+        title: createConversationDto.title,
+      });
+      const result = await this.messagingService.createConversation(createConversationDto, creatorId);
+      console.log('✅ [Controller] Conversation created, returning result');
+      return result;
+    } catch (error) {
+      console.error('❌ [Controller] Error in createConversation:', error);
+      throw error;
+    }
   }
 
   @Get('conversations')
@@ -47,6 +62,22 @@ export class MessagingController {
   createMessage(@Body() createMessageDto: CreateMessageDto, @Request() req) {
     const senderId = req.context.userId;
     return this.messagingService.createMessage(createMessageDto, senderId);
+  }
+
+  @Patch('messages/:id')
+  updateMessage(
+    @Param('id') messageId: string,
+    @Body('content') content: string,
+    @Request() req,
+  ) {
+    const userId = req.context.userId;
+    return this.messagingService.updateMessage(messageId, content, userId);
+  }
+
+  @Delete('messages/:id')
+  deleteMessage(@Param('id') messageId: string, @Request() req) {
+    const userId = req.context.userId;
+    return this.messagingService.deleteMessage(messageId, userId);
   }
 
   @Get('conversations/:id/messages')

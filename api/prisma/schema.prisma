@@ -1113,6 +1113,10 @@ model Message {
   receiverId     String? // For direct messages
   content        String
   messageType    MessageType @default(TEXT)
+  fileUrl        String?     // URL to the uploaded file
+  fileName       String?     // Original filename
+  fileSize       Int?        // File size in bytes
+  mimeType       String?     // MIME type of the file
   isRead         Boolean     @default(false)
   createdAt      DateTime    @default(now())
 

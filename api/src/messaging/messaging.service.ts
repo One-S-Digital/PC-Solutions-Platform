@@ -1,27 +1,176 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { MessageType } from '@workspace/types';
+import { MessagingGateway } from './messaging.gateway';
 
 @Injectable()
 export class MessagingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Optional() @Inject(MessagingGateway) private messagingGateway?: MessagingGateway,
+  ) {}
 
   // Conversation Management
   async createConversation(createConversationDto: CreateConversationDto, creatorId: string) {
     const { type, title, participantIds } = createConversationDto;
 
-    return this.prisma.conversation.create({
+    console.log('🔵 [createConversation] Starting conversation creation:', {
+      type,
+      title,
+      participantIds,
+      creatorId,
+    });
+
+    // The creatorId can be either AppUser.id or Clerk ID (user_xxx)
+    // But conversation_participants.userId references User.id, not AppUser.id
+    // We need to convert to User IDs by looking up by clerkId
+    
+    // First, determine if creatorId is a Clerk ID or AppUser ID
+    // Clerk IDs start with "user_" while UUIDs are the AppUser.id format
+    let creatorClerkId: string;
+    let creatorAppUser;
+    
+    if (creatorId.startsWith('user_')) {
+      // It's a Clerk ID, look up AppUser by clerkId
+      creatorAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: creatorId },
+        select: { id: true, clerkId: true },
+      });
+      creatorClerkId = creatorId;
+    } else {
+      // It's an AppUser ID, look up AppUser by id
+      creatorAppUser = await this.prisma.appUser.findUnique({
+        where: { id: creatorId },
+        select: { id: true, clerkId: true },
+      });
+      if (creatorAppUser) {
+        creatorClerkId = creatorAppUser.clerkId;
+      }
+    }
+    
+    if (!creatorAppUser) {
+      throw new Error(`Creator with ID ${creatorId} not found in AppUser table`);
+    }
+    
+    // Get the creator's User record
+    const creatorUser = await this.prisma.user.findUnique({
+      where: { clerkId: creatorClerkId },
+      select: { id: true },
+    });
+    
+    if (!creatorUser) {
+      throw new Error(`User record not found for creator with clerkId ${creatorClerkId}`);
+    }
+    
+    // Get AppUsers for all participants to find their clerkIds
+    // Filter out any invalid IDs first
+    let participantAppUsers = await this.prisma.appUser.findMany({
+      where: { id: { in: participantIds } },
+      select: { id: true, clerkId: true },
+    });
+    
+    if (participantAppUsers.length !== participantIds.length) {
+      const foundIds = new Set(participantAppUsers.map(u => u.id));
+      const missingIds = participantIds.filter(id => !foundIds.has(id));
+      
+      // Log for debugging
+      console.error('Invalid participant IDs:', {
+        requested: participantIds,
+        found: participantAppUsers.map(u => u.id),
+        missing: missingIds,
+      });
+      
+      // Try to find missing IDs in the User table (they might be User.id instead of AppUser.id)
+      // If found, get their AppUser records via clerkId
+      const missingUserRecords = await this.prisma.user.findMany({
+        where: { id: { in: missingIds } },
+        select: { id: true, clerkId: true },
+      });
+      
+      if (missingUserRecords.length > 0) {
+        // These are User.id, need to find corresponding AppUser records
+        const clerkIds = missingUserRecords.map(u => u.clerkId);
+        const correspondingAppUsers = await this.prisma.appUser.findMany({
+          where: { clerkId: { in: clerkIds } },
+          select: { id: true, clerkId: true },
+        });
+        
+        // Add found AppUsers to the list
+        participantAppUsers.push(...correspondingAppUsers);
+        
+        // Update foundIds
+        correspondingAppUsers.forEach(u => foundIds.add(u.id));
+      }
+      
+      // Filter out any remaining invalid IDs (those not found in either AppUser or User table)
+      const validParticipantIds = participantIds.filter(id => foundIds.has(id));
+      const stillMissing = participantIds.filter(id => !foundIds.has(id));
+      
+      if (stillMissing.length > 0) {
+        console.warn(`⚠️ Some participant IDs not found in either AppUser or User table and will be excluded: ${stillMissing.join(', ')}`);
+      }
+      
+      if (validParticipantIds.length === 0) {
+        throw new Error(`No valid participant IDs found. All requested IDs were invalid: ${participantIds.join(', ')}`);
+      }
+      
+      // Update participantIds array to only include valid ones
+      participantIds.length = 0;
+      participantIds.push(...validParticipantIds);
+      
+      // Also filter participantAppUsers to only include those with valid IDs
+      const validAppUserIds = new Set(validParticipantIds);
+      participantAppUsers = participantAppUsers.filter(u => validAppUserIds.has(u.id));
+    }
+    
+    // Get User records for all participants by clerkId
+    const clerkIds = participantAppUsers.map(u => u.clerkId);
+    const participantUsers = await this.prisma.user.findMany({
+      where: { clerkId: { in: clerkIds } },
+      select: { id: true, clerkId: true },
+    });
+    
+    // Filter out participants that don't have User records (e.g., system accounts)
+    // Only include participants that have both AppUser and User records
+    const foundClerkIds = new Set(participantUsers.map(u => u.clerkId));
+    const validParticipantAppUsers = participantAppUsers.filter(appUser => foundClerkIds.has(appUser.clerkId));
+    
+    if (validParticipantAppUsers.length === 0) {
+      throw new Error('No valid participants found. All participants must have User records in the database.');
+    }
+    
+    if (validParticipantAppUsers.length < participantAppUsers.length) {
+      const missingClerkIds = clerkIds.filter(id => !foundClerkIds.has(id));
+      console.warn(`⚠️ Some participants don't have User records and will be excluded: ${missingClerkIds.join(', ')}`);
+    }
+    
+    // Map participant AppUser IDs to User IDs
+    const clerkIdToUserId = new Map(participantUsers.map(u => [u.clerkId, u.id]));
+    const participantUserIds = validParticipantAppUsers.map(appUser => {
+      const userId = clerkIdToUserId.get(appUser.clerkId);
+      if (!userId) {
+        throw new Error(`User ID not found for participant with clerkId ${appUser.clerkId}`);
+      }
+      return userId;
+    });
+
+    // Ensure creator is in the participant list (avoid duplicates)
+    const allParticipantIds = new Set([creatorUser.id, ...participantUserIds]);
+    const uniqueParticipantIds = Array.from(allParticipantIds);
+    
+    console.log('🔵 [createConversation] Final participant User IDs:', uniqueParticipantIds);
+    console.log('🔵 [createConversation] Creating conversation in database...');
+
+    try {
+      const conversation = await this.prisma.conversation.create({
       data: {
         type,
         title,
         participants: {
-          create: [
-            { userId: creatorId },
-            ...participantIds.map(id => ({ userId: id })),
-          ],
-        },
+            create: uniqueParticipantIds.map(userId => ({ userId })),
+          },
       },
       include: {
         participants: {
@@ -39,14 +188,76 @@ export class MessagingService {
         },
       },
     });
+      
+      console.log('✅ [createConversation] Conversation created successfully:', {
+        id: conversation.id,
+        type: conversation.type,
+        title: conversation.title,
+        participantCount: conversation.participants.length,
+      });
+      
+      return conversation;
+    } catch (error) {
+      console.error('❌ [createConversation] Error creating conversation:', error);
+      console.error('❌ [createConversation] Error details:', {
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        code: (error as any)?.code,
+        meta: (error as any)?.meta,
+      });
+      throw error;
+    }
   }
 
-  async getUserConversations(userId: string) {
+  async getUserConversations(rawUserId: string) {
+    console.log('🔵 [getUserConversations] Starting with rawUserId:', rawUserId);
+    
+    // Convert rawUserId (Clerk ID or AppUser ID) to User.id
+    let userClerkId: string;
+    let userAppUser;
+
+    if (rawUserId.startsWith('user_')) {
+      // It's a Clerk ID, look up AppUser by clerkId
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      userClerkId = rawUserId;
+    } else {
+      // It's an AppUser ID, look up AppUser by id
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      if (userAppUser) {
+        userClerkId = userAppUser.clerkId;
+      }
+    }
+
+    if (!userAppUser) {
+      console.warn('⚠️ [getUserConversations] User not found in AppUser table:', rawUserId);
+      return [];
+    }
+
+    // Get the User record
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: userClerkId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      console.warn('⚠️ [getUserConversations] User record not found for clerkId:', userClerkId);
+      return [];
+    }
+
+    const finalUserId = user.id;
+    console.log('🔵 [getUserConversations] Final User ID:', finalUserId);
+
     return this.prisma.conversation.findMany({
       where: {
         participants: {
           some: {
-            userId,
+            userId: finalUserId,
             isActive: true,
           },
         },
@@ -70,13 +281,48 @@ export class MessagingService {
     });
   }
 
-  async findConversationById(id: string, userId: string) {
+  async findConversationById(id: string, rawUserId: string) {
+    // Convert rawUserId (Clerk ID or AppUser ID) to User.id
+    let userClerkId: string;
+    let userAppUser;
+
+    if (rawUserId.startsWith('user_')) {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      userClerkId = rawUserId;
+    } else {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      if (userAppUser) {
+        userClerkId = userAppUser.clerkId;
+      }
+    }
+
+    if (!userAppUser) {
+      return null;
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: userClerkId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    const finalUserId = user.id;
+
     return this.prisma.conversation.findFirst({
       where: {
         id,
         participants: {
           some: {
-            userId,
+            userId: finalUserId,
             isActive: true,
           },
         },
@@ -99,8 +345,87 @@ export class MessagingService {
   }
 
   // Message Management
-  async createMessage(createMessageDto: CreateMessageDto, senderId: string) {
-    const { conversationId, receiverId, content, messageType } = createMessageDto;
+  async createMessage(createMessageDto: CreateMessageDto, rawSenderId: string) {
+    const { conversationId, receiverId, content, messageType, fileUrl, fileName, fileSize, mimeType } = createMessageDto;
+
+    console.log('🔵 [createMessage] Starting message creation:', {
+      conversationId,
+      rawSenderId,
+      content: content?.substring(0, 50),
+    });
+
+    // Convert senderId (Clerk ID or AppUser ID) to User.id
+    // senderId can be either Clerk ID (user_xxx) or AppUser.id (UUID)
+    let senderClerkId: string;
+    let senderAppUser;
+
+    if (rawSenderId.startsWith('user_')) {
+      // It's a Clerk ID, look up AppUser by clerkId
+      senderAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawSenderId },
+        select: { id: true, clerkId: true },
+      });
+      senderClerkId = rawSenderId;
+    } else {
+      // It's an AppUser ID, look up AppUser by id
+      senderAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawSenderId },
+        select: { id: true, clerkId: true },
+      });
+      if (senderAppUser) {
+        senderClerkId = senderAppUser.clerkId;
+      }
+    }
+
+    if (!senderAppUser) {
+      throw new Error(`Sender with ID ${rawSenderId} not found in AppUser table`);
+    }
+
+    // Get the sender's User record
+    const senderUser = await this.prisma.user.findUnique({
+      where: { clerkId: senderClerkId },
+      select: { id: true },
+    });
+
+    if (!senderUser) {
+      throw new Error(`User record not found for sender with clerkId ${senderClerkId}`);
+    }
+
+    const finalSenderUserId = senderUser.id;
+    console.log('🔵 [createMessage] Sender User ID:', finalSenderUserId);
+
+    // Convert receiverId if provided (same logic)
+    let finalReceiverUserId: string | null = null;
+    if (receiverId) {
+      let receiverClerkId: string;
+      let receiverAppUser;
+
+      if (receiverId.startsWith('user_')) {
+        receiverAppUser = await this.prisma.appUser.findUnique({
+          where: { clerkId: receiverId },
+          select: { id: true, clerkId: true },
+        });
+        receiverClerkId = receiverId;
+      } else {
+        receiverAppUser = await this.prisma.appUser.findUnique({
+          where: { id: receiverId },
+          select: { id: true, clerkId: true },
+        });
+        if (receiverAppUser) {
+          receiverClerkId = receiverAppUser.clerkId;
+        }
+      }
+
+      if (receiverAppUser) {
+        const receiverUser = await this.prisma.user.findUnique({
+          where: { clerkId: receiverClerkId },
+          select: { id: true },
+        });
+        if (receiverUser) {
+          finalReceiverUserId = receiverUser.id;
+        }
+      }
+    }
 
     // Update conversation's last message timestamp
     await this.prisma.conversation.update({
@@ -108,38 +433,96 @@ export class MessagingService {
       data: { lastMessageAt: new Date() },
     });
 
-    return this.prisma.message.create({
-      data: {
-        conversationId,
-        senderId,
-        receiverId,
-        content,
-        messageType,
-      },
-      include: {
-        sender: true,
-        receiver: true,
-        conversation: {
-          include: {
-            participants: {
-              include: {
-                user: true,
+    console.log('🔵 [createMessage] Creating message in database...');
+    try {
+      const message = await this.prisma.message.create({
+        data: {
+          conversationId,
+          senderId: finalSenderUserId,
+          receiverId: finalReceiverUserId,
+          content,
+          messageType,
+          fileUrl,
+          fileName,
+          fileSize,
+          mimeType,
+        },
+        include: {
+          sender: true,
+          receiver: true,
+          conversation: {
+            include: {
+              participants: {
+                include: {
+                  user: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+      
+      console.log('✅ [createMessage] Message created successfully:', {
+        id: message.id,
+        conversationId: message.conversationId,
+        senderId: message.senderId,
+      });
+      
+      // Broadcast new message via WebSocket
+      if (message.conversationId && this.messagingGateway) {
+        this.messagingGateway.broadcastNewMessage(message.conversationId, message);
+      }
+      
+      return message;
+    } catch (error) {
+      console.error('❌ [createMessage] Error creating message:', error);
+      throw error;
+    }
   }
 
-  async getConversationMessages(conversationId: string, userId: string, page = 1, limit = 50) {
+  async getConversationMessages(conversationId: string, rawUserId: string, page = 1, limit = 50) {
+    // Convert rawUserId (Clerk ID or AppUser ID) to User.id
+    let userClerkId: string;
+    let userAppUser;
+
+    if (rawUserId.startsWith('user_')) {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      userClerkId = rawUserId;
+    } else {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      if (userAppUser) {
+        userClerkId = userAppUser.clerkId;
+      }
+    }
+
+    if (!userAppUser) {
+      throw new Error('User not found');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: userClerkId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      throw new Error('User record not found');
+    }
+
+    const finalUserId = user.id;
+
     // Verify user has access to conversation
     const conversation = await this.prisma.conversation.findFirst({
       where: {
         id: conversationId,
         participants: {
           some: {
-            userId,
+            userId: finalUserId,
             isActive: true,
           },
         },
@@ -165,11 +548,12 @@ export class MessagingService {
   }
 
   async markMessagesAsRead(conversationId: string, userId: string) {
-    // Mark all messages in conversation as read for this user
+    // Mark all unread messages in conversation as read for this user
+    // Messages that are not from the current user should be marked as read
     await this.prisma.message.updateMany({
       where: {
         conversationId,
-        receiverId: userId,
+        senderId: { not: userId }, // All messages not sent by this user
         isRead: false,
       },
       data: { isRead: true },
@@ -186,12 +570,156 @@ export class MessagingService {
   }
 
   async getUnreadMessageCount(userId: string) {
+    // Count unread messages in conversations where user is a participant
+    const userConversations = await this.prisma.conversationParticipant.findMany({
+      where: { userId, isActive: true },
+      select: { conversationId: true },
+    });
+
+    const conversationIds = userConversations.map(cp => cp.conversationId);
+
     return this.prisma.message.count({
       where: {
-        receiverId: userId,
+        conversationId: { in: conversationIds },
+        senderId: { not: userId },
         isRead: false,
       },
     });
+  }
+
+  async updateMessage(messageId: string, content: string, rawUserId: string) {
+    // Convert userId to User.id
+    let userClerkId: string;
+    let userAppUser;
+
+    if (rawUserId.startsWith('user_')) {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      userClerkId = rawUserId;
+    } else {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      if (userAppUser) {
+        userClerkId = userAppUser.clerkId;
+      }
+    }
+
+    if (!userAppUser) {
+      throw new Error('User not found');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: userClerkId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      throw new Error('User record not found');
+    }
+
+    // Verify message belongs to user
+    const message = await this.prisma.message.findFirst({
+      where: {
+        id: messageId,
+        senderId: user.id,
+      },
+    });
+
+    if (!message) {
+      throw new Error('Message not found or you do not have permission to edit it');
+    }
+
+    // Update message
+    const updatedMessage = await this.prisma.message.update({
+      where: { id: messageId },
+      data: { content },
+      include: {
+        sender: true,
+        receiver: true,
+        conversation: true,
+      },
+    });
+
+    // Broadcast message update via WebSocket
+    if (updatedMessage.conversationId && this.messagingGateway) {
+      this.messagingGateway.broadcastMessageUpdate(updatedMessage.conversationId, updatedMessage);
+    }
+
+    return updatedMessage;
+  }
+
+  async deleteMessage(messageId: string, rawUserId: string) {
+    // Convert userId to User.id
+    let userClerkId: string;
+    let userAppUser;
+
+    if (rawUserId.startsWith('user_')) {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      userClerkId = rawUserId;
+    } else {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      if (userAppUser) {
+        userClerkId = userAppUser.clerkId;
+      }
+    }
+
+    if (!userAppUser) {
+      throw new Error('User not found');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: userClerkId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      throw new Error('User record not found');
+    }
+
+    // Verify message belongs to user
+    const message = await this.prisma.message.findFirst({
+      where: {
+        id: messageId,
+        senderId: user.id,
+      },
+    });
+
+    if (!message) {
+      throw new Error('Message not found or you do not have permission to delete it');
+    }
+
+    // Soft delete: Update content to indicate deletion
+    // Or hard delete: await this.prisma.message.delete({ where: { id: messageId } });
+    // Using soft delete to preserve message history
+    const deletedMessage = await this.prisma.message.update({
+      where: { id: messageId },
+      data: {
+        content: '[Message deleted]',
+        messageType: MessageType.SYSTEM,
+      },
+      include: {
+        sender: true,
+        receiver: true,
+        conversation: true,
+      },
+    });
+
+    // Broadcast message deletion via WebSocket
+    if (deletedMessage.conversationId && this.messagingGateway) {
+      this.messagingGateway.broadcastMessageDelete(deletedMessage.conversationId, messageId);
+    }
+
+    return deletedMessage;
   }
 
   // Direct Messaging (Legacy support)

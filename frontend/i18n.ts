@@ -38,6 +38,7 @@ import usersEn from '@workspace/translations/locales/en/users.json';
 import adminEn from '@workspace/translations/locales/en/admin.json';
 import signupEn from '@workspace/translations/locales/en/signup.json';
 import settingsEn from '@workspace/translations/locales/en/settings.json';
+import messagesEn from '@workspace/translations/locales/en/messages.json';
 
 import commonFr from '@workspace/translations/locales/fr/common.json';
 import authFr from '@workspace/translations/locales/fr/auth.json';
@@ -49,6 +50,7 @@ import usersFr from '@workspace/translations/locales/fr/users.json';
 import adminFr from '@workspace/translations/locales/fr/admin.json';
 import signupFr from '@workspace/translations/locales/fr/signup.json';
 import settingsFr from '@workspace/translations/locales/fr/settings.json';
+import messagesFr from '@workspace/translations/locales/fr/messages.json';
 
 import commonDe from '@workspace/translations/locales/de/common.json';
 import authDe from '@workspace/translations/locales/de/auth.json';
@@ -60,6 +62,7 @@ import usersDe from '@workspace/translations/locales/de/users.json';
 import adminDe from '@workspace/translations/locales/de/admin.json';
 import signupDe from '@workspace/translations/locales/de/signup.json';
 import settingsDe from '@workspace/translations/locales/de/settings.json';
+import messagesDe from '@workspace/translations/locales/de/messages.json';
 
 // Fallback resources (used when API is unavailable)
 // Strip prefixes from all fallback resources before using them
@@ -75,6 +78,7 @@ const fallbackResources = {
     admin: stripPrefixes(adminEn),
     signup: stripPrefixes(signupEn),
     settings: stripPrefixes(settingsEn),
+    messages: stripPrefixes(messagesEn),
   },
   fr: {
     common: stripPrefixes(commonFr),
@@ -87,6 +91,7 @@ const fallbackResources = {
     admin: stripPrefixes(adminFr),
     signup: stripPrefixes(signupFr),
     settings: stripPrefixes(settingsFr),
+    messages: stripPrefixes(messagesFr),
   },
   de: {
     common: stripPrefixes(commonDe),
@@ -99,6 +104,7 @@ const fallbackResources = {
     admin: stripPrefixes(adminDe),
     signup: stripPrefixes(signupDe),
     settings: stripPrefixes(settingsDe),
+    messages: stripPrefixes(messagesDe),
   },
 };
 

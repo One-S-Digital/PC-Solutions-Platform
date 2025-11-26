@@ -464,14 +464,18 @@
     "noMessagesYet": "No  Messages Yet"
   },
   "createGroupChatModal": {
+    "titleNewChat": "Create Chat",
     "error": {
-      "minParticipants": "Min Participants"
+      "minParticipants": "Please select at least one participant to start a conversation. You will be automatically added as a participant.",
+      "invalidParticipants": "Please select valid participants. System accounts and yourself cannot be added to conversations."
     },
-    "title": "Title",
+    "title": "Create Group Chat",
     "groupNameLabel": "Group Name",
     "groupNamePlaceholder": "Enter group name",
     "selectParticipantsLabel": "Select Participants",
-    "createButton": "Create Button"
+    "createButton": "Create",
+    "loadingUsers": "Loading users...",
+    "noUsersAvailable": "No users available"
   },
   "serviceRequestDetailModal": {
     "markAsCompleted": "Mark As Completed",
