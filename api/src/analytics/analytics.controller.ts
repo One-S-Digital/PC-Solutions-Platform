@@ -5,11 +5,26 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 
-// Helper function to wrap responses in standard API format
-function wrapResponse<T>(data: T) {
+/**
+ * Standard API response envelope for analytics endpoints
+ */
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+/**
+ * Wraps data in a standard API response envelope
+ * @param data - The data to wrap
+ * @param message - Optional message (defaults to 'OK')
+ * @returns Standardized API response object
+ */
+function wrapResponse<T>(data: T, message = 'OK'): ApiResponse<T> {
   return {
     success: true,
-    message: 'OK',
+    message,
     data,
     timestamp: new Date().toISOString(),
   };
