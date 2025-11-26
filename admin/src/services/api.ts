@@ -225,7 +225,7 @@ export const apiService = {
   getUsers: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User[]>>('/users'),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
-  updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => apiClient.put<ApiResponse<User>>(`/users/${id}`, userData),
+  updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => apiClient.patch<ApiResponse<User>>(`/users/${id}`, userData),
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
 
   // Organizations
