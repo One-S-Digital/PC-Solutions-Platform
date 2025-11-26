@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
   Plus, 
@@ -32,6 +32,7 @@ const Users: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
+  const queryClient = useQueryClient()
 
   const { data: usersResponse, isLoading, error } = useQuery({
     queryKey: ['users'],
@@ -56,8 +57,10 @@ const Users: React.FC = () => {
   }
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    const userName = user.name || ''
+    const userEmail = user.email || ''
+    const matchesSearch = userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         userEmail.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesRole = !selectedRole || user.role === selectedRole
     return matchesSearch && matchesRole
   })
@@ -181,14 +184,14 @@ const Users: React.FC = () => {
                         ) : (
                           <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center">
                             <span className="text-white font-medium text-sm">
-                              {user.name.charAt(0)}
+                              {(user.name || user.email || '?').charAt(0).toUpperCase()}
                             </span>
                           </div>
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm font-medium text-gray-900">{user.name || 'Unknown'}</div>
+                        <div className="text-sm text-gray-500">{user.email || 'No email'}</div>
                       </div>
                     </div>
                   </td>
