@@ -367,6 +367,26 @@ export class UsersService {
     const { page, limit, role, search } = params;
     const skip = (page - 1) * limit;
 
+    // If there's a search term, we need to search in both AppUser and User tables
+    let matchingClerkIds: string[] | null = null;
+    
+    if (search && search.length >= 2) {
+      // First, find User profiles that match the search (firstName, lastName)
+      // Limit to 500 results to prevent performance issues with broad searches
+      const matchingProfiles = await this.prisma.user.findMany({
+        where: {
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+        select: { clerkId: true },
+        take: 500,
+      });
+      matchingClerkIds = matchingProfiles.map(p => p.clerkId);
+    }
+
     const where: any = {};
     
     if (role) {
@@ -374,10 +394,17 @@ export class UsersService {
     }
 
     if (search) {
-      where.OR = [
+      const orConditions: any[] = [
         { email: { contains: search, mode: 'insensitive' } },
         { clerkId: { contains: search, mode: 'insensitive' } },
       ];
+      
+      // Include clerkIds that match from User table search (only if search >= 2 chars)
+      if (matchingClerkIds && matchingClerkIds.length > 0) {
+        orConditions.push({ clerkId: { in: matchingClerkIds } });
+      }
+      
+      where.OR = orConditions;
     }
 
     const [appUsers, total] = await Promise.all([
@@ -392,28 +419,83 @@ export class UsersService {
       this.prisma.appUser.count({ where }),
     ]);
 
-    // Convert AppUser to User format for compatibility
-    const users = appUsers.map(appUser => ({
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    }));
+    // Get all clerkIds to fetch User profiles in bulk
+    const clerkIds = appUsers.map(u => u.clerkId);
+    
+    // Fetch User profiles to get firstName/lastName
+    const userProfiles = await this.prisma.user.findMany({
+      where: {
+        clerkId: { in: clerkIds },
+      },
+      include: {
+        avatarAsset: true,
+        organizations: {
+          include: {
+            organization: true,
+          },
+        },
+      },
+    });
+
+    // Create a map of clerkId -> userProfile for quick lookup
+    const profileMap = new Map(userProfiles.map(u => [u.clerkId, u]));
+
+    // Convert AppUser to User format with profile data
+    const users = appUsers.map(appUser => {
+      const profile = profileMap.get(appUser.clerkId);
+      
+      // Build display name from firstName/lastName or fall back to email
+      const firstName = profile?.firstName || null;
+      const lastName = profile?.lastName || null;
+      let displayName: string;
+      
+      if (firstName || lastName) {
+        displayName = `${firstName || ''} ${lastName || ''}`.trim();
+      } else if (appUser.email) {
+        displayName = appUser.email;
+      } else {
+        displayName = 'Unknown User';
+      }
+
+      // Get primary organization if available
+      const primaryOrg = profile?.organizations?.[0]?.organization;
+
+      return {
+        id: appUser.id,
+        clerkId: appUser.clerkId,
+        email: appUser.email || profile?.email || null,
+        firstName,
+        lastName,
+        name: displayName,
+        role: appUser.role,
+        phoneNumber: profile?.phoneNumber || null,
+        workExperience: profile?.workExperience || null,
+        education: profile?.education || null,
+        certifications: profile?.certifications || [],
+        skills: profile?.skills || [],
+        availability: profile?.availability || null,
+        cvUrl: profile?.cvUrl || null,
+        shortBio: profile?.shortBio || null,
+        stripeCustomerId: profile?.stripeCustomerId || null,
+        lastActiveAt: profile?.lastActiveAt || null,
+        lastLogin: profile?.lastActiveAt || null,
+        isActive: profile?.isActive ?? true,
+        status: profile?.isActive ? 'ACTIVE' : 'INACTIVE',
+        createdAt: appUser.createdAt,
+        updatedAt: appUser.updatedAt,
+        avatarUrl: profile?.avatarAsset?.publicUrl || null,
+        avatarAssetId: profile?.avatarAssetId || null,
+        orgId: primaryOrg?.id || null,
+        orgName: primaryOrg?.name || null,
+        orgType: primaryOrg?.type || null,
+        organizations: profile?.organizations?.map(uo => ({
+          id: uo.organization.id,
+          name: uo.organization.name,
+          type: uo.organization.type,
+          role: uo.role,
+        })) || [],
+      };
+    });
 
     return {
       data: users,
