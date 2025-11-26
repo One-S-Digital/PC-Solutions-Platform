@@ -370,8 +370,9 @@ export class UsersService {
     // If there's a search term, we need to search in both AppUser and User tables
     let matchingClerkIds: string[] | null = null;
     
-    if (search) {
+    if (search && search.length >= 2) {
       // First, find User profiles that match the search (firstName, lastName)
+      // Limit to 500 results to prevent performance issues with broad searches
       const matchingProfiles = await this.prisma.user.findMany({
         where: {
           OR: [
@@ -381,6 +382,7 @@ export class UsersService {
           ],
         },
         select: { clerkId: true },
+        take: 500,
       });
       matchingClerkIds = matchingProfiles.map(p => p.clerkId);
     }
@@ -392,14 +394,17 @@ export class UsersService {
     }
 
     if (search) {
-      where.OR = [
+      const orConditions: any[] = [
         { email: { contains: search, mode: 'insensitive' } },
         { clerkId: { contains: search, mode: 'insensitive' } },
-        // Include clerkIds that match from User table search
-        ...(matchingClerkIds && matchingClerkIds.length > 0 
-          ? [{ clerkId: { in: matchingClerkIds } }] 
-          : []),
       ];
+      
+      // Include clerkIds that match from User table search (only if search >= 2 chars)
+      if (matchingClerkIds && matchingClerkIds.length > 0) {
+        orConditions.push({ clerkId: { in: matchingClerkIds } });
+      }
+      
+      where.OR = orConditions;
     }
 
     const [appUsers, total] = await Promise.all([

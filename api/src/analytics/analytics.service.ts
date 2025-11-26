@@ -29,11 +29,16 @@ export class AnalyticsService {
     // Get total users from AppUser table (source of truth for registered users)
     const totalUsers = await this.prisma.appUser.count();
     
+    // Active users are always defined as users active within the last 30 days
+    // This is independent of the timeRange parameter which affects registration trends
+    const ACTIVE_USER_WINDOW_MS = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+    const activeWindowStart = new Date(Date.now() - ACTIVE_USER_WINDOW_MS);
+    
     // Get active users - check User table for lastActiveAt, fall back to AppUser updatedAt
     const activeUsersFromProfile = await this.prisma.user.count({
       where: {
         lastActiveAt: {
-          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          gte: activeWindowStart,
         },
       },
     });
@@ -42,7 +47,7 @@ export class AnalyticsService {
     const recentlyUpdatedAppUsers = await this.prisma.appUser.count({
       where: {
         updatedAt: {
-          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          gte: activeWindowStart,
         },
       },
     });
