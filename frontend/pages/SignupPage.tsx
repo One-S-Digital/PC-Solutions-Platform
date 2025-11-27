@@ -176,12 +176,12 @@ const SignupPage: React.FC = () => {
     }
   }, [isOAuthCompletion, clerkUser]);
 
-  const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitle?: string }[] = [
+  const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitleKey?: string }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
     { role: SignupRole.SERVICE_PROVIDER, nameKey: 'role.serviceProvider', icon: CogIcon },
     { role: SignupRole.PARENT, nameKey: 'role.parent', icon: UsersIcon },
-    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitle: 'Find Job' },
+    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator' },
   ];
 
   const handleRoleSelect = (role: SignupRole) => {
@@ -666,7 +666,7 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 1 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {rolesConfig.map(({ role, nameKey, icon: Icon, subtitle }, index) => (
+                {rolesConfig.map(({ role, nameKey, icon: Icon, subtitleKey }, index) => (
                   <button 
                     key={role} 
                     onClick={() => handleRoleSelect(role)} 
@@ -675,7 +675,7 @@ const SignupPage: React.FC = () => {
                   >
                     <Icon className="w-10 h-10 mx-auto mb-2 text-gray-400" />
                     <span className="block font-semibold text-swiss-charcoal">{t(nameKey)}</span>
-                    {subtitle && <span className="block text-sm text-gray-500 mt-1">{subtitle}</span>}
+                    {subtitleKey && <span className="block text-sm text-gray-500 mt-1">{t(subtitleKey)}</span>}
                   </button>
                 ))}
               </div>

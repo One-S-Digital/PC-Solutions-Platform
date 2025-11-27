@@ -26,6 +26,9 @@
     "admin": "Administrator",
     "superAdmin": "Super Administrator"
   },
+  "roleSubtitle": {
+    "educator": "Job finden"
+  },
   "roles": {
     "superAdmin": {
       "label": "Super Administrator",
