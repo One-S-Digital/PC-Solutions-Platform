@@ -11,6 +11,8 @@ import { ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import { pricingService } from '../services/pricingService';
 import { usePricingTranslations } from '../hooks/usePricingTranslations';
+import { useFrontendSettings } from '../hooks/useFrontendSettings';
+import { APP_NAME } from '../constants';
 
 const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
@@ -18,6 +20,7 @@ const PricingPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAppContext();
   const { translatePlan } = usePricingTranslations();
+  const { settings } = useFrontendSettings();
   const [isAnnual, setIsAnnual] = useState(false);
 
   const fromSignup = location.state?.fromSignup || false;
@@ -81,8 +84,15 @@ const PricingPage: React.FC = () => {
     <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative text-swiss-charcoal">
        <div className="absolute top-0 left-0 w-full p-4 sm:p-6 lg:p-8 flex justify-between items-center z-10">
         <Link to="/login" className="flex items-center space-x-2 text-swiss-charcoal hover:text-swiss-teal transition-colors">
-            <SquaresPlusIcon className="h-8 w-8 text-swiss-mint" />
-            <span className="font-bold text-lg hidden sm:block">{t('appName')}</span>
+            {settings?.logoAsset?.publicUrl ? (
+              <img 
+                src={settings.logoAsset.publicUrl} 
+                alt={settings.siteName || APP_NAME} 
+                className="h-10 w-auto" 
+              />
+            ) : (
+              <SquaresPlusIcon className="h-8 w-8 text-swiss-mint" />
+            )}
         </Link>
         <Button variant="light" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon}>
             {t('common:buttons.goBack')}
