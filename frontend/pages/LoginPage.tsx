@@ -276,8 +276,9 @@ const LoginPage: React.FC = () => {
     );
   }
 
-  // SCENARIO B (Edge Case): Signed in to Clerk but backend sync failed
-  // Don't show this screen during sign-out to prevent flash of error message
+  // SCENARIO B: Signed in to Clerk but no backend profile
+  // This typically means a new user signed up via OAuth (Google) and needs to complete their profile
+  // Redirect them to signup page to select a role and complete registration
   if (isSignedIn && !currentUser && !isAuthLoading && !isSigningOut && !isSigningOutGlobal) {
     return (
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
@@ -293,32 +294,38 @@ const LoginPage: React.FC = () => {
               <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
             )}
             <h1 className="text-2xl font-bold text-swiss-charcoal">
-              {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
+              {t('common:loginPage.completeRegistration', 'Complete Your Registration')}
             </h1>
           </div>
 
           <div className="space-y-6">
-            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className="text-sm text-yellow-800 mb-2">
-                <strong>{t('common:loginPage.backendSyncError', 'Backend Sync Error')}</strong>
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800 mb-2">
+                <strong>{t('common:loginPage.almostThere', 'Almost there!')}</strong>
               </p>
-              <p className="text-xs text-yellow-700">
-                You are authenticated, but we're having trouble connecting to the backend. 
-                This may be due to a configuration issue. Please sign out and try again, 
-                or contact support if the problem persists.
+              <p className="text-xs text-blue-700">
+                {t('common:loginPage.completeProfileMessage', 'You\'re signed in with Google. To finish setting up your account, please select a role and complete your profile.')}
               </p>
             </div>
             <div className="flex flex-col space-y-3">
               <Button
                 type="button"
-                variant="secondary"
+                variant="primary"
+                className="w-full"
+                onClick={() => navigate('/signup', { replace: true, state: { fromOAuth: true } })}
+              >
+                {t('common:loginPage.completeProfile', 'Complete Profile')}
+              </Button>
+              <Button
+                type="button"
+                variant="light"
                 className="w-full"
                 onClick={handleLogout}
                 disabled={isSigningOut}
               >
                 {isSigningOut
                   ? t('common:loginPage.signingOut', 'Signing Out...')
-                  : t('common:loginPage.signOutButton', 'Sign Out')}
+                  : t('common:loginPage.useAnotherAccount', 'Use Another Account')}
               </Button>
             </div>
           </div>

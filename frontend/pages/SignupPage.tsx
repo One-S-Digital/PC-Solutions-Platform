@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useSignUp, useAuth } from '@clerk/clerk-react';
+import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage, UserRole } from '../types';
 import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
 import Button from '../components/ui/Button';
@@ -9,7 +9,7 @@ import Card from '../components/ui/Card';
 import Captcha from '../components/ui/Captcha';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
-import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
 import { useAuthContext } from '../providers/AuthProvider';
 import { apiService } from '../services/api';
@@ -28,8 +28,13 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn, getToken } = useAuth();
-  const { currentUser, refreshCurrentUser } = useAuthContext();
+  const { user: clerkUser } = useUser();
+  const { currentUser, refreshCurrentUser, logout, isLoading: isAuthLoading } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
+
+  // Detect if this is an OAuth user completing their profile (signed in but no backend user)
+  // Important: Also check !isAuthLoading to avoid false positive while user data is being fetched
+  const isOAuthCompletion = isSignedIn && !currentUser && !isAuthLoading;
 
   useEffect(() => {
     if (settingsError) {
@@ -160,6 +165,17 @@ const SignupPage: React.FC = () => {
     }
   }, [isSignedIn, currentStep, navigate, successRedirect]);
 
+  // Pre-fill form data for OAuth users (e.g., Google Sign Up)
+  useEffect(() => {
+    if (isOAuthCompletion && clerkUser) {
+      setFormData(prev => ({
+        ...prev,
+        email: clerkUser.primaryEmailAddress?.emailAddress || prev.email,
+        contactPerson: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || prev.contactPerson,
+      }));
+    }
+  }, [isOAuthCompletion, clerkUser]);
+
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
@@ -260,6 +276,57 @@ const SignupPage: React.FC = () => {
     return Object.keys(newErrors).length === 0 && captchaToken !== null;
   };
 
+  // Validation for OAuth users (no password required, email already verified by OAuth provider)
+  const validateOAuthProfile = (): boolean => {
+    const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
+    if (!selectedRole) return false;
+
+    const requiresOrganizationDetails = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
+
+    if (requiresOrganizationDetails && !formData.organisationName) {
+      newErrors.organisationName = t('errors.organisationNameRequired');
+    }
+    if (!formData.contactPerson) 
+      newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'errors.parentNameRequired' : 'errors.contactPersonRequired');
+    
+    // OAuth users don't need email validation - it's pre-filled from OAuth provider
+    // Password fields are not required for OAuth users
+
+    if (requiresOrganizationDetails && !formData.phone) {
+      newErrors.phone = t('errors.phoneRequired');
+    }
+    if (requiresOrganizationDetails && !formData.canton) {
+      newErrors.canton = t('errors.cantonRequired');
+    }
+
+    if (selectedRole === SignupRole.FOUNDATION && (formData.capacity === undefined || formData.capacity <= 0)) 
+      newErrors.capacity = t('errors.capacityRequired');
+    if (selectedRole === SignupRole.SUPPLIER && !formData.category) 
+      newErrors.category = t('errors.categoryRequired');
+    if (selectedRole === SignupRole.SERVICE_PROVIDER && !formData.serviceType) 
+      newErrors.serviceType = t('errors.serviceTypeRequired');
+    
+    if (selectedRole === SignupRole.PARENT) {
+      if (formData.childAge === undefined || formData.childAge <= 0) 
+        newErrors.childAge = t('errors.childAgeRequired');
+      if (!formData.childStartDate) 
+        newErrors.childStartDate = t('errors.childStartDateRequired');
+    }
+
+    if (!formData.termsAccepted) 
+      newErrors.termsAccepted = t('errors.termsRequired');
+
+    // CAPTCHA validation - still required for OAuth users
+    if (!captchaToken) {
+      setCaptchaError(t('errors.captchaRequired'));
+    } else {
+      setCaptchaError('');
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0 && captchaToken !== null;
+  };
+
   const handleCaptchaVerify = (token: string) => {
     setCaptchaToken(token);
     setCaptchaError('');
@@ -325,14 +392,18 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validateStep2() || !selectedRole) return;
+    if (!selectedRole) return;
     
-    // If user is already authenticated (e.g. via Google) but missing profile
-    // we call the backend to complete the profile instead of creating a new Clerk user
-    if (isSignedIn && !currentUser) {
+    // If user is already authenticated (e.g. via Google OAuth) but missing backend profile
+    // we use OAuth-specific validation (no password required) and complete their profile
+    if (isOAuthCompletion) {
+        if (!validateOAuthProfile()) return;
         await handleCompleteProfile();
         return;
     }
+
+    // Regular email/password signup - use full validation including password
+    if (!validateStep2()) return;
 
     if (!isLoaded || !signUp) return;
     
@@ -534,8 +605,12 @@ const SignupPage: React.FC = () => {
     </div>
   );
 
-  const progressText = currentStep === 1 ? t('progress.step1') : t('progress.step2');
-  const formTitle = currentStep === 1 ? t('selectRoleTitle') : t('detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
+  const progressText = currentStep === 1 
+    ? (isOAuthCompletion ? t('progress.oauthStep1', 'Step 1: Select your role') : t('progress.step1')) 
+    : (isOAuthCompletion ? t('progress.oauthStep2', 'Step 2: Complete your profile') : t('progress.step2'));
+  const formTitle = currentStep === 1 
+    ? (isOAuthCompletion ? t('selectRoleTitle.oauth', 'Complete Your Registration') : t('selectRoleTitle')) 
+    : t('detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
 
   if (!isLoaded) {
     return (
@@ -607,13 +682,50 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 2 && selectedRole && (
               <>
+                {/* OAuth completion notice */}
+                {isOAuthCompletion && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-sm text-blue-800">
+                      <strong>{t('signup:oauthCompletion.title', 'Almost there!')}</strong>
+                    </p>
+                    <p className="text-xs text-blue-700 mt-1">
+                      {t('signup:oauthCompletion.message', 'You\'re signed in with Google. Just complete your profile details below to finish setting up your account.')}
+                    </p>
+                  </div>
+                )}
+
                 {!showVerificationStep && (
                   <form onSubmit={handleSubmit} className="space-y-4">
                       {requiresOrganizationDetails && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
                     {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
-                    {renderField('email', 'labels.email', 'email', true, 'placeholders.email')}
-                    {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
-                    {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
+                    
+                    {/* Email field - read-only for OAuth users */}
+                    {isOAuthCompletion ? (
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                          {t('labels.email')}<span className="text-swiss-coral">*</span>
+                        </label>
+                        <input 
+                          type="email"
+                          id="email" 
+                          name="email" 
+                          value={formData.email}
+                          readOnly
+                          className={`${STANDARD_INPUT_FIELD} bg-gray-100 cursor-not-allowed`}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">{t('signup:oauthCompletion.emailFromProvider', 'Email provided by Google')}</p>
+                      </div>
+                    ) : (
+                      renderField('email', 'labels.email', 'email', true, 'placeholders.email')
+                    )}
+                    
+                    {/* Password fields - only for regular email/password signup, not OAuth */}
+                    {!isOAuthCompletion && (
+                      <>
+                        {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
+                        {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
+                      </>
+                    )}
                     
                       {requiresOrganizationDetails && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
                       {requiresOrganizationDetails && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
@@ -668,7 +780,9 @@ const SignupPage: React.FC = () => {
                         {t('common:buttons.goBack')}
                       </Button>
                       <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
-                        {isLoading ? t('signup:creatingAccount', 'Creating Account...') : t('common:buttons.createAccount')}
+                        {isLoading 
+                          ? (isOAuthCompletion ? t('signup:completingProfile', 'Completing Profile...') : t('signup:creatingAccount', 'Creating Account...')) 
+                          : (isOAuthCompletion ? t('signup:completeProfile', 'Complete Profile') : t('common:buttons.createAccount'))}
                       </Button>
                     </div>
                   </form>
@@ -749,6 +863,28 @@ const SignupPage: React.FC = () => {
                 {t('common:buttons.login')}
               </Link>
             </p>
+
+            {/* Sign out option for OAuth users who want to start fresh */}
+            {isOAuthCompletion && (
+              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+                <p className="text-xs text-gray-500 mb-2">
+                  {t('signup:oauthCompletion.wrongAccount', 'Wrong account? Sign out and try again.')}
+                </p>
+                <Button 
+                  type="button" 
+                  variant="light" 
+                  size="sm"
+                  leftIcon={ArrowRightOnRectangleIcon}
+                  onClick={async () => {
+                    await logout();
+                    navigate('/login', { replace: true });
+                  }}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  {t('common:loginPage.signOutButton', 'Sign Out')}
+                </Button>
+              </div>
+            )}
           </>
         )}
       </Card>
