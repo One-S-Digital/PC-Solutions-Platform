@@ -118,6 +118,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           : user.firstName || user.lastName || user.name || user.email || 'Unknown User';
 
       const resolvedAvatar =
+        user.avatarAsset?.publicUrl ??
         user.avatarUrl ??
         primaryOrganization?.logoUrl ??
         `https://ui-avatars.com/api/?name=${encodeURIComponent(derivedName)}&background=48CFAE&color=ffffff&size=128&rounded=true`;

@@ -78,28 +78,34 @@ const safeParseJSON = <T>(value?: string | null): T | undefined => {
   }
 };
 
-const transformCandidate = (data: any): CandidateProfile => ({
-  id: data.id,
-  name: `${data.firstName ?? ''} ${data.lastName ?? ''}`.trim() || data.email,
-  email: data.email,
-  phone: data.phoneNumber ?? undefined,
-  avatarUrl: data.avatarUrl ?? undefined,
-  currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? data.role,
-  location: data.region ?? undefined,
-  availabilityStatus: data.availability ?? undefined,
-  shortBio: data.bio ?? data.shortBio ?? undefined,
-  skills: data.skills ?? [],
-  workExperience: safeParseJSON(data.workExperience),
-  education: safeParseJSON(data.education),
-  certifications: data.certifications ?? [],
-  availabilityPreferences: data.availabilityPreferences ?? undefined,
-  documents: data.documents ?? [],
-  role: data.role,
-  availability: data.availability ?? undefined,
-  preferredRegion: data.region ?? undefined,
-  experience: data.experience ?? undefined,
-  languages: data.languages ?? [],
-});
+const transformCandidate = (data: any): CandidateProfile => {
+  if (!data || typeof data !== 'object') {
+    throw new Error('Invalid candidate data received');
+  }
+  
+  return {
+    id: data.id,
+    name: `${data.firstName ?? ''} ${data.lastName ?? ''}`.trim() || data.email || 'Unknown',
+    email: data.email ?? '',
+    phone: data.phoneNumber ?? undefined,
+    avatarUrl: data.avatarAsset?.publicUrl ?? data.avatarUrl ?? undefined,
+    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? data.role,
+    location: data.region ?? undefined,
+    availabilityStatus: data.availability ?? undefined,
+    shortBio: data.bio ?? data.shortBio ?? undefined,
+    skills: data.skills ?? [],
+    workExperience: safeParseJSON(data.workExperience),
+    education: safeParseJSON(data.education),
+    certifications: data.certifications ?? [],
+    availabilityPreferences: data.availabilityPreferences ?? undefined,
+    documents: data.documents ?? [],
+    role: data.role,
+    availability: data.availability ?? undefined,
+    preferredRegion: data.region ?? undefined,
+    experience: data.experience ?? undefined,
+    languages: data.languages ?? [],
+  };
+};
 
 export const useRecruitmentApi = () => {
   const { request } = useAuthenticatedApi();
