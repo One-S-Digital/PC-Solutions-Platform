@@ -29,11 +29,12 @@ const SignupPage: React.FC = () => {
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn, getToken } = useAuth();
   const { user: clerkUser } = useUser();
-  const { currentUser, refreshCurrentUser, logout } = useAuthContext();
+  const { currentUser, refreshCurrentUser, logout, isLoading: isAuthLoading } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
 
   // Detect if this is an OAuth user completing their profile (signed in but no backend user)
-  const isOAuthCompletion = isSignedIn && !currentUser;
+  // Important: Also check !isAuthLoading to avoid false positive while user data is being fetched
+  const isOAuthCompletion = isSignedIn && !currentUser && !isAuthLoading;
 
   useEffect(() => {
     if (settingsError) {
@@ -874,8 +875,8 @@ const SignupPage: React.FC = () => {
                   variant="light" 
                   size="sm"
                   leftIcon={ArrowRightOnRectangleIcon}
-                  onClick={() => {
-                    logout();
+                  onClick={async () => {
+                    await logout();
                     navigate('/login', { replace: true });
                   }}
                   className="text-gray-600 hover:text-gray-800"
