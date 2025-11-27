@@ -39,6 +39,8 @@ import adminEn from '@workspace/translations/locales/en/admin.json';
 import signupEn from '@workspace/translations/locales/en/signup.json';
 import settingsEn from '@workspace/translations/locales/en/settings.json';
 import messagesEn from '@workspace/translations/locales/en/messages.json';
+import pricingEn from '@workspace/translations/locales/en/pricing.json';
+import parentLeadFormEn from '@workspace/translations/locales/en/parentLeadForm.json';
 
 import commonFr from '@workspace/translations/locales/fr/common.json';
 import authFr from '@workspace/translations/locales/fr/auth.json';
@@ -51,6 +53,8 @@ import adminFr from '@workspace/translations/locales/fr/admin.json';
 import signupFr from '@workspace/translations/locales/fr/signup.json';
 import settingsFr from '@workspace/translations/locales/fr/settings.json';
 import messagesFr from '@workspace/translations/locales/fr/messages.json';
+import pricingFr from '@workspace/translations/locales/fr/pricing.json';
+import parentLeadFormFr from '@workspace/translations/locales/fr/parentLeadForm.json';
 
 import commonDe from '@workspace/translations/locales/de/common.json';
 import authDe from '@workspace/translations/locales/de/auth.json';
@@ -63,6 +67,8 @@ import adminDe from '@workspace/translations/locales/de/admin.json';
 import signupDe from '@workspace/translations/locales/de/signup.json';
 import settingsDe from '@workspace/translations/locales/de/settings.json';
 import messagesDe from '@workspace/translations/locales/de/messages.json';
+import pricingDe from '@workspace/translations/locales/de/pricing.json';
+import parentLeadFormDe from '@workspace/translations/locales/de/parentLeadForm.json';
 
 // Fallback resources (used when API is unavailable)
 // Strip prefixes from all fallback resources before using them
@@ -79,6 +85,8 @@ const fallbackResources = {
     signup: stripPrefixes(signupEn),
     settings: stripPrefixes(settingsEn),
     messages: stripPrefixes(messagesEn),
+    pricing: stripPrefixes(pricingEn),
+    parentLeadForm: stripPrefixes(parentLeadFormEn),
   },
   fr: {
     common: stripPrefixes(commonFr),
@@ -92,6 +100,8 @@ const fallbackResources = {
     signup: stripPrefixes(signupFr),
     settings: stripPrefixes(settingsFr),
     messages: stripPrefixes(messagesFr),
+    pricing: stripPrefixes(pricingFr),
+    parentLeadForm: stripPrefixes(parentLeadFormFr),
   },
   de: {
     common: stripPrefixes(commonDe),
@@ -105,6 +115,8 @@ const fallbackResources = {
     signup: stripPrefixes(signupDe),
     settings: stripPrefixes(settingsDe),
     messages: stripPrefixes(messagesDe),
+    pricing: stripPrefixes(pricingDe),
+    parentLeadForm: stripPrefixes(parentLeadFormDe),
   },
 };
 
@@ -114,7 +126,7 @@ IndexedDBBackend.init()
     // Clear cache on app start to ensure fresh translations without prefixes
     // This is a one-time clear to remove any old cached data with prefixes
     const cacheVersion = localStorage.getItem('i18n-cache-version');
-    const currentVersion = '2.0'; // Increment this when translations structure changes
+    const currentVersion = '2.5'; // Increment this when translations structure changes
     
     if (cacheVersion !== currentVersion) {
       IndexedDBBackend.clearAll()

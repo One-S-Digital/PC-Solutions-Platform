@@ -4,6 +4,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { MessageType } from '@workspace/types';
 import { MessagingGateway } from './messaging.gateway';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class MessagingService {
@@ -11,6 +12,61 @@ export class MessagingService {
     private prisma: PrismaService,
     @Optional() @Inject(MessagingGateway) private messagingGateway?: MessagingGateway,
   ) {}
+
+  /**
+   * Get allowed roles that a user can message based on their role
+   * SUPER_ADMIN can message everyone (handled separately)
+   */
+  private getAllowedMessagingRoles(userRole: UserRole): UserRole[] {
+    switch (userRole) {
+      case UserRole.SUPER_ADMIN:
+        // Handled separately - can message all
+        return Object.values(UserRole);
+      
+      case UserRole.ADMIN:
+        // Admin can message: ADMIN, EDUCATOR, PARENT, FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER
+        return [
+          UserRole.ADMIN,
+          UserRole.EDUCATOR,
+          UserRole.PARENT,
+          UserRole.FOUNDATION,
+          UserRole.PRODUCT_SUPPLIER,
+          UserRole.SERVICE_PROVIDER,
+        ];
+      
+      case UserRole.EDUCATOR:
+        // Educator can message: EDUCATOR, ADMIN, PARENT
+        return [
+          UserRole.EDUCATOR,
+          UserRole.ADMIN,
+          UserRole.PARENT,
+        ];
+      
+      case UserRole.PARENT:
+        // Parent can message: PARENT, EDUCATOR, ADMIN
+        return [
+          UserRole.PARENT,
+          UserRole.EDUCATOR,
+          UserRole.ADMIN,
+        ];
+      
+      case UserRole.FOUNDATION:
+      case UserRole.PRODUCT_SUPPLIER:
+      case UserRole.SERVICE_PROVIDER:
+        // Foundation/Supplier/Service Provider can message: same roles + ADMIN
+        return [
+          userRole, // Same role
+          UserRole.FOUNDATION,
+          UserRole.PRODUCT_SUPPLIER,
+          UserRole.SERVICE_PROVIDER,
+          UserRole.ADMIN,
+        ];
+      
+      default:
+        // Default: can only message same role
+        return [userRole];
+    }
+  }
 
   // Conversation Management
   async createConversation(createConversationDto: CreateConversationDto, creatorId: string) {
@@ -54,15 +110,17 @@ export class MessagingService {
       throw new Error(`Creator with ID ${creatorId} not found in AppUser table`);
     }
     
-    // Get the creator's User record
+    // Get the creator's User record and role
     const creatorUser = await this.prisma.user.findUnique({
       where: { clerkId: creatorClerkId },
-      select: { id: true },
+      select: { id: true, role: true },
     });
     
     if (!creatorUser) {
       throw new Error(`User record not found for creator with clerkId ${creatorClerkId}`);
     }
+
+    const creatorRole = creatorUser.role;
     
     // Get AppUsers for all participants to find their clerkIds
     // Filter out any invalid IDs first
@@ -125,12 +183,29 @@ export class MessagingService {
       participantAppUsers = participantAppUsers.filter(u => validAppUserIds.has(u.id));
     }
     
-    // Get User records for all participants by clerkId
+    // Get User records for all participants by clerkId (including roles for access control)
     const clerkIds = participantAppUsers.map(u => u.clerkId);
     const participantUsers = await this.prisma.user.findMany({
       where: { clerkId: { in: clerkIds } },
-      select: { id: true, clerkId: true },
+      select: { id: true, clerkId: true, role: true },
     });
+
+    // Role-based access control: Check if creator can message each participant
+    // SUPER_ADMIN can message anyone
+    if (creatorRole !== UserRole.SUPER_ADMIN) {
+      const allowedRoles = this.getAllowedMessagingRoles(creatorRole);
+      const unauthorizedParticipants = participantUsers.filter(
+        participant => !allowedRoles.includes(participant.role)
+      );
+
+      if (unauthorizedParticipants.length > 0) {
+        const unauthorizedRoles = unauthorizedParticipants.map(p => p.role).join(', ');
+        throw new Error(
+          `You do not have permission to message users with the following roles: ${unauthorizedRoles}. ` +
+          `Your role (${creatorRole}) can only message: ${allowedRoles.join(', ')}`
+        );
+      }
+    }
     
     // Filter out participants that don't have User records (e.g., system accounts)
     // Only include participants that have both AppUser and User records
@@ -253,15 +328,59 @@ export class MessagingService {
     const finalUserId = user.id;
     console.log('🔵 [getUserConversations] Final User ID:', finalUserId);
 
-    return this.prisma.conversation.findMany({
-      where: {
-        participants: {
-          some: {
-            userId: finalUserId,
-            isActive: true,
+    // Get user's role for filtering
+    const userWithRole = await this.prisma.user.findUnique({
+      where: { id: finalUserId },
+      select: { role: true },
+    });
+
+    const userRole = userWithRole?.role || UserRole.PARENT;
+    const allowedRoles = userRole === UserRole.SUPER_ADMIN 
+      ? Object.values(UserRole) 
+      : this.getAllowedMessagingRoles(userRole);
+
+    // For SUPER_ADMIN, show all conversations they're part of
+    // For others, filter to only show conversations with allowed roles
+    const whereClause = userRole === UserRole.SUPER_ADMIN
+      ? {
+          participants: {
+            some: {
+              userId: finalUserId,
+              isActive: true,
+            },
           },
-        },
-      },
+        }
+      : {
+          AND: [
+            {
+              participants: {
+                some: {
+                  userId: finalUserId,
+                  isActive: true,
+                },
+              },
+            },
+            {
+              participants: {
+                every: {
+                  OR: [
+                    { userId: finalUserId }, // Always include user's own participation
+                    {
+                      user: {
+                        role: {
+                          in: allowedRoles,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        };
+
+    return this.prisma.conversation.findMany({
+      where: whereClause,
       include: {
         participants: {
           include: {

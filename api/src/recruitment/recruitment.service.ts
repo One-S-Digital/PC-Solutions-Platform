@@ -6,10 +6,15 @@ import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { JobContractType, JobStatus } from '@workspace/types';
 import { Prisma } from '@prisma/client';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 @Injectable()
 export class RecruitmentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private translationService: TranslationService,
+  ) {}
 
   // Job Listing Management
   async createJobListing(createJobListingDto: CreateJobListingDto, foundationId: string) {
@@ -32,7 +37,7 @@ export class RecruitmentService {
           })()
         : undefined;
 
-    return this.prisma.jobListing.create({
+    const jobListing = await this.prisma.jobListing.create({
       data: {
         ...rest,
         contractType: contractType ?? JobContractType.FULL_TIME,
@@ -54,6 +59,41 @@ export class RecruitmentService {
         },
       },
     });
+
+    // Save translatable fields and trigger translation
+    const translatableFields = FIELDS_BY_ENTITY.job_listing || ['title', 'description', 'requirements'];
+    const translationPayload: Record<string, any> = {
+      title: jobListing.title,
+      description: jobListing.description || '',
+      requirements: Array.isArray(jobListing.requirements) 
+        ? jobListing.requirements.join('\n') 
+        : '',
+      responsibilities: Array.isArray(jobListing.responsibilities) 
+        ? jobListing.responsibilities.join('\n') 
+        : '',
+      qualifications: Array.isArray(jobListing.qualifications) 
+        ? jobListing.qualifications.join('\n') 
+        : '',
+      benefits: Array.isArray(jobListing.benefits) 
+        ? jobListing.benefits.join('\n') 
+        : '',
+    };
+
+    // Only save translations if there's content to translate
+    const hasTranslatableContent = Object.values(translationPayload).some(
+      value => value && typeof value === 'string' && value.trim().length > 0
+    );
+
+    if (hasTranslatableContent) {
+      await this.translationService.saveEntityWithTranslations(
+        'job_listing',
+        jobListing.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return jobListing;
   }
 
   async findAllJobListings(filters?: {
@@ -63,6 +103,7 @@ export class RecruitmentService {
     search?: string;
     contractType?: string;
     publishedOnly?: boolean;
+    lang?: string;
   }) {
     const where: any = {};
 
@@ -94,7 +135,7 @@ export class RecruitmentService {
       where.status = JobStatus.PUBLISHED;
     }
 
-    return this.prisma.jobListing.findMany({
+    const jobListings = await this.prisma.jobListing.findMany({
       where,
       include: {
         foundation: true,
@@ -106,10 +147,47 @@ export class RecruitmentService {
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Apply translations if lang is provided
+    if (filters?.lang && filters.lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.job_listing || ['title', 'description', 'requirements'];
+      
+      for (const listing of jobListings) {
+        const translatedFields = await this.translationService.resolveEntity(
+          'job_listing',
+          listing.id,
+          translatableFields,
+          filters.lang,
+        );
+
+        // Apply translated fields
+        if (translatedFields.title) {
+          listing.title = translatedFields.title;
+        }
+        if (translatedFields.description) {
+          listing.description = translatedFields.description;
+        }
+        // Split array fields back from joined strings
+        if (translatedFields.requirements) {
+          listing.requirements = translatedFields.requirements.split('\n').filter(r => r.trim().length > 0);
+        }
+        if (translatedFields.responsibilities) {
+          listing.responsibilities = translatedFields.responsibilities.split('\n').filter(r => r.trim().length > 0);
+        }
+        if (translatedFields.qualifications) {
+          listing.qualifications = translatedFields.qualifications.split('\n').filter(r => r.trim().length > 0);
+        }
+        if (translatedFields.benefits) {
+          listing.benefits = translatedFields.benefits.split('\n').filter(r => r.trim().length > 0);
+        }
+      }
+    }
+
+    return jobListings;
   }
 
-  async findJobListingById(id: string) {
-    return this.prisma.jobListing.findUnique({
+  async findJobListingById(id: string, lang: string = 'en') {
+    const jobListing = await this.prisma.jobListing.findUnique({
       where: { id },
       include: {
         foundation: true,
@@ -120,6 +198,45 @@ export class RecruitmentService {
         },
       },
     });
+
+    if (!jobListing) {
+      return null;
+    }
+
+    // Apply translations if lang is provided and not English
+    if (lang && lang !== 'en') {
+      const translatableFields = FIELDS_BY_ENTITY.job_listing || ['title', 'description', 'requirements'];
+      
+      const translatedFields = await this.translationService.resolveEntity(
+        'job_listing',
+        jobListing.id,
+        translatableFields,
+        lang,
+      );
+
+      // Apply translated fields
+      if (translatedFields.title) {
+        jobListing.title = translatedFields.title;
+      }
+      if (translatedFields.description) {
+        jobListing.description = translatedFields.description;
+      }
+      // Split array fields back from joined strings
+      if (translatedFields.requirements) {
+        jobListing.requirements = translatedFields.requirements.split('\n').filter(r => r.trim().length > 0);
+      }
+      if (translatedFields.responsibilities) {
+        jobListing.responsibilities = translatedFields.responsibilities.split('\n').filter(r => r.trim().length > 0);
+      }
+      if (translatedFields.qualifications) {
+        jobListing.qualifications = translatedFields.qualifications.split('\n').filter(r => r.trim().length > 0);
+      }
+      if (translatedFields.benefits) {
+        jobListing.benefits = translatedFields.benefits.split('\n').filter(r => r.trim().length > 0);
+      }
+    }
+
+    return jobListing;
   }
 
   async updateJobListing(id: string, updateJobListingDto: UpdateJobListingDto) {
@@ -147,7 +264,7 @@ export class RecruitmentService {
       select: { status: true, publishedAt: true },
     });
 
-    return this.prisma.jobListing.update({
+    const updatedJobListing = await this.prisma.jobListing.update({
       where: { id },
       data: {
         ...rest,
@@ -176,6 +293,41 @@ export class RecruitmentService {
         },
       },
     });
+
+    // Update translations if translatable fields were changed
+    const translatableFields = FIELDS_BY_ENTITY.job_listing || ['title', 'description', 'requirements'];
+    const translationPayload: Record<string, any> = {
+      title: updatedJobListing.title,
+      description: updatedJobListing.description || '',
+      requirements: Array.isArray(updatedJobListing.requirements) 
+        ? updatedJobListing.requirements.join('\n') 
+        : '',
+      responsibilities: Array.isArray(updatedJobListing.responsibilities) 
+        ? updatedJobListing.responsibilities.join('\n') 
+        : '',
+      qualifications: Array.isArray(updatedJobListing.qualifications) 
+        ? updatedJobListing.qualifications.join('\n') 
+        : '',
+      benefits: Array.isArray(updatedJobListing.benefits) 
+        ? updatedJobListing.benefits.join('\n') 
+        : '',
+    };
+
+    // Only update translations if there's content to translate
+    const hasTranslatableContent = Object.values(translationPayload).some(
+      value => value && typeof value === 'string' && value.trim().length > 0
+    );
+
+    if (hasTranslatableContent) {
+      await this.translationService.saveEntityWithTranslations(
+        'job_listing',
+        updatedJobListing.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
+
+    return updatedJobListing;
   }
 
   async deleteJobListing(id: string) {
@@ -190,7 +342,7 @@ export class RecruitmentService {
     candidateId: string,
   ) {
     try {
-      return await this.prisma.jobApplication.create({
+      const jobApplication = await this.prisma.jobApplication.create({
         data: {
           ...createJobApplicationDto,
           candidateId,
@@ -204,6 +356,23 @@ export class RecruitmentService {
           candidate: true,
         },
       });
+
+      // Save translatable fields and trigger translation
+      const translatableFields = FIELDS_BY_ENTITY.job_application || ['cover_letter'];
+      const translationPayload: Record<string, any> = {
+        cover_letter: jobApplication.coverLetter || '',
+      };
+
+      if (translationPayload.cover_letter && translationPayload.cover_letter.trim().length > 0) {
+        await this.translationService.saveEntityWithTranslations(
+          'job_application',
+          jobApplication.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
+
+      return jobApplication;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('You have already applied for this job.');
@@ -260,7 +429,7 @@ export class RecruitmentService {
   }
 
   async updateJobApplication(id: string, updateJobApplicationDto: UpdateJobApplicationDto) {
-    return this.prisma.jobApplication.update({
+    const updatedJobApplication = await this.prisma.jobApplication.update({
       where: { id },
       data: updateJobApplicationDto,
       include: {
@@ -272,6 +441,25 @@ export class RecruitmentService {
         candidate: true,
       },
     });
+
+    // Update translations if cover_letter was changed
+    if (updateJobApplicationDto.coverLetter !== undefined) {
+      const translatableFields = FIELDS_BY_ENTITY.job_application || ['cover_letter'];
+      const translationPayload: Record<string, any> = {
+        cover_letter: updatedJobApplication.coverLetter || '',
+      };
+
+      if (translationPayload.cover_letter && translationPayload.cover_letter.trim().length > 0) {
+        await this.translationService.saveEntityWithTranslations(
+          'job_application',
+          updatedJobApplication.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
+    }
+
+    return updatedJobApplication;
   }
 
   async deleteJobApplication(id: string) {

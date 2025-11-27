@@ -39,7 +39,7 @@
     "products": "Produkte",
     "services": "Dienstleistungen",
     "recruitment": "Rekrutierung",
-    "jobListings": "STELLENANGEBOTE",
+    "jobListings": "Stellenangebote",
     "candidatePool": "Talentpool",
     "eLearning": "E-Learning",
     "messages": "Nachricht",
@@ -913,7 +913,7 @@
       "emptyState": "Keine Kandidaten gefunden"
     },
     "tabs": {
-      "jobOffers": "STELLENANGEBOTE",
+      "jobOffers": "Stellenangebote",
       "candidatePool": "Kandidatenpool"
     }
   },
@@ -1197,7 +1197,7 @@
     "(240)": "(240)",
     "Branding": "Branding",
     "Favicon": "Favicon",
-    "Search job offers...": "STELLENANGEBOTE Suchen ...",
+    "Search job offers...": "Stellenangebote suchen ...",
     "Search partners...": "Partner Suchen ...",
     "Search candidates...": "Solche Kandidaten ...",
     "Search content...": "Inhalieren Sie Sinyen ...",

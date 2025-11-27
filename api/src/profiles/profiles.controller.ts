@@ -8,6 +8,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { PrincipalService } from '../principal/principal.service';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 export class UpdateProfileDto {
   firstName?: string;
@@ -23,6 +25,7 @@ export class UpdateProfileDto {
   avatarAssetId?: string;
   // Organization fields
   organizationName?: string;
+  description?: string;
   contactPerson?: string;
   canton?: string;
   languages?: string[];
@@ -71,6 +74,7 @@ export class ProfileController {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly principal: PrincipalService,
+    private readonly translationService: TranslationService,
   ) {}
 
   @Get('me')
@@ -128,7 +132,7 @@ export class ProfileController {
 
     const userId = user.id;
 
-    await this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
         firstName: updateData.firstName ?? user.firstName,
@@ -145,6 +149,23 @@ export class ProfileController {
       },
     });
 
+    // Update user translations if shortBio was changed
+    if (updateData.shortBio !== undefined) {
+      const translatableFields = FIELDS_BY_ENTITY.user || ['shortBio'];
+      const translationPayload: Record<string, any> = {
+        shortBio: updatedUser.shortBio || '',
+      };
+
+      if (translationPayload.shortBio && translationPayload.shortBio.trim().length > 0) {
+        await this.translationService.saveEntityWithTranslations(
+          'user',
+          updatedUser.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
+    }
+
     if (this.isOrganizationRole(req.context.role)) {
       const userOrganizations = await this.prisma.userOrganization.findMany({
         where: { userId },
@@ -153,7 +174,7 @@ export class ProfileController {
 
       for (const userOrg of userOrganizations) {
         const organization = userOrg.organization;
-        await this.prisma.organization.update({
+        const updatedOrganization = await this.prisma.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: updateData.organizationName ?? organization.name,
@@ -171,8 +192,26 @@ export class ProfileController {
             serviceCategories: updateData.serviceCategories ?? organization.serviceCategories,
             deliveryType: updateData.deliveryType ?? organization.deliveryType,
             bookingLink: updateData.bookingLink ?? organization.bookingLink,
+            description: updateData.description ?? organization.description,
           },
         });
+
+        // Update organization translations if description was changed (name is not translatable - it's a proper noun)
+        if (updateData.description !== undefined) {
+          const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+          const translationPayload: Record<string, any> = {
+            description: updatedOrganization.description || '',
+          };
+
+          if (translationPayload.description && translationPayload.description.trim().length > 0) {
+            await this.translationService.saveEntityWithTranslations(
+              'organization',
+              updatedOrganization.id,
+              translationPayload,
+              translatableFields,
+            );
+          }
+        }
       }
     }
 

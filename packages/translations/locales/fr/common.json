@@ -293,18 +293,20 @@
     "backendUserCreationError": "La création de l'utilisateur sur le backend a échoué. Veuillez vérifier que le webhook Clerk est configuré."
   },
   "settingsPage": {
-    "unsavedChangesPrompt": "[FR] You have unsaved changes. Are you sure you want to leave?",
-    "loading": "[FR] Loading",
-    "noSectionsAvailable": "[FR] No settings sections available",
-    "analyticsPreferences": "[FR] Analytics Preferences",
-    "companyProfile": "[FR] Company Profile",
+    "unsavedChangesPrompt": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir partir?",
+    "loading": "Chargement des paramètres...",
+    "noSectionsAvailable": "Aucun paramètre disponible pour votre rôle",
+    "accountSecurity": "Compte et sécurité",
+    "billingSubscription": "Facturation et abonnement",
+    "analyticsPreferences": "Préférences d'analyse",
+    "companyProfile": "Profil de l'entreprise",
     "profile": "Modifier le profil",
-    "contactBooking": "[FR] Contact Booking",
-    "defaults": "[FR] Defaults",
-    "notificationPreferences": "[FR] No tification Preferences",
-    "privacyData": "[FR] Privacy Data",
-    "promoCodeManager": "[FR] Promo Code Manager",
-    "teamPermissions": "[FR] Team Permissions"
+    "contactBooking": "Contact et réservation",
+    "defaults": "Paramètres par défaut",
+    "notificationPreferences": "Préférences de notification",
+    "privacyData": "Confidentialité et données",
+    "promoCodeManager": "Gestionnaire de codes promo",
+    "teamPermissions": "Équipe et permissions"
   },
   "contentUploadModal": {
     "error": {
@@ -566,7 +568,8 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Informations personnelles mises à jour avec succès",
-      "passwordChanged": "Mot de passe modifié avec succès"
+      "passwordChanged": "Mot de passe modifié avec succès",
+      "passwordChangedMessage": "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant utiliser votre nouveau mot de passe pour vous connecter."
     },
     "dangerZone": {
       "finalConfirmation": "Êtes-vous absolument sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée.",
@@ -583,14 +586,20 @@
       "accountTypeLabel": "Type de compte",
       "memberSinceLabel": "Membre depuis",
       "updateInfoButton": "Mettre à jour les informations",
-      "nameLabel": "Nom"
+      "nameLabel": "Nom",
+      "firstNameLabel": "Prénom",
+      "lastNameLabel": "Nom de famille"
     },
     "changePassword": {
       "title": "Changer le mot de passe",
       "currentPasswordLabel": "Mot de passe actuel",
       "newPasswordLabel": "Nouveau mot de passe",
       "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
-      "updatePasswordButton": "Mettre à jour le mot de passe"
+      "updatePasswordButton": "Mettre à jour le mot de passe",
+      "passwordUpdated": "Mot de passe mis à jour",
+      "updating": "Mise à jour...",
+      "securityMessage": "Pour des raisons de sécurité, vous devrez peut-être vous déconnecter et vous reconnecter avant de changer votre mot de passe. Si vous rencontrez une erreur de vérification, veuillez vous déconnecter et vous reconnecter, puis réessayer.",
+      "verificationErrorTip": "Astuce : Essayez de vous déconnecter et de vous reconnecter, puis tentez de changer votre mot de passe à nouveau."
     }
   },
   "settingsPrivacyData": {

@@ -286,7 +286,8 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Persönliche Informationen erfolgreich aktualisiert",
-      "passwordChanged": "Passwort erfolgreich geändert"
+      "passwordChanged": "Passwort erfolgreich geändert",
+      "passwordChangedMessage": "Ihr Passwort wurde erfolgreich aktualisiert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden."
     },
     "dangerZone": {
       "finalConfirmation": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -303,14 +304,20 @@
       "accountTypeLabel": "Kontotyp",
       "memberSinceLabel": "Mitglied seit",
       "updateInfoButton": "Informationen aktualisieren",
-      "nameLabel": "Name"
+      "nameLabel": "Name",
+      "firstNameLabel": "Vorname",
+      "lastNameLabel": "Nachname"
     },
     "changePassword": {
       "title": "Passwort ändern",
       "currentPasswordLabel": "Aktuelles Passwort",
       "newPasswordLabel": "Neues Passwort",
       "confirmNewPasswordLabel": "Neues Passwort bestätigen",
-      "updatePasswordButton": "Passwort aktualisieren"
+      "updatePasswordButton": "Passwort aktualisieren",
+      "passwordUpdated": "Passwort aktualisiert",
+      "updating": "Aktualisierung...",
+      "securityMessage": "Aus Sicherheitsgründen müssen Sie sich möglicherweise abmelden und erneut anmelden, bevor Sie Ihr Passwort ändern. Wenn Sie einen Verifizierungsfehler erhalten, melden Sie sich bitte ab und wieder an, und versuchen Sie es erneut.",
+      "verificationErrorTip": "Tipp: Versuchen Sie, sich ab- und wieder anzumelden, und versuchen Sie dann erneut, Ihr Passwort zu ändern."
     }
   },
   "settingsBillingSubscription": {

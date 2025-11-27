@@ -55,14 +55,13 @@ export class ProfilesService {
       }
     });
 
-    // Save translatable fields and trigger translation
-    const translatableFields = FIELDS_BY_ENTITY.organization || ['name', 'description'];
+    // Save translatable fields and trigger translation (only description - name is a proper noun/identifier)
+    const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
     const translationPayload: Record<string, any> = {
-      name: organization.name,
       description: organization.description || '',
     };
     
-    if (translationPayload.name || translationPayload.description) {
+    if (translationPayload.description && translationPayload.description.trim().length > 0) {
       await this.translationService.saveEntityWithTranslations(
         'organization',
         organization.id,

@@ -565,7 +565,9 @@
       "accountTypeLabel": "Account Type",
       "memberSinceLabel": "Member Since",
       "updateInfoButton": "Update Information",
-      "nameLabel": "Name"
+      "nameLabel": "Name",
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name"
     },
     "changePassword": {
       "title": "Change Password",
@@ -573,7 +575,10 @@
       "newPasswordLabel": "New Password",
       "confirmNewPasswordLabel": "Confirm New Password",
       "updatePasswordButton": "Update Password",
-      "passwordUpdated": "Password Updated"
+      "passwordUpdated": "Password Updated",
+      "updating": "Updating...",
+      "securityMessage": "For security reasons, you may need to sign out and sign back in before changing your password. If you encounter a verification error, please sign out and sign back in, then try again.",
+      "verificationErrorTip": "Tip: Try signing out and signing back in, then attempt to change your password again."
     }
   },
   "settingsPrivacyData": {
