@@ -341,6 +341,7 @@ export class RecruitmentService {
         role: 'EDUCATOR',
       },
       include: {
+        avatarAsset: true,
         applications: {
           include: {
             jobListing: {
@@ -359,6 +360,7 @@ export class RecruitmentService {
     return this.prisma.user.findUnique({
       where: { id },
       include: {
+        avatarAsset: true,
         applications: {
           include: {
             jobListing: {

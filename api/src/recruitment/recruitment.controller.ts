@@ -180,8 +180,12 @@ export class RecruitmentController {
   }
 
   @Get('candidates/:id')
-  findCandidateById(@Param('id') id: string) {
-    return this.recruitmentService.findCandidateById(id);
+  async findCandidateById(@Param('id') id: string) {
+    const candidate = await this.recruitmentService.findCandidateById(id);
+    if (!candidate) {
+      throw new NotFoundException('Candidate not found');
+    }
+    return candidate;
   }
 
   // Matching endpoints
