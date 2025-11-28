@@ -338,6 +338,17 @@ CREATE TABLE IF NOT EXISTS "public"."job_listings" (
     CONSTRAINT "job_listings_pkey" PRIMARY KEY ("id")
 );
 
+-- Create index on foundationId for organization-scoped queries
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'job_listings_foundationId_idx'
+    ) THEN
+        CREATE INDEX "job_listings_foundationId_idx" ON "public"."job_listings"("foundationId");
+    END IF;
+END $$;
+
 -- Add foreign key for foundationId (only if it doesn't exist)
 DO $$
 BEGIN
@@ -395,6 +406,17 @@ BEGIN
         WHERE indexname = 'job_applications_jobListingId_candidateId_key'
     ) THEN
         CREATE UNIQUE INDEX "job_applications_jobListingId_candidateId_key" ON "public"."job_applications"("jobListingId", "candidateId");
+    END IF;
+END $$;
+
+-- Create index on candidateId for user-scoped queries (e.g., fetching all applications for a user's profile)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'job_applications_candidateId_idx'
+    ) THEN
+        CREATE INDEX "job_applications_candidateId_idx" ON "public"."job_applications"("candidateId");
     END IF;
 END $$;
 
