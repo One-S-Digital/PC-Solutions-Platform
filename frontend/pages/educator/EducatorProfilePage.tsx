@@ -14,6 +14,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import FileUploadZone from '../../components/ui/FileUploadZone';
+import { WorkExperienceItem, EducationItem, CertificationItem } from '../../types';
 
 interface EducatorProfileData {
   firstName: string;
@@ -29,31 +30,6 @@ interface EducatorProfileData {
   shortBio: string;
   avatarAssetId: string;
   avatarUrl?: string;
-}
-
-interface WorkExperienceItem {
-  id: string;
-  jobTitle: string;
-  institutionName: string;
-  startDate: string;
-  endDate: string;
-  descriptionPoints: string[];
-}
-
-interface EducationItem {
-  id: string;
-  degree: string;
-  institutionName: string;
-  graduationYear: string;
-  description?: string;
-}
-
-interface CertificationItem {
-  id: string;
-  name: string;
-  issuingOrganization: string;
-  issueDate: string;
-  expiryDate?: string;
 }
 
 const SectionCard: React.FC<{ 
@@ -318,6 +294,9 @@ const EducatorProfilePage: React.FC = () => {
   };
 
   const handleRemoveCv = async () => {
+    if (!window.confirm(t('educatorProfilePage.documents.confirmRemove', 'Are you sure you want to remove your CV?'))) {
+      return;
+    }
     await saveProfile({ cvUrl: '' });
   };
 
@@ -680,7 +659,7 @@ const EducatorProfilePage: React.FC = () => {
                     <div key={edu.id} className="p-3 bg-gray-50 rounded-md">
                       <h3 className="font-semibold text-swiss-charcoal">{edu.degree}</h3>
                       <p className="text-sm text-swiss-teal">{edu.institutionName}</p>
-                      <p className="text-xs text-gray-500">{t('educatorProfilePage.education.graduated')}: {edu.graduationYear}</p>
+                      <p className="text-xs text-gray-500">{t('educatorProfilePage.education.graduated', 'Graduated')}: {edu.graduationYear}</p>
                       {edu.description && <p className="text-sm text-gray-600 mt-1">{edu.description}</p>}
                     </div>
                   ))
