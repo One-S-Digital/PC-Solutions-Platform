@@ -291,6 +291,170 @@ ALTER TABLE "products"
   );
 };
 
+const ensureJobListingsTable = () => {
+  const sql = `
+-- Ensure JobStatus enum exists
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'JobStatus'
+    ) THEN
+        CREATE TYPE "public"."JobStatus" AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED', 'FILLED');
+    END IF;
+END
+$$;
+
+-- Ensure JobContractType enum exists
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'JobContractType'
+    ) THEN
+        CREATE TYPE "public"."JobContractType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CDI', 'CDD', 'INTERNSHIP');
+    END IF;
+END
+$$;
+
+-- Create the job_listings table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."job_listings" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "requirements" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "benefits" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "responsibilities" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "qualifications" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "location" TEXT,
+    "salary" TEXT,
+    "salaryRange" TEXT,
+    "contractType" "public"."JobContractType" NOT NULL DEFAULT 'FULL_TIME',
+    "startDate" TIMESTAMP(3),
+    "status" "public"."JobStatus" NOT NULL DEFAULT 'DRAFT',
+    "foundationId" TEXT NOT NULL,
+    "publishedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "job_listings_pkey" PRIMARY KEY ("id")
+);
+
+-- Create index on foundationId for organization-scoped queries
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'job_listings_foundationId_idx'
+    ) THEN
+        CREATE INDEX "job_listings_foundationId_idx" ON "public"."job_listings"("foundationId");
+    END IF;
+END $$;
+
+-- Add foreign key for foundationId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'job_listings_foundationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."job_listings" 
+        ADD CONSTRAINT "job_listings_foundationId_fkey" 
+        FOREIGN KEY ("foundationId") REFERENCES "public"."organizations"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureJobApplicationsTable = () => {
+  const sql = `
+-- Ensure ApplicationStatus enum exists
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'ApplicationStatus'
+    ) THEN
+        CREATE TYPE "public"."ApplicationStatus" AS ENUM ('PENDING', 'REVIEWED', 'ACCEPTED', 'REJECTED');
+    END IF;
+END
+$$;
+
+-- Create the job_applications table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."job_applications" (
+    "id" TEXT NOT NULL,
+    "jobListingId" TEXT NOT NULL,
+    "candidateId" TEXT NOT NULL,
+    "coverLetter" TEXT,
+    "cvUrl" TEXT,
+    "cvAssetId" TEXT,
+    "status" "public"."ApplicationStatus" NOT NULL DEFAULT 'PENDING',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "job_applications_pkey" PRIMARY KEY ("id")
+);
+
+-- Create unique index (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'job_applications_jobListingId_candidateId_key'
+    ) THEN
+        CREATE UNIQUE INDEX "job_applications_jobListingId_candidateId_key" ON "public"."job_applications"("jobListingId", "candidateId");
+    END IF;
+END $$;
+
+-- Create index on candidateId for user-scoped queries (e.g., fetching all applications for a user's profile)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'job_applications_candidateId_idx'
+    ) THEN
+        CREATE INDEX "job_applications_candidateId_idx" ON "public"."job_applications"("candidateId");
+    END IF;
+END $$;
+
+-- Add foreign key for jobListingId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'job_applications_jobListingId_fkey'
+    ) THEN
+        ALTER TABLE "public"."job_applications" 
+        ADD CONSTRAINT "job_applications_jobListingId_fkey" 
+        FOREIGN KEY ("jobListingId") REFERENCES "public"."job_listings"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for candidateId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'job_applications_candidateId_fkey'
+    ) THEN
+        ALTER TABLE "public"."job_applications" 
+        ADD CONSTRAINT "job_applications_candidateId_fkey" 
+        FOREIGN KEY ("candidateId") REFERENCES "public"."users"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const ensureTranslationInfrastructure = () => {
   const sql = `
 DO $$
@@ -398,6 +562,23 @@ const handleFailedMigration = (migration) => {
 log('🔧 Running database pre-build cleanup...');
 log(`📍 Database URL: ${process.env.DATABASE_URL ? '[SET]' : '[NOT SET]'}`);
 log(`📍 Schema path: ${SCHEMA_PATH}`);
+
+// Ensure critical recruitment tables exist before migrations run
+log('🔁 Ensuring job_listings table exists...');
+try {
+  ensureJobListingsTable();
+  log('✅ job_listings table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure job_listings table: ${error.message}`);
+}
+
+log('🔁 Ensuring job_applications table exists...');
+try {
+  ensureJobApplicationsTable();
+  log('✅ job_applications table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure job_applications table: ${error.message}`);
+}
 
 // log('🔁 Ensuring translation infrastructure is present...');
 // ensureTranslationInfrastructure();
