@@ -91,6 +91,7 @@
     "unknown": "An unknown error occurred",
     "networkError": "Network error occurred",
     "validationError": "Validation error",
+    "loadingFiles": "Error loading files",
     "unauthorized": "Unauthorized access",
     "forbidden": "Access forbidden",
     "notFound": "Resource not found",
@@ -829,9 +830,13 @@
     },
     "confirmDelete": "Are you sure you want to delete this file?",
     "uploadButton": "Upload Files",
+    "adminUploadNote": "View and download your files",
+    "fileCount": "{{count}} files",
+    "fileCount_one": "{{count}} file",
+    "downloadError": "Failed to download file. Please try again.",
     "emptyState": {
       "title": "No files yet",
-      "message": "Upload your first file to get started"
+      "message": "Your files will appear here once uploaded"
     }
   },
   "hrDocumentCard": {

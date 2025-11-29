@@ -1,8 +1,10 @@
-import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CloudflareR2Service } from './cloudflare-r2.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { PrismaService } from '../prisma/prisma.service';
+import { UploadService } from './upload.service';
+import { AssetKind } from '@workspace/types';
 
 @Controller('upload')
 @UseGuards(ClerkAuthGuard)
@@ -12,6 +14,7 @@ export class UploadController {
   constructor(
     private readonly r2Service: CloudflareR2Service,
     private readonly prisma: PrismaService,
+    private readonly uploadService: UploadService,
   ) {}
 
   /**
@@ -59,6 +62,101 @@ export class UploadController {
       }
       throw new BadRequestException('Failed to fetch asset');
     }
+  }
+
+  /**
+   * Get current user's assets (files)
+   * GET /api/upload/my-files
+   * Query params:
+   * - kind: Filter by AssetKind (optional, e.g., DOCUMENT, CV)
+   * - limit: Max number of results (default 50)
+   * - offset: Pagination offset (default 0)
+   */
+  @Get('my-files')
+  async getMyFiles(
+    @Req() req: Request,
+    @Query('kind') kind?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ) {
+    try {
+      const appUser = (req as any).appUser;
+      
+      if (!appUser?.id) {
+        this.logger.warn('User not found in request context for my-files');
+        throw new BadRequestException('User context not found');
+      }
+
+      this.logger.log(`Fetching files for user: ${appUser.id}, kind: ${kind || 'all'}`);
+
+      // Parse kind if provided and valid
+      let assetKind: AssetKind | undefined;
+      const validKinds = Object.values(AssetKind);
+      if (kind && validKinds.includes(kind as AssetKind)) {
+        assetKind = kind as AssetKind;
+      }
+
+      // Parse and validate limit/offset parameters
+      const parsedLimit = limit ? parseInt(limit, 10) : 50;
+      const parsedOffset = offset ? parseInt(offset, 10) : 0;
+
+      if (isNaN(parsedLimit) || isNaN(parsedOffset) || parsedLimit < 0 || parsedOffset < 0) {
+        throw new BadRequestException('Invalid limit or offset parameter');
+      }
+
+      const assets = await this.uploadService.getUserAssets(appUser.id, {
+        kind: assetKind,
+        limit: parsedLimit,
+        offset: parsedOffset,
+      });
+
+      // Transform to DocumentItem format for frontend compatibility
+      const files = assets.map(asset => ({
+        id: asset.id,
+        name: asset.filename,
+        url: asset.publicUrl,
+        type: this.mapAssetKindToDocumentType(asset.kind),
+        uploadDate: asset.createdAt.toISOString(),
+        size: asset.size || 0,
+        mimeType: asset.mimeType,
+        storageKey: asset.storageKey,
+      }));
+
+      return {
+        success: true,
+        data: files,
+        total: files.length,
+      };
+    } catch (error) {
+      this.logger.error('Failed to fetch user files', error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to fetch files');
+    }
+  }
+
+  /**
+   * Map AssetKind to DocumentItem type for frontend
+   */
+  private mapAssetKindToDocumentType(kind: string): string {
+    const kindMap: Record<string, string> = {
+      'CV': 'CV',
+      'DOCUMENT': 'Other',
+      'AVATAR': 'Other',
+      'LOGO': 'Other',
+      'COVER_IMAGE': 'Other',
+      'PRODUCT_IMAGE': 'Other',
+      'CATALOG_PDF': 'Other',
+      'CATALOG_CSV': 'Other',
+      'FRONTEND_LOGO': 'Other',
+      'FRONTEND_FAVICON': 'Other',
+      'FRONTEND_OG_IMAGE': 'Other',
+      'ADMIN_LOGO': 'Other',
+      'ADMIN_FAVICON': 'Other',
+      'ELEARNING': 'Other',
+    };
+    return kindMap[kind] || 'Other';
   }
 
   /**
