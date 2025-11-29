@@ -13,10 +13,6 @@ import {
   FileText,
   Scale,
   PlusCircle,
-  Eye,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
   Briefcase
 } from 'lucide-react'
 import { publicApi, useApiClient, apiService } from '../services/api'
@@ -44,19 +40,52 @@ const Dashboard: React.FC = () => {
     refetchInterval: 120000, // Refresh every 2 minutes instead of 30 seconds
   })
 
-  // Fetch real-time analytics overview data
-  const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
-    queryKey: ['admin-analytics-overview'],
-    queryFn: () => apiService.getAnalyticsOverview(apiClient),
-    refetchInterval: 60000, // Refresh every minute
+  // Fetch users count directly from users endpoint
+  const { data: usersResponse, isLoading: usersLoading } = useQuery({
+    queryKey: ['dashboard-users-count'],
+    queryFn: () => apiService.getUsers(apiClient),
     enabled: !!apiClient,
+    staleTime: 60000, // Cache for 1 minute
   })
 
-  // Fetch parent leads count separately since it's not in analytics
-  const { data: parentLeadsData, isLoading: parentLeadsLoading } = useQuery({
-    queryKey: ['parent-leads-count'],
+  // Fetch organizations count directly from organizations endpoint
+  const { data: orgsResponse, isLoading: orgsLoading } = useQuery({
+    queryKey: ['dashboard-orgs-count'],
+    queryFn: () => apiService.getOrganizations(apiClient),
+    enabled: !!apiClient,
+    staleTime: 60000,
+  })
+
+  // Fetch products count directly from products endpoint
+  const { data: productsResponse, isLoading: productsLoading } = useQuery({
+    queryKey: ['dashboard-products-count'],
+    queryFn: () => apiService.getProducts(apiClient),
+    enabled: !!apiClient,
+    staleTime: 60000,
+  })
+
+  // Fetch parent leads count directly from parent-leads endpoint
+  const { data: parentLeadsResponse, isLoading: parentLeadsLoading } = useQuery({
+    queryKey: ['dashboard-parent-leads-count'],
     queryFn: () => apiService.getParentLeads(apiClient),
     enabled: !!apiClient,
+    staleTime: 60000,
+  })
+
+  // Fetch job listings count directly from job-listings endpoint
+  const { data: jobListingsResponse, isLoading: jobListingsLoading } = useQuery({
+    queryKey: ['dashboard-job-listings-count'],
+    queryFn: () => apiService.getJobListings(apiClient),
+    enabled: !!apiClient,
+    staleTime: 60000,
+  })
+
+  // Fetch candidates/applications count directly from candidates endpoint
+  const { data: candidatesResponse, isLoading: candidatesLoading } = useQuery({
+    queryKey: ['dashboard-candidates-count'],
+    queryFn: () => apiService.getCandidates(apiClient),
+    enabled: !!apiClient,
+    staleTime: 60000,
   })
 
   // Content Management State
@@ -67,26 +96,18 @@ const Dashboard: React.FC = () => {
   const [policiesCount, setPoliciesCount] = useState(0)
   const [contentLoading, setContentLoading] = useState(true)
 
-  // Extract real data from analytics response
-  // API returns { success, data: { users: {...}, organizations: {...}, ... } }
-  const analyticsResult = analyticsData?.data?.data
-  const usersData = analyticsResult?.users?.totalUsers ?? 0
-  const usersLoading = analyticsLoading
-  const orgsData = analyticsResult?.organizations?.totalOrganizations ?? 0
-  const orgsLoading = analyticsLoading
-  const productsData = analyticsResult?.products?.totalProducts ?? 0
-  const productsLoading = analyticsLoading
-  const leadsData = parentLeadsData?.data?.data?.length ?? 0
-  const leadsLoading = parentLeadsLoading
-
-  // Extract job analytics data
-  const totalJobs = analyticsResult?.jobs?.totalJobs ?? 0
-  const totalApplications = analyticsResult?.jobs?.totalApplications ?? 0
+  // Extract counts directly from API responses - much simpler and more reliable
+  const usersData = usersResponse?.data?.data?.length ?? 0
+  const orgsData = orgsResponse?.data?.data?.length ?? 0
+  const productsData = productsResponse?.data?.data?.length ?? 0
+  const leadsData = parentLeadsResponse?.data?.data?.length ?? 0
+  const totalJobs = jobListingsResponse?.data?.data?.length ?? 0
+  const totalApplications = candidatesResponse?.data?.data?.length ?? 0
 
   const stats = [
     {
       name: t('sidebar.allUsersTitle', 'Total Users'),
-      value: usersData || 0,
+      value: usersData,
       icon: Users,
       loading: usersLoading,
       color: 'text-swiss-mint',
@@ -95,7 +116,7 @@ const Dashboard: React.FC = () => {
     },
     {
       name: t('sidebar.foundations', 'Organizations'),
-      value: orgsData || 0,
+      value: orgsData,
       icon: Building2,
       loading: orgsLoading,
       color: 'text-swiss-sand',
@@ -104,7 +125,7 @@ const Dashboard: React.FC = () => {
     },
     {
       name: t('sidebar.products', 'Products'),
-      value: productsData || 0,
+      value: productsData,
       icon: Package,
       loading: productsLoading,
       color: 'text-swiss-teal',
@@ -113,9 +134,9 @@ const Dashboard: React.FC = () => {
     },
     {
       name: t('sidebar.parentLeads', 'Parent Leads'),
-      value: leadsData || 0,
+      value: leadsData,
       icon: Heart,
-      loading: leadsLoading,
+      loading: parentLeadsLoading,
       color: 'text-swiss-coral',
       bgColor: 'bg-swiss-coral/10',
       link: '/parent-leads',
@@ -128,7 +149,7 @@ const Dashboard: React.FC = () => {
       name: t('sidebar.jobListings', 'Job Listings'),
       value: totalJobs,
       icon: Briefcase,
-      loading: analyticsLoading,
+      loading: jobListingsLoading,
       color: 'text-indigo-600',
       bgColor: 'bg-indigo-100',
       link: '/job-listings',
@@ -137,7 +158,7 @@ const Dashboard: React.FC = () => {
       name: t('applications', 'Applications'),
       value: totalApplications,
       icon: FileText,
-      loading: analyticsLoading,
+      loading: candidatesLoading,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
       link: '/candidates',
@@ -145,6 +166,9 @@ const Dashboard: React.FC = () => {
   ]
 
   const systemStatus = healthData?.data?.status === 'OK'
+
+  // Overall loading state for summary section
+  const statsLoading = usersLoading || orgsLoading || productsLoading || jobListingsLoading
 
   // Fetch content counts
   useEffect(() => {
@@ -460,35 +484,35 @@ const Dashboard: React.FC = () => {
               <span className="text-gray-400">• {t('live', 'Live')}</span>
             </div>
           )}
-          {!analyticsLoading && usersData > 0 && (
+          {!usersLoading && usersData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
               <span className="text-gray-600">{usersData} {t('registeredUsers', 'registered users in the platform')}</span>
               <span className="text-gray-400">• {t('total', 'Total')}</span>
             </div>
           )}
-          {!analyticsLoading && orgsData > 0 && (
+          {!orgsLoading && orgsData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-sand rounded-full"></div>
               <span className="text-gray-600">{orgsData} {t('activeOrganizations', 'active organizations')}</span>
               <span className="text-gray-400">• {t('total', 'Total')}</span>
             </div>
           )}
-          {!analyticsLoading && totalJobs > 0 && (
+          {!jobListingsLoading && totalJobs > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
               <span className="text-gray-600">{totalJobs} {t('jobsPosted', 'job listings posted')}</span>
               <span className="text-gray-400">• {totalApplications} {t('applications', 'applications')}</span>
             </div>
           )}
-          {!analyticsLoading && productsData > 0 && (
+          {!productsLoading && productsData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-teal rounded-full"></div>
               <span className="text-gray-600">{productsData} {t('productsAvailable', 'products in catalog')}</span>
               <span className="text-gray-400">• {t('total', 'Total')}</span>
             </div>
           )}
-          {analyticsLoading && (
+          {statsLoading && (
             <div className="flex items-center space-x-3 text-sm">
               <LoadingSpinner size="small" />
               <span className="text-gray-600">{t('loadingStats', 'Loading platform statistics...')}</span>
