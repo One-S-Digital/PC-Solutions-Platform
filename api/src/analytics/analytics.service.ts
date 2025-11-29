@@ -10,8 +10,8 @@ export class AnalyticsService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get user registrations by day from AppUser (the auth source of truth)
-    const registrations = await this.prisma.appUser.groupBy({
+    // Get user registrations by day from User table (actual platform users)
+    const registrations = await this.prisma.user.groupBy({
       by: ['createdAt'],
       where: {
         createdAt: {
@@ -26,37 +26,25 @@ export class AnalyticsService {
       },
     });
 
-    // Get total users from AppUser table (source of truth for registered users)
-    const totalUsers = await this.prisma.appUser.count();
+    // Get total users from User table (actual registered platform users)
+    const totalUsers = await this.prisma.user.count();
     
-    // Active users are always defined as users active within the last 30 days
-    // This is independent of the timeRange parameter which affects registration trends
+    // Active users are defined as users active within the last 30 days
     const ACTIVE_USER_WINDOW_MS = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
     const activeWindowStart = new Date(Date.now() - ACTIVE_USER_WINDOW_MS);
     
-    // Get active users - check User table for lastActiveAt, fall back to AppUser updatedAt
-    const activeUsersFromProfile = await this.prisma.user.count({
+    // Get active users based on lastActiveAt or recent creation/update
+    const activeUsers = await this.prisma.user.count({
       where: {
-        lastActiveAt: {
-          gte: activeWindowStart,
-        },
+        OR: [
+          { lastActiveAt: { gte: activeWindowStart } },
+          { updatedAt: { gte: activeWindowStart } },
+        ],
       },
     });
-    
-    // Also count recently updated AppUsers as potentially active
-    const recentlyUpdatedAppUsers = await this.prisma.appUser.count({
-      where: {
-        updatedAt: {
-          gte: activeWindowStart,
-        },
-      },
-    });
-    
-    // Use the higher count as an estimate of active users
-    const activeUsers = Math.max(activeUsersFromProfile, recentlyUpdatedAppUsers);
 
-    // Get users by role from AppUser table (source of truth for roles)
-    const usersByRole = await this.prisma.appUser.groupBy({
+    // Get users by role from User table
+    const usersByRole = await this.prisma.user.groupBy({
       by: ['role'],
       _count: {
         id: true,
