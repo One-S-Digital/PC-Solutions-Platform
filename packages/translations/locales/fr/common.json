@@ -91,6 +91,7 @@
     "unknown": "Une erreur inconnue s'est produite",
     "networkError": "Erreur réseau",
     "validationError": "Erreur de validation",
+    "loadingFiles": "Erreur lors du chargement des fichiers",
     "unauthorized": "Accès non autorisé",
     "forbidden": "Accès interdit",
     "notFound": "Ressource non trouvée",
@@ -846,9 +847,13 @@
     },
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fichier ?",
     "uploadButton": "Télécharger des Fichiers",
+    "adminUploadNote": "Consultez et téléchargez vos fichiers",
+    "fileCount": "{{count}} fichiers",
+    "fileCount_one": "{{count}} fichier",
+    "downloadError": "Échec du téléchargement du fichier. Veuillez réessayer.",
     "emptyState": {
       "title": "Aucun fichier pour le moment",
-      "message": "Téléchargez votre premier fichier pour commencer"
+      "message": "Vos fichiers apparaîtront ici une fois téléchargés"
     }
   },
   "hrDocumentCard": {

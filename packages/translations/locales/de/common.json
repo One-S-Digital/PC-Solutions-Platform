@@ -91,6 +91,7 @@
     "unknown": "Ein unbekannter Fehler ist aufgetreten",
     "networkError": "Netzwerkfehler",
     "validationError": "Validierungsfehler",
+    "loadingFiles": "Fehler beim Laden der Dateien",
     "unauthorized": "Nicht autorisiert",
     "forbidden": "Zugriff verweigert",
     "notFound": "Ressource nicht gefunden",
@@ -902,9 +903,13 @@
     },
     "confirmDelete": "Sind Sie sicher, dass Sie diese Datei löschen möchten?",
     "uploadButton": "Dateien Hochladen",
+    "adminUploadNote": "Ihre Dateien ansehen und herunterladen",
+    "fileCount": "{{count}} Dateien",
+    "fileCount_one": "{{count}} Datei",
+    "downloadError": "Datei konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "emptyState": {
       "title": "Noch keine Dateien",
-      "message": "Laden Sie Ihre erste Datei hoch, um zu beginnen"
+      "message": "Ihre Dateien erscheinen hier, sobald sie hochgeladen sind"
     }
   },
   "hrDocumentCard": {
