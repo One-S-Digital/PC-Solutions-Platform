@@ -80,14 +80,14 @@ export class UploadController {
     @Query('offset') offset?: string,
   ) {
     try {
-      const appUser = (req as any).appUser;
+      const user = (req as any).user;
       
-      if (!appUser?.id) {
+      if (!user?.id) {
         this.logger.warn('User not found in request context for my-files');
         throw new BadRequestException('User context not found');
       }
 
-      this.logger.log(`Fetching files for user: ${appUser.id}, kind: ${kind || 'all'}`);
+      this.logger.log(`Fetching files for user: ${user.id}, kind: ${kind || 'all'}`);
 
       // Parse kind if provided and valid
       let assetKind: AssetKind | undefined;
@@ -104,7 +104,7 @@ export class UploadController {
         throw new BadRequestException('Invalid limit or offset parameter');
       }
 
-      const assets = await this.uploadService.getUserAssets(appUser.id, {
+      const assets = await this.uploadService.getUserAssets(user.id, {
         kind: assetKind,
         limit: parsedLimit,
         offset: parsedOffset,
