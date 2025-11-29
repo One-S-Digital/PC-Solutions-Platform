@@ -96,10 +96,18 @@ export class UploadController {
         assetKind = kind as AssetKind;
       }
 
+      // Parse and validate limit/offset parameters
+      const parsedLimit = limit ? parseInt(limit, 10) : 50;
+      const parsedOffset = offset ? parseInt(offset, 10) : 0;
+
+      if (isNaN(parsedLimit) || isNaN(parsedOffset) || parsedLimit < 0 || parsedOffset < 0) {
+        throw new BadRequestException('Invalid limit or offset parameter');
+      }
+
       const assets = await this.uploadService.getUserAssets(appUser.id, {
         kind: assetKind,
-        limit: limit ? parseInt(limit, 10) : 50,
-        offset: offset ? parseInt(offset, 10) : 0,
+        limit: parsedLimit,
+        offset: parsedOffset,
       });
 
       // Transform to DocumentItem format for frontend compatibility

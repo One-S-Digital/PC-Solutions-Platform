@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DocumentItem } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { 
@@ -169,7 +168,7 @@ const FileGalleryPage: React.FC = () => {
   // Get file extension from file name
   const getFileExtension = (fileName: string): string => {
     const parts = fileName.split('.');
-    return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'PDF';
+    return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'FILE';
   };
 
   return (
@@ -211,7 +210,7 @@ const FileGalleryPage: React.FC = () => {
             <ExclamationCircleIcon className="w-6 h-6 text-red-500 flex-shrink-0" />
             <div>
               <h3 className="text-sm font-medium text-red-800">
-                {t('common:error.loadingFiles', 'Error loading files')}
+                {t('common:errors.loadingFiles', 'Error loading files')}
               </h3>
               <p className="text-sm text-red-600 mt-1">{error}</p>
               <Button 
