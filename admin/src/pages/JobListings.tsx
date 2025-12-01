@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { 
   Briefcase, 
   Plus, 
@@ -18,17 +18,32 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
+import AddJobListingModal, { JobListingFormData } from '../components/AddJobListingModal'
 
 const JobListings: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const apiClient = useApiClient()
+  const queryClient = useQueryClient()
 
   const { data: jobsResponse, isLoading, error } = useQuery({
     queryKey: ['job-listings'],
     queryFn: () => apiService.getJobListings(apiClient),
   })
+
+  const createJobListingMutation = useMutation({
+    mutationFn: (data: JobListingFormData) => apiService.createJobListing(apiClient, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['job-listings'] })
+      setIsAddModalOpen(false)
+    },
+  })
+
+  const handleCreateJobListing = async (data: JobListingFormData) => {
+    await createJobListingMutation.mutateAsync(data)
+  }
 
   const jobs: JobListing[] = jobsResponse?.data?.data || []
 
@@ -68,11 +83,22 @@ const JobListings: React.FC = () => {
             {t('admin:jobListings.subtitle', { count: jobs.length })}
           </p>
         </div>
-        <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
+        <button 
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+        >
           <Plus className="h-4 w-4 mr-2" />
           {t('admin:jobListings.addButton')}
         </button>
       </div>
+
+      {/* Add Job Listing Modal */}
+      <AddJobListingModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleCreateJobListing}
+        isSubmitting={createJobListingMutation.isPending}
+      />
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
