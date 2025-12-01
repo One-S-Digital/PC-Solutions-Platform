@@ -1,9 +1,11 @@
 import { useAuth } from '@clerk/clerk-react';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiService, ApiResponse, ApiError } from '../services/api';
 
 export function useAuthenticatedApi() {
   const { getToken } = useAuth();
+  const { t } = useTranslation('common');
 
   const authenticatedRequest = useCallback(
     async <T = any>(
@@ -191,7 +193,7 @@ export function useAuthenticatedApi() {
           throw error;
         }
         throw new ApiError(
-          error instanceof Error ? error.message : 'Download failed',
+          error instanceof Error ? error.message : t('common:errors.downloadFailed'),
           0
         );
       }

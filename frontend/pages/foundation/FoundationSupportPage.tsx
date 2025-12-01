@@ -247,7 +247,7 @@ const FoundationSupportPage: React.FC = () => {
     <div className="space-y-8">
       <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
         <LifebuoyIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-        {t('sidebar.support')}
+        {t('dashboard:sidebar.support')}
       </h1>
 
       {/* FAQ Section */}

@@ -354,7 +354,7 @@ const EducatorProfilePage: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center">
         <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center mb-4 sm:mb-0">
           <IdentificationIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-          {t('sidebar.myProfile')}
+          {t('dashboard:sidebar.myProfile')}
         </h1>
         <div className="flex space-x-2">
           <Button 
@@ -373,7 +373,7 @@ const EducatorProfilePage: React.FC = () => {
           <Card className="p-6 text-center">
             <img
               src={avatarUrl}
-              alt="Profile"
+              alt={t('common.profile')}
               className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg bg-gray-200"
             />
             <h2 className="text-2xl font-bold text-swiss-charcoal mt-4">{fullName}</h2>

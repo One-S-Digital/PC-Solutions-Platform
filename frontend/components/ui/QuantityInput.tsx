@@ -1,5 +1,6 @@
 import React from 'react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 
 interface QuantityInputProps {
   quantity: number;
@@ -16,6 +17,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
     max = Infinity,
     stockStatus 
 }) => {
+const { t } = useTranslation();
 
   const handleDecrement = () => {
     if (quantity > min) {
@@ -69,7 +71,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
         // Conditionally set max attribute if it's not Infinity and not 'On Demand'
         max={(max !== Infinity && stockStatus !== 'On Demand') ? max : undefined}
         className="w-14 h-full text-center border-l border-r border-gray-300 focus:outline-none focus:ring-1 focus:ring-swiss-mint focus:z-10 disabled:bg-gray-50 text-sm font-medium text-gray-700 no-spinners"
-        aria-label="Current quantity"
+        aria-label={t('common.labels.currentquantity')}
         disabled={stockStatus === 'Out of Stock'}
       />
       <button

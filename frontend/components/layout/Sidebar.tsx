@@ -47,7 +47,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   });
 
   React.useEffect(() => {
-    if (error) {
+    // Only log non-abort errors (abort errors are expected when component unmounts)
+    if (error && !error.includes('aborted')) {
       console.warn('Failed to load frontend settings:', error);
     }
   }, [error]);
@@ -264,8 +265,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         )}
         {hasSubscription && (
           <div className="bg-swiss-sand/20 p-4 rounded-card text-center">
-              <p className="text-sm text-swiss-charcoal font-semibold">{t('sidebar.currentPlan', { plan: currentUser.plan })}</p>
-              <p className="text-xs text-gray-600 mb-2.5">{t('sidebar.manageSubscriptionDesc')}</p>
+              <p className="text-sm text-swiss-charcoal font-semibold">{t('dashboard:sidebar.currentPlan', { plan: currentUser.plan })}</p>
+              <p className="text-xs text-gray-600 mb-2.5">{t('dashboard:sidebar.manageSubscriptionDesc')}</p>
               <button 
                 onClick={() => {
                     const targetPath = currentUser?.role === UserRole.SERVICE_PROVIDER ? '/settings/service-provider' : '/settings';
@@ -275,7 +276,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
                 className="w-full bg-swiss-coral text-white text-sm px-4 py-2 rounded-button hover:bg-opacity-90 transition-colors shadow-soft flex items-center justify-center"
               >
                   <WalletIcon className="w-4 h-4 mr-2"/>
-                  {t('sidebar.billingSubscription')}
+                  {t('dashboard:sidebar.billingSubscription')}
               </button>
           </div>
         )}

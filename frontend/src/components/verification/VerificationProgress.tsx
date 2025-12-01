@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 interface VerificationProgressProps {
   status: 'pending' | 'processing' | 'ready' | 'error';
@@ -12,14 +13,15 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
   error,
   onRetry,
 }) => {
+  const { t } = useTranslation('common');
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
 
   const steps = [
-    'Verifying email...',
-    'Creating your account...',
-    'Setting up your profile...',
-    'Almost ready...'
+    t('verificationProgress.steps.verifyingEmail'),
+    t('verificationProgress.steps.creatingAccount'),
+    t('verificationProgress.steps.settingUpProfile'),
+    t('verificationProgress.steps.almostReady')
   ];
 
   useEffect(() => {
@@ -53,13 +55,13 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
   const getStatusMessage = () => {
     switch (status) {
       case 'ready':
-        return 'Account setup complete!';
+        return t('verificationProgress.messages.accountSetupComplete');
       case 'error':
-        return error || 'Something went wrong';
+        return error || t('verificationProgress.messages.somethingWentWrong');
       case 'processing':
-        return steps[currentStep] || 'Setting up your account...';
+        return steps[currentStep] || t('verificationProgress.messages.preparingAccount');
       default:
-        return 'Preparing your account...';
+        return t('verificationProgress.messages.preparingAccount');
     }
   };
 
@@ -70,7 +72,7 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
       </div>
       
       <h2 className="text-2xl font-bold text-gray-900 mb-4">
-        {status === 'ready' ? 'Welcome!' : 'Setting Up Your Account'}
+        {status === 'ready' ? t('verificationProgress.title.ready') : t('verificationProgress.title.processing')}
       </h2>
       
       <p className="text-gray-600 mb-6">
@@ -86,7 +88,7 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
             />
           </div>
           <p className="text-sm text-gray-500">
-            {Math.round(progress)}% complete
+            {t('verificationProgress.progress.complete', { percent: Math.round(progress) })}
           </p>
         </div>
       )}
@@ -94,13 +96,13 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
       {status === 'error' && onRetry && (
         <div className="space-y-4">
           <p className="text-sm text-gray-500">
-            If this problem persists, please contact support.
+            {t('verificationProgress.messages.contactSupport')}
           </p>
           <button
             onClick={onRetry}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
-            Try Again
+            {t('verificationProgress.messages.tryAgain')}
           </button>
         </div>
       )}
@@ -108,7 +110,7 @@ const VerificationProgress: React.FC<VerificationProgressProps> = ({
       {status === 'ready' && (
         <div className="text-green-600">
           <p className="text-sm">
-            Redirecting you to your dashboard...
+            {t('verificationProgress.messages.redirectingToDashboard')}
           </p>
         </div>
       )}

@@ -148,7 +148,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getOrderStatusClass(order.status)}`}>
-                        {t(`orderStatus.${order.status.toLowerCase()}` as any, order.status)}
+                        {t(`common:orderStatus.${order.status.toLowerCase().replace(/\s/g, '')}` as const, order.status)}
                       </span>
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
@@ -323,7 +323,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('sidebar.ordersAppointments')}</h1>
+      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboard:sidebar.ordersAppointments')}</h1>
       <Tabs
         tabs={tabs}
         variant="pills"

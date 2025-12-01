@@ -1129,19 +1129,27 @@
     "cannotSubmitMissingInfo": "[DE] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "orderStatus": {
+    "submitted": "Eingereicht",
+    "viewedbysupplier": "Vom Lieferanten angesehen",
+    "accepted": "Akzeptiert",
+    "declined": "Abgelehnt",
+    "processing": "In Bearbeitung",
+    "shipped": "Versandt",
+    "fulfilled": "Erfüllt",
+    "cancelled": "Storniert",
     "pending": "[DE] Pending",
     "approved": "[DE] Approved",
     "rejected": "[DE] Rejected",
     "completed": "[DE] Completed",
-    "cancelled": "[DE] Cancelled",
     "active": "[DE] Active",
     "inactive": "[DE] Inactive",
     "paid": "[DE] Paid",
-    "shipped": "[DE] Shipped",
     "confirmed": "[DE] Confirmed",
-    "processing": "[DE] Processing",
     "delivered": "[DE] Delivered",
     "refunded": "[DE] Refunded"
+  },
+  "filters": {
+    "all": "Alle"
   },
   "serviceStatus": {
     "pending": "[DE] Pending",

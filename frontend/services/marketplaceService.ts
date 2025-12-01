@@ -234,7 +234,7 @@ class MarketplaceService {
       tags: service.tags || [], // Default empty tags
       imageUrl: service.imageUrl, // Services may have images
       deliveryType: service.deliveryType || service.provider?.deliveryType || 'On-site',
-      priceInfo: service.priceInfo || (service.price ? `CHF ${service.price}` : 'Contact for pricing'),
+      priceInfo: service.priceInfo || (service.price ? `CHF ${service.price}` : i18n.t('common:marketplace.contactForPricing')),
     };
   }
 

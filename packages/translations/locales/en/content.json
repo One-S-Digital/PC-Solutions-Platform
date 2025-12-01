@@ -62,6 +62,15 @@
   "statePolicies": {
     "title": "State Policies"
   },
+  "policyCategories": {
+    "EducationPolicy": "Education Policy",
+    "Health&Safety": "Health & Safety",
+    "Labor&Employment": "Labor & Employment",
+    "ChildProtection": "Child Protection",
+    "DataPrivacy": "Data Privacy",
+    "Environmental": "Environmental",
+    "Other": "Other Policies"
+  },
   "statePoliciesPage": {
     "title": "State Policies",
     "filters": {
@@ -76,10 +85,13 @@
     "sections": {
       "compliance": "Compliance",
       "updates": "Updates",
-      "downloads": "Downloads"
+      "downloads": "Downloads",
+      "categories": "Policy Categories"
     },
     "emptyState": {
-      "noPolicies": "No policies available"
+      "noPolicies": "No policies available",
+      "noPoliciesMatchFilters": "No policies match current filters",
+      "noPoliciesFoundForFilters": "No policies found for current filters."
     },
     "buttons": {
       "manageAlerts": "Manage Alerts",
@@ -91,6 +103,15 @@
       "published": "Published",
       "updated": "Updated",
       "effective": "Effective"
+    },
+    "filters": {
+      "allCantonsRegions": "All Cantons/Regions"
+    },
+    "adminNote": "Use Admin Dashboard to add/edit policies",
+    "loading": "Loading policies...",
+    "confirmDeleteAlert": "Are you sure you want to delete this alert?",
+    "errors": {
+      "downloadFailed": "Failed to download file. Please try again."
     }
   },
   "contentManagementDashboard": {

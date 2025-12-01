@@ -99,7 +99,7 @@ const ServiceProviderListingsPage: React.FC = () => {
         availability: data.availability || 'By appointment',
         tags: data.tags || [],
         deliveryType: data.deliveryType || 'On-site',
-        priceInfo: data.priceInfo || 'Contact for quote',
+        priceInfo: data.priceInfo || t('serviceProviderListingsPage.defaultPriceInfo'),
         imageUrl: file ? URL.createObjectURL(file) : `https://picsum.photos/seed/newSrv${Date.now()}/400/300`,
         ...(data as Partial<Service>), // Spread remaining data which is already partial
       };

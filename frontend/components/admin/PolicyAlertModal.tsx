@@ -74,7 +74,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
       <Card className="w-full max-w-lg bg-white p-0 shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <h2 id="policyAlertModalTitle" className="text-xl font-semibold text-swiss-charcoal">
-            {existingAlert ? 'Edit' : 'Create New'} Policy Alert
+            {existingAlert ? t('common:buttons.edit') : t('common:buttons.create')} {t('common:policyAlertModal.title')}
           </h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close modal">
             <XMarkIcon className="w-6 h-6" />

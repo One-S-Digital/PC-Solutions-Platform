@@ -108,7 +108,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
             <div className="relative">
               <img
                 src={avatarUrl}
-                alt="Profile"
+                alt={t('common.profile')}
                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
               />
             </div>

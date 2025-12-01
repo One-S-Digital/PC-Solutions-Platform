@@ -1103,19 +1103,27 @@
     "cannotSubmitMissingInfo": "[FR] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "orderStatus": {
+    "submitted": "Soumis",
+    "viewedbysupplier": "Vu par le fournisseur",
+    "accepted": "Accepté",
+    "declined": "Refusé",
+    "processing": "En traitement",
+    "shipped": "Expédié",
+    "fulfilled": "Rempli",
+    "cancelled": "Annulé",
     "pending": "[FR] Pending",
     "approved": "[FR] Approved",
     "rejected": "[FR] Rejected",
     "completed": "[FR] Completed",
-    "cancelled": "[FR] Cancelled",
     "active": "[FR] Active",
     "inactive": "[FR] Inactive",
     "paid": "[FR] Paid",
-    "shipped": "[FR] Shipped",
     "confirmed": "[FR] Confirmed",
-    "processing": "[FR] Processing",
     "delivered": "[FR] Delivered",
     "refunded": "[FR] Refunded"
+  },
+  "filters": {
+    "all": "Tous"
   },
   "serviceStatus": {
     "pending": "[FR] Pending",

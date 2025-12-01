@@ -111,7 +111,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
               <div className="flex items-center gap-4">
                 <img
                   src={logoUrl}
-                  alt="Logo"
+                  alt={t('common.logo')}
                   className="w-24 h-24 rounded-lg border-2 border-gray-200 object-cover"
                 />
                 <div className="flex-1">
@@ -138,7 +138,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
               <div className="flex items-center gap-4">
                 <img
                   src={coverImageUrl}
-                  alt="Cover"
+                  alt={t('common.cover')}
                   className="w-32 h-20 rounded-lg border-2 border-gray-200 object-cover"
                 />
                 <div className="flex-1">

@@ -28,7 +28,7 @@ type ContentType = 'e-learning' | 'hr' | 'policy';
 const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const apiClient = useApiClient()
-  const { t } = useTranslation('dashboard')
+  const { t } = useTranslation(['dashboard', 'common'])
   const user = {
     fullName: 'Development User'
   }
@@ -155,7 +155,7 @@ const Dashboard: React.FC = () => {
       link: '/job-listings',
     },
     {
-      name: t('applications', 'Applications'),
+      name: t('sidebar.applications', 'Applications'),
       value: totalApplications,
       icon: FileText,
       loading: candidatesLoading,
@@ -475,47 +475,47 @@ const Dashboard: React.FC = () => {
 
       {/* Platform Summary */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">{t('platformSummary', 'Platform Summary')}</h2>
+        <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">{t('dashboard:platformSummary', 'Platform Summary')}</h2>
         <div className="space-y-4">
           {systemStatus && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
-              <span className="text-gray-600">{t('systemHealthy', 'All systems operational')}</span>
-              <span className="text-gray-400">• {t('live', 'Live')}</span>
+              <span className="text-gray-600">{t('dashboard:systemHealthy', 'All systems operational')}</span>
+              <span className="text-gray-400">• {t('dashboard:live', 'Live')}</span>
             </div>
           )}
           {!usersLoading && usersData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
-              <span className="text-gray-600">{usersData} {t('registeredUsers', 'registered users in the platform')}</span>
-              <span className="text-gray-400">• {t('total', 'Total')}</span>
+              <span className="text-gray-600">{usersData} {t('dashboard:registeredUsers', 'registered users in the platform')}</span>
+              <span className="text-gray-400">• {t('dashboard:total', 'Total')}</span>
             </div>
           )}
           {!orgsLoading && orgsData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-sand rounded-full"></div>
-              <span className="text-gray-600">{orgsData} {t('activeOrganizations', 'active organizations')}</span>
-              <span className="text-gray-400">• {t('total', 'Total')}</span>
+              <span className="text-gray-600">{orgsData} {t('dashboard:activeOrganizations', 'active organizations')}</span>
+              <span className="text-gray-400">• {t('dashboard:total', 'Total')}</span>
             </div>
           )}
           {!jobListingsLoading && totalJobs > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-              <span className="text-gray-600">{totalJobs} {t('jobsPosted', 'job listings posted')}</span>
-              <span className="text-gray-400">• {totalApplications} {t('applications', 'applications')}</span>
+              <span className="text-gray-600">{totalJobs} {t('dashboard:jobsPosted', 'job listings posted')}</span>
+              <span className="text-gray-400">• {totalApplications} {t('dashboard:sidebar.applications', 'applications')}</span>
             </div>
           )}
           {!productsLoading && productsData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-teal rounded-full"></div>
-              <span className="text-gray-600">{productsData} {t('productsAvailable', 'products in catalog')}</span>
-              <span className="text-gray-400">• {t('total', 'Total')}</span>
+              <span className="text-gray-600">{productsData} {t('dashboard:productsAvailable', 'products in catalog')}</span>
+              <span className="text-gray-400">• {t('dashboard:total', 'Total')}</span>
             </div>
           )}
           {statsLoading && (
             <div className="flex items-center space-x-3 text-sm">
               <LoadingSpinner size="small" />
-              <span className="text-gray-600">{t('loadingStats', 'Loading platform statistics...')}</span>
+              <span className="text-gray-600">{t('dashboard:loadingStats', 'Loading platform statistics...')}</span>
             </div>
           )}
         </div>

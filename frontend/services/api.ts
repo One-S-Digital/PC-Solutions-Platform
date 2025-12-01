@@ -170,6 +170,11 @@ class ApiService {
       
       return data;
     } catch (error) {
+      // Handle abort errors - don't convert to ApiError, just re-throw
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw error;
+      }
+      
       if (error instanceof ApiError) {
         throw error;
       }

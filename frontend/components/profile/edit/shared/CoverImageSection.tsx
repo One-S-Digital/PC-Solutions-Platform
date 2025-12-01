@@ -37,7 +37,7 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
     <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gray-200 rounded-lg overflow-hidden group">
       <img
         src={displayUrl}
-        alt="Cover"
+        alt={t('common.cover')}
         className="w-full h-full object-cover"
       />
       {uploading && (

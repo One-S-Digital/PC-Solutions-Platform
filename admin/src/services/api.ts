@@ -686,6 +686,12 @@ export const apiService = {
   ) => apiClient.post<ApiResponse<{ success: boolean; cleaned: number; affected: number }>>('/static-translations/admin/cleanup-prefixes', {}, {
     timeout: 300000, // 5 minutes timeout for cleanup operations (can take a while for large datasets)
   }),
+
+  autoFixHardcodedStrings: (
+    apiClient: AxiosInstance
+  ) => apiClient.post<ApiResponse<{ success: boolean; fixed: number; skipped: number; errors: number; message: string }>>('/static-translations/admin/auto-fix-hardcoded-strings', {}, {
+    timeout: 600000, // 10 minutes timeout for auto-fix operations (can take a while)
+  }),
 }
 
 // Export individual content functions for easier imports

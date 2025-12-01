@@ -403,9 +403,11 @@ export class TranslationService {
       const text = await this.resolveField(entityType, entityId, field, lang);
       result[field] = text;
       
-      if (!text && lang !== 'en') {
+      // Detect missing translations for ALL languages, including English
+      // This ensures English translations are created for German/French sources, etc.
+      if (!text) {
         hasMissingTranslations = true;
-      } else if (text && lang !== 'en' && sourceRecord) {
+      } else if (text && sourceRecord) {
         // Check if translation text matches source text (which means it's wrong)
         const sourceTranslation = await this.prisma.entityTranslation.findUnique({
           where: {
@@ -478,7 +480,9 @@ export class TranslationService {
     // According to plan: resolveEntity should ONLY return existing translations
     // Missing translations should be queued for background processing (non-blocking)
     // This ensures API responses are fast and translations happen async via queue
-    if (hasMissingTranslations && lang !== 'en') {
+    // Always queue translations for missing languages, regardless of target language
+    // This ensures English translations are created for German/French sources, etc.
+    if (hasMissingTranslations) {
       this.logger.log(`Missing translations detected for ${entityType}:${entityId} in ${lang}, queuing for background processing`);
       
       // Queue translation job for background processing (non-blocking)

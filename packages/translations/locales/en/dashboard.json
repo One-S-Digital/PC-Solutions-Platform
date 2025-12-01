@@ -45,6 +45,7 @@
     "messages": "Messages",
     "users": "Users",
     "allUsers": "All Users",
+    "allUsersTitle": "Total Users",
     "admins": "Admins",
     "foundations": "Foundations",
     "productSuppliers": "Product Suppliers",
@@ -78,6 +79,9 @@
     "homeFindCreche": "Home / Find Crèche",
     "applications": "Applications"
   },
+  "buttons": {
+    "add": "Add"
+  },
   "navbar": {
     "notificationsCount": "{{count}} notifications",
     "unreadMessages": "{{count}} unread messages",
@@ -92,6 +96,15 @@
     "userMenu": "User menu",
     "signOut": "Sign out"
   },
+  "platformSummary": "Platform Summary",
+  "loadingStats": "Loading platform statistics...",
+  "systemHealthy": "All systems operational",
+  "live": "Live",
+  "registeredUsers": "registered users in the platform",
+  "total": "Total",
+  "activeOrganizations": "active organizations",
+  "jobsPosted": "job listings posted",
+  "productsAvailable": "products in catalog",
   "stockStatus": {
     "instock": "In Stock",
     "outofstock": "Out of Stock",
@@ -671,7 +684,34 @@
       }
     },
     "recentOrdersTitle": "Recent Orders",
-    "noRecentOrders": "No recent orders"
+    "noRecentOrders": "No recent orders",
+    "noSalesYet": "No sales yet",
+    "recentOrdersTable": {
+      "id": "Order ID",
+      "creche": "Crèche",
+      "date": "Date",
+      "total": "Total",
+      "status": "Status"
+    },
+    "recentOrdersActions": {
+      "decline": "Decline",
+      "accept": "Accept"
+    }
+  },
+  "orderRequestDetailModal": {
+    "title": "Order Details",
+    "orderId": "Order ID",
+    "date": "Date",
+    "status": "Status",
+    "total": "Total",
+    "foundation": "Foundation",
+    "viewDaycareProfile": "View Profile",
+    "lineItems": "Line Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "notes": "Notes",
+    "markAsProcessing": "Mark as Processing"
   },
   "supplierAnalyticsPage": {
     "orderRequestsTrend": "Order Requests Trend",
@@ -837,7 +877,11 @@
     "eventTypes": {
       "info": "Information",
       "warning": "Warning",
-      "error": "Error"
+      "error": "Error",
+      "HealthCheck": "Health Check",
+      "DatabaseBackup": "Database Backup",
+      "MemoryAlert": "Memory Alert",
+      "APIImprovement": "API Improvement"
     }
   },
   "adminDiscountTerminationsPage": {

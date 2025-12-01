@@ -199,6 +199,20 @@ export default function Translations() {
     },
   });
 
+  // Auto-fix hardcoded strings mutation
+  const autoFixMutation = useMutation({
+    mutationFn: async () => {
+      return apiService.autoFixHardcodedStrings(apiClient);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      alert(`✅ Successful translation of static UI strings!\n\nFixed: ${data.data.fixed}\nSkipped: ${data.data.skipped}\nErrors: ${data.data.errors}\n\n${data.data.message}`);
+    },
+    onError: (error: any) => {
+      alert(`❌ Auto-fix failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
   // Bulk approve mutation
   const bulkApproveMutation = useMutation({
     mutationFn: async (keys: Array<{ namespace: string; key: string; lang: string }>) => {
@@ -620,6 +634,29 @@ export default function Translations() {
                 <>
                   <Globe className="w-4 h-4 mr-2 inline" />
                   Translate EN→{targetLang.toUpperCase()}
+                </>
+              )}
+            </Button>
+            <div className="border-l border-gray-300 h-6 mx-1" />
+            <Button
+              onClick={() => {
+                if (confirm('This will automatically find and fix hardcoded strings in the frontend code. This will:\n\n1. Scan all frontend files for hardcoded English strings\n2. Replace them with translation keys\n3. Add the keys to translation files\n\nContinue?')) {
+                  autoFixMutation.mutate();
+                }
+              }}
+              disabled={autoFixMutation.isPending}
+              variant="primary"
+              className="text-sm px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white"
+            >
+              {autoFixMutation.isPending ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
+                  Fixing...
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4 mr-2 inline" />
+                  Auto-Fix Hardcoded Strings
                 </>
               )}
             </Button>

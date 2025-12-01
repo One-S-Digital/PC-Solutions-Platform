@@ -46,7 +46,7 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
       <div className="relative">
         <img
           src={displayUrl}
-          alt="Avatar"
+          alt={t('common.avatar')}
           className={`${sizeClasses[size]} rounded-full border-4 border-white shadow-lg object-cover`}
         />
         {uploading && (
