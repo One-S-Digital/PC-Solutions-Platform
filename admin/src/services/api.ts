@@ -246,6 +246,7 @@ export const apiService = {
   getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/organizations/${id}`),
   createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/organizations', orgData),
   updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/organizations/${id}`, orgData),
+  deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/organizations/${id}`),
 
   // Products
 
