@@ -157,11 +157,12 @@ export class CompatController {
         updateData.canton = data.region;
       }
       if (data.phone !== undefined) updateData.phoneNumber = data.phone;
-      if (data.email !== undefined) updateData.contactPerson = data.contactPerson;
+      if (data.contactPerson !== undefined) updateData.contactPerson = data.contactPerson;
       if (data.languagesSpoken !== undefined) updateData.languages = data.languagesSpoken;
       if (data.capacity !== undefined) updateData.capacity = data.capacity;
       if (data.pedagogy !== undefined) updateData.pedagogy = data.pedagogy;
       if (data.website !== undefined) updateData.catalogUrl = data.website;
+      if (data.catalogUrl !== undefined) updateData.catalogUrl = data.catalogUrl;
       if (data.directOrderLink !== undefined) updateData.directOrderLink = data.directOrderLink;
       if (data.serviceCategories !== undefined) updateData.serviceCategories = data.serviceCategories;
       if (data.deliveryType !== undefined) updateData.deliveryType = data.deliveryType;
@@ -204,6 +205,7 @@ export class CompatController {
       case 'PRODUCT_SUPPLIER':
         return OrganizationType.PRODUCT_SUPPLIER;
       default:
+        console.warn(`Unknown organization type: ${type}, defaulting to FOUNDATION`);
         return OrganizationType.FOUNDATION;
     }
   }

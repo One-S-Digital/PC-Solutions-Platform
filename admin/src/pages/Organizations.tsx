@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment, useRef } from 'react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Building2, 
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
-import { Menu, Transition } from '@headlessui/react'
+import { Menu, Transition, Dialog } from '@headlessui/react'
 import { Organization } from '../types/api'
 import { useTranslation } from 'react-i18next'
 import Card from '../components/design-system/Card'
@@ -53,6 +53,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
   defaultType = 'FOUNDATION'
 }) => {
   const { t } = useTranslation(['admin', 'common'])
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const [formData, setFormData] = useState<Partial<Organization>>({
     name: '',
     type: defaultType,
@@ -158,243 +159,275 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
     })
   }
 
-  if (!isOpen) return null
-
   const isFoundation = formData.type === 'FOUNDATION'
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-          <h2 className="text-xl font-semibold text-gray-900">
-            {mode === 'add' ? 'Add Organization' : 'Edit Organization'}
-          </h2>
-          <button 
-            onClick={onClose} 
-            className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-            disabled={isLoading}
-          >
-            <X className="w-6 h-6" />
-          </button>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog 
+        as="div" 
+        className="relative z-50" 
+        onClose={isLoading ? () => {} : onClose}
+        initialFocus={nameInputRef}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+                  <Dialog.Title as="h2" className="text-xl font-semibold text-gray-900">
+                    {mode === 'add' ? t('admin:organizations.modal.addTitle', 'Add Organization') : t('admin:organizations.modal.editTitle', 'Edit Organization')}
+                  </Dialog.Title>
+                  <button 
+                    onClick={onClose} 
+                    className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                    disabled={isLoading}
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                  <div className="p-6 space-y-4">
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    {/* Basic Information */}
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:organizations.form.basicInfo', 'Basic Information')}</h3>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {t('admin:organizations.form.name', 'Organization Name')} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          ref={nameInputRef}
+                          type="text"
+                          className={STANDARD_INPUT_FIELD}
+                          value={formData.name || ''}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          placeholder={t('admin:organizations.form.namePlaceholder', 'Enter organization name')}
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.type', 'Type')}</label>
+                        <select
+                          className={STANDARD_INPUT_FIELD}
+                          value={formData.type || 'FOUNDATION'}
+                          onChange={(e) => setFormData({ ...formData, type: e.target.value as OrganizationType })}
+                        >
+                          <option value="FOUNDATION">{t('admin:organizations.types.foundation', 'Foundation (Daycare)')}</option>
+                          <option value="SERVICE_PROVIDER">{t('admin:organizations.types.serviceProvider', 'Service Provider')}</option>
+                          <option value="PRODUCT_SUPPLIER">{t('admin:organizations.types.productSupplier', 'Product Supplier')}</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.description', 'Description')}</label>
+                        <textarea
+                          className={`${STANDARD_INPUT_FIELD} min-h-[80px]`}
+                          value={formData.description || ''}
+                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          placeholder={t('admin:organizations.form.descriptionPlaceholder', 'Brief description of the organization')}
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Contact Information */}
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:organizations.form.contactInfo', 'Contact Information')}</h3>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.email', 'Email')}</label>
+                          <input
+                            type="email"
+                            className={STANDARD_INPUT_FIELD}
+                            value={formData.email || ''}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="contact@example.com"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.phone', 'Phone')}</label>
+                          <input
+                            type="tel"
+                            className={STANDARD_INPUT_FIELD}
+                            value={formData.phone || ''}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="+41 XX XXX XX XX"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.address', 'Address')}</label>
+                        <input
+                          type="text"
+                          className={STANDARD_INPUT_FIELD}
+                          value={formData.address || ''}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          placeholder={t('admin:organizations.form.addressPlaceholder', 'Street address, City')}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.region', 'Region/Canton')}</label>
+                          <input
+                            type="text"
+                            className={STANDARD_INPUT_FIELD}
+                            value={formData.region || ''}
+                            onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                            placeholder="e.g., Zurich"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.website', 'Website')}</label>
+                          <input
+                            type="url"
+                            className={STANDARD_INPUT_FIELD}
+                            value={formData.website || ''}
+                            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                            placeholder="https://example.com"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Foundation-specific fields */}
+                    {isFoundation && (
+                      <div className="space-y-4">
+                        <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:organizations.form.daycareDetails', 'Daycare Details')}</h3>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.capacity', 'Capacity (Children)')}</label>
+                          <input
+                            type="number"
+                            className={STANDARD_INPUT_FIELD}
+                            value={formData.capacity || ''}
+                            onChange={(e) => setFormData({ ...formData, capacity: parseInt(e.target.value) || undefined })}
+                            placeholder={t('admin:organizations.form.capacityPlaceholder', 'Number of children')}
+                            min={0}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.pedagogy', 'Pedagogy Approaches')}</label>
+                          <div className="flex gap-2 mb-2">
+                            <input
+                              type="text"
+                              className={`${STANDARD_INPUT_FIELD} flex-1`}
+                              value={pedagogyInput}
+                              onChange={(e) => setPedagogyInput(e.target.value)}
+                              placeholder="e.g., Montessori, Waldorf"
+                              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addPedagogy())}
+                            />
+                            <Button type="button" variant="secondary" onClick={addPedagogy}>{t('common:add', 'Add')}</Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {formData.pedagogy?.map((item) => (
+                              <span 
+                                key={item} 
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-swiss-teal/10 text-swiss-teal"
+                              >
+                                {item}
+                                <button 
+                                  type="button" 
+                                  onClick={() => removePedagogy(item)}
+                                  className="ml-2 text-swiss-teal/70 hover:text-swiss-teal"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:organizations.form.languages', 'Languages Spoken')}</label>
+                          <div className="flex gap-2 mb-2">
+                            <input
+                              type="text"
+                              className={`${STANDARD_INPUT_FIELD} flex-1`}
+                              value={languageInput}
+                              onChange={(e) => setLanguageInput(e.target.value)}
+                              placeholder="e.g., German, French, English"
+                              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
+                            />
+                            <Button type="button" variant="secondary" onClick={addLanguage}>{t('common:add', 'Add')}</Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {formData.languagesSpoken?.map((item) => (
+                              <span 
+                                key={item} 
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-swiss-mint/10 text-swiss-mint"
+                              >
+                                {item}
+                                <button 
+                                  type="button" 
+                                  onClick={() => removeLanguage(item)}
+                                  className="ml-2 text-swiss-mint/70 hover:text-swiss-mint"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3 sticky bottom-0">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={onClose}
+                      disabled={isLoading}
+                    >
+                      {t('common:cancel', 'Cancel')}
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? t('common:saving', 'Saving...') : mode === 'add' ? t('admin:organizations.actions.create', 'Create Organization') : t('admin:organizations.actions.save', 'Save Changes')}
+                    </Button>
+                  </div>
+                </form>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="p-6 space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error}
-              </div>
-            )}
-
-            {/* Basic Information */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Basic Information</h3>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Organization Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={STANDARD_INPUT_FIELD}
-                  value={formData.name || ''}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter organization name"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                <select
-                  className={STANDARD_INPUT_FIELD}
-                  value={formData.type || 'FOUNDATION'}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as OrganizationType })}
-                >
-                  <option value="FOUNDATION">Foundation (Daycare)</option>
-                  <option value="SERVICE_PROVIDER">Service Provider</option>
-                  <option value="PRODUCT_SUPPLIER">Product Supplier</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  className={`${STANDARD_INPUT_FIELD} min-h-[80px]`}
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brief description of the organization"
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            {/* Contact Information */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Contact Information</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    className={STANDARD_INPUT_FIELD}
-                    value={formData.email || ''}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="contact@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input
-                    type="tel"
-                    className={STANDARD_INPUT_FIELD}
-                    value={formData.phone || ''}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+41 XX XXX XX XX"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                <input
-                  type="text"
-                  className={STANDARD_INPUT_FIELD}
-                  value={formData.address || ''}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="Street address, City"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Region/Canton</label>
-                  <input
-                    type="text"
-                    className={STANDARD_INPUT_FIELD}
-                    value={formData.region || ''}
-                    onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                    placeholder="e.g., Zurich"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
-                  <input
-                    type="url"
-                    className={STANDARD_INPUT_FIELD}
-                    value={formData.website || ''}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                    placeholder="https://example.com"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Foundation-specific fields */}
-            {isFoundation && (
-              <div className="space-y-4">
-                <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Daycare Details</h3>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Capacity (Children)</label>
-                  <input
-                    type="number"
-                    className={STANDARD_INPUT_FIELD}
-                    value={formData.capacity || ''}
-                    onChange={(e) => setFormData({ ...formData, capacity: parseInt(e.target.value) || undefined })}
-                    placeholder="Number of children"
-                    min={0}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pedagogy Approaches</label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      className={`${STANDARD_INPUT_FIELD} flex-1`}
-                      value={pedagogyInput}
-                      onChange={(e) => setPedagogyInput(e.target.value)}
-                      placeholder="e.g., Montessori, Waldorf"
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addPedagogy())}
-                    />
-                    <Button type="button" variant="secondary" onClick={addPedagogy}>Add</Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.pedagogy?.map((item) => (
-                      <span 
-                        key={item} 
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-swiss-teal/10 text-swiss-teal"
-                      >
-                        {item}
-                        <button 
-                          type="button" 
-                          onClick={() => removePedagogy(item)}
-                          className="ml-2 text-swiss-teal/70 hover:text-swiss-teal"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Languages Spoken</label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      className={`${STANDARD_INPUT_FIELD} flex-1`}
-                      value={languageInput}
-                      onChange={(e) => setLanguageInput(e.target.value)}
-                      placeholder="e.g., German, French, English"
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
-                    />
-                    <Button type="button" variant="secondary" onClick={addLanguage}>Add</Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.languagesSpoken?.map((item) => (
-                      <span 
-                        key={item} 
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-swiss-mint/10 text-swiss-mint"
-                      >
-                        {item}
-                        <button 
-                          type="button" 
-                          onClick={() => removeLanguage(item)}
-                          className="ml-2 text-swiss-mint/70 hover:text-swiss-mint"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3 sticky bottom-0">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={onClose}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Saving...' : mode === 'add' ? 'Create Organization' : 'Save Changes'}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </Dialog>
+    </Transition>
   )
 }
 
@@ -414,45 +447,82 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   onConfirm, 
   isLoading 
 }) => {
-  if (!isOpen || !organization) return null
+  const { t } = useTranslation(['admin', 'common'])
+  const cancelButtonRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
-        <div className="p-6">
-          <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
-            <AlertTriangle className="w-6 h-6 text-red-600" />
-          </div>
-          
-          <div className="mt-4 text-center">
-            <h3 className="text-lg font-semibold text-gray-900">Delete Organization</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to delete <span className="font-medium">{organization.name}</span>? 
-              This action cannot be undone and will permanently remove all associated data including products, services, and job listings.
-            </p>
-          </div>
-        </div>
+    <Transition appear show={isOpen && !!organization} as={Fragment}>
+      <Dialog 
+        as="div" 
+        className="relative z-50" 
+        onClose={isLoading ? () => {} : onClose}
+        initialFocus={cancelButtonRef}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+        </Transition.Child>
 
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onClose}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
-          >
-            {isLoading ? 'Deleting...' : 'Delete Organization'}
-          </button>
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+                    <AlertTriangle className="w-6 h-6 text-red-600" />
+                  </div>
+                  
+                  <div className="mt-4 text-center">
+                    <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900">
+                      {t('admin:organizations.delete.title', 'Delete Organization')}
+                    </Dialog.Title>
+                    <p className="mt-2 text-sm text-gray-600">
+                      {t('admin:organizations.delete.confirmation', 'Are you sure you want to delete')} <span className="font-medium">{organization?.name}</span>? 
+                      {t('admin:organizations.delete.warning', 'This action cannot be undone and will permanently remove all associated data including products, services, and job listings.')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                  <Button
+                    ref={cancelButtonRef}
+                    type="button"
+                    variant="secondary"
+                    onClick={onClose}
+                    disabled={isLoading}
+                  >
+                    {t('common:cancel', 'Cancel')}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={onConfirm}
+                    disabled={isLoading}
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {isLoading ? t('common:deleting', 'Deleting...') : t('admin:organizations.actions.delete', 'Delete Organization')}
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
-      </div>
-    </div>
+      </Dialog>
+    </Transition>
   )
 }
 
@@ -495,11 +565,11 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
   const getTypeLabel = () => {
     switch (org.type) {
       case 'FOUNDATION':
-        return 'Daycare'
+        return t('admin:organizations.types.daycare', 'Daycare')
       case 'SERVICE_PROVIDER':
-        return 'Service Provider'
+        return t('admin:organizations.types.serviceProvider', 'Service Provider')
       case 'PRODUCT_SUPPLIER':
-        return 'Product Supplier'
+        return t('admin:organizations.types.productSupplier', 'Product Supplier')
       default:
         return org.type
     }
@@ -545,7 +615,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
                       className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                     >
                       <Edit className="h-4 w-4 mr-2" />
-                      Edit
+                      {t('common:edit', 'Edit')}
                     </button>
                   )}
                 </Menu.Item>
@@ -556,7 +626,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
                       className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
+                      {t('common:delete', 'Delete')}
                     </button>
                   )}
                 </Menu.Item>
@@ -594,7 +664,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
         {org.type === 'FOUNDATION' && org.capacity && (
           <div className="flex items-center text-sm text-gray-600">
             <Users className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span>{org.capacity} children capacity</span>
+            <span>{org.capacity} {t('admin:organizations.childrenCapacity', 'children capacity')}</span>
           </div>
         )}
       </div>
@@ -609,7 +679,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
           ))}
           {org.pedagogy.length > 3 && (
             <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
-              +{org.pedagogy.length - 3} more
+              +{org.pedagogy.length - 3} {t('common:more', 'more')}
             </span>
           )}
         </div>
@@ -651,7 +721,6 @@ const Organizations: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to create organization:', error)
-      throw error
     },
   })
 
@@ -667,7 +736,6 @@ const Organizations: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to update organization:', error)
-      throw error
     },
   })
 
@@ -682,7 +750,6 @@ const Organizations: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to delete organization:', error)
-      throw error
     },
   })
 
@@ -766,7 +833,7 @@ const Organizations: React.FC = () => {
             {t('admin:organizations.title', 'Organizations')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage all organizations across the platform ({organizations.length} total)
+            {t('admin:organizations.subtitle', 'Manage all organizations across the platform')} ({organizations.length} {t('common:total', 'total')})
           </p>
         </div>
         <Button
@@ -774,7 +841,7 @@ const Organizations: React.FC = () => {
           leftIcon={Plus}
           onClick={handleAddOrganization}
         >
-          Add {activeTab === 'foundations' ? 'Foundation' : 'Organisation'}
+          {t('common:add', 'Add')} {activeTab === 'foundations' ? t('admin:organizations.foundation', 'Foundation') : t('admin:organizations.organisation', 'Organisation')}
         </Button>
       </div>
 
@@ -790,7 +857,7 @@ const Organizations: React.FC = () => {
             }`}
           >
             <Home className={`h-5 w-5 mr-2 ${activeTab === 'foundations' ? 'text-white' : 'text-gray-400'}`} />
-            Foundations
+            {t('admin:organizations.tabs.foundations', 'Foundations')}
             <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
               activeTab === 'foundations' 
                 ? 'bg-white/20 text-white' 
@@ -808,7 +875,7 @@ const Organizations: React.FC = () => {
             }`}
           >
             <Briefcase className={`h-5 w-5 mr-2 ${activeTab === 'organisations' ? 'text-white' : 'text-gray-400'}`} />
-            Organisations
+            {t('admin:organizations.tabs.organisations', 'Organisations')}
             <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
               activeTab === 'organisations' 
                 ? 'bg-white/20 text-white' 
@@ -826,16 +893,16 @@ const Organizations: React.FC = () => {
           <div className="flex items-center">
             <Home className="h-5 w-5 text-swiss-teal mr-3" />
             <div>
-              <p className="text-sm font-medium text-gray-900">Foundations (Daycares)</p>
-              <p className="text-xs text-gray-600">Childcare centers and daycare facilities registered on the platform</p>
+              <p className="text-sm font-medium text-gray-900">{t('admin:organizations.foundationsDesc.title', 'Foundations (Daycares)')}</p>
+              <p className="text-xs text-gray-600">{t('admin:organizations.foundationsDesc.subtitle', 'Childcare centers and daycare facilities registered on the platform')}</p>
             </div>
           </div>
         ) : (
           <div className="flex items-center">
             <Briefcase className="h-5 w-5 text-swiss-teal mr-3" />
             <div>
-              <p className="text-sm font-medium text-gray-900">Organisations (Service Providers & Product Suppliers)</p>
-              <p className="text-xs text-gray-600">Companies providing services or products to childcare organizations</p>
+              <p className="text-sm font-medium text-gray-900">{t('admin:organizations.organisationsDesc.title', 'Organisations (Service Providers & Product Suppliers)')}</p>
+              <p className="text-xs text-gray-600">{t('admin:organizations.organisationsDesc.subtitle', 'Companies providing services or products to childcare organizations')}</p>
             </div>
           </div>
         )}
@@ -847,7 +914,7 @@ const Organizations: React.FC = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder={`Search ${activeTab === 'foundations' ? 'foundations' : 'organisations'} by name, address, or region...`}
+            placeholder={t('admin:organizations.searchPlaceholder', `Search ${activeTab === 'foundations' ? 'foundations' : 'organisations'} by name, address, or region...`)}
             className={`${STANDARD_INPUT_FIELD} pl-10`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -873,17 +940,17 @@ const Organizations: React.FC = () => {
           <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             {searchQuery 
-              ? `No ${activeTab === 'foundations' ? 'foundations' : 'organisations'} found` 
-              : `No ${activeTab === 'foundations' ? 'foundations' : 'organisations'} yet`}
+              ? t('admin:organizations.emptyState.noResults', `No ${activeTab === 'foundations' ? 'foundations' : 'organisations'} found`)
+              : t('admin:organizations.emptyState.noData', `No ${activeTab === 'foundations' ? 'foundations' : 'organisations'} yet`)}
           </h3>
           <p className="text-gray-600 mb-4">
             {searchQuery 
-              ? 'Try adjusting your search criteria' 
-              : `Get started by adding your first ${activeTab === 'foundations' ? 'foundation' : 'organisation'}`}
+              ? t('admin:organizations.emptyState.adjustSearch', 'Try adjusting your search criteria')
+              : t('admin:organizations.emptyState.getStarted', `Get started by adding your first ${activeTab === 'foundations' ? 'foundation' : 'organisation'}`)}
           </p>
           {!searchQuery && (
             <Button variant="primary" leftIcon={Plus} onClick={handleAddOrganization}>
-              Add {activeTab === 'foundations' ? 'Foundation' : 'Organisation'}
+              {t('common:add', 'Add')} {activeTab === 'foundations' ? t('admin:organizations.foundation', 'Foundation') : t('admin:organizations.organisation', 'Organisation')}
             </Button>
           )}
         </div>
