@@ -141,5 +141,20 @@
     "serviceType": "Service Type",
     "childAge": "Child's Age",
     "childStartDate": "Desired Start Date"
-  }
+  },
+  "oauthCompletion": {
+    "title": "Almost there!",
+    "message": "You're signed in with Google. Just complete your profile details below to finish setting up your account.",
+    "emailFromProvider": "Email provided by Google",
+    "wrongAccount": "Wrong account? Sign out and try again."
+  },
+  "emailConflict": {
+    "title": "Account Already Exists",
+    "message": "An account with this email address was already created. It looks like you may have previously signed up using a different method (email/password).",
+    "instructions": "Please sign out and log in with your existing account to continue.",
+    "signOutAndLogin": "Sign Out & Log In",
+    "tryAgain": "Start Over"
+  },
+  "completingProfile": "Completing Profile...",
+  "completeProfile": "Complete Profile"
 }

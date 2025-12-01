@@ -245,7 +245,7 @@ export class UsersService {
   async completeProfile(clerkId: string, email: string, dto: CompleteProfileDto) {
     this.logger.log(`👤 [COMPLETE PROFILE] Completing profile for ${clerkId}`);
     
-    // Check if user already exists
+    // Check if user already exists by clerkId
     const existingUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
@@ -262,6 +262,28 @@ export class UsersService {
         });
       }
     } else {
+      // Check if an account with this email already exists (for a DIFFERENT clerkId)
+      // This can happen when:
+      // 1. User starts Google SSO signup on Device A but doesn't complete it
+      // 2. User signs up with email/password on Device B (creates a new account)
+      // 3. User returns to Device A and tries to complete the Google SSO signup
+      // 4. The email already belongs to the account created on Device B
+      const existingEmailUser = await this.prisma.appUser.findFirst({
+        where: { 
+          email: email,
+          clerkId: { not: clerkId },
+        },
+      });
+
+      if (existingEmailUser) {
+        this.logger.warn(`🚫 [COMPLETE PROFILE] Email conflict detected! Email ${email} already exists for a different account.`);
+        throw new ConflictException({
+          message: 'An account with this email address already exists. Please sign out and sign in with your existing account.',
+          code: 'EMAIL_ALREADY_EXISTS',
+          existingAccountType: 'email_password',
+        });
+      }
+      
       this.logger.log(`🆕 [COMPLETE PROFILE] Creating new user with role ${dto.role}`);
       // Create AppUser and User atomically with audit trail and Clerk sync
       const nameParts = dto.contactPerson ? dto.contactPerson.trim().split(' ') : [];
