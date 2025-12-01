@@ -155,8 +155,8 @@ export interface Service {
 export interface Organization {
   id: string;
   name: string;
-  type: string; // Should be an enum
-  region: string;
+  type: string; // OrganizationType: FOUNDATION, SERVICE_PROVIDER, PRODUCT_SUPPLIER
+  region?: string;
   logoUrl?: string;
   logoAssetId?: string;
   coverImageUrl?: string;

@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { OrganizationType } from '@prisma/client';
 
 @Controller()
 export class CompatController {
@@ -89,10 +90,123 @@ export class CompatController {
   @Public()
   async getOrganizations() {
     try {
-      const orgs = await this.prisma.organization.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
+      const orgs = await this.prisma.organization.findMany({ orderBy: { createdAt: 'desc' }, take: 100 });
       return { success: true, message: 'OK', data: orgs, timestamp: new Date().toISOString() };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  @Get('organizations/:id')
+  @Public()
+  async getOrganizationById(@Param('id') id: string) {
+    try {
+      const org = await this.prisma.organization.findUnique({ where: { id } });
+      if (!org) {
+        return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+      }
+      return { success: true, message: 'OK', data: org, timestamp: new Date().toISOString() };
+    } catch (error) {
+      return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  @Post('organizations')
+  @Public()
+  async createOrganization(@Body() data: any) {
+    try {
+      // Map type string to OrganizationType enum
+      const orgType = this.mapToOrganizationType(data.type);
+      
+      const org = await this.prisma.organization.create({
+        data: {
+          name: data.name,
+          type: orgType,
+          description: data.description,
+          region: data.region,
+          phoneNumber: data.phone,
+          canton: data.region, // Map region to canton as well
+          languages: data.languagesSpoken || [],
+          capacity: data.capacity,
+          pedagogy: data.pedagogy || [],
+          contactPerson: data.contactPerson,
+          directOrderLink: data.directOrderLink,
+          catalogUrl: data.catalogUrl,
+          serviceCategories: data.serviceCategories || [],
+          deliveryType: data.deliveryType,
+          bookingLink: data.bookingLink,
+        },
+      });
+      return { success: true, message: 'Organization created successfully', data: org, timestamp: new Date().toISOString() };
+    } catch (error) {
+      return { success: false, message: 'Failed to create organization', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  @Put('organizations/:id')
+  @Public()
+  async updateOrganization(@Param('id') id: string, @Body() data: any) {
+    try {
+      const updateData: any = {};
+      
+      if (data.name !== undefined) updateData.name = data.name;
+      if (data.type !== undefined) updateData.type = this.mapToOrganizationType(data.type);
+      if (data.description !== undefined) updateData.description = data.description;
+      if (data.region !== undefined) {
+        updateData.region = data.region;
+        updateData.canton = data.region;
+      }
+      if (data.phone !== undefined) updateData.phoneNumber = data.phone;
+      if (data.contactPerson !== undefined) updateData.contactPerson = data.contactPerson;
+      if (data.languagesSpoken !== undefined) updateData.languages = data.languagesSpoken;
+      if (data.capacity !== undefined) updateData.capacity = data.capacity;
+      if (data.pedagogy !== undefined) updateData.pedagogy = data.pedagogy;
+      if (data.website !== undefined) updateData.catalogUrl = data.website;
+      if (data.catalogUrl !== undefined) updateData.catalogUrl = data.catalogUrl;
+      if (data.directOrderLink !== undefined) updateData.directOrderLink = data.directOrderLink;
+      if (data.serviceCategories !== undefined) updateData.serviceCategories = data.serviceCategories;
+      if (data.deliveryType !== undefined) updateData.deliveryType = data.deliveryType;
+      if (data.bookingLink !== undefined) updateData.bookingLink = data.bookingLink;
+
+      const org = await this.prisma.organization.update({
+        where: { id },
+        data: updateData,
+      });
+      return { success: true, message: 'Organization updated successfully', data: org, timestamp: new Date().toISOString() };
+    } catch (error) {
+      return { success: false, message: 'Failed to update organization', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  @Delete('organizations/:id')
+  @Public()
+  async deleteOrganization(@Param('id') id: string) {
+    try {
+      // First check if organization exists
+      const org = await this.prisma.organization.findUnique({ where: { id } });
+      if (!org) {
+        return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+      }
+
+      // Delete the organization (cascades should handle related records)
+      await this.prisma.organization.delete({ where: { id } });
+      return { success: true, message: 'Organization deleted successfully', timestamp: new Date().toISOString() };
+    } catch (error) {
+      return { success: false, message: 'Failed to delete organization', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  private mapToOrganizationType(type: string): OrganizationType {
+    switch (type?.toUpperCase()) {
+      case 'FOUNDATION':
+        return OrganizationType.FOUNDATION;
+      case 'SERVICE_PROVIDER':
+        return OrganizationType.SERVICE_PROVIDER;
+      case 'PRODUCT_SUPPLIER':
+        return OrganizationType.PRODUCT_SUPPLIER;
+      default:
+        console.warn(`Unknown organization type: ${type}, defaulting to FOUNDATION`);
+        return OrganizationType.FOUNDATION;
     }
   }
 
