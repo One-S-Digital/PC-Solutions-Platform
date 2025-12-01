@@ -115,7 +115,9 @@
     "lastNameRequired": "Nachname ist erforderlich",
     "captchaRequired": "Bitte vervollständigen Sie die CAPTCHA-Verifizierung",
     "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
-    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut"
+    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",
+    "profileCompletionFailed": "Bei der Vervollständigung Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
   },
   "buttons": {
     "createAccount": "Konto erstellen",

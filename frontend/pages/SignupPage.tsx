@@ -345,10 +345,13 @@ const SignupPage: React.FC = () => {
 
   // State to track if there's an email conflict (account exists with different auth method)
   const [emailConflictError, setEmailConflictError] = useState(false);
+  // State for general OAuth profile completion errors (visible in a banner, not attached to email field)
+  const [completeProfileError, setCompleteProfileError] = useState<string | null>(null);
 
   const handleCompleteProfile = async () => {
     setIsLoading(true);
     setEmailConflictError(false);
+    setCompleteProfileError(null);
     try {
        const token = await getToken();
        
@@ -397,7 +400,12 @@ const SignupPage: React.FC = () => {
        }
     } catch (err: any) {
         console.error('Profile completion error:', err);
-        setErrors({ email: err.message || 'An error occurred while completing your profile' });
+        // For OAuth users, set error in a visible banner instead of on the read-only email field
+        if (isOAuthCompletion) {
+            setCompleteProfileError(err.message || t('signup:errors.profileCompletionFailed', 'An error occurred while completing your profile. Please try again.'));
+        } else {
+            setErrors({ email: err.message || 'An error occurred while completing your profile' });
+        }
     } finally {
         setIsLoading(false);
     }
@@ -731,9 +739,11 @@ const SignupPage: React.FC = () => {
                             type="button" 
                             variant="light"
                             size="sm"
-                            onClick={() => {
-                              setEmailConflictError(false);
-                              handleBackToRoleSelection();
+                            onClick={async () => {
+                              // Log out and restart signup with a fresh session
+                              // (just resetting the wizard won't work - same OAuth session hits same conflict)
+                              await logout();
+                              navigate('/signup', { replace: true });
                             }}
                           >
                             {t('signup:emailConflict.tryAgain', 'Start Over')}
@@ -752,6 +762,18 @@ const SignupPage: React.FC = () => {
                     </p>
                     <p className="text-xs text-blue-700 mt-1">
                       {t('signup:oauthCompletion.message', 'You\'re signed in with Google. Just complete your profile details below to finish setting up your account.')}
+                    </p>
+                  </div>
+                )}
+
+                {/* OAuth profile completion error banner */}
+                {completeProfileError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-sm text-red-800">
+                      <strong>{t('signup:errors.profileCompletionFailedTitle', 'Profile Completion Failed')}</strong>
+                    </p>
+                    <p className="text-xs text-red-700 mt-1">
+                      {completeProfileError}
                     </p>
                   </div>
                 )}

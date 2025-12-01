@@ -276,7 +276,9 @@ export class UsersService {
       });
 
       if (existingEmailUser) {
-        this.logger.warn(`🚫 [COMPLETE PROFILE] Email conflict detected! Email ${email} already exists for a different account.`);
+        // Mask email in logs for PII protection (show first 3 chars + domain)
+        const maskedEmail = email ? `${email.substring(0, 3)}***@${email.split('@')[1] || '***'}` : '***';
+        this.logger.warn(`🚫 [COMPLETE PROFILE] Email conflict detected! Email ${maskedEmail} already exists for a different account (existing clerkId: ${existingEmailUser.clerkId}, new clerkId: ${clerkId}).`);
         throw new ConflictException({
           message: 'An account with this email address already exists. Please sign out and sign in with your existing account.',
           code: 'EMAIL_ALREADY_EXISTS',

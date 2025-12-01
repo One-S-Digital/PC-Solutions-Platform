@@ -115,7 +115,9 @@
     "lastNameRequired": "Le nom est requis",
     "captchaRequired": "Veuillez compléter la vérification CAPTCHA",
     "captchaExpired": "Le CAPTCHA a expiré. Veuillez réessayer",
-    "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer"
+    "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer",
+    "profileCompletionFailedTitle": "Échec de la finalisation du profil",
+    "profileCompletionFailed": "Une erreur s'est produite lors de la finalisation de votre profil. Veuillez réessayer."
   },
   "buttons": {
     "createAccount": "Créer un compte",
