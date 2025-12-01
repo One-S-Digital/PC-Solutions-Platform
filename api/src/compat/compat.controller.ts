@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, JobStatus, JobContractType } from '@prisma/client';
+import { UserRole, JobStatus, JobContractType, OrganizationType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
