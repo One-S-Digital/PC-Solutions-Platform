@@ -343,8 +343,15 @@ const SignupPage: React.FC = () => {
     console.error('CAPTCHA error:', error);
   };
 
+  // State to track if there's an email conflict (account exists with different auth method)
+  const [emailConflictError, setEmailConflictError] = useState(false);
+  // State for general OAuth profile completion errors (visible in a banner, not attached to email field)
+  const [completeProfileError, setCompleteProfileError] = useState<string | null>(null);
+
   const handleCompleteProfile = async () => {
     setIsLoading(true);
+    setEmailConflictError(false);
+    setCompleteProfileError(null);
     try {
        const token = await getToken();
        
@@ -380,11 +387,25 @@ const SignupPage: React.FC = () => {
            setCurrentStep(3);
        } else {
            const errorData = await response.json().catch(() => ({}));
+           
+           // Check for email conflict error (EMAIL_ALREADY_EXISTS)
+           // This happens when user started Google SSO but an account was created
+           // with email/password before they completed the Google signup
+           if (response.status === 409 && errorData.code === 'EMAIL_ALREADY_EXISTS') {
+               setEmailConflictError(true);
+               return;
+           }
+           
            throw new Error(errorData.message || 'Failed to complete profile');
        }
     } catch (err: any) {
         console.error('Profile completion error:', err);
-        setErrors({ email: err.message || 'An error occurred while completing your profile' });
+        // For OAuth users, set error in a visible banner instead of on the read-only email field
+        if (isOAuthCompletion) {
+            setCompleteProfileError(err.message || t('signup:errors.profileCompletionFailed', 'An error occurred while completing your profile. Please try again.'));
+        } else {
+            setErrors({ email: err.message || 'An error occurred while completing your profile' });
+        }
     } finally {
         setIsLoading(false);
     }
@@ -683,8 +704,58 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 2 && selectedRole && (
               <>
+                {/* Email conflict error - account already exists with different auth method */}
+                {emailConflictError && (
+                  <div className="mb-4 p-4 bg-amber-50 border border-amber-300 rounded-lg">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-semibold text-amber-800">
+                          {t('signup:emailConflict.title', 'Account Already Exists')}
+                        </h3>
+                        <p className="text-sm text-amber-700 mt-1">
+                          {t('signup:emailConflict.message', 'An account with this email address was already created. It looks like you may have previously signed up using a different method (email/password).')}
+                        </p>
+                        <p className="text-sm text-amber-700 mt-2">
+                          {t('signup:emailConflict.instructions', 'Please sign out and log in with your existing account to continue.')}
+                        </p>
+                        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                          <Button 
+                            type="button" 
+                            variant="primary"
+                            size="sm"
+                            onClick={async () => {
+                              await logout();
+                              navigate('/login', { replace: true });
+                            }}
+                          >
+                            {t('signup:emailConflict.signOutAndLogin', 'Sign Out & Log In')}
+                          </Button>
+                          <Button 
+                            type="button" 
+                            variant="light"
+                            size="sm"
+                            onClick={async () => {
+                              // Log out and restart signup with a fresh session
+                              // (just resetting the wizard won't work - same OAuth session hits same conflict)
+                              await logout();
+                              navigate('/signup', { replace: true });
+                            }}
+                          >
+                            {t('signup:emailConflict.tryAgain', 'Start Over')}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* OAuth completion notice */}
-                {isOAuthCompletion && (
+                {isOAuthCompletion && !emailConflictError && (
                   <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                     <p className="text-sm text-blue-800">
                       <strong>{t('signup:oauthCompletion.title', 'Almost there!')}</strong>
@@ -695,7 +766,19 @@ const SignupPage: React.FC = () => {
                   </div>
                 )}
 
-                {!showVerificationStep && (
+                {/* OAuth profile completion error banner */}
+                {completeProfileError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-sm text-red-800">
+                      <strong>{t('signup:errors.profileCompletionFailedTitle', 'Profile Completion Failed')}</strong>
+                    </p>
+                    <p className="text-xs text-red-700 mt-1">
+                      {completeProfileError}
+                    </p>
+                  </div>
+                )}
+
+                {!showVerificationStep && !emailConflictError && (
                   <form onSubmit={handleSubmit} className="space-y-4">
                       {requiresOrganizationDetails && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
                     {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}

@@ -22,12 +22,6 @@ const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
-const FacebookIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.97 9-9.95z"></path>
-  </svg>
-);
-
 const LoginPage: React.FC = () => {
   const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
@@ -137,7 +131,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleSocialLogin = async (provider: 'oauth_google' | 'oauth_facebook') => {
+  const handleSocialLogin = async (provider: 'oauth_google') => {
     if (isSignedIn) {
       setError(t('common:loginPage.sessionAlreadyActive'));
       return;
@@ -431,7 +425,7 @@ const LoginPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="mt-4">
                 <Button
                   variant="light"
                   onClick={() => handleSocialLogin('oauth_google')}
@@ -439,14 +433,6 @@ const LoginPage: React.FC = () => {
                   disabled={isSubmitting}
                 >
                   <GoogleIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.google')}
-                </Button>
-                <Button
-                  variant="light"
-                  onClick={() => handleSocialLogin('oauth_facebook')}
-                  className="w-full"
-                  disabled={isSubmitting}
-                >
-                  <FacebookIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.facebook')}
                 </Button>
               </div>
             </div>

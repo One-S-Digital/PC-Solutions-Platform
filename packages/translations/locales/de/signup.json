@@ -115,7 +115,9 @@
     "lastNameRequired": "Nachname ist erforderlich",
     "captchaRequired": "Bitte vervollständigen Sie die CAPTCHA-Verifizierung",
     "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
-    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut"
+    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",
+    "profileCompletionFailed": "Bei der Vervollständigung Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
   },
   "buttons": {
     "createAccount": "Konto erstellen",
@@ -141,5 +143,20 @@
     "serviceType": "Dienstleistungsart",
     "childAge": "Alter des Kindes",
     "childStartDate": "Gewünschtes Startdatum"
-  }
+  },
+  "oauthCompletion": {
+    "title": "Fast geschafft!",
+    "message": "Sie sind mit Google angemeldet. Vervollständigen Sie einfach Ihre Profildetails unten, um die Einrichtung Ihres Kontos abzuschließen.",
+    "emailFromProvider": "E-Mail von Google bereitgestellt",
+    "wrongAccount": "Falsches Konto? Abmelden und erneut versuchen."
+  },
+  "emailConflict": {
+    "title": "Konto existiert bereits",
+    "message": "Ein Konto mit dieser E-Mail-Adresse wurde bereits erstellt. Es scheint, dass Sie sich bereits mit einer anderen Methode (E-Mail/Passwort) registriert haben.",
+    "instructions": "Bitte melden Sie sich ab und melden Sie sich mit Ihrem bestehenden Konto an, um fortzufahren.",
+    "signOutAndLogin": "Abmelden & Anmelden",
+    "tryAgain": "Neu starten"
+  },
+  "completingProfile": "Profil wird vervollständigt...",
+  "completeProfile": "Profil vervollständigen"
 }

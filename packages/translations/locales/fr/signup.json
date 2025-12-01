@@ -115,7 +115,9 @@
     "lastNameRequired": "Le nom est requis",
     "captchaRequired": "Veuillez compléter la vérification CAPTCHA",
     "captchaExpired": "Le CAPTCHA a expiré. Veuillez réessayer",
-    "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer"
+    "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer",
+    "profileCompletionFailedTitle": "Échec de la finalisation du profil",
+    "profileCompletionFailed": "Une erreur s'est produite lors de la finalisation de votre profil. Veuillez réessayer."
   },
   "buttons": {
     "createAccount": "Créer un compte",
@@ -141,5 +143,20 @@
     "serviceType": "Type de service",
     "childAge": "Âge de l'enfant",
     "childStartDate": "Date de début souhaitée"
-  }
+  },
+  "oauthCompletion": {
+    "title": "Presque terminé !",
+    "message": "Vous êtes connecté avec Google. Complétez simplement vos informations de profil ci-dessous pour terminer la configuration de votre compte.",
+    "emailFromProvider": "E-mail fourni par Google",
+    "wrongAccount": "Mauvais compte ? Déconnectez-vous et réessayez."
+  },
+  "emailConflict": {
+    "title": "Le compte existe déjà",
+    "message": "Un compte avec cette adresse e-mail a déjà été créé. Il semble que vous vous soyez déjà inscrit en utilisant une autre méthode (e-mail/mot de passe).",
+    "instructions": "Veuillez vous déconnecter et vous connecter avec votre compte existant pour continuer.",
+    "signOutAndLogin": "Se déconnecter et se connecter",
+    "tryAgain": "Recommencer"
+  },
+  "completingProfile": "Finalisation du profil...",
+  "completeProfile": "Finaliser le profil"
 }
