@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, useEffect } from 'react';
+import React, { useState, FormEvent, useEffect, useRef } from 'react';
 import { XMarkIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
@@ -99,12 +99,16 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
   // Filter to only show FOUNDATION type organizations
   const foundations = organizations.filter(org => org.type === 'FOUNDATION');
 
+  // Track if we've set the default foundation to avoid unnecessary re-renders
+  const hasSetDefaultFoundation = useRef(false);
+
   // Set default organization when organizations load
   useEffect(() => {
-    if (foundations.length > 0 && !formData.foundationId) {
+    if (foundations.length > 0 && !hasSetDefaultFoundation.current) {
+      hasSetDefaultFoundation.current = true;
       setFormData(prev => ({ ...prev, foundationId: foundations[0].id }));
     }
-  }, [foundations, formData.foundationId]);
+  }, [foundations]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -161,7 +165,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
     
     try {
       await onSubmit(formData);
-      // Reset form on success
+      // Reset form on success - parent mutation's onSuccess closes the modal
       setFormData({
         title: '',
         description: '',
@@ -175,7 +179,8 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
         benefits: [],
         status: 'DRAFT',
       });
-      onClose();
+      // Reset the ref so default foundation can be set again on next open
+      hasSetDefaultFoundation.current = false;
     } catch (error) {
       console.error('Error submitting job listing:', error);
     }
@@ -386,7 +391,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   type="text"
                   value={newRequirement}
                   onChange={(e) => setNewRequirement(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('requirements', newRequirement, setNewRequirement))}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('requirements', newRequirement, setNewRequirement))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add a requirement..."
                 />
@@ -442,7 +447,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   type="text"
                   value={newResponsibility}
                   onChange={(e) => setNewResponsibility(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('responsibilities', newResponsibility, setNewResponsibility))}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('responsibilities', newResponsibility, setNewResponsibility))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add a responsibility..."
                 />
@@ -485,7 +490,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   type="text"
                   value={newQualification}
                   onChange={(e) => setNewQualification(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('qualifications', newQualification, setNewQualification))}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('qualifications', newQualification, setNewQualification))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add a qualification..."
                 />
@@ -528,7 +533,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   type="text"
                   value={newBenefit}
                   onChange={(e) => setNewBenefit(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('benefits', newBenefit, setNewBenefit))}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('benefits', newBenefit, setNewBenefit))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add a benefit..."
                 />

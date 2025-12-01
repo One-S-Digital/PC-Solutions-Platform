@@ -40,6 +40,10 @@ const Candidates: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] })
       setIsAddModalOpen(false)
     },
+    onError: (error) => {
+      console.error('Failed to create candidate:', error)
+      // Error is handled in the modal's try-catch for user feedback
+    },
   })
 
   const handleCreateCandidate = async (data: CandidateFormData) => {

@@ -4,34 +4,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole, JobStatus, JobContractType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-
-// DTOs for create operations
-interface CreateCandidateDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  skills?: string[];
-  certifications?: string[];
-  workExperience?: string;
-  education?: string;
-  availability?: string;
-  shortBio?: string;
-}
-
-interface CreateJobListingDto {
-  title: string;
-  description?: string;
-  location?: string;
-  salary?: string;
-  contractType?: JobContractType;
-  foundationId: string;
-  requirements?: string[];
-  responsibilities?: string[];
-  qualifications?: string[];
-  benefits?: string[];
-  status?: JobStatus;
-}
+import { CreateCandidateDto } from './dto/create-candidate.dto';
+import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
 
 @Controller()
 @UseGuards(RolesGuard)
@@ -204,8 +178,20 @@ export class CompatController {
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async createCandidate(@Body() createCandidateDto: CreateCandidateDto) {
     try {
+      // Check if email already exists
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: createCandidateDto.email },
+      });
+      if (existingUser) {
+        return {
+          success: false,
+          message: 'A user with this email already exists',
+          timestamp: new Date().toISOString(),
+        };
+      }
+
       // Generate a temporary clerkId for admin-created candidates
-      const tempClerkId = `admin_created_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const tempClerkId = `admin_created_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       
       const candidate = await this.prisma.user.create({
         data: {

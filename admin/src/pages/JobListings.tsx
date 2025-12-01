@@ -39,6 +39,10 @@ const JobListings: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['job-listings'] })
       setIsAddModalOpen(false)
     },
+    onError: (error) => {
+      console.error('Failed to create job listing:', error)
+      // Error is handled in the modal's try-catch for user feedback
+    },
   })
 
   const handleCreateJobListing = async (data: JobListingFormData) => {

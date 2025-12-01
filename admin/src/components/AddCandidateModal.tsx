@@ -141,7 +141,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
     
     try {
       await onSubmit(formData);
-      // Reset form on success
+      // Reset form on success - parent mutation's onSuccess closes the modal
       setFormData({
         firstName: '',
         lastName: '',
@@ -154,7 +154,6 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
         availability: AVAILABILITY_OPTIONS[0],
         shortBio: '',
       });
-      onClose();
     } catch (error) {
       console.error('Error submitting candidate:', error);
     }
@@ -354,7 +353,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                   type="text"
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill(newSkill))}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill(newSkill))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   placeholder="Add a custom skill..."
                 />
@@ -410,7 +409,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                   type="text"
                   value={newCertification}
                   onChange={(e) => setNewCertification(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCertification())}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCertification())}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   placeholder="e.g., Early Childhood Education Diploma, First Aid Certificate..."
                 />
