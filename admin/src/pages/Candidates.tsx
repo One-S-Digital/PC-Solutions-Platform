@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   UserCheck,
   Plus,
@@ -18,18 +18,37 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
+import AddCandidateModal, { CandidateFormData } from '../components/AddCandidateModal'
 
 const Candidates: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const apiClient = useApiClient()
+  const queryClient = useQueryClient()
 
   const { data: candidatesResponse, isLoading } = useQuery({
     queryKey: ['candidates'],
     queryFn: () => apiService.getCandidates(apiClient),
     enabled: !!apiClient,
   })
+
+  const createCandidateMutation = useMutation({
+    mutationFn: (data: CandidateFormData) => apiService.createCandidate(apiClient, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] })
+      setIsAddModalOpen(false)
+    },
+    onError: (error) => {
+      console.error('Failed to create candidate:', error)
+      // Error is handled in the modal's try-catch for user feedback
+    },
+  })
+
+  const handleCreateCandidate = async (data: CandidateFormData) => {
+    await createCandidateMutation.mutateAsync(data)
+  }
 
   const candidates: Candidate[] = useMemo(
     () => candidatesResponse?.data?.data || [],
@@ -85,11 +104,22 @@ const Candidates: React.FC = () => {
             {t('admin:candidates.subtitle', { count: candidates.length })}
           </p>
         </div>
-        <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
+        <button 
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+        >
           <Plus className="h-4 w-4 mr-2" />
           {t('admin:candidates.addButton')}
         </button>
       </div>
+
+      {/* Add Candidate Modal */}
+      <AddCandidateModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleCreateCandidate}
+        isSubmitting={createCandidateMutation.isPending}
+      />
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

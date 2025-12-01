@@ -265,9 +265,34 @@ export const apiService = {
 
   // Job Listings
   getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/job-listings'),
+  createJobListing: (apiClient: AxiosInstance, jobData: {
+    title: string;
+    description?: string;
+    location?: string;
+    salary?: string;
+    contractType?: string;
+    foundationId: string;
+    requirements?: string[];
+    responsibilities?: string[];
+    qualifications?: string[];
+    benefits?: string[];
+    status?: string;
+  }) => apiClient.post<ApiResponse<JobListing>>('/job-listings', jobData),
 
   // Candidates
   getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/candidates'),
+  createCandidate: (apiClient: AxiosInstance, candidateData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber?: string;
+    skills?: string[];
+    certifications?: string[];
+    workExperience?: string;
+    education?: string;
+    availability?: string;
+    shortBio?: string;
+  }) => apiClient.post<ApiResponse<Candidate>>('/candidates', candidateData),
 
 
   // Content Management - E-Learning
