@@ -35,6 +35,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   const { currentUser } = useAppContext();
   const { settings, loading, error } = useFrontendSettings();
   const navigate = useNavigate();
+  
+  // Compute sidebar logo URL once - prefer sidebar logo, fall back to main logo
+  const sidebarLogoUrl = settings?.sidebarLogoAsset?.publicUrl || settings?.logoAsset?.publicUrl;
+  
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'sidebar.content': true, // Corrected key
     'sidebar.marketplace': true, // Corrected key
@@ -166,8 +170,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       {isMobileView && (
         <div className="flex justify-between items-center h-20 px-4 border-b border-gray-200/80">
             <div className="flex items-center">
-                {settings?.logoAsset?.publicUrl ? (
-                  <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[63px] w-auto mr-2" />
+                {sidebarLogoUrl ? (
+                  <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-[63px] w-auto mr-2" />
                 ) : (
                   <SquaresPlusIcon className="h-[63px] w-[63px] text-swiss-mint mr-2" />
                 )}
@@ -177,8 +181,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       )}
       {!isMobileView && (
         <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80"> 
-            {settings?.logoAsset?.publicUrl ? (
-              <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[69px] w-auto mr-2.5" />
+            {sidebarLogoUrl ? (
+              <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-[69px] w-auto mr-2.5" />
             ) : (
               <SquaresPlusIcon className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
             )}

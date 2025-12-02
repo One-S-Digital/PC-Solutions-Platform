@@ -12,16 +12,19 @@ import logger from '../../utils/logger'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 
+// Define supported asset types for type safety
+type BrandingAssetType = 'logo' | 'sidebarLogo' | 'adminLogo' | 'favicon' | 'adminFavicon';
+
 const BrandingSettings: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, refreshSettings, loading, error, saving } = useSettings()
   const apiClient = useApiClient()
   const { user } = useUser()
-  const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
-  const [uploadedAssets, setUploadedAssets] = useState<Record<string, string>>({})
+  const [uploadingAssets, setUploadingAssets] = useState<Record<BrandingAssetType, boolean>>({} as Record<BrandingAssetType, boolean>)
+  const [uploadedAssets, setUploadedAssets] = useState<Record<BrandingAssetType, string>>({} as Record<BrandingAssetType, string>)
 
 
-  const handleUploadAndUpdate = async (assetType: string, file: File) => {
+  const handleUploadAndUpdate = async (assetType: BrandingAssetType, file: File) => {
     setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
     
     try {
@@ -49,6 +52,9 @@ const BrandingSettings: React.FC = () => {
         case 'adminFavicon':
           response = await apiService.uploadAdminFavicon(apiClient, formData)
           break
+        case 'sidebarLogo':
+          response = await apiService.uploadSidebarLogo(apiClient, formData)
+          break
         default:
           throw new Error(`Unknown asset type: ${assetType}`)
       }
@@ -74,7 +80,7 @@ const BrandingSettings: React.FC = () => {
     }
   }
 
-  const handleSaveAsset = async (assetType: string) => {
+  const handleSaveAsset = async (assetType: BrandingAssetType) => {
     const assetId = uploadedAssets[assetType]
     if (!assetId) {
       toast.error(t('admin:settings.branding.noAssetToSave'))
@@ -304,6 +310,9 @@ const BrandingSettings: React.FC = () => {
               <label className="block text-sm font-medium text-swiss-charcoal mb-2">
                 {t('admin:settings.branding.logosAssets.mainLogo')}
               </label>
+              <p className="text-xs text-gray-500 mb-2">
+                {t('admin:settings.branding.logosAssets.mainLogoDescription')}
+              </p>
               <SimpleAssetUploader
                 currentAssetId={settings?.logoAssetId}
                 onUpload={(file: File) => handleUploadAndUpdate('logo', file)}
@@ -331,6 +340,46 @@ const BrandingSettings: React.FC = () => {
                       disabled={saving}
                     >
                       {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveLogo')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-swiss-charcoal mb-2">
+                {t('admin:settings.branding.logosAssets.sidebarLogo')}
+              </label>
+              <p className="text-xs text-gray-500 mb-2">
+                {t('admin:settings.branding.logosAssets.sidebarLogoDescription')}
+              </p>
+              <SimpleAssetUploader
+                currentAssetId={settings?.sidebarLogoAssetId}
+                onUpload={(file: File) => handleUploadAndUpdate('sidebarLogo', file)}
+                accept="image/*"
+                maxSize={5 * 1024 * 1024}
+                fetchDelay={200}
+              />
+              {uploadingAssets.sidebarLogo && (
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">{t('admin:settings.branding.uploading.sidebarLogo')}</span>
+                  </div>
+                </div>
+              )}
+              {uploadedAssets.sidebarLogo && (
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">{t('admin:settings.branding.uploaded.sidebarLogo')}</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('sidebarLogo')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveSidebarLogo')}
                     </Button>
                   </div>
                 </div>

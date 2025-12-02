@@ -220,19 +220,24 @@
       },
       "logosAssets": {
         "title": "Logos et ressources",
-        "mainLogo": "Logo principal",
+        "mainLogo": "Logo principal (Pages publiques)",
+        "mainLogoDescription": "Utilisé sur les pages de connexion, d'inscription et autres pages publiques",
+        "sidebarLogo": "Logo de la barre latérale",
+        "sidebarLogoDescription": "Logo séparé pour le menu de la barre latérale de l'application principale (optionnel - utilise le logo principal par défaut)",
         "adminLogo": "Logo admin",
         "favicon": "Favicon",
         "adminFavicon": "Favicon admin"
       },
       "uploading": {
         "logo": "Téléchargement du logo...",
+        "sidebarLogo": "Téléchargement du logo de la barre latérale...",
         "adminLogo": "Téléchargement du logo admin...",
         "favicon": "Téléchargement du favicon...",
         "adminFavicon": "Téléchargement du favicon admin..."
       },
       "uploaded": {
         "logo": "✓ Logo téléchargé ! Cliquez sur \"Enregistrer le logo\" ci-dessous pour appliquer les modifications.",
+        "sidebarLogo": "✓ Logo de la barre latérale téléchargé ! Cliquez sur \"Enregistrer le logo de la barre latérale\" ci-dessous pour appliquer les modifications.",
         "adminLogo": "✓ Logo admin téléchargé ! Cliquez sur \"Enregistrer le logo admin\" ci-dessous pour appliquer les modifications.",
         "favicon": "✓ Favicon téléchargé ! Cliquez sur \"Enregistrer le favicon\" ci-dessous pour appliquer les modifications.",
         "adminFavicon": "✓ Favicon admin téléchargé ! Cliquez sur \"Enregistrer le favicon admin\" ci-dessous pour appliquer les modifications."
@@ -240,6 +245,7 @@
       "saveColors": "Enregistrer les couleurs",
       "saveAdminColors": "Enregistrer les couleurs admin",
       "saveLogo": "Enregistrer le logo",
+      "saveSidebarLogo": "Enregistrer le logo de la barre latérale",
       "saveAdminLogo": "Enregistrer le logo admin",
       "saveFavicon": "Enregistrer le favicon",
       "saveAdminFavicon": "Enregistrer le favicon admin",

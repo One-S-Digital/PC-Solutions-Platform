@@ -40,6 +40,7 @@ export class FrontendSettingsService {
       logoAsset: settings.logoAsset,
       faviconAsset: settings.faviconAsset,
       ogImageAsset: settings.ogImageAsset,
+      sidebarLogoAsset: settings.sidebarLogoAsset,
     };
   }
 
@@ -51,6 +52,7 @@ export class FrontendSettingsService {
         ogImageAsset: true,
         adminLogoAsset: true,
         adminFaviconAsset: true,
+        sidebarLogoAsset: true,
       },
     });
     
@@ -76,6 +78,7 @@ export class FrontendSettingsService {
           ogImageAsset: true,
           adminLogoAsset: true,
           adminFaviconAsset: true,
+          sidebarLogoAsset: true,
         },
       });
     }
@@ -96,6 +99,7 @@ export class FrontendSettingsService {
           ogImageAsset: true,
           adminLogoAsset: true,
           adminFaviconAsset: true,
+          sidebarLogoAsset: true,
         },
       });
     } else {
@@ -109,6 +113,7 @@ export class FrontendSettingsService {
           ogImageAsset: true,
           adminLogoAsset: true,
           adminFaviconAsset: true,
+          sidebarLogoAsset: true,
         },
       });
     }
@@ -181,6 +186,20 @@ export class FrontendSettingsService {
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
       data: { adminFaviconAssetId: uploadResult.asset.id },
+    });
+
+    return uploadResult;
+  }
+
+  async uploadSidebarLogo(file: Express.Multer.File, uploadedById: string) {
+    // Use the existing upload service
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.SIDEBAR_LOGO);
+
+    // Update frontend settings with new sidebar logo
+    const settings = await this.getSettings();
+    await this.prisma.frontendSettings.update({
+      where: { id: settings.id },
+      data: { sidebarLogoAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;

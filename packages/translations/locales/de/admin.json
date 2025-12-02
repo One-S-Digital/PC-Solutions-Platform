@@ -220,19 +220,24 @@
       },
       "logosAssets": {
         "title": "Logos & Assets",
-        "mainLogo": "Hauptlogo",
+        "mainLogo": "Hauptlogo (Öffentliche Seiten)",
+        "mainLogoDescription": "Wird auf Anmelde-, Registrierungs- und anderen öffentlichen Seiten verwendet",
+        "sidebarLogo": "Seitenleisten-Logo",
+        "sidebarLogoDescription": "Separates Logo für das Seitenleisten-Menü der Haupt-App (optional - verwendet Hauptlogo als Fallback)",
         "adminLogo": "Admin-Logo",
         "favicon": "Favicon",
         "adminFavicon": "Admin-Favicon"
       },
       "uploading": {
         "logo": "Logo wird hochgeladen...",
+        "sidebarLogo": "Seitenleisten-Logo wird hochgeladen...",
         "adminLogo": "Admin-Logo wird hochgeladen...",
         "favicon": "Favicon wird hochgeladen...",
         "adminFavicon": "Admin-Favicon wird hochgeladen..."
       },
       "uploaded": {
         "logo": "✓ Logo hochgeladen! Klicken Sie unten auf \"Logo speichern\", um die Änderungen zu übernehmen.",
+        "sidebarLogo": "✓ Seitenleisten-Logo hochgeladen! Klicken Sie unten auf \"Seitenleisten-Logo speichern\", um die Änderungen zu übernehmen.",
         "adminLogo": "✓ Admin-Logo hochgeladen! Klicken Sie unten auf \"Admin-Logo speichern\", um die Änderungen zu übernehmen.",
         "favicon": "✓ Favicon hochgeladen! Klicken Sie unten auf \"Favicon speichern\", um die Änderungen zu übernehmen.",
         "adminFavicon": "✓ Admin-Favicon hochgeladen! Klicken Sie unten auf \"Admin-Favicon speichern\", um die Änderungen zu übernehmen."
@@ -240,6 +245,7 @@
       "saveColors": "Farben speichern",
       "saveAdminColors": "Admin-Farben speichern",
       "saveLogo": "Logo speichern",
+      "saveSidebarLogo": "Seitenleisten-Logo speichern",
       "saveAdminLogo": "Admin-Logo speichern",
       "saveFavicon": "Favicon speichern",
       "saveAdminFavicon": "Admin-Favicon speichern",

@@ -36,6 +36,7 @@ export declare const AssetKind: {
     readonly FRONTEND_OG_IMAGE: "FRONTEND_OG_IMAGE";
     readonly ADMIN_LOGO: "ADMIN_LOGO";
     readonly ADMIN_FAVICON: "ADMIN_FAVICON";
+    readonly SIDEBAR_LOGO: "SIDEBAR_LOGO";
 };
 export type AssetKind = (typeof AssetKind)[keyof typeof AssetKind];
 export declare const OrganizationType: {

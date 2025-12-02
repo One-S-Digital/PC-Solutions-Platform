@@ -253,4 +253,43 @@ export class FrontendSettingsController {
       throw error;
     }
   }
+
+  @Post('sidebar-logo')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadSidebarLogo(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    try {
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      // Development mode bypass
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      let appUserId = req.context?.appUserId;
+      
+      if (!appUserId && isDevelopment) {
+        appUserId = 'dev-user-123';
+        console.log('🔧 Development mode: Using mock user ID for sidebar logo upload');
+      } else if (!appUserId) {
+        throw new BadRequestException('Missing authenticated user');
+      }
+      
+      const result = await this.frontendSettingsService.uploadSidebarLogo(file, appUserId);
+      
+      return {
+        success: true,
+        message: 'Sidebar logo uploaded',
+        data: {
+          id: result.asset.id,
+          url: result.publicUrl,
+          filename: result.asset.filename,
+          size: result.asset.size,
+          mimeType: result.asset.mimeType,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Sidebar logo upload error:', error);
+      throw error;
+    }
+  }
 }

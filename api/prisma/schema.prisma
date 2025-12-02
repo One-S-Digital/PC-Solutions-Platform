@@ -41,6 +41,7 @@ enum AssetKind {
   FRONTEND_OG_IMAGE
   ADMIN_LOGO
   ADMIN_FAVICON
+  SIDEBAR_LOGO
   ELEARNING
 }
 
@@ -345,6 +346,7 @@ model Asset {
   frontendOgImages FrontendSettings[] @relation("FrontendOgImage")
   adminLogos       FrontendSettings[] @relation("AdminLogo")
   adminFavicons    FrontendSettings[] @relation("AdminFavicon")
+  sidebarLogos     FrontendSettings[] @relation("SidebarLogo")
 
   @@index([storageKey])
   @@index([etag])
@@ -1126,6 +1128,9 @@ model FrontendSettings {
   adminSecondaryColor String  @default("#374151")
   adminAccentColor    String  @default("#3B82F6")
 
+  // Sidebar Logo (for main app sidebar menu)
+  sidebarLogoAssetId  String?
+
   // Contact Information
   contactEmail   String?
   contactPhone   String?
@@ -1170,6 +1175,7 @@ model FrontendSettings {
   ogImageAsset      Asset? @relation("FrontendOgImage", fields: [ogImageAssetId], references: [id])
   adminLogoAsset    Asset? @relation("AdminLogo", fields: [adminLogoAssetId], references: [id])
   adminFaviconAsset Asset? @relation("AdminFavicon", fields: [adminFaviconAssetId], references: [id])
+  sidebarLogoAsset  Asset? @relation("SidebarLogo", fields: [sidebarLogoAssetId], references: [id])
 
   @@map("frontend_settings")
 }
