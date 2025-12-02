@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -256,10 +256,125 @@ export class CompatController {
 
   @Get('organizations')
   @Public()
-  async getOrganizations() {
+  async getOrganizations(
+    @Query('type') type?: string,
+    @Query('region') region?: string,
+    @Query('search') search?: string,
+    @Query('isActive') isActive?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     try {
-      const orgs = await this.prisma.organization.findMany({ orderBy: { createdAt: 'desc' }, take: 100 });
-      return { success: true, message: 'OK', data: orgs, timestamp: new Date().toISOString() };
+      const where: any = {};
+      
+      // Filter by organization type
+      if (type) {
+        const orgType = this.mapToOrganizationType(type);
+        where.type = orgType;
+      }
+      
+      // Filter by region
+      if (region && region !== 'All') {
+        where.OR = [
+          { region: region },
+          { canton: region },
+          { regionsServed: { has: region } },
+        ];
+      }
+      
+      // Filter by active status
+      if (isActive !== undefined) {
+        where.isActive = isActive === 'true';
+      }
+      
+      // Search filter
+      if (search) {
+        where.AND = [
+          ...(where.AND || []),
+          {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' } },
+              { description: { contains: search, mode: 'insensitive' } },
+              { contactPerson: { contains: search, mode: 'insensitive' } },
+            ],
+          },
+        ];
+      }
+      
+      const pageNum = parseInt(page || '1', 10);
+      const limitNum = parseInt(limit || '100', 10);
+      const skip = (pageNum - 1) * limitNum;
+      
+      const [orgs, total] = await Promise.all([
+        this.prisma.organization.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take: limitNum,
+          skip,
+          include: {
+            logoAsset: true,
+            coverAsset: true,
+            products: {
+              where: { isActive: true },
+              take: 5,
+              select: {
+                id: true,
+                title: true,
+                category: true,
+                categories: true,
+                price: true,
+                imageAsset: true,
+              },
+            },
+            serviceProviders: {
+              include: {
+                services: {
+                  where: { isActive: true },
+                  take: 5,
+                  select: {
+                    id: true,
+                    title: true,
+                    category: true,
+                    categories: true,
+                    price: true,
+                    priceInfo: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        this.prisma.organization.count({ where }),
+      ]);
+      
+      // Transform organizations to include legacy fields
+      const transformedOrgs = orgs.map(org => ({
+        ...org,
+        logoUrl: org.logoAsset?.publicUrl,
+        coverImageUrl: org.coverAsset?.publicUrl,
+        // Transform products with imageUrl
+        products: org.products?.map(p => ({
+          ...p,
+          imageUrl: p.imageAsset?.publicUrl,
+        })) || [],
+        // Flatten services from serviceProviders for convenience
+        services: org.serviceProviders?.flatMap(sp => sp.services) || [],
+      }));
+      
+      return {
+        success: true,
+        message: 'OK',
+        data: {
+          organizations: transformedOrgs,
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total,
+            totalPages: Math.ceil(total / limitNum),
+          },
+        },
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
     }
@@ -269,11 +384,47 @@ export class CompatController {
   @Public()
   async getOrganizationById(@Param('id') id: string) {
     try {
-      const org = await this.prisma.organization.findUnique({ where: { id } });
+      const org = await this.prisma.organization.findUnique({
+        where: { id },
+        include: {
+          logoAsset: true,
+          coverAsset: true,
+          products: {
+            where: { isActive: true },
+            include: {
+              imageAsset: true,
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+          serviceProviders: {
+            include: {
+              services: {
+                where: { isActive: true },
+                orderBy: { createdAt: 'desc' },
+              },
+            },
+          },
+        },
+      });
       if (!org) {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
       }
-      return { success: true, message: 'OK', data: org, timestamp: new Date().toISOString() };
+      
+      // Transform to include legacy fields
+      const transformedOrg = {
+        ...org,
+        logoUrl: org.logoAsset?.publicUrl,
+        coverImageUrl: org.coverAsset?.publicUrl,
+        // Flatten services from serviceProviders
+        services: org.serviceProviders?.flatMap(sp => sp.services) || [],
+        // Transform products with imageUrl
+        products: org.products?.map(p => ({
+          ...p,
+          imageUrl: p.imageAsset?.publicUrl,
+        })) || [],
+      };
+      
+      return { success: true, message: 'OK', data: transformedOrg, timestamp: new Date().toISOString() };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
     }

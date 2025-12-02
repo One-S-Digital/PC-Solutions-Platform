@@ -1,5 +1,5 @@
 import { apiService, ApiResponse } from './api';
-import { Product, Service } from '../types';
+import { Product, Service, Organization, OrganizationType } from '../types';
 import { API_ENDPOINTS } from './api-endpoints';
 import i18n from '../i18n';
 
@@ -23,27 +23,94 @@ export interface ServiceCreateData {
 
 export interface ServiceUpdateData extends Partial<ServiceCreateData> {}
 
+export interface MarketplaceFilters {
+  category?: string;
+  region?: string;
+  search?: string;
+  tags?: string[];
+  page?: number;
+  limit?: number;
+  isActive?: boolean;
+}
+
 class MarketplaceService {
+  // Get product suppliers (organizations of type PRODUCT_SUPPLIER)
+  async getProductSuppliers(filters: MarketplaceFilters = {}): Promise<{ suppliers: Organization[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
+    const params = new URLSearchParams();
+    
+    params.append('type', 'PRODUCT_SUPPLIER');
+    params.append('lang', currentLang);
+    params.append('isActive', 'true');
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+    if (filters.region && filters.region !== 'All') params.append('region', filters.region);
+    if (filters.search) params.append('search', filters.search);
+    
+    const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
+      `/organizations?${params.toString()}`
+    );
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to fetch product suppliers');
+    }
+    return {
+      suppliers: response.data.organizations.map(org => this.transformOrganization(org)),
+      pagination: response.data.pagination,
+    };
+  }
+
+  // Get service providers (organizations of type SERVICE_PROVIDER)
+  async getServiceProviders(filters: MarketplaceFilters = {}): Promise<{ providers: Organization[]; pagination: any }> {
+    const currentLang = i18n.language || 'en';
+    const params = new URLSearchParams();
+    
+    params.append('type', 'SERVICE_PROVIDER');
+    params.append('lang', currentLang);
+    params.append('isActive', 'true');
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+    if (filters.region && filters.region !== 'All') params.append('region', filters.region);
+    if (filters.search) params.append('search', filters.search);
+    
+    const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
+      `/organizations?${params.toString()}`
+    );
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to fetch service providers');
+    }
+    return {
+      providers: response.data.organizations.map(org => this.transformOrganization(org)),
+      pagination: response.data.pagination,
+    };
+  }
+
   // Products
-  async getProducts(page = 1, limit = 20, category?: string, search?: string): Promise<{ products: Product[]; pagination: any }> {
+  async getProducts(filters: MarketplaceFilters = {}): Promise<{ products: Product[]; pagination: any }> {
     const currentLang = i18n.language || 'en';
     const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      ...(category && { category }),
-      ...(search && { search }),
+      page: (filters.page || 1).toString(),
+      limit: (filters.limit || 20).toString(),
+      ...(filters.category && { category: filters.category }),
+      ...(filters.search && { search: filters.search }),
       lang: currentLang,
     });
     
-    const response = await apiService.get<{ products: Product[]; pagination: any }>(
+    const response = await apiService.get<{ products: Product[]; pagination: any } | Product[]>(
       `${API_ENDPOINTS.marketplace.products.list}?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch products');
     }
+    
+    // Handle both array and paginated response formats
+    const products = Array.isArray(response.data) ? response.data : (response.data.products || []);
+    const pagination = Array.isArray(response.data) 
+      ? { page: 1, limit: products.length, total: products.length, totalPages: 1 }
+      : response.data.pagination;
+    
     return {
-      products: response.data.products.map(product => this.transformProduct(product)),
-      pagination: response.data.pagination,
+      products: products.map(product => this.transformProduct(product)),
+      pagination,
     };
   }
 
@@ -82,25 +149,32 @@ class MarketplaceService {
   }
 
   // Services
-  async getServices(page = 1, limit = 20, category?: string, search?: string): Promise<{ services: Service[]; pagination: any }> {
+  async getServices(filters: MarketplaceFilters = {}): Promise<{ services: Service[]; pagination: any }> {
     const currentLang = i18n.language || 'en';
     const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      ...(category && { category }),
-      ...(search && { search }),
+      page: (filters.page || 1).toString(),
+      limit: (filters.limit || 20).toString(),
+      ...(filters.category && { category: filters.category }),
+      ...(filters.search && { search: filters.search }),
       lang: currentLang,
     });
     
-    const response = await apiService.get<{ services: Service[]; pagination: any }>(
-      `/services?${params.toString()}`
+    const response = await apiService.get<{ services: Service[]; pagination: any } | Service[]>(
+      `${API_ENDPOINTS.marketplace.services.list}?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch services');
     }
+    
+    // Handle both array and paginated response formats
+    const services = Array.isArray(response.data) ? response.data : (response.data.services || []);
+    const pagination = Array.isArray(response.data) 
+      ? { page: 1, limit: services.length, total: services.length, totalPages: 1 }
+      : response.data.pagination;
+    
     return {
-      services: response.data.services.map(service => this.transformService(service)),
-      pagination: response.data.pagination,
+      services: services.map(service => this.transformService(service)),
+      pagination,
     };
   }
 
@@ -142,9 +216,9 @@ class MarketplaceService {
       ...product,
       // Legacy fields for UI compatibility
       supplierName: product.supplier?.name,
-      supplierLogo: product.supplier?.logoAsset?.publicUrl,
-      imageUrl: product.imageAsset?.publicUrl,
-      stockStatus: 'In Stock', // Default status
+      supplierLogo: product.supplier?.logoAsset?.publicUrl || product.supplier?.logoUrl,
+      imageUrl: product.imageAsset?.publicUrl || product.imageUrl,
+      stockStatus: product.stockStatus || 'In Stock', // Default status
     };
   }
 
@@ -153,13 +227,31 @@ class MarketplaceService {
     return {
       ...service,
       // Legacy fields for UI compatibility
-      providerName: service.provider?.organization?.name,
-      providerLogo: service.provider?.organization?.logoAsset?.publicUrl,
-      availability: 'Available', // Default availability
-      tags: [], // Default empty tags
-      imageUrl: undefined, // Services don't have images by default
-      deliveryType: service.provider?.deliveryType || 'On-site',
-      priceInfo: service.price ? `CHF ${service.price}` : 'Contact for pricing',
+      providerName: service.provider?.organization?.name || service.providerName,
+      providerLogo: service.provider?.organization?.logoAsset?.publicUrl || service.providerLogo,
+      providerId: service.provider?.organizationId || service.providerId,
+      availability: service.availability || 'Available', // Default availability
+      tags: service.tags || [], // Default empty tags
+      imageUrl: service.imageUrl, // Services may have images
+      deliveryType: service.deliveryType || service.provider?.deliveryType || 'On-site',
+      priceInfo: service.priceInfo || (service.price ? `CHF ${service.price}` : 'Contact for pricing'),
+    };
+  }
+
+  // Transform organization data for marketplace display
+  private transformOrganization(org: any): Organization {
+    return {
+      ...org,
+      // Legacy fields for UI compatibility
+      logoUrl: org.logoAsset?.publicUrl || org.logoUrl,
+      coverImageUrl: org.coverAsset?.publicUrl || org.coverImageUrl,
+      email: org.email, // Use actual email if available
+      phone: org.phoneNumber,
+      website: org.directOrderLink || org.bookingLink || org.catalogUrl,
+      address: org.region ? `${org.region}, Switzerland` : undefined,
+      tags: org.productCategories || org.serviceCategories || org.pedagogy || [],
+      rating: org.rating, // Preserve actual rating or leave undefined
+      badges: org.badges || [],
     };
   }
 }

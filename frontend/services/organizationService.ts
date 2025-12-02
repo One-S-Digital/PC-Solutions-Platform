@@ -26,12 +26,31 @@ export interface OrganizationCreateData {
 
 export interface OrganizationUpdateData extends Partial<OrganizationCreateData> {}
 
+export interface OrganizationFilters {
+  type?: OrganizationType | string;
+  region?: string;
+  search?: string;
+  isActive?: boolean;
+  page?: number;
+  limit?: number;
+}
+
 class OrganizationService {
-  // Get all organizations
-  async getOrganizations(page = 1, limit = 20): Promise<{ organizations: Organization[]; pagination: any }> {
+  // Get all organizations with optional filters
+  async getOrganizations(filters: OrganizationFilters = {}): Promise<{ organizations: Organization[]; pagination: any }> {
     const currentLang = i18n.language || 'en';
+    const params = new URLSearchParams();
+    
+    params.append('lang', currentLang);
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+    if (filters.type) params.append('type', filters.type);
+    if (filters.region && filters.region !== 'All') params.append('region', filters.region);
+    if (filters.search) params.append('search', filters.search);
+    if (filters.isActive !== undefined) params.append('isActive', filters.isActive.toString());
+    
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/organizations?page=${page}&limit=${limit}&lang=${currentLang}`
+      `/organizations?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch organizations');
@@ -40,6 +59,21 @@ class OrganizationService {
       organizations: response.data.organizations.map(org => this.transformOrganization(org)),
       pagination: response.data.pagination,
     };
+  }
+
+  // Get product suppliers
+  async getProductSuppliers(filters: Omit<OrganizationFilters, 'type'> = {}): Promise<{ organizations: Organization[]; pagination: any }> {
+    return this.getOrganizations({ ...filters, type: 'PRODUCT_SUPPLIER' });
+  }
+
+  // Get service providers
+  async getServiceProviders(filters: Omit<OrganizationFilters, 'type'> = {}): Promise<{ organizations: Organization[]; pagination: any }> {
+    return this.getOrganizations({ ...filters, type: 'SERVICE_PROVIDER' });
+  }
+
+  // Get foundations (daycares)
+  async getFoundations(filters: Omit<OrganizationFilters, 'type'> = {}): Promise<{ organizations: Organization[]; pagination: any }> {
+    return this.getOrganizations({ ...filters, type: 'FOUNDATION' });
   }
 
   // Get organization by ID
@@ -109,15 +143,15 @@ class OrganizationService {
     return {
       ...org,
       // Legacy fields for UI compatibility
-      logoUrl: org.logoAsset?.publicUrl,
-      coverImageUrl: org.coverAsset?.publicUrl,
-      email: org.contactPerson ? `${org.contactPerson.toLowerCase().replace(' ', '.')}@${org.name.toLowerCase().replace(/\s+/g, '')}.ch` : undefined,
+      logoUrl: org.logoAsset?.publicUrl || org.logoUrl,
+      coverImageUrl: org.coverAsset?.publicUrl || org.coverImageUrl,
+      email: org.email, // Use actual email if available
       phone: org.phoneNumber,
-      website: org.directOrderLink || org.bookingLink,
+      website: org.directOrderLink || org.bookingLink || org.catalogUrl,
       address: org.region ? `${org.region}, Switzerland` : undefined,
-      tags: org.pedagogy || org.serviceCategories || [],
-      rating: 4.5, // Default rating for now
-      badges: [], // Default empty badges
+      tags: org.pedagogy || org.serviceCategories || org.productCategories || [],
+      rating: org.rating, // Preserve actual rating or leave undefined
+      badges: org.badges || [],
     };
   }
 }
