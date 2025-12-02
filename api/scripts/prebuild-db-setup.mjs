@@ -370,6 +370,57 @@ END $$;
   );
 };
 
+const ensureParentLeadsTable = () => {
+  const sql = `
+-- Create the parent_leads table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."parent_leads" (
+    "id" TEXT NOT NULL,
+    "parentName" TEXT NOT NULL,
+    "parentEmail" TEXT NOT NULL,
+    "parentPhone" TEXT,
+    "childName" TEXT NOT NULL,
+    "childAge" INTEGER NOT NULL,
+    "message" TEXT,
+    "foundationId" TEXT,
+    "preferredLocation" TEXT,
+    "preferredLanguages" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "specialRequirements" TEXT,
+    "source" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'NEW',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "parent_leads_pkey" PRIMARY KEY ("id")
+);
+
+-- Create indexes on parent_leads (if they don't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'parent_leads_status_idx'
+    ) THEN
+        CREATE INDEX "parent_leads_status_idx" ON "public"."parent_leads"("status");
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'parent_leads_foundationId_idx'
+    ) THEN
+        CREATE INDEX "parent_leads_foundationId_idx" ON "public"."parent_leads"("foundationId");
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const ensureJobApplicationsTable = () => {
   const sql = `
 -- Ensure ApplicationStatus enum exists
@@ -445,6 +496,210 @@ BEGIN
         ADD CONSTRAINT "job_applications_candidateId_fkey" 
         FOREIGN KEY ("candidateId") REFERENCES "public"."users"("id") 
         ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureFoundationPagesEnhancements = () => {
+  // First ensure parent_leads exists (prerequisite)
+  ensureParentLeadsTable();
+  
+  const sql = `
+-- Create foundation_lead_responses table
+CREATE TABLE IF NOT EXISTS "foundation_lead_responses" (
+    "id" TEXT NOT NULL,
+    "leadId" TEXT NOT NULL,
+    "foundationId" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
+    "message" TEXT,
+    "respondedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "foundation_lead_responses_pkey" PRIMARY KEY ("id")
+);
+
+-- Create support_tickets table
+CREATE TABLE IF NOT EXISTS "support_tickets" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "subject" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "category" TEXT NOT NULL DEFAULT 'GENERAL',
+    "priority" TEXT NOT NULL DEFAULT 'MEDIUM',
+    "status" TEXT NOT NULL DEFAULT 'OPEN',
+    "assignedTo" TEXT,
+    "resolvedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "support_tickets_pkey" PRIMARY KEY ("id")
+);
+
+-- Create ticket_responses table
+CREATE TABLE IF NOT EXISTS "ticket_responses" (
+    "id" TEXT NOT NULL,
+    "ticketId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "isStaff" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ticket_responses_pkey" PRIMARY KEY ("id")
+);
+
+-- Create calendar_events table
+CREATE TABLE IF NOT EXISTS "calendar_events" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "eventType" TEXT NOT NULL,
+    "startTime" TIMESTAMP(3) NOT NULL,
+    "endTime" TIMESTAMP(3),
+    "allDay" BOOLEAN NOT NULL DEFAULT false,
+    "location" TEXT,
+    "relatedEntityType" TEXT,
+    "relatedEntityId" TEXT,
+    "createdBy" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "calendar_events_pkey" PRIMARY KEY ("id")
+);
+
+-- Create indexes for foundation_lead_responses
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'foundation_lead_responses_leadId_foundationId_key') THEN
+        CREATE UNIQUE INDEX "foundation_lead_responses_leadId_foundationId_key" ON "foundation_lead_responses"("leadId", "foundationId");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'foundation_lead_responses_foundationId_idx') THEN
+        CREATE INDEX "foundation_lead_responses_foundationId_idx" ON "foundation_lead_responses"("foundationId");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'foundation_lead_responses_status_idx') THEN
+        CREATE INDEX "foundation_lead_responses_status_idx" ON "foundation_lead_responses"("status");
+    END IF;
+END $$;
+
+-- Create indexes for support_tickets
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'support_tickets_userId_idx') THEN
+        CREATE INDEX "support_tickets_userId_idx" ON "support_tickets"("userId");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'support_tickets_status_idx') THEN
+        CREATE INDEX "support_tickets_status_idx" ON "support_tickets"("status");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'support_tickets_priority_idx') THEN
+        CREATE INDEX "support_tickets_priority_idx" ON "support_tickets"("priority");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'support_tickets_assignedTo_idx') THEN
+        CREATE INDEX "support_tickets_assignedTo_idx" ON "support_tickets"("assignedTo");
+    END IF;
+END $$;
+
+-- Create indexes for ticket_responses
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'ticket_responses_ticketId_idx') THEN
+        CREATE INDEX "ticket_responses_ticketId_idx" ON "ticket_responses"("ticketId");
+    END IF;
+END $$;
+
+-- Create indexes for calendar_events
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'calendar_events_organizationId_idx') THEN
+        CREATE INDEX "calendar_events_organizationId_idx" ON "calendar_events"("organizationId");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'calendar_events_startTime_idx') THEN
+        CREATE INDEX "calendar_events_startTime_idx" ON "calendar_events"("startTime");
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'calendar_events_eventType_idx') THEN
+        CREATE INDEX "calendar_events_eventType_idx" ON "calendar_events"("eventType");
+    END IF;
+END $$;
+
+-- Add foreign keys for foundation_lead_responses
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'foundation_lead_responses_leadId_fkey') THEN
+        ALTER TABLE "foundation_lead_responses" ADD CONSTRAINT "foundation_lead_responses_leadId_fkey" 
+        FOREIGN KEY ("leadId") REFERENCES "parent_leads"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'foundation_lead_responses_foundationId_fkey') THEN
+        ALTER TABLE "foundation_lead_responses" ADD CONSTRAINT "foundation_lead_responses_foundationId_fkey" 
+        FOREIGN KEY ("foundationId") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign keys for support_tickets
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'support_tickets_userId_fkey') THEN
+        ALTER TABLE "support_tickets" ADD CONSTRAINT "support_tickets_userId_fkey" 
+        FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'support_tickets_assignedTo_fkey') THEN
+        ALTER TABLE "support_tickets" ADD CONSTRAINT "support_tickets_assignedTo_fkey" 
+        FOREIGN KEY ("assignedTo") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign keys for ticket_responses
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ticket_responses_ticketId_fkey') THEN
+        ALTER TABLE "ticket_responses" ADD CONSTRAINT "ticket_responses_ticketId_fkey" 
+        FOREIGN KEY ("ticketId") REFERENCES "support_tickets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ticket_responses_userId_fkey') THEN
+        ALTER TABLE "ticket_responses" ADD CONSTRAINT "ticket_responses_userId_fkey" 
+        FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign keys for calendar_events
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'calendar_events_organizationId_fkey') THEN
+        ALTER TABLE "calendar_events" ADD CONSTRAINT "calendar_events_organizationId_fkey" 
+        FOREIGN KEY ("organizationId") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'calendar_events_createdBy_fkey') THEN
+        ALTER TABLE "calendar_events" ADD CONSTRAINT "calendar_events_createdBy_fkey" 
+        FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
 END $$;
 `;
@@ -552,6 +807,11 @@ const handleFailedMigration = (migration) => {
       ensureProductMetadataColumns();
       resolveMigration('applied', migration);
       break;
+    case '20251202_foundation_pages_enhancements':
+      log(`   • Resolving ${migration} (foundation pages enhancements)`);
+      ensureFoundationPagesEnhancements();
+      resolveMigration('applied', migration);
+      break;
     default:
       log(`   • Rolling back failed migration ${migration}`);
       resolveMigration('rolled-back', migration);
@@ -578,6 +838,14 @@ try {
   log('✅ job_applications table check complete');
 } catch (error) {
   warn(`⚠️  Could not ensure job_applications table: ${error.message}`);
+}
+
+log('🔁 Ensuring parent_leads table exists...');
+try {
+  ensureParentLeadsTable();
+  log('✅ parent_leads table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure parent_leads table: ${error.message}`);
 }
 
 // log('🔁 Ensuring translation infrastructure is present...');
