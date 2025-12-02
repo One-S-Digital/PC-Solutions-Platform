@@ -1,10 +1,14 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Message } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
 import { useMessaging } from '../../contexts/MessagingContext';
-import { DocumentIcon, PhotoIcon, PencilIcon, TrashIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, PhotoIcon, PencilIcon, TrashIcon, CheckIcon, XMarkIcon, EyeIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@clerk/clerk-react';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import { apiService } from '../../services/api';
+import DocumentPreviewModal from '../DocumentPreviewModal';
 
 interface MessageBubbleProps {
   message: Message;
@@ -14,6 +18,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const { currentUser } = useAppContext();
   const { updateMessage, deleteMessage } = useMessaging();
   const { t } = useTranslation(['messages', 'common']);
+  const { getToken } = useAuth();
+  const { authenticatedDownload } = useAuthenticatedApi();
   const isCurrentUserSender = message.senderId === currentUser?.id;
   const isImage = message.messageType === 'IMAGE' && message.fileUrl;
   const isFile = message.messageType === 'FILE' && message.fileUrl;
@@ -21,6 +27,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
   const [showActions, setShowActions] = useState(false);
+  const [imageBlobUrl, setImageBlobUrl] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const imageFetchedRef = useRef(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return '';
@@ -45,6 +56,112 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const handleCancelEdit = () => {
     setEditContent(message.content);
     setIsEditing(false);
+  };
+
+  // Fetch image with authentication and create blob URL
+  useEffect(() => {
+    if (isImage && message.fileUrl && !imageFetchedRef.current) {
+      imageFetchedRef.current = true;
+      setImageLoading(true);
+      setImageError(false);
+
+      const fetchAuthenticatedImage = async () => {
+        try {
+          const token = await getToken();
+          if (!token) {
+            setImageError(true);
+            setImageLoading(false);
+            return;
+          }
+
+          // Extract the storage key from the URL
+          let downloadUrl = message.fileUrl;
+          const apiBaseUrl = apiService.apiBaseUrl; // e.g., "http://localhost:3000/api"
+          
+          if (downloadUrl.startsWith('/api/upload/download/')) {
+            // Already a secure URL (relative path like /api/upload/download/...)
+            // Extract the storage key (everything after /api/upload/download/)
+            const storageKey = downloadUrl.replace('/api/upload/download/', '');
+            downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+          } else if (downloadUrl.startsWith('http://') || downloadUrl.startsWith('https://')) {
+            // Full URL - extract storage key
+            try {
+              const url = new URL(downloadUrl);
+              // Check if it's already a download URL
+              if (url.pathname.startsWith('/api/upload/download/')) {
+                const storageKey = url.pathname.replace('/api/upload/download/', '');
+                downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+              } else {
+                // Extract storage key from pathname
+                const storageKey = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+                downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+              }
+            } catch {
+              // If URL parsing fails, try to extract from path
+              const pathMatch = downloadUrl.match(/\/upload\/download\/(.+)$/);
+              if (pathMatch) {
+                downloadUrl = `${apiBaseUrl}/upload/download/${pathMatch[1]}`;
+              } else {
+                // Fallback: assume it's a storage key
+                downloadUrl = `${apiBaseUrl}/upload/download/${downloadUrl}`;
+              }
+            }
+          } else {
+            // Assume it's a storage key (e.g., "messages/...")
+            downloadUrl = `${apiBaseUrl}/upload/download/${downloadUrl}`;
+          }
+
+          const response = await fetch(downloadUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to load image: ${response.statusText}`);
+          }
+
+          const blob = await response.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          setImageBlobUrl(blobUrl);
+          setImageLoading(false);
+        } catch (error) {
+          console.error('Failed to load authenticated image:', error);
+          setImageError(true);
+          setImageLoading(false);
+        }
+      };
+
+      fetchAuthenticatedImage();
+    }
+
+    // Cleanup blob URL on unmount
+    return () => {
+      if (imageBlobUrl) {
+        window.URL.revokeObjectURL(imageBlobUrl);
+      }
+    };
+  }, [isImage, message.fileUrl, getToken, imageBlobUrl]);
+
+  const handleFileDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!message.fileUrl || !message.fileName) return;
+
+    try {
+      await authenticatedDownload(message.fileUrl, message.fileName);
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      alert(t('common:errors.downloadFailed', 'Failed to download file. Please try again.'));
+    }
+  };
+
+  const handleImageClick = () => {
+    if (imageBlobUrl) {
+      window.open(imageBlobUrl, '_blank');
+    } else if (message.fileUrl) {
+      // Fallback: try to open the URL (might not work if auth required)
+      window.open(message.fileUrl, '_blank');
+    }
   };
 
   if (isDeleted) {
@@ -97,16 +214,29 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         {/* Image Preview */}
         {isImage && message.fileUrl && (
           <div className="mb-2">
-            <img 
-              src={message.fileUrl} 
-              alt={message.fileName || 'Image'} 
-              className="max-w-full h-auto rounded-lg cursor-pointer"
-              onClick={() => window.open(message.fileUrl, '_blank')}
-              onError={(e) => {
-                // Fallback if image fails to load
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
+            {imageLoading && (
+              <div className="flex items-center justify-center p-4 bg-gray-100 rounded-lg">
+                <p className="text-sm text-gray-500">{t('common:loading', 'Loading...')}</p>
+              </div>
+            )}
+            {imageError && (
+              <div className="flex items-center justify-center p-4 bg-gray-100 rounded-lg">
+                <p className="text-sm text-red-500">{t('common:errors.loadFailed', 'Failed to load image')}</p>
+              </div>
+            )}
+            {imageBlobUrl && !imageLoading && !imageError && (
+              <img 
+                src={imageBlobUrl} 
+                alt={message.fileName || 'Image'} 
+                className="max-w-full h-auto rounded-lg cursor-pointer"
+                onClick={handleImageClick}
+                onError={(e) => {
+                  console.error('Image display error');
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  setImageError(true);
+                }}
+              />
+            )}
             {message.content && (
               <p className="text-sm whitespace-pre-wrap mt-2">{message.content}</p>
             )}
@@ -116,27 +246,43 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         {/* File Attachment */}
         {isFile && message.fileUrl && (
           <div className="mb-2">
-            <a
-              href={message.fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              download={message.fileName}
-              className={`flex items-center space-x-2 p-2 rounded-lg hover:opacity-80 transition-opacity cursor-pointer ${
-                isCurrentUserSender 
-                  ? 'bg-swiss-mint/20 text-white' 
-                  : 'bg-gray-200 text-swiss-charcoal'
-              }`}
-            >
-              <DocumentIcon className="w-5 h-5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
-                {message.fileSize && (
-                  <p className={`text-xs ${isCurrentUserSender ? 'text-swiss-mint/70' : 'text-gray-500'}`}>
-                    {formatFileSize(message.fileSize)}
-                  </p>
-                )}
+            <div className={`flex items-center space-x-2 p-2 rounded-lg ${
+              isCurrentUserSender 
+                ? 'bg-swiss-mint/20 text-white' 
+                : 'bg-gray-200 text-swiss-charcoal'
+            }`}>
+              <button
+                onClick={() => setShowPreview(true)}
+                className="flex items-center space-x-2 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity cursor-pointer"
+                title={t('common:preview', 'Preview')}
+              >
+                <DocumentIcon className="w-5 h-5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
+                  {message.fileSize && (
+                    <p className={`text-xs ${isCurrentUserSender ? 'text-swiss-mint/70' : 'text-gray-500'}`}>
+                      {formatFileSize(message.fileSize)}
+                    </p>
+                  )}
+                </div>
+              </button>
+              <div className="flex items-center space-x-1 flex-shrink-0">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFileDownload(e);
+                  }}
+                  className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
+                    isCurrentUserSender 
+                      ? 'hover:bg-swiss-mint/30 text-white' 
+                      : 'hover:bg-gray-300 text-swiss-charcoal'
+                  }`}
+                  title={t('common:download', 'Download')}
+                >
+                  <ArrowDownTrayIcon className="w-4 h-4" />
+                </button>
               </div>
-            </a>
+            </div>
             {/* Only show content if it's not empty and not JSON metadata */}
             {message.content && message.content.trim() && !message.content.startsWith('{') && (
               <p className="text-sm whitespace-pre-wrap mt-2">{message.content}</p>
@@ -180,6 +326,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
+
+      {/* Document Preview Modal */}
+      {isFile && message.fileUrl && (
+        <DocumentPreviewModal
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          fileUrl={message.fileUrl}
+          fileName={message.fileName || 'Document'}
+          fileType={message.mimeType || message.fileName?.split('.').pop()?.toUpperCase() || 'PDF'}
+        />
+      )}
     </div>
   );
 };

@@ -38,6 +38,8 @@
     "db:verify:sql": "psql $DATABASE_URL -f scripts/verify-db-schema.sql",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:message-urls": "ts-node scripts/migrate-message-file-urls.ts",
+    "db:migrate:message-urls:execute": "ts-node scripts/migrate-message-file-urls.ts --execute",
     "db:reset": "prisma migrate reset",
     "db:status": "prisma migrate status",
     "db:pull": "prisma db pull",

@@ -1,6 +1,26 @@
 {
   "buttons": {
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "close": "Close",
+    "open": "Open",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "submitTicket": "Submit Ticket"
   },
   "common": {
     "error": "An error occurred",

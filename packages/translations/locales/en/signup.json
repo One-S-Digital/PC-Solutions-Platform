@@ -117,7 +117,10 @@
     "captchaExpired": "CAPTCHA has expired. Please try again",
     "captchaError": "CAPTCHA verification failed. Please try again",
     "profileCompletionFailedTitle": "Profile Completion Failed",
-    "profileCompletionFailed": "An error occurred while completing your profile. Please try again."
+    "profileCompletionFailed": "An error occurred while completing your profile. Please try again.",
+    "accountExists": "An account with this email already exists",
+    "passwordPwned": "This password has been found in a data breach. Please choose a different password",
+    "passwordWeak": "Password is not strong enough"
   },
   "buttons": {
     "createAccount": "Create Account",

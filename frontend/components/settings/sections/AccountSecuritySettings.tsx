@@ -116,7 +116,6 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
       if (window.confirm(t('settingsPrivacyData.confirmGDPRDelete'))) {
           if (window.confirm(t('common:settingsAccountSecurity.dangerZone.finalConfirmation'))) {
               // Mock action: In a real app, this would trigger a backend process.
-              console.log("ACCOUNT DELETION INITIATED FOR USER:", currentUser?.id);
               alert(t('settingsPrivacyData.deletionRequestSubmittedHelpText'));
           }
       }

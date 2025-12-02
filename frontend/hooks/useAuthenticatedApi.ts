@@ -156,16 +156,45 @@ export function useAuthenticatedApi() {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
         }
 
-        // Extract storage key from the URL
-        const url = new URL(fileUrl);
-        const storageKey = url.pathname.substring(1); // Remove leading slash
+        // Determine the download URL based on the input format
+        let downloadUrl: string;
+        const apiUrl = apiService.apiBaseUrl; // e.g., "http://localhost:3000/api"
 
-        // Use backend proxy endpoint
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-        const proxyUrl = `${apiUrl}/upload/download/${storageKey}`;
+        if (fileUrl.startsWith('/api/upload/download/')) {
+          // Already a secure download URL (relative path like /api/upload/download/...)
+          // Extract the storage key (everything after /api/upload/download/)
+          const storageKey = fileUrl.replace('/api/upload/download/', '');
+          // Construct URL: apiUrl is already "http://localhost:3000/api", so just add /upload/download/
+          downloadUrl = `${apiUrl}/upload/download/${storageKey}`;
+        } else if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+          // Full URL - extract storage key
+          try {
+            const url = new URL(fileUrl);
+            // Check if it's already a download URL
+            if (url.pathname.startsWith('/api/upload/download/')) {
+              const storageKey = url.pathname.replace('/api/upload/download/', '');
+              downloadUrl = `${apiUrl}/upload/download/${storageKey}`;
+            } else {
+              // Extract storage key from pathname
+              const storageKey = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+              downloadUrl = `${apiUrl}/upload/download/${storageKey}`;
+            }
+          } catch {
+            // If URL parsing fails, try to extract from path
+            const pathMatch = fileUrl.match(/\/upload\/download\/(.+)$/);
+            if (pathMatch) {
+              downloadUrl = `${apiUrl}/upload/download/${pathMatch[1]}`;
+            } else {
+              throw new Error('Invalid file URL format');
+            }
+          }
+        } else {
+          // Assume it's a storage key (e.g., "messages/...")
+          downloadUrl = `${apiUrl}/upload/download/${fileUrl}`;
+        }
 
         // Fetch through proxy with authentication
-        const response = await fetch(proxyUrl, {
+        const response = await fetch(downloadUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -198,7 +227,7 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [getToken, t]
   );
 
   return {

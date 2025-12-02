@@ -8,6 +8,68 @@ import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class MessagingService {
+  /**
+   * Extract storage key from a full URL or return the key if it's already a key
+   * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
+   * Returns the storage key portion
+   */
+  private extractStorageKey(fileUrl: string | undefined): string | undefined {
+    if (!fileUrl) return undefined;
+    
+    // If it's already a relative download URL, extract the key
+    if (fileUrl.startsWith('/api/upload/download/')) {
+      return fileUrl.replace('/api/upload/download/', '');
+    }
+    
+    // If it's a full URL, extract the path after the domain
+    try {
+      const url = new URL(fileUrl);
+      // Remove leading slash and return the path
+      return url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+    } catch {
+      // If it's not a valid URL, assume it's already a storage key
+      return fileUrl;
+    }
+  }
+
+  /**
+   * Convert storage key to secure download URL
+   * This ensures files are accessed through the authenticated download endpoint
+   */
+  private toSecureDownloadUrl(storageKey: string | undefined): string | undefined {
+    if (!storageKey) return undefined;
+    return `/api/upload/download/${storageKey}`;
+  }
+
+  /**
+   * Transform message to convert storage keys to secure download URLs
+   * This ensures file URLs are always secure and go through authentication
+   */
+  private transformMessageForResponse(message: any): any {
+    if (!message) return message;
+    
+    // Convert storage key to secure download URL if fileUrl exists
+    if (message.fileUrl && !message.fileUrl.startsWith('/api/upload/download/')) {
+      // First extract the storage key from any URL format (full URL, relative URL, or already a key)
+      const storageKey = this.extractStorageKey(message.fileUrl);
+      // Then convert the storage key to a secure download URL
+      const secureUrl = this.toSecureDownloadUrl(storageKey);
+      return {
+        ...message,
+        fileUrl: secureUrl,
+      };
+    }
+    
+    return message;
+  }
+
+  /**
+   * Transform array of messages to convert storage keys to secure download URLs
+   */
+  private transformMessagesForResponse(messages: any[]): any[] {
+    if (!Array.isArray(messages)) return messages;
+    return messages.map(msg => this.transformMessageForResponse(msg));
+  }
   constructor(
     private prisma: PrismaService,
     @Optional() @Inject(MessagingGateway) private messagingGateway?: MessagingGateway,
@@ -271,7 +333,11 @@ export class MessagingService {
         participantCount: conversation.participants.length,
       });
       
-      return conversation;
+      // Transform messages to use secure download URLs
+      return {
+        ...conversation,
+        messages: this.transformMessagesForResponse(conversation.messages || []),
+      };
     } catch (error) {
       console.error('❌ [createConversation] Error creating conversation:', error);
       console.error('❌ [createConversation] Error details:', {
@@ -379,7 +445,7 @@ export class MessagingService {
           ],
         };
 
-    return this.prisma.conversation.findMany({
+    const conversations = await this.prisma.conversation.findMany({
       where: whereClause,
       include: {
         participants: {
@@ -398,6 +464,12 @@ export class MessagingService {
       },
       orderBy: { lastMessageAt: 'desc' },
     });
+
+    // Transform messages in conversations to use secure download URLs
+    return conversations.map(conv => ({
+      ...conv,
+      messages: this.transformMessagesForResponse(conv.messages || []),
+    }));
   }
 
   async findConversationById(id: string, rawUserId: string) {
@@ -436,7 +508,7 @@ export class MessagingService {
 
     const finalUserId = user.id;
 
-    return this.prisma.conversation.findFirst({
+    const conversation = await this.prisma.conversation.findFirst({
       where: {
         id,
         participants: {
@@ -461,11 +533,23 @@ export class MessagingService {
         },
       },
     });
+
+    if (!conversation) return null;
+
+    // Transform messages to use secure download URLs
+    return {
+      ...conversation,
+      messages: this.transformMessagesForResponse(conversation.messages || []),
+    };
   }
 
   // Message Management
   async createMessage(createMessageDto: CreateMessageDto, rawSenderId: string) {
     const { conversationId, receiverId, content, messageType, fileUrl, fileName, fileSize, mimeType } = createMessageDto;
+    
+    // Extract storage key from fileUrl to avoid storing full public URLs (security)
+    // Store only the storage key, which will be converted to secure download URL when retrieved
+    const storageKey = this.extractStorageKey(fileUrl);
 
     console.log('🔵 [createMessage] Starting message creation:', {
       conversationId,
@@ -561,7 +645,7 @@ export class MessagingService {
           receiverId: finalReceiverUserId,
           content,
           messageType,
-          fileUrl,
+          fileUrl: storageKey, // Store only the storage key, not the full URL
           fileName,
           fileSize,
           mimeType,
@@ -587,12 +671,15 @@ export class MessagingService {
         senderId: message.senderId,
       });
       
+      // Transform message to use secure download URL
+      const transformedMessage = this.transformMessageForResponse(message);
+      
       // Broadcast new message via WebSocket
       if (message.conversationId && this.messagingGateway) {
-        this.messagingGateway.broadcastNewMessage(message.conversationId, message);
+        this.messagingGateway.broadcastNewMessage(message.conversationId, transformedMessage);
       }
       
-      return message;
+      return transformedMessage;
     } catch (error) {
       console.error('❌ [createMessage] Error creating message:', error);
       throw error;
@@ -654,7 +741,7 @@ export class MessagingService {
 
     const skip = (page - 1) * limit;
 
-    return this.prisma.message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: { conversationId },
       include: {
         sender: true,
@@ -664,6 +751,9 @@ export class MessagingService {
       skip,
       take: limit,
     });
+
+    // Transform messages to use secure download URLs
+    return this.transformMessagesForResponse(messages);
   }
 
   async markMessagesAsRead(conversationId: string, userId: string) {
@@ -763,12 +853,15 @@ export class MessagingService {
       },
     });
 
+    // Transform message to use secure download URL
+    const transformedMessage = this.transformMessageForResponse(updatedMessage);
+
     // Broadcast message update via WebSocket
     if (updatedMessage.conversationId && this.messagingGateway) {
-      this.messagingGateway.broadcastMessageUpdate(updatedMessage.conversationId, updatedMessage);
+      this.messagingGateway.broadcastMessageUpdate(updatedMessage.conversationId, transformedMessage);
     }
 
-    return updatedMessage;
+    return transformedMessage;
   }
 
   async deleteMessage(messageId: string, rawUserId: string) {
@@ -833,12 +926,15 @@ export class MessagingService {
       },
     });
 
+    // Transform message to use secure download URL (if it had a file)
+    const transformedMessage = this.transformMessageForResponse(deletedMessage);
+
     // Broadcast message deletion via WebSocket
     if (deletedMessage.conversationId && this.messagingGateway) {
       this.messagingGateway.broadcastMessageDelete(deletedMessage.conversationId, messageId);
     }
 
-    return deletedMessage;
+    return transformedMessage;
   }
 
   // Direct Messaging (Legacy support)
@@ -969,7 +1065,7 @@ export class MessagingService {
       };
     }
 
-    return this.prisma.message.findMany({
+    const messages = await this.prisma.message.findMany({
       where,
       include: {
         sender: true,
@@ -986,6 +1082,9 @@ export class MessagingService {
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Transform messages to use secure download URLs
+    return this.transformMessagesForResponse(messages);
   }
 
   // Analytics

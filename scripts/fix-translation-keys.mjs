@@ -1,12 +1,28 @@
 #!/usr/bin/env node
 /**
- * Fix Translation Keys Migration Script
+ * ⚠️  DEPRECATED - DO NOT USE ⚠️
  * 
+ * This script has been DEPRECATED because it causes issues with the translation system.
+ * It incorrectly modifies translation keys, removing namespace prefixes, which breaks translations.
+ * 
+ * USE INSTEAD: scripts/check-untranslated-strings.mjs
+ * 
+ * That script only REPORTS issues and does NOT modify code.
+ * 
+ * This script is kept for reference only. DO NOT RUN IT.
+ * 
+ * Previous description:
  * This script automatically fixes translation key prefixes across the codebase
  * by removing redundant "*Page." prefixes that don't match the namespace structure.
  * 
  * Usage: node scripts/fix-translation-keys.mjs
  */
+
+// Exit immediately with warning
+console.error('❌ ERROR: This script has been DEPRECATED and should not be used.');
+console.error('💡 Use "npm run check:untranslated" instead to find untranslated strings.');
+console.error('📖 See scripts/README-translation-scripts.md for details.');
+process.exit(1);
 
 import fs from 'fs';
 import path from 'path';

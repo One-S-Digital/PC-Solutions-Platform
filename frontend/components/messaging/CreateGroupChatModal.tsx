@@ -38,7 +38,6 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
           }
           // Use userService which handles the API call and transformation
           const { users } = await userService.getAllUsers(1, 100, token);
-          console.log('👥 Fetched users:', { total: users.length });
           
           // Filter out current user and system accounts (they don't have User records for messaging)
           const otherUsers = users.filter(u => {
@@ -48,14 +47,9 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
             if (u.clerkId && (u.clerkId.startsWith('system-') || u.clerkId.startsWith('test-'))) return false;
             return true;
           });
-          console.log('👥 Available users after filtering:', { 
-            total: users.length, 
-            filtered: otherUsers.length,
-            excluded: users.length - otherUsers.length 
-          });
           setAvailableUsers(otherUsers);
         } catch (error) {
-          console.error('Failed to fetch users:', error);
+          console.error('Failed to fetch users');
         } finally {
           setIsLoadingUsers(false);
         }
@@ -101,12 +95,6 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
     }
     
     try {
-      console.log('📝 Creating conversation with participants:', {
-        selected: validUsers.map(u => ({ id: u.id, name: u.name, email: u.email, clerkId: u.clerkId })),
-        currentUser: currentUser ? { id: currentUser.id, name: currentUser.name } : null,
-        groupName: groupName || undefined
-      });
-      
       const participants = validUsers.map(u => ({ id: u.id, name: u.name, role: u.role }));
       const conversationId = await startConversation(participants, groupName || undefined);
       
@@ -115,7 +103,7 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
       setGroupName('');
       setSelectedUsers([]);
     } catch (error) {
-      console.error('❌ Failed to create group:', error);
+      console.error('❌ Failed to create group');
       const errorMessage = error instanceof Error ? error.message : 'Failed to create conversation. Please try again.';
       alert(errorMessage);
     }

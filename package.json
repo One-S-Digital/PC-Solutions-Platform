@@ -20,6 +20,7 @@
     "generate:i18n-types": "ts-node scripts/generate-i18n-types.ts",
     "extract:i18n-keys": "ts-node scripts/extract-i18n-keys.ts",
     "check:i18n-keys": "ts-node scripts/check-i18n-keys.ts",
+    "check:untranslated": "node scripts/check-untranslated-strings.mjs",
     "i18n:full-check": "npm run extract:i18n-keys && npm run check:i18n-keys && npm run generate:i18n-types"
   },
   "devDependencies": {

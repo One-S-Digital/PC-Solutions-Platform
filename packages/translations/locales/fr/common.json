@@ -1,5 +1,6 @@
 {
   "buttons": {
+    "confirm": "Confirmer",
     "save": "Enregistrer",
     "saveChanges": "Enregistrer les modifications",
     "cancel": "Annuler",

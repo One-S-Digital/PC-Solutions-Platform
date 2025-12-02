@@ -336,4 +336,57 @@ export class UploadService {
     this.logger.log(`Asset ${assetId} associated with organization ${organizationId} as ${associationType}`);
     return { success: true };
   }
+
+  /**
+   * Verify user has access to file by storage key
+   * Returns asset if user has access, throws error otherwise
+   */
+  async verifyFileAccess(storageKey: string, appUserId: string, userRole?: string) {
+    const asset = await this.prisma.asset.findFirst({
+      where: { storageKey },
+      include: {
+        uploader: {
+          select: {
+            id: true,
+            email: true,
+            clerkId: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    if (!asset) {
+      throw new NotFoundException('File not found');
+    }
+
+    // Allow access if:
+    // 1. User is the uploader
+    // 2. User is SUPER_ADMIN or ADMIN
+    // 3. File is public (if you have a public flag - not implemented here)
+    const isOwner = asset.uploadedById === appUserId;
+    const isAdmin = userRole === 'SUPER_ADMIN' || userRole === 'ADMIN';
+
+    if (!isOwner && !isAdmin) {
+      this.logger.warn(`Access denied to file ${storageKey} for user ${appUserId}`);
+      throw new ForbiddenException('Access denied to this file');
+    }
+
+    return asset;
+  }
+
+  /**
+   * Get asset by storage key (for download endpoint)
+   */
+  async getAssetByStorageKey(storageKey: string) {
+    const asset = await this.prisma.asset.findFirst({
+      where: { storageKey },
+    });
+
+    if (!asset) {
+      throw new NotFoundException('Asset not found');
+    }
+
+    return asset;
+  }
 }

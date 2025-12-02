@@ -11,6 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import { ensureSecureFileUrl } from '../utils/secureUrl';
 import i18n from '../i18n';
 
 interface CourseMaterialCardProps {
@@ -196,7 +197,8 @@ const ELearningPage: React.FC = () => {
             status: item.status || 'Published',
             lessons: item.lessons,
             duration: item.duration,
-            fileUrl: item.publicUrl || item.fileUrl || item.url,
+            // Convert public R2 URLs to secure download URLs
+            fileUrl: ensureSecureFileUrl(item.publicUrl || item.fileUrl || item.url),
             tags: item.tags || [],
             contentPreview: item.contentPreview || item.description,
           }));
@@ -265,6 +267,44 @@ const ELearningPage: React.FC = () => {
     if (item.fileUrl) {
       setPreviewItem(item);
     }
+  };
+
+  // Helper to get MIME type from e-learning content type and file URL
+  const getMimeType = (item: Course): string => {
+    // Try to get MIME type from file extension
+    const fileUrl = item.fileUrl || '';
+    const extension = fileUrl.split('.').pop()?.toLowerCase();
+    
+    // Map extensions to MIME types
+    const extensionToMime: Record<string, string> = {
+      'mp4': 'video/mp4',
+      'webm': 'video/webm',
+      'ogg': 'video/ogg',
+      'mov': 'video/quicktime',
+      'avi': 'video/x-msvideo',
+      'pdf': 'application/pdf',
+      'doc': 'application/msword',
+      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'png': 'image/png',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+    };
+    
+    if (extension && extensionToMime[extension]) {
+      return extensionToMime[extension];
+    }
+    
+    // Fallback: Map e-learning content type to default MIME type
+    const typeToMime: Record<string, string> = {
+      'VIDEO': 'video/mp4',
+      'PDF': 'application/pdf',
+      'COURSE': 'video/mp4', // Courses often have video content
+      'LINK': 'text/html',
+    };
+    
+    return typeToMime[item.type] || 'application/octet-stream';
   };
 
   const handleDownload = async (item: Course) => {
@@ -367,7 +407,7 @@ const ELearningPage: React.FC = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         <ELearningTypeDisplayCard
-          title={t('common.titles.allcontent')}
+          title={t('common:titles.allcontent')}
           icon={AcademicCapIcon}
           count={totalItems}
           colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -415,7 +455,7 @@ const ELearningPage: React.FC = () => {
           onClose={() => setPreviewItem(null)}
           fileUrl={previewItem.fileUrl}
           fileName={previewItem.title}
-          fileType={previewItem.type}
+          fileType={getMimeType(previewItem)}
         />
       )}
     </div>

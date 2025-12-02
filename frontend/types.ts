@@ -1,6 +1,3 @@
-import { useTranslation } from 'react-i18next';
-
-
 export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN = 'ADMIN',
@@ -449,7 +446,6 @@ export enum PolicyType {
 export const POLICY_TYPES_ENUM = Object.values(PolicyType);
 
 export interface PolicyDocument {
-    const { t } = useTranslation();
     id: string;
     title: string;
     category: PolicyCategory;
@@ -470,7 +466,7 @@ export interface PolicyDocument {
 }
 
 export enum PolicyAlertType {
-    INFO = {t('common.info')},
+    INFO = 'Info',
     CRITICAL = 'Critical'
 }
 export interface PolicyAlert {

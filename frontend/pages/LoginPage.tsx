@@ -92,7 +92,7 @@ const LoginPage: React.FC = () => {
         setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
-      console.error('Login error:', err);
+      console.error('Login error');
 
       let errorMessage = t('common:errors.unknown');
       let errorCode = 'unknown';
@@ -153,7 +153,7 @@ const LoginPage: React.FC = () => {
         redirectUrlComplete: redirectUrl,
       });
     } catch (error: any) {
-      console.error('Social login error:', error);
+      console.error('Social login error');
       const errorMessage = error.errors?.[0]?.message || t('common:loginPage.socialLoginFailed');
       setError(errorMessage);
     }
@@ -167,7 +167,7 @@ const LoginPage: React.FC = () => {
     try {
       await logout();
     } catch (error) {
-      console.error('Logout error from login page:', error);
+      console.error('Logout error from login page');
       setError(t('common:loginPage.signOutFailed'));
     } finally {
       setIsSigningOut(false);

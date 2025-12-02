@@ -226,48 +226,48 @@ const SignupPage: React.FC = () => {
       const requiresOrganizationDetails = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
 
       if (requiresOrganizationDetails && !formData.organisationName) {
-        newErrors.organisationName = t('errors.organisationNameRequired');
+        newErrors.organisationName = t('signup:errors.organisationNameRequired');
       }
     if (!formData.contactPerson) 
-      newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'errors.parentNameRequired' : 'errors.contactPersonRequired');
+      newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'signup:errors.parentNameRequired' : 'signup:errors.contactPersonRequired');
     if (!formData.email) 
-      newErrors.email = t('errors.emailRequired');
+      newErrors.email = t('signup:errors.emailRequired');
     else if (!/\S+@\S+\.\S+/.test(formData.email)) 
-      newErrors.email = t('errors.emailInvalid');
+      newErrors.email = t('signup:errors.emailInvalid');
     if (!formData.password) 
-      newErrors.password = t('errors.passwordRequired');
+      newErrors.password = t('signup:errors.passwordRequired');
     else if (formData.password.length < 8) 
-      newErrors.password = t('errors.passwordTooShort');
+      newErrors.password = t('signup:errors.passwordTooShort');
     if (formData.password !== formData.confirmPassword) 
-      newErrors.confirmPassword = t('errors.passwordsNoMatch');
+      newErrors.confirmPassword = t('signup:errors.passwordsNoMatch');
     
       if (requiresOrganizationDetails && !formData.phone) {
-        newErrors.phone = t('errors.phoneRequired');
+        newErrors.phone = t('signup:errors.phoneRequired');
       }
       if (requiresOrganizationDetails && !formData.canton) {
-        newErrors.canton = t('errors.cantonRequired');
+        newErrors.canton = t('signup:errors.cantonRequired');
       }
 
     if (selectedRole === SignupRole.FOUNDATION && (formData.capacity === undefined || formData.capacity <= 0)) 
-      newErrors.capacity = t('errors.capacityRequired');
+      newErrors.capacity = t('signup:errors.capacityRequired');
     if (selectedRole === SignupRole.SUPPLIER && !formData.category) 
-      newErrors.category = t('errors.categoryRequired');
+      newErrors.category = t('signup:errors.categoryRequired');
     if (selectedRole === SignupRole.SERVICE_PROVIDER && !formData.serviceType) 
-      newErrors.serviceType = t('errors.serviceTypeRequired');
+      newErrors.serviceType = t('signup:errors.serviceTypeRequired');
     
     if (selectedRole === SignupRole.PARENT) {
       if (formData.childAge === undefined || formData.childAge <= 0) 
-        newErrors.childAge = t('errors.childAgeRequired');
+        newErrors.childAge = t('signup:errors.childAgeRequired');
       if (!formData.childStartDate) 
-        newErrors.childStartDate = t('errors.childStartDateRequired');
+        newErrors.childStartDate = t('signup:errors.childStartDateRequired');
     }
 
     if (!formData.termsAccepted) 
-      newErrors.termsAccepted = t('errors.termsRequired');
+      newErrors.termsAccepted = t('signup:errors.termsRequired');
 
     // CAPTCHA validation
     if (!captchaToken) {
-      setCaptchaError(t('errors.captchaRequired'));
+      setCaptchaError(t('signup:errors.captchaRequired'));
     } else {
       setCaptchaError('');
     }
@@ -284,41 +284,41 @@ const SignupPage: React.FC = () => {
     const requiresOrganizationDetails = [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
 
     if (requiresOrganizationDetails && !formData.organisationName) {
-      newErrors.organisationName = t('errors.organisationNameRequired');
+      newErrors.organisationName = t('signup:errors.organisationNameRequired');
     }
     if (!formData.contactPerson) 
-      newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'errors.parentNameRequired' : 'errors.contactPersonRequired');
+      newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'signup:errors.parentNameRequired' : 'signup:errors.contactPersonRequired');
     
     // OAuth users don't need email validation - it's pre-filled from OAuth provider
     // Password fields are not required for OAuth users
 
     if (requiresOrganizationDetails && !formData.phone) {
-      newErrors.phone = t('errors.phoneRequired');
+      newErrors.phone = t('signup:errors.phoneRequired');
     }
     if (requiresOrganizationDetails && !formData.canton) {
-      newErrors.canton = t('errors.cantonRequired');
+      newErrors.canton = t('signup:errors.cantonRequired');
     }
 
     if (selectedRole === SignupRole.FOUNDATION && (formData.capacity === undefined || formData.capacity <= 0)) 
-      newErrors.capacity = t('errors.capacityRequired');
+      newErrors.capacity = t('signup:errors.capacityRequired');
     if (selectedRole === SignupRole.SUPPLIER && !formData.category) 
-      newErrors.category = t('errors.categoryRequired');
+      newErrors.category = t('signup:errors.categoryRequired');
     if (selectedRole === SignupRole.SERVICE_PROVIDER && !formData.serviceType) 
-      newErrors.serviceType = t('errors.serviceTypeRequired');
+      newErrors.serviceType = t('signup:errors.serviceTypeRequired');
     
     if (selectedRole === SignupRole.PARENT) {
       if (formData.childAge === undefined || formData.childAge <= 0) 
-        newErrors.childAge = t('errors.childAgeRequired');
+        newErrors.childAge = t('signup:errors.childAgeRequired');
       if (!formData.childStartDate) 
-        newErrors.childStartDate = t('errors.childStartDateRequired');
+        newErrors.childStartDate = t('signup:errors.childStartDateRequired');
     }
 
     if (!formData.termsAccepted) 
-      newErrors.termsAccepted = t('errors.termsRequired');
+      newErrors.termsAccepted = t('signup:errors.termsRequired');
 
     // CAPTCHA validation - still required for OAuth users
     if (!captchaToken) {
-      setCaptchaError(t('errors.captchaRequired'));
+      setCaptchaError(t('signup:errors.captchaRequired'));
     } else {
       setCaptchaError('');
     }
@@ -334,13 +334,13 @@ const SignupPage: React.FC = () => {
 
   const handleCaptchaExpire = () => {
     setCaptchaToken(null);
-    setCaptchaError(t('errors.captchaExpired'));
+    setCaptchaError(t('signup:errors.captchaExpired'));
   };
 
   const handleCaptchaError = (error: any) => {
     setCaptchaToken(null);
-    setCaptchaError(t('errors.captchaError'));
-    console.error('CAPTCHA error:', error);
+    setCaptchaError(t('signup:errors.captchaError'));
+    console.error('CAPTCHA error');
   };
 
   // State to track if there's an email conflict (account exists with different auth method)
@@ -480,7 +480,7 @@ const SignupPage: React.FC = () => {
         }
       }
     } catch (err: any) {
-      console.error('Signup error:', err);
+      console.error('Signup error');
       const errorCode = err.errors?.[0]?.code || 'unknown';
       let errorMessage = 'An error occurred during signup';
       
@@ -488,16 +488,16 @@ const SignupPage: React.FC = () => {
         const clerkError = err.errors[0];
         switch (clerkError.code) {
           case 'form_identifier_exists':
-            errorMessage = t('errors.accountExists', 'An account with this email already exists');
+            errorMessage = t('signup:errors.accountExists', 'An account with this email already exists');
             break;
           case 'form_password_pwned':
-            errorMessage = t('errors.passwordPwned', 'This password has been found in a data breach. Please choose a different password');
+            errorMessage = t('signup:errors.passwordPwned', 'This password has been found in a data breach. Please choose a different password');
             break;
           case 'form_password_not_strong_enough':
-            errorMessage = t('errors.passwordWeak', 'Password is not strong enough');
+            errorMessage = t('signup:errors.passwordWeak', 'Password is not strong enough');
             break;
           case 'form_identifier_invalid':
-            errorMessage = t('errors.emailInvalid', 'Please enter a valid email address');
+            errorMessage = t('signup:errors.emailInvalid', 'Please enter a valid email address');
             break;
           default:
             errorMessage = clerkError.message || 'Invalid email or password';
@@ -567,8 +567,8 @@ const SignupPage: React.FC = () => {
         setVerificationError('Verification failed. Please try again.');
       }
     } catch (err: any) {
-      console.error('Verification error:', err);
-      let errorMessage = {t('common.errors.invalidverificationcode')};
+      console.error('Verification error');
+      let errorMessage = t('common.errors.invalidverificationcode');
 
       if (err?.errors && err.errors.length > 0) {
         errorMessage = err.errors[0]?.message || errorMessage;
@@ -596,7 +596,7 @@ const SignupPage: React.FC = () => {
           onChange={handleChange} 
           className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}
         >
-          <option value="">{t('placeholders.select')}</option>
+          <option value="">{t('signup:placeholders.select')}</option>
           {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
       ) : (
@@ -627,11 +627,11 @@ const SignupPage: React.FC = () => {
   );
 
   const progressText = currentStep === 1 
-    ? (isOAuthCompletion ? t('progress.oauthStep1', 'Step 1: Select your role') : t('progress.step1')) 
-    : (isOAuthCompletion ? t('progress.oauthStep2', 'Step 2: Complete your profile') : t('progress.step2'));
+    ? (isOAuthCompletion ? t('signup:progress.oauthStep1', 'Step 1: Select your role') : t('signup:progress.step1')) 
+    : (isOAuthCompletion ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile') : t('signup:progress.step2'));
   const formTitle = currentStep === 1 
-    ? (isOAuthCompletion ? t('selectRoleTitle.oauth', 'Complete Your Registration') : t('selectRoleTitle')) 
-    : t('detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
+    ? (isOAuthCompletion ? t('signup:selectRoleTitle.oauth', 'Complete Your Registration') : t('signup:selectRoleTitle')) 
+    : t('signup:detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
 
   if (!isLoaded) {
     return (
@@ -787,7 +787,7 @@ const SignupPage: React.FC = () => {
                     {isOAuthCompletion ? (
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                          {t('labels.email')}<span className="text-swiss-coral">*</span>
+                          {t('signup:labels.email')}<span className="text-swiss-coral">*</span>
                         </label>
                         <input 
                           type="email"

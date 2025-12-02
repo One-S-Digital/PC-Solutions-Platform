@@ -86,12 +86,12 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
           setMessagePages(prev => ({ ...prev, [currentActiveId]: 1 }));
           setHasMoreMessages(prev => ({ ...prev, [currentActiveId]: hasMore }));
         } catch (error) {
-          console.error(`Failed to load messages for active conversation ${currentActiveId}:`, error);
+          console.error('Failed to load messages for active conversation');
           setMessagesByConversation(prev => ({ ...prev, [currentActiveId]: [] }));
         }
       }
     } catch (error) {
-      console.error('Failed to load conversations:', error);
+      console.error('Failed to load conversations');
       setConversations([]);
       setMessagesByConversation({});
     } finally {
@@ -174,7 +174,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         });
       } catch (error) {
         // Silently fail polling errors
-        console.error('Polling error:', error);
+        console.error('Polling error');
       }
     }, 5000); // Increased to 5 seconds to reduce load
 
@@ -212,7 +212,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       setMessagePages(prev => ({ ...prev, [conversationId]: 1 }));
       setHasMoreMessages(prev => ({ ...prev, [conversationId]: hasMore }));
     } catch (error) {
-      console.error(`Failed to load messages for conversation ${conversationId}:`, error);
+      console.error('Failed to load messages for conversation');
       // Only show error notification for non-network errors (server might be down)
       if (error instanceof Error && !error.message.includes('Failed to fetch') && !error.message.includes('ERR_CONNECTION_REFUSED')) {
         addNotification({
@@ -251,7 +251,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         )
       }));
     } catch (error) {
-      console.error(`Failed to mark conversation ${conversationId} as read:`, error);
+      console.error('Failed to mark conversation as read');
     }
   };
 
@@ -312,7 +312,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       // Reload conversations to get updated last message from server
       loadUserConversations();
     } catch (error) {
-      console.error('Failed to send message:', error);
+      console.error('Failed to send message');
       // Remove optimistic update on error
       setMessagesByConversation(prev => ({
         ...prev,
@@ -354,7 +354,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         type: 'success',
       });
     } catch (error) {
-      console.error('Failed to update message:', error);
+      console.error('Failed to update message');
       addNotification({
         title: t('common:errors.updateMessageFailed', 'Failed to update message'),
         message: error instanceof Error ? error.message : 'An unknown error occurred',
@@ -393,7 +393,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         type: 'success',
       });
     } catch (error) {
-      console.error('Failed to delete message:', error);
+      console.error('Failed to delete message');
       addNotification({
         title: t('common:errors.deleteMessageFailed', 'Failed to delete message'),
         message: error instanceof Error ? error.message : 'An unknown error occurred',
@@ -430,7 +430,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       setMessagePages(prev => ({ ...prev, [conversationId]: nextPage }));
       setHasMoreMessages(prev => ({ ...prev, [conversationId]: hasMore }));
     } catch (error) {
-      console.error(`Failed to load more messages for conversation ${conversationId}:`, error);
+      console.error('Failed to load more messages for conversation');
     }
   };
 
@@ -466,7 +466,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
                     conv.participantIds.every(pid => participantIds.includes(pid))
           );
         } catch (error) {
-          console.error('Failed to check existing conversations:', error);
+          console.error('Failed to check existing conversations');
           // Continue to create new conversation
         }
       }
@@ -495,7 +495,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       setActiveConversationId(conversation.id);
       return conversation.id;
     } catch (error) {
-      console.error('Failed to start conversation:', error);
+      console.error('Failed to start conversation');
       throw error;
     }
   };

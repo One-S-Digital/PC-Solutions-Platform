@@ -3,7 +3,7 @@ import { useMessaging } from '../../contexts/MessagingContext';
 import { useAppContext } from '../../contexts/AppContext';
 import MessageBubble from './MessageBubble';
 import Button from '../ui/Button';
-import { PaperAirplaneIcon, UserCircleIcon, PaperClipIcon, FaceSmileIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, UserCircleIcon, PaperClipIcon, FaceSmileIcon, UserGroupIcon, XMarkIcon, DocumentIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
@@ -32,6 +32,13 @@ const ChatWindow: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+  const [pendingFile, setPendingFile] = useState<{
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+    fileUrl: string;
+    isImage: boolean;
+  } | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -40,6 +47,13 @@ const ChatWindow: React.FC = () => {
 
   const activeConversation = conversations.find(c => c.id === activeConversationId);
   const rawMessages = activeConversationId ? messagesByConversation[activeConversationId] || [] : [];
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  };
   
   // Deduplicate messages by ID to prevent React key warnings
   const messages = useMemo(() => {
@@ -163,11 +177,23 @@ const ChatWindow: React.FC = () => {
         throw new Error('Authentication token not available');
       }
 
-      // Determine if it's an image or file
+      // Determine file type and appropriate assetKind
       const isImage = file.type.startsWith('image/');
-      // Use DOCUMENT for all messaging attachments (both images and files)
-      // The messageType (IMAGE/FILE) will distinguish them in the UI
-      const assetKind = 'DOCUMENT';
+      const isVideo = file.type.startsWith('video/');
+      const isPresentation = file.type.includes('powerpoint') || file.type.includes('presentation');
+      const isCSV = file.type === 'text/csv' || file.type === 'application/csv';
+      
+      // Route to appropriate asset kind based on file type
+      let assetKind: string;
+      if (isImage) {
+        assetKind = 'COVER_IMAGE'; // Images (JPEG, PNG, WEBP)
+      } else if (isVideo || isPresentation) {
+        assetKind = 'ELEARNING'; // Videos (MP4, MOV, AVI, WebM) & Presentations (PPT, PPTX)
+      } else if (isCSV) {
+        assetKind = 'CATALOG_CSV'; // CSV files
+      } else {
+        assetKind = 'DOCUMENT'; // Documents (PDF, Word)
+      }
 
       // Upload file with conversationId to organize files by conversation
       const uploadResponse = await upload('/upload/file', file, { 
@@ -182,22 +208,18 @@ const ChatWindow: React.FC = () => {
       const asset = uploadResponse.asset;
       const fileUrl = asset.publicUrl || asset.url;
       
-      // Send message with file attachment
-      // Content is empty for file messages - file metadata is stored in separate fields
-      await sendMessage(
-        activeConversationId,
-        '', // Empty content for file messages
-        isImage ? 'IMAGE' : 'FILE',
-        {
-          fileName: asset.filename || file.name,
-          fileSize: asset.size || file.size,
-          mimeType: asset.mimeType || asset.contentType || file.type,
-          fileUrl: fileUrl,
-        }
-      );
+      // Store the file as pending instead of sending immediately
+      setPendingFile({
+        fileName: asset.filename || file.name,
+        fileSize: asset.size || file.size,
+        mimeType: asset.mimeType || asset.contentType || file.type,
+        fileUrl: fileUrl,
+        isImage: isImage,
+      });
     } catch (error) {
-      console.error('Failed to upload file:', error);
-      alert(error instanceof Error ? error.message : 'Failed to upload file. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
+      console.error('Failed to upload file');
+      alert(`${errorMessage}. Please try again.`);
     } finally {
       setIsUploading(false);
       // Reset file input
@@ -207,11 +229,43 @@ const ChatWindow: React.FC = () => {
     }
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleRemovePendingFile = () => {
+    setPendingFile(null);
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newMessage.trim() && activeConversationId) {
-      sendTypingStop(); // Stop typing indicator when sending
-      sendMessage(activeConversationId, newMessage.trim());
+    if (!activeConversationId) return;
+    
+    const messageText = newMessage.trim();
+    const hasMessage = messageText.length > 0;
+    const hasFile = pendingFile !== null;
+    
+    // Only send if there's either a message or a file
+    if (!hasMessage && !hasFile) return;
+
+    sendTypingStop(); // Stop typing indicator when sending
+    
+    try {
+      if (hasFile && pendingFile) {
+        // Send message with file attachment
+        await sendMessage(
+          activeConversationId,
+          messageText, // Can be empty or have caption
+          pendingFile.isImage ? 'IMAGE' : 'FILE',
+          {
+            fileName: pendingFile.fileName,
+            fileSize: pendingFile.fileSize,
+            mimeType: pendingFile.mimeType,
+            fileUrl: pendingFile.fileUrl,
+          }
+        );
+        setPendingFile(null); // Clear pending file after sending
+      } else if (hasMessage) {
+        // Send text-only message
+        await sendMessage(activeConversationId, messageText);
+      }
+      
       setNewMessage('');
       
       // Clear typing timeout
@@ -219,6 +273,9 @@ const ChatWindow: React.FC = () => {
         clearTimeout(typingTimeoutRef.current);
         typingTimeoutRef.current = null;
       }
+    } catch (error) {
+      console.error('Failed to send message');
+      alert(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
     }
   };
 
@@ -297,14 +354,50 @@ const ChatWindow: React.FC = () => {
       </div>
 
       {/* Message Input Area */}
-      <div className="border-t border-gray-200 p-4 bg-gray-50 relative">
-        <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
+      <div className="border-t border-gray-200 bg-gray-50 relative">
+        {/* Pending File Preview */}
+        {pendingFile && (
+          <div className="p-3 border-b border-gray-200 bg-white">
+            <div className="flex items-center space-x-3">
+              {pendingFile.isImage ? (
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                  <img 
+                    src={pendingFile.fileUrl} 
+                    alt={pendingFile.fileName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-swiss-mint/10 flex items-center justify-center flex-shrink-0">
+                  <DocumentIcon className="w-6 h-6 text-swiss-mint" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{pendingFile.fileName}</p>
+                <p className="text-xs text-gray-500">
+                  {pendingFile.fileSize ? formatFileSize(pendingFile.fileSize) : ''}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemovePendingFile}
+                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                aria-label={t('common:remove', 'Remove')}
+                title={t('common:remove', 'Remove')}
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <form onSubmit={handleSendMessage} className="p-4 flex items-center space-x-2">
           <input
             type="file"
             ref={fileInputRef}
             onChange={handleFileSelect}
             className="hidden"
-            accept="image/*,.pdf,.doc,.docx,.txt,.zip"
+            accept="image/*,.pdf,.doc,.docx,.csv,.mp4,.mov,.avi,.webm,.ppt,.pptx"
             disabled={isUploading}
           />
           <Button 
@@ -346,7 +439,7 @@ const ChatWindow: React.FC = () => {
               type="text"
               value={newMessage}
               onChange={handleInputChange}
-              placeholder={isUploading ? t('common:uploading', 'Uploading...') : t('messages:placeholders.typeMessage')}
+              placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}
               className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent outline-none text-sm shadow-sm disabled:opacity-50"
               autoFocus
               aria-label={t('messages:placeholders.typeMessage')}
@@ -364,7 +457,7 @@ const ChatWindow: React.FC = () => {
             size="md" 
             className="!p-2.5 disabled:opacity-50" 
             aria-label={t('common:buttons.sendMessage')}
-            disabled={isUploading || (!newMessage.trim() && !isUploading)}
+            disabled={isUploading || (!newMessage.trim() && !pendingFile)}
           >
             <PaperAirplaneIcon className="w-5 h-5" />
           </Button>

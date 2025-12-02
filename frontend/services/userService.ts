@@ -58,20 +58,9 @@ class UserService {
         { token }
       );
       
-      console.log('👥 getAllUsers response:', JSON.stringify({
-        success: response.success,
-        successType: typeof response.success,
-        hasData: !!response.data,
-        dataType: typeof response.data,
-        isArray: Array.isArray(response.data),
-        dataKeys: response.data && typeof response.data === 'object' && !Array.isArray(response.data) ? Object.keys(response.data) : 'N/A',
-        hasMeta: !!(response as any).meta,
-        fullResponse: response
-      }, null, 2));
-      
       // Check success - handle undefined as success if data exists
       if (response.success === false) {
-        console.error('❌ Response indicates failure:', response);
+        console.error('❌ Failed to fetch users');
         throw new Error(response.message || 'Failed to fetch users');
       }
       
@@ -122,8 +111,6 @@ class UserService {
         }
       }
       
-      console.log('👥 Parsed users:', { count: users.length, pagination });
-      
       if (users.length === 0) {
         console.warn('⚠️ No users found in response');
         return { users: [], pagination: pagination };
@@ -135,7 +122,7 @@ class UserService {
             try {
               return this.transformUser(user);
             } catch (error) {
-              console.error('❌ Error transforming user:', user, error);
+              console.error('❌ Error transforming user');
               // Return a basic user object if transformation fails
               return {
                 id: user.id || 'unknown',
@@ -153,11 +140,11 @@ class UserService {
           pagination: pagination,
         };
       } catch (error) {
-        console.error('❌ Error mapping users:', error);
+        console.error('❌ Error mapping users');
         throw new Error('Failed to process users data');
       }
     } catch (error) {
-      console.error('❌ Error in getAllUsers:', error);
+      console.error('❌ Error fetching users');
       throw error;
     }
   }

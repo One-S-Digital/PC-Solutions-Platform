@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
- * Automated Hardcoded Strings Fixer
+ * Automated Hardcoded Strings Fixer (Improved & Conservative)
  * 
- * This script automatically finds and fixes hardcoded strings by:
- * 1. Finding hardcoded user-facing strings
- * 2. Generating appropriate translation keys
- * 3. Replacing hardcoded strings with t() calls
- * 4. Adding translation keys to translation files
+ * This script ONLY converts hardcoded user-facing strings to translation keys.
+ * It is conservative and will:
+ * - Only fix strings that are clearly visible in the UI
+ * - Skip strings that are already translated
+ * - Skip strings that shouldn't be translated (technical terms, IDs, etc.)
+ * - Only modify code related to translations, nothing else
  * 
  * Usage: node scripts/auto-fix-hardcoded-strings.mjs [options]
  */
@@ -21,51 +22,111 @@ const __dirname = path.dirname(__filename);
 const FRONTEND_DIR = path.join(__dirname, '../frontend');
 const TRANSLATIONS_DIR = path.join(__dirname, '../packages/translations/locales/en');
 
-// Common UI words that should be translated
-const UI_WORDS = [
-  'Save', 'Cancel', 'Delete', 'Edit', 'Add', 'Create', 'Update', 'Submit',
-  'Loading', 'Error', 'Success', 'Warning', 'Info', 'Welcome', 'Dashboard',
-  'Profile', 'Settings', 'Logout', 'Login', 'Register', 'Sign up', 'Sign in',
-  'Back', 'Next', 'Previous', 'Close', 'Open', 'View', 'Details', 'Search',
-  'Filter', 'Sort', 'Export', 'Import', 'Download', 'Upload', 'Yes', 'No',
-  'Confirm', 'OK', 'Apply', 'Reset', 'Clear', 'Send', 'Receive', 'Message',
-  'Messages', 'Notification', 'Notifications', 'Home', 'About', 'Contact',
-  'Help', 'Support', 'Terms', 'Privacy', 'Policy', 'Policies'
-];
-
-// Patterns to exclude
-const EXCLUDE_PATTERNS = [
-  /className/, /import\s+.*from/, /export\s+.*from/,
-  /console\.(log|error|warn|debug)/, /\/\/.*/, /\/\*.*\*\//,
-  /['"]https?:\/\//, /['"]data:/, /['"]#/, /['"]\./, /['"]\w+\.\w+/,
-  /['"]\d+/, /['"]\$\{/, /process\.env/, /__dirname|__filename/,
-  /useTranslation|useTranslation\(/, /t\(/, /i18n/, /['"]\w+:\w+/,
-  /['"]\w+\.\w+\.\w+/, /['"]\w+\.\w+\.\w+\.\w+/,
-];
-
-const FALSE_POSITIVES = [
-  'React', 'Component', 'Props', 'State', 'TypeScript', 'JavaScript',
-  'HTML', 'CSS', 'JSX', 'TSX', 'API', 'HTTP', 'HTTPS', 'URL', 'URI',
-  'JSON', 'XML', 'SVG', 'PNG', 'JPG', 'PDF', 'DOC', 'XLS',
-  'useState', 'useEffect', 'useCallback', 'useMemo', 'useRef',
-  'className', 'onClick', 'onChange', 'onSubmit', 'onFocus', 'onBlur',
-  'aria-label', 'aria-labelledby', 'data-testid', 'data-cy',
-  'true', 'false', 'null', 'undefined', 'NaN',
-  'px', 'rem', 'em', 'vh', 'vw', '%', 'deg', 'ms', 's',
-  'flex', 'grid', 'block', 'inline', 'none', 'auto',
-];
-
-function isExcluded(text, line) {
-  for (const pattern of EXCLUDE_PATTERNS) {
-    if (pattern.test(line)) return true;
+/**
+ * Load all existing translation values to avoid duplicates
+ */
+function loadAllTranslationValues() {
+  const allValues = new Set();
+  const languages = ['en', 'fr', 'de'];
+  
+  for (const lang of languages) {
+    const langDir = path.join(__dirname, '../packages/translations/locales', lang);
+    if (!fs.existsSync(langDir)) continue;
+    
+    const files = fs.readdirSync(langDir).filter(f => f.endsWith('.json'));
+    
+    for (const file of files) {
+      const filePath = path.join(langDir, file);
+      try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        const translations = JSON.parse(content);
+        
+        // Flatten and collect all string values
+        function collectValues(obj) {
+          if (typeof obj === 'string') {
+            allValues.add(obj.toLowerCase().trim());
+          } else if (typeof obj === 'object' && obj !== null) {
+            Object.values(obj).forEach(collectValues);
+          }
+        }
+        
+        collectValues(translations);
+      } catch (error) {
+        // Skip invalid JSON files
+      }
+    }
   }
-  if (FALSE_POSITIVES.some(fp => text.includes(fp))) return true;
-  if (text.length < 3) return true;
-  if (text === text.toUpperCase() && text.length > 2) return true;
-  if (/^[a-z]+[A-Z]/.test(text) || /^[a-z_]+$/.test(text)) return true;
+  
+  return allValues;
+}
+
+/**
+ * Check if a string should be skipped (not translated)
+ */
+function shouldSkipString(text, line) {
+  const normalizedText = text.toLowerCase().trim();
+  
+  // Skip empty or very short strings
+  if (!text || text.trim().length < 3) return true;
+  
+  // Skip if already using translation
+  if (line.includes('t(') || line.includes('useTranslation')) return true;
+  
+  // Skip comments
+  if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.trim().startsWith('*')) return true;
+  
+  // Skip import/export statements
+  if (line.trim().startsWith('import ') || line.trim().startsWith('export ')) return true;
+  
+  // Skip URLs
+  if (text.match(/^https?:\/\//i) || text.match(/^www\./i)) return true;
+  
+  // Skip email addresses
+  if (text.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return true;
+  
+  // Skip file paths
+  if (text.match(/^[\/\\]|\.(js|ts|tsx|jsx|json|css|scss|png|jpg|svg|gif|webp)$/i)) return true;
+  
+  // Skip CSS classes and technical terms
+  if (text.match(/^(bg-|text-|border-|p-|m-|w-|h-|flex|grid|hidden|block|inline|absolute|relative|fixed)/)) return true;
+  
+  // Skip technical identifiers
+  if (text.match(/^[a-z]+[A-Z][a-z]*$/) && text.length < 15) return true; // camelCase
+  if (text.match(/^[A-Z_]+$/)) return true; // CONSTANTS
+  if (text.match(/^[a-z_]+$/)) return true; // snake_case
+  
+  // Skip single technical words
+  if (text.match(/^(React|Component|Props|State|TypeScript|JavaScript|HTML|CSS|JSX|TSX|API|HTTP|HTTPS|URL|URI|JSON|XML|SVG|PNG|JPG|PDF|DOC|XLS|useState|useEffect|useCallback|useMemo|useRef|className|onClick|onChange|onSubmit|true|false|null|undefined|NaN|px|rem|em|vh|vw|%|deg|ms|s|flex|grid|block|inline|none|auto)$/i)) return true;
+  
+  // Skip strings that look like code
+  if (text.includes('${') || text.includes('`') || text.includes('=>') || text.includes('function')) return true;
+  
+  // Skip strings that are all uppercase (likely constants)
+  if (text === text.toUpperCase() && text.length > 2 && !text.includes(' ')) return true;
+  
+  // Skip strings that are just numbers
+  if (text.match(/^\d+$/)) return true;
+  
+  // Skip strings in className, id, data-* attributes
+  if (line.match(/(className|id|data-\w+)\s*=\s*['"]/)) return true;
+  
+  // Skip console.log, console.error, etc.
+  if (line.match(/console\.(log|error|warn|debug)/)) return true;
+  
   return false;
 }
 
+/**
+ * Check if string is already in translation files
+ */
+function isAlreadyTranslated(text, existingTranslations) {
+  const normalized = text.toLowerCase().trim();
+  return existingTranslations.has(normalized);
+}
+
+/**
+ * Generate translation key from text
+ */
 function generateTranslationKey(text, filePath, context) {
   // Clean text for key generation
   let key = text
@@ -81,12 +142,14 @@ function generateTranslationKey(text, filePath, context) {
     const pageMatch = filePath.match(/pages\/([^/]+)/);
     if (pageMatch) {
       const pageName = pageMatch[1];
-      if (pageName === 'admin') namespace = 'admin';
+      if (pageName === 'admin' || pageName.includes('Admin')) namespace = 'admin';
       else if (pageName === 'auth' || pageName.includes('Login') || pageName.includes('Signup')) namespace = 'auth';
       else if (pageName.includes('Dashboard')) namespace = 'dashboard';
       else if (pageName.includes('Settings')) namespace = 'settings';
       else if (pageName.includes('Messages')) namespace = 'messages';
-      else if (pageName.includes('Content') || pageName.includes('Policy')) namespace = 'content';
+      else if (pageName.includes('Content') || pageName.includes('Policy') || pageName.includes('ELearning')) namespace = 'content';
+      else if (pageName.includes('Signup')) namespace = 'signup';
+      else if (pageName.includes('Recruitment')) namespace = 'recruitment';
     }
   } else if (filePath.includes('/components/')) {
     const compMatch = filePath.match(/components\/([^/]+)/);
@@ -99,15 +162,15 @@ function generateTranslationKey(text, filePath, context) {
   }
   
   // Generate key based on context
-  if (context.includes('button') || context.includes('Button')) {
+  if (context.includes('button') || context.includes('Button') || context.includes('<button') || context.includes('</button>')) {
     return `${namespace}.buttons.${key}`;
-  } else if (context.includes('label') || context.includes('Label')) {
+  } else if (context.includes('label') || context.includes('Label') || context.includes('htmlFor') || context.includes('for=')) {
     return `${namespace}.labels.${key}`;
   } else if (context.includes('placeholder') || context.includes('Placeholder')) {
     return `${namespace}.placeholders.${key}`;
   } else if (context.includes('error') || context.includes('Error')) {
     return `${namespace}.errors.${key}`;
-  } else if (context.includes('title') || context.includes('Title')) {
+  } else if (context.includes('title') || context.includes('Title') || context.includes('<h1') || context.includes('<h2') || context.includes('<h3')) {
     return `${namespace}.titles.${key}`;
   } else if (context.includes('message') || context.includes('Message')) {
     return `${namespace}.messages.${key}`;
@@ -116,73 +179,111 @@ function generateTranslationKey(text, filePath, context) {
   return `${namespace}.${key}`;
 }
 
-function findHardcodedStrings(filePath, content) {
+/**
+ * Find hardcoded strings - ONLY user-facing strings visible in UI
+ */
+function findHardcodedStrings(filePath, content, existingTranslations) {
   const results = [];
   const lines = content.split('\n');
   
   lines.forEach((line, lineNumber) => {
-    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
+    // Skip if already has translation
+    if (line.includes("t('") || line.includes('t("') || line.includes('t(`')) return;
     
-    // Pattern 1: JSX text content >"Text"<
-    const jsxTextMatch = line.match(/>\s*['"]([A-Z][a-zA-Z\s]{3,})['"]\s*</);
-    if (jsxTextMatch && !isExcluded(jsxTextMatch[1], line)) {
-      if (!line.includes('t(') && !line.includes('useTranslation')) {
+    // Skip if should be excluded
+    if (shouldSkipString('', line)) return;
+    
+    // Pattern 1: JSX text content between tags (quoted strings)
+    // Look for: >"Text here"< or >'Text here'<
+    const jsxTextQuotedPattern = />\s*['"]([A-Z][A-Za-z\s]{2,}?)\s*</g;
+    let match;
+    while ((match = jsxTextQuotedPattern.exec(line)) !== null) {
+      const text = match[1].trim();
+      
+      if (!shouldSkipString(text, line) && 
+          !isAlreadyTranslated(text, existingTranslations) &&
+          text.length >= 3) {
         results.push({
-          text: jsxTextMatch[1].trim(),
+          text,
           line: lineNumber + 1,
           context: line.trim(),
           file: filePath,
-          type: 'jsx-text',
+          type: 'jsx-text-quoted',
           confidence: 'high'
         });
       }
     }
     
-    // Pattern 2: Attribute values
-    const attrMatch = line.match(/(title|placeholder|aria-label|alt|label|text|message|error|success|warning|info|description|heading|subtitle|caption|tooltip|hint|help|content)\s*=\s*['"]([A-Z][a-zA-Z\s]{3,})['"]/i);
-    if (attrMatch && !isExcluded(attrMatch[2], line)) {
-      if (!line.includes('t(') && !line.includes('useTranslation')) {
-        results.push({
-          text: attrMatch[2].trim(),
-          line: lineNumber + 1,
-          context: line.trim(),
-          file: filePath,
-          type: 'attribute',
-          attribute: attrMatch[1],
-          confidence: 'high'
-        });
+    // Pattern 2: JSX text content between tags (unquoted - direct text)
+    // Look for: >Text here< (not in JSX expression, not already translated)
+    // This catches: <p>Some text</p> or <div>Hello World</div>
+    // But skips: <p>{t('key')}</p> or <div>{variable}</div>
+    if (!line.includes('{') && !line.includes('t(')) {
+      const jsxTextUnquotedPattern = />\s*([A-Z][A-Za-z\s]{2,}?)\s*</g;
+      while ((match = jsxTextUnquotedPattern.exec(line)) !== null) {
+        const text = match[1].trim();
+        
+        // Skip if it looks like a closing tag or attribute
+        if (text.includes('<') || text.includes('>') || text.includes('=')) continue;
+        
+        if (!shouldSkipString(text, line) && 
+            !isAlreadyTranslated(text, existingTranslations) &&
+            text.length >= 3) {
+          results.push({
+            text,
+            line: lineNumber + 1,
+            context: line.trim(),
+            file: filePath,
+            type: 'jsx-text-unquoted',
+            confidence: 'high'
+          });
+        }
       }
     }
     
-    // Pattern 3: Variable assignments
-    const varMatch = line.match(/(const|let|var)\s+\w+\s*=\s*['"]([A-Z][a-zA-Z\s]{3,})['"]/);
-    if (varMatch && !isExcluded(varMatch[2], line)) {
-      const hasSpaces = varMatch[2].includes(' ');
-      const startsWithCapital = /^[A-Z]/.test(varMatch[2]);
-      if (hasSpaces && startsWithCapital && !line.includes('t(')) {
-        results.push({
-          text: varMatch[2].trim(),
-          line: lineNumber + 1,
-          context: line.trim(),
-          file: filePath,
-          type: 'variable',
-          confidence: 'medium'
-        });
+    // Pattern 3: Button/link text content
+    // Look for: <button>Text</button> or <a>Text</a> (but not if it has {t()} inside)
+    if (!line.includes('{t(') && !line.includes('{t(')) {
+      const buttonTextPattern = /<(button|a)[^>]*>\s*([A-Z][A-Za-z\s]{2,}?)\s*<\/(button|a)>/gi;
+      while ((match = buttonTextPattern.exec(line)) !== null) {
+        const text = match[2].trim();
+        
+        if (!shouldSkipString(text, line) && 
+            !isAlreadyTranslated(text, existingTranslations) &&
+            text.length >= 3) {
+          results.push({
+            text,
+            line: lineNumber + 1,
+            context: line.trim(),
+            file: filePath,
+            type: 'button-text',
+            confidence: 'high'
+          });
+        }
       }
     }
     
-    // Pattern 4: Alert/Confirm messages
-    const alertMatch = line.match(/(alert|confirm)\s*\(\s*['"]([A-Z][a-zA-Z\s]{3,})['"]/i);
-    if (alertMatch && !isExcluded(alertMatch[2], line)) {
-      if (!line.includes('t(')) {
-        results.push({
-          text: alertMatch[2].trim(),
-          line: lineNumber + 1,
-          context: line.trim(),
-          file: filePath,
-          type: 'alert',
-          confidence: 'high'
-        });
+    // Pattern 4: User-facing attributes (title, placeholder, aria-label, alt)
+    // ONLY these specific attributes that are visible to users
+    // Skip if already using t() in the attribute
+    if (!line.includes('{t(')) {
+      const attrPattern = /(title|placeholder|aria-label|alt)\s*=\s*['"]([A-Z][A-Za-z\s]{2,})['"]/gi;
+      while ((match = attrPattern.exec(line)) !== null) {
+        const text = match[2].trim();
+        
+        if (!shouldSkipString(text, line) && 
+            !isAlreadyTranslated(text, existingTranslations) &&
+            text.length >= 3) {
+          results.push({
+            text,
+            line: lineNumber + 1,
+            context: line.trim(),
+            file: filePath,
+            type: 'attribute',
+            attribute: match[1],
+            confidence: 'high'
+          });
+        }
       }
     }
   });
@@ -190,7 +291,10 @@ function findHardcodedStrings(filePath, content) {
   return results;
 }
 
-function scanDirectory(dirPath, extensions = ['.tsx', '.ts']) {
+/**
+ * Scan directory for files
+ */
+function scanDirectory(dirPath, extensions = ['.tsx', '.jsx']) {
   const results = [];
   const files = [];
   
@@ -201,7 +305,7 @@ function scanDirectory(dirPath, extensions = ['.tsx', '.ts']) {
       const fullPath = path.join(currentPath, entry.name);
       
       if (entry.isDirectory()) {
-        if (['node_modules', 'dist', 'build', '.git', '.next', 'coverage', 'tests', 'test'].includes(entry.name)) {
+        if (['node_modules', 'dist', 'build', '.git', '.next', 'coverage', 'tests', 'test', '__tests__', '__mocks__'].includes(entry.name)) {
           continue;
         }
         walkDir(fullPath);
@@ -215,20 +319,12 @@ function scanDirectory(dirPath, extensions = ['.tsx', '.ts']) {
   }
   
   walkDir(dirPath);
-  
-  for (const file of files) {
-    try {
-      const content = fs.readFileSync(file, 'utf8');
-      const fileResults = findHardcodedStrings(file, content);
-      results.push(...fileResults);
-    } catch (error) {
-      console.error(`Error reading ${file}:`, error.message);
-    }
-  }
-  
-  return results;
+  return files;
 }
 
+/**
+ * Load translation file
+ */
 function loadTranslationFile(namespace) {
   const filePath = path.join(TRANSLATIONS_DIR, `${namespace}.json`);
   if (fs.existsSync(filePath)) {
@@ -237,11 +333,17 @@ function loadTranslationFile(namespace) {
   return {};
 }
 
+/**
+ * Save translation file
+ */
 function saveTranslationFile(namespace, data) {
   const filePath = path.join(TRANSLATIONS_DIR, `${namespace}.json`);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8');
 }
 
+/**
+ * Set nested value in object
+ */
 function setNestedValue(obj, keyPath, value) {
   const keys = keyPath.split('.');
   let current = obj;
@@ -257,10 +359,18 @@ function setNestedValue(obj, keyPath, value) {
   current[keys[keys.length - 1]] = value;
 }
 
+/**
+ * Fix hardcoded string - ONLY modify translation-related code
+ */
 function fixHardcodedString(filePath, lineNumber, originalText, translationKey, namespace) {
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
   const line = lines[lineNumber - 1];
+  
+  // Convert translation key to proper namespace:key format
+  const formattedKey = translationKey.includes('.') 
+    ? translationKey.replace(/^([^.]+)\./, '$1:') 
+    : `common:${translationKey}`;
   
   let newLine = line;
   let needsUseTranslation = false;
@@ -273,21 +383,39 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
   const hasUseTranslationHook = content.includes('const { t } = useTranslation') || 
                                 content.includes('const { t } = useTranslation(');
   
-  // Replace the hardcoded string
+  // ONLY replace the specific hardcoded string - be very precise
+  const escapedText = originalText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  
+  // Pattern 1: JSX text content >"Text"< (quoted)
   if (line.includes(`>"${originalText}"<`) || line.includes(`>'${originalText}'<`)) {
-    // JSX text content
     newLine = line.replace(
-      new RegExp(`>\\s*['"]${originalText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"]\\s*<`),
-      `>{t('${translationKey}')}<`
+      new RegExp(`>\\s*['"]${escapedText}['"]\\s*<`),
+      `>{t('${formattedKey}')}<`
     );
     needsUseTranslation = true;
-  } else if (line.match(/['"]/)) {
-    // Attribute or other string - be more careful
-    const escapedText = originalText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  // Pattern 2: JSX text content >Text< (unquoted)
+  else if (line.match(new RegExp(`>\\s*${escapedText}\\s*<`)) && !line.includes('{')) {
+    newLine = line.replace(
+      new RegExp(`>\\s*${escapedText}\\s*<`),
+      `>{t('${formattedKey}')}<`
+    );
+    needsUseTranslation = true;
+  }
+  // Pattern 3: Button/link text <button>Text</button>
+  else if (line.match(new RegExp(`<[^>]+>\\s*${escapedText}\\s*<\\/`)) && !line.includes('{t(')) {
+    newLine = line.replace(
+      new RegExp(`(${escapedText})`),
+      `{t('${formattedKey}')}`
+    );
+    needsUseTranslation = true;
+  }
+  // Pattern 4: Attribute values (title, placeholder, aria-label, alt)
+  else if (line.match(/(title|placeholder|aria-label|alt)\s*=\s*['"]/) && !line.includes('{t(')) {
     if (line.includes(`"${originalText}"`) || line.includes(`'${originalText}'`)) {
       newLine = line.replace(
-        new RegExp(`['"]${escapedText}['"]`),
-        `{t('${translationKey}')}`
+        new RegExp(`(['"])${escapedText}\\1`),
+        `$1{t('${formattedKey}')}$1`
       );
       needsUseTranslation = true;
     }
@@ -297,7 +425,7 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
   if (newLine !== line) {
     lines[lineNumber - 1] = newLine;
     
-    // Add useTranslation import if needed
+    // Add useTranslation import if needed (ONLY if not already present)
     if (!hasUseTranslationImport && needsUseTranslation) {
       // Find the last import statement
       let lastImportIndex = -1;
@@ -317,7 +445,7 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
       }
     }
     
-    // Add useTranslation hook in component if needed
+    // Add useTranslation hook in component if needed (ONLY if not already present)
     if (!hasUseTranslationHook && needsUseTranslation) {
       // Find component function/const
       let componentStart = -1;
@@ -342,7 +470,9 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
         const nearbyLines = lines.slice(hookInsertIndex, hookInsertIndex + 5).join('\n');
         if (!nearbyLines.includes('useTranslation')) {
           const indent = lines[hookInsertIndex]?.match(/^(\s*)/)?.[1] || '  ';
-          lines.splice(hookInsertIndex, 0, `${indent}const { t } = useTranslation();`);
+          // Use proper namespace in useTranslation hook
+          const namespaceForHook = namespace !== 'common' ? `['${namespace}', 'common']` : `['common']`;
+          lines.splice(hookInsertIndex, 0, `${indent}const { t } = useTranslation(${namespaceForHook});`);
         }
       }
     }
@@ -354,15 +484,116 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
   return { fixed: false, needsTranslation: false };
 }
 
+/**
+ * Main auto-fix function
+ */
 async function autoFix() {
-  console.log('🔍 Scanning for hardcoded strings...\n');
+  console.log('🔍 Scanning for hardcoded user-facing strings...\n');
   
-  const results = scanDirectory(FRONTEND_DIR);
+  // Load all existing translations to avoid duplicates
+  const existingTranslations = loadAllTranslationValues();
+  console.log(`📚 Loaded ${existingTranslations.size} existing translation values\n`);
+  
+  // Scan files
+  const files = scanDirectory(FRONTEND_DIR);
+  console.log(`📂 Scanning ${files.length} files...\n`);
+  
+  // Verbose: Show file scanning progress
+  let filesScanned = 0;
+  let filesWithResults = 0;
+  const scanStats = {
+    totalFiles: files.length,
+    filesWithStrings: 0,
+    totalStringsFound: 0,
+    stringsByType: {},
+    stringsByFile: {}
+  };
+  
+  const allResults = [];
+  for (const file of files) {
+    try {
+      const content = fs.readFileSync(file, 'utf8');
+      const fileResults = findHardcodedStrings(file, content, existingTranslations);
+      
+      filesScanned++;
+      if (fileResults.length > 0) {
+        filesWithResults++;
+        scanStats.filesWithStrings++;
+        scanStats.totalStringsFound += fileResults.length;
+        
+        const relPath = path.relative(FRONTEND_DIR, file);
+        scanStats.stringsByFile[relPath] = fileResults.length;
+        
+        // Count by type
+        fileResults.forEach(r => {
+          scanStats.stringsByType[r.type] = (scanStats.stringsByType[r.type] || 0) + 1;
+        });
+      }
+      
+      allResults.push(...fileResults);
+      
+      // Show progress every 50 files
+      if (filesScanned % 50 === 0) {
+        console.log(`   Scanned ${filesScanned}/${files.length} files... (found ${allResults.length} potential strings so far)`);
+      }
+    } catch (error) {
+      console.error(`Error reading ${file}:`, error.message);
+    }
+  }
   
   // Filter to only high-confidence findings
-  const highConfidence = results.filter(r => r.confidence === 'high');
+  const highConfidence = allResults.filter(r => r.confidence === 'high');
   
-  console.log(`📊 Found ${highConfidence.length} high-confidence hardcoded strings\n`);
+  console.log(`\n📊 Scan Summary:`);
+  console.log(`   Files scanned: ${filesScanned}`);
+  console.log(`   Files with potential strings: ${filesWithResults}`);
+  console.log(`   Total potential strings found: ${allResults.length}`);
+  console.log(`   High confidence strings: ${highConfidence.length}\n`);
+  
+  // Show breakdown by type
+  if (Object.keys(scanStats.stringsByType).length > 0) {
+    console.log('📋 Strings by type:');
+    Object.entries(scanStats.stringsByType)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([type, count]) => {
+        console.log(`   ${type}: ${count}`);
+      });
+    console.log('');
+  }
+  
+  // Show top files with most strings
+  if (Object.keys(scanStats.stringsByFile).length > 0) {
+    console.log('📁 Top files with potential strings:');
+    Object.entries(scanStats.stringsByFile)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .forEach(([file, count]) => {
+        console.log(`   ${file}: ${count} string(s)`);
+      });
+    console.log('');
+  }
+  
+  // Debug: Show what was found and why it was filtered
+  if (allResults.length > 0) {
+    console.log('📝 Sample findings (first 15):');
+    allResults.slice(0, 15).forEach(r => {
+      const relPath = path.relative(FRONTEND_DIR, r.file);
+      const confidence = r.confidence === 'high' ? '✓' : '○';
+      console.log(`   ${confidence} "${r.text}" in ${relPath}:${r.line} (${r.type})`);
+    });
+    console.log('');
+    
+    if (highConfidence.length === 0 && allResults.length > 0) {
+      console.log('⚠️  All strings were filtered out. This likely means:');
+      console.log('   - They are already translated (using t() calls)');
+      console.log('   - They exist in translation files');
+      console.log('   - They are technical strings that shouldn\'t be translated');
+      console.log('');
+    }
+  } else {
+    console.log('✅ No potential hardcoded strings found in any files.');
+    console.log('   This means the codebase is well-translated!\n');
+  }
   
   if (highConfidence.length === 0) {
     return {
@@ -370,7 +601,11 @@ async function autoFix() {
       fixed: 0,
       skipped: 0,
       errors: 0,
-      message: 'No hardcoded strings found that need fixing.'
+      message: 'No hardcoded user-facing strings found that need fixing.',
+      details: {
+        scanStats,
+        skipped: []
+      }
     };
   }
   
@@ -391,12 +626,23 @@ async function autoFix() {
       // Check if key already exists
       const existingValue = key.split('.').reduce((obj, k) => obj?.[k], translations);
       
-      if (existingValue && existingValue !== result.text) {
+      if (existingValue) {
         skipped.push({
           file: result.file,
           line: result.line,
           text: result.text,
-          reason: 'Translation key already exists with different value'
+          reason: `Translation key already exists: ${translationKey.replace(/^([^.]+)\./, '$1:')}`
+        });
+        continue;
+      }
+      
+      // Also check if the exact text value already exists in translations
+      if (isAlreadyTranslated(result.text, existingTranslations)) {
+        skipped.push({
+          file: result.file,
+          line: result.line,
+          text: result.text,
+          reason: 'Text already exists in translation files'
         });
         continue;
       }
@@ -415,7 +661,7 @@ async function autoFix() {
           file: result.file,
           line: result.line,
           text: result.text,
-          translationKey
+          translationKey: translationKey.replace(/^([^.]+)\./, '$1:')
         });
       } else {
         skipped.push({
@@ -455,9 +701,22 @@ async function autoFix() {
     details: {
       fixed,
       skipped,
-      errors
+      errors,
+      scanStats
     },
-    message: `Successfully fixed ${fixed.length} hardcoded strings. ${skipped.length} skipped, ${errors.length} errors.`
+    message: (() => {
+      let msg = `Successfully fixed ${fixed.length} hardcoded strings.`;
+      if (skipped.length > 0) {
+        msg += ` ${skipped.length} skipped (already translated or filtered).`;
+      }
+      if (errors.length > 0) {
+        msg += ` ${errors.length} errors.`;
+      }
+      if (fixed.length === 0 && skipped.length > 0) {
+        msg += '\n\n💡 All found strings were already translated or filtered out. This is good - it means your codebase is well-translated!';
+      }
+      return msg;
+    })()
   };
 }
 
@@ -473,6 +732,19 @@ if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith
     console.error(`   Skipped: ${result.skipped}`);
     console.error(`   Errors: ${result.errors}`);
     console.error(`\n${result.message}\n`);
+    
+    // Show detailed skip reasons if all were skipped
+    if (result.fixed === 0 && result.skipped > 0 && result.details?.skipped) {
+      console.error('📋 Skip reasons (first 10):');
+      const skipReasons = {};
+      result.details.skipped.slice(0, 10).forEach(s => {
+        skipReasons[s.reason] = (skipReasons[s.reason] || 0) + 1;
+      });
+      Object.entries(skipReasons).forEach(([reason, count]) => {
+        console.error(`   - ${reason}: ${count}`);
+      });
+      console.error('');
+    }
     
     if (result.errors > 0 && result.details?.errors) {
       console.error('⚠️  Errors encountered:');
@@ -497,4 +769,3 @@ if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith
 }
 
 export { autoFix };
-

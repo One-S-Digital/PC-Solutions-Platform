@@ -1,6 +1,31 @@
 import { apiService, ApiResponse } from './api';
 import { Conversation, Message, User } from '../types';
 
+/**
+ * Convert relative download URL to absolute URL
+ * Handles URLs like /api/upload/download/{key} and converts them to full URLs
+ */
+function toAbsoluteDownloadUrl(fileUrl: string | undefined): string | undefined {
+  if (!fileUrl) return undefined;
+  
+  // If it's already an absolute URL (starts with http:// or https://), return as-is
+  if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+    return fileUrl;
+  }
+  
+  // If it's a relative URL starting with /api/, prepend the API base URL
+  if (fileUrl.startsWith('/api/')) {
+    const apiBaseUrl = apiService.apiBaseUrl;
+    // Remove /api from the base URL if it's already there, since fileUrl already has /api/
+    const baseWithoutApi = apiBaseUrl.replace(/\/api\/?$/, '');
+    return `${baseWithoutApi}${fileUrl}`;
+  }
+  
+  // If it's a relative URL without /api/, assume it's relative to current domain
+  // This shouldn't happen with our secure URLs, but handle it just in case
+  return fileUrl;
+}
+
 export interface ConversationCreateData {
   type: 'DIRECT' | 'GROUP' | 'SUPPORT';
   title?: string;
@@ -33,38 +58,27 @@ class MessagingService {
   async getConversations(token?: string): Promise<Conversation[]> {
     try {
       const response = await apiService.get<Conversation[]>('/messaging/conversations', { token });
-      console.log('📨 getConversations response:', JSON.stringify({ 
-        success: response.success, 
-        hasData: !!response.data, 
-        dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
-        dataLength: Array.isArray(response.data) ? response.data.length : 'N/A',
-        message: response.message,
-        dataPreview: Array.isArray(response.data) ? response.data.slice(0, 2) : response.data,
-        fullResponse: response 
-      }, null, 2));
       
       // Handle empty array case - this is valid
       if (response.success === false) {
-        console.error('❌ Response indicates failure:', response);
+        console.error('❌ Failed to fetch conversations');
         throw new Error(response.message || 'Failed to fetch conversations');
       }
       
       // If data is undefined or null, return empty array (valid - user has no conversations)
       if (response.data === undefined || response.data === null) {
-        console.warn('⚠️ No data in response, returning empty array');
         return [];
       }
       
       // Ensure data is an array
       const conversations = Array.isArray(response.data) ? response.data : [];
-      console.log('📨 Transforming conversations:', { count: conversations.length });
       
       // Transform and deduplicate by ID (keep first occurrence)
       const transformed = conversations.map(conv => this.transformConversation(conv));
       const seen = new Set<string>();
       const unique = transformed.filter(conv => {
         if (seen.has(conv.id)) {
-          console.warn(`⚠️ Duplicate conversation detected: ${conv.id}, skipping`);
+          console.warn(`⚠️ Duplicate conversation detected, skipping`);
           return false;
         }
         seen.add(conv.id);
@@ -73,7 +87,7 @@ class MessagingService {
       
       return unique;
     } catch (error) {
-      console.error('❌ Error in getConversations:', error);
+      console.error('❌ Error fetching conversations:', error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   }
@@ -87,40 +101,17 @@ class MessagingService {
   }
 
   async createConversation(data: ConversationCreateData, token?: string): Promise<Conversation> {
-    console.log('📝 Creating conversation:', JSON.stringify({ 
-      type: data.type,
-      title: data.title,
-      participantIds: data.participantIds,
-      participantCount: data.participantIds.length,
-      hasToken: !!token 
-    }, null, 2));
     try {
       const response = await apiService.post<Conversation>('/messaging/conversations', data, { token });
-      console.log('📝 Create conversation response:', JSON.stringify({ 
-        success: response.success, 
-        hasData: !!response.data,
-        message: response.message,
-        responseType: typeof response,
-        responseKeys: Object.keys(response),
-        dataPreview: response.data ? {
-          id: response.data.id,
-          type: (response.data as any).type,
-          title: (response.data as any).title,
-        } : null,
-        fullResponse: response
-      }, null, 2));
       
       // Check if response is already the conversation object (direct response from backend)
       if (response && typeof response === 'object' && 'id' in response && 'type' in response && !('success' in response)) {
-        console.log('✅ Received direct conversation object from backend');
-        const transformed = this.transformConversation(response as any);
-        console.log('✅ Conversation created successfully:', { id: transformed.id, type: transformed.type });
-        return transformed;
+        return this.transformConversation(response as any);
       }
       
       if (!response.success) {
         const errorMsg = response.message || 'Failed to create conversation';
-        console.error('❌ Conversation creation failed:', errorMsg);
+        console.error('❌ Failed to create conversation');
         throw new Error(errorMsg);
       }
       
@@ -129,17 +120,9 @@ class MessagingService {
         throw new Error('No conversation data returned from server');
       }
       
-      const transformed = this.transformConversation(response.data);
-      console.log('✅ Conversation created successfully:', { id: transformed.id, type: transformed.type });
-      return transformed;
+      return this.transformConversation(response.data);
     } catch (error) {
-      console.error('❌ Error creating conversation:', error);
-      if (error instanceof Error) {
-        console.error('❌ Error details:', {
-          message: error.message,
-          stack: error.stack,
-        });
-      }
+      console.error('❌ Error creating conversation:', error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   }
@@ -302,6 +285,9 @@ class MessagingService {
       }
     }
 
+    // Convert fileUrl to absolute URL if it's a relative download URL
+    const absoluteFileUrl = toAbsoluteDownloadUrl(fileUrl);
+
     return {
       id: msg.id,
       conversationId: msg.conversationId,
@@ -312,7 +298,7 @@ class MessagingService {
       timestamp: msg.createdAt,
       isRead: msg.isRead,
       messageType: msg.messageType || 'TEXT',
-      fileUrl,
+      fileUrl: absoluteFileUrl,
       fileName,
       fileSize,
       mimeType,

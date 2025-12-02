@@ -53,7 +53,7 @@ export function useMessagingSocket({
           const token = await getToken();
           cb({ token, userId });
         } catch (error) {
-          console.error('Failed to get auth token for WebSocket:', error);
+          console.error('Failed to get auth token for WebSocket');
           cb({ token: null, userId });
         }
       },

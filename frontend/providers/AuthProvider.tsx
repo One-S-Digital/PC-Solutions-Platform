@@ -347,7 +347,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
 
-        console.error('Failed to sync user with backend:', error);
+        console.error('Failed to sync user with backend');
         const errorKey = determineAuthErrorKey(error);
         setCurrentUser(null);
         setAuthError(errorKey);
@@ -403,7 +403,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       // Properly sign out from Clerk
       await clerkSignOut();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Logout error');
       // Still clear local state even if Clerk signOut fails
       setCurrentUser(null);
     } finally {
@@ -486,7 +486,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           throw new Error('Invalid response format');
         }
       } catch (error) {
-        console.error('Failed to update user:', error);
+        console.error('Failed to update user');
         throw error;
       }
     },
@@ -508,7 +508,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           signOutOfOtherSessions: false,
         });
       } catch (error: any) {
-        console.error('Failed to change password via Clerk', error);
+        console.error('Failed to change password via Clerk');
 
         // Handle the specific "additional verification" error
         const errorMessage = error?.message || '';

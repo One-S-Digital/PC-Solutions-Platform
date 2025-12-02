@@ -55,7 +55,6 @@ export const useWebhookStatus = () => {
 
       const data = await response.json();
       const webhookStatus: WebhookStatus = data.data;
-      console.log('[Signup Debug] webhook-status response', webhookStatus);
 
       if (webhookStatus.exists) {
         setStatus('ready');
@@ -103,7 +102,6 @@ export const useWebhookStatus = () => {
     setIsPolling(true);
     setStatus('processing');
     setError(null);
-    console.log('[Signup Debug] webhook-status polling started');
 
     checkWebhookStatus();
 
