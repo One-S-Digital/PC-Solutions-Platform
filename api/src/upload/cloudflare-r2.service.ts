@@ -259,6 +259,7 @@ export class CloudflareR2Service {
       FRONTEND_OG_IMAGE: 5 * 1024 * 1024, // 5MB
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
+      SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
       ELEARNING: 100 * 1024 * 1024, // 100MB - for videos, PDFs, courses
     };
 
@@ -276,6 +277,7 @@ export class CloudflareR2Service {
       FRONTEND_OG_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
       ADMIN_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
       ADMIN_FAVICON: ['image/x-icon', 'image/png', 'image/jpeg'],
+      SIDEBAR_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
       ELEARNING: [
         'application/pdf',
         'video/mp4',
