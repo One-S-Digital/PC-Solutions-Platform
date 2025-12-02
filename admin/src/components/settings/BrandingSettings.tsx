@@ -12,16 +12,19 @@ import logger from '../../utils/logger'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 
+// Define supported asset types for type safety
+type BrandingAssetType = 'logo' | 'sidebarLogo' | 'adminLogo' | 'favicon' | 'adminFavicon';
+
 const BrandingSettings: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, refreshSettings, loading, error, saving } = useSettings()
   const apiClient = useApiClient()
   const { user } = useUser()
-  const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
-  const [uploadedAssets, setUploadedAssets] = useState<Record<string, string>>({})
+  const [uploadingAssets, setUploadingAssets] = useState<Record<BrandingAssetType, boolean>>({} as Record<BrandingAssetType, boolean>)
+  const [uploadedAssets, setUploadedAssets] = useState<Record<BrandingAssetType, string>>({} as Record<BrandingAssetType, string>)
 
 
-  const handleUploadAndUpdate = async (assetType: string, file: File) => {
+  const handleUploadAndUpdate = async (assetType: BrandingAssetType, file: File) => {
     setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
     
     try {
@@ -77,7 +80,7 @@ const BrandingSettings: React.FC = () => {
     }
   }
 
-  const handleSaveAsset = async (assetType: string) => {
+  const handleSaveAsset = async (assetType: BrandingAssetType) => {
     const assetId = uploadedAssets[assetType]
     if (!assetId) {
       toast.error(t('admin:settings.branding.noAssetToSave'))
