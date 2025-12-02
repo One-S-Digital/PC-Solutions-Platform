@@ -283,19 +283,24 @@
       },
       "logosAssets": {
         "title": "Logos & Assets",
-        "mainLogo": "Main Logo",
+        "mainLogo": "Main Logo (Public Pages)",
+        "mainLogoDescription": "Used on login, signup, and other public-facing pages",
+        "sidebarLogo": "Sidebar Logo",
+        "sidebarLogoDescription": "Separate logo for the main app sidebar menu (optional - falls back to Main Logo if not set)",
         "adminLogo": "Admin Logo",
         "favicon": "Favicon",
         "adminFavicon": "Admin Favicon"
       },
       "uploading": {
         "logo": "Uploading logo...",
+        "sidebarLogo": "Uploading sidebar logo...",
         "adminLogo": "Uploading admin logo...",
         "favicon": "Uploading favicon...",
         "adminFavicon": "Uploading admin favicon..."
       },
       "uploaded": {
         "logo": "✓ Logo uploaded! Click \"Save Logo\" below to apply changes.",
+        "sidebarLogo": "✓ Sidebar logo uploaded! Click \"Save Sidebar Logo\" below to apply changes.",
         "adminLogo": "✓ Admin logo uploaded! Click \"Save Admin Logo\" below to apply changes.",
         "favicon": "✓ Favicon uploaded! Click \"Save Favicon\" below to apply changes.",
         "adminFavicon": "✓ Admin favicon uploaded! Click \"Save Admin Favicon\" below to apply changes."
@@ -303,6 +308,7 @@
       "saveColors": "Save Colors",
       "saveAdminColors": "Save Admin Colors",
       "saveLogo": "Save Logo",
+      "saveSidebarLogo": "Save Sidebar Logo",
       "saveAdminLogo": "Save Admin Logo",
       "saveFavicon": "Save Favicon",
       "saveAdminFavicon": "Save Admin Favicon",

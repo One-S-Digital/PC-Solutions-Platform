@@ -166,8 +166,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       {isMobileView && (
         <div className="flex justify-between items-center h-20 px-4 border-b border-gray-200/80">
             <div className="flex items-center">
-                {settings?.logoAsset?.publicUrl ? (
-                  <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[63px] w-auto mr-2" />
+                {(settings?.sidebarLogoAsset?.publicUrl || settings?.logoAsset?.publicUrl) ? (
+                  <img src={settings.sidebarLogoAsset?.publicUrl || settings.logoAsset?.publicUrl} alt={settings.siteName || t('appName')} className="h-[63px] w-auto mr-2" />
                 ) : (
                   <SquaresPlusIcon className="h-[63px] w-[63px] text-swiss-mint mr-2" />
                 )}
@@ -177,8 +177,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       )}
       {!isMobileView && (
         <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80"> 
-            {settings?.logoAsset?.publicUrl ? (
-              <img src={settings.logoAsset.publicUrl} alt={settings.siteName || t('appName')} className="h-[69px] w-auto mr-2.5" />
+            {(settings?.sidebarLogoAsset?.publicUrl || settings?.logoAsset?.publicUrl) ? (
+              <img src={settings.sidebarLogoAsset?.publicUrl || settings.logoAsset?.publicUrl} alt={settings.siteName || t('appName')} className="h-[69px] w-auto mr-2.5" />
             ) : (
               <SquaresPlusIcon className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
             )}

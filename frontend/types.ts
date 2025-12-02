@@ -965,6 +965,7 @@ export interface FrontendSettings {
   logoAsset?: Asset;
   faviconAsset?: Asset;
   ogImageAsset?: Asset;
+  sidebarLogoAsset?: Asset;
 }
 
 // ACTIVE CLIENT FEATURE TYPES

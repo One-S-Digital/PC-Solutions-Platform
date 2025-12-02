@@ -23,6 +23,7 @@ export interface FrontendSettings {
   secondaryColor: string;
   accentColor?: string;
   adminLogoAssetId?: string;
+  sidebarLogoAssetId?: string;
   adminPrimaryColor: string;
   adminSecondaryColor: string;
   adminAccentColor: string;
@@ -79,6 +80,16 @@ export interface FrontendSettings {
     height?: number;
   };
   adminFaviconAsset?: {
+    id: string;
+    publicUrl: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+  sidebarLogoAsset?: {
     id: string;
     publicUrl: string;
     filename: string;

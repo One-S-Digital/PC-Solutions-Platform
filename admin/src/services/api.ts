@@ -531,6 +531,22 @@ export const apiService = {
     })
   },
 
+  uploadSidebarLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
+    const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/sidebar-logo`
+    console.log('🔄 API: uploadSidebarLogo called with full URL:', fullUrl)
+    return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/sidebar-logo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
+    })
+  },
+
   // Health Check
   getSettingsHealth: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<SettingsHealth>>('/admin/settings/health'),
   getSystemHealth: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<SystemHealth>>('/health'),
