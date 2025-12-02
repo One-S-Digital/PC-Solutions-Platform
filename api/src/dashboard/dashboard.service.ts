@@ -110,17 +110,28 @@ export class DashboardService {
     });
 
     // Get upcoming appointments (service requests scheduled in next 7 days)
+    // Note: service_requests table may not exist in all environments
     const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const upcomingAppointments = await this.prisma.serviceRequest.count({
-      where: {
-        organizationId: { in: organizationIds },
-        scheduledAt: {
-          gte: now,
-          lte: sevenDaysFromNow,
+    let upcomingAppointments = 0;
+    try {
+      upcomingAppointments = await this.prisma.serviceRequest.count({
+        where: {
+          organizationId: { in: organizationIds },
+          scheduledAt: {
+            gte: now,
+            lte: sevenDaysFromNow,
+          },
+          status: { in: ['PENDING', 'CONFIRMED', 'SCHEDULED'] },
         },
-        status: { in: ['PENDING', 'CONFIRMED', 'SCHEDULED'] },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      // Handle case where service_requests table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('ServiceRequest table does not exist, returning 0 for upcomingAppointments');
+      } else {
+        throw error;
+      }
+    }
 
     return {
       enrolled: enrolledCount,
@@ -194,33 +205,43 @@ export class DashboardService {
     }
 
     // Get recent service requests
-    const recentServiceRequests = await this.prisma.serviceRequest.findMany({
-      where: { organizationId: { in: organizationIds } },
-      include: {
-        service: {
-          select: {
-            title: true,
-            provider: {
-              select: { organization: { select: { name: true } } },
+    // Note: service_requests table may not exist in all environments
+    try {
+      const recentServiceRequests = await this.prisma.serviceRequest.findMany({
+        where: { organizationId: { in: organizationIds } },
+        include: {
+          service: {
+            select: {
+              title: true,
+              provider: {
+                select: { organization: { select: { name: true } } },
+              },
             },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    });
-
-    for (const req of recentServiceRequests) {
-      const providerName = req.service?.provider?.organization?.name || 'Unknown Provider';
-      activities.push({
-        id: req.id,
-        type: 'service',
-        title: 'Service Update',
-        description: `${req.service?.title || 'Service'} from ${providerName}`,
-        timestamp: req.createdAt.toISOString(),
-        status: req.status.toLowerCase(),
-        metadata: { scheduledAt: req.scheduledAt?.toISOString() },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
       });
+
+      for (const req of recentServiceRequests) {
+        const providerName = req.service?.provider?.organization?.name || 'Unknown Provider';
+        activities.push({
+          id: req.id,
+          type: 'service',
+          title: 'Service Update',
+          description: `${req.service?.title || 'Service'} from ${providerName}`,
+          timestamp: req.createdAt.toISOString(),
+          status: req.status.toLowerCase(),
+          metadata: { scheduledAt: req.scheduledAt?.toISOString() },
+        });
+      }
+    } catch (error: unknown) {
+      // Handle case where service_requests table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('ServiceRequest table does not exist, skipping service requests in activities');
+      } else {
+        throw error;
+      }
     }
 
     // Get recent parent leads
@@ -295,35 +316,45 @@ export class DashboardService {
     }));
 
     // Add scheduled service requests as events
-    const scheduledServices = await this.prisma.serviceRequest.findMany({
-      where: {
-        organizationId: { in: organizationIds },
-        scheduledAt: {
-          gte: startOfDay,
-          lte: endOfDay,
+    // Note: service_requests table may not exist in all environments
+    try {
+      const scheduledServices = await this.prisma.serviceRequest.findMany({
+        where: {
+          organizationId: { in: organizationIds },
+          scheduledAt: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
         },
-      },
-      include: {
-        service: { select: { title: true } },
-      },
-      orderBy: { scheduledAt: 'asc' },
-    });
-
-    for (const service of scheduledServices) {
-      // Defensive null check for scheduledAt
-      if (!service.scheduledAt) continue;
-      
-      events.push({
-        id: `service-${service.id}`,
-        title: service.service?.title || 'Scheduled Service',
-        description: service.description || undefined,
-        eventType: 'service',
-        startTime: service.scheduledAt.toISOString(),
-        endTime: undefined,
-        allDay: false,
-        relatedEntityType: 'service_request',
-        relatedEntityId: service.id,
+        include: {
+          service: { select: { title: true } },
+        },
+        orderBy: { scheduledAt: 'asc' },
       });
+
+      for (const service of scheduledServices) {
+        // Defensive null check for scheduledAt
+        if (!service.scheduledAt) continue;
+        
+        events.push({
+          id: `service-${service.id}`,
+          title: service.service?.title || 'Scheduled Service',
+          description: service.description || undefined,
+          eventType: 'service',
+          startTime: service.scheduledAt.toISOString(),
+          endTime: undefined,
+          allDay: false,
+          relatedEntityType: 'service_request',
+          relatedEntityId: service.id,
+        });
+      }
+    } catch (error: unknown) {
+      // Handle case where service_requests table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('ServiceRequest table does not exist, skipping scheduled services in calendar');
+      } else {
+        throw error;
+      }
     }
 
     // Sort by start time
