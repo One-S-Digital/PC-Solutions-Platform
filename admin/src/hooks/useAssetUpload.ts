@@ -4,7 +4,7 @@ import logger from '../utils/logger'
 
 export interface AssetUploadResult {
   id: string
-  url: string
+  publicUrl: string
   filename: string
   originalName: string
   size: number
@@ -40,7 +40,7 @@ export const useAssetUpload = () => {
         logger.log(`✅ Asset uploaded successfully:`, asset)
         return {
           id: asset.id,
-          url: asset.url || asset.publicUrl,
+          publicUrl: asset.publicUrl,
           filename: asset.filename,
           originalName: asset.originalName,
           size: asset.size,

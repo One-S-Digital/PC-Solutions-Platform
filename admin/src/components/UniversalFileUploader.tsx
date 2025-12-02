@@ -11,7 +11,7 @@ interface Asset {
   category: string;
   filename: string;
   originalName: string;
-  url: string;
+  publicUrl: string;
   size: number;
   mimeType: string;
   width?: number;
@@ -249,7 +249,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
   };
 
   const getPreviewUrl = () => {
-    if (currentAsset) return currentAsset.url;
+    if (currentAsset) return currentAsset.publicUrl;
     if (fallbackUrl) return fallbackUrl;
     return null;
   };

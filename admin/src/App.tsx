@@ -37,14 +37,14 @@ const FrontendSettingsManager: React.FC = () => {
   useEffect(() => {
     if (settings) {
       // Update favicon if admin favicon is present
-      if (settings.adminFaviconAsset?.url) {
+      if (settings.adminFaviconAsset?.publicUrl) {
         let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
         if (!link) {
           link = document.createElement('link');
           link.rel = 'icon';
           document.head.appendChild(link);
         }
-        link.href = settings.adminFaviconAsset.url;
+        link.href = settings.adminFaviconAsset.publicUrl;
       }
 
       // Optionally update title - though Admin might want fixed title

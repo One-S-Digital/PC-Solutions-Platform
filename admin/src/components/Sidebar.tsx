@@ -55,8 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { t } = useTranslation('dashboard')
 
   const getAdminLogo = () => {
-    if (settings?.adminLogoAsset?.url) {
-      return settings.adminLogoAsset.url
+    if (settings?.adminLogoAsset?.publicUrl) {
+      return settings.adminLogoAsset.publicUrl
     }
     return null
   }
