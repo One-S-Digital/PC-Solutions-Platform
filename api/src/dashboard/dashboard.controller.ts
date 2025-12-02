@@ -1,33 +1,181 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { DashboardService } from './dashboard.service';
 import { PrismaService } from '../prisma/prisma.service';
-
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+
+/**
+ * Standard API response envelope
+ */
+interface ApiResponseEnvelope<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+function wrapResponse<T>(data: T, message = 'OK'): ApiResponseEnvelope<T> {
+  return {
+    success: true,
+    message,
+    data,
+    timestamp: new Date().toISOString(),
+  };
+}
 
 @ApiTags('dashboard')
 @Controller('dashboard')
 @UseGuards(ClerkAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class DashboardController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly dashboardService: DashboardService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  /**
+   * Helper to get user's organization IDs
+   */
+  private async getUserOrganizationIds(userId: string): Promise<string[]> {
+    const userOrganizations = await this.prisma.userOrganization.findMany({
+      where: { userId },
+      select: { organizationId: true },
+    });
+    return userOrganizations.map((uo) => uo.organizationId);
+  }
+
+  // ============================================
+  // FOUNDATION ENDPOINTS
+  // ============================================
+
+  @Get('foundation/quick-stats')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Get foundation quick stats for dashboard' })
+  @ApiResponse({ status: 200, description: 'Quick stats retrieved successfully' })
+  async getFoundationQuickStats(@Request() req) {
+    const userId = req.context.userId;
+    const organizationIds = await this.getUserOrganizationIds(userId);
+    const stats = await this.dashboardService.getFoundationQuickStats(organizationIds);
+    return wrapResponse(stats);
+  }
+
+  @Get('foundation/activities')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Get foundation recent activities' })
+  @ApiResponse({ status: 200, description: 'Activities retrieved successfully' })
+  async getFoundationActivities(@Request() req, @Query('limit') limit?: string) {
+    const userId = req.context.userId;
+    const organizationIds = await this.getUserOrganizationIds(userId);
+    const activities = await this.dashboardService.getFoundationActivities(
+      organizationIds,
+      limit ? parseInt(limit, 10) : 10,
+    );
+    return wrapResponse(activities);
+  }
+
+  @Get('foundation/calendar')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Get foundation calendar events for a specific date' })
+  @ApiResponse({ status: 200, description: 'Calendar events retrieved successfully' })
+  async getFoundationCalendar(@Request() req, @Query('date') date?: string) {
+    const userId = req.context.userId;
+    const organizationIds = await this.getUserOrganizationIds(userId);
+    const events = await this.dashboardService.getFoundationCalendarEvents(organizationIds, date);
+    return wrapResponse(events);
+  }
+
+  @Post('foundation/calendar')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Create a calendar event' })
+  @ApiResponse({ status: 201, description: 'Calendar event created successfully' })
+  async createCalendarEvent(
+    @Request() req,
+    @Body()
+    body: {
+      title: string;
+      description?: string;
+      eventType: string;
+      startTime: string;
+      endTime?: string;
+      allDay?: boolean;
+      location?: string;
+      relatedEntityType?: string;
+      relatedEntityId?: string;
+    },
+  ) {
+    const userId = req.context.userId;
+    const organizationIds = await this.getUserOrganizationIds(userId);
+
+    if (organizationIds.length === 0) {
+      return {
+        success: false,
+        message: 'User has no associated organization',
+        data: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    const event = await this.dashboardService.createCalendarEvent(
+      organizationIds[0], // Use primary organization
+      userId,
+      {
+        title: body.title,
+        description: body.description,
+        eventType: body.eventType,
+        startTime: new Date(body.startTime),
+        endTime: body.endTime ? new Date(body.endTime) : undefined,
+        allDay: body.allDay,
+        location: body.location,
+        relatedEntityType: body.relatedEntityType,
+        relatedEntityId: body.relatedEntityId,
+      },
+    );
+
+    return wrapResponse(event, 'Calendar event created');
+  }
+
+  @Delete('foundation/calendar/:eventId')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Delete a calendar event' })
+  @ApiResponse({ status: 200, description: 'Calendar event deleted successfully' })
+  async deleteCalendarEvent(@Request() req, @Param('eventId') eventId: string) {
+    const userId = req.context.userId;
+    const organizationIds = await this.getUserOrganizationIds(userId);
+    const deleted = await this.dashboardService.deleteCalendarEvent(eventId, organizationIds);
+
+    if (!deleted) {
+      return {
+        success: false,
+        message: 'Event not found or not authorized',
+        data: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    return wrapResponse({ deleted: true }, 'Calendar event deleted');
+  }
+
+  @Get('foundation/weather')
+  @Roles(UserRole.FOUNDATION)
+  @ApiOperation({ summary: 'Get weather data for foundation location' })
+  @ApiResponse({ status: 200, description: 'Weather data retrieved successfully' })
+  async getFoundationWeather(@Request() req) {
+    const userId = req.context.userId;
+    const organizationIds = await this.getUserOrganizationIds(userId);
+    const weather = await this.dashboardService.getFoundationWeather(organizationIds);
+    return wrapResponse(weather);
+  }
 
   @Get('foundation/stats')
   @Roles(UserRole.FOUNDATION)
-  @ApiOperation({ summary: 'Get foundation dashboard stats' })
+  @ApiOperation({ summary: 'Get foundation dashboard stats (legacy)' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getFoundationStats(@Request() req) {
     const userId = req.context.userId;
-    
-    // Get user's organizations
-    const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
-    });
-
-    const organizationIds = userOrganizations.map(uo => uo.organizationId);
+    const organizationIds = await this.getUserOrganizationIds(userId);
 
     // Calculate real stats from database
     const [
@@ -36,38 +184,34 @@ export class DashboardController {
       totalOrders,
       totalServiceRequests,
       activeJobListings,
-      pendingApplications
+      pendingApplications,
     ] = await Promise.all([
       this.prisma.jobListing.count({
-        where: { foundationId: { in: organizationIds } }
+        where: { foundationId: { in: organizationIds } },
       }),
       this.prisma.jobApplication.count({
         where: {
-          jobListing: {
-            foundationId: { in: organizationIds }
-          }
-        }
+          jobListing: { foundationId: { in: organizationIds } },
+        },
       }),
       this.prisma.order.count({
-        where: { organizationId: { in: organizationIds } }
+        where: { organizationId: { in: organizationIds } },
       }),
       this.prisma.serviceRequest.count({
-        where: { organizationId: { in: organizationIds } }
+        where: { organizationId: { in: organizationIds } },
       }),
       this.prisma.jobListing.count({
-        where: { 
+        where: {
           foundationId: { in: organizationIds },
-          status: 'PUBLISHED'
-        }
+          status: 'PUBLISHED',
+        },
       }),
       this.prisma.jobApplication.count({
         where: {
-          jobListing: {
-            foundationId: { in: organizationIds }
-          },
-          status: 'PENDING'
-        }
-      })
+          jobListing: { foundationId: { in: organizationIds } },
+          status: 'PENDING',
+        },
+      }),
     ]);
 
     const stats = {
@@ -81,131 +225,15 @@ export class DashboardController {
       totalApplications,
       totalOrders,
       totalServiceRequests,
-      activeJobListings
+      activeJobListings,
     };
 
-    return {
-      success: true,
-      data: stats
-    };
+    return wrapResponse(stats);
   }
 
-  @Get('foundation/activities')
-  @Roles(UserRole.FOUNDATION)
-  @ApiOperation({ summary: 'Get foundation recent activities' })
-  @ApiResponse({ status: 200, description: 'Activities retrieved successfully' })
-  async getFoundationActivities(@Request() req) {
-    const userId = req.context.userId;
-    
-    // Get user's organizations
-    const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
-    });
-
-    const organizationIds = userOrganizations.map(uo => uo.organizationId);
-
-    // Get real activities from database
-    const [
-      recentApplications,
-      recentOrders,
-      recentServiceRequests,
-      recentJobListings
-    ] = await Promise.all([
-      this.prisma.jobApplication.findMany({
-        where: {
-          jobListing: {
-            foundationId: { in: organizationIds }
-          }
-        },
-        include: {
-          candidate: true,
-          jobListing: true
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      }),
-      this.prisma.order.findMany({
-        where: { organizationId: { in: organizationIds } },
-        include: {
-          organization: true,
-          items: {
-            include: {
-              product: true
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      }),
-      this.prisma.serviceRequest.findMany({
-        where: { organizationId: { in: organizationIds } },
-        include: {
-          organization: true,
-          service: {
-            include: {
-              provider: {
-                include: {
-                  organization: true
-                }
-              }
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      }),
-      this.prisma.jobListing.findMany({
-        where: { foundationId: { in: organizationIds } },
-        include: {
-          foundation: true
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      })
-    ]);
-
-    // Transform data into activity format
-    const activities = [
-      ...recentApplications.map(app => ({
-        id: app.id,
-        type: 'application',
-        title: 'New Job Application',
-        description: `${app.candidate.firstName} ${app.candidate.lastName} applied for ${app.jobListing.title}`,
-        timestamp: app.createdAt.toISOString(),
-        status: app.status.toLowerCase()
-      })),
-      ...recentOrders.map(order => ({
-        id: order.id,
-        type: 'order',
-        title: 'New Order',
-        description: `Order for ${order.items.length} items totaling CHF ${order.totalAmount}`,
-        timestamp: order.createdAt.toISOString(),
-        status: order.status.toLowerCase()
-      })),
-      ...recentServiceRequests.map(req => ({
-        id: req.id,
-        type: 'service',
-        title: 'Service Request',
-        description: `Request for ${req.service.title} from ${req.service.provider.organization.name}`,
-        timestamp: req.createdAt.toISOString(),
-        status: req.status.toLowerCase()
-      })),
-      ...recentJobListings.map(job => ({
-        id: job.id,
-        type: 'job',
-        title: 'Job Listing Created',
-        description: `Posted new job: ${job.title}`,
-        timestamp: job.createdAt.toISOString(),
-        status: job.status.toLowerCase()
-      }))
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10);
-
-    return {
-      success: true,
-      data: activities
-    };
-  }
+  // ============================================
+  // EDUCATOR ENDPOINTS
+  // ============================================
 
   @Get('educator/stats')
   @Roles(UserRole.EDUCATOR)
@@ -213,55 +241,39 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getEducatorStats(@Request() req) {
     const userId = req.context.userId;
-    
-    // Calculate real stats from database
-    const [
-      applicationsSent,
-      interviewsScheduled,
-      jobOffers,
-      profileViews,
-      skillsCompleted,
-      certificationsExpiring
-    ] = await Promise.all([
+
+    const [applicationsSent, interviewsScheduled, jobOffers, user] = await Promise.all([
       this.prisma.jobApplication.count({
-        where: { candidateId: userId }
+        where: { candidateId: userId },
       }),
       this.prisma.jobApplication.count({
-        where: { 
+        where: {
           candidateId: userId,
-          status: 'REVIEWED' // Assuming this means interview scheduled
-        }
+          status: 'REVIEWED',
+        },
       }),
       this.prisma.jobApplication.count({
-        where: { 
+        where: {
           candidateId: userId,
-          status: 'ACCEPTED'
-        }
+          status: 'ACCEPTED',
+        },
       }),
-      0, // Profile views would need a separate tracking system
       this.prisma.user.findUnique({
         where: { id: userId },
-        select: { skills: true }
-      }).then(user => user?.skills?.length || 0),
-      this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { certifications: true }
-      }).then(user => user?.certifications?.length || 0)
+        select: { skills: true, certifications: true },
+      }),
     ]);
 
     const stats = {
       applicationsSent,
       interviewsScheduled,
       jobOffers,
-      profileViews,
-      skillsCompleted,
-      certificationsExpiring
+      profileViews: 0,
+      skillsCompleted: user?.skills?.length || 0,
+      certificationsExpiring: user?.certifications?.length || 0,
     };
 
-    return {
-      success: true,
-      data: stats
-    };
+    return wrapResponse(stats);
   }
 
   @Get('educator/jobs')
@@ -270,47 +282,37 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Jobs retrieved successfully' })
   async getEducatorJobs(@Request() req) {
     const userId = req.context.userId;
-    
-    // Get user's applications to determine status
-    const userApplications = await this.prisma.jobApplication.findMany({
-      where: { candidateId: userId },
-      select: { jobListingId: true, status: true }
-    });
-    
-    const applicationMap = new Map(
-      userApplications.map(app => [app.jobListingId, app.status])
-    );
 
-    // Get recent job listings with application status
     const jobs = await this.prisma.jobListing.findMany({
       where: { status: 'PUBLISHED' },
       include: {
         foundation: true,
         applications: {
           where: { candidateId: userId },
-          select: { status: true }
-        }
+          select: { status: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
-      take: 10
+      take: 10,
     });
 
-    const jobData = jobs.map(job => ({
+    const jobData = jobs.map((job) => ({
       id: job.id,
       title: job.title,
       organization: job.foundation.name,
       location: job.location || 'Not specified',
       salary: job.salary || 'Not specified',
-      type: 'full-time', // This would need to be added to the schema
+      type: job.contractType || 'full-time',
       postedDate: job.createdAt.toISOString(),
-      status: job.applications.length > 0 ? job.applications[0].status.toLowerCase() : 'not_applied'
+      status: job.applications.length > 0 ? job.applications[0].status.toLowerCase() : 'not_applied',
     }));
 
-    return {
-      success: true,
-      data: jobData
-    };
+    return wrapResponse(jobData);
   }
+
+  // ============================================
+  // SUPPLIER ENDPOINTS
+  // ============================================
 
   @Get('supplier/stats')
   @Roles(UserRole.PRODUCT_SUPPLIER)
@@ -318,80 +320,52 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getSupplierStats(@Request() req) {
     const userId = req.context.userId;
-    
-    // Get user's organizations
-    const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
-    });
+    const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const organizationIds = userOrganizations.map(uo => uo.organizationId);
-
-    // Calculate real stats from database
-    const [
-      totalOrders,
-      monthlyRevenue,
-      activeCustomers,
-      pendingOrders,
-      inventoryItems,
-      lowStockItems
-    ] = await Promise.all([
-      this.prisma.order.count({
-        where: {
-          items: {
-            some: {
-              product: {
-                supplierId: { in: organizationIds }
-              }
-            }
-          }
-        }
-      }),
-      this.prisma.orderItem.findMany({
-        where: {
-          product: {
-            supplierId: { in: organizationIds }
+    const [totalOrders, monthlyRevenue, activeCustomers, pendingOrders, inventoryItems] =
+      await Promise.all([
+        this.prisma.order.count({
+          where: {
+            items: {
+              some: { product: { supplierId: { in: organizationIds } } },
+            },
           },
-          order: {
-            createdAt: {
-              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-            }
-          }
-        },
-        select: {
-          price: true,
-          quantity: true
-        }
-      }).then(items => items.reduce((sum, item) => sum + (item.price * item.quantity), 0)),
-      this.prisma.order.groupBy({
-        by: ['organizationId'],
-        where: {
-          items: {
-            some: {
-              product: {
-                supplierId: { in: organizationIds }
-              }
-            }
-          }
-        }
-      }).then(result => result.length),
-      this.prisma.order.count({
-        where: {
-          status: 'PENDING',
-          items: {
-            some: {
-              product: {
-                supplierId: { in: organizationIds }
-              }
-            }
-          }
-        }
-      }),
-      this.prisma.product.count({
-        where: { supplierId: { in: organizationIds } }
-      }),
-      0 // Low stock would need inventory tracking
-    ]);
+        }),
+        this.prisma.orderItem
+          .findMany({
+            where: {
+              product: { supplierId: { in: organizationIds } },
+              order: {
+                createdAt: {
+                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                },
+              },
+            },
+            select: { price: true, quantity: true },
+          })
+          .then((items) => items.reduce((sum, item) => sum + item.price * item.quantity, 0)),
+        this.prisma.order
+          .groupBy({
+            by: ['organizationId'],
+            where: {
+              items: {
+                some: { product: { supplierId: { in: organizationIds } } },
+              },
+            },
+          })
+          .then((result) => result.length),
+        this.prisma.order.count({
+          where: {
+            status: 'PENDING',
+            items: {
+              some: { product: { supplierId: { in: organizationIds } } },
+            },
+          },
+        }),
+        this.prisma.product.count({
+          where: { supplierId: { in: organizationIds } },
+        }),
+      ]);
 
     const stats = {
       totalOrders,
@@ -399,13 +373,10 @@ export class DashboardController {
       activeCustomers,
       pendingOrders,
       inventoryItems,
-      lowStockItems
+      lowStockItems: 0,
     };
 
-    return {
-      success: true,
-      data: stats
-    };
+    return wrapResponse(stats);
   }
 
   @Get('supplier/orders')
@@ -414,61 +385,47 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Orders retrieved successfully' })
   async getSupplierOrders(@Request() req) {
     const userId = req.context.userId;
-    
-    // Get user's organizations
-    const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
-    });
+    const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const organizationIds = userOrganizations.map(uo => uo.organizationId);
-
-    // Get real orders from database
     const orders = await this.prisma.order.findMany({
       where: {
         items: {
-          some: {
-            product: {
-              supplierId: { in: organizationIds }
-            }
-          }
-        }
+          some: { product: { supplierId: { in: organizationIds } } },
+        },
       },
       include: {
         organization: true,
-        items: {
-          include: {
-            product: true
-          }
-        }
+        items: { include: { product: true } },
       },
       orderBy: { createdAt: 'desc' },
-      take: 10
+      take: 10,
     });
 
-    const orderData = orders.map(order => {
-      const supplierItems = order.items.filter(item => 
-        organizationIds.includes(item.product.supplierId)
+    const orderData = orders.map((order) => {
+      const supplierItems = order.items.filter((item) =>
+        organizationIds.includes(item.product.supplierId),
       );
-      
+
       return {
         id: order.id,
         customerName: order.organization.name,
-        productName: supplierItems.length === 1 
-          ? supplierItems[0].product.title 
-          : `${supplierItems.length} products`,
+        productName:
+          supplierItems.length === 1
+            ? supplierItems[0].product.title
+            : `${supplierItems.length} products`,
         quantity: supplierItems.reduce((sum, item) => sum + item.quantity, 0),
-        totalAmount: supplierItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        totalAmount: supplierItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
         orderDate: order.createdAt.toISOString(),
-        status: order.status.toLowerCase()
+        status: order.status.toLowerCase(),
       };
     });
 
-    return {
-      success: true,
-      data: orderData
-    };
+    return wrapResponse(orderData);
   }
+
+  // ============================================
+  // SERVICE PROVIDER ENDPOINTS
+  // ============================================
 
   @Get('service-provider/stats')
   @Roles(UserRole.SERVICE_PROVIDER)
@@ -476,92 +433,55 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getServiceProviderStats(@Request() req) {
     const userId = req.context.userId;
-    
-    // Get user's organizations
-    const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
-    });
+    const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const organizationIds = userOrganizations.map(uo => uo.organizationId);
-
-    // Calculate real stats from database
-    const [
-      totalBookings,
-      monthlyRevenue,
-      activeClients,
-      pendingBookings,
-      completedServices
-    ] = await Promise.all([
-      this.prisma.serviceRequest.count({
-        where: {
-          service: {
-            provider: {
-              organizationId: { in: organizationIds }
-            }
-          }
-        }
-      }),
-      this.prisma.serviceRequest.aggregate({
-        where: {
-          service: {
-            provider: {
-              organizationId: { in: organizationIds }
-            }
+    const [totalBookings, monthlyBookings, activeClients, pendingBookings, completedServices] =
+      await Promise.all([
+        this.prisma.serviceRequest.count({
+          where: {
+            service: { provider: { organizationId: { in: organizationIds } } },
           },
-          createdAt: {
-            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-          }
-        },
-        _count: {
-          id: true
-        }
-      }).then(result => result._count.id * 100), // Placeholder calculation
-      this.prisma.serviceRequest.groupBy({
-        by: ['organizationId'],
-        where: {
-          service: {
-            provider: {
-              organizationId: { in: organizationIds }
-            }
-          }
-        }
-      }).then(result => result.length),
-      this.prisma.serviceRequest.count({
-        where: {
-          status: 'PENDING',
-          service: {
-            provider: {
-              organizationId: { in: organizationIds }
-            }
-          }
-        }
-      }),
-      this.prisma.serviceRequest.count({
-        where: {
-          status: 'COMPLETED',
-          service: {
-            provider: {
-              organizationId: { in: organizationIds }
-            }
-          }
-        }
-      })
-    ]);
+        }),
+        this.prisma.serviceRequest.count({
+          where: {
+            service: { provider: { organizationId: { in: organizationIds } } },
+            createdAt: {
+              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            },
+          },
+        }),
+        this.prisma.serviceRequest
+          .groupBy({
+            by: ['organizationId'],
+            where: {
+              service: { provider: { organizationId: { in: organizationIds } } },
+            },
+          })
+          .then((result) => result.length),
+        this.prisma.serviceRequest.count({
+          where: {
+            status: 'PENDING',
+            service: { provider: { organizationId: { in: organizationIds } } },
+          },
+        }),
+        this.prisma.serviceRequest.count({
+          where: {
+            status: 'COMPLETED',
+            service: { provider: { organizationId: { in: organizationIds } } },
+          },
+        }),
+      ]);
 
     const stats = {
       totalBookings,
-      monthlyRevenue,
+      monthlyRevenue: monthlyBookings * 100, // Placeholder calculation
       activeClients,
       pendingBookings,
       completedServices,
-      averageRating: 0 // Would need rating system
+      averageRating: 0,
     };
 
-    return {
-      success: true,
-      data: stats
-    };
+    return wrapResponse(stats);
   }
 
   @Get('service-provider/bookings')
@@ -570,55 +490,38 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Bookings retrieved successfully' })
   async getServiceProviderBookings(@Request() req) {
     const userId = req.context.userId;
-    
-    // Get user's organizations
-    const userOrganizations = await this.prisma.userOrganization.findMany({
-      where: { userId },
-      include: { organization: true }
-    });
+    const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const organizationIds = userOrganizations.map(uo => uo.organizationId);
-
-    // Get real bookings from database
     const bookings = await this.prisma.serviceRequest.findMany({
       where: {
-        service: {
-          provider: {
-            organizationId: { in: organizationIds }
-          }
-        }
+        service: { provider: { organizationId: { in: organizationIds } } },
       },
       include: {
         organization: true,
         service: {
-          include: {
-            provider: {
-              include: {
-                organization: true
-              }
-            }
-          }
-        }
+          include: { provider: { include: { organization: true } } },
+        },
       },
       orderBy: { createdAt: 'desc' },
-      take: 10
+      take: 10,
     });
 
-    const bookingData = bookings.map(booking => ({
+    const bookingData = bookings.map((booking) => ({
       id: booking.id,
       clientName: booking.organization.name,
       serviceType: booking.service.title,
       scheduledDate: booking.scheduledAt?.toISOString() || booking.createdAt.toISOString(),
-      duration: 0, // Would need duration field
+      duration: 0,
       totalAmount: booking.service.price || 0,
-      status: booking.status.toLowerCase()
+      status: booking.status.toLowerCase(),
     }));
 
-    return {
-      success: true,
-      data: bookingData
-    };
+    return wrapResponse(bookingData);
   }
+
+  // ============================================
+  // PARENT ENDPOINTS
+  // ============================================
 
   @Get('parent/stats')
   @Roles(UserRole.PARENT)
@@ -626,77 +529,62 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getParentStats(@Request() req) {
     const userId = req.context.userId;
-    
-    // Calculate real stats from database
-    const [
-      applicationsSent,
-      interviewsScheduled,
-      offersReceived,
-      messagesUnread
-    ] = await Promise.all([
-      this.prisma.parentLead.count({
-        where: { 
-          parentEmail: req.user.email // Assuming parent email matches user email
-        }
+
+    const [user, messagesUnread] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { email: true },
       }),
-      0, // Would need interview scheduling system
-      0, // Would need offer tracking system
       this.prisma.message.count({
         where: {
           receiverId: userId,
-          isRead: false
-        }
-      })
+          isRead: false,
+        },
+      }),
     ]);
+
+    // Get leads submitted by this parent
+    const applicationsSent = await this.prisma.parentLead.count({
+      where: { parentEmail: user?.email || '' },
+    });
 
     const stats = {
       applicationsSent,
-      interviewsScheduled,
-      offersReceived,
-      favoritesCount: 0, // Would need favorites system
+      interviewsScheduled: 0,
+      offersReceived: 0,
+      favoritesCount: 0,
       messagesUnread,
-      childAge: 0 // Would need child profile system
+      childAge: 0,
     };
 
-    return {
-      success: true,
-      data: stats
-    };
+    return wrapResponse(stats);
   }
 
   @Get('parent/options')
   @Roles(UserRole.PARENT)
   @ApiOperation({ summary: 'Get parent childcare options' })
   @ApiResponse({ status: 200, description: 'Options retrieved successfully' })
-  async getParentOptions(@Request() req) {
-    // Get real childcare options from database
+  async getParentOptions() {
     const foundations = await this.prisma.organization.findMany({
-      where: { type: 'FOUNDATION' },
+      where: { type: 'FOUNDATION', isActive: true },
       include: {
-        members: {
-          include: {
-            user: true
-          }
-        }
+        members: { include: { user: true } },
       },
       orderBy: { createdAt: 'desc' },
-      take: 10
+      take: 10,
     });
 
-    const options = foundations.map(foundation => ({
+    const options = foundations.map((foundation) => ({
       id: foundation.id,
       name: foundation.name,
       type: 'foundation',
-      location: foundation.region || 'Not specified',
-      rating: 0, // Would need rating system
-      price: 0, // Would need pricing system
-      availability: 'Available', // Would need availability tracking
-      status: 'not_applied' // Would need application tracking
+      location: foundation.region || foundation.canton || 'Not specified',
+      rating: 0,
+      price: 0,
+      availability: 'Available',
+      status: 'not_applied',
     }));
 
-    return {
-      success: true,
-      data: options
-    };
+    return wrapResponse(options);
   }
 }
