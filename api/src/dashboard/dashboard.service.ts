@@ -179,29 +179,39 @@ export class DashboardService {
     }
 
     // Get recent orders
-    const recentOrders = await this.prisma.order.findMany({
-      where: { organizationId: { in: organizationIds } },
-      include: {
-        items: {
-          include: { product: { select: { title: true, supplier: { select: { name: true } } } } },
+    // Note: orders table may not exist in all environments
+    try {
+      const recentOrders = await this.prisma.order.findMany({
+        where: { organizationId: { in: organizationIds } },
+        include: {
+          items: {
+            include: { product: { select: { title: true, supplier: { select: { name: true } } } } },
+          },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    });
-
-    for (const order of recentOrders) {
-      const supplierName = order.items[0]?.product?.supplier?.name || 'Unknown Supplier';
-      const itemCount = order.items.length;
-      activities.push({
-        id: order.id,
-        type: 'order',
-        title: 'Order Confirmation',
-        description: `Order #${order.id.substring(0, 8)} from ${supplierName} (${itemCount} item${itemCount !== 1 ? 's' : ''})`,
-        timestamp: order.createdAt.toISOString(),
-        status: order.status.toLowerCase(),
-        metadata: { totalAmount: order.totalAmount },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
       });
+
+      for (const order of recentOrders) {
+        const supplierName = order.items[0]?.product?.supplier?.name || 'Unknown Supplier';
+        const itemCount = order.items.length;
+        activities.push({
+          id: order.id,
+          type: 'order',
+          title: 'Order Confirmation',
+          description: `Order #${order.id.substring(0, 8)} from ${supplierName} (${itemCount} item${itemCount !== 1 ? 's' : ''})`,
+          timestamp: order.createdAt.toISOString(),
+          status: order.status.toLowerCase(),
+          metadata: { totalAmount: order.totalAmount },
+        });
+      }
+    } catch (error: unknown) {
+      // Handle case where orders table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Order table does not exist, skipping orders in activities');
+      } else {
+        throw error;
+      }
     }
 
     // Get recent service requests

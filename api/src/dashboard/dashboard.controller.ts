@@ -387,40 +387,50 @@ export class DashboardController {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const orders = await this.prisma.order.findMany({
-      where: {
-        items: {
-          some: { product: { supplierId: { in: organizationIds } } },
+    // Note: orders table may not exist in all environments
+    try {
+      const orders = await this.prisma.order.findMany({
+        where: {
+          items: {
+            some: { product: { supplierId: { in: organizationIds } } },
+          },
         },
-      },
-      include: {
-        organization: true,
-        items: { include: { product: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 10,
-    });
+        include: {
+          organization: true,
+          items: { include: { product: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+      });
 
-    const orderData = orders.map((order) => {
-      const supplierItems = order.items.filter((item) =>
-        organizationIds.includes(item.product.supplierId),
-      );
+      const orderData = orders.map((order) => {
+        const supplierItems = order.items.filter((item) =>
+          organizationIds.includes(item.product.supplierId),
+        );
 
-      return {
-        id: order.id,
-        customerName: order.organization.name,
-        productName:
-          supplierItems.length === 1
-            ? supplierItems[0].product.title
-            : `${supplierItems.length} products`,
-        quantity: supplierItems.reduce((sum, item) => sum + item.quantity, 0),
-        totalAmount: supplierItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-        orderDate: order.createdAt.toISOString(),
-        status: order.status.toLowerCase(),
-      };
-    });
+        return {
+          id: order.id,
+          customerName: order.organization.name,
+          productName:
+            supplierItems.length === 1
+              ? supplierItems[0].product.title
+              : `${supplierItems.length} products`,
+          quantity: supplierItems.reduce((sum, item) => sum + item.quantity, 0),
+          totalAmount: supplierItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+          orderDate: order.createdAt.toISOString(),
+          status: order.status.toLowerCase(),
+        };
+      });
 
-    return wrapResponse(orderData);
+      return wrapResponse(orderData);
+    } catch (error: unknown) {
+      // Handle case where orders table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Order table does not exist, returning empty orders list');
+        return wrapResponse([]);
+      }
+      throw error;
+    }
   }
 
   // ============================================

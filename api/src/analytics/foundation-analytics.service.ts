@@ -79,22 +79,40 @@ export class FoundationAnalyticsService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get all orders for the organization in the time range
-    const orders = await this.prisma.order.findMany({
-      where: {
-        organizationId: { in: organizationIds },
-        createdAt: { gte: startDate },
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              select: { category: true, primaryCategory: true },
+    // Note: orders table may not exist in all environments
+    let orders: Array<{
+      items: Array<{
+        price: number;
+        quantity: number;
+        product: { category: string | null; primaryCategory: string | null } | null;
+      }>;
+    }> = [];
+
+    try {
+      // Get all orders for the organization in the time range
+      orders = await this.prisma.order.findMany({
+        where: {
+          organizationId: { in: organizationIds },
+          createdAt: { gte: startDate },
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: { category: true, primaryCategory: true },
+              },
             },
           },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      // Handle case where orders table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Order table does not exist, returning empty spending data');
+        return [];
+      }
+      throw error;
+    }
 
     // Aggregate spending by category
     const categorySpending: Record<string, { amount: number; count: number }> = {};
