@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -15,44 +14,192 @@ import {
   UserGroupIcon, 
   PresentationChartLineIcon, 
   ChatBubbleLeftEllipsisIcon,
-  SunIcon
+  SunIcon,
+  CloudIcon,
+  ExclamationCircleIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import { 
+  foundationDashboardApi, 
+  FoundationQuickStats, 
+  FoundationActivity, 
+  CalendarEvent, 
+  WeatherData 
+} from '../../services/foundationDashboardService';
+
+// Activity type to icon mapping
+const ACTIVITY_ICONS: Record<string, React.ComponentType<any>> = {
+  lead: InboxArrowDownIcon,
+  application: BriefcaseIcon,
+  order: BanknotesIcon,
+  service: DocumentTextIcon,
+  message: ChatBubbleLeftEllipsisIcon,
+  job: BriefcaseIcon,
+};
+
+// Activity type to color mapping
+const ACTIVITY_COLORS: Record<string, string> = {
+  lead: 'text-swiss-mint',
+  application: 'text-swiss-teal',
+  order: 'text-swiss-sand',
+  service: 'text-swiss-coral',
+  message: 'text-gray-500',
+  job: 'text-swiss-teal',
+};
 
 const FoundationDashboardPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
+  const { request } = useAuthenticatedApi();
 
-  // Mock data based on UI Spec
-  const quickStats = [
-    { labelKey: 'foundationDashboard.quickStats.enrolled', value: '45 / 50', trend: '+2', icon: UsersIcon, color: 'text-swiss-mint' },
-    { labelKey: 'foundationDashboard.quickStats.availableSpots', value: '5', icon: UserPlusIcon, color: 'text-swiss-sand' },
-    { labelKey: 'foundationDashboard.quickStats.pendingApps', value: '3', icon: InboxArrowDownIcon, color: 'text-swiss-coral' },
-    { labelKey: 'foundationDashboard.quickStats.upcomingAppointments', value: '2', icon: CalendarDaysIcon, color: 'text-swiss-teal' },
-  ];
+  // State for API data
+  const [quickStats, setQuickStats] = useState<FoundationQuickStats | null>(null);
+  const [activities, setActivities] = useState<FoundationActivity[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const recentActivity = [
-    { id: 1, icon: InboxArrowDownIcon, textKey: 'foundationDashboard.activity.parentInquiry', details: 'S. Dubois for a 2-year-old', time: t('dashboardPage.timeAgo.minutes', { count: 15 }), color: 'text-swiss-mint' },
-    { id: 2, icon: BriefcaseIcon, textKey: 'foundationDashboard.activity.jobApplication', details: 'J. Miller for Lead Educator', time: t('dashboardPage.timeAgo.hours', { count: 1 }), color: 'text-swiss-teal' },
-    { id: 3, icon: BanknotesIcon, textKey: 'foundationDashboard.activity.orderConfirmation', details: '#ORD123 from EcoToys', time: t('dashboardPage.timeAgo.hours', { count: 3 }), color: 'text-swiss-sand' },
-    { id: 4, icon: DocumentTextIcon, textKey: 'foundationDashboard.activity.serviceUpdate', details: 'ProClean confirmed cleaning for Friday', time: t('dashboardPage.timeAgo.hours', { count: 5 }), color: 'text-swiss-coral' },
-    { id: 5, icon: ChatBubbleLeftEllipsisIcon, textKey: 'foundationDashboard.activity.newMessage', details: 'From candidate T. Fischer', time: t('dashboardPage.timeAgo.yesterday'), color: 'text-gray-500' },
-  ];
+  // Fetch dashboard data
+  const fetchDashboardData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Fetch all dashboard data in parallel
+      const [statsRes, activitiesRes, calendarRes, weatherRes] = await Promise.all([
+        request<FoundationQuickStats>(foundationDashboardApi.getQuickStatsEndpoint()),
+        request<FoundationActivity[]>(foundationDashboardApi.getActivitiesEndpoint(10)),
+        request<CalendarEvent[]>(foundationDashboardApi.getCalendarEndpoint()),
+        request<WeatherData>(foundationDashboardApi.getWeatherEndpoint()),
+      ]);
+
+      if (statsRes.success && statsRes.data) {
+        setQuickStats(statsRes.data);
+      }
+      if (activitiesRes.success && activitiesRes.data) {
+        setActivities(activitiesRes.data);
+      }
+      if (calendarRes.success && calendarRes.data) {
+        setCalendarEvents(calendarRes.data);
+      }
+      if (weatherRes.success && weatherRes.data) {
+        setWeather(weatherRes.data);
+      }
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError(t('common:errors.fetchFailed'));
+    } finally {
+      setLoading(false);
+    }
+  }, [request, t]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  // Format relative time
+  const formatRelativeTime = (timestamp: string) => {
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMins < 60) {
+      return t('dashboardPage.timeAgo.minutes', { count: diffMins });
+    } else if (diffHours < 24) {
+      return t('dashboardPage.timeAgo.hours', { count: diffHours });
+    } else if (diffDays === 1) {
+      return t('dashboardPage.timeAgo.yesterday');
+    } else {
+      return t('dashboardPage.timeAgo.days', { count: diffDays });
+    }
+  };
+
+  // Format time from ISO string
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
+  };
   
+  // Quick actions (no change needed)
   const quickActions = [
     { labelKey: 'foundationDashboard.quickActions.postJob', onClick: () => navigate('/recruitment'), icon: BriefcaseIcon },
     { labelKey: 'foundationDashboard.quickActions.browseMarketplace', onClick: () => navigate('/marketplace'), icon: ShoppingBagIcon },
     { labelKey: 'foundationDashboard.quickActions.viewParentLeads', onClick: () => navigate('/foundation/leads'), icon: UserGroupIcon },
     { labelKey: 'foundationDashboard.quickActions.viewAnalytics', onClick: () => navigate('/foundation/analytics'), icon: PresentationChartLineIcon },
   ];
-  
-  const calendarEvents = [
-    { time: '10:00', titleKey: 'foundationDashboard.calendar.event1' },
-    { time: '14:00', titleKey: 'foundationDashboard.calendar.event2' },
-    { time: '16:30', titleKey: 'foundationDashboard.calendar.event3' },
-  ];
+
+  // Build quick stats display
+  const statsDisplay = quickStats ? [
+    { 
+      labelKey: 'foundationDashboard.quickStats.enrolled', 
+      value: `${quickStats.enrolled} / ${quickStats.capacity}`, 
+      trend: quickStats.trend.enrolled > 0 ? `+${quickStats.trend.enrolled}` : undefined, 
+      icon: UsersIcon, 
+      color: 'text-swiss-mint' 
+    },
+    { 
+      labelKey: 'foundationDashboard.quickStats.availableSpots', 
+      value: quickStats.availableSpots.toString(), 
+      icon: UserPlusIcon, 
+      color: 'text-swiss-sand' 
+    },
+    { 
+      labelKey: 'foundationDashboard.quickStats.pendingApps', 
+      value: quickStats.pendingApplications.toString(), 
+      icon: InboxArrowDownIcon, 
+      color: 'text-swiss-coral' 
+    },
+    { 
+      labelKey: 'foundationDashboard.quickStats.upcomingAppointments', 
+      value: quickStats.upcomingAppointments.toString(), 
+      icon: CalendarDaysIcon, 
+      color: 'text-swiss-teal' 
+    },
+  ] : [];
+
+  // Render loading state
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-swiss-charcoal">
+            {t('foundationDashboard.title')}
+          </h1>
+          <p className="text-gray-500 mt-1">{t('foundationDashboard.welcomeMessage', { name: currentUser?.name?.split(' ')[0] })}</p>
+        </div>
+        <div className="flex justify-center items-center py-12">
+          <ArrowPathIcon className="w-8 h-8 animate-spin text-swiss-teal" />
+        </div>
+      </div>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-swiss-charcoal">
+            {t('foundationDashboard.title')}
+          </h1>
+          <p className="text-gray-500 mt-1">{t('foundationDashboard.welcomeMessage', { name: currentUser?.name?.split(' ')[0] })}</p>
+        </div>
+        <Card className="p-8 text-center">
+          <ExclamationCircleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button onClick={fetchDashboardData}>{t('common:buttons.retry')}</Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -69,7 +216,7 @@ const FoundationDashboardPage: React.FC = () => {
           <Card className="p-5">
             <h2 className="text-lg font-semibold text-swiss-charcoal mb-3">{t('foundationDashboard.quickStats.title')}</h2>
             <div className="space-y-4">
-              {quickStats.map(stat => (
+              {statsDisplay.map(stat => (
                 <div key={stat.labelKey} className="flex items-center">
                   <div className={`p-2 rounded-lg bg-gray-100 mr-3 ${stat.color}`}>
                     <stat.icon className="w-5 h-5"/>
@@ -81,25 +228,39 @@ const FoundationDashboardPage: React.FC = () => {
                   {stat.trend && <span className="ml-auto text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">{stat.trend}</span>}
                 </div>
               ))}
+              {statsDisplay.length === 0 && (
+                <p className="text-sm text-gray-500">{t('common:noData')}</p>
+              )}
             </div>
           </Card>
-           <Card className="p-5">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-lg font-semibold text-swiss-charcoal">{t('foundationDashboard.todayAtGlance')}</h2>
+          
+          <Card className="p-5">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-lg font-semibold text-swiss-charcoal">{t('foundationDashboard.todayAtGlance')}</h2>
+              {weather && (
                 <div className="flex items-center text-sm text-yellow-600 font-semibold">
-                  <SunIcon className="w-5 h-5 mr-1"/>
-                  <span>18°C</span>
+                  {weather.condition === 'Sunny' ? (
+                    <SunIcon className="w-5 h-5 mr-1"/>
+                  ) : (
+                    <CloudIcon className="w-5 h-5 mr-1"/>
+                  )}
+                  <span>{weather.temperature}°C</span>
                 </div>
-              </div>
-              <ul className="space-y-2">
-                {calendarEvents.map(event => (
-                  <li key={event.titleKey} className="flex items-center text-sm">
-                    <span className="w-12 text-gray-500 font-medium">{event.time}</span>
-                    <span className="flex-1 text-gray-700">{t(event.titleKey)}</span>
+              )}
+            </div>
+            <ul className="space-y-2">
+              {calendarEvents.length > 0 ? (
+                calendarEvents.map(event => (
+                  <li key={event.id} className="flex items-center text-sm">
+                    <span className="w-12 text-gray-500 font-medium">{formatTime(event.startTime)}</span>
+                    <span className="flex-1 text-gray-700">{event.title}</span>
                   </li>
-                ))}
-              </ul>
-            </Card>
+                ))
+              ) : (
+                <li className="text-sm text-gray-500">{t('foundationDashboard.calendar.noEvents')}</li>
+              )}
+            </ul>
+          </Card>
         </div>
 
         {/* Center Column (Recent Activity) - 6/12 on large screens */}
@@ -107,20 +268,29 @@ const FoundationDashboardPage: React.FC = () => {
           <Card className="p-5 h-full">
             <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">{t('foundationDashboard.activity.title')}</h2>
             <ul className="space-y-3">
-              {recentActivity.map(activity => (
-                <li key={activity.id} className="flex items-start p-3 -m-3 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className={`p-2 rounded-full bg-gray-100 mr-3 ${activity.color}`}>
-                    <activity.icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-grow">
-                    <p className="text-sm text-gray-800">
-                      <span className="font-semibold">{t(activity.textKey)}:</span> {activity.details}
-                    </p>
-                    <p className="text-xs text-gray-400">{activity.time}</p>
-                  </div>
-                  <Button variant="ghost" size="xs">{t('common:buttons.view')}</Button>
-                </li>
-              ))}
+              {activities.length > 0 ? (
+                activities.map(activity => {
+                  const IconComponent = ACTIVITY_ICONS[activity.type] || DocumentTextIcon;
+                  const iconColor = ACTIVITY_COLORS[activity.type] || 'text-gray-500';
+                  
+                  return (
+                    <li key={activity.id} className="flex items-start p-3 -m-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className={`p-2 rounded-full bg-gray-100 mr-3 ${iconColor}`}>
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      <div className="flex-grow">
+                        <p className="text-sm text-gray-800">
+                          <span className="font-semibold">{activity.title}:</span> {activity.description}
+                        </p>
+                        <p className="text-xs text-gray-400">{formatRelativeTime(activity.timestamp)}</p>
+                      </div>
+                      <Button variant="ghost" size="xs">{t('common:buttons.view')}</Button>
+                    </li>
+                  );
+                })
+              ) : (
+                <li className="text-sm text-gray-500 py-4">{t('foundationDashboard.activity.noActivity')}</li>
+              )}
             </ul>
           </Card>
         </div>
