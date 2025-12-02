@@ -1,50 +1,131 @@
-
-
-import React, { useState, useMemo, useEffect } from 'react';
-import { Organization, Service, OrderRequest, UserRole, Product, ServiceRequest, ServiceRequestStatus } from '../types';
-import { MOCK_PRODUCTS, MOCK_SERVICES, MOCK_ORGANIZATIONS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, MOCK_SERVICE_REQUESTS } from '../constants'; 
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Organization, Service, UserRole, Product, ServiceRequest, ServiceRequestStatus, OrganizationType } from '../types';
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
-import { BuildingStorefrontIcon, WrenchScrewdriverIcon, TagIcon, FunnelIcon, MagnifyingGlassIcon, ListBulletIcon, Squares2X2Icon, InformationCircleIcon, ChevronDownIcon, EyeIcon, StarIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
+import { BuildingStorefrontIcon, WrenchScrewdriverIcon, TagIcon, FunnelIcon, MagnifyingGlassIcon, ListBulletIcon, Squares2X2Icon, InformationCircleIcon, EyeIcon, StarIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import ServiceRequestModal from '../components/marketplace/ServiceRequestModal';
 import SupplierCard from '../components/marketplace/SupplierCard'; 
 import { useAppContext } from '../contexts/AppContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { formatServiceCategory } from '../utils/serviceFormatting';
+import { formatServiceCategory, formatServiceDeliveryType } from '../utils/serviceFormatting';
+import { marketplaceService } from '../services/marketplaceService';
 
-// ServiceCard now includes a function to book an appointment
-const ServiceCard: React.FC<{ service: Service, onViewProvider: (providerId: string) => void, onBookAppointment: (service: Service) => void }> = ({ service, onViewProvider, onBookAppointment }) => {
-    const { t } = useTranslation(['dashboard', 'common']);
-    const localizedCategory = formatServiceCategory(t, service.category);
-  return (
-  <Card className="flex flex-col group" hoverEffect>
-     <div className="relative overflow-hidden aspect-video cursor-pointer" onClick={() => onViewProvider(service.providerId)}>
-        <img src={service.imageUrl || 'https://picsum.photos/seed/serviceY/400/300'} alt={service.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+// Loading skeleton component
+const CardSkeleton: React.FC = () => (
+  <Card className="flex flex-col animate-pulse">
+    <div className="relative p-4 border-b border-gray-200 bg-gray-50/50">
+      <div className="w-20 h-20 rounded-full mx-auto bg-gray-200" />
     </div>
     <div className="p-5 flex flex-col flex-grow">
-      <h3 className="text-lg font-semibold text-swiss-charcoal mb-1 group-hover:text-swiss-teal transition-colors cursor-pointer" onClick={() => onViewProvider(service.providerId)}>{service.title}</h3>
-       <div className="flex items-center text-xs text-gray-500 mb-2">
-        <img src={service.providerLogo || 'https://picsum.photos/seed/provLogo/50/50'} alt={service.providerName} className="w-5 h-5 rounded-full mr-1.5 border border-gray-200" />
-        <button onClick={() => onViewProvider(service.providerId)} className="hover:underline focus:outline-none">{service.providerName}</button>
-      </div>
-      <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
-        <div className="text-xs text-gray-500 mb-1">
-          <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('common:marketplacePage.serviceCard.categoryLabel')}: {localizedCategory}
-      </div>
-      {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
-       <div className="mb-4">
-        {service.tags.slice(0,3).map(tag => <span key={tag} className="text-xs bg-swiss-mint/10 text-swiss-mint px-2.5 py-1 rounded-full mr-1.5 mb-1 inline-block font-medium">{tag}</span>)}
-      </div>
-      <div className="flex space-x-2 mt-auto">
-        <Button variant="secondary" size="sm" className="flex-1" onClick={() => onBookAppointment(service)}>{t('serviceCard.bookAppointment')}</Button>
-        <Button variant="outline" size="sm" leftIcon={EyeIcon} onClick={() => onViewProvider(service.providerId)}>{t('serviceCard.viewProvider')}</Button>
-      </div>
+      <div className="h-5 bg-gray-200 rounded w-3/4 mx-auto mb-2" />
+      <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mb-3" />
+      <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto mb-4" />
+      <div className="h-10 bg-gray-200 rounded w-full mt-auto" />
     </div>
   </Card>
+);
+
+// Service Provider Card Component
+const ServiceProviderCard: React.FC<{ 
+  provider: Organization; 
+  onViewProfile: (providerId: string) => void;
+}> = ({ provider, onViewProfile }) => {
+  const { t } = useTranslation(['dashboard', 'common']);
+
+  const renderRatingStars = (rating?: number) => {
+    const totalStars = 5;
+    const fullStars = Math.floor(rating || 0);
+    const emptyStars = totalStars - fullStars;
+    return (
+      <div className="flex items-center justify-center">
+        {[...Array(fullStars)].map((_, i) => <StarIcon key={`full-${i}`} className="w-4 h-4 text-yellow-400 fill-yellow-400" />)}
+        {[...Array(emptyStars)].map((_, i) => <StarIcon key={`empty-${i}`} className="w-4 h-4 text-gray-300" />)}
+        {rating && <span className="ml-1.5 text-xs text-gray-500">({rating.toFixed(1)})</span>}
+      </div>
+    );
+  };
+
+  // Get service categories from the provider
+  const getServiceCategories = () => {
+    if (provider.serviceCategories && provider.serviceCategories.length > 0) {
+      return provider.serviceCategories.slice(0, 2).join(', ') + (provider.serviceCategories.length > 2 ? '...' : '');
+    }
+    if (provider.serviceType) {
+      return provider.serviceType;
+    }
+    if (provider.services && provider.services.length > 0) {
+      const categories = [...new Set(provider.services.map(s => s.category))];
+      return categories.slice(0, 2).map(cat => formatServiceCategory(t, cat)).join(', ');
+    }
+    return t('common:marketplace.variousServices', 'Various Services');
+  };
+
+  return (
+    <Card className="flex flex-col group" hoverEffect>
+      <div className="relative p-4 border-b border-gray-200 bg-gray-50/50">
+        <img 
+          src={provider.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(provider.name)}&background=D1FAE5&color=059669&size=128`} 
+          alt={`${provider.name} logo`} 
+          className="w-20 h-20 rounded-full mx-auto object-contain border-2 border-white shadow-md bg-white"
+        />
+        {provider.badges && provider.badges.length > 0 && (
+          <span className={`absolute top-2 right-2 text-xs font-semibold px-2 py-0.5 rounded-full ${
+            provider.badges[0].toLowerCase().includes('verified') ? 'bg-green-100 text-green-700' :
+            provider.badges[0].toLowerCase().includes('promo') ? 'bg-red-100 text-red-700' :
+            'bg-teal-100 text-teal-700'
+          }`}>
+            {provider.badges[0]}
+          </span>
+        )}
+      </div>
+      <div className="p-5 flex flex-col flex-grow">
+        <h3 className="text-lg font-semibold text-swiss-charcoal mb-1 text-center group-hover:text-swiss-teal transition-colors">
+          {provider.name}
+        </h3>
+        <p className="text-xs text-gray-500 text-center mb-2 flex items-center justify-center">
+          <WrenchScrewdriverIcon className="w-3.5 h-3.5 mr-1 opacity-70"/> {provider.region || 'Switzerland'}
+        </p>
+        <div className="text-center mb-3">
+          {renderRatingStars(provider.rating)}
+        </div>
+        
+        <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-2 text-center">
+          <TagIcon className="w-4 h-4 inline mr-1 opacity-60" /> 
+          {getServiceCategories()}
+        </p>
+
+        {provider.deliveryType && (
+          <p className="text-xs text-center text-gray-500 mb-3">
+            {formatServiceDeliveryType(t, provider.deliveryType)}
+          </p>
+        )}
+        
+        <div className="mt-auto">
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            className="w-full" 
+            leftIcon={EyeIcon}
+            onClick={() => onViewProfile(provider.id)}
+          >
+            {t('dashboard:supplierCard.viewProfileAndProducts', 'View Profile & Services')}
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
 };
+
+// Empty state component
+const EmptyState: React.FC<{ message: string; icon: React.ElementType }> = ({ message, icon: Icon }) => (
+  <div className="text-center py-12">
+    <Icon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+    <p className="text-gray-500">{message}</p>
+  </div>
+);
 
 const getActiveTabFromPath = (path: string) => {
   if (path.includes('/services')) return 1;
@@ -65,20 +146,55 @@ const MarketplacePage: React.FC = () => {
   const [sortOption, setSortOption] = useState('name_asc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
+  // Data state
+  const [productSuppliers, setProductSuppliers] = useState<Organization[]>([]);
+  const [serviceProviders, setServiceProviders] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Modal state
   const [isServiceRequestModalOpen, setIsServiceRequestModalOpen] = useState(false);
   const [selectedServiceForRequest, setSelectedServiceForRequest] = useState<Service | null>(null);
   
-  // Effect to sync tab with URL changes (e.g., browser back/forward)
+  // Fetch data from API
+  const fetchMarketplaceData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const [suppliersResult, providersResult] = await Promise.all([
+        marketplaceService.getProductSuppliers({
+          region: regionFilter !== 'All' ? regionFilter : undefined,
+          search: searchTerm || undefined,
+          limit: 100,
+        }),
+        marketplaceService.getServiceProviders({
+          region: regionFilter !== 'All' ? regionFilter : undefined,
+          search: searchTerm || undefined,
+          limit: 100,
+        }),
+      ]);
+      
+      setProductSuppliers(suppliersResult.suppliers);
+      setServiceProviders(providersResult.providers);
+    } catch (err) {
+      console.error('Failed to fetch marketplace data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load marketplace data');
+    } finally {
+      setLoading(false);
+    }
+  }, [regionFilter, searchTerm]);
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchMarketplaceData();
+  }, [fetchMarketplaceData]);
+  
+  // Effect to sync tab with URL changes
   useEffect(() => {
     const newIndex = getActiveTabFromPath(location.pathname);
     if (newIndex !== activeTabIndex) {
       setActiveTabIndex(newIndex);
-      // Reset filters when tab changes to avoid confusion
-      setSearchTerm('');
-      setCategoryFilter('All');
-      setRegionFilter('All');
-      setTagFilter('All');
-      setSortOption('name_asc');
     }
   }, [location.pathname, activeTabIndex]);
 
@@ -93,11 +209,11 @@ const MarketplacePage: React.FC = () => {
   
   const handleSubmitServiceRequest = (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId' | 'providerId' | 'serviceName' | 'serviceId'>) => {
     if (!currentUser || !currentUser.orgId || !selectedServiceForRequest) return;
-     const newRequest = {
-        ...requestData,
-        providerId: selectedServiceForRequest.providerId,
-        serviceId: selectedServiceForRequest.id,
-        serviceName: selectedServiceForRequest.title,
+    const newRequest = {
+      ...requestData,
+      providerId: selectedServiceForRequest.providerId,
+      serviceId: selectedServiceForRequest.id,
+      serviceName: selectedServiceForRequest.title,
     };
     submitServiceRequest(newRequest);
     setIsServiceRequestModalOpen(false);
@@ -110,80 +226,90 @@ const MarketplacePage: React.FC = () => {
       : t('tabs.serviceProviders');
   }, [activeTabIndex, t]);
 
-  const productSuppliers = useMemo(() => MOCK_ORGANIZATIONS.filter(org => org.type === 'supplier'), []);
-  const serviceProviders = useMemo(() => MOCK_ORGANIZATIONS.filter(org => org.type === 'service_provider'), []);
-
+  // Extract categories from suppliers
   const supplierProductCategories = useMemo(() => {
     const categories = new Set<string>();
     productSuppliers.forEach(supplier => {
-      // Check organization product categories
       if (supplier.productCategories) {
         supplier.productCategories.forEach(cat => categories.add(cat));
       }
-      // Also check product categories
-      MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).forEach(p => {
-        if (p.categories) {
-          p.categories.forEach(cat => categories.add(cat));
-        } else if (p.category) {
-          categories.add(p.category);
-        }
-      });
+      if (supplier.products) {
+        supplier.products.forEach(p => {
+          if (p.categories) {
+            p.categories.forEach(cat => categories.add(cat));
+          } else if (p.category) {
+            categories.add(p.category);
+          }
+        });
+      }
     });
     return ['All', ...Array.from(categories).sort()];
   }, [productSuppliers]);
 
+  // Extract tags from suppliers
   const supplierTags = useMemo(() => {
     const tags = new Set<string>();
     productSuppliers.forEach(supplier => {
       (supplier.tags || []).forEach(tag => tags.add(tag));
+      (supplier.productCategories || []).forEach(cat => tags.add(cat));
     });
     return ['All', ...Array.from(tags).sort()];
   }, [productSuppliers]);
   
+  // Extract service categories from providers
   const serviceProviderCategories = useMemo(() => {
     const categories = new Set<string>();
-    MOCK_SERVICES.forEach(s => {
-      if (s.categories) {
-        s.categories.forEach(cat => categories.add(cat));
-      } else if (s.category) {
-        categories.add(String(s.category));
+    serviceProviders.forEach(provider => {
+      if (provider.serviceCategories) {
+        provider.serviceCategories.forEach(cat => categories.add(cat));
+      }
+      if (provider.services) {
+        provider.services.forEach(s => {
+          if (s.categories) {
+            s.categories.forEach(cat => categories.add(cat));
+          } else if (s.category) {
+            categories.add(String(s.category));
+          }
+        });
       }
     });
     return ['All', ...Array.from(categories).sort()];
-  }, []);
-  const allRegions = useMemo(() => ['All', ...new Set(MOCK_ORGANIZATIONS.map(org => org.region).sort())], []);
+  }, [serviceProviders]);
+
+  // Extract all regions
+  const allRegions = useMemo(() => {
+    const regions = new Set<string>();
+    [...productSuppliers, ...serviceProviders].forEach(org => {
+      if (org.region) regions.add(org.region);
+      if (org.canton) regions.add(org.canton);
+      if (org.regionsServed) {
+        org.regionsServed.forEach(r => regions.add(r));
+      }
+    });
+    return ['All', ...Array.from(regions).sort()];
+  }, [productSuppliers, serviceProviders]);
 
   const currentCategories = activeTabIndex === 0 ? supplierProductCategories : serviceProviderCategories;
   const currentTags = activeTabIndex === 0 ? supplierTags : [];
 
+  // Filter and sort suppliers
   const filteredSuppliers = useMemo(() => {
     return productSuppliers
       .filter(supplier => {
-        // Search filter
-        const matchesSearch = supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (supplier.tags && supplier.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))) ||
-          (supplier.productCategories && supplier.productCategories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()))) ||
-          MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
-            p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            (p.categories && p.categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()))) ||
-            (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
-          );
-        
-        // Region filter
-        const matchesRegion = regionFilter === 'All' || supplier.region === regionFilter;
-        
-        // Category filter - check both organization and product categories
+        // Category filter
         const matchesCategory = categoryFilter === 'All' || 
           (supplier.productCategories && supplier.productCategories.includes(categoryFilter)) ||
-          MOCK_PRODUCTS.filter(p => p.supplierId === supplier.id).some(p => 
+          (supplier.products && supplier.products.some(p => 
             (p.categories && p.categories.includes(categoryFilter)) ||
             p.category === categoryFilter
-          );
+          ));
         
         // Tag filter
-        const matchesTag = tagFilter === 'All' || (supplier.tags && supplier.tags.includes(tagFilter));
+        const matchesTag = tagFilter === 'All' || 
+          (supplier.tags && supplier.tags.includes(tagFilter)) ||
+          (supplier.productCategories && supplier.productCategories.includes(tagFilter));
         
-        return matchesSearch && matchesRegion && matchesCategory && matchesTag;
+        return matchesCategory && matchesTag;
       })
       .sort((a, b) => {
         switch (sortOption) {
@@ -193,22 +319,31 @@ const MarketplacePage: React.FC = () => {
           default: return 0;
         }
       });
-  }, [searchTerm, regionFilter, categoryFilter, tagFilter, sortOption, productSuppliers]);
+  }, [productSuppliers, categoryFilter, tagFilter, sortOption]);
 
-  const filteredServices = useMemo(() =>
-    MOCK_SERVICES.filter(s => {
-      const matchesSearch = s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (s.categories && s.categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase())));
-      
-      const matchesCategory = categoryFilter === 'All' || 
-        (s.categories && s.categories.includes(categoryFilter)) ||
-        String(s.category) === categoryFilter;
-      
-      const matchesRegion = regionFilter === 'All' || 
-        serviceProviders.find(p => p.id === s.providerId)?.region === regionFilter;
-      
-      return matchesSearch && matchesCategory && matchesRegion;
-    }), [searchTerm, categoryFilter, regionFilter, serviceProviders]);
+  // Filter and sort service providers
+  const filteredProviders = useMemo(() => {
+    return serviceProviders
+      .filter(provider => {
+        // Category filter
+        const matchesCategory = categoryFilter === 'All' || 
+          (provider.serviceCategories && provider.serviceCategories.includes(categoryFilter)) ||
+          (provider.services && provider.services.some(s => 
+            (s.categories && s.categories.includes(categoryFilter)) ||
+            String(s.category) === categoryFilter
+          ));
+        
+        return matchesCategory;
+      })
+      .sort((a, b) => {
+        switch (sortOption) {
+          case 'name_asc': return a.name.localeCompare(b.name);
+          case 'name_desc': return b.name.localeCompare(a.name);
+          case 'rating_desc': return (b.rating || 0) - (a.rating || 0);
+          default: return 0;
+        }
+      });
+  }, [serviceProviders, categoryFilter, sortOption]);
 
 
   const handleViewPartner = (partnerId: string) => {
@@ -216,6 +351,8 @@ const MarketplacePage: React.FC = () => {
   };
   
   const handleTabChange = (index: number) => {
+    setCategoryFilter('All');
+    setTagFilter('All');
     if (index === 0) {
       navigate('/marketplace/products');
     } else if (index === 1) {
@@ -223,44 +360,111 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setCategoryFilter('All');
+    setRegionFilter('All');
+    setTagFilter('All');
+    setSortOption('name_asc');
+  };
+
+  const gridClass = viewMode === 'grid' 
+    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+    : 'grid-cols-1';
+
   const tabsConfig = [
-    { label: t('tabs.productSuppliers'), icon: BuildingStorefrontIcon, content: (
-      <>
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-          {filteredSuppliers.map(supplier => 
-            <SupplierCard key={supplier.id} supplier={supplier} onViewProfile={handleViewPartner} />
+    { 
+      label: t('tabs.productSuppliers'), 
+      icon: BuildingStorefrontIcon, 
+      content: (
+        <>
+          {loading ? (
+            <div className={`grid gap-6 ${gridClass}`}>
+              {[...Array(8)].map((_, i) => <CardSkeleton key={i} />)}
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 mb-4">{error}</p>
+              <Button variant="outline" leftIcon={ArrowPathIcon} onClick={fetchMarketplaceData}>
+                {t('common:buttons.retry', 'Retry')}
+              </Button>
+            </div>
+          ) : filteredSuppliers.length > 0 ? (
+            <div className={`grid gap-6 ${gridClass}`}>
+              {filteredSuppliers.map(supplier => 
+                <SupplierCard key={supplier.id} supplier={supplier} onViewProfile={handleViewPartner} />
+              )}
+            </div>
+          ) : (
+            <EmptyState 
+              message={t('emptyStates.noProductSuppliers')} 
+              icon={BuildingStorefrontIcon} 
+            />
           )}
-        </div>
-        {filteredSuppliers.length === 0 && <p className="text-center text-gray-500 py-12">{t('emptyStates.noProductSuppliers')}</p>}
-      </>
-    )},
-    { label: t('tabs.serviceProviders'), icon: WrenchScrewdriverIcon, content: ( 
-      <>
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-          {filteredServices.map(service => 
-            <ServiceCard key={service.id} service={service} onViewProvider={handleViewPartner} onBookAppointment={handleOpenServiceRequestModal}/>
+        </>
+      )
+    },
+    { 
+      label: t('tabs.serviceProviders'), 
+      icon: WrenchScrewdriverIcon, 
+      content: ( 
+        <>
+          {loading ? (
+            <div className={`grid gap-6 ${gridClass}`}>
+              {[...Array(8)].map((_, i) => <CardSkeleton key={i} />)}
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 mb-4">{error}</p>
+              <Button variant="outline" leftIcon={ArrowPathIcon} onClick={fetchMarketplaceData}>
+                {t('common:buttons.retry', 'Retry')}
+              </Button>
+            </div>
+          ) : filteredProviders.length > 0 ? (
+            <div className={`grid gap-6 ${gridClass}`}>
+              {filteredProviders.map(provider => 
+                <ServiceProviderCard 
+                  key={provider.id} 
+                  provider={provider} 
+                  onViewProfile={handleViewPartner}
+                />
+              )}
+            </div>
+          ) : (
+            <EmptyState 
+              message={t('emptyStates.noServices')} 
+              icon={WrenchScrewdriverIcon} 
+            />
           )}
-        </div>
-         {filteredServices.length === 0 && <p className="text-center text-gray-500 py-12">{t('emptyStates.noServices')}</p>}
-      </>
-    )},
+        </>
+      )
+    },
   ];
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start">
         <div>
-            <h1 className="text-3xl font-bold text-swiss-charcoal">
-                {activeTabLabel}
-            </h1>
-            {activeTabIndex === 0 && 
-                <p className="text-gray-500 mt-1">{t('subtitles.productSuppliers')}</p>
-            }
-            {activeTabIndex === 1 &&
-                 <p className="text-gray-500 mt-1">{t('subtitles.serviceProviders')}</p>
-            }
+          <h1 className="text-3xl font-bold text-swiss-charcoal">
+            {activeTabLabel}
+          </h1>
+          {activeTabIndex === 0 && 
+            <p className="text-gray-500 mt-1">{t('subtitles.productSuppliers')}</p>
+          }
+          {activeTabIndex === 1 &&
+            <p className="text-gray-500 mt-1">{t('subtitles.serviceProviders')}</p>
+          }
         </div>
-        {currentUser?.role === UserRole.ADMIN && <Button variant="secondary" leftIcon={FunnelIcon} size="md" onClick={() => alert("Partner Onboarding TBD")}>{t('marketplace:buttons.partnerOnboarding')}</Button>}
+        {currentUser?.role === UserRole.ADMIN && (
+          <Button 
+            variant="secondary" 
+            leftIcon={FunnelIcon} 
+            size="md" 
+            onClick={() => alert("Partner Onboarding TBD")}
+          >
+            {t('marketplace:buttons.partnerOnboarding')}
+          </Button>
+        )}
       </div>
       
       <div className="bg-swiss-teal/5 border-l-4 border-swiss-teal text-swiss-teal p-4 rounded-card flex items-start" role="alert">
@@ -273,100 +477,120 @@ const MarketplacePage: React.FC = () => {
       <Card className="p-5">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           <div className="relative lg:col-span-2">
-             <label htmlFor="searchMarketplace" className="sr-only">{t('searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}</label>
-             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-             <input 
-                type="text" 
-                id="searchMarketplace"
-                placeholder={t('searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={ICON_INPUT_FIELD}
+            <label htmlFor="searchMarketplace" className="sr-only">
+              {t('searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}
+            </label>
+            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input 
+              type="text" 
+              id="searchMarketplace"
+              placeholder={t('searchPlaceholder', { activeTabLabel: activeTabLabel.toLowerCase() })}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={ICON_INPUT_FIELD}
             />
           </div>
           <div>
-            <label htmlFor="categoryFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.category')}</label>
+            <label htmlFor="categoryFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">
+              {t('labels.category')}
+            </label>
             <select 
-                id="categoryFilterMarketplace"
-                value={categoryFilter} 
-                onChange={(e) => {setCategoryFilter(e.target.value);}}
-                className={STANDARD_INPUT_FIELD}
+              id="categoryFilterMarketplace"
+              value={categoryFilter} 
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className={STANDARD_INPUT_FIELD}
             >
-                    {currentCategories.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat === 'All'
-                      ? t('common:filters.all')
-                      : activeTabIndex === 1
-                        ? formatServiceCategory(t, cat)
-                        : cat}
-                  </option>
-                ))}
+              {currentCategories.map(cat => (
+                <option key={cat} value={cat}>
+                  {cat === 'All'
+                    ? t('common:filters.all')
+                    : activeTabIndex === 1
+                      ? formatServiceCategory(t, cat)
+                      : cat}
+                </option>
+              ))}
             </select>
           </div>
           <div>
-            <label htmlFor="regionFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.region')}</label>
+            <label htmlFor="regionFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">
+              {t('labels.region')}
+            </label>
             <select 
-                id="regionFilterMarketplace"
-                value={regionFilter} 
-                onChange={(e) => setRegionFilter(e.target.value)}
-                className={STANDARD_INPUT_FIELD}
+              id="regionFilterMarketplace"
+              value={regionFilter} 
+              onChange={(e) => setRegionFilter(e.target.value)}
+              className={STANDARD_INPUT_FIELD}
             >
-                {allRegions.map(reg => <option key={reg} value={reg}>{reg === 'All' ? t('common:filters.all') : reg}</option>)}
+              {allRegions.map(reg => (
+                <option key={reg} value={reg}>
+                  {reg === 'All' ? t('common:filters.all') : reg}
+                </option>
+              ))}
             </select>
           </div>
           {activeTabIndex === 0 && (
             <>
               <div>
-                <label htmlFor="tagFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.supplierTags')}</label>
+                <label htmlFor="tagFilterMarketplace" className="block text-xs font-medium text-gray-500 mb-1">
+                  {t('labels.supplierTags')}
+                </label>
                 <select 
-                    id="tagFilterMarketplace"
-                    value={tagFilter} 
-                    onChange={(e) => setTagFilter(e.target.value)}
-                    className={STANDARD_INPUT_FIELD}
+                  id="tagFilterMarketplace"
+                  value={tagFilter} 
+                  onChange={(e) => setTagFilter(e.target.value)}
+                  className={STANDARD_INPUT_FIELD}
                 >
-                    {(currentTags as string[]).map(tag => <option key={tag} value={tag}>{tag === 'All' ? t('common:filters.all') : tag}</option>)}
+                  {(currentTags as string[]).map(tag => (
+                    <option key={tag} value={tag}>
+                      {tag === 'All' ? t('common:filters.all') : tag}
+                    </option>
+                  ))}
                 </select>
               </div>
-               <div>
-                <label htmlFor="sortOptionMarketplace" className="block text-xs font-medium text-gray-500 mb-1">{t('labels.sortBy')}</label>
+              <div>
+                <label htmlFor="sortOptionMarketplace" className="block text-xs font-medium text-gray-500 mb-1">
+                  {t('labels.sortBy')}
+                </label>
                 <select 
-                    id="sortOptionMarketplace"
-                    value={sortOption} 
-                    onChange={(e) => setSortOption(e.target.value)}
-                    className={STANDARD_INPUT_FIELD}
+                  id="sortOptionMarketplace"
+                  value={sortOption} 
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className={STANDARD_INPUT_FIELD}
                 >
-                    <option value="name_asc">{t('sortOptions.nameAsc')}</option>
-                    <option value="name_desc">{t('sortOptions.nameDesc')}</option>
-                    <option value="rating_desc">{t('sortOptions.ratingDesc')}</option>
+                  <option value="name_asc">{t('sortOptions.nameAsc')}</option>
+                  <option value="name_desc">{t('sortOptions.nameDesc')}</option>
+                  <option value="rating_desc">{t('sortOptions.ratingDesc')}</option>
                 </select>
               </div>
             </>
           )}
         </div>
         <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-            <div className="flex items-center space-x-1 border border-gray-300 rounded-button p-0.5 bg-gray-100">
-                <Button 
-                    variant={viewMode === 'grid' ? 'light' : 'ghost'} 
-                    size="sm" 
-                    onClick={() => setViewMode('grid')}
-                    className={`${viewMode === 'grid' ? 'bg-white shadow-sm' : 'shadow-none'}`}
-                    aria-pressed={viewMode === 'grid'}
-                    aria-label={t('ariaLabels.gridView')}
-                >
-                    <Squares2X2Icon className="w-5 h-5"/>
-                </Button>
-                 <Button 
-                    variant={viewMode === 'list' ? 'light' : 'ghost'} 
-                    size="sm" 
-                    onClick={() => setViewMode('list')}
-                    className={`${viewMode === 'list' ? 'bg-white shadow-sm' : 'shadow-none'}`}
-                    aria-pressed={viewMode === 'list'}
-                    aria-label={t('ariaLabels.listView')}
-                >
-                    <ListBulletIcon className="w-5 h-5"/>
-                </Button>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setCategoryFilter('All'); setRegionFilter('All'); setTagFilter('All'); setSortOption('name_asc');}}>{t('common:buttons.resetFilters')}</Button>
+          <div className="flex items-center space-x-1 border border-gray-300 rounded-button p-0.5 bg-gray-100">
+            <Button 
+              variant={viewMode === 'grid' ? 'light' : 'ghost'} 
+              size="sm" 
+              onClick={() => setViewMode('grid')}
+              className={`${viewMode === 'grid' ? 'bg-white shadow-sm' : 'shadow-none'}`}
+              aria-pressed={viewMode === 'grid'}
+              aria-label={t('ariaLabels.gridView')}
+            >
+              <Squares2X2Icon className="w-5 h-5"/>
+            </Button>
+            <Button 
+              variant={viewMode === 'list' ? 'light' : 'ghost'} 
+              size="sm" 
+              onClick={() => setViewMode('list')}
+              className={`${viewMode === 'list' ? 'bg-white shadow-sm' : 'shadow-none'}`}
+              aria-pressed={viewMode === 'list'}
+              aria-label={t('ariaLabels.listView')}
+            >
+              <ListBulletIcon className="w-5 h-5"/>
+            </Button>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleResetFilters}>
+            {t('common:buttons.resetFilters')}
+          </Button>
         </div>
       </Card>
 
@@ -378,13 +602,12 @@ const MarketplacePage: React.FC = () => {
         onTabChange={handleTabChange}
       />
 
-       <ServiceRequestModal
+      <ServiceRequestModal
         isOpen={isServiceRequestModalOpen}
         onClose={() => setIsServiceRequestModalOpen(false)}
         service={selectedServiceForRequest}
         onSubmitRequest={handleSubmitServiceRequest}
       />
-
     </div>
   );
 };
