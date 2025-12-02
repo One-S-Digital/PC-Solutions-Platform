@@ -50,7 +50,7 @@ export interface FrontendSettings {
   // Asset relations
   logoAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -60,7 +60,7 @@ export interface FrontendSettings {
   };
   faviconAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -70,7 +70,7 @@ export interface FrontendSettings {
   };
   adminLogoAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -80,7 +80,7 @@ export interface FrontendSettings {
   };
   adminFaviconAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -90,7 +90,7 @@ export interface FrontendSettings {
   };
   ogImageAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -329,7 +329,7 @@ export interface FileHealth {
 
 export interface UploadedAsset {
   id: string;
-  url: string;
+  publicUrl: string;
   filename: string;
   size: number;
   mimeType: string;

@@ -9,7 +9,7 @@ interface AssetUploaderProps {
   kind: 'logo' | 'admin_logo' | 'favicon' | 'admin_favicon' | 'hero';
   currentAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     size: number;
     mimeType: string;
@@ -215,7 +215,7 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
   };
 
   const getPreviewUrl = () => {
-    if (currentAsset) return currentAsset.url;
+    if (currentAsset) return currentAsset.publicUrl;
     if (fallbackUrl) return fallbackUrl;
     return null;
   };
