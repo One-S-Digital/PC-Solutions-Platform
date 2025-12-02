@@ -154,12 +154,14 @@ export class FoundationAnalyticsController {
         break;
       }
       case 'enrollment': {
-        const data = await this.analyticsService.getEnrollmentTrend(organizationIds, '12m');
+        // Map timeRange to enrollment-compatible format
+        const enrollmentTimeRange = timeRange === '1y' ? '12m' : timeRange === '6m' ? '6m' : '3m';
+        const data = await this.analyticsService.getEnrollmentTrend(organizationIds, enrollmentTimeRange);
         csvContent = 'Month,Total Enrolled,New Leads,Conversions\n';
         csvContent += data
           .map((d) => `"${d.monthLabel}",${d.enrolled},${d.newLeads},${d.converted}`)
           .join('\n');
-        filename = 'enrollment-trend.csv';
+        filename = `enrollment-trend-${enrollmentTimeRange}.csv`;
         break;
       }
     }

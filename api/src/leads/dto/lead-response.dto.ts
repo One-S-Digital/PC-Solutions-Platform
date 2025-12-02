@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsOptional, IsIn, MinLength, MaxLength } from 'class-validator';
 
 export class CreateLeadResponseDto {
   @IsString()
@@ -7,5 +7,7 @@ export class CreateLeadResponseDto {
 
   @IsString()
   @IsOptional()
+  @MinLength(1)
+  @MaxLength(5000)
   message?: string;
 }

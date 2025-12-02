@@ -56,10 +56,12 @@ export class FoundationAnalyticsService {
       case '30d':
         return 30;
       case '90d':
+      case '3m':
         return 90;
       case '6m':
         return 180;
       case '1y':
+      case '12m':
         return 365;
       default:
         return 30;
@@ -367,10 +369,10 @@ export class FoundationAnalyticsService {
       this.getEnrollmentTrend(organizationIds, '12m'),
     ]);
 
-    // Calculate summary metrics
+    // Calculate summary metrics - use explicit stage lookup instead of fragile array indexing
     const totalSpending = spending.reduce((sum, item) => sum + item.amount, 0);
-    const totalLeads = leadFunnel[0]?.count || 0;
-    const enrolledLeads = leadFunnel[3]?.count || 0;
+    const totalLeads = leadFunnel.find((s) => s.stage === 'New Leads')?.count || 0;
+    const enrolledLeads = leadFunnel.find((s) => s.stage === 'Enrolled')?.count || 0;
     const conversionRate = totalLeads > 0 ? Math.round((enrolledLeads / totalLeads) * 1000) / 10 : 0;
 
     const totalEnrolled = training.reduce((sum, item) => sum + item.totalEnrolled, 0);

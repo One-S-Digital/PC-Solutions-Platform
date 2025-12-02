@@ -474,7 +474,7 @@ export class DashboardController {
 
     const stats = {
       totalBookings,
-      monthlyRevenue: monthlyBookings * 100, // Placeholder calculation
+      monthlyRevenue: 0, // TODO: Calculate from actual service request prices
       activeClients,
       pendingBookings,
       completedServices,

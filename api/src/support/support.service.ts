@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '@prisma/client';
 import { SupportTicketResponse } from './dto/support.dto';
+
+const ALLOWED_STATUSES = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'] as const;
 
 @Injectable()
 export class SupportService {
@@ -62,7 +63,7 @@ export class SupportService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return tickets.map(this.transformTicket);
+    return tickets.map((ticket) => this.transformTicket(ticket));
   }
 
   /**
@@ -110,7 +111,7 @@ export class SupportService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return tickets.map(this.transformTicket);
+    return tickets.map((ticket) => this.transformTicket(ticket));
   }
 
   /**
@@ -198,6 +199,11 @@ export class SupportService {
     status: string,
     adminUserId: string,
   ): Promise<SupportTicketResponse> {
+    // Validate status
+    if (!ALLOWED_STATUSES.includes(status as typeof ALLOWED_STATUSES[number])) {
+      throw new BadRequestException(`Invalid status: ${status}. Allowed values: ${ALLOWED_STATUSES.join(', ')}`);
+    }
+
     const ticket = await this.prisma.supportTicket.findUnique({
       where: { id: ticketId },
     });
@@ -206,7 +212,7 @@ export class SupportService {
       throw new NotFoundException(`Ticket with ID ${ticketId} not found`);
     }
 
-    const updateData: any = { status };
+    const updateData: { status: string; resolvedAt?: Date } = { status };
 
     if (status === 'RESOLVED' || status === 'CLOSED') {
       updateData.resolvedAt = new Date();

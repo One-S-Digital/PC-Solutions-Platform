@@ -310,12 +310,15 @@ export class DashboardService {
     });
 
     for (const service of scheduledServices) {
+      // Defensive null check for scheduledAt
+      if (!service.scheduledAt) continue;
+      
       events.push({
         id: `service-${service.id}`,
         title: service.service?.title || 'Scheduled Service',
         description: service.description || undefined,
         eventType: 'service',
-        startTime: service.scheduledAt!.toISOString(),
+        startTime: service.scheduledAt.toISOString(),
         endTime: undefined,
         allDay: false,
         relatedEntityType: 'service_request',

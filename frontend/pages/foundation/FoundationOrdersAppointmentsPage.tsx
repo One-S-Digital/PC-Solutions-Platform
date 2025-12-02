@@ -9,7 +9,6 @@ import {
   ArrowPathIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
-import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
@@ -17,57 +16,19 @@ import {
   foundationOrdersApi,
   getOrderStatusClass,
   getServiceStatusClass,
+  Order,
+  OrderItem,
+  ServiceAppointment,
 } from '../../services/foundationOrdersService';
-
-interface OrderItem {
-  productId: string;
-  productName: string;
-  quantity: number;
-  price: number;
-}
-
-interface Order {
-  id: string;
-  totalAmount: number;
-  status: string;
-  createdAt: string;
-  items: OrderItem[];
-  organization: {
-    id: string;
-    name: string;
-    logoAsset?: { url: string };
-  };
-}
-
-interface ServiceRequest {
-  id: string;
-  status: string;
-  description: string | null;
-  createdAt: string;
-  scheduledAt: string | null;
-  service: {
-    id: string;
-    title: string;
-    price: number;
-    provider: {
-      organization: {
-        id: string;
-        name: string;
-        logoAsset?: { url: string };
-      };
-    };
-  };
-}
 
 const FoundationOrdersAppointmentsPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
-  const { currentUser } = useAppContext();
   const navigate = useNavigate();
   const { request } = useAuthenticatedApi();
   
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
+  const [serviceRequests, setServiceRequests] = useState<ServiceAppointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,7 +40,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
     try {
       const [ordersRes, servicesRes] = await Promise.all([
         request<Order[]>(foundationOrdersApi.getOrdersEndpoint()),
-        request<ServiceRequest[]>(foundationOrdersApi.getServiceRequestsEndpoint()),
+        request<ServiceAppointment[]>(foundationOrdersApi.getServiceRequestsEndpoint()),
       ]);
 
       if (ordersRes.success && ordersRes.data) {
@@ -154,9 +115,6 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {orders.map(order => {
-                const supplierName = order.items[0]?.productName ? 'Supplier' : 'Unknown';
-                const logoUrl = order.organization?.logoAsset?.url;
-                
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-4 py-2 whitespace-nowrap font-medium text-swiss-teal">
@@ -164,14 +122,14 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <div className="flex items-center">
-                        {logoUrl && (
+                        {order.supplierLogoUrl && (
                           <img 
-                            src={logoUrl} 
-                            alt={order.organization?.name} 
+                            src={order.supplierLogoUrl} 
+                            alt={order.supplierName} 
                             className="w-6 h-6 rounded-full mr-2"
                           />
                         )}
-                        {order.organization?.name || supplierName}
+                        {order.supplierName || t('foundationOrdersAppointmentsPage.unknownSupplier')}
                       </div>
                     </td>
                     <td className="px-4 py-2">
@@ -197,7 +155,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                       <Button 
                         variant="ghost" 
                         size="xs" 
-                        onClick={() => handleMessageSupplier(order.organization?.id)}
+                        onClick={() => handleMessageSupplier(order.supplierId)}
                       >
                         {t('common:buttons.sendMessage')}
                       </Button>
@@ -264,9 +222,6 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {serviceRequests.map(req => {
-                const providerOrg = req.service?.provider?.organization;
-                const logoUrl = providerOrg?.logoAsset?.url;
-                
                 return (
                   <tr key={req.id} className="hover:bg-gray-50">
                     <td className="px-4 py-2 whitespace-nowrap font-medium text-swiss-teal">
@@ -274,23 +229,23 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <div className="flex items-center">
-                        {logoUrl && (
+                        {req.providerLogoUrl && (
                           <img 
-                            src={logoUrl} 
-                            alt={providerOrg?.name} 
+                            src={req.providerLogoUrl} 
+                            alt={req.providerName} 
                             className="w-6 h-6 rounded-full mr-2"
                           />
                         )}
-                        {providerOrg?.name || t('foundationOrdersAppointmentsPage.unknownProvider')}
+                        {req.providerName || t('foundationOrdersAppointmentsPage.unknownProvider')}
                       </div>
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      {req.service?.title || t('foundationOrdersAppointmentsPage.unknownService')}
+                      {req.serviceTitle || t('foundationOrdersAppointmentsPage.unknownService')}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       {req.scheduledAt 
                         ? new Date(req.scheduledAt).toLocaleDateString(i18n.language)
-                        : new Date(req.createdAt).toLocaleDateString(i18n.language) + ` (${t('foundationOrdersAppointmentsPage.requestedAbbr')})`
+                        : new Date(req.requestedAt).toLocaleDateString(i18n.language) + ` (${t('foundationOrdersAppointmentsPage.requestedAbbr')})`
                       }
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
@@ -302,7 +257,7 @@ const FoundationOrdersAppointmentsPage: React.FC = () => {
                       <Button 
                         variant="ghost" 
                         size="xs" 
-                        onClick={() => handleMessageProvider(providerOrg?.id || '')}
+                        onClick={() => handleMessageProvider(req.providerId)}
                       >
                         {t('common:buttons.sendMessage')}
                       </Button>

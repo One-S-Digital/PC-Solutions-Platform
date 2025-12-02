@@ -47,6 +47,8 @@ const FoundationAnalyticsPage: React.FC = () => {
 
       if (res.success && res.data) {
         setAnalytics(res.data);
+      } else {
+        setError(t('common:errors.fetchFailed'));
       }
     } catch (err) {
       console.error('Error fetching analytics:', err);
@@ -63,6 +65,7 @@ const FoundationAnalyticsPage: React.FC = () => {
   // Handle CSV export
   const handleExport = async (type: ExportType) => {
     setExporting(type);
+    setError(null);
     try {
       const res = await request<{ filename: string; contentType: string; content: string }>(
         foundationAnalyticsApi.getExportEndpoint(type, timeRange)
@@ -70,9 +73,12 @@ const FoundationAnalyticsPage: React.FC = () => {
 
       if (res.success && res.data) {
         downloadCsv(res.data);
+      } else {
+        setError(t('common:errors.exportFailed'));
       }
     } catch (err) {
       console.error('Error exporting:', err);
+      setError(t('common:errors.exportFailed'));
     } finally {
       setExporting(null);
     }

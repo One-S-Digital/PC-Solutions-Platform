@@ -123,10 +123,14 @@ const FoundationSupportPage: React.FC = () => {
         setTicketCategory('GENERAL');
         setTicketPriority('MEDIUM');
         setShowNewTicketForm(false);
+        setError(null);
         await fetchTickets();
+      } else {
+        setError(t('common:errors.submitFailed'));
       }
     } catch (err) {
       console.error('Error submitting ticket:', err);
+      setError(t('common:errors.submitFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -149,10 +153,14 @@ const FoundationSupportPage: React.FC = () => {
       if (res.success && res.data) {
         setSelectedTicket(res.data);
         setNewResponse('');
+        setError(null);
         await fetchTickets();
+      } else {
+        setError(t('common:errors.submitFailed'));
       }
     } catch (err) {
       console.error('Error submitting response:', err);
+      setError(t('common:errors.submitFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -384,6 +392,10 @@ const FoundationSupportPage: React.FC = () => {
                   key={ticket.id} 
                   className="py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 px-2 -mx-2 rounded"
                   onClick={() => setSelectedTicket(ticket)}
+                  onKeyDown={(e) => e.key === 'Enter' && setSelectedTicket(ticket)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${t('common:supportPage.viewTicket')}: ${ticket.subject}`}
                 >
                   <div>
                     <h4 className="text-sm font-medium text-swiss-charcoal">{ticket.subject}</h4>

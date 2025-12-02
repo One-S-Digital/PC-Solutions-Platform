@@ -329,43 +329,56 @@ export class LeadsService {
       select: { region: true, canton: true, languages: true },
     });
 
-    // Build the query
-    const leads = await this.prisma.parentLead.findMany({
-      where: {
-        OR: [
-          // Leads directly assigned to this foundation
-          { foundationId: foundationId },
-          // Leads with responses from this foundation
-          {
-            foundationResponses: {
-              some: { foundationId: foundationId },
-            },
-          },
-          // New leads that might match (unassigned)
-          {
-            status: 'NEW',
-            foundationId: null,
-            ...(foundation?.region || foundation?.canton
-              ? {
-                  preferredLocation: {
-                    contains: foundation.canton || foundation.region || '',
-                    mode: 'insensitive' as const,
-                  },
-                }
-              : {}),
-          },
-        ],
-        ...(filters?.status ? { status: filters.status } : {}),
-        ...(filters?.search
+    // Build the base foundation-scoping conditions
+    const foundationScopeConditions = [
+      // Leads directly assigned to this foundation
+      { foundationId: foundationId },
+      // Leads with responses from this foundation
+      {
+        foundationResponses: {
+          some: { foundationId: foundationId },
+        },
+      },
+      // New leads that might match (unassigned)
+      {
+        status: 'NEW',
+        foundationId: null,
+        ...(foundation?.region || foundation?.canton
           ? {
-              OR: [
-                { parentName: { contains: filters.search, mode: 'insensitive' as const } },
-                { childName: { contains: filters.search, mode: 'insensitive' as const } },
-                { message: { contains: filters.search, mode: 'insensitive' as const } },
-              ],
+              preferredLocation: {
+                contains: foundation.canton || foundation.region || '',
+                mode: 'insensitive' as const,
+              },
             }
           : {}),
       },
+    ];
+
+    // Build the where clause with proper AND composition
+    const whereClause: any = {
+      AND: [
+        // Foundation scope (must match one of these)
+        { OR: foundationScopeConditions },
+        // Status filter (if provided)
+        ...(filters?.status ? [{ status: filters.status }] : []),
+        // Search filter (if provided) - search across multiple fields
+        ...(filters?.search
+          ? [
+              {
+                OR: [
+                  { parentName: { contains: filters.search, mode: 'insensitive' as const } },
+                  { childName: { contains: filters.search, mode: 'insensitive' as const } },
+                  { message: { contains: filters.search, mode: 'insensitive' as const } },
+                ],
+              },
+            ]
+          : []),
+      ],
+    };
+
+    // Build the query
+    const leads = await this.prisma.parentLead.findMany({
+      where: whereClause,
       include: {
         foundationResponses: {
           include: {
@@ -493,86 +506,103 @@ export class LeadsService {
     status: LeadResponseStatus,
     message?: string,
   ) {
-    // Verify lead exists
-    const lead = await this.prisma.parentLead.findUnique({
-      where: { id: leadId },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      // Verify lead exists
+      const lead = await tx.parentLead.findUnique({
+        where: { id: leadId },
+        include: {
+          foundationResponses: {
+            where: { foundationId },
+          },
+        },
+      });
 
-    if (!lead) {
-      throw new NotFoundException(`Lead with ID ${leadId} not found`);
-    }
+      if (!lead) {
+        throw new NotFoundException(`Lead with ID ${leadId} not found`);
+      }
 
-    // Verify foundation exists
-    const foundation = await this.prisma.organization.findUnique({
-      where: { id: foundationId },
-    });
+      // Authorization check: Foundation can only respond to leads that are:
+      // 1. Directly assigned to them
+      // 2. Already have a response from them
+      // 3. New/unassigned leads
+      const isAssignedToFoundation = lead.foundationId === foundationId;
+      const hasExistingResponse = lead.foundationResponses.length > 0;
+      const isNewOrUnassigned = lead.status === 'NEW' && lead.foundationId === null;
 
-    if (!foundation) {
-      throw new NotFoundException(`Foundation with ID ${foundationId} not found`);
-    }
+      if (!isAssignedToFoundation && !hasExistingResponse && !isNewOrUnassigned) {
+        throw new NotFoundException(`Lead with ID ${leadId} not accessible to this foundation`);
+      }
 
-    // Create or update the response
-    const response = await this.prisma.foundationLeadResponse.upsert({
-      where: {
-        leadId_foundationId: {
+      // Verify foundation exists
+      const foundation = await tx.organization.findUnique({
+        where: { id: foundationId },
+      });
+
+      if (!foundation) {
+        throw new NotFoundException(`Foundation with ID ${foundationId} not found`);
+      }
+
+      // Create or update the response
+      const response = await tx.foundationLeadResponse.upsert({
+        where: {
+          leadId_foundationId: {
+            leadId,
+            foundationId,
+          },
+        },
+        update: {
+          status,
+          message,
+          respondedAt: new Date(),
+        },
+        create: {
           leadId,
           foundationId,
+          status,
+          message,
         },
-      },
-      update: {
-        status,
-        message,
-        respondedAt: new Date(),
-      },
-      create: {
-        leadId,
-        foundationId,
-        status,
-        message,
-      },
+      });
+
+      // Determine new lead status based on response
+      let newLeadStatus = lead.status;
+      let updateData: { status?: string; foundationId?: string } = {};
+
+      if (status === 'INTERESTED' || status === 'NEEDS_MORE_INFO') {
+        newLeadStatus = 'PROCESSING';
+      } else if (status === 'ENROLLED') {
+        newLeadStatus = 'CONVERTED';
+        // If enrolled, assign the lead to this foundation
+        updateData.foundationId = foundationId;
+      } else if (lead.status === 'NEW') {
+        newLeadStatus = 'CONTACTED';
+      }
+
+      // Only update if status changed (single update, avoid duplicate)
+      if (newLeadStatus !== lead.status || updateData.foundationId) {
+        updateData.status = newLeadStatus;
+        await tx.parentLead.update({
+          where: { id: leadId },
+          data: updateData,
+        });
+      }
+
+      this.logger.log(
+        `Foundation ${foundationId} responded to lead ${leadId} with status ${status}`,
+        'LeadsService',
+        { leadId, foundationId, status },
+      );
+
+      return {
+        success: true,
+        response: {
+          id: response.id,
+          status: response.status,
+          message: response.message,
+          respondedAt: response.respondedAt,
+        },
+        leadStatus: newLeadStatus,
+      };
     });
-
-    // Update lead status based on response
-    let newLeadStatus = lead.status;
-    if (status === 'INTERESTED' || status === 'NEEDS_MORE_INFO') {
-      newLeadStatus = 'PROCESSING';
-    } else if (status === 'ENROLLED') {
-      newLeadStatus = 'CONVERTED';
-      // If enrolled, assign the lead to this foundation
-      await this.prisma.parentLead.update({
-        where: { id: leadId },
-        data: {
-          foundationId,
-          status: newLeadStatus,
-        },
-      });
-    } else if (lead.status === 'NEW') {
-      newLeadStatus = 'CONTACTED';
-    }
-
-    if (newLeadStatus !== lead.status) {
-      await this.prisma.parentLead.update({
-        where: { id: leadId },
-        data: { status: newLeadStatus },
-      });
-    }
-
-    this.logger.log(
-      `Foundation ${foundationId} responded to lead ${leadId} with status ${status}`,
-      'LeadsService',
-      { leadId, foundationId, status },
-    );
-
-    return {
-      success: true,
-      response: {
-        id: response.id,
-        status: response.status,
-        message: response.message,
-        respondedAt: response.respondedAt,
-      },
-      leadStatus: newLeadStatus,
-    };
   }
 
   /**

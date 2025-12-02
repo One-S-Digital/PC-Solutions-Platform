@@ -39,6 +39,15 @@ function wrapResponse<T>(data: T, message = 'OK'): ApiResponseEnvelope<T> {
   };
 }
 
+function wrapErrorResponse(message: string): ApiResponseEnvelope<null> {
+  return {
+    success: false,
+    message,
+    data: null,
+    timestamp: new Date().toISOString(),
+  };
+}
+
 @ApiTags('leads')
 @Controller('leads')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -198,16 +207,31 @@ export class LeadsController {
     const organizationIds = await this.getUserOrganizationIds(userId);
 
     if (organizationIds.length === 0) {
-      return wrapResponse([], 'No organization found for user');
+      return wrapErrorResponse('No organization found for user');
     }
 
-    const leads = await this.leadsService.getFoundationLeads(organizationIds[0], {
-      status,
-      responseStatus,
-      search,
-    });
+    // Aggregate leads from all user organizations
+    const allLeads = await Promise.all(
+      organizationIds.map((orgId) =>
+        this.leadsService.getFoundationLeads(orgId, {
+          status,
+          responseStatus,
+          search,
+        }),
+      ),
+    );
 
-    return wrapResponse(leads);
+    // Deduplicate leads by id
+    const leadsMap = new Map();
+    for (const orgLeads of allLeads) {
+      for (const lead of orgLeads) {
+        if (!leadsMap.has(lead.id)) {
+          leadsMap.set(lead.id, lead);
+        }
+      }
+    }
+
+    return wrapResponse(Array.from(leadsMap.values()));
   }
 
   @Get('foundation/leads/:id')
@@ -219,12 +243,7 @@ export class LeadsController {
     const organizationIds = await this.getUserOrganizationIds(userId);
 
     if (organizationIds.length === 0) {
-      return {
-        success: false,
-        message: 'No organization found for user',
-        data: null,
-        timestamp: new Date().toISOString(),
-      };
+      return wrapErrorResponse('No organization found for user');
     }
 
     const lead = await this.leadsService.getLeadWithResponses(leadId, organizationIds[0]);
@@ -244,12 +263,7 @@ export class LeadsController {
     const organizationIds = await this.getUserOrganizationIds(userId);
 
     if (organizationIds.length === 0) {
-      return {
-        success: false,
-        message: 'No organization found for user',
-        data: null,
-        timestamp: new Date().toISOString(),
-      };
+      return wrapErrorResponse('No organization found for user');
     }
 
     const result = await this.leadsService.respondToLead(

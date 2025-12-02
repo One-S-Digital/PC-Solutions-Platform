@@ -87,6 +87,7 @@ const FoundationLeadsPage: React.FC = () => {
   // Handle lead response
   const handleResponse = async (leadId: string, status: LeadResponseStatus, message?: string) => {
     setRespondingLeadId(leadId);
+    setError(null);
     
     try {
       const config = foundationLeadsApi.respondToLeadConfig(leadId, { status, message });
@@ -100,9 +101,12 @@ const FoundationLeadsPage: React.FC = () => {
         await fetchLeads();
         setShowResponseInput({ ...showResponseInput, [leadId]: false });
         setResponseTexts({ ...responseTexts, [leadId]: '' });
+      } else {
+        setError(t('foundationLeadsPage.errors.responseFailed'));
       }
     } catch (err) {
       console.error('Error responding to lead:', err);
+      setError(t('foundationLeadsPage.errors.responseFailed'));
     } finally {
       setRespondingLeadId(null);
     }
