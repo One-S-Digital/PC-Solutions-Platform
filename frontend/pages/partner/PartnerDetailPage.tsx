@@ -321,11 +321,14 @@ const PartnerDetailPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-swiss-charcoal">{partner.name}</h1>
             <p className="text-gray-500">{partnerTypeLabel}</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {(partner.tags || partner.productCategories || partner.serviceCategories || []).slice(0, 5).map(tag => (
-                <span key={tag} className="text-xs bg-swiss-teal/10 text-swiss-teal px-2 py-1 rounded-full">
-                  {tag}
-                </span>
-              ))}
+              {[...(partner.tags || []), ...(partner.productCategories || []), ...(partner.serviceCategories || [])]
+                .filter((tag, index, self) => self.indexOf(tag) === index) // Remove duplicates
+                .slice(0, 5)
+                .map(tag => (
+                  <span key={tag} className="text-xs bg-swiss-teal/10 text-swiss-teal px-2 py-1 rounded-full">
+                    {tag}
+                  </span>
+                ))}
             </div>
           </div>
           {isFoundationUser && (

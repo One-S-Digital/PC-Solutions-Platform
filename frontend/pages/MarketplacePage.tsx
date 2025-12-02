@@ -4,7 +4,8 @@ import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
-import { BuildingStorefrontIcon, WrenchScrewdriverIcon, TagIcon, FunnelIcon, MagnifyingGlassIcon, ListBulletIcon, Squares2X2Icon, InformationCircleIcon, EyeIcon, StarIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import RatingStars from '../components/ui/RatingStars';
+import { BuildingStorefrontIcon, WrenchScrewdriverIcon, TagIcon, FunnelIcon, MagnifyingGlassIcon, ListBulletIcon, Squares2X2Icon, InformationCircleIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import ServiceRequestModal from '../components/marketplace/ServiceRequestModal';
 import SupplierCard from '../components/marketplace/SupplierCard'; 
 import { useAppContext } from '../contexts/AppContext'; 
@@ -34,19 +35,6 @@ const ServiceProviderCard: React.FC<{
   onViewProfile: (providerId: string) => void;
 }> = ({ provider, onViewProfile }) => {
   const { t } = useTranslation(['dashboard', 'common']);
-
-  const renderRatingStars = (rating?: number) => {
-    const totalStars = 5;
-    const fullStars = Math.floor(rating || 0);
-    const emptyStars = totalStars - fullStars;
-    return (
-      <div className="flex items-center justify-center">
-        {[...Array(fullStars)].map((_, i) => <StarIcon key={`full-${i}`} className="w-4 h-4 text-yellow-400 fill-yellow-400" />)}
-        {[...Array(emptyStars)].map((_, i) => <StarIcon key={`empty-${i}`} className="w-4 h-4 text-gray-300" />)}
-        {rating && <span className="ml-1.5 text-xs text-gray-500">({rating.toFixed(1)})</span>}
-      </div>
-    );
-  };
 
   // Get service categories from the provider
   const getServiceCategories = () => {
@@ -88,8 +76,8 @@ const ServiceProviderCard: React.FC<{
         <p className="text-xs text-gray-500 text-center mb-2 flex items-center justify-center">
           <WrenchScrewdriverIcon className="w-3.5 h-3.5 mr-1 opacity-70"/> {provider.region || 'Switzerland'}
         </p>
-        <div className="text-center mb-3">
-          {renderRatingStars(provider.rating)}
+        <div className="text-center mb-3 flex justify-center">
+          <RatingStars rating={provider.rating} />
         </div>
         
         <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-2 text-center">
@@ -140,6 +128,7 @@ const MarketplacePage: React.FC = () => {
 
   const [activeTabIndex, setActiveTabIndex] = useState(() => getActiveTabFromPath(location.pathname));
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [regionFilter, setRegionFilter] = useState('All'); 
   const [tagFilter, setTagFilter] = useState('All');
@@ -155,6 +144,14 @@ const MarketplacePage: React.FC = () => {
   // Modal state
   const [isServiceRequestModalOpen, setIsServiceRequestModalOpen] = useState(false);
   const [selectedServiceForRequest, setSelectedServiceForRequest] = useState<Service | null>(null);
+
+  // Debounce search term to avoid excessive API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
   
   // Fetch data from API
   const fetchMarketplaceData = useCallback(async () => {
@@ -165,12 +162,12 @@ const MarketplacePage: React.FC = () => {
       const [suppliersResult, providersResult] = await Promise.all([
         marketplaceService.getProductSuppliers({
           region: regionFilter !== 'All' ? regionFilter : undefined,
-          search: searchTerm || undefined,
+          search: debouncedSearchTerm || undefined,
           limit: 100,
         }),
         marketplaceService.getServiceProviders({
           region: regionFilter !== 'All' ? regionFilter : undefined,
-          search: searchTerm || undefined,
+          search: debouncedSearchTerm || undefined,
           limit: 100,
         }),
       ]);
@@ -183,7 +180,7 @@ const MarketplacePage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [regionFilter, searchTerm]);
+  }, [regionFilter, debouncedSearchTerm]);
 
   // Initial data fetch
   useEffect(() => {

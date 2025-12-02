@@ -352,6 +352,11 @@ export class CompatController {
         ...org,
         logoUrl: org.logoAsset?.publicUrl,
         coverImageUrl: org.coverAsset?.publicUrl,
+        // Transform products with imageUrl
+        products: org.products?.map(p => ({
+          ...p,
+          imageUrl: p.imageAsset?.publicUrl,
+        })) || [],
         // Flatten services from serviceProviders for convenience
         services: org.serviceProviders?.flatMap(sp => sp.services) || [],
       }));

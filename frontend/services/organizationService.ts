@@ -143,15 +143,15 @@ class OrganizationService {
     return {
       ...org,
       // Legacy fields for UI compatibility
-      logoUrl: org.logoAsset?.publicUrl,
-      coverImageUrl: org.coverAsset?.publicUrl,
-      email: org.contactPerson ? `${org.contactPerson.toLowerCase().replace(' ', '.')}@${org.name.toLowerCase().replace(/\s+/g, '')}.ch` : undefined,
+      logoUrl: org.logoAsset?.publicUrl || org.logoUrl,
+      coverImageUrl: org.coverAsset?.publicUrl || org.coverImageUrl,
+      email: org.email, // Use actual email if available
       phone: org.phoneNumber,
-      website: org.directOrderLink || org.bookingLink,
+      website: org.directOrderLink || org.bookingLink || org.catalogUrl,
       address: org.region ? `${org.region}, Switzerland` : undefined,
-      tags: org.pedagogy || org.serviceCategories || [],
-      rating: 4.5, // Default rating for now
-      badges: [], // Default empty badges
+      tags: org.pedagogy || org.serviceCategories || org.productCategories || [],
+      rating: org.rating, // Preserve actual rating or leave undefined
+      badges: org.badges || [],
     };
   }
 }

@@ -245,12 +245,12 @@ class MarketplaceService {
       // Legacy fields for UI compatibility
       logoUrl: org.logoAsset?.publicUrl || org.logoUrl,
       coverImageUrl: org.coverAsset?.publicUrl || org.coverImageUrl,
-      email: org.contactPerson ? `contact@${org.name?.toLowerCase().replace(/\s+/g, '')}.ch` : undefined,
+      email: org.email, // Use actual email if available
       phone: org.phoneNumber,
       website: org.directOrderLink || org.bookingLink || org.catalogUrl,
       address: org.region ? `${org.region}, Switzerland` : undefined,
       tags: org.productCategories || org.serviceCategories || org.pedagogy || [],
-      rating: org.rating || 4.5, // Default rating
+      rating: org.rating, // Preserve actual rating or leave undefined
       badges: org.badges || [],
     };
   }

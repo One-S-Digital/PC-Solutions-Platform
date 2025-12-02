@@ -2,7 +2,8 @@ import React from 'react';
 import { Organization } from '../../types';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
-import { BuildingStorefrontIcon, StarIcon, EyeIcon, TagIcon } from '@heroicons/react/24/outline';
+import RatingStars from '../ui/RatingStars';
+import { BuildingStorefrontIcon, EyeIcon, TagIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 interface SupplierCardProps {
@@ -12,27 +13,6 @@ interface SupplierCardProps {
 
 const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) => {
   const { t } = useTranslation(['dashboard', 'common']);
-
-  const renderRatingStars = (rating?: number) => {
-    const totalStars = 5;
-    const fullStars = Math.floor(rating || 0);
-    const halfStar = (rating || 0) % 1 >= 0.5 ? 1 : 0;
-    const emptyStars = totalStars - fullStars - halfStar;
-    return (
-      <div className="flex items-center">
-        {[...Array(fullStars)].map((_, i) => (
-          <StarIcon key={`full-${i}`} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-        ))}
-        {halfStar > 0 && (
-          <StarIcon key="half" className="w-4 h-4 text-yellow-400" style={{ clipPath: 'inset(0 50% 0 0)' }} />
-        )}
-        {[...Array(emptyStars)].map((_, i) => (
-          <StarIcon key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
-        ))}
-        {rating && <span className="ml-1.5 text-xs text-gray-500">({rating.toFixed(1)})</span>}
-      </div>
-    );
-  };
 
   // Get main categories from supplier's data
   const getSupplierMainCategories = () => {
@@ -96,8 +76,8 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) 
         <p className="text-xs text-gray-500 text-center mb-2 flex items-center justify-center">
           <BuildingStorefrontIcon className="w-3.5 h-3.5 mr-1 opacity-70"/> {supplier.region || 'Switzerland'}
         </p>
-        <div className="text-center mb-3">
-          {renderRatingStars(supplier.rating)}
+        <div className="text-center mb-3 flex justify-center">
+          <RatingStars rating={supplier.rating} />
         </div>
         
         <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-2 text-center">
