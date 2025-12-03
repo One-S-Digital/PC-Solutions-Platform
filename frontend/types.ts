@@ -108,6 +108,11 @@ export interface Organization {
   services?: Service[];
   jobListings?: JobListing[];
   membershipRole?: UserRole;
+  
+  // UI-specific fields for marketplace display
+  tags?: string[];
+  badges?: string[];
+  rating?: number;
 }
 
 
@@ -213,12 +218,13 @@ export interface Service {
   imageUrl?: string;
   deliveryType?: ServiceDeliveryType;
   priceInfo?: string;
+  bookingLink?: string;
 }
 export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, ServiceCategory.IT_SUPPORT, ServiceCategory.MAINTENANCE, ServiceCategory.CONSULTING, ServiceCategory.TRAINING, ServiceCategory.OTHER];
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
-export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP';
+export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE';
 
 export const JobStatus = {
     DRAFT: 'DRAFT',
@@ -234,6 +240,7 @@ export const JobContractTypeValue = {
     CDI: 'CDI',
     CDD: 'CDD',
     INTERNSHIP: 'INTERNSHIP',
+    FREELANCE: 'FREELANCE',
 } as const;
 
 export interface JobListing {
@@ -327,11 +334,11 @@ export interface DocumentItem {
 export interface Partner {
     id: string;
     name: string;
-    logoUrl: string;
+    logoUrl?: string;
     description: string;
     type: 'Academic' | 'Corporate' | 'Governmental';
-    countryRegion: string;
-    websiteUrl: string;
+    countryRegion?: string;
+    websiteUrl?: string;
 }
 
 export type UploadableContentType = 'e-learning' | 'hr' | 'policy';
@@ -525,20 +532,6 @@ export interface ParentLead {
     responses: FoundationResponse[];
 }
 
-// Mock User for Parent
-export const MOCK_PARENT_USER: User = {
-  id: 'parentUser123',
-  name: 'Sophie D.', // Anonymized
-  email: 'sophie.d@example-parent.com', // Anonymized
-  role: UserRole.PARENT,
-  avatarUrl: 'https://picsum.photos/seed/sophie/100/100',
-  status: 'Active',
-  lastLogin: '2024-07-22T08:00:00Z',
-  region: 'Geneva',
-  memberSince: '2024-07-15T10:00:00Z',
-};
-
-
 export enum SignupRole {
     FOUNDATION = 'Foundation (Daycare)',
     SUPPLIER = 'Product Supplier',
@@ -728,6 +721,8 @@ interface BaseSettings {
     companyName?: string;
     logoUrl?: string;
     coverImageUrl?: string;
+    logoAssetId?: string;
+    coverAssetId?: string;
     aboutText?: string;
     description?: string; // Alias for aboutText
     vatNumber?: string;
@@ -769,11 +764,14 @@ interface BaseSettings {
     serviceCategories?: string[];
     deliveryType?: string;
     bookingLink?: string;
-    // Educator-specific fields
+    // Educator/Parent-specific fields
     shortBio?: string;
     avatarAssetId?: string;
+    avatarUrl?: string;
+    cvAssetId?: string;
     firstName?: string;
     lastName?: string;
+    email?: string; // User's personal email (for Educator/Parent)
     workExperience?: string;
     education?: string;
     certifications?: string[];

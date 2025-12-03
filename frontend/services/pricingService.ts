@@ -1,5 +1,5 @@
 import { PricingPlan, UserRole } from '../types';
-import { MOCK_PRICING_PLANS } from '../constants';
+import { PRICING_PLANS } from '../constants';
 
 // Centralized pricing service that handles both public pricing page and subscription settings
 export class PricingService {
@@ -7,7 +7,7 @@ export class PricingService {
   private pricingPlans: PricingPlan[];
 
   private constructor() {
-    this.pricingPlans = MOCK_PRICING_PLANS;
+    this.pricingPlans = PRICING_PLANS;
   }
 
   static getInstance(): PricingService {

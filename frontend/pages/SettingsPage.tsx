@@ -66,7 +66,7 @@ const SettingsPage: React.FC = () => {
 
         if (currentUser.role === UserRole.FOUNDATION) {
           const response = await request<{ success: boolean; data?: any }>('/settings/foundation');
-          const data = response.success && response.data ? response.data : {};
+          const data = response.success && response.data ? response.data : ({} as any);
           const org = currentUser.primaryOrganization;
           roleSettings = {
             companyName: data.companyName || org?.name || currentUser.orgName || '',
@@ -87,7 +87,7 @@ const SettingsPage: React.FC = () => {
           } as Partial<SettingsFormData>;
         } else if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
           const response = await request<{ success: boolean; data?: any }>('/settings/supplier');
-          const data = response.success && response.data ? response.data : {};
+          const data = response.success && response.data ? response.data : ({} as any);
           const org = currentUser.primaryOrganization;
           roleSettings = {
             companyName: data.companyName || org?.name || '',
@@ -111,7 +111,7 @@ const SettingsPage: React.FC = () => {
           } as Partial<SettingsFormData>;
         } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
           const response = await request<{ success: boolean; data?: any }>('/settings/service-provider');
-          const data = response.success && response.data ? response.data : {};
+          const data = response.success && response.data ? response.data : ({} as any);
           const org = currentUser.primaryOrganization;
           roleSettings = {
             companyName: data.companyName || org?.name || '',
@@ -141,16 +141,16 @@ const SettingsPage: React.FC = () => {
 
         const privacyData = privacyResponse.success && privacyResponse.data
           ? {
-              hidePubliclyToggle: !!privacyResponse.data.hidePubliclyToggle,
-              gdprDataDeletionRequestMade: !!privacyResponse.data.gdprDataDeletionRequestMade,
+              hidePubliclyToggle: !!(privacyResponse.data as any).hidePubliclyToggle,
+              gdprDataDeletionRequestMade: !!(privacyResponse.data as any).gdprDataDeletionRequestMade,
             }
           : { hidePubliclyToggle: false, gdprDataDeletionRequestMade: false };
 
         const notificationData = notificationResponse.success && notificationResponse.data
           ? {
-              newRequestEmailToggle: !!notificationResponse.data.newRequestEmailToggle,
-              digestRadio: (notificationResponse.data.digestRadio as SettingsFormData['digestRadio']) || 'Daily',
-              promoRedemptionAlertsToggle: !!notificationResponse.data.promoRedemptionAlertsToggle,
+              newRequestEmailToggle: !!(notificationResponse.data as any).newRequestEmailToggle,
+              digestRadio: ((notificationResponse.data as any).digestRadio as SettingsFormData['digestRadio']) || 'Daily',
+              promoRedemptionAlertsToggle: !!(notificationResponse.data as any).promoRedemptionAlertsToggle,
             }
           : { newRequestEmailToggle: true, digestRadio: 'Daily' as const, promoRedemptionAlertsToggle: false };
 
@@ -248,6 +248,8 @@ const SettingsPage: React.FC = () => {
               languages: Array.isArray(payload.languagesSpoken) ? payload.languagesSpoken : [],
               capacity: Number.isFinite(payload.capacity) ? Number(payload.capacity) : 0,
               pedagogy: Array.isArray(payload.pedagogy) ? payload.pedagogy : [],
+              ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+              ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
             }),
           })
         );
@@ -273,6 +275,8 @@ const SettingsPage: React.FC = () => {
               minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
               directOrderLink: payload.directOrderLink || '',
               catalogUrl: payload.catalogUrl || '',
+              ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+              ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
             }),
           })
         );
@@ -297,6 +301,8 @@ const SettingsPage: React.FC = () => {
               serviceCategories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories : [],
               deliveryType: payload.deliveryType || '',
               bookingLink: payload.bookingLink || '',
+              ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+              ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
             }),
           })
         );

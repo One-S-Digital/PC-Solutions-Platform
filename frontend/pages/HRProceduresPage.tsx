@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 // [FIX] Imported HR_CATEGORIES to use as a valid fallback.
 import { HRDocument, UserRole, HRDocument as HRDocType, HR_CATEGORIES, HR_CATEGORY_LABELS, HRCategory } from '../types';
-import { MOCK_HR_DOCS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card'; 
 import Button from '../components/ui/Button';
 import { DocumentTextIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, StarIcon, DocumentDuplicateIcon, UserPlusIcon, BuildingLibraryIcon, AcademicCapIcon, HeartIcon, FolderIcon } from '@heroicons/react/24/outline';
@@ -151,8 +151,8 @@ const HRProceduresPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Failed to fetch HR documents:', error);
-        // Fall back to mock data if API fails
-        setHrDocs(MOCK_HR_DOCS);
+        // Fall back to empty state if API fails
+        setHrDocs([]);
       } finally {
         setIsLoading(false);
       }

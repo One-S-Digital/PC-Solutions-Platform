@@ -126,14 +126,14 @@ const CandidateProfilePage: React.FC = () => {
 
   const isFavorite = isCandidateFavorite(candidate.id);
 
-  const handleSendMessage = () => {
-    const conversationId = startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+  const handleSendMessage = async () => {
+    const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
     navigate(`/messages/${conversationId}`);
   };
 
-  const handleInviteToApply = () => {
-    const conversationId = startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    sendMessage(
+  const handleInviteToApply = async () => {
+    const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+    await sendMessage(
       conversationId,
       `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
     );

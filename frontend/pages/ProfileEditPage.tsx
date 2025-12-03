@@ -42,7 +42,7 @@ const ProfileEditPage: React.FC = () => {
 
       if (currentUser.role === UserRole.FOUNDATION) {
         const response = await request<{ success: boolean; data?: any }>('/settings/foundation');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         const org = currentUser.primaryOrganization;
         roleSettings = {
           companyName: data.companyName || org?.name || currentUser.orgName || '',
@@ -63,7 +63,7 @@ const ProfileEditPage: React.FC = () => {
         } as Partial<SettingsFormData>;
       } else if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
         const response = await request<{ success: boolean; data?: any }>('/settings/supplier');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         const org = currentUser.primaryOrganization;
         roleSettings = {
           companyName: data.companyName || org?.name || '',
@@ -87,7 +87,7 @@ const ProfileEditPage: React.FC = () => {
         } as Partial<SettingsFormData>;
       } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
         const response = await request<{ success: boolean; data?: any }>('/settings/service-provider');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         const org = currentUser.primaryOrganization;
         roleSettings = {
           companyName: data.companyName || org?.name || '',
@@ -110,7 +110,7 @@ const ProfileEditPage: React.FC = () => {
         } as Partial<SettingsFormData>;
       } else if (currentUser.role === UserRole.EDUCATOR) {
         const response = await request<{ success: boolean; data?: any }>('/settings/educator');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         roleSettings = {
           firstName: data.firstName || currentUser.firstName || '',
           lastName: data.lastName || currentUser.lastName || '',
@@ -168,6 +168,8 @@ const ProfileEditPage: React.FC = () => {
             languages: Array.isArray(payload.languagesSpoken) ? payload.languagesSpoken : [],
             capacity: Number.isFinite(payload.capacity) ? Number(payload.capacity) : 0,
             pedagogy: Array.isArray(payload.pedagogy) ? payload.pedagogy : [],
+            ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+            ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
           }),
         });
       } else if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
@@ -189,6 +191,8 @@ const ProfileEditPage: React.FC = () => {
             minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
             directOrderLink: payload.directOrderLink || '',
             catalogUrl: payload.catalogUrl || '',
+            ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+            ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
           }),
         });
       } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
@@ -209,6 +213,8 @@ const ProfileEditPage: React.FC = () => {
             serviceCategories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories : [],
             deliveryType: payload.deliveryType || '',
             bookingLink: payload.bookingLink || '',
+            ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+            ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
           }),
         });
       } else if (currentUser.role === UserRole.EDUCATOR) {

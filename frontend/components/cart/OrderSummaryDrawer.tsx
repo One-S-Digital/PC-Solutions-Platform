@@ -1,13 +1,12 @@
-
 import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { useAppContext } from '../../contexts/AppContext';
 import Button from '../ui/Button';
 import { XMarkIcon, ShoppingCartIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { OrderRequestStatus, LineItem, Order } from '../../types';
-import QuantityInput from '../ui/QuantityInput'; // Assuming QuantityInput is in ui folder
-import { MOCK_ORDERS } from '../../constants'; // To store submitted orders
+import QuantityInput from '../ui/QuantityInput';
 import { useTranslation } from 'react-i18next';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 
 interface OrderSummaryDrawerProps {
   isOpen: boolean;
@@ -16,6 +15,7 @@ interface OrderSummaryDrawerProps {
 
 const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation(['dashboard', 'common']);
+  const { authenticatedRequest } = useAuthenticatedApi();
   const { 
     cartItems, 
     cartSupplierInfo,
@@ -23,13 +23,13 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
     removeFromCart, 
     clearCart, 
     getCartTotal, 
-    getCartItemCount 
   } = useCart();
   const { currentUser } = useAppContext();
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!currentUser || !cartSupplierInfo || cartItems.length === 0) {
       alert(
         t(
@@ -40,6 +40,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
       return;
     }
     setIsSubmitting(true);
+    setError(null);
 
     const lineItems: LineItem[] = cartItems.map(item => ({
       productId: item.productId,
@@ -49,31 +50,38 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
       imageUrl: item.imageUrl,
     }));
 
-    const newOrder: Order = {
-      id: `ORDER_${Date.now()}`,
+    const orderData = {
       foundationId: currentUser.id,
-      foundationOrgId: currentUser.orgId || 'UNKNOWN_ORG', // Fallback, ensure orgId is present for foundation users
+      foundationOrgId: currentUser.orgId || 'UNKNOWN_ORG',
       supplierId: cartSupplierInfo.id,
       supplierName: cartSupplierInfo.name,
       items: lineItems,
       totalAmount: getCartTotal(),
       notes: notes || undefined,
       status: OrderRequestStatus.SUBMITTED,
-      requestDate: new Date().toISOString(),
     };
 
-    // Simulate API call
-    setTimeout(() => {
-      MOCK_ORDERS.push(newOrder); // Add to mock orders list
-      console.log('Order Submitted:', newOrder);
-      console.log('Current MOCK_ORDERS:', MOCK_ORDERS);
-      
-      clearCart();
-      setNotes('');
+    try {
+      const response = await authenticatedRequest<Order>('/marketplace/orders', {
+        method: 'POST',
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.success && response.data) {
+        clearCart();
+        setNotes('');
+        onClose();
+        alert(t('orderSummaryDrawer.orderSuccess', 
+          `Order successfully submitted to ${cartSupplierInfo.name}! Order ID: ${response.data.id}`));
+      } else {
+        throw new Error(response.message || 'Failed to submit order');
+      }
+    } catch (err) {
+      console.error('Failed to submit order:', err);
+      setError(t('orderSummaryDrawer.orderError', 'Failed to submit order. Please try again.'));
+    } finally {
       setIsSubmitting(false);
-      onClose();
-      alert(`Order successfully submitted to ${cartSupplierInfo.name}! Order ID: ${newOrder.id}`);
-    }, 1000);
+    }
   };
 
   if (!isOpen) return null;
@@ -91,7 +99,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                 <div className="flex items-start justify-between pb-4 border-b border-gray-200">
                   <h2 className="text-xl font-semibold text-swiss-charcoal flex items-center" id="slide-over-title">
                     <ShoppingCartIcon className="h-6 w-6 mr-2 text-swiss-mint" />
-{t("orderSummaryDrawer.title")}
+                    {t("orderSummaryDrawer.title")}
                   </h2>
                   <div className="ml-3 h-7 flex items-center">
                     <button
@@ -104,6 +112,12 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                     </button>
                   </div>
                 </div>
+
+                {error && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                    {error}
+                  </div>
+                )}
 
                 {cartItems.length === 0 ? (
                   <div className="text-center py-10">
@@ -137,7 +151,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                               <QuantityInput
                                 quantity={item.quantity}
                                 onQuantityChange={(newQuantity) => updateItemQuantity(item.productId, newQuantity)}
-                                min={0} // Allows removing by setting to 0
+                                min={0}
                                 stockStatus={item.stockStatus}
                               />
                               <div className="flex">
@@ -146,7 +160,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                                   onClick={() => removeFromCart(item.productId)}
                                   className="font-medium text-swiss-coral hover:text-opacity-80 flex items-center"
                                 >
-                                  <TrashIcon className="h-4 w-4 mr-1" /> Remove
+                                  <TrashIcon className="h-4 w-4 mr-1" /> {t('common:buttons.remove', 'Remove')}
                                 </button>
                               </div>
                             </div>
@@ -162,7 +176,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                 <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
                   <div>
                     <label htmlFor="orderNotes" className="block text-sm font-medium text-gray-700 mb-1">
-{t("orderSummaryDrawer.specialInstructions")}
+                      {t("orderSummaryDrawer.specialInstructions")}
                     </label>
                     <textarea
                       id="orderNotes"
@@ -171,7 +185,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       className="shadow-sm focus:ring-swiss-mint focus:border-swiss-mint block w-full sm:text-sm border-gray-300 rounded-md p-2"
-                      placeholder="e.g., Preferred delivery times, specific packaging..."
+                      placeholder={t('orderSummaryDrawer.notesPlaceholder', 'e.g., Preferred delivery times, specific packaging...')}
                     ></textarea>
                   </div>
                   <div className="flex justify-between text-base font-medium text-gray-900 mt-6">
@@ -181,24 +195,26 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                   <p className="mt-0.5 text-sm text-gray-500">{t("orderSummaryDrawer.shippingNote")}</p>
                   <div className="mt-6">
                     <Button
-                      variant="danger" // Using danger for coral color
+                      variant="danger"
                       size="lg"
                       className="w-full"
                       onClick={handleSubmitOrder}
                       disabled={isSubmitting || cartItems.length === 0}
                     >
-                      {isSubmitting ? 'Submitting...' : `Submit Order to ${cartSupplierInfo?.name || 'Supplier'}`}
+                      {isSubmitting 
+                        ? t('orderSummaryDrawer.submitting', 'Submitting...') 
+                        : `${t('orderSummaryDrawer.submitTo', 'Submit Order to')} ${cartSupplierInfo?.name || 'Supplier'}`}
                     </Button>
                   </div>
                   <div className="mt-4 flex justify-center text-sm text-center text-gray-500">
                     <p>
-                      or{' '}
+                      {t('common:or', 'or')}{' '}
                       <button
                         type="button"
                         className="font-medium text-swiss-mint hover:text-opacity-80"
                         onClick={onClose}
                       >
-{t("orderSummaryDrawer.continueShopping")} <span aria-hidden="true"> &rarr;</span>
+                        {t("orderSummaryDrawer.continueShopping")} <span aria-hidden="true"> &rarr;</span>
                       </button>
                     </p>
                   </div>

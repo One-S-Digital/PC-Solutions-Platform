@@ -17,7 +17,7 @@ const ParentEnquiriesPage: React.FC = () => {
   const { startOrGetConversation } = useMessaging();
   const navigate = useNavigate();
 
-  if (!currentUser || currentUser.role !== 'Parent') {
+  if (!currentUser || currentUser.role !== UserRole.PARENT) {
     return (
       <div className="text-center p-10">
         <h1 className="text-2xl font-bold text-swiss-charcoal">{t('parentEnquiriesPage.accessDenied.title')}</h1>
