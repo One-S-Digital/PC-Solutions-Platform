@@ -1,19 +1,40 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
-import { VendorClient, VendorClientReason } from '../../types';
-import { MOCK_ORGANIZATIONS } from '../../constants';
+import { VendorClient, VendorClientReason, Organization } from '../../types';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { TagIcon, CheckCircleIcon, ShieldExclamationIcon, InboxIcon } from '@heroicons/react/24/outline';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const DiscountTerminationsPage: React.FC = () => {
     const { t, i18n } = useTranslation(['admin', 'common']);
-    const { vendorClients, updateVendorClientStatus } = useAppContext();
+    const { vendorClients, vendorClientsLoading, updateVendorClientStatus } = useAppContext();
+    const { authenticatedRequest } = useAuthenticatedApi();
+    
+    const [organizations, setOrganizations] = useState<Organization[]>([]);
+    const [orgsLoading, setOrgsLoading] = useState(true);
 
-    // Mock: In a real app, this would be based on actual organization status.
-    // Here we simulate that 'Happy Kids Daycare' has churned.
+    const fetchOrganizations = useCallback(async () => {
+        setOrgsLoading(true);
+        try {
+            const response = await authenticatedRequest<Organization[]>('/compat/organizations');
+            if (response.success && response.data) {
+                setOrganizations(response.data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch organizations:', err);
+        } finally {
+            setOrgsLoading(false);
+        }
+    }, [authenticatedRequest]);
+
+    useEffect(() => {
+        fetchOrganizations();
+    }, [fetchOrganizations]);
+
+    // In a real app, this would come from actual churned organization data
     const churnedDaycareId = 'orgOtherFoundation1';
 
     const terminationQueue = useMemo(() => {
@@ -26,19 +47,23 @@ const DiscountTerminationsPage: React.FC = () => {
 
     const handleSendNotices = () => {
         alert(t('discountTerminations.actions.sendNoticesAlert', { count: terminationQueue.length }));
-        // Mock updating the status
     };
 
-    const handleMarkCompleted = (clientId: string) => {
+    const handleMarkCompleted = async (clientId: string) => {
         const client = vendorClients.find(vc => vc.id === clientId);
         if (client) {
-            updateVendorClientStatus(client.vendorId, client.orgId, false, VendorClientReason.TERMINATED, "Terminated due to daycare churn.");
+            try {
+                await updateVendorClientStatus(client.vendorId, client.orgId, false, VendorClientReason.TERMINATED, "Terminated due to daycare churn.");
+            } catch (err) {
+                console.error('Failed to mark completed:', err);
+                alert(t('discountTerminations.actions.markCompletedError', 'Failed to update status'));
+            }
         }
     };
     
     const renderTable = (data: VendorClient[], titleKey: string, emptyKey: string) => {
-        const getVendorName = (vendorId: string) => MOCK_ORGANIZATIONS.find(o => o.id === vendorId)?.name || vendorId;
-        const getDaycareName = (orgId: string) => MOCK_ORGANIZATIONS.find(o => o.id === orgId)?.name || orgId;
+        const getVendorName = (vendorId: string) => organizations.find(o => o.id === vendorId)?.name || vendorId;
+        const getDaycareName = (orgId: string) => organizations.find(o => o.id === orgId)?.name || orgId;
 
         return (
             <Card className="p-6">
@@ -82,6 +107,16 @@ const DiscountTerminationsPage: React.FC = () => {
             </Card>
         );
     };
+
+    const loading = vendorClientsLoading || orgsLoading;
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <LoadingSpinner size="lg" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">

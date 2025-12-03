@@ -1,14 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Card from '../../components/ui/Card';
 import { 
-    ServerStackIcon, WifiIcon, CircleStackIcon, CpuChipIcon, CogIcon, UserGroupIcon,
+    ServerStackIcon, CpuChipIcon, CogIcon,
     ClockIcon, CheckCircleIcon, ExclamationTriangleIcon, ShieldCheckIcon, CloudArrowDownIcon, WrenchScrewdriverIcon, ArrowPathIcon,
-    CommandLineIcon
+    CommandLineIcon, CircleStackIcon
 } from '@heroicons/react/24/outline';
-import { MOCK_SYSTEM_MONITORING_DATA, MOCK_LOG_ENTRIES } from '../../constants';
-import { SystemEventType, SystemStatusLevel, LogEntry } from '../../types';
+import { SystemEventType, SystemStatusLevel, LogEntry, SystemMonitoringData } from '../../types';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../../components/ui/Tabs';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+
+// Default monitoring data structure for fallback
+const DEFAULT_SYSTEM_MONITORING_DATA: SystemMonitoringData = {
+  systemStatus: {
+    status: 'Operational',
+    components: {
+      api: 'Operational',
+      database: 'Operational',
+      authService: 'Operational',
+    },
+  },
+  metadata: {
+    environment: 'Production',
+    version: '1.0.0',
+    uptimeMinutes: 0,
+    lastHealthCheck: new Date().toISOString(),
+  },
+  serverPerformance: {
+    cpuUsage: 0,
+    memoryUsage: 0,
+    diskUsage: 0,
+    uptimeDays: 0,
+  },
+  databasePerformance: {
+    activeConnections: 0,
+    maxConnections: 100,
+    avgQueryTimeMs: 0,
+    storageUsedGb: 0,
+    storageTotalGb: 100,
+    status: 'Healthy',
+  },
+  appPerformance: {
+    activeUsers: 0,
+    requestsPerMinute: 0,
+    avgResponseTimeMs: 0,
+    errorRate: 0,
+  },
+  events: [],
+};
 
 const ProgressBar: React.FC<{ value: number; colorClass: string }> = ({ value, colorClass }) => (
   <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -33,7 +73,40 @@ const getStatusIndicator = (status: SystemStatusLevel) => {
 
 const AdminSystemMonitoringPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
-  const data = MOCK_SYSTEM_MONITORING_DATA;
+  const { authenticatedRequest } = useAuthenticatedApi();
+  
+  const [data, setData] = useState<SystemMonitoringData>(DEFAULT_SYSTEM_MONITORING_DATA);
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [healthRes, logsRes] = await Promise.all([
+        authenticatedRequest<SystemMonitoringData>('/health/snapshot'),
+        authenticatedRequest<LogEntry[]>('/system-monitoring/logs'),
+      ]);
+
+      if (healthRes.success && healthRes.data) {
+        setData(healthRes.data);
+      }
+      if (logsRes.success && logsRes.data) {
+        setLogEntries(logsRes.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch system monitoring data:', error);
+      // Keep defaults on error
+    } finally {
+      setLoading(false);
+    }
+  }, [authenticatedRequest]);
+
+  useEffect(() => {
+    fetchData();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   const eventIcons: Record<SystemEventType, React.ElementType> = {
     'Health Check': ShieldCheckIcon,
@@ -70,11 +143,19 @@ const AdminSystemMonitoringPage: React.FC = () => {
   };
 
   const logTabs = [
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.all'), content: <LogList logs={MOCK_LOG_ENTRIES} /> },
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.errors'), content: <LogList logs={MOCK_LOG_ENTRIES.filter(l => l.level === 'ERROR')} /> },
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.warnings'), content: <LogList logs={MOCK_LOG_ENTRIES.filter(l => l.level === 'WARN')} /> },
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.info'), content: <LogList logs={MOCK_LOG_ENTRIES.filter(l => l.level === 'INFO')} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.all'), content: <LogList logs={logEntries} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.errors'), content: <LogList logs={logEntries.filter(l => l.level === 'ERROR')} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.warnings'), content: <LogList logs={logEntries.filter(l => l.level === 'WARN')} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.info'), content: <LogList logs={logEntries.filter(l => l.level === 'INFO')} /> },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -179,38 +260,42 @@ const AdminSystemMonitoringPage: React.FC = () => {
             <ClockIcon className="w-6 h-6 mr-2" />
             {t('adminSystemMonitoringPage.recentEvents.title')}
         </h2>
-        <div className="flow-root">
-            <ul role="list" className="-mb-8">
-            {data.events.map((event, eventIdx) => {
-                const EventIcon = eventIcons[event.type] || ArrowPathIcon;
-                return (
-                <li key={event.id}>
-                    <div className="relative pb-8">
-                    {eventIdx !== data.events.length - 1 ? (
-                        <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
-                    ) : null}
-                    <div className="relative flex items-start space-x-3">
-                        <div>
-                        <div className="relative px-1">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white">
-                                <EventIcon className={`h-5 w-5 ${eventColors[event.type]}`} aria-hidden="true" />
-                            </div>
-                        </div>
-                        </div>
-                        <div className="min-w-0 flex-1 py-1.5">
-                        <div className="text-sm text-gray-500">
-                            <span className="font-medium text-gray-900">{t(`adminSystemMonitoringPage.eventTypes.${event.type.replace(/\s/g, '')}`)}</span>
-                            <span className="whitespace-nowrap ml-2">({new Date(event.timestamp).toLocaleString()})</span>
-                        </div>
-                        <p className="mt-0.5 text-sm text-gray-700">{event.message}</p>
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                );
-            })}
-            </ul>
-        </div>
+        {data.events.length === 0 ? (
+          <p className="text-center text-gray-500 py-8">{t('adminSystemMonitoringPage.recentEvents.empty', 'No recent events')}</p>
+        ) : (
+          <div className="flow-root">
+              <ul role="list" className="-mb-8">
+              {data.events.map((event, eventIdx) => {
+                  const EventIcon = eventIcons[event.type] || ArrowPathIcon;
+                  return (
+                  <li key={event.id}>
+                      <div className="relative pb-8">
+                      {eventIdx !== data.events.length - 1 ? (
+                          <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
+                      ) : null}
+                      <div className="relative flex items-start space-x-3">
+                          <div>
+                          <div className="relative px-1">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white">
+                                  <EventIcon className={`h-5 w-5 ${eventColors[event.type]}`} aria-hidden="true" />
+                              </div>
+                          </div>
+                          </div>
+                          <div className="min-w-0 flex-1 py-1.5">
+                          <div className="text-sm text-gray-500">
+                              <span className="font-medium text-gray-900">{t(`adminSystemMonitoringPage.eventTypes.${event.type.replace(/\s/g, '')}`)}</span>
+                              <span className="whitespace-nowrap ml-2">({new Date(event.timestamp).toLocaleString()})</span>
+                          </div>
+                          <p className="mt-0.5 text-sm text-gray-700">{event.message}</p>
+                          </div>
+                      </div>
+                      </div>
+                  </li>
+                  );
+              })}
+              </ul>
+          </div>
+        )}
       </Card>
 
       {/* Raw Log Console */}

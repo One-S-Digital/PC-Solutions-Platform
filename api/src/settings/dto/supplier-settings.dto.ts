@@ -5,6 +5,7 @@ import {
   IsString,
   IsOptional,
   IsArray,
+  IsUUID,
   Min,
 } from 'class-validator';
 
@@ -70,4 +71,12 @@ export class UpdateSupplierSettingsDto {
   @IsString()
   @IsOptional()
   catalogUrl?: string;
+
+  @IsUUID()
+  @IsOptional()
+  logoAssetId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  coverAssetId?: string;
 }

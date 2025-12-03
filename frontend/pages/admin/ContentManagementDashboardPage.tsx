@@ -166,7 +166,7 @@ const ContentManagementDashboardPage: React.FC = () => {
       if (course?.fileUrl) {
         fileUrl = course.fileUrl;
         // Determine file type from course type
-        if (course.type === 'VIDEO' || course.type === 'Video') {
+        if (course.type === 'VIDEO') {
           fileType = 'VIDEO';
         } else if (course.type === 'PDF') {
           fileType = 'PDF';
@@ -204,7 +204,7 @@ const ContentManagementDashboardPage: React.FC = () => {
     }
   };
 
-  const handleContentSubmit = (data: Partial<Course | HRDocument | PolicyDocument>, file?: File) => {
+  const handleContentSubmit = async (data: Partial<Course | HRDocument | PolicyDocument>, file?: File): Promise<void> => {
     const commonFieldsBase = {
         id: `${uploadContentType}-${Date.now()}`,
         title: data.title || 'Untitled',
@@ -227,7 +227,7 @@ const ContentManagementDashboardPage: React.FC = () => {
         id: `crs${Date.now()}`,
         updatedDate: commonFieldsDate.updatedDate,
         description: courseData.description || '',
-        type: courseData.type || 'Course',
+        type: courseData.type || 'COURSE',
         // [FIX] Used a valid ELearningCategory as a fallback.
         category: courseData.category || ELEARNING_CATEGORIES[0],
         status: courseData.status || 'Draft',
@@ -261,7 +261,7 @@ const ContentManagementDashboardPage: React.FC = () => {
         id: `pol${Date.now()}`,
         publishedDate: commonFieldsDate.publishedDate,
         lastUpdatedDate: commonFieldsDate.lastUpdatedDate,
-        category: policyData.category || 'Updates & News',
+        category: policyData.category || 'Other',
         policyType: policyData.policyType,
         country: policyData.country,
         region: policyData.region,

@@ -1,5 +1,6 @@
-import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query, UseInterceptors, UploadedFile, Body, ParseUUIDPipe } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudflareR2Service } from './cloudflare-r2.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { PrismaService } from '../prisma/prisma.service';
@@ -18,11 +19,118 @@ export class UploadController {
   ) {}
 
   /**
+   * Upload a file and create an asset record
+   * POST /api/upload/file
+   * Body: multipart/form-data with 'file' and optional 'assetKind'
+   */
+  @Post('file')
+  @UseInterceptors(FileInterceptor('file', {
+    limits: {
+      fileSize: 100 * 1024 * 1024, // 100MB max (e-learning content can be large)
+    },
+  }))
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Body('assetKind') assetKindParam?: string,
+  ) {
+    try {
+      const user = (req as any).user;
+      
+      if (!user?.id) {
+        this.logger.warn('User not found in request context for file upload');
+        throw new BadRequestException('User context not found');
+      }
+
+      if (!file) {
+        this.logger.warn('No file provided in upload request');
+        throw new BadRequestException('No file provided');
+      }
+
+      this.logger.log(`Processing file upload for user: ${user.id}, file: ${file.originalname}, size: ${file.size}`);
+
+      // Determine asset kind from parameter or default to DOCUMENT
+      let assetKind: AssetKind = AssetKind.DOCUMENT;
+      if (assetKindParam) {
+        const validKinds = Object.values(AssetKind);
+        if (validKinds.includes(assetKindParam as AssetKind)) {
+          assetKind = assetKindParam as AssetKind;
+        } else {
+          this.logger.warn(`Invalid asset kind: ${assetKindParam}, defaulting to DOCUMENT`);
+        }
+      }
+
+      this.logger.log(`Asset kind: ${assetKind}`);
+
+      // Upload file using the upload service
+      const result = await this.uploadService.uploadFile(file, user.id, assetKind);
+
+      this.logger.log(`File uploaded successfully: ${result.asset.id}`);
+
+      return {
+        success: true,
+        message: 'File uploaded successfully',
+        asset: {
+          id: result.asset.id,
+          kind: result.asset.kind,
+          filename: result.asset.filename,
+          publicUrl: result.publicUrl,
+          url: result.publicUrl,
+          storageKey: result.asset.storageKey,
+          mimeType: result.asset.mimeType,
+          size: result.asset.size,
+          createdAt: result.asset.createdAt,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`File upload failed: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(`File upload failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Delete an asset by ID
+   * DELETE /api/upload/files/:id
+   */
+  @Delete('files/:id')
+  async deleteFile(
+    @Param('id', ParseUUIDPipe) assetId: string,
+    @Req() req: Request,
+  ) {
+    try {
+      const user = (req as any).user;
+      
+      if (!user?.id) {
+        this.logger.warn('User not found in request context for file delete');
+        throw new BadRequestException('User context not found');
+      }
+
+      this.logger.log(`Deleting asset: ${assetId} for user: ${user.id}`);
+
+      await this.uploadService.deleteAsset(assetId, user.id);
+
+      return {
+        success: true,
+        message: 'File deleted successfully',
+      };
+    } catch (error) {
+      this.logger.error(`File delete failed: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(`File delete failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Get asset metadata by ID
    * GET /api/upload/asset/:id
    */
   @Get('asset/:id')
-  async getAsset(@Param('id') assetId: string) {
+  async getAsset(@Param('id', ParseUUIDPipe) assetId: string) {
     try {
       this.logger.log(`Fetching asset: ${assetId}`);
       

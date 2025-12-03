@@ -167,7 +167,7 @@ const RecruitmentPage: React.FC = () => {
     currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
   const canPostJob = isFoundationUser || isAdminOrSuperAdmin;
   const canViewCandidatePool = isFoundationUser || isAdminOrSuperAdmin;
-  const foundationId = currentUser?.orgId || currentUser?.organizationId;
+  const foundationId = currentUser?.orgId;
 
   const fetchJobs = useCallback(async () => {
     setJobsLoading(true);

@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 // [FIX] Imported ELEARNING_CATEGORIES to use as a valid fallback.
 import { Course, UserRole, Course as CourseType, ELearningContentType, ELearningCategory, ELEARNING_CATEGORIES, ELEARNING_CATEGORY_LABELS } from '../types';
-import { MOCK_COURSES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon, StarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
@@ -204,8 +204,8 @@ const ELearningPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Failed to fetch E-Learning content:', error);
-        // Fall back to mock data if API fails
-        setELearningItems(MOCK_COURSES);
+        // Fall back to empty state if API fails
+        setELearningItems([]);
       } finally {
         setIsLoading(false);
       }
@@ -241,10 +241,10 @@ const ELearningPage: React.FC = () => {
   const linkItems = useMemo(() => categoryAndSearchFilteredItems.filter(item => item.type === ELearningContentType.LINK), [categoryAndSearchFilteredItems]);
 
   const typeVisuals: Record<ELearningContentType, {icon: React.ElementType, colorClasses: string, label: string}> = {
-    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white', label: t('eLearning.coursesTitle') },
-    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, colorClasses: 'bg-red-500 text-white', label: t('eLearning.videosTitle') },
-    [ELearningContentType.PDF]: { icon: DocumentTextIcon, colorClasses: 'bg-orange-500 text-white', label: t('eLearning.pdfsTitle') },
-    [ELearningContentType.LINK]: { icon: LinkIcon, colorClasses: 'bg-purple-500 text-white', label: t('eLearning.externalLinksTitle') },
+    COURSE: { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white', label: t('eLearning.coursesTitle') },
+    VIDEO: { icon: VideoCameraIcon, colorClasses: 'bg-red-500 text-white', label: t('eLearning.videosTitle') },
+    PDF: { icon: DocumentTextIcon, colorClasses: 'bg-orange-500 text-white', label: t('eLearning.pdfsTitle') },
+    LINK: { icon: LinkIcon, colorClasses: 'bg-purple-500 text-white', label: t('eLearning.externalLinksTitle') },
   };
 
   const typeCounts = useMemo(() => {

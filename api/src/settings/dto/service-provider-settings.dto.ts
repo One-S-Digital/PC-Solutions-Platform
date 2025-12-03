@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsString,
   IsOptional,
+  IsUUID,
 } from 'class-validator';
 
 export class UpdateServiceProviderSettingsDto {
@@ -62,4 +63,12 @@ export class UpdateServiceProviderSettingsDto {
   @IsString()
   @IsOptional()
   bookingLink?: string;
+
+  @IsUUID()
+  @IsOptional()
+  logoAssetId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  coverAssetId?: string;
 }

@@ -565,7 +565,7 @@ export class LeadsService {
 
       // Determine new lead status based on response
       let newLeadStatus = lead.status;
-      let updateData: { status?: string; foundationId?: string } = {};
+      const updateData: { status?: string; foundationId?: string } = {};
 
       if (status === 'INTERESTED' || status === 'NEEDS_MORE_INFO') {
         newLeadStatus = 'PROCESSING';

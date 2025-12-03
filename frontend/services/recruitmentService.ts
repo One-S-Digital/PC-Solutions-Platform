@@ -44,9 +44,12 @@ class RecruitmentService {
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch job listings');
     }
+    const jobListingsData = Array.isArray(response.data) 
+      ? response.data 
+      : (response.data.jobListings || []);
     return {
-      jobListings: (response.data.jobListings || response.data || []).map((job: any) => this.transformJobListing(job)),
-      pagination: response.data.pagination,
+      jobListings: jobListingsData.map((job: any) => this.transformJobListing(job)),
+      pagination: Array.isArray(response.data) ? null : response.data.pagination,
     };
   }
 
@@ -98,9 +101,12 @@ class RecruitmentService {
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch applications');
     }
+    const applicationsData = Array.isArray(response.data)
+      ? response.data
+      : (response.data.applications || []);
     return {
-      applications: (response.data.applications || response.data || []).map((app: any) => this.transformApplication(app)),
-      pagination: response.data.pagination,
+      applications: applicationsData.map((app: any) => this.transformApplication(app)),
+      pagination: Array.isArray(response.data) ? null : response.data.pagination,
     };
   }
 
