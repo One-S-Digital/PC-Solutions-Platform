@@ -248,6 +248,8 @@ const SettingsPage: React.FC = () => {
               languages: Array.isArray(payload.languagesSpoken) ? payload.languagesSpoken : [],
               capacity: Number.isFinite(payload.capacity) ? Number(payload.capacity) : 0,
               pedagogy: Array.isArray(payload.pedagogy) ? payload.pedagogy : [],
+              ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+              ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
             }),
           })
         );
@@ -273,6 +275,8 @@ const SettingsPage: React.FC = () => {
               minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
               directOrderLink: payload.directOrderLink || '',
               catalogUrl: payload.catalogUrl || '',
+              ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+              ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
             }),
           })
         );
@@ -297,6 +301,8 @@ const SettingsPage: React.FC = () => {
               serviceCategories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories : [],
               deliveryType: payload.deliveryType || '',
               bookingLink: payload.bookingLink || '',
+              ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+              ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
             }),
           })
         );
