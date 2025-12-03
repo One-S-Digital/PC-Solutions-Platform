@@ -34,9 +34,16 @@ const SupplierOrdersPage: React.FC = () => {
 
       if (ordersRes.success && ordersRes.data) {
         setOrders(ordersRes.data);
+      } else if (!ordersRes.success) {
+        console.error('Orders API returned failure:', ordersRes);
+        setError(t('supplierOrdersPage.loadError', 'Failed to load orders'));
       }
+      
       if (orgsRes.success && orgsRes.data) {
         setOrganizations(orgsRes.data);
+      } else if (!orgsRes.success) {
+        console.error('Organizations API returned failure:', orgsRes);
+        // Organizations are non-critical, don't set error but log it
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from './contexts/AppContext';
 import { useNotifications } from './contexts/NotificationContext';
 import { UserRole, SettingsFormData, SupplierSettings, ProviderSettings, FoundationSettings } from './types';
-import { DEFAULT_ADMIN_SUPPLIER_SETTINGS, DEFAULT_ADMIN_PROVIDER_SETTINGS, DEFAULT_ADMIN_FOUNDATION_SETTINGS } from './constants';
+// Note: DEFAULT_ADMIN_*_SETTINGS are for admin platform configuration, not user settings form
 import Button from './components/ui/Button';
 import Card from './components/ui/Card';
 import {
@@ -30,7 +30,7 @@ export interface SettingsSectionConfig {
   id: string;
   nameKey: string; // Changed from name to nameKey
   icon: React.ElementType;
-  component: React.FC<{ settings: SettingsFormData; onChange: (field: keyof SettingsFormData, value: any) => void; userRole: UserRole }>;
+  component: React.FC<{ settings: Partial<SettingsFormData>; onChange: (field: keyof SettingsFormData, value: any) => void; userRole: UserRole }>;
   roles: UserRole[]; // Roles that can see this section
 }
 
@@ -40,8 +40,8 @@ const SettingsPage: React.FC = () => {
   const { addNotification } = useNotifications();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<SettingsFormData | null>(null);
-  const [initialFormData, setInitialFormData] = useState<SettingsFormData | null>(null);
+  const [formData, setFormData] = useState<Partial<SettingsFormData> | null>(null);
+  const [initialFormData, setInitialFormData] = useState<Partial<SettingsFormData> | null>(null);
   const [activeSectionId, setActiveSectionId] = useState<string>('');
   const [isDirty, setIsDirty] = useState(false);
 
@@ -49,15 +49,11 @@ const SettingsPage: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      let initialSettings: SettingsFormData = {} as SettingsFormData; // Default empty object for other roles
-      if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
-        initialSettings = DEFAULT_ADMIN_SUPPLIER_SETTINGS as SettingsFormData;
-      } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
-        initialSettings = DEFAULT_ADMIN_PROVIDER_SETTINGS as SettingsFormData;
-      } else if (currentUser.role === UserRole.FOUNDATION) {
-        initialSettings = DEFAULT_ADMIN_FOUNDATION_SETTINGS as SettingsFormData;
-      }
-      // For other roles, it remains an empty object, AccountSecuritySettings will handle its own state from currentUser
+      // Initialize with empty settings - actual settings should be fetched from API
+      // The DEFAULT_ADMIN_*_SETTINGS constants are for admin platform config, not user settings
+      // For user-facing settings, we start with empty object and let each section handle defaults
+      const initialSettings: Partial<SettingsFormData> = {};
+      
       setFormData(JSON.parse(JSON.stringify(initialSettings))); 
       setInitialFormData(JSON.parse(JSON.stringify(initialSettings)));
     }
@@ -94,7 +90,7 @@ const SettingsPage: React.FC = () => {
 
 
   const handleFormChange = (field: keyof SettingsFormData, value: any) => {
-    setFormData(prev => prev ? { ...prev, [field]: value } : null);
+    setFormData((prev: Partial<SettingsFormData> | null) => prev ? { ...prev, [field]: value } : null);
   };
 
   const handleSave = () => {

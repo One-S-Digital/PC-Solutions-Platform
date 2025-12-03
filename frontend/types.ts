@@ -240,6 +240,7 @@ export const JobContractTypeValue = {
     CDI: 'CDI',
     CDD: 'CDD',
     INTERNSHIP: 'INTERNSHIP',
+    FREELANCE: 'FREELANCE',
 } as const;
 
 export interface JobListing {
@@ -333,11 +334,11 @@ export interface DocumentItem {
 export interface Partner {
     id: string;
     name: string;
-    logoUrl: string;
+    logoUrl?: string;
     description: string;
     type: 'Academic' | 'Corporate' | 'Governmental';
-    countryRegion: string;
-    websiteUrl: string;
+    countryRegion?: string;
+    websiteUrl?: string;
 }
 
 export type UploadableContentType = 'e-learning' | 'hr' | 'policy';

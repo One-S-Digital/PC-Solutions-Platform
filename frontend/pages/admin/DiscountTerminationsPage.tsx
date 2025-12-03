@@ -52,7 +52,12 @@ const DiscountTerminationsPage: React.FC = () => {
     const handleMarkCompleted = async (clientId: string) => {
         const client = vendorClients.find(vc => vc.id === clientId);
         if (client) {
-            await updateVendorClientStatus(client.vendorId, client.orgId, false, VendorClientReason.TERMINATED, "Terminated due to daycare churn.");
+            try {
+                await updateVendorClientStatus(client.vendorId, client.orgId, false, VendorClientReason.TERMINATED, "Terminated due to daycare churn.");
+            } catch (err) {
+                console.error('Failed to mark completed:', err);
+                alert(t('discountTerminations.actions.markCompletedError', 'Failed to update status'));
+            }
         }
     };
     

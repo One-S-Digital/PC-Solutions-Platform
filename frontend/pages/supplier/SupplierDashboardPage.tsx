@@ -103,6 +103,9 @@ const SupplierDashboardPage: React.FC = () => {
 
   const productManagement = {
     active: myProducts.length.toString(),
+    // 'pending' is hardcoded to '0' because the Product model only tracks ACTIVE/INACTIVE status,
+    // not a separate 'pending approval' workflow. If approval workflow is added later,
+    // this should be computed from products with a pending status or fetched from stats API.
     pending: '0',
     lowStock: myProducts.filter(p => p.stockStatus === 'Low Stock').map(p => p.title),
   };

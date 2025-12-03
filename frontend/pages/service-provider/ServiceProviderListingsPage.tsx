@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { UploadedAsset } from '../../services/api';
 
 interface ServiceCardProps {
   service: Service;
@@ -108,13 +109,31 @@ const ServiceProviderListingsPage: React.FC = () => {
     const providerLogo = currentUser.avatarUrl;
 
     try {
+      // Upload file if provided
+      let imageUrl = editingService?.imageUrl;
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('assetKind', 'DOCUMENT'); // Using DOCUMENT kind for service images
+        
+        const uploadResponse = await authenticatedRequest<{ asset: UploadedAsset }>('/upload/file', {
+          method: 'POST',
+          body: formData,
+          headers: {}, // Let browser set Content-Type for FormData
+        });
+        
+        if (uploadResponse.success && uploadResponse.asset) {
+          imageUrl = uploadResponse.asset.publicUrl;
+        }
+      }
+
       if (editingService) {
         // Update existing service
         const response = await authenticatedRequest<Service>(`/marketplace/services/${editingService.id}`, {
           method: 'PATCH',
           body: JSON.stringify({
             ...data,
-            imageUrl: file ? URL.createObjectURL(file) : editingService.imageUrl,
+            imageUrl,
           }),
         });
 
@@ -136,7 +155,7 @@ const ServiceProviderListingsPage: React.FC = () => {
           tags: data.tags || [],
           deliveryType: data.deliveryType || 'On-site',
           priceInfo: data.priceInfo || 'Contact for quote',
-          imageUrl: file ? URL.createObjectURL(file) : undefined,
+          imageUrl,
           isActive: true,
           ...data,
         };
