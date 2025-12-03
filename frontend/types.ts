@@ -324,14 +324,38 @@ export interface DocumentItem {
 }
 
 
+export type PartnerType = 'ACADEMIC' | 'CORPORATE' | 'GOVERNMENTAL' | 'NON_PROFIT' | 'MEDIA' | 'TECHNOLOGY';
+
+export const PARTNER_TYPES: PartnerType[] = ['ACADEMIC', 'CORPORATE', 'GOVERNMENTAL', 'NON_PROFIT', 'MEDIA', 'TECHNOLOGY'];
+
+export const PARTNER_TYPE_LABELS: Record<PartnerType, string> = {
+  ACADEMIC: 'Academic',
+  CORPORATE: 'Corporate',
+  GOVERNMENTAL: 'Governmental',
+  NON_PROFIT: 'Non-Profit',
+  MEDIA: 'Media',
+  TECHNOLOGY: 'Technology',
+};
+
 export interface Partner {
-    id: string;
-    name: string;
-    logoUrl: string;
-    description: string;
-    type: 'Academic' | 'Corporate' | 'Governmental';
-    countryRegion: string;
-    websiteUrl: string;
+  id: string;
+  name: string;
+  type: PartnerType;
+  description?: string;
+  websiteUrl?: string;
+  countryRegion?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPerson?: string;
+  logoAssetId?: string;
+  logoUrl?: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  displayOrder: number;
+  partnershipStart?: string;
+  partnershipEnd?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type UploadableContentType = 'e-learning' | 'hr' | 'policy';

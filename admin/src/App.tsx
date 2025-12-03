@@ -7,6 +7,7 @@ import { useSettings } from './hooks/useSettings';
 import Dashboard from './pages/Dashboard';
 import UsersPage from './pages/Users';
 import OrganizationsPage from './pages/Organizations';
+import PartnersPage from './pages/Partners';
 import ProductsPage from './pages/Products';
 import ServicesPage from './pages/Services';
 import JobListingsPage from './pages/JobListings';
@@ -76,6 +77,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="organizations" element={<OrganizationsPage />} />
+          <Route path="partners" element={<PartnersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="services" element={<ServicesPage />} />
           <Route path="job-listings" element={<JobListingsPage />} />

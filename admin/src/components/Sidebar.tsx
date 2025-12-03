@@ -20,6 +20,7 @@ import {
   Shield,
   Palette,
   Globe,
+  Handshake,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -34,6 +35,7 @@ const navigation = [
   { key: 'dashboard', href: '/dashboard', icon: BarChart3 },
   { key: 'users', href: '/users', icon: Users },
   { key: 'foundations', href: '/organizations', icon: Building2 },
+  { key: 'partners', href: '/partners', icon: Handshake },
   { key: 'products', href: '/products', icon: Package },
   { key: 'services', href: '/services', icon: Wrench },
   { key: 'jobListings', href: '/job-listings', icon: Briefcase },
