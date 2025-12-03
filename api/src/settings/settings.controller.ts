@@ -146,6 +146,8 @@ export class SettingsController {
             languages: settings.languages ?? [],
             capacity: settings.capacity,
             pedagogy: settings.pedagogy ?? [],
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
           },
         });
       } else {
@@ -165,6 +167,8 @@ export class SettingsController {
             capacity: settings.capacity,
             pedagogy: settings.pedagogy ?? [],
             isActive: true,
+            ...(settings.logoAssetId && { logoAssetId: settings.logoAssetId }),
+            ...(settings.coverAssetId && { coverAssetId: settings.coverAssetId }),
           },
         });
 
@@ -360,6 +364,8 @@ export class SettingsController {
             minimumOrderQuantity: settings.minimumOrderQuantity,
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
           },
         });
       } else {
@@ -382,6 +388,8 @@ export class SettingsController {
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
             isActive: true,
+            ...(settings.logoAssetId && { logoAssetId: settings.logoAssetId }),
+            ...(settings.coverAssetId && { coverAssetId: settings.coverAssetId }),
           },
         });
 
@@ -603,6 +611,8 @@ export class SettingsController {
               serviceCategories: settings.serviceCategories ?? [],
               deliveryType: settings.deliveryType,
               bookingLink: settings.bookingLink,
+              ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+              ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
             };
 
             // Validate array fields
@@ -671,6 +681,8 @@ export class SettingsController {
               deliveryType: settings.deliveryType,
               bookingLink: settings.bookingLink,
               isActive: true,
+              ...(settings.logoAssetId && { logoAssetId: settings.logoAssetId }),
+              ...(settings.coverAssetId && { coverAssetId: settings.coverAssetId }),
             };
 
             // Validate array fields
@@ -804,6 +816,7 @@ export class SettingsController {
           lastName: settings.lastName,
           email: settings.email,
           phoneNumber: settings.phoneNumber,
+          ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
         },
       });
 
