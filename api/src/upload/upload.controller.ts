@@ -46,13 +46,18 @@ export class UploadController {
     
     // Allow all localhost origins in development
     if (process.env.NODE_ENV !== 'production') {
-      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-        return true;
+      try {
+        const url = new URL(origin);
+        if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+          return true;
+        }
+      } catch {
+        return false;
       }
     }
     
-    // In production, check against configured origins
-    return this.allowedOrigins.some(allowed => origin === allowed || origin.endsWith(allowed));
+    // In production, check against configured origins (exact match only)
+    return this.allowedOrigins.includes(origin);
   }
 
   /**
@@ -134,11 +139,12 @@ export class UploadController {
           }
           
           // Log error but continue upload if scanner is unavailable (graceful degradation)
-          // In production, you might want to block uploads if scanner is down
           this.logger.error(`⚠️ Malware scan failed (scanner unavailable): ${file.originalname}`, error);
           
-          // Uncomment to block uploads when scanner is unavailable:
-          // throw new ServiceUnavailableException('Security scanner unavailable. Please try again later.');
+          // Block uploads when scanner is unavailable in production
+          if (process.env.NODE_ENV === 'production') {
+            throw new ServiceUnavailableException('Security scanner unavailable. Please try again later.');
+          }
         }
       }
 
@@ -218,7 +224,6 @@ export class UploadController {
   }
 
   /**
-<<<<<<< HEAD
    * Get current user's assets (files)
    * GET /api/upload/my-files
    * Query params:
@@ -314,10 +319,7 @@ export class UploadController {
   }
 
   /**
-   * Proxy endpoint to download files with proper CORS headers
-=======
    * Proxy endpoint to download files with authentication and authorization
->>>>>>> ee5d98c46 (Updated various tasks)
    * GET /api/upload/download/*
    */
   @Options('download/*')
@@ -363,8 +365,7 @@ export class UploadController {
       // Verify user has access to this file (ownership or admin)
       const asset = await this.uploadService.verifyFileAccess(
         storageKey, 
-        req.context.appUserId,
-        req.context.role
+        req.context.appUserId
       );
       
       this.logger.log(`🔒 Authorized download: ${storageKey} by user ${req.context.appUserId}`);

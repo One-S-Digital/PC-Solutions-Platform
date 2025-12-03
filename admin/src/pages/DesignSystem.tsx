@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import Tabs from '../components/design-system/Tabs';
@@ -27,25 +28,26 @@ const ColorSwatch: React.FC<{ name: string; hex: string }> = ({ name, hex }) => 
 );
 
 const DesignSystemPage: React.FC = () => {
+    const { t } = useTranslation(['admin', 'common']);
     const [quantity, setQuantity] = useState(1);
     const [tabIndex, setTabIndex] = useState(0);
 
     const tabsContent = [
-        { label: 'Tab 1', content: <p>This is the content for Tab 1.</p> },
-        { label: 'Tab 2', content: <p>This is the content for Tab 2.</p> },
-        { label: 'Tab 3', content: <p>This is a disabled tab.</p>, disabled: true },
+        { label: t('admin:designSystem.tabs.tab1'), content: <p>{t('admin:designSystem.tabs.content1')}</p> },
+        { label: t('admin:designSystem.tabs.tab2'), content: <p>{t('admin:designSystem.tabs.content2')}</p> },
+        { label: t('admin:designSystem.tabs.tab3'), content: <p>{t('admin:designSystem.tabs.content3')}</p>, disabled: true },
     ];
 
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="text-4xl font-bold text-swiss-charcoal">Design System</h1>
-        <p className="mt-2 text-lg text-gray-600">A living reference for all UI components and design tokens in the Pro Crèche Solutions application.</p>
+        <h1 className="text-4xl font-bold text-swiss-charcoal">{t('admin:designSystem.title')}</h1>
+        <p className="mt-2 text-lg text-gray-600">{t('admin:designSystem.description')}</p>
       </div>
 
       {/* Colors Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Colors</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.sections.colors')}</h2>
         <Card className="p-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-8">
             {Object.entries(colorPalette).map(([name, hex]) => (
@@ -57,58 +59,58 @@ const DesignSystemPage: React.FC = () => {
 
       {/* Typography Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Typography</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.typography.title')}</h2>
         <Card className="p-8 space-y-4">
-          <p className="text-xs text-gray-500">Font Family: Nunito, Inter, sans-serif</p>
-          <h1 className="text-4xl font-bold">Heading 1: The quick brown fox</h1>
-          <h2 className="text-3xl font-bold">Heading 2: The quick brown fox</h2>
-          <h3 className="text-2xl font-semibold">Heading 3: The quick brown fox</h3>
-          <h4 className="text-xl font-semibold">Heading 4: The quick brown fox</h4>
-          <p className="text-base">Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.</p>
-          <p className="text-sm">Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.</p>
-          <a href="#" className="text-swiss-mint hover:underline">This is a link</a>
+          <p className="text-xs text-gray-500">{t('admin:designSystem.typography.fontFamily')}</p>
+          <h1 className="text-4xl font-bold">{t('admin:designSystem.typography.heading1')}</h1>
+          <h2 className="text-3xl font-bold">{t('admin:designSystem.typography.heading2')}</h2>
+          <h3 className="text-2xl font-semibold">{t('admin:designSystem.typography.heading3')}</h3>
+          <h4 className="text-xl font-semibold">{t('admin:designSystem.typography.heading4')}</h4>
+          <p className="text-base">{t('admin:designSystem.typography.bodyBase')}</p>
+          <p className="text-sm">{t('admin:designSystem.typography.bodySmall')}</p>
+          <a href="#" className="text-swiss-mint hover:underline">{t('admin:designSystem.typography.link')}</a>
         </Card>
       </section>
 
       {/* Buttons Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Buttons</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.buttons.title')}</h2>
         <Card className="p-8 space-y-6">
           <div>
-            <h3 className="font-medium mb-3">Variants</h3>
+            <h3 className="font-medium mb-3">{t('admin:designSystem.buttons.variants')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="danger">Danger</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="light">Light</Button>
+              <Button variant="primary">{t('admin:designSystem.buttons.primary')}</Button>
+              <Button variant="secondary">{t('admin:designSystem.buttons.secondary')}</Button>
+              <Button variant="danger">{t('admin:designSystem.buttons.danger')}</Button>
+              <Button variant="outline">{t('admin:designSystem.buttons.outline')}</Button>
+              <Button variant="ghost">{t('admin:designSystem.buttons.ghost')}</Button>
+              <Button variant="light">{t('admin:designSystem.buttons.light')}</Button>
             </div>
           </div>
            <div>
-            <h3 className="font-medium mb-3">Sizes</h3>
+            <h3 className="font-medium mb-3">{t('admin:designSystem.buttons.sizes')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary" size="xs">Extra Small</Button>
-              <Button variant="primary" size="sm">Small</Button>
-              <Button variant="primary" size="md">Medium (Default)</Button>
-              <Button variant="primary" size="lg">Large</Button>
+              <Button variant="primary" size="xs">{t('admin:designSystem.buttons.extraSmall')}</Button>
+              <Button variant="primary" size="sm">{t('admin:designSystem.buttons.small')}</Button>
+              <Button variant="primary" size="md">{t('admin:designSystem.buttons.mediumDefault')}</Button>
+              <Button variant="primary" size="lg">{t('admin:designSystem.buttons.large')}</Button>
             </div>
           </div>
            <div>
-            <h3 className="font-medium mb-3">With Icons</h3>
+            <h3 className="font-medium mb-3">{t('admin:designSystem.buttons.withIcons')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="secondary" leftIcon={PlusIcon}>Left Icon</Button>
-              <Button variant="outline" rightIcon={ArrowRightIcon}>Right Icon</Button>
-              <Button variant="primary" leftIcon={CheckIcon} size="sm">Small Icon</Button>
+              <Button variant="secondary" leftIcon={PlusIcon}>{t('admin:designSystem.buttons.leftIcon')}</Button>
+              <Button variant="outline" rightIcon={ArrowRightIcon}>{t('admin:designSystem.buttons.rightIcon')}</Button>
+              <Button variant="primary" leftIcon={CheckIcon} size="sm">{t('admin:designSystem.buttons.smallIcon')}</Button>
               <Button variant="danger" leftIcon={PlusIcon} />
             </div>
           </div>
           <div>
-            <h3 className="font-medium mb-3">Disabled State</h3>
+            <h3 className="font-medium mb-3">{t('admin:designSystem.buttons.disabledState')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary" disabled>Primary Disabled</Button>
-              <Button variant="secondary" disabled>Secondary Disabled</Button>
-               <Button variant="outline" disabled>Outline Disabled</Button>
+              <Button variant="primary" disabled>{t('admin:designSystem.buttons.primaryDisabled')}</Button>
+              <Button variant="secondary" disabled>{t('admin:designSystem.buttons.secondaryDisabled')}</Button>
+               <Button variant="outline" disabled>{t('admin:designSystem.buttons.outlineDisabled')}</Button>
             </div>
           </div>
         </Card>
@@ -116,7 +118,7 @@ const DesignSystemPage: React.FC = () => {
 
        {/* Cards Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Cards</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.sections.cards')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="p-6">
                 <h3 className="font-semibold mb-2">Standard Card</h3>
@@ -131,7 +133,7 @@ const DesignSystemPage: React.FC = () => {
 
       {/* Form Controls Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Form Controls</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.formControls.title')}</h2>
         <Card className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
                 <div>

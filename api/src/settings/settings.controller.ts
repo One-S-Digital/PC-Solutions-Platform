@@ -388,21 +388,6 @@ export class SettingsController {
             catalogUrl: settings.catalogUrl,
           },
         });
-
-        // Update organization translations (only description - name is a proper noun/identifier)
-        const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
-        const translationPayload: Record<string, any> = {
-          description: updatedOrganization.description || '',
-        };
-
-        if (translationPayload.description && translationPayload.description.trim().length > 0) {
-          await this.translationService.saveEntityWithTranslations(
-            'organization',
-            updatedOrganization.id,
-            translationPayload,
-            translatableFields,
-          );
-        }
       } else {
         // Create new organization if it doesn't exist
         const newOrganization = await tx.organization.create({
@@ -434,23 +419,28 @@ export class SettingsController {
             role: UserRole.PRODUCT_SUPPLIER,
           },
         });
-
-        // Save organization translations (only description - name is a proper noun/identifier)
-        const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
-        const translationPayload: Record<string, any> = {
-          description: newOrganization.description || '',
-        };
-
-        if (translationPayload.description && translationPayload.description.trim().length > 0) {
-          await this.translationService.saveEntityWithTranslations(
-            'organization',
-            newOrganization.id,
-            translationPayload,
-            translatableFields,
-          );
-        }
       }
     });
+
+    // Update translations after transaction completes
+    const userOrg = await this.prisma.userOrganization.findFirst({
+      where: { userId: profileId },
+      include: { organization: true },
+    });
+    
+    if (userOrg?.organization && userOrg.organization.description?.trim()) {
+      const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+      const translationPayload: Record<string, any> = {
+        description: userOrg.organization.description,
+      };
+      
+      await this.translationService.saveEntityWithTranslations(
+        'organization',
+        userOrg.organization.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
 
     return {
       success: true,
@@ -689,21 +679,6 @@ export class SettingsController {
               organizationId: updatedOrg.id,
               name: updatedOrg.name,
             });
-
-            // Update organization translations (only description - name is a proper noun/identifier)
-            const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
-            const translationPayload: Record<string, any> = {
-              description: updatedOrg.description || '',
-            };
-
-            if (translationPayload.description && translationPayload.description.trim().length > 0) {
-              await this.translationService.saveEntityWithTranslations(
-                'organization',
-                updatedOrg.id,
-                translationPayload,
-                translatableFields,
-              );
-            }
           } else {
             // Create new organization if it doesn't exist
             this.logger.log('🔍 [DEBUG] Step 4: Creating new organization', {
@@ -792,21 +767,6 @@ export class SettingsController {
               organizationId: newUserOrg.organizationId,
               role: newUserOrg.role,
             });
-
-            // Save organization translations (only description - name is a proper noun/identifier)
-            const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
-            const translationPayload: Record<string, any> = {
-              description: newOrganization.description || '',
-            };
-
-            if (translationPayload.description && translationPayload.description.trim().length > 0) {
-              await this.translationService.saveEntityWithTranslations(
-                'organization',
-                newOrganization.id,
-                translationPayload,
-                translatableFields,
-              );
-            }
           }
 
           this.logger.log('🔍 [DEBUG] Transaction completed successfully');
@@ -822,6 +782,26 @@ export class SettingsController {
           throw txError;
         }
       });
+
+      // Update translations after transaction completes
+      const userOrg = await this.prisma.userOrganization.findFirst({
+        where: { userId: profileId },
+        include: { organization: true },
+      });
+      
+      if (userOrg?.organization && userOrg.organization.description?.trim()) {
+        const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+        const translationPayload: Record<string, any> = {
+          description: userOrg.organization.description,
+        };
+        
+        await this.translationService.saveEntityWithTranslations(
+          'organization',
+          userOrg.organization.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
 
       const duration = Date.now() - startTime;
       this.logger.log('🔍 [DEBUG] updateServiceProviderSettings - SUCCESS', {

@@ -66,17 +66,17 @@ export class RecruitmentService {
       title: jobListing.title,
       description: jobListing.description || '',
       requirements: Array.isArray(jobListing.requirements) 
-        ? jobListing.requirements.join('\n') 
-        : '',
+        ? JSON.stringify(jobListing.requirements) 
+        : '[]',
       responsibilities: Array.isArray(jobListing.responsibilities) 
-        ? jobListing.responsibilities.join('\n') 
-        : '',
+        ? JSON.stringify(jobListing.responsibilities) 
+        : '[]',
       qualifications: Array.isArray(jobListing.qualifications) 
-        ? jobListing.qualifications.join('\n') 
-        : '',
+        ? JSON.stringify(jobListing.qualifications) 
+        : '[]',
       benefits: Array.isArray(jobListing.benefits) 
-        ? jobListing.benefits.join('\n') 
-        : '',
+        ? JSON.stringify(jobListing.benefits) 
+        : '[]',
     };
 
     // Only save translations if there's content to translate
@@ -152,6 +152,18 @@ export class RecruitmentService {
     if (filters?.lang && filters.lang !== 'en') {
       const translatableFields = FIELDS_BY_ENTITY.job_listing || ['title', 'description', 'requirements'];
       
+      // TODO: N+1 QUERY PERFORMANCE ISSUE
+      // Each listing triggers a separate resolveEntity call, resulting in N additional queries.
+      // Consider implementing a batch resolution method in TranslationService:
+      // const entityIds = jobListings.map(l => l.id);
+      // const translationsMap = await this.translationService.resolveEntitiesBatch(
+      //   'job_listing', entityIds, translatableFields, filters.lang
+      // );
+      // for (const listing of jobListings) {
+      //   const translatedFields = translationsMap.get(listing.id);
+      //   // ... apply translations
+      // }
+      
       for (const listing of jobListings) {
         const translatedFields = await this.translationService.resolveEntity(
           'job_listing',
@@ -167,18 +179,34 @@ export class RecruitmentService {
         if (translatedFields.description) {
           listing.description = translatedFields.description;
         }
-        // Split array fields back from joined strings
+        // Parse array fields from JSON strings
         if (translatedFields.requirements) {
-          listing.requirements = translatedFields.requirements.split('\n').filter(r => r.trim().length > 0);
+          try {
+            listing.requirements = JSON.parse(translatedFields.requirements);
+          } catch {
+            listing.requirements = [];
+          }
         }
         if (translatedFields.responsibilities) {
-          listing.responsibilities = translatedFields.responsibilities.split('\n').filter(r => r.trim().length > 0);
+          try {
+            listing.responsibilities = JSON.parse(translatedFields.responsibilities);
+          } catch {
+            listing.responsibilities = [];
+          }
         }
         if (translatedFields.qualifications) {
-          listing.qualifications = translatedFields.qualifications.split('\n').filter(r => r.trim().length > 0);
+          try {
+            listing.qualifications = JSON.parse(translatedFields.qualifications);
+          } catch {
+            listing.qualifications = [];
+          }
         }
         if (translatedFields.benefits) {
-          listing.benefits = translatedFields.benefits.split('\n').filter(r => r.trim().length > 0);
+          try {
+            listing.benefits = JSON.parse(translatedFields.benefits);
+          } catch {
+            listing.benefits = [];
+          }
         }
       }
     }

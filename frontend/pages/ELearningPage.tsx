@@ -130,6 +130,45 @@ const ELearningTypeDisplayCard: React.FC<{title: string, icon: React.ElementType
   );
 };
 
+// Move outside component - mapping constants
+const EXTENSION_TO_MIME: Record<string, string> = {
+  'mp4': 'video/mp4',
+  'webm': 'video/webm',
+  'ogg': 'video/ogg',
+  'mov': 'video/quicktime',
+  'avi': 'video/x-msvideo',
+  'pdf': 'application/pdf',
+  'doc': 'application/msword',
+  'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'png': 'image/png',
+  'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
+  'gif': 'image/gif',
+  'webp': 'image/webp',
+};
+
+const TYPE_TO_MIME: Record<string, string> = {
+  'VIDEO': 'video/mp4',
+  'PDF': 'application/pdf',
+  'COURSE': 'application/octet-stream', // Courses may vary - use generic fallback
+  'LINK': 'text/html',
+};
+
+// Move outside component - helper function
+const getMimeType = (item: Course): string => {
+  const fileUrl = item.fileUrl || '';
+  
+  // Extract extension, removing query params and fragments
+  const urlPath = fileUrl.split('?')[0].split('#')[0];
+  const extension = urlPath.split('.').pop()?.toLowerCase();
+  
+  if (extension && EXTENSION_TO_MIME[extension]) {
+    return EXTENSION_TO_MIME[extension];
+  }
+  
+  return TYPE_TO_MIME[item.type] || 'application/octet-stream';
+};
+
 const ELearningPage: React.FC = () => {
   const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
@@ -267,44 +306,6 @@ const ELearningPage: React.FC = () => {
     if (item.fileUrl) {
       setPreviewItem(item);
     }
-  };
-
-  // Helper to get MIME type from e-learning content type and file URL
-  const getMimeType = (item: Course): string => {
-    // Try to get MIME type from file extension
-    const fileUrl = item.fileUrl || '';
-    const extension = fileUrl.split('.').pop()?.toLowerCase();
-    
-    // Map extensions to MIME types
-    const extensionToMime: Record<string, string> = {
-      'mp4': 'video/mp4',
-      'webm': 'video/webm',
-      'ogg': 'video/ogg',
-      'mov': 'video/quicktime',
-      'avi': 'video/x-msvideo',
-      'pdf': 'application/pdf',
-      'doc': 'application/msword',
-      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'png': 'image/png',
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'gif': 'image/gif',
-      'webp': 'image/webp',
-    };
-    
-    if (extension && extensionToMime[extension]) {
-      return extensionToMime[extension];
-    }
-    
-    // Fallback: Map e-learning content type to default MIME type
-    const typeToMime: Record<string, string> = {
-      'VIDEO': 'video/mp4',
-      'PDF': 'application/pdf',
-      'COURSE': 'video/mp4', // Courses often have video content
-      'LINK': 'text/html',
-    };
-    
-    return typeToMime[item.type] || 'application/octet-stream';
   };
 
   const handleDownload = async (item: Course) => {

@@ -152,17 +152,27 @@ export class ProfileController {
     // Update user translations if shortBio was changed
     if (updateData.shortBio !== undefined) {
       const translatableFields = FIELDS_BY_ENTITY.user || ['shortBio'];
-      const translationPayload: Record<string, any> = {
-        shortBio: updatedUser.shortBio || '',
-      };
+      const translationPayload: Record<string, any> = {};
+      
+      // Include all translatable fields from the updated user
+      for (const field of translatableFields) {
+        if (updatedUser[field] !== undefined && updatedUser[field] !== null) {
+          translationPayload[field] = updatedUser[field];
+        }
+      }
 
-      if (translationPayload.shortBio && translationPayload.shortBio.trim().length > 0) {
-        await this.translationService.saveEntityWithTranslations(
-          'user',
-          updatedUser.id,
-          translationPayload,
-          translatableFields,
-        );
+      if (Object.keys(translationPayload).length > 0) {
+        try {
+          await this.translationService.saveEntityWithTranslations(
+            'user',
+            updatedUser.id,
+            translationPayload,
+            translatableFields,
+          );
+        } catch (error) {
+          // Log but don't fail the request
+          console.error('Failed to save user translations:', error);
+        }
       }
     }
 
@@ -199,17 +209,25 @@ export class ProfileController {
         // Update organization translations if description was changed (name is not translatable - it's a proper noun)
         if (updateData.description !== undefined) {
           const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
-          const translationPayload: Record<string, any> = {
-            description: updatedOrganization.description || '',
-          };
+          const translationPayload: Record<string, any> = {};
+          
+          for (const field of translatableFields) {
+            if (updatedOrganization[field] !== undefined && updatedOrganization[field] !== null) {
+              translationPayload[field] = updatedOrganization[field];
+            }
+          }
 
-          if (translationPayload.description && translationPayload.description.trim().length > 0) {
-            await this.translationService.saveEntityWithTranslations(
-              'organization',
-              updatedOrganization.id,
-              translationPayload,
-              translatableFields,
-            );
+          if (Object.keys(translationPayload).length > 0) {
+            try {
+              await this.translationService.saveEntityWithTranslations(
+                'organization',
+                updatedOrganization.id,
+                translationPayload,
+                translatableFields,
+              );
+            } catch (error) {
+              console.error(`Failed to save translations for org ${updatedOrganization.id}:`, error);
+            }
           }
         }
       }

@@ -28,6 +28,7 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
   // Fetch users from API
   useEffect(() => {
     if (isOpen) {
+      let isMounted = true;
       const fetchUsers = async () => {
         setIsLoadingUsers(true);
         try {
@@ -47,16 +48,23 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
             if (u.clerkId && (u.clerkId.startsWith('system-') || u.clerkId.startsWith('test-'))) return false;
             return true;
           });
-          setAvailableUsers(otherUsers);
+          if (isMounted) {
+            setAvailableUsers(otherUsers);
+          }
         } catch (error) {
-          console.error('Failed to fetch users');
+          console.error('Failed to fetch users:', error);
         } finally {
-          setIsLoadingUsers(false);
+          if (isMounted) {
+            setIsLoadingUsers(false);
+          }
         }
       };
       fetchUsers();
+      return () => {
+        isMounted = false;
+      };
     }
-  }, [isOpen, currentUser, getToken]);
+  }, [isOpen, currentUser]);
 
   const handleUserToggle = (user: User) => {
     setSelectedUsers(prev => 
@@ -72,30 +80,8 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
       return;
     }
     
-    // Check if all selected users are valid (not system accounts and not current user)
-    const validUsers = selectedUsers.filter(u => {
-      // Exclude system accounts
-      if (u.clerkId && (u.clerkId.startsWith('system-') || u.clerkId.startsWith('test-'))) {
-        return false;
-      }
-      // Exclude current user (they're added automatically)
-      if (u.id === currentUser?.id) {
-        return false;
-      }
-      return true;
-    });
-    
-    if (validUsers.length === 0) {
-      if (selectedUsers.length > 0) {
-        alert(t('common:createGroupChatModal.error.invalidParticipants', 'Please select valid participants. System accounts and yourself cannot be added to conversations.'));
-      } else {
-        alert(t('common:createGroupChatModal.error.minParticipants', 'Please select at least one participant to start a conversation. You will be automatically added as a participant.'));
-      }
-      return;
-    }
-    
     try {
-      const participants = validUsers.map(u => ({ id: u.id, name: u.name, role: u.role }));
+      const participants = selectedUsers.map(u => ({ id: u.id, name: u.name, role: u.role }));
       const conversationId = await startConversation(participants, groupName || undefined);
       
       console.log('✅ Conversation created successfully:', conversationId);
@@ -103,7 +89,7 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
       setGroupName('');
       setSelectedUsers([]);
     } catch (error) {
-      console.error('❌ Failed to create group');
+      console.error('❌ Failed to create group:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create conversation. Please try again.';
       alert(errorMessage);
     }

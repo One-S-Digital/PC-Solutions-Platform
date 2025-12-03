@@ -30,7 +30,7 @@ const MessagingContext = createContext<MessagingContextType | undefined>(undefin
 export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { currentUser } = useAppContext();
   const { getToken } = useAuth();
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['dashboard', 'common', 'messages']);
   const { addNotification } = useNotifications();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messagesByConversation, setMessagesByConversation] = useState<Record<string, Message[]>>({});
@@ -500,13 +500,20 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   };
 
+  const handleSetActiveConversation = (conversationId: string | null) => {
+    if (conversationId === null) {
+      setActiveConversationId(null);
+      return;
+    }
+    loadMessagesForConversation(conversationId);
+  };
 
   return (
     <MessagingContext.Provider value={{ 
         conversations, 
         messagesByConversation, 
         activeConversationId, 
-        setActiveConversationId: loadMessagesForConversation,
+        setActiveConversationId: handleSetActiveConversation,
         loadUserConversations, 
         loadMessagesForConversation, 
         sendMessage,
@@ -524,7 +531,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
 };
 
 export const useMessaging = (): MessagingContextType => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['dashboard', 'common', 'messages']);
   const context = useContext(MessagingContext);
   if (context === undefined) {
     throw new Error(t('messagingContext.useMessagingError'));

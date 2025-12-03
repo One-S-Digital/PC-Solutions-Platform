@@ -26,6 +26,19 @@ export function useMessagingSocket({
   const [isConnected, setIsConnected] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isConnectingRef = useRef<boolean>(false);
+  
+  // Store callbacks in refs to avoid recreating socket on callback changes
+  const onNewMessageRef = useRef(onNewMessage);
+  const onMessageUpdateRef = useRef(onMessageUpdate);
+  const onMessageDeleteRef = useRef(onMessageDelete);
+  const onUserTypingRef = useRef(onUserTyping);
+  
+  useEffect(() => {
+    onNewMessageRef.current = onNewMessage;
+    onMessageUpdateRef.current = onMessageUpdate;
+    onMessageDeleteRef.current = onMessageDelete;
+    onUserTypingRef.current = onUserTyping;
+  });
 
   useEffect(() => {
     // Only create socket if we have both conversationId and userId
@@ -71,9 +84,6 @@ export function useMessagingSocket({
     socket.on('connect', () => {
       setIsConnected(true);
       console.log('✅ Messaging WebSocket connected');
-      if (conversationId) {
-        socket.emit('join-conversation', { conversationId });
-      }
     });
 
     socket.on('disconnect', (reason) => {
@@ -100,31 +110,35 @@ export function useMessagingSocket({
     });
 
     socket.on('new-message', (data: { conversationId: string; message: any }) => {
-      if (data.conversationId === conversationId && onNewMessage) {
-        onNewMessage(data.message);
+      if (data.conversationId === conversationId && onNewMessageRef.current) {
+        onNewMessageRef.current(data.message);
       }
     });
 
     socket.on('message-updated', (data: { conversationId: string; message: any }) => {
-      if (data.conversationId === conversationId && onMessageUpdate) {
-        onMessageUpdate(data.message);
+      if (data.conversationId === conversationId && onMessageUpdateRef.current) {
+        onMessageUpdateRef.current(data.message);
       }
     });
 
     socket.on('message-deleted', (data: { conversationId: string; messageId: string }) => {
-      if (data.conversationId === conversationId && onMessageDelete) {
-        onMessageDelete(data.messageId);
+      if (data.conversationId === conversationId && onMessageDeleteRef.current) {
+        onMessageDeleteRef.current(data.messageId);
       }
     });
 
     socket.on('user-typing', (data: { userId: string; userName: string; isTyping: boolean }) => {
-      if (data.userId !== userId && onUserTyping) {
-        onUserTyping(data);
+      if (data.userId !== userId && onUserTypingRef.current) {
+        onUserTypingRef.current(data);
       }
     });
 
     return () => {
       isConnectingRef.current = false;
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
       if (socket && socket.connected) {
         if (conversationId) {
           socket.emit('leave-conversation', { conversationId });
@@ -134,7 +148,7 @@ export function useMessagingSocket({
       socketRef.current = null;
       setIsConnected(false);
     };
-  }, [userId, getToken, conversationId, onNewMessage, onMessageUpdate, onMessageDelete, onUserTyping]);
+  }, [userId, getToken, conversationId]);
 
   // Join/leave conversation
   useEffect(() => {

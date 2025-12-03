@@ -155,7 +155,7 @@ const Dashboard: React.FC = () => {
       link: '/job-listings',
     },
     {
-      name: t('sidebar.applications', 'Applications'),
+      name: t('dashboard:sidebar.applications', 'Applications'),
       value: totalApplications,
       icon: FileText,
       loading: candidatesLoading,

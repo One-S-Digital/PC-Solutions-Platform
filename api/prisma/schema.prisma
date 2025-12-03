@@ -1113,12 +1113,13 @@ model Message {
   receiverId     String? // For direct messages
   content        String
   messageType    MessageType @default(TEXT)
-  fileUrl        String?     // URL to the uploaded file
-  fileName       String?     // Original filename
-  fileSize       Int?        // File size in bytes
-  mimeType       String?     // MIME type of the file
+  fileUrl        String?     // URL to the uploaded file (storage key for authenticated access)
+  fileName       String?     // Original filename (validate max 255 chars in application code)
+  fileSize       Int?        // File size in bytes (validate >= 0 in application code)
+  mimeType       String?     // MIME type of the file (validate against allowed list in application code)
   isRead         Boolean     @default(false)
   createdAt      DateTime    @default(now())
+  // Note: When messageType is FILE or IMAGE, validate fileUrl is present in application code
 
   // Relations
   conversation Conversation? @relation(fields: [conversationId], references: [id])

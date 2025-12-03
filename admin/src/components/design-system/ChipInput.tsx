@@ -2,6 +2,7 @@
 import React, { useState, KeyboardEvent } from 'react';
 import { XCircleIcon } from '@heroicons/react/20/solid';
 import { STANDARD_INPUT_FIELD } from '../../constants';
+import { useTranslation } from 'react-i18next';
 
 interface ChipInputProps<T extends string> {
   selectedChips: T[];
@@ -16,12 +17,15 @@ const ChipInput = <T extends string>({
   selectedChips,
   availableOptions,
   onChange,
-  placeholder = "Type or select...",
+  placeholder,
   maxChips,
   allowCustomValues = !availableOptions // Default to true if no options are provided
 }: ChipInputProps<T>): JSX.Element => {
+  const { t } = useTranslation(['common']);
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  const placeholderText = placeholder || t('common:placeholders.typeorselect');
 
   const handleAddChip = (chipValue: T) => {
     if (chipValue && !selectedChips.includes(chipValue) && (!maxChips || selectedChips.length < maxChips)) {
@@ -77,7 +81,7 @@ const ChipInput = <T extends string>({
           onKeyDown={handleKeyDown}
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // Delay to allow click on suggestions
-          placeholder={selectedChips.length === 0 ? placeholder : ''}
+          placeholder={selectedChips.length === 0 ? placeholderText : ''}
           className="flex-grow p-0.5 border-none focus:ring-0 focus:outline-none text-sm placeholder-gray-400"
           disabled={maxChips !== undefined && selectedChips.length >= maxChips}
         />

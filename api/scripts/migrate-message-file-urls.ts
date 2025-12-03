@@ -51,21 +51,41 @@ async function migrateMessageFileUrls(dryRun: boolean = true) {
   console.log('');
 
   try {
-    // Find all messages with fileUrl
-    const messages = await prisma.message.findMany({
-      where: {
-        fileUrl: {
-          not: null,
+    // Find all messages with fileUrl (using pagination to avoid memory issues)
+    const batchSize = 1000;
+    let skip = 0;
+    let allMessages = [];
+    
+    console.log('📊 Fetching messages with fileUrl in batches...');
+    
+    while (true) {
+      const batch = await prisma.message.findMany({
+        where: {
+          fileUrl: {
+            not: null,
+          },
         },
-      },
-      select: {
-        id: true,
-        fileUrl: true,
-        fileName: true,
-        messageType: true,
-        createdAt: true,
-      },
-    });
+        select: {
+          id: true,
+          fileUrl: true,
+          fileName: true,
+          messageType: true,
+          createdAt: true,
+        },
+        take: batchSize,
+        skip: skip,
+      });
+      
+      if (batch.length === 0) break;
+      allMessages.push(...batch);
+      skip += batchSize;
+      
+      if (skip % 5000 === 0) {
+        console.log(`   Fetched ${skip} messages so far...`);
+      }
+    }
+    
+    const messages = allMessages;
 
     console.log(`📊 Found ${messages.length} messages with fileUrl`);
     console.log('');

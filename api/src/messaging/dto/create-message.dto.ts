@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsUrl, Matches } from 'class-validator';
 import { ConversationType, MessageType } from '@workspace/types';
 
 export class CreateConversationDto {
@@ -31,11 +31,14 @@ export class CreateMessageDto {
   messageType?: MessageType;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   fileUrl?: string;
 
   @IsOptional()
   @IsString()
+  @Matches(/^[a-zA-Z0-9._-]+$/, {
+    message: 'fileName must contain only alphanumeric characters, dots, hyphens, and underscores'
+  })
   fileName?: string;
 
   @IsOptional()

@@ -19,11 +19,13 @@ import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { LeadMainStatus } from '../types'
 import { ParentLead } from '../types/api'
+import { useTranslation } from 'react-i18next';
 
 const ParentLeads: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<LeadMainStatus | ''>('')
   const apiClient = useApiClient()
+  const { t } = useTranslation(['common']);
 
   const { data: leadsResponse, isLoading, error } = useQuery({
     queryKey: ['parent-leads'],
@@ -95,7 +97,7 @@ const ParentLeads: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search parent leads..."
+                placeholder={t('common:placeholders.searchparentleads')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -108,7 +110,7 @@ const ParentLeads: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as LeadMainStatus | '')}
             >
-              <option value="">All Status</option>
+              <option value="">{t('common:allstatus')}</option>
               {Object.values(LeadMainStatus).map((status) => (
                 <option key={status} value={status}>
                   {status}

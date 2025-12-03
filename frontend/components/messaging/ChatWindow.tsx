@@ -9,7 +9,6 @@ import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { useAuth } from '@clerk/clerk-react';
 import { useMessagingSocket } from '../../hooks/useMessagingSocket';
-import { messagingService } from '../../services/messagingService';
 
 const ChatWindow: React.FC = () => {
   const { t } = useTranslation(['messages', 'common', 'dashboard']);
@@ -91,6 +90,9 @@ const ChatWindow: React.FC = () => {
       }
     },
     onUserTyping: (data: { userId: string; userName: string; isTyping: boolean }) => {
+      // Don't show typing indicator for the current user
+      if (data.userId === currentUser?.id) return;
+      
       setTypingUsers(prev => {
         const updated = { ...prev };
         if (data.isTyping) {
@@ -107,7 +109,28 @@ const ChatWindow: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(scrollToBottom, [messages]);
+  // Track if user is near bottom to avoid disrupting scroll when loading older messages
+  const isNearBottomRef = useRef(true);
+
+  // Update isNearBottom on scroll
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    const handleScrollPosition = () => {
+      const threshold = 100;
+      isNearBottomRef.current = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    };
+    container.addEventListener('scroll', handleScrollPosition);
+    return () => container.removeEventListener('scroll', handleScrollPosition);
+  }, []);
+
+  useEffect(() => {
+    // Only scroll to bottom if user is near bottom (for new messages)
+    // Don't scroll when loading older messages (infinite scroll)
+    if (isNearBottomRef.current) {
+      scrollToBottom();
+    }
+  }, [messages]);
 
   // Infinite scroll handler
   const handleScroll = useCallback(() => {
@@ -170,6 +193,12 @@ const ChatWindow: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file || !activeConversationId) return;
 
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+    if (file.size > MAX_FILE_SIZE) {
+      alert(t('messages:errors.fileTooLarge', 'File size exceeds 50MB limit'));
+      return;
+    }
+
     setIsUploading(true);
     try {
       const token = await getToken();
@@ -218,7 +247,7 @@ const ChatWindow: React.FC = () => {
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
-      console.error('Failed to upload file');
+      console.error('Failed to upload file:', error);
       alert(`${errorMessage}. Please try again.`);
     } finally {
       setIsUploading(false);
@@ -274,7 +303,7 @@ const ChatWindow: React.FC = () => {
         typingTimeoutRef.current = null;
       }
     } catch (error) {
-      console.error('Failed to send message');
+      console.error('Failed to send message:', error);
       alert(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
     }
   };

@@ -1422,6 +1422,14 @@ export class StaticTranslationService {
       const path = await import('path');
       const fs = await import('fs');
       
+      // Allow configuration via environment variable
+      const configuredScriptPath = process.env.AUTO_FIX_SCRIPT_PATH;
+      if (configuredScriptPath && fs.existsSync(configuredScriptPath)) {
+        const scriptDir = path.dirname(configuredScriptPath);
+        const projectRoot = path.dirname(scriptDir);
+        return this.runScript(configuredScriptPath, projectRoot);
+      }
+      
       // Find project root by looking for package.json and scripts directory
       // Start from __dirname (api/src/static-translation) and go up to find root
       let projectRoot = __dirname;
@@ -1497,16 +1505,34 @@ export class StaticTranslationService {
     const { exec } = await import('child_process');
     const { promisify } = await import('util');
     const execAsync = promisify(exec);
+    const path = await import('path');
+    const fs = await import('fs');
     
     this.logger.log(`Running auto-fix script from: ${cwd}`);
     this.logger.log(`Script path: ${scriptPath}`);
     
     // Run the script - it outputs JSON to stdout and human-readable to stderr
-    const { stdout, stderr } = await execAsync(`node "${scriptPath}"`, {
-      cwd: cwd, // Run from project root
-      maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-      encoding: 'utf8',
-    });
+    let stdout: string;
+    let stderr: string;
+    try {
+      const result = await execAsync(`node "${scriptPath}"`, {
+        cwd: cwd, // Run from project root
+        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+        encoding: 'utf8',
+        timeout: 5 * 60 * 1000, // 5 minute timeout
+      });
+      stdout = result.stdout;
+      stderr = result.stderr;
+    } catch (execError: any) {
+      this.logger.error('Script execution failed:', execError);
+      return {
+        success: false,
+        fixed: 0,
+        skipped: 0,
+        errors: 1,
+        message: `Script execution failed: ${execError.message}`,
+      };
+    }
     
     // Log stderr (human-readable output) for debugging
     if (stderr) {
@@ -1520,6 +1546,27 @@ export class StaticTranslationService {
       if (jsonMatch) {
         const result = JSON.parse(jsonMatch[0]);
         this.logger.log(`Auto-fix completed: ${result.fixed} fixed, ${result.skipped} skipped, ${result.errors} errors`);
+        
+        // If strings were fixed, automatically sync to database
+        if (result.fixed > 0) {
+          this.logger.log('🔄 Auto-syncing translations to database...');
+          try {
+            const syncScriptPath = path.join(cwd, 'scripts', 'sync-json-to-database.mjs');
+            if (fs.existsSync(syncScriptPath)) {
+              await execAsync(`node "${syncScriptPath}"`, {
+                cwd: cwd,
+                maxBuffer: 10 * 1024 * 1024,
+                timeout: 60 * 1000, // 1 minute
+              });
+              this.logger.log('✅ Translations synced to database automatically!');
+              result.message = result.message + '\n\n✅ Translations automatically synced to database and ready to use!';
+            }
+          } catch (syncError: any) {
+            this.logger.warn('Database sync failed (non-fatal):', syncError.message);
+            result.message = result.message + '\n\n⚠️ Auto-sync to database failed. Please run manually: node scripts/sync-json-to-database.mjs';
+          }
+        }
+        
         return result;
       } else {
         // Try parsing entire stdout
@@ -1533,12 +1580,15 @@ export class StaticTranslationService {
       const skippedMatch = output.match(/Skipped:\s*(\d+)/);
       const errorMatch = output.match(/Errors:\s*(\d+)/);
       
+      const foundAnyMatch = fixedMatch || skippedMatch || errorMatch;
       return {
-        success: true,
+        success: foundAnyMatch ? true : false,
         fixed: fixedMatch ? parseInt(fixedMatch[1]) : 0,
         skipped: skippedMatch ? parseInt(skippedMatch[1]) : 0,
         errors: errorMatch ? parseInt(errorMatch[1]) : 0,
-        message: output || 'Auto-fix completed successfully',
+        message: foundAnyMatch 
+          ? (output || 'Auto-fix completed successfully')
+          : `Failed to parse script output: ${output.substring(0, 500)}`,
       };
     }
   }

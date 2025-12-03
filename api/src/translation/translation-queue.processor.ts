@@ -284,19 +284,19 @@ export class TranslationQueueProcessor implements OnModuleInit {
     const trimmed = text.trim();
     const length = trimmed.length;
 
-    // Very short text (likely identifiers)
-    if (length <= 2) return true;
+    // Very short text (single character identifiers)
+    if (length <= 1) return true;
 
     // Only numbers or alphanumeric codes (e.g., "Test30", "HR-DOC-001", "ABC123")
-    if (/^[A-Z0-9\-_]+$/i.test(trimmed) && length < 20) {
-      // Check if it looks like an identifier (has numbers or is all caps)
-      if (/\d/.test(trimmed) || trimmed === trimmed.toUpperCase()) {
+    if (/^[A-Za-z0-9\-_]+$/.test(trimmed)) {
+      // Must have numbers, underscores, or multiple caps to be considered an identifier
+      if (/\d/.test(trimmed) || /_/.test(trimmed) || (/[A-Z]/.test(trimmed) && trimmed === trimmed.toUpperCase())) {
         return true;
       }
     }
 
-    // Single word that's all caps (likely an acronym or constant)
-    if (trimmed.split(/\s+/).length === 1 && trimmed === trimmed.toUpperCase() && length < 10) {
+    // Single word that's all caps (likely a short acronym or constant)
+    if (trimmed.split(/\s+/).length === 1 && trimmed === trimmed.toUpperCase() && length < 5) {
       return true;
     }
 

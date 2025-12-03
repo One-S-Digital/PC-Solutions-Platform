@@ -123,7 +123,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
             </div>
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-            <Button type="button" variant="light" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
             <Button type="submit" variant="primary">
               {existingAlert ? 'Save Changes' : 'Create Alert'}
             </Button>

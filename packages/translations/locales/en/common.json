@@ -51,15 +51,8 @@
     "save10Percent": "save 10%"
   },
   "errors": {
-    "unknown": "An unknown error occurred",
-    "networkError": "Network error occurred",
-    "validationError": "Validation error",
-    "loadingFiles": "Error loading files",
-    "unauthorized": "Unauthorized access",
-    "forbidden": "Access forbidden",
-    "notFound": "Resource not found",
-    "serverError": "Server error occurred",
-    "invalidverificationcode": "Invalid verification code"
+    "errorrate": "Error Rate",
+    "errors": "Errors"
   },
   "notifications": {
     "errorTitle": "Error",
@@ -250,6 +243,22 @@
     "en": "English",
     "fr": "Français",
     "de": "Deutsch"
+  },
+  "fileUpload": {
+    "dragDrop": "or drag and drop",
+    "selected": "Selected:"
+  },
+  "placeholders": {
+    "addtag": "Add tag...",
+    "describethisfile": "Describe this file...",
+    "lastname": "Last name",
+    "emailaddress": "Email address",
+    "searchusersbynameoremail": "Search users by name or email..."
+  },
+  "accessibility": {
+    "dismiss": "Dismiss",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "settingsPage": {
     "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
@@ -1044,7 +1053,7 @@
   },
   "orderStatus": {
     "submitted": "Submitted",
-    "viewedbysupplier": "Viewed by Supplier",
+    "viewedBySupplier": "Viewed by Supplier",
     "accepted": "Accepted",
     "declined": "Declined",
     "processing": "Processing",
@@ -1192,10 +1201,82 @@
   "avatar": "Avatar",
   "cover": "Cover",
   "labels": {
-    "currentquantity": "Current quantity"
+    "currentquantity": "Current quantity",
+    "increasequantity": "Increase quantity"
   },
   "titles": {
-    "allcontent": "All Content"
+    "cpuusage": "CPU Usage",
+    "memoryusage": "Memory Usage",
+    "activealerts": "Active Alerts",
+    "diskusage": "Disk Usage",
+    "uptime": "Uptime",
+    "activeconnections": "Active Connections",
+    "avgquerytime": "Avg Query Time",
+    "storageused": "Storage Used",
+    "connectionhealth": "Connection Health",
+    "activeusers": "Active Users",
+    "requestsmin": "Requests/min",
+    "responsetime": "Response Time",
+    "throughput": "Throughput",
+    "newuserstoday": "New Users Today",
+    "sessionduration": "Session Duration",
+    "pageviews": "Page Views",
+    "failedlogins": "Failed Logins",
+    "blockedips": "Blocked IPs",
+    "apihealth": "API Health",
+    "lastscan": "Last Scan"
   },
-  "info": "Info"
+  "info": "Info",
+  "preview": "Preview",
+  "adminlogo": "Admin Logo",
+  "draft": "Draft",
+  "published": "Published",
+  "archived": "Archived",
+  "downloadfile": "Download File",
+  "currentfile": "Current file",
+  "fallbackpreview": "Fallback preview",
+  "educational": "Educational",
+  "safety": "Safety",
+  "nutrition": "Nutrition",
+  "hygiene": "Hygiene",
+  "furniture": "Furniture",
+  "allcategories": "All Categories",
+  "childcare": "Childcare",
+  "education": "Education",
+  "health": "Health",
+  "specialneeds": "Special Needs",
+  "authentication": "Authentication",
+  "payment": "Payment",
+  "email": "Email",
+  "storage": "Storage",
+  "analytics": "Analytics",
+  "other": "Other",
+  "refresh": "Refresh",
+  "allnamespaces": "All Namespaces",
+  "deutschde": "Deutsch (DE)",
+  "download": "Download",
+  "allstatus": "All Status",
+  "submitted": "Submitted",
+  "viewedbysupplier": "Viewed By Supplier",
+  "accepted": "Accepted",
+  "processing": "Processing",
+  "shipped": "Shipped",
+  "fulfilled": "Fulfilled",
+  "cancelled": "Cancelled",
+  "declined": "Declined",
+  "createalert": "Create Alert",
+  "alllogs": "All Logs",
+  "warnings": "Warnings",
+  "export": "Export",
+  "superadmin": "Super Admin",
+  "admin": "Admin",
+  "foundation": "Foundation",
+  "productsupplier": "Product Supplier",
+  "serviceprovider": "Service Provider",
+  "educator": "Educator",
+  "parent": "Parent",
+  "active": "Active",
+  "pending": "Pending",
+  "inactive": "Inactive",
+  "allroles": "All Roles"
 }

@@ -95,19 +95,11 @@ class ApiService {
       // Read response body once
       const text = await response.text();
       
-      // Handle 304 Not Modified or empty response
-      if (response.status === 304 || !text || !text.trim()) {
-        // Return success with empty array for conversations endpoint
-        if (endpoint.includes('/conversations')) {
-          return {
-            success: true,
-            data: [] as T,
-          };
-        }
-        // For other endpoints, try to return cached data if available
+      // Handle empty response body
+      if (!text || !text.trim()) {
         return {
           success: true,
-          data: [] as T,
+          data: undefined as T,
         };
       }
 
@@ -137,7 +129,6 @@ class ApiService {
             success: false,
             message: data.error.message || data.message || 'An error occurred',
             data: undefined,
-            error: data.error,
           };
         }
         // Handle success response with data
@@ -168,7 +159,12 @@ class ApiService {
         }
       }
       
-      return data;
+      // Fallback: wrap any remaining data
+      console.warn('Unexpected response format:', { endpoint, data });
+      return {
+        success: true,
+        data: data as T,
+      };
     } catch (error) {
       // Handle abort errors - don't convert to ApiError, just re-throw
       if (error instanceof Error && error.name === 'AbortError') {

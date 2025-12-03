@@ -163,7 +163,7 @@ export function useAuthenticatedApi() {
         if (fileUrl.startsWith('/api/upload/download/')) {
           // Already a secure download URL (relative path like /api/upload/download/...)
           // Extract the storage key (everything after /api/upload/download/)
-          const storageKey = fileUrl.replace('/api/upload/download/', '');
+          const storageKey = fileUrl.substring('/api/upload/download/'.length);
           // Construct URL: apiUrl is already "http://localhost:3000/api", so just add /upload/download/
           downloadUrl = `${apiUrl}/upload/download/${storageKey}`;
         } else if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
@@ -172,7 +172,7 @@ export function useAuthenticatedApi() {
             const url = new URL(fileUrl);
             // Check if it's already a download URL
             if (url.pathname.startsWith('/api/upload/download/')) {
-              const storageKey = url.pathname.replace('/api/upload/download/', '');
+              const storageKey = url.pathname.substring('/api/upload/download/'.length);
               downloadUrl = `${apiUrl}/upload/download/${storageKey}`;
             } else {
               // Extract storage key from pathname
@@ -185,7 +185,7 @@ export function useAuthenticatedApi() {
             if (pathMatch) {
               downloadUrl = `${apiUrl}/upload/download/${pathMatch[1]}`;
             } else {
-              throw new Error('Invalid file URL format');
+              throw new ApiError('Invalid file URL format', 400);
             }
           }
         } else {

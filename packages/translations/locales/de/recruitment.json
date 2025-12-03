@@ -125,5 +125,8 @@
   "confirmations": {
     "deleteJob": "Möchten Sie dieses Stellenangebot wirklich löschen?"
   },
-  "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?"
+  "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?",
+  "application": {
+    "coverLetterPlaceholder": "[DE] Tell us why you're interested in this position and what makes you a great fit..."
+  }
 }

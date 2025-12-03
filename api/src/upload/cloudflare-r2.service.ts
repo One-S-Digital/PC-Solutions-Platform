@@ -324,6 +324,9 @@ export class CloudflareR2Service {
 
     // Special handling for message attachments - organize by conversation
     // If conversationId is provided, use messages folder structure
+    // SECURITY NOTE: Files from different users share the same conversation folder.
+    // Conversation-level authorization MUST be enforced at the API/service layer
+    // to prevent unauthorized file uploads and access.
     if (conversationId) {
       const sanitizedConversationId = conversationId.replace(/[^a-zA-Z0-9-]/g, '_');
       return `messages/${sanitizedConversationId}/${timestamp}-${sanitizedFilename}`;

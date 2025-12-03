@@ -62,6 +62,7 @@ const MessagesPage: React.FC = () => {
             <ChatBubbleLeftEllipsisIcon className="w-8 h-8 mr-3 text-swiss-mint" />
             {t('dashboard:sidebar.messages')}
         </h1>
+        {/* NOTE: Button opens CreateGroupChatModal which handles both individual and group chat creation */}
         <Button variant="primary" leftIcon={PlusIcon} onClick={() => setIsGroupModalOpen(true)}>
             {t('messages:buttons.newChat', 'New Chat')}
         </Button>

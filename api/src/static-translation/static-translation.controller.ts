@@ -404,13 +404,17 @@ export class StaticTranslationController {
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Auto-fix hardcoded strings in frontend code (admin)' })
-  async autoFixHardcodedStrings(): Promise<{
+  async autoFixHardcodedStrings(
+    @Request() req: any,
+  ): Promise<{
     success: boolean;
     fixed: number;
     skipped: number;
     errors: number;
     message: string;
   }> {
+    // TODO: Add audit logging with userId for tracking who initiated the auto-fix
+    // const userId = req.user?.id;
     const result = await this.service.autoFixHardcodedStrings();
     return {
       success: result.success,

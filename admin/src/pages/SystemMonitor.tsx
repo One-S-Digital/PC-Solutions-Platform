@@ -34,11 +34,13 @@ import { publicApi } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { LucideIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next';
 
 const SystemMonitor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'metrics' | 'alerts' | 'logs' | 'analytics' | 'security'>('overview')
   const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all')
   const queryClient = useQueryClient()
+  const { t } = useTranslation(['common']);
 
   const { data: healthData, isLoading, error } = useQuery({
     queryKey: ['system-health'],
@@ -250,7 +252,7 @@ const SystemMonitor: React.FC = () => {
           className="flex items-center space-x-2 px-4 py-2 bg-swiss-teal text-white rounded-lg hover:bg-swiss-teal/90 transition-colors"
         >
           <RefreshCw className="h-4 w-4" />
-          <span>Refresh</span>
+          <span>{t('common:refresh')}</span>
         </button>
       </div>
 
@@ -332,7 +334,7 @@ const SystemMonitor: React.FC = () => {
           {/* Quick Metrics Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricCard
-              title="CPU Usage"
+              title={t('common:titles.cpuusage')}
               value={realMetricsAvailable ? (systemMetrics?.data?.cpu ?? 'N/A') : 'N/A'}
               unit={realMetricsAvailable && systemMetrics?.data?.cpu ? '%' : ''}
               icon={Cpu}
@@ -340,7 +342,7 @@ const SystemMonitor: React.FC = () => {
               percentage={realMetricsAvailable ? systemMetrics?.data?.cpu : undefined}
             />
             <MetricCard
-              title="Memory Usage"
+              title={t('common:titles.memoryusage')}
               value={realMetricsAvailable ? (systemMetrics?.data?.memory ?? 'N/A') : 'N/A'}
               unit={realMetricsAvailable && systemMetrics?.data?.memory ? '%' : ''}
               icon={Activity}
@@ -348,13 +350,13 @@ const SystemMonitor: React.FC = () => {
               percentage={realMetricsAvailable ? systemMetrics?.data?.memory : undefined}
             />
             <MetricCard
-              title="Active Alerts"
+              title={t('common:titles.activealerts')}
               value={realAlertsAvailable ? systemAlerts?.data?.filter((alert: any) => alert.status === 'active').length : 0}
               icon={AlertTriangle}
               color="red"
             />
             <MetricCard
-              title="Error Rate"
+              title={t('common:errors.errorrate')}
               value={realMetricsAvailable ? (systemMetrics?.data?.errorRate ?? 'N/A') : 'N/A'}
               unit={realMetricsAvailable && systemMetrics?.data?.errorRate !== undefined ? '%' : ''}
               icon={TrendingUp}
@@ -378,7 +380,7 @@ const SystemMonitor: React.FC = () => {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
-                title="CPU Usage"
+                title={t('common:titles.cpuusage')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.cpu ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.cpu ? '%' : ''}
                 icon={Cpu}
@@ -386,7 +388,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.cpu : undefined}
               />
               <MetricCard
-                title="Memory Usage"
+                title={t('common:titles.memoryusage')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.memory ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.memory ? '%' : ''}
                 icon={Activity}
@@ -394,7 +396,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.memory : undefined}
               />
               <MetricCard
-                title="Disk Usage"
+                title={t('common:titles.diskusage')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.disk ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.disk ? '%' : ''}
                 icon={HardDrive}
@@ -402,7 +404,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.disk : undefined}
               />
               <MetricCard
-                title="Uptime"
+                title={t('common:titles.uptime')}
                 value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                 icon={Clock}
                 color="purple"
@@ -415,21 +417,21 @@ const SystemMonitor: React.FC = () => {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Database Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
-                title="Active Connections"
+                title={t('common:titles.activeconnections')}
                 value={realMetricsAvailable && systemMetrics?.data?.dbConnections ? `${systemMetrics.data.dbConnections}/${systemMetrics.data.maxConnections || 100}` : 'N/A'}
                 icon={Database}
                 color="blue"
                 percentage={realMetricsAvailable && systemMetrics?.data?.dbConnections ? (systemMetrics.data.dbConnections / (systemMetrics.data.maxConnections || 100)) * 100 : undefined}
               />
               <MetricCard
-                title="Avg Query Time"
+                title={t('common:titles.avgquerytime')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.queryTime ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.queryTime ? 'ms' : ''}
                 icon={Activity}
                 color="green"
               />
               <MetricCard
-                title="Storage Used"
+                title={t('common:titles.storageused')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.storage ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.storage ? '%' : ''}
                 icon={HardDrive}
@@ -437,7 +439,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.storage : undefined}
               />
               <MetricCard
-                title="Connection Health"
+                title={t('common:titles.connectionhealth')}
                 value={systemStatus ? 'Healthy' : 'Unknown'}
                 icon={systemStatus ? CheckCircle : AlertCircle}
                 color={systemStatus ? 'green' : 'yellow'}
@@ -450,26 +452,26 @@ const SystemMonitor: React.FC = () => {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Application Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
-                title="Active Users"
+                title={t('common:titles.activeusers')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.activeUsers ?? 'N/A') : 'N/A'}
                 icon={Users}
                 color="blue"
               />
               <MetricCard
-                title="Requests/min"
+                title={t('common:titles.requestsmin')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.requestsPerMinute ?? 'N/A') : 'N/A'}
                 icon={TrendingUp}
                 color="green"
               />
               <MetricCard
-                title="Response Time"
+                title={t('common:titles.responsetime')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.responseTime ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.responseTime ? 'ms' : ''}
                 icon={Wifi}
                 color="yellow"
               />
               <MetricCard
-                title="Error Rate"
+                title={t('common:errors.errorrate')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.errorRate ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.errorRate !== undefined ? '%' : ''}
                 icon={AlertTriangle}
@@ -496,7 +498,7 @@ const SystemMonitor: React.FC = () => {
                 className="flex items-center space-x-2 px-4 py-2 bg-swiss-teal text-white rounded-lg hover:bg-swiss-teal/90 transition-colors"
               >
                 <Bell className="h-4 w-4" />
-                <span>Create Alert</span>
+                <span>{t('common:createalert')}</span>
               </button>
             </div>
 
@@ -553,17 +555,17 @@ const SystemMonitor: React.FC = () => {
                   onChange={(e) => setLogFilter(e.target.value as any)}
                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 >
-                  <option value="all">All Logs</option>
-                  <option value="error">Errors</option>
-                  <option value="warning">Warnings</option>
-                  <option value="info">Info</option>
+                  <option value="all">{t('common:alllogs')}</option>
+                  <option value="error">{t('common:errors.errors')}</option>
+                  <option value="warning">{t('common:warnings')}</option>
+                  <option value="info">{t('common:info')}</option>
                 </select>
                 <button
                   onClick={handleExportLogs}
                   className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   <Download className="h-4 w-4" />
-                  <span>Export</span>
+                  <span>{t('common:export')}</span>
                 </button>
               </div>
             </div>
@@ -627,28 +629,28 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                  title="Response Time"
+                  title={t('common:titles.responsetime')}
                   value={performanceMetrics?.data?.avgResponseTime ?? 'N/A'}
                   unit={performanceMetrics?.data?.avgResponseTime ? 'ms' : ''}
                   icon={Zap}
                   color="blue"
                 />
                 <MetricCard
-                  title="Throughput"
+                  title={t('common:titles.throughput')}
                   value={performanceMetrics?.data?.requestsPerSecond ?? 'N/A'}
                   unit={performanceMetrics?.data?.requestsPerSecond ? 'req/s' : ''}
                   icon={TrendingUp}
                   color="green"
                 />
                 <MetricCard
-                  title="Error Rate"
+                  title={t('common:errors.errorrate')}
                   value={performanceMetrics?.data?.errorRate ?? 'N/A'}
                   unit={performanceMetrics?.data?.errorRate !== undefined ? '%' : ''}
                   icon={AlertCircle}
                   color="red"
                 />
                 <MetricCard
-                  title="Uptime"
+                  title={t('common:titles.uptime')}
                   value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                   icon={CheckCircle}
                   color="green"
@@ -681,26 +683,26 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                  title="Active Users"
+                  title={t('common:titles.activeusers')}
                   value={userAnalytics?.data?.activeUsers ?? 'N/A'}
                   icon={Users}
                   color="blue"
                 />
                 <MetricCard
-                  title="New Users Today"
+                  title={t('common:titles.newuserstoday')}
                   value={userAnalytics?.data?.newUsersToday ?? 'N/A'}
                   icon={TrendingUp}
                   color="green"
                 />
                 <MetricCard
-                  title="Session Duration"
+                  title={t('common:titles.sessionduration')}
                   value={userAnalytics?.data?.avgSessionDuration ?? 'N/A'}
                   unit={userAnalytics?.data?.avgSessionDuration ? 'min' : ''}
                   icon={Clock}
                   color="purple"
                 />
                 <MetricCard
-                  title="Page Views"
+                  title={t('common:titles.pageviews')}
                   value={userAnalytics?.data?.pageViews ?? 'N/A'}
                   icon={Eye}
                   color="yellow"
@@ -754,25 +756,25 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                  title="Failed Logins"
+                  title={t('common:titles.failedlogins')}
                   value={securityMetrics?.data?.failedLogins ?? 'N/A'}
                   icon={AlertTriangle}
                   color="red"
                 />
                 <MetricCard
-                  title="Blocked IPs"
+                  title={t('common:titles.blockedips')}
                   value={securityMetrics?.data?.blockedIPs ?? 'N/A'}
                   icon={Shield}
                   color="blue"
                 />
                 <MetricCard
-                  title="API Health"
+                  title={t('common:titles.apihealth')}
                   value={systemStatus ? 'Healthy' : 'Unknown'}
                   icon={systemStatus ? CheckCircle : AlertCircle}
                   color={systemStatus ? 'green' : 'yellow'}
                 />
                 <MetricCard
-                  title="Last Scan"
+                  title={t('common:titles.lastscan')}
                   value={securityMetrics?.data?.lastScan ?? 'N/A'}
                   icon={Settings}
                   color="purple"

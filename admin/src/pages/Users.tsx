@@ -14,6 +14,7 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
+import { useTranslation } from 'react-i18next';
 
 import logger from '../utils/logger'
 
@@ -37,6 +38,7 @@ interface EditUserModalProps {
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading }) => {
   const [formData, setFormData] = useState<Partial<User>>({})
+  const { t } = useTranslation(['common']);
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -103,7 +105,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                   className={STANDARD_INPUT_FIELD}
                   value={formData.firstName || ''}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  placeholder="First name"
+                  placeholder={t('common:placeholders.firstname')}
                 />
               </div>
               <div>
@@ -113,7 +115,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                   className={STANDARD_INPUT_FIELD}
                   value={formData.lastName || ''}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  placeholder="Last name"
+                  placeholder={t('common:placeholders.lastname')}
                 />
               </div>
             </div>
@@ -125,7 +127,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 className={STANDARD_INPUT_FIELD}
                 value={formData.email || ''}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="Email address"
+                placeholder={t('common:placeholders.emailaddress')}
                 required
               />
             </div>
@@ -137,13 +139,13 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 value={formData.role || ''}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
               >
-                <option value={UserRole.SUPER_ADMIN}>Super Admin</option>
-                <option value={UserRole.ADMIN}>Admin</option>
-                <option value={UserRole.FOUNDATION}>Foundation</option>
-                <option value={UserRole.PRODUCT_SUPPLIER}>Product Supplier</option>
-                <option value={UserRole.SERVICE_PROVIDER}>Service Provider</option>
-                <option value={UserRole.EDUCATOR}>Educator</option>
-                <option value={UserRole.PARENT}>Parent</option>
+                <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+                <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+                <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+                <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+                <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+                <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+                <option value={UserRole.PARENT}>{t('common:parent')}</option>
               </select>
             </div>
 
@@ -154,9 +156,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 value={formData.status || UserStatus.ACTIVE}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as UserStatus })}
               >
-                <option value={UserStatus.ACTIVE}>Active</option>
-                <option value={UserStatus.PENDING}>Pending</option>
-                <option value={UserStatus.INACTIVE}>Inactive</option>
+                <option value={UserStatus.ACTIVE}>{t('common:active')}</option>
+                <option value={UserStatus.PENDING}>{t('common:pending')}</option>
+                <option value={UserStatus.INACTIVE}>{t('common:inactive')}</option>
               </select>
             </div>
           </div>
@@ -387,7 +389,7 @@ const Users: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users by name or email..."
+                placeholder={t('common:placeholders.searchusersbynameoremail')}
                 className={`${STANDARD_INPUT_FIELD} pl-10`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -400,14 +402,14 @@ const Users: React.FC = () => {
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
             >
-              <option value="">All Roles</option>
-              <option value={UserRole.SUPER_ADMIN}>Super Admin</option>
-              <option value={UserRole.ADMIN}>Admin</option>
-              <option value={UserRole.FOUNDATION}>Foundation</option>
-              <option value={UserRole.PRODUCT_SUPPLIER}>Product Supplier</option>
-              <option value={UserRole.SERVICE_PROVIDER}>Service Provider</option>
-              <option value={UserRole.EDUCATOR}>Educator</option>
-              <option value={UserRole.PARENT}>Parent</option>
+              <option value="">{t('common:allroles')}</option>
+              <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+              <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+              <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+              <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+              <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+              <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+              <option value={UserRole.PARENT}>{t('common:parent')}</option>
             </select>
           </div>
         </div>

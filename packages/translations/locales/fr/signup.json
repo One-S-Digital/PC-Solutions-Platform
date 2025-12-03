@@ -117,7 +117,10 @@
     "captchaExpired": "Le CAPTCHA a expiré. Veuillez réessayer",
     "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer",
     "profileCompletionFailedTitle": "Échec de la finalisation du profil",
-    "profileCompletionFailed": "Une erreur s'est produite lors de la finalisation de votre profil. Veuillez réessayer."
+    "profileCompletionFailed": "Une erreur s'est produite lors de la finalisation de votre profil. Veuillez réessayer.",
+    "accountExists": "[FR] An account with this email already exists",
+    "passwordPwned": "[FR] This password has been found in a data breach. Please choose a different password",
+    "passwordWeak": "[FR] Password is not strong enough"
   },
   "buttons": {
     "createAccount": "Créer un compte",

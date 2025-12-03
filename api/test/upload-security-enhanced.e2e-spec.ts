@@ -188,13 +188,10 @@ describe('Enhanced Upload Security Tests (E2E)', () => {
         .post('/api/upload/file')
         .set('Authorization', `Bearer ${authToken}`)
         .attach('file', Buffer.from('not a real PDF'), 'fake.pdf')
-        .field('assetKind', 'DOCUMENT');
+        .field('assetKind', 'DOCUMENT')
+        .expect(400); // MIME validation should reject mismatched content
 
-      // Should fail MIME validation
-      expect([400, 201]).toContain(response.status);
-      if (response.status === 400) {
-        expect(response.body.message).toContain('Invalid file');
-      }
+      expect(response.body.message).toContain('Invalid file');
     });
 
     it('should reject files with invalid extensions', async () => {

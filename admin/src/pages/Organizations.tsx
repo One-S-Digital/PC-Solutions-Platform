@@ -270,7 +270,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
                             className={STANDARD_INPUT_FIELD}
                             value={formData.email || ''}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            placeholder="contact@example.com"
+                            placeholder={t('admin:forms.organization.emailPlaceholder')}
                           />
                         </div>
                         <div>
@@ -280,7 +280,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
                             className={STANDARD_INPUT_FIELD}
                             value={formData.phone || ''}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            placeholder="+41 XX XXX XX XX"
+                            placeholder={t('common:placeholders.41xxxxxxxxx')}
                           />
                         </div>
                       </div>
@@ -304,7 +304,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
                             className={STANDARD_INPUT_FIELD}
                             value={formData.region || ''}
                             onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                            placeholder="e.g., Zurich"
+                            placeholder={t('admin:forms.organization.regionPlaceholder')}
                           />
                         </div>
                         <div>
@@ -314,7 +314,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
                             className={STANDARD_INPUT_FIELD}
                             value={formData.website || ''}
                             onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                            placeholder="https://example.com"
+                            placeholder={t('admin:forms.organization.websitePlaceholder')}
                           />
                         </div>
                       </div>
@@ -345,7 +345,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
                               className={`${STANDARD_INPUT_FIELD} flex-1`}
                               value={pedagogyInput}
                               onChange={(e) => setPedagogyInput(e.target.value)}
-                              placeholder="e.g., Montessori, Waldorf"
+                              placeholder={t('admin:forms.organization.pedagogyPlaceholder')}
                               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addPedagogy())}
                             />
                             <Button type="button" variant="secondary" onClick={addPedagogy}>{t('common:add', 'Add')}</Button>
@@ -377,7 +377,7 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
                               className={`${STANDARD_INPUT_FIELD} flex-1`}
                               value={languageInput}
                               onChange={(e) => setLanguageInput(e.target.value)}
-                              placeholder="e.g., German, French, English"
+                              placeholder={t('admin:forms.organization.languagePlaceholder')}
                               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
                             />
                             <Button type="button" variant="secondary" onClick={addLanguage}>{t('common:add', 'Add')}</Button>

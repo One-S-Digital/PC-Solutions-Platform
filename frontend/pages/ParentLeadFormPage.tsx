@@ -193,7 +193,7 @@ const ParentLeadFormPage: React.FC = () => {
             </div>
             <div>
               <label htmlFor="desiredStartDate" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.startDate')}</label>
-              <input type="date" name="desiredStartDate" id="desiredStartDate" value={formData.desiredStartDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.startDate')} />
+              <input type="date" name="desiredStartDate" id="desiredStartDate" value={formData.desiredStartDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
             </div>
           </div>
 

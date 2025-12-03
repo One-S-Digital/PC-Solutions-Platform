@@ -84,7 +84,7 @@ export class RecruitmentController {
   @Get('job-listings/:id/applications')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getJobListingApplications(@Param('id') id: string, @Request() req) {
-    const listing = await this.recruitmentService.findJobListingById(id);
+    const listing = await this.recruitmentService.findJobListingById(id, 'en');
 
     if (!listing) {
       throw new NotFoundException('Job listing not found');
@@ -131,7 +131,7 @@ export class RecruitmentController {
   @Get('applications/job/:id')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getApplicationsForJob(@Param('id') id: string, @Request() req) {
-    const listing = await this.recruitmentService.findJobListingById(id);
+    const listing = await this.recruitmentService.findJobListingById(id, 'en');
 
     if (!listing) {
       throw new NotFoundException('Job listing not found');

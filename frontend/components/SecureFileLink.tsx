@@ -26,15 +26,21 @@ export const SecureFileLink: React.FC<SecureFileLinkProps> = ({
     e.preventDefault(); // Prevent any navigation
     e.stopPropagation();
     
-    // Convert to secure URL if needed
-    const secureUrl = ensureSecureFileUrl(fileUrl);
-    
-    // Always open in preview modal with authentication
-    onPreview(secureUrl, fileName, fileType);
+    try {
+      // Convert to secure URL if needed
+      const secureUrl = ensureSecureFileUrl(fileUrl);
+      
+      // Always open in preview modal with authentication
+      onPreview(secureUrl, fileName, fileType);
+    } catch (error) {
+      console.error('Failed to open file preview:', error);
+      // Consider adding user-facing error notification here
+    }
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
-    // Prevent right-click menu to avoid "Copy Link" or "Open in New Tab"
+    // Prevent right-click menu as a usability feature (not a security control)
+    // Note: Actual security is enforced server-side with authentication
     e.preventDefault();
   };
 

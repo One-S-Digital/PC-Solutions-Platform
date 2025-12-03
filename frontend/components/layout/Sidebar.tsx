@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
 
   React.useEffect(() => {
     // Only log non-abort errors (abort errors are expected when component unmounts)
-    if (error && !error.includes('aborted')) {
+    if (error && !(typeof error === 'string' ? error : error.message).toLowerCase().includes('aborted')) {
       console.warn('Failed to load frontend settings:', error);
     }
   }, [error]);

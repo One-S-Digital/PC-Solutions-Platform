@@ -56,7 +56,7 @@ export class ProfilesService {
     });
 
     // Save translatable fields and trigger translation (only description - name is a proper noun/identifier)
-    const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+    const translatableFields = FIELDS_BY_ENTITY.organization?.length ? FIELDS_BY_ENTITY.organization : ['description'];
     const translationPayload: Record<string, any> = {
       description: organization.description || '',
     };

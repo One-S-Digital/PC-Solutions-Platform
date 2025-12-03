@@ -92,7 +92,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             <div className="relative group">
               <img
                 src={avatarUrl}
-                alt={t('common.profile')}
+                alt={t('common:profile', 'Profile')}
                 className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-white"
               />
               <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full cursor-pointer transition-opacity">

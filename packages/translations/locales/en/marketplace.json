@@ -43,5 +43,11 @@
   "emptyStates": {
     "noProductSuppliers": "No product suppliers found",
     "noServices": "No services found"
+  },
+  "serviceRequest": {
+    "detailsPlaceholder": "e.g., Number of children for workshop, specific areas for cleaning..."
+  },
+  "cart": {
+    "notesPlaceholder": "e.g., Preferred delivery times, specific packaging..."
   }
 }

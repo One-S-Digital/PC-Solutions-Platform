@@ -57,8 +57,21 @@ async function createTestUsers() {
       if (existingAppUserByEmail) {
         console.log(`⚠️  User with email ${userData.email} already exists, updating clerkId...`);
         
+        // Store old clerkId before updating
+        const oldClerkId = existingAppUserByEmail.clerkId;
+        
         // Update clerkId if different
         if (existingAppUserByEmail.clerkId !== userData.clerkId) {
+          // Check if target clerkId is already in use by another AppUser
+          const conflictingAppUser = await prisma.appUser.findUnique({
+            where: { clerkId: userData.clerkId },
+          });
+          
+          if (conflictingAppUser && conflictingAppUser.id !== existingAppUserByEmail.id) {
+            console.warn(`⚠️  ClerkId ${userData.clerkId} already in use by another AppUser, skipping update`);
+            continue;
+          }
+          
           await prisma.appUser.update({
             where: { id: existingAppUserByEmail.id },
             data: { clerkId: userData.clerkId },
@@ -74,10 +87,20 @@ async function createTestUsers() {
         if (!existingUser) {
           // Check if User exists with old clerkId
           const userWithOldClerkId = await prisma.user.findUnique({
-            where: { clerkId: existingAppUserByEmail.clerkId },
+            where: { clerkId: oldClerkId },
           });
 
           if (userWithOldClerkId) {
+            // Check for conflicts before updating
+            const conflictingUser = await prisma.user.findUnique({
+              where: { clerkId: userData.clerkId },
+            });
+            
+            if (conflictingUser && conflictingUser.id !== userWithOldClerkId.id) {
+              console.warn(`⚠️  clerkId ${userData.clerkId} already in use by another User, skipping update`);
+              continue;
+            }
+            
             // Update clerkId
             await prisma.user.update({
               where: { id: userWithOldClerkId.id },

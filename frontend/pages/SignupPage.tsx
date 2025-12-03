@@ -568,7 +568,7 @@ const SignupPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Verification error');
-      let errorMessage = t('common.errors.invalidverificationcode');
+      let errorMessage = t('signup:errors.invalidVerificationCode');
 
       if (err?.errors && err.errors.length > 0) {
         errorMessage = err.errors[0]?.message || errorMessage;

@@ -15,7 +15,7 @@ import { Logger } from '@nestjs/common';
     origin: [
       process.env.FRONTEND_URL || 'http://localhost:3000',
       process.env.ADMIN_URL || 'http://localhost:3001',
-      'http://localhost:5174', // Vite dev server
+      ...(process.env.NODE_ENV === 'development' ? ['http://localhost:5174'] : []),
     ],
     credentials: true,
   },
@@ -36,10 +36,30 @@ export class MessagingGateway
 
   async handleConnection(client: Socket) {
     try {
-      // Get user ID from auth token
       const token = client.handshake.auth?.token || client.handshake.query?.token;
-      // TODO: Validate JWT token and extract userId
-      // For now, use client ID as userId (should be replaced with actual auth)
+      
+      // TODO: CRITICAL - Implement JWT authentication before production
+      // Required implementation:
+      // 1. Inject JwtService or ClerkService
+      // 2. Validate the token
+      // 3. Extract authenticated userId from token payload
+      // 4. Reject connections with invalid/missing tokens
+      //
+      // Example:
+      // if (!token) {
+      //   this.logger.warn(`Connection rejected: missing token`);
+      //   client.disconnect();
+      //   return;
+      // }
+      // const payload = await this.jwtService.verifyAsync(token);
+      // const userId = payload.sub || payload.userId;
+      // if (!userId) {
+      //   this.logger.warn(`Connection rejected: invalid token`);
+      //   client.disconnect();
+      //   return;
+      // }
+      
+      // TEMPORARY: Using query userId (INSECURE - allows impersonation)
       const userId = client.handshake.query?.userId as string || client.id;
       
       this.connectedClients.set(client.id, {
@@ -55,21 +75,53 @@ export class MessagingGateway
   }
 
   handleDisconnect(client: Socket) {
+    const clientData = this.connectedClients.get(client.id);
+    if (clientData) {
+      // Leave all conversation rooms
+      clientData.conversationIds.forEach((conversationId) => {
+        client.leave(`conversation:${conversationId}`);
+      });
+    }
     this.connectedClients.delete(client.id);
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('join-conversation')
-  handleJoinConversation(
+  async handleJoinConversation(
     @MessageBody() data: { conversationId: string },
     client: Socket,
   ) {
     const clientData = this.connectedClients.get(client.id);
-    if (clientData) {
-      clientData.conversationIds.add(data.conversationId);
-      client.join(`conversation:${data.conversationId}`);
-      this.logger.log(`Client ${client.id} joined conversation ${data.conversationId}`);
+    if (!clientData) {
+      client.emit('error', { message: 'Client not found' });
+      return;
     }
+
+    // Validate conversationId format
+    if (!data.conversationId || typeof data.conversationId !== 'string') {
+      client.emit('error', { message: 'Invalid conversationId' });
+      return;
+    }
+
+    // TODO: CRITICAL - Add authorization check before production
+    // Required implementation:
+    // 1. Inject ConversationService or PrismaService
+    // 2. Verify user is a participant in the conversation
+    // 3. Reject if not authorized
+    //
+    // Example:
+    // const isParticipant = await this.conversationService.isUserParticipant(
+    //   data.conversationId,
+    //   clientData.userId
+    // );
+    // if (!isParticipant) {
+    //   client.emit('error', { message: 'Unauthorized to join conversation' });
+    //   return;
+    // }
+
+    clientData.conversationIds.add(data.conversationId);
+    client.join(`conversation:${data.conversationId}`);
+    this.logger.log(`Client ${client.id} joined conversation ${data.conversationId}`);
   }
 
   @SubscribeMessage('leave-conversation')
@@ -87,27 +139,36 @@ export class MessagingGateway
 
   @SubscribeMessage('typing-start')
   handleTypingStart(
-    @MessageBody() data: { conversationId: string; userId: string; userName: string },
+    @MessageBody() data: { conversationId: string },
     client: Socket,
   ) {
+    const clientData = this.connectedClients.get(client.id);
+    if (!clientData || !clientData.conversationIds.has(data.conversationId)) {
+      return;
+    }
+    
     // Broadcast to all clients in the conversation except the sender
     client.to(`conversation:${data.conversationId}`).emit('user-typing', {
       conversationId: data.conversationId,
-      userId: data.userId,
-      userName: data.userName,
+      userId: clientData.userId,
       isTyping: true,
     });
   }
 
   @SubscribeMessage('typing-stop')
   handleTypingStop(
-    @MessageBody() data: { conversationId: string; userId: string },
+    @MessageBody() data: { conversationId: string },
     client: Socket,
   ) {
+    const clientData = this.connectedClients.get(client.id);
+    if (!clientData || !clientData.conversationIds.has(data.conversationId)) {
+      return;
+    }
+    
     // Broadcast to all clients in the conversation except the sender
     client.to(`conversation:${data.conversationId}`).emit('user-typing', {
       conversationId: data.conversationId,
-      userId: data.userId,
+      userId: clientData.userId,
       isTyping: false,
     });
   }

@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         {getAdminLogo() ? (
           <img
             src={getAdminLogo()}
-            alt="Admin Logo"
+            alt={t('common:adminlogo')}
             className="h-[69px] w-[69px] object-contain mr-2.5"
           />
         ) : (

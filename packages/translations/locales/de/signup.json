@@ -117,7 +117,10 @@
     "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
     "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
     "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",
-    "profileCompletionFailed": "Bei der Vervollständigung Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+    "profileCompletionFailed": "Bei der Vervollständigung Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "accountExists": "[DE] An account with this email already exists",
+    "passwordPwned": "[DE] This password has been found in a data breach. Please choose a different password",
+    "passwordWeak": "[DE] Password is not strong enough"
   },
   "buttons": {
     "createAccount": "Konto erstellen",

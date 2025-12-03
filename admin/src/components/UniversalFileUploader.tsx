@@ -3,6 +3,7 @@ import { Upload, X, Check, AlertCircle, File, Image, Video, FileText, Info, Tag 
 import { apiService, useApiClient } from '../services/api';
 import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
 import { FileTypeInfo } from '../types/api';
+import { useTranslation } from 'react-i18next';
 
 
 interface Asset {
@@ -47,6 +48,7 @@ interface UniversalFileUploaderProps {
 }
 
 const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
+  const { t } = useTranslation(['common']);
   kind,
   currentAsset,
   fallbackUrl,
@@ -328,7 +330,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
           <h4 className="text-sm font-medium text-gray-700 mb-2">Current Image (Fallback URL)</h4>
           <img
             src={previewUrl}
-            alt="Fallback preview"
+            alt={t('common:fallbackpreview')}
             className="max-w-full max-h-32 object-contain border border-gray-200 rounded bg-white"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -348,7 +350,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         {mimeType.startsWith('image/') && (
           <img
             src={previewUrl}
-            alt="Preview"
+            alt={t('common:preview')}
             className="max-w-full max-h-48 object-contain border border-gray-200 rounded bg-white"
           />
         )}
@@ -583,7 +585,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
             ))}
             <input
               type="text"
-              placeholder="Add tag..."
+              placeholder={t('common:placeholders.addtag')}
               className="px-2 py-1 border border-gray-300 rounded text-xs"
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
@@ -606,7 +608,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
           <textarea
             value={fileDescription}
             onChange={(e) => setFileDescription(e.target.value)}
-            placeholder="Describe this file..."
+            placeholder={t('common:placeholders.describethisfile')}
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           />

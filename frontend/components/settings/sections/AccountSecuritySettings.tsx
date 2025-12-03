@@ -222,7 +222,9 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                {passwordError && (
                  <div className="mt-2">
                    <p className="text-sm text-swiss-coral font-medium">{passwordError}</p>
-                   {passwordError.includes('verification') && (
+                   {/* TODO: Use error codes instead of string matching for better i18n support */}
+                   {(passwordError.toLowerCase().includes('verification') || 
+                     passwordError.toLowerCase().includes(t('common:errors.verificationKeyword', 'verification').toLowerCase())) && (
                      <p className="text-sm text-gray-600 mt-1">
                        {t('common:settingsAccountSecurity.changePassword.verificationErrorTip')}
                      </p>

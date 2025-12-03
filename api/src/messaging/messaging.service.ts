@@ -76,6 +76,42 @@ export class MessagingService {
   ) {}
 
   /**
+   * Resolve rawUserId (Clerk ID or AppUser ID) to User.id
+   * @returns User.id or null if not found
+   */
+  private async resolveUserId(rawUserId: string): Promise<string | null> {
+    let userClerkId: string;
+    let userAppUser;
+
+    if (rawUserId.startsWith('user_')) {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      userClerkId = rawUserId;
+    } else {
+      userAppUser = await this.prisma.appUser.findUnique({
+        where: { id: rawUserId },
+        select: { id: true, clerkId: true },
+      });
+      if (userAppUser) {
+        userClerkId = userAppUser.clerkId;
+      }
+    }
+
+    if (!userAppUser) {
+      return null;
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: userClerkId },
+      select: { id: true },
+    });
+
+    return user?.id || null;
+  }
+
+  /**
    * Get allowed roles that a user can message based on their role
    * SUPER_ADMIN can message everyone (handled separately)
    */
@@ -115,9 +151,8 @@ export class MessagingService {
       case UserRole.FOUNDATION:
       case UserRole.PRODUCT_SUPPLIER:
       case UserRole.SERVICE_PROVIDER:
-        // Foundation/Supplier/Service Provider can message: same roles + ADMIN
+        // Foundation/Supplier/Service Provider can message each other + ADMIN
         return [
-          userRole, // Same role
           UserRole.FOUNDATION,
           UserRole.PRODUCT_SUPPLIER,
           UserRole.SERVICE_PROVIDER,
@@ -354,44 +389,13 @@ export class MessagingService {
     console.log('🔵 [getUserConversations] Starting with rawUserId:', rawUserId);
     
     // Convert rawUserId (Clerk ID or AppUser ID) to User.id
-    let userClerkId: string;
-    let userAppUser;
-
-    if (rawUserId.startsWith('user_')) {
-      // It's a Clerk ID, look up AppUser by clerkId
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { clerkId: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      userClerkId = rawUserId;
-    } else {
-      // It's an AppUser ID, look up AppUser by id
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { id: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      if (userAppUser) {
-        userClerkId = userAppUser.clerkId;
-      }
-    }
-
-    if (!userAppUser) {
-      console.warn('⚠️ [getUserConversations] User not found in AppUser table:', rawUserId);
+    const finalUserId = await this.resolveUserId(rawUserId);
+    
+    if (!finalUserId) {
+      console.warn('⚠️ [getUserConversations] User not found:', rawUserId);
       return [];
     }
 
-    // Get the User record
-    const user = await this.prisma.user.findUnique({
-      where: { clerkId: userClerkId },
-      select: { id: true },
-    });
-
-    if (!user) {
-      console.warn('⚠️ [getUserConversations] User record not found for clerkId:', userClerkId);
-      return [];
-    }
-
-    const finalUserId = user.id;
     console.log('🔵 [getUserConversations] Final User ID:', finalUserId);
 
     // Get user's role for filtering
@@ -474,39 +478,11 @@ export class MessagingService {
 
   async findConversationById(id: string, rawUserId: string) {
     // Convert rawUserId (Clerk ID or AppUser ID) to User.id
-    let userClerkId: string;
-    let userAppUser;
-
-    if (rawUserId.startsWith('user_')) {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { clerkId: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      userClerkId = rawUserId;
-    } else {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { id: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      if (userAppUser) {
-        userClerkId = userAppUser.clerkId;
-      }
-    }
-
-    if (!userAppUser) {
+    const finalUserId = await this.resolveUserId(rawUserId);
+    
+    if (!finalUserId) {
       return null;
     }
-
-    const user = await this.prisma.user.findUnique({
-      where: { clerkId: userClerkId },
-      select: { id: true },
-    });
-
-    if (!user) {
-      return null;
-    }
-
-    const finalUserId = user.id;
 
     const conversation = await this.prisma.conversation.findFirst({
       where: {
@@ -688,39 +664,11 @@ export class MessagingService {
 
   async getConversationMessages(conversationId: string, rawUserId: string, page = 1, limit = 50) {
     // Convert rawUserId (Clerk ID or AppUser ID) to User.id
-    let userClerkId: string;
-    let userAppUser;
-
-    if (rawUserId.startsWith('user_')) {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { clerkId: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      userClerkId = rawUserId;
-    } else {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { id: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      if (userAppUser) {
-        userClerkId = userAppUser.clerkId;
-      }
-    }
-
-    if (!userAppUser) {
+    const finalUserId = await this.resolveUserId(rawUserId);
+    
+    if (!finalUserId) {
       throw new Error('User not found');
     }
-
-    const user = await this.prisma.user.findUnique({
-      where: { clerkId: userClerkId },
-      select: { id: true },
-    });
-
-    if (!user) {
-      throw new Error('User record not found');
-    }
-
-    const finalUserId = user.id;
 
     // Verify user has access to conversation
     const conversation = await this.prisma.conversation.findFirst({
@@ -798,43 +746,17 @@ export class MessagingService {
 
   async updateMessage(messageId: string, content: string, rawUserId: string) {
     // Convert userId to User.id
-    let userClerkId: string;
-    let userAppUser;
-
-    if (rawUserId.startsWith('user_')) {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { clerkId: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      userClerkId = rawUserId;
-    } else {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { id: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      if (userAppUser) {
-        userClerkId = userAppUser.clerkId;
-      }
-    }
-
-    if (!userAppUser) {
+    const finalUserId = await this.resolveUserId(rawUserId);
+    
+    if (!finalUserId) {
       throw new Error('User not found');
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { clerkId: userClerkId },
-      select: { id: true },
-    });
-
-    if (!user) {
-      throw new Error('User record not found');
     }
 
     // Verify message belongs to user
     const message = await this.prisma.message.findFirst({
       where: {
         id: messageId,
-        senderId: user.id,
+        senderId: finalUserId,
       },
     });
 
@@ -866,43 +788,17 @@ export class MessagingService {
 
   async deleteMessage(messageId: string, rawUserId: string) {
     // Convert userId to User.id
-    let userClerkId: string;
-    let userAppUser;
-
-    if (rawUserId.startsWith('user_')) {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { clerkId: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      userClerkId = rawUserId;
-    } else {
-      userAppUser = await this.prisma.appUser.findUnique({
-        where: { id: rawUserId },
-        select: { id: true, clerkId: true },
-      });
-      if (userAppUser) {
-        userClerkId = userAppUser.clerkId;
-      }
-    }
-
-    if (!userAppUser) {
+    const finalUserId = await this.resolveUserId(rawUserId);
+    
+    if (!finalUserId) {
       throw new Error('User not found');
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { clerkId: userClerkId },
-      select: { id: true },
-    });
-
-    if (!user) {
-      throw new Error('User record not found');
     }
 
     // Verify message belongs to user
     const message = await this.prisma.message.findFirst({
       where: {
         id: messageId,
-        senderId: user.id,
+        senderId: finalUserId,
       },
     });
 
@@ -918,6 +814,10 @@ export class MessagingService {
       data: {
         content: '[Message deleted]',
         messageType: MessageType.SYSTEM,
+        fileUrl: null,
+        fileName: null,
+        fileSize: null,
+        mimeType: null,
       },
       include: {
         sender: true,

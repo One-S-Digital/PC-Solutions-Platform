@@ -179,7 +179,7 @@ export default function AdminCustomLoginForm() {
               {getAdminLogo(settings) ? (
                 <img 
                   src={getAdminLogo(settings)!} 
-                  alt="Admin Logo" 
+                  alt={t('common:adminlogo')} 
                   className="h-[46px] w-[46px] object-contain"
                 />
               ) : (
@@ -250,15 +250,15 @@ export default function AdminCustomLoginForm() {
             {getAdminLogo(settings) ? (
               <img 
                 src={getAdminLogo(settings)!} 
-                alt="Admin Logo" 
+                alt={t('common:adminlogo')} 
                 className="h-[46px] w-[46px] object-contain"
               />
             ) : (
               <SquaresPlusIcon className="h-[46px] w-[46px] text-white" />
             )}
           </div>
-          <h1 className="text-2xl font-bold text-swiss-charcoal">Admin Dashboard</h1>
-          <p className="text-sm text-gray-500">Pro Crèche Solutions Management Portal</p>
+          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('admin:auth.login.title')}</h1>
+          <p className="text-sm text-gray-500">{t('admin:auth.login.subtitle')}</p>
         </div>
 
         {error && (
@@ -270,7 +270,7 @@ export default function AdminCustomLoginForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              {t('admin:auth.login.emailLabel')}
             </label>
             <input
               type="email"
@@ -279,16 +279,16 @@ export default function AdminCustomLoginForm() {
               onChange={(e) => updateFormData('email', e.target.value)}
               className={STANDARD_INPUT_FIELD}
               required
-              placeholder="admin@procreche.com"
+              placeholder={t('admin:auth.login.emailPlaceholder')}
             />
           </div>
           <div>
             <div className="flex justify-between items-baseline">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
+                  {t('admin:auth.login.passwordLabel')}
                 </label>
                 <a href="#/password-reset" onClick={(e) => {e.preventDefault(); alert('Password reset functionality TBD');}} className="text-xs text-swiss-mint hover:underline">
-                    Forgot Password?
+                    {t('admin:auth.login.forgotPassword')}
                 </a>
             </div>
             <div className="relative">
@@ -299,13 +299,13 @@ export default function AdminCustomLoginForm() {
                 onChange={(e) => updateFormData('password', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
                 required
-                placeholder="Enter your password"
+                placeholder={t('common:placeholders.enteryourpassword')}
                 />
                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showPassword ? t('admin:auth.login.hidePassword') : t('admin:auth.login.showPassword')}
                 >
                     {showPassword ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
                 </button>

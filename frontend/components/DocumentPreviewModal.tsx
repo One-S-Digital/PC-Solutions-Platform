@@ -113,8 +113,8 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
       }
       setIsLoading(false);
       // Mark content as ready after a brief delay for external content
-      setTimeout(() => setContentReady(true), 100);
-      return;
+      const timeoutId = setTimeout(() => setContentReady(true), 100);
+      return () => clearTimeout(timeoutId);
     }
 
     // Skip if we already have a blob URL for this file
@@ -298,7 +298,6 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
             'QUICKTIME': 'MOV',
             'X-MSVIDEO': 'AVI',
             'MPEG': 'MPEG',
-            'MPEGURL': 'M3U8',
             'X-M4V': 'M4V',
             'MPEGURL': 'M3U8',
             'VND.APPLE.MPEGURL': 'M3U8',

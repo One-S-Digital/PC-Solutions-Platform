@@ -31,10 +31,10 @@
     "announcements": "Annonces Publicitaires",
     "notifications": "Notifications"
   },
-    "sidebar": {
-      "billingSubscription": "Facturation et avis",
-      "dashboard": "Tableau de Bord",
-      "dashboardHome": "Accueil du tableau de bord",
+  "sidebar": {
+    "billingSubscription": "Facturation et avis",
+    "dashboard": "Tableau de Bord",
+    "dashboardHome": "Accueil du tableau de bord",
     "marketplace": "1, Place du marché",
     "products": "Produits",
     "services": "Services",
@@ -76,7 +76,8 @@
     "myRequests": "Mes Demandes",
     "serviceMarketplace": "Marché des Services",
     "homeFindCreche": "Accueil / Trouver une Crèche",
-    "applications": "Candidatures"
+    "applications": "Candidatures",
+    "allUsersTitle": "[FR] Total Users"
   },
   "navbar": {
     "notificationsCount": "Notifications  : {{count}}",
@@ -328,46 +329,46 @@
       "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème"
     }
   },
-    "parentDashboardPage": {
-      "title": "Tableau de Bord Parent",
-      "welcome": "Bienvenue dans le tableau de bord de Tableau de Bord",
-      "myChildren": "Mes enfants",
-      "findCreche": "Dépassement de la crèche"
+  "parentDashboardPage": {
+    "title": "Tableau de Bord Parent",
+    "welcome": "Bienvenue dans le tableau de bord de Tableau de Bord",
+    "myChildren": "Mes enfants",
+    "findCreche": "Dépassement de la crèche"
+  },
+  "parentDashboard": {
+    "title": "Tableau de Bord Parent",
+    "welcomeMessage": "Bon retour ! Voici un aperçu de votre recherche de garde d'enfants et de vos demandes.",
+    "enquiry": {
+      "title": "Mes Demandes",
+      "sent": "Envoyées",
+      "responses": "Réponses",
+      "responded": "Répondues",
+      "pending": "En Attente",
+      "button": "Voir Toutes les Demandes"
     },
-    "parentDashboard": {
-      "title": "Tableau de Bord Parent",
-      "welcomeMessage": "Bon retour ! Voici un aperçu de votre recherche de garde d'enfants et de vos demandes.",
-      "enquiry": {
-        "title": "Mes Demandes",
-        "sent": "Envoyées",
-        "responses": "Réponses",
-        "responded": "Répondues",
-        "pending": "En Attente",
-        "button": "Voir Toutes les Demandes"
-      },
-      "childProfile": {
-        "title": "Profil de l'Enfant",
-        "name": "Nom",
-        "age": "Âge",
-        "location": "Localisation",
-        "languages": "Langues",
-        "specialNeeds": "Besoins Spéciaux",
-        "button": "Mettre à Jour le Profil"
-      },
-      "favorites": {
-        "title": "Favoris",
-        "subtitle": "Vos crèches et services sauvegardés",
-        "button": "Voir Tous les Favoris"
-      },
-      "quickActions": {
-        "title": "Actions Rapides",
-        "findDaycare": "Trouver une Garderie",
-        "viewEnquiries": "Voir les demandes",
-        "enquiries": "Mes Demandes",
-        "updateProfile": "Mettre à Jour le Profil",
-        "browseServices": "Parcourir les Services"
-      }
+    "childProfile": {
+      "title": "Profil de l'Enfant",
+      "name": "Nom",
+      "age": "Âge",
+      "location": "Localisation",
+      "languages": "Langues",
+      "specialNeeds": "Besoins Spéciaux",
+      "button": "Mettre à Jour le Profil"
     },
+    "favorites": {
+      "title": "Favoris",
+      "subtitle": "Vos crèches et services sauvegardés",
+      "button": "Voir Tous les Favoris"
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "findDaycare": "Trouver une Garderie",
+      "viewEnquiries": "Voir les demandes",
+      "enquiries": "Mes Demandes",
+      "updateProfile": "Mettre à Jour le Profil",
+      "browseServices": "Parcourir les Services"
+    }
+  },
   "parentEnquiriesPage": {
     "accessDenied": {
       "title": "Accès refusé",
@@ -443,14 +444,14 @@
       "match": "Correspondance"
     }
   },
-    "educatorApplicationsPage": {
-      "title": "Mes Candidatures",
-      "status": {
-        "pending": "En attente",
-        "reviewed": "Consultée",
-        "accepted": "Acceptée",
-        "rejected": "Refusée"
-      },
+  "educatorApplicationsPage": {
+    "title": "Mes Candidatures",
+    "status": {
+      "pending": "En attente",
+      "reviewed": "Consultée",
+      "accepted": "Acceptée",
+      "rejected": "Refusée"
+    },
     "table": {
       "jobTitle": "Titre d'emploi",
       "creche": "Crèche",
@@ -462,58 +463,58 @@
     "emptyState": "Dépoi de l'application Autre",
     "footerNote": "Les applications sont mises à jour en temps réel"
   },
-    "educatorJobBoardPage": {
-      "title": "Offres d'emploi",
-      "postedOn": "Publié le",
-      "searchPlaceholder": "Rechercher des emplois...",
-      "noJobsFound": "Aucune offre trouvée",
-      "errors": {
-        "loadJobs": "Impossible de charger les offres d'emploi."
-      },
-      "unknownFoundation": "Fondation inconnue"
+  "educatorJobBoardPage": {
+    "title": "Offres d'emploi",
+    "postedOn": "Publié le",
+    "searchPlaceholder": "Rechercher des emplois...",
+    "noJobsFound": "Aucune offre trouvée",
+    "errors": {
+      "loadJobs": "Impossible de charger les offres d'emploi."
     },
-    "educatorProfilePage": {
-      "editProfile": "Modifier le profil",
-      "loadError": "Impossible de charger le profil.",
-      "saveSuccess": "Modifications du profil enregistrées !",
-      "roleUnknown": "Rôle non spécifié",
-      "locationUnknown": "Localisation non fournie",
-      "notProvided": "Non renseigné",
-      "skills": {
-        "title": "Compétences",
-        "empty": "Aucune compétence renseignée pour le moment."
-      },
-      "availability": {
-        "title": "Disponibilité",
-        "days": "Jours",
-        "times": "Créneaux",
-        "contract": "Contrat",
-        "ageGroups": "Tranches d'âge"
-      },
-      "documents": {
-        "title": "Documents",
-        "empty": "Aucun document téléchargé pour le moment."
-      },
-      "bio": {
-        "title": "À propos de moi",
-        "empty": "Aucune biographie renseignée pour le moment."
-      },
-      "experience": {
-        "title": "Expérience",
-        "empty": "Aucune expérience ajoutée pour le moment."
-      },
-      "education": {
-        "title": "Formation",
-        "graduated": "Diplômé",
-        "empty": "Aucune formation ajoutée pour le moment."
-      },
-      "certifications": {
-        "title": "Certifications",
-        "issued": "Délivrée",
-        "expires": "Expire",
-        "empty": "Aucune certification ajoutée pour le moment."
-      }
+    "unknownFoundation": "Fondation inconnue"
+  },
+  "educatorProfilePage": {
+    "editProfile": "Modifier le profil",
+    "loadError": "Impossible de charger le profil.",
+    "saveSuccess": "Modifications du profil enregistrées !",
+    "roleUnknown": "Rôle non spécifié",
+    "locationUnknown": "Localisation non fournie",
+    "notProvided": "Non renseigné",
+    "skills": {
+      "title": "Compétences",
+      "empty": "Aucune compétence renseignée pour le moment."
     },
+    "availability": {
+      "title": "Disponibilité",
+      "days": "Jours",
+      "times": "Créneaux",
+      "contract": "Contrat",
+      "ageGroups": "Tranches d'âge"
+    },
+    "documents": {
+      "title": "Documents",
+      "empty": "Aucun document téléchargé pour le moment."
+    },
+    "bio": {
+      "title": "À propos de moi",
+      "empty": "Aucune biographie renseignée pour le moment."
+    },
+    "experience": {
+      "title": "Expérience",
+      "empty": "Aucune expérience ajoutée pour le moment."
+    },
+    "education": {
+      "title": "Formation",
+      "graduated": "Diplômé",
+      "empty": "Aucune formation ajoutée pour le moment."
+    },
+    "certifications": {
+      "title": "Certifications",
+      "issued": "Délivrée",
+      "expires": "Expire",
+      "empty": "Aucune certification ajoutée pour le moment."
+    }
+  },
   "educatorSupportPage": {
     "ticketSubmittedAlert": "Ticket d'aide Soumis Avec succés",
     "faq": {
@@ -610,7 +611,8 @@
       "date": "Date",
       "status": "Statut"
     },
-    "emptyState": "AUCUNE DEMANDE DE SERVICE TRUVÉE LE FILTRE SÉLÉCTIONNÉ."
+    "emptyState": "AUCUNE DEMANDE DE SERVICE TRUVÉE LE FILTRE SÉLÉCTIONNÉ.",
+    "title": "[FR] Service Requests"
   },
   "serviceProviderSupportPage": {
     "ticketSubmittedAlert": "Soutenir le Billet Soumis AVEC SUCCILS",
@@ -670,7 +672,19 @@
       }
     },
     "recentOrdersTitle": "Commandes Récentes",
-    "noRecentOrders": "Aucune commande récente"
+    "noRecentOrders": "Aucune commande récente",
+    "noSalesYet": "[FR] No sales yet",
+    "recentOrdersTable": {
+      "id": "[FR] Order ID",
+      "creche": "[FR] Crèche",
+      "date": "[FR] Date",
+      "total": "[FR] Total",
+      "status": "[FR] Status"
+    },
+    "recentOrdersActions": {
+      "decline": "[FR] Decline",
+      "accept": "[FR] Accept"
+    }
   },
   "supplierAnalyticsPage": {
     "orderRequestsTrend": "Tendance des Demandes de Commandes",
@@ -700,9 +714,37 @@
       "price": "Prix",
       "stock": "Action",
       "visibility": "Visibilité",
-      "actions": "ACTES."
+      "actions": "ACTES.",
+      "toggleVisibility": "[FR] Toggle visibility"
     },
-    "emptyState": "AUCUN PRODUITS TRUVÉ."
+    "emptyState": "AUCUN PRODUITS TRUVÉ.",
+    "subtitle": "[FR] Publish accurate listings and keep daycares informed.",
+    "noOrgMessage": "[FR] You need an organization to manage product listings.",
+    "visibility": {
+      "visible": "[FR] Visible",
+      "hidden": "[FR] Hidden"
+    },
+    "notifications": {
+      "loadErrorTitle": "[FR] Unable to load products",
+      "loadErrorMessage": "[FR] Please try again shortly.",
+      "missingOrgTitle": "[FR] Organization required",
+      "missingOrgMessage": "[FR] You need an organization ID to manage products.",
+      "createSuccessTitle": "[FR] Product saved",
+      "updateSuccessMessage": "[FR] Your product was updated successfully.",
+      "createSuccessMessage": "[FR] Your product was published to the marketplace.",
+      "createErrorTitle": "[FR] Unable to save product",
+      "createErrorMessage": "[FR] Please review the form and try again.",
+      "toggleSuccessTitle": "[FR] Visibility updated",
+      "toggleVisible": "[FR] The product is now visible in the marketplace.",
+      "toggleHidden": "[FR] The product is hidden from the marketplace.",
+      "toggleErrorTitle": "[FR] Unable to update visibility",
+      "toggleErrorMessage": "[FR] Please try again.",
+      "deleteSuccessTitle": "[FR] Product deleted",
+      "deleteSuccessMessage": "[FR] The product has been removed.",
+      "deleteErrorTitle": "[FR] Unable to delete product",
+      "deleteErrorMessage": "[FR] Please try again later."
+    },
+    "confirmDelete": "[FR] Are you sure you want to delete this product?"
   },
   "supplierOrdersPage": {
     "title": "Commandes",
@@ -745,10 +787,12 @@
     }
   },
   "adminContentManagementDashboardPage": {
-    "title": "Geste du contenu",
-    "content": "Aperçu du contenu",
-    "policies": "Geste des politiques",
-    "announcements": "Annonces Publicitaires"
+    "addContent": "Ajouter du contenu",
+    "editContent": "Modifier le contenu",
+    "title": "[FR] Content Management",
+    "content": "[FR] Content Overview",
+    "policies": "[FR] Policy Management",
+    "announcements": "[FR] Announcements"
   },
   "adminSystemMonitoringPage": {
     "rawLogConsole": {
@@ -807,7 +851,11 @@
     "eventTypes": {
       "info": "[FR] Information",
       "warning": "[FR] Warning",
-      "error": "[FR] Error"
+      "error": "[FR] Error",
+      "HealthCheck": "[FR] Health Check",
+      "DatabaseBackup": "[FR] Database Backup",
+      "MemoryAlert": "[FR] Memory Alert",
+      "APIImprovement": "[FR] API Improvement"
     }
   },
   "adminDiscountTerminationsPage": {
@@ -889,24 +937,24 @@
       "region": "Région",
       "availabilityDate": "Date Disponibilité"
     },
-  "filters": {
-    "all": "Tous"
-  },
-  "supportPage": {
-    "faqTitle": "Questions Fréquemment Posées",
-    "furtherAssistanceTitle": "Besoin d'Aide Supplémentaire ?",
-    "furtherAssistanceText": "Si vous ne trouvez pas la réponse que vous cherchez, notre équipe de support est là pour vous aider. Contactez-nous à",
-    "emailLinkText": "support@procrechesolutions.com",
-    "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
-    "submitTicketTitle": "Soumettre un Ticket de Support",
-    "ticketForm": {
-      "subjectLabel": "Sujet",
-      "subjectPlaceholder": "Brève description de votre problème",
-      "messageLabel": "Message",
-      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
-      "submitButton": "Soumettre le Ticket"
-    }
-  },
+    "filters": {
+      "all": "Tous"
+    },
+    "supportPage": {
+      "faqTitle": "Questions Fréquemment Posées",
+      "furtherAssistanceTitle": "Besoin d'Aide Supplémentaire ?",
+      "furtherAssistanceText": "Si vous ne trouvez pas la réponse que vous cherchez, notre équipe de support est là pour vous aider. Contactez-nous à",
+      "emailLinkText": "support@procrechesolutions.com",
+      "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
+      "submitTicketTitle": "Soumettre un Ticket de Support",
+      "ticketForm": {
+        "subjectLabel": "Sujet",
+        "subjectPlaceholder": "Brève description de votre problème",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+        "submitButton": "Soumettre le Ticket"
+      }
+    },
     "candidatePool": {
       "searchPlaceholder": "Rechercher Les Candidats ...",
       "filterTitle": "Filtrer les candidats",
@@ -915,6 +963,46 @@
     "tabs": {
       "jobOffers": "Offres Postées",
       "candidatePool": "Pool de Candidats"
+    },
+    "foundationSupportPage": {
+      "faq": {
+        "manageLeads": {
+          "q": "[FR] How do I manage incoming parent leads?",
+          "a": "[FR] You can view and respond to parent leads from your dashboard. Use the quick actions to mark leads as interested, not interested, or request more information."
+        },
+        "useMarketplace": {
+          "q": "[FR] How do I use the marketplace?",
+          "a": "[FR] Browse products and services from verified suppliers. Add items to your order cart and submit orders directly through the platform."
+        },
+        "manageProfile": {
+          "q": "[FR] How do I manage my organization profile?",
+          "a": "[FR] Go to Organization Profile to update your branding, contact information, opening hours, and other details that parents see."
+        },
+        "recruitment": {
+          "q": "[FR] How do I post job openings?",
+          "a": "[FR] Navigate to Recruitment > Job Listings and click 'Post New Job' to create a job posting. You can view applicants and manage the hiring process from there."
+        }
+      }
+    },
+    "supplierSupportPage": {
+      "faq": {
+        "addProduct": {
+          "q": "[FR] How do I add a new product?",
+          "a": "[FR] Go to Products and click 'Add New Product'. Fill in the product details, set pricing, and upload images. Products will be reviewed before going live."
+        },
+        "processOrders": {
+          "q": "[FR] How do I process orders?",
+          "a": "[FR] View all orders in the Orders section. You can accept, decline, or mark orders as shipped. Orders are automatically synced with the foundation's dashboard."
+        },
+        "manageProfile": {
+          "q": "[FR] How do I manage my supplier profile?",
+          "a": "[FR] Update your company information, contact details, and business hours in Settings > Company Profile."
+        },
+        "commissionRates": {
+          "q": "[FR] What are the commission rates?",
+          "a": "[FR] Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription."
+        }
+      }
     }
   },
   "messagesPage": {
@@ -1010,10 +1098,6 @@
     "selected": "Sélectionné :",
     "uploading": "Téléversement...",
     "upload": "Téléverser"
-  },
-  "adminContentManagementDashboardPage": {
-    "addContent": "Ajouter du contenu",
-    "editContent": "Modifier le contenu"
   },
   "common": {
     "title": "Titre",
@@ -1259,5 +1343,32 @@
     "defaultTitle": "[FR] Default Title",
     "detailsFor": "[FR] Details For",
     "noSpecificView": "[FR] No  Specific View"
+  },
+  "buttons": {
+    "add": "[FR] Add"
+  },
+  "platformSummary": "[FR] Platform Summary",
+  "loadingStats": "[FR] Loading platform statistics...",
+  "systemHealthy": "[FR] All systems operational",
+  "live": "[FR] Live",
+  "registeredUsers": "[FR] registered users in the platform",
+  "total": "[FR] Total",
+  "activeOrganizations": "[FR] active organizations",
+  "jobsPosted": "[FR] job listings posted",
+  "productsAvailable": "[FR] products in catalog",
+  "orderRequestDetailModal": {
+    "title": "[FR] Order Details",
+    "orderId": "[FR] Order ID",
+    "date": "[FR] Date",
+    "status": "[FR] Status",
+    "total": "[FR] Total",
+    "foundation": "[FR] Foundation",
+    "viewDaycareProfile": "[FR] View Profile",
+    "lineItems": "[FR] Line Items",
+    "product": "[FR] Product",
+    "quantity": "[FR] Quantity",
+    "price": "[FR] Price",
+    "notes": "[FR] Notes",
+    "markAsProcessing": "[FR] Mark as Processing"
   }
 }

@@ -122,7 +122,7 @@ class UserService {
             try {
               return this.transformUser(user);
             } catch (error) {
-              console.error('❌ Error transforming user');
+              console.error('❌ Error transforming user:', error);
               // Return a basic user object if transformation fails
               return {
                 id: user.id || 'unknown',
@@ -140,11 +140,11 @@ class UserService {
           pagination: pagination,
         };
       } catch (error) {
-        console.error('❌ Error mapping users');
+        console.error('❌ Error mapping users:', error);
         throw new Error('Failed to process users data');
       }
     } catch (error) {
-      console.error('❌ Error fetching users');
+      console.error('❌ Error fetching users:', error);
       throw error;
     }
   }

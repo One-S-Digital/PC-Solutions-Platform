@@ -71,7 +71,7 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
         {doc.fileUrl && (
           <>
             <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => onDownload(doc)}>{t('common:statePolicies.download', { fileType: doc.fileType })}</Button>
-            <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onPreview(doc)} className="p-2" aria-label="Preview" title="Preview"></Button>
+            <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onPreview(doc)} className="p-2" aria-label={t('common:statePolicies.preview', 'Preview')} title={t('common:statePolicies.preview', 'Preview')}></Button>
           </>
         )}
       </div>
@@ -92,7 +92,7 @@ const PolicyCategoryDisplayCard: React.FC<{title: string, icon: React.ElementTyp
     >
       <Icon className="w-10 h-10 mb-3 text-current"/>
       <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
-      <p className="text-sm opacity-80 text-current">{count} {count === 1 ? t('common:statePolicies.policy') : t('common:statePolicies.policies')}</p>
+      <p className="text-sm opacity-80 text-current">{t('common:statePolicies.policyCount', { count, defaultValue: '{{count}} policies' })}</p>
     </div>
   );
 };
@@ -310,22 +310,22 @@ const StatePoliciesPage: React.FC = () => {
              <input
                 id="policySearch"
                 type="text"
-                placeholder="Search by keyword, topic..."
+                placeholder={t('common:placeholders.searchKeyword')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`${ICON_INPUT_FIELD} w-full`}
             />
           </div>
-          <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Canton">
+          <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label={t('content:statePoliciesPage.filters.ariaLabelCanton', 'Filter by Canton')}>
             <option value="All">{t('content:statePoliciesPage.filters.allCantonsRegions')}</option>
             {cantons.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value as 'All' | PolicyType)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Type">
+          <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value as 'All' | PolicyType)} className={STANDARD_INPUT_FIELD} aria-label={t('content:statePoliciesPage.filters.ariaLabelPolicyType', 'Filter by Policy Type')}>
             {policyTypeOptions.map(pt => (
               <option key={pt} value={pt}>{pt === 'All' ? t('common:statePolicies.allPolicyTypes') : pt}</option>
             ))}
           </select>
-           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Category">
+           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label={t('content:statePoliciesPage.filters.ariaLabelCategory', 'Filter by Policy Category')}>
             {policyCategoryOptions.map(pt => (
               <option key={pt} value={pt}>{pt === 'All' ? t('common:statePolicies.allCategories') : t(`content:policyCategories.${pt.replace(/\s+/g, '')}`, { defaultValue: POLICY_CATEGORY_LABELS[pt] || pt })}</option>
             ))}

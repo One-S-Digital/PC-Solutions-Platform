@@ -373,7 +373,7 @@ const EducatorProfilePage: React.FC = () => {
           <Card className="p-6 text-center">
             <img
               src={avatarUrl}
-              alt={t('common.profile')}
+              alt={t('common:profile', 'Profile')}
               className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg bg-gray-200"
             />
             <h2 className="text-2xl font-bold text-swiss-charcoal mt-4">{fullName}</h2>

@@ -416,6 +416,7 @@ export const apiService = {
   getOrderRequests: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<OrderRequest[]>>('/order-requests'),
 
   // Messaging
+  // NOTE: Endpoint paths changed from /messages/* to /messaging/* - ensure backend is deployed first
   getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messaging/conversations'),
   getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messaging/conversations/${id}`),
   createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messaging/conversations', data),

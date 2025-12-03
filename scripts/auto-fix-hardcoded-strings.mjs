@@ -20,14 +20,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const FRONTEND_DIR = path.join(__dirname, '../frontend');
+const ADMIN_DIR = path.join(__dirname, '../admin/src');
 const TRANSLATIONS_DIR = path.join(__dirname, '../packages/translations/locales/en');
 
 /**
- * Load all existing translation values to avoid duplicates
+ * Load all existing translation KEYS (not values) to check for duplicates
  */
-function loadAllTranslationValues() {
-  const allValues = new Set();
-  const languages = ['en', 'fr', 'de'];
+function loadAllTranslationKeys() {
+  const allKeys = new Set();
+  const languages = ['en'];  // Only check EN to avoid duplicates
   
   for (const lang of languages) {
     const langDir = path.join(__dirname, '../packages/translations/locales', lang);
@@ -36,28 +37,32 @@ function loadAllTranslationValues() {
     const files = fs.readdirSync(langDir).filter(f => f.endsWith('.json'));
     
     for (const file of files) {
+      const namespace = file.replace('.json', '');
       const filePath = path.join(langDir, file);
       try {
         const content = fs.readFileSync(filePath, 'utf8');
         const translations = JSON.parse(content);
         
-        // Flatten and collect all string values
-        function collectValues(obj) {
-          if (typeof obj === 'string') {
-            allValues.add(obj.toLowerCase().trim());
-          } else if (typeof obj === 'object' && obj !== null) {
-            Object.values(obj).forEach(collectValues);
+        // Flatten and collect all keys
+        function collectKeys(obj, prefix = '') {
+          for (const [key, value] of Object.entries(obj)) {
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+              collectKeys(value, fullKey);
+            } else {
+              allKeys.add(`${namespace}:${fullKey}`);
+            }
           }
         }
         
-        collectValues(translations);
+        collectKeys(translations);
       } catch (error) {
         // Skip invalid JSON files
       }
     }
   }
   
-  return allValues;
+  return allKeys;
 }
 
 /**
@@ -117,11 +122,10 @@ function shouldSkipString(text, line) {
 }
 
 /**
- * Check if string is already in translation files
+ * Check if a specific translation key already exists
  */
-function isAlreadyTranslated(text, existingTranslations) {
-  const normalized = text.toLowerCase().trim();
-  return existingTranslations.has(normalized);
+function translationKeyExists(key, existingKeys) {
+  return existingKeys.has(key);
 }
 
 /**
@@ -182,16 +186,18 @@ function generateTranslationKey(text, filePath, context) {
 /**
  * Find hardcoded strings - ONLY user-facing strings visible in UI
  */
-function findHardcodedStrings(filePath, content, existingTranslations) {
+function findHardcodedStrings(filePath, content, existingKeys) {
   const results = [];
   const lines = content.split('\n');
   
   lines.forEach((line, lineNumber) => {
-    // Skip if already has translation
-    if (line.includes("t('") || line.includes('t("') || line.includes('t(`')) return;
+    // Skip if already has translation (including {t( for JSX)
+    if (line.includes("t('") || line.includes('t("') || line.includes('t(`') || line.includes('{t(')) return;
     
-    // Skip if should be excluded
-    if (shouldSkipString('', line)) return;
+    // Skip comments, imports, etc.
+    if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.trim().startsWith('*')) return;
+    if (line.trim().startsWith('import ') || line.trim().startsWith('export ')) return;
+    if (line.includes('console.log') || line.includes('console.error')) return;
     
     // Pattern 1: JSX text content between tags (quoted strings)
     // Look for: >"Text here"< or >'Text here'<
@@ -200,35 +206,36 @@ function findHardcodedStrings(filePath, content, existingTranslations) {
     while ((match = jsxTextQuotedPattern.exec(line)) !== null) {
       const text = match[1].trim();
       
-      if (!shouldSkipString(text, line) && 
-          !isAlreadyTranslated(text, existingTranslations) &&
-          text.length >= 3) {
-        results.push({
-          text,
-          line: lineNumber + 1,
-          context: line.trim(),
-          file: filePath,
-          type: 'jsx-text-quoted',
-          confidence: 'high'
-        });
-      }
+        if (!shouldSkipString(text, line) && text.length >= 3) {
+          results.push({
+            text,
+            line: lineNumber + 1,
+            context: line.trim(),
+            file: filePath,
+            type: 'jsx-text-quoted',
+            confidence: 'high'
+          });
+        }
     }
     
     // Pattern 2: JSX text content between tags (unquoted - direct text)
     // Look for: >Text here< (not in JSX expression, not already translated)
     // This catches: <p>Some text</p> or <div>Hello World</div>
     // But skips: <p>{t('key')}</p> or <div>{variable}</div>
-    if (!line.includes('{') && !line.includes('t(')) {
-      const jsxTextUnquotedPattern = />\s*([A-Z][A-Za-z\s]{2,}?)\s*</g;
+    // Updated to catch cases even with { present, as long as no t( call
+    if (!line.includes('t(') && !line.includes('{t(')) {
+      const jsxTextUnquotedPattern = />([A-Z][A-Za-z\s\(\)]{2,}?)</g;
       while ((match = jsxTextUnquotedPattern.exec(line)) !== null) {
         const text = match[1].trim();
         
-        // Skip if it looks like a closing tag or attribute
-        if (text.includes('<') || text.includes('>') || text.includes('=')) continue;
+        // Skip if it looks like a closing tag or attribute or has variables
+        if (text.includes('<') || text.includes('>') || text.includes('=') || 
+            text.includes('{') || text.includes('}') || text.includes('$')) continue;
         
         if (!shouldSkipString(text, line) && 
-            !isAlreadyTranslated(text, existingTranslations) &&
-            text.length >= 3) {
+            text.length >= 3 &&
+            // Allow button text, section headers, etc.
+            (text.match(/^[A-Z]/) || text.includes(' '))) {
           results.push({
             text,
             line: lineNumber + 1,
@@ -241,16 +248,16 @@ function findHardcodedStrings(filePath, content, existingTranslations) {
       }
     }
     
-    // Pattern 3: Button/link text content
-    // Look for: <button>Text</button> or <a>Text</a> (but not if it has {t()} inside)
+    // Pattern 3: Button/link text content (including React components with capital letters)
+    // Look for: <button>Text</button>, <Button>Text</Button>, <a>Text</a>, etc.
+    // But not if it has {t()} inside
     if (!line.includes('{t(') && !line.includes('{t(')) {
-      const buttonTextPattern = /<(button|a)[^>]*>\s*([A-Z][A-Za-z\s]{2,}?)\s*<\/(button|a)>/gi;
+      // Match both lowercase and capitalized tags (button, Button, etc.)
+      const buttonTextPattern = /<([Bb]utton|[Aa])[^>]*>([A-Z][A-Za-z\s\(\)]+?)<\/\1>/gi;
       while ((match = buttonTextPattern.exec(line)) !== null) {
         const text = match[2].trim();
         
-        if (!shouldSkipString(text, line) && 
-            !isAlreadyTranslated(text, existingTranslations) &&
-            text.length >= 3) {
+        if (!shouldSkipString(text, line) && text.length >= 3) {
           results.push({
             text,
             line: lineNumber + 1,
@@ -265,15 +272,28 @@ function findHardcodedStrings(filePath, content, existingTranslations) {
     
     // Pattern 4: User-facing attributes (title, placeholder, aria-label, alt)
     // ONLY these specific attributes that are visible to users
-    // Skip if already using t() in the attribute
-    if (!line.includes('{t(')) {
-      const attrPattern = /(title|placeholder|aria-label|alt)\s*=\s*['"]([A-Z][A-Za-z\s]{2,})['"]/gi;
+    // Skip if already using t() in the attribute - check for both t( and {t(
+    if (!line.includes('{t(') && !line.includes("t('") && !line.includes('t("')) {
+      // More flexible pattern to catch various placeholder/attribute formats
+      // This pattern now handles spaces, punctuation, and special characters better
+      const attrPattern = /(title|placeholder|aria-label|alt)\s*=\s*["']([^"']{3,})["']/gi;
       while ((match = attrPattern.exec(line)) !== null) {
         const text = match[2].trim();
         
+        // Must have at least one letter and be reasonable length
         if (!shouldSkipString(text, line) && 
-            !isAlreadyTranslated(text, existingTranslations) &&
-            text.length >= 3) {
+            text.length >= 3 &&
+            text.match(/[a-zA-Z]/) &&
+            // Exclude obvious non-translatable patterns
+            !text.match(/^[\d\-]+$/) &&
+            !text.match(/^[a-z0-9\-_]+$/) && // exclude CSS classes/IDs like "w-full"
+            !text.match(/^[a-z]+(-[a-z]+)+$/) && // exclude kebab-case like "border-gray-300"
+            !text.startsWith('http') &&
+            !text.startsWith('www.') &&
+            !text.startsWith('#') && // exclude color codes
+            !text.match(/^\d+px$/) && // exclude pixel values
+            !text.match(/^[\d\s]+$/) // exclude numbers with spaces
+        ) {
           results.push({
             text,
             line: lineNumber + 1,
@@ -413,11 +433,23 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
   // Pattern 4: Attribute values (title, placeholder, aria-label, alt)
   else if (line.match(/(title|placeholder|aria-label|alt)\s*=\s*['"]/) && !line.includes('{t(')) {
     if (line.includes(`"${originalText}"`) || line.includes(`'${originalText}'`)) {
-      newLine = line.replace(
-        new RegExp(`(['"])${escapedText}\\1`),
-        `$1{t('${formattedKey}')}$1`
-      );
-      needsUseTranslation = true;
+      // Check if this is a JSX attribute or a function parameter default
+      // Function parameters will have ({ before the line or be inside a parameter list
+      const isJSXAttribute = line.includes('<') || line.includes('/>') || line.includes('>');
+      const isFunctionParam = line.includes('}: ') || line.includes('):') || (lines[lineNumber - 2]?.includes('({') && !lines[lineNumber - 2]?.includes('<'));
+      
+      if (isJSXAttribute && !isFunctionParam) {
+        // For JSX attributes, wrap in curly braces
+        newLine = line.replace(
+          new RegExp(`(['"])${escapedText}\\1`),
+          `{t('${formattedKey}')}`
+        );
+        needsUseTranslation = true;
+      } else {
+        // For function parameters, skip - can't use JSX syntax here
+        // These should be handled manually or the component should use the translation internally
+        return { fixed: false, needsTranslation: false };
+      }
     }
   }
   
@@ -457,22 +489,80 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
       }
       
       if (componentStart !== -1) {
-        // Find the opening brace
-        let hookInsertIndex = componentStart + 1;
-        for (let i = componentStart + 1; i < Math.min(componentStart + 10, lines.length); i++) {
+        // Find the opening brace of the function body
+        let braceIndex = -1;
+        for (let i = componentStart; i < Math.min(componentStart + 10, lines.length); i++) {
           if (lines[i].includes('{')) {
-            hookInsertIndex = i + 1;
+            braceIndex = i;
             break;
           }
         }
         
-        // Check if hook already exists nearby
-        const nearbyLines = lines.slice(hookInsertIndex, hookInsertIndex + 5).join('\n');
-        if (!nearbyLines.includes('useTranslation')) {
-          const indent = lines[hookInsertIndex]?.match(/^(\s*)/)?.[1] || '  ';
-          // Use proper namespace in useTranslation hook
-          const namespaceForHook = namespace !== 'common' ? `['${namespace}', 'common']` : `['common']`;
-          lines.splice(hookInsertIndex, 0, `${indent}const { t } = useTranslation(${namespaceForHook});`);
+        if (braceIndex !== -1) {
+          // Find the first appropriate line to insert the hook
+          // It should be:
+          // 1. After any existing hooks (useState, useEffect, etc.)
+          // 2. Before any useQuery, useMutation, or other hook calls that might use t()
+          // 3. Not inside any object literal or function call
+          
+          let hookInsertIndex = braceIndex + 1;
+          let foundGoodSpot = false;
+          
+          // Look for existing hooks or variable declarations
+          for (let i = braceIndex + 1; i < Math.min(braceIndex + 20, lines.length); i++) {
+            const line = lines[i].trim();
+            
+            // Skip empty lines at the start
+            if (!line && i === braceIndex + 1) {
+              hookInsertIndex = i + 1;
+              continue;
+            }
+            
+            // If we find another hook call (useState, useEffect, etc.) or const declaration
+            // that's not useQuery/useMutation, continue past it
+            if (line.match(/^const\s+.*=\s+(useState|useEffect|useCallback|useMemo|useRef|useContext|useReducer|useApiClient|useAuth)/)) {
+              hookInsertIndex = i + 1;
+              foundGoodSpot = true;
+              continue;
+            }
+            
+            // If we hit a useQuery or useMutation, insert BEFORE it
+            if (line.match(/^const\s+.*=\s+(useQuery|useMutation)/)) {
+              // Insert before this line
+              hookInsertIndex = i;
+              foundGoodSpot = true;
+              break;
+            }
+            
+            // If we find a return statement or JSX, we've gone too far
+            if (line.startsWith('return') || line.startsWith('<')) {
+              break;
+            }
+            
+            // If we find any other non-empty, non-comment line, this is a good spot
+            if (line && !line.startsWith('//') && !line.startsWith('/*')) {
+              hookInsertIndex = i;
+              foundGoodSpot = true;
+              break;
+            }
+          }
+          
+          // Check if hook already exists nearby
+          const nearbyLines = lines.slice(Math.max(0, hookInsertIndex - 3), hookInsertIndex + 5).join('\n');
+          if (!nearbyLines.includes('useTranslation')) {
+            const indent = lines[hookInsertIndex]?.match(/^(\s*)/)?.[1] || '  ';
+            // Use proper namespace in useTranslation hook
+            const namespaceForHook = namespace !== 'common' ? `['${namespace}', 'common']` : `['common']`;
+            const hookLine = `${indent}const { t } = useTranslation(${namespaceForHook});`;
+            
+            // Insert the hook line
+            lines.splice(hookInsertIndex, 0, hookLine);
+            
+            // Add a blank line after the hook if the next line isn't empty
+            if (lines[hookInsertIndex + 1] && lines[hookInsertIndex + 1].trim() !== '') {
+              lines.splice(hookInsertIndex + 1, 0, '');
+            }
+          }
         }
       }
     }
@@ -490,13 +580,15 @@ function fixHardcodedString(filePath, lineNumber, originalText, translationKey, 
 async function autoFix() {
   console.log('🔍 Scanning for hardcoded user-facing strings...\n');
   
-  // Load all existing translations to avoid duplicates
-  const existingTranslations = loadAllTranslationValues();
-  console.log(`📚 Loaded ${existingTranslations.size} existing translation values\n`);
+  // Load all existing translation KEYS to check for duplicates
+  const existingKeys = loadAllTranslationKeys();
+  console.log(`📚 Loaded ${existingKeys.size} existing translation keys\n`);
   
-  // Scan files
-  const files = scanDirectory(FRONTEND_DIR);
-  console.log(`📂 Scanning ${files.length} files...\n`);
+  // Scan files from both frontend and admin directories
+  const frontendFiles = scanDirectory(FRONTEND_DIR);
+  const adminFiles = scanDirectory(ADMIN_DIR);
+  const files = [...frontendFiles, ...adminFiles];
+  console.log(`📂 Scanning ${files.length} files (${frontendFiles.length} frontend + ${adminFiles.length} admin)...\n`);
   
   // Verbose: Show file scanning progress
   let filesScanned = 0;
@@ -513,7 +605,7 @@ async function autoFix() {
   for (const file of files) {
     try {
       const content = fs.readFileSync(file, 'utf8');
-      const fileResults = findHardcodedStrings(file, content, existingTranslations);
+      const fileResults = findHardcodedStrings(file, content, existingKeys);
       
       filesScanned++;
       if (fileResults.length > 0) {
@@ -521,7 +613,10 @@ async function autoFix() {
         scanStats.filesWithStrings++;
         scanStats.totalStringsFound += fileResults.length;
         
-        const relPath = path.relative(FRONTEND_DIR, file);
+        // Get relative path from either frontend or admin directory
+        const relPath = file.includes(ADMIN_DIR) 
+          ? 'admin/' + path.relative(ADMIN_DIR, file)
+          : 'frontend/' + path.relative(FRONTEND_DIR, file);
         scanStats.stringsByFile[relPath] = fileResults.length;
         
         // Count by type
@@ -577,7 +672,9 @@ async function autoFix() {
   if (allResults.length > 0) {
     console.log('📝 Sample findings (first 15):');
     allResults.slice(0, 15).forEach(r => {
-      const relPath = path.relative(FRONTEND_DIR, r.file);
+      const relPath = r.file.includes(ADMIN_DIR)
+        ? 'admin/' + path.relative(ADMIN_DIR, r.file)
+        : 'frontend/' + path.relative(FRONTEND_DIR, r.file);
       const confidence = r.confidence === 'high' ? '✓' : '○';
       console.log(`   ${confidence} "${r.text}" in ${relPath}:${r.line} (${r.type})`);
     });
@@ -625,43 +722,31 @@ async function autoFix() {
       
       // Check if key already exists
       const existingValue = key.split('.').reduce((obj, k) => obj?.[k], translations);
+      const formattedKey = translationKey.replace(/^([^.]+)\./, '$1:');
       
-      if (existingValue) {
-        skipped.push({
-          file: result.file,
-          line: result.line,
-          text: result.text,
-          reason: `Translation key already exists: ${translationKey.replace(/^([^.]+)\./, '$1:')}`
-        });
-        continue;
-      }
+      const keyAlreadyExists = existingValue || translationKeyExists(formattedKey, existingKeys);
       
-      // Also check if the exact text value already exists in translations
-      if (isAlreadyTranslated(result.text, existingTranslations)) {
-        skipped.push({
-          file: result.file,
-          line: result.line,
-          text: result.text,
-          reason: 'Text already exists in translation files'
-        });
-        continue;
-      }
+      // If key exists, we still want to fix the CODE to use it (don't skip!)
+      // We just won't add it to translation files again
       
       // Fix the code
       const fixResult = fixHardcodedString(result.file, result.line, result.text, translationKey, namespace);
       
       if (fixResult.fixed) {
-        // Add translation key
-        if (!translationKeys.has(namespace)) {
-          translationKeys.set(namespace, {});
+        // Only add translation key if it doesn't already exist
+        if (!keyAlreadyExists) {
+          if (!translationKeys.has(namespace)) {
+            translationKeys.set(namespace, {});
+          }
+          setNestedValue(translationKeys.get(namespace), key, result.text);
         }
-        setNestedValue(translationKeys.get(namespace), key, result.text);
         
         fixed.push({
           file: result.file,
           line: result.line,
           text: result.text,
-          translationKey: translationKey.replace(/^([^.]+)\./, '$1:')
+          translationKey: translationKey.replace(/^([^.]+)\./, '$1:'),
+          keyStatus: keyAlreadyExists ? 'used existing' : 'created new'
         });
       } else {
         skipped.push({
@@ -681,7 +766,7 @@ async function autoFix() {
     }
   }
   
-  // Save translation files
+  // Save translation files (EN)
   for (const [namespace, keys] of translationKeys.entries()) {
     const translations = loadTranslationFile(namespace);
     
@@ -691,9 +776,72 @@ async function autoFix() {
     }
     
     saveTranslationFile(namespace, translations);
+    console.log(`   ✅ Updated EN translation file: ${namespace}.json`);
   }
   
-  return {
+  // Auto-sync to FR and DE
+  if (translationKeys.size > 0) {
+    console.log('\n🔄 Auto-syncing new keys to French and German...');
+    for (const namespace of translationKeys.keys()) {
+      const enTranslations = loadTranslationFile(namespace);
+      
+      // Sync to French
+      const frPath = path.join(__dirname, '../packages/translations/locales/fr', `${namespace}.json`);
+      if (fs.existsSync(frPath)) {
+        const frTranslations = JSON.parse(fs.readFileSync(frPath, 'utf8'));
+        let frAdded = 0;
+        
+        function syncKeys(enObj, frObj, prefix = '') {
+          for (const [key, value] of Object.entries(enObj)) {
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+              if (!frObj[key]) frObj[key] = {};
+              syncKeys(value, frObj[key], fullKey);
+            } else if (typeof value === 'string') {
+              if (!frObj[key]) {
+                frObj[key] = `[FR] ${value}`;
+                frAdded++;
+              }
+            }
+          }
+        }
+        
+        syncKeys(enTranslations, frTranslations);
+        fs.writeFileSync(frPath, JSON.stringify(frTranslations, null, 2) + '\n', 'utf8');
+        if (frAdded > 0) console.log(`   ✅ French: Added ${frAdded} keys to ${namespace}.json`);
+      }
+      
+      // Sync to German
+      const dePath = path.join(__dirname, '../packages/translations/locales/de', `${namespace}.json`);
+      if (fs.existsSync(dePath)) {
+        const deTranslations = JSON.parse(fs.readFileSync(dePath, 'utf8'));
+        let deAdded = 0;
+        
+        function syncKeys(enObj, deObj, prefix = '') {
+          for (const [key, value] of Object.entries(enObj)) {
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+              if (!deObj[key]) deObj[key] = {};
+              syncKeys(value, deObj[key], fullKey);
+            } else if (typeof value === 'string') {
+              if (!deObj[key]) {
+                deObj[key] = `[DE] ${value}`;
+                deAdded++;
+              }
+            }
+          }
+        }
+        
+        syncKeys(enTranslations, deTranslations);
+        fs.writeFileSync(dePath, JSON.stringify(deTranslations, null, 2) + '\n', 'utf8');
+        if (deAdded > 0) console.log(`   ✅ German: Added ${deAdded} keys to ${namespace}.json`);
+      }
+    }
+    console.log('✅ Auto-sync to FR/DE complete!\n');
+  }
+  
+  // Generate detailed report
+  const report = {
     success: true,
     fixed: fixed.length,
     skipped: skipped.length,
@@ -705,19 +853,51 @@ async function autoFix() {
       scanStats
     },
     message: (() => {
-      let msg = `Successfully fixed ${fixed.length} hardcoded strings.`;
-      if (skipped.length > 0) {
-        msg += ` ${skipped.length} skipped (already translated or filtered).`;
+      let msg = `✅ Auto-fix complete!\n\n`;
+      msg += `📊 Results:\n`;
+      msg += `   • Fixed: ${fixed.length} hardcoded strings\n`;
+      msg += `   • Skipped: ${skipped.length} (already using translations)\n`;
+      msg += `   • Errors: ${errors.length}\n\n`;
+      
+      if (fixed.length > 0) {
+        msg += `📝 What was fixed:\n`;
+        
+        // Group by file and count
+        const fileStats = {};
+        fixed.forEach(f => {
+          const relPath = f.file.includes('admin') 
+            ? 'admin/' + path.relative(ADMIN_DIR, f.file)
+            : 'frontend/' + path.relative(FRONTEND_DIR, f.file);
+          fileStats[relPath] = (fileStats[relPath] || 0) + 1;
+        });
+        
+        // Show top 10 files
+        Object.entries(fileStats)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .forEach(([file, count]) => {
+            msg += `   • ${file}: ${count} string${count > 1 ? 's' : ''}\n`;
+          });
+        
+        if (Object.keys(fileStats).length > 10) {
+          msg += `   • ... and ${Object.keys(fileStats).length - 10} more files\n`;
+        }
+        
+        msg += `\n✅ Translation keys created and synced to FR/DE\n`;
+        msg += `⚠️ Next step: Run database sync to make translations available in the app\n`;
+        msg += `   Command: node scripts/sync-json-to-database.mjs\n`;
+      } else if (skipped.length > 0) {
+        msg += '💡 All found strings were already using translation functions.\n';
+        msg += 'This means your codebase is well-translated! ✅\n';
+      } else {
+        msg += '💡 No hardcoded strings found. Your codebase is clean! ✅\n';
       }
-      if (errors.length > 0) {
-        msg += ` ${errors.length} errors.`;
-      }
-      if (fixed.length === 0 && skipped.length > 0) {
-        msg += '\n\n💡 All found strings were already translated or filtered out. This is good - it means your codebase is well-translated!';
-      }
+      
       return msg;
     })()
   };
+  
+  return report;
 }
 
 // Main execution

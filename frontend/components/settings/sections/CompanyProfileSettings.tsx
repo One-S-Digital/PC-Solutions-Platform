@@ -111,7 +111,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
               <div className="flex items-center gap-4">
                 <img
                   src={logoUrl}
-                  alt={t('common.logo')}
+                  alt={t('common:logo', 'Logo')}
                   className="w-24 h-24 rounded-lg border-2 border-gray-200 object-cover"
                 />
                 <div className="flex-1">
@@ -138,7 +138,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
               <div className="flex items-center gap-4">
                 <img
                   src={coverImageUrl}
-                  alt={t('common.cover')}
+                  alt={t('common:cover', 'Cover')}
                   className="w-32 h-20 rounded-lg border-2 border-gray-200 object-cover"
                 />
                 <div className="flex-1">
@@ -211,7 +211,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.vatNumber || ''}
                 onChange={(e) => onChange('vatNumber', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder="CHE-123.456.789"
+                placeholder={t('common:placeholders.vatNumber')}
               />
             </div>
           </div>
@@ -250,7 +250,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.phoneNumber || ''}
                 onChange={(e) => onChange('phoneNumber', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder="+41 XX XXX XX XX"
+                placeholder={t('common:placeholders.41xxxxxxxxx')}
               />
             </div>
 
@@ -430,7 +430,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.directOrderLink || ''}
                     onChange={(e) => onChange('directOrderLink', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
-                    placeholder="https://..."
+                    placeholder={t('common:placeholders.url')}
                   />
                 </div>
 
@@ -444,7 +444,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.catalogUrl || ''}
                     onChange={(e) => onChange('catalogUrl', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
-                    placeholder="https://..."
+                    placeholder={t('common:placeholders.url')}
                   />
                 </div>
               </div>
@@ -522,7 +522,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.bookingLink || ''}
                     onChange={(e) => onChange('bookingLink', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
-                    placeholder="https://..."
+                    placeholder={t('common:placeholders.url')}
                   />
                 </div>
               </div>

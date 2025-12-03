@@ -171,7 +171,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       className="shadow-sm focus:ring-swiss-mint focus:border-swiss-mint block w-full sm:text-sm border-gray-300 rounded-md p-2"
-                      placeholder="e.g., Preferred delivery times, specific packaging..."
+                      placeholder={t('marketplace:cart.notesPlaceholder')}
                     ></textarea>
                   </div>
                   <div className="flex justify-between text-base font-medium text-gray-900 mt-6">

@@ -3,6 +3,7 @@ console.log('📦 Messaging.tsx module loaded');
 import React, { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
+import { useTranslation } from 'react-i18next'
 
 import { 
   MessageSquare, 
@@ -69,8 +70,8 @@ const transformMessage = (msg: any, currentUserId?: string): Message & { isFromA
 }
 
 const Messaging: React.FC = () => {
-  console.log('🚀 Messaging component rendering...');
-  console.trace('Messaging component call stack');
+  // Debug logging removed - use React DevTools for render tracking
+  const { t } = useTranslation(['admin', 'common']);
   
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
@@ -237,7 +238,7 @@ const Messaging: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search conversations..."
+                placeholder={t('admin:messaging.searchPlaceholder')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -424,7 +425,7 @@ const Messaging: React.FC = () => {
                 <div className="flex-1">
                   <input
                     type="text"
-                    placeholder="Type your message..."
+                    placeholder={t('admin:messaging.typePlaceholder')}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}

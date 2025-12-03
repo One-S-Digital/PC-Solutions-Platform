@@ -53,7 +53,7 @@
     "confirmDeleteDocument": "Möchten Sie dieses Dokument wirklich löschen?",
     "backToCategoriesButton": "Zurück zu Kategorien",
     "searchPlaceholder": "Dokumente durchsuchen...",
-    "uploadButton": "Dokument hochladen",
+    "uploadButton": "[DE] Upload Document",
     "categoryDisplay": {
       "documentsCount": "{{count}} Dokumente",
       "viewCategoryAria": "{{title}} anzeigen"
@@ -71,9 +71,6 @@
       "downloadingAlert": "Herunterladen...",
       "previewingAlert": "Vorschau..."
     },
-    "uploadButton": {
-      "label": "Dokument hochladen"
-    },
     "emptyState": {
       "noDocuments": "Keine HR-Dokumente verfügbar"
     },
@@ -89,7 +86,8 @@
     "filters": {
       "canton": "Kanton",
       "region": "Region",
-      "policyType": "Richtlinientyp"
+      "policyType": "Richtlinientyp",
+      "allCantonsRegions": "[DE] All Cantons/Regions"
     },
     "tabs": {
       "cantonal": "Kantonal",
@@ -98,10 +96,13 @@
     "sections": {
       "compliance": "Compliance",
       "updates": "Aktualisierungen",
-      "downloads": "Downloads"
+      "downloads": "Downloads",
+      "categories": "[DE] Policy Categories"
     },
     "emptyState": {
-      "noPolicies": "Keine Richtlinien verfügbar"
+      "noPolicies": "Keine Richtlinien verfügbar",
+      "noPoliciesMatchFilters": "[DE] No policies match current filters",
+      "noPoliciesFoundForFilters": "[DE] No policies found for current filters."
     },
     "buttons": {
       "manageAlerts": "Warnungen verwalten",
@@ -113,6 +114,12 @@
       "published": "Veröffentlicht",
       "updated": "Aktualisiert",
       "effective": "Wirksam"
+    },
+    "adminNote": "[DE] Use Admin Dashboard to add/edit policies",
+    "loading": "[DE] Loading policies...",
+    "confirmDeleteAlert": "[DE] Are you sure you want to delete this alert?",
+    "errors": {
+      "downloadFailed": "[DE] Failed to download file. Please try again."
     }
   },
   "contentManagementDashboard": {
@@ -124,5 +131,14 @@
       "recentActivity": "Letzte Aktivität",
       "contentStatusFlags": "Inhaltsstatusindikatoren"
     }
+  },
+  "policyCategories": {
+    "EducationPolicy": "[DE] Education Policy",
+    "Health&Safety": "[DE] Health & Safety",
+    "Labor&Employment": "[DE] Labor & Employment",
+    "ChildProtection": "[DE] Child Protection",
+    "DataPrivacy": "[DE] Data Privacy",
+    "Environmental": "[DE] Environmental",
+    "Other": "[DE] Other Policies"
   }
 }

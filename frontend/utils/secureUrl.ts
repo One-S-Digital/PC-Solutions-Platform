@@ -10,17 +10,22 @@
 export function extractStorageKeyFromPublicUrl(publicUrl: string): string | null {
   try {
     // Handle R2 public domain URLs
-    if (publicUrl.includes('assets.procrechesolutions.com')) {
+    if (publicUrl.includes('assets.procrechesolutions.com') || 
+        publicUrl.includes('.r2.dev') ||
+        publicUrl.includes('r2.cloudflarestorage.com')) {
       const url = new URL(publicUrl);
-      // Remove leading slash and return the path as storage key
-      return url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
-    }
-
-    // Handle other R2 public URLs (if you have custom domains)
-    // Pattern: https://pub-xxxxx.r2.dev/path/to/file
-    if (publicUrl.includes('.r2.dev')) {
-      const url = new URL(publicUrl);
-      return url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+      const pathname = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+      const search = url.search;
+      const hash = url.hash;
+      const storageKey = `${pathname}${search}${hash}`;
+      
+      // Validate: reject path traversal attempts
+      if (storageKey.includes('..')) {
+        console.warn('Path traversal attempt detected:', publicUrl);
+        return null;
+      }
+      
+      return storageKey;
     }
 
     return null;
@@ -36,12 +41,19 @@ export function extractStorageKeyFromPublicUrl(publicUrl: string): string | null
 export function isPublicStorageUrl(url: string): boolean {
   if (!url) return false;
   
-  // Check for known R2 public domains
-  return (
-    url.includes('assets.procrechesolutions.com') ||
-    url.includes('.r2.dev') ||
-    url.includes('r2.cloudflarestorage.com')
-  );
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.toLowerCase();
+    
+    // Check for known R2 public domains
+    return (
+      hostname === 'assets.procrechesolutions.com' ||
+      hostname.endsWith('.r2.dev') ||
+      hostname.endsWith('.r2.cloudflarestorage.com')
+    );
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -109,15 +121,16 @@ export function ensureSecureFileUrl(fileUrl: string | undefined | null): string 
     return convertToSecureDownloadUrl(fileUrl);
   }
 
-  // If already a secure URL, return as-is
-  if (fileUrl.startsWith('/api/upload/download/') || 
-      fileUrl.includes('/api/upload/download/')) {
-    return fileUrl;
-  }
-
   // For relative paths or storage keys, assume they need secure endpoint
   if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
-    return `/api/upload/download/${fileUrl}`;
+    // Skip protocol-relative URLs and other schemes
+    if (fileUrl.startsWith('//') || fileUrl.includes(':')) {
+      return fileUrl;
+    }
+    
+    // Remove leading slash to avoid double slashes
+    const cleanPath = fileUrl.startsWith('/') ? fileUrl.substring(1) : fileUrl;
+    return `/api/upload/download/${cleanPath}`;
   }
 
   // Return original for other cases

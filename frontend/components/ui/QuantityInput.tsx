@@ -17,7 +17,8 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
     max = Infinity,
     stockStatus 
 }) => {
-const { t } = useTranslation();
+
+const { t } = useTranslation();
 
   const handleDecrement = () => {
     if (quantity > min) {
@@ -26,10 +27,10 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
   };
 
   const handleIncrement = () => {
-    if (quantity < max) {
+    if (quantity < max || stockStatus === 'On Demand') {
       onQuantityChange(quantity + 1);
-    } else if (quantity >= max && stockStatus !== 'Out of Stock' && stockStatus !== 'On Demand') { // Allow increment for on demand
-        alert(`Maximum quantity of ${max} reached for this item.`);
+    } else if (quantity >= max && stockStatus !== 'Out of Stock' && stockStatus !== 'On Demand') {
+        alert(t('common:messages.maxQuantityReached', { max, defaultValue: `Maximum quantity of ${max} reached for this item.` }));
     }
   };
 
@@ -40,9 +41,9 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
     }
     if (newQuantity < min) newQuantity = min;
     
-    if (newQuantity > max && stockStatus !== 'Out of Stock' && stockStatus !== 'On Demand') {
+    if (newQuantity > max && stockStatus !== 'On Demand') {
         newQuantity = max;
-        alert(`Maximum quantity of ${max} reached for this item.`);
+        alert(t('common:messages.maxQuantityReached', { max, defaultValue: `Maximum quantity of ${max} reached for this item.` }));
     }
     onQuantityChange(newQuantity);
   };
@@ -59,7 +60,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
         onClick={handleDecrement}
         disabled={isDecrementDisabled}
         className="px-3 h-full bg-gray-50 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-1 focus:ring-swiss-mint"
-        aria-label="Decrease quantity"
+        aria-label={t('common:labels.decreaseQuantity', 'Decrease quantity')}
       >
         <MinusIcon className="w-4 h-4 text-gray-700" />
       </button>
@@ -71,7 +72,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
         // Conditionally set max attribute if it's not Infinity and not 'On Demand'
         max={(max !== Infinity && stockStatus !== 'On Demand') ? max : undefined}
         className="w-14 h-full text-center border-l border-r border-gray-300 focus:outline-none focus:ring-1 focus:ring-swiss-mint focus:z-10 disabled:bg-gray-50 text-sm font-medium text-gray-700 no-spinners"
-        aria-label={t('common.labels.currentquantity')}
+        aria-label={t('common:labels.currentQuantity', 'Current quantity')}
         disabled={stockStatus === 'Out of Stock'}
       />
       <button
@@ -79,7 +80,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
         onClick={handleIncrement}
         disabled={isIncrementDisabled}
         className="px-3 h-full bg-gray-50 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-1 focus:ring-swiss-mint"
-        aria-label="Increase quantity"
+        aria-label={t('common:labels.increaseQuantity', 'Increase quantity')}
       >
         <PlusIcon className="w-4 h-4 text-gray-700" />
       </button>

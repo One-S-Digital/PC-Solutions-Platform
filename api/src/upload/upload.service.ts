@@ -341,7 +341,7 @@ export class UploadService {
    * Verify user has access to file by storage key
    * Returns asset if user has access, throws error otherwise
    */
-  async verifyFileAccess(storageKey: string, appUserId: string, userRole?: string) {
+  async verifyFileAccess(storageKey: string, appUserId: string) {
     const asset = await this.prisma.asset.findFirst({
       where: { storageKey },
       include: {
@@ -360,12 +360,18 @@ export class UploadService {
       throw new NotFoundException('File not found');
     }
 
+    // Fetch the requesting user's role from the database
+    const requestingUser = await this.prisma.appUser.findUnique({
+      where: { id: appUserId },
+      select: { role: true },
+    });
+
     // Allow access if:
     // 1. User is the uploader
     // 2. User is SUPER_ADMIN or ADMIN
     // 3. File is public (if you have a public flag - not implemented here)
     const isOwner = asset.uploadedById === appUserId;
-    const isAdmin = userRole === 'SUPER_ADMIN' || userRole === 'ADMIN';
+    const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
 
     if (!isOwner && !isAdmin) {
       this.logger.warn(`Access denied to file ${storageKey} for user ${appUserId}`);
@@ -377,8 +383,9 @@ export class UploadService {
 
   /**
    * Get asset by storage key (for download endpoint)
+   * @private This method should only be called after verifyFileAccess
    */
-  async getAssetByStorageKey(storageKey: string) {
+  private async getAssetByStorageKey(storageKey: string) {
     const asset = await this.prisma.asset.findFirst({
       where: { storageKey },
     });

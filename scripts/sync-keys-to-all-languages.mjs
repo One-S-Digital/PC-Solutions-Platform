@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 
 const TRANSLATIONS_DIR = path.join(__dirname, '..', 'packages', 'translations', 'locales');
 
-const namespaces = ['common', 'auth', 'dashboard', 'pricing'];
+const namespaces = ['common', 'auth', 'dashboard', 'pricing', 'admin', 'marketplace', 'recruitment', 'content', 'users', 'settings', 'messages', 'signup', 'parentLeadForm', 'profile'];
 const languages = ['en', 'fr', 'de'];
 
 function getAllKeys(obj, prefix = '') {

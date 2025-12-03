@@ -23,7 +23,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isCurrentUserSender = message.senderId === currentUser?.id;
   const isImage = message.messageType === 'IMAGE' && message.fileUrl;
   const isFile = message.messageType === 'FILE' && message.fileUrl;
-  const isDeleted = message.content === '[Message deleted]' || message.messageType === 'SYSTEM';
+  const isDeleted = message.content === '[Message deleted]';
+  const isSystem = message.messageType === 'SYSTEM';
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
   const [showActions, setShowActions] = useState(false);
@@ -42,14 +43,28 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
   const handleEdit = async () => {
     if (editContent.trim() && editContent !== message.content) {
-      await updateMessage(message.id, editContent.trim());
+      try {
+        await updateMessage(message.id, editContent.trim());
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Failed to update message:', error);
+        alert(t('common:errors.updateFailed', 'Failed to update message. Please try again.'));
+        // Keep edit mode open so user can retry
+        return;
+      }
+    } else {
+      setIsEditing(false);
     }
-    setIsEditing(false);
   };
 
   const handleDelete = async () => {
     if (window.confirm(t('messages:confirmDelete', 'Are you sure you want to delete this message?'))) {
-      await deleteMessage(message.id);
+      try {
+        await deleteMessage(message.id);
+      } catch (error) {
+        console.error('Failed to delete message:', error);
+        alert(t('common:errors.deleteFailed', 'Failed to delete message. Please try again.'));
+      }
     }
   };
 
@@ -57,6 +72,20 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
     setEditContent(message.content);
     setIsEditing(false);
   };
+
+  // Reset fetch flag when URL changes
+  useEffect(() => {
+    imageFetchedRef.current = false;
+  }, [message.fileUrl]);
+
+  // Cleanup blob URL when it changes
+  useEffect(() => {
+    return () => {
+      if (imageBlobUrl) {
+        window.URL.revokeObjectURL(imageBlobUrl);
+      }
+    };
+  }, [imageBlobUrl]);
 
   // Fetch image with authentication and create blob URL
   useEffect(() => {
@@ -134,14 +163,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
       fetchAuthenticatedImage();
     }
-
-    // Cleanup blob URL on unmount
-    return () => {
-      if (imageBlobUrl) {
-        window.URL.revokeObjectURL(imageBlobUrl);
-      }
-    };
-  }, [isImage, message.fileUrl, getToken, imageBlobUrl]);
+  }, [isImage, message.fileUrl, getToken]);
 
   const handleFileDownload = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -183,6 +205,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       className={`flex mb-3 ${isCurrentUserSender ? 'justify-end' : 'justify-start'} group`}
       onMouseEnter={() => isCurrentUserSender && !isEditing && setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
+      onFocus={() => isCurrentUserSender && !isEditing && setShowActions(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && setShowActions(false)}
+      tabIndex={isCurrentUserSender ? 0 : -1}
     >
       <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-soft relative ${
         isCurrentUserSender 

@@ -19,9 +19,11 @@ const ConfirmDestructiveActionModal: React.FC<ConfirmDestructiveActionModalProps
   onConfirm,
   title,
   message,
-  confirmButtonText = {t('common.buttons.confirm')}
-  const { t } = useTranslation();
+  confirmButtonText
 }) => {
+  const { t } = useTranslation();
+  const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');
+
   if (!isOpen) return null;
 
   return (
@@ -34,7 +36,7 @@ const ConfirmDestructiveActionModal: React.FC<ConfirmDestructiveActionModalProps
             Cancel
           </Button>
           <Button variant="danger" onClick={onConfirm}>
-            {confirmButtonText}
+            {finalConfirmButtonText}
           </Button>
         </div>
       </div>

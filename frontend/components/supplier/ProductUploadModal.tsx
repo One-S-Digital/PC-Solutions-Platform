@@ -1222,7 +1222,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
                       {label('primaryImage', 'Primary image')}
                     </label>
                     <FileUploadZone
-                      label={t('productUploadModal.labels.uploadPrimaryImage')}
+                      label={label('uploadPrimaryImage', 'Upload primary image')}
                       assetKind="PRODUCT_IMAGE"
                       acceptedMimeTypes="image/*"
                       onUploadSuccess={(asset) =>

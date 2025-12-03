@@ -95,7 +95,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
             <div className="relative group">
               <img
                 src={logoUrl}
-                alt={t('common.logo')}
+                alt={t('common:logo', 'Logo')}
                 className="w-40 h-40 rounded-full border-4 border-white shadow-lg object-cover bg-white"
               />
               <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full cursor-pointer transition-opacity">
@@ -179,7 +179,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
               value={formData.vatNumber || ''}
               onChange={(e) => onChange('vatNumber', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="CHE-123.456.789"
+              placeholder={t('common:placeholders.vatNumber')}
             />
           </div>
         </div>
@@ -314,7 +314,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
               value={formData.bookingLink || ''}
               onChange={(e) => onChange('bookingLink', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="https://..."
+              placeholder={t('common:placeholders.url')}
             />
           </div>
         </div>
