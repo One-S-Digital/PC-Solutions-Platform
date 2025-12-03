@@ -83,6 +83,7 @@ import EducatorSupportPage from './pages/educator/EducatorSupportPage';
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
 import ParentSupportPage from './pages/parent/ParentSupportPage';
 import PricingPage from './pages/PricingPage';
+import PublicPartnersPage from './pages/PublicPartnersPage';
 import ProfilePage from './pages/ProfilePage';
 import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
 import EducatorProfileViewPage from './pages/profile/EducatorProfileViewPage';
@@ -198,7 +199,7 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/hr-procedures" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><HRProceduresPage /></ProtectedRoute>} />
         <Route path="/state-policies" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.EDUCATOR, UserRole.PARENT]}><StatePoliciesPage /></ProtectedRoute>} />
         <Route path="/e-learning" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><ELearningPage /></ProtectedRoute>} />
-          <Route path="/partners" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><PartnersPage /></ProtectedRoute>} />
+          <Route path="/admin/partners" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><PartnersPage /></ProtectedRoute>} />
           <Route
             path="/partner/:partnerId"
             element={
@@ -407,6 +408,7 @@ const App: React.FC = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/partners" element={<PublicPartnersPage />} />
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
