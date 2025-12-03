@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query, UseInterceptors, UploadedFile, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query, UseInterceptors, UploadedFile, Body, ParseUUIDPipe } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudflareR2Service } from './cloudflare-r2.service';
@@ -97,7 +97,7 @@ export class UploadController {
    */
   @Delete('files/:id')
   async deleteFile(
-    @Param('id') assetId: string,
+    @Param('id', ParseUUIDPipe) assetId: string,
     @Req() req: Request,
   ) {
     try {
@@ -130,7 +130,7 @@ export class UploadController {
    * GET /api/upload/asset/:id
    */
   @Get('asset/:id')
-  async getAsset(@Param('id') assetId: string) {
+  async getAsset(@Param('id', ParseUUIDPipe) assetId: string) {
     try {
       this.logger.log(`Fetching asset: ${assetId}`);
       
