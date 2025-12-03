@@ -44,7 +44,7 @@
     "title": "Bild zuschneiden",
     "subtitle": "Passen Sie die Auswahl für Ihr {{type}} an",
     "targetSize": "Ausgabe: {{width}}×{{height}}px",
-    "dragHint": "Ziehen zum Verschieben, Ecken zum Größe ändern",
+    "dragHint": "Ziehen zum Verschieben, Ecken zur Größenänderung",
     "qualityNote": "Das Bild wird als hochwertige JPEG-Datei gespeichert",
     "processing": "Verarbeitung...",
     "apply": "Zuschnitt anwenden"

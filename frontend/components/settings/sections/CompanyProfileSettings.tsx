@@ -4,7 +4,7 @@ import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../.
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
-import ImageCropperModal, { ImageCropPreset, IMAGE_CROP_PRESETS } from '../../shared/ImageCropperModal';
+import ImageCropperModal from '../../shared/ImageCropperModal';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
 import { 
   BuildingOfficeIcon, 

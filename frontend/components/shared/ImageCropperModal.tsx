@@ -259,11 +259,8 @@ const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
     
     const handleSize = 15;
     
-    // Check if clicking on resize handles
+    // Check if clicking on resize handle (only SE corner is functional for resize)
     const corners = [
-      { x: cropArea.x, y: cropArea.y, cursor: 'nw-resize', type: 'nw' },
-      { x: cropArea.x + cropArea.width, y: cropArea.y, cursor: 'ne-resize', type: 'ne' },
-      { x: cropArea.x, y: cropArea.y + cropArea.height, cursor: 'sw-resize', type: 'sw' },
       { x: cropArea.x + cropArea.width, y: cropArea.y + cropArea.height, cursor: 'se-resize', type: 'se' },
     ];
     
@@ -400,7 +397,7 @@ const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
       });
       
       // Create file from blob
-      const fileName = imageFile?.name.replace(/\.[^.]+$/, '') + '_cropped.jpg';
+      const fileName = (imageFile?.name?.replace(/\.[^.]+$/, '') || 'image') + '_cropped.jpg';
       const croppedFile = new File([blob], fileName, { type: 'image/jpeg' });
       
       onCropComplete(croppedFile);

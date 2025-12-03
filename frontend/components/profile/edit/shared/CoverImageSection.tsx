@@ -77,12 +77,13 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
     setUploadError(null);
 
     try {
-      // Show preview immediately
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(croppedFile);
+      // Create preview URL synchronously before upload
+      const previewDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(croppedFile);
+      });
+      setPreviewUrl(previewDataUrl);
 
       // Upload to server
       const response = await upload('/upload/file', croppedFile, { assetKind });

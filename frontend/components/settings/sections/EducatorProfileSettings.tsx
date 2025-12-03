@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { SettingsFormData, UserRole } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
-import ImageCropperModal, { IMAGE_CROP_PRESETS } from '../../shared/ImageCropperModal';
+import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
 import Button from '../../ui/Button';
 import { 

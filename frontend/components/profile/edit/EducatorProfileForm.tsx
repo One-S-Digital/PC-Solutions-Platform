@@ -1,21 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { SettingsFormData } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
-import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
 import CoverImageSection from './shared/CoverImageSection';
 import ContactDetailsSection from './shared/ContactDetailsSection';
 import AvatarSection from './shared/AvatarSection';
 import FileUploadZone from '../../ui/FileUploadZone';
-import ImageCropperModal from '../../shared/ImageCropperModal';
 import {
   UserCircleIcon,
   BriefcaseIcon,
   AcademicCapIcon,
   StarIcon,
   CalendarDaysIcon,
-  CameraIcon,
   PaperClipIcon,
   DocumentTextIcon,
   XMarkIcon,
@@ -43,16 +40,12 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
 
   const handleAvatarChange = (url: string, assetId?: string) => {
     onChange('avatarUrl', url);
-    if (assetId) {
-      onChange('avatarAssetId', assetId);
-    }
+    onChange('avatarAssetId', assetId ?? '');
   };
 
   const handleCoverChange = (url: string, assetId?: string) => {
     onChange('coverImageUrl', url);
-    if (assetId) {
-      onChange('coverAssetId', assetId);
-    }
+    onChange('coverAssetId', assetId ?? '');
   };
 
   const handleCvUpload = (asset: any) => {

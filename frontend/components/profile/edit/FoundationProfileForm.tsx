@@ -60,16 +60,12 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
 
   const handleLogoChange = (url: string, assetId?: string) => {
     onChange('logoUrl', url);
-    if (assetId) {
-      onChange('logoAssetId', assetId);
-    }
+    onChange('logoAssetId', assetId ?? '');
   };
 
   const handleCoverChange = (url: string, assetId?: string) => {
     onChange('coverImageUrl', url);
-    if (assetId) {
-      onChange('coverAssetId', assetId);
-    }
+    onChange('coverAssetId', assetId ?? '');
   };
 
   return (
