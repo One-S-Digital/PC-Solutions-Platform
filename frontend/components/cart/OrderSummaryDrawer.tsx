@@ -6,7 +6,7 @@ import Button from '../ui/Button';
 import { XMarkIcon, ShoppingCartIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { OrderRequestStatus, LineItem, Order } from '../../types';
 import QuantityInput from '../ui/QuantityInput'; // Assuming QuantityInput is in ui folder
-import { MOCK_ORDERS } from '../../constants'; // To store submitted orders
+import { INITIAL_ORDERS } from '../../constants'; // TODO: Replace with real API calls
 import { useTranslation } from 'react-i18next';
 
 interface OrderSummaryDrawerProps {
@@ -64,9 +64,9 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
 
     // Simulate API call
     setTimeout(() => {
-      MOCK_ORDERS.push(newOrder); // Add to mock orders list
+      // TODO: Replace with real API call to submit order
+      INITIAL_ORDERS.push(newOrder); // Temporary - add to local state
       console.log('Order Submitted:', newOrder);
-      console.log('Current MOCK_ORDERS:', MOCK_ORDERS);
       
       clearCart();
       setNotes('');

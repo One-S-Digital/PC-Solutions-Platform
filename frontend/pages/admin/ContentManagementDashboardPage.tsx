@@ -204,7 +204,7 @@ const ContentManagementDashboardPage: React.FC = () => {
     }
   };
 
-  const handleContentSubmit = (data: Partial<Course | HRDocument | PolicyDocument>, file?: File) => {
+  const handleContentSubmit = async (data: Partial<Course | HRDocument | PolicyDocument>, file?: File): Promise<void> => {
     const commonFieldsBase = {
         id: `${uploadContentType}-${Date.now()}`,
         title: data.title || 'Untitled',
@@ -261,7 +261,7 @@ const ContentManagementDashboardPage: React.FC = () => {
         id: `pol${Date.now()}`,
         publishedDate: commonFieldsDate.publishedDate,
         lastUpdatedDate: commonFieldsDate.lastUpdatedDate,
-        category: policyData.category || 'Updates & News',
+        category: policyData.category || 'Other',
         policyType: policyData.policyType,
         country: policyData.country,
         region: policyData.region,

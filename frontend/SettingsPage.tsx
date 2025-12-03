@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from './contexts/AppContext';
 import { useNotifications } from './contexts/NotificationContext';
 import { UserRole, SettingsFormData, SupplierSettings, ProviderSettings, FoundationSettings } from './types';
-import { MOCK_SUPPLIER_SETTINGS, MOCK_PROVIDER_SETTINGS, MOCK_FOUNDATION_SETTINGS } from './constants';
+import { DEFAULT_ADMIN_SUPPLIER_SETTINGS, DEFAULT_ADMIN_PROVIDER_SETTINGS, DEFAULT_ADMIN_FOUNDATION_SETTINGS } from './constants';
 import Button from './components/ui/Button';
 import Card from './components/ui/Card';
 import {
@@ -51,11 +51,11 @@ const SettingsPage: React.FC = () => {
     if (currentUser) {
       let initialSettings: SettingsFormData = {} as SettingsFormData; // Default empty object for other roles
       if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
-        initialSettings = MOCK_SUPPLIER_SETTINGS as SettingsFormData;
+        initialSettings = DEFAULT_ADMIN_SUPPLIER_SETTINGS as SettingsFormData;
       } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
-        initialSettings = MOCK_PROVIDER_SETTINGS as SettingsFormData;
+        initialSettings = DEFAULT_ADMIN_PROVIDER_SETTINGS as SettingsFormData;
       } else if (currentUser.role === UserRole.FOUNDATION) {
-        initialSettings = MOCK_FOUNDATION_SETTINGS as SettingsFormData;
+        initialSettings = DEFAULT_ADMIN_FOUNDATION_SETTINGS as SettingsFormData;
       }
       // For other roles, it remains an empty object, AccountSecuritySettings will handle its own state from currentUser
       setFormData(JSON.parse(JSON.stringify(initialSettings))); 

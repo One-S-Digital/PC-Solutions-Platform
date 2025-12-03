@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { PlusCircleIcon, PencilSquareIcon, TrashIcon, EyeIcon, WrenchScrewdriverIcon, TagIcon } from '@heroicons/react/24/outline';
-import { MOCK_SERVICES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../../constants';
+import { INITIAL_SERVICES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../../constants';
 import { Service, ServiceCategory, SERVICE_CATEGORIES } from '../../types';
 import ServiceUploadModal from '../../components/service-provider/ServiceUploadModal';
 import { useAppContext } from '../../contexts/AppContext';
@@ -45,8 +45,8 @@ const ServiceProviderListingsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const [serviceListings, setServiceListings] = useState<Service[]>(
-    // Filter MOCK_SERVICES to only those belonging to the current service provider for initial state
-    MOCK_SERVICES.filter(s => s.providerId === currentUser?.orgId)
+    // Filter services to only those belonging to the current service provider for initial state
+    INITIAL_SERVICES.filter(s => s.providerId === currentUser?.orgId)
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -54,7 +54,7 @@ const ServiceProviderListingsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
   
-    const serviceCategories: (ServiceCategory | 'All')[] = ['All', ...new Set(MOCK_SERVICES.map(s => s.category))];
+    const serviceCategories: (ServiceCategory | 'All')[] = ['All', ...new Set(INITIAL_SERVICES.map(s => s.category))];
 
 
   const handleOpenModal = (service: Service | null = null) => {
@@ -101,6 +101,9 @@ const ServiceProviderListingsPage: React.FC = () => {
         deliveryType: data.deliveryType || 'On-site',
         priceInfo: data.priceInfo || 'Contact for quote',
         imageUrl: file ? URL.createObjectURL(file) : `https://picsum.photos/seed/newSrv${Date.now()}/400/300`,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         ...(data as Partial<Service>), // Spread remaining data which is already partial
       };
       setServiceListings(prev => [newService, ...prev]);

@@ -6,7 +6,7 @@ import { ShoppingCartIcon, PlusCircleIcon, ExclamationTriangleIcon } from '@hero
 import { useAppContext } from '../../contexts/AppContext';
 import Button from '../../components/ui/Button';
 import { useTranslation } from 'react-i18next';
-import { MOCK_ORDERS, MOCK_PRODUCTS, MOCK_ORGANIZATIONS } from '../../constants';
+import { INITIAL_ORDERS, INITIAL_PRODUCTS, INITIAL_ORGANIZATIONS } from '../../constants';
 import { OrderRequestStatus } from '../../types';
 
 const SupplierDashboardPage: React.FC = () => {
@@ -15,8 +15,8 @@ const SupplierDashboardPage: React.FC = () => {
   const { currentUser } = useAppContext();
 
   // Dynamic data based on logged-in supplier
-  const myProducts = currentUser?.orgId ? MOCK_PRODUCTS.filter(p => p.supplierId === currentUser.orgId) : [];
-  const myOrders = currentUser?.orgId ? MOCK_ORDERS.filter(o => o.supplierId === currentUser.orgId) : [];
+  const myProducts = currentUser?.orgId ? INITIAL_PRODUCTS.filter(p => p.supplierId === currentUser.orgId) : [];
+  const myOrders = currentUser?.orgId ? INITIAL_ORDERS.filter(o => o.supplierId === currentUser.orgId) : [];
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -60,7 +60,7 @@ const SupplierDashboardPage: React.FC = () => {
   };
 
   const getFoundationName = (orgId: string) => {
-    const org = MOCK_ORGANIZATIONS.find(o => o.id === orgId);
+    const org = INITIAL_ORGANIZATIONS.find(o => o.id === orgId);
     return org ? org.name : 'Unknown Foundation';
   };
 

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Card from '../../components/ui/Card';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
-import { MOCK_ORDERS, MOCK_ORGANIZATIONS } from '../../constants';
+import { INITIAL_ORDERS, INITIAL_ORGANIZATIONS } from '../../constants';
 import { Order, OrderRequestStatus } from '../../types';
 import Button from '../../components/ui/Button';
 import OrderRequestDetailModal from '../../components/supplier/OrderRequestDetailModal';
@@ -10,7 +10,7 @@ import OrderRequestDetailModal from '../../components/supplier/OrderRequestDetai
 const SupplierOrdersPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [statusFilter, setStatusFilter] = useState<OrderRequestStatus | 'All'>('All');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
@@ -26,7 +26,7 @@ const SupplierOrdersPage: React.FC = () => {
   const orderStatuses: (OrderRequestStatus | 'All')[] = ['All', ...Object.values(OrderRequestStatus)];
 
   const getFoundationName = (orgId: string) => {
-    const org = MOCK_ORGANIZATIONS.find(o => o.id === orgId);
+    const org = INITIAL_ORGANIZATIONS.find(o => o.id === orgId);
     return org ? org.name : t('foundationOrdersAppointmentsPage.unknownProvider');
   };
 

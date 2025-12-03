@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Card from '../../components/ui/Card';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
-import { MOCK_ORGANIZATIONS } from '../../constants';
+import { INITIAL_ORGANIZATIONS } from '../../constants';
 import { ServiceRequest, ServiceRequestStatus } from '../../types';
 import Button from '../../components/ui/Button';
 import ServiceRequestDetailModal from '../../components/service-provider/ServiceRequestDetailModal';
@@ -27,7 +27,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
   const requestStatuses: (ServiceRequestStatus | 'All')[] = ['All', ...Object.values(ServiceRequestStatus)];
 
   const getFoundationName = (orgId: string) => {
-    return MOCK_ORGANIZATIONS.find(o => o.id === orgId)?.name || t('foundationOrdersAppointmentsPage.unknownProvider');
+    return INITIAL_ORGANIZATIONS.find(o => o.id === orgId)?.name || t('foundationOrdersAppointmentsPage.unknownProvider');
   };
 
   const getStatusClass = (status: ServiceRequestStatus) => {

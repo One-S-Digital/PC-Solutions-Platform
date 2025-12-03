@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Order, OrderRequestStatus } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline';
-import { MOCK_ORGANIZATIONS } from '../../constants';
+import { INITIAL_ORGANIZATIONS } from '../../constants';
 
 interface OrderRequestDetailModalProps {
   order: Order | null;
@@ -19,7 +19,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
 
   if (!isOpen || !order) return null;
 
-  const daycare = MOCK_ORGANIZATIONS.find(org => org.id === order.foundationOrgId);
+  const daycare = INITIAL_ORGANIZATIONS.find(org => org.id === order.foundationOrgId);
 
   const handleViewProfile = () => {
     navigate(`/partner/${order.foundationOrgId}`);

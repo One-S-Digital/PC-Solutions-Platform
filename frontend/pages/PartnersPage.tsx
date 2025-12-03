@@ -1,6 +1,6 @@
 import React from 'react';
 import { Partner } from '../types';
-import { MOCK_PARTNERS } from '../constants';
+import { INITIAL_PARTNERS } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { BuildingStorefrontIcon, ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
@@ -50,7 +50,7 @@ const PartnersPage: React.FC = () => {
         <h2 className="text-3xl font-semibold text-swiss-charcoal text-center mb-2">{t('partners.featured.title')}</h2>
         <p className="text-center text-gray-600 mb-8">{t('partners.featured.subtitle')}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {MOCK_PARTNERS.map(partner => (
+          {INITIAL_PARTNERS.map(partner => (
             <PartnerCard key={partner.id} partner={partner} />
           ))}
         </div>

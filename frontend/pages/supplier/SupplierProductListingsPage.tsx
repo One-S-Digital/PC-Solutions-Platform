@@ -43,7 +43,7 @@ const SupplierProductListingsPage: React.FC = () => {
     setIsLoading(true);
     try {
       const query = new URLSearchParams({ supplierId: currentUser.orgId });
-      const response = await request<{ data?: Product[] }>(
+      const response = await request<Product[]>(
         `/marketplace/products?${query.toString()}`,
       );
       if (response.success === false) {
@@ -238,7 +238,7 @@ const SupplierProductListingsPage: React.FC = () => {
         ? `/marketplace/products/${editingProduct.id}`
         : '/marketplace/products';
       const method = editingProduct ? 'PATCH' : 'POST';
-      const response = await request<{ data?: Product }>(endpoint, {
+      const response = await request<Product>(endpoint, {
         method,
         body: JSON.stringify(payload),
       });
@@ -301,7 +301,7 @@ const SupplierProductListingsPage: React.FC = () => {
 
   const handleToggleVisibility = async (product: Product) => {
     try {
-      const response = await request<{ data?: Product }>(
+      const response = await request<Product>(
         `/marketplace/products/${product.id}`,
         {
           method: 'PATCH',

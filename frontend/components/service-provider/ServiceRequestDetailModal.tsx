@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ServiceRequest, ServiceRequestStatus } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline';
-import { MOCK_ORGANIZATIONS } from '../../constants';
+import { INITIAL_ORGANIZATIONS } from '../../constants';
 
 interface ServiceRequestDetailModalProps {
   request: ServiceRequest | null;
@@ -19,7 +19,7 @@ const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ r
 
   if (!isOpen || !request) return null;
 
-  const daycare = MOCK_ORGANIZATIONS.find(org => org.id === request.foundationOrgId);
+  const daycare = INITIAL_ORGANIZATIONS.find(org => org.id === request.foundationOrgId);
 
   const handleViewProfile = () => {
     navigate(`/partner/${request.foundationOrgId}`);

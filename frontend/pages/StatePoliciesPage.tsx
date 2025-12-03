@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { PolicyDocument, UserRole, PolicyAlert, PolicyAlertType, PolicyDocument as PolicyDocType, POLICY_CATEGORIES, POLICY_CATEGORY_LABELS, PolicyCategory, PolicyType, POLICY_TYPES_ENUM } from '../types';
-import { MOCK_POLICY_DOCS, MOCK_POLICY_ALERTS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
+import { INITIAL_POLICY_DOCS, INITIAL_POLICY_ALERTS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { NewspaperIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, DocumentTextIcon, InformationCircleIcon, PlusCircleIcon, ShieldExclamationIcon, AcademicCapIcon, HeartIcon, ShieldCheckIcon, LockClosedIcon, GlobeAltIcon, FolderIcon } from '@heroicons/react/24/outline';
@@ -132,7 +132,7 @@ const StatePoliciesPage: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<'All' | PolicyCategory>('All');
   
   const [policyDocs, setPolicyDocs] = useState<PolicyDocument[]>([]);
-  const [policyAlerts, setPolicyAlerts] = useState<PolicyAlert[]>(MOCK_POLICY_ALERTS);
+  const [policyAlerts, setPolicyAlerts] = useState<PolicyAlert[]>(INITIAL_POLICY_ALERTS);
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<PolicyAlert | null>(null);
@@ -176,8 +176,8 @@ const StatePoliciesPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Failed to fetch State Policies:', error);
-        // Fall back to mock data if API fails
-        setPolicyDocs(MOCK_POLICY_DOCS);
+        // Fall back to empty state if API fails
+        setPolicyDocs(INITIAL_POLICY_DOCS);
       } finally {
         setIsLoading(false);
       }

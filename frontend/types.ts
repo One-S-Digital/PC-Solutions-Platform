@@ -531,25 +531,6 @@ export interface ParentLead {
     responses: FoundationResponse[];
 }
 
-// Mock User for Parent
-export const MOCK_PARENT_USER: User = {
-  id: 'parentUser123',
-  clerkId: 'clerk_parentUser123',
-  name: 'Sophie D.', // Anonymized
-  firstName: 'Sophie',
-  lastName: 'D.',
-  email: 'sophie.d@example-parent.com', // Anonymized
-  role: UserRole.PARENT,
-  avatarUrl: 'https://picsum.photos/seed/sophie/100/100',
-  status: 'Active',
-  lastLogin: '2024-07-22T08:00:00Z',
-  memberSince: '2024-07-15T10:00:00Z',
-  isActive: true,
-  createdAt: '2024-07-15T10:00:00Z',
-  updatedAt: '2024-07-22T08:00:00Z',
-};
-
-
 export enum SignupRole {
     FOUNDATION = 'Foundation (Daycare)',
     SUPPLIER = 'Product Supplier',

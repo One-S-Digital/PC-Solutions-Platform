@@ -5,7 +5,7 @@ import {
     ClockIcon, CheckCircleIcon, ExclamationTriangleIcon, ShieldCheckIcon, CloudArrowDownIcon, WrenchScrewdriverIcon, ArrowPathIcon,
     CommandLineIcon
 } from '@heroicons/react/24/outline';
-import { MOCK_SYSTEM_MONITORING_DATA, MOCK_LOG_ENTRIES } from '../../constants';
+import { DEFAULT_SYSTEM_MONITORING_DATA, INITIAL_LOG_ENTRIES } from '../../constants';
 import { SystemEventType, SystemStatusLevel, LogEntry } from '../../types';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../../components/ui/Tabs';
@@ -33,7 +33,7 @@ const getStatusIndicator = (status: SystemStatusLevel) => {
 
 const AdminSystemMonitoringPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
-  const data = MOCK_SYSTEM_MONITORING_DATA;
+  const data = DEFAULT_SYSTEM_MONITORING_DATA;
 
   const eventIcons: Record<SystemEventType, React.ElementType> = {
     'Health Check': ShieldCheckIcon,
@@ -70,10 +70,10 @@ const AdminSystemMonitoringPage: React.FC = () => {
   };
 
   const logTabs = [
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.all'), content: <LogList logs={MOCK_LOG_ENTRIES} /> },
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.errors'), content: <LogList logs={MOCK_LOG_ENTRIES.filter(l => l.level === 'ERROR')} /> },
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.warnings'), content: <LogList logs={MOCK_LOG_ENTRIES.filter(l => l.level === 'WARN')} /> },
-    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.info'), content: <LogList logs={MOCK_LOG_ENTRIES.filter(l => l.level === 'INFO')} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.all'), content: <LogList logs={INITIAL_LOG_ENTRIES} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.errors'), content: <LogList logs={INITIAL_LOG_ENTRIES.filter(l => l.level === 'ERROR')} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.warnings'), content: <LogList logs={INITIAL_LOG_ENTRIES.filter(l => l.level === 'WARN')} /> },
+    { label: t('adminSystemMonitoringPage.rawLogConsole.tabs.info'), content: <LogList logs={INITIAL_LOG_ENTRIES.filter(l => l.level === 'INFO')} /> },
   ];
 
   return (

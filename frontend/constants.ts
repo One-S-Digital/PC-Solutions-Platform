@@ -30,9 +30,12 @@ export const REGIONS_BY_COUNTRY: Record<CountryForPolicies, readonly string[]> =
   France: ['Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Brittany', 'Centre-Val de Loire', 'Corsica', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandy', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', 'Provence-Alpes-Côte d\'Azur'],
 };
 
-// Production-ready settings (mock data removed)
-export const MOCK_PLATFORM_SETTINGS: PlatformSettings = {
-  platformName: 'ParentConnect',
+// =============================================================================
+// DEFAULT PLATFORM SETTINGS
+// These should eventually be fetched from the API/backend configuration
+// =============================================================================
+export const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
+  platformName: 'Pro Crèche Solutions',
   metadataDescription: 'A platform connecting parents with childcare providers',
   enableUserRegistration: true,
   enableEmailNotifications: true,
@@ -47,36 +50,39 @@ export const MOCK_PLATFORM_SETTINGS: PlatformSettings = {
   requireEmailVerification: true,
 };
 
-// Platform data constants
-export const MOCK_POLICY_ALERTS: PolicyAlert[] = [];
+// =============================================================================
+// INITIAL STATE VALUES
+// Empty arrays used as initial state while data loads from API
+// =============================================================================
+export const INITIAL_POLICY_ALERTS: PolicyAlert[] = [];
+export const INITIAL_PARENT_LEADS: ParentLead[] = [];
+export const INITIAL_CANDIDATE_PROFILES: CandidateProfile[] = [];
+export const INITIAL_PRODUCTS: Product[] = [];
+export const INITIAL_SERVICES: Service[] = [];
+export const INITIAL_JOB_LISTINGS: JobListing[] = [];
+export const INITIAL_APPLICATIONS: Application[] = [];
+export const INITIAL_SERVICE_REQUESTS: ServiceRequest[] = [];
+export const INITIAL_ORDERS: Order[] = [];
+export const INITIAL_CONVERSATIONS: Conversation[] = [];
+export const INITIAL_MESSAGES: Message[] = [];
+export const INITIAL_NOTIFICATIONS: AppNotification[] = [];
+export const INITIAL_HR_DOCS: HRDocument[] = [];
+export const INITIAL_COURSES: Course[] = [];
+export const INITIAL_POLICY_DOCS: PolicyDocument[] = [];
+export const INITIAL_ORDER_REQUESTS: OrderRequest[] = [];
+export const INITIAL_VENDOR_CLIENTS: VendorClient[] = [];
+export const INITIAL_ORGANIZATIONS: Organization[] = [];
+export const INITIAL_SYSTEM_LOGS: LogEntry[] = [];
+export const INITIAL_SECURITY_ALERTS: SecurityAlert[] = [];
+export const INITIAL_CONTENT_MODERATION_ITEMS: ContentModerationItem[] = [];
+export const INITIAL_PARTNERS: Partner[] = [];
+export const INITIAL_LOG_ENTRIES: LogEntry[] = [];
 
-// Empty arrays for production (data fetched from API)
-export const MOCK_PARENT_LEADS: ParentLead[] = [];
-export const MOCK_CANDIDATE_PROFILES: CandidateProfile[] = [];
-export const MOCK_PRODUCTS: Product[] = [];
-export const MOCK_SERVICES: Service[] = [];
-export const MOCK_JOB_LISTINGS: JobListing[] = [];
-export const MOCK_APPLICATIONS: Application[] = [];
-export const MOCK_SERVICE_REQUESTS: ServiceRequest[] = [];
-export const MOCK_ORDERS: Order[] = [];
-export const MOCK_CONVERSATIONS: Conversation[] = [];
-export const MOCK_MESSAGES: Message[] = [];
-export const MOCK_NOTIFICATIONS: AppNotification[] = [];
-export const MOCK_HR_DOCS: HRDocument[] = [];
-export const MOCK_COURSES: Course[] = [];
-export const MOCK_POLICY_DOCS: PolicyDocument[] = [];
-export const MOCK_ORDER_REQUESTS: OrderRequest[] = [];
-export const MOCK_VENDOR_CLIENTS: VendorClient[] = [];
-
-// Empty organizations array for production
-export const MOCK_ORGANIZATIONS: Organization[] = [];
-
-// Logs and alerts for production monitoring
-export const MOCK_SYSTEM_LOGS: LogEntry[] = [];
-export const MOCK_SECURITY_ALERTS: SecurityAlert[] = [];
-
-// Admin-specific foundation settings (different from user-facing FoundationSettings)
-export const MOCK_FOUNDATION_SETTINGS = {
+// =============================================================================
+// DEFAULT ADMIN SETTINGS
+// Used as default values for admin forms before API data loads
+// =============================================================================
+export const DEFAULT_ADMIN_FOUNDATION_SETTINGS = {
   enableParentEnquiries: true,
   enableMessaging: true,
   enableDataExport: true,
@@ -88,8 +94,68 @@ export const MOCK_FOUNDATION_SETTINGS = {
   enableLeadTracking: true,
 };
 
-// Production pricing plans (real business logic)
-export const MOCK_PRICING_PLANS: PricingPlan[] = [
+export const DEFAULT_ADMIN_SUPPLIER_SETTINGS = {
+  enableNotifications: true,
+  enableDataExport: true,
+  autoAssignRoles: false,
+  enableAutoApproval: false,
+  requireAdminApproval: true,
+  enableLeadTracking: true,
+};
+
+export const DEFAULT_ADMIN_PROVIDER_SETTINGS = {
+  enableNotifications: true,
+  enableDataExport: true,
+  autoAssignRoles: false,
+  enableAutoApproval: false,
+  requireAdminApproval: true,
+  enableLeadTracking: true,
+};
+
+// Default system monitoring data structure (actual data should come from API)
+export const DEFAULT_SYSTEM_MONITORING_DATA: SystemMonitoringData = {
+  systemStatus: {
+    status: 'Operational',
+    components: {
+      api: 'Operational',
+      database: 'Operational',
+      authService: 'Operational',
+    },
+  },
+  metadata: {
+    environment: 'Production',
+    version: '1.0.0',
+    uptimeMinutes: 0,
+    lastHealthCheck: new Date().toISOString(),
+  },
+  serverPerformance: {
+    cpuUsage: 0,
+    memoryUsage: 0,
+    diskUsage: 0,
+    uptimeDays: 0,
+  },
+  databasePerformance: {
+    activeConnections: 0,
+    maxConnections: 100,
+    avgQueryTimeMs: 0,
+    storageUsedGb: 0,
+    storageTotalGb: 100,
+    status: 'Healthy',
+  },
+  appPerformance: {
+    activeUsers: 0,
+    requestsPerMinute: 0,
+    avgResponseTimeMs: 0,
+    errorRate: 0,
+  },
+  events: [],
+};
+
+// =============================================================================
+// PRICING PLANS (Business Configuration)
+// These are actual pricing plans - should be fetched from backend in production
+// =============================================================================
+export const PRICING_PLANS: PricingPlan[] = [
   // Daycare Plans
   {
     role: UserRole.FOUNDATION,
@@ -205,73 +271,10 @@ export const MOCK_PRICING_PLANS: PricingPlan[] = [
   },
 ];
 
-// Content moderation items (empty for production)
-export const MOCK_CONTENT_MODERATION_ITEMS: ContentModerationItem[] = [];
-
-// Monitor data (proper structure for production - actual data comes from API)
-export const MOCK_SYSTEM_MONITORING_DATA: SystemMonitoringData = {
-  systemStatus: {
-    status: 'Operational',
-    components: {
-      api: 'Operational',
-      database: 'Operational',
-      authService: 'Operational',
-    },
-  },
-  metadata: {
-    environment: 'Production',
-    version: '1.0.0',
-    uptimeMinutes: 0,
-    lastHealthCheck: new Date().toISOString(),
-  },
-  serverPerformance: {
-    cpuUsage: 0,
-    memoryUsage: 0,
-    diskUsage: 0,
-    uptimeDays: 0,
-  },
-  databasePerformance: {
-    activeConnections: 0,
-    maxConnections: 100,
-    avgQueryTimeMs: 0,
-    storageUsedGb: 0,
-    storageTotalGb: 100,
-    status: 'Healthy',
-  },
-  appPerformance: {
-    activeUsers: 0,
-    requestsPerMinute: 0,
-    avgResponseTimeMs: 0,
-    errorRate: 0,
-  },
-  events: [],
-};
-
-// Admin-specific settings (different from user-facing SupplierSettings/ProviderSettings)
-export const MOCK_SUPPLIER_SETTINGS = {
-  enableNotifications: true,
-  enableDataExport: true,
-  autoAssignRoles: false,
-  enableAutoApproval: false,
-  requireAdminApproval: true,
-  enableLeadTracking: true,
-};
-
-export const MOCK_PROVIDER_SETTINGS = {
-  enableNotifications: true,
-  enableDataExport: true,
-  autoAssignRoles: false,
-  enableAutoApproval: false,
-  requireAdminApproval: true,
-  enableLeadTracking: true,
-};
-
-// Empty mock data for production (fetched from API)
-export const MOCK_PARTNERS: Partner[] = [];
-export const MOCK_LOG_ENTRIES: LogEntry[] = [];
-
-// Build timestamp to force cache refresh: 2025-11-19T11:44:00Z
-// Suggested Service Categories (users can add custom ones)
+// =============================================================================
+// SUGGESTED CATEGORIES AND OPTIONS
+// These are suggestion lists for forms - not mock data
+// =============================================================================
 export const SUGGESTED_SERVICE_CATEGORIES = [
   'Cleaning & Maintenance',
   'IT & Technical Support',
@@ -294,7 +297,6 @@ export const SUGGESTED_SERVICE_CATEGORIES = [
   'Other',
 ] as const;
 
-// Suggested Product Categories (users can add custom ones)
 export const SUGGESTED_PRODUCT_CATEGORIES = [
   'Educational Toys',
   'Furniture',
@@ -343,3 +345,67 @@ export const SUGGESTED_PRODUCT_DELIVERY_METHODS = [
   'Pickup',
   'Installation Included',
 ] as const;
+
+// =============================================================================
+// BACKWARD COMPATIBILITY ALIASES
+// These aliases maintain backward compatibility with existing code
+// TODO: Gradually migrate all usages to the new names
+// =============================================================================
+/** @deprecated Use DEFAULT_PLATFORM_SETTINGS instead */
+export const MOCK_PLATFORM_SETTINGS = DEFAULT_PLATFORM_SETTINGS;
+/** @deprecated Use INITIAL_POLICY_ALERTS instead */
+export const MOCK_POLICY_ALERTS = INITIAL_POLICY_ALERTS;
+/** @deprecated Use INITIAL_PARENT_LEADS instead */
+export const MOCK_PARENT_LEADS = INITIAL_PARENT_LEADS;
+/** @deprecated Use INITIAL_CANDIDATE_PROFILES instead */
+export const MOCK_CANDIDATE_PROFILES = INITIAL_CANDIDATE_PROFILES;
+/** @deprecated Use INITIAL_PRODUCTS instead */
+export const MOCK_PRODUCTS = INITIAL_PRODUCTS;
+/** @deprecated Use INITIAL_SERVICES instead */
+export const MOCK_SERVICES = INITIAL_SERVICES;
+/** @deprecated Use INITIAL_JOB_LISTINGS instead */
+export const MOCK_JOB_LISTINGS = INITIAL_JOB_LISTINGS;
+/** @deprecated Use INITIAL_APPLICATIONS instead */
+export const MOCK_APPLICATIONS = INITIAL_APPLICATIONS;
+/** @deprecated Use INITIAL_SERVICE_REQUESTS instead */
+export const MOCK_SERVICE_REQUESTS = INITIAL_SERVICE_REQUESTS;
+/** @deprecated Use INITIAL_ORDERS instead */
+export const MOCK_ORDERS = INITIAL_ORDERS;
+/** @deprecated Use INITIAL_CONVERSATIONS instead */
+export const MOCK_CONVERSATIONS = INITIAL_CONVERSATIONS;
+/** @deprecated Use INITIAL_MESSAGES instead */
+export const MOCK_MESSAGES = INITIAL_MESSAGES;
+/** @deprecated Use INITIAL_NOTIFICATIONS instead */
+export const MOCK_NOTIFICATIONS = INITIAL_NOTIFICATIONS;
+/** @deprecated Use INITIAL_HR_DOCS instead */
+export const MOCK_HR_DOCS = INITIAL_HR_DOCS;
+/** @deprecated Use INITIAL_COURSES instead */
+export const MOCK_COURSES = INITIAL_COURSES;
+/** @deprecated Use INITIAL_POLICY_DOCS instead */
+export const MOCK_POLICY_DOCS = INITIAL_POLICY_DOCS;
+/** @deprecated Use INITIAL_ORDER_REQUESTS instead */
+export const MOCK_ORDER_REQUESTS = INITIAL_ORDER_REQUESTS;
+/** @deprecated Use INITIAL_VENDOR_CLIENTS instead */
+export const MOCK_VENDOR_CLIENTS = INITIAL_VENDOR_CLIENTS;
+/** @deprecated Use INITIAL_ORGANIZATIONS instead */
+export const MOCK_ORGANIZATIONS = INITIAL_ORGANIZATIONS;
+/** @deprecated Use INITIAL_SYSTEM_LOGS instead */
+export const MOCK_SYSTEM_LOGS = INITIAL_SYSTEM_LOGS;
+/** @deprecated Use INITIAL_SECURITY_ALERTS instead */
+export const MOCK_SECURITY_ALERTS = INITIAL_SECURITY_ALERTS;
+/** @deprecated Use DEFAULT_ADMIN_FOUNDATION_SETTINGS instead */
+export const MOCK_FOUNDATION_SETTINGS = DEFAULT_ADMIN_FOUNDATION_SETTINGS;
+/** @deprecated Use PRICING_PLANS instead */
+export const MOCK_PRICING_PLANS = PRICING_PLANS;
+/** @deprecated Use INITIAL_CONTENT_MODERATION_ITEMS instead */
+export const MOCK_CONTENT_MODERATION_ITEMS = INITIAL_CONTENT_MODERATION_ITEMS;
+/** @deprecated Use DEFAULT_SYSTEM_MONITORING_DATA instead */
+export const MOCK_SYSTEM_MONITORING_DATA = DEFAULT_SYSTEM_MONITORING_DATA;
+/** @deprecated Use DEFAULT_ADMIN_SUPPLIER_SETTINGS instead */
+export const MOCK_SUPPLIER_SETTINGS = DEFAULT_ADMIN_SUPPLIER_SETTINGS;
+/** @deprecated Use DEFAULT_ADMIN_PROVIDER_SETTINGS instead */
+export const MOCK_PROVIDER_SETTINGS = DEFAULT_ADMIN_PROVIDER_SETTINGS;
+/** @deprecated Use INITIAL_PARTNERS instead */
+export const MOCK_PARTNERS = INITIAL_PARTNERS;
+/** @deprecated Use INITIAL_LOG_ENTRIES instead */
+export const MOCK_LOG_ENTRIES = INITIAL_LOG_ENTRIES;

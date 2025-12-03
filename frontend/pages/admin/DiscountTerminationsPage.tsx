@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
 import { VendorClient, VendorClientReason } from '../../types';
-import { MOCK_ORGANIZATIONS } from '../../constants';
+import { INITIAL_ORGANIZATIONS } from '../../constants';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { TagIcon, CheckCircleIcon, ShieldExclamationIcon, InboxIcon } from '@heroicons/react/24/outline';
@@ -37,8 +37,8 @@ const DiscountTerminationsPage: React.FC = () => {
     };
     
     const renderTable = (data: VendorClient[], titleKey: string, emptyKey: string) => {
-        const getVendorName = (vendorId: string) => MOCK_ORGANIZATIONS.find(o => o.id === vendorId)?.name || vendorId;
-        const getDaycareName = (orgId: string) => MOCK_ORGANIZATIONS.find(o => o.id === orgId)?.name || orgId;
+        const getVendorName = (vendorId: string) => INITIAL_ORGANIZATIONS.find(o => o.id === vendorId)?.name || vendorId;
+        const getDaycareName = (orgId: string) => INITIAL_ORGANIZATIONS.find(o => o.id === orgId)?.name || orgId;
 
         return (
             <Card className="p-6">
