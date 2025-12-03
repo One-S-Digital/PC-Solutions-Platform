@@ -62,7 +62,7 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
 
 
 const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const [isCancelModalOpen, setIsCancelModalOpen] = React.useState(false);
   
   const handleSelectPlan = (planName: string) => {

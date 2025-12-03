@@ -241,10 +241,10 @@ const ELearningPage: React.FC = () => {
   const linkItems = useMemo(() => categoryAndSearchFilteredItems.filter(item => item.type === ELearningContentType.LINK), [categoryAndSearchFilteredItems]);
 
   const typeVisuals: Record<ELearningContentType, {icon: React.ElementType, colorClasses: string, label: string}> = {
-    [ELearningContentType.COURSE]: { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white', label: t('eLearning.coursesTitle') },
-    [ELearningContentType.VIDEO]: { icon: VideoCameraIcon, colorClasses: 'bg-red-500 text-white', label: t('eLearning.videosTitle') },
-    [ELearningContentType.PDF]: { icon: DocumentTextIcon, colorClasses: 'bg-orange-500 text-white', label: t('eLearning.pdfsTitle') },
-    [ELearningContentType.LINK]: { icon: LinkIcon, colorClasses: 'bg-purple-500 text-white', label: t('eLearning.externalLinksTitle') },
+    COURSE: { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white', label: t('eLearning.coursesTitle') },
+    VIDEO: { icon: VideoCameraIcon, colorClasses: 'bg-red-500 text-white', label: t('eLearning.videosTitle') },
+    PDF: { icon: DocumentTextIcon, colorClasses: 'bg-orange-500 text-white', label: t('eLearning.pdfsTitle') },
+    LINK: { icon: LinkIcon, colorClasses: 'bg-purple-500 text-white', label: t('eLearning.externalLinksTitle') },
   };
 
   const typeCounts = useMemo(() => {

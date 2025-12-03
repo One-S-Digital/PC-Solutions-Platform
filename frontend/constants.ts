@@ -32,6 +32,8 @@ export const REGIONS_BY_COUNTRY: Record<CountryForPolicies, readonly string[]> =
 
 // Production-ready settings (mock data removed)
 export const MOCK_PLATFORM_SETTINGS: PlatformSettings = {
+  platformName: 'ParentConnect',
+  metadataDescription: 'A platform connecting parents with childcare providers',
   enableUserRegistration: true,
   enableEmailNotifications: true,
   enableSmsNotifications: false,
@@ -73,7 +75,8 @@ export const MOCK_ORGANIZATIONS: Organization[] = [];
 export const MOCK_SYSTEM_LOGS: LogEntry[] = [];
 export const MOCK_SECURITY_ALERTS: SecurityAlert[] = [];
 
-export const MOCK_FOUNDATION_SETTINGS: FoundationSettings = {
+// Admin-specific foundation settings (different from user-facing FoundationSettings)
+export const MOCK_FOUNDATION_SETTINGS = {
   enableParentEnquiries: true,
   enableMessaging: true,
   enableDataExport: true,
@@ -205,19 +208,47 @@ export const MOCK_PRICING_PLANS: PricingPlan[] = [
 // Content moderation items (empty for production)
 export const MOCK_CONTENT_MODERATION_ITEMS: ContentModerationItem[] = [];
 
-// Monitor data (empty for production)
+// Monitor data (proper structure for production - actual data comes from API)
 export const MOCK_SYSTEM_MONITORING_DATA: SystemMonitoringData = {
-  totalUsers: 0,
-  activeSessions: 0,
-  systemLoad: 0,
-  memoryUsage: 0,
-  diskUsage: 0,
-  uptime: 0,
-  lastGenerated: new Date().toISOString(),
+  systemStatus: {
+    status: 'Operational',
+    components: {
+      api: 'Operational',
+      database: 'Operational',
+      authService: 'Operational',
+    },
+  },
+  metadata: {
+    environment: 'Production',
+    version: '1.0.0',
+    uptimeMinutes: 0,
+    lastHealthCheck: new Date().toISOString(),
+  },
+  serverPerformance: {
+    cpuUsage: 0,
+    memoryUsage: 0,
+    diskUsage: 0,
+    uptimeDays: 0,
+  },
+  databasePerformance: {
+    activeConnections: 0,
+    maxConnections: 100,
+    avgQueryTimeMs: 0,
+    storageUsedGb: 0,
+    storageTotalGb: 100,
+    status: 'Healthy',
+  },
+  appPerformance: {
+    activeUsers: 0,
+    requestsPerMinute: 0,
+    avgResponseTimeMs: 0,
+    errorRate: 0,
+  },
+  events: [],
 };
 
-// Settings defaults for production
-export const MOCK_SUPPLIER_SETTINGS: SupplierSettings = {
+// Admin-specific settings (different from user-facing SupplierSettings/ProviderSettings)
+export const MOCK_SUPPLIER_SETTINGS = {
   enableNotifications: true,
   enableDataExport: true,
   autoAssignRoles: false,
@@ -226,7 +257,7 @@ export const MOCK_SUPPLIER_SETTINGS: SupplierSettings = {
   enableLeadTracking: true,
 };
 
-export const MOCK_PROVIDER_SETTINGS: ProviderSettings = {
+export const MOCK_PROVIDER_SETTINGS = {
   enableNotifications: true,
   enableDataExport: true,
   autoAssignRoles: false,

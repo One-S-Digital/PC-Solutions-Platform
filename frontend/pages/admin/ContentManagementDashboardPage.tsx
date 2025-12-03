@@ -166,7 +166,7 @@ const ContentManagementDashboardPage: React.FC = () => {
       if (course?.fileUrl) {
         fileUrl = course.fileUrl;
         // Determine file type from course type
-        if (course.type === 'VIDEO' || course.type === 'Video') {
+        if (course.type === 'VIDEO') {
           fileType = 'VIDEO';
         } else if (course.type === 'PDF') {
           fileType = 'PDF';
@@ -227,7 +227,7 @@ const ContentManagementDashboardPage: React.FC = () => {
         id: `crs${Date.now()}`,
         updatedDate: commonFieldsDate.updatedDate,
         description: courseData.description || '',
-        type: courseData.type || 'Course',
+        type: courseData.type || 'COURSE',
         // [FIX] Used a valid ELearningCategory as a fallback.
         category: courseData.category || ELEARNING_CATEGORIES[0],
         status: courseData.status || 'Draft',

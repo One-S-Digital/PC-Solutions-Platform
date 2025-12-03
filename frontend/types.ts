@@ -108,6 +108,11 @@ export interface Organization {
   services?: Service[];
   jobListings?: JobListing[];
   membershipRole?: UserRole;
+  
+  // UI-specific fields for marketplace display
+  tags?: string[];
+  badges?: string[];
+  rating?: number;
 }
 
 
@@ -213,12 +218,13 @@ export interface Service {
   imageUrl?: string;
   deliveryType?: ServiceDeliveryType;
   priceInfo?: string;
+  bookingLink?: string;
 }
 export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, ServiceCategory.IT_SUPPORT, ServiceCategory.MAINTENANCE, ServiceCategory.CONSULTING, ServiceCategory.TRAINING, ServiceCategory.OTHER];
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
-export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP';
+export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE';
 
 export const JobStatus = {
     DRAFT: 'DRAFT',

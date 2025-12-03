@@ -49,13 +49,13 @@ const SettingsPage: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      let initialSettings: SettingsFormData = {}; // Default empty object for other roles
+      let initialSettings: SettingsFormData = {} as SettingsFormData; // Default empty object for other roles
       if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
-        initialSettings = MOCK_SUPPLIER_SETTINGS;
+        initialSettings = MOCK_SUPPLIER_SETTINGS as SettingsFormData;
       } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
-        initialSettings = MOCK_PROVIDER_SETTINGS;
+        initialSettings = MOCK_PROVIDER_SETTINGS as SettingsFormData;
       } else if (currentUser.role === UserRole.FOUNDATION) {
-        initialSettings = MOCK_FOUNDATION_SETTINGS;
+        initialSettings = MOCK_FOUNDATION_SETTINGS as SettingsFormData;
       }
       // For other roles, it remains an empty object, AccountSecuritySettings will handle its own state from currentUser
       setFormData(JSON.parse(JSON.stringify(initialSettings))); 

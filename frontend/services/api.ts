@@ -17,6 +17,10 @@ export interface ApiResponse<T = any> {
   message?: string;
   data?: T;
   asset?: UploadedAsset; // For upload responses
+  // Alternative response structures for different endpoints
+  jobListings?: T[];
+  candidates?: T[];
+  applications?: T[];
   pagination?: {
     page: number;
     limit: number;
