@@ -686,6 +686,37 @@ export const apiService = {
   ) => apiClient.post<ApiResponse<{ success: boolean; cleaned: number; affected: number }>>('/static-translations/admin/cleanup-prefixes', {}, {
     timeout: 300000, // 5 minutes timeout for cleanup operations (can take a while for large datasets)
   }),
+
+  // Support Tickets
+  getSupportTickets: (apiClient: AxiosInstance, filters?: {
+    status?: string;
+    priority?: string;
+    category?: string;
+    search?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.priority) params.append('priority', filters.priority);
+    if (filters?.category) params.append('category', filters.category);
+    if (filters?.search) params.append('search', filters.search);
+    
+    return apiClient.get<ApiResponse<any[]>>(`/support/admin/tickets${params.toString() ? `?${params.toString()}` : ''}`);
+  },
+
+  getSupportTicket: (apiClient: AxiosInstance, ticketId: string) => 
+    apiClient.get<ApiResponse<any>>(`/support/tickets/${ticketId}`),
+
+  updateTicketStatus: (apiClient: AxiosInstance, ticketId: string, status: string) =>
+    apiClient.patch<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/status`, { status }),
+
+  assignTicket: (apiClient: AxiosInstance, ticketId: string, assigneeId?: string) =>
+    apiClient.patch<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/assign`, { assigneeId }),
+
+  respondToTicket: (apiClient: AxiosInstance, ticketId: string, message: string) =>
+    apiClient.post<ApiResponse<any>>(`/support/tickets/${ticketId}/respond`, { message }),
+
+  getSupportTicketStats: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/support/admin/stats'),
 }
 
 // Export individual content functions for easier imports

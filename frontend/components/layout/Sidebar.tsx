@@ -128,6 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     },
     { path: '/admin/discount-terminations', nameKey: 'sidebar.discountTerminations', icon: TagIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/partners', nameKey: 'sidebar.partners', icon: BuildingStorefrontIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { path: '/admin/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/design-system', nameKey: 'sidebar.designSystem', icon: SwatchIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/settings', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER] },
     { path: '/settings/service-provider', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.SERVICE_PROVIDER] },

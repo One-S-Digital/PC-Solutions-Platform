@@ -263,6 +263,14 @@ const ProtectedLayout: React.FC = () => {
           } 
         />
         <Route 
+          path="/admin/support" 
+          element={
+            <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+              <FoundationSupportPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/design-system" 
           element={
             <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
