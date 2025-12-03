@@ -16,7 +16,10 @@ import {
   ProductAnalytics,
   JobAnalytics,
   RevenueAnalytics,
-  SystemUsageAnalytics
+  SystemUsageAnalytics,
+  Partner,
+  PartnerStats,
+  PartnerType
 } from '../types/api'
 import { AxiosInstance } from 'axios'
 
@@ -229,7 +232,7 @@ export const useApiClient = () => {
 // Public API calls (no auth required)
 export const publicApi = {
   getSystemHealth: () => api.get<ApiResponse<SystemHealth>>('/health'),
-  getPartners: () => api.get('/partners'),
+  getPartners: () => api.get<ApiResponse<Partner[]>>('/partners/active'),
 }
 
 // API service functions
@@ -568,6 +571,23 @@ export const apiService = {
   getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
     apiClient.get<ApiResponse<SystemUsageAnalytics>>('/admin/analytics/system', { params: { timeRange } }),
 
+  // Partners Management
+  getPartners: (apiClient: AxiosInstance, params?: { type?: PartnerType; isActive?: boolean; isFeatured?: boolean; search?: string }) => 
+    apiClient.get<ApiResponse<Partner[]>>('/partners', { params }),
+  getPartnerById: (apiClient: AxiosInstance, id: string) => 
+    apiClient.get<ApiResponse<Partner>>(`/partners/${id}`),
+  createPartner: (apiClient: AxiosInstance, data: Partial<Partner>) => 
+    apiClient.post<ApiResponse<Partner>>('/partners', data),
+  updatePartner: (apiClient: AxiosInstance, id: string, data: Partial<Partner>) => 
+    apiClient.patch<ApiResponse<Partner>>(`/partners/${id}`, data),
+  deletePartner: (apiClient: AxiosInstance, id: string) => 
+    apiClient.delete<ApiResponse<null>>(`/partners/${id}`),
+  togglePartnerActive: (apiClient: AxiosInstance, id: string) => 
+    apiClient.patch<ApiResponse<Partner>>(`/partners/${id}/toggle-active`),
+  togglePartnerFeatured: (apiClient: AxiosInstance, id: string) => 
+    apiClient.patch<ApiResponse<Partner>>(`/partners/${id}/toggle-featured`),
+  getPartnerStats: (apiClient: AxiosInstance) => 
+    apiClient.get<ApiResponse<PartnerStats>>('/partners/stats'),
 
   // Legacy upload (keeping for compatibility)
   uploadFile: (apiClient: AxiosInstance, file: FormData) => apiClient.post<ApiResponse<LegacyUploadResult>>('/admin/upload', file, {

@@ -459,3 +459,34 @@ export interface ApiResponse<T> {
   };
   timestamp: string;
 }
+
+// Partner types
+export type PartnerType = 'ACADEMIC' | 'CORPORATE' | 'GOVERNMENTAL' | 'NON_PROFIT' | 'MEDIA' | 'TECHNOLOGY';
+
+export interface Partner {
+  id: string;
+  name: string;
+  type: PartnerType;
+  description?: string;
+  websiteUrl?: string;
+  countryRegion?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPerson?: string;
+  logoAssetId?: string;
+  logoUrl?: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  displayOrder: number;
+  partnershipStart?: string;
+  partnershipEnd?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PartnerStats {
+  total: number;
+  active: number;
+  featured: number;
+  byType: Array<{ type: PartnerType; count: number }>;
+}

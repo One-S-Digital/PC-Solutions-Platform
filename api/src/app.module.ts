@@ -45,6 +45,7 @@ import { PolicyAlertsModule } from './policy-alerts/policy-alerts.module';
 import { TranslationErrorsModule } from './translation-errors/translation-errors.module';
 import { StaticTranslationModule } from './static-translation/static-translation.module';
 import { SupportModule } from './support/support.module';
+import { PartnersModule } from './partners/partners.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -135,6 +136,7 @@ import {
     TranslationErrorsModule,
     StaticTranslationModule,
     SupportModule,
+    PartnersModule,
   ],
   controllers: [AppController],
   providers: [
