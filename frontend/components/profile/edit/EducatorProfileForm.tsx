@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SettingsFormData } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
 import CoverImageSection from './shared/CoverImageSection';
 import ContactDetailsSection from './shared/ContactDetailsSection';
+import AvatarSection from './shared/AvatarSection';
 import FileUploadZone from '../../ui/FileUploadZone';
+import ImageCropperModal from '../../shared/ImageCropperModal';
 import {
   UserCircleIcon,
   BriefcaseIcon,
@@ -27,8 +30,6 @@ interface EducatorProfileFormProps {
 const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
 
   const handleSkillsChange = (value: string) => {
     const skillsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
@@ -40,38 +41,36 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
     onChange('certifications', certsArray);
   };
 
-  const handleAvatarUpload = async (file: File) => {
-    setUploadingAvatar(true);
-    // TODO: Implement actual file upload with API
-    setTimeout(() => {
-      alert('Avatar upload functionality will be implemented with file upload service');
-      setUploadingAvatar(false);
-    }, 500);
+  const handleAvatarChange = (url: string, assetId?: string) => {
+    onChange('avatarUrl', url);
+    if (assetId) {
+      onChange('avatarAssetId', assetId);
+    }
   };
 
-  const handleCoverUpload = async (file: File) => {
-    setUploadingCover(true);
-    // TODO: Implement actual file upload with API
-    setTimeout(() => {
-      alert('Cover image upload functionality will be implemented with file upload service');
-      setUploadingCover(false);
-    }, 500);
+  const handleCoverChange = (url: string, assetId?: string) => {
+    onChange('coverImageUrl', url);
+    if (assetId) {
+      onChange('coverAssetId', assetId);
+    }
   };
 
   const handleCvUpload = (asset: any) => {
-    onChange('cvUrl', asset.url);
-    // We might want to store cvAssetId as well if the backend supports it in settings
-    // onChange('cvAssetId', asset.id);
+    onChange('cvUrl', asset.url || asset.publicUrl);
+    if (asset.id) {
+      onChange('cvAssetId', asset.id);
+    }
   };
 
   const handleRemoveCv = () => {
     onChange('cvUrl', '');
+    onChange('cvAssetId', '');
   };
 
-  const avatarUrl = currentUser?.avatarUrl || 
+  const avatarUrl = formData.avatarUrl || currentUser?.avatarUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent((formData.firstName || '') + ' ' + (formData.lastName || ''))}&background=48CFAE&color=fff&size=128&rounded=true`;
 
-  const coverImageUrl = currentUser?.orgCoverImageUrl || 
+  const coverImageUrl = formData.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';
 
   const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');
@@ -82,39 +81,23 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <CoverImageSection
           coverImageUrl={coverImageUrl}
-          onCoverChange={handleCoverUpload}
-          uploading={uploadingCover}
+          onCoverChange={handleCoverChange}
+          assetKind="COVER_IMAGE"
+          cropPreset="COVER"
         />
         
         {/* Profile Picture Overlay */}
         <div className="relative px-6 pb-6">
           <div className="flex items-end -mt-16 mb-4">
-            <div className="relative group">
-              <img
-                src={avatarUrl}
-                alt="Profile"
-                className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-white"
-              />
-              <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full cursor-pointer transition-opacity">
-                <CameraIcon className="w-6 h-6 text-white opacity-0 group-hover:opacity-100" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleAvatarUpload(file);
-                  }}
-                  disabled={uploadingAvatar}
-                  className="sr-only"
-                />
-              </label>
-              {uploadingAvatar && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                </div>
-              )}
-            </div>
-            <div className="ml-4 mb-2">
+            <AvatarSection
+              avatarUrl={avatarUrl}
+              onAvatarChange={handleAvatarChange}
+              size="xl"
+              variant="avatar"
+              assetKind="AVATAR"
+              cropPreset="AVATAR"
+            />
+            <div className="ml-4 mb-2 flex-1">
               <h2 className="text-2xl font-bold text-gray-900">
                 {fullName}
               </h2>
