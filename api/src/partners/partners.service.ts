@@ -13,8 +13,9 @@ export class PartnersService {
     return this.prisma.partner.create({
       data: {
         ...rest,
-        partnershipStart: partnershipStart ? new Date(partnershipStart) : undefined,
-        partnershipEnd: partnershipEnd ? new Date(partnershipEnd) : undefined,
+        // Handle date fields: empty string or undefined = no date, value = set date
+        partnershipStart: partnershipStart ? new Date(partnershipStart) : null,
+        partnershipEnd: partnershipEnd ? new Date(partnershipEnd) : null,
       },
     });
   }
@@ -102,8 +103,9 @@ export class PartnersService {
       where: { id },
       data: {
         ...rest,
-        partnershipStart: partnershipStart ? new Date(partnershipStart) : undefined,
-        partnershipEnd: partnershipEnd ? new Date(partnershipEnd) : undefined,
+        // Handle date fields: undefined = don't update, empty string = clear (null), value = set date
+        partnershipStart: partnershipStart === undefined ? undefined : (partnershipStart ? new Date(partnershipStart) : null),
+        partnershipEnd: partnershipEnd === undefined ? undefined : (partnershipEnd ? new Date(partnershipEnd) : null),
       },
     });
   }

@@ -817,6 +817,9 @@ const Partners: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['partners'] })
       queryClient.invalidateQueries({ queryKey: ['partnerStats'] })
     },
+    onError: (error) => {
+      logger.error('Failed to toggle partner active status:', error)
+    },
   })
 
   // Toggle featured mutation
@@ -825,6 +828,9 @@ const Partners: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['partners'] })
       queryClient.invalidateQueries({ queryKey: ['partnerStats'] })
+    },
+    onError: (error) => {
+      logger.error('Failed to toggle partner featured status:', error)
     },
   })
 
@@ -860,12 +866,12 @@ const Partners: React.FC = () => {
     }
   }
 
-  const handleToggleActive = async (partner: Partner) => {
-    await toggleActiveMutation.mutateAsync(partner.id)
+  const handleToggleActive = (partner: Partner) => {
+    toggleActiveMutation.mutate(partner.id)
   }
 
-  const handleToggleFeatured = async (partner: Partner) => {
-    await toggleFeaturedMutation.mutateAsync(partner.id)
+  const handleToggleFeatured = (partner: Partner) => {
+    toggleFeaturedMutation.mutate(partner.id)
   }
 
   if (isLoading) {

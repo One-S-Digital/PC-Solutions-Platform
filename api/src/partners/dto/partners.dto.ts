@@ -134,3 +134,9 @@ export class PartnerQueryDto {
   @IsString()
   search?: string;
 }
+
+export class UpdateDisplayOrderDto {
+  @IsInt()
+  @Min(0)
+  displayOrder: number;
+}

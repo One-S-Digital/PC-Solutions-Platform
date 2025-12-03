@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PartnersService } from './partners.service';
-import { CreatePartnerDto, UpdatePartnerDto, PartnerQueryDto } from './dto/partners.dto';
+import { CreatePartnerDto, UpdatePartnerDto, PartnerQueryDto, UpdateDisplayOrderDto } from './dto/partners.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole, PartnerType } from '@prisma/client';
 
 @Controller('partners')
 export class PartnersController {
@@ -38,7 +38,11 @@ export class PartnersController {
     const query: PartnerQueryDto = {};
     
     if (type) {
-      query.type = type as any;
+      // Validate type against PartnerType enum
+      if (Object.values(PartnerType).includes(type as PartnerType)) {
+        query.type = type as PartnerType;
+      }
+      // Invalid types are silently ignored, returning all partners
     }
     if (isActive !== undefined) {
       query.isActive = isActive === 'true';
@@ -111,8 +115,8 @@ export class PartnersController {
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   updateDisplayOrder(
     @Param('id') id: string,
-    @Body('displayOrder') displayOrder: number,
+    @Body() dto: UpdateDisplayOrderDto,
   ) {
-    return this.partnersService.updateDisplayOrder(id, displayOrder);
+    return this.partnersService.updateDisplayOrder(id, dto.displayOrder);
   }
 }
