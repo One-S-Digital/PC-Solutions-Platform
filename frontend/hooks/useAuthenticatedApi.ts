@@ -1,9 +1,19 @@
 import { useAuth } from '@clerk/clerk-react';
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { apiService, ApiResponse, ApiError } from '../services/api';
 
 export function useAuthenticatedApi() {
   const { getToken } = useAuth();
+  
+  // Use a ref to hold the latest getToken function to avoid dependency array issues.
+  // Clerk's getToken is not referentially stable and can cause infinite loops
+  // when included in useCallback dependency arrays.
+  const getTokenRef = useRef(getToken);
+  
+  // Keep the ref updated with the latest getToken function
+  useEffect(() => {
+    getTokenRef.current = getToken;
+  }, [getToken]);
 
   const authenticatedRequest = useCallback(
     async <T = any>(
@@ -11,7 +21,7 @@ export function useAuthenticatedApi() {
       options: RequestInit = {}
     ): Promise<ApiResponse<T>> => {
       try {
-        const token = await getToken();
+        const token = await getTokenRef.current();
 
         if (!token) {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
@@ -50,7 +60,7 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [] // Empty deps - getToken accessed via ref for stability
   );
 
   const authenticatedUpload = useCallback(
@@ -60,7 +70,7 @@ export function useAuthenticatedApi() {
       additionalData?: Record<string, any>
     ): Promise<ApiResponse> => {
       try {
-        const token = await getToken();
+        const token = await getTokenRef.current();
 
         if (!token) {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
@@ -113,7 +123,7 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [] // Empty deps - getToken accessed via ref for stability
   );
 
   // Wrapper to accept a callback that returns a Promise (for apiService methods)
@@ -122,7 +132,7 @@ export function useAuthenticatedApi() {
       apiCall: () => Promise<ApiResponse<T>>
     ): Promise<ApiResponse<T>> => {
       try {
-        const token = await getToken();
+        const token = await getTokenRef.current();
         
         if (!token) {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
@@ -142,13 +152,13 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [] // Empty deps - getToken accessed via ref for stability
   );
 
   const authenticatedDownload = useCallback(
     async (fileUrl: string, fileName: string): Promise<void> => {
       try {
-        const token = await getToken();
+        const token = await getTokenRef.current();
 
         if (!token) {
           throw new ApiError('Authentication token not available', 401, 'auth_token_missing');
@@ -196,7 +206,7 @@ export function useAuthenticatedApi() {
         );
       }
     },
-    [getToken]
+    [] // Empty deps - getToken accessed via ref for stability
   );
 
   return {
