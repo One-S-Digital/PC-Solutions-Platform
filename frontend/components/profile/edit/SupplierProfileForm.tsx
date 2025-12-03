@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SettingsFormData, SwissCanton, SupportedLanguage } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
 import ContactDetailsSection from './shared/ContactDetailsSection';
+import AvatarSection from './shared/AvatarSection';
 import {
   BuildingOfficeIcon,
   MapPinIcon,
   ShoppingCartIcon,
-  CameraIcon,
 } from '@heroicons/react/24/outline';
 
 const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLanguage }[] = [
@@ -26,8 +26,6 @@ interface SupplierProfileFormProps {
 const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
 
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (formData[field] as string[] || []) as Array<SwissCanton | SupportedLanguage | string>;
@@ -48,20 +46,14 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
   const coverImageUrl = formData.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';
 
-  const handleLogoUpload = async (file: File) => {
-    setUploadingLogo(true);
-    setTimeout(() => {
-      alert('Logo upload functionality will be implemented with file upload service');
-      setUploadingLogo(false);
-    }, 500);
+  const handleLogoChange = (url: string, assetId?: string) => {
+    onChange('logoUrl', url);
+    onChange('logoAssetId', assetId ?? '');
   };
 
-  const handleCoverUpload = async (file: File) => {
-    setUploadingCover(true);
-    setTimeout(() => {
-      alert('Cover image upload functionality will be implemented with file upload service');
-      setUploadingCover(false);
-    }, 500);
+  const handleCoverChange = (url: string, assetId?: string) => {
+    onChange('coverImageUrl', url);
+    onChange('coverAssetId', assetId ?? '');
   };
 
   return (
@@ -70,39 +62,23 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <CoverImageSection
           coverImageUrl={coverImageUrl}
-          onCoverChange={handleCoverUpload}
-          uploading={uploadingCover}
+          onCoverChange={handleCoverChange}
+          assetKind="COVER_IMAGE"
+          cropPreset="COVER"
         />
         
         {/* Profile Picture Overlay - Facebook style */}
         <div className="relative px-6 pb-6">
           <div className="flex items-end -mt-16 mb-4">
-            <div className="relative group">
-              <img
-                src={logoUrl}
-                alt="Logo"
-                className="w-40 h-40 rounded-full border-4 border-white shadow-lg object-cover bg-white"
-              />
-              <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full cursor-pointer transition-opacity">
-                <CameraIcon className="w-6 h-6 text-white opacity-0 group-hover:opacity-100" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleLogoUpload(file);
-                  }}
-                  disabled={uploadingLogo}
-                  className="sr-only"
-                />
-              </label>
-              {uploadingLogo && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                </div>
-              )}
-            </div>
-            <div className="ml-4 mb-2">
+            <AvatarSection
+              avatarUrl={logoUrl}
+              onAvatarChange={handleLogoChange}
+              size="xl"
+              variant="logo"
+              assetKind="LOGO"
+              cropPreset="LOGO"
+            />
+            <div className="ml-4 mb-2 flex-1">
               <h2 className="text-2xl font-bold text-gray-900">
                 {formData.companyName || t('settings:companyProfile.supplier', 'Product Supplier')}
               </h2>

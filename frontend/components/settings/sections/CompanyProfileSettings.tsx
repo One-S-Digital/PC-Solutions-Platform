@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
+import ImageCropperModal from '../../shared/ImageCropperModal';
+import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
 import { 
   BuildingOfficeIcon, 
   PhotoIcon, 
@@ -14,11 +16,12 @@ import {
   ShoppingCartIcon,
   BriefcaseIcon,
   AcademicCapIcon,
-  LinkIcon
+  LinkIcon,
+  CameraIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
-import FileUploadZone from '../../ui/FileUploadZone';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -63,6 +66,19 @@ const DELIVERY_TYPE_OPTIONS = [
 const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common', 'settings']);
   const { currentUser } = useAppContext();
+  const { upload } = useAuthenticatedApi();
+  
+  // Logo cropping state
+  const [showLogoCropper, setShowLogoCropper] = useState(false);
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  
+  // Cover cropping state
+  const [showCoverCropper, setShowCoverCropper] = useState(false);
+  const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (settings[field] as string[] || []) as Array<SwissCanton | SupportedLanguage | string>;
@@ -92,6 +108,92 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   const coverImageUrl = settings.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';
 
+  // Logo handlers
+  const handleLogoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+      alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));
+      return;
+    }
+    
+    setSelectedLogoFile(file);
+    setShowLogoCropper(true);
+    
+    if (logoInputRef.current) {
+      logoInputRef.current.value = '';
+    }
+  };
+  
+  const handleLogoCropComplete = async (croppedFile: File) => {
+    setShowLogoCropper(false);
+    setSelectedLogoFile(null);
+    setUploadingLogo(true);
+    
+    try {
+      const response = await upload('/upload/file', croppedFile, { assetKind: 'LOGO' });
+      
+      if (response.success && response.asset) {
+        const uploadedUrl = response.asset.publicUrl || response.asset.url;
+        onChange('logoUrl', uploadedUrl);
+        if (response.asset.id) {
+          onChange('logoAssetId', response.asset.id);
+        }
+      } else {
+        throw new Error(response.message || 'Upload failed');
+      }
+    } catch (error: any) {
+      console.error('Logo upload failed:', error);
+      alert(error.message || t('settings:companyProfile.uploadFailed', 'Upload failed. Please try again.'));
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+  
+  // Cover handlers
+  const handleCoverFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+      alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));
+      return;
+    }
+    
+    setSelectedCoverFile(file);
+    setShowCoverCropper(true);
+    
+    if (coverInputRef.current) {
+      coverInputRef.current.value = '';
+    }
+  };
+  
+  const handleCoverCropComplete = async (croppedFile: File) => {
+    setShowCoverCropper(false);
+    setSelectedCoverFile(null);
+    setUploadingCover(true);
+    
+    try {
+      const response = await upload('/upload/file', croppedFile, { assetKind: 'COVER_IMAGE' });
+      
+      if (response.success && response.asset) {
+        const uploadedUrl = response.asset.publicUrl || response.asset.url;
+        onChange('coverImageUrl', uploadedUrl);
+        if (response.asset.id) {
+          onChange('coverAssetId', response.asset.id);
+        }
+      } else {
+        throw new Error(response.message || 'Upload failed');
+      }
+    } catch (error: any) {
+      console.error('Cover upload failed:', error);
+      alert(error.message || t('settings:companyProfile.uploadFailed', 'Upload failed. Please try again.'));
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
   return (
     <SettingsSectionWrapper title={t('settings:page.companyProfile', 'Organization Profile')} icon={BuildingOfficeIcon}>
       <div className="space-y-8">
@@ -109,22 +211,45 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 {t('settings:companyProfile.logo', 'Logo')}
               </label>
               <div className="flex items-center gap-4">
-                <img
-                  src={logoUrl}
-                  alt="Logo"
-                  className="w-24 h-24 rounded-lg border-2 border-gray-200 object-cover"
-                />
+                <div className="relative group">
+                  <img
+                    src={logoUrl}
+                    alt="Logo"
+                    className="w-24 h-24 rounded-lg border-2 border-gray-200 object-cover"
+                  />
+                  {uploadingLogo && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+                      <ArrowPathIcon className="h-8 w-8 text-white animate-spin" />
+                    </div>
+                  )}
+                  {!uploadingLogo && (
+                    <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-lg cursor-pointer transition-all">
+                      <CameraIcon className="w-6 h-6 text-white opacity-0 group-hover:opacity-100" />
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoFileSelect}
+                        className="sr-only"
+                      />
+                    </label>
+                  )}
+                </div>
                 <div className="flex-1">
-                    <FileUploadZone
-                      label={t('settings:companyProfile.uploadLogo', 'Upload Logo')}
-                      acceptedMimeTypes="image/*"
-                      maxFileSizeMB={2}
-                      assetKind="LOGO"
-                      autoUpload
-                      onUploadSuccess={(asset) => onChange('logoUrl', asset.url)}
-                    />
+                  <button
+                    type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={uploadingLogo}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-swiss-mint bg-swiss-mint/10 rounded-md hover:bg-swiss-mint/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint disabled:opacity-50 transition-colors"
+                  >
+                    <CameraIcon className="w-4 h-4 mr-2" />
+                    {uploadingLogo 
+                      ? t('settings:companyProfile.uploading', 'Uploading...') 
+                      : t('settings:companyProfile.uploadLogo', 'Upload Logo')
+                    }
+                  </button>
                   <p className="mt-1 text-xs text-gray-500">
-                    {t('settings:companyProfile.logoHint', 'JPG, PNG or GIF. Max size 2MB')}
+                    {t('settings:companyProfile.logoHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}
                   </p>
                 </div>
               </div>
@@ -136,22 +261,45 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 {t('settings:companyProfile.coverImage', 'Cover Image')}
               </label>
               <div className="flex items-center gap-4">
-                <img
-                  src={coverImageUrl}
-                  alt="Cover"
-                  className="w-32 h-20 rounded-lg border-2 border-gray-200 object-cover"
-                />
+                <div className="relative group">
+                  <img
+                    src={coverImageUrl}
+                    alt="Cover"
+                    className="w-32 h-20 rounded-lg border-2 border-gray-200 object-cover"
+                  />
+                  {uploadingCover && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+                      <ArrowPathIcon className="h-6 w-6 text-white animate-spin" />
+                    </div>
+                  )}
+                  {!uploadingCover && (
+                    <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-lg cursor-pointer transition-all">
+                      <CameraIcon className="w-5 h-5 text-white opacity-0 group-hover:opacity-100" />
+                      <input
+                        ref={coverInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCoverFileSelect}
+                        className="sr-only"
+                      />
+                    </label>
+                  )}
+                </div>
                 <div className="flex-1">
-                    <FileUploadZone
-                      label={t('settings:companyProfile.uploadCoverImage', 'Upload Cover Image')}
-                      acceptedMimeTypes="image/*"
-                      maxFileSizeMB={5}
-                      assetKind="COVER_IMAGE"
-                      autoUpload
-                      onUploadSuccess={(asset) => onChange('coverImageUrl', asset.url)}
-                    />
+                  <button
+                    type="button"
+                    onClick={() => coverInputRef.current?.click()}
+                    disabled={uploadingCover}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-swiss-mint bg-swiss-mint/10 rounded-md hover:bg-swiss-mint/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint disabled:opacity-50 transition-colors"
+                  >
+                    <CameraIcon className="w-4 h-4 mr-2" />
+                    {uploadingCover 
+                      ? t('settings:companyProfile.uploading', 'Uploading...') 
+                      : t('settings:companyProfile.uploadCoverImage', 'Upload Cover Image')
+                    }
+                  </button>
                   <p className="mt-1 text-xs text-gray-500">
-                    {t('settings:companyProfile.coverHint', 'Recommended: 1600x400px')}
+                    {t('settings:companyProfile.coverHint', 'Recommended: 1600×400px')}
                   </p>
                 </div>
               </div>
@@ -530,6 +678,31 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
           </>
         )}
       </div>
+      
+      {/* Image Cropper Modals */}
+      <ImageCropperModal
+        isOpen={showLogoCropper}
+        onClose={() => {
+          setShowLogoCropper(false);
+          setSelectedLogoFile(null);
+        }}
+        imageFile={selectedLogoFile}
+        preset="LOGO"
+        onCropComplete={handleLogoCropComplete}
+        circular={false}
+      />
+      
+      <ImageCropperModal
+        isOpen={showCoverCropper}
+        onClose={() => {
+          setShowCoverCropper(false);
+          setSelectedCoverFile(null);
+        }}
+        imageFile={selectedCoverFile}
+        preset="COVER"
+        onCropComplete={handleCoverCropComplete}
+        circular={false}
+      />
     </SettingsSectionWrapper>
   );
 };

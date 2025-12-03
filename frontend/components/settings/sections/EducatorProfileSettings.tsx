@@ -1,9 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SettingsFormData, UserRole } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
-import { UserCircleIcon, PhotoIcon, BriefcaseIcon, AcademicCapIcon, StarIcon, CalendarDaysIcon, PaperClipIcon } from '@heroicons/react/24/outline';
+import ImageCropperModal from '../../shared/ImageCropperModal';
+import FileUploadZone from '../../ui/FileUploadZone';
 import Button from '../../ui/Button';
+import { 
+  UserCircleIcon, 
+  PhotoIcon, 
+  BriefcaseIcon, 
+  AcademicCapIcon, 
+  StarIcon, 
+  CalendarDaysIcon, 
+  PaperClipIcon,
+  CameraIcon,
+  ArrowPathIcon,
+  DocumentTextIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
@@ -17,8 +31,13 @@ interface EducatorProfileSettingsProps {
 const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common', 'settings']);
   const { currentUser } = useAppContext();
-  const { request } = useAuthenticatedApi();
+  const { upload } = useAuthenticatedApi();
+  
+  // Avatar cropping state
+  const [showAvatarCropper, setShowAvatarCropper] = useState(false);
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form fields from settings
   const [profileData, setProfileData] = useState({
@@ -33,6 +52,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     skills: Array.isArray(settings.skills) ? settings.skills : [],
     availability: settings.availability || '',
     cvUrl: settings.cvUrl || '',
+    avatarUrl: settings.avatarUrl || '',
     avatarAssetId: settings.avatarAssetId || '',
   });
 
@@ -50,6 +70,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       skills: Array.isArray(settings.skills) ? settings.skills : [],
       availability: settings.availability || '',
       cvUrl: settings.cvUrl || '',
+      avatarUrl: settings.avatarUrl || '',
       avatarAssetId: settings.avatarAssetId || '',
     });
   }, [settings, currentUser]);
@@ -69,30 +90,63 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     handleFieldChange('certifications', certsArray);
   };
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Avatar handlers
+  const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
+    
+    if (!file.type.startsWith('image/')) {
+      alert(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));
+      return;
+    }
+    
+    setSelectedAvatarFile(file);
+    setShowAvatarCropper(true);
+    
+    if (avatarInputRef.current) {
+      avatarInputRef.current.value = '';
+    }
+  };
+  
+  const handleAvatarCropComplete = async (croppedFile: File) => {
+    setShowAvatarCropper(false);
+    setSelectedAvatarFile(null);
     setUploadingAvatar(true);
+    
     try {
-      // TODO: Implement actual file upload to get asset ID
-      // For now, this is a placeholder
-      // const formData = new FormData();
-      // formData.append('file', file);
-      // const response = await request('/assets/upload', { method: 'POST', body: formData });
-      // if (response.success && response.data?.id) {
-      //   handleFieldChange('avatarAssetId', response.data.id);
-      // }
-      alert('Avatar upload functionality will be implemented with file upload service');
-    } catch (error) {
-      console.error('Failed to upload avatar:', error);
-      alert('Failed to upload avatar');
+      const response = await upload('/upload/file', croppedFile, { assetKind: 'AVATAR' });
+      
+      if (response.success && response.asset) {
+        const uploadedUrl = response.asset.publicUrl || response.asset.url;
+        handleFieldChange('avatarUrl', uploadedUrl);
+        if (response.asset.id) {
+          handleFieldChange('avatarAssetId', response.asset.id);
+        }
+      } else {
+        throw new Error(response.message || 'Upload failed');
+      }
+    } catch (error: any) {
+      console.error('Avatar upload failed:', error);
+      alert(error.message || t('settings:educatorProfile.uploadFailed', 'Upload failed. Please try again.'));
     } finally {
       setUploadingAvatar(false);
     }
   };
 
-  const avatarUrl = currentUser?.avatarUrl || 
+  const handleCvUpload = (asset: any) => {
+    const url = asset.url || asset.publicUrl;
+    handleFieldChange('cvUrl', url);
+    if (asset.id) {
+      onChange('cvAssetId', asset.id);
+    }
+  };
+
+  const handleRemoveCv = () => {
+    handleFieldChange('cvUrl', '');
+    onChange('cvAssetId', '');
+  };
+
+  const avatarUrl = profileData.avatarUrl || currentUser?.avatarUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.firstName + ' ' + profileData.lastName)}&background=48CFAE&color=fff&size=128&rounded=true`;
 
   return (
@@ -105,26 +159,45 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
             {t('settings:educatorProfile.avatar', 'Profile Photo')}
           </h3>
           <div className="flex items-center gap-6">
-            <div className="relative">
+            <div className="relative group">
               <img
                 src={avatarUrl}
                 alt="Profile"
                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
               />
+              {uploadingAvatar && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                  <ArrowPathIcon className="h-8 w-8 text-white animate-spin" />
+                </div>
+              )}
+              {!uploadingAvatar && (
+                <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full cursor-pointer transition-all">
+                  <CameraIcon className="w-6 h-6 text-white opacity-0 group-hover:opacity-100" />
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarFileSelect}
+                    className="sr-only"
+                  />
+                </label>
+              )}
             </div>
             <div>
-              <label className="block">
-                <span className="sr-only">{t('settings:educatorProfile.chooseAvatar', 'Choose avatar')}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  disabled={uploadingAvatar}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-swiss-mint file:text-white hover:file:bg-swiss-teal disabled:opacity-50"
-                />
-              </label>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={uploadingAvatar}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-swiss-mint bg-swiss-mint/10 rounded-md hover:bg-swiss-mint/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint disabled:opacity-50 transition-colors"
+              >
+                <CameraIcon className="w-4 h-4 mr-2" />
+                {uploadingAvatar 
+                  ? t('settings:educatorProfile.uploading', 'Uploading...') 
+                  : t('settings:educatorProfile.chooseAvatar', 'Choose avatar')
+                }
+              </button>
               <p className="mt-1 text-xs text-gray-500">
-                {t('settings:educatorProfile.avatarHint', 'JPG, PNG or GIF. Max size 2MB')}
+                {t('settings:educatorProfile.avatarHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}
               </p>
             </div>
           </div>
@@ -367,32 +440,75 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
 
         <hr />
 
-        {/* CV URL */}
+        {/* CV / Resume Upload */}
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
             <PaperClipIcon className="w-5 h-5 mr-2 text-swiss-mint" />
             {t('settings:educatorProfile.cv', 'CV / Resume')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
-            <label htmlFor="cvUrl" className="form-label">
-              {t('settings:educatorProfile.cvUrl', 'CV URL')}
+            <label className="form-label">
+              {t('settings:educatorProfile.cvUpload', 'Upload CV')}
             </label>
             <div className="form-input-container">
-              <input
-                type="url"
-                id="cvUrl"
-                value={profileData.cvUrl}
-                onChange={(e) => handleFieldChange('cvUrl', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('settings:educatorProfile.cvUrlPlaceholder', 'https://example.com/cv.pdf')}
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                {t('settings:educatorProfile.cvUrlHint', 'Link to your CV or resume document')}
+              {profileData.cvUrl ? (
+                <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center">
+                    <DocumentTextIcon className="w-6 h-6 text-green-600 mr-3" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {profileData.cvUrl.split('/').pop() || 'CV Document'}
+                      </p>
+                      <a 
+                        href={profileData.cvUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-xs text-green-700 hover:underline"
+                      >
+                        View Document
+                      </a>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRemoveCv}
+                    leftIcon={XMarkIcon}
+                  >
+                    {t('common:buttons.remove', 'Remove')}
+                  </Button>
+                </div>
+              ) : (
+                <FileUploadZone
+                  label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}
+                  acceptedMimeTypes=".pdf,.doc,.docx"
+                  maxFileSizeMB={5}
+                  assetKind="CV"
+                  onUploadSuccess={handleCvUpload}
+                  autoUpload={true}
+                />
+              )}
+              <p className="mt-2 text-xs text-gray-500">
+                {t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}
               </p>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Avatar Cropper Modal */}
+      <ImageCropperModal
+        isOpen={showAvatarCropper}
+        onClose={() => {
+          setShowAvatarCropper(false);
+          setSelectedAvatarFile(null);
+        }}
+        imageFile={selectedAvatarFile}
+        preset="AVATAR"
+        onCropComplete={handleAvatarCropComplete}
+        circular={true}
+      />
     </SettingsSectionWrapper>
   );
 };
