@@ -42,7 +42,7 @@ const ProfileEditPage: React.FC = () => {
 
       if (currentUser.role === UserRole.FOUNDATION) {
         const response = await request<{ success: boolean; data?: any }>('/settings/foundation');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         const org = currentUser.primaryOrganization;
         roleSettings = {
           companyName: data.companyName || org?.name || currentUser.orgName || '',
@@ -63,7 +63,7 @@ const ProfileEditPage: React.FC = () => {
         } as Partial<SettingsFormData>;
       } else if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
         const response = await request<{ success: boolean; data?: any }>('/settings/supplier');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         const org = currentUser.primaryOrganization;
         roleSettings = {
           companyName: data.companyName || org?.name || '',
@@ -87,7 +87,7 @@ const ProfileEditPage: React.FC = () => {
         } as Partial<SettingsFormData>;
       } else if (currentUser.role === UserRole.SERVICE_PROVIDER) {
         const response = await request<{ success: boolean; data?: any }>('/settings/service-provider');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         const org = currentUser.primaryOrganization;
         roleSettings = {
           companyName: data.companyName || org?.name || '',
@@ -110,7 +110,7 @@ const ProfileEditPage: React.FC = () => {
         } as Partial<SettingsFormData>;
       } else if (currentUser.role === UserRole.EDUCATOR) {
         const response = await request<{ success: boolean; data?: any }>('/settings/educator');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
         roleSettings = {
           firstName: data.firstName || currentUser.firstName || '',
           lastName: data.lastName || currentUser.lastName || '',

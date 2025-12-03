@@ -50,7 +50,7 @@ const OrganizationProfileForm: React.FC = () => {
         }
 
         if (response.success && response.data) {
-          const data = response.data;
+          const data = response.data as any;
           setProfile({
             companyName: data.companyName || currentUser.orgName || '',
             contactEmail: data.contactEmail || currentUser.email,

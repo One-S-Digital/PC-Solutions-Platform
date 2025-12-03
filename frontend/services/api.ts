@@ -1,9 +1,22 @@
 // Removed Clerk import - will be handled by useAuthenticatedApi hook
 
+export interface UploadedAsset {
+  id: string;
+  kind: string;
+  filename: string;
+  publicUrl: string;
+  url: string;
+  storageKey: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+}
+
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   data?: T;
+  asset?: UploadedAsset; // For upload responses
   pagination?: {
     page: number;
     limit: number;

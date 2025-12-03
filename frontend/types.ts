@@ -528,14 +528,19 @@ export interface ParentLead {
 // Mock User for Parent
 export const MOCK_PARENT_USER: User = {
   id: 'parentUser123',
+  clerkId: 'clerk_parentUser123',
   name: 'Sophie D.', // Anonymized
+  firstName: 'Sophie',
+  lastName: 'D.',
   email: 'sophie.d@example-parent.com', // Anonymized
   role: UserRole.PARENT,
   avatarUrl: 'https://picsum.photos/seed/sophie/100/100',
   status: 'Active',
   lastLogin: '2024-07-22T08:00:00Z',
-  region: 'Geneva',
   memberSince: '2024-07-15T10:00:00Z',
+  isActive: true,
+  createdAt: '2024-07-15T10:00:00Z',
+  updatedAt: '2024-07-22T08:00:00Z',
 };
 
 
@@ -728,6 +733,8 @@ interface BaseSettings {
     companyName?: string;
     logoUrl?: string;
     coverImageUrl?: string;
+    logoAssetId?: string;
+    coverAssetId?: string;
     aboutText?: string;
     description?: string; // Alias for aboutText
     vatNumber?: string;
@@ -769,11 +776,14 @@ interface BaseSettings {
     serviceCategories?: string[];
     deliveryType?: string;
     bookingLink?: string;
-    // Educator-specific fields
+    // Educator/Parent-specific fields
     shortBio?: string;
     avatarAssetId?: string;
+    avatarUrl?: string;
+    cvAssetId?: string;
     firstName?: string;
     lastName?: string;
+    email?: string; // User's personal email (for Educator/Parent)
     workExperience?: string;
     education?: string;
     certifications?: string[];
