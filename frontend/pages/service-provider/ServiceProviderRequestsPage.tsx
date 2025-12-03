@@ -1,23 +1,45 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import Card from '../../components/ui/Card';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
-import { INITIAL_ORGANIZATIONS } from '../../constants';
-import { ServiceRequest, ServiceRequestStatus } from '../../types';
+import { ServiceRequest, ServiceRequestStatus, Organization } from '../../types';
 import Button from '../../components/ui/Button';
 import ServiceRequestDetailModal from '../../components/service-provider/ServiceRequestDetailModal';
 import { InboxIcon } from '@heroicons/react/24/outline';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const ServiceProviderRequestsPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
-  const { currentUser, serviceRequests: allRequests } = useAppContext();
-  const [requests, setRequests] = useState(allRequests);
+  const { currentUser, serviceRequests: contextRequests, serviceRequestsLoading, refreshServiceRequests } = useAppContext();
+  const { authenticatedRequest } = useAuthenticatedApi();
+  
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [orgsLoading, setOrgsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<ServiceRequestStatus | 'All'>('All');
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
 
+  const fetchOrganizations = useCallback(async () => {
+    setOrgsLoading(true);
+    try {
+      const response = await authenticatedRequest<Organization[]>('/compat/organizations');
+      if (response.success && response.data) {
+        setOrganizations(response.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch organizations:', err);
+    } finally {
+      setOrgsLoading(false);
+    }
+  }, [authenticatedRequest]);
+
+  useEffect(() => {
+    fetchOrganizations();
+  }, [fetchOrganizations]);
+
   const myRequests = useMemo(() => {
-    return requests.filter(req => req.providerId === currentUser?.orgId);
-  }, [requests, currentUser?.orgId]);
+    return contextRequests.filter(req => req.providerId === currentUser?.orgId);
+  }, [contextRequests, currentUser?.orgId]);
 
   const filteredRequests = useMemo(() => {
     if (statusFilter === 'All') return myRequests;
@@ -27,7 +49,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
   const requestStatuses: (ServiceRequestStatus | 'All')[] = ['All', ...Object.values(ServiceRequestStatus)];
 
   const getFoundationName = (orgId: string) => {
-    return INITIAL_ORGANIZATIONS.find(o => o.id === orgId)?.name || t('foundationOrdersAppointmentsPage.unknownProvider');
+    return organizations.find(o => o.id === orgId)?.name || t('foundationOrdersAppointmentsPage.unknownProvider');
   };
 
   const getStatusClass = (status: ServiceRequestStatus) => {
@@ -45,13 +67,33 @@ const ServiceProviderRequestsPage: React.FC = () => {
     }
   };
 
-  const handleUpdateStatus = (requestId: string, newStatus: ServiceRequestStatus) => {
-    setRequests(prev => prev.map(req => 
-      req.id === requestId ? { ...req, status: newStatus } : req
-    ));
-    setSelectedRequest(prev => prev ? { ...prev, status: newStatus } : null);
-    alert(`Request ${requestId} updated to ${newStatus}.`);
+  const handleUpdateStatus = async (requestId: string, newStatus: ServiceRequestStatus) => {
+    try {
+      const response = await authenticatedRequest<ServiceRequest>(`/marketplace/service-requests/${requestId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.success) {
+        // Refresh the requests from context
+        await refreshServiceRequests();
+        setSelectedRequest(prev => prev ? { ...prev, status: newStatus } : null);
+      }
+    } catch (err) {
+      console.error('Failed to update request status:', err);
+      alert(t('serviceProviderRequestsPage.updateError', 'Failed to update request status'));
+    }
   };
+
+  const loading = serviceRequestsLoading || orgsLoading;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -112,6 +154,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
         onClose={() => setSelectedRequest(null)}
         request={selectedRequest}
         onUpdateStatus={handleUpdateStatus}
+        organizations={organizations}
       />
     </div>
   );

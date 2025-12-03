@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 // [FIX] Imported ELEARNING_CATEGORIES to use as a valid fallback.
 import { Course, UserRole, Course as CourseType, ELearningContentType, ELearningCategory, ELEARNING_CATEGORIES, ELEARNING_CATEGORY_LABELS } from '../types';
-import { INITIAL_COURSES, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { AcademicCapIcon, VideoCameraIcon, DocumentTextIcon, EyeIcon, PlayIcon, ArrowDownTrayIcon, LinkIcon, MagnifyingGlassIcon, ArrowTopRightOnSquareIcon, StarIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
@@ -205,7 +205,7 @@ const ELearningPage: React.FC = () => {
       } catch (error) {
         console.error('Failed to fetch E-Learning content:', error);
         // Fall back to empty state if API fails
-        setELearningItems(INITIAL_COURSES);
+        setELearningItems([]);
       } finally {
         setIsLoading(false);
       }

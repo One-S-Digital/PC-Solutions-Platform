@@ -1,18 +1,28 @@
-
-
 import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
 import { User, UserRole, ParentLead, LeadMainStatus, SupportedLanguage, SignupFormData, SignupRole, JobListing, Application, DocumentItem, PlatformSettings, ServiceRequest, ServiceRequestStatus, VendorClient, VendorClientReason } from '../types';
 import { useTranslation } from 'react-i18next';
 import { useAuthContext } from '../providers/AuthProvider';
-import {
-  MOCK_PARENT_LEADS,
-  MOCK_PLATFORM_SETTINGS,
-  MOCK_SERVICE_REQUESTS,
-  MOCK_VENDOR_CLIENTS,
-} from '../constants';
 import i18n from '../i18n';
 import { useRecruitmentApi } from '../hooks/useRecruitmentApi';
 import { ApiError } from '../services/api';
+import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+
+// Default platform settings - should come from API
+const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
+  platformName: 'Pro Crèche Solutions',
+  metadataDescription: 'A platform connecting parents with childcare providers',
+  enableUserRegistration: true,
+  enableEmailNotifications: true,
+  enableSmsNotifications: false,
+  enableMaintenanceMode: false,
+  maxFileUploadSize: 10485760,
+  supportedFileTypes: ['image/jpeg', 'image/png', 'application/pdf', 'text/plain'],
+  enablePublicRegistration: true,
+  enabledLanguages: ['en', 'fr', 'de'],
+  defaultLanguage: 'en',
+  enableCaptcha: true,
+  requireEmailVerification: true,
+};
 
 interface AppContextType {
   currentUser: User | null;
@@ -22,7 +32,8 @@ interface AppContextType {
   signup: (formData: SignupFormData, role: SignupRole) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
   leads: ParentLead[];
   setLeads: Dispatch<SetStateAction<ParentLead[]>>;
-  submitParentLead: (leadData: Omit<ParentLead, 'id' | 'submissionDate' | 'mainStatus' | 'assignedFoundations' | 'responses' | 'parentId'>) => void;
+  leadsLoading: boolean;
+  submitParentLead: (leadData: Omit<ParentLead, 'id' | 'submissionDate' | 'mainStatus' | 'assignedFoundations' | 'responses' | 'parentId'>) => Promise<void>;
   favoriteCandidateIds: string[];
   toggleFavoriteCandidate: (candidateId: string) => void;
   isCandidateFavorite: (candidateId: string) => boolean;
@@ -38,10 +49,14 @@ interface AppContextType {
   setPlatformSettings: Dispatch<SetStateAction<PlatformSettings>>;
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
   serviceRequests: ServiceRequest[];
-  submitServiceRequest: (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId'>) => void;
-  // FIX: Add missing properties for vendor client management
+  serviceRequestsLoading: boolean;
+  submitServiceRequest: (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId'>) => Promise<void>;
   vendorClients: VendorClient[];
-  updateVendorClientStatus: (vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => void;
+  vendorClientsLoading: boolean;
+  updateVendorClientStatus: (vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => Promise<void>;
+  refreshLeads: () => Promise<void>;
+  refreshServiceRequests: () => Promise<void>;
+  refreshVendorClients: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -49,13 +64,19 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Use Clerk authentication from AuthProvider
   const { currentUser, setCurrentUser, login, logout, signup, updateCurrentUserInfo: updateUserFromAuth } = useAuthContext();
-  const [leads, setLeads] = useState<ParentLead[]>(MOCK_PARENT_LEADS);
-  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>(MOCK_SERVICE_REQUESTS);
+  const { authenticatedRequest } = useAuthenticatedApi();
+  
+  // Data states - initialized empty, loaded from API
+  const [leads, setLeads] = useState<ParentLead[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
+  const [serviceRequestsLoading, setServiceRequestsLoading] = useState(false);
+  const [vendorClients, setVendorClients] = useState<VendorClient[]>([]);
+  const [vendorClientsLoading, setVendorClientsLoading] = useState(false);
   const [applications, setApplications] = useState<Application[]>([]);
   const [userFiles, setUserFiles] = useState<DocumentItem[]>([]);
-  const [platformSettings, setPlatformSettings] = useState<PlatformSettings>(MOCK_PLATFORM_SETTINGS);
-  // FIX: Add state for vendor clients
-  const [vendorClients, setVendorClients] = useState<VendorClient[]>(MOCK_VENDOR_CLIENTS);
+  const [platformSettings, setPlatformSettings] = useState<PlatformSettings>(DEFAULT_PLATFORM_SETTINGS);
+  
   const { createApplication, listMyApplications } = useRecruitmentApi();
   const [language, setLanguage] = useState<SupportedLanguage>(() => {
     const detectedLng = i18n.language?.toUpperCase().split('-')[0];
@@ -69,11 +90,102 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     return storedFavorites ? JSON.parse(storedFavorites) : [];
   });
 
+  // Load platform settings from API
+  useEffect(() => {
+    const loadPlatformSettings = async () => {
+      try {
+        const response = await fetch('/api/frontend-settings/public');
+        if (response.ok) {
+          const data = await response.json();
+          if (data) {
+            setPlatformSettings(prev => ({ ...prev, ...data }));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load platform settings:', error);
+        // Keep defaults on error
+      }
+    };
+    loadPlatformSettings();
+  }, []);
+
+  // Load leads from API when user is authenticated
+  const refreshLeads = useCallback(async () => {
+    if (!currentUser) {
+      setLeads([]);
+      return;
+    }
+    
+    setLeadsLoading(true);
+    try {
+      const response = await authenticatedRequest<ParentLead[]>('/compat/parent-leads');
+      if (response.success && response.data) {
+        setLeads(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to load leads:', error);
+    } finally {
+      setLeadsLoading(false);
+    }
+  }, [currentUser, authenticatedRequest]);
+
+  // Load service requests from API
+  const refreshServiceRequests = useCallback(async () => {
+    if (!currentUser) {
+      setServiceRequests([]);
+      return;
+    }
+    
+    setServiceRequestsLoading(true);
+    try {
+      const response = await authenticatedRequest<ServiceRequest[]>('/marketplace/service-requests');
+      if (response.success && response.data) {
+        setServiceRequests(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to load service requests:', error);
+    } finally {
+      setServiceRequestsLoading(false);
+    }
+  }, [currentUser, authenticatedRequest]);
+
+  // Load vendor clients from API
+  const refreshVendorClients = useCallback(async () => {
+    if (!currentUser) {
+      setVendorClients([]);
+      return;
+    }
+    
+    setVendorClientsLoading(true);
+    try {
+      const response = await authenticatedRequest<VendorClient[]>('/compat/vendor-clients');
+      if (response.success && response.data) {
+        setVendorClients(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to load vendor clients:', error);
+      // Vendor clients endpoint might not exist yet - that's ok
+    } finally {
+      setVendorClientsLoading(false);
+    }
+  }, [currentUser, authenticatedRequest]);
+
+  // Load data when user changes
+  useEffect(() => {
+    if (currentUser) {
+      refreshLeads();
+      refreshServiceRequests();
+      refreshVendorClients();
+    } else {
+      setLeads([]);
+      setServiceRequests([]);
+      setVendorClients([]);
+    }
+  }, [currentUser, refreshLeads, refreshServiceRequests, refreshVendorClients]);
+
   useEffect(() => {
     const newLangCode = language.toLowerCase();
     if (i18n.language !== newLangCode) {
-      // Change language immediately - translations should already be preloaded
-      // If not, i18next will use fallback resources and load in background
       i18n.changeLanguage(newLangCode).catch((err) => {
         console.error('Failed to change language:', err);
       });
@@ -139,41 +251,49 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     };
   }, [language]);
 
-  // Note: login and signup are now handled by Clerk through AuthProvider
-  // These functions are passed through from AuthProvider
+  const submitParentLead = useCallback(async (leadData: Omit<ParentLead, 'id' | 'submissionDate' | 'mainStatus' | 'assignedFoundations' | 'responses'| 'parentId'>) => {
+    try {
+      const response = await authenticatedRequest<ParentLead>('/compat/parent-leads', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...leadData,
+          mainStatus: LeadMainStatus.NEW,
+        }),
+      });
+      
+      if (response.success && response.data) {
+        setLeads(prevLeads => [response.data!, ...prevLeads]);
+      }
+    } catch (error) {
+      console.error('Failed to submit lead:', error);
+      throw error;
+    }
+  }, [authenticatedRequest]);
 
-
-  const submitParentLead = useCallback((leadData: Omit<ParentLead, 'id' | 'submissionDate' | 'mainStatus' | 'assignedFoundations' | 'responses'| 'parentId'>) => {
-    const newLead: ParentLead = {
-      ...leadData,
-      id: `lead${Date.now()}`,
-      parentId: currentUser?.id || `anon${Date.now()}`, // Use actual parent ID if logged in
-      submissionDate: new Date().toISOString(),
-      mainStatus: LeadMainStatus.NEW,
-      assignedFoundations: [], 
-      responses: [],
-    };
-    setLeads(prevLeads => [newLead, ...prevLeads]);
-  }, [currentUser]);
-
-  const submitServiceRequest = useCallback((requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId'>) => {
+  const submitServiceRequest = useCallback(async (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId'>) => {
     if (!currentUser || !currentUser.orgId) {
-        alert("You must be logged in as a foundation to submit a request.");
-        return;
-    };
-    const newRequest: ServiceRequest = {
-        ...requestData,
-        id: `servreq_${Date.now()}`,
-        foundationId: currentUser.id,
-        foundationOrgId: currentUser.orgId,
-        requestDate: new Date().toISOString(),
-        status: ServiceRequestStatus.NEW,
-    };
-    setServiceRequests(prev => [newRequest, ...prev]);
-    // For demo persistence across reloads, we would update the mock constant.
-    // In a real app this is an API call.
-    MOCK_SERVICE_REQUESTS.unshift(newRequest);
-  }, [currentUser]);
+      throw new Error("You must be logged in as a foundation to submit a request.");
+    }
+    
+    try {
+      const response = await authenticatedRequest<ServiceRequest>('/marketplace/service-requests', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...requestData,
+          foundationId: currentUser.id,
+          foundationOrgId: currentUser.orgId,
+          status: ServiceRequestStatus.NEW,
+        }),
+      });
+      
+      if (response.success && response.data) {
+        setServiceRequests(prev => [response.data!, ...prev]);
+      }
+    } catch (error) {
+      console.error('Failed to submit service request:', error);
+      throw error;
+    }
+  }, [currentUser, authenticatedRequest]);
 
   const toggleFavoriteCandidate = useCallback((candidateId: string) => {
     setFavoriteCandidateIds(prev => {
@@ -219,8 +339,8 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     const newFile: DocumentItem = {
         id: `file_${Date.now()}`,
         name: file.name,
-        url: URL.createObjectURL(file), // Mock URL
-        type: 'Other', // Could try to determine from file.type
+        url: URL.createObjectURL(file),
+        type: 'Other',
         uploadDate: new Date().toISOString(),
         size: file.size,
     };
@@ -237,50 +357,68 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const updateCurrentUserInfo = useCallback(
     (updatedInfo: Partial<User>) => {
-      // Delegate to AuthProvider's update function
       return updateUserFromAuth(updatedInfo);
     },
     [updateUserFromAuth]
   );
 
-  // FIX: Implement vendor client status update function
-  const updateVendorClientStatus = useCallback((vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => {
+  const updateVendorClientStatus = useCallback(async (vendorId: string, orgId: string, isActive: boolean, reason?: VendorClientReason, note?: string) => {
     if (!currentUser) return;
 
-    setVendorClients(prevClients => {
+    try {
+      const response = await authenticatedRequest<VendorClient>('/compat/vendor-clients', {
+        method: 'POST',
+        body: JSON.stringify({
+          vendorId,
+          orgId,
+          isActive,
+          reason,
+          note,
+        }),
+      });
+      
+      if (response.success) {
+        // Refresh the list to get updated data
+        await refreshVendorClients();
+      }
+    } catch (error) {
+      console.error('Failed to update vendor client status:', error);
+      // Fallback to local update if API fails
+      setVendorClients(prevClients => {
         const existingClientIndex = prevClients.findIndex(vc => vc.vendorId === vendorId && vc.orgId === orgId);
         
         if (existingClientIndex > -1) {
-            const updatedClients = [...prevClients];
-            const clientToUpdate = { ...updatedClients[existingClientIndex] };
-            clientToUpdate.isActive = isActive;
-            if (reason) clientToUpdate.reason = reason;
-            if (note !== undefined) clientToUpdate.note = note;
-            clientToUpdate.markedByUserId = currentUser.id;
-            clientToUpdate.markedAt = new Date().toISOString();
-            if (!isActive && updatedClients[existingClientIndex].isActive) {
-                clientToUpdate.deactivatedAt = new Date().toISOString();
-            } else if (isActive) {
-                clientToUpdate.deactivatedAt = undefined;
-            }
-            updatedClients[existingClientIndex] = clientToUpdate;
-            return updatedClients;
+          const updatedClients = [...prevClients];
+          const clientToUpdate = { ...updatedClients[existingClientIndex] };
+          clientToUpdate.isActive = isActive;
+          if (reason) clientToUpdate.reason = reason;
+          if (note !== undefined) clientToUpdate.note = note;
+          clientToUpdate.markedByUserId = currentUser.id;
+          clientToUpdate.markedAt = new Date().toISOString();
+          if (!isActive && updatedClients[existingClientIndex].isActive) {
+            clientToUpdate.deactivatedAt = new Date().toISOString();
+          } else if (isActive) {
+            clientToUpdate.deactivatedAt = undefined;
+          }
+          updatedClients[existingClientIndex] = clientToUpdate;
+          return updatedClients;
         } else {
-            const newClient: VendorClient = {
-                id: `vc-${Date.now()}`,
-                vendorId,
-                orgId,
-                isActive,
-                reason,
-                note,
-                markedByUserId: currentUser.id,
-                markedAt: new Date().toISOString(),
-                deactivatedAt: !isActive ? new Date().toISOString() : undefined,
-            };
-            return [...prevClients, newClient];
+          const newClient: VendorClient = {
+            id: `vc-${Date.now()}`,
+            vendorId,
+            orgId,
+            isActive,
+            reason,
+            note,
+            markedByUserId: currentUser.id,
+            markedAt: new Date().toISOString(),
+            deactivatedAt: !isActive ? new Date().toISOString() : undefined,
+          };
+          return [...prevClients, newClient];
         }
-    });
-  }, [currentUser]);
+      });
+    }
+  }, [currentUser, authenticatedRequest, refreshVendorClients]);
 
 
   return (
@@ -291,7 +429,8 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
         logout,
         signup,
         leads, 
-        setLeads, 
+        setLeads,
+        leadsLoading,
         submitParentLead,
         favoriteCandidateIds,
         toggleFavoriteCandidate,
@@ -308,10 +447,14 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
         setPlatformSettings,
         updateCurrentUserInfo,
         serviceRequests,
+        serviceRequestsLoading,
         submitServiceRequest,
-        // FIX: Provide vendor client state and function
         vendorClients,
-        updateVendorClientStatus
+        vendorClientsLoading,
+        updateVendorClientStatus,
+        refreshLeads,
+        refreshServiceRequests,
+        refreshVendorClients,
     }}>
       {children}
     </AppContext.Provider>

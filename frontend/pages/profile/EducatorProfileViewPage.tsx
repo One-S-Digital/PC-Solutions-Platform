@@ -86,10 +86,10 @@ const EducatorProfileViewPage: React.FC = () => {
     navigate(`/messages/${conversationId}`);
   };
 
-  const handleInviteToApply = () => {
+  const handleInviteToApply = async () => {
     if (!candidate || !currentUser) return;
-    const conversationId = startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    sendMessage(
+    const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+    await sendMessage(
       conversationId,
       `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
     );

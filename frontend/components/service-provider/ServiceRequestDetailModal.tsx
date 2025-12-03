@@ -1,25 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ServiceRequest, ServiceRequestStatus } from '../../types';
+import { ServiceRequest, ServiceRequestStatus, Organization } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline';
-import { INITIAL_ORGANIZATIONS } from '../../constants';
 
 interface ServiceRequestDetailModalProps {
   request: ServiceRequest | null;
   isOpen: boolean;
   onClose: () => void;
   onUpdateStatus: (requestId: string, newStatus: ServiceRequestStatus) => void;
+  organizations?: Organization[];
 }
 
-const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ request, isOpen, onClose, onUpdateStatus }) => {
+const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ request, isOpen, onClose, onUpdateStatus, organizations = [] }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
 
   if (!isOpen || !request) return null;
 
-  const daycare = INITIAL_ORGANIZATIONS.find(org => org.id === request.foundationOrgId);
+  const daycare = organizations.find(org => org.id === request.foundationOrgId);
 
   const handleViewProfile = () => {
     navigate(`/partner/${request.foundationOrgId}`);
@@ -31,12 +31,12 @@ const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ r
       case ServiceRequestStatus.NEW:
         return (
           <>
-            <Button variant="danger" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.REJECTED)}>Reject</Button>
-            <Button variant="primary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.ACCEPTED)}>Accept</Button>
+            <Button variant="danger" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.REJECTED)}>{t('common:buttons.reject', 'Reject')}</Button>
+            <Button variant="primary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.ACCEPTED)}>{t('common:buttons.accept', 'Accept')}</Button>
           </>
         );
       case ServiceRequestStatus.ACCEPTED:
-        return <Button variant="secondary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.SCHEDULED)}>Schedule</Button>;
+        return <Button variant="secondary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.SCHEDULED)}>{t('serviceRequestDetailModal.schedule', 'Schedule')}</Button>;
       case ServiceRequestStatus.SCHEDULED:
         return <Button variant="primary" onClick={() => onUpdateStatus(request.id, ServiceRequestStatus.COMPLETED)}>{t("serviceRequestDetailModal.markAsCompleted")}</Button>;
       default:
@@ -62,14 +62,16 @@ const ServiceRequestDetailModal: React.FC<ServiceRequestDetailModalProps> = ({ r
           </div>
 
           <div className="flex items-center p-3 border rounded-md">
-            <img src={daycare?.logoUrl} alt={daycare?.name} className="w-12 h-12 rounded-full mr-3"/>
+            {daycare?.logoUrl && <img src={daycare.logoUrl} alt={daycare?.name} className="w-12 h-12 rounded-full mr-3"/>}
             <div>
-              <p className="font-medium">{daycare?.name}</p>
+              <p className="font-medium">{daycare?.name || t('common:unknown', 'Unknown')}</p>
               <p className="text-xs text-gray-500">{daycare?.region}</p>
             </div>
-            <Button variant="outline" size="sm" leftIcon={BuildingStorefrontIcon} className="ml-auto" onClick={handleViewProfile}>
-              {t('serviceRequestDetailModal.viewDaycareProfile')}
-            </Button>
+            {daycare && (
+              <Button variant="outline" size="sm" leftIcon={BuildingStorefrontIcon} className="ml-auto" onClick={handleViewProfile}>
+                {t('serviceRequestDetailModal.viewDaycareProfile')}
+              </Button>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
