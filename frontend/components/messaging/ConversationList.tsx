@@ -13,9 +13,7 @@ const ConversationList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
-  useEffect(() => {
-    loadUserConversations();
-  }, [loadUserConversations]);
+  // Removed duplicate loadUserConversations call - MessagingContext already loads on mount
 
   const filteredConversations = useMemo(() => conversations
     .filter(conv => {

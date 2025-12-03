@@ -275,7 +275,6 @@ const ContentManagementDashboardPage: React.FC = () => {
       };
       setPolicies(prev => [newPolicy, ...prev]);
     }
-    console.log(`New ${uploadContentType} submitted:`, data, file?.name);
     // Modal will close itself if submission is successful
   };
   

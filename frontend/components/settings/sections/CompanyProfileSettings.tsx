@@ -359,7 +359,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.vatNumber || ''}
                 onChange={(e) => onChange('vatNumber', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder="CHE-123.456.789"
+                placeholder={t('common:placeholders.vatNumber')}
               />
             </div>
           </div>
@@ -398,7 +398,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 value={settings.phoneNumber || ''}
                 onChange={(e) => onChange('phoneNumber', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder="+41 XX XXX XX XX"
+                placeholder={t('common:placeholders.41xxxxxxxxx')}
               />
             </div>
 
@@ -578,7 +578,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.directOrderLink || ''}
                     onChange={(e) => onChange('directOrderLink', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
-                    placeholder="https://..."
+                    placeholder={t('common:placeholders.url')}
                   />
                 </div>
 
@@ -592,7 +592,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.catalogUrl || ''}
                     onChange={(e) => onChange('catalogUrl', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
-                    placeholder="https://..."
+                    placeholder={t('common:placeholders.url')}
                   />
                 </div>
               </div>
@@ -670,7 +670,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     value={settings.bookingLink || ''}
                     onChange={(e) => onChange('bookingLink', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
-                    placeholder="https://..."
+                    placeholder={t('common:placeholders.url')}
                   />
                 </div>
               </div>

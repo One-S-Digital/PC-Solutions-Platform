@@ -219,9 +219,9 @@ export default function AdminCustomSignupForm() {
             className={`h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint ${errors[name] ? 'border-swiss-coral' : ''}`} 
           />
           <span className="ml-2 text-sm text-gray-600">
-            I accept the{' '}
+            {t('admin:auth.signup.termsPrefix')}{' '}
             <a href="#/terms" target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">
-              Terms and Conditions
+              {t('admin:auth.signup.termsLink')}
             </a>
           </span>
         </div>
@@ -241,7 +241,7 @@ export default function AdminCustomSignupForm() {
               type="button" 
               onClick={() => name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
               className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-              aria-label={(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'Hide password' : 'Show password'}
+              aria-label={(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? t('admin:auth.login.hidePassword') : t('admin:auth.login.showPassword')}
             >
               {(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
             </button>
@@ -274,7 +274,7 @@ export default function AdminCustomSignupForm() {
                   {getAdminLogo(settings) ? (
                     <img 
                       src={getAdminLogo(settings)!} 
-                      alt="Admin Logo" 
+                      alt={t('common:adminlogo')} 
                       className="h-8 w-8 object-contain"
                     />
                   ) : (

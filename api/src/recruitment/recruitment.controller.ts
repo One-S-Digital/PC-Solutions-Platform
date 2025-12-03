@@ -41,6 +41,7 @@ export class RecruitmentController {
     @Query('location') location?: string,
     @Query('search') search?: string,
     @Query('contractType') contractType?: string,
+    @Query('lang') lang?: string,
     @Request() req?,
   ) {
     const normalizedContractType = contractType ? contractType.toUpperCase() : undefined;
@@ -59,12 +60,13 @@ export class RecruitmentController {
       search,
       contractType: normalizedContractType,
       publishedOnly,
+      lang: lang || 'en',
     });
   }
 
   @Get('job-listings/:id')
-  findJobListingById(@Param('id') id: string) {
-    return this.recruitmentService.findJobListingById(id);
+  findJobListingById(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.recruitmentService.findJobListingById(id, lang || 'en');
   }
 
   @Patch('job-listings/:id')
@@ -82,7 +84,7 @@ export class RecruitmentController {
   @Get('job-listings/:id/applications')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getJobListingApplications(@Param('id') id: string, @Request() req) {
-    const listing = await this.recruitmentService.findJobListingById(id);
+    const listing = await this.recruitmentService.findJobListingById(id, 'en');
 
     if (!listing) {
       throw new NotFoundException('Job listing not found');
@@ -129,7 +131,7 @@ export class RecruitmentController {
   @Get('applications/job/:id')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getApplicationsForJob(@Param('id') id: string, @Request() req) {
-    const listing = await this.recruitmentService.findJobListingById(id);
+    const listing = await this.recruitmentService.findJobListingById(id, 'en');
 
     if (!listing) {
       throw new NotFoundException('Job listing not found');

@@ -234,7 +234,10 @@ class MarketplaceService {
       tags: service.tags || [], // Default empty tags
       imageUrl: service.imageUrl, // Services may have images
       deliveryType: service.deliveryType || service.provider?.deliveryType || 'On-site',
-      priceInfo: service.priceInfo || (service.price ? `CHF ${service.price}` : 'Contact for pricing'),
+      // TODO: Consider moving translation to UI layer for dynamic language switching
+      // Current approach: translates at data fetch time, won't update if user switches language
+      // Alternative: Store translation key and translate in component
+      priceInfo: service.priceInfo || (service.price ? `CHF ${service.price}` : i18n.t('common:marketplace.contactForPricing')),
     };
   }
 

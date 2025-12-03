@@ -24,6 +24,8 @@ import { UpdateServiceProviderSettingsDto } from './dto/service-provider-setting
 import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
 import { UpdatePrivacySettingsDto } from './dto/privacy-settings.dto';
 import { UpdateNotificationSettingsDto } from './dto/notification-settings.dto';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -36,6 +38,7 @@ export class SettingsController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly principal: PrincipalService,
+    private readonly translationService: TranslationService,
   ) {}
 
   private getContext(request: any) {
@@ -178,6 +181,29 @@ export class SettingsController {
         });
       }
     });
+
+    // Update organization translations after transaction
+    const userOrg = await this.prisma.userOrganization.findFirst({
+      where: { userId: profileId },
+      include: { organization: true },
+    });
+
+    if (userOrg?.organization) {
+      // Update organization translations (only description - name is a proper noun/identifier)
+      const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+      const translationPayload: Record<string, any> = {
+        description: userOrg.organization.description || '',
+      };
+
+      if (translationPayload.description && translationPayload.description.trim().length > 0) {
+        await this.translationService.saveEntityWithTranslations(
+          'organization',
+          userOrg.organization.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
+    }
 
     return {
       success: true,
@@ -343,7 +369,7 @@ export class SettingsController {
 
       if (userOrg?.organization) {
         // Update existing organization
-        await tx.organization.update({
+        const updatedOrganization = await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: settings.companyName,
@@ -395,6 +421,26 @@ export class SettingsController {
         });
       }
     });
+
+    // Update translations after transaction completes
+    const userOrg = await this.prisma.userOrganization.findFirst({
+      where: { userId: profileId },
+      include: { organization: true },
+    });
+    
+    if (userOrg?.organization && userOrg.organization.description?.trim()) {
+      const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+      const translationPayload: Record<string, any> = {
+        description: userOrg.organization.description,
+      };
+      
+      await this.translationService.saveEntityWithTranslations(
+        'organization',
+        userOrg.organization.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
 
     return {
       success: true,
@@ -736,6 +782,26 @@ export class SettingsController {
           throw txError;
         }
       });
+
+      // Update translations after transaction completes
+      const userOrg = await this.prisma.userOrganization.findFirst({
+        where: { userId: profileId },
+        include: { organization: true },
+      });
+      
+      if (userOrg?.organization && userOrg.organization.description?.trim()) {
+        const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+        const translationPayload: Record<string, any> = {
+          description: userOrg.organization.description,
+        };
+        
+        await this.translationService.saveEntityWithTranslations(
+          'organization',
+          userOrg.organization.id,
+          translationPayload,
+          translatableFields,
+        );
+      }
 
       const duration = Date.now() - startTime;
       this.logger.log('🔍 [DEBUG] updateServiceProviderSettings - SUCCESS', {

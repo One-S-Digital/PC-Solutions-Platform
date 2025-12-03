@@ -215,7 +215,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
             onClick={handleClose}
             disabled={isSubmitting}
             className="p-1 rounded-full text-white/80 hover:bg-white/20 hover:text-white transition-colors disabled:opacity-50"
-            aria-label="Close"
+            aria-label={t('common:labels.close')}
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -240,7 +240,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   value={formData.title}
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
-                  placeholder="e.g., Early Childhood Educator"
+                  placeholder={t('admin:forms.job.titlePlaceholder')}
                 />
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               </div>
@@ -280,7 +280,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   onChange={handleInputChange}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Describe the role, day-to-day responsibilities, and what makes this position special..."
+                  placeholder={t('admin:forms.job.descriptionPlaceholder')}
                 />
               </div>
 
@@ -296,7 +296,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                     value={formData.location}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="e.g., Zurich, Switzerland"
+                    placeholder={t('admin:forms.job.locationPlaceholder')}
                   />
                 </div>
                 
@@ -311,7 +311,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                     value={formData.salary}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="e.g., CHF 60,000 - 80,000"
+                    placeholder={t('admin:forms.job.salaryPlaceholder')}
                   />
                 </div>
                 
@@ -393,7 +393,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   onChange={(e) => setNewRequirement(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('requirements', newRequirement, setNewRequirement))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Add a requirement..."
+                  placeholder={t('admin:forms.job.requirementPlaceholder')}
                 />
                 <button
                   type="button"
@@ -449,7 +449,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   onChange={(e) => setNewResponsibility(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('responsibilities', newResponsibility, setNewResponsibility))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Add a responsibility..."
+                  placeholder={t('admin:forms.job.responsibilityPlaceholder')}
                 />
                 <button
                   type="button"
@@ -492,7 +492,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   onChange={(e) => setNewQualification(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('qualifications', newQualification, setNewQualification))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Add a qualification..."
+                  placeholder={t('admin:forms.job.qualificationPlaceholder')}
                 />
                 <button
                   type="button"
@@ -535,7 +535,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                   onChange={(e) => setNewBenefit(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddItem('benefits', newBenefit, setNewBenefit))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Add a benefit..."
+                  placeholder={t('admin:forms.job.benefitPlaceholder')}
                 />
                 <button
                   type="button"

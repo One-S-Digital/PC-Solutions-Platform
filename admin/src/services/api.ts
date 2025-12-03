@@ -416,12 +416,13 @@ export const apiService = {
   getOrderRequests: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<OrderRequest[]>>('/order-requests'),
 
   // Messaging
-  getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messages/conversations'),
-  getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messages/conversations/${id}`),
-  createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messages/conversations', data),
-  getMessages: (apiClient: AxiosInstance, conversationId: string) => apiClient.get<ApiResponse<Message[]>>(`/messages/conversations/${conversationId}/messages`),
-  sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messages', data),
-  markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messages/${id}/read`),
+  // NOTE: Endpoint paths changed from /messages/* to /messaging/* - ensure backend is deployed first
+  getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messaging/conversations'),
+  getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messaging/conversations/${id}`),
+  createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messaging/conversations', data),
+  getMessages: (apiClient: AxiosInstance, conversationId: string) => apiClient.get<ApiResponse<Message[]>>(`/messaging/conversations/${conversationId}/messages`),
+  sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messaging/messages', data),
+  markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messaging/messages/${id}/read`),
 
   // System
   getCurrentUser: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User>>('/users/me'),
@@ -717,6 +718,12 @@ export const apiService = {
 
   getSupportTicketStats: (apiClient: AxiosInstance) =>
     apiClient.get<ApiResponse<any>>('/support/admin/stats'),
+
+  autoFixHardcodedStrings: (
+    apiClient: AxiosInstance
+  ) => apiClient.post<ApiResponse<{ success: boolean; fixed: number; skipped: number; errors: number; message: string }>>('/static-translations/admin/auto-fix-hardcoded-strings', {}, {
+    timeout: 600000, // 10 minutes timeout for auto-fix operations (can take a while)
+  }),
 }
 
 // Export individual content functions for easier imports

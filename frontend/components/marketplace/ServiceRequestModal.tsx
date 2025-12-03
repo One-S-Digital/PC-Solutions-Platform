@@ -89,12 +89,12 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
                 className={STANDARD_INPUT_FIELD}
-                placeholder="e.g., Number of children for workshop, specific areas for cleaning..."
+                placeholder={t('marketplace:serviceRequest.detailsPlaceholder')}
               />
             </div>
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-            <Button type="button" variant="light" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
             <Button type="submit" variant="secondary">{t("serviceRequestModal.submitButton")}</Button>
           </div>
         </form>

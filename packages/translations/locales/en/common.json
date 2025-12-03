@@ -1,55 +1,17 @@
 {
   "buttons": {
+    "confirm": "Confirm",
+    "login": "Log In",
+    "signup": "Sign Up",
     "save": "Save",
-    "saveChanges": "Save Changes",
     "cancel": "Cancel",
     "submit": "Submit",
     "add": "Add",
     "edit": "Edit",
     "delete": "Delete",
-    "viewDetails": "View Details",
-    "viewProfile": "View Profile",
-    "editProfile": "Edit Profile",
-    "profileUpdated": "Profile updated!",
-    "saving": "Saving",
-    "goBack": "Go Back",
-    "login": "Log In",
-    "signup": "Sign Up",
-    "applyNow": "Apply Now",
-    "confirmApply": "Confirm Application",
-    "sendMessage": "Send Message",
-    "inviteToApply": "Invite to Apply",
-    "inviteToInterview": "Invite to Interview",
-    "addToFavorites": "Add to Favorites",
-    "favorited": "Favorited",
-    "submitEnquiry": "Submit Enquiry",
-    "viewMyEnquiries": "View My Enquiries",
-    "submitTicket": "Submit Ticket",
-    "goToLogin": "Go to Login",
+    "view": "View",
     "close": "Close",
     "open": "Open",
-    "view": "View",
-    "resetFilters": "Reset Filters",
-    "applyFilters": "Apply Filters",
-    "submitRequest": "Submit Request",
-    "remove": "Remove",
-    "dismiss": "Dismiss",
-    "viewAll": "View All",
-    "continue": "Continue",
-    "send": "Send",
-    "create": "Create",
-    "update": "Update",
-    "register": "Register",
-    "toggleNavigation": "Toggle Navigation",
-    "hidePassword": "Hide Password",
-    "showPassword": "Show Password",
-    "signIn": "Sign In",
-    "signOut": "Sign Out",
-    "resetPassword": "Reset Password",
-    "rememberMe": "Remember Me",
-    "createAccount": "Create Account",
-    "download": "Download",
-    "upload": "Upload",
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
@@ -57,7 +19,8 @@
     "no": "No",
     "ok": "OK",
     "retry": "Retry",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "submitTicket": "Submit Ticket"
   },
   "common": {
     "error": "An error occurred",
@@ -88,14 +51,8 @@
     "save10Percent": "save 10%"
   },
   "errors": {
-    "unknown": "An unknown error occurred",
-    "networkError": "Network error occurred",
-    "validationError": "Validation error",
-    "loadingFiles": "Error loading files",
-    "unauthorized": "Unauthorized access",
-    "forbidden": "Access forbidden",
-    "notFound": "Resource not found",
-    "serverError": "Server error occurred"
+    "errorrate": "Error Rate",
+    "errors": "Errors"
   },
   "notifications": {
     "errorTitle": "Error",
@@ -287,6 +244,22 @@
     "fr": "Français",
     "de": "Deutsch"
   },
+  "fileUpload": {
+    "dragDrop": "or drag and drop",
+    "selected": "Selected:"
+  },
+  "placeholders": {
+    "addtag": "Add tag...",
+    "describethisfile": "Describe this file...",
+    "lastname": "Last name",
+    "emailaddress": "Email address",
+    "searchusersbynameoremail": "Search users by name or email..."
+  },
+  "accessibility": {
+    "dismiss": "Dismiss",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  },
   "settingsPage": {
     "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to leave?",
     "loading": "Loading settings...",
@@ -377,14 +350,7 @@
     }
   },
   "policyAlertModal": {
-    "labels": {
-      "title": "Title",
-      "message": "Message",
-      "type": "Type",
-      "regionScope": "Region Scope",
-      "displayStartDate": "Display Start Date",
-      "displayEndDate": "Display End Date"
-    }
+    "title": "Policy Alert"
   },
   "orderSummaryDrawer": {
     "title": "Title",
@@ -464,14 +430,18 @@
     "noMessagesYet": "No  Messages Yet"
   },
   "createGroupChatModal": {
+    "titleNewChat": "Create Chat",
     "error": {
-      "minParticipants": "Min Participants"
+      "minParticipants": "Please select at least one participant to start a conversation. You will be automatically added as a participant.",
+      "invalidParticipants": "Please select valid participants. System accounts and yourself cannot be added to conversations."
     },
-    "title": "Title",
+    "title": "Create Group Chat",
     "groupNameLabel": "Group Name",
     "groupNamePlaceholder": "Enter group name",
     "selectParticipantsLabel": "Select Participants",
-    "createButton": "Create Button"
+    "createButton": "Create",
+    "loadingUsers": "Loading users...",
+    "noUsersAvailable": "No users available"
   },
   "serviceRequestDetailModal": {
     "markAsCompleted": "Mark As Completed",
@@ -561,7 +531,9 @@
       "accountTypeLabel": "Account Type",
       "memberSinceLabel": "Member Since",
       "updateInfoButton": "Update Information",
-      "nameLabel": "Name"
+      "nameLabel": "Name",
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name"
     },
     "changePassword": {
       "title": "Change Password",
@@ -569,7 +541,10 @@
       "newPasswordLabel": "New Password",
       "confirmNewPasswordLabel": "Confirm New Password",
       "updatePasswordButton": "Update Password",
-      "passwordUpdated": "Password Updated"
+      "passwordUpdated": "Password Updated",
+      "updating": "Updating...",
+      "securityMessage": "For security reasons, you may need to sign out and sign back in before changing your password. If you encounter a verification error, please sign out and sign back in, then try again.",
+      "verificationErrorTip": "Tip: Try signing out and signing back in, then attempt to change your password again."
     }
   },
   "settingsPrivacyData": {
@@ -806,7 +781,7 @@
     "notes": "No tes"
   },
   "fileUploadZone": {
-    "dragAndDrop": "Drag and drop files here"
+    "defaultLabel": "Upload a file"
   },
   "appContext": {
     "useAppContextError": "Use App Context Error"
@@ -1054,7 +1029,7 @@
     }
   },
   "serviceProviderListingsPage": {
-    "title": "Title"
+    "defaultPriceInfo": "Contact for quote"
   },
   "serviceProviderRequestsPage": {
     "title": "Title"
@@ -1077,19 +1052,14 @@
     "cannotSubmitMissingInfo": "Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "orderStatus": {
-    "pending": "Pending",
-    "approved": "Approved",
-    "rejected": "Rejected",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "active": "Active",
-    "inactive": "Inactive",
-    "paid": "Paid",
-    "shipped": "Shipped",
-    "confirmed": "Confirmed",
+    "submitted": "Submitted",
+    "viewedBySupplier": "Viewed by Supplier",
+    "accepted": "Accepted",
+    "declined": "Declined",
     "processing": "Processing",
-    "delivered": "Delivered",
-    "refunded": "Refunded"
+    "shipped": "Shipped",
+    "fulfilled": "Fulfilled",
+    "cancelled": "Cancelled"
   },
   "serviceStatus": {
     "pending": "Pending",
@@ -1137,5 +1107,176 @@
     "active": "Active",
     "archived": "Archived",
     "draft": "Draft"
-  }
+  },
+  "verificationProgress": {
+    "title": {
+      "ready": "Welcome!",
+      "processing": "Setting Up Your Account"
+    },
+    "steps": {
+      "verifyingEmail": "Verifying email...",
+      "creatingAccount": "Creating your account...",
+      "settingUpProfile": "Setting up your profile...",
+      "almostReady": "Almost ready..."
+    },
+    "messages": {
+      "accountSetupComplete": "Account setup complete!",
+      "somethingWentWrong": "Something went wrong",
+      "preparingAccount": "Preparing your account...",
+      "redirectingToDashboard": "Redirecting you to your dashboard...",
+      "contactSupport": "If this problem persists, please contact support.",
+      "tryAgain": "Try Again"
+    },
+    "progress": {
+      "complete": "{{percent}}% complete"
+    }
+  },
+  "candidateProfile": {
+    "loading": "Loading candidate…",
+    "notFound": "Candidate not found.",
+    "notFoundDescription": "The profile you are looking for does not exist or the ID is incorrect.",
+    "goBack": "Go Back",
+    "retry": "Retry",
+    "backToPool": "Back to Candidate Pool",
+    "roleNotSpecified": "Role not specified",
+    "locationNotProvided": "Location not provided",
+    "availabilityNotProvided": "Availability not provided",
+    "sections": {
+      "shortBio": "Short Bio",
+      "workExperience": "Work Experience",
+      "education": "Education",
+      "certifications": "Certifications",
+      "skillsAndSpecialties": "Skills & Specialties",
+      "availabilityAndPreferences": "Availability & Preferences",
+      "cvAndDocuments": "CV & Documents"
+    },
+    "noBioProvided": "No bio provided yet.",
+    "noExperienceListed": "No experience listed yet.",
+    "noEducationDetails": "No education details yet.",
+    "noCertificationsListed": "No certifications listed yet.",
+    "noSkillsListed": "No skills listed yet.",
+    "noDocumentsUploaded": "No documents uploaded yet.",
+    "notProvided": "Not provided",
+    "graduated": "Graduated",
+    "issued": "Issued",
+    "expires": "Expires",
+    "viewCredential": "View Credential",
+    "preferredDays": "Preferred Days",
+    "preferredTimes": "Preferred Times",
+    "contractType": "Contract Type",
+    "preferredAgeGroups": "Preferred Age Groups",
+    "inviteToApply": "Invite to Apply",
+    "sendMessage": "Send Message",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites"
+  },
+  "adminSystemMonitoring": {
+    "eventTypes": {
+      "HealthCheck": "Health Check",
+      "DatabaseBackup": "Database Backup",
+      "MemoryAlert": "Memory Alert",
+      "APIImprovement": "API Improvement"
+    }
+  },
+  "statePolicies": {
+    "allPolicies": "All Policies",
+    "allPolicyTypes": "All Policy Types",
+    "allCategories": "All Categories",
+    "policy": "policy",
+    "policies": "policies",
+    "criticalUpdate": "Critical Update",
+    "viewOnline": "View Online",
+    "download": "Download {{fileType}}"
+  },
+  "marketplace": {
+    "contactForPricing": "Contact for pricing"
+  },
+  "productUploadModal": {
+    "labels": {
+      "uploadPrimaryImage": "Upload primary image"
+    }
+  },
+  "profile": "Profile",
+  "logo": "Logo",
+  "avatar": "Avatar",
+  "cover": "Cover",
+  "labels": {
+    "currentquantity": "Current quantity",
+    "increasequantity": "Increase quantity"
+  },
+  "titles": {
+    "cpuusage": "CPU Usage",
+    "memoryusage": "Memory Usage",
+    "activealerts": "Active Alerts",
+    "diskusage": "Disk Usage",
+    "uptime": "Uptime",
+    "activeconnections": "Active Connections",
+    "avgquerytime": "Avg Query Time",
+    "storageused": "Storage Used",
+    "connectionhealth": "Connection Health",
+    "activeusers": "Active Users",
+    "requestsmin": "Requests/min",
+    "responsetime": "Response Time",
+    "throughput": "Throughput",
+    "newuserstoday": "New Users Today",
+    "sessionduration": "Session Duration",
+    "pageviews": "Page Views",
+    "failedlogins": "Failed Logins",
+    "blockedips": "Blocked IPs",
+    "apihealth": "API Health",
+    "lastscan": "Last Scan"
+  },
+  "info": "Info",
+  "preview": "Preview",
+  "adminlogo": "Admin Logo",
+  "draft": "Draft",
+  "published": "Published",
+  "archived": "Archived",
+  "downloadfile": "Download File",
+  "currentfile": "Current file",
+  "fallbackpreview": "Fallback preview",
+  "educational": "Educational",
+  "safety": "Safety",
+  "nutrition": "Nutrition",
+  "hygiene": "Hygiene",
+  "furniture": "Furniture",
+  "allcategories": "All Categories",
+  "childcare": "Childcare",
+  "education": "Education",
+  "health": "Health",
+  "specialneeds": "Special Needs",
+  "authentication": "Authentication",
+  "payment": "Payment",
+  "email": "Email",
+  "storage": "Storage",
+  "analytics": "Analytics",
+  "other": "Other",
+  "refresh": "Refresh",
+  "allnamespaces": "All Namespaces",
+  "deutschde": "Deutsch (DE)",
+  "download": "Download",
+  "allstatus": "All Status",
+  "submitted": "Submitted",
+  "viewedbysupplier": "Viewed By Supplier",
+  "accepted": "Accepted",
+  "processing": "Processing",
+  "shipped": "Shipped",
+  "fulfilled": "Fulfilled",
+  "cancelled": "Cancelled",
+  "declined": "Declined",
+  "createalert": "Create Alert",
+  "alllogs": "All Logs",
+  "warnings": "Warnings",
+  "export": "Export",
+  "superadmin": "Super Admin",
+  "admin": "Admin",
+  "foundation": "Foundation",
+  "productsupplier": "Product Supplier",
+  "serviceprovider": "Service Provider",
+  "educator": "Educator",
+  "parent": "Parent",
+  "active": "Active",
+  "pending": "Pending",
+  "inactive": "Inactive",
+  "allroles": "All Roles"
 }

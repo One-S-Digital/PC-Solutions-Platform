@@ -3,6 +3,7 @@ import { Upload, Check, AlertCircle } from 'lucide-react';
 import { apiService, useApiClient } from '../services/api';
 import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
 import { UploadedAsset } from '../types/api';
+import { useTranslation } from 'react-i18next';
 
 
 interface AssetUploaderProps {
@@ -27,6 +28,7 @@ interface AssetUploaderProps {
 }
 
 const AssetUploader: React.FC<AssetUploaderProps> = ({
+  const { t } = useTranslation(['common']);
   kind,
   currentAsset,
   fallbackUrl,
@@ -326,12 +328,12 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
             {currentAsset?.mimeType === 'image/svg+xml' || previewUrl.endsWith('.svg') ? (
               <div 
                 className="w-16 h-16 border border-gray-200 rounded bg-white flex items-center justify-center"
-                dangerouslySetInnerHTML={{ __html: `<img src="${previewUrl}" alt="Preview" style="max-width: 100%; max-height: 100%;" />` }}
+                dangerouslySetInnerHTML={{ __html: `<img src="${previewUrl}" alt={t('common:preview')} style="max-width: 100%; max-height: 100%;" />` }}
               />
             ) : (
               <img
                 src={previewUrl}
-                alt="Preview"
+                alt={t('common:preview')}
                 className="w-16 h-16 object-contain border border-gray-200 rounded bg-white"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;

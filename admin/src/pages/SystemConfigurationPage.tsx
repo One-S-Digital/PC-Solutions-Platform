@@ -914,12 +914,12 @@ export default function SystemConfigurationPage() {
                       value={newIntegration.type}
                       onChange={(e) => setNewIntegration(prev => ({ ...prev, type: e.target.value }))}
                     >
-                      <option value="auth">Authentication</option>
-                      <option value="payment">Payment</option>
-                      <option value="email">Email</option>
-                      <option value="storage">Storage</option>
-                      <option value="analytics">Analytics</option>
-                      <option value="other">Other</option>
+                      <option value="auth">{t('common:authentication')}</option>
+                      <option value="payment">{t('common:payment')}</option>
+                      <option value="email">{t('common:email')}</option>
+                      <option value="storage">{t('common:storage')}</option>
+                      <option value="analytics">{t('common:analytics')}</option>
+                      <option value="other">{t('common:other')}</option>
                     </select>
                   </div>
                 </div>

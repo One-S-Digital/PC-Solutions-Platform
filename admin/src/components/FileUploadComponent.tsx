@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Upload, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FileUploadComponentProps {
   currentFile?: {
@@ -112,7 +113,7 @@ export default function FileUploadComponent({
             {currentFile.publicUrl ? (
               <img
                 src={currentFile.publicUrl}
-                alt="Current file"
+                alt={t('common:currentfile')}
                 className="rounded-card border border-gray-200"
                 style={{ width: previewWidth, height: previewHeight, objectFit: 'contain' }}
               />
@@ -187,7 +188,7 @@ export default function FileUploadComponent({
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <img
               src={preview}
-              alt="Preview"
+              alt={t('common:preview')}
               className="rounded border border-gray-200"
               style={{ width: previewWidth, height: previewHeight, objectFit: 'contain' }}
             />

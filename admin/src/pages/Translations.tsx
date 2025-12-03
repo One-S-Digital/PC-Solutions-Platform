@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Search,
@@ -41,10 +42,12 @@ const LANGUAGE_LABELS: Record<string, string> = {
 };
 
 export default function Translations() {
+  const { t } = useTranslation(['admin', 'common']);
   const [selectedNamespace, setSelectedNamespace] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [limit] = useState(50);
+  const [autoFixJustRan, setAutoFixJustRan] = useState(false); // Track if auto-fix just ran
   const [editing, setEditing] = useState<{
     namespace: string;
     key: string;
@@ -196,6 +199,51 @@ export default function Translations() {
     },
     onError: (error: any) => {
       alert(`Cleanup failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Auto-fix hardcoded strings mutation
+  const autoFixMutation = useMutation({
+    mutationFn: async () => {
+      return apiService.autoFixHardcodedStrings(apiClient);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      
+      // Enable the auto-translate button if strings were fixed
+      if (data.data.fixed > 0) {
+        setAutoFixJustRan(true);
+        alert(`✅ Successful translation of static UI strings!\n\nFixed: ${data.data.fixed}\nSkipped: ${data.data.skipped}\nErrors: ${data.data.errors}\n\n${data.data.message}\n\n🌍 NEXT STEP: Click the "Auto-Translate FR/DE" button (now enabled) to automatically translate all new entries to French and German!`);
+      } else {
+        alert(`✅ Successful translation of static UI strings!\n\nFixed: ${data.data.fixed}\nSkipped: ${data.data.skipped}\nErrors: ${data.data.errors}\n\n${data.data.message}`);
+      }
+    },
+    onError: (error: any) => {
+      alert(`❌ Auto-fix failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Auto-translate all new keys mutation (translates [FR] and [DE] prefixed entries)
+  const autoTranslateNewKeysMutation = useMutation({
+    mutationFn: async () => {
+      // Translate to French first
+      const frResult = await apiService.translateMissing(apiClient, 'en', 'fr', undefined, undefined, false);
+      // Then translate to German
+      const deResult = await apiService.translateMissing(apiClient, 'en', 'de', undefined, undefined, false);
+      return { frResult, deResult };
+    },
+    onSuccess: ({ frResult, deResult }) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      const totalTranslated = frResult.data.translated + deResult.data.translated;
+      
+      // Reset the flag after successful translation
+      setAutoFixJustRan(false);
+      
+      alert(`✅ Auto-translation complete!\n\nFrench: ${frResult.data.translated} translations\nGerman: ${deResult.data.translated} translations\n\nTotal: ${totalTranslated} entries translated\n\n💡 All translations are now available in the app!\n\n✅ Your multi-language support is complete!`);
+    },
+    onError: (error: any) => {
+      alert(`❌ Auto-translation failed: ${error.response?.data?.message || error.message}`);
+      setAutoFixJustRan(false); // Reset on error too
     },
   });
 
@@ -506,14 +554,14 @@ export default function Translations() {
         <div className="flex gap-4">
           <input
             type="text"
-            placeholder="Version (e.g., v1.2.3)"
+            placeholder={t('admin:translations.versionPlaceholder')}
             value={newReleaseVersion}
             onChange={(e) => setNewReleaseVersion(e.target.value)}
             className="border rounded px-3 py-2 flex-1"
           />
           <input
             type="text"
-            placeholder="Description (optional)"
+            placeholder={t('admin:translations.descriptionPlaceholder')}
             value={newReleaseDescription}
             onChange={(e) => setNewReleaseDescription(e.target.value)}
             className="border rounded px-3 py-2 flex-1"
@@ -542,7 +590,7 @@ export default function Translations() {
               onChange={(e) => setSelectedNamespace(e.target.value)}
               className="w-full border rounded px-3 py-2"
             >
-              <option value="">All Namespaces</option>
+              <option value="">{t('common:allnamespaces')}</option>
               {namespaces.map((ns) => (
                 <option key={ns} value={ns}>
                   {ns}
@@ -558,7 +606,7 @@ export default function Translations() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search keys or values..."
+                placeholder={t('admin:translations.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full border rounded px-3 py-2 pl-10"
@@ -580,7 +628,7 @@ export default function Translations() {
                 disabled={translateMutation.isPending}
               >
                 <option value="fr">Français (FR)</option>
-                <option value="de">Deutsch (DE)</option>
+                <option value="de">{t('common:deutschde')}</option>
               </select>
             </div>
             <label className="flex items-center gap-2 text-sm cursor-pointer">
@@ -620,6 +668,53 @@ export default function Translations() {
                 <>
                   <Globe className="w-4 h-4 mr-2 inline" />
                   Translate EN→{targetLang.toUpperCase()}
+                </>
+              )}
+            </Button>
+            <div className="border-l border-gray-300 h-6 mx-1" />
+            <Button
+              onClick={() => {
+                if (confirm('This will automatically find and fix hardcoded strings in the frontend code. This will:\n\n1. Scan all frontend files for hardcoded English strings\n2. Replace them with translation keys\n3. Add the keys to translation files\n\nContinue?')) {
+                  autoFixMutation.mutate();
+                }
+              }}
+              disabled={autoFixMutation.isPending}
+              variant="primary"
+              className="text-sm px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white"
+            >
+              {autoFixMutation.isPending ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
+                  Fixing...
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4 mr-2 inline" />
+                  Auto-Fix Hardcoded Strings
+                </>
+              )}
+            </Button>
+            <div className="border-l border-gray-300 h-6 mx-1" />
+            <Button
+              onClick={() => {
+                if (confirm('This will automatically translate all new [FR] and [DE] prefixed entries using machine translation. This will:\n\n1. Translate all [FR] entries to French\n2. Translate all [DE] entries to German\n3. Make translations immediately available\n\nNote: Machine translation is used. Review for accuracy.\n\nContinue?')) {
+                  autoTranslateNewKeysMutation.mutate();
+                }
+              }}
+              disabled={autoTranslateNewKeysMutation.isPending || !autoFixJustRan}
+              variant="primary"
+              className={`text-sm px-3 py-1.5 ${autoFixJustRan ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-gray-400 cursor-not-allowed'} text-white`}
+              title={!autoFixJustRan ? 'Run "Auto-Fix Hardcoded Strings" first to enable this button' : 'Click to translate all new entries to French and German'}
+            >
+              {autoTranslateNewKeysMutation.isPending ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
+                  Translating...
+                </>
+              ) : (
+                <>
+                  <Globe className="w-4 h-4 mr-2 inline" />
+                  {autoFixJustRan ? '👉 Auto-Translate FR/DE (Step 2)' : 'Auto-Translate FR/DE'}
                 </>
               )}
             </Button>
@@ -811,14 +906,14 @@ export default function Translations() {
                                     onClick={saveTranslation}
                                     disabled={updateMutation.isPending}
                                     className="p-1 text-green-600 hover:bg-green-50 rounded"
-                                    title="Save"
+                                    title={t('common:titles.save')}
                                   >
                                     <Check className="h-4 w-4" />
                                   </button>
                                   <button
                                     onClick={() => setEditing(null)}
                                     className="p-1 text-red-600 hover:bg-red-50 rounded"
-                                    title="Cancel"
+                                    title={t('common:titles.cancel')}
                                   >
                                     <X className="h-4 w-4" />
                                   </button>

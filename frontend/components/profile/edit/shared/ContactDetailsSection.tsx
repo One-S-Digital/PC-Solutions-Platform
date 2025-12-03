@@ -49,7 +49,7 @@ const ContactDetailsSection: React.FC<ContactDetailsSectionProps> = ({
             value={formData.phoneNumber || ''}
             onChange={(e) => onChange('phoneNumber', e.target.value)}
             className={STANDARD_INPUT_FIELD}
-            placeholder="+41 XX XXX XX XX"
+            placeholder={t('common:placeholders.41xxxxxxxxx')}
           />
         </div>
         <div>
@@ -62,7 +62,7 @@ const ContactDetailsSection: React.FC<ContactDetailsSectionProps> = ({
             value={formData.contactEmail || ''}
             onChange={(e) => onChange('contactEmail', e.target.value)}
             className={STANDARD_INPUT_FIELD}
-            placeholder="contact@example.com"
+            placeholder={t('common:placeholders.email')}
           />
         </div>
       </div>

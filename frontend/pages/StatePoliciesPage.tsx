@@ -43,11 +43,11 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
         {doc.isCritical && (
              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-2 rounded-md mb-3 text-xs flex items-center" role="alert">
                 <InformationCircleIcon className="h-5 w-5 mr-2"/>
-                Critical Update: {doc.title}
+                {t('common:statePolicies.criticalUpdate')}: {doc.title}
             </div>
         )}
         <h3 className="text-lg font-semibold text-swiss-charcoal mb-1">{doc.title}</h3>
-        <p className="text-xs text-gray-500 mb-2">{t('content:statePoliciesPage.labels.category')}: {POLICY_CATEGORY_LABELS[doc.category] || doc.category} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
+        <p className="text-xs text-gray-500 mb-2">{t('content:statePoliciesPage.labels.category')}: {t(`content:policyCategories.${doc.category.replace(/\s+/g, '')}`, { defaultValue: POLICY_CATEGORY_LABELS[doc.category] || doc.category })} {doc.region && `(${doc.region})`} {doc.country && `- ${doc.country}`}</p>
         {doc.status && (
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full inline-flex items-center ${statusColors[doc.status] || 'bg-gray-100 text-gray-700'}`}>
             {statusIcons[doc.status] || <InformationCircleIcon className="w-4 h-4 inline mr-1" />} {doc.status}
@@ -67,11 +67,11 @@ const PolicyDocumentCard: React.FC<PolicyDocumentCardProps> = ({ doc, onPreview,
         </div>
       </div>
       <div className="bg-gray-50 px-5 py-3 mt-auto border-t flex justify-end items-center space-x-2">
-        {doc.externalLink && <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => window.open(doc.externalLink, '_blank')}>View Online</Button>}
+        {doc.externalLink && <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => window.open(doc.externalLink, '_blank')}>{t('common:statePolicies.viewOnline')}</Button>}
         {doc.fileUrl && (
           <>
-            <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => onDownload(doc)}>Download {doc.fileType}</Button>
-            <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onPreview(doc)} className="p-2" aria-label="Preview" title="Preview"></Button>
+            <Button variant="primary" size="sm" leftIcon={ArrowDownTrayIcon} onClick={() => onDownload(doc)}>{t('common:statePolicies.download', { fileType: doc.fileType })}</Button>
+            <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onPreview(doc)} className="p-2" aria-label={t('common:statePolicies.preview', 'Preview')} title={t('common:statePolicies.preview', 'Preview')}></Button>
           </>
         )}
       </div>
@@ -92,7 +92,7 @@ const PolicyCategoryDisplayCard: React.FC<{title: string, icon: React.ElementTyp
     >
       <Icon className="w-10 h-10 mb-3 text-current"/>
       <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
-      <p className="text-sm opacity-80 text-current">{count} {count === 1 ? 'policy' : 'policies'}</p>
+      <p className="text-sm opacity-80 text-current">{t('common:statePolicies.policyCount', { count, defaultValue: '{{count}} policies' })}</p>
     </div>
   );
 };
@@ -251,7 +251,7 @@ const StatePoliciesPage: React.FC = () => {
         await authenticatedDownload(doc.fileUrl, `${doc.title}.${doc.fileType?.toLowerCase() || 'pdf'}`);
       } catch (error) {
         console.error('Download failed:', error);
-        alert('Failed to download file. Please try again.');
+        alert(t('content:statePoliciesPage.errors.downloadFailed'));
       }
     }
   };
@@ -272,7 +272,7 @@ const StatePoliciesPage: React.FC = () => {
   };
   
   const handleDeleteAlert = (alertId: string) => {
-    if (window.confirm("Are you sure you want to delete this alert?")) {
+    if (window.confirm(t('content:statePoliciesPage.confirmDeleteAlert'))) {
         setPolicyAlerts(prev => prev.filter(a => a.id !== alertId));
     }
   };
@@ -283,11 +283,11 @@ const StatePoliciesPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">State Policies & Regulations</h1>
+        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('content:statePoliciesPage.title')}</h1>
         {isAdminOrSuperAdmin && (
           <div className="flex items-center space-x-3">
-            <Button variant="secondary" leftIcon={ShieldExclamationIcon} onClick={() => { setEditingAlert(null); setIsAlertModalOpen(true); }}>Manage Alerts</Button>
-            <span className="text-sm text-gray-500 italic">Use Admin Dashboard to add/edit policies</span>
+            <Button variant="secondary" leftIcon={ShieldExclamationIcon} onClick={() => { setEditingAlert(null); setIsAlertModalOpen(true); }}>{t('content:statePoliciesPage.buttons.manageAlerts')}</Button>
+            <span className="text-sm text-gray-500 italic">{t('content:statePoliciesPage.adminNote')}</span>
           </div>
         )}
       </div>
@@ -310,40 +310,40 @@ const StatePoliciesPage: React.FC = () => {
              <input
                 id="policySearch"
                 type="text"
-                placeholder="Search by keyword, topic..."
+                placeholder={t('common:placeholders.searchKeyword')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`${ICON_INPUT_FIELD} w-full`}
             />
           </div>
-          <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Canton">
-            <option value="All">All Cantons/Regions</option>
+          <select value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD} aria-label={t('content:statePoliciesPage.filters.ariaLabelCanton', 'Filter by Canton')}>
+            <option value="All">{t('content:statePoliciesPage.filters.allCantonsRegions')}</option>
             {cantons.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value as 'All' | PolicyType)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Type">
+          <select value={filterPolicyType} onChange={(e) => setFilterPolicyType(e.target.value as 'All' | PolicyType)} className={STANDARD_INPUT_FIELD} aria-label={t('content:statePoliciesPage.filters.ariaLabelPolicyType', 'Filter by Policy Type')}>
             {policyTypeOptions.map(pt => (
-              <option key={pt} value={pt}>{pt === 'All' ? 'All Policy Types' : pt}</option>
+              <option key={pt} value={pt}>{pt === 'All' ? t('common:statePolicies.allPolicyTypes') : pt}</option>
             ))}
           </select>
-           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label="Filter by Policy Category">
+           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value as 'All' | PolicyCategory)} className={STANDARD_INPUT_FIELD} aria-label={t('content:statePoliciesPage.filters.ariaLabelCategory', 'Filter by Policy Category')}>
             {policyCategoryOptions.map(pt => (
-              <option key={pt} value={pt}>{pt === 'All' ? 'All Categories' : (POLICY_CATEGORY_LABELS[pt] || pt)}</option>
+              <option key={pt} value={pt}>{pt === 'All' ? t('common:statePolicies.allCategories') : t(`content:policyCategories.${pt.replace(/\s+/g, '')}`, { defaultValue: POLICY_CATEGORY_LABELS[pt] || pt })}</option>
             ))}
           </select>
         </div>
       </Card>
 
-      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">Policy Categories</h2>
+      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">{t('content:statePoliciesPage.sections.categories')}</h2>
       
       {isLoading && (
         <div className="text-center py-8">
-          <p className="text-gray-500">{t('common:loading') || 'Loading policies...'}</p>
+          <p className="text-gray-500">{t('content:statePoliciesPage.loading')}</p>
         </div>
       )}
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
         <PolicyCategoryDisplayCard
-          title="All Policies"
+          title={t('common:statePolicies.allPolicies')}
           icon={FolderIcon}
           count={totalPublishedPolicies}
           colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -351,7 +351,7 @@ const StatePoliciesPage: React.FC = () => {
         />
         {categoriesWithCounts.map(({ category, count }) => {
           const visualConfig = categoryVisuals[category] || { icon: FolderIcon, colorClasses: 'bg-gray-500 text-white' };
-          const label = POLICY_CATEGORY_LABELS[category] || category;
+          const label = t(`content:policyCategories.${category.replace(/\s+/g, '')}`, { defaultValue: POLICY_CATEGORY_LABELS[category] || category });
           return (
             <PolicyCategoryDisplayCard 
               key={category} 
@@ -364,18 +364,18 @@ const StatePoliciesPage: React.FC = () => {
           );
         })}
         {categoriesWithCounts.length === 0 && totalPublishedPolicies > 0 && (
-            <p className="text-center text-gray-500 py-8 col-span-full">No policies match current filters</p>
+            <p className="text-center text-gray-500 py-8 col-span-full">{t('content:statePoliciesPage.emptyState.noPoliciesMatchFilters')}</p>
         )}
-        {totalPublishedPolicies === 0 && <p className="text-center text-gray-500 py-8 col-span-full">No policies available</p>}
+        {totalPublishedPolicies === 0 && <p className="text-center text-gray-500 py-8 col-span-full">{t('content:statePoliciesPage.emptyState.noPolicies')}</p>}
       </div>
 
       <div>
         <h2 className="text-2xl font-semibold text-swiss-charcoal mb-4">
           {filterCategory === 'All' 
-            ? 'All Policies' 
-            : `${POLICY_CATEGORY_LABELS[filterCategory] || filterCategory} Policies`}
+            ? t('common:statePolicies.allPolicies')
+            : `${t(`content:policyCategories.${filterCategory.replace(/\s+/g, '')}`, { defaultValue: POLICY_CATEGORY_LABELS[filterCategory] || filterCategory })} ${t('common:statePolicies.policies')}`}
           <span className="text-base font-normal text-gray-500 ml-2">
-            ({filteredDocs.length} {filteredDocs.length === 1 ? 'policy' : 'policies'})
+            ({filteredDocs.length} {filteredDocs.length === 1 ? t('common:statePolicies.policy') : t('common:statePolicies.policies')})
           </span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -388,7 +388,7 @@ const StatePoliciesPage: React.FC = () => {
             />
           ))}
           {filteredDocs.length === 0 && (
-            <p className="text-center text-gray-500 py-8 col-span-full">No policies found for current filters.</p>
+            <p className="text-center text-gray-500 py-8 col-span-full">{t('content:statePoliciesPage.emptyState.noPoliciesFoundForFilters')}</p>
           )}
         </div>
       </div>

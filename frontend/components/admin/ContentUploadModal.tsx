@@ -491,7 +491,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         <div>
           <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="policyCategory" value={formData.category as PolicyCategory} onChange={handleInputChange} required className={policySpecificInputClass}>
-            {POLICY_CATEGORIES.map(c => <option key={c} value={c}>{POLICY_CATEGORY_LABELS[c] || c}</option>)}
+            {POLICY_CATEGORIES.map(c => <option key={c} value={c}>{t(`content:policyCategories.${c.replace(/\s+/g, '')}`, { defaultValue: POLICY_CATEGORY_LABELS[c] || c })}</option>)}
           </select>
         </div>
          {renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}

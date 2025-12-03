@@ -279,8 +279,9 @@ export class ContentService {
       ]);
 
       // Resolve translations if language is specified
+      // Always resolve translations to handle cases where source language != target language
       let transformedItems = items.map((item) => this.transformElearningAsset(item));
-      if (lang && lang !== 'en') {
+      if (lang) {
         const translatableFields = FIELDS_BY_ENTITY.elearning || ['title', 'description', 'content_preview'];
         this.logger.debug(`Resolving translations for ${transformedItems.length} e-learning items in language: ${lang}`);
         transformedItems = await Promise.all(
@@ -299,6 +300,7 @@ export class ContentService {
             });
             
             // Treat empty strings as missing translations (fallback to source)
+            // resolveEntity returns empty string if translation not found, so fallback to source
             const finalTitle = (translatedFields.title && translatedFields.title.trim()) || item.title;
             const finalDescription = (translatedFields.description && translatedFields.description.trim()) 
               ? translatedFields.description.trim()
@@ -686,8 +688,9 @@ export class ContentService {
       ]);
 
       // Resolve translations if language is specified
+      // Always resolve translations to handle cases where source language != target language
       let transformedItems = items.map((item) => this.transformHrDocumentAsset(item));
-      if (lang && lang !== 'en') {
+      if (lang) {
         const translatableFields = FIELDS_BY_ENTITY.hr_document || ['title', 'description', 'content_preview'];
         this.logger.debug(`Resolving translations for ${transformedItems.length} HR documents in language: ${lang}`);
         transformedItems = await Promise.all(
@@ -706,6 +709,7 @@ export class ContentService {
             });
             
             // Treat empty strings as missing translations (fallback to source)
+            // resolveEntity returns empty string if translation not found, so fallback to source
             const finalTitle = (translatedFields.title && translatedFields.title.trim()) || item.title;
             const finalDescription = (translatedFields.description && translatedFields.description.trim()) 
               ? translatedFields.description.trim()

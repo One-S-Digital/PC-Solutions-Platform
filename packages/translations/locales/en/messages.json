@@ -18,10 +18,14 @@
   },
   "buttons": {
     "newGroup": "New Group",
+    "newChat": "New Chat",
     "sendMessage": "Send Message"
   },
   "placeholders": {
     "typeMessage": "Type a message...",
     "searchConversations": "Search conversations..."
-  }
+  },
+  "youPrefix": "You: ",
+  "noMessagesYet": "No messages yet",
+  "unknownUser": "Unknown User"
 }

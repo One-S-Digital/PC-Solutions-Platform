@@ -409,8 +409,8 @@ const App: React.FC = () => {
     <AppContextProvider>
       <FrontendSettingsManager />
       <CartProvider>
-        <MessagingProvider>
-          <NotificationProvider>
+        <NotificationProvider>
+          <MessagingProvider>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
@@ -418,8 +418,8 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-          </NotificationProvider>
-        </MessagingProvider>
+          </MessagingProvider>
+        </NotificationProvider>
       </CartProvider>
     </AppContextProvider>
   );

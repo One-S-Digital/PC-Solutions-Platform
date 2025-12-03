@@ -22,7 +22,73 @@
     "sections": {
       "colors": "Couleurs",
       "typography": "Typographie",
-      "components": "Composants"
+      "components": "Composants",
+      "buttons": "[FR] Buttons",
+      "cards": "[FR] Cards",
+      "formControls": "[FR] Form Controls"
+    },
+    "description": "[FR] A living reference for all UI components and design tokens in the Pro Crèche Solutions application.",
+    "typography": {
+      "title": "[FR] Typography",
+      "fontFamily": "[FR] Font Family: Nunito, Inter, sans-serif",
+      "heading1": "[FR] Heading 1: The quick brown fox",
+      "heading2": "[FR] Heading 2: The quick brown fox",
+      "heading3": "[FR] Heading 3: The quick brown fox",
+      "heading4": "[FR] Heading 4: The quick brown fox",
+      "bodyBase": "[FR] Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+      "bodySmall": "[FR] Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
+      "link": "[FR] This is a link"
+    },
+    "buttons": {
+      "title": "[FR] Buttons",
+      "variants": "[FR] Variants",
+      "primary": "[FR] Primary",
+      "secondary": "[FR] Secondary",
+      "danger": "[FR] Danger",
+      "outline": "[FR] Outline",
+      "ghost": "[FR] Ghost",
+      "light": "[FR] Light",
+      "sizes": "[FR] Sizes",
+      "extraSmall": "[FR] Extra Small",
+      "small": "[FR] Small",
+      "mediumDefault": "[FR] Medium (Default)",
+      "large": "[FR] Large",
+      "withIcons": "[FR] With Icons",
+      "leftIcon": "[FR] Left Icon",
+      "rightIcon": "[FR] Right Icon",
+      "smallIcon": "[FR] Small Icon",
+      "disabledState": "[FR] Disabled State",
+      "primaryDisabled": "[FR] Primary Disabled",
+      "secondaryDisabled": "[FR] Secondary Disabled",
+      "outlineDisabled": "[FR] Outline Disabled"
+    },
+    "cards": {
+      "standardCard": "[FR] Standard Card",
+      "standardCardDesc": "[FR] Basic card component with padding and shadow",
+      "hoverEffectCard": "[FR] Hover Effect Card",
+      "hoverEffectCardDesc": "[FR] Card with hover effect"
+    },
+    "formControls": {
+      "title": "[FR] Form Controls",
+      "textInput": "[FR] Text Input",
+      "selectMenu": "[FR] Select Menu",
+      "option1": "[FR] Option 1",
+      "option2": "[FR] Option 2",
+      "option3": "[FR] Option 3",
+      "quantityInput": "[FR] Quantity Input",
+      "disabledInput": "[FR] Disabled Input"
+    },
+    "tabs": {
+      "title": "[FR] Tabs",
+      "pillsVariant": "[FR] Pills Variant",
+      "lineVariant": "[FR] Line Variant",
+      "tab1": "[FR] Tab 1",
+      "tab2": "[FR] Tab 2",
+      "tab3": "[FR] Tab 3",
+      "disabledTab": "[FR] Tab 3 (Disabled)",
+      "content1": "[FR] This is the content for Tab 1.",
+      "content2": "[FR] This is the content for Tab 2.",
+      "content3": "[FR] This is a disabled tab."
     }
   },
   "discountTerminations": {
@@ -54,13 +120,30 @@
   "partners": {
     "hero": {
       "title": "Nos partenaires",
-      "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance"
+      "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance",
+      "ctaButton": "[FR] Become a Partner"
     },
     "sections": {
       "featuredPartners": "Partenaires en vedette"
     },
     "buttons": {
       "becomePartner": "Devenir partenaire"
+    },
+    "featured": {
+      "title": "[FR] Featured Partners",
+      "subtitle": "[FR] Leading organizations we work with"
+    },
+    "joinUs": {
+      "title": "[FR] Become a Partner",
+      "subtitle": "[FR] Join our network of trusted providers",
+      "contactUsButton": "[FR] Contact Us",
+      "contactUsAlert": "[FR] Contact form coming soon",
+      "inquiryFormLink": "[FR] Partner Inquiry Form"
+    },
+    "partnerCard": {
+      "logoAlt": "[FR] Partner logo",
+      "partnerType": "[FR] Partner Type",
+      "learnMoreButton": "[FR] Learn More"
     }
   },
   "organizations": {
@@ -558,5 +641,97 @@
         }
       }
     }
+  },
+  "content": {
+    "eLearning": {
+      "title": "[FR] E-Learning Content",
+      "total": "[FR] total",
+      "searchPlaceholder": "[FR] Search e-learning...",
+      "loading": "[FR] Loading content...",
+      "noResults": "[FR] No results found",
+      "empty": "[FR] No e-learning content yet",
+      "addFirst": "[FR] Add First Content"
+    },
+    "hrDocuments": {
+      "title": "[FR] HR Documents",
+      "searchPlaceholder": "[FR] Search HR documents...",
+      "loading": "[FR] Loading documents...",
+      "noResults": "[FR] No results found",
+      "empty": "[FR] No HR documents yet",
+      "addFirst": "[FR] Add First Document"
+    },
+    "statePolicies": {
+      "title": "[FR] State Policies",
+      "searchPlaceholder": "[FR] Search policies...",
+      "loading": "[FR] Loading policies...",
+      "noResults": "[FR] No results found",
+      "empty": "[FR] No state policies yet",
+      "addFirst": "[FR] Add First Policy"
+    },
+    "orDragDrop": "[FR] or drag and drop",
+    "selected": "[FR] Selected:"
+  },
+  "auth": {
+    "login": {
+      "title": "[FR] Admin Dashboard",
+      "subtitle": "[FR] Pro Crèche Solutions Management Portal",
+      "emailLabel": "[FR] Email",
+      "emailPlaceholder": "[FR] admin@procreche.com",
+      "passwordLabel": "[FR] Password",
+      "forgotPassword": "[FR] Forgot Password?",
+      "showPassword": "[FR] Show password",
+      "hidePassword": "[FR] Hide password"
+    },
+    "signup": {
+      "termsPrefix": "[FR] I accept the",
+      "termsLink": "[FR] Terms and Conditions"
+    }
+  },
+  "forms": {
+    "job": {
+      "titlePlaceholder": "[FR] e.g., Early Childhood Educator",
+      "descriptionPlaceholder": "[FR] Describe the role, day-to-day responsibilities, and what makes this position special...",
+      "locationPlaceholder": "[FR] e.g., Zurich, Switzerland",
+      "salaryPlaceholder": "[FR] e.g., CHF 60,000 - 80,000",
+      "requirementPlaceholder": "[FR] Add a requirement...",
+      "responsibilityPlaceholder": "[FR] Add a responsibility...",
+      "qualificationPlaceholder": "[FR] Add a qualification...",
+      "benefitPlaceholder": "[FR] Add a benefit..."
+    },
+    "candidate": {
+      "firstNamePlaceholder": "[FR] John",
+      "lastNamePlaceholder": "[FR] Doe",
+      "emailPlaceholder": "[FR] john.doe@example.com",
+      "experiencePlaceholder": "[FR] Describe relevant work experience...",
+      "educationPlaceholder": "[FR] Educational background and qualifications...",
+      "skillPlaceholder": "[FR] Add a custom skill...",
+      "certificationPlaceholder": "[FR] e.g., Early Childhood Education Diploma, First Aid Certificate...",
+      "bioPlaceholder": "[FR] A brief introduction about the candidate..."
+    },
+    "organization": {
+      "emailPlaceholder": "[FR] contact@example.com",
+      "regionPlaceholder": "[FR] e.g., Zurich",
+      "websitePlaceholder": "[FR] https://example.com",
+      "pedagogyPlaceholder": "[FR] e.g., Montessori, Waldorf",
+      "languagePlaceholder": "[FR] e.g., German, French, English"
+    }
+  },
+  "fileUpload": {
+    "dragDrop": "[FR] or drag and drop",
+    "selected": "[FR] Selected:",
+    "clickBrowse": "[FR] Click to browse or drag and drop",
+    "defaultHelp": "[FR] PDF, DOCX, MP4 (Max 50MB)",
+    "tagPlaceholder": "[FR] Add tag...",
+    "descriptionPlaceholder": "[FR] Describe this file...",
+    "urlPlaceholder": "[FR] https://example.com/image.png"
+  },
+  "messaging": {
+    "searchPlaceholder": "[FR] Search conversations...",
+    "typePlaceholder": "[FR] Type your message..."
+  },
+  "translations": {
+    "versionPlaceholder": "[FR] Version (e.g., v1.2.3)",
+    "descriptionPlaceholder": "[FR] Description (optional)",
+    "searchPlaceholder": "[FR] Search keys or values..."
   }
 }

@@ -17,7 +17,7 @@ const SupplierAnalyticsPage: React.FC = () => {
         {type === 'pie' && <ChartPieIcon className="h-12 w-12" />}
       </div>
       <p className="text-sm font-medium text-gray-600">{t(titleKey)}</p>
-      <p className="text-xs text-gray-400">{t('supplierAnalyticsPage.mockChartText', { type })}</p>
+      <p className="text-xs text-gray-400">{t('dashboard:supplierAnalyticsPage.mockChartText', { type })}</p>
     </div>
   );
 
@@ -30,43 +30,43 @@ const SupplierAnalyticsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('sidebar.analytics')}</h1>
+        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('dashboard:sidebar.analytics')}</h1>
         <div className="flex items-center space-x-2">
-            <input type="date" className={`${STANDARD_INPUT_FIELD} w-auto`} defaultValue={new Date().toISOString().split('T')[0]} aria-label={t('supplierAnalyticsPage.datePickerLabel')}/>
-            <Button variant="outline" size="md" leftIcon={ArrowDownTrayIcon} onClick={() => alert(t('supplierAnalyticsPage.exportCsvAlert'))}>
-                {t('supplierAnalyticsPage.exportCsvButton')}
+            <input type="date" className={`${STANDARD_INPUT_FIELD} w-auto`} defaultValue={new Date().toISOString().split('T')[0]} aria-label={t('dashboard:supplierAnalyticsPage.datePickerLabel')}/>
+            <Button variant="outline" size="md" leftIcon={ArrowDownTrayIcon} onClick={() => alert(t('dashboard:supplierAnalyticsPage.exportCsvAlert'))}>
+                {t('dashboard:supplierAnalyticsPage.exportCsvButton')}
             </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">{t('supplierAnalyticsPage.orderRequestsPerWeek')}</h2>
-          {chartPlaceholder('supplierAnalyticsPage.orderRequestsTrend', 'line')}
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">{t('dashboard:supplierAnalyticsPage.orderRequestsPerWeek')}</h2>
+          {chartPlaceholder('dashboard:supplierAnalyticsPage.orderRequestsTrend', 'line')}
         </Card>
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">{t('supplierAnalyticsPage.topViewedProducts')}</h2>
-          {chartPlaceholder('supplierAnalyticsPage.productViews', 'bar')}
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">{t('dashboard:supplierAnalyticsPage.topViewedProducts')}</h2>
+          {chartPlaceholder('dashboard:supplierAnalyticsPage.productViews', 'bar')}
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-1 gap-6"> {/* Changed to 1 column for table, Pie could be next to it or below */}
          <Card className="p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">{t('supplierAnalyticsPage.requestsByCanton')}</h2>
-          {chartPlaceholder('supplierAnalyticsPage.requestsDistribution', 'pie')}
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">{t('dashboard:supplierAnalyticsPage.requestsByCanton')}</h2>
+          {chartPlaceholder('dashboard:supplierAnalyticsPage.requestsDistribution', 'pie')}
         </Card>
         <Card className="p-6">
           <h2 className="text-xl font-semibold text-swiss-charcoal mb-3 flex items-center">
             <TableCellsIcon className="w-5 h-5 mr-2 text-swiss-teal" />
-            {t('supplierAnalyticsPage.promoCodePerformance')}
+            {t('dashboard:supplierAnalyticsPage.promoCodePerformance')}
           </h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('supplierAnalyticsPage.table.code')}</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('supplierAnalyticsPage.table.uses')}</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('supplierAnalyticsPage.table.estRevenueImpact')}</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('dashboard:supplierAnalyticsPage.table.code')}</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('dashboard:supplierAnalyticsPage.table.uses')}</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('dashboard:supplierAnalyticsPage.table.estRevenueImpact')}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

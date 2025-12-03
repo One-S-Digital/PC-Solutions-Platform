@@ -21,13 +21,13 @@
     "childAge": "Alter in Monaten eingeben",
     "startDate": "Datum auswählen",
     "specialRequirements": "Bitte beschreiben Sie besondere Anforderungen, Ernährungsbedürfnisse, medizinische Bedingungen oder andere wichtige Informationen über Ihr Kind..."
-    },
-    "buttons": {
-      "submitEnquiry": "Anfrage senden",
-      "viewMyEnquiries": "Meine Anfragen anzeigen",
-      "backToDashboard": "Zurück zum Dashboard",
-      "backToHome": "Zurück zur Startseite"
-    },
+  },
+  "buttons": {
+    "submitEnquiry": "Anfrage senden",
+    "viewMyEnquiries": "Meine Anfragen anzeigen",
+    "backToDashboard": "Zurück zum Dashboard",
+    "backToHome": "Zurück zur Startseite"
+  },
   "messages": {
     "submitting": "Ihre Anfrage wird gesendet...",
     "success": "Ihre Anfrage wurde erfolgreich gesendet!",

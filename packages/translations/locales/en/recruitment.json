@@ -46,6 +46,9 @@
     "addRequirement": "Add Requirement",
     "postJob": "Post Job"
   },
+  "application": {
+    "coverLetterPlaceholder": "Tell us why you're interested in this position and what makes you a great fit..."
+  },
   "jobDetailModal": {
     "overviewTitle": "Job Overview",
     "location": "Location",

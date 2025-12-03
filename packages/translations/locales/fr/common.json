@@ -1,5 +1,6 @@
 {
   "buttons": {
+    "confirm": "Confirmer",
     "save": "Enregistrer",
     "saveChanges": "Enregistrer les modifications",
     "cancel": "Annuler",
@@ -56,7 +57,8 @@
     "yes": "Oui",
     "no": "Non",
     "ok": "OK",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "refresh": "[FR] Refresh"
   },
   "common": {
     "loading": "Chargement...",
@@ -95,7 +97,10 @@
     "unauthorized": "Accès non autorisé",
     "forbidden": "Accès interdit",
     "notFound": "Ressource non trouvée",
-    "serverError": "Erreur serveur"
+    "serverError": "Erreur serveur",
+    "invalidverificationcode": "[FR] Invalid verification code",
+    "errorrate": "[FR] Error Rate",
+    "errors": "[FR] Errors"
   },
   "notifications": {
     "errorTitle": "Erreur",
@@ -257,7 +262,7 @@
     "info": "[FR] Info"
   },
   "loginPage": {
-    "title": "",
+    "title": "[FR] ",
     "subtitle": "Connectez-vous à votre compte",
     "emailLabel": "Adresse e-mail",
     "emailPlaceholder": "Entrez votre e-mail",
@@ -293,25 +298,32 @@
     "backendUserCreationError": "La création de l'utilisateur sur le backend a échoué. Veuillez vérifier que le webhook Clerk est configuré."
   },
   "settingsPage": {
-    "unsavedChangesPrompt": "[FR] You have unsaved changes. Are you sure you want to leave?",
-    "loading": "[FR] Loading",
-    "noSectionsAvailable": "[FR] No settings sections available",
-    "analyticsPreferences": "[FR] Analytics Preferences",
-    "companyProfile": "[FR] Company Profile",
+    "unsavedChangesPrompt": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir partir?",
+    "loading": "Chargement des paramètres...",
+    "noSectionsAvailable": "Aucun paramètre disponible pour votre rôle",
+    "accountSecurity": "Compte et sécurité",
+    "billingSubscription": "Facturation et abonnement",
+    "analyticsPreferences": "Préférences d'analyse",
+    "companyProfile": "Profil de l'entreprise",
     "profile": "Modifier le profil",
-    "contactBooking": "[FR] Contact Booking",
-    "defaults": "[FR] Defaults",
-    "notificationPreferences": "[FR] No tification Preferences",
-    "privacyData": "[FR] Privacy Data",
-    "promoCodeManager": "[FR] Promo Code Manager",
-    "teamPermissions": "[FR] Team Permissions"
+    "contactBooking": "Contact et réservation",
+    "defaults": "Paramètres par défaut",
+    "notificationPreferences": "Préférences de notification",
+    "privacyData": "Confidentialité et données",
+    "promoCodeManager": "Gestionnaire de codes promo",
+    "teamPermissions": "Équipe et permissions"
   },
   "contentUploadModal": {
     "error": {
       "selectFileOrLink": "[FR] Please select a file or provide a link"
     },
     "title": {
-      "edit": "[FR] Edit"
+      "edit": "[FR] Edit",
+      "add": {
+        "e-learning": "[FR] Add E-Learning Content",
+        "hr": "[FR] Add HR Document",
+        "policy": "[FR] Add Policy Document"
+      }
     },
     "labels": {
       "descriptionPreview": "[FR] Description Preview",
@@ -382,7 +394,8 @@
       "regionScope": "[FR] Region Scope",
       "displayStartDate": "[FR] Display Start Date",
       "displayEndDate": "[FR] Display End Date"
-    }
+    },
+    "title": "[FR] Policy Alert"
   },
   "orderSummaryDrawer": {
     "title": "[FR] Title",
@@ -447,25 +460,25 @@
     "submitButton": "[FR] Submit Button"
   },
   "serviceUploadModal": {
-    "addTitle": "Ajouter un service",
-    "editTitle": "Modifier le service",
+    "editTitle": "[FR] Edit Title",
     "labels": {
-      "title": "Titre du service",
-      "description": "Description",
-      "category": "Catégorie",
-      "deliveryType": "Mode de prestation",
-      "availability": "Disponibilité et horaires",
-      "priceInfo": "Informations tarifaires",
-      "tags": "Mots-clés",
-      "image": "Visuel du service"
+      "title": "[FR] Title",
+      "description": "[FR] Description",
+      "category": "[FR] Category",
+      "deliveryType": "[FR] Delivery Type",
+      "availability": "[FR] Availability",
+      "priceInfo": "[FR] Price Info",
+      "tags": "[FR] Tags",
+      "image": "[FR] Image"
     },
     "placeholders": {
-      "availability": "ex. : Lun-ven 9h00-18h00 ou Sur rendez-vous",
-      "priceInfo": "ex. : CHF 150/heure ou Prix sur demande",
-      "tags": "Mots-clés séparés par des virgules (nettoyage, écologique, ...)"
+      "availability": "[FR] Availability",
+      "priceInfo": "[FR] Price Info",
+      "tags": "[FR] Tags"
     },
-    "imageHelpText": "Téléchargez une image JPG ou PNG (max. 5 Mo). Elle apparaîtra dans la marketplace.",
-    "currentImage": "Image actuelle"
+    "imageHelpText": "[FR] Image Help Text",
+    "currentImage": "[FR] Current Image",
+    "addTitle": "[FR] Add Service"
   },
   "serviceCategories": {
     "CLEANING": "Nettoyage et maintenance",
@@ -497,13 +510,17 @@
   },
   "createGroupChatModal": {
     "error": {
-      "minParticipants": "[FR] Min Participants"
+      "minParticipants": "Veuillez sélectionner au moins un participant pour démarrer une conversation. Vous serez automatiquement ajouté comme participant.",
+      "invalidParticipants": "Veuillez sélectionner des participants valides. Les comptes système et vous-même ne peuvent pas être ajoutés aux conversations."
     },
-    "title": "[FR] Title",
-    "groupNameLabel": "[FR] Group Name",
-    "groupNamePlaceholder": "[FR] Enter group name",
-    "selectParticipantsLabel": "[FR] Select Participants",
-    "createButton": "[FR] Create Button"
+    "title": "Créer un groupe de discussion",
+    "titleNewChat": "Créer une conversation",
+    "groupNameLabel": "Nom du groupe",
+    "groupNamePlaceholder": "Entrez le nom du groupe",
+    "selectParticipantsLabel": "Sélectionner les participants",
+    "createButton": "Créer",
+    "loadingUsers": "Chargement des utilisateurs...",
+    "noUsersAvailable": "Aucun utilisateur disponible"
   },
   "serviceRequestDetailModal": {
     "markAsCompleted": "[FR] Mark As Completed",
@@ -516,27 +533,6 @@
     "preferredDate": "[FR] Preferred Date",
     "noPreferredDate": "[FR] No  Preferred Date",
     "notes": "[FR] No tes"
-  },
-  "serviceUploadModal": {
-    "editTitle": "[FR] Edit Title",
-    "labels": {
-      "title": "[FR] Title",
-      "description": "[FR] Description",
-      "category": "[FR] Category",
-      "deliveryType": "[FR] Delivery Type",
-      "availability": "[FR] Availability",
-      "priceInfo": "[FR] Price Info",
-      "tags": "[FR] Tags",
-      "image": "[FR] Image"
-    },
-    "placeholders": {
-      "availability": "[FR] Availability",
-      "priceInfo": "[FR] Price Info",
-      "tags": "[FR] Tags"
-    },
-    "imageHelpText": "[FR] Image Help Text",
-    "currentImage": "[FR] Current Image",
-    "addTitle": "[FR] Add Service"
   },
   "addPromoCodeModal": {
     "placeholder": "[FR] Placeholder"
@@ -562,7 +558,8 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Informations personnelles mises à jour avec succès",
-      "passwordChanged": "Mot de passe modifié avec succès"
+      "passwordChanged": "Mot de passe modifié avec succès",
+      "passwordChangedMessage": "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant utiliser votre nouveau mot de passe pour vous connecter."
     },
     "dangerZone": {
       "finalConfirmation": "Êtes-vous absolument sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée.",
@@ -579,14 +576,20 @@
       "accountTypeLabel": "Type de compte",
       "memberSinceLabel": "Membre depuis",
       "updateInfoButton": "Mettre à jour les informations",
-      "nameLabel": "Nom"
+      "nameLabel": "Nom",
+      "firstNameLabel": "Prénom",
+      "lastNameLabel": "Nom de famille"
     },
     "changePassword": {
       "title": "Changer le mot de passe",
       "currentPasswordLabel": "Mot de passe actuel",
       "newPasswordLabel": "Nouveau mot de passe",
       "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
-      "updatePasswordButton": "Mettre à jour le mot de passe"
+      "updatePasswordButton": "Mettre à jour le mot de passe",
+      "passwordUpdated": "Mot de passe mis à jour",
+      "updating": "Mise à jour...",
+      "securityMessage": "Pour des raisons de sécurité, vous devrez peut-être vous déconnecter et vous reconnecter avant de changer votre mot de passe. Si vous rencontrez une erreur de vérification, veuillez vous déconnecter et vous reconnecter, puis réessayer.",
+      "verificationErrorTip": "Astuce : Essayez de vous déconnecter et de vous reconnecter, puis tentez de changer votre mot de passe à nouveau."
     }
   },
   "settingsPrivacyData": {
@@ -823,7 +826,8 @@
     "notes": "[FR] No tes"
   },
   "fileUploadZone": {
-    "dragAndDrop": "[FR] Drag and drop files here"
+    "dragAndDrop": "[FR] Drag and drop files here",
+    "defaultLabel": "[FR] Upload a file"
   },
   "appContext": {
     "useAppContextError": "[FR] Use App Context Error"
@@ -1071,7 +1075,8 @@
     }
   },
   "serviceProviderListingsPage": {
-    "title": "[FR] Title"
+    "title": "[FR] Title",
+    "defaultPriceInfo": "[FR] Contact for quote"
   },
   "serviceProviderRequestsPage": {
     "title": "[FR] Title"
@@ -1090,19 +1095,25 @@
     "cannotSubmitMissingInfo": "[FR] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "orderStatus": {
+    "submitted": "Soumis",
+    "viewedbysupplier": "Vu par le fournisseur",
+    "accepted": "Accepté",
+    "declined": "Refusé",
+    "processing": "En traitement",
+    "shipped": "Expédié",
+    "fulfilled": "Rempli",
+    "cancelled": "Annulé",
     "pending": "[FR] Pending",
     "approved": "[FR] Approved",
     "rejected": "[FR] Rejected",
     "completed": "[FR] Completed",
-    "cancelled": "[FR] Cancelled",
     "active": "[FR] Active",
     "inactive": "[FR] Inactive",
     "paid": "[FR] Paid",
-    "shipped": "[FR] Shipped",
     "confirmed": "[FR] Confirmed",
-    "processing": "[FR] Processing",
     "delivered": "[FR] Delivered",
-    "refunded": "[FR] Refunded"
+    "refunded": "[FR] Refunded",
+    "viewedBySupplier": "[FR] Viewed by Supplier"
   },
   "serviceStatus": {
     "pending": "[FR] Pending",
@@ -1150,5 +1161,211 @@
     "active": "[FR] Active",
     "archived": "[FR] Archived",
     "draft": "[FR] Draft"
-  }
+  },
+  "fileUpload": {
+    "dragDrop": "[FR] or drag and drop",
+    "selected": "[FR] Selected:"
+  },
+  "placeholders": {
+    "vatNumber": "[FR] CHE-123.456.789",
+    "url": "[FR] https://...",
+    "email": "[FR] contact@example.com",
+    "searchKeyword": "[FR] Search by keyword, topic...",
+    "enterDetails": "[FR] Enter details here...",
+    "disabledInput": "[FR] You can't type here",
+    "41xxxxxxxxx": "[FR] +41 XX XXX XX XX",
+    "typeorselect": "[FR] Type or select...",
+    "enteryourpassword": "[FR] Enter your password",
+    "searchorders": "[FR] Search orders...",
+    "searchparentleads": "[FR] Search parent leads...",
+    "searchservices": "[FR] Search services...",
+    "firstname": "[FR] First name",
+    "addtag": "[FR] Add tag...",
+    "describethisfile": "[FR] Describe this file...",
+    "lastname": "[FR] Last name",
+    "emailaddress": "[FR] Email address",
+    "searchusersbynameoremail": "[FR] Search users by name or email..."
+  },
+  "accessibility": {
+    "dismiss": "[FR] Dismiss",
+    "showPassword": "[FR] Show password",
+    "hidePassword": "[FR] Hide password"
+  },
+  "verificationProgress": {
+    "title": {
+      "ready": "[FR] Welcome!",
+      "processing": "[FR] Setting Up Your Account"
+    },
+    "steps": {
+      "verifyingEmail": "[FR] Verifying email...",
+      "creatingAccount": "[FR] Creating your account...",
+      "settingUpProfile": "[FR] Setting up your profile...",
+      "almostReady": "[FR] Almost ready..."
+    },
+    "messages": {
+      "accountSetupComplete": "[FR] Account setup complete!",
+      "somethingWentWrong": "[FR] Something went wrong",
+      "preparingAccount": "[FR] Preparing your account...",
+      "redirectingToDashboard": "[FR] Redirecting you to your dashboard...",
+      "contactSupport": "[FR] If this problem persists, please contact support.",
+      "tryAgain": "[FR] Try Again"
+    },
+    "progress": {
+      "complete": "[FR] {{percent}}% complete"
+    }
+  },
+  "candidateProfile": {
+    "loading": "[FR] Loading candidate…",
+    "notFound": "[FR] Candidate not found.",
+    "notFoundDescription": "[FR] The profile you are looking for does not exist or the ID is incorrect.",
+    "goBack": "[FR] Go Back",
+    "retry": "[FR] Retry",
+    "backToPool": "[FR] Back to Candidate Pool",
+    "roleNotSpecified": "[FR] Role not specified",
+    "locationNotProvided": "[FR] Location not provided",
+    "availabilityNotProvided": "[FR] Availability not provided",
+    "sections": {
+      "shortBio": "[FR] Short Bio",
+      "workExperience": "[FR] Work Experience",
+      "education": "[FR] Education",
+      "certifications": "[FR] Certifications",
+      "skillsAndSpecialties": "[FR] Skills & Specialties",
+      "availabilityAndPreferences": "[FR] Availability & Preferences",
+      "cvAndDocuments": "[FR] CV & Documents"
+    },
+    "noBioProvided": "[FR] No bio provided yet.",
+    "noExperienceListed": "[FR] No experience listed yet.",
+    "noEducationDetails": "[FR] No education details yet.",
+    "noCertificationsListed": "[FR] No certifications listed yet.",
+    "noSkillsListed": "[FR] No skills listed yet.",
+    "noDocumentsUploaded": "[FR] No documents uploaded yet.",
+    "notProvided": "[FR] Not provided",
+    "graduated": "[FR] Graduated",
+    "issued": "[FR] Issued",
+    "expires": "[FR] Expires",
+    "viewCredential": "[FR] View Credential",
+    "preferredDays": "[FR] Preferred Days",
+    "preferredTimes": "[FR] Preferred Times",
+    "contractType": "[FR] Contract Type",
+    "preferredAgeGroups": "[FR] Preferred Age Groups",
+    "inviteToApply": "[FR] Invite to Apply",
+    "sendMessage": "[FR] Send Message",
+    "addToFavorites": "[FR] Add to Favorites",
+    "removeFromFavorites": "[FR] Remove from Favorites"
+  },
+  "adminSystemMonitoring": {
+    "eventTypes": {
+      "HealthCheck": "[FR] Health Check",
+      "DatabaseBackup": "[FR] Database Backup",
+      "MemoryAlert": "[FR] Memory Alert",
+      "APIImprovement": "[FR] API Improvement"
+    }
+  },
+  "statePolicies": {
+    "allPolicies": "[FR] All Policies",
+    "allPolicyTypes": "[FR] All Policy Types",
+    "allCategories": "[FR] All Categories",
+    "policy": "[FR] policy",
+    "policies": "[FR] policies",
+    "criticalUpdate": "[FR] Critical Update",
+    "viewOnline": "[FR] View Online",
+    "download": "[FR] Download {{fileType}}"
+  },
+  "marketplace": {
+    "contactForPricing": "[FR] Contact for pricing"
+  },
+  "productUploadModal": {
+    "labels": {
+      "uploadPrimaryImage": "[FR] Upload primary image"
+    }
+  },
+  "profile": "[FR] Profile",
+  "logo": "[FR] Logo",
+  "avatar": "[FR] Avatar",
+  "cover": "[FR] Cover",
+  "labels": {
+    "currentquantity": "[FR] Current quantity",
+    "closesidebar": "[FR] Close sidebar",
+    "close": "[FR] Close",
+    "decreasequantity": "[FR] Decrease quantity",
+    "increasequantity": "[FR] Increase quantity"
+  },
+  "titles": {
+    "allcontent": "[FR] All Content",
+    "save": "[FR] Save",
+    "cancel": "[FR] Cancel",
+    "cpuusage": "[FR] CPU Usage",
+    "memoryusage": "[FR] Memory Usage",
+    "activealerts": "[FR] Active Alerts",
+    "diskusage": "[FR] Disk Usage",
+    "uptime": "[FR] Uptime",
+    "activeconnections": "[FR] Active Connections",
+    "avgquerytime": "[FR] Avg Query Time",
+    "storageused": "[FR] Storage Used",
+    "connectionhealth": "[FR] Connection Health",
+    "activeusers": "[FR] Active Users",
+    "requestsmin": "[FR] Requests/min",
+    "responsetime": "[FR] Response Time",
+    "throughput": "[FR] Throughput",
+    "newuserstoday": "[FR] New Users Today",
+    "sessionduration": "[FR] Session Duration",
+    "pageviews": "[FR] Page Views",
+    "failedlogins": "[FR] Failed Logins",
+    "blockedips": "[FR] Blocked IPs",
+    "apihealth": "[FR] API Health",
+    "lastscan": "[FR] Last Scan"
+  },
+  "info": "[FR] Info",
+  "preview": "[FR] Preview",
+  "adminlogo": "[FR] Admin Logo",
+  "draft": "[FR] Draft",
+  "published": "[FR] Published",
+  "archived": "[FR] Archived",
+  "downloadfile": "[FR] Download File",
+  "currentfile": "[FR] Current file",
+  "fallbackpreview": "[FR] Fallback preview",
+  "educational": "[FR] Educational",
+  "safety": "[FR] Safety",
+  "nutrition": "[FR] Nutrition",
+  "hygiene": "[FR] Hygiene",
+  "furniture": "[FR] Furniture",
+  "allcategories": "[FR] All Categories",
+  "childcare": "[FR] Childcare",
+  "education": "[FR] Education",
+  "health": "[FR] Health",
+  "specialneeds": "[FR] Special Needs",
+  "authentication": "[FR] Authentication",
+  "payment": "[FR] Payment",
+  "email": "[FR] Email",
+  "storage": "[FR] Storage",
+  "analytics": "[FR] Analytics",
+  "other": "[FR] Other",
+  "refresh": "[FR] Refresh",
+  "allnamespaces": "[FR] All Namespaces",
+  "deutschde": "[FR] Deutsch (DE)",
+  "download": "[FR] Download",
+  "allstatus": "[FR] All Status",
+  "submitted": "[FR] Submitted",
+  "viewedbysupplier": "[FR] Viewed By Supplier",
+  "accepted": "[FR] Accepted",
+  "processing": "[FR] Processing",
+  "shipped": "[FR] Shipped",
+  "fulfilled": "[FR] Fulfilled",
+  "cancelled": "[FR] Cancelled",
+  "declined": "[FR] Declined",
+  "createalert": "[FR] Create Alert",
+  "alllogs": "[FR] All Logs",
+  "warnings": "[FR] Warnings",
+  "export": "[FR] Export",
+  "superadmin": "[FR] Super Admin",
+  "admin": "[FR] Admin",
+  "foundation": "[FR] Foundation",
+  "productsupplier": "[FR] Product Supplier",
+  "serviceprovider": "[FR] Service Provider",
+  "educator": "[FR] Educator",
+  "parent": "[FR] Parent",
+  "active": "[FR] Active",
+  "pending": "[FR] Pending",
+  "inactive": "[FR] Inactive",
+  "allroles": "[FR] All Roles"
 }

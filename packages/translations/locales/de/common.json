@@ -1,5 +1,6 @@
 {
   "buttons": {
+    "confirm": "Bestätigen",
     "save": "Speichern",
     "saveChanges": "Änderungen speichern",
     "cancel": "Abbrechen",
@@ -56,7 +57,8 @@
     "yes": "Ja",
     "no": "Nein",
     "ok": "OK",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "refresh": "[DE] Refresh"
   },
   "common": {
     "loading": "Laden...",
@@ -95,7 +97,10 @@
     "unauthorized": "Nicht autorisiert",
     "forbidden": "Zugriff verweigert",
     "notFound": "Ressource nicht gefunden",
-    "serverError": "Serverfehler"
+    "serverError": "Serverfehler",
+    "invalidverificationcode": "[DE] Invalid verification code",
+    "errorrate": "[DE] Error Rate",
+    "errors": "[DE] Errors"
   },
   "notifications": {
     "errorTitle": "Fehler",
@@ -286,7 +291,8 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Persönliche Informationen erfolgreich aktualisiert",
-      "passwordChanged": "Passwort erfolgreich geändert"
+      "passwordChanged": "Passwort erfolgreich geändert",
+      "passwordChangedMessage": "Ihr Passwort wurde erfolgreich aktualisiert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden."
     },
     "dangerZone": {
       "finalConfirmation": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -303,14 +309,20 @@
       "accountTypeLabel": "Kontotyp",
       "memberSinceLabel": "Mitglied seit",
       "updateInfoButton": "Informationen aktualisieren",
-      "nameLabel": "Name"
+      "nameLabel": "Name",
+      "firstNameLabel": "Vorname",
+      "lastNameLabel": "Nachname"
     },
     "changePassword": {
       "title": "Passwort ändern",
       "currentPasswordLabel": "Aktuelles Passwort",
       "newPasswordLabel": "Neues Passwort",
       "confirmNewPasswordLabel": "Neues Passwort bestätigen",
-      "updatePasswordButton": "Passwort aktualisieren"
+      "updatePasswordButton": "Passwort aktualisieren",
+      "passwordUpdated": "Passwort aktualisiert",
+      "updating": "Aktualisierung...",
+      "securityMessage": "Aus Sicherheitsgründen müssen Sie sich möglicherweise abmelden und erneut anmelden, bevor Sie Ihr Passwort ändern. Wenn Sie einen Verifizierungsfehler erhalten, melden Sie sich bitte ab und wieder an, und versuchen Sie es erneut.",
+      "verificationErrorTip": "Tipp: Versuchen Sie, sich ab- und wieder anzumelden, und versuchen Sie dann erneut, Ihr Passwort zu ändern."
     }
   },
   "settingsBillingSubscription": {
@@ -602,7 +614,7 @@
   "next": "[DE] Next",
   "back": "[DE] Back",
   "loginPage": {
-    "title": "",
+    "title": "[DE] ",
     "subtitle": "Melden Sie sich in Ihrem Konto an",
     "emailLabel": "E-Mail-Adresse",
     "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
@@ -642,7 +654,12 @@
       "selectFileOrLink": "[DE] Please select a file or provide a link"
     },
     "title": {
-      "edit": "[DE] Edit"
+      "edit": "[DE] Edit",
+      "add": {
+        "e-learning": "[DE] Add E-Learning Content",
+        "hr": "[DE] Add HR Document",
+        "policy": "[DE] Add Policy Document"
+      }
     },
     "labels": {
       "descriptionPreview": "[DE] Description Preview",
@@ -706,25 +723,25 @@
     }
   },
   "serviceUploadModal": {
-    "addTitle": "Service hinzufügen",
-    "editTitle": "Service bearbeiten",
+    "editTitle": "[DE] Edit Title",
     "labels": {
-      "title": "Servicetitel",
-      "description": "Beschreibung",
-      "category": "Kategorie",
-      "deliveryType": "Leistungsart",
-      "availability": "Verfügbarkeit & Zeiten",
-      "priceInfo": "Preisinformationen",
-      "tags": "Tags",
-      "image": "Servicebild"
+      "title": "[DE] Title",
+      "description": "[DE] Description",
+      "category": "[DE] Category",
+      "deliveryType": "[DE] Delivery Type",
+      "availability": "[DE] Availability",
+      "priceInfo": "[DE] Price Info",
+      "tags": "[DE] Tags",
+      "image": "[DE] Image"
     },
     "placeholders": {
-      "availability": "z. B. Mo-Fr 09:00-18:00 oder nach Vereinbarung",
-      "priceInfo": "z. B. CHF 150/Stunde oder Preis auf Anfrage",
-      "tags": "Stichwörter, getrennt durch Kommas (reinigung, bio, ...)"
+      "availability": "[DE] Availability",
+      "priceInfo": "[DE] Price Info",
+      "tags": "[DE] Tags"
     },
-    "imageHelpText": "Laden Sie ein JPG oder PNG (max. 5 MB) hoch. Es wird auf der Marketplace-Karte angezeigt.",
-    "currentImage": "Aktuelles Bild"
+    "imageHelpText": "[DE] Image Help Text",
+    "currentImage": "[DE] Current Image",
+    "addTitle": "[DE] Add Service"
   },
   "serviceCategories": {
     "CLEANING": "Reinigung & Wartung",
@@ -747,7 +764,8 @@
       "regionScope": "[DE] Region Scope",
       "displayStartDate": "[DE] Display Start Date",
       "displayEndDate": "[DE] Display End Date"
-    }
+    },
+    "title": "[DE] Policy Alert"
   },
   "orderSummaryDrawer": {
     "title": "[DE] Title",
@@ -770,34 +788,17 @@
   },
   "createGroupChatModal": {
     "error": {
-      "minParticipants": "[DE] Min Participants"
+      "minParticipants": "Bitte wählen Sie mindestens einen Teilnehmer aus, um eine Konversation zu starten. Sie werden automatisch als Teilnehmer hinzugefügt.",
+      "invalidParticipants": "Bitte wählen Sie gültige Teilnehmer aus. Systemkonten und Sie selbst können nicht zu Konversationen hinzugefügt werden."
     },
-    "title": "[DE] Title",
-    "groupNameLabel": "[DE] Group Name",
-    "groupNamePlaceholder": "[DE] Enter group name",
-    "selectParticipantsLabel": "[DE] Select Participants",
-    "createButton": "[DE] Create Button"
-  },
-  "serviceUploadModal": {
-    "editTitle": "[DE] Edit Title",
-    "labels": {
-      "title": "[DE] Title",
-      "description": "[DE] Description",
-      "category": "[DE] Category",
-      "deliveryType": "[DE] Delivery Type",
-      "availability": "[DE] Availability",
-      "priceInfo": "[DE] Price Info",
-      "tags": "[DE] Tags",
-      "image": "[DE] Image"
-    },
-    "placeholders": {
-      "availability": "[DE] Availability",
-      "priceInfo": "[DE] Price Info",
-      "tags": "[DE] Tags"
-    },
-    "imageHelpText": "[DE] Image Help Text",
-    "currentImage": "[DE] Current Image",
-    "addTitle": "[DE] Add Service"
+    "title": "Gruppenchat erstellen",
+    "titleNewChat": "Chat erstellen",
+    "groupNameLabel": "Gruppenname",
+    "groupNamePlaceholder": "Gruppenname eingeben",
+    "selectParticipantsLabel": "Teilnehmer auswählen",
+    "createButton": "Erstellen",
+    "loadingUsers": "Benutzer werden geladen...",
+    "noUsersAvailable": "Keine Benutzer verfügbar"
   },
   "addPromoCodeModal": {
     "placeholder": "[DE] Placeholder"
@@ -879,7 +880,8 @@
     }
   },
   "fileUploadZone": {
-    "dragAndDrop": "[DE] Drag and drop files here"
+    "dragAndDrop": "[DE] Drag and drop files here",
+    "defaultLabel": "[DE] Upload a file"
   },
   "appContext": {
     "useAppContextError": "[DE] Use App Context Error"
@@ -1096,7 +1098,8 @@
     }
   },
   "serviceProviderListingsPage": {
-    "title": "[DE] Title"
+    "title": "[DE] Title",
+    "defaultPriceInfo": "[DE] Contact for quote"
   },
   "serviceProviderRequestsPage": {
     "title": "[DE] Title"
@@ -1118,19 +1121,25 @@
     "cannotSubmitMissingInfo": "[DE] Cannot submit order. User not logged in, supplier info missing, or cart is empty."
   },
   "orderStatus": {
+    "submitted": "Eingereicht",
+    "viewedbysupplier": "Vom Lieferanten angesehen",
+    "accepted": "Akzeptiert",
+    "declined": "Abgelehnt",
+    "processing": "In Bearbeitung",
+    "shipped": "Versandt",
+    "fulfilled": "Erfüllt",
+    "cancelled": "Storniert",
     "pending": "[DE] Pending",
     "approved": "[DE] Approved",
     "rejected": "[DE] Rejected",
     "completed": "[DE] Completed",
-    "cancelled": "[DE] Cancelled",
     "active": "[DE] Active",
     "inactive": "[DE] Inactive",
     "paid": "[DE] Paid",
-    "shipped": "[DE] Shipped",
     "confirmed": "[DE] Confirmed",
-    "processing": "[DE] Processing",
     "delivered": "[DE] Delivered",
-    "refunded": "[DE] Refunded"
+    "refunded": "[DE] Refunded",
+    "viewedBySupplier": "[DE] Viewed by Supplier"
   },
   "serviceStatus": {
     "pending": "[DE] Pending",
@@ -1178,5 +1187,211 @@
     "active": "[DE] Active",
     "archived": "[DE] Archived",
     "draft": "[DE] Draft"
-  }
+  },
+  "fileUpload": {
+    "dragDrop": "[DE] or drag and drop",
+    "selected": "[DE] Selected:"
+  },
+  "placeholders": {
+    "vatNumber": "[DE] CHE-123.456.789",
+    "url": "[DE] https://...",
+    "email": "[DE] contact@example.com",
+    "searchKeyword": "[DE] Search by keyword, topic...",
+    "enterDetails": "[DE] Enter details here...",
+    "disabledInput": "[DE] You can't type here",
+    "41xxxxxxxxx": "[DE] +41 XX XXX XX XX",
+    "typeorselect": "[DE] Type or select...",
+    "enteryourpassword": "[DE] Enter your password",
+    "searchorders": "[DE] Search orders...",
+    "searchparentleads": "[DE] Search parent leads...",
+    "searchservices": "[DE] Search services...",
+    "firstname": "[DE] First name",
+    "addtag": "[DE] Add tag...",
+    "describethisfile": "[DE] Describe this file...",
+    "lastname": "[DE] Last name",
+    "emailaddress": "[DE] Email address",
+    "searchusersbynameoremail": "[DE] Search users by name or email..."
+  },
+  "accessibility": {
+    "dismiss": "[DE] Dismiss",
+    "showPassword": "[DE] Show password",
+    "hidePassword": "[DE] Hide password"
+  },
+  "verificationProgress": {
+    "title": {
+      "ready": "[DE] Welcome!",
+      "processing": "[DE] Setting Up Your Account"
+    },
+    "steps": {
+      "verifyingEmail": "[DE] Verifying email...",
+      "creatingAccount": "[DE] Creating your account...",
+      "settingUpProfile": "[DE] Setting up your profile...",
+      "almostReady": "[DE] Almost ready..."
+    },
+    "messages": {
+      "accountSetupComplete": "[DE] Account setup complete!",
+      "somethingWentWrong": "[DE] Something went wrong",
+      "preparingAccount": "[DE] Preparing your account...",
+      "redirectingToDashboard": "[DE] Redirecting you to your dashboard...",
+      "contactSupport": "[DE] If this problem persists, please contact support.",
+      "tryAgain": "[DE] Try Again"
+    },
+    "progress": {
+      "complete": "[DE] {{percent}}% complete"
+    }
+  },
+  "candidateProfile": {
+    "loading": "[DE] Loading candidate…",
+    "notFound": "[DE] Candidate not found.",
+    "notFoundDescription": "[DE] The profile you are looking for does not exist or the ID is incorrect.",
+    "goBack": "[DE] Go Back",
+    "retry": "[DE] Retry",
+    "backToPool": "[DE] Back to Candidate Pool",
+    "roleNotSpecified": "[DE] Role not specified",
+    "locationNotProvided": "[DE] Location not provided",
+    "availabilityNotProvided": "[DE] Availability not provided",
+    "sections": {
+      "shortBio": "[DE] Short Bio",
+      "workExperience": "[DE] Work Experience",
+      "education": "[DE] Education",
+      "certifications": "[DE] Certifications",
+      "skillsAndSpecialties": "[DE] Skills & Specialties",
+      "availabilityAndPreferences": "[DE] Availability & Preferences",
+      "cvAndDocuments": "[DE] CV & Documents"
+    },
+    "noBioProvided": "[DE] No bio provided yet.",
+    "noExperienceListed": "[DE] No experience listed yet.",
+    "noEducationDetails": "[DE] No education details yet.",
+    "noCertificationsListed": "[DE] No certifications listed yet.",
+    "noSkillsListed": "[DE] No skills listed yet.",
+    "noDocumentsUploaded": "[DE] No documents uploaded yet.",
+    "notProvided": "[DE] Not provided",
+    "graduated": "[DE] Graduated",
+    "issued": "[DE] Issued",
+    "expires": "[DE] Expires",
+    "viewCredential": "[DE] View Credential",
+    "preferredDays": "[DE] Preferred Days",
+    "preferredTimes": "[DE] Preferred Times",
+    "contractType": "[DE] Contract Type",
+    "preferredAgeGroups": "[DE] Preferred Age Groups",
+    "inviteToApply": "[DE] Invite to Apply",
+    "sendMessage": "[DE] Send Message",
+    "addToFavorites": "[DE] Add to Favorites",
+    "removeFromFavorites": "[DE] Remove from Favorites"
+  },
+  "adminSystemMonitoring": {
+    "eventTypes": {
+      "HealthCheck": "[DE] Health Check",
+      "DatabaseBackup": "[DE] Database Backup",
+      "MemoryAlert": "[DE] Memory Alert",
+      "APIImprovement": "[DE] API Improvement"
+    }
+  },
+  "statePolicies": {
+    "allPolicies": "[DE] All Policies",
+    "allPolicyTypes": "[DE] All Policy Types",
+    "allCategories": "[DE] All Categories",
+    "policy": "[DE] policy",
+    "policies": "[DE] policies",
+    "criticalUpdate": "[DE] Critical Update",
+    "viewOnline": "[DE] View Online",
+    "download": "[DE] Download {{fileType}}"
+  },
+  "marketplace": {
+    "contactForPricing": "[DE] Contact for pricing"
+  },
+  "productUploadModal": {
+    "labels": {
+      "uploadPrimaryImage": "[DE] Upload primary image"
+    }
+  },
+  "profile": "[DE] Profile",
+  "logo": "[DE] Logo",
+  "avatar": "[DE] Avatar",
+  "cover": "[DE] Cover",
+  "labels": {
+    "currentquantity": "[DE] Current quantity",
+    "closesidebar": "[DE] Close sidebar",
+    "close": "[DE] Close",
+    "decreasequantity": "[DE] Decrease quantity",
+    "increasequantity": "[DE] Increase quantity"
+  },
+  "titles": {
+    "allcontent": "[DE] All Content",
+    "save": "[DE] Save",
+    "cancel": "[DE] Cancel",
+    "cpuusage": "[DE] CPU Usage",
+    "memoryusage": "[DE] Memory Usage",
+    "activealerts": "[DE] Active Alerts",
+    "diskusage": "[DE] Disk Usage",
+    "uptime": "[DE] Uptime",
+    "activeconnections": "[DE] Active Connections",
+    "avgquerytime": "[DE] Avg Query Time",
+    "storageused": "[DE] Storage Used",
+    "connectionhealth": "[DE] Connection Health",
+    "activeusers": "[DE] Active Users",
+    "requestsmin": "[DE] Requests/min",
+    "responsetime": "[DE] Response Time",
+    "throughput": "[DE] Throughput",
+    "newuserstoday": "[DE] New Users Today",
+    "sessionduration": "[DE] Session Duration",
+    "pageviews": "[DE] Page Views",
+    "failedlogins": "[DE] Failed Logins",
+    "blockedips": "[DE] Blocked IPs",
+    "apihealth": "[DE] API Health",
+    "lastscan": "[DE] Last Scan"
+  },
+  "info": "[DE] Info",
+  "preview": "[DE] Preview",
+  "adminlogo": "[DE] Admin Logo",
+  "draft": "[DE] Draft",
+  "published": "[DE] Published",
+  "archived": "[DE] Archived",
+  "downloadfile": "[DE] Download File",
+  "currentfile": "[DE] Current file",
+  "fallbackpreview": "[DE] Fallback preview",
+  "educational": "[DE] Educational",
+  "safety": "[DE] Safety",
+  "nutrition": "[DE] Nutrition",
+  "hygiene": "[DE] Hygiene",
+  "furniture": "[DE] Furniture",
+  "allcategories": "[DE] All Categories",
+  "childcare": "[DE] Childcare",
+  "education": "[DE] Education",
+  "health": "[DE] Health",
+  "specialneeds": "[DE] Special Needs",
+  "authentication": "[DE] Authentication",
+  "payment": "[DE] Payment",
+  "email": "[DE] Email",
+  "storage": "[DE] Storage",
+  "analytics": "[DE] Analytics",
+  "other": "[DE] Other",
+  "refresh": "[DE] Refresh",
+  "allnamespaces": "[DE] All Namespaces",
+  "deutschde": "[DE] Deutsch (DE)",
+  "download": "[DE] Download",
+  "allstatus": "[DE] All Status",
+  "submitted": "[DE] Submitted",
+  "viewedbysupplier": "[DE] Viewed By Supplier",
+  "accepted": "[DE] Accepted",
+  "processing": "[DE] Processing",
+  "shipped": "[DE] Shipped",
+  "fulfilled": "[DE] Fulfilled",
+  "cancelled": "[DE] Cancelled",
+  "declined": "[DE] Declined",
+  "createalert": "[DE] Create Alert",
+  "alllogs": "[DE] All Logs",
+  "warnings": "[DE] Warnings",
+  "export": "[DE] Export",
+  "superadmin": "[DE] Super Admin",
+  "admin": "[DE] Admin",
+  "foundation": "[DE] Foundation",
+  "productsupplier": "[DE] Product Supplier",
+  "serviceprovider": "[DE] Service Provider",
+  "educator": "[DE] Educator",
+  "parent": "[DE] Parent",
+  "active": "[DE] Active",
+  "pending": "[DE] Pending",
+  "inactive": "[DE] Inactive",
+  "allroles": "[DE] All Roles"
 }

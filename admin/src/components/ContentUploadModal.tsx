@@ -492,9 +492,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       <div>
         <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">{t('common.status','Status')}</label>
         <select name="status" id="status" value={formData.status || 'Draft'} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-          <option value="Draft">Draft</option>
-          <option value="Published">Published</option>
-          <option value="Archived">Archived</option>
+          <option value="Draft">{t('common:draft')}</option>
+          <option value="Published">{t('common:published')}</option>
+          <option value="Archived">{t('common:archived')}</option>
         </select>
       </div>
       <div>
@@ -531,9 +531,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">{t('common.status','Status')}</label>
           <select name="status" id="status" value={formData.status || 'Draft'} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            <option value="Draft">Draft</option>
-            <option value="Published">Published</option>
-            <option value="Archived">Archived</option>
+            <option value="Draft">{t('common:draft')}</option>
+            <option value="Published">{t('common:published')}</option>
+            <option value="Archived">{t('common:archived')}</option>
           </select>
         </div>
       </div>

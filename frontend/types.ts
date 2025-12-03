@@ -1,5 +1,3 @@
-
-
 export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN = 'ADMIN',
@@ -666,6 +664,11 @@ export interface Message {
     content: string;
     timestamp: string; // ISO string
     isRead: boolean;
+    messageType?: 'TEXT' | 'FILE' | 'IMAGE' | 'SYSTEM';
+    fileUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+    mimeType?: string;
 }
 
 

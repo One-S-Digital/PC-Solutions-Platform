@@ -38,6 +38,7 @@ interface PaginationInfo {
 }
 
 export default function Content() {
+  const { t } = useTranslation(['admin', 'common']);
   const apiClient = useApiClient();
   
   // Modal state
@@ -497,9 +498,9 @@ export default function Content() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <AcademicCapIcon className="h-8 w-8 text-indigo-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">E-Learning Content</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.eLearning.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({eLearningPagination.total} total)
+                ({eLearningPagination.total} {t('admin:content.eLearning.total')})
               </span>
             </div>
             
@@ -507,7 +508,7 @@ export default function Content() {
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search e-learning..."
+                placeholder={t('admin:content.eLearning.searchPlaceholder')}
                 value={eLearningSearch}
                 onChange={(e) => handleSearch('e-learning', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -519,20 +520,20 @@ export default function Content() {
           {isLoadingELearning ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading content...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.eLearning.loading')}</p>
             </div>
           ) : eLearningContent.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <AcademicCapIcon className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {eLearningSearch ? 'No results found' : 'No e-learning content yet'}
+                {eLearningSearch ? t('admin:content.eLearning.noResults') : t('admin:content.eLearning.empty')}
               </p>
               <button
                 onClick={() => handleOpenModal('e-learning')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add First Content
+                {t('admin:content.eLearning.addFirst')}
               </button>
             </div>
           ) : (
@@ -564,9 +565,9 @@ export default function Content() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <DocumentTextIcon className="h-8 w-8 text-green-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">HR Documents</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.hrDocuments.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({hrPagination.total} total)
+                ({hrPagination.total} {t('admin:content.eLearning.total')})
               </span>
             </div>
             
@@ -574,7 +575,7 @@ export default function Content() {
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search HR documents..."
+                placeholder={t('admin:content.hrDocuments.searchPlaceholder')}
                 value={hrSearch}
                 onChange={(e) => handleSearch('hr', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
@@ -586,20 +587,20 @@ export default function Content() {
           {isLoadingHR ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading documents...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.hrDocuments.loading')}</p>
             </div>
           ) : hrDocuments.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {hrSearch ? 'No results found' : 'No HR documents yet'}
+                {hrSearch ? t('admin:content.hrDocuments.noResults') : t('admin:content.hrDocuments.empty')}
               </p>
               <button
                 onClick={() => handleOpenModal('hr')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add First Document
+                {t('admin:content.hrDocuments.addFirst')}
               </button>
             </div>
           ) : (
@@ -631,9 +632,9 @@ export default function Content() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <ScaleIcon className="h-8 w-8 text-purple-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">State Policies</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.statePolicies.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({policyPagination.total} total)
+                ({policyPagination.total} {t('admin:content.eLearning.total')})
               </span>
             </div>
             
@@ -641,7 +642,7 @@ export default function Content() {
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search policies..."
+                placeholder={t('admin:content.statePolicies.searchPlaceholder')}
                 value={policySearch}
                 onChange={(e) => handleSearch('policy', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
@@ -653,20 +654,20 @@ export default function Content() {
           {isLoadingPolicies ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading policies...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.statePolicies.loading')}</p>
             </div>
           ) : statePolicies.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <ScaleIcon className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {policySearch ? 'No results found' : 'No state policies yet'}
+                {policySearch ? t('admin:content.statePolicies.noResults') : t('admin:content.statePolicies.empty')}
               </p>
               <button
                 onClick={() => handleOpenModal('policy')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add First Policy
+                {t('admin:content.statePolicies.addFirst')}
               </button>
             </div>
           ) : (

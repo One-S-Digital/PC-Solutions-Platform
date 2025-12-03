@@ -155,7 +155,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
               value={formData.vatNumber || ''}
               onChange={(e) => onChange('vatNumber', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="CHE-123.456.789"
+              placeholder={t('common:placeholders.vatNumber')}
             />
           </div>
         </div>
@@ -290,7 +290,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
               value={formData.bookingLink || ''}
               onChange={(e) => onChange('bookingLink', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="https://..."
+              placeholder={t('common:placeholders.url')}
             />
           </div>
         </div>

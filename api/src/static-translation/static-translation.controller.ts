@@ -396,6 +396,36 @@ export class StaticTranslationController {
   }
 
   /**
+   * Admin: Auto-fix hardcoded strings
+   * Automatically finds and fixes hardcoded strings in frontend code
+   */
+  @Post('admin/auto-fix-hardcoded-strings')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Auto-fix hardcoded strings in frontend code (admin)' })
+  async autoFixHardcodedStrings(
+    @Request() req: any,
+  ): Promise<{
+    success: boolean;
+    fixed: number;
+    skipped: number;
+    errors: number;
+    message: string;
+  }> {
+    // TODO: Add audit logging with userId for tracking who initiated the auto-fix
+    // const userId = req.user?.id;
+    const result = await this.service.autoFixHardcodedStrings();
+    return {
+      success: result.success,
+      fixed: result.fixed,
+      skipped: result.skipped,
+      errors: result.errors,
+      message: result.message,
+    };
+  }
+
+  /**
    * Public endpoint: Get translations for a namespace
    * Used by i18next-http-backend for runtime loading
    * Includes ETag and Cache-Control headers for efficient caching

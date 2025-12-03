@@ -20,12 +20,13 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   onUploadSuccess,
   acceptedMimeTypes = "image/*,application/pdf,.doc,.docx,.xls,.xlsx",
   maxFileSizeMB = 5,
-  label = "Upload a file",
+  label,
   multiple = false,
   assetKind = 'DOCUMENT',
   autoUpload = true,
 }) => {
   const { t } = useTranslation(['dashboard', 'common']);
+  const displayLabel = label || t('common:fileUploadZone.defaultLabel');
   const { upload } = useAuthenticatedApi();
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -150,7 +151,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (!isUploading && (e.key === 'Enter' || e.key === ' ')) openFileDialog();}}
-        aria-label={label}
+        aria-label={displayLabel}
       >
         <div className="space-y-1 text-center">
           {isUploading ? (
@@ -176,7 +177,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                 <span
                   className="relative cursor-pointer bg-transparent rounded-md font-medium text-swiss-mint hover:text-opacity-80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-swiss-mint"
                 >
-                  <span>{label}</span>
+                  <span>{displayLabel}</span>
                 </span>
                 <p className="pl-1 text-gray-500">{t("fileUploadZone.dragAndDrop")}</p>
               </div>

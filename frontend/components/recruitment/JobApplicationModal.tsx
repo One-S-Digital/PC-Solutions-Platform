@@ -141,7 +141,7 @@ const JobApplicationModal: React.FC<JobApplicationModalProps> = ({
               onChange={(e) => setCoverLetter(e.target.value)}
               rows={8}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
-              placeholder="Tell us why you're interested in this position and what makes you a great fit..."
+              placeholder={t('recruitment:application.coverLetterPlaceholder')}
               disabled={isSubmitting}
             />
             <p className="mt-1 text-xs text-gray-500">

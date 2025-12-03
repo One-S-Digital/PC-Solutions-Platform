@@ -12,7 +12,7 @@ const ParentSupportPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
           <QuestionMarkCircleIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-          {t('sidebar.supportFAQ')}
+          {t('dashboard:sidebar.supportFAQ')}
         </h1>
       </div>
         <Card className="p-6">

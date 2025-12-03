@@ -177,7 +177,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
                       <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
                   </div>
                   <Link to="/settings" role="menuitem" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-swiss-mint transition-colors" onClick={() => setDropdownOpen(false)}>
-                    {t('sidebar.settings')}
+                    {t('dashboard:sidebar.settings')}
                   </Link>
                   <button 
                     role="menuitem"

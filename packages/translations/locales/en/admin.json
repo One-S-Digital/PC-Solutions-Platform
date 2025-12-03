@@ -19,35 +19,48 @@
   },
   "designSystem": {
     "title": "Design System",
-    "description": "Comprehensive design system and component library for ProCrèche Solutions",
+    "description": "A living reference for all UI components and design tokens in the Pro Crèche Solutions application.",
     "sections": {
       "colors": "Colors",
       "typography": "Typography",
+      "buttons": "Buttons",
+      "cards": "Cards",
+      "formControls": "Form Controls",
       "components": "Components"
     },
     "typography": {
-      "fontFamily": "Font Family: Inter",
-      "heading1": "Heading 1",
-      "heading2": "Heading 2",
-      "heading3": "Heading 3",
-      "heading4": "Heading 4",
-      "bodyBase": "Body text (base)",
-      "bodySmall": "Body text (small)",
-      "link": "Link example"
+      "title": "Typography",
+      "fontFamily": "Font Family: Nunito, Inter, sans-serif",
+      "heading1": "Heading 1: The quick brown fox",
+      "heading2": "Heading 2: The quick brown fox",
+      "heading3": "Heading 3: The quick brown fox",
+      "heading4": "Heading 4: The quick brown fox",
+      "bodyBase": "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+      "bodySmall": "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
+      "link": "This is a link"
     },
     "buttons": {
-      "primaryDisabled": "Primary (Disabled)",
-      "secondaryDisabled": "Secondary (Disabled)",
-      "outlineDisabled": "Outline (Disabled)",
-      "disabledState": "Disabled State",
+      "title": "Buttons",
+      "variants": "Variants",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "danger": "Danger",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "light": "Light",
+      "sizes": "Sizes",
       "extraSmall": "Extra Small",
       "small": "Small",
       "mediumDefault": "Medium (Default)",
       "large": "Large",
-      "smallIcon": "Small Icon",
+      "withIcons": "With Icons",
       "leftIcon": "Left Icon",
       "rightIcon": "Right Icon",
-      "withIcons": "With Icons"
+      "smallIcon": "Small Icon",
+      "disabledState": "Disabled State",
+      "primaryDisabled": "Primary Disabled",
+      "secondaryDisabled": "Secondary Disabled",
+      "outlineDisabled": "Outline Disabled"
     },
     "cards": {
       "standardCard": "Standard Card",
@@ -71,10 +84,11 @@
       "lineVariant": "Line Variant",
       "tab1": "Tab 1",
       "tab2": "Tab 2",
-      "tab3": "Tab 3 (Disabled)",
-      "content1": "This is content for tab 1",
-      "content2": "This is content for tab 2",
-      "content3": "This is content for tab 3"
+      "tab3": "Tab 3",
+      "disabledTab": "Tab 3 (Disabled)",
+      "content1": "This is the content for Tab 1.",
+      "content2": "This is the content for Tab 2.",
+      "content3": "This is a disabled tab."
     }
   },
   "partners": {
@@ -621,5 +635,97 @@
         }
       }
     }
+  },
+  "content": {
+    "eLearning": {
+      "title": "E-Learning Content",
+      "total": "total",
+      "searchPlaceholder": "Search e-learning...",
+      "loading": "Loading content...",
+      "noResults": "No results found",
+      "empty": "No e-learning content yet",
+      "addFirst": "Add First Content"
+    },
+    "hrDocuments": {
+      "title": "HR Documents",
+      "searchPlaceholder": "Search HR documents...",
+      "loading": "Loading documents...",
+      "noResults": "No results found",
+      "empty": "No HR documents yet",
+      "addFirst": "Add First Document"
+    },
+    "statePolicies": {
+      "title": "State Policies",
+      "searchPlaceholder": "Search policies...",
+      "loading": "Loading policies...",
+      "noResults": "No results found",
+      "empty": "No state policies yet",
+      "addFirst": "Add First Policy"
+    },
+    "orDragDrop": "or drag and drop",
+    "selected": "Selected:"
+  },
+  "auth": {
+    "login": {
+      "title": "Admin Dashboard",
+      "subtitle": "Pro Crèche Solutions Management Portal",
+      "emailLabel": "Email",
+      "emailPlaceholder": "admin@procreche.com",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot Password?",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "signup": {
+      "termsPrefix": "I accept the",
+      "termsLink": "Terms and Conditions"
+    }
+  },
+  "forms": {
+    "job": {
+      "titlePlaceholder": "e.g., Early Childhood Educator",
+      "descriptionPlaceholder": "Describe the role, day-to-day responsibilities, and what makes this position special...",
+      "locationPlaceholder": "e.g., Zurich, Switzerland",
+      "salaryPlaceholder": "e.g., CHF 60,000 - 80,000",
+      "requirementPlaceholder": "Add a requirement...",
+      "responsibilityPlaceholder": "Add a responsibility...",
+      "qualificationPlaceholder": "Add a qualification...",
+      "benefitPlaceholder": "Add a benefit..."
+    },
+    "candidate": {
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "emailPlaceholder": "john.doe@example.com",
+      "experiencePlaceholder": "Describe relevant work experience...",
+      "educationPlaceholder": "Educational background and qualifications...",
+      "skillPlaceholder": "Add a custom skill...",
+      "certificationPlaceholder": "e.g., Early Childhood Education Diploma, First Aid Certificate...",
+      "bioPlaceholder": "A brief introduction about the candidate..."
+    },
+    "organization": {
+      "emailPlaceholder": "contact@example.com",
+      "regionPlaceholder": "e.g., Zurich",
+      "websitePlaceholder": "https://example.com",
+      "pedagogyPlaceholder": "e.g., Montessori, Waldorf",
+      "languagePlaceholder": "e.g., German, French, English"
+    }
+  },
+  "fileUpload": {
+    "dragDrop": "or drag and drop",
+    "selected": "Selected:",
+    "clickBrowse": "Click to browse or drag and drop",
+    "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
+    "tagPlaceholder": "Add tag...",
+    "descriptionPlaceholder": "Describe this file...",
+    "urlPlaceholder": "https://example.com/image.png"
+  },
+  "messaging": {
+    "searchPlaceholder": "Search conversations...",
+    "typePlaceholder": "Type your message..."
+  },
+  "translations": {
+    "versionPlaceholder": "Version (e.g., v1.2.3)",
+    "descriptionPlaceholder": "Description (optional)",
+    "searchPlaceholder": "Search keys or values..."
   }
 }

@@ -105,7 +105,7 @@ const Services: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search services..."
+                placeholder={t('common:placeholders.searchservices')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -118,12 +118,12 @@ const Services: React.FC = () => {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
-              <option value="">All Categories</option>
-              <option value="Childcare">Childcare</option>
-              <option value="Education">Education</option>
-              <option value="Health">Health</option>
-              <option value="Nutrition">Nutrition</option>
-              <option value="Special Needs">Special Needs</option>
+              <option value="">{t('common:allcategories')}</option>
+              <option value="Childcare">{t('common:childcare')}</option>
+              <option value="Education">{t('common:education')}</option>
+              <option value="Health">{t('common:health')}</option>
+              <option value="Nutrition">{t('common:nutrition')}</option>
+              <option value="Special Needs">{t('common:specialneeds')}</option>
             </select>
           </div>
         </div>

@@ -1402,5 +1402,195 @@ export class StaticTranslationService {
 
     return rows;
   }
+
+  /**
+   * Auto-fix hardcoded strings in frontend code
+   * Runs the automated script to find and fix hardcoded strings
+   */
+  async autoFixHardcodedStrings(): Promise<{
+    success: boolean;
+    fixed: number;
+    skipped: number;
+    errors: number;
+    details?: any;
+    message: string;
+  }> {
+    try {
+      const { exec } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(exec);
+      const path = await import('path');
+      const fs = await import('fs');
+      
+      // Allow configuration via environment variable
+      const configuredScriptPath = process.env.AUTO_FIX_SCRIPT_PATH;
+      if (configuredScriptPath && fs.existsSync(configuredScriptPath)) {
+        const scriptDir = path.dirname(configuredScriptPath);
+        const projectRoot = path.dirname(scriptDir);
+        return this.runScript(configuredScriptPath, projectRoot);
+      }
+      
+      // Find project root by looking for package.json and scripts directory
+      // Start from __dirname (api/src/static-translation) and go up to find root
+      let projectRoot = __dirname;
+      let found = false;
+      const maxDepth = 10; // Prevent infinite loop
+      let depth = 0;
+      
+      while (depth < maxDepth && projectRoot !== path.dirname(projectRoot)) {
+        const scriptsDir = path.join(projectRoot, 'scripts');
+        const packageJson = path.join(projectRoot, 'package.json');
+        if (fs.existsSync(scriptsDir) && fs.existsSync(packageJson)) {
+          found = true;
+          break;
+        }
+        projectRoot = path.dirname(projectRoot);
+        depth++;
+      }
+      
+      if (!found) {
+        // Fallback: try process.cwd() or use a relative path from __dirname
+        projectRoot = process.cwd();
+        // If still in api directory, go up one level
+        if (path.basename(projectRoot) === 'api') {
+          projectRoot = path.dirname(projectRoot);
+        }
+      }
+      
+      const scriptPath = path.join(projectRoot, 'scripts', 'auto-fix-hardcoded-strings.mjs');
+      
+      // Check if script exists
+      if (!fs.existsSync(scriptPath)) {
+        // Try alternative paths
+        const altPath1 = path.resolve(process.cwd(), '..', 'scripts', 'auto-fix-hardcoded-strings.mjs');
+        const altPath2 = path.resolve(__dirname, '../../../scripts/auto-fix-hardcoded-strings.mjs');
+        
+        if (fs.existsSync(altPath1)) {
+          this.logger.log(`Using alternative path 1: ${altPath1}`);
+          const altCwd1 = path.dirname(path.dirname(altPath1)); // Go up from scripts to project root
+          return this.runScript(altPath1, altCwd1);
+        } else if (fs.existsSync(altPath2)) {
+          this.logger.log(`Using alternative path 2: ${altPath2}`);
+          const altCwd2 = path.dirname(path.dirname(altPath2)); // Go up from scripts to project root
+          return this.runScript(altPath2, altCwd2);
+        }
+        
+        throw new Error(`Script not found at ${scriptPath}. Also tried: ${altPath1}, ${altPath2}`);
+      }
+      
+      return this.runScript(scriptPath, projectRoot);
+    } catch (error: any) {
+      this.logger.error('Auto-fix script failed:', error);
+      return {
+        success: false,
+        fixed: 0,
+        skipped: 0,
+        errors: 1,
+        message: `Auto-fix failed: ${error.message}`,
+      };
+    }
+  }
+
+  /**
+   * Helper method to run the auto-fix script
+   */
+  private async runScript(scriptPath: string, cwd: string): Promise<{
+    success: boolean;
+    fixed: number;
+    skipped: number;
+    errors: number;
+    details?: any;
+    message: string;
+  }> {
+    const { exec } = await import('child_process');
+    const { promisify } = await import('util');
+    const execAsync = promisify(exec);
+    const path = await import('path');
+    const fs = await import('fs');
+    
+    this.logger.log(`Running auto-fix script from: ${cwd}`);
+    this.logger.log(`Script path: ${scriptPath}`);
+    
+    // Run the script - it outputs JSON to stdout and human-readable to stderr
+    let stdout: string;
+    let stderr: string;
+    try {
+      const result = await execAsync(`node "${scriptPath}"`, {
+        cwd: cwd, // Run from project root
+        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+        encoding: 'utf8',
+        timeout: 5 * 60 * 1000, // 5 minute timeout
+      });
+      stdout = result.stdout;
+      stderr = result.stderr;
+    } catch (execError: any) {
+      this.logger.error('Script execution failed:', execError);
+      return {
+        success: false,
+        fixed: 0,
+        skipped: 0,
+        errors: 1,
+        message: `Script execution failed: ${execError.message}`,
+      };
+    }
+    
+    // Log stderr (human-readable output) for debugging
+    if (stderr) {
+      this.logger.log('Script output:', stderr);
+    }
+    
+    // Parse JSON from stdout
+    try {
+      // Extract JSON from stdout (may have other text)
+      const jsonMatch = stdout.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const result = JSON.parse(jsonMatch[0]);
+        this.logger.log(`Auto-fix completed: ${result.fixed} fixed, ${result.skipped} skipped, ${result.errors} errors`);
+        
+        // If strings were fixed, automatically sync to database
+        if (result.fixed > 0) {
+          this.logger.log('🔄 Auto-syncing translations to database...');
+          try {
+            const syncScriptPath = path.join(cwd, 'scripts', 'sync-json-to-database.mjs');
+            if (fs.existsSync(syncScriptPath)) {
+              await execAsync(`node "${syncScriptPath}"`, {
+                cwd: cwd,
+                maxBuffer: 10 * 1024 * 1024,
+                timeout: 60 * 1000, // 1 minute
+              });
+              this.logger.log('✅ Translations synced to database automatically!');
+              result.message = result.message + '\n\n✅ Translations automatically synced to database and ready to use!';
+            }
+          } catch (syncError: any) {
+            this.logger.warn('Database sync failed (non-fatal):', syncError.message);
+            result.message = result.message + '\n\n⚠️ Auto-sync to database failed. Please run manually: node scripts/sync-json-to-database.mjs';
+          }
+        }
+        
+        return result;
+      } else {
+        // Try parsing entire stdout
+        const result = JSON.parse(stdout.trim());
+        return result;
+      }
+    } catch (parseError) {
+      // If JSON parsing fails, try to extract info from stdout/stderr
+      const output = stdout + stderr;
+      const fixedMatch = output.match(/Fixed:\s*(\d+)/);
+      const skippedMatch = output.match(/Skipped:\s*(\d+)/);
+      const errorMatch = output.match(/Errors:\s*(\d+)/);
+      
+      const foundAnyMatch = fixedMatch || skippedMatch || errorMatch;
+      return {
+        success: foundAnyMatch ? true : false,
+        fixed: fixedMatch ? parseInt(fixedMatch[1]) : 0,
+        skipped: skippedMatch ? parseInt(skippedMatch[1]) : 0,
+        errors: errorMatch ? parseInt(errorMatch[1]) : 0,
+        message: foundAnyMatch 
+          ? (output || 'Auto-fix completed successfully')
+          : `Failed to parse script output: ${output.substring(0, 500)}`,
+      };
+    }
+  }
 }
 

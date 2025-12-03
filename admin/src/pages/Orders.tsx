@@ -18,11 +18,13 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { Order, LineItem } from '../types/api'
+import { useTranslation } from 'react-i18next';
 
 const Orders: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
   const apiClient = useApiClient()
+  const { t } = useTranslation(['common']);
 
   const { data: ordersResponse, isLoading, error } = useQuery({
     queryKey: ['orders'],
@@ -108,7 +110,7 @@ const Orders: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search orders..."
+                placeholder={t('common:placeholders.searchorders')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -121,15 +123,15 @@ const Orders: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
-              <option value="">All Status</option>
-              <option value="Submitted">Submitted</option>
-              <option value="ViewedBySupplier">Viewed By Supplier</option>
-              <option value="Accepted">Accepted</option>
-              <option value="Processing">Processing</option>
-              <option value="Shipped">Shipped</option>
-              <option value="Fulfilled">Fulfilled</option>
-              <option value="Cancelled">Cancelled</option>
-              <option value="Declined">Declined</option>
+              <option value="">{t('common:allstatus')}</option>
+              <option value="Submitted">{t('common:submitted')}</option>
+              <option value="ViewedBySupplier">{t('common:viewedbysupplier')}</option>
+              <option value="Accepted">{t('common:accepted')}</option>
+              <option value="Processing">{t('common:processing')}</option>
+              <option value="Shipped">{t('common:shipped')}</option>
+              <option value="Fulfilled">{t('common:fulfilled')}</option>
+              <option value="Cancelled">{t('common:cancelled')}</option>
+              <option value="Declined">{t('common:declined')}</option>
             </select>
           </div>
         </div>

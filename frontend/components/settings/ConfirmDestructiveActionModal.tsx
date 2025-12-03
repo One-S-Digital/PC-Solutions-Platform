@@ -2,6 +2,7 @@
 // Placeholder for ConfirmDestructiveActionModal.tsx
 import React from 'react';
 import Button from '../ui/Button'; // Assuming Button component exists
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmDestructiveActionModalProps {
   isOpen: boolean;
@@ -18,8 +19,11 @@ const ConfirmDestructiveActionModal: React.FC<ConfirmDestructiveActionModalProps
   onConfirm,
   title,
   message,
-  confirmButtonText = "Confirm"
+  confirmButtonText
 }) => {
+  const { t } = useTranslation();
+  const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');
+
   if (!isOpen) return null;
 
   return (
@@ -32,7 +36,7 @@ const ConfirmDestructiveActionModal: React.FC<ConfirmDestructiveActionModalProps
             Cancel
           </Button>
           <Button variant="danger" onClick={onConfirm}>
-            {confirmButtonText}
+            {finalConfirmButtonText}
           </Button>
         </div>
       </div>
