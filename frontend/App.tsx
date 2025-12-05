@@ -199,7 +199,7 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/hr-procedures" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><HRProceduresPage /></ProtectedRoute>} />
         <Route path="/state-policies" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.EDUCATOR, UserRole.PARENT]}><StatePoliciesPage /></ProtectedRoute>} />
         <Route path="/e-learning" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><ELearningPage /></ProtectedRoute>} />
-          <Route path="/admin/partners" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><PartnersPage /></ProtectedRoute>} />
+          <Route path="/partners-directory" element={<PartnersPage />} />
           <Route
             path="/partner/:partnerId"
             element={
