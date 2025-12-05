@@ -140,3 +140,32 @@ export class UpdateDisplayOrderDto {
   @Min(0)
   displayOrder: number;
 }
+
+export class PartnerApplicationDto {
+  @IsString()
+  organizationName: string;
+
+  @IsEnum(PartnerType)
+  type: PartnerType;
+
+  @IsEmail()
+  contactEmail: string;
+
+  @IsString()
+  contactPerson: string;
+
+  @IsOptional()
+  @IsString()
+  contactPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  countryRegion?: string;
+
+  @IsString()
+  message: string;
+}
