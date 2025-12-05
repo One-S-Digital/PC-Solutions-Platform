@@ -150,17 +150,18 @@ export class SettingsController {
 
     await this.prisma.$transaction(async (tx) => {
       // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
       await this.validateAssetForUsage(
         tx,
         settings.logoAssetId,
-        profileId,
+        accountId,
         [AssetKind.LOGO],
         'Logo',
       );
       await this.validateAssetForUsage(
         tx,
         settings.coverAssetId,
-        profileId,
+        accountId,
         [AssetKind.COVER_IMAGE],
         'Cover image',
       );
@@ -283,10 +284,11 @@ export class SettingsController {
 
     await this.prisma.$transaction(async (tx) => {
       // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
       await this.validateAssetForUsage(
         tx,
         settings.avatarAssetId,
-        profileId,
+        accountId,
         [AssetKind.AVATAR],
         'Avatar',
       );
@@ -390,17 +392,18 @@ export class SettingsController {
 
     await this.prisma.$transaction(async (tx) => {
       // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
       await this.validateAssetForUsage(
         tx,
         settings.logoAssetId,
-        profileId,
+        accountId,
         [AssetKind.LOGO],
         'Logo',
       );
       await this.validateAssetForUsage(
         tx,
         settings.coverAssetId,
-        profileId,
+        accountId,
         [AssetKind.COVER_IMAGE],
         'Cover image',
       );
@@ -601,17 +604,18 @@ export class SettingsController {
 
         try {
           // Validate asset ownership and kind before updating
+          // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
           await this.validateAssetForUsage(
             tx,
             settings.logoAssetId,
-            profileId,
+            accountId,
             [AssetKind.LOGO],
             'Logo',
           );
           await this.validateAssetForUsage(
             tx,
             settings.coverAssetId,
-            profileId,
+            accountId,
             [AssetKind.COVER_IMAGE],
             'Cover image',
           );
@@ -905,10 +909,11 @@ export class SettingsController {
 
     await this.prisma.$transaction(async (tx) => {
       // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
       await this.validateAssetForUsage(
         tx,
         settings.avatarAssetId,
-        profileId,
+        accountId,
         [AssetKind.AVATAR],
         'Avatar',
       );

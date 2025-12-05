@@ -39,12 +39,12 @@ export class UploadController {
     try {
       const context = (req as any).context;
       
-      // Use profileId (User.id) for asset ownership to match settings validation
-      // profileId is set by EnsureProfileInterceptor from the User table
-      const userId = context?.profileId;
+      // Use accountId (AppUser.id) for asset ownership since Asset.uploader relation references AppUser
+      // accountId is set by EnsureProfileInterceptor from the AppUser table
+      const userId = context?.accountId;
       
       if (!userId) {
-        this.logger.warn('User profile not found in request context for file upload');
+        this.logger.warn('User account not found in request context for file upload');
         throw new BadRequestException('User context not found');
       }
 
@@ -108,10 +108,10 @@ export class UploadController {
   ) {
     try {
       const context = (req as any).context;
-      const userId = context?.profileId;
+      const userId = context?.accountId;
       
       if (!userId) {
-        this.logger.warn('User profile not found in request context for file delete');
+        this.logger.warn('User account not found in request context for file delete');
         throw new BadRequestException('User context not found');
       }
 
@@ -196,10 +196,10 @@ export class UploadController {
   ) {
     try {
       const context = (req as any).context;
-      const userId = context?.profileId;
+      const userId = context?.accountId;
       
       if (!userId) {
-        this.logger.warn('User profile not found in request context for my-files');
+        this.logger.warn('User account not found in request context for my-files');
         throw new BadRequestException('User context not found');
       }
 
