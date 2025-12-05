@@ -87,6 +87,9 @@
       "title": "Featured Partners",
       "subtitle": "Leading organizations we work with"
     },
+    "allPartners": {
+      "title": "All Partners"
+    },
     "joinUs": {
       "title": "Become a Partner",
       "subtitle": "Join our network of trusted providers",
@@ -95,9 +98,49 @@
       "inquiryFormLink": "Partner Inquiry Form"
     },
     "partnerCard": {
-      "logoAlt": "Partner logo",
+      "logoAlt": "{{name}} logo",
       "partnerType": "Partner Type",
       "learnMoreButton": "Learn More"
+    },
+    "searchPlaceholder": "Search partners...",
+    "allTypes": "All Types",
+    "searchResults": "Search Results",
+    "partnersFound": "partners found",
+    "noResults": "No partners found matching your search",
+    "noPartners": "No partners available yet",
+    "error": {
+      "loadFailed": "Failed to load partners. Please try again later."
+    },
+    "types": {
+      "academic": "Academic",
+      "corporate": "Corporate",
+      "governmental": "Governmental",
+      "nonProfit": "Non-Profit",
+      "media": "Media",
+      "technology": "Technology"
+    },
+    "application": {
+      "title": "Partner Application",
+      "organizationName": "Organization Name",
+      "organizationNamePlaceholder": "Enter your organization name",
+      "partnerType": "Partner Type",
+      "contactPerson": "Contact Person",
+      "contactPersonPlaceholder": "Full name of contact person",
+      "contactEmail": "Email Address",
+      "contactEmailPlaceholder": "contact@example.com",
+      "contactPhone": "Phone Number",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "countryRegion": "Country/Region",
+      "countryRegionPlaceholder": "e.g., Switzerland",
+      "websiteUrl": "Website URL",
+      "websiteUrlPlaceholder": "https://www.example.com",
+      "message": "Tell us about your organization",
+      "messagePlaceholder": "Describe your organization, the services you offer, and why you'd like to partner with us...",
+      "submit": "Submit Application",
+      "submitting": "Submitting...",
+      "successTitle": "Application Submitted!",
+      "successMessage": "Thank you for your interest in partnering with ProCrèche Solutions. Our team will review your application and contact you within 3-5 business days.",
+      "error": "Failed to submit application. Please try again."
     }
   },
   "discountTerminations": {

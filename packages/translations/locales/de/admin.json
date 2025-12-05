@@ -54,13 +54,67 @@
   "partners": {
     "hero": {
       "title": "Unsere Partner",
-      "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung"
+      "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
+      "ctaButton": "Partner werden"
     },
-    "sections": {
-      "featuredPartners": "Ausgewählte Partner"
+    "featured": {
+      "title": "Ausgewählte Partner",
+      "subtitle": "Führende Organisationen, mit denen wir zusammenarbeiten"
     },
-    "buttons": {
-      "becomePartner": "Partner werden"
+    "allPartners": {
+      "title": "Alle Partner"
+    },
+    "joinUs": {
+      "title": "Partner werden",
+      "subtitle": "Treten Sie unserem Netzwerk vertrauenswürdiger Anbieter bei",
+      "contactUsButton": "Kontaktieren Sie uns",
+      "contactUsAlert": "Kontaktformular kommt bald",
+      "inquiryFormLink": "Partneranfrage-Formular"
+    },
+    "partnerCard": {
+      "logoAlt": "Logo von {{name}}",
+      "partnerType": "Partnertyp",
+      "learnMoreButton": "Mehr erfahren"
+    },
+    "searchPlaceholder": "Partner suchen...",
+    "allTypes": "Alle Typen",
+    "searchResults": "Suchergebnisse",
+    "partnersFound": "Partner gefunden",
+    "noResults": "Keine Partner gefunden, die Ihrer Suche entsprechen",
+    "noPartners": "Noch keine Partner verfügbar",
+    "error": {
+      "loadFailed": "Fehler beim Laden der Partner. Bitte versuchen Sie es später erneut."
+    },
+    "types": {
+      "academic": "Akademisch",
+      "corporate": "Unternehmen",
+      "governmental": "Staatlich",
+      "nonProfit": "Gemeinnützig",
+      "media": "Medien",
+      "technology": "Technologie"
+    },
+    "application": {
+      "title": "Partnerantrag",
+      "organizationName": "Organisationsname",
+      "organizationNamePlaceholder": "Geben Sie Ihren Organisationsnamen ein",
+      "partnerType": "Partnertyp",
+      "contactPerson": "Ansprechpartner",
+      "contactPersonPlaceholder": "Vollständiger Name des Ansprechpartners",
+      "contactEmail": "E-Mail-Adresse",
+      "contactEmailPlaceholder": "kontakt@beispiel.com",
+      "contactPhone": "Telefonnummer",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "countryRegion": "Land/Region",
+      "countryRegionPlaceholder": "z.B. Schweiz",
+      "websiteUrl": "Website-URL",
+      "websiteUrlPlaceholder": "https://www.beispiel.com",
+      "message": "Erzählen Sie uns von Ihrer Organisation",
+      "messagePlaceholder": "Beschreiben Sie Ihre Organisation, die angebotenen Dienstleistungen und warum Sie Partner werden möchten...",
+      "submit": "Antrag einreichen",
+      "submitting": "Wird gesendet...",
+      "successTitle": "Antrag eingereicht!",
+      "successMessage": "Vielen Dank für Ihr Interesse an einer Partnerschaft mit ProCrèche Solutions. Unser Team wird Ihren Antrag prüfen und Sie innerhalb von 3-5 Werktagen kontaktieren.",
+      "error": "Fehler beim Einreichen des Antrags. Bitte versuchen Sie es erneut."
     }
   },
   "organizations": {

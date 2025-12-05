@@ -10,9 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PartnersService } from './partners.service';
-import { CreatePartnerDto, UpdatePartnerDto, PartnerQueryDto, UpdateDisplayOrderDto } from './dto/partners.dto';
+import { CreatePartnerDto, UpdatePartnerDto, PartnerQueryDto, UpdateDisplayOrderDto, PartnerApplicationDto } from './dto/partners.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { UserRole, PartnerType } from '@prisma/client';
 
 @Controller('partners')
@@ -58,15 +59,24 @@ export class PartnersController {
   }
 
   // Public endpoint for active partners only
+  @Public()
   @Get('active')
   findActive() {
     return this.partnersService.findActive();
   }
 
   // Public endpoint for featured partners
+  @Public()
   @Get('featured')
   findFeatured() {
     return this.partnersService.findFeatured();
+  }
+
+  // Public endpoint for partner applications
+  @Public()
+  @Post('apply')
+  submitApplication(@Body() applicationDto: PartnerApplicationDto) {
+    return this.partnersService.submitApplication(applicationDto);
   }
 
   // Admin endpoint for statistics

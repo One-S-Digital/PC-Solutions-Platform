@@ -53,14 +53,68 @@
   },
   "partners": {
     "hero": {
-      "title": "Nos partenaires",
-      "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance"
+      "title": "Nos Partenaires",
+      "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance",
+      "ctaButton": "Devenir Partenaire"
     },
-    "sections": {
-      "featuredPartners": "Partenaires en vedette"
+    "featured": {
+      "title": "Partenaires en Vedette",
+      "subtitle": "Organisations leaders avec lesquelles nous travaillons"
     },
-    "buttons": {
-      "becomePartner": "Devenir partenaire"
+    "allPartners": {
+      "title": "Tous les Partenaires"
+    },
+    "joinUs": {
+      "title": "Devenir Partenaire",
+      "subtitle": "Rejoignez notre réseau de prestataires de confiance",
+      "contactUsButton": "Nous Contacter",
+      "contactUsAlert": "Formulaire de contact bientôt disponible",
+      "inquiryFormLink": "Formulaire de demande de partenariat"
+    },
+    "partnerCard": {
+      "logoAlt": "Logo de {{name}}",
+      "partnerType": "Type de partenaire",
+      "learnMoreButton": "En savoir plus"
+    },
+    "searchPlaceholder": "Rechercher des partenaires...",
+    "allTypes": "Tous les types",
+    "searchResults": "Résultats de recherche",
+    "partnersFound": "partenaires trouvés",
+    "noResults": "Aucun partenaire trouvé correspondant à votre recherche",
+    "noPartners": "Aucun partenaire disponible pour le moment",
+    "error": {
+      "loadFailed": "Échec du chargement des partenaires. Veuillez réessayer plus tard."
+    },
+    "types": {
+      "academic": "Académique",
+      "corporate": "Entreprise",
+      "governmental": "Gouvernemental",
+      "nonProfit": "Association",
+      "media": "Média",
+      "technology": "Technologie"
+    },
+    "application": {
+      "title": "Demande de Partenariat",
+      "organizationName": "Nom de l'organisation",
+      "organizationNamePlaceholder": "Entrez le nom de votre organisation",
+      "partnerType": "Type de partenaire",
+      "contactPerson": "Personne de contact",
+      "contactPersonPlaceholder": "Nom complet de la personne de contact",
+      "contactEmail": "Adresse e-mail",
+      "contactEmailPlaceholder": "contact@exemple.com",
+      "contactPhone": "Numéro de téléphone",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "countryRegion": "Pays/Région",
+      "countryRegionPlaceholder": "ex: Suisse",
+      "websiteUrl": "URL du site web",
+      "websiteUrlPlaceholder": "https://www.exemple.com",
+      "message": "Parlez-nous de votre organisation",
+      "messagePlaceholder": "Décrivez votre organisation, les services que vous proposez et pourquoi vous souhaitez devenir partenaire...",
+      "submit": "Soumettre la demande",
+      "submitting": "Envoi en cours...",
+      "successTitle": "Demande envoyée !",
+      "successMessage": "Merci de votre intérêt pour un partenariat avec ProCrèche Solutions. Notre équipe examinera votre demande et vous contactera dans les 3 à 5 jours ouvrables.",
+      "error": "Échec de l'envoi de la demande. Veuillez réessayer."
     }
   },
   "organizations": {
