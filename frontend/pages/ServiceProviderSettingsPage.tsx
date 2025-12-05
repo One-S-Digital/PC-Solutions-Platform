@@ -110,6 +110,8 @@ const ServiceProviderSettingsPage: React.FC = () => {
           aboutText: data.description || '',
           description: data.description || '',
           vatNumber: data.vatNumber || '',
+          logoUrl: data.logoUrl || null,
+          coverImageUrl: data.coverImageUrl || null,
           serviceType: data.serviceType || '',
           serviceCategories: Array.isArray(data.serviceCategories) ? data.serviceCategories : [],
           deliveryType: data.deliveryType || '',
@@ -199,6 +201,8 @@ const ServiceProviderSettingsPage: React.FC = () => {
             serviceCategories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories : [],
             deliveryType: payload.deliveryType || '',
             bookingLink: payload.bookingLink || '',
+            ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+            ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
           }),
         }),
         request('/settings/privacy', {
