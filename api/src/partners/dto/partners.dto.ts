@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsOptional, IsBoolean, IsInt, IsDateString, IsEmail, IsUrl, Min } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsBoolean, IsInt, IsDateString, IsEmail, IsUrl, Min, MaxLength } from 'class-validator';
 import { PartnerType } from '@prisma/client';
 
 export class CreatePartnerDto {
@@ -159,7 +159,7 @@ export class PartnerApplicationDto {
   contactPhone?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   websiteUrl?: string;
 
   @IsOptional()
@@ -167,5 +167,6 @@ export class PartnerApplicationDto {
   countryRegion?: string;
 
   @IsString()
+  @MaxLength(5000)
   message: string;
 }

@@ -112,16 +112,20 @@ const PartnerApplicationModal: React.FC<PartnerApplicationModalProps> = ({ isOpe
       {/* Modal container */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="partner-application-title"
           className="relative w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto transform transition-all"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 id="partner-application-title" className="text-xl font-semibold text-gray-900">
               {t('partners.application.title', 'Partner Application')}
             </h2>
             <button
               onClick={handleClose}
+              aria-label={t('common:buttons.close', 'Close')}
               className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
             >
               <XMarkIcon className="w-6 h-6" />

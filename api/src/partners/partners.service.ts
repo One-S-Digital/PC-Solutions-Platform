@@ -13,6 +13,31 @@ export class PartnersService {
     const sendGridApiKey = process.env.SENDGRID_API_KEY;
     if (sendGridApiKey) {
       sgMail.setApiKey(sendGridApiKey);
+    } else {
+      this.logger.warn('SENDGRID_API_KEY not configured - email notifications will be disabled');
+    }
+  }
+
+  // HTML escape utility to prevent XSS in emails
+  private escapeHtml(unsafe: string): string {
+    return unsafe
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // URL sanitization to prevent javascript: and other malicious schemes
+  private sanitizeUrl(url: string): string {
+    try {
+      const parsed = new URL(url);
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        return '#';
+      }
+      return url;
+    } catch {
+      return '#';
     }
   }
 
@@ -204,9 +229,19 @@ export class PartnersService {
       },
     });
 
-    // Send email notification to admin
-    const adminEmail = 'admin@procrechesolutions.com';
+    // Send email notification to admin (use environment variable with fallback)
+    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'admin@procrechesolutions.com';
     const fromEmail = process.env.FROM_EMAIL || 'noreply@procreche.ch';
+
+    // Escape user inputs to prevent HTML injection in emails
+    const safeOrgName = this.escapeHtml(organizationName);
+    const safeContactPerson = this.escapeHtml(contactPerson);
+    const safeContactEmail = this.escapeHtml(contactEmail);
+    const safeContactPhone = contactPhone ? this.escapeHtml(contactPhone) : '';
+    const safeCountryRegion = countryRegion ? this.escapeHtml(countryRegion) : '';
+    const safeWebsiteUrl = websiteUrl ? this.escapeHtml(websiteUrl) : '';
+    const sanitizedWebsiteHref = websiteUrl ? this.sanitizeUrl(websiteUrl) : '';
+    const safeMessage = this.escapeHtml(message).replace(/\n/g, '<br>');
 
     try {
       const emailContent = {
@@ -215,7 +250,7 @@ export class PartnersService {
           email: fromEmail,
           name: 'ProCrèche Solutions',
         },
-        subject: `New Partner Application: ${organizationName}`,
+        subject: `New Partner Application: ${safeOrgName}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #00B4B4; padding: 20px; text-align: center;">
@@ -226,7 +261,7 @@ export class PartnersService {
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Organization Name:</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${organizationName}</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${safeOrgName}</td>
                 </tr>
                 <tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Partner Type:</td>
@@ -234,29 +269,29 @@ export class PartnersService {
                 </tr>
                 <tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Contact Person:</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${contactPerson}</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${safeContactPerson}</td>
                 </tr>
                 <tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Email:</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #ddd;"><a href="mailto:${contactEmail}">${contactEmail}</a></td>
+                  <td style="padding: 10px; border-bottom: 1px solid #ddd;"><a href="mailto:${safeContactEmail}">${safeContactEmail}</a></td>
                 </tr>
                 ${contactPhone ? `<tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Phone:</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${contactPhone}</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${safeContactPhone}</td>
                 </tr>` : ''}
                 ${websiteUrl ? `<tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Website:</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #ddd;"><a href="${websiteUrl}">${websiteUrl}</a></td>
+                  <td style="padding: 10px; border-bottom: 1px solid #ddd;"><a href="${sanitizedWebsiteHref}">${safeWebsiteUrl}</a></td>
                 </tr>` : ''}
                 ${countryRegion ? `<tr>
                   <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Country/Region:</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${countryRegion}</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #ddd;">${safeCountryRegion}</td>
                 </tr>` : ''}
               </table>
               
               <h3 style="color: #333; margin-top: 20px;">Message</h3>
               <p style="background-color: white; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
-                ${message.replace(/\n/g, '<br>')}
+                ${safeMessage}
               </p>
               
               <div style="margin-top: 20px; padding: 15px; background-color: #e8f5f5; border-radius: 5px;">
