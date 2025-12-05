@@ -5,9 +5,10 @@ import { CloudflareR2Service } from './cloudflare-r2.service';
 import { R2Service } from './r2.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
+import { PrincipalModule } from '../principal/principal.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [PrismaModule, AuthModule, PrincipalModule],
   controllers: [UploadController],
   providers: [UploadService, CloudflareR2Service, R2Service],
   exports: [UploadService, CloudflareR2Service, R2Service],
