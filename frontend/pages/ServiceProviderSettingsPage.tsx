@@ -72,7 +72,7 @@ const ServiceProviderSettingsPage: React.FC = () => {
       setIsLoading(true);
       try {
         const response = await request<{ success: boolean; data?: any }>('/settings/service-provider');
-        const data = response.success && response.data ? response.data : {};
+        const data = response.success && response.data ? response.data : ({} as any);
 
         const [privacyResponse, notificationResponse] = await Promise.all([
           request<{ success: boolean; data?: any }>('/settings/privacy'),
@@ -81,16 +81,16 @@ const ServiceProviderSettingsPage: React.FC = () => {
 
         const privacyData = privacyResponse.success && privacyResponse.data
           ? {
-              hidePubliclyToggle: !!privacyResponse.data.hidePubliclyToggle,
-              gdprDataDeletionRequestMade: !!privacyResponse.data.gdprDataDeletionRequestMade,
+              hidePubliclyToggle: !!(privacyResponse.data as any).hidePubliclyToggle,
+              gdprDataDeletionRequestMade: !!(privacyResponse.data as any).gdprDataDeletionRequestMade,
             }
           : { hidePubliclyToggle: false, gdprDataDeletionRequestMade: false };
 
         const notificationData = notificationResponse.success && notificationResponse.data
           ? {
-              newRequestEmailToggle: !!notificationResponse.data.newRequestEmailToggle,
-              digestRadio: (notificationResponse.data.digestRadio as SettingsFormData['digestRadio']) || 'Daily',
-              promoRedemptionAlertsToggle: !!notificationResponse.data.promoRedemptionAlertsToggle,
+              newRequestEmailToggle: !!(notificationResponse.data as any).newRequestEmailToggle,
+              digestRadio: ((notificationResponse.data as any).digestRadio as SettingsFormData['digestRadio']) || 'Daily',
+              promoRedemptionAlertsToggle: !!(notificationResponse.data as any).promoRedemptionAlertsToggle,
             }
           : { newRequestEmailToggle: true, digestRadio: 'Daily' as const, promoRedemptionAlertsToggle: false };
 
@@ -110,6 +110,8 @@ const ServiceProviderSettingsPage: React.FC = () => {
           aboutText: data.description || '',
           description: data.description || '',
           vatNumber: data.vatNumber || '',
+          logoUrl: data.logoUrl || null,
+          coverImageUrl: data.coverImageUrl || null,
           serviceType: data.serviceType || '',
           serviceCategories: Array.isArray(data.serviceCategories) ? data.serviceCategories : [],
           deliveryType: data.deliveryType || '',
@@ -199,6 +201,8 @@ const ServiceProviderSettingsPage: React.FC = () => {
             serviceCategories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories : [],
             deliveryType: payload.deliveryType || '',
             bookingLink: payload.bookingLink || '',
+            ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
+            ...(payload.coverAssetId !== undefined && { coverAssetId: payload.coverAssetId || null }),
           }),
         }),
         request('/settings/privacy', {

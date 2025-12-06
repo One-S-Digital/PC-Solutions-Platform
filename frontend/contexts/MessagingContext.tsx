@@ -1,5 +1,4 @@
 
-
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { Message, Conversation, UserRole, User } from '../types';
 import { messagingService } from '../services/messagingService';
@@ -12,6 +11,7 @@ interface MessagingContextType {
   conversations: Conversation[];
   messagesByConversation: Record<string, Message[]>;
   activeConversationId: string | null;
+  loading: boolean;
   setActiveConversationId: (conversationId: string | null) => void;
   loadUserConversations: () => void;
   loadMessagesForConversation: (conversationId: string) => void;
@@ -48,6 +48,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       return;
     }
 
+<<<<<<< HEAD
     // Prevent concurrent calls - if already loading, skip
     if (loadingConversationsRef.current) {
       return;
@@ -103,6 +104,7 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
     loadUserConversations();
   }, [currentUser, loadUserConversations]);
 
+<<<<<<< HEAD
   // Polling for real-time message updates (fallback when WebSocket is not available)
   // Note: With WebSocket, this polling is less critical but kept as a backup
   useEffect(() => {
@@ -437,9 +439,10 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   const startOrGetConversation = async (recipientId: string, recipientName: string, recipientRole: UserRole): Promise<string> => {
     if (!currentUser) throw new Error(t("messagingContext.userNotLoggedIn") || "User not logged in");
     const participants = [
-        { id: currentUser.id, name: currentUser.name, role: currentUser.role },
-        { id: recipientId, name: recipientName, role: recipientRole }
+      { id: currentUser.id, name: currentUser.name, role: currentUser.role },
+      { id: recipientId, name: recipientName, role: recipientRole }
     ];
+<<<<<<< HEAD
     return await startConversation(participants);
   };
   

@@ -1,27 +1,81 @@
-
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import { ShoppingCartIcon, PlusCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import Button from '../../components/ui/Button';
 import { useTranslation } from 'react-i18next';
-import { MOCK_ORDERS, MOCK_PRODUCTS, MOCK_ORGANIZATIONS } from '../../constants';
-import { OrderRequestStatus } from '../../types';
+import { Order, Product, OrderRequestStatus, Organization } from '../../types';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+
+interface SupplierStats {
+  totalOrders: number;
+  pendingOrders: number;
+  revenueThisMonth: number;
+  fulfillmentRate: number;
+}
 
 const SupplierDashboardPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
+  const { authenticatedRequest } = useAuthenticatedApi();
 
-  // Dynamic data based on logged-in supplier
-  const myProducts = currentUser?.orgId ? MOCK_PRODUCTS.filter(p => p.supplierId === currentUser.orgId) : [];
-  const myOrders = currentUser?.orgId ? MOCK_ORDERS.filter(o => o.supplierId === currentUser.orgId) : [];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [stats, setStats] = useState<SupplierStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!currentUser?.orgId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch data in parallel
+      const [productsRes, ordersRes, statsRes, orgsRes] = await Promise.all([
+        authenticatedRequest<Product[]>('/marketplace/products'),
+        authenticatedRequest<Order[]>('/marketplace/orders'),
+        authenticatedRequest<SupplierStats>('/dashboard/supplier/stats'),
+        authenticatedRequest<Organization[]>('/compat/organizations'),
+      ]);
+
+      if (productsRes.success && productsRes.data) {
+        setProducts(productsRes.data);
+      }
+      if (ordersRes.success && ordersRes.data) {
+        setOrders(ordersRes.data);
+      }
+      if (statsRes.success && statsRes.data) {
+        setStats(statsRes.data);
+      }
+      if (orgsRes.success && orgsRes.data) {
+        setOrganizations(orgsRes.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch supplier dashboard data:', err);
+      setError(t('supplierDashboard.loadError', 'Failed to load dashboard data'));
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser?.orgId, authenticatedRequest, t]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Calculate derived data
+  const myProducts = products;
+  const myOrders = orders;
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const revenueThisMonth = myOrders
+  const revenueThisMonth = stats?.revenueThisMonth ?? myOrders
     .filter(order => new Date(order.requestDate) >= startOfMonth)
     .reduce((sum, order) => sum + order.totalAmount, 0);
 
@@ -38,30 +92,32 @@ const SupplierDashboardPage: React.FC = () => {
   })();
   
   const fulfilledOrders = myOrders.filter(o => o.status === OrderRequestStatus.FULFILLED).length;
-  const fulfillmentRate = myOrders.length > 0 ? ((fulfilledOrders / myOrders.length) * 100).toFixed(0) : '100';
-
+  const fulfillmentRate = stats?.fulfillmentRate ?? (myOrders.length > 0 ? ((fulfilledOrders / myOrders.length) * 100) : 100);
 
   const salesOverview = {
-    totalOrders: myOrders.length.toString(),
+    totalOrders: (stats?.totalOrders ?? myOrders.length).toString(),
     revenueThisMonth: `CHF ${revenueThisMonth.toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
     topSelling: topSellingProduct,
-    fulfillmentRate: `${fulfillmentRate}%`,
+    fulfillmentRate: `${fulfillmentRate.toFixed(0)}%`,
   };
 
   const productManagement = {
     active: myProducts.length.toString(),
-    pending: '0', // Mock data, no 'pending' status in Product model
+    // 'pending' is hardcoded to '0' because the Product model only tracks ACTIVE/INACTIVE status,
+    // not a separate 'pending approval' workflow. If approval workflow is added later,
+    // this should be computed from products with a pending status or fetched from stats API.
+    pending: '0',
     lowStock: myProducts.filter(p => p.stockStatus === 'Low Stock').map(p => p.title),
   };
 
   const orderManagement = {
-    pending: myOrders.filter(o => o.status === OrderRequestStatus.SUBMITTED).length.toString(),
+    pending: (stats?.pendingOrders ?? myOrders.filter(o => o.status === OrderRequestStatus.SUBMITTED).length).toString(),
     toFulfill: myOrders.filter(o => [OrderRequestStatus.ACCEPTED, OrderRequestStatus.PROCESSING].includes(o.status)).map(o => o.id),
   };
 
   const getFoundationName = (orgId: string) => {
-    const org = MOCK_ORGANIZATIONS.find(o => o.id === orgId);
-    return org ? org.name : 'Unknown Foundation';
+    const org = organizations.find(o => o.id === orgId);
+    return org ? org.name : t('common:unknown', 'Unknown Foundation');
   };
 
   const getStatusClass = (status: OrderRequestStatus) => {
@@ -78,6 +134,23 @@ const SupplierDashboardPage: React.FC = () => {
       default: return 'bg-gray-100 text-gray-700';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-4">{error}</p>
+        <Button onClick={fetchData}>{t('common:retry', 'Retry')}</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -151,7 +224,7 @@ const SupplierDashboardPage: React.FC = () => {
                 <div>
                     <p className="text-sm font-medium text-gray-600">{t('dashboard:supplierDashboard.widgets.orders.toFulfill')}</p>
                     <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
-                        {orderManagement.toFulfill.map(item => <li key={item}>{item.substring(0,12)}...</li>)}
+                        {orderManagement.toFulfill.slice(0, 3).map(item => <li key={item}>{item.substring(0,12)}...</li>)}
                     </ul>
                 </div>
             )}
@@ -181,8 +254,8 @@ const SupplierDashboardPage: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {myOrders.slice(0, 5).map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap font-medium text-swiss-teal">{order.id.split('-')[1]}</td>
+                  <tr key={order.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/supplier/orders?order=${order.id}`)}>
+                    <td className="px-4 py-3 whitespace-nowrap font-medium text-swiss-teal">{order.id.split('-')[1] || order.id.substring(0,8)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">{getFoundationName(order.foundationOrgId)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">CHF {order.totalAmount.toFixed(2)}</td>

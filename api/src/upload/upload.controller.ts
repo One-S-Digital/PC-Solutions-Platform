@@ -1,10 +1,11 @@
-import { Controller, Get, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Post, UploadedFile, UseInterceptors, Body, Query, ServiceUnavailableException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Options, Param, Res, UseGuards, BadRequestException, Logger, Req, NotFoundException, Query, UseInterceptors, UploadedFile, Body, ParseUUIDPipe, ServiceUnavailableException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { CloudflareR2Service } from './cloudflare-r2.service';
 import { UploadService } from './upload.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
+import { EnsureProfileInterceptor } from '../principal/ensure-profile.interceptor';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClamAVService } from '../security/clamav.service';
 import { MimeValidationService } from '../security/mime-validation.service';
@@ -13,6 +14,7 @@ import { UploadThrottle } from '../common/decorators/throttle.decorator';
 
 @Controller('upload')
 @UseGuards(ClerkAuthGuard)
+@UseInterceptors(EnsureProfileInterceptor)
 export class UploadController {
   private readonly logger = new Logger(UploadController.name);
   private readonly allowedOrigins: string[];
@@ -177,11 +179,123 @@ export class UploadController {
   }
 
   /**
+   * Upload a file and create an asset record
+   * POST /api/upload/file
+   * Body: multipart/form-data with 'file' and optional 'assetKind'
+   */
+  @Post('file')
+  @UseInterceptors(FileInterceptor('file', {
+    limits: {
+      fileSize: 100 * 1024 * 1024, // 100MB max (e-learning content can be large)
+    },
+  }))
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Body('assetKind') assetKindParam?: string,
+  ) {
+    try {
+      const context = (req as any).context;
+      
+      // Use accountId (AppUser.id) for asset ownership since Asset.uploader relation references AppUser
+      // accountId is set by EnsureProfileInterceptor from the AppUser table
+      const userId = context?.accountId;
+      
+      if (!userId) {
+        this.logger.warn('User account not found in request context for file upload');
+        throw new BadRequestException('User context not found');
+      }
+
+      if (!file) {
+        this.logger.warn('No file provided in upload request');
+        throw new BadRequestException('No file provided');
+      }
+
+      this.logger.log(`Processing file upload for user: ${userId}, file: ${file.originalname}, size: ${file.size}`);
+
+      // Determine asset kind from parameter or default to DOCUMENT
+      let assetKind: AssetKind = AssetKind.DOCUMENT;
+      if (assetKindParam) {
+        const validKinds = Object.values(AssetKind);
+        if (validKinds.includes(assetKindParam as AssetKind)) {
+          assetKind = assetKindParam as AssetKind;
+        } else {
+          this.logger.warn(`Invalid asset kind: ${assetKindParam}, defaulting to DOCUMENT`);
+        }
+      }
+
+      this.logger.log(`Asset kind: ${assetKind}`);
+
+      // Upload file using the upload service
+      const result = await this.uploadService.uploadFile(file, userId, assetKind);
+
+      this.logger.log(`File uploaded successfully: ${result.asset.id}`);
+
+      return {
+        success: true,
+        message: 'File uploaded successfully',
+        asset: {
+          id: result.asset.id,
+          kind: result.asset.kind,
+          filename: result.asset.filename,
+          publicUrl: result.publicUrl,
+          url: result.publicUrl,
+          storageKey: result.asset.storageKey,
+          mimeType: result.asset.mimeType,
+          size: result.asset.size,
+          createdAt: result.asset.createdAt,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`File upload failed: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(`File upload failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Delete an asset by ID
+   * DELETE /api/upload/files/:id
+   */
+  @Delete('files/:id')
+  async deleteFile(
+    @Param('id', ParseUUIDPipe) assetId: string,
+    @Req() req: Request,
+  ) {
+    try {
+      const context = (req as any).context;
+      const userId = context?.accountId;
+      
+      if (!userId) {
+        this.logger.warn('User account not found in request context for file delete');
+        throw new BadRequestException('User context not found');
+      }
+
+      this.logger.log(`Deleting asset: ${assetId} for user: ${userId}`);
+
+      await this.uploadService.deleteAsset(assetId, userId);
+
+      return {
+        success: true,
+        message: 'File deleted successfully',
+      };
+    } catch (error) {
+      this.logger.error(`File delete failed: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(`File delete failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Get asset metadata by ID
    * GET /api/upload/asset/:id
    */
   @Get('asset/:id')
-  async getAsset(@Param('id') assetId: string) {
+  async getAsset(@Param('id', ParseUUIDPipe) assetId: string) {
     try {
       this.logger.log(`Fetching asset: ${assetId}`);
       
@@ -239,14 +353,15 @@ export class UploadController {
     @Query('offset') offset?: string,
   ) {
     try {
-      const user = (req as any).user;
+      const context = (req as any).context;
+      const userId = context?.accountId;
       
-      if (!user?.id) {
-        this.logger.warn('User not found in request context for my-files');
+      if (!userId) {
+        this.logger.warn('User account not found in request context for my-files');
         throw new BadRequestException('User context not found');
       }
 
-      this.logger.log(`Fetching files for user: ${user.id}, kind: ${kind || 'all'}`);
+      this.logger.log(`Fetching files for user: ${userId}, kind: ${kind || 'all'}`);
 
       // Parse kind if provided and valid
       let assetKind: AssetKind | undefined;
@@ -263,7 +378,7 @@ export class UploadController {
         throw new BadRequestException('Invalid limit or offset parameter');
       }
 
-      const assets = await this.uploadService.getUserAssets(user.id, {
+      const assets = await this.uploadService.getUserAssets(userId, {
         kind: assetKind,
         limit: parsedLimit,
         offset: parsedOffset,

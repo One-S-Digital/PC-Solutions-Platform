@@ -1825,3 +1825,46 @@ model CalendarEvent {
   @@index([eventType])
   @@map("calendar_events")
 }
+
+// Partner Organizations (External Partners/Sponsors)
+enum PartnerType {
+  ACADEMIC
+  CORPORATE
+  GOVERNMENTAL
+  NON_PROFIT
+  MEDIA
+  TECHNOLOGY
+}
+
+model Partner {
+  id            String      @id @default(uuid())
+  name          String
+  type          PartnerType
+  description   String?     @db.Text
+  websiteUrl    String?
+  countryRegion String?
+  contactEmail  String?
+  contactPhone  String?
+  contactPerson String?
+  
+  // Asset relations
+  logoAssetId   String?
+  
+  // Status and visibility
+  isActive      Boolean     @default(true)
+  isFeatured    Boolean     @default(false)
+  displayOrder  Int         @default(0)
+  
+  // Dates
+  partnershipStart DateTime?
+  partnershipEnd   DateTime?
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([displayOrder])
+  @@map("partners")
+}

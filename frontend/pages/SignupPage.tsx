@@ -534,7 +534,6 @@ const SignupPage: React.FC = () => {
         status: result.status,
         createdSessionId: result.createdSessionId,
         createdUserId: result.createdUserId,
-        errors: result.errors,
       });
 
       if (result.status === 'complete') {

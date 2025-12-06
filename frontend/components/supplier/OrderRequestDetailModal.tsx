@@ -1,25 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Order, OrderRequestStatus } from '../../types';
+import { Order, OrderRequestStatus, Organization } from '../../types';
 import Button from '../ui/Button';
 import { XMarkIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline';
-import { MOCK_ORGANIZATIONS } from '../../constants';
 
 interface OrderRequestDetailModalProps {
   order: Order | null;
   isOpen: boolean;
   onClose: () => void;
   onUpdateStatus: (orderId: string, newStatus: OrderRequestStatus) => void;
+  organizations?: Organization[];
 }
 
-const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order, isOpen, onClose, onUpdateStatus }) => {
+const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order, isOpen, onClose, onUpdateStatus, organizations = [] }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
 
   if (!isOpen || !order) return null;
 
-  const daycare = MOCK_ORGANIZATIONS.find(org => org.id === order.foundationOrgId);
+  const daycare = organizations.find(org => org.id === order.foundationOrgId);
 
   const handleViewProfile = () => {
     navigate(`/partner/${order.foundationOrgId}`);
@@ -62,14 +62,16 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
           <div className="mb-4">
             <h3 className="font-semibold mb-2">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>
             <div className="flex items-center p-3 border rounded-md">
-              <img src={daycare?.logoUrl} alt={daycare?.name} className="w-12 h-12 rounded-full mr-3"/>
+              {daycare?.logoUrl && <img src={daycare.logoUrl} alt={daycare?.name} className="w-12 h-12 rounded-full mr-3"/>}
               <div>
-                <p className="font-medium">{daycare?.name}</p>
+                <p className="font-medium">{daycare?.name || t('common:unknown', 'Unknown')}</p>
                 <p className="text-xs text-gray-500">{daycare?.region}</p>
               </div>
-              <Button variant="outline" size="sm" leftIcon={BuildingStorefrontIcon} className="ml-auto" onClick={handleViewProfile}>
-                {t('dashboard:orderRequestDetailModal.viewDaycareProfile')}
-              </Button>
+              {daycare && (
+                <Button variant="outline" size="sm" leftIcon={BuildingStorefrontIcon} className="ml-auto" onClick={handleViewProfile}>
+                  {t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -87,7 +89,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
                 {order.items.map(item => (
                   <tr key={item.productId}>
                     <td className="px-4 py-2 flex items-center gap-3">
-                      <img src={item.imageUrl} alt={item.productName} className="w-10 h-10 rounded-md object-cover"/>
+                      {item.imageUrl && <img src={item.imageUrl} alt={item.productName} className="w-10 h-10 rounded-md object-cover"/>}
                       {item.productName}
                     </td>
                     <td className="px-4 py-2 text-center">{item.quantity}</td>

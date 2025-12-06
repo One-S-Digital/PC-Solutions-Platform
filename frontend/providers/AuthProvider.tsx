@@ -500,8 +500,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       try {
-        // First, try to update password directly
-        // Clerk's updatePassword should handle verification automatically if currentPassword is provided
+        // Update password directly via Clerk
+        // Clerk's updatePassword handles verification automatically when currentPassword is provided
         await clerkUser.updatePassword({ 
           currentPassword, 
           newPassword,
@@ -514,62 +514,17 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         const errorMessage = error?.message || '';
         const errorCode = error?.code || error?.status || '';
         
-        // If Clerk requires additional verification, we need to prepare and complete verification first
+        // If Clerk requires additional verification
         if (
           errorMessage.includes('additional verification') || 
           errorMessage.includes('verification') ||
           errorCode === 403 ||
           error?.status === 403
         ) {
-          try {
-            // Prepare verification with password strategy
-            const verification = await clerkUser.prepareVerification({
-              strategy: 'password',
-            });
-
-            // Attempt to verify with current password
-            if (verification.status === 'unverified') {
-              const verified = await verification.attemptVerification({
-                password: currentPassword,
-              });
-
-              if (verified.status === 'verified') {
-                // Verification successful, now try password update again
-                await clerkUser.updatePassword({ 
-                  currentPassword, 
-                  newPassword,
-                  signOutOfOtherSessions: false,
-                });
-                return; // Success, exit early
-              }
-            } else if (verification.status === 'verified') {
-              // Already verified, try password update again
-              await clerkUser.updatePassword({ 
-                currentPassword, 
-                newPassword,
-                signOutOfOtherSessions: false,
-              });
-              return; // Success, exit early
-            }
-
-            // If we get here, verification didn't work as expected
-            throw new Error(
-              'Verification completed but password update still failed. ' +
-              'Please try signing out and signing back in, then attempt the password change again.'
-            );
-          } catch (verifyError: any) {
-            // Handle verification-specific errors
-            if (verifyError?.message?.includes('incorrect') || verifyError?.message?.includes('password')) {
-              throw new Error('The current password you entered is incorrect. Please try again.');
-            }
-            
-            // Re-throw verification errors with context
-            throw new Error(
-              'Additional verification is required to change your password. ' +
-              'Please ensure you entered your current password correctly, or sign out and sign back in, then try again. ' +
-              `Error: ${verifyError?.message || 'Verification failed'}`
-            );
-          }
+          throw new Error(
+            'Additional verification is required to change your password. ' +
+            'Please ensure you entered your current password correctly, or sign out and sign back in, then try again.'
+          );
         }
 
         // Handle incorrect current password

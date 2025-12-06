@@ -79,7 +79,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             supplierId: supplier.id, 
             supplierName: supplier.name,
             imageUrl: product.imageUrl,
-            stockStatus: product.stockStatus 
+            stockStatus: product.stockStatus as StockStatus
         }];
       }
     });

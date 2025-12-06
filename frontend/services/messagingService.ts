@@ -1,5 +1,5 @@
 import { apiService, ApiResponse } from './api';
-import { Conversation, Message, User } from '../types';
+import { Conversation, Message, User, UserRole } from '../types';
 
 /**
  * Convert relative download URL to absolute URL
@@ -224,7 +224,7 @@ class MessagingService {
   private transformConversation(conv: any): Conversation {
     const participants = conv.participants || [];
     const participantNames: Record<string, string> = {};
-    const participantRoles: Record<string, string> = {};
+    const participantRoles: Record<string, UserRole> = {};
     
     participants.forEach((participant: any) => {
       if (participant.user) {

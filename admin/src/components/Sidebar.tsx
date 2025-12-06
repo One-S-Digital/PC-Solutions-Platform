@@ -20,6 +20,7 @@ import {
   Shield,
   Palette,
   Globe,
+  Handshake,
   LifeBuoy,
 } from 'lucide-react'
 import { clsx } from 'clsx'
@@ -35,6 +36,7 @@ const navigation = [
   { key: 'dashboard', href: '/dashboard', icon: BarChart3 },
   { key: 'users', href: '/users', icon: Users },
   { key: 'foundations', href: '/organizations', icon: Building2 },
+  { key: 'partners', href: '/partners', icon: Handshake },
   { key: 'products', href: '/products', icon: Package },
   { key: 'services', href: '/services', icon: Wrench },
   { key: 'jobListings', href: '/job-listings', icon: Briefcase },
@@ -70,12 +72,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <img
             src={getAdminLogo()}
             alt={t('common:adminlogo')}
-            className="h-[69px] w-[69px] object-contain mr-2.5"
+            className="h-[69px] w-auto mr-2.5"
           />
         ) : (
-          <div className="h-[69px] w-[69px] bg-swiss-mint mr-2.5 flex items-center justify-center rounded">
-            <Shield className="h-[38px] w-[38px] text-white" />
-          </div>
+          <Shield className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
         )}
         <h1 className="text-2xl font-bold text-swiss-charcoal">Admin</h1>
       </div>

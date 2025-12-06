@@ -1,9 +1,9 @@
 // Export all services
 export { apiService, ApiService } from './api';
-export { userService, UserService } from './userService';
-export { organizationService, OrganizationService } from './organizationService';
-export { marketplaceService, MarketplaceService } from './marketplaceService';
-export { messagingService, MessagingService } from './messagingService';
+export { userService } from './userService';
+export { organizationService } from './organizationService';
+export { marketplaceService } from './marketplaceService';
+export { messagingService } from './messagingService';
 export { leadsService } from './leadsService';
 
 // Foundation-specific services

@@ -1,938 +1,616 @@
 {
+  "discountTerminationsPage": {
+    "queue": {
+      "title": "Kündigungswarteschlange"
+    },
+    "active": {
+      "title": "Aktive Rabatte"
+    }
+  },
+  "partnersPage": {
+    "title": "Unsere Partner",
+    "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
+    "sections": {
+      "featuredPartners": "Ausgewählte Partner"
+    },
+    "buttons": {
+      "becomePartner": "Partner werden"
+    }
+  },
+  "designSystem": {
+    "title": "Designsystem",
+    "sections": {
+      "colors": "Farben",
+      "typography": "Typografie",
+      "components": "Komponenten"
+    }
+  },
+  "discountTerminations": {
+    "queue": {
+      "title": "Kündigungswarteschlange",
+      "description": "Kunden mit ausstehender Rabattkündigung",
+      "tableTitle": "Ausstehende Kündigungen",
+      "empty": "Keine ausstehenden Kündigungen"
+    },
+    "allActive": {
+      "title": "Aktive Rabatte",
+      "description": "Alle aktiven Anbieterrabatte",
+      "tableTitle": "Aktive Anbieterrabatte",
+      "empty": "Keine aktiven Rabatte"
+    },
+    "table": {
+      "vendor": "Anbieter",
+      "daycare": "Kindertagesstätte",
+      "reason": "Grund",
+      "activeSince": "Aktiv seit",
+      "actions": "Aktionen"
+    },
+    "actions": {
+      "markCompleted": "Als abgeschlossen markieren",
+      "sendNotices": "Benachrichtigungen senden",
+      "sendNoticesAlert": "Benachrichtigungsfunktion kommt bald"
+    }
+  },
+  "partners": {
+    "hero": {
+      "title": "Unsere Partner",
+      "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
+      "ctaButton": "Partner werden"
+    },
+    "featured": {
+      "title": "Ausgewählte Partner",
+      "subtitle": "Führende Organisationen, mit denen wir zusammenarbeiten"
+    },
+    "allPartners": {
+      "title": "Alle Partner"
+    },
+    "joinUs": {
+      "title": "Partner werden",
+      "subtitle": "Treten Sie unserem Netzwerk vertrauenswürdiger Anbieter bei",
+      "contactUsButton": "Kontaktieren Sie uns",
+      "contactUsAlert": "Kontaktformular kommt bald",
+      "inquiryFormLink": "Partneranfrage-Formular"
+    },
+    "partnerCard": {
+      "logoAlt": "Logo von {{name}}",
+      "partnerType": "Partnertyp",
+      "learnMoreButton": "Mehr erfahren"
+    },
+    "searchPlaceholder": "Partner suchen...",
+    "allTypes": "Alle Typen",
+    "searchResults": "Suchergebnisse",
+    "partnersFound": "Partner gefunden",
+    "noResults": "Keine Partner gefunden, die Ihrer Suche entsprechen",
+    "noPartners": "Noch keine Partner verfügbar",
+    "error": {
+      "loadFailed": "Fehler beim Laden der Partner. Bitte versuchen Sie es später erneut."
+    },
+    "types": {
+      "academic": "Akademisch",
+      "corporate": "Unternehmen",
+      "governmental": "Staatlich",
+      "nonProfit": "Gemeinnützig",
+      "media": "Medien",
+      "technology": "Technologie"
+    },
+    "application": {
+      "title": "Partnerantrag",
+      "organizationName": "Organisationsname",
+      "organizationNamePlaceholder": "Geben Sie Ihren Organisationsnamen ein",
+      "partnerType": "Partnertyp",
+      "contactPerson": "Ansprechpartner",
+      "contactPersonPlaceholder": "Vollständiger Name des Ansprechpartners",
+      "contactEmail": "E-Mail-Adresse",
+      "contactEmailPlaceholder": "kontakt@beispiel.com",
+      "contactPhone": "Telefonnummer",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "countryRegion": "Land/Region",
+      "countryRegionPlaceholder": "z.B. Schweiz",
+      "websiteUrl": "Website-URL",
+      "websiteUrlPlaceholder": "https://www.beispiel.com",
+      "message": "Erzählen Sie uns von Ihrer Organisation",
+      "messagePlaceholder": "Beschreiben Sie Ihre Organisation, die angebotenen Dienstleistungen und warum Sie Partner werden möchten...",
+      "submit": "Antrag einreichen",
+      "submitting": "Wird gesendet...",
+      "successTitle": "Antrag eingereicht!",
+      "successMessage": "Vielen Dank für Ihr Interesse an einer Partnerschaft mit ProCrèche Solutions. Unser Team wird Ihren Antrag prüfen und Sie innerhalb von 3-5 Werktagen kontaktieren.",
+      "error": "Fehler beim Einreichen des Antrags. Bitte versuchen Sie es erneut."
+    }
+  },
+  "organizations": {
+    "title": "Organisationen",
+    "subtitle": "Kindertagesstätten und Organisationen verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Organisationen suchen...",
+    "addButton": "Organisation hinzufügen",
+    "emptyState": {
+      "title": "Keine Organisationen gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Organisation hinzuzufügen."
+    },
+    "error": {
+      "title": "Fehler beim Laden der Organisationen",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "staffMembers": "Mitarbeiter"
+  },
+  "jobListings": {
+    "title": "Stellenangebote",
+    "subtitle": "Stellenangebote und Rekrutierung verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Stellen suchen...",
+    "addButton": "Stelle veröffentlichen",
+    "statusFilter": {
+      "all": "Alle Status",
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "closed": "Geschlossen"
+    },
+    "emptyState": {
+      "title": "Keine Stellenangebote gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Stelle zu veröffentlichen."
+    },
+    "error": {
+      "title": "Fehler beim Laden der Stellenangebote",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
+  },
+  "candidates": {
+    "title": "Kandidaten",
+    "subtitle": "Bewerber und Kandidaten verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Kandidaten suchen...",
+    "addButton": "Kandidat hinzufügen",
+    "statusFilter": {
+      "all": "Alle Status"
+    },
+    "emptyState": {
+      "title": "Keine Kandidaten gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder einen neuen Kandidaten hinzuzufügen."
+    },
+    "table": {
+      "candidate": "KANDIDAT",
+      "position": "POSITION",
+      "experience": "ERFAHRUNG",
+      "status": "STATUS",
+      "appliedDate": "BEWERBUNGSDATUM"
+    }
+  },
+  "products": {
+    "title": "Produkte",
+    "subtitle": "Produkte und Lieferungen verwalten ({{count}} insgesamt)",
+    "searchPlaceholder": "Produkte suchen...",
+    "addButton": "Produkt hinzufügen",
+    "categoryFilter": {
+      "all": "Alle Kategorien"
+    },
+    "emptyState": {
+      "title": "Keine Produkte gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder ein neues Produkt hinzuzufügen."
+    },
+    "error": {
+      "title": "Fehler beim Laden der Produkte",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
+  },
   "settings": {
-    "emailNotifications": {
-      "send": {
-        "eventTypes": {
-          "job_application_received": "Bewerbung erhalten",
-          "subscription_activation": "Abonnementaktivierung",
-          "account_verification": "Kontoüberprüfung",
-          "order_confirmation": "Bestellbestätigung",
-          "system_maintenance": "Systemwartung",
-          "password_reset": "Passwort zurücksetzen",
-          "welcome_email": "Willkommens-E-Mail",
-          "new_message": "Neue Nachricht"
-        },
-        "templateVariablesPlaceholder": "{\"firstName\": \"Max\", \"lastName\": \"Mustermann\", \"verificationUrl\": \"https://...\"}",
-        "recipientEmailPlaceholder": "benutzer@beispiel.com oder benutzer1@beispiel.com, benutzer2@beispiel.com",
-        "recipientNamePlaceholder": "Max Mustermann",
-        "buttons": {
-          "sendBulkEmail": "Massen-E-Mail senden",
-          "sendEmail": "E-Mail senden"
-        },
-        "templateVariablesHint": "Vorlagenvariablen als JSON eingeben. Häufige Variablen: firstName, lastName, verificationUrl, resetUrl, etc.",
-        "recipientEmailHint": "Für Massensendungen mehrere E-Mails durch Kommas trennen",
-        "alerts": {
-          "bulkFailed": "Fehler beim Senden der Massen-E-Mails: {{message}}",
-          "sendFailed": "Fehler beim Senden der E-Mail: {{message}}",
-          "bulkSent": "Massen-E-Mail gesendet! Gesendet: {{sent}}, Fehlgeschlagen: {{failed}}",
-          "sent": "E-Mail erfolgreich gesendet!"
-        },
-        "templateVariables": "Vorlagenvariablen (JSON)",
-        "selectEventType": "Ereignistyp auswählen",
-        "recipientEmail": "Empfänger-E-Mail(s)",
-        "recipientName": "Empfängername (Optional)",
-        "eventType": "Ereignistyp",
-        "title": "E-Mail senden"
+    "title": "Einstellungen",
+    "subtitle": "Verwalten Sie Ihre Anwendungseinstellungen und Präferenzen",
+    "tabs": {
+      "general": "Allgemein",
+      "branding": "Branding",
+      "content": "Inhalt",
+      "notifications": "Benachrichtigungen",
+      "integrations": "Integrationen",
+      "emailTemplates": "E-Mail-Vorlagen",
+      "systemConfig": "Systemkonfiguration"
+    },
+    "general": {
+      "title": "Allgemeine Einstellungen",
+      "description": "Grundlegende Informationen zu Ihrer Anwendung",
+      "siteName": "Seitenname",
+      "siteNamePlaceholder": "Seitennamen eingeben",
+      "contactEmail": "Kontakt-E-Mail",
+      "contactEmailPlaceholder": "kontakt@beispiel.com",
+      "siteDescription": "Seitenbeschreibung",
+      "siteDescriptionPlaceholder": "Seitenbeschreibung eingeben",
+      "contactPhone": "Kontakttelefon",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "saveChanges": "Änderungen speichern",
+      "saving": "Speichern...",
+      "platformSettings": {
+        "title": "Plattformeinstellungen",
+        "maintenanceMode": "Wartungsmodus",
+        "maintenanceModeActive": "Plattform befindet sich derzeit im Wartungsmodus",
+        "maintenanceModeInactive": "Plattform ist betriebsbereit",
+        "maintenanceMessage": "Wartungsnachricht",
+        "maintenanceMessagePlaceholder": "Wartungsnachricht für Benutzer eingeben...",
+        "updateMessage": "Nachricht aktualisieren",
+        "updating": "Aktualisieren..."
+      }
+    },
+    "content": {
+      "title": "Inhaltseinstellungen",
+      "description": "Verwalten Sie Ihre Homepage-Inhalte und den Hero-Bereich",
+      "heroImage": {
+        "title": "Hero-Bild"
       },
-      "analytics": {
-        "eventsBreakdown": {
-          "title": "Ereignisaufschlüsselung"
-        },
-        "labels": {
-          "deliveryRate": "Zustellrate",
-          "emailsSent": "Gesendete E-Mails",
-          "clickRate": "Klickrate",
-          "delivered": "Zugestellt",
-          "totalSent": "Gesamt gesendet",
-          "openRate": "Öffnungsrate",
-          "clicked": "Geklickt",
-          "opened": "Geöffnet"
-        },
-        "performance": {
-          "title": "E-Mail-Leistung"
-        }
+      "heroContent": {
+        "title": "Hero-Inhalt",
+        "heroTitle": "Hero-Titel",
+        "heroTitlePlaceholder": "Hero-Titel eingeben",
+        "heroSubtitle": "Hero-Untertitel",
+        "heroSubtitlePlaceholder": "Hero-Untertitel eingeben",
+        "buttonText": "Button-Text",
+        "buttonTextPlaceholder": "Loslegen",
+        "buttonLink": "Button-Link",
+        "buttonLinkPlaceholder": "https://beispiel.com"
       },
-      "templates": {
-        "tableHeaders": {
-          "category": "Kategorie",
-          "actions": "Aktionen",
-          "subject": "Betreff",
-          "updated": "Aktualisiert",
-          "status": "Status",
-          "event": "Ereignis",
-          "name": "Name"
-        },
-        "buttons": {
-          "preview": "Vorschau",
-          "edit": "Bearbeiten"
-        },
-        "status": {
-          "inactive": "Inaktiv",
-          "active": "Aktiv"
-        },
-        "createTemplate": "Vorlage erstellen",
-        "title": "E-Mail-Vorlagen"
+      "saveChanges": "Änderungen speichern",
+      "saving": "Speichern..."
+    },
+    "branding": {
+      "title": "Branding-Einstellungen",
+      "description": "Passen Sie Ihre Markenfarben, Logos und visuelle Identität an",
+      "brandColors": {
+        "title": "Markenfarben",
+        "primaryColor": "Primärfarbe",
+        "secondaryColor": "Sekundärfarbe",
+        "accentColor": "Akzentfarbe"
       },
-      "logs": {
-        "tableHeaders": {
-          "recipient": "Empfänger",
-          "sentAt": "Gesendet um",
-          "status": "Status",
-          "error": "Fehler",
-          "event": "Ereignis"
-        },
-        "title": "E-Mail-Protokolle"
+      "adminColors": {
+        "title": "Admin-Dashboard-Farben",
+        "adminPrimaryColor": "Admin-Primärfarbe",
+        "adminSecondaryColor": "Admin-Sekundärfarbe",
+        "adminAccentColor": "Admin-Akzentfarbe"
       },
-      "tabs": {
-        "analytics": "Analytik",
-        "templates": "Vorlagen",
-        "logs": "E-Mail-Protokolle",
-        "send": "E-Mail senden"
+      "logosAssets": {
+        "title": "Logos & Assets",
+        "mainLogo": "Hauptlogo (Öffentliche Seiten)",
+        "mainLogoDescription": "Wird auf Anmelde-, Registrierungs- und anderen öffentlichen Seiten verwendet",
+        "sidebarLogo": "Seitenleisten-Logo",
+        "sidebarLogoDescription": "Separates Logo für das Seitenleisten-Menü der Haupt-App (optional - verwendet Hauptlogo als Fallback)",
+        "adminLogo": "Admin-Logo",
+        "favicon": "Favicon",
+        "adminFavicon": "Admin-Favicon"
       },
-      "sendEmail": "E-Mail senden",
-      "loading": "E-Mail-Benachrichtigungen werden geladen...",
-      "refresh": "Aktualisieren",
-      "title": "E-Mail-Benachrichtigungen"
+      "uploading": {
+        "logo": "Logo wird hochgeladen...",
+        "sidebarLogo": "Seitenleisten-Logo wird hochgeladen...",
+        "adminLogo": "Admin-Logo wird hochgeladen...",
+        "favicon": "Favicon wird hochgeladen...",
+        "adminFavicon": "Admin-Favicon wird hochgeladen..."
+      },
+      "uploaded": {
+        "logo": "✓ Logo hochgeladen! Klicken Sie unten auf \"Logo speichern\", um die Änderungen zu übernehmen.",
+        "sidebarLogo": "✓ Seitenleisten-Logo hochgeladen! Klicken Sie unten auf \"Seitenleisten-Logo speichern\", um die Änderungen zu übernehmen.",
+        "adminLogo": "✓ Admin-Logo hochgeladen! Klicken Sie unten auf \"Admin-Logo speichern\", um die Änderungen zu übernehmen.",
+        "favicon": "✓ Favicon hochgeladen! Klicken Sie unten auf \"Favicon speichern\", um die Änderungen zu übernehmen.",
+        "adminFavicon": "✓ Admin-Favicon hochgeladen! Klicken Sie unten auf \"Admin-Favicon speichern\", um die Änderungen zu übernehmen."
+      },
+      "saveColors": "Farben speichern",
+      "saveAdminColors": "Admin-Farben speichern",
+      "saveLogo": "Logo speichern",
+      "saveSidebarLogo": "Seitenleisten-Logo speichern",
+      "saveAdminLogo": "Admin-Logo speichern",
+      "saveFavicon": "Favicon speichern",
+      "saveAdminFavicon": "Admin-Favicon speichern",
+      "saving": "Speichern...",
+      "noAssetToSave": "Kein Asset zum Speichern. Bitte laden Sie zuerst eine Datei hoch.",
+      "assetSaved": "{{assetType}} erfolgreich gespeichert!",
+      "assetUploaded": "{{assetType}} erfolgreich hochgeladen!",
+      "assetUploadFailed": "Fehler beim Hochladen von {{assetType}}. Bitte versuchen Sie es erneut.",
+      "assetSaveFailed": "Fehler beim Speichern von {{assetType}}. Bitte versuchen Sie es erneut.",
+      "brandColorsSaved": "Markenfarben erfolgreich gespeichert!",
+      "brandColorsSaveFailed": "Fehler beim Speichern der Markenfarben. Bitte versuchen Sie es erneut."
     },
     "notifications": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "E-Mail-Benachrichtigungen und SMTP-Einstellungen konfigurieren",
       "emailNotifications": {
-        "applicationSubmissionsDesc": "Benachrichtigung erhalten, wenn Bewerbungen eingereicht werden",
+        "title": "E-Mail-Benachrichtigungen",
+        "newUserRegistrations": "Neue Benutzerregistrierungen",
         "newUserRegistrationsDesc": "Benachrichtigung erhalten, wenn sich neue Benutzer registrieren",
         "applicationSubmissions": "Bewerbungseingaben",
-        "newUserRegistrations": "Neue Benutzerregistrierungen",
-        "title": "E-Mail-Benachrichtigungen"
+        "applicationSubmissionsDesc": "Benachrichtigung erhalten, wenn Bewerbungen eingereicht werden"
       },
       "smtp": {
-        "notificationEmailPlaceholder": "benachrichtigungen@beispiel.com",
-        "smtpPasswordPlaceholder": "--------",
-        "smtpHostPlaceholder": "smtp.gmail.com",
-        "smtpPortPlaceholder": "587",
-        "smtpUserPlaceholder": "ihre-email@gmail.com",
+        "title": "SMTP-Konfiguration",
         "notificationEmail": "Benachrichtigungs-E-Mail",
-        "smtpPassword": "SMTP-Passwort",
+        "notificationEmailPlaceholder": "benachrichtigungen@beispiel.com",
         "smtpHost": "SMTP-Host",
+        "smtpHostPlaceholder": "smtp.gmail.com",
         "smtpPort": "SMTP-Port",
+        "smtpPortPlaceholder": "587",
         "smtpUser": "SMTP-Benutzername",
-        "title": "SMTP-Konfiguration"
+        "smtpUserPlaceholder": "ihre-email@gmail.com",
+        "smtpPassword": "SMTP-Passwort",
+        "smtpPasswordPlaceholder": "••••••••"
       },
       "saveSmtpSettings": "SMTP-Einstellungen speichern",
-      "description": "E-Mail-Benachrichtigungen und SMTP-Einstellungen konfigurieren",
-      "saving": "Speichern...",
-      "title": "Benachrichtigungseinstellungen"
+      "saving": "Speichern..."
+    },
+    "integrations": {
+      "title": "Integrationseinstellungen",
+      "description": "Drittanbieter-Integrationen und API-Schlüssel konfigurieren",
+      "authentication": {
+        "title": "Authentifizierung (Clerk)",
+        "clerkPublishableKey": "Clerk Publishable Key",
+        "clerkPublishableKeyPlaceholder": "pk_test_...",
+        "clerkSecretKey": "Clerk Secret Key",
+        "clerkSecretKeyPlaceholder": "sk_test_..."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "googleAnalyticsId": "Google Analytics ID",
+        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
+        "facebookPixelId": "Facebook Pixel ID",
+        "facebookPixelIdPlaceholder": "123456789012345"
+      },
+      "saveIntegrationSettings": "Integrationseinstellungen speichern",
+      "saving": "Speichern..."
     },
     "systemConfig": {
+      "title": "Systemkonfiguration",
+      "refresh": "Aktualisieren",
+      "loading": "Systemkonfiguration wird geladen...",
+      "tabs": {
+        "systemSettings": "Systemeinstellungen",
+        "integrations": "Integrationen",
+        "maintenance": "Wartung",
+        "systemHealth": "Systemgesundheit",
+        "emailTemplates": "E-Mail-Vorlagen"
+      },
       "systemSettings": {
-        "createModal": {
-          "categories": {
-            "security": "Sicherheit",
-            "general": "Allgemein",
-            "payment": "Zahlung",
-            "storage": "Speicher",
-            "email": "E-Mail"
-          },
-          "description": "Beschreibung",
-          "encrypted": "Verschlüsselt",
-          "category": "Kategorie",
-          "cancel": "Abbrechen",
-          "create": "Einstellung erstellen",
-          "public": "Öffentlich",
-          "title": "Systemeinstellung erstellen",
-          "value": "Wert",
-          "key": "Schlüssel"
-        },
+        "title": "Systemeinstellungen",
+        "createSetting": "Einstellung erstellen",
         "tableHeaders": {
-          "category": "Kategorie",
-          "actions": "Aktionen",
+          "key": "Schlüssel",
           "value": "Wert",
+          "category": "Kategorie",
           "type": "Typ",
-          "key": "Schlüssel"
-        },
-        "alerts": {
-          "createFailed": "Fehler beim Erstellen der Einstellung: {{message}}",
-          "created": "Systemeinstellung erfolgreich erstellt!"
+          "actions": "Aktionen"
         },
         "badges": {
           "encrypted": "Verschlüsselt",
           "public": "Öffentlich"
         },
-        "createSetting": "Einstellung erstellen",
         "buttons": {
           "edit": "Bearbeiten",
           "view": "Anzeigen"
         },
-        "title": "Systemeinstellungen"
-      },
-      "integrations": {
         "createModal": {
-          "types": {
-            "analytics": "Analytik",
-            "payment": "Zahlung",
-            "storage": "Speicher",
-            "email": "E-Mail",
-            "other": "Andere",
-            "auth": "Authentifizierung"
-          },
-          "webhookUrl": "Webhook-URL (Optional)",
-          "provider": "Anbieter",
+          "title": "Systemeinstellung erstellen",
+          "key": "Schlüssel",
+          "category": "Kategorie",
+          "value": "Wert",
+          "description": "Beschreibung",
+          "encrypted": "Verschlüsselt",
+          "public": "Öffentlich",
+          "create": "Einstellung erstellen",
           "cancel": "Abbrechen",
-          "create": "Integration erstellen",
-          "title": "Integration erstellen",
-          "name": "Name",
-          "type": "Typ"
-        },
-        "tableHeaders": {
-          "lastSync": "Letzte Synchronisierung",
-          "provider": "Anbieter",
-          "actions": "Aktionen",
-          "status": "Status",
-          "name": "Name",
-          "type": "Typ"
+          "categories": {
+            "general": "Allgemein",
+            "security": "Sicherheit",
+            "email": "E-Mail",
+            "payment": "Zahlung",
+            "storage": "Speicher"
+          }
         },
         "alerts": {
-          "createFailed": "Fehler beim Erstellen der Integration: {{message}}",
-          "created": "Integration erfolgreich erstellt!"
-        },
+          "created": "Systemeinstellung erfolgreich erstellt!",
+          "createFailed": "Fehler beim Erstellen der Einstellung: {{message}}"
+        }
+      },
+      "integrations": {
+        "title": "Integrationen",
         "createIntegration": "Integration erstellen",
+        "tableHeaders": {
+          "name": "Name",
+          "type": "Typ",
+          "provider": "Anbieter",
+          "status": "Status",
+          "lastSync": "Letzte Synchronisierung",
+          "actions": "Aktionen"
+        },
         "status": {
-          "inactive": "Inaktiv",
           "active": "Aktiv",
+          "inactive": "Inaktiv",
           "never": "Nie"
         },
         "buttons": {
-          "sync": "Synchronisieren",
-          "test": "Testen"
-        },
-        "title": "Integrationen"
-      },
-      "maintenance": {
-        "tableHeaders": {
-          "scheduledStart": "Geplanter Start",
-          "scheduledEnd": "Geplantes Ende",
-          "description": "Beschreibung",
-          "actions": "Aktionen",
-          "status": "Status",
-          "name": "Name"
+          "test": "Testen",
+          "sync": "Synchronisieren"
         },
         "createModal": {
-          "scheduledStart": "Geplanter Start",
-          "scheduledEnd": "Geplantes Ende",
-          "description": "Beschreibung",
+          "title": "Integration erstellen",
+          "name": "Name",
+          "type": "Typ",
+          "provider": "Anbieter",
+          "webhookUrl": "Webhook-URL (Optional)",
+          "create": "Integration erstellen",
           "cancel": "Abbrechen",
-          "create": "Plan erstellen",
-          "title": "Wartungsplan erstellen",
-          "name": "Name"
-        },
-        "schedules": {
-          "createSchedule": "Wartungsplan erstellen",
-          "title": "Wartungspläne"
+          "types": {
+            "auth": "Authentifizierung",
+            "payment": "Zahlung",
+            "email": "E-Mail",
+            "storage": "Speicher",
+            "analytics": "Analytics",
+            "other": "Andere"
+          }
         },
         "alerts": {
-          "scheduleCreated": "Wartungsplan erfolgreich erstellt!",
-          "scheduleFailed": "Fehler beim Erstellen des Plans: {{message}}",
-          "disableFailed": "Fehler beim Deaktivieren des Wartungsmodus: {{message}}",
-          "enableFailed": "Fehler beim Aktivieren des Wartungsmodus: {{message}}",
-          "disabled": "Wartungsmodus erfolgreich deaktiviert!",
-          "enabled": "Wartungsmodus erfolgreich aktiviert!"
-        },
-        "buttons": {
-          "disable": "Wartung deaktivieren",
-          "enable": "Wartung aktivieren"
+          "created": "Integration erfolgreich erstellt!",
+          "createFailed": "Fehler beim Erstellen der Integration: {{message}}"
+        }
+      },
+      "maintenance": {
+        "title": "Wartungsmodus",
+        "schedules": {
+          "title": "Wartungspläne",
+          "createSchedule": "Wartungsplan erstellen"
         },
         "status": {
-          "disabled": "Deaktiviert",
-          "enabled": "Aktiviert"
+          "enabled": "Aktiviert",
+          "disabled": "Deaktiviert"
         },
         "estimatedEnd": "Geschätztes Ende: {{date}}",
-        "title": "Wartungsmodus"
+        "buttons": {
+          "enable": "Wartung aktivieren",
+          "disable": "Wartung deaktivieren"
+        },
+        "tableHeaders": {
+          "name": "Name",
+          "description": "Beschreibung",
+          "scheduledStart": "Geplanter Start",
+          "scheduledEnd": "Geplantes Ende",
+          "status": "Status",
+          "actions": "Aktionen"
+        },
+        "createModal": {
+          "title": "Wartungsplan erstellen",
+          "name": "Name",
+          "description": "Beschreibung",
+          "scheduledStart": "Geplanter Start",
+          "scheduledEnd": "Geplantes Ende",
+          "create": "Plan erstellen",
+          "cancel": "Abbrechen"
+        },
+        "alerts": {
+          "enabled": "Wartungsmodus erfolgreich aktiviert!",
+          "disabled": "Wartungsmodus erfolgreich deaktiviert!",
+          "enableFailed": "Fehler beim Aktivieren des Wartungsmodus: {{message}}",
+          "disableFailed": "Fehler beim Deaktivieren des Wartungsmodus: {{message}}",
+          "scheduleCreated": "Wartungsplan erfolgreich erstellt!",
+          "scheduleFailed": "Fehler beim Erstellen des Plans: {{message}}"
+        }
       },
       "systemHealth": {
         "overview": {
-          "externalServices": "Externe Dienste",
+          "title": "Systemgesundheitsübersicht",
           "database": "Datenbank",
           "storage": "Speicher",
-          "title": "Systemgesundheitsübersicht"
+          "externalServices": "Externe Dienste"
         },
         "labels": {
+          "systemStatus": "Systemstatus",
           "databaseResponse": "Datenbankantwort",
           "activeServices": "Aktive Dienste",
-          "responseTime": "Antwortzeit",
-          "systemStatus": "Systemstatus",
-          "connections": "Verbindungen",
           "storageUsed": "Verwendeter Speicher",
-          "usedSpace": "Verwendeter Speicherplatz",
-          "status": "Status"
+          "status": "Status",
+          "responseTime": "Antwortzeit",
+          "connections": "Verbindungen",
+          "usedSpace": "Verwendeter Speicherplatz"
         }
       },
       "emailTemplates": {
+        "title": "E-Mail-Vorlagen",
         "createTemplate": "Vorlage erstellen",
         "goToTemplates": "Zu E-Mail-Vorlagen gehen",
-        "description": "E-Mail-Vorlagen für Benachrichtigungen verwalten",
-        "title": "E-Mail-Vorlagen"
-      },
-      "tabs": {
-        "emailTemplates": "E-Mail-Vorlagen",
-        "systemSettings": "Systemeinstellungen",
-        "integrations": "Integrationen",
-        "systemHealth": "Systemgesundheit",
-        "maintenance": "Wartung"
-      },
-      "loading": "Systemkonfiguration wird geladen...",
-      "refresh": "Aktualisieren",
-      "title": "Systemkonfiguration"
+        "description": "E-Mail-Vorlagen für Benachrichtigungen verwalten"
+      }
     },
-    "integrations": {
-      "authentication": {
-        "clerkPublishableKeyPlaceholder": "pk_test_...",
-        "clerkSecretKeyPlaceholder": "sk_test_...",
-        "clerkPublishableKey": "Clerk Publishable Key",
-        "clerkSecretKey": "Angestellter Geheimschlüssel",
-        "title": "Authentifizierung (Clerk)"
+    "emailNotifications": {
+      "title": "E-Mail-Benachrichtigungen",
+      "loading": "E-Mail-Benachrichtigungen werden geladen...",
+      "refresh": "Aktualisieren",
+      "sendEmail": "E-Mail senden",
+      "tabs": {
+        "templates": "Vorlagen",
+        "analytics": "Analytics",
+        "logs": "E-Mail-Protokolle",
+        "send": "E-Mail senden"
       },
       "analytics": {
-        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
-        "facebookPixelIdPlaceholder": "123456789012345",
-        "googleAnalyticsId": "Google Analytics-Kennung",
-        "facebookPixelId": "Facebook-Pixel-Kennung",
-        "title": "Analytik"
+        "labels": {
+          "emailsSent": "Gesendete E-Mails",
+          "deliveryRate": "Zustellrate",
+          "openRate": "Öffnungsrate",
+          "clickRate": "Klickrate",
+          "totalSent": "Gesamt gesendet",
+          "delivered": "Zugestellt",
+          "opened": "Geöffnet",
+          "clicked": "Geklickt"
+        },
+        "performance": {
+          "title": "E-Mail-Leistung"
+        },
+        "eventsBreakdown": {
+          "title": "Ereignisaufschlüsselung"
+        }
       },
-      "saveIntegrationSettings": "Integrationseinstellungen speichern",
-      "description": "Drittanbieter-Integrationen und API-Schlüssel konfigurieren",
-      "saving": "Speichern...",
-      "title": "Integrationseinstellungen"
-    },
-    "general": {
-      "platformSettings": {
-        "maintenanceMessagePlaceholder": "Wartungsnachricht für Benutzer eingeben...",
-        "maintenanceModeInactive": "Plattform ist betriebsbereit",
-        "maintenanceModeActive": "Plattform befindet sich derzeit im Wartungsmodus",
-        "maintenanceMessage": "Wartungsnachricht",
-        "maintenanceMode": "Wartungsmodus",
-        "updateMessage": "Nachricht aktualisieren",
-        "updating": "Aktualisieren...",
-        "title": "Plattformeinstellungen"
+      "templates": {
+        "title": "E-Mail-Vorlagen",
+        "createTemplate": "Vorlage erstellen",
+        "tableHeaders": {
+          "name": "Name",
+          "event": "Ereignis",
+          "category": "Kategorie",
+          "subject": "Betreff",
+          "status": "Status",
+          "updated": "Aktualisiert",
+          "actions": "Aktionen"
+        },
+        "status": {
+          "active": "Aktiv",
+          "inactive": "Inaktiv"
+        },
+        "buttons": {
+          "edit": "Bearbeiten",
+          "preview": "Vorschau"
+        }
       },
-      "siteDescriptionPlaceholder": "Seitenbeschreibung eingeben",
-      "contactEmailPlaceholder": "kontakt@beispiel.com",
-      "contactPhonePlaceholder": "+41 XX XXX XX XX",
-      "siteNamePlaceholder": "Seitennamen eingeben",
-      "siteDescription": "Seitenbeschreibung",
-      "contactEmail": "Kontakt-E-Mail",
-      "contactPhone": "Kontakttelefon",
-      "description": "Grundlegende Informationen zu Ihrer Anwendung",
-      "saveChanges": "Änderungen speichern",
-      "siteName": "Seitenname",
-      "saving": "Speichern...",
-      "title": "Allgemeine Einstellungen"
-    },
-    "branding": {
-      "logosAssets": {
-        "sidebarLogoDescription": "Separates Logo für das Seitenleisten-Menü der Haupt-App (optional - verwendet Hauptlogo als Fallback)",
-        "mainLogoDescription": "Wird auf Anmelde-, Registrierungs- und anderen öffentlichen Seiten verwendet",
-        "adminFavicon": "Admin-Favicon",
-        "sidebarLogo": "Seitenleisten-Logo",
-        "adminLogo": "Admin-Logo",
-        "mainLogo": "Hauptlogo (Öffentliche Seiten)",
-        "favicon": "Favicon",
-        "title": "Logos und Vermögenswerte"
+      "logs": {
+        "title": "E-Mail-Protokolle",
+        "tableHeaders": {
+          "event": "Ereignis",
+          "recipient": "Empfänger",
+          "status": "Status",
+          "sentAt": "Gesendet um",
+          "error": "Fehler"
+        }
       },
-      "adminColors": {
-        "adminSecondaryColor": "Admin-Sekundärfarbe",
-        "adminPrimaryColor": "Admin-Primärfarbe",
-        "adminAccentColor": "Admin-Akzentfarbe",
-        "title": "Admin-Dashboard-Farben"
-      },
-      "brandColors": {
-        "secondaryColor": "Sekundärfarbe",
-        "primaryColor": "Primärfarbe",
-        "accentColor": "Akzentfarbe",
-        "title": "Markenfarben"
-      },
-      "uploading": {
-        "adminFavicon": "Admin-Favicon wird hochgeladen...",
-        "sidebarLogo": "Seitenleisten-Logo wird hochgeladen...",
-        "adminLogo": "Admin-Logo wird hochgeladen...",
-        "favicon": "Favicon wird hochgeladen...",
-        "logo": "Logo wird hochgeladen..."
-      },
-      "brandColorsSaveFailed": "Fehler beim Speichern der Markenfarben. Bitte versuchen Sie es erneut.",
-      "uploaded": {
-        "adminFavicon": "✓ Admin-Favicon hochgeladen! Klicken Sie unten auf \"Admin-Favicon speichern\", um die Änderungen zu übernehmen.",
-        "sidebarLogo": "✓ Seitenleisten-Logo hochgeladen! Klicken Sie unten auf \"Seitenleisten-Logo speichern\", um die Änderungen zu übernehmen.",
-        "adminLogo": "✓ Admin-Logo hochgeladen! Klicken Sie unten auf \"Admin-Logo speichern\", um die Änderungen zu übernehmen.",
-        "favicon": "✓ Favicon hochgeladen! Klicken Sie unten auf \"Favicon speichern\", um die Änderungen zu übernehmen.",
-        "logo": "✓ Logo hochgeladen! Klicken Sie unten auf \"Logo speichern\", um die Änderungen zu übernehmen."
-      },
-      "assetUploadFailed": "Fehler beim Hochladen von {{assetType}}. Bitte versuchen Sie es erneut.",
-      "brandColorsSaved": "Markenfarben erfolgreich gespeichert!",
-      "saveAdminFavicon": "Admin-Favicon speichern",
-      "assetSaveFailed": "Fehler beim Speichern von {{assetType}}. Bitte versuchen Sie es erneut.",
-      "saveAdminColors": "Admin-Farben speichern",
-      "saveSidebarLogo": "Seitenleisten-Logo speichern",
-      "assetUploaded": "{{assetType}} erfolgreich hochgeladen!",
-      "noAssetToSave": "Kein Asset zum Speichern. Bitte laden Sie zuerst eine Datei hoch.",
-      "saveAdminLogo": "Admin-Logo speichern",
-      "description": "Passen Sie Ihre Markenfarben, Logos und visuelle Identität an",
-      "saveFavicon": "Favicon speichern",
-      "assetSaved": "{{assetType}} erfolgreich gespeichert!",
-      "saveColors": "Farben speichern",
-      "saveLogo": "Logo speichern",
-      "saving": "Speichern...",
-      "title": "Branding-Einstellungen"
-    },
-    "content": {
-      "heroContent": {
-        "heroSubtitlePlaceholder": "Hero-Untertitel eingeben",
-        "buttonLinkPlaceholder": "https://beispiel.com",
-        "buttonTextPlaceholder": "Loslegen",
-        "heroTitlePlaceholder": "Hero-Titel eingeben",
-        "heroSubtitle": "Hero-Untertitel",
-        "buttonLink": "Button-Link",
-        "buttonText": "Button-Text",
-        "heroTitle": "Hero-Titel",
-        "title": "Hero-Inhalt"
-      },
-      "heroImage": {
-        "title": "Hero-Bild"
-      },
-      "description": "Verwalten Sie Ihre Homepage-Inhalte und den Hero-Bereich",
-      "saveChanges": "Änderungen speichern",
-      "saving": "Speichern...",
-      "title": "Inhaltseinstellungen"
-    },
-    "tabs": {
-      "emailTemplates": "E-Mail-Vorlagen",
-      "notifications": "Benachrichtigungen",
-      "integrations": "Integrationen",
-      "systemConfig": "Systemkonfiguration",
-      "branding": "Branding",
-      "content": "Inhalt",
-      "general": "Allgemein"
-    },
-    "subtitle": "Verwalten Sie Ihre Anwendungseinstellungen und Präferenzen",
-    "title": "Einstellungen"
-  },
-  "admin": {
-    "discountTerminations": {
-      "actions": {
-        "sendNoticesAlert": "Benachrichtigungsfunktion kommt bald",
-        "markCompleted": "Als abgeschlossen markieren",
-        "sendNotices": "Benachrichtigungen senden"
-      },
-      "allActive": {
-        "description": "Alle aktiven Anbieterrabatte",
-        "tableTitle": "Aktive Anbieterrabatte",
-        "empty": "Keine aktiven Rabatte",
-        "title": "Aktive Rabatte"
-      },
-      "queue": {
-        "description": "Kunden mit ausstehender Rabattkündigung",
-        "tableTitle": "Ausstehende Kündigungen",
-        "empty": "Keine ausstehenden Kündigungen",
-        "title": "Kündigungswarteschlange"
-      },
-      "table": {
-        "activeSince": "Aktiv seit",
-        "actions": "Aktionen",
-        "daycare": "Kindertagesstätte",
-        "reason": "Grund",
-        "vendor": "Anbieter"
-      }
-    },
-    "platformSettings": {
-      "general": {
-        "platformDescription": "Plattformbeschreibung",
-        "descriptionLabel": "Plattform Beschreibung",
-        "platformName": "Plattformname",
-        "nameLabel": "Name der Plattform",
-        "title": "Allgemeine Einstellungen"
-      },
-      "branding": {
-        "faviconLabel": "Favicon",
-        "logoLabel": "Logo",
-        "favicon": "Favicon",
-        "title": "Branding",
-        "logo": "Logo"
-      },
-      "buttons": {
-        "saveChanges": "Änderungen speichern"
-      },
-      "title": "Plattformeinstellungen"
-    },
-    "designSystem": {
-      "formControls": {
-        "disabledInput": "Deaktivierte Eingabe",
-        "quantityInput": "Menge Eingabe",
-        "selectMenu": "Menü auswählen",
-        "textInput": "Texteingabe",
-        "option1": "Option 1",
-        "option2": "Option 2",
-        "option3": "Option 3",
-        "title": "Formular-Steuerelemente"
-      },
-      "buttons": {
-        "secondaryDisabled": "Sekundär (Deaktiviert)",
-        "outlineDisabled": "Umriss (deaktiviert)",
-        "primaryDisabled": "Primär (behindert)",
-        "disabledState": "Behinderter Zustand",
-        "mediumDefault": "Mittel (Standard)",
-        "extraSmall": "Extra klein",
-        "rightIcon": "Rechtes Symbol",
-        "smallIcon": "Kleine Ikone",
-        "withIcons": "Mit Ikonen",
-        "leftIcon": "Linkes Symbol",
-        "large": "groß",
-        "small": "Klein"
-      },
-      "cards": {
-        "hoverEffectCardDesc": "Karte mit Hover-Effekt",
-        "standardCardDesc": "Einfache Kartenkomponente mit Füllung und Schatten",
-        "hoverEffectCard": "Hover-Effekt-Karte",
-        "standardCard": "Standard-Karte"
-      },
-      "typography": {
-        "fontFamily": "Schriftfamilie: Inter",
-        "bodySmall": "Fließtext (klein)",
-        "bodyBase": "Haupttext (Basis)",
-        "heading1": "Rubrik 1",
-        "heading2": "Rubrik 2",
-        "heading3": "Rubrik 3",
-        "heading4": "Rubrik 4",
-        "link": "Beispiel für einen Link"
-      },
-      "sections": {
-        "components": "Komponenten",
-        "typography": "Typografie",
-        "colors": "Farben"
-      },
-      "tabs": {
-        "pillsVariant": "Pillen-Variante",
-        "lineVariant": "Linien-Variante",
-        "content1": "Dies ist der Inhalt von Registerkarte 1",
-        "content2": "Dies ist der Inhalt von Registerkarte 2",
-        "content3": "Dies ist der Inhalt von Registerkarte 3",
-        "title": "Registerkarten",
-        "tab1": "Registerkarte 1",
-        "tab2": "Registerkarte 2",
-        "tab3": "Registerkarte 3 (Deaktiviert)"
-      },
-      "description": "Umfassendes Designsystem und Komponentenbibliothek für ProCrèche Solutions",
-      "title": "Designsystem"
-    },
-    "partnersPage": {
-      "sections": {
-        "featuredPartners": "Ausgewählte Partner"
-      },
-      "buttons": {
-        "becomePartner": "Partner werden"
-      },
-      "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
-      "title": "Unsere Partner"
-    },
-    "discountTerminationsPage": {
-      "active": {
-        "title": "Aktive Rabatte"
-      },
-      "queue": {
-        "title": "Kündigungswarteschlange"
-      }
-    },
-    "partners": {
-      "partnerCard": {
-        "learnMoreButton": "Mehr erfahren",
-        "partnerType": "Partner-Typ",
-        "logoAlt": "Partner-Logo"
-      },
-      "sections": {
-        "featuredPartners": "Ausgewählte Partner"
-      },
-      "joinUs": {
-        "contactUsButton": "Kontakt",
-        "inquiryFormLink": "Formular für Partneranfragen",
-        "contactUsAlert": "Kontaktformular in Kürze",
-        "subtitle": "Treten Sie unserem Netzwerk vertrauenswürdiger Anbieter bei",
-        "title": "Partner werden"
-      },
-      "buttons": {
-        "becomePartner": "Partner werden"
-      },
-      "featured": {
-        "subtitle": "Führende Organisationen, mit denen wir zusammenarbeiten",
-        "title": "Ausgewählte Partner"
-      },
-      "hero": {
-        "ctaButton": "Partner werden",
-        "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
-        "title": "Unsere Partner"
+      "send": {
+        "title": "E-Mail senden",
+        "eventType": "Ereignistyp",
+        "selectEventType": "Ereignistyp auswählen",
+        "recipientEmail": "Empfänger-E-Mail(s)",
+        "recipientEmailPlaceholder": "benutzer@beispiel.com oder benutzer1@beispiel.com, benutzer2@beispiel.com",
+        "recipientEmailHint": "Für Massensendungen mehrere E-Mails durch Kommas trennen",
+        "recipientName": "Empfängername (Optional)",
+        "recipientNamePlaceholder": "Max Mustermann",
+        "templateVariables": "Vorlagenvariablen (JSON)",
+        "templateVariablesPlaceholder": "{\"firstName\": \"Max\", \"lastName\": \"Mustermann\", \"verificationUrl\": \"https://...\"}",
+        "templateVariablesHint": "Vorlagenvariablen als JSON eingeben. Häufige Variablen: firstName, lastName, verificationUrl, resetUrl, etc.",
+        "buttons": {
+          "sendEmail": "E-Mail senden",
+          "sendBulkEmail": "Massen-E-Mail senden"
+        },
+        "eventTypes": {
+          "account_verification": "Kontoüberprüfung",
+          "password_reset": "Passwort zurücksetzen",
+          "welcome_email": "Willkommens-E-Mail",
+          "job_application_received": "Bewerbung erhalten",
+          "new_message": "Neue Nachricht",
+          "order_confirmation": "Bestellbestätigung",
+          "subscription_activation": "Abonnementaktivierung",
+          "system_maintenance": "Systemwartung"
+        },
+        "alerts": {
+          "sent": "E-Mail erfolgreich gesendet!",
+          "sendFailed": "Fehler beim Senden der E-Mail: {{message}}",
+          "bulkSent": "Massen-E-Mail gesendet! Gesendet: {{sent}}, Fehlgeschlagen: {{failed}}",
+          "bulkFailed": "Fehler beim Senden der Massen-E-Mails: {{message}}"
+        }
       }
     }
-  },
-  "discountTerminations": {
-    "actions": {
-      "sendNoticesAlert": "Benachrichtigungsfunktion kommt bald",
-      "markCompleted": "Als abgeschlossen markieren",
-      "sendNotices": "Benachrichtigungen senden"
-    },
-    "allActive": {
-      "description": "Alle aktiven Anbieterrabatte",
-      "tableTitle": "Aktive Anbieterrabatte",
-      "empty": "Keine aktiven Rabatte",
-      "title": "Aktive Rabatte"
-    },
-    "queue": {
-      "description": "Kunden mit ausstehender Rabattkündigung",
-      "tableTitle": "Ausstehende Kündigungen",
-      "empty": "Keine ausstehenden Kündigungen",
-      "title": "Kündigungswarteschlange"
-    },
-    "table": {
-      "activeSince": "Aktiv seit",
-      "actions": "Aktionen",
-      "daycare": "Kindertagesstätte",
-      "reason": "Grund",
-      "vendor": "Anbieter"
-    }
-  },
-  "platformSettings": {
-    "general": {
-      "platformDescription": "Plattformbeschreibung",
-      "descriptionLabel": "Plattform Beschreibung",
-      "platformName": "Plattformname",
-      "nameLabel": "Name der Plattform",
-      "title": "Allgemeine Einstellungen"
-    },
-    "branding": {
-      "faviconLabel": "Favicon",
-      "logoLabel": "Logo",
-      "favicon": "Favicon",
-      "title": "Branding",
-      "logo": "Logo"
-    },
-    "buttons": {
-      "saveChanges": "Änderungen speichern"
-    },
-    "title": "Plattformeinstellungen"
-  },
-  "forms": {
-    "candidate": {
-      "certificationPlaceholder": "z. B. Diplom für frühkindliche Erziehung, Erste-Hilfe-Zertifikat...",
-      "experiencePlaceholder": "Beschreiben Sie Ihre einschlägige Berufserfahrung...",
-      "educationPlaceholder": "Bildungshintergrund und Qualifikationen...",
-      "firstNamePlaceholder": "John",
-      "lastNamePlaceholder": "Doe",
-      "emailPlaceholder": "john.doe@example.com",
-      "skillPlaceholder": "Hinzufügen einer benutzerdefinierten Fähigkeit...",
-      "bioPlaceholder": "Eine kurze Vorstellung des Bewerbers..."
-    },
-    "organization": {
-      "languagePlaceholder": "z.B. Deutsch, Französisch, Englisch",
-      "pedagogyPlaceholder": "z. B. Montessori, Waldorf",
-      "websitePlaceholder": "https://example.com",
-      "regionPlaceholder": "z.B. Zürich",
-      "emailPlaceholder": "contact@example.com"
-    },
-    "job": {
-      "responsibilityPlaceholder": "Hinzufügen einer Verantwortung...",
-      "qualificationPlaceholder": "Eine Qualifikation hinzufügen...",
-      "descriptionPlaceholder": "Beschreiben Sie die Rolle, die täglichen Aufgaben und was diese Position so besonders macht...",
-      "requirementPlaceholder": "Eine Anforderung hinzufügen...",
-      "locationPlaceholder": "z.B., Zürich, Schweiz",
-      "benefitPlaceholder": "Einen Vorteil hinzufügen...",
-      "salaryPlaceholder": "z.B. 60'000 - 80'000 CHF",
-      "titlePlaceholder": "z.B. Erzieherin für Kleinkinder"
-    }
-  },
-  "content": {
-    "statePolicies": {
-      "searchPlaceholder": "Suchpolitik...",
-      "noResults": "Keine Ergebnisse gefunden",
-      "addFirst": "Erste Police hinzufügen",
-      "loading": "Richtlinien laden...",
-      "empty": "Noch keine staatliche Politik",
-      "title": "Staatliche Politiken"
-    },
-    "hrDocuments": {
-      "searchPlaceholder": "HR-Dokumente suchen...",
-      "noResults": "Keine Ergebnisse gefunden",
-      "addFirst": "Erstes Dokument hinzufügen",
-      "loading": "Dokumente laden...",
-      "empty": "Noch keine HR-Dokumente",
-      "title": "HR-Dokumente"
-    },
-    "eLearning": {
-      "searchPlaceholder": "E-Learning suchen...",
-      "noResults": "Keine Ergebnisse gefunden",
-      "addFirst": "Ersten Inhalt hinzufügen",
-      "loading": "Inhalt laden...",
-      "empty": "Noch keine E-Learning-Inhalte",
-      "title": "E-Learning-Inhalte",
-      "total": "Insgesamt"
-    },
-    "orDragDrop": "oder ziehen und ablegen",
-    "selected": "Ausgewählte"
-  },
-  "designSystem": {
-    "formControls": {
-      "disabledInput": "Deaktivierte Eingabe",
-      "quantityInput": "Menge Eingabe",
-      "selectMenu": "Menü auswählen",
-      "textInput": "Texteingabe",
-      "option1": "Option1",
-      "option2": "Option2",
-      "option3": "Option3",
-      "title": "Formular-Steuerelemente"
-    },
-    "buttons": {
-      "secondaryDisabled": "Sekundär Behinderte",
-      "outlineDisabled": "Gliederung Deaktiviert",
-      "primaryDisabled": "Primär Behinderte",
-      "disabledState": "Deaktivierter Zustand",
-      "mediumDefault": "Medium Standard",
-      "extraSmall": "Extra klein",
-      "rightIcon": "Rechte Ikone",
-      "secondary": "Sekundäres",
-      "smallIcon": "Kleine Ikone",
-      "withIcons": "Mit Ikonen",
-      "leftIcon": "Linkes Symbol",
-      "variants": "Varianten",
-      "outline": "Gliederung",
-      "primary": "Primäre",
-      "danger": "Gefahr",
-      "ghost": "Geist",
-      "large": "Groß",
-      "light": "Licht",
-      "sizes": "Größen",
-      "small": "Klein",
-      "title": "Buttons"
-    },
-    "cards": {
-      "hoverEffectCardDesc": "Karte mit Hover-Effekt",
-      "standardCardDesc": "Einfache Kartenkomponente mit Füllung und Schatten",
-      "hoverEffectCard": "Hover-Effekt-Karte",
-      "standardCard": "Standard-Karte"
-    },
-    "sections": {
-      "formControls": "Formular-Steuerelemente",
-      "components": "Komponenten",
-      "typography": "Typografie",
-      "buttons": "Buttons",
-      "colors": "Farben",
-      "cards": "Karten"
-    },
-    "typography": {
-      "fontFamily": "Schriftfamilie: Nunito, Inter, sans-serif",
-      "bodySmall": "Haupttext (klein): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
-      "bodyBase": "Haupttext (Basis): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
-      "heading1": "Rubrik 1: Der schnelle braune Fuchs",
-      "heading2": "Rubrik 2: Der schnelle braune Fuchs",
-      "heading3": "Rubrik 3: Der schnelle braune Fuchs",
-      "heading4": "Rubrik 4: Der schnelle braune Fuchs",
-      "title": "Typografie",
-      "link": "Dies ist ein Link"
-    },
-    "tabs": {
-      "pillsVariant": "Pillen-Variante",
-      "disabledTab": "Registerkarte 3 (Deaktiviert)",
-      "lineVariant": "Linien-Variante",
-      "content1": "Dies ist der Inhalt von Registerkarte 1.",
-      "content2": "Dies ist der Inhalt von Tab 2.",
-      "content3": "Dies ist eine deaktivierte Registerkarte.",
-      "title": "Registerkarten",
-      "tab1": "Tab1",
-      "tab2": "Tab2",
-      "tab3": "Tab3"
-    },
-    "description": "Eine lebendige Referenz für alle UI-Komponenten und Design-Token in der Pro Crèche Solutions-Anwendung.",
-    "title": "Designsystem"
-  },
-  "partnersPage": {
-    "sections": {
-      "featuredPartners": "Ausgewählte Partner"
-    },
-    "buttons": {
-      "becomePartner": "Partner werden"
-    },
-    "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
-    "title": "Unsere Partner"
-  },
-  "discountTerminationsPage": {
-    "active": {
-      "title": "Aktive Rabatte"
-    },
-    "queue": {
-      "title": "Kündigungswarteschlange"
-    }
-  },
-  "organizations": {
-    "emptyState": {
-      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Organisation hinzuzufügen.",
-      "title": "Keine Organisationen gefunden"
-    },
-    "error": {
-      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-      "title": "Fehler beim Laden der Organisationen"
-    },
-    "searchPlaceholder": "Organisationen suchen...",
-    "actions": {
-      "delete": "Löschen",
-      "edit": "Bearbeiten"
-    },
-    "staffMembers": "Mitarbeiter",
-    "addButton": "Organisation hinzufügen",
-    "subtitle": "Kindertagesstätten und Organisationen verwalten ({{count}} insgesamt)",
-    "title": "Organisationen"
-  },
-  "partners": {
-    "partnerCard": {
-      "learnMoreButton": "Mehr erfahren",
-      "partnerType": "Partner-Typ",
-      "logoAlt": "Partner-Logo"
-    },
-    "sections": {
-      "featuredPartners": "Ausgewählte Partner"
-    },
-    "joinUs": {
-      "contactUsButton": "Kontakt",
-      "inquiryFormLink": "Formular für Partneranfragen",
-      "contactUsAlert": "Kontaktformular in Kürze",
-      "subtitle": "Treten Sie unserem Netzwerk vertrauenswürdiger Anbieter bei",
-      "title": "Partner werden"
-    },
-    "buttons": {
-      "becomePartner": "Partner werden"
-    },
-    "featured": {
-      "subtitle": "Führende Organisationen, mit denen wir zusammenarbeiten",
-      "title": "Ausgewählte Partner"
-    },
-    "hero": {
-      "ctaButton": "Partner werden",
-      "subtitle": "Vertrauenswürdige Partner in der frühkindlichen Bildung",
-      "title": "Unsere Partner"
-    }
-  },
-  "translations": {
-    "descriptionPlaceholder": "Beschreibung (fakultativ)",
-    "versionPlaceholder": "Version (z.B. v1.2.3)",
-    "searchPlaceholder": "Schlüssel oder Werte suchen..."
-  },
-  "jobListings": {
-    "emptyState": {
-      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Stelle zu veröffentlichen.",
-      "title": "Keine Stellenangebote gefunden"
-    },
-    "statusFilter": {
-      "active": "Aktiv",
-      "closed": "Geschlossen",
-      "paused": "Pausiert",
-      "all": "Alle Status"
-    },
-    "error": {
-      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-      "title": "Fehler beim Laden der Stellenangebote"
-    },
-    "searchPlaceholder": "Stellen suchen...",
-    "actions": {
-      "delete": "Löschen",
-      "edit": "Bearbeiten"
-    },
-    "addButton": "Stelle veröffentlichen",
-    "subtitle": "Stellenangebote und Rekrutierung verwalten ({{count}} insgesamt)",
-    "title": "Stellenangebote"
-  },
-  "candidates": {
-    "emptyState": {
-      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder einen neuen Kandidaten hinzuzufügen.",
-      "title": "Keine Kandidaten gefunden"
-    },
-    "searchPlaceholder": "Kandidaten suchen...",
-    "table": {
-      "appliedDate": "BEWERBUNGSDATUM",
-      "experience": "ERFAHRUNG",
-      "candidate": "KANDIDAT",
-      "position": "Position",
-      "status": "Status"
-    },
-    "statusFilter": {
-      "all": "Alle Status"
-    },
-    "addButton": "Kandidat hinzufügen",
-    "subtitle": "Bewerber und Kandidaten verwalten ({{count}} insgesamt)",
-    "title": "Kandidaten"
-  },
-  "fileUpload": {
-    "descriptionPlaceholder": "Beschreiben Sie diese Datei...",
-    "tagPlaceholder": "Tag hinzufügen...",
-    "urlPlaceholder": "https://example.com/image.png",
-    "clickBrowse": "Zum Durchsuchen klicken oder ziehen und ablegen",
-    "defaultHelp": "PDF, DOCX, MP4 (maximal 50MB)",
-    "dragDrop": "oder ziehen und ablegen",
-    "selected": "Ausgewählte"
-  },
-  "products": {
-    "emptyState": {
-      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder ein neues Produkt hinzuzufügen.",
-      "title": "Keine Produkte gefunden"
-    },
-    "categoryFilter": {
-      "all": "Alle Kategorien"
-    },
-    "error": {
-      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-      "title": "Fehler beim Laden der Produkte"
-    },
-    "searchPlaceholder": "Produkte suchen...",
-    "actions": {
-      "delete": "Löschen",
-      "edit": "Bearbeiten"
-    },
-    "addButton": "Produkt hinzufügen",
-    "subtitle": "Produkte und Lieferungen verwalten ({{count}} insgesamt)",
-    "title": "Produkte"
-  },
-  "auth": {
-    "login": {
-      "emailPlaceholder": "admin@procreche.com",
-      "forgotPassword": "Passwort vergessen",
-      "passwordLabel": "Passwort",
-      "hidePassword": "Passwort verbergen",
-      "showPassword": "Passwort anzeigen",
-      "emailLabel": "E-Mail",
-      "subtitle": "Pro Crèche Solutions Management Portal",
-      "title": "Verwaltungs-Dashboard"
-    },
-    "signup": {
-      "termsPrefix": "Ich akzeptiere die",
-      "termsLink": "Bedingungen und Konditionen"
-    }
-  },
-  "messaging": {
-    "searchPlaceholder": "Suche nach Gesprächen...",
-    "typePlaceholder": "Geben Sie Ihre Nachricht ein..."
-  },
-  "support": {
-    "searchPlaceholder": "Tickets suchen...",
-    "replyPlaceholder": "Geben Sie Ihre Antwort ein...",
-    "table": {
-      "assignedTo": "Zugewiesen an",
-      "priority": "Priorität",
-      "created": "Erstellt",
-      "status": "Status",
-      "ticket": "Ticket",
-      "user": "Benutzer"
-    },
-    "assignedToYou": "Ihnen zugewiesen",
-    "selectTicket": "Wählen Sie ein Ticket aus, um Details anzuzeigen",
-    "staffMember": "Personalmitglied",
-    "assignedTo": "Zugewiesen an",
-    "assignToMe": "Mir zuweisen",
-    "unassigned": "Nicht zugewiesen",
-    "assigning": "Zuweisen...",
-    "noTickets": "Keine Tickets gefunden",
-    "sendReply": "Antwort senden",
-    "subtitle": "Verwalten und Beantworten von Support-Tickets ({{total}} insgesamt)",
-    "sending": "Ich schicke...",
-    "staff": "Personal",
-    "title": "Tickets unterstützen",
-    "user": "Benutzer"
   }
 }

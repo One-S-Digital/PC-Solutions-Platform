@@ -5,6 +5,7 @@ import {
   IsInt,
   IsString,
   IsOptional,
+  IsUUID,
   Min,
 } from 'class-validator';
 
@@ -59,4 +60,12 @@ export class UpdateFoundationSettingsDto {
   @IsString({ each: true })
   @IsOptional()
   pedagogy?: string[];
+
+  @IsUUID()
+  @IsOptional()
+  logoAssetId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  coverAssetId?: string;
 }

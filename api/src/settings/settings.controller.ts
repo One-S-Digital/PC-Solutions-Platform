@@ -5,10 +5,12 @@ import {
   Patch,
   Request,
   UnauthorizedException,
+  BadRequestException,
   UseGuards,
   UseInterceptors,
   Logger,
 } from '@nestjs/common';
+import { AssetKind } from '@prisma/client';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -48,6 +50,42 @@ export class SettingsController {
       throw new UnauthorizedException('Authenticated user context missing');
     }
     return { profileId, accountId, clerkUserId };
+  }
+
+  /**
+   * Validates that an asset exists, belongs to the user, and has the correct kind.
+   * @param tx Prisma transaction client
+   * @param assetId The asset ID to validate
+   * @param userId The user ID who should own the asset
+   * @param allowedKinds Array of allowed AssetKind values
+   * @param fieldName Name of the field for error messages
+   */
+  private async validateAssetForUsage(
+    tx: any,
+    assetId: string | null | undefined,
+    userId: string,
+    allowedKinds: AssetKind[],
+    fieldName: string,
+  ): Promise<void> {
+    if (!assetId) return; // Skip validation if no asset ID provided
+
+    const asset = await tx.asset.findUnique({
+      where: { id: assetId },
+    });
+
+    if (!asset) {
+      throw new BadRequestException(`${fieldName} asset not found`);
+    }
+
+    if (asset.uploadedById !== userId) {
+      throw new BadRequestException(`Unauthorized to use this ${fieldName.toLowerCase()} asset`);
+    }
+
+    if (!allowedKinds.includes(asset.kind)) {
+      throw new BadRequestException(
+        `Asset must be of kind ${allowedKinds.join(' or ')} for ${fieldName.toLowerCase()}`,
+      );
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -114,6 +152,23 @@ export class SettingsController {
     const { profileId, accountId } = this.getContext(req);
 
     await this.prisma.$transaction(async (tx) => {
+      // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
+      await this.validateAssetForUsage(
+        tx,
+        settings.logoAssetId,
+        accountId,
+        [AssetKind.LOGO],
+        'Logo',
+      );
+      await this.validateAssetForUsage(
+        tx,
+        settings.coverAssetId,
+        accountId,
+        [AssetKind.COVER_IMAGE],
+        'Cover image',
+      );
+
       await tx.user.update({
         where: { id: profileId },
         data: {
@@ -149,6 +204,8 @@ export class SettingsController {
             languages: settings.languages ?? [],
             capacity: settings.capacity,
             pedagogy: settings.pedagogy ?? [],
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
           },
         });
       } else {
@@ -168,6 +225,8 @@ export class SettingsController {
             capacity: settings.capacity,
             pedagogy: settings.pedagogy ?? [],
             isActive: true,
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
           },
         });
 
@@ -250,6 +309,16 @@ export class SettingsController {
     const { profileId, accountId } = this.getContext(req);
 
     await this.prisma.$transaction(async (tx) => {
+      // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
+      await this.validateAssetForUsage(
+        tx,
+        settings.avatarAssetId,
+        accountId,
+        [AssetKind.AVATAR],
+        'Avatar',
+      );
+
       await tx.user.update({
         where: { id: profileId },
         data: {
@@ -264,7 +333,7 @@ export class SettingsController {
         availability: settings.availability,
         cvUrl: settings.cvUrl,
         shortBio: settings.shortBio,
-        avatarAssetId: settings.avatarAssetId,
+        ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
       },
       });
 
@@ -348,6 +417,23 @@ export class SettingsController {
     const { profileId, accountId } = this.getContext(req);
 
     await this.prisma.$transaction(async (tx) => {
+      // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
+      await this.validateAssetForUsage(
+        tx,
+        settings.logoAssetId,
+        accountId,
+        [AssetKind.LOGO],
+        'Logo',
+      );
+      await this.validateAssetForUsage(
+        tx,
+        settings.coverAssetId,
+        accountId,
+        [AssetKind.COVER_IMAGE],
+        'Cover image',
+      );
+
       await tx.user.update({
         where: { id: profileId },
         data: {
@@ -386,6 +472,8 @@ export class SettingsController {
             minimumOrderQuantity: settings.minimumOrderQuantity,
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
           },
         });
       } else {
@@ -408,6 +496,8 @@ export class SettingsController {
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
             isActive: true,
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
           },
         });
 
@@ -559,6 +649,23 @@ export class SettingsController {
         this.logger.log('🔍 [DEBUG] Transaction started');
 
         try {
+          // Validate asset ownership and kind before updating
+          // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
+          await this.validateAssetForUsage(
+            tx,
+            settings.logoAssetId,
+            accountId,
+            [AssetKind.LOGO],
+            'Logo',
+          );
+          await this.validateAssetForUsage(
+            tx,
+            settings.coverAssetId,
+            accountId,
+            [AssetKind.COVER_IMAGE],
+            'Cover image',
+          );
+
           // Step 1: Update User
           this.logger.log('🔍 [DEBUG] Step 1: Updating User', {
             profileId,
@@ -649,6 +756,8 @@ export class SettingsController {
               serviceCategories: settings.serviceCategories ?? [],
               deliveryType: settings.deliveryType,
               bookingLink: settings.bookingLink,
+              ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+              ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
             };
 
             // Validate array fields
@@ -717,6 +826,8 @@ export class SettingsController {
               deliveryType: settings.deliveryType,
               bookingLink: settings.bookingLink,
               isActive: true,
+              ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+              ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
             };
 
             // Validate array fields
@@ -863,6 +974,16 @@ export class SettingsController {
     const { profileId, accountId } = this.getContext(req);
 
     await this.prisma.$transaction(async (tx) => {
+      // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
+      await this.validateAssetForUsage(
+        tx,
+        settings.avatarAssetId,
+        accountId,
+        [AssetKind.AVATAR],
+        'Avatar',
+      );
+
       await tx.user.update({
         where: { id: profileId },
         data: {
@@ -870,6 +991,7 @@ export class SettingsController {
           lastName: settings.lastName,
           email: settings.email,
           phoneNumber: settings.phoneNumber,
+          ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
         },
       });
 

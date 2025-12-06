@@ -383,7 +383,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
     />
   );
 
-    const Section: React.FC<{ title: string; description?: string }> = ({
+    const Section: React.FC<{ title: string; description?: string; children?: React.ReactNode }> = ({
       title,
       description,
       children,
@@ -523,7 +523,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
                       )}
                     />
                     <datalist id="product-category-suggestions">
-                      {(SUGGESTED_PRODUCT_CATEGORIES as string[]).map(
+                      {[...SUGGESTED_PRODUCT_CATEGORIES].map(
                         (cat) => (
                           <option key={cat} value={cat} />
                         ),

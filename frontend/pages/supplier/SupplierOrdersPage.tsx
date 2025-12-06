@@ -1,18 +1,61 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import Card from '../../components/ui/Card';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
-import { MOCK_ORDERS, MOCK_ORGANIZATIONS } from '../../constants';
-import { Order, OrderRequestStatus } from '../../types';
+import { Order, OrderRequestStatus, Organization } from '../../types';
 import Button from '../../components/ui/Button';
 import OrderRequestDetailModal from '../../components/supplier/OrderRequestDetailModal';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const SupplierOrdersPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
+  const { authenticatedRequest } = useAuthenticatedApi();
+  
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<OrderRequestStatus | 'All'>('All');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!currentUser?.orgId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const [ordersRes, orgsRes] = await Promise.all([
+        authenticatedRequest<Order[]>('/marketplace/orders'),
+        authenticatedRequest<Organization[]>('/compat/organizations'),
+      ]);
+
+      if (ordersRes.success && ordersRes.data) {
+        setOrders(ordersRes.data);
+      } else if (!ordersRes.success) {
+        console.error('Orders API returned failure:', ordersRes);
+        setError(t('supplierOrdersPage.loadError', 'Failed to load orders'));
+      }
+      
+      if (orgsRes.success && orgsRes.data) {
+        setOrganizations(orgsRes.data);
+      } else if (!orgsRes.success) {
+        console.error('Organizations API returned failure:', orgsRes);
+        // Organizations are non-critical, don't set error but log it
+      }
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+      setError(t('supplierOrdersPage.loadError', 'Failed to load orders'));
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser?.orgId, authenticatedRequest, t]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const myOrders = useMemo(() => {
     return orders.filter(o => o.supplierId === currentUser?.orgId);
@@ -26,8 +69,8 @@ const SupplierOrdersPage: React.FC = () => {
   const orderStatuses: (OrderRequestStatus | 'All')[] = ['All', ...Object.values(OrderRequestStatus)];
 
   const getFoundationName = (orgId: string) => {
-    const org = MOCK_ORGANIZATIONS.find(o => o.id === orgId);
-    return org ? org.name : t('dashboard:foundationOrdersAppointmentsPage.unknownProvider');
+    const org = organizations.find(o => o.id === orgId);
+    return org ? org.name : t('dashboard:foundationOrdersAppointmentsPage.unknownProvider', t('foundationOrdersAppointmentsPage.unknownProvider'));
   };
 
   const getStatusClass = (status: OrderRequestStatus) => {
@@ -45,13 +88,41 @@ const SupplierOrdersPage: React.FC = () => {
     }
   };
   
-  const handleUpdateStatus = (orderId: string, newStatus: OrderRequestStatus) => {
-    setOrders(prevOrders => prevOrders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
-    setSelectedOrder(prevOrder => prevOrder ? { ...prevOrder, status: newStatus } : null);
-    alert(`Order ${orderId} has been updated to ${newStatus}.`);
+  const handleUpdateStatus = async (orderId: string, newStatus: OrderRequestStatus) => {
+    try {
+      const response = await authenticatedRequest<Order>(`/marketplace/orders/${orderId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.success) {
+        setOrders(prevOrders => prevOrders.map(order => 
+          order.id === orderId ? { ...order, status: newStatus } : order
+        ));
+        setSelectedOrder(prevOrder => prevOrder ? { ...prevOrder, status: newStatus } : null);
+      }
+    } catch (err) {
+      console.error('Failed to update order status:', err);
+      alert(t('supplierOrdersPage.updateError', 'Failed to update order status'));
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-4">{error}</p>
+        <Button onClick={fetchData}>{t('common:retry', 'Retry')}</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -107,6 +178,7 @@ const SupplierOrdersPage: React.FC = () => {
         onClose={() => setSelectedOrder(null)}
         order={selectedOrder}
         onUpdateStatus={handleUpdateStatus}
+        organizations={organizations}
       />
     </div>
   );

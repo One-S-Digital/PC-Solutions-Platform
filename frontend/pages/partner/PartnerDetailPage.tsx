@@ -23,7 +23,8 @@ import {
   ListBulletIcon, 
   ArrowTopRightOnSquareIcon,
   WrenchScrewdriverIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useMessaging } from '../../contexts/MessagingContext';
@@ -155,10 +156,10 @@ const PartnerDetailPage: React.FC = () => {
       setPartner(partnerData);
       
       // Set products and services based on organization type
-      if (partnerData.type === OrganizationType.PRODUCT_SUPPLIER || partnerData.type === 'PRODUCT_SUPPLIER') {
+      if (partnerData.type === OrganizationType.PRODUCT_SUPPLIER) {
         setProducts(partnerData.products || []);
         setServices([]);
-      } else if (partnerData.type === OrganizationType.SERVICE_PROVIDER || partnerData.type === 'SERVICE_PROVIDER') {
+      } else if (partnerData.type === OrganizationType.SERVICE_PROVIDER) {
         setServices(partnerData.services || []);
         setProducts([]);
       }
@@ -177,8 +178,8 @@ const PartnerDetailPage: React.FC = () => {
   const isFoundationUser = currentUser?.role === UserRole.FOUNDATION;
   const isVendorUser = currentUser?.role === UserRole.PRODUCT_SUPPLIER || currentUser?.role === UserRole.SERVICE_PROVIDER;
   
-  const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER || partner?.type === 'PRODUCT_SUPPLIER';
-  const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER || partner?.type === 'SERVICE_PROVIDER';
+  const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
+  const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
 
   const handleSendMessage = () => {
     if (!partner) {
@@ -292,8 +293,8 @@ const PartnerDetailPage: React.FC = () => {
       ? t('common:userRoles.Service Provider') 
       : t('common:userRoles.Foundation');
 
-  const coverImageUrl = partner.coverImageUrl || partner.coverAsset?.publicUrl || `https://picsum.photos/seed/${partner.id}Cover/1200/300`;
-  const logoUrl = partner.logoUrl || partner.logoAsset?.publicUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(partner.name)}&background=E0E7FF&color=4F46E5&size=128`;
+  const coverImageUrl = partner.coverImageUrl || `https://picsum.photos/seed/${partner.id}Cover/1200/300`;
+  const logoUrl = partner.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(partner.name)}&background=E0E7FF&color=4F46E5&size=128`;
 
   return (
     <div className="space-y-6">
@@ -358,38 +359,36 @@ const PartnerDetailPage: React.FC = () => {
               {t('partnerDetailPage.contactInfoTitle')}
             </h2>
             <div className="space-y-2 text-sm text-gray-700">
-              {(partner.address || partner.region) && (
+              {(partner.region || partner.canton) && (
                 <p className="flex items-start">
                   <MapPinIcon className="w-5 h-5 mr-2 mt-0.5 text-gray-400 flex-shrink-0" /> 
-                  {partner.address || `${partner.region || partner.canton}, Switzerland`}
+                  {`${partner.region || partner.canton}, Switzerland`}
                 </p>
               )}
-              {(partner.phone || partner.phoneNumber) && (
+              {partner.phoneNumber && (
                 <p className="flex items-center">
                   <PhoneIcon className="w-5 h-5 mr-2 text-gray-400" /> 
-                  <a href={`tel:${partner.phone || partner.phoneNumber}`} className="hover:text-swiss-mint">
-                    {partner.phone || partner.phoneNumber}
+                  <a href={`tel:${partner.phoneNumber}`} className="hover:text-swiss-mint">
+                    {partner.phoneNumber}
                   </a>
                 </p>
               )}
-              {partner.email && (
+              {partner.contactPerson && (
                 <p className="flex items-center">
-                  <EnvelopeIcon className="w-5 h-5 mr-2 text-gray-400" /> 
-                  <a href={`mailto:${partner.email}`} className="hover:text-swiss-mint">
-                    {partner.email}
-                  </a>
+                  <UserCircleIcon className="w-5 h-5 mr-2 text-gray-400" /> 
+                  {partner.contactPerson}
                 </p>
               )}
-              {(partner.website || partner.catalogUrl || partner.bookingLink || partner.directOrderLink) && (
+              {(partner.catalogUrl || partner.bookingLink || partner.directOrderLink) && (
                 <p className="flex items-center">
                   <GlobeAltIcon className="w-5 h-5 mr-2 text-gray-400" /> 
                   <a 
-                    href={partner.website || partner.catalogUrl || partner.bookingLink || partner.directOrderLink} 
+                    href={partner.catalogUrl || partner.bookingLink || partner.directOrderLink} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="hover:text-swiss-mint truncate"
                   >
-                    {partner.website || partner.catalogUrl || partner.bookingLink || partner.directOrderLink}
+                    {partner.catalogUrl || partner.bookingLink || partner.directOrderLink}
                   </a>
                 </p>
               )}

@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { PolicyDocument, UserRole, PolicyAlert, PolicyAlertType, PolicyDocument as PolicyDocType, POLICY_CATEGORIES, POLICY_CATEGORY_LABELS, PolicyCategory, PolicyType, POLICY_TYPES_ENUM } from '../types';
-import { MOCK_POLICY_DOCS, MOCK_POLICY_ALERTS, STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { NewspaperIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon, EyeIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, DocumentTextIcon, InformationCircleIcon, PlusCircleIcon, ShieldExclamationIcon, AcademicCapIcon, HeartIcon, ShieldCheckIcon, LockClosedIcon, GlobeAltIcon, FolderIcon } from '@heroicons/react/24/outline';
@@ -132,7 +132,8 @@ const StatePoliciesPage: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<'All' | PolicyCategory>('All');
   
   const [policyDocs, setPolicyDocs] = useState<PolicyDocument[]>([]);
-  const [policyAlerts, setPolicyAlerts] = useState<PolicyAlert[]>(MOCK_POLICY_ALERTS);
+  const [policyAlerts, setPolicyAlerts] = useState<PolicyAlert[]>([]);
+  const [alertsLoading, setAlertsLoading] = useState(true);
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<PolicyAlert | null>(null);
@@ -140,6 +141,30 @@ const StatePoliciesPage: React.FC = () => {
   const [previewDoc, setPreviewDoc] = useState<PolicyDocument | null>(null);
 
   const isAdminOrSuperAdmin = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
+
+  // Fetch Policy Alerts from API
+  useEffect(() => {
+    const fetchPolicyAlerts = async () => {
+      try {
+        setAlertsLoading(true);
+        const response = await authenticatedRequest<PolicyAlert[]>('/policy-alerts', {
+          method: 'GET'
+        });
+
+        if (response.success && response.data) {
+          setPolicyAlerts(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch Policy Alerts:', error);
+        // Fall back to empty state if API fails
+        setPolicyAlerts([]);
+      } finally {
+        setAlertsLoading(false);
+      }
+    };
+
+    fetchPolicyAlerts();
+  }, [authenticatedRequest]);
 
   // Fetch State Policies from API
   useEffect(() => {
@@ -176,8 +201,8 @@ const StatePoliciesPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Failed to fetch State Policies:', error);
-        // Fall back to mock data if API fails
-        setPolicyDocs(MOCK_POLICY_DOCS);
+        // Fall back to empty state if API fails
+        setPolicyDocs([]);
       } finally {
         setIsLoading(false);
       }
@@ -257,23 +282,51 @@ const StatePoliciesPage: React.FC = () => {
   };
 
 
-  const handleAlertSubmit = (alertData: Omit<PolicyAlert, 'id' | 'creationDate'>) => {
-    if (editingAlert) {
-      setPolicyAlerts(prev => prev.map(a => a.id === editingAlert.id ? { ...a, ...alertData, creationDate: a.creationDate } : a));
-    } else {
-      const newAlert: PolicyAlert = {
-        ...alertData,
-        id: `alert${Date.now()}`,
-        creationDate: new Date().toISOString(),
-      };
-      setPolicyAlerts(prev => [newAlert, ...prev]);
+  const handleAlertSubmit = async (alertData: Omit<PolicyAlert, 'id' | 'creationDate'>) => {
+    try {
+      if (editingAlert) {
+        // Update existing alert via API
+        const response = await authenticatedRequest<PolicyAlert>(`/policy-alerts/${editingAlert.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(alertData),
+        });
+        
+        if (response.success && response.data) {
+          setPolicyAlerts(prev => prev.map(a => a.id === editingAlert.id ? response.data! : a));
+        }
+      } else {
+        // Create new alert via API
+        const response = await authenticatedRequest<PolicyAlert>('/policy-alerts', {
+          method: 'POST',
+          body: JSON.stringify(alertData),
+        });
+        
+        if (response.success && response.data) {
+          setPolicyAlerts(prev => [response.data!, ...prev]);
+        }
+      }
+      setEditingAlert(null);
+      setIsAlertModalOpen(false);
+    } catch (error) {
+      console.error('Failed to save alert:', error);
+      alert('Failed to save alert. Please try again.');
     }
-    setEditingAlert(null);
   };
   
-  const handleDeleteAlert = (alertId: string) => {
-    if (window.confirm(t('content:statePoliciesPage.confirmDeleteAlert'))) {
-        setPolicyAlerts(prev => prev.filter(a => a.id !== alertId));
+  const handleDeleteAlert = async (alertId: string) => {
+    if (window.confirm(t('content:statePoliciesPage.confirmDeleteAlert', 'Are you sure you want to delete this alert?'))) {
+      try {
+        const response = await authenticatedRequest<void>(`/policy-alerts/${alertId}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.success) {
+          setPolicyAlerts(prev => prev.filter(a => a.id !== alertId));
+        }
+      } catch (error) {
+        console.error('Failed to delete alert:', error);
+        alert('Failed to delete alert. Please try again.');
+      }
     }
   };
 

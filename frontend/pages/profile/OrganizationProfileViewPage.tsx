@@ -35,7 +35,7 @@ const OrganizationProfileViewPage: React.FC = () => {
       setError(null);
 
       try {
-        const response = await request<{ success: boolean; data: Organization }>(`/profiles/organization/${id}`);
+        const response = await request<Organization>(`/profiles/organization/${id}`);
         
         if (response.success && response.data) {
           const orgData = response.data;

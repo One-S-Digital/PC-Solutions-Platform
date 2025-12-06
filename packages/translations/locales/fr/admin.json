@@ -1,938 +1,616 @@
 {
+  "discountTerminationsPage": {
+    "queue": {
+      "title": "File d'attente de résiliation"
+    },
+    "active": {
+      "title": "Réductions actives"
+    }
+  },
+  "partnersPage": {
+    "title": "Nos partenaires",
+    "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance",
+    "sections": {
+      "featuredPartners": "Partenaires en vedette"
+    },
+    "buttons": {
+      "becomePartner": "Devenir partenaire"
+    }
+  },
+  "designSystem": {
+    "title": "Système de design",
+    "sections": {
+      "colors": "Couleurs",
+      "typography": "Typographie",
+      "components": "Composants"
+    }
+  },
+  "discountTerminations": {
+    "queue": {
+      "title": "File d'attente de résiliation",
+      "description": "Clients en attente de résiliation de réduction",
+      "tableTitle": "Résiliations en attente",
+      "empty": "Aucune résiliation en attente"
+    },
+    "allActive": {
+      "title": "Réductions actives",
+      "description": "Toutes les réductions actives des fournisseurs",
+      "tableTitle": "Réductions actives des fournisseurs",
+      "empty": "Aucune réduction active"
+    },
+    "table": {
+      "vendor": "Fournisseur",
+      "daycare": "Crèche",
+      "reason": "Raison",
+      "activeSince": "Actif depuis",
+      "actions": "Actions"
+    },
+    "actions": {
+      "markCompleted": "Marquer comme terminé",
+      "sendNotices": "Envoyer des avis",
+      "sendNoticesAlert": "Fonctionnalité d'envoi d'avis à venir"
+    }
+  },
+  "partners": {
+    "hero": {
+      "title": "Nos Partenaires",
+      "subtitle": "Partenaires de confiance dans l'éducation de la petite enfance",
+      "ctaButton": "Devenir Partenaire"
+    },
+    "featured": {
+      "title": "Partenaires en Vedette",
+      "subtitle": "Organisations leaders avec lesquelles nous travaillons"
+    },
+    "allPartners": {
+      "title": "Tous les Partenaires"
+    },
+    "joinUs": {
+      "title": "Devenir Partenaire",
+      "subtitle": "Rejoignez notre réseau de prestataires de confiance",
+      "contactUsButton": "Nous Contacter",
+      "contactUsAlert": "Formulaire de contact bientôt disponible",
+      "inquiryFormLink": "Formulaire de demande de partenariat"
+    },
+    "partnerCard": {
+      "logoAlt": "Logo de {{name}}",
+      "partnerType": "Type de partenaire",
+      "learnMoreButton": "En savoir plus"
+    },
+    "searchPlaceholder": "Rechercher des partenaires...",
+    "allTypes": "Tous les types",
+    "searchResults": "Résultats de recherche",
+    "partnersFound": "partenaires trouvés",
+    "noResults": "Aucun partenaire trouvé correspondant à votre recherche",
+    "noPartners": "Aucun partenaire disponible pour le moment",
+    "error": {
+      "loadFailed": "Échec du chargement des partenaires. Veuillez réessayer plus tard."
+    },
+    "types": {
+      "academic": "Académique",
+      "corporate": "Entreprise",
+      "governmental": "Gouvernemental",
+      "nonProfit": "Association",
+      "media": "Média",
+      "technology": "Technologie"
+    },
+    "application": {
+      "title": "Demande de Partenariat",
+      "organizationName": "Nom de l'organisation",
+      "organizationNamePlaceholder": "Entrez le nom de votre organisation",
+      "partnerType": "Type de partenaire",
+      "contactPerson": "Personne de contact",
+      "contactPersonPlaceholder": "Nom complet de la personne de contact",
+      "contactEmail": "Adresse e-mail",
+      "contactEmailPlaceholder": "contact@exemple.com",
+      "contactPhone": "Numéro de téléphone",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "countryRegion": "Pays/Région",
+      "countryRegionPlaceholder": "ex: Suisse",
+      "websiteUrl": "URL du site web",
+      "websiteUrlPlaceholder": "https://www.exemple.com",
+      "message": "Parlez-nous de votre organisation",
+      "messagePlaceholder": "Décrivez votre organisation, les services que vous proposez et pourquoi vous souhaitez devenir partenaire...",
+      "submit": "Soumettre la demande",
+      "submitting": "Envoi en cours...",
+      "successTitle": "Demande envoyée !",
+      "successMessage": "Merci de votre intérêt pour un partenariat avec ProCrèche Solutions. Notre équipe examinera votre demande et vous contactera dans les 3 à 5 jours ouvrables.",
+      "error": "Échec de l'envoi de la demande. Veuillez réessayer."
+    }
+  },
+  "organizations": {
+    "title": "Organisations",
+    "subtitle": "Gérer les crèches et organisations ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des organisations...",
+    "addButton": "Ajouter une organisation",
+    "emptyState": {
+      "title": "Aucune organisation trouvée",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez une nouvelle organisation."
+    },
+    "error": {
+      "title": "Échec du chargement des organisations",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "staffMembers": "membres du personnel"
+  },
+  "jobListings": {
+    "title": "Offres d'emploi",
+    "subtitle": "Gérer les offres d'emploi et le recrutement ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des emplois...",
+    "addButton": "Publier une offre",
+    "statusFilter": {
+      "all": "Tous les statuts",
+      "active": "Actif",
+      "paused": "En pause",
+      "closed": "Fermé"
+    },
+    "emptyState": {
+      "title": "Aucune offre d'emploi trouvée",
+      "description": "Essayez d'ajuster vos critères de recherche ou publiez une nouvelle offre."
+    },
+    "error": {
+      "title": "Échec du chargement des offres d'emploi",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
+  "candidates": {
+    "title": "Candidats",
+    "subtitle": "Gérer les candidats et postulants ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des candidats...",
+    "addButton": "Ajouter un candidat",
+    "statusFilter": {
+      "all": "Tous les statuts"
+    },
+    "emptyState": {
+      "title": "Aucun candidat trouvé",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez un nouveau candidat."
+    },
+    "table": {
+      "candidate": "CANDIDAT",
+      "position": "POSTE",
+      "experience": "EXPÉRIENCE",
+      "status": "STATUT",
+      "appliedDate": "DATE DE CANDIDATURE"
+    }
+  },
+  "products": {
+    "title": "Produits",
+    "subtitle": "Gérer les produits et fournitures ({{count}} au total)",
+    "searchPlaceholder": "Rechercher des produits...",
+    "addButton": "Ajouter un produit",
+    "categoryFilter": {
+      "all": "Toutes les catégories"
+    },
+    "emptyState": {
+      "title": "Aucun produit trouvé",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez un nouveau produit."
+    },
+    "error": {
+      "title": "Échec du chargement des produits",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
   "settings": {
-    "emailNotifications": {
-      "send": {
-        "eventTypes": {
-          "job_application_received": "Demande d'emploi reçue",
-          "subscription_activation": "Activation de l'abonnement",
-          "account_verification": "Vérification du compte",
-          "order_confirmation": "Confirmation de commande",
-          "system_maintenance": "Maintenance du système",
-          "password_reset": "Réinitialisation du mot de passe",
-          "welcome_email": "Courriel de bienvenue",
-          "new_message": "Nouveau"
-        },
-        "templateVariablesPlaceholder": "{\"firstName\" : \"John\", \"lastName\" : \"Doe\", \"verificationUrl\" : \"https://...\"}",
-        "recipientEmailPlaceholder": "user@example.com ou user1@example.com, user2@example.com",
-        "recipientNamePlaceholder": "Jean Dupont",
-        "buttons": {
-          "sendBulkEmail": "Envoyer des courriels en masse",
-          "sendEmail": "Envoyer un courriel"
-        },
-        "templateVariablesHint": "Saisissez les variables du modèle sous forme de JSON. Variables courantes : firstName, lastName, verificationUrl, resetUrl, etc.",
-        "recipientEmailHint": "Pour les envois en nombre, séparez plusieurs courriels par des virgules.",
-        "alerts": {
-          "bulkFailed": "Échec de l'envoi de courriels en masse : {{message}}",
-          "sendFailed": "Échec de l'envoi de l'email : {{message}}",
-          "bulkSent": "Envoi d'un courriel en masse ! Envoyé : {{sent}}, Echec : {{échec}}",
-          "sent": "Courriel envoyé avec succès !"
-        },
-        "templateVariables": "Variables du modèle (JSON)",
-        "selectEventType": "Sélectionner le type d'événement",
-        "recipientEmail": "Courriel(s) du destinataire",
-        "recipientName": "Nom du bénéficiaire (facultatif)",
-        "eventType": "Type d'événement",
-        "title": "Envoyer un courriel"
+    "title": "Paramètres",
+    "subtitle": "Gérer les paramètres et préférences de votre application",
+    "tabs": {
+      "general": "Général",
+      "branding": "Image de marque",
+      "content": "Contenu",
+      "notifications": "Notifications",
+      "integrations": "Intégrations",
+      "emailTemplates": "Modèles d'e-mail",
+      "systemConfig": "Configuration système"
+    },
+    "general": {
+      "title": "Paramètres généraux",
+      "description": "Informations de base sur votre application",
+      "siteName": "Nom du site",
+      "siteNamePlaceholder": "Entrez le nom du site",
+      "contactEmail": "E-mail de contact",
+      "contactEmailPlaceholder": "contact@exemple.com",
+      "siteDescription": "Description du site",
+      "siteDescriptionPlaceholder": "Entrez la description du site",
+      "contactPhone": "Téléphone de contact",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "platformSettings": {
+        "title": "Paramètres de la plateforme",
+        "maintenanceMode": "Mode maintenance",
+        "maintenanceModeActive": "La plateforme est actuellement en mode maintenance",
+        "maintenanceModeInactive": "La plateforme est opérationnelle",
+        "maintenanceMessage": "Message de maintenance",
+        "maintenanceMessagePlaceholder": "Entrez le message de maintenance pour les utilisateurs...",
+        "updateMessage": "Mettre à jour le message",
+        "updating": "Mise à jour..."
+      }
+    },
+    "content": {
+      "title": "Paramètres de contenu",
+      "description": "Gérez le contenu de votre page d'accueil et la section hero",
+      "heroImage": {
+        "title": "Image hero"
       },
-      "analytics": {
-        "eventsBreakdown": {
-          "title": "Répartition des événements"
-        },
-        "labels": {
-          "deliveryRate": "Taux de livraison",
-          "emailsSent": "Emails envoyés",
-          "clickRate": "Taux de clics",
-          "delivered": "Livré",
-          "totalSent": "Total envoyé",
-          "openRate": "Taux d'ouverture",
-          "clicked": "Cliquer",
-          "opened": "Ouvert"
-        },
-        "performance": {
-          "title": "Performance des courriels"
-        }
+      "heroContent": {
+        "title": "Contenu hero",
+        "heroTitle": "Titre hero",
+        "heroTitlePlaceholder": "Entrez le titre hero",
+        "heroSubtitle": "Sous-titre hero",
+        "heroSubtitlePlaceholder": "Entrez le sous-titre hero",
+        "buttonText": "Texte du bouton",
+        "buttonTextPlaceholder": "Commencer",
+        "buttonLink": "Lien du bouton",
+        "buttonLinkPlaceholder": "https://exemple.com"
       },
-      "templates": {
-        "tableHeaders": {
-          "category": "Catégorie",
-          "actions": "Actions",
-          "subject": "Sujet",
-          "updated": "Mise à jour",
-          "status": "Statut",
-          "event": "Événement",
-          "name": "Nom"
-        },
-        "buttons": {
-          "preview": "Avant-première",
-          "edit": "Editer"
-        },
-        "status": {
-          "inactive": "Inactif",
-          "active": "Actif"
-        },
-        "createTemplate": "Créer un modèle",
-        "title": "Modèles d'e-mails"
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement..."
+    },
+    "branding": {
+      "title": "Paramètres de marque",
+      "description": "Personnalisez les couleurs de votre marque, les logos et l'identité visuelle",
+      "brandColors": {
+        "title": "Couleurs de marque",
+        "primaryColor": "Couleur primaire",
+        "secondaryColor": "Couleur secondaire",
+        "accentColor": "Couleur d'accent"
       },
-      "logs": {
-        "tableHeaders": {
-          "recipient": "Bénéficiaire",
-          "sentAt": "Envoyé à",
-          "status": "Statut",
-          "error": "Erreur",
-          "event": "Événement"
-        },
-        "title": "Journaux des courriels"
+      "adminColors": {
+        "title": "Couleurs du tableau de bord administrateur",
+        "adminPrimaryColor": "Couleur primaire admin",
+        "adminSecondaryColor": "Couleur secondaire admin",
+        "adminAccentColor": "Couleur d'accent admin"
       },
-      "tabs": {
-        "analytics": "Analyse",
-        "templates": "Modèles",
-        "logs": "Journaux des courriels",
-        "send": "Envoyer un courriel"
+      "logosAssets": {
+        "title": "Logos et ressources",
+        "mainLogo": "Logo principal (Pages publiques)",
+        "mainLogoDescription": "Utilisé sur les pages de connexion, d'inscription et autres pages publiques",
+        "sidebarLogo": "Logo de la barre latérale",
+        "sidebarLogoDescription": "Logo séparé pour le menu de la barre latérale de l'application principale (optionnel - utilise le logo principal par défaut)",
+        "adminLogo": "Logo admin",
+        "favicon": "Favicon",
+        "adminFavicon": "Favicon admin"
       },
-      "sendEmail": "Envoyer un courriel",
-      "loading": "Chargement des notifications par courriel...",
-      "refresh": "Rafraîchir",
-      "title": "Notifications par courrier électronique"
+      "uploading": {
+        "logo": "Téléchargement du logo...",
+        "sidebarLogo": "Téléchargement du logo de la barre latérale...",
+        "adminLogo": "Téléchargement du logo admin...",
+        "favicon": "Téléchargement du favicon...",
+        "adminFavicon": "Téléchargement du favicon admin..."
+      },
+      "uploaded": {
+        "logo": "✓ Logo téléchargé ! Cliquez sur \"Enregistrer le logo\" ci-dessous pour appliquer les modifications.",
+        "sidebarLogo": "✓ Logo de la barre latérale téléchargé ! Cliquez sur \"Enregistrer le logo de la barre latérale\" ci-dessous pour appliquer les modifications.",
+        "adminLogo": "✓ Logo admin téléchargé ! Cliquez sur \"Enregistrer le logo admin\" ci-dessous pour appliquer les modifications.",
+        "favicon": "✓ Favicon téléchargé ! Cliquez sur \"Enregistrer le favicon\" ci-dessous pour appliquer les modifications.",
+        "adminFavicon": "✓ Favicon admin téléchargé ! Cliquez sur \"Enregistrer le favicon admin\" ci-dessous pour appliquer les modifications."
+      },
+      "saveColors": "Enregistrer les couleurs",
+      "saveAdminColors": "Enregistrer les couleurs admin",
+      "saveLogo": "Enregistrer le logo",
+      "saveSidebarLogo": "Enregistrer le logo de la barre latérale",
+      "saveAdminLogo": "Enregistrer le logo admin",
+      "saveFavicon": "Enregistrer le favicon",
+      "saveAdminFavicon": "Enregistrer le favicon admin",
+      "saving": "Enregistrement...",
+      "noAssetToSave": "Aucune ressource à enregistrer. Veuillez d'abord télécharger un fichier.",
+      "assetSaved": "{{assetType}} enregistré avec succès !",
+      "assetUploaded": "{{assetType}} téléchargé avec succès !",
+      "assetUploadFailed": "Échec du téléchargement de {{assetType}}. Veuillez réessayer.",
+      "assetSaveFailed": "Échec de l'enregistrement de {{assetType}}. Veuillez réessayer.",
+      "brandColorsSaved": "Couleurs de marque enregistrées avec succès !",
+      "brandColorsSaveFailed": "Échec de l'enregistrement des couleurs de marque. Veuillez réessayer."
     },
     "notifications": {
+      "title": "Paramètres de notification",
+      "description": "Configurer les notifications par e-mail et les paramètres SMTP",
       "emailNotifications": {
-        "applicationSubmissionsDesc": "Recevoir une notification lorsque les demandes sont soumises",
-        "newUserRegistrationsDesc": "Recevoir une notification lorsque de nouveaux utilisateurs s'inscrivent",
-        "applicationSubmissions": "Dépôt des candidatures",
-        "newUserRegistrations": "Enregistrements de nouveaux utilisateurs",
-        "title": "Notifications par courrier électronique"
+        "title": "Notifications par e-mail",
+        "newUserRegistrations": "Nouvelles inscriptions d'utilisateurs",
+        "newUserRegistrationsDesc": "Être notifié lors de nouvelles inscriptions",
+        "applicationSubmissions": "Soumissions de candidatures",
+        "applicationSubmissionsDesc": "Être notifié lors de soumissions de candidatures"
       },
       "smtp": {
-        "notificationEmailPlaceholder": "notifications@example.com",
-        "smtpPasswordPlaceholder": "--------",
+        "title": "Configuration SMTP",
+        "notificationEmail": "E-mail de notification",
+        "notificationEmailPlaceholder": "notifications@exemple.com",
+        "smtpHost": "Hôte SMTP",
         "smtpHostPlaceholder": "smtp.gmail.com",
+        "smtpPort": "Port SMTP",
         "smtpPortPlaceholder": "587",
-        "smtpUserPlaceholder": "your-email@gmail.com",
-        "notificationEmail": "Courriel de notification",
-        "smtpPassword": "Mot de passe Smtp",
-        "smtpHost": "Hôte Smtp",
-        "smtpPort": "Port Smtp",
         "smtpUser": "Nom d'utilisateur SMTP",
-        "title": "Configuration SMTP"
+        "smtpUserPlaceholder": "votre-email@gmail.com",
+        "smtpPassword": "Mot de passe SMTP",
+        "smtpPasswordPlaceholder": "••••••••"
       },
-      "saveSmtpSettings": "Enregistrer les paramètres Smtp",
-      "description": "Configuration des notifications par courrier électronique et des paramètres SMTP",
-      "saving": "Économiser",
-      "title": "Paramètres de notification"
+      "saveSmtpSettings": "Enregistrer les paramètres SMTP",
+      "saving": "Enregistrement..."
+    },
+    "integrations": {
+      "title": "Paramètres d'intégration",
+      "description": "Configurer les intégrations tierces et les clés API",
+      "authentication": {
+        "title": "Authentification (Clerk)",
+        "clerkPublishableKey": "Clé publique Clerk",
+        "clerkPublishableKeyPlaceholder": "pk_test_...",
+        "clerkSecretKey": "Clé secrète Clerk",
+        "clerkSecretKeyPlaceholder": "sk_test_..."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "googleAnalyticsId": "ID Google Analytics",
+        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
+        "facebookPixelId": "ID Facebook Pixel",
+        "facebookPixelIdPlaceholder": "123456789012345"
+      },
+      "saveIntegrationSettings": "Enregistrer les paramètres d'intégration",
+      "saving": "Enregistrement..."
     },
     "systemConfig": {
+      "title": "Configuration système",
+      "refresh": "Actualiser",
+      "loading": "Chargement de la configuration système...",
+      "tabs": {
+        "systemSettings": "Paramètres système",
+        "integrations": "Intégrations",
+        "maintenance": "Maintenance",
+        "systemHealth": "Santé du système",
+        "emailTemplates": "Modèles d'e-mail"
+      },
       "systemSettings": {
-        "createModal": {
-          "categories": {
-            "security": "Sécurité",
-            "general": "Général",
-            "payment": "Paiement",
-            "storage": "Stockage",
-            "email": "Courriel"
-          },
-          "description": "Description",
-          "encrypted": "Chiffré",
-          "category": "Catégorie",
-          "cancel": "Annuler",
-          "create": "Créer un cadre",
-          "public": "Public",
-          "title": "Créer un paramétrage du système",
-          "value": "Valeur",
-          "key": "Clé"
-        },
+        "title": "Paramètres système",
+        "createSetting": "Créer un paramètre",
         "tableHeaders": {
-          "category": "Catégorie",
-          "actions": "Actions",
+          "key": "Clé",
           "value": "Valeur",
+          "category": "Catégorie",
           "type": "Type",
-          "key": "Clé"
-        },
-        "alerts": {
-          "createFailed": "Échec de la création d'un paramètre : {{message}}",
-          "created": "Le paramétrage du système a été créé avec succès !"
+          "actions": "Actions"
         },
         "badges": {
           "encrypted": "Chiffré",
           "public": "Public"
         },
-        "createSetting": "Créer un cadre",
         "buttons": {
-          "edit": "Editer",
+          "edit": "Modifier",
           "view": "Voir"
         },
-        "title": "Paramètres du système"
-      },
-      "integrations": {
         "createModal": {
-          "types": {
-            "analytics": "Analyse",
-            "payment": "Paiement",
-            "storage": "Stockage",
-            "email": "Courriel",
-            "other": "Autres",
-            "auth": "Authentification"
-          },
-          "webhookUrl": "URL du webhook (facultatif)",
-          "provider": "Fournisseur",
+          "title": "Créer un paramètre système",
+          "key": "Clé",
+          "category": "Catégorie",
+          "value": "Valeur",
+          "description": "Description",
+          "encrypted": "Chiffré",
+          "public": "Public",
+          "create": "Créer le paramètre",
           "cancel": "Annuler",
-          "create": "Créer l'intégration",
-          "title": "Créer l'intégration",
-          "name": "Nom",
-          "type": "Type"
-        },
-        "tableHeaders": {
-          "lastSync": "Dernière synchronisation",
-          "provider": "Fournisseur",
-          "actions": "Actions",
-          "status": "Statut",
-          "name": "Nom",
-          "type": "Type"
+          "categories": {
+            "general": "Général",
+            "security": "Sécurité",
+            "email": "E-mail",
+            "payment": "Paiement",
+            "storage": "Stockage"
+          }
         },
         "alerts": {
-          "createFailed": "Échec de la création de l'intégration : {{message}}",
-          "created": "L'intégration a été créée avec succès !"
+          "created": "Paramètre système créé avec succès !",
+          "createFailed": "Échec de la création du paramètre : {{message}}"
+        }
+      },
+      "integrations": {
+        "title": "Intégrations",
+        "createIntegration": "Créer une intégration",
+        "tableHeaders": {
+          "name": "Nom",
+          "type": "Type",
+          "provider": "Fournisseur",
+          "status": "Statut",
+          "lastSync": "Dernière synchronisation",
+          "actions": "Actions"
         },
-        "createIntegration": "Créer l'intégration",
         "status": {
-          "inactive": "Inactif",
           "active": "Actif",
+          "inactive": "Inactif",
           "never": "Jamais"
         },
         "buttons": {
-          "sync": "Synchronisation",
-          "test": "Test"
-        },
-        "title": "Intégrations"
-      },
-      "maintenance": {
-        "tableHeaders": {
-          "scheduledStart": "Début programmé",
-          "scheduledEnd": "Fin prévue",
-          "description": "Description",
-          "actions": "Actions",
-          "status": "Statut",
-          "name": "Nom"
+          "test": "Tester",
+          "sync": "Synchroniser"
         },
         "createModal": {
-          "scheduledStart": "Début programmé",
-          "scheduledEnd": "Fin prévue",
-          "description": "Description",
+          "title": "Créer une intégration",
+          "name": "Nom",
+          "type": "Type",
+          "provider": "Fournisseur",
+          "webhookUrl": "URL Webhook (Optionnel)",
+          "create": "Créer l'intégration",
           "cancel": "Annuler",
-          "create": "Créer un calendrier",
-          "title": "Création d'un calendrier de maintenance",
-          "name": "Nom"
-        },
-        "schedules": {
-          "createSchedule": "Créer un calendrier",
-          "title": "Calendrier d'entretien"
+          "types": {
+            "auth": "Authentification",
+            "payment": "Paiement",
+            "email": "E-mail",
+            "storage": "Stockage",
+            "analytics": "Analytics",
+            "other": "Autre"
+          }
         },
         "alerts": {
-          "scheduleCreated": "Création réussie du calendrier d'entretien !",
-          "scheduleFailed": "Échec de la création de l'horaire : {{message}}",
-          "disableFailed": "Échec de la désactivation du mode maintenance : {{message}}",
-          "enableFailed": "Échec de l'activation du mode maintenance : {{message}}",
-          "disabled": "Le mode maintenance a été désactivé avec succès !",
-          "enabled": "Le mode maintenance a été activé avec succès !"
-        },
-        "buttons": {
-          "disable": "Désactiver la maintenance",
-          "enable": "Activer la maintenance"
+          "created": "Intégration créée avec succès !",
+          "createFailed": "Échec de la création de l'intégration : {{message}}"
+        }
+      },
+      "maintenance": {
+        "title": "Mode maintenance",
+        "schedules": {
+          "title": "Plannings de maintenance",
+          "createSchedule": "Créer un planning"
         },
         "status": {
-          "disabled": "Handicapés",
-          "enabled": "Activé"
+          "enabled": "Activé",
+          "disabled": "Désactivé"
         },
         "estimatedEnd": "Fin estimée : {{date}}",
-        "title": "Mode maintenance"
+        "buttons": {
+          "enable": "Activer la maintenance",
+          "disable": "Désactiver la maintenance"
+        },
+        "tableHeaders": {
+          "name": "Nom",
+          "description": "Description",
+          "scheduledStart": "Début prévu",
+          "scheduledEnd": "Fin prévue",
+          "status": "Statut",
+          "actions": "Actions"
+        },
+        "createModal": {
+          "title": "Créer un planning de maintenance",
+          "name": "Nom",
+          "description": "Description",
+          "scheduledStart": "Début prévu",
+          "scheduledEnd": "Fin prévue",
+          "create": "Créer le planning",
+          "cancel": "Annuler"
+        },
+        "alerts": {
+          "enabled": "Mode maintenance activé avec succès !",
+          "disabled": "Mode maintenance désactivé avec succès !",
+          "enableFailed": "Échec de l'activation du mode maintenance : {{message}}",
+          "disableFailed": "Échec de la désactivation du mode maintenance : {{message}}",
+          "scheduleCreated": "Planning de maintenance créé avec succès !",
+          "scheduleFailed": "Échec de la création du planning : {{message}}"
+        }
       },
       "systemHealth": {
         "overview": {
-          "externalServices": "Services externes",
+          "title": "Vue d'ensemble de la santé du système",
           "database": "Base de données",
           "storage": "Stockage",
-          "title": "Aperçu de la santé du système"
+          "externalServices": "Services externes"
         },
         "labels": {
+          "systemStatus": "Statut du système",
           "databaseResponse": "Réponse de la base de données",
           "activeServices": "Services actifs",
-          "responseTime": "Temps de réponse",
-          "systemStatus": "État du système",
-          "connections": "Connexions",
           "storageUsed": "Stockage utilisé",
-          "usedSpace": "Espace utilisé",
-          "status": "Statut"
+          "status": "Statut",
+          "responseTime": "Temps de réponse",
+          "connections": "Connexions",
+          "usedSpace": "Espace utilisé"
         }
       },
       "emailTemplates": {
+        "title": "Modèles d'e-mail",
         "createTemplate": "Créer un modèle",
-        "goToTemplates": "Aller à Modèles d'e-mail",
-        "description": "Gérer les modèles de courrier électronique pour les notifications",
-        "title": "Modèles d'e-mails"
-      },
-      "tabs": {
-        "emailTemplates": "Modèles d'e-mails",
-        "systemSettings": "Paramètres du système",
-        "integrations": "Intégrations",
-        "systemHealth": "Santé du système",
-        "maintenance": "Maintenance"
-      },
-      "loading": "Chargement de la configuration du système...",
-      "refresh": "Rafraîchir",
-      "title": "Configuration du système"
+        "goToTemplates": "Aller aux modèles d'e-mail",
+        "description": "Gérer les modèles d'e-mail pour les notifications"
+      }
     },
-    "integrations": {
-      "authentication": {
-        "clerkPublishableKeyPlaceholder": "pk_test_...",
-        "clerkSecretKeyPlaceholder": "sk_test_...",
-        "clerkPublishableKey": "Clé publiable du greffier",
-        "clerkSecretKey": "Clé secrète du greffier",
-        "title": "Authentification (greffier)"
+    "emailNotifications": {
+      "title": "Notifications par e-mail",
+      "loading": "Chargement des notifications par e-mail...",
+      "refresh": "Actualiser",
+      "sendEmail": "Envoyer un e-mail",
+      "tabs": {
+        "templates": "Modèles",
+        "analytics": "Analytics",
+        "logs": "Journaux d'e-mail",
+        "send": "Envoyer un e-mail"
       },
       "analytics": {
-        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
-        "facebookPixelIdPlaceholder": "123456789012345",
-        "googleAnalyticsId": "Id Google Analytics",
-        "facebookPixelId": "Identité du pixel Facebook",
-        "title": "Analyse"
+        "labels": {
+          "emailsSent": "E-mails envoyés",
+          "deliveryRate": "Taux de livraison",
+          "openRate": "Taux d'ouverture",
+          "clickRate": "Taux de clic",
+          "totalSent": "Total envoyé",
+          "delivered": "Livré",
+          "opened": "Ouvert",
+          "clicked": "Cliqué"
+        },
+        "performance": {
+          "title": "Performances des e-mails"
+        },
+        "eventsBreakdown": {
+          "title": "Répartition des événements"
+        }
       },
-      "saveIntegrationSettings": "Sauvegarder les paramètres d'intégration",
-      "description": "Configurer les intégrations tierces et les clés API",
-      "saving": "Économiser",
-      "title": "Paramètres d'intégration"
-    },
-    "general": {
-      "platformSettings": {
-        "maintenanceMessagePlaceholder": "Saisir un message de maintenance pour les utilisateurs...",
-        "maintenanceModeInactive": "La plate-forme est opérationnelle",
-        "maintenanceModeActive": "La plateforme est actuellement en mode maintenance",
-        "maintenanceMessage": "Maintenance",
-        "maintenanceMode": "Mode maintenance",
-        "updateMessage": "Mise à jour",
-        "updating": "Mise à jour",
-        "title": "Paramètres de la plate-forme"
+      "templates": {
+        "title": "Modèles d'e-mail",
+        "createTemplate": "Créer un modèle",
+        "tableHeaders": {
+          "name": "Nom",
+          "event": "Événement",
+          "category": "Catégorie",
+          "subject": "Sujet",
+          "status": "Statut",
+          "updated": "Mis à jour",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Actif",
+          "inactive": "Inactif"
+        },
+        "buttons": {
+          "edit": "Modifier",
+          "preview": "Aperçu"
+        }
       },
-      "siteDescriptionPlaceholder": "Saisir la description du site",
-      "contactEmailPlaceholder": "contact@example.com",
-      "contactPhonePlaceholder": "+41 XX XXX XX XX",
-      "siteNamePlaceholder": "Saisir le nom du site",
-      "siteDescription": "Description du site",
-      "contactEmail": "Contact Email",
-      "contactPhone": "Téléphone de contact",
-      "description": "Informations de base sur votre demande",
-      "saveChanges": "Enregistrer les modifications",
-      "siteName": "Nom du site",
-      "saving": "Économiser",
-      "title": "Paramètres généraux"
-    },
-    "branding": {
-      "logosAssets": {
-        "sidebarLogoDescription": "Logo séparé pour le menu latéral de l'application principale (facultatif - revient au logo principal s'il n'est pas défini)",
-        "mainLogoDescription": "Utilisé sur les pages de connexion, d'inscription et autres pages destinées au public",
-        "adminFavicon": "Favicon de l'administrateur",
-        "sidebarLogo": "Logo Sidebar",
-        "adminLogo": "Logo de l'administration",
-        "mainLogo": "Logo principal (pages publiques)",
-        "favicon": "Favicon",
-        "title": "Logos et actifs"
+      "logs": {
+        "title": "Journaux d'e-mail",
+        "tableHeaders": {
+          "event": "Événement",
+          "recipient": "Destinataire",
+          "status": "Statut",
+          "sentAt": "Envoyé à",
+          "error": "Erreur"
+        }
       },
-      "adminColors": {
-        "adminSecondaryColor": "Couleur secondaire de l'administrateur",
-        "adminPrimaryColor": "Couleur primaire de l'administrateur",
-        "adminAccentColor": "Couleur d'accentuation de l'administration",
-        "title": "Couleurs du tableau de bord de l'administrateur"
-      },
-      "brandColors": {
-        "secondaryColor": "Couleur secondaire",
-        "primaryColor": "Couleur primaire",
-        "accentColor": "Couleur d'accent",
-        "title": "Couleurs de la marque"
-      },
-      "uploading": {
-        "adminFavicon": "Téléchargement de la favicon de l'administrateur...",
-        "sidebarLogo": "Téléchargement du logo de la barre latérale...",
-        "adminLogo": "Téléchargement du logo de l'administration...",
-        "favicon": "Téléchargement du favicon...",
-        "logo": "Téléchargement du logo..."
-      },
-      "brandColorsSaveFailed": "L'enregistrement des couleurs de la marque a échoué. Veuillez réessayer.",
-      "uploaded": {
-        "adminFavicon": "Le favicon de l'administrateur a été téléchargé ! Cliquez sur \"Save Admin Favicon\" ci-dessous pour appliquer les changements.",
-        "sidebarLogo": "✓ Logo de la barre latérale téléchargé ! Cliquez sur \"Enregistrer le logo\" ci-dessous pour appliquer les changements.",
-        "adminLogo": "✓ Logo de l'administrateur téléchargé ! Cliquez sur \"Save Admin Logo\" ci-dessous pour appliquer les changements.",
-        "favicon": "✓ Favicon uploaded ! Cliquez sur \"Enregistrer le Favicon\" ci-dessous pour appliquer les changements.",
-        "logo": "✓ Logo téléchargé ! Cliquez sur \"Enregistrer le logo\" ci-dessous pour appliquer les changements."
-      },
-      "assetUploadFailed": "Échec du téléchargement de {{type d'actif}}. Veuillez réessayer.",
-      "brandColorsSaved": "Les couleurs de la marque ont été sauvegardées avec succès !",
-      "saveAdminFavicon": "Sauvegarder le Favicon de l'administrateur",
-      "assetSaveFailed": "Échec de l'enregistrement de {{type d'actif}}. Veuillez réessayer.",
-      "saveAdminColors": "Sauvegarder les couleurs de l'administration",
-      "saveSidebarLogo": "Sauver le logo de la barre latérale",
-      "assetUploaded": "{{assetType}} téléchargé avec succès !",
-      "noAssetToSave": "Aucun actif à sauvegarder. Veuillez d'abord télécharger un fichier.",
-      "saveAdminLogo": "Sauver le logo de l'administration",
-      "description": "Personnaliser les couleurs, les logos et l'identité visuelle de votre marque",
-      "saveFavicon": "Sauvegarder le Favicon",
-      "assetSaved": "{{assetType}} sauvegardé avec succès !",
-      "saveColors": "Sauvegarder les couleurs",
-      "saveLogo": "Sauver le logo",
-      "saving": "Économiser",
-      "title": "Paramètres de l'image de marque"
-    },
-    "content": {
-      "heroContent": {
-        "heroSubtitlePlaceholder": "Saisir le sous-titre du héros",
-        "buttonLinkPlaceholder": "https://example.com",
-        "buttonTextPlaceholder": "Commencer",
-        "heroTitlePlaceholder": "Saisir le titre du héros",
-        "heroSubtitle": "Hero Sub",
-        "buttonLink": "Lien vers le bouton",
-        "buttonText": "Bouton",
-        "heroTitle": "Héros",
-        "title": "Contenu du héros"
-      },
-      "heroImage": {
-        "title": "Image du héros"
-      },
-      "description": "Gérer le contenu de votre page d'accueil et la section des héros",
-      "saveChanges": "Enregistrer les modifications",
-      "saving": "Économiser",
-      "title": "Paramètres du contenu"
-    },
-    "tabs": {
-      "emailTemplates": "Modèles d'e-mails",
-      "notifications": "Notifications",
-      "integrations": "Intégrations",
-      "systemConfig": "Configuration du système",
-      "branding": "L'image de marque",
-      "content": "Contenu",
-      "general": "Général"
-    },
-    "subtitle": "Gérer les paramètres et les préférences de l'application",
-    "title": "Paramètres"
-  },
-  "admin": {
-    "discountTerminations": {
-      "actions": {
-        "sendNoticesAlert": "La fonctionnalité d'envoi d'avis sera bientôt disponible",
-        "markCompleted": "Marque complétée",
-        "sendNotices": "Envoyer des avis"
-      },
-      "allActive": {
-        "description": "Toutes les remises actives des fournisseurs",
-        "tableTitle": "Réductions pour les vendeurs actifs",
-        "empty": "Aucune réduction active",
-        "title": "Réductions actives"
-      },
-      "queue": {
-        "description": "Clients en attente de résiliation d'escompte",
-        "tableTitle": "Cessations d'activité en cours",
-        "empty": "Aucun licenciement en cours",
-        "title": "File d'attente de terminaison"
-      },
-      "table": {
-        "activeSince": "Actif depuis",
-        "actions": "Actions",
-        "daycare": "Garderie",
-        "reason": "Raison",
-        "vendor": "Vendeur"
-      }
-    },
-    "platformSettings": {
-      "general": {
-        "platformDescription": "Description de la plateforme",
-        "descriptionLabel": "Description de la plate-forme",
-        "platformName": "Nom de la plateforme",
-        "nameLabel": "Nom de la plate-forme",
-        "title": "Paramètres généraux"
-      },
-      "branding": {
-        "faviconLabel": "Favicon",
-        "logoLabel": "Logo",
-        "favicon": "Favicon",
-        "title": "L'image de marque",
-        "logo": "Logo"
-      },
-      "buttons": {
-        "saveChanges": "Enregistrer les modifications"
-      },
-      "title": "Paramètres de la plate-forme"
-    },
-    "designSystem": {
-      "formControls": {
-        "disabledInput": "Entrée désactivée",
-        "quantityInput": "Quantité Entrée",
-        "selectMenu": "Sélectionner le menu",
-        "textInput": "Entrée de texte",
-        "option1": "Option 1",
-        "option2": "Option 2",
-        "option3": "Option 3",
-        "title": "Contrôles des formulaires"
-      },
-      "buttons": {
-        "secondaryDisabled": "Secondaire (désactivé)",
-        "outlineDisabled": "Schéma (désactivé)",
-        "primaryDisabled": "Primaire (désactivé)",
-        "disabledState": "État désactivé",
-        "mediumDefault": "Moyen (par défaut)",
-        "extraSmall": "Très petit",
-        "rightIcon": "Icône de droite",
-        "smallIcon": "Petite icône",
-        "withIcons": "Avec des icônes",
-        "leftIcon": "Icône gauche",
-        "large": "Grandes dimensions",
-        "small": "Petit"
-      },
-      "cards": {
-        "hoverEffectCardDesc": "Carte avec effet de survol",
-        "standardCardDesc": "Composant de base d'une carte avec remplissage et ombre",
-        "hoverEffectCard": "Carte à effet de survol",
-        "standardCard": "Carte standard"
-      },
-      "typography": {
-        "fontFamily": "Famille de polices : Inter",
-        "bodySmall": "Corps de texte (petit)",
-        "bodyBase": "Corps de texte (base)",
-        "heading1": "Rubrique 1",
-        "heading2": "Rubrique 2",
-        "heading3": "Rubrique 3",
-        "heading4": "Rubrique 4",
-        "link": "Exemple de lien"
-      },
-      "sections": {
-        "components": "Composants",
-        "typography": "Typographie",
-        "colors": "Couleurs"
-      },
-      "tabs": {
-        "pillsVariant": "Variante des pilules",
-        "lineVariant": "Variante de ligne",
-        "content1": "Voici le contenu de l'onglet 1",
-        "content2": "Voici le contenu de l'onglet 2",
-        "content3": "Voici le contenu de l'onglet 3",
-        "title": "Onglets",
-        "tab1": "Onglet 1",
-        "tab2": "Onglet 2",
-        "tab3": "Onglet 3 (désactivé)"
-      },
-      "description": "Système de conception complet et bibliothèque de composants pour les solutions ProCrèche",
-      "title": "Système de conception"
-    },
-    "partnersPage": {
-      "sections": {
-        "featuredPartners": "Partenaires en vedette"
-      },
-      "buttons": {
-        "becomePartner": "Devenir partenaire"
-      },
-      "subtitle": "Des partenaires de confiance dans l'éducation de la petite enfance",
-      "title": "Nos partenaires"
-    },
-    "discountTerminationsPage": {
-      "active": {
-        "title": "Réductions actives"
-      },
-      "queue": {
-        "title": "File d'attente de terminaison"
-      }
-    },
-    "partners": {
-      "partnerCard": {
-        "learnMoreButton": "En savoir plus",
-        "partnerType": "Type de partenaire",
-        "logoAlt": "Logo du partenaire"
-      },
-      "sections": {
-        "featuredPartners": "Partenaires en vedette"
-      },
-      "joinUs": {
-        "contactUsButton": "Nous contacter",
-        "inquiryFormLink": "Formulaire de demande de partenariat",
-        "contactUsAlert": "Formulaire de contact bientôt disponible",
-        "subtitle": "Rejoignez notre réseau de fournisseurs de confiance",
-        "title": "Devenir partenaire"
-      },
-      "buttons": {
-        "becomePartner": "Devenir partenaire"
-      },
-      "featured": {
-        "subtitle": "Principales organisations avec lesquelles nous travaillons",
-        "title": "Partenaires en vedette"
-      },
-      "hero": {
-        "ctaButton": "Devenir partenaire",
-        "subtitle": "Des partenaires de confiance dans l'éducation de la petite enfance",
-        "title": "Nos partenaires"
+      "send": {
+        "title": "Envoyer un e-mail",
+        "eventType": "Type d'événement",
+        "selectEventType": "Sélectionner le type d'événement",
+        "recipientEmail": "E-mail(s) du destinataire",
+        "recipientEmailPlaceholder": "utilisateur@exemple.com ou utilisateur1@exemple.com, utilisateur2@exemple.com",
+        "recipientEmailHint": "Pour l'envoi en masse, séparer plusieurs e-mails par des virgules",
+        "recipientName": "Nom du destinataire (Optionnel)",
+        "recipientNamePlaceholder": "Jean Dupont",
+        "templateVariables": "Variables de modèle (JSON)",
+        "templateVariablesPlaceholder": "{\"firstName\": \"Jean\", \"lastName\": \"Dupont\", \"verificationUrl\": \"https://...\"}",
+        "templateVariablesHint": "Entrer les variables de modèle en JSON. Variables courantes : firstName, lastName, verificationUrl, resetUrl, etc.",
+        "buttons": {
+          "sendEmail": "Envoyer un e-mail",
+          "sendBulkEmail": "Envoyer un e-mail en masse"
+        },
+        "eventTypes": {
+          "account_verification": "Vérification du compte",
+          "password_reset": "Réinitialisation du mot de passe",
+          "welcome_email": "E-mail de bienvenue",
+          "job_application_received": "Candidature reçue",
+          "new_message": "Nouveau message",
+          "order_confirmation": "Confirmation de commande",
+          "subscription_activation": "Activation de l'abonnement",
+          "system_maintenance": "Maintenance du système"
+        },
+        "alerts": {
+          "sent": "E-mail envoyé avec succès !",
+          "sendFailed": "Échec de l'envoi de l'e-mail : {{message}}",
+          "bulkSent": "E-mail en masse envoyé ! Envoyé : {{sent}}, Échoué : {{failed}}",
+          "bulkFailed": "Échec de l'envoi des e-mails en masse : {{message}}"
+        }
       }
     }
-  },
-  "discountTerminations": {
-    "actions": {
-      "sendNoticesAlert": "La fonctionnalité d'envoi d'avis sera bientôt disponible",
-      "markCompleted": "Marque complétée",
-      "sendNotices": "Envoyer des avis"
-    },
-    "allActive": {
-      "description": "Toutes les remises actives des fournisseurs",
-      "tableTitle": "Réductions pour les vendeurs actifs",
-      "empty": "Aucune réduction active",
-      "title": "Réductions actives"
-    },
-    "queue": {
-      "description": "Clients en attente de résiliation d'escompte",
-      "tableTitle": "Cessations d'activité en cours",
-      "empty": "Aucun licenciement en cours",
-      "title": "File d'attente de terminaison"
-    },
-    "table": {
-      "activeSince": "Actif depuis",
-      "actions": "Actions",
-      "daycare": "Garderie",
-      "reason": "Raison",
-      "vendor": "Vendeur"
-    }
-  },
-  "platformSettings": {
-    "general": {
-      "platformDescription": "Description de la plateforme",
-      "descriptionLabel": "Description de la plate-forme",
-      "platformName": "Nom de la plateforme",
-      "nameLabel": "Nom de la plate-forme",
-      "title": "Paramètres généraux"
-    },
-    "branding": {
-      "faviconLabel": "Favicon",
-      "logoLabel": "Logo",
-      "favicon": "Favicon",
-      "title": "L'image de marque",
-      "logo": "Logo"
-    },
-    "buttons": {
-      "saveChanges": "Enregistrer les modifications"
-    },
-    "title": "Paramètres de la plate-forme"
-  },
-  "forms": {
-    "candidate": {
-      "certificationPlaceholder": "par exemple, diplôme d'éducateur de jeunes enfants, certificat de premiers secours...",
-      "experiencePlaceholder": "Décrivez votre expérience professionnelle...",
-      "educationPlaceholder": "Formation et qualifications...",
-      "firstNamePlaceholder": "Jean",
-      "lastNamePlaceholder": "Doe",
-      "emailPlaceholder": "john.doe@example.com",
-      "skillPlaceholder": "Ajouter une compétence personnalisée...",
-      "bioPlaceholder": "Une brève présentation du candidat..."
-    },
-    "organization": {
-      "languagePlaceholder": "par exemple, allemand, français, anglais",
-      "pedagogyPlaceholder": "Montessori, Waldorf, etc.",
-      "websitePlaceholder": "https://example.com",
-      "regionPlaceholder": "par exemple, Zurich",
-      "emailPlaceholder": "contact@example.com"
-    },
-    "job": {
-      "responsibilityPlaceholder": "Ajouter une responsabilité...",
-      "qualificationPlaceholder": "Ajouter une qualification...",
-      "descriptionPlaceholder": "Décrivez le rôle, les responsabilités quotidiennes et ce qui rend ce poste spécial...",
-      "requirementPlaceholder": "Ajouter une exigence...",
-      "locationPlaceholder": "par exemple, Zurich, Suisse",
-      "benefitPlaceholder": "Ajouter un avantage...",
-      "salaryPlaceholder": "par exemple, 60 000 - 80 000 CHF",
-      "titlePlaceholder": "par exemple, éducateur de la petite enfance"
-    }
-  },
-  "content": {
-    "statePolicies": {
-      "searchPlaceholder": "Politiques de recherche...",
-      "noResults": "Aucun résultat trouvé",
-      "addFirst": "Ajouter une première police",
-      "loading": "Chargement des politiques...",
-      "empty": "Pas encore de politiques nationales",
-      "title": "Politiques nationales"
-    },
-    "hrDocuments": {
-      "searchPlaceholder": "Rechercher des documents RH...",
-      "noResults": "Aucun résultat trouvé",
-      "addFirst": "Ajouter le premier document",
-      "loading": "Chargement des documents...",
-      "empty": "Pas encore de documents RH",
-      "title": "Documents RH"
-    },
-    "eLearning": {
-      "searchPlaceholder": "Rechercher l'apprentissage en ligne...",
-      "noResults": "Aucun résultat trouvé",
-      "addFirst": "Ajouter le premier contenu",
-      "loading": "Chargement du contenu...",
-      "empty": "Pas encore de contenu d'apprentissage en ligne",
-      "title": "Contenu E-Learning",
-      "total": "Total"
-    },
-    "orDragDrop": "ou par glisser-déposer",
-    "selected": "Sélectionné"
-  },
-  "designSystem": {
-    "formControls": {
-      "disabledInput": "Entrée désactivée",
-      "quantityInput": "Quantité Entrée",
-      "selectMenu": "Sélectionner le menu",
-      "textInput": "Entrée de texte",
-      "option1": "Option 1",
-      "option2": "Option 2",
-      "option3": "Option3",
-      "title": "Contrôles des formulaires"
-    },
-    "buttons": {
-      "secondaryDisabled": "Handicapés secondaires",
-      "outlineDisabled": "Cadre Handicapés",
-      "primaryDisabled": "Handicapés primaires",
-      "disabledState": "État désactivé",
-      "mediumDefault": "Moyen Défaut",
-      "extraSmall": "Très petit",
-      "rightIcon": "Icône de droite",
-      "secondary": "Secondaire",
-      "smallIcon": "Petite icône",
-      "withIcons": "Avec des icônes",
-      "leftIcon": "Icône gauche",
-      "variants": "Variantes",
-      "outline": "Aperçu",
-      "primary": "Primaire",
-      "danger": "Danger",
-      "ghost": "Fantôme",
-      "large": "Grandes dimensions",
-      "light": "Lumière",
-      "sizes": "Tailles",
-      "small": "Petit",
-      "title": "Boutons"
-    },
-    "cards": {
-      "hoverEffectCardDesc": "Carte avec effet de survol",
-      "standardCardDesc": "Composant de base d'une carte avec remplissage et ombre",
-      "hoverEffectCard": "Carte à effet de survol",
-      "standardCard": "Carte standard"
-    },
-    "sections": {
-      "formControls": "Contrôles des formulaires",
-      "components": "Composants",
-      "typography": "Typographie",
-      "buttons": "Boutons",
-      "colors": "Couleurs",
-      "cards": "Cartes"
-    },
-    "typography": {
-      "fontFamily": "Famille de polices : Nunito, Inter, sans-serif",
-      "bodySmall": "Corps de texte (petit) : Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
-      "bodyBase": "Corps du texte (base) : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
-      "heading1": "Rubrique 1 : Le renard brun et rapide",
-      "heading2": "Rubrique 2 : Le renard brun et rapide",
-      "heading3": "Rubrique 3 : Le renard brun et rapide",
-      "heading4": "Rubrique 4 : Le renard brun et rapide",
-      "title": "Typographie",
-      "link": "Voici un lien"
-    },
-    "tabs": {
-      "pillsVariant": "Variante des pilules",
-      "disabledTab": "Onglet 3 (désactivé)",
-      "lineVariant": "Variante de ligne",
-      "content1": "Il s'agit du contenu de l'onglet 1.",
-      "content2": "Il s'agit du contenu de l'onglet 2.",
-      "content3": "Il s'agit d'un onglet désactivé.",
-      "title": "Onglets",
-      "tab1": "Onglet 1",
-      "tab2": "Onglet 2",
-      "tab3": "Tab3"
-    },
-    "description": "Une référence vivante pour tous les composants de l'interface utilisateur et les jetons de conception dans l'application Pro Crèche Solutions.",
-    "title": "Système de conception"
-  },
-  "partnersPage": {
-    "sections": {
-      "featuredPartners": "Partenaires en vedette"
-    },
-    "buttons": {
-      "becomePartner": "Devenir partenaire"
-    },
-    "subtitle": "Des partenaires de confiance dans l'éducation de la petite enfance",
-    "title": "Nos partenaires"
-  },
-  "discountTerminationsPage": {
-    "active": {
-      "title": "Réductions actives"
-    },
-    "queue": {
-      "title": "File d'attente de terminaison"
-    }
-  },
-  "organizations": {
-    "emptyState": {
-      "description": "Essayez d'ajuster vos critères de recherche ou d'ajouter une nouvelle organisation.",
-      "title": "Aucune organisation trouvée"
-    },
-    "error": {
-      "description": "Veuillez vérifier votre connexion et réessayer.",
-      "title": "Échec du chargement des organisations"
-    },
-    "searchPlaceholder": "Rechercher des organisations...",
-    "actions": {
-      "delete": "Supprimer",
-      "edit": "Editer"
-    },
-    "staffMembers": "Membres du personnel",
-    "addButton": "Ajouter une organisation",
-    "subtitle": "Gérer les crèches et les organisations ({{count}} total)",
-    "title": "Organisations"
-  },
-  "partners": {
-    "partnerCard": {
-      "learnMoreButton": "En savoir plus",
-      "partnerType": "Type de partenaire",
-      "logoAlt": "Logo du partenaire"
-    },
-    "sections": {
-      "featuredPartners": "Partenaires en vedette"
-    },
-    "joinUs": {
-      "contactUsButton": "Nous contacter",
-      "inquiryFormLink": "Formulaire de demande de partenariat",
-      "contactUsAlert": "Formulaire de contact bientôt disponible",
-      "subtitle": "Rejoignez notre réseau de fournisseurs de confiance",
-      "title": "Devenir partenaire"
-    },
-    "buttons": {
-      "becomePartner": "Devenir partenaire"
-    },
-    "featured": {
-      "subtitle": "Principales organisations avec lesquelles nous travaillons",
-      "title": "Partenaires en vedette"
-    },
-    "hero": {
-      "ctaButton": "Devenir partenaire",
-      "subtitle": "Des partenaires de confiance dans l'éducation de la petite enfance",
-      "title": "Nos partenaires"
-    }
-  },
-  "translations": {
-    "descriptionPlaceholder": "Description (facultatif)",
-    "versionPlaceholder": "Version (par exemple, v1.2.3)",
-    "searchPlaceholder": "Rechercher des clés ou des valeurs..."
-  },
-  "jobListings": {
-    "emptyState": {
-      "description": "Essayez d'ajuster vos critères de recherche ou publiez un nouvel emploi.",
-      "title": "Aucune offre d'emploi trouvée"
-    },
-    "statusFilter": {
-      "active": "Actif",
-      "closed": "Fermé",
-      "paused": "En pause",
-      "all": "Tous les statuts"
-    },
-    "error": {
-      "description": "Veuillez vérifier votre connexion et réessayer.",
-      "title": "Échec du chargement des listes d'offres d'emploi"
-    },
-    "searchPlaceholder": "Rechercher des emplois...",
-    "actions": {
-      "delete": "Supprimer",
-      "edit": "Editer"
-    },
-    "addButton": "Poste de travail",
-    "subtitle": "Gérer les offres d'emploi et le recrutement ({{count}} total)",
-    "title": "Offres d'emploi"
-  },
-  "candidates": {
-    "emptyState": {
-      "description": "Essayez d'ajuster vos critères de recherche ou d'ajouter un nouveau candidat.",
-      "title": "Aucun candidat n'a été trouvé"
-    },
-    "searchPlaceholder": "Rechercher des candidats...",
-    "table": {
-      "appliedDate": "Date d'application",
-      "experience": "Expérience",
-      "candidate": "Candidat",
-      "position": "Position",
-      "status": "Statut"
-    },
-    "statusFilter": {
-      "all": "Tous les statuts"
-    },
-    "addButton": "Ajouter un candidat",
-    "subtitle": "Gérer les demandeurs d'emploi et les candidats ({{count}} total)",
-    "title": "Candidats"
-  },
-  "fileUpload": {
-    "descriptionPlaceholder": "Décrivez ce dossier...",
-    "tagPlaceholder": "Ajouter une étiquette...",
-    "urlPlaceholder": "https://example.com/image.png",
-    "clickBrowse": "Cliquer pour parcourir ou glisser-déposer",
-    "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
-    "dragDrop": "ou par glisser-déposer",
-    "selected": "Sélectionné"
-  },
-  "products": {
-    "emptyState": {
-      "description": "Essayez d'ajuster vos critères de recherche ou d'ajouter un nouveau produit.",
-      "title": "Aucun produit trouvé"
-    },
-    "categoryFilter": {
-      "all": "Toutes les catégories"
-    },
-    "error": {
-      "description": "Veuillez vérifier votre connexion et réessayer.",
-      "title": "Échec du chargement des produits"
-    },
-    "searchPlaceholder": "Rechercher des produits...",
-    "actions": {
-      "delete": "Supprimer",
-      "edit": "Editer"
-    },
-    "addButton": "Ajouter un produit",
-    "subtitle": "Gérer les produits et les fournitures ({{count}} total)",
-    "title": "Produits"
-  },
-  "auth": {
-    "login": {
-      "emailPlaceholder": "admin@procreche.com",
-      "forgotPassword": "Mot de passe oublié",
-      "passwordLabel": "Mot de passe",
-      "hidePassword": "Cacher le mot de passe",
-      "showPassword": "Afficher le mot de passe",
-      "emailLabel": "Courriel",
-      "subtitle": "Portail de gestion des solutions Pro Crèche",
-      "title": "Tableau de bord de l'administrateur"
-    },
-    "signup": {
-      "termsPrefix": "J'accepte la",
-      "termsLink": "Conditions générales d'utilisation"
-    }
-  },
-  "messaging": {
-    "searchPlaceholder": "Recherche de conversations...",
-    "typePlaceholder": "Tapez votre message..."
-  },
-  "support": {
-    "searchPlaceholder": "Recherche de billets...",
-    "replyPlaceholder": "Tapez votre réponse...",
-    "table": {
-      "assignedTo": "Affecté à",
-      "priority": "Priorité",
-      "created": "Créée",
-      "status": "Statut",
-      "ticket": "Billet",
-      "user": "Utilisateur"
-    },
-    "assignedToYou": "Attribué à vous",
-    "selectTicket": "Sélectionnez un billet pour en voir les détails",
-    "staffMember": "Membre du personnel",
-    "assignedTo": "Affecté à",
-    "assignToMe": "Affecter à moi",
-    "unassigned": "Non attribué",
-    "assigning": "Affectation",
-    "noTickets": "Aucun billet trouvé",
-    "sendReply": "Envoyer la réponse",
-    "subtitle": "Gérer les tickets d'assistance et y répondre ({{total}} total)",
-    "sending": "Envoi",
-    "staff": "Personnel",
-    "title": "Tickets de soutien",
-    "user": "Utilisateur"
   }
 }

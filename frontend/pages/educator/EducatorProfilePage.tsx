@@ -106,7 +106,7 @@ const EducatorProfilePage: React.FC = () => {
     try {
       const response = await request<{ success: boolean; data?: any }>('/settings/educator');
       if (response.success && response.data) {
-        const data = response.data;
+        const data = response.data as any;
         setProfile({
           firstName: data.firstName || '',
           lastName: data.lastName || '',
