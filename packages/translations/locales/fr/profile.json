@@ -1,26 +1,26 @@
 {
-  "title": "Mon profil",
-  "subtitle": "Consultez les informations de votre compte et de votre organisation.",
-  "actions": {
-    "goToSettings": "Mettre à jour le profil"
-  },
-  "details": {
-    "sectionTitle": "Informations du compte",
-    "name": "Nom complet",
-    "email": "E-mail",
-    "role": "Rôle",
-    "status": "Statut",
-    "memberSince": "Membre depuis",
-    "lastActive": "Dernière activité"
-  },
   "organization": {
     "sectionTitle": "Organisation",
-    "name": "Nom de l'organisation",
     "region": "Région",
-    "plan": "Offre",
+    "name": "Nom de l'organisation",
+    "plan": "Plan",
     "id": "ID de l'organisation"
   },
+  "actions": {
+    "goToSettings": "Mise à jour du profil"
+  },
+  "details": {
+    "sectionTitle": "Détails du compte",
+    "memberSince": "Membre depuis",
+    "lastActive": "Dernier actif",
+    "status": "Statut",
+    "email": "Courriel",
+    "name": "Nom complet",
+    "role": "Rôle"
+  },
   "empty": {
-    "organization": "Aucune information d'organisation pour le moment."
-  }
+    "organization": "Aucune information sur l'organisation n'est encore disponible."
+  },
+  "subtitle": "Passez en revue les détails de votre compte et les informations relatives à votre organisation.",
+  "title": "Mon profil"
 }

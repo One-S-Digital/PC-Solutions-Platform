@@ -164,15 +164,7 @@ export class StaticTranslationController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all namespaces (admin)' })
   async getNamespaces(@Query('lang') lang?: string) {
-    let data: string[];
-    if (lang) {
-      data = await this.service.getAllNamespaces(lang);
-    } else {
-      // Return all unique namespaces
-      const result = await this.service.listKeys();
-      const namespaces = new Set(result.data.map((r: any) => r.namespace));
-      data = Array.from(namespaces) as string[];
-    }
+    const data = await this.service.getAllNamespacesAcrossAllLangs();
     return {
       success: true,
       version: 1,
@@ -214,6 +206,7 @@ export class StaticTranslationController {
       namespace?: string;
       keys?: string[];
       force?: boolean;
+      includePlaceholders?: boolean;
     },
   ): Promise<{ success: boolean; translated: number }> {
     const translated = await this.service.translateMissing(
@@ -222,6 +215,7 @@ export class StaticTranslationController {
       body.namespace,
       body.keys,
       body.force || false,
+      body.includePlaceholders ?? true,
     );
     return {
       success: true,
@@ -337,6 +331,97 @@ export class StaticTranslationController {
   }
 
   /**
+   * Admin: Import translations from JSON files in packages/translations/locales
+   * This reads the JSON files from the server's file system and imports them into the database
+   */
+  @Post('admin/import-from-files')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Import translations from JSON files (admin)' })
+  async importFromFiles(
+    @Request() req: any,
+  ): Promise<{ success: boolean; imported: number; details: any }> {
+    const userId = req.user?.id;
+    const result = await this.service.importFromJsonFiles(userId);
+    return {
+      success: true,
+      imported: result.imported,
+      details: result.details,
+    };
+  }
+
+  /**
+   * Admin: Export translations from database to JSON files
+   * This writes translations from the database back to packages/translations/locales
+   */
+  @Post('admin/export-to-files')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Export translations from database to JSON files (admin)' })
+  async exportToFiles(): Promise<{ success: boolean; exported: number; details: any }> {
+    const result = await this.service.exportToJsonFiles();
+    return {
+      success: true,
+      exported: result.exported,
+      details: result.details,
+    };
+  }
+
+  /**
+   * Admin: Full sync - Import, Translate, and Export in one step
+   * This is the simplified workflow that does everything at once
+   * 
+   * NOTE: This is a long-running operation (5-10 mins). The frontend should
+   * handle timeouts gracefully - the sync will continue on the server even
+   * if the HTTP connection times out.
+   */
+  @Post('admin/full-sync')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Throttle({ long: { limit: 1, ttl: 300 } }) // Only allow 1 request per 5 minutes to prevent spam
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Full sync: Import EN, Translate FR/DE, Export to files (admin)' })
+  async fullSync(
+    @Request() req: any,
+  ): Promise<{
+    success: boolean;
+    imported: number;
+    translatedFr: number;
+    translatedDe: number;
+    exported: number;
+    message: string;
+  }> {
+    const userId = req.user?.id;
+    const result = await this.service.fullSync(userId);
+    return {
+      success: true,
+      ...result,
+      message: `Imported ${result.imported} EN keys, translated ${result.translatedFr} FR + ${result.translatedDe} DE, exported ${result.exported} to files`,
+    };
+  }
+
+  /**
+   * Admin: Get translation budget status
+   */
+  @Get('admin/budget-status')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get MT budget status (admin)' })
+  async getBudgetStatus() {
+    const status = await this.service.getBudgetStatus();
+    return {
+      success: true,
+      version: 1,
+      message: 'Budget status retrieved successfully',
+      data: status,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
    * Admin: Get audit logs
    */
   @Get('admin/audit-logs')
@@ -396,6 +481,28 @@ export class StaticTranslationController {
   }
 
   /**
+   * Admin: Clean up English values that look like raw keys
+   * Example: "supportPage.ticketForm.subjectLabel" -> "Subject"
+   */
+  @Post('admin/fix-english-placeholders')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Clean up English key-like placeholders (admin)' })
+  async fixEnglishPlaceholders(): Promise<{
+    success: boolean;
+    cleaned: number;
+    affected: number;
+  }> {
+    const result = await this.service.cleanupEnglishKeyPlaceholders();
+    return {
+      success: true,
+      cleaned: result.cleaned,
+      affected: result.affected,
+    };
+  }
+
+  /**
    * Admin: Auto-fix hardcoded strings
    * Automatically finds and fixes hardcoded strings in frontend code
    */
@@ -411,6 +518,10 @@ export class StaticTranslationController {
     fixed: number;
     skipped: number;
     errors: number;
+    /** Number of completely new translation keys created by the script */
+    missingKeysCreated?: number;
+    /** Detailed info about what was fixed/created so the frontend can drive follow‑up actions */
+    details?: any;
     message: string;
   }> {
     // TODO: Add audit logging with userId for tracking who initiated the auto-fix
@@ -421,6 +532,10 @@ export class StaticTranslationController {
       fixed: result.fixed,
       skipped: result.skipped,
       errors: result.errors,
+      // Pass through new metadata so the frontend can know what changed,
+      // even after a dev-server reload.
+      missingKeysCreated: result.missingKeysCreated ?? 0,
+      details: result.details ?? undefined,
       message: result.message,
     };
   }

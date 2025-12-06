@@ -26,6 +26,11 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 // Ensure BASE_API_URL includes /api prefix since NestJS uses global prefix
 const BASE_API_URL = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
+// Production mode: Use bundled translations, skip API calls
+// Set VITE_USE_BUNDLED_TRANSLATIONS=true in production .env
+const USE_BUNDLED_TRANSLATIONS = import.meta.env.VITE_USE_BUNDLED_TRANSLATIONS === 'true' || 
+  import.meta.env.PROD; // Default to bundled in production builds
+
 // Fallback translations (for offline support)
 // These are still imported from the JSON files as fallback
 import commonEn from '@workspace/translations/locales/en/common.json';
@@ -126,7 +131,7 @@ IndexedDBBackend.init()
     // Clear cache on app start to ensure fresh translations without prefixes
     // This is a one-time clear to remove any old cached data with prefixes
     const cacheVersion = localStorage.getItem('i18n-cache-version');
-    const currentVersion = '2.5'; // Increment this when translations structure changes
+    const currentVersion = '3.0'; // Increment this when translations structure changes - CLEANED PLACEHOLDERS
     
     if (cacheVersion !== currentVersion) {
       IndexedDBBackend.clearAll()
@@ -192,67 +197,65 @@ i18n
       'parentLeadForm',
     ],
     defaultNS: 'common',
-    // Add fallback resources immediately so they're available for instant switching
-    resources: fallbackResources,
+    // Don't use fallback resources as primary - let API serve translations first
+    // Only use fallback if API fails
+    // resources: fallbackResources,
     backend: {
       loadPath: `${BASE_API_URL}/static-translations/{{lng}}/{{ns}}`,
-      // Custom request function to add IndexedDB caching and ETag support
+      // Custom request function with production/development modes
+      // Production: Use bundled JSON files (fast, no API dependency)
+      // Development: Fetch from API (always get latest from database)
       request: async (options: any, url: string, payload: any, callback: any) => {
         const [lng, ns] = url.match(/\/static-translations\/([^/]+)\/([^/]+)/)?.slice(1) || [];
         
         if (!lng || !ns) {
-          // Fallback to default HttpBackend behavior
           return callback(null, { status: 404, data: {} });
         }
 
-        try {
-          // Try IndexedDB cache first
-          const cached = await IndexedDBBackend.read(lng, ns);
-          if (cached && !IndexedDBBackend.isStale(cached)) {
-            // Data is already cleaned by IndexedDBBackend.read()
-            callback(null, { status: 200, data: cached.data });
+        // Helper to get bundled translations
+        const getBundledTranslations = () => {
+          const bundled = fallbackResources[lng as keyof typeof fallbackResources]?.[ns as keyof typeof fallbackResources['en']];
+          return bundled ? stripPrefixes(bundled) : null;
+        };
+
+        // PRODUCTION MODE: Use bundled translations directly (faster, no API calls)
+        if (USE_BUNDLED_TRANSLATIONS) {
+          const bundled = getBundledTranslations();
+          if (bundled) {
+            callback(null, { status: 200, data: bundled });
             return;
           }
+          // If not in bundle, try dynamic import
+          try {
+            const module = await import(`@workspace/translations/locales/${lng}/${ns}.json`);
+            const data = stripPrefixes(module.default || module);
+            callback(null, { status: 200, data });
+          } catch (e) {
+            console.warn(`No bundled translation for ${lng}/${ns}`);
+            callback(null, { status: 200, data: {} });
+          }
+          return;
+        }
 
-          // Add version to URL for cache-busting
+        // DEVELOPMENT MODE: Fetch from API to get latest translations
+        try {
           const version = await getVersion();
           const urlWithVersion = url.includes('?') ? `${url}&v=${version}` : `${url}?v=${version}`;
 
-          // Fetch from API with ETag if cached
-          const headers: HeadersInit = {
-            Accept: 'application/json',
-          };
-          if (cached?.etag) {
-            headers['If-None-Match'] = cached.etag;
-          }
-
           const response = await fetch(urlWithVersion, {
-            headers,
+            headers: { Accept: 'application/json' },
             cache: 'force-cache',
           });
-
-          if (response.status === 304) {
-            // Not modified, use cached data
-            if (cached) {
-              await IndexedDBBackend.save(lng, ns, cached.data, cached.etag);
-              callback(null, { status: 200, data: cached.data });
-            } else {
-              callback(null, { status: 304, data: {} });
-            }
-            return;
-          }
 
           if (!response.ok) {
             throw new Error(`API error: ${response.status}`);
           }
 
           let data = await response.json();
-          const etag = response.headers.get('ETag');
-
-          // Strip prefixes from API data in case database still has some
           data = stripPrefixes(data);
 
-          // Cache in IndexedDB
+          // Cache in IndexedDB for offline use
+          const etag = response.headers.get('ETag');
           await IndexedDBBackend.save(lng, ns, data, etag || '');
 
           callback(null, { status: 200, data });
@@ -260,30 +263,17 @@ i18n
           console.warn(`Failed to load translation ${lng}/${ns}:`, error);
 
           // Fallback to bundled translations
-          try {
-            let fallback = fallbackResources[lng as keyof typeof fallbackResources]?.[ns as keyof typeof fallbackResources['en']];
-            if (!fallback) {
-              // Try to import from packages/translations
-              try {
-                const module = await import(
-                  `@workspace/translations/locales/${lng}/${ns}.json`
-                );
-                fallback = module.default || module;
-              } catch (importError) {
-                callback(importError, { status: 500, data: {} });
-                return;
-              }
-            }
-            
-            // Strip prefixes from fallback translations
-            if (fallback) {
-              const cleanedFallback = stripPrefixes(fallback);
-              callback(null, { status: 200, data: cleanedFallback });
-            } else {
+          const bundled = getBundledTranslations();
+          if (bundled) {
+            callback(null, { status: 200, data: bundled });
+          } else {
+            try {
+              const module = await import(`@workspace/translations/locales/${lng}/${ns}.json`);
+              const data = stripPrefixes(module.default || module);
+              callback(null, { status: 200, data });
+            } catch (e) {
               callback(null, { status: 200, data: {} });
             }
-          } catch (fallbackError) {
-            callback(fallbackError, { status: 500, data: {} });
           }
         }
       },

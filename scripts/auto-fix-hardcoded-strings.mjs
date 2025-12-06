@@ -184,6 +184,47 @@ function generateTranslationKey(text, filePath, context) {
 }
 
 /**
+ * Find missing translation keys - keys used in t() but don't exist in JSON files
+ */
+function findMissingTranslationKeys(filePath, content, existingKeys) {
+  const missingKeys = [];
+  const lines = content.split('\n');
+  
+  lines.forEach((line, lineNumber) => {
+    // Find all t('key') or t("key") calls
+    const tCallPattern = /t\(['"]([\w:.-]+)['"]\)/g;
+    let match;
+    
+    while ((match = tCallPattern.exec(line)) !== null) {
+      const fullKey = match[1];
+      
+      // Normalize the key (handle both namespace:key and just key)
+      const normalizedKey = fullKey.includes(':') ? fullKey : `common:${fullKey}`;
+      
+      // Check if key exists
+      if (!existingKeys.has(normalizedKey)) {
+        // Extract namespace and key parts
+        const [namespace, ...keyParts] = normalizedKey.split(':');
+        const keyPath = keyParts.join(':').replace(/:/g, '.');
+        
+        missingKeys.push({
+          key: normalizedKey,
+          namespace: namespace,
+          keyPath: keyPath,
+          line: lineNumber + 1,
+          context: line.trim(),
+          file: filePath,
+          type: 'missing-key',
+          confidence: 'high'
+        });
+      }
+    }
+  });
+  
+  return missingKeys;
+}
+
+/**
  * Find hardcoded strings - ONLY user-facing strings visible in UI
  */
 function findHardcodedStrings(filePath, content, existingKeys) {
@@ -602,30 +643,42 @@ async function autoFix() {
   };
   
   const allResults = [];
+  const allMissingKeys = [];
+  
   for (const file of files) {
     try {
       const content = fs.readFileSync(file, 'utf8');
+      
+      // Find hardcoded strings
       const fileResults = findHardcodedStrings(file, content, existingKeys);
       
+      // Find missing translation keys
+      const missingKeys = findMissingTranslationKeys(file, content, existingKeys);
+      
       filesScanned++;
-      if (fileResults.length > 0) {
+      if (fileResults.length > 0 || missingKeys.length > 0) {
         filesWithResults++;
         scanStats.filesWithStrings++;
-        scanStats.totalStringsFound += fileResults.length;
+        scanStats.totalStringsFound += fileResults.length + missingKeys.length;
         
         // Get relative path from either frontend or admin directory
         const relPath = file.includes(ADMIN_DIR) 
           ? 'admin/' + path.relative(ADMIN_DIR, file)
           : 'frontend/' + path.relative(FRONTEND_DIR, file);
-        scanStats.stringsByFile[relPath] = fileResults.length;
+        scanStats.stringsByFile[relPath] = fileResults.length + missingKeys.length;
         
         // Count by type
         fileResults.forEach(r => {
           scanStats.stringsByType[r.type] = (scanStats.stringsByType[r.type] || 0) + 1;
         });
+        
+        missingKeys.forEach(r => {
+          scanStats.stringsByType[r.type] = (scanStats.stringsByType[r.type] || 0) + 1;
+        });
       }
       
       allResults.push(...fileResults);
+      allMissingKeys.push(...missingKeys);
       
       // Show progress every 50 files
       if (filesScanned % 50 === 0) {
@@ -641,9 +694,11 @@ async function autoFix() {
   
   console.log(`\n📊 Scan Summary:`);
   console.log(`   Files scanned: ${filesScanned}`);
-  console.log(`   Files with potential strings: ${filesWithResults}`);
-  console.log(`   Total potential strings found: ${allResults.length}`);
-  console.log(`   High confidence strings: ${highConfidence.length}\n`);
+  console.log(`   Files with potential issues: ${filesWithResults}`);
+  console.log(`   Hardcoded strings found: ${allResults.length}`);
+  console.log(`   Missing translation keys found: ${allMissingKeys.length}`);
+  console.log(`   Total issues: ${allResults.length + allMissingKeys.length}`);
+  console.log(`   High confidence: ${highConfidence.length}\n`);
   
   // Show breakdown by type
   if (Object.keys(scanStats.stringsByType).length > 0) {
@@ -692,13 +747,66 @@ async function autoFix() {
     console.log('   This means the codebase is well-translated!\n');
   }
   
-  if (highConfidence.length === 0) {
+  // Process missing keys first - create placeholder keys for them
+  const createdMissingKeys = [];
+  if (allMissingKeys.length > 0) {
+    console.log(`\n🔍 Found ${allMissingKeys.length} missing translation keys. Creating placeholders...\n`);
+    
+    const missingKeysByNamespace = new Map();
+    
+    for (const missingKey of allMissingKeys) {
+      try {
+        if (!missingKeysByNamespace.has(missingKey.namespace)) {
+          missingKeysByNamespace.set(missingKey.namespace, {});
+        }
+        
+        // Create a placeholder value from the key name
+        const placeholder = missingKey.keyPath
+          .split('.')
+          .pop()
+          .replace(/([A-Z])/g, ' $1')
+          .trim()
+          .replace(/^./, str => str.toUpperCase());
+        
+        setNestedValue(missingKeysByNamespace.get(missingKey.namespace), missingKey.keyPath, placeholder);
+        
+        createdMissingKeys.push({
+          key: missingKey.key,
+          namespace: missingKey.namespace,
+          keyPath: missingKey.keyPath,
+          placeholder: placeholder,
+          file: missingKey.file,
+          line: missingKey.line
+        });
+      } catch (error) {
+        console.error(`Error creating placeholder for ${missingKey.key}:`, error.message);
+      }
+    }
+    
+    // Save missing keys to translation files
+    for (const [namespace, keys] of missingKeysByNamespace.entries()) {
+      const translations = loadTranslationFile(namespace);
+      
+      // Merge new keys
+      for (const [keyPath, value] of Object.entries(keys)) {
+        setNestedValue(translations, keyPath, value);
+      }
+      
+      saveTranslationFile(namespace, translations);
+      console.log(`   ✅ Created placeholders in ${namespace}.json`);
+    }
+    
+    console.log(`\n✅ Created ${createdMissingKeys.length} missing translation key placeholders!\n`);
+  }
+  
+  if (highConfidence.length === 0 && allMissingKeys.length === 0) {
     return {
       success: true,
       fixed: 0,
       skipped: 0,
       errors: 0,
-      message: 'No hardcoded user-facing strings found that need fixing.',
+      missingKeysCreated: 0,
+      message: 'No hardcoded strings or missing translation keys found.',
       details: {
         scanStats,
         skipped: []
@@ -846,16 +954,19 @@ async function autoFix() {
     fixed: fixed.length,
     skipped: skipped.length,
     errors: errors.length,
+    missingKeysCreated: createdMissingKeys.length,
     details: {
       fixed,
       skipped,
       errors,
+      missingKeys: createdMissingKeys,
       scanStats
     },
     message: (() => {
       let msg = `✅ Auto-fix complete!\n\n`;
       msg += `📊 Results:\n`;
       msg += `   • Fixed: ${fixed.length} hardcoded strings\n`;
+      msg += `   • Missing keys created: ${createdMissingKeys.length}\n`;
       msg += `   • Skipped: ${skipped.length} (already using translations)\n`;
       msg += `   • Errors: ${errors.length}\n\n`;
       
@@ -886,7 +997,28 @@ async function autoFix() {
         msg += `\n✅ Translation keys created and synced to FR/DE\n`;
         msg += `⚠️ Next step: Run database sync to make translations available in the app\n`;
         msg += `   Command: node scripts/sync-json-to-database.mjs\n`;
-      } else if (skipped.length > 0) {
+      }
+      
+      if (createdMissingKeys.length > 0) {
+        msg += `\n🔍 Missing Translation Keys:\n`;
+        msg += `   Created ${createdMissingKeys.length} placeholder keys for missing translations\n`;
+        
+        // Group by namespace
+        const byNamespace = {};
+        createdMissingKeys.forEach(k => {
+          if (!byNamespace[k.namespace]) byNamespace[k.namespace] = [];
+          byNamespace[k.namespace].push(k);
+        });
+        
+        Object.entries(byNamespace).forEach(([ns, keys]) => {
+          msg += `   • ${ns}: ${keys.length} key${keys.length > 1 ? 's' : ''}\n`;
+        });
+        
+        msg += `\n💡 These keys were being used in code but didn't exist in JSON files.\n`;
+        msg += `   Placeholder values created. Review and update as needed.\n`;
+      }
+      
+      if (fixed.length === 0 && createdMissingKeys.length === 0 && skipped.length > 0) {
         msg += '💡 All found strings were already using translation functions.\n';
         msg += 'This means your codebase is well-translated! ✅\n';
       } else {

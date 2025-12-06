@@ -1,31 +1,58 @@
 {
-  "title": "Nachrichten",
-  "tabs": {
-    "all": "Alle Nachrichten",
-    "unread": "Ungelesen"
+  "messages": {
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
+      "noConversationSelectedTitle": "Keine Konversation ausgewählt",
+      "noConversationsYet": "Noch keine Konversationen",
+      "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
+    },
+    "placeholders": {
+      "searchConversations": "Konversationen durchsuchen...",
+      "typeMessage": "Nachricht eingeben..."
+    },
+    "noConversationsFound": "Keine Konversationen gefunden",
+    "buttons": {
+      "sendMessage": "Nachricht senden",
+      "newGroup": "Neue Gruppe"
+    },
+    "searchPlaceholder": "Konversationen durchsuchen...",
+    "filters": {
+      "unread": "Ungelesen",
+      "all": "Alle"
+    },
+    "tabs": {
+      "unread": "Ungelesen",
+      "all": "Alle Nachrichten"
+    },
+    "title": "Nachrichten"
   },
   "emptyState": {
-    "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen",
-    "noConversationSelectedTitle": "Keine Konversation ausgewählt",
     "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
-    "noConversationsYet": "Noch keine Konversationen"
-  },
-  "searchPlaceholder": "Konversationen durchsuchen...",
-  "noConversationsFound": "Keine Konversationen gefunden",
-  "filters": {
-    "all": "Alle",
-    "unread": "Ungelesen"
-  },
-  "buttons": {
-    "newGroup": "Neue Gruppe",
-    "newChat": "Neuer Chat",
-    "sendMessage": "Nachricht senden"
+    "noConversationSelectedTitle": "Keine Konversation ausgewählt",
+    "noConversationsYet": "Noch keine Konversationen",
+    "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
   },
   "placeholders": {
-    "typeMessage": "Nachricht eingeben...",
-    "searchConversations": "Konversationen durchsuchen..."
+    "searchConversations": "Konversationen durchsuchen...",
+    "typeMessage": "Nachricht eingeben..."
   },
-  "youPrefix": "Sie: ",
+  "noConversationsFound": "Keine Konversationen gefunden",
+  "buttons": {
+    "sendMessage": "Nachricht senden",
+    "newGroup": "Neue Gruppe",
+    "newChat": "Neuer Chat"
+  },
+  "searchPlaceholder": "Konversationen durchsuchen...",
+  "filters": {
+    "unread": "Ungelesen",
+    "all": "Alle"
+  },
   "noMessagesYet": "Noch keine Nachrichten",
-  "unknownUser": "Unbekannter Benutzer"
+  "tabs": {
+    "unread": "Ungelesen",
+    "all": "Alle Nachrichten"
+  },
+  "unknownUser": "Unbekannter Benutzer",
+  "youPrefix": "Sie: ",
+  "title": "Nachrichten"
 }

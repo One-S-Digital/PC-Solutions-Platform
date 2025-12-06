@@ -1,12 +1,127 @@
 {
-  "all": {
-    "title": "Tous les utilisateurs"
+  "users": {
+    "roleManagement": {
+      "userDetailDrawer": {
+        "cannotModifyOwnAccount": "Vous ne pouvez pas modifier votre propre compte",
+        "activateUserButton": "Activer l'utilisateur",
+        "adminActionsTitle": "Actions de l'administration",
+        "changeRoleLabel": "Changer de rôle",
+        "lastLoginLabel": "Dernière connexion",
+        "regionLabel": "Région",
+        "statusLabel": "Statut",
+        "roleLabel": "Rôle",
+        "orgLabel": "Organisation",
+        "title": "Détails de l'utilisateur"
+      },
+      "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
+      "confirmDeleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+      "searchPlaceholder": "Recherche d'utilisateurs...",
+      "addNewUserButton": "Ajouter un nouvel utilisateur",
+      "status": {
+        "inactive": "Inactif",
+        "pending": "En attente",
+        "active": "Actif"
+      },
+      "table": {
+        "lastLogin": "Dernière connexion",
+        "actions": "Actions",
+        "nameOrg": "Nom / Organisation",
+        "region": "Région",
+        "status": "Statut",
+        "role": "Rôle"
+      },
+      "addNewUserTBD": "Fonctionnalité d'ajout d'utilisateur bientôt disponible",
+      "allUsersTitle": "Tous les utilisateurs",
+      "filtersButton": "Filtres",
+      "rolePageTitle": "{{rôle}} Utilisateurs",
+      "noUsersFound": "Aucun utilisateur n'a été trouvé pour ce rôle",
+      "addNewUser": "Ajouter un nouvel utilisateur",
+      "emptyState": "Aucun utilisateur trouvé",
+      "filtersTBD": "Fonctionnalité des filtres bientôt disponible",
+      "search": "Recherche d'utilisateurs...",
+      "title": "Gestion des rôles"
+    },
+    "productSuppliers": {
+      "title": "Fournisseurs de produits"
+    },
+    "serviceProviders": {
+      "title": "Prestataires de services"
+    },
+    "buttons": {
+      "addNewUser": "Ajouter un nouvel utilisateur",
+      "deleteUser": "Supprimer l'utilisateur",
+      "editUser": "Modifier l'utilisateur"
+    },
+    "foundations": {
+      "title": "Fondements"
+    },
+    "educators": {
+      "title": "Éducateurs"
+    },
+    "headers": {
+      "actions": "Actions",
+      "status": "Statut",
+      "email": "Courriel",
+      "name": "Nom",
+      "role": "Rôle"
+    },
+    "status": {
+      "inactive": "Inactif",
+      "pending": "En attente",
+      "active": "Actif"
+    },
+    "parents": {
+      "title": "Les parents"
+    },
+    "admins": {
+      "title": "Administrateurs"
+    },
+    "noUsersFound": "Aucun utilisateur trouvé",
+    "all": {
+      "title": "Tous les utilisateurs"
+    }
   },
-  "admins": {
-    "title": "Administrateurs"
-  },
-  "foundations": {
-    "title": "Fondations"
+  "roleManagement": {
+    "userDetailDrawer": {
+      "cannotModifyOwnAccount": "Vous ne pouvez pas modifier votre propre compte",
+      "activateUserButton": "Activer l'utilisateur",
+      "adminActionsTitle": "Actions de l'administration",
+      "changeRoleLabel": "Changer de rôle",
+      "lastLoginLabel": "Dernière connexion",
+      "regionLabel": "Région",
+      "statusLabel": "Statut",
+      "roleLabel": "Rôle",
+      "orgLabel": "Organisation",
+      "title": "Détails de l'utilisateur"
+    },
+    "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
+    "userProfileUpdated": "Profil de {{name}} mis à jour avec succès",
+    "confirmDeleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+    "searchPlaceholder": "Recherche d'utilisateurs...",
+    "addNewUserButton": "Ajouter un nouvel utilisateur",
+    "status": {
+      "inactive": "Inactif",
+      "pending": "En attente",
+      "active": "Actif"
+    },
+    "table": {
+      "lastLogin": "Dernière connexion",
+      "actions": "Actions",
+      "nameOrg": "Nom / Organisation",
+      "region": "Région",
+      "status": "Statut",
+      "role": "Rôle"
+    },
+    "addNewUserTBD": "Fonctionnalité d'ajout d'utilisateur bientôt disponible",
+    "allUsersTitle": "Tous les utilisateurs",
+    "filtersButton": "Filtres",
+    "rolePageTitle": "{{rôle}} Utilisateurs",
+    "noUsersFound": "Aucun utilisateur n'a été trouvé pour ce rôle",
+    "addNewUser": "Ajouter un nouvel utilisateur",
+    "emptyState": "Aucun utilisateur trouvé",
+    "filtersTBD": "Fonctionnalité des filtres bientôt disponible",
+    "search": "Recherche d'utilisateurs...",
+    "title": "Gestion des rôles"
   },
   "productSuppliers": {
     "title": "Fournisseurs de produits"
@@ -14,70 +129,37 @@
   "serviceProviders": {
     "title": "Prestataires de services"
   },
-  "parents": {
-    "title": "Parents"
+  "buttons": {
+    "addNewUser": "Ajouter un nouvel utilisateur",
+    "deleteUser": "Supprimer l'utilisateur",
+    "editUser": "Modifier l'utilisateur"
+  },
+  "foundations": {
+    "title": "Fondements"
   },
   "educators": {
     "title": "Éducateurs"
   },
   "headers": {
-    "name": "Nom",
-    "email": "E-mail",
-    "role": "Rôle",
+    "actions": "Actions",
     "status": "Statut",
-    "actions": "Actions"
+    "email": "Courriel",
+    "name": "Nom",
+    "role": "Rôle"
+  },
+  "status": {
+    "inactive": "Inactif",
+    "pending": "En attente",
+    "active": "Actif"
+  },
+  "parents": {
+    "title": "Les parents"
+  },
+  "admins": {
+    "title": "Administrateurs"
   },
   "noUsersFound": "Aucun utilisateur trouvé",
-  "status": {
-    "pending": "En attente",
-    "active": "Actif",
-    "inactive": "Inactif"
-  },
-  "buttons": {
-    "addNewUser": "Ajouter un nouvel utilisateur",
-    "editUser": "Modifier l'utilisateur",
-    "deleteUser": "Supprimer l'utilisateur"
-  },
-  "roleManagement": {
-    "title": "Gestion des rôles",
-    "search": "Rechercher des utilisateurs...",
-    "addNewUser": "Ajouter un nouvel utilisateur",
-    "noUsersFound": "Aucun utilisateur trouvé pour ce rôle",
-    "allUsersTitle": "Tous les utilisateurs",
-    "rolePageTitle": "Utilisateurs {{role}}",
-    "searchPlaceholder": "Rechercher des utilisateurs...",
-    "addNewUserButton": "Ajouter un nouvel utilisateur",
-    "addNewUserTBD": "Fonctionnalité d'ajout d'utilisateur à venir",
-    "filtersButton": "Filtres",
-    "filtersTBD": "Fonctionnalité de filtres à venir",
-    "emptyState": "Aucun utilisateur trouvé",
-    "confirmDeleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
-    "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
-    "userProfileUpdated": "Profil de {{name}} mis à jour avec succès",
-    "status": {
-      "pending": "En attente",
-      "active": "Actif",
-      "inactive": "Inactif"
-    },
-    "table": {
-      "nameOrg": "Nom / Organisation",
-      "role": "Rôle",
-      "region": "Région",
-      "status": "Statut",
-      "lastLogin": "Dernière connexion",
-      "actions": "Actions"
-    },
-    "userDetailDrawer": {
-      "title": "Détails de l'utilisateur",
-      "roleLabel": "Rôle",
-      "statusLabel": "Statut",
-      "regionLabel": "Région",
-      "lastLoginLabel": "Dernière connexion",
-      "orgLabel": "Organisation",
-      "adminActionsTitle": "Actions administrateur",
-      "activateUserButton": "Activer l'utilisateur",
-      "changeRoleLabel": "Changer le rôle",
-      "cannotModifyOwnAccount": "Vous ne pouvez pas modifier votre propre compte"
-    }
+  "all": {
+    "title": "Tous les utilisateurs"
   }
 }

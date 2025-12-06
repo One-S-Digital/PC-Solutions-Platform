@@ -26,14 +26,14 @@ export class MessagingController {
   // Conversation Management
   @Post('conversations')
   async createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
-    // req.context.userId is the Clerk ID
-    // Use appUserId if available, otherwise use clerkId (userId)
-    const creatorId = req.context.appUserId || req.context.userId;
+    // Use profileUserId (User table ID) for conversation participants
+    const creatorId = req.context.profileUserId;
     return this.messagingService.createConversation(createConversationDto, creatorId);
   }
 
   @Get('conversations')
   getUserConversations(@Request() req) {
+    // Use Clerk ID for getUserConversations (service handles lookup)
     const userId = req.context.userId;
     return this.messagingService.getUserConversations(userId);
   }

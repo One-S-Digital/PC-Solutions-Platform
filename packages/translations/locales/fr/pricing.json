@@ -1,129 +1,258 @@
 {
-  "sections": {
-    "basic": {
-      "title": "Basique",
-      "desc": "Outils essentiels pour les petites crèches",
-      "price": "CHF 49"
+  "pricing": {
+    "pricingPage": {
+      "serviceProviderPlan": {
+        "features": {
+          "appointmentScheduling": "Système de prise de rendez-vous",
+          "multiLanguageSupport": "Prise en charge multilingue",
+          "prioritySupport": "Soutien prioritaire",
+          "revenueTracking": "Suivi des recettes et rapports",
+          "serviceListings": "Listes de services et accès au marché",
+          "crm": "Gestion des relations avec les clients"
+        },
+        "description": "Planifiez des rendez-vous, gérez des listes de clients et développez des revenus récurrents avec les opérateurs de garde d'enfants.",
+        "tagline": "Établir des partenariats durables avec des garderies professionnelles.",
+        "name": "Prestataires de services"
+      },
+      "enterprisePlan": {
+        "features": {
+          "everythingProfessional": "Tout en professionnel",
+          "multiSiteManagement": "Gestion multisite",
+          "customIntegrations": "Intégrations personnalisées et accès à l'API",
+          "whiteLabelBranding": "Options de marquage en marque blanche",
+          "advancedAnalytics": "Analyses et rapports avancés",
+          "accountManager": "Gestionnaire de compte dédié"
+        },
+        "description": "Exploitez plusieurs sites avec une qualité constante grâce aux analyses, aux intégrations et aux experts dédiés.",
+        "tagline": "Évoluez sur plusieurs sites grâce à l'automatisation et à une assistance de premier ordre.",
+        "name": "Entreprise"
+      },
+      "professionalPlan": {
+        "features": {
+          "everythingEssential": "Tout en essentiel",
+          "unlimitedEnquiries": "Nombre illimité de demandes de renseignements de la part des parents",
+          "prioritySupport": "Soutien prioritaire",
+          "recruitment": "Module de recrutement",
+          "elearning": "Bibliothèque d'apprentissage en ligne du personnel",
+          "teamTools": "Outils de gestion d'équipe"
+        },
+        "description": "Recrutez et formez du personnel, traitez un nombre illimité de demandes de renseignements de la part des parents et assurez l'excellence sans alourdir la charge administrative.",
+        "tagline": "Se développer en toute confiance grâce à un soutien complet en matière de recrutement et de formation.",
+        "name": "Professionnel"
+      },
+      "suppliersPlan": {
+        "features": {
+          "multiLanguageSupport": "Prise en charge multilingue",
+          "productListings": "Listes de produits et accès à la place de marché",
+          "leadManagement": "Espace de travail pour la gestion des prospects",
+          "salesAnalytics": "Tableau de bord d'analyse des ventes",
+          "orderTracking": "Suivi et exécution des commandes",
+          "emailSupport": "Soutien par courrier électronique"
+        },
+        "description": "Faites la promotion de votre catalogue, gérez les clients potentiels et suivez les performances de vente à partir d'un seul endroit.",
+        "tagline": "Des prix justes et simples pour atteindre les garderies suisses.",
+        "name": "Fournisseurs"
+      },
+      "essentialPlan": {
+        "features": {
+          "everythingBasic": "Tout en bas",
+          "enquiryTracker": "Suivi des demandes des parents avec réponses rapides",
+          "hrCompliance": "Bibliothèque de RH et de conformité validée en Suisse",
+          "leadInbox": "Boîte de réception des pistes parentales avec correspondance automatique"
+        },
+        "description": "Gagnez des parents plus rapidement, restez en conformité et gérez les demandes avec facilité, le tout à partir d'un tableau de bord simple.",
+        "tagline": "Gagnez du temps grâce à des flux de travail prêts à l'emploi pour les parents et les RH.",
+        "name": "Essentiel"
+      },
+      "basicPlan": {
+        "features": {
+          "emailSupport": "Soutien par courrier électronique",
+          "multilingual": "Interface multilingue (EN/FR/DE)",
+          "marketplace": "Marché des fournisseurs et des prestataires de services",
+          "policyhub": "Pôle politique propre à chaque canton"
+        },
+        "description": "Bénéficiez d'un accès immédiat aux fournisseurs, de conseils en matière de conformité et d'une assistance - tout ce dont vous avez besoin pour fonctionner sans heurts et à moindre coût.",
+        "tagline": "Des outils essentiels pour les petites crèches.",
+        "name": "De base"
+      },
+      "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
+      "selectAndContinue": "Sélectionner et continuer",
+      "featureFallback": "Caractéristiques incluses",
+      "subtitleSignup": "Créez votre compte pour commencer",
+      "titleSignup": "S'inscrire",
+      "choosePlan": "Choisissez votre plan",
+      "saveUpTo10": "Économisez jusqu'à 10",
+      "whatYouGet": "Ce que vous obtenez",
+      "features": "Caractéristiques du plan",
+      "subtitle": "Choisissez le plan qui convient à votre organisation",
+      "billing": "Informations de facturation",
+      "monthly": "Mensuel",
+      "popular": "Les plus populaires",
+      "annual": "Annuel",
+      "plans": "Plans disponibles",
+      "title": "Plans de tarification"
     },
-    "essential": {
-      "title": "Essentiel",
-      "desc": "Gagnez du temps avec des workflows prêts à l'emploi",
-      "price": "CHF 99"
+    "suppliers": {
+      "serviceProvidersPlan": {
+        "price": "CHF 99",
+        "title": "Prestataires de services",
+        "desc": "Établir des partenariats avec les crèches"
+      },
+      "suppliersPlan": {
+        "price": "79 CHF",
+        "title": "Fournisseurs de produits",
+        "desc": "Vos produits pour les crèches suisses"
+      },
+      "title": "Pour les fournisseurs et prestataires de services"
     },
-    "professional": {
-      "title": "Professionnel",
-      "desc": "Croissez en toute confiance avec un soutien complet",
-      "price": "CHF 199"
-    },
-    "enterprise": {
-      "title": "Entreprise",
-      "desc": "Évoluez sur plusieurs sites avec automatisation",
-      "price": "Personnalisé"
-    }
-  },
-  "suppliers": {
-    "title": "Pour les fournisseurs et prestataires de services",
-    "suppliersPlan": {
-      "title": "Fournisseurs de produits",
-      "desc": "Atteignez les crèches suisses avec vos produits",
-      "price": "CHF 79"
-    },
-    "serviceProvidersPlan": {
-      "title": "Prestataires de services",
-      "desc": "Créez des partenariats avec les crèches",
-      "price": "CHF 99"
+    "sections": {
+      "professional": {
+        "price": "199 CHF",
+        "title": "Professionnel",
+        "desc": "Se développer en toute confiance avec un soutien complet"
+      },
+      "enterprise": {
+        "price": "Sur mesure",
+        "title": "Entreprise",
+        "desc": "L'automatisation permet de faire évoluer les sites"
+      },
+      "essential": {
+        "price": "CHF 99",
+        "title": "Essentiel",
+        "desc": "Gagner du temps grâce à des flux de travail prêts à l'emploi"
+      },
+      "basic": {
+        "price": "49 CHF",
+        "title": "De base",
+        "desc": "Outils essentiels pour les petites crèches"
+      }
     }
   },
   "pricingPage": {
-    "title": "Plans tarifaires",
-    "plans": "Offres disponibles",
-    "features": "Fonctionnalités du plan",
-    "billing": "Informations de facturation",
-    "monthly": "Mensuel",
-    "annual": "Annuel",
-    "saveUpTo10": "Économisez jusqu'à 10 %",
-    "popular": "Le plus populaire",
-    "whatYouGet": "Ce qui est inclus",
-    "selectAndContinue": "Sélectionner et continuer",
-    "choosePlan": "Choisir un plan",
-    "titleSignup": "Inscription",
-    "subtitleSignup": "Créez votre compte pour commencer",
-    "subtitle": "Choisissez le plan le plus adapté à votre organisation",
-    "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
-    "basicPlan": {
-      "name": "Basic",
-      "tagline": "Outils essentiels pour les petites crèches.",
-      "description": "Accédez immédiatement aux fournisseurs, aux conseils de conformité et au support — tout ce qu'il faut pour fonctionner sereinement à moindre coût.",
+    "serviceProviderPlan": {
       "features": {
-        "marketplace": "Place de marché des fournisseurs et prestataires",
-        "policyhub": "Hub des politiques cantonales",
-        "multilingual": "Interface multilingue (EN/FR/DE)",
-        "emailSupport": "Support par e-mail"
-      }
-    },
-    "essentialPlan": {
-      "name": "Essential",
-      "tagline": "Gagnez du temps avec des parcours parents et RH prêts à l'emploi.",
-      "description": "Attirez les parents plus rapidement, restez conforme et gérez les demandes facilement depuis un tableau de bord unique.",
-      "features": {
-        "everythingBasic": "Tout ce qui est inclus dans Basic",
-        "leadInbox": "Boîte de réception des prospects parents avec auto-matching",
-        "hrCompliance": "Bibliothèque RH et conformité validée en Suisse",
-        "enquiryTracker": "Suivi des demandes parents avec réponses rapides"
-      }
-    },
-    "professionalPlan": {
-      "name": "Professional",
-      "tagline": "Développez-vous sereinement avec le recrutement et la formation intégrés.",
-      "description": "Recrutez et formez votre équipe, traitez un volume illimité de demandes parents et offrez un service irréprochable sans charge administrative.",
-      "features": {
-        "everythingEssential": "Tout ce qui est inclus dans Essential",
-        "recruitment": "Module de recrutement",
-        "unlimitedEnquiries": "Demandes parents illimitées",
-        "elearning": "Bibliothèque e-learning pour le personnel",
-        "teamTools": "Outils de gestion d'équipe",
-        "prioritySupport": "Support prioritaire"
-      }
+        "appointmentScheduling": "Système de prise de rendez-vous",
+        "multiLanguageSupport": "Support multilingue",
+        "prioritySupport": "Soutien prioritaire",
+        "revenueTracking": "Suivi des recettes et rapports",
+        "serviceListings": "Listes de services et accès au marché",
+        "crm": "Gestion des relations avec les clients"
+      },
+      "description": "Planifiez des rendez-vous, gérez des listes de clients et développez des revenus récurrents avec les opérateurs de garde d'enfants.",
+      "tagline": "Établir des partenariats durables avec des garderies professionnelles.",
+      "name": "Prestataires de services"
     },
     "enterprisePlan": {
-      "name": "Enterprise",
-      "tagline": "Déployez plusieurs sites avec automatisation et support premium.",
-      "description": "Pilotez plusieurs établissements avec une qualité constante grâce aux analyses, aux intégrations et à des experts dédiés.",
       "features": {
-        "everythingProfessional": "Tout ce qui est inclus dans Professional",
+        "everythingProfessional": "Tout en professionnel",
         "multiSiteManagement": "Gestion multi-sites",
+        "customIntegrations": "Intégrations personnalisées et accès à l'API",
+        "whiteLabelBranding": "Options de marquage en marque blanche",
         "advancedAnalytics": "Analyses et rapports avancés",
-        "accountManager": "Gestionnaire de compte dédié",
-        "customIntegrations": "Intégrations personnalisées et accès API",
-        "whiteLabelBranding": "Options de marque blanche"
-      }
+        "accountManager": "Gestionnaire de compte dédié"
+      },
+      "description": "Exploitez plusieurs sites avec une qualité constante grâce aux analyses, aux intégrations et aux experts dédiés.",
+      "tagline": "Évoluez sur plusieurs sites grâce à l'automatisation et à une assistance de premier ordre.",
+      "name": "Entreprise"
+    },
+    "professionalPlan": {
+      "features": {
+        "everythingEssential": "Tout en essentiel",
+        "unlimitedEnquiries": "Nombre illimité de demandes de renseignements de la part des parents",
+        "prioritySupport": "Soutien prioritaire",
+        "recruitment": "Module de recrutement",
+        "elearning": "Bibliothèque d'apprentissage en ligne du personnel",
+        "teamTools": "Outils de gestion d'équipe"
+      },
+      "description": "Recrutez et formez du personnel, traitez un nombre illimité de demandes de renseignements de la part des parents et assurez l'excellence sans alourdir la charge administrative.",
+      "tagline": "Se développer en toute confiance grâce à un soutien complet en matière de recrutement et de formation.",
+      "name": "Professionnel"
     },
     "suppliersPlan": {
-      "name": "Suppliers",
-      "tagline": "Tarification simple pour toucher les crèches suisses.",
-      "description": "Mettez en avant votre catalogue, gérez vos prospects et suivez vos ventes depuis une seule interface.",
       "features": {
-        "productListings": "Mises en avant produits et accès à la place de marché",
-        "leadManagement": "Espace de gestion des prospects",
-        "orderTracking": "Suivi et traitement des commandes",
         "multiLanguageSupport": "Support multilingue",
-        "salesAnalytics": "Tableau de bord des ventes",
-        "emailSupport": "Support par e-mail"
-      }
+        "productListings": "Listes de produits et accès à la place de marché",
+        "leadManagement": "Espace de travail pour la gestion des prospects",
+        "salesAnalytics": "Tableau de bord d'analyse des ventes",
+        "orderTracking": "Suivi et exécution des commandes",
+        "emailSupport": "Soutien par courriel"
+      },
+      "description": "Faites la promotion de votre catalogue, gérez les clients potentiels et suivez les performances de vente à partir d'un seul endroit.",
+      "tagline": "Des prix justes et simples pour atteindre les garderies suisses.",
+      "name": "Fournisseurs"
     },
-    "serviceProviderPlan": {
-      "name": "Service Providers",
-      "tagline": "Bâtissez des partenariats durables avec les crèches professionnelles.",
-      "description": "Planifiez vos rendez-vous, pilotez votre pipeline clients et développez des revenus récurrents avec les opérateurs de garde d'enfants.",
+    "essentialPlan": {
       "features": {
-        "serviceListings": "Mises en avant de services et accès à la place de marché",
-        "appointmentScheduling": "Système de planification de rendez-vous",
-        "crm": "Gestion de la relation client",
-        "revenueTracking": "Suivi et rapports de revenus",
-        "multiLanguageSupport": "Support multilingue",
-        "prioritySupport": "Support prioritaire"
-      }
+        "everythingBasic": "Tout en bas",
+        "enquiryTracker": "Suivi des demandes des parents avec réponses rapides",
+        "hrCompliance": "Bibliothèque de RH et de conformité validée en Suisse",
+        "leadInbox": "Boîte de réception des pistes parentales avec correspondance automatique"
+      },
+      "description": "Gagnez des parents plus rapidement, restez en conformité et gérez les demandes avec facilité, le tout à partir d'un tableau de bord simple.",
+      "tagline": "Gagnez du temps grâce à des flux de travail prêts à l'emploi pour les parents et les RH.",
+      "name": "Essentiel"
     },
-    "featureFallback": "Fonction incluse"
+    "basicPlan": {
+      "features": {
+        "emailSupport": "Soutien par courriel",
+        "multilingual": "Interface multilingue (EN/FR/DE)",
+        "marketplace": "Marché des fournisseurs et des prestataires de services",
+        "policyhub": "Pôle politique propre à chaque canton"
+      },
+      "description": "Bénéficiez d'un accès immédiat aux fournisseurs, de conseils en matière de conformité et d'une assistance - tout ce dont vous avez besoin pour fonctionner sans heurts et à moindre coût.",
+      "tagline": "Des outils essentiels pour les petites crèches.",
+      "name": "De base"
+    },
+    "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
+    "selectAndContinue": "Sélectionner et continuer",
+    "featureFallback": "Caractéristiques incluses",
+    "subtitleSignup": "Créez votre compte pour commencer",
+    "titleSignup": "Titre Signup",
+    "choosePlan": "Choisissez votre plan",
+    "saveUpTo10": "Economisez jusqu'à 10",
+    "whatYouGet": "Ce que vous obtenez",
+    "features": "Caractéristiques du plan",
+    "subtitle": "Choisissez le plan qui convient à votre organisation",
+    "billing": "Informations de facturation",
+    "monthly": "Mensuel",
+    "popular": "Les plus populaires",
+    "annual": "Annuel",
+    "plans": "Plans disponibles",
+    "title": "Plans de tarification"
+  },
+  "suppliers": {
+    "serviceProvidersPlan": {
+      "price": "CHF 99",
+      "title": "Prestataires de services",
+      "desc": "Établir des partenariats avec les crèches"
+    },
+    "suppliersPlan": {
+      "price": "79 CHF",
+      "title": "Fournisseurs de produits",
+      "desc": "Vos produits pour les crèches suisses"
+    },
+    "title": "Pour les fournisseurs et prestataires de services"
+  },
+  "sections": {
+    "professional": {
+      "price": "199 CHF",
+      "title": "Professionnel",
+      "desc": "Se développer en toute confiance avec un soutien complet"
+    },
+    "enterprise": {
+      "price": "Sur mesure",
+      "title": "Entreprise",
+      "desc": "L'automatisation permet de faire évoluer les sites"
+    },
+    "essential": {
+      "price": "CHF 99",
+      "title": "Essentiel",
+      "desc": "Gagner du temps grâce à des flux de travail prêts à l'emploi"
+    },
+    "basic": {
+      "price": "49 CHF",
+      "title": "De base",
+      "desc": "Outils essentiels pour les petites crèches"
+    }
   }
 }

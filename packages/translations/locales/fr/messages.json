@@ -1,31 +1,58 @@
 {
-  "title": "Messages",
-  "tabs": {
-    "all": "Tous les messages",
-    "unread": "Non lus"
+  "messages": {
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
+      "noConversationSelectedTitle": "Aucune conversation sélectionnée",
+      "noConversationsYet": "Pas encore de conversations",
+      "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
+    },
+    "placeholders": {
+      "searchConversations": "Recherche de conversations...",
+      "typeMessage": "Tapez un message..."
+    },
+    "noConversationsFound": "Aucune conversation trouvée",
+    "buttons": {
+      "sendMessage": "Envoyer un message",
+      "newGroup": "Nouveau groupe"
+    },
+    "searchPlaceholder": "Recherche de conversations...",
+    "filters": {
+      "unread": "Non lu",
+      "all": "Tous"
+    },
+    "tabs": {
+      "unread": "Non lu",
+      "all": "Tous les messages"
+    },
+    "title": "Messages"
   },
   "emptyState": {
-    "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages",
+    "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
     "noConversationSelectedTitle": "Aucune conversation sélectionnée",
-    "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer",
-    "noConversationsYet": "Aucune conversation pour le moment"
-  },
-  "searchPlaceholder": "Rechercher des conversations...",
-  "noConversationsFound": "Aucune conversation trouvée",
-  "filters": {
-    "all": "Tout",
-    "unread": "Non lus"
-  },
-  "buttons": {
-    "newGroup": "Nouveau groupe",
-    "newChat": "Nouvelle conversation",
-    "sendMessage": "Envoyer un message"
+    "noConversationsYet": "Pas encore de conversation",
+    "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
   },
   "placeholders": {
-    "typeMessage": "Tapez un message...",
-    "searchConversations": "Rechercher des conversations..."
+    "searchConversations": "Recherche de conversations",
+    "typeMessage": "Tapez un message..."
   },
-  "youPrefix": "Vous : ",
-  "noMessagesYet": "Aucun message pour le moment",
-  "unknownUser": "Utilisateur inconnu"
+  "noConversationsFound": "Aucune conversation trouvée",
+  "buttons": {
+    "sendMessage": "Envoyer",
+    "newGroup": "Nouveau groupe",
+    "newChat": "Nouveau chat"
+  },
+  "searchPlaceholder": "Recherche de conversations...",
+  "filters": {
+    "unread": "Non lu",
+    "all": "Tous"
+  },
+  "noMessagesYet": "Aucun message pour l'instant",
+  "tabs": {
+    "unread": "Non lu",
+    "all": "Tous les messages"
+  },
+  "unknownUser": "Utilisateur inconnu",
+  "youPrefix": "Vous :",
+  "title": "Messages"
 }

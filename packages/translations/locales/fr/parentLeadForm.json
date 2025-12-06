@@ -1,36 +1,70 @@
 {
-  "title": "Trouvez votre crèche parfaite",
-  "subtitle": "Parlez-nous de vos besoins et nous vous aiderons à trouver la meilleure solution de garde d'enfants",
-  "labels": {
-    "fullName": "Nom complet",
-    "email": "Adresse e-mail",
-    "phoneNumber": "Numéro de téléphone",
-    "canton": "Canton",
-    "municipality": "Municipalité",
-    "childAge": "Âge de l'enfant (en mois)",
-    "startDate": "Date de début préférée",
-    "childNeeds": "Besoins spéciaux de l'enfant",
-    "specialNeeds": "Exigences spéciales"
+  "parentLeadForm": {
+    "placeholders": {
+      "specialRequirements": "Veuillez décrire toute exigence particulière, tout régime alimentaire, toute condition médicale ou toute autre information importante concernant votre enfant...",
+      "municipality": "Sélectionner la municipalité",
+      "phoneNumber": "+41 XX XXX XX XX",
+      "startDate": "Sélectionner la date",
+      "childAge": "Saisir l'âge en mois",
+      "fullName": "Saisissez votre nom complet",
+      "canton": "Sélectionner un canton",
+      "email": "your.email@example.com"
+    },
+    "buttons": {
+      "viewMyEnquiries": "Voir mes demandes de renseignements",
+      "submitEnquiry": "Soumettre une demande"
+    },
+    "labels": {
+      "municipality": "Municipalité",
+      "specialNeeds": "Exigences particulières",
+      "phoneNumber": "Numéro de téléphone",
+      "childNeeds": "Besoins particuliers de l'enfant",
+      "startDate": "Date de début souhaitée",
+      "childAge": "Âge de l'enfant (en mois)",
+      "fullName": "Nom complet",
+      "canton": "Canton",
+      "email": "Adresse électronique"
+    },
+    "messages": {
+      "submitting": "Soumettre votre demande...",
+      "success": "Votre demande a été soumise avec succès !",
+      "error": "L'envoi de la demande a échoué. Veuillez réessayer."
+    },
+    "subtitle": "Faites-nous part de vos besoins et nous vous aiderons à trouver la meilleure solution de garde d'enfants.",
+    "title": "Trouvez la crèche qui vous convient"
   },
   "placeholders": {
-    "fullName": "Entrez votre nom complet",
-    "email": "votre.email@exemple.com",
-    "phoneNumber": "+41 XX XXX XX XX",
-    "canton": "Sélectionner le canton",
+    "specialRequirements": "Veuillez décrire toute exigence particulière, tout régime alimentaire, toute condition médicale ou toute autre information importante concernant votre enfant...",
     "municipality": "Sélectionner la municipalité",
-    "childAge": "Entrez l'âge en mois",
+    "phoneNumber": "+41 XX XXX XX XX",
     "startDate": "Sélectionner la date",
-    "specialRequirements": "Veuillez décrire toute exigence particulière, besoins alimentaires, conditions médicales ou autres informations importantes concernant votre enfant..."
+    "childAge": "Saisir l'âge en mois",
+    "fullName": "Saisissez votre nom complet",
+    "canton": "Sélectionner un canton",
+    "email": "your.email@example.com"
   },
   "buttons": {
-    "submitEnquiry": "Soumettre la demande",
-    "viewMyEnquiries": "Voir mes demandes",
     "backToDashboard": "Retour au tableau de bord",
+    "viewMyEnquiries": "Voir mes demandes de renseignements",
+    "submitEnquiry": "Soumettre une demande",
     "backToHome": "Retour à l'accueil"
   },
+  "labels": {
+    "municipality": "Municipalité",
+    "specialNeeds": "Exigences particulières",
+    "phoneNumber": "Numéro de téléphone",
+    "childNeeds": "Besoins particuliers de l'enfant",
+    "startDate": "Date de début souhaitée",
+    "childAge": "Âge de l'enfant (en mois)",
+    "fullName": "Nom complet",
+    "canton": "Canton",
+    "email": "Adresse électronique"
+  },
   "messages": {
-    "submitting": "Soumission de votre demande...",
-    "success": "Votre demande a été soumise avec succès!",
-    "error": "Échec de la soumission de la demande. Veuillez réessayer."
-  }
+    "submitting": "Soumettre votre demande...",
+    "success": "Votre demande a été soumise avec succès !",
+    "error": "L'envoi de la demande a échoué. Veuillez réessayer."
+  },
+  "subtitle": "Faites-nous part de vos besoins et nous vous aiderons à trouver la meilleure solution de garde d'enfants.",
+  "title": "Trouvez la crèche qui vous convient"
 }

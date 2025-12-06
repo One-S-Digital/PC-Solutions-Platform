@@ -51,7 +51,7 @@ export class SupportController {
   @ApiOperation({ summary: 'Create a new support ticket' })
   @ApiResponse({ status: 201, description: 'Ticket created successfully' })
   async createTicket(@Request() req, @Body() createTicketDto: CreateTicketDto) {
-    const userId = req.context.userId;
+    const userId = req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const ticket = await this.supportService.createTicket(userId, createTicketDto);
     return wrapResponse(ticket, 'Ticket created successfully');
   }
@@ -60,7 +60,7 @@ export class SupportController {
   @ApiOperation({ summary: 'Get all tickets for the current user' })
   @ApiResponse({ status: 200, description: 'Tickets retrieved successfully' })
   async getMyTickets(@Request() req) {
-    const userId = req.context.userId;
+    const userId = req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const tickets = await this.supportService.getUserTickets(userId);
     return wrapResponse(tickets);
   }
@@ -69,7 +69,7 @@ export class SupportController {
   @ApiOperation({ summary: 'Get a specific ticket' })
   @ApiResponse({ status: 200, description: 'Ticket retrieved successfully' })
   async getTicket(@Request() req, @Param('id') ticketId: string) {
-    const userId = req.context.userId;
+    const userId = req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const isAdmin =
       req.context.role === UserRole.ADMIN || req.context.role === UserRole.SUPER_ADMIN;
     const ticket = await this.supportService.getTicketById(ticketId, userId, isAdmin);
@@ -84,7 +84,7 @@ export class SupportController {
     @Param('id') ticketId: string,
     @Body() responseDto: CreateTicketResponseDto,
   ) {
-    const userId = req.context.userId;
+    const userId = req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const isAdmin =
       req.context.role === UserRole.ADMIN || req.context.role === UserRole.SUPER_ADMIN;
     const ticket = await this.supportService.addResponse(
@@ -128,7 +128,7 @@ export class SupportController {
     @Param('id') ticketId: string,
     @Body() statusDto: UpdateTicketStatusDto,
   ) {
-    const adminUserId = req.context.userId;
+    const adminUserId = req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const ticket = await this.supportService.updateTicketStatus(
       ticketId,
       statusDto.status,
@@ -147,7 +147,7 @@ export class SupportController {
     @Body('assigneeId') assigneeId?: string,
   ) {
     // If no assigneeId provided, assign to current admin
-    const userId = assigneeId || req.context.userId;
+    const userId = assigneeId || req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const ticket = await this.supportService.assignTicket(ticketId, userId);
     return wrapResponse(ticket, 'Ticket assigned successfully');
   }

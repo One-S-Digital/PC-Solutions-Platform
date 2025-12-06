@@ -72,16 +72,20 @@ export interface SupportTicket {
   createdAt: string;
   updatedAt: string;
   resolvedAt: string | null;
+  assignedTo?: string | null;
   responses: TicketResponse[];
   user?: {
+    id: string;
     firstName: string | null;
     lastName: string | null;
     email: string | null;
   };
   assignee?: {
+    id: string;
     firstName: string | null;
     lastName: string | null;
-  };
+    email: string | null;
+  } | null;
 }
 
 export interface CreateTicketData {

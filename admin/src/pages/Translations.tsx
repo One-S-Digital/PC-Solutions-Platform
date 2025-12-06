@@ -15,6 +15,7 @@ import {
   Upload,
   History,
   Package,
+  Database,
 } from 'lucide-react';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -41,6 +42,10 @@ const LANGUAGE_LABELS: Record<string, string> = {
   de: 'Deutsch',
 };
 
+// Persist auto-fix state across dev-server reloads so Step 2 remains enabled
+// even when Vite reloads the page after the script edits files.
+const AUTO_FIX_STORAGE_KEY = 'translationAutoFixState';
+
 export default function Translations() {
   const { t } = useTranslation(['admin', 'common']);
   const [selectedNamespace, setSelectedNamespace] = useState<string>('');
@@ -48,6 +53,7 @@ export default function Translations() {
   const [page, setPage] = useState(1);
   const [limit] = useState(50);
   const [autoFixJustRan, setAutoFixJustRan] = useState(false); // Track if auto-fix just ran
+  const [newKeysToTranslate, setNewKeysToTranslate] = useState<Array<{namespace: string; key: string}>>([]);
   const [editing, setEditing] = useState<{
     namespace: string;
     key: string;
@@ -59,11 +65,32 @@ export default function Translations() {
   const [newReleaseDescription, setNewReleaseDescription] = useState('');
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'translations' | 'audit' | 'releases'>('translations');
-  const [targetLang, setTargetLang] = useState<'fr' | 'de'>('fr');
   const [forceRetranslate, setForceRetranslate] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [includePlaceholders, setIncludePlaceholders] = useState(false);
 
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+
+  // Rehydrate auto-fix state from sessionStorage (survives Vite reloads)
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(AUTO_FIX_STORAGE_KEY);
+      if (!stored) return;
+      const parsed = JSON.parse(stored) as {
+        autoFixJustRan?: boolean;
+        newKeysToTranslate?: Array<{ namespace: string; key: string }>;
+      };
+
+      if (parsed?.newKeysToTranslate && parsed.newKeysToTranslate.length > 0) {
+        console.log('♻️ Restoring auto-fix state from sessionStorage:', parsed);
+        setNewKeysToTranslate(parsed.newKeysToTranslate);
+        setAutoFixJustRan(!!parsed.autoFixJustRan);
+      }
+    } catch (e) {
+      console.warn('Failed to restore auto-fix state from sessionStorage', e);
+    }
+  }, []);
 
   // Fetch namespaces
   const { data: namespacesResponse } = useQuery({
@@ -202,20 +229,171 @@ export default function Translations() {
     },
   });
 
-  // Auto-fix hardcoded strings mutation
-  const autoFixMutation = useMutation({
+  // Cleanup English placeholders that look like raw keys (e.g. "supportPage.ticketForm.subjectLabel")
+  const fixEnglishPlaceholdersMutation = useMutation({
     mutationFn: async () => {
-      return apiService.autoFixHardcodedStrings(apiClient);
+      return apiService.fixEnglishPlaceholders(apiClient);
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      alert(
+        `✅ English cleanup complete!\n\n` +
+          `📊 Updated ${data.data.cleaned} English translations that looked like raw keys,\n` +
+          `out of ${data.data.affected} total English entries scanned.\n\n` +
+          `🔄 Translation version updated - frontend will reload translations automatically.\n\n` +
+          `💡 If you don't see changes immediately, refresh the page (Ctrl+R or F5) to clear the browser cache.`,
+      );
+    },
+    onError: (error: any) => {
+      alert(`Cleanup failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Import from JSON files mutation
+  const importFromFilesMutation = useMutation({
+    mutationFn: async () => {
+      const result = await apiService.importFromJsonFiles(apiClient);
+      return result;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      queryClient.invalidateQueries({ queryKey: ['namespaces'] });
       
-      // Enable the auto-translate button if strings were fixed
-      if (data.data.fixed > 0) {
-        setAutoFixJustRan(true);
-        alert(`✅ Successful translation of static UI strings!\n\nFixed: ${data.data.fixed}\nSkipped: ${data.data.skipped}\nErrors: ${data.data.errors}\n\n${data.data.message}\n\n🌍 NEXT STEP: Click the "Auto-Translate FR/DE" button (now enabled) to automatically translate all new entries to French and German!`);
+      const details = Object.entries(data.data.details || {})
+        .map(([key, count]) => `  ${key}: ${count} keys`)
+        .join('\n');
+      
+      alert(
+        `✅ Successfully imported ${data.data.imported} translations from JSON files!\n\n` +
+        `📊 Details:\n${details}\n\n` +
+        `🔄 Translation cache cleared - you can now translate these keys.`
+      );
+    },
+    onError: (error: any) => {
+      alert(`Import failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Full Sync mutation - does everything in one click!
+  // Uses extended timeout since this can take 5-10 minutes
+  const fullSyncMutation = useMutation({
+    mutationFn: async () => {
+      // Create a custom axios instance with extended timeout for this long operation
+      const longTimeoutClient = apiClient;
+      // Note: The actual timeout is set on the client creation, but the server will continue
+      // even if the client times out. We handle this gracefully.
+      const result = await apiService.fullSync(longTimeoutClient);
+      return result;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      queryClient.invalidateQueries({ queryKey: ['namespaces'] });
+      
+      alert(
+        `🎉 Full Sync Complete!\n\n` +
+        `📥 Imported: ${data.data.imported} EN keys\n` +
+        `🇫🇷 Translated FR: ${data.data.translatedFr} keys\n` +
+        `🇩🇪 Translated DE: ${data.data.translatedDe} keys\n` +
+        `📤 Exported: ${data.data.exported} keys to JSON files\n\n` +
+        `✅ Now restart your frontend (pnpm dev) and refresh the page!`
+      );
+    },
+    onError: (error: any) => {
+      const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
+      
+      if (isTimeout) {
+        alert(
+          `⏱️ Request timed out, but the sync is still running on the server!\n\n` +
+          `The translation process takes 5-10 minutes. The server will continue processing.\n\n` +
+          `Please wait a few minutes, then:\n` +
+          `1. Restart your frontend (pnpm dev)\n` +
+          `2. Refresh this page\n` +
+          `3. Check the translation list for updated entries`
+        );
+      } else if (error.response?.status === 429) {
+        alert(
+          `⚠️ Rate limited: Please wait 5 minutes before running Full Sync again.\n\n` +
+          `This limit prevents overloading the translation service.`
+        );
       } else {
-        alert(`✅ Successful translation of static UI strings!\n\nFixed: ${data.data.fixed}\nSkipped: ${data.data.skipped}\nErrors: ${data.data.errors}\n\n${data.data.message}`);
+        alert(`Full sync failed: ${error.response?.data?.message || error.message}\n\nTry running individual steps from Advanced Options instead.`);
+      }
+    },
+  });
+
+  // Auto-fix hardcoded strings mutation
+  const autoFixMutation = useMutation({
+    mutationFn: async () => {
+      console.log('🔵 autoFixMutation: mutationFn called!');
+      const result = await apiService.autoFixHardcodedStrings(apiClient);
+      console.log('🔵 autoFixMutation: API result:', result);
+      return result;
+    },
+    onSuccess: (data) => {
+      console.log('🟢 autoFixMutation: onSuccess called!', data);
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      
+      const totalNewItems = (data.data.fixed || 0) + (data.data.missingKeysCreated || 0);
+      
+      // Enable the auto-translate button if strings were fixed or missing keys were created
+      if (totalNewItems > 0) {
+        // Extract the new keys that were created from the details
+        const newKeys: Array<{namespace: string; key: string}> = [];
+        
+        // Add keys from fixed hardcoded strings
+        if (data.data.details?.fixed) {
+          data.data.details.fixed.forEach((item: any) => {
+            // Parse the translation key to get namespace and key
+            // Format is "namespace:key.path.here"
+            const [namespace, ...keyParts] = item.translationKey.split(':');
+            if (namespace && keyParts.length > 0) {
+              const key = keyParts.join(':').replace(/:/g, '.'); // Convert back to dot notation
+              newKeys.push({ namespace, key });
+            }
+          });
+        }
+        
+        // Add keys from missing translations
+        if (data.data.details?.missingKeys) {
+          data.data.details.missingKeys.forEach((item: any) => {
+            newKeys.push({ namespace: item.namespace, key: item.keyPath });
+          });
+        }
+        
+        setNewKeysToTranslate(newKeys);
+        setAutoFixJustRan(true);
+
+        // Persist to sessionStorage so Step 2 stays enabled after a dev-server reload
+        try {
+          console.log('💾 Saving auto-fix state to sessionStorage:', {
+            autoFixJustRan: true,
+            newKeysToTranslate: newKeys,
+          });
+          sessionStorage.setItem(
+            AUTO_FIX_STORAGE_KEY,
+            JSON.stringify({
+              autoFixJustRan: true,
+              newKeysToTranslate: newKeys,
+            }),
+          );
+        } catch (e) {
+          console.warn('Failed to persist auto-fix state to sessionStorage', e);
+        }
+        alert(`✅ Successful translation check!\n\n📊 Results:\n• Fixed hardcoded strings: ${data.data.fixed || 0}\n• Missing keys created: ${data.data.missingKeysCreated || 0}\n• Skipped: ${data.data.skipped}\n• Errors: ${data.data.errors}\n\n${data.data.message}\n\n🌍 NEXT STEP: Click the "Auto-Translate FR/DE" button (Step 2, now enabled) to automatically translate the ${totalNewItems} new entries to French and German!`);
+      } else {
+        setNewKeysToTranslate([]);
+        setAutoFixJustRan(false);
+        try {
+          sessionStorage.removeItem(AUTO_FIX_STORAGE_KEY);
+        } catch (e) {
+          console.warn('Failed to clear auto-fix state from sessionStorage', e);
+        }
+        alert(
+          `✅ Translation check complete!\n\n📊 Results:\n• Fixed: ${data.data.fixed || 0}\n` +
+            `• Missing keys created: ${data.data.missingKeysCreated || 0}\n` +
+            `• Skipped: ${data.data.skipped}\n• Errors: ${data.data.errors}\n\n` +
+            `${data.data.message}\n\n💡 Everything is up to date!`,
+        );
       }
     },
     onError: (error: any) => {
@@ -223,27 +401,44 @@ export default function Translations() {
     },
   });
 
-  // Auto-translate all new keys mutation (translates [FR] and [DE] prefixed entries)
-  const autoTranslateNewKeysMutation = useMutation({
+  // Translate missing/prefixed strings (optionally forced)
+  const translateMissingMutation = useMutation({
     mutationFn: async () => {
-      // Translate to French first
-      const frResult = await apiService.translateMissing(apiClient, 'en', 'fr', undefined, undefined, false);
-      // Then translate to German
-      const deResult = await apiService.translateMissing(apiClient, 'en', 'de', undefined, undefined, false);
+      const ns = selectedNamespace || undefined;
+      const frResult = await apiService.translateMissing(
+        apiClient,
+        'en',
+        'fr',
+        ns,
+        includePlaceholders ? undefined : [],
+        forceRetranslate,
+        includePlaceholders,
+      );
+      const deResult = await apiService.translateMissing(
+        apiClient,
+        'en',
+        'de',
+        ns,
+        includePlaceholders ? undefined : [],
+        forceRetranslate,
+        includePlaceholders,
+      );
       return { frResult, deResult };
     },
     onSuccess: ({ frResult, deResult }) => {
       queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
-      const totalTranslated = frResult.data.translated + deResult.data.translated;
-      
-      // Reset the flag after successful translation
-      setAutoFixJustRan(false);
-      
-      alert(`✅ Auto-translation complete!\n\nFrench: ${frResult.data.translated} translations\nGerman: ${deResult.data.translated} translations\n\nTotal: ${totalTranslated} entries translated\n\n💡 All translations are now available in the app!\n\n✅ Your multi-language support is complete!`);
+      const total = (frResult.data?.translated || 0) + (deResult.data?.translated || 0);
+      alert(
+        `✅ Translation complete!\n\n` +
+          `Scope: ${selectedNamespace || 'all namespaces'}\n` +
+          `Force re-translate: ${forceRetranslate ? 'Yes' : 'No'}\n` +
+          `FR translated: ${frResult.data?.translated || 0}\n` +
+          `DE translated: ${deResult.data?.translated || 0}\n` +
+          `Total: ${total}`,
+      );
     },
     onError: (error: any) => {
-      alert(`❌ Auto-translation failed: ${error.response?.data?.message || error.message}`);
-      setAutoFixJustRan(false); // Reset on error too
+      alert(`❌ Translation failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -614,181 +809,262 @@ export default function Translations() {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 items-end flex-wrap">
-          <div className="flex gap-2 items-center flex-wrap">
-            <label className="text-sm font-medium text-gray-700">
-              Machine Translation:
-            </label>
-            <div className="flex items-center gap-2 border rounded-md px-3 py-1.5 bg-white">
-              <span className="text-sm text-gray-600">Translate to:</span>
-              <select
-                value={targetLang}
-                onChange={(e) => setTargetLang(e.target.value as 'fr' | 'de')}
-                className="text-sm border-0 focus:ring-0 focus:outline-none cursor-pointer bg-transparent"
-                disabled={translateMutation.isPending}
-              >
-                <option value="fr">Français (FR)</option>
-                <option value="de">{t('common:deutschde')}</option>
-              </select>
+        {/* ONE-CLICK SYNC - The main action */}
+        <Card className="p-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex-1">
+              <h2 className="text-xl font-bold text-emerald-900 flex items-center gap-2">
+                <Globe className="w-6 h-6" />
+                One-Click Sync
+              </h2>
+              <p className="text-sm text-emerald-700 mt-1">
+                Import English keys → Translate to French & German → Export to files.<br/>
+                <span className="text-xs opacity-75">This does everything in one step! Takes 5-10 minutes.</span>
+              </p>
             </div>
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                checked={forceRetranslate}
-                onChange={(e) => setForceRetranslate(e.target.checked)}
-                disabled={translateMutation.isPending}
-                className="w-4 h-4"
-              />
-              <span className="text-gray-700">Force re-translate</span>
-            </label>
             <Button
               onClick={() => {
-                if (forceRetranslate) {
-                  if (!confirm(`This will re-translate ALL ${targetLang.toUpperCase()} translations, overwriting existing ones. Continue?`)) {
-                    return;
+                if (
+                  confirm(
+                    '🔄 Full Sync will:\n\n' +
+                    '1. Import EN translations from JSON files\n' +
+                    '2. Translate missing keys to French (FR)\n' +
+                    '3. Translate missing keys to German (DE)\n' +
+                    '4. Export everything back to JSON files\n\n' +
+                    '⏱️ This takes 5-10 minutes. Continue?',
+                  )
+                ) {
+                  fullSyncMutation.mutate();
+                }
+              }}
+              disabled={fullSyncMutation.isPending}
+              variant="primary"
+              className="text-lg px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg"
+            >
+              {fullSyncMutation.isPending ? (
+                <>
+                  <RefreshCw className="w-5 h-5 mr-2 animate-spin inline" />
+                  Syncing... (this takes a few minutes)
+                </>
+              ) : (
+                <>
+                  <Globe className="w-5 h-5 mr-2 inline" />
+                  🔄 Full Sync All Languages
+                </>
+              )}
+            </Button>
+          </div>
+        </Card>
+
+        {/* Advanced Options - Collapsed by default */}
+        <Card className="p-4">
+          <details className="group">
+            <summary className="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-gray-900">
+              <span className="text-sm font-medium">⚙️ Advanced Options (Individual Steps)</span>
+              <span className="text-xs text-gray-400">Click to expand</span>
+            </summary>
+            
+            <div className="mt-4 space-y-3 pt-4 border-t">
+              {/* Step 0 - Import from JSON files */}
+              <div className="p-3 rounded border border-blue-200 bg-blue-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-blue-800">Import from JSON Files</div>
+                    <div className="text-xs text-blue-600">Load EN/FR/DE from packages/translations/locales into database</div>
+                  </div>
+                  <Button
+                    onClick={() => importFromFilesMutation.mutate()}
+                    disabled={importFromFilesMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-blue-700 hover:bg-blue-100"
+                  >
+                    {importFromFilesMutation.isPending ? 'Importing...' : 'Import'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step 1 - Scan & Fix */}
+              <div className="p-3 rounded border border-gray-200 bg-gray-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700">Scan & Fix Hardcoded Strings</div>
+                    <div className="text-xs text-gray-500">Find hardcoded strings in code and create translation keys</div>
+                  </div>
+                  <Button
+                    onClick={() => autoFixMutation.mutate()}
+                    disabled={autoFixMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-gray-600 hover:bg-gray-100"
+                  >
+                    {autoFixMutation.isPending ? 'Scanning...' : 'Scan'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step 2 - Translate */}
+              <div className="p-3 rounded border border-gray-200 bg-gray-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700">Translate Missing (FR/DE)</div>
+                    <div className="text-xs text-gray-500">Translate missing keys to French and German</div>
+                  </div>
+                  <Button
+                    onClick={() => translateMissingMutation.mutate()}
+                    disabled={translateMissingMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-gray-600 hover:bg-gray-100"
+                  >
+                    {translateMissingMutation.isPending ? 'Translating...' : 'Translate'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step 3 - Clean Prefixes */}
+              <div className="p-3 rounded border border-gray-200 bg-gray-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700">Clean Prefixes</div>
+                    <div className="text-xs text-gray-500">Remove [FR]/[DE]/[EN] prefixes from translations</div>
+                  </div>
+                  <Button
+                    onClick={() => cleanupMutation.mutate()}
+                    disabled={cleanupMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-gray-600 hover:bg-gray-100"
+                  >
+                    {cleanupMutation.isPending ? 'Cleaning...' : 'Clean'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Export to Files */}
+              <div className="p-3 rounded border border-green-200 bg-green-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-green-700">Export to JSON Files</div>
+                    <div className="text-xs text-green-600">Sync database translations back to JSON files (required for frontend)</div>
+                  </div>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        const result = await apiService.exportToJsonFiles(apiClient);
+                        alert(`✅ Exported ${result.data.exported} translations to JSON files!\n\nNow restart your frontend (pnpm dev) and refresh.`);
+                      } catch (err: any) {
+                        alert(`Export failed: ${err.message}`);
+                      }
+                    }}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-green-700 hover:bg-green-100"
+                  >
+                    Export
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </details>
+        </Card>
+
+        {/* Additional Advanced Controls */}
+        <Card className="p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold text-gray-800">More Options</div>
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              {showAdvanced ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {showAdvanced && (
+            <div className="space-y-4">
+              <div className="flex gap-2 items-center flex-wrap">
+                <Button
+                  onClick={() => refetch()}
+                  variant="secondary"
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Refresh
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (
+                      confirm(
+                        'This will scan English translations for values that look like raw keys and replace them with readable labels.\n\nContinue?',
+                      )
+                    ) {
+                      fixEnglishPlaceholdersMutation.mutate();
+                    }
+                  }}
+                  disabled={fixEnglishPlaceholdersMutation.isPending}
+                  variant="secondary"
+                  className="text-sm px-3 py-1.5 text-indigo-600 hover:text-indigo-700 border-indigo-200"
+                >
+                  {fixEnglishPlaceholdersMutation.isPending ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
+                      Fixing EN Labels...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 mr-2 inline" />
+                      Fix EN Key Labels
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex gap-2 items-center flex-wrap">
+                {selectedKeys.size > 0 && (
+                  <Button
+                    onClick={handleBulkApprove}
+                    disabled={bulkApproveMutation.isPending}
+                    variant="secondary"
+                    className="text-sm px-3 py-1"
+                  >
+                    {bulkApproveMutation.isPending
+                      ? 'Approving...'
+                      : `Approve ${selectedKeys.size} Selected`}
+                  </Button>
+                )}
+                <Button
+                  onClick={() =>
+                    exportMutation.mutate({ format: 'json', namespace: selectedNamespace || undefined })
                   }
-                }
-                translateMutation.mutate({
-                  sourceLang: 'en',
-                  targetLang,
-                  namespace: selectedNamespace || undefined,
-                  force: forceRetranslate,
-                });
-              }}
-              disabled={translateMutation.isPending}
-              variant="primary"
-              className="text-sm px-4 py-1.5"
-            >
-              {translateMutation.isPending ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
-                  Translating...
-                </>
-              ) : (
-                <>
-                  <Globe className="w-4 h-4 mr-2 inline" />
-                  Translate EN→{targetLang.toUpperCase()}
-                </>
-              )}
-            </Button>
-            <div className="border-l border-gray-300 h-6 mx-1" />
-            <Button
-              onClick={() => {
-                if (confirm('This will automatically find and fix hardcoded strings in the frontend code. This will:\n\n1. Scan all frontend files for hardcoded English strings\n2. Replace them with translation keys\n3. Add the keys to translation files\n\nContinue?')) {
-                  autoFixMutation.mutate();
-                }
-              }}
-              disabled={autoFixMutation.isPending}
-              variant="primary"
-              className="text-sm px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white"
-            >
-              {autoFixMutation.isPending ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
-                  Fixing...
-                </>
-              ) : (
-                <>
-                  <Check className="w-4 h-4 mr-2 inline" />
-                  Auto-Fix Hardcoded Strings
-                </>
-              )}
-            </Button>
-            <div className="border-l border-gray-300 h-6 mx-1" />
-            <Button
-              onClick={() => {
-                if (confirm('This will automatically translate all new [FR] and [DE] prefixed entries using machine translation. This will:\n\n1. Translate all [FR] entries to French\n2. Translate all [DE] entries to German\n3. Make translations immediately available\n\nNote: Machine translation is used. Review for accuracy.\n\nContinue?')) {
-                  autoTranslateNewKeysMutation.mutate();
-                }
-              }}
-              disabled={autoTranslateNewKeysMutation.isPending || !autoFixJustRan}
-              variant="primary"
-              className={`text-sm px-3 py-1.5 ${autoFixJustRan ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-gray-400 cursor-not-allowed'} text-white`}
-              title={!autoFixJustRan ? 'Run "Auto-Fix Hardcoded Strings" first to enable this button' : 'Click to translate all new entries to French and German'}
-            >
-              {autoTranslateNewKeysMutation.isPending ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
-                  Translating...
-                </>
-              ) : (
-                <>
-                  <Globe className="w-4 h-4 mr-2 inline" />
-                  {autoFixJustRan ? '👉 Auto-Translate FR/DE (Step 2)' : 'Auto-Translate FR/DE'}
-                </>
-              )}
-            </Button>
-            <div className="border-l border-gray-300 h-6 mx-1" />
-            <Button
-              onClick={() => {
-                if (confirm('This will remove [FR], [DE], and [EN] prefixes from all existing translations. Continue?')) {
-                  cleanupMutation.mutate();
-                }
-              }}
-              disabled={cleanupMutation.isPending}
-              variant="secondary"
-              className="text-sm px-3 py-1.5 text-orange-600 hover:text-orange-700 border-orange-200"
-            >
-              {cleanupMutation.isPending ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
-                  Cleaning...
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="w-4 h-4 mr-2 inline" />
-                  Clean Prefixes
-                </>
-              )}
-            </Button>
-          </div>
-          <div className="flex gap-2 items-center ml-auto">
-            {selectedKeys.size > 0 && (
-              <Button
-                onClick={handleBulkApprove}
-                disabled={bulkApproveMutation.isPending}
-                variant="secondary"
-                className="text-sm px-3 py-1"
-              >
-                {bulkApproveMutation.isPending
-                  ? 'Approving...'
-                  : `Approve ${selectedKeys.size} Selected`}
-              </Button>
-            )}
-            <Button
-              onClick={() =>
-                exportMutation.mutate({ format: 'json', namespace: selectedNamespace || undefined })
-              }
-              disabled={exportMutation.isPending}
-              variant="secondary"
-              className="text-sm px-3 py-1 flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export JSON
-            </Button>
-            <Button
-              onClick={() =>
-                exportMutation.mutate({ format: 'csv', namespace: selectedNamespace || undefined })
-              }
-              disabled={exportMutation.isPending}
-              variant="secondary"
-              className="text-sm px-3 py-1 flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </Button>
-            <label className="text-sm px-3 py-1 border rounded cursor-pointer flex items-center gap-2 hover:bg-gray-50">
-              <Upload className="h-4 w-4" />
-              Import
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileImport}
-                className="hidden"
-              />
-            </label>
-          </div>
-        </div>
+                  disabled={exportMutation.isPending}
+                  variant="secondary"
+                  className="text-sm px-3 py-1 flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Export JSON
+                </Button>
+                <Button
+                  onClick={() =>
+                    exportMutation.mutate({ format: 'csv', namespace: selectedNamespace || undefined })
+                  }
+                  disabled={exportMutation.isPending}
+                  variant="secondary"
+                  className="text-sm px-3 py-1 flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </Button>
+                <label className="text-sm px-3 py-1 border rounded cursor-pointer flex items-center gap-2 hover:bg-gray-50">
+                  <Upload className="h-4 w-4" />
+                  Import
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileImport}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          )}
+        </Card>
+
+      {/* End Filters / Actions card */}
       </Card>
 
       {/* Translation Table */}

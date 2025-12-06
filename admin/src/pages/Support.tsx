@@ -19,6 +19,7 @@ import {
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats } from '../types';
+import { useTranslation } from 'react-i18next';
 
 const Support: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,7 +30,17 @@ const Support: React.FC = () => {
   const [replyMessage, setReplyMessage] = useState('');
 
   const apiClient = useApiClient();
+  const { t } = useTranslation(['common', 'admin']);
+
   const queryClient = useQueryClient();
+
+  // Fetch current user to check assignment
+  const { data: currentUserResponse } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => apiService.getCurrentUser(apiClient),
+  });
+
+  const currentUser = currentUserResponse?.data?.data;
 
   // Fetch tickets with filters
   const { data: ticketsResponse, isLoading: ticketsLoading } = useQuery({
@@ -177,9 +188,9 @@ const Support: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <LifeBuoy className="h-8 w-8 mr-3 text-blue-600" />
-            Support Tickets
+            {t('admin:support.title')}
           </h1>
-          <p className="mt-2 text-gray-600">Manage and respond to support tickets ({stats.total} total)</p>
+          <p className="mt-2 text-gray-600">{t('admin:support.subtitle', { total: stats.total })}</p>
         </div>
       </div>
 
@@ -188,7 +199,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Open</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:open')}</p>
               <p className="text-2xl font-bold text-yellow-600">{stats.open}</p>
             </div>
             <AlertCircle className="h-8 w-8 text-yellow-500" />
@@ -197,7 +208,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">In Progress</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:inprogress')}</p>
               <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
             </div>
             <Clock className="h-8 w-8 text-blue-500" />
@@ -206,7 +217,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Resolved</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:resolved')}</p>
               <p className="text-2xl font-bold text-green-600">{stats.resolved}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-500" />
@@ -215,7 +226,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:total')}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
             <TrendingUp className="h-8 w-8 text-gray-500" />
@@ -227,14 +238,14 @@ const Support: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="h-5 w-5 text-gray-500" />
-          <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('common:filters')}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search tickets..."
+              placeholder={t('admin:support.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -245,33 +256,33 @@ const Support: React.FC = () => {
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value as TicketStatus | '')}
           >
-            <option value="">All Status</option>
-            <option value="OPEN">Open</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="RESOLVED">Resolved</option>
-            <option value="CLOSED">Closed</option>
+            <option value="">{t('common:allstatus')}</option>
+            <option value="OPEN">{t('common:open')}</option>
+            <option value="IN_PROGRESS">{t('common:inprogress')}</option>
+            <option value="RESOLVED">{t('common:resolved')}</option>
+            <option value="CLOSED">{t('common:closed')}</option>
           </select>
           <select
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value as TicketPriority | '')}
           >
-            <option value="">All Priority</option>
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-            <option value="URGENT">Urgent</option>
+            <option value="">{t('common:allpriority')}</option>
+            <option value="LOW">{t('common:low')}</option>
+            <option value="MEDIUM">{t('common:medium')}</option>
+            <option value="HIGH">{t('common:high')}</option>
+            <option value="URGENT">{t('common:urgent')}</option>
           </select>
           <select
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value as TicketCategory | '')}
           >
-            <option value="">All Category</option>
-            <option value="GENERAL">General</option>
-            <option value="TECHNICAL">Technical</option>
-            <option value="BILLING">Billing</option>
-            <option value="FEATURE_REQUEST">Feature Request</option>
+            <option value="">{t('common:allcategory')}</option>
+            <option value="GENERAL">{t('common:general')}</option>
+            <option value="TECHNICAL">{t('common:technical')}</option>
+            <option value="BILLING">{t('common:billing')}</option>
+            <option value="FEATURE_REQUEST">{t('common:featurerequest')}</option>
           </select>
         </div>
       </div>
@@ -285,27 +296,30 @@ const Support: React.FC = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ticket
+                      {t('admin:support.table.ticket')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
+                      {t('admin:support.table.user')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Priority
+                      {t('admin:support.table.assignedTo')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      {t('admin:support.table.priority')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
+                      {t('admin:support.table.status')}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('admin:support.table.created')}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {tickets.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                        No tickets found
+                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                        {t('admin:support.noTickets')}
                       </td>
                     </tr>
                   ) : (
@@ -336,8 +350,24 @@ const Support: React.FC = () => {
                               {ticket.user
                                 ? `${ticket.user.firstName || ''} ${ticket.user.lastName || ''}`.trim() ||
                                   ticket.user.email
-                                : 'Unknown'}
+                                : t('common:unknown')}
                             </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            {ticket.assignee ? (
+                              <>
+                                <UserCheck className="h-4 w-4 text-green-600 mr-2" />
+                                <div className="text-sm text-gray-900">
+                                  {`${ticket.assignee.firstName || ''} ${ticket.assignee.lastName || ''}`.trim() ||
+                                    ticket.assignee.email ||
+                                    t('admin:support.staff')}
+                                </div>
+                              </>
+                            ) : (
+                              <span className="text-sm text-gray-400 italic">{t('admin:support.unassigned')}</span>
+                            )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -398,6 +428,21 @@ const Support: React.FC = () => {
                   </span>
                 </div>
 
+                {/* Assignee Information */}
+                {selectedTicket.assignee && (
+                  <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center text-sm text-blue-800">
+                      <UserCheck className="h-4 w-4 mr-2" />
+                      <span className="font-medium">
+                        {t('admin:support.assignedTo')}:{' '}
+                        {`${selectedTicket.assignee.firstName || ''} ${selectedTicket.assignee.lastName || ''}`.trim() ||
+                          selectedTicket.assignee.email ||
+                          t('admin:support.staffMember')}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Quick Actions */}
                 <div className="space-y-2">
                   <select
@@ -405,18 +450,26 @@ const Support: React.FC = () => {
                     value={selectedTicket.status}
                     onChange={(e) => handleStatusChange(selectedTicket.id, e.target.value as TicketStatus)}
                   >
-                    <option value="OPEN">Open</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="RESOLVED">Resolved</option>
-                    <option value="CLOSED">Closed</option>
+                    <option value="OPEN">{t('common:open')}</option>
+                    <option value="IN_PROGRESS">{t('common:inprogress')}</option>
+                    <option value="RESOLVED">{t('common:resolved')}</option>
+                    <option value="CLOSED">{t('common:closed')}</option>
                   </select>
-                  <button
-                    onClick={() => handleAssignToMe(selectedTicket.id)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm"
-                  >
-                    <UserCheck className="h-4 w-4 mr-2" />
-                    Assign to Me
-                  </button>
+                  {!selectedTicket.assignedTo || selectedTicket.assignedTo !== currentUser?.id ? (
+                    <button
+                      onClick={() => handleAssignToMe(selectedTicket.id)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm"
+                      disabled={assignTicketMutation.isPending}
+                    >
+                      <UserCheck className="h-4 w-4 mr-2" />
+                      {assignTicketMutation.isPending ? t('admin:support.assigning') : t('admin:support.assignToMe')}
+                    </button>
+                  ) : (
+                    <div className="w-full bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-lg flex items-center justify-center text-sm font-medium">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      {t('admin:support.assignedToYou')}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -428,7 +481,7 @@ const Support: React.FC = () => {
                       <span className="text-sm font-medium text-gray-900">
                         {selectedTicket.user
                           ? `${selectedTicket.user.firstName || ''} ${selectedTicket.user.lastName || ''}`.trim()
-                          : 'User'}
+                          : t('admin:support.user')}
                       </span>
                       <span className="text-xs text-gray-500">
                         {new Date(selectedTicket.createdAt).toLocaleString()}
@@ -447,10 +500,10 @@ const Support: React.FC = () => {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-gray-900">
-                          {response.userName || 'Unknown'}
+                          {response.userName || t('common:unknown')}
                           {response.isStaff && (
                             <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                              Staff
+                              {t('admin:support.staff')}
                             </span>
                           )}
                         </span>
@@ -469,7 +522,7 @@ const Support: React.FC = () => {
                 <textarea
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
                   rows={3}
-                  placeholder="Type your reply..."
+                  placeholder={t('admin:support.replyPlaceholder')}
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
                 />
@@ -479,14 +532,14 @@ const Support: React.FC = () => {
                   className="mt-2 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm"
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  {replyMutation.isPending ? 'Sending...' : 'Send Reply'}
+                  {replyMutation.isPending ? t('admin:support.sending') : t('admin:support.sendReply')}
                 </button>
               </div>
             </div>
           ) : (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
               <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Select a ticket to view details</p>
+              <p className="text-gray-500">{t('admin:support.selectTicket')}</p>
             </div>
           )}
         </div>

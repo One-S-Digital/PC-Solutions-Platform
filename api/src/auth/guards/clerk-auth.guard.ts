@@ -135,6 +135,10 @@ export class ClerkAuthGuard implements CanActivate {
       // Populate request.context (user role from AppUser), so RolesGuard can authorize
       try {
         const appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
+        
+        // Also fetch the User profile record
+        const userProfile = await this.prisma.user.findUnique({ where: { clerkId: payload.sub } });
+        
         if (!appUser) {
           if (this.authDebug) {
             console.log('🔐 Auth Debug: AppUser missing, user may be pending webhook processing', { userId: payload.sub });
@@ -145,6 +149,7 @@ export class ClerkAuthGuard implements CanActivate {
             userId: payload.sub,
             role: 'PENDING',
             appUserId: null,
+            profileUserId: userProfile?.id || null,
             clerkUserId: payload.sub,
             isPending: true,
           };
@@ -152,7 +157,7 @@ export class ClerkAuthGuard implements CanActivate {
           request.user = {
             clerkId: payload.sub,
             role: 'PENDING',
-            id: null,
+            id: userProfile?.id || null,
             isPending: true,
           };
           if (this.authDebug) {
@@ -163,13 +168,14 @@ export class ClerkAuthGuard implements CanActivate {
             userId: payload.sub,
             role: appUser.role,
             appUserId: appUser.id,
+            profileUserId: userProfile?.id || null,
             clerkUserId: payload.sub,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
           request.user = {
             clerkId: payload.sub,
             role: appUser.role,
-            id: appUser.id,
+            id: userProfile?.id || null,
           };
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });

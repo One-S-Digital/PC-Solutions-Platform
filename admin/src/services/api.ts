@@ -637,13 +637,15 @@ export const apiService = {
     targetLang: string,
     namespace?: string,
     keys?: string[],
-    force?: boolean
+    force?: boolean,
+    includePlaceholders?: boolean,
   ) => apiClient.post<ApiResponse<{ success: boolean; translated: number }>>('/static-translations/admin/translate-missing', {
     sourceLang,
     targetLang,
     namespace,
     keys,
     force,
+    includePlaceholders,
   }, {
     timeout: 300000, // 5 minutes timeout for translation operations (can take a while for large batches)
   }),
@@ -719,11 +721,71 @@ export const apiService = {
   getSupportTicketStats: (apiClient: AxiosInstance) =>
     apiClient.get<ApiResponse<any>>('/support/admin/stats'),
 
+  importFromJsonFiles: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        imported: number;
+        details: Record<string, number>;
+      }>
+    >('/static-translations/admin/import-from-files'),
+
+  exportToJsonFiles: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        exported: number;
+        details: Record<string, number>;
+      }>
+    >('/static-translations/admin/export-to-files'),
+
+  fullSync: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        imported: number;
+        translatedFr: number;
+        translatedDe: number;
+        exported: number;
+        message: string;
+      }>
+    >('/static-translations/admin/full-sync', {}, { timeout: 600000 }), // 10 minute timeout
+
   autoFixHardcodedStrings: (
     apiClient: AxiosInstance
-  ) => apiClient.post<ApiResponse<{ success: boolean; fixed: number; skipped: number; errors: number; message: string }>>('/static-translations/admin/auto-fix-hardcoded-strings', {}, {
-    timeout: 600000, // 10 minutes timeout for auto-fix operations (can take a while)
-  }),
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        fixed: number;
+        skipped: number;
+        errors: number;
+        /** Number of completely new translation keys created by the script */
+        missingKeysCreated?: number;
+        /** Detailed per-file/per-key info from the script */
+        details?: any;
+        message: string;
+      }>
+    >('/static-translations/admin/auto-fix-hardcoded-strings', {}, {
+      timeout: 600000, // 10 minutes timeout for auto-fix operations (can take a while)
+    }),
+
+  fixEnglishPlaceholders: (apiClient: AxiosInstance) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        cleaned: number;
+        affected: number;
+      }>
+    >('/static-translations/admin/fix-english-placeholders', {}, {
+      timeout: 300000, // 5 minutes timeout for cleanup operations
+    }),
 }
 
 // Export individual content functions for easier imports

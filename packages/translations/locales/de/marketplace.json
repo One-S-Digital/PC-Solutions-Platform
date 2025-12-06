@@ -1,16 +1,57 @@
 {
-  "tabs": {
-    "productSuppliers": "Produktlieferanten",
-    "serviceProviders": "Dienstleister"
+  "marketplace": {
+    "emptyStates": {
+      "noProductSuppliers": "Keine Produktlieferanten gefunden",
+      "noServices": "Keine Dienste gefunden"
+    },
+    "messages": {
+      "noProductSuppliers": "Keine Produktlieferanten gefunden",
+      "noServiceProviders": "Keine Dienstleister gefunden",
+      "noServices": "Keine Dienste gefunden",
+      "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, Ihre Filter anzupassen."
+    },
+    "serviceCard": {
+      "bookAppointment": "Termin buchen",
+      "categoryLabel": "{{Kategorie}}",
+      "viewProvider": "Ansicht Anbieter"
+    },
+    "subtitles": {
+      "productSuppliers": "Produkte von geprüften Lieferanten durchsuchen",
+      "serviceProviders": "Entdecken Sie professionelle Dienstleistungen für Ihre Kindertagesstätte"
+    },
+    "buttons": {
+      "partnerOnboarding": "Partner Onboarding",
+      "resetFilters": "Filter zurücksetzen",
+      "viewDetails": "Details anzeigen",
+      "contact": "Lieferanten kontaktieren"
+    },
+    "sortOptions": {
+      "ratingDesc": "Höchste Bewertung",
+      "nameDesc": "Name (Z-A)",
+      "nameAsc": "Name (A-Z)"
+    },
+    "labels": {
+      "categoryFilter": "Nach Kategorie filtern",
+      "regionFilter": "Nach Region filtern",
+      "searchByName": "Nach Namen suchen",
+      "supplierTags": "Tags",
+      "category": "Kategorie",
+      "region": "Region",
+      "sortBy": "Sortieren nach"
+    },
+    "tabs": {
+      "productSuppliers": "Produktlieferanten",
+      "serviceProviders": "Dienstleister"
+    },
+    "searchPlaceholder": "Suche {{activeTabLabel}}...",
+    "infoAlert": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Schweizer Anbietern"
   },
-  "labels": {
-    "searchByName": "Nach Namen suchen",
-    "categoryFilter": "Nach Kategorie filtern",
-    "regionFilter": "Nach Region filtern",
-    "category": "Kategorie",
-    "region": "Region",
-    "supplierTags": "Tags",
-    "sortBy": "Sortieren nach"
+  "serviceRequest": {
+    "detailsPlaceholder": "z.B. Anzahl der Kinder für den Workshop, bestimmte Bereiche für die Reinigung..."
+  },
+  "emptyStates": {
+    "noProductSuppliers": "Keine Produktlieferanten gefunden",
+    "noServices": "Keine Dienste gefunden"
   },
   "messages": {
     "noProductSuppliers": "Keine Produktlieferanten gefunden",
@@ -18,36 +59,42 @@
     "noServices": "Keine Dienste gefunden",
     "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, Ihre Filter anzupassen."
   },
-  "buttons": {
-    "resetFilters": "Filter zurücksetzen",
-    "viewDetails": "Details anzeigen",
-    "contact": "Lieferanten kontaktieren",
-    "partnerOnboarding": "Partner-Onboarding"
-  },
   "serviceCard": {
-    "categoryLabel": "{{category}}",
     "bookAppointment": "Termin vereinbaren",
+    "categoryLabel": "{{category}}",
     "viewProvider": "Anbieter anzeigen"
   },
-  "searchPlaceholder": "{{activeTabLabel}} suchen...",
-  "infoAlert": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Schweizer Anbietern",
   "subtitles": {
     "productSuppliers": "Durchsuchen Sie Produkte von verifizierten Lieferanten",
     "serviceProviders": "Entdecken Sie professionelle Dienstleistungen für Ihre Kindertagesstätte"
   },
+  "buttons": {
+    "partnerOnboarding": "Partner-Onboarding",
+    "resetFilters": "Filter zurücksetzen",
+    "viewDetails": "Details anzeigen",
+    "contact": "Lieferanten kontaktieren"
+  },
   "sortOptions": {
-    "nameAsc": "Name (A-Z)",
+    "ratingDesc": "Höchste Bewertung",
     "nameDesc": "Name (Z-A)",
-    "ratingDesc": "Höchste Bewertung"
-  },
-  "emptyStates": {
-    "noProductSuppliers": "Keine Produktlieferanten gefunden",
-    "noServices": "Keine Dienste gefunden"
-  },
-  "serviceRequest": {
-    "detailsPlaceholder": "[DE] e.g., Number of children for workshop, specific areas for cleaning..."
+    "nameAsc": "Name (A-Z)"
   },
   "cart": {
-    "notesPlaceholder": "[DE] e.g., Preferred delivery times, specific packaging..."
-  }
+    "notesPlaceholder": "z.B. bevorzugte Lieferzeiten, spezielle Verpackungen..."
+  },
+  "labels": {
+    "categoryFilter": "Nach Kategorie filtern",
+    "regionFilter": "Nach Region filtern",
+    "searchByName": "Nach Namen suchen",
+    "supplierTags": "Tags",
+    "category": "Kategorie",
+    "region": "Region",
+    "sortBy": "Sortieren nach"
+  },
+  "tabs": {
+    "productSuppliers": "Produktlieferanten",
+    "serviceProviders": "Dienstleister"
+  },
+  "searchPlaceholder": "{{activeTabLabel}} suchen...",
+  "infoAlert": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Schweizer Anbietern"
 }

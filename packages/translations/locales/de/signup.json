@@ -1,7 +1,290 @@
 {
-  "title": "Treten Sie der PC Solutions Plattform bei",
-  "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
+  "signup": {
+    "roles": {
+      "productSupplier": {
+        "description": "Verkaufen Sie Produkte an Kinderbetreuungsorganisationen",
+        "label": "Produktlieferant"
+      },
+      "serviceProvider": {
+        "description": "Bieten Sie Dienstleistungen für Kinderbetreuungsorganisationen an",
+        "label": "Dienstleister"
+      },
+      "foundation": {
+        "description": "Verwalten Sie Ihren Kita-Betrieb, rekrutieren Sie Personal und beschaffen Sie Dienstleistungen",
+        "label": "Stiftung (Kindertagesstätte)"
+      },
+      "superAdmin": {
+        "description": "Vollständiger Systemzugriff und Verwaltung",
+        "label": "Super Administrator"
+      },
+      "educator": {
+        "description": "Finden Sie Beschäftigungsmöglichkeiten in der Kinderbetreuung",
+        "label": "Pädagoge/Kandidat"
+      },
+      "parent": {
+        "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder",
+        "label": "Elternteil"
+      },
+      "admin": {
+        "description": "Administrativer Zugriff auf die Plattformverwaltung",
+        "label": "Administrator"
+      }
+    },
+    "errors": {
+      "organisationNameRequired": "Organisationsname ist erforderlich",
+      "childStartDateRequired": "Startdatum des Kindes ist erforderlich",
+      "contactPersonRequired": "Kontaktperson ist erforderlich",
+      "serviceTypeRequired": "Dienstleistungsart ist erforderlich",
+      "parentNameRequired": "Name des Elternteils ist erforderlich",
+      "firstNameRequired": "Vorname ist erforderlich",
+      "capacityRequired": "Kapazität ist erforderlich",
+      "categoryRequired": "Kategorie ist erforderlich",
+      "childAgeRequired": "Alter des Kindes ist erforderlich",
+      "lastNameRequired": "Nachname ist erforderlich",
+      "passwordRequired": "Passwort ist erforderlich",
+      "passwordsNoMatch": "Passwörter stimmen nicht überein",
+      "passwordTooShort": "Passwort muss mindestens 6 Zeichen lang sein",
+      "captchaRequired": "Bitte vervollständigen Sie die CAPTCHA-Verifizierung",
+      "cantonRequired": "Kanton ist erforderlich",
+      "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
+      "emailRequired": "E-Mail ist erforderlich",
+      "phoneRequired": "Telefonnummer ist erforderlich",
+      "termsRequired": "Sie müssen die Geschäftsbedingungen akzeptieren",
+      "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein"
+    },
+    "placeholders": {
+      "organisationName": "Geben Sie den Organisationsnamen ein",
+      "confirmPassword": "Bestätigen Sie Ihr Passwort",
+      "contactPerson": "Geben Sie den Namen der Kontaktperson ein",
+      "organisation": "Name Ihrer Organisation",
+      "serviceType": "Geben Sie die Dienstleistungsart ein",
+      "parentName": "Geben Sie Ihren vollständigen Namen ein",
+      "firstName": "Geben Sie Ihren Vornamen ein",
+      "category": "Geben Sie die Produktkategorie ein",
+      "lastName": "Geben Sie Ihren Nachnamen ein",
+      "password": "Mindestens 6 Zeichen",
+      "select": "Auswählen...",
+      "email": "sie@beispiel.com",
+      "phone": "+41 XX XXX XX XX"
+    },
+    "submissionSuccessMessage": "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden, um auf die Plattform zuzugreifen.",
+    "fields": {
+      "organisationName": "Organisationsname",
+      "confirmPassword": "Passwort bestätigen",
+      "childStartDate": "Startdatum des Kindes",
+      "contactPerson": "Kontaktperson",
+      "termsAccepted": "Ich akzeptiere die Geschäftsbedingungen",
+      "organisation": "Organisationsname",
+      "serviceType": "Dienstleistungsart",
+      "firstName": "Vorname",
+      "startDate": "Bevorzugtes Startdatum",
+      "capacity": "Kapazität",
+      "category": "Kategorie",
+      "childAge": "Alter des Kindes",
+      "fullName": "Vollständiger Name",
+      "lastName": "Nachname",
+      "password": "Passwort",
+      "canton": "Kanton",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer"
+    },
+    "labels": {
+      "organisationName": "Organisationsname",
+      "confirmPassword": "Passwort bestätigen",
+      "childStartDate": "Gewünschtes Startdatum",
+      "contactPerson": "Kontaktperson",
+      "serviceType": "Dienstleistungsart",
+      "parentName": "Ihr Name",
+      "capacity": "Kapazität",
+      "category": "Produktkategorie",
+      "childAge": "Alter des Kindes",
+      "password": "Passwort",
+      "canton": "Kanton",
+      "email": "E-Mail",
+      "phone": "Telefon"
+    },
+    "submissionSuccessTitle": "Konto erfolgreich erstellt",
+    "buttons": {
+      "createAccount": "Konto erstellen",
+      "goBack": "Zurück"
+    },
+    "role": {
+      "productSupplier": "Produktlieferant",
+      "serviceProvider": "Dienstleister",
+      "foundation": "Stiftung (Kindertagesstätte)",
+      "superAdmin": "Super Administrator",
+      "educator": "Pädagoge/Kandidat",
+      "supplier": "Produktlieferant",
+      "parent": "Elternteil",
+      "admin": "Administrator"
+    },
+    "goToDashboardButton": "Zum Dashboard",
+    "createAccountTitle": "Erstellen Sie Ihr Konto",
+    "steps": {
+      "step1": {
+        "title": "Wählen Sie Ihre Rolle"
+      },
+      "step2": {
+        "title": "Geben Sie Ihre Details ein"
+      }
+    },
+    "creatingAccount": "Konto wird erstellt...",
+    "selectRoleTitle": "Wählen Sie Ihre Rolle",
+    "progress": {
+      "step1": "Schritt 1 von 2",
+      "step2": "Schritt 2 von 2"
+    },
+    "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
+    "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
+    "termsLink": "Geschäftsbedingungen",
+    "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
+    "title": "Treten Sie der PC Solutions Plattform bei"
+  },
+  "errors": {
+    "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",
+    "organisationNameRequired": "Organisationsname ist erforderlich",
+    "invalidVerificationCode": "Ungültiger Verifizierungscode",
+    "profileCompletionFailed": "Bei der Vervollständigung Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "childStartDateRequired": "Startdatum des Kindes ist erforderlich",
+    "contactPersonRequired": "Kontaktperson ist erforderlich",
+    "serviceTypeRequired": "Dienstleistungsart ist erforderlich",
+    "parentNameRequired": "Name des Elternteils ist erforderlich",
+    "firstNameRequired": "Vorname ist erforderlich",
+    "capacityRequired": "Kapazität ist erforderlich",
+    "categoryRequired": "Kategorie ist erforderlich",
+    "childAgeRequired": "Alter des Kindes ist erforderlich",
+    "lastNameRequired": "Nachname ist erforderlich",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordsNoMatch": "Passwörter stimmen nicht überein",
+    "passwordTooShort": "Passwort muss mindestens 6 Zeichen lang sein",
+    "captchaRequired": "Bitte vervollständigen Sie die CAPTCHA-Verifizierung",
+    "cantonRequired": "Kanton ist erforderlich",
+    "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
+    "accountExists": "Ein Konto mit dieser E-Mail existiert bereits",
+    "emailRequired": "E-Mail ist erforderlich",
+    "passwordPwned": "Dieses Passwort wurde bei einer Datenverletzung gefunden. Bitte wählen Sie ein anderes Passwort",
+    "phoneRequired": "Telefonnummer ist erforderlich",
+    "termsRequired": "Sie müssen die Geschäftsbedingungen akzeptieren",
+    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "passwordWeak": "Das Passwort ist nicht stark genug"
+  },
+  "oauthCompletion": {
+    "emailFromProvider": "E-Mail von Google bereitgestellt",
+    "wrongAccount": "Falsches Konto? Abmelden und erneut versuchen.",
+    "message": "Sie sind mit Google angemeldet. Vervollständigen Sie einfach Ihre Profildetails unten, um die Einrichtung Ihres Kontos abzuschließen.",
+    "title": "Fast geschafft!"
+  },
+  "roles": {
+    "productSupplier": {
+      "description": "Verkaufen Sie Produkte an Kinderbetreuungsorganisationen",
+      "label": "Produktlieferant"
+    },
+    "serviceProvider": {
+      "description": "Bieten Sie Dienstleistungen für Kinderbetreuungsorganisationen an",
+      "label": "Dienstleister"
+    },
+    "foundation": {
+      "description": "Verwalten Sie Ihren Kita-Betrieb, rekrutieren Sie Personal und beschaffen Sie Dienstleistungen",
+      "label": "Stiftung (Kindertagesstätte)"
+    },
+    "superAdmin": {
+      "description": "Vollständiger Systemzugriff und Verwaltung",
+      "label": "Super Administrator"
+    },
+    "educator": {
+      "description": "Finden Sie Beschäftigungsmöglichkeiten in der Kinderbetreuung",
+      "label": "Pädagoge/Kandidat"
+    },
+    "parent": {
+      "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder",
+      "label": "Elternteil"
+    },
+    "admin": {
+      "description": "Administrativer Zugriff auf die Plattformverwaltung",
+      "label": "Administrator"
+    }
+  },
+  "emailConflict": {
+    "signOutAndLogin": "Abmelden & Anmelden",
+    "instructions": "Bitte melden Sie sich ab und melden Sie sich mit Ihrem bestehenden Konto an, um fortzufahren.",
+    "tryAgain": "Neu starten",
+    "message": "Ein Konto mit dieser E-Mail-Adresse wurde bereits erstellt. Es scheint, dass Sie sich bereits mit einer anderen Methode (E-Mail/Passwort) registriert haben.",
+    "title": "Konto existiert bereits"
+  },
+  "placeholders": {
+    "organisationName": "Geben Sie den Organisationsnamen ein",
+    "confirmPassword": "Bestätigen Sie Ihr Passwort",
+    "contactPerson": "Geben Sie den Namen der Kontaktperson ein",
+    "organisation": "Name Ihrer Organisation",
+    "serviceType": "Geben Sie die Dienstleistungsart ein",
+    "parentName": "Geben Sie Ihren vollständigen Namen ein",
+    "firstName": "Geben Sie Ihren Vornamen ein",
+    "category": "Geben Sie die Produktkategorie ein",
+    "lastName": "Geben Sie Ihren Nachnamen ein",
+    "password": "Mindestens 6 Zeichen",
+    "select": "Auswählen...",
+    "email": "sie@beispiel.com",
+    "phone": "+41 XX XXX XX XX"
+  },
+  "submissionSuccessMessage": "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden, um auf die Plattform zuzugreifen.",
+  "fields": {
+    "organisationName": "Organisationsname",
+    "confirmPassword": "Passwort bestätigen",
+    "childStartDate": "Startdatum des Kindes",
+    "contactPerson": "Kontaktperson",
+    "termsAccepted": "Ich akzeptiere die Geschäftsbedingungen",
+    "organisation": "Organisationsname",
+    "serviceType": "Dienstleistungsart",
+    "firstName": "Vorname",
+    "startDate": "Bevorzugtes Startdatum",
+    "capacity": "Kapazität",
+    "category": "Kategorie",
+    "childAge": "Alter des Kindes",
+    "fullName": "Vollständiger Name",
+    "lastName": "Nachname",
+    "password": "Passwort",
+    "canton": "Kanton",
+    "email": "E-Mail-Adresse",
+    "phone": "Telefonnummer"
+  },
+  "labels": {
+    "organisationName": "Organisationsname",
+    "confirmPassword": "Passwort bestätigen",
+    "childStartDate": "Gewünschtes Startdatum",
+    "contactPerson": "Kontaktperson",
+    "serviceType": "Dienstleistungsart",
+    "parentName": "Ihr Name",
+    "capacity": "Kapazität",
+    "category": "Produktkategorie",
+    "childAge": "Alter des Kindes",
+    "password": "Passwort",
+    "canton": "Kanton",
+    "email": "E-Mail",
+    "phone": "Telefon"
+  },
+  "submissionSuccessTitle": "Konto erfolgreich erstellt",
+  "buttons": {
+    "createAccount": "Konto erstellen",
+    "goBack": "Zurück"
+  },
+  "roleSubtitle": {
+    "educator": "Job finden"
+  },
+  "role": {
+    "productSupplier": "Produktlieferant",
+    "serviceProvider": "Dienstleister",
+    "foundation": "Stiftung (Kindertagesstätte)",
+    "superAdmin": "Super Administrator",
+    "educator": "Pädagoge/Kandidat",
+    "supplier": "Produktlieferant",
+    "parent": "Elternteil",
+    "admin": "Administrator"
+  },
+  "goToDashboardButton": "Zum Dashboard",
   "createAccountTitle": "Erstellen Sie Ihr Konto",
+  "completingProfile": "Profil wird vervollständigt...",
   "steps": {
     "step1": {
       "title": "Wählen Sie Ihre Rolle"
@@ -10,156 +293,16 @@
       "title": "Geben Sie Ihre Details ein"
     }
   },
+  "completeProfile": "Profil vervollständigen",
+  "creatingAccount": "Konto wird erstellt...",
+  "selectRoleTitle": "Wählen Sie Ihre Rolle",
   "progress": {
     "step1": "Schritt 1 von 2",
     "step2": "Schritt 2 von 2"
   },
-  "selectRoleTitle": "Wählen Sie Ihre Rolle",
   "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
-  "role": {
-    "foundation": "Stiftung (Kindertagesstätte)",
-    "supplier": "Produktlieferant",
-    "productSupplier": "Produktlieferant",
-    "serviceProvider": "Dienstleister",
-    "parent": "Elternteil",
-    "educator": "Pädagoge/Kandidat",
-    "admin": "Administrator",
-    "superAdmin": "Super Administrator"
-  },
-  "roleSubtitle": {
-    "educator": "Job finden"
-  },
-  "roles": {
-    "superAdmin": {
-      "label": "Super Administrator",
-      "description": "Vollständiger Systemzugriff und Verwaltung"
-    },
-    "admin": {
-      "label": "Administrator",
-      "description": "Administrativer Zugriff auf die Plattformverwaltung"
-    },
-    "foundation": {
-      "label": "Stiftung (Kindertagesstätte)",
-      "description": "Verwalten Sie Ihren Kita-Betrieb, rekrutieren Sie Personal und beschaffen Sie Dienstleistungen"
-    },
-    "productSupplier": {
-      "label": "Produktlieferant",
-      "description": "Verkaufen Sie Produkte an Kinderbetreuungsorganisationen"
-    },
-    "serviceProvider": {
-      "label": "Dienstleister",
-      "description": "Bieten Sie Dienstleistungen für Kinderbetreuungsorganisationen an"
-    },
-    "educator": {
-      "label": "Pädagoge/Kandidat",
-      "description": "Finden Sie Beschäftigungsmöglichkeiten in der Kinderbetreuung"
-    },
-    "parent": {
-      "label": "Elternteil",
-      "description": "Finden Sie Kinderbetreuungsdienste für Ihre Kinder"
-    }
-  },
-  "fields": {
-    "fullName": "Vollständiger Name",
-    "firstName": "Vorname",
-    "lastName": "Nachname",
-    "email": "E-Mail-Adresse",
-    "password": "Passwort",
-    "confirmPassword": "Passwort bestätigen",
-    "phone": "Telefonnummer",
-    "organisation": "Organisationsname",
-    "organisationName": "Organisationsname",
-    "canton": "Kanton",
-    "capacity": "Kapazität",
-    "category": "Kategorie",
-    "serviceType": "Dienstleistungsart",
-    "childAge": "Alter des Kindes",
-    "startDate": "Bevorzugtes Startdatum",
-    "childStartDate": "Startdatum des Kindes",
-    "contactPerson": "Kontaktperson",
-    "termsAccepted": "Ich akzeptiere die Geschäftsbedingungen"
-  },
-  "placeholders": {
-    "select": "Auswählen...",
-    "firstName": "Geben Sie Ihren Vornamen ein",
-    "lastName": "Geben Sie Ihren Nachnamen ein",
-    "email": "sie@beispiel.com",
-    "password": "Mindestens 6 Zeichen",
-    "confirmPassword": "Bestätigen Sie Ihr Passwort",
-    "phone": "+41 XX XXX XX XX",
-    "organisation": "Name Ihrer Organisation",
-    "organisationName": "Geben Sie den Organisationsnamen ein",
-    "contactPerson": "Geben Sie den Namen der Kontaktperson ein",
-    "parentName": "Geben Sie Ihren vollständigen Namen ein",
-    "category": "Geben Sie die Produktkategorie ein",
-    "serviceType": "Geben Sie die Dienstleistungsart ein"
-  },
-  "errors": {
-    "organisationNameRequired": "Organisationsname ist erforderlich",
-    "emailRequired": "E-Mail ist erforderlich",
-    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-    "passwordRequired": "Passwort ist erforderlich",
-    "passwordTooShort": "Passwort muss mindestens 6 Zeichen lang sein",
-    "passwordsNoMatch": "Passwörter stimmen nicht überein",
-    "phoneRequired": "Telefonnummer ist erforderlich",
-    "cantonRequired": "Kanton ist erforderlich",
-    "capacityRequired": "Kapazität ist erforderlich",
-    "categoryRequired": "Kategorie ist erforderlich",
-    "serviceTypeRequired": "Dienstleistungsart ist erforderlich",
-    "childAgeRequired": "Alter des Kindes ist erforderlich",
-    "childStartDateRequired": "Startdatum des Kindes ist erforderlich",
-    "termsRequired": "Sie müssen die Geschäftsbedingungen akzeptieren",
-    "contactPersonRequired": "Kontaktperson ist erforderlich",
-    "parentNameRequired": "Name des Elternteils ist erforderlich",
-    "firstNameRequired": "Vorname ist erforderlich",
-    "lastNameRequired": "Nachname ist erforderlich",
-    "captchaRequired": "Bitte vervollständigen Sie die CAPTCHA-Verifizierung",
-    "captchaExpired": "CAPTCHA ist abgelaufen. Bitte versuchen Sie es erneut",
-    "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
-    "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",
-    "profileCompletionFailed": "Bei der Vervollständigung Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
-    "accountExists": "[DE] An account with this email already exists",
-    "passwordPwned": "[DE] This password has been found in a data breach. Please choose a different password",
-    "passwordWeak": "[DE] Password is not strong enough"
-  },
-  "buttons": {
-    "createAccount": "Konto erstellen",
-    "goBack": "Zurück"
-  },
-  "submissionSuccessTitle": "Konto erfolgreich erstellt",
-  "submissionSuccessMessage": "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden, um auf die Plattform zuzugreifen.",
-  "goToDashboardButton": "Zum Dashboard",
-  "creatingAccount": "Konto wird erstellt...",
   "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
   "termsLink": "Geschäftsbedingungen",
-  "labels": {
-    "organisationName": "Organisationsname",
-    "contactPerson": "Kontaktperson",
-    "parentName": "Ihr Name",
-    "email": "E-Mail",
-    "password": "Passwort",
-    "confirmPassword": "Passwort bestätigen",
-    "phone": "Telefon",
-    "canton": "Kanton",
-    "capacity": "Kapazität",
-    "category": "Produktkategorie",
-    "serviceType": "Dienstleistungsart",
-    "childAge": "Alter des Kindes",
-    "childStartDate": "Gewünschtes Startdatum"
-  },
-  "oauthCompletion": {
-    "title": "Fast geschafft!",
-    "message": "Sie sind mit Google angemeldet. Vervollständigen Sie einfach Ihre Profildetails unten, um die Einrichtung Ihres Kontos abzuschließen.",
-    "emailFromProvider": "E-Mail von Google bereitgestellt",
-    "wrongAccount": "Falsches Konto? Abmelden und erneut versuchen."
-  },
-  "emailConflict": {
-    "title": "Konto existiert bereits",
-    "message": "Ein Konto mit dieser E-Mail-Adresse wurde bereits erstellt. Es scheint, dass Sie sich bereits mit einer anderen Methode (E-Mail/Passwort) registriert haben.",
-    "instructions": "Bitte melden Sie sich ab und melden Sie sich mit Ihrem bestehenden Konto an, um fortzufahren.",
-    "signOutAndLogin": "Abmelden & Anmelden",
-    "tryAgain": "Neu starten"
-  },
-  "completingProfile": "Profil wird vervollständigt...",
-  "completeProfile": "Profil vervollständigen"
+  "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
+  "title": "Treten Sie der PC Solutions Plattform bei"
 }

@@ -1,31 +1,58 @@
 {
-  "title": "Messages",
-  "tabs": {
-    "all": "All Messages",
-    "unread": "Unread"
+  "messages": {
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Select a conversation to start messaging",
+      "noConversationSelectedTitle": "No Conversation Selected",
+      "noConversationsYet": "No conversations yet",
+      "selectConversation": "Select a conversation to start messaging"
+    },
+    "placeholders": {
+      "searchConversations": "Search conversations...",
+      "typeMessage": "Type a message..."
+    },
+    "noConversationsFound": "No conversations found",
+    "buttons": {
+      "sendMessage": "Send Message",
+      "newGroup": "New Group"
+    },
+    "searchPlaceholder": "Search conversations...",
+    "filters": {
+      "unread": "Unread",
+      "all": "All"
+    },
+    "tabs": {
+      "unread": "Unread",
+      "all": "All Messages"
+    },
+    "title": "Messages"
   },
   "emptyState": {
-    "selectConversation": "Select a conversation to start messaging",
-    "noConversationSelectedTitle": "No Conversation Selected",
     "noConversationSelectedSubtitle": "Select a conversation to start messaging",
-    "noConversationsYet": "No conversations yet"
-  },
-  "searchPlaceholder": "Search conversations...",
-  "noConversationsFound": "No conversations found",
-  "filters": {
-    "all": "All",
-    "unread": "Unread"
-  },
-  "buttons": {
-    "newGroup": "New Group",
-    "newChat": "New Chat",
-    "sendMessage": "Send Message"
+    "noConversationSelectedTitle": "No Conversation Selected",
+    "noConversationsYet": "No Conversations Yet",
+    "selectConversation": "Select a conversation to start messaging"
   },
   "placeholders": {
-    "typeMessage": "Type a message...",
-    "searchConversations": "Search conversations..."
+    "searchConversations": "Search Conversations",
+    "typeMessage": "Type a message..."
   },
+  "noConversationsFound": "No Conversations Found",
+  "buttons": {
+    "sendMessage": "Send",
+    "newGroup": "New Group",
+    "newChat": "New Chat"
+  },
+  "searchPlaceholder": "Search conversations...",
+  "filters": {
+    "unread": "Unread",
+    "all": "All"
+  },
+  "noMessagesYet": "No Messages Yet",
+  "tabs": {
+    "unread": "Unread",
+    "all": "All Messages"
+  },
+  "unknownUser": "Unknown User",
   "youPrefix": "You: ",
-  "noMessagesYet": "No messages yet",
-  "unknownUser": "Unknown User"
+  "title": "Messages"
 }
