@@ -121,6 +121,11 @@
     "deliveryTypeHint": "Wählen Sie, wie Sie Ihre Dienste erbringen",
     "bookingLink": "Buchungslink"
   },
+  "profileEdit": {
+    "organizationProfile": "Organisationsprofil",
+    "profile": "Profil",
+    "documents": "Dokumente und Kataloge"
+  },
   "educatorProfile": {
     "avatar": "Profilfoto",
     "chooseAvatar": "Avatar auswählen",

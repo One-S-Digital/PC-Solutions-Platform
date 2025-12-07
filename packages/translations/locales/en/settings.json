@@ -167,6 +167,11 @@
     "cvUrlPlaceholder": "https://example.com/cv.pdf",
     "cvUrlHint": "Link to your CV or resume document"
   },
+  "profileEdit": {
+    "organizationProfile": "Organization Profile",
+    "profile": "Profile",
+    "documents": "Documents & Catalogs"
+  },
   "profileDocuments": {
     "title": "Catalogs & Documents",
     "supplierDescription": "Upload product catalogs, price lists, or company brochures that will be visible on your public profile.",

@@ -121,6 +121,11 @@
     "deliveryTypeHint": "Choisissez comment vous fournissez vos services",
     "bookingLink": "Lien de réservation"
   },
+  "profileEdit": {
+    "organizationProfile": "Profil de l'organisation",
+    "profile": "Profil",
+    "documents": "Documents et catalogues"
+  },
   "educatorProfile": {
     "avatar": "Photo de profil",
     "chooseAvatar": "Choisir un avatar",
