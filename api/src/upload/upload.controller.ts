@@ -271,6 +271,7 @@ export class UploadController {
       'ADMIN_LOGO': 'Other',
       'ADMIN_FAVICON': 'Other',
       'ELEARNING': 'Other',
+      'COMPANY_PROFILE_DOC': 'Other',
     };
     return kindMap[kind] || 'Other';
   }

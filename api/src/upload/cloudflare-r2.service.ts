@@ -261,6 +261,7 @@ export class CloudflareR2Service {
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
       SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
       ELEARNING: 100 * 1024 * 1024, // 100MB - for videos, PDFs, courses
+      COMPANY_PROFILE_DOC: 50 * 1024 * 1024, // 50MB - for catalogs, company profiles
     };
 
     const allowedTypes = {
@@ -284,6 +285,15 @@ export class CloudflareR2Service {
         'video/quicktime',
         'video/x-msvideo', // AVI
         'video/webm',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      ],
+      COMPANY_PROFILE_DOC: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'application/vnd.ms-powerpoint',
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       ],

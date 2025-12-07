@@ -15,6 +15,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
+import OrganizationDocumentsList from './OrganizationDocumentsList';
 import { User, UserRole, Product, Service, JobListing, Organization } from '../../types';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 
@@ -551,6 +552,11 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                 </p>
               )}
             </Card>
+          )}
+
+          {/* Documents Section - For Suppliers and Service Providers */}
+          {(role === UserRole.PRODUCT_SUPPLIER || role === UserRole.SERVICE_PROVIDER) && (
+            <OrganizationDocumentsList organizationId={organization.id} />
           )}
         </div>
       </div>

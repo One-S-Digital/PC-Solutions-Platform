@@ -38,6 +38,7 @@ export declare const AssetKind: {
     readonly ADMIN_FAVICON: "ADMIN_FAVICON";
     readonly SIDEBAR_LOGO: "SIDEBAR_LOGO";
     readonly ELEARNING: "ELEARNING";
+    readonly COMPANY_PROFILE_DOC: "COMPANY_PROFILE_DOC";
 };
 export type AssetKind = (typeof AssetKind)[keyof typeof AssetKind];
 export declare const OrganizationType: {
