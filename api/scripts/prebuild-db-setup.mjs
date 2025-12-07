@@ -506,6 +506,331 @@ END $$;
   );
 };
 
+const ensureOrdersTable = () => {
+  const sql = `
+-- Create the orders table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."orders" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "totalAmount" DOUBLE PRECISION NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
+);
+
+-- Create index on organizationId for organization-scoped queries
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'orders_organizationId_idx'
+    ) THEN
+        CREATE INDEX "orders_organizationId_idx" ON "public"."orders"("organizationId");
+    END IF;
+END $$;
+
+-- Add foreign key for organizationId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'orders_organizationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."orders" 
+        ADD CONSTRAINT "orders_organizationId_fkey" 
+        FOREIGN KEY ("organizationId") REFERENCES "public"."organizations"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureOrderItemsTable = () => {
+  const sql = `
+-- Create the order_items table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."order_items" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "order_items_pkey" PRIMARY KEY ("id")
+);
+
+-- Add foreign key for orderId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'order_items_orderId_fkey'
+    ) THEN
+        ALTER TABLE "public"."order_items" 
+        ADD CONSTRAINT "order_items_orderId_fkey" 
+        FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for productId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'order_items_productId_fkey'
+    ) THEN
+        ALTER TABLE "public"."order_items" 
+        ADD CONSTRAINT "order_items_productId_fkey" 
+        FOREIGN KEY ("productId") REFERENCES "public"."products"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureServiceRequestsTable = () => {
+  const sql = `
+-- Create the service_requests table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."service_requests" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "serviceId" TEXT NOT NULL,
+    "description" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "requestedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "scheduledAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "service_requests_pkey" PRIMARY KEY ("id")
+);
+
+-- Create index on organizationId for organization-scoped queries
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'service_requests_organizationId_idx'
+    ) THEN
+        CREATE INDEX "service_requests_organizationId_idx" ON "public"."service_requests"("organizationId");
+    END IF;
+END $$;
+
+-- Add foreign key for organizationId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'service_requests_organizationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."service_requests" 
+        ADD CONSTRAINT "service_requests_organizationId_fkey" 
+        FOREIGN KEY ("organizationId") REFERENCES "public"."organizations"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for serviceId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'service_requests_serviceId_fkey'
+    ) THEN
+        ALTER TABLE "public"."service_requests" 
+        ADD CONSTRAINT "service_requests_serviceId_fkey" 
+        FOREIGN KEY ("serviceId") REFERENCES "public"."services"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureConversationsTable = () => {
+  const sql = `
+-- Ensure ConversationType enum exists
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'ConversationType'
+    ) THEN
+        CREATE TYPE "public"."ConversationType" AS ENUM ('DIRECT', 'GROUP', 'SUPPORT');
+    END IF;
+END
+$$;
+
+-- Create the conversations table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."conversations" (
+    "id" TEXT NOT NULL,
+    "type" "public"."ConversationType" NOT NULL DEFAULT 'DIRECT',
+    "title" TEXT,
+    "lastMessageAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "conversations_pkey" PRIMARY KEY ("id")
+);
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureConversationParticipantsTable = () => {
+  const sql = `
+-- Create the conversation_participants table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."conversation_participants" (
+    "id" TEXT NOT NULL,
+    "conversationId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "joinedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastReadAt" TIMESTAMP(3),
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "conversation_participants_pkey" PRIMARY KEY ("id")
+);
+
+-- Create unique index for conversationId + userId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'conversation_participants_conversationId_userId_key'
+    ) THEN
+        CREATE UNIQUE INDEX "conversation_participants_conversationId_userId_key" ON "public"."conversation_participants"("conversationId", "userId");
+    END IF;
+END $$;
+
+-- Add foreign key for conversationId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'conversation_participants_conversationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."conversation_participants" 
+        ADD CONSTRAINT "conversation_participants_conversationId_fkey" 
+        FOREIGN KEY ("conversationId") REFERENCES "public"."conversations"("id") 
+        ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for userId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'conversation_participants_userId_fkey'
+    ) THEN
+        ALTER TABLE "public"."conversation_participants" 
+        ADD CONSTRAINT "conversation_participants_userId_fkey" 
+        FOREIGN KEY ("userId") REFERENCES "public"."users"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
+const ensureMessagesTable = () => {
+  const sql = `
+-- Ensure MessageType enum exists
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'MessageType'
+    ) THEN
+        CREATE TYPE "public"."MessageType" AS ENUM ('TEXT', 'FILE', 'IMAGE', 'SYSTEM');
+    END IF;
+END
+$$;
+
+-- Create the messages table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."messages" (
+    "id" TEXT NOT NULL,
+    "conversationId" TEXT,
+    "senderId" TEXT NOT NULL,
+    "receiverId" TEXT,
+    "content" TEXT NOT NULL,
+    "messageType" "public"."MessageType" NOT NULL DEFAULT 'TEXT',
+    "isRead" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "messages_pkey" PRIMARY KEY ("id")
+);
+
+-- Add foreign key for conversationId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'messages_conversationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."messages" 
+        ADD CONSTRAINT "messages_conversationId_fkey" 
+        FOREIGN KEY ("conversationId") REFERENCES "public"."conversations"("id") 
+        ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for senderId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'messages_senderId_fkey'
+    ) THEN
+        ALTER TABLE "public"."messages" 
+        ADD CONSTRAINT "messages_senderId_fkey" 
+        FOREIGN KEY ("senderId") REFERENCES "public"."users"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for receiverId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'messages_receiverId_fkey'
+    ) THEN
+        ALTER TABLE "public"."messages" 
+        ADD CONSTRAINT "messages_receiverId_fkey" 
+        FOREIGN KEY ("receiverId") REFERENCES "public"."users"("id") 
+        ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const ensureOrganizationDocumentsTable = () => {
   const sql = `
 -- Create the organization_documents table if it doesn't exist
@@ -928,6 +1253,54 @@ try {
   log('✅ organization_documents table check complete');
 } catch (error) {
   warn(`⚠️  Could not ensure organization_documents table: ${error.message}`);
+}
+
+log('🔁 Ensuring orders table exists...');
+try {
+  ensureOrdersTable();
+  log('✅ orders table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure orders table: ${error.message}`);
+}
+
+log('🔁 Ensuring order_items table exists...');
+try {
+  ensureOrderItemsTable();
+  log('✅ order_items table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure order_items table: ${error.message}`);
+}
+
+log('🔁 Ensuring service_requests table exists...');
+try {
+  ensureServiceRequestsTable();
+  log('✅ service_requests table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure service_requests table: ${error.message}`);
+}
+
+log('🔁 Ensuring conversations table exists...');
+try {
+  ensureConversationsTable();
+  log('✅ conversations table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure conversations table: ${error.message}`);
+}
+
+log('🔁 Ensuring conversation_participants table exists...');
+try {
+  ensureConversationParticipantsTable();
+  log('✅ conversation_participants table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure conversation_participants table: ${error.message}`);
+}
+
+log('🔁 Ensuring messages table exists...');
+try {
+  ensureMessagesTable();
+  log('✅ messages table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure messages table: ${error.message}`);
 }
 
 // log('🔁 Ensuring translation infrastructure is present...');
