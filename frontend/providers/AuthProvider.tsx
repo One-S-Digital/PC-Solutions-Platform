@@ -46,6 +46,8 @@ interface AuthContextType {
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
   refreshCurrentUser: () => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  changeEmail: (newEmail: string) => Promise<void>;
+  verifyEmailChange: (code: string, emailAddressId: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -578,6 +580,60 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     [clerkUser, getToken]
   );
 
+  const changeEmail = useCallback(
+    async (newEmail: string) => {
+      if (!clerkUser) {
+        throw new Error('Authenticated user is not available');
+      }
+
+      const previousEmail = clerkUser.primaryEmailAddress?.emailAddress || currentUser?.email;
+
+      try {
+        // Create a new email address in Clerk
+        // This will trigger a verification email to the new address
+        const emailAddress = await clerkUser.createEmailAddress({ email: newEmail });
+        
+        // Prepare for verification - Clerk will send a verification email
+        await emailAddress.prepareVerification({ strategy: 'email_code' });
+        
+        // Note: The actual email change will be completed after verification
+        // We store the pending email change info for the UI to handle verification
+        return;
+      } catch (error: any) {
+        console.error('Failed to initiate email change via Clerk', error);
+
+        // Handle Clerk-specific errors
+        const clerkErrors = error?.errors;
+        if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
+          const message = clerkErrors
+            .map((e: any) => e?.longMessage || e?.message)
+            .filter(Boolean)
+            .join(' ');
+          throw new Error(message || 'Email change failed');
+        }
+
+        const errorMessage = error?.message || '';
+        
+        // Handle duplicate email
+        if (errorMessage.includes('already exists') || errorMessage.includes('taken')) {
+          throw new Error('This email address is already in use by another account.');
+        }
+
+        // Handle invalid email
+        if (errorMessage.includes('invalid') || errorMessage.includes('Invalid')) {
+          throw new Error('Please enter a valid email address.');
+        }
+
+        if (error instanceof Error && error.message) {
+          throw new Error(error.message);
+        }
+
+        throw new Error('Unable to change email. Please try again.');
+      }
+    },
+    [clerkUser, currentUser?.email]
+  );
+
   const refreshCurrentUser = useCallback(async () => {
     if (!clerkIsLoaded) {
       throw new Error('Clerk is not loaded yet');
@@ -597,6 +653,85 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, [clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
 
+  const verifyEmailChange = useCallback(
+    async (code: string, emailAddressId: string) => {
+      if (!clerkUser) {
+        throw new Error('Authenticated user is not available');
+      }
+
+      const previousEmail = clerkUser.primaryEmailAddress?.emailAddress || currentUser?.email;
+
+      try {
+        // Find the email address to verify
+        const emailAddress = clerkUser.emailAddresses.find(e => e.id === emailAddressId);
+        
+        if (!emailAddress) {
+          throw new Error('Email address not found');
+        }
+
+        // Verify the email with the code
+        await emailAddress.attemptVerification({ code });
+
+        // Set it as primary
+        await clerkUser.update({ primaryEmailAddressId: emailAddress.id });
+
+        // Get the new email
+        const newEmail = emailAddress.emailAddress;
+
+        // Record the change on our backend
+        try {
+          const token = await getToken();
+
+          if (token) {
+            const url = `${apiService.apiBaseUrl}${API_ENDPOINTS.security.emailChange}`;
+
+            await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                occurredAt: new Date().toISOString(),
+                method: 'clerk',
+                previousEmail: previousEmail,
+                newEmail: newEmail,
+              }),
+            });
+          }
+        } catch (auditError) {
+          console.error('Email change audit logging failed', auditError);
+        }
+
+        // Refresh user to get updated email
+        await refreshCurrentUser();
+      } catch (error: any) {
+        console.error('Failed to verify email change', error);
+
+        const clerkErrors = error?.errors;
+        if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
+          const message = clerkErrors
+            .map((e: any) => e?.longMessage || e?.message)
+            .filter(Boolean)
+            .join(' ');
+          throw new Error(message || 'Email verification failed');
+        }
+
+        if (error?.message?.includes('incorrect') || error?.message?.includes('invalid')) {
+          throw new Error('The verification code is incorrect. Please try again.');
+        }
+
+        if (error instanceof Error && error.message) {
+          throw new Error(error.message);
+        }
+
+        throw new Error('Unable to verify email. Please try again.');
+      }
+    },
+    [clerkUser, currentUser?.email, getToken, refreshCurrentUser]
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -613,6 +748,8 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         updateCurrentUserInfo,
         refreshCurrentUser,
         changePassword,
+        changeEmail,
+        verifyEmailChange,
       }}
     >
       {children}

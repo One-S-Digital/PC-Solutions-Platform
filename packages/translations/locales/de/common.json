@@ -286,7 +286,10 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Persönliche Informationen erfolgreich aktualisiert",
-      "passwordChanged": "Passwort erfolgreich geändert"
+      "passwordChanged": "Passwort erfolgreich geändert",
+      "passwordChangedMessage": "Ihr Passwort wurde erfolgreich aktualisiert. Sie können jetzt Ihr neues Passwort zur Anmeldung verwenden.",
+      "emailChanged": "E-Mail-Adresse erfolgreich geändert",
+      "emailChangedMessage": "Ihre E-Mail-Adresse wurde erfolgreich aktualisiert."
     },
     "dangerZone": {
       "finalConfirmation": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -310,7 +313,33 @@
       "currentPasswordLabel": "Aktuelles Passwort",
       "newPasswordLabel": "Neues Passwort",
       "confirmNewPasswordLabel": "Neues Passwort bestätigen",
-      "updatePasswordButton": "Passwort aktualisieren"
+      "updatePasswordButton": "Passwort aktualisieren",
+      "passwordUpdated": "Passwort aktualisiert"
+    },
+    "changeEmail": {
+      "title": "E-Mail-Adresse ändern",
+      "description": "Ändern Sie die mit Ihrem Konto verknüpfte E-Mail-Adresse. Ein Bestätigungscode wird an Ihre neue E-Mail-Adresse gesendet.",
+      "currentEmailLabel": "Aktuelle E-Mail",
+      "newEmailLabel": "Neue E-Mail-Adresse",
+      "newEmailPlaceholder": "Geben Sie Ihre neue E-Mail-Adresse ein",
+      "sendVerificationCode": "Bestätigungscode senden",
+      "sending": "Wird gesendet...",
+      "verificationSent": "Bestätigungscode gesendet",
+      "verificationSentMessage": "Bitte überprüfen Sie Ihre neue E-Mail-Adresse für den Bestätigungscode.",
+      "verificationCodeLabel": "Bestätigungscode",
+      "verificationCodePlaceholder": "6-stelligen Code eingeben",
+      "verificationInstructions": "Ein Bestätigungscode wurde gesendet an",
+      "enterCodeBelow": " Bitte geben Sie den Code unten ein, um die E-Mail-Änderung abzuschließen.",
+      "verifyAndChange": "Verifizieren & E-Mail ändern",
+      "verifying": "Wird verifiziert...",
+      "resendCode": "Code erneut senden",
+      "codeResent": "Bestätigungscode erneut gesendet",
+      "codeResentMessage": "Ein neuer Bestätigungscode wurde an Ihre E-Mail gesendet.",
+      "emailChanged": "E-Mail-Adresse erfolgreich geändert",
+      "emailChangedMessage": "Ihre E-Mail-Adresse wurde erfolgreich aktualisiert.",
+      "sameEmailError": "Die neue E-Mail-Adresse muss sich von der aktuellen unterscheiden",
+      "enterCode": "Bitte geben Sie den Bestätigungscode ein",
+      "sessionExpired": "Sitzung abgelaufen. Bitte versuchen Sie es erneut."
     }
   },
   "settingsBillingSubscription": {

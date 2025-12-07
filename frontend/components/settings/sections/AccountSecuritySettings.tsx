@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import { SettingsFormData, UserRole } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
-import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon, CheckCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import Button from '../../ui/Button';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
@@ -19,8 +20,9 @@ interface AccountSecuritySettingsProps {
 const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ settings, onChange, userRole }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { currentUser, updateCurrentUserInfo } = useAppContext();
-  const { changePassword } = useAuthContext();
+  const { changePassword, changeEmail, verifyEmailChange } = useAuthContext();
   const { addNotification } = useNotifications();
+  const { user: clerkUser } = useUser();
   
   const [personalInfo, setPersonalInfo] = useState({
     firstName: currentUser?.firstName || '',
@@ -51,6 +53,16 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
+
+  // Email change state
+  const [newEmail, setNewEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [pendingEmailAddressId, setPendingEmailAddressId] = useState<string | null>(null);
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
+  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [emailChangeStep, setEmailChangeStep] = useState<'input' | 'verify'>('input');
   
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPersonalInfo(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -111,6 +123,151 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
         setIsUpdatingPassword(false);
       }
     };
+
+  const handleInitiateEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError(null);
+    setEmailSuccess(false);
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      addNotification({ title: t('common:forms.emailInvalid'), message: '', type: 'error' });
+      return;
+    }
+
+    // Check if it's the same as current email
+    if (newEmail.toLowerCase() === currentUser?.email?.toLowerCase()) {
+      addNotification({ 
+        title: t('common:settingsAccountSecurity.changeEmail.sameEmailError', 'New email must be different from current email'), 
+        message: '', 
+        type: 'error' 
+      });
+      return;
+    }
+
+    setIsUpdatingEmail(true);
+
+    try {
+      await changeEmail(newEmail);
+      
+      // Find the newly created email address ID from Clerk
+      if (clerkUser) {
+        const pendingEmail = clerkUser.emailAddresses.find(
+          e => e.emailAddress.toLowerCase() === newEmail.toLowerCase() && 
+               e.verification?.status !== 'verified'
+        );
+        if (pendingEmail) {
+          setPendingEmailAddressId(pendingEmail.id);
+        }
+      }
+
+      // Move to verification step
+      setEmailChangeStep('verify');
+      addNotification({ 
+        title: t('common:settingsAccountSecurity.changeEmail.verificationSent', 'Verification code sent'), 
+        message: t('common:settingsAccountSecurity.changeEmail.verificationSentMessage', 'Please check your new email for the verification code.'),
+        type: 'success' 
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('common:errors.unknown');
+      setEmailError(message);
+      addNotification({ title: message, message: '', type: 'error' });
+    } finally {
+      setIsUpdatingEmail(false);
+    }
+  };
+
+  const handleVerifyEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError(null);
+
+    if (!verificationCode.trim()) {
+      addNotification({ 
+        title: t('common:settingsAccountSecurity.changeEmail.enterCode', 'Please enter the verification code'), 
+        message: '', 
+        type: 'error' 
+      });
+      return;
+    }
+
+    if (!pendingEmailAddressId) {
+      // Try to find it again
+      if (clerkUser) {
+        const pendingEmail = clerkUser.emailAddresses.find(
+          e => e.emailAddress.toLowerCase() === newEmail.toLowerCase() && 
+               e.verification?.status !== 'verified'
+        );
+        if (pendingEmail) {
+          setPendingEmailAddressId(pendingEmail.id);
+        } else {
+          addNotification({ 
+            title: t('common:settingsAccountSecurity.changeEmail.sessionExpired', 'Session expired. Please try again.'), 
+            message: '', 
+            type: 'error' 
+          });
+          handleCancelEmailChange();
+          return;
+        }
+      }
+    }
+
+    setIsVerifyingEmail(true);
+
+    try {
+      await verifyEmailChange(verificationCode, pendingEmailAddressId!);
+      
+      setEmailSuccess(true);
+      setEmailChangeStep('input');
+      setNewEmail('');
+      setVerificationCode('');
+      setPendingEmailAddressId(null);
+      
+      addNotification({ 
+        title: t('common:settingsAccountSecurity.changeEmail.emailChanged', 'Email changed successfully'), 
+        message: t('common:settingsAccountSecurity.changeEmail.emailChangedMessage', 'Your email address has been successfully updated.'),
+        type: 'success' 
+      });
+
+      // Clear success message after 10 seconds
+      setTimeout(() => {
+        setEmailSuccess(false);
+      }, 10000);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('common:errors.unknown');
+      setEmailError(message);
+      addNotification({ title: message, message: '', type: 'error' });
+    } finally {
+      setIsVerifyingEmail(false);
+    }
+  };
+
+  const handleCancelEmailChange = () => {
+    setEmailChangeStep('input');
+    setNewEmail('');
+    setVerificationCode('');
+    setPendingEmailAddressId(null);
+    setEmailError(null);
+  };
+
+  const handleResendVerificationCode = async () => {
+    if (!pendingEmailAddressId || !clerkUser) return;
+
+    try {
+      const emailAddress = clerkUser.emailAddresses.find(e => e.id === pendingEmailAddressId);
+      if (emailAddress) {
+        await emailAddress.prepareVerification({ strategy: 'email_code' });
+        addNotification({ 
+          title: t('common:settingsAccountSecurity.changeEmail.codeResent', 'Verification code resent'), 
+          message: t('common:settingsAccountSecurity.changeEmail.codeResentMessage', 'A new verification code has been sent to your email.'),
+          type: 'success' 
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('common:errors.unknown');
+      addNotification({ title: message, message: '', type: 'error' });
+    }
+  };
 
   const handleAccountDeletion = () => {
       if (window.confirm(t('settingsPrivacyData.confirmGDPRDelete'))) {
@@ -233,6 +390,117 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                )}
              </div>
         </form>
+
+        <hr />
+
+        {/* Change Email Section */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 flex items-center">
+            <EnvelopeIcon className="w-5 h-5 mr-2" />
+            {t('common:settingsAccountSecurity.changeEmail.title', 'Change Email Address')}
+          </h3>
+          <div className="mt-2 mb-4">
+            <p className="text-sm text-gray-600">
+              {t('common:settingsAccountSecurity.changeEmail.description', 'Change the email address associated with your account. A verification code will be sent to your new email address.')}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              {t('common:settingsAccountSecurity.changeEmail.currentEmailLabel', 'Current email')}: <span className="font-medium text-gray-700">{currentUser?.email}</span>
+            </p>
+          </div>
+
+          {emailChangeStep === 'input' ? (
+            <form onSubmit={handleInitiateEmailChange}>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
+                <label htmlFor="newEmail" className="form-label md:pt-2">
+                  {t('common:settingsAccountSecurity.changeEmail.newEmailLabel', 'New Email Address')}
+                </label>
+                <div className="form-input-container">
+                  <input 
+                    type="email" 
+                    id="newEmail" 
+                    name="newEmail" 
+                    value={newEmail} 
+                    onChange={(e) => setNewEmail(e.target.value)} 
+                    placeholder={t('common:settingsAccountSecurity.changeEmail.newEmailPlaceholder', 'Enter your new email address')}
+                    className={STANDARD_INPUT_FIELD} 
+                    required
+                  />
+                </div>
+              </div>
+              <div className="mt-4 space-y-2">
+                <Button type="submit" variant="secondary" disabled={isUpdatingEmail || emailSuccess || !newEmail.trim()}>
+                  {isUpdatingEmail 
+                    ? t('common:settingsAccountSecurity.changeEmail.sending', 'Sending...') 
+                    : t('common:settingsAccountSecurity.changeEmail.sendVerificationCode', 'Send Verification Code')}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyEmailChange}>
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
+                <p className="text-sm text-blue-800">
+                  {t('common:settingsAccountSecurity.changeEmail.verificationInstructions', 'A verification code has been sent to')} <span className="font-medium">{newEmail}</span>. 
+                  {t('common:settingsAccountSecurity.changeEmail.enterCodeBelow', ' Please enter the code below to complete the email change.')}
+                </p>
+              </div>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
+                <label htmlFor="verificationCode" className="form-label md:pt-2">
+                  {t('common:settingsAccountSecurity.changeEmail.verificationCodeLabel', 'Verification Code')}
+                </label>
+                <div className="form-input-container">
+                  <input 
+                    type="text" 
+                    id="verificationCode" 
+                    name="verificationCode" 
+                    value={verificationCode} 
+                    onChange={(e) => setVerificationCode(e.target.value)} 
+                    placeholder={t('common:settingsAccountSecurity.changeEmail.verificationCodePlaceholder', 'Enter 6-digit code')}
+                    className={STANDARD_INPUT_FIELD} 
+                    maxLength={6}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button type="submit" variant="primary" disabled={isVerifyingEmail || !verificationCode.trim()}>
+                  {isVerifyingEmail 
+                    ? t('common:settingsAccountSecurity.changeEmail.verifying', 'Verifying...') 
+                    : t('common:settingsAccountSecurity.changeEmail.verifyAndChange', 'Verify & Change Email')}
+                </Button>
+                <Button type="button" variant="light" onClick={handleResendVerificationCode}>
+                  {t('common:settingsAccountSecurity.changeEmail.resendCode', 'Resend Code')}
+                </Button>
+                <Button type="button" variant="outline" onClick={handleCancelEmailChange}>
+                  {t('common:buttons.cancel', 'Cancel')}
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {/* Success Message */}
+          {emailSuccess && (
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-start">
+                <CheckCircleIcon className="h-5 w-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-green-800">
+                    {t('common:settingsAccountSecurity.changeEmail.emailChanged', 'Email changed successfully')}
+                  </p>
+                  <p className="text-sm text-green-700 mt-1">
+                    {t('common:settingsAccountSecurity.changeEmail.emailChangedMessage', 'Your email address has been successfully updated.')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {emailError && (
+            <div className="mt-4">
+              <p className="text-sm text-swiss-coral font-medium">{emailError}</p>
+            </div>
+          )}
+        </div>
 
         <hr />
 

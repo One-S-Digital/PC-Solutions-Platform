@@ -562,7 +562,10 @@
   "settingsAccountSecurity": {
     "notifications": {
       "infoUpdated": "Informations personnelles mises à jour avec succès",
-      "passwordChanged": "Mot de passe modifié avec succès"
+      "passwordChanged": "Mot de passe modifié avec succès",
+      "passwordChangedMessage": "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant utiliser votre nouveau mot de passe pour vous connecter.",
+      "emailChanged": "Adresse e-mail modifiée avec succès",
+      "emailChangedMessage": "Votre adresse e-mail a été mise à jour avec succès."
     },
     "dangerZone": {
       "finalConfirmation": "Êtes-vous absolument sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée.",
@@ -586,7 +589,33 @@
       "currentPasswordLabel": "Mot de passe actuel",
       "newPasswordLabel": "Nouveau mot de passe",
       "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
-      "updatePasswordButton": "Mettre à jour le mot de passe"
+      "updatePasswordButton": "Mettre à jour le mot de passe",
+      "passwordUpdated": "Mot de passe mis à jour"
+    },
+    "changeEmail": {
+      "title": "Changer l'adresse e-mail",
+      "description": "Changez l'adresse e-mail associée à votre compte. Un code de vérification sera envoyé à votre nouvelle adresse e-mail.",
+      "currentEmailLabel": "E-mail actuel",
+      "newEmailLabel": "Nouvelle adresse e-mail",
+      "newEmailPlaceholder": "Entrez votre nouvelle adresse e-mail",
+      "sendVerificationCode": "Envoyer le code de vérification",
+      "sending": "Envoi en cours...",
+      "verificationSent": "Code de vérification envoyé",
+      "verificationSentMessage": "Veuillez vérifier votre nouvelle adresse e-mail pour le code de vérification.",
+      "verificationCodeLabel": "Code de vérification",
+      "verificationCodePlaceholder": "Entrez le code à 6 chiffres",
+      "verificationInstructions": "Un code de vérification a été envoyé à",
+      "enterCodeBelow": " Veuillez entrer le code ci-dessous pour terminer le changement d'e-mail.",
+      "verifyAndChange": "Vérifier et changer l'e-mail",
+      "verifying": "Vérification en cours...",
+      "resendCode": "Renvoyer le code",
+      "codeResent": "Code de vérification renvoyé",
+      "codeResentMessage": "Un nouveau code de vérification a été envoyé à votre e-mail.",
+      "emailChanged": "Adresse e-mail modifiée avec succès",
+      "emailChangedMessage": "Votre adresse e-mail a été mise à jour avec succès.",
+      "sameEmailError": "La nouvelle adresse e-mail doit être différente de l'adresse actuelle",
+      "enterCode": "Veuillez entrer le code de vérification",
+      "sessionExpired": "Session expirée. Veuillez réessayer."
     }
   },
   "settingsPrivacyData": {
