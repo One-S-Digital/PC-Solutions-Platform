@@ -42,6 +42,7 @@ exports.AssetKind = {
     ADMIN_FAVICON: 'ADMIN_FAVICON',
     SIDEBAR_LOGO: 'SIDEBAR_LOGO',
     ELEARNING: 'ELEARNING',
+    COMPANY_PROFILE_DOC: 'COMPANY_PROFILE_DOC',
 };
 // Organization Types
 exports.OrganizationType = {

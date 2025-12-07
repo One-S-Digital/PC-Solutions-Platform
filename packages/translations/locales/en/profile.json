@@ -22,5 +22,18 @@
   },
   "empty": {
     "organization": "No organization information available yet."
+  },
+  "documents": {
+    "title": "Documents & Resources",
+    "preview": "Preview",
+    "download": "Download",
+    "noFileUrl": "Document URL not available.",
+    "downloadFailedMessage": "Failed to download document.",
+    "types": {
+      "catalog": "Product Catalog",
+      "company_profile": "Company Profile",
+      "brochure": "Brochure",
+      "price_list": "Price List"
+    }
   }
 }

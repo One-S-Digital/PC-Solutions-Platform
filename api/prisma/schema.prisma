@@ -43,6 +43,7 @@ enum AssetKind {
   ADMIN_FAVICON
   SIDEBAR_LOGO
   ELEARNING
+  COMPANY_PROFILE_DOC
 }
 
 enum SubscriptionStatus {
@@ -264,6 +265,7 @@ model Organization {
   subscriptions    Subscription[]
   orders           Order[]
   serviceRequests  ServiceRequest[]
+  profileDocuments OrganizationDocument[]
 
   // Foundation-specific relations
   leadResponses    FoundationLeadResponse[] @relation("FoundationLeadResponses")
@@ -283,6 +285,28 @@ model UserOrganization {
 
   @@id([userId, organizationId])
   @@map("user_organizations")
+}
+
+// Organization Profile Documents (Catalogs, Company Profiles, etc.)
+model OrganizationDocument {
+  id             String   @id @default(uuid())
+  organizationId String
+  assetId        String
+  documentType   String   @default("CATALOG") // CATALOG, COMPANY_PROFILE, BROCHURE, PRICE_LIST
+  title          String?
+  description    String?
+  displayOrder   Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  asset        Asset        @relation("OrganizationDocumentAsset", fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([documentType])
+  @@map("organization_documents")
 }
 
 model Asset {
@@ -351,6 +375,9 @@ model Asset {
   // Catalog relations
   catalogPdfs Catalog[] @relation("CatalogPdf")
   catalogCsvs Catalog[] @relation("CatalogCsv")
+
+  // Organization document relations
+  organizationDocuments OrganizationDocument[] @relation("OrganizationDocumentAsset")
 
   // Frontend customization relations
   frontendLogos    FrontendSettings[] @relation("FrontendLogo")
