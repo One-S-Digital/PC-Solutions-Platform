@@ -95,9 +95,25 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
     enabled: isOpen && !!apiClient,
   });
 
-  const organizations: Organization[] = organizationsResponse?.data?.data || [];
+  // Handle different response structures from compat controller
+  // Compat controller returns: { success: true, data: { organizations: [...], pagination: {...} } }
+  // or direct array in data.data
+  const organizations: Organization[] = (() => {
+    if (!organizationsResponse?.data?.data) return [];
+    // Check if data.data is an array (direct array response)
+    if (Array.isArray(organizationsResponse.data.data)) {
+      return organizationsResponse.data.data;
+    }
+    // Check if data.data.organizations exists (nested response with pagination)
+    if (organizationsResponse.data.data.organizations && Array.isArray(organizationsResponse.data.data.organizations)) {
+      return organizationsResponse.data.data.organizations;
+    }
+    // Fallback to empty array
+    return [];
+  })();
+  
   // Filter to only show FOUNDATION type organizations
-  const foundations = organizations.filter(org => org.type === 'FOUNDATION');
+  const foundations = (Array.isArray(organizations) ? organizations : []).filter(org => org.type === 'FOUNDATION');
 
   // Track if we've set the default foundation to avoid unnecessary re-renders
   const hasSetDefaultFoundation = useRef(false);

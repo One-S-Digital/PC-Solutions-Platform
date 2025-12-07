@@ -239,6 +239,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
 }
 
 const Users: React.FC = () => {
+  const { t } = useTranslation(['common']);
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
 

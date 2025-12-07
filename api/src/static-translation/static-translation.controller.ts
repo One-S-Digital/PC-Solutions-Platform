@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Response } from 'express';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { StaticTranslationService } from './static-translation.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -24,14 +24,17 @@ import { UserRole } from '@prisma/client';
 
 @ApiTags('Static Translations')
 @Controller('static-translations')
+@SkipThrottle() // Skip rate limiting for all translation endpoints - they're needed for page load
 export class StaticTranslationController {
   constructor(private readonly service: StaticTranslationService) {}
 
   /**
    * Get current translation version for cache-busting
+   * This endpoint is called frequently for cache validation, so skip rate limiting
    */
   @Get('system/version')
   @Public() // Public endpoint - no auth required
+  @SkipThrottle() // Explicitly skip throttling for this endpoint
   @ApiOperation({ summary: 'Get current translation version' })
   async getVersion(): Promise<{ version: string }> {
     const version = await this.service.getCurrentVersion();
@@ -380,7 +383,8 @@ export class StaticTranslationController {
   @Post('admin/full-sync')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
-  @Throttle({ long: { limit: 1, ttl: 300 } }) // Only allow 1 request per 5 minutes to prevent spam
+  @SkipThrottle({ default: false }) // Re-enable throttling for this endpoint
+  @Throttle({ default: { limit: 1, ttl: 300000 } }) // Only allow 1 request per 5 minutes
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Full sync: Import EN, Translate FR/DE, Export to files (admin)' })
   async fullSync(
@@ -548,7 +552,7 @@ export class StaticTranslationController {
    */
   @Get(':lang/:namespace')
   @Public() // Public endpoint - no auth required
-  @Throttle({ long: { limit: 100, ttl: 60 } }) // Rate limit: 100 requests per minute
+  @SkipThrottle() // Explicitly skip throttling for this endpoint
   @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=86400')
   @ApiOperation({ summary: 'Get static translations (public)' })
   @ApiResponse({ status: 200, description: 'Translations retrieved' })

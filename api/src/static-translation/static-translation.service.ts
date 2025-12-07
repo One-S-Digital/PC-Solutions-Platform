@@ -38,43 +38,51 @@ export class StaticTranslationService {
   ): Promise<{ data: Record<string, any>; etag: string }> {
     const cacheKey = `static:${lang}:${namespace}`;
 
-    // Try cache first
-    const cached = await this.cacheManager.get<{ data: Record<string, any>; etag: string }>(
-      cacheKey,
-    );
-    if (cached) {
-      return cached;
+    try {
+      // Try cache first
+      const cached = await this.cacheManager.get<{ data: Record<string, any>; etag: string }>(
+        cacheKey,
+      );
+      if (cached) {
+        return cached;
+      }
+
+      // Fetch from database
+      const translations = await this.prisma.staticTranslation.findMany({
+        where: {
+          lang,
+          namespace,
+        },
+        select: {
+          key: true,
+          value: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      });
+
+      this.logger.debug(`Found ${translations.length} translations for ${lang}/${namespace}`);
+
+      // Transform flat keys to nested object structure
+      const result = this.nestKeys(translations);
+
+      // Generate ETag from content hash
+      const latestUpdate = translations[0]?.updatedAt || new Date();
+      const etag = this.generateETag(result, latestUpdate);
+
+      const response = { data: result, etag };
+
+      // Cache result with ETag
+      await this.cacheManager.set(cacheKey, response, this.CACHE_TTL * 1000);
+
+      return response;
+    } catch (error) {
+      this.logger.error(`Error loading translations for ${lang}/${namespace}: ${error.message}`, error.stack);
+      // Return empty object on error to prevent 500
+      return { data: {}, etag: `"empty-${Date.now()}"` };
     }
-
-    // Fetch from database
-    const translations = await this.prisma.staticTranslation.findMany({
-      where: {
-        lang,
-        namespace,
-      },
-      select: {
-        key: true,
-        value: true,
-        updatedAt: true,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
-
-    // Transform flat keys to nested object structure
-    const result = this.nestKeys(translations);
-
-    // Generate ETag from content hash
-    const latestUpdate = translations[0]?.updatedAt || new Date();
-    const etag = this.generateETag(result, latestUpdate);
-
-    const response = { data: result, etag };
-
-    // Cache result with ETag
-    await this.cacheManager.set(cacheKey, response, this.CACHE_TTL * 1000);
-
-    return response;
   }
 
   /**
@@ -467,23 +475,42 @@ export class StaticTranslationService {
 
   /**
    * Helper: Transform flat keys to nested object
+   * Handles conflicting keys (e.g., when 'foo' is both a value and a parent)
    */
   private nestKeys(translations: Array<{ key: string; value: string }>): Record<string, any> {
     const result: Record<string, any> = {};
 
     for (const { key, value } of translations) {
-      const parts = key.split('.');
-      let current = result;
+      try {
+        const parts = key.split('.');
+        let current = result;
 
-      for (let i = 0; i < parts.length - 1; i++) {
-        const part = parts[i];
-        if (!current[part]) {
-          current[part] = {};
+        for (let i = 0; i < parts.length - 1; i++) {
+          const part = parts[i];
+          if (!current[part]) {
+            current[part] = {};
+          } else if (typeof current[part] !== 'object') {
+            // Conflict: key is already a string value but we need it to be an object
+            // Keep the existing string value and skip this nested key
+            this.logger.warn(`Key conflict: "${parts.slice(0, i + 1).join('.')}" is a string but "${key}" needs it to be an object. Skipping.`);
+            current = null;
+            break;
+          }
+          current = current[part];
         }
-        current = current[part];
-      }
 
-      current[parts[parts.length - 1]] = value;
+        if (current !== null) {
+          const lastPart = parts[parts.length - 1];
+          // Don't overwrite an object with a string
+          if (typeof current[lastPart] === 'object' && current[lastPart] !== null) {
+            this.logger.warn(`Key conflict: "${key}" would overwrite object with string. Skipping.`);
+          } else {
+            current[lastPart] = value;
+          }
+        }
+      } catch (err) {
+        this.logger.error(`Error processing key "${key}": ${err.message}`);
+      }
     }
 
     return result;

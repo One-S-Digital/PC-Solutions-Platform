@@ -94,12 +94,43 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   useEffect(() => {
     const loadPlatformSettings = async () => {
       try {
-        const response = await fetch('/api/frontend-settings/public');
+        const response = await fetch('/api/admin/frontend-settings/public');
+        const contentType = response.headers.get('content-type');
+        
         if (response.ok) {
-          const data = await response.json();
-          if (data) {
-            setPlatformSettings(prev => ({ ...prev, ...data }));
+          if (contentType && contentType.includes('application/json')) {
+            const result = await response.json();
+            if (result.success && result.data) {
+              setPlatformSettings(prev => ({ ...prev, ...result.data }));
+            }
+          } else {
+            // Got HTML instead of JSON - likely 404 page or server not running
+            try {
+              const text = await response.text();
+              console.warn('Platform settings endpoint returned non-JSON response:', {
+                status: response.status,
+                statusText: response.statusText,
+                contentType,
+                preview: text.substring(0, 200),
+                url: response.url,
+              });
+            } catch (e) {
+              console.warn('Platform settings endpoint returned non-JSON response (unable to read):', {
+                status: response.status,
+                statusText: response.statusText,
+                contentType,
+                url: response.url,
+              });
+            }
           }
+        } else {
+          const text = await response.text().catch(() => 'Unable to read response');
+          console.warn('Platform settings endpoint error:', {
+            status: response.status,
+            statusText: response.statusText,
+            contentType,
+            preview: text.substring(0, 200),
+          });
         }
       } catch (error) {
         console.error('Failed to load platform settings:', error);

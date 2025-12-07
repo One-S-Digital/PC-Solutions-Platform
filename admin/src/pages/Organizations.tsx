@@ -708,7 +708,22 @@ const Organizations: React.FC = () => {
     queryFn: () => apiService.getOrganizations(apiClient),
   })
 
-  const organizations: Organization[] = orgsResponse?.data?.data || []
+  // Handle different response structures from compat controller
+  // Compat controller returns: { success: true, data: { organizations: [...], pagination: {...} } }
+  // or direct array in data.data
+  const organizations: Organization[] = (() => {
+    if (!orgsResponse?.data?.data) return [];
+    // Check if data.data is an array (direct array response)
+    if (Array.isArray(orgsResponse.data.data)) {
+      return orgsResponse.data.data;
+    }
+    // Check if data.data.organizations exists (nested response with pagination)
+    if (orgsResponse.data.data.organizations && Array.isArray(orgsResponse.data.data.organizations)) {
+      return orgsResponse.data.data.organizations;
+    }
+    // Fallback to empty array
+    return [];
+  })()
 
   // Create organization mutation
   const createMutation = useMutation({
@@ -754,7 +769,7 @@ const Organizations: React.FC = () => {
   })
 
   // Filter organizations by type and search
-  const filteredOrgs = organizations.filter((org) => {
+  const filteredOrgs = (Array.isArray(organizations) ? organizations : []).filter((org) => {
     const matchesSearch = 
       org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (org.address && org.address.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -767,8 +782,8 @@ const Organizations: React.FC = () => {
     }
   })
 
-  const foundationsCount = organizations.filter(o => o.type === 'FOUNDATION').length
-  const organisationsCount = organizations.filter(o => o.type === 'SERVICE_PROVIDER' || o.type === 'PRODUCT_SUPPLIER').length
+  const foundationsCount = (Array.isArray(organizations) ? organizations : []).filter(o => o.type === 'FOUNDATION').length
+  const organisationsCount = (Array.isArray(organizations) ? organizations : []).filter(o => o.type === 'SERVICE_PROVIDER' || o.type === 'PRODUCT_SUPPLIER').length
 
   // Handlers
   const handleAddOrganization = () => {
@@ -833,7 +848,7 @@ const Organizations: React.FC = () => {
             {t('admin:organizations.title', 'Organizations')}
           </h1>
           <p className="mt-2 text-gray-600">
-            {t('admin:organizations.subtitle', 'Manage all organizations across the platform')} ({organizations.length} {t('common:total', 'total')})
+            {t('admin:organizations.subtitle', 'Manage all organizations across the platform')} ({Array.isArray(organizations) ? organizations.length : 0} {t('common:total', 'total')})
           </p>
         </div>
         <Button

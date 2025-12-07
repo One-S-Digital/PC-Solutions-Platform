@@ -1,668 +1,972 @@
 {
-  "discountTerminationsPage": {
-    "queue": {
-      "title": "Termination Queue"
-    },
-    "active": {
-      "title": "Active Discounts"
-    }
-  },
-  "partnersPage": {
-    "title": "Our Partners",
-    "subtitle": "Trusted partners in early childhood education",
-    "sections": {
-      "featuredPartners": "Featured Partners"
-    },
-    "buttons": {
-      "becomePartner": "Become a Partner"
-    }
-  },
-  "designSystem": {
-    "title": "Design System",
-    "description": "Comprehensive design system and component library for ProCrèche Solutions",
-    "sections": {
-      "colors": "Colors",
-      "typography": "Typography",
-      "components": "Components"
-    },
-    "typography": {
-      "fontFamily": "Font Family: Inter",
-      "heading1": "Heading 1",
-      "heading2": "Heading 2",
-      "heading3": "Heading 3",
-      "heading4": "Heading 4",
-      "bodyBase": "Body text (base)",
-      "bodySmall": "Body text (small)",
-      "link": "Link example"
-    },
-    "buttons": {
-      "primaryDisabled": "Primary (Disabled)",
-      "secondaryDisabled": "Secondary (Disabled)",
-      "outlineDisabled": "Outline (Disabled)",
-      "disabledState": "Disabled State",
-      "extraSmall": "Extra Small",
-      "small": "Small",
-      "mediumDefault": "Medium (Default)",
-      "large": "Large",
-      "smallIcon": "Small Icon",
-      "leftIcon": "Left Icon",
-      "rightIcon": "Right Icon",
-      "withIcons": "With Icons"
-    },
-    "cards": {
-      "standardCard": "Standard Card",
-      "standardCardDesc": "Basic card component with padding and shadow",
-      "hoverEffectCard": "Hover Effect Card",
-      "hoverEffectCardDesc": "Card with hover effect"
-    },
-    "formControls": {
-      "title": "Form Controls",
-      "textInput": "Text Input",
-      "selectMenu": "Select Menu",
-      "option1": "Option 1",
-      "option2": "Option 2",
-      "option3": "Option 3",
-      "quantityInput": "Quantity Input",
-      "disabledInput": "Disabled Input"
-    },
-    "tabs": {
-      "title": "Tabs",
-      "pillsVariant": "Pills Variant",
-      "lineVariant": "Line Variant",
-      "tab1": "Tab 1",
-      "tab2": "Tab 2",
-      "tab3": "Tab 3 (Disabled)",
-      "content1": "This is content for tab 1",
-      "content2": "This is content for tab 2",
-      "content3": "This is content for tab 3"
-    }
-  },
-  "partners": {
-    "hero": {
-      "title": "Our Partners",
-      "subtitle": "Trusted partners in early childhood education",
-      "ctaButton": "Become a Partner"
-    },
-    "featured": {
-      "title": "Featured Partners",
-      "subtitle": "Leading organizations we work with"
-    },
-    "allPartners": {
-      "title": "All Partners"
-    },
-    "joinUs": {
-      "title": "Become a Partner",
-      "subtitle": "Join our network of trusted providers",
-      "contactUsButton": "Contact Us",
-      "contactUsAlert": "Contact form coming soon",
-      "inquiryFormLink": "Partner Inquiry Form"
-    },
-    "partnerCard": {
-      "logoAlt": "{{name}} logo",
-      "partnerType": "Partner Type",
-      "learnMoreButton": "Learn More"
-    },
-    "searchPlaceholder": "Search partners...",
-    "allTypes": "All Types",
-    "searchResults": "Search Results",
-    "partnersFound": "partners found",
-    "noResults": "No partners found matching your search",
-    "noPartners": "No partners available yet",
-    "error": {
-      "loadFailed": "Failed to load partners. Please try again later."
-    },
-    "types": {
-      "academic": "Academic",
-      "corporate": "Corporate",
-      "governmental": "Governmental",
-      "nonProfit": "Non-Profit",
-      "media": "Media",
-      "technology": "Technology"
-    },
-    "application": {
-      "title": "Partner Application",
-      "organizationName": "Organization Name",
-      "organizationNamePlaceholder": "Enter your organization name",
-      "partnerType": "Partner Type",
-      "contactPerson": "Contact Person",
-      "contactPersonPlaceholder": "Full name of contact person",
-      "contactEmail": "Email Address",
-      "contactEmailPlaceholder": "contact@example.com",
-      "contactPhone": "Phone Number",
-      "contactPhonePlaceholder": "+41 XX XXX XX XX",
-      "countryRegion": "Country/Region",
-      "countryRegionPlaceholder": "e.g., Switzerland",
-      "websiteUrl": "Website URL",
-      "websiteUrlPlaceholder": "https://www.example.com",
-      "message": "Tell us about your organization",
-      "messagePlaceholder": "Describe your organization, the services you offer, and why you'd like to partner with us...",
-      "submit": "Submit Application",
-      "submitting": "Submitting...",
-      "successTitle": "Application Submitted!",
-      "successMessage": "Thank you for your interest in partnering with ProCrèche Solutions. Our team will review your application and contact you within 3-5 business days.",
-      "error": "Failed to submit application. Please try again."
-    }
-  },
-  "discountTerminations": {
-    "queue": {
-      "title": "Termination Queue",
-      "description": "Clients pending discount termination",
-      "tableTitle": "Pending Terminations",
-      "empty": "No pending terminations"
-    },
-    "allActive": {
-      "title": "Active Discounts",
-      "description": "All active vendor discounts",
-      "tableTitle": "Active Vendor Discounts",
-      "empty": "No active discounts"
-    },
-    "table": {
-      "vendor": "Vendor",
-      "daycare": "Daycare",
-      "reason": "Reason",
-      "activeSince": "Active Since",
-      "actions": "Actions"
-    },
-    "actions": {
-      "markCompleted": "Mark Completed",
-      "sendNotices": "Send Notices",
-      "sendNoticesAlert": "Notice sending functionality coming soon"
-    }
-  },
-  "organizations": {
-    "title": "Organizations",
-    "subtitle": "Manage daycare centers and organizations ({{count}} total)",
-    "searchPlaceholder": "Search organizations...",
-    "addButton": "Add Organization",
-    "emptyState": {
-      "title": "No organizations found",
-      "description": "Try adjusting your search criteria or add a new organization."
-    },
-    "error": {
-      "title": "Failed to load organizations",
-      "description": "Please check your connection and try again."
-    },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
-    },
-    "staffMembers": "staff members"
-  },
-  "jobListings": {
-    "title": "Job Listings",
-    "subtitle": "Manage job postings and recruitment ({{count}} total)",
-    "searchPlaceholder": "Search jobs...",
-    "addButton": "Post Job",
-    "statusFilter": {
-      "all": "All Status",
-      "active": "Active",
-      "paused": "Paused",
-      "closed": "Closed"
-    },
-    "emptyState": {
-      "title": "No job listings found",
-      "description": "Try adjusting your search criteria or post a new job."
-    },
-    "error": {
-      "title": "Failed to load job listings",
-      "description": "Please check your connection and try again."
-    },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
-    }
-  },
-  "candidates": {
-    "title": "Candidates",
-    "subtitle": "Manage job applicants and candidates ({{count}} total)",
-    "searchPlaceholder": "Search candidates...",
-    "addButton": "Add Candidate",
-    "statusFilter": {
-      "all": "All Status"
-    },
-    "emptyState": {
-      "title": "No candidates found",
-      "description": "Try adjusting your search criteria or add a new candidate."
-    },
-    "table": {
-      "candidate": "CANDIDATE",
-      "position": "POSITION",
-      "experience": "EXPERIENCE",
-      "status": "STATUS",
-      "appliedDate": "APPLIED DATE"
-    }
-  },
-  "products": {
-    "title": "Products",
-    "subtitle": "Manage products and supplies ({{count}} total)",
-    "searchPlaceholder": "Search products...",
-    "addButton": "Add Product",
-    "categoryFilter": {
-      "all": "All Categories"
-    },
-    "emptyState": {
-      "title": "No products found",
-      "description": "Try adjusting your search criteria or add a new product."
-    },
-    "error": {
-      "title": "Failed to load products",
-      "description": "Please check your connection and try again."
-    },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
-    }
-  },
   "settings": {
-    "title": "Settings",
-    "subtitle": "Manage your application settings and preferences",
-    "tabs": {
-      "general": "General",
-      "branding": "Branding",
-      "content": "Content",
-      "notifications": "Notifications",
-      "integrations": "Integrations",
-      "emailTemplates": "Email Templates",
-      "systemConfig": "System Config"
-    },
-    "general": {
-      "title": "General Settings",
-      "description": "Basic information about your application",
-      "siteName": "Site Name",
-      "siteNamePlaceholder": "Enter site name",
-      "contactEmail": "Contact Email",
-      "contactEmailPlaceholder": "contact@example.com",
-      "siteDescription": "Site Description",
-      "siteDescriptionPlaceholder": "Enter site description",
-      "contactPhone": "Contact Phone",
-      "contactPhonePlaceholder": "+41 XX XXX XX XX",
-      "saveChanges": "Save Changes",
-      "saving": "Saving...",
-      "platformSettings": {
-        "title": "Platform Settings",
-        "maintenanceMode": "Maintenance Mode",
-        "maintenanceModeActive": "Platform is currently in maintenance mode",
-        "maintenanceModeInactive": "Platform is operational",
-        "maintenanceMessage": "Maintenance Message",
-        "maintenanceMessagePlaceholder": "Enter maintenance message for users...",
-        "updateMessage": "Update Message",
-        "updating": "Updating..."
-      }
-    },
-    "content": {
-      "title": "Content Settings",
-      "description": "Manage your homepage content and hero section",
-      "heroImage": {
-        "title": "Hero Image"
-      },
-      "heroContent": {
-        "title": "Hero Content",
-        "heroTitle": "Hero Title",
-        "heroTitlePlaceholder": "Enter hero title",
-        "heroSubtitle": "Hero Subtitle",
-        "heroSubtitlePlaceholder": "Enter hero subtitle",
-        "buttonText": "Button Text",
-        "buttonTextPlaceholder": "Get Started",
-        "buttonLink": "Button Link",
-        "buttonLinkPlaceholder": "https://example.com"
-      },
-      "saveChanges": "Save Changes",
-      "saving": "Saving..."
-    },
-    "branding": {
-      "title": "Branding Settings",
-      "description": "Customize your brand colors, logos, and visual identity",
-      "brandColors": {
-        "title": "Brand Colors",
-        "primaryColor": "Primary Color",
-        "secondaryColor": "Secondary Color",
-        "accentColor": "Accent Color"
-      },
-      "adminColors": {
-        "title": "Admin Dashboard Colors",
-        "adminPrimaryColor": "Admin Primary Color",
-        "adminSecondaryColor": "Admin Secondary Color",
-        "adminAccentColor": "Admin Accent Color"
-      },
-      "logosAssets": {
-        "title": "Logos & Assets",
-        "mainLogo": "Main Logo (Public Pages)",
-        "mainLogoDescription": "Used on login, signup, and other public-facing pages",
-        "sidebarLogo": "Sidebar Logo",
-        "sidebarLogoDescription": "Separate logo for the main app sidebar menu (optional - falls back to Main Logo if not set)",
-        "adminLogo": "Admin Logo",
-        "favicon": "Favicon",
-        "adminFavicon": "Admin Favicon"
-      },
-      "uploading": {
-        "logo": "Uploading logo...",
-        "sidebarLogo": "Uploading sidebar logo...",
-        "adminLogo": "Uploading admin logo...",
-        "favicon": "Uploading favicon...",
-        "adminFavicon": "Uploading admin favicon..."
-      },
-      "uploaded": {
-        "logo": "✓ Logo uploaded! Click \"Save Logo\" below to apply changes.",
-        "sidebarLogo": "✓ Sidebar logo uploaded! Click \"Save Sidebar Logo\" below to apply changes.",
-        "adminLogo": "✓ Admin logo uploaded! Click \"Save Admin Logo\" below to apply changes.",
-        "favicon": "✓ Favicon uploaded! Click \"Save Favicon\" below to apply changes.",
-        "adminFavicon": "✓ Admin favicon uploaded! Click \"Save Admin Favicon\" below to apply changes."
-      },
-      "saveColors": "Save Colors",
-      "saveAdminColors": "Save Admin Colors",
-      "saveLogo": "Save Logo",
-      "saveSidebarLogo": "Save Sidebar Logo",
-      "saveAdminLogo": "Save Admin Logo",
-      "saveFavicon": "Save Favicon",
-      "saveAdminFavicon": "Save Admin Favicon",
-      "saving": "Saving...",
-      "noAssetToSave": "No asset to save. Please upload a file first.",
-      "assetSaved": "{{assetType}} saved successfully!",
-      "assetUploaded": "{{assetType}} uploaded successfully!",
-      "assetUploadFailed": "Failed to upload {{assetType}}. Please try again.",
-      "assetSaveFailed": "Failed to save {{assetType}}. Please try again.",
-      "brandColorsSaved": "Brand colors saved successfully!",
-      "brandColorsSaveFailed": "Failed to save brand colors. Please try again."
-    },
-    "notifications": {
-      "title": "Notification Settings",
-      "description": "Configure email notifications and SMTP settings",
-      "emailNotifications": {
-        "title": "Email Notifications",
-        "newUserRegistrations": "New User Registrations",
-        "newUserRegistrationsDesc": "Get notified when new users register",
-        "applicationSubmissions": "Application Submissions",
-        "applicationSubmissionsDesc": "Get notified when applications are submitted"
-      },
-      "smtp": {
-        "title": "SMTP Configuration",
-        "notificationEmail": "Notification Email",
-        "notificationEmailPlaceholder": "notifications@example.com",
-        "smtpHost": "SMTP Host",
-        "smtpHostPlaceholder": "smtp.gmail.com",
-        "smtpPort": "SMTP Port",
-        "smtpPortPlaceholder": "587",
-        "smtpUser": "SMTP Username",
-        "smtpUserPlaceholder": "your-email@gmail.com",
-        "smtpPassword": "SMTP Password",
-        "smtpPasswordPlaceholder": "••••••••"
-      },
-      "saveSmtpSettings": "Save SMTP Settings",
-      "saving": "Saving..."
-    },
-    "integrations": {
-      "title": "Integration Settings",
-      "description": "Configure third-party integrations and API keys",
-      "authentication": {
-        "title": "Authentication (Clerk)",
-        "clerkPublishableKey": "Clerk Publishable Key",
-        "clerkPublishableKeyPlaceholder": "pk_test_...",
-        "clerkSecretKey": "Clerk Secret Key",
-        "clerkSecretKeyPlaceholder": "sk_test_..."
+    "emailNotifications": {
+      "send": {
+        "eventTypes": {
+          "job_application_received": "Job Application Received",
+          "subscription_activation": "Subscription Activation",
+          "account_verification": "Account Verification",
+          "order_confirmation": "Order Confirmation",
+          "system_maintenance": "System Maintenance",
+          "password_reset": "Password Reset",
+          "welcome_email": "Welcome Email",
+          "new_message": "New Message"
+        },
+        "templateVariablesPlaceholder": "{\"firstName\": \"John\", \"lastName\": \"Doe\", \"verificationUrl\": \"https://...\"}",
+        "recipientEmailPlaceholder": "user@example.com or user1@example.com, user2@example.com",
+        "recipientNamePlaceholder": "John Doe",
+        "buttons": {
+          "sendBulkEmail": "Send Bulk Email",
+          "sendEmail": "Send Email"
+        },
+        "templateVariablesHint": "Enter template variables as JSON. Common variables: firstName, lastName, verificationUrl, resetUrl, etc.",
+        "recipientEmailHint": "For bulk sending, separate multiple emails with commas",
+        "alerts": {
+          "bulkFailed": "Failed to send bulk emails: {{message}}",
+          "sendFailed": "Failed to send email: {{message}}",
+          "bulkSent": "Bulk email sent! Sent: {{sent}}, Failed: {{failed}}",
+          "sent": "Email sent successfully!"
+        },
+        "templateVariables": "Template Variables (JSON)",
+        "selectEventType": "Select Event Type",
+        "recipientEmail": "Recipient Email(s)",
+        "recipientName": "Recipient Name (Optional)",
+        "eventType": "Event Type",
+        "title": "Send Email"
       },
       "analytics": {
-        "title": "Analytics",
-        "googleAnalyticsId": "Google Analytics ID",
-        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
-        "facebookPixelId": "Facebook Pixel ID",
-        "facebookPixelIdPlaceholder": "123456789012345"
+        "eventsBreakdown": {
+          "title": "Events Breakdown"
+        },
+        "labels": {
+          "deliveryRate": "Delivery Rate",
+          "emailsSent": "Emails Sent",
+          "clickRate": "Click Rate",
+          "delivered": "Delivered",
+          "totalSent": "Total Sent",
+          "openRate": "Open Rate",
+          "clicked": "Clicked",
+          "opened": "Opened"
+        },
+        "performance": {
+          "title": "Email Performance"
+        }
       },
-      "saveIntegrationSettings": "Save Integration Settings",
-      "saving": "Saving..."
+      "templates": {
+        "tableHeaders": {
+          "category": "Category",
+          "actions": "Actions",
+          "subject": "Subject",
+          "updated": "Updated",
+          "status": "Status",
+          "event": "Event",
+          "name": "Name"
+        },
+        "buttons": {
+          "preview": "Preview",
+          "edit": "Edit"
+        },
+        "status": {
+          "inactive": "Inactive",
+          "active": "Active"
+        },
+        "createTemplate": "Create Template",
+        "title": "Email Templates"
+      },
+      "logs": {
+        "tableHeaders": {
+          "recipient": "Recipient",
+          "sentAt": "Sent At",
+          "status": "Status",
+          "error": "Error",
+          "event": "Event"
+        },
+        "title": "Email Logs"
+      },
+      "tabs": {
+        "analytics": "Analytics",
+        "templates": "Templates",
+        "logs": "Email Logs",
+        "send": "Send Email"
+      },
+      "sendEmail": "Send Email",
+      "loading": "Loading email notifications...",
+      "refresh": "Refresh",
+      "title": "Email Notifications"
+    },
+    "notifications": {
+      "emailNotifications": {
+        "applicationSubmissionsDesc": "Get notified when applications are submitted",
+        "newUserRegistrationsDesc": "Get notified when new users register",
+        "applicationSubmissions": "Application Submissions",
+        "newUserRegistrations": "New User Registrations",
+        "title": "Email Notifications"
+      },
+      "smtp": {
+        "notificationEmailPlaceholder": "notifications@example.com",
+        "smtpPasswordPlaceholder": "••••••••",
+        "smtpHostPlaceholder": "smtp.gmail.com",
+        "smtpPortPlaceholder": "587",
+        "smtpUserPlaceholder": "your-email@gmail.com",
+        "notificationEmail": "Notification Email",
+        "smtpPassword": "SMTP Password",
+        "smtpHost": "SMTP Host",
+        "smtpPort": "SMTP Port",
+        "smtpUser": "SMTP Username",
+        "title": "SMTP Configuration"
+      },
+      "saveSmtpSettings": "Save SMTP Settings",
+      "description": "Configure email notifications and SMTP settings",
+      "saving": "Saving...",
+      "title": "Notification Settings"
     },
     "systemConfig": {
-      "title": "System Configuration",
-      "refresh": "Refresh",
-      "loading": "Loading system configuration...",
-      "tabs": {
-        "systemSettings": "System Settings",
-        "integrations": "Integrations",
-        "maintenance": "Maintenance",
-        "systemHealth": "System Health",
-        "emailTemplates": "Email Templates"
-      },
       "systemSettings": {
-        "title": "System Settings",
-        "createSetting": "Create Setting",
-        "tableHeaders": {
-          "key": "Key",
-          "value": "Value",
+        "createModal": {
+          "categories": {
+            "security": "Security",
+            "general": "General",
+            "payment": "Payment",
+            "storage": "Storage",
+            "email": "Email"
+          },
+          "description": "Description",
+          "encrypted": "Encrypted",
           "category": "Category",
+          "cancel": "Cancel",
+          "create": "Create Setting",
+          "public": "Public",
+          "title": "Create System Setting",
+          "value": "Value",
+          "key": "Key"
+        },
+        "tableHeaders": {
+          "category": "Category",
+          "actions": "Actions",
+          "value": "Value",
           "type": "Type",
-          "actions": "Actions"
+          "key": "Key"
+        },
+        "alerts": {
+          "createFailed": "Failed to create setting: {{message}}",
+          "created": "System setting created successfully!"
         },
         "badges": {
           "encrypted": "Encrypted",
           "public": "Public"
         },
+        "createSetting": "Create Setting",
         "buttons": {
           "edit": "Edit",
           "view": "View"
         },
-        "createModal": {
-          "title": "Create System Setting",
-          "key": "Key",
-          "category": "Category",
-          "value": "Value",
-          "description": "Description",
-          "encrypted": "Encrypted",
-          "public": "Public",
-          "create": "Create Setting",
-          "cancel": "Cancel",
-          "categories": {
-            "general": "General",
-            "security": "Security",
-            "email": "Email",
-            "payment": "Payment",
-            "storage": "Storage"
-          }
-        },
-        "alerts": {
-          "created": "System setting created successfully!",
-          "createFailed": "Failed to create setting: {{message}}"
-        }
+        "title": "System Settings"
       },
       "integrations": {
-        "title": "Integrations",
-        "createIntegration": "Create Integration",
-        "tableHeaders": {
-          "name": "Name",
-          "type": "Type",
+        "createModal": {
+          "types": {
+            "analytics": "Analytics",
+            "payment": "Payment",
+            "storage": "Storage",
+            "email": "Email",
+            "other": "Other",
+            "auth": "Authentication"
+          },
+          "webhookUrl": "Webhook URL (Optional)",
           "provider": "Provider",
-          "status": "Status",
-          "lastSync": "Last Sync",
-          "actions": "Actions"
+          "cancel": "Cancel",
+          "create": "Create Integration",
+          "title": "Create Integration",
+          "name": "Name",
+          "type": "Type"
         },
+        "tableHeaders": {
+          "lastSync": "Last Sync",
+          "provider": "Provider",
+          "actions": "Actions",
+          "status": "Status",
+          "name": "Name",
+          "type": "Type"
+        },
+        "alerts": {
+          "createFailed": "Failed to create integration: {{message}}",
+          "created": "Integration created successfully!"
+        },
+        "createIntegration": "Create Integration",
         "status": {
-          "active": "Active",
           "inactive": "Inactive",
+          "active": "Active",
           "never": "Never"
         },
         "buttons": {
-          "test": "Test",
-          "sync": "Sync"
+          "sync": "Sync",
+          "test": "Test"
         },
-        "createModal": {
-          "title": "Create Integration",
-          "name": "Name",
-          "type": "Type",
-          "provider": "Provider",
-          "webhookUrl": "Webhook URL (Optional)",
-          "create": "Create Integration",
-          "cancel": "Cancel",
-          "types": {
-            "auth": "Authentication",
-            "payment": "Payment",
-            "email": "Email",
-            "storage": "Storage",
-            "analytics": "Analytics",
-            "other": "Other"
-          }
-        },
-        "alerts": {
-          "created": "Integration created successfully!",
-          "createFailed": "Failed to create integration: {{message}}"
-        }
+        "title": "Integrations"
       },
       "maintenance": {
-        "title": "Maintenance Mode",
-        "schedules": {
-          "title": "Maintenance Schedules",
-          "createSchedule": "Create Schedule"
-        },
-        "status": {
-          "enabled": "Enabled",
-          "disabled": "Disabled"
-        },
-        "estimatedEnd": "Estimated end: {{date}}",
-        "buttons": {
-          "enable": "Enable Maintenance",
-          "disable": "Disable Maintenance"
-        },
         "tableHeaders": {
-          "name": "Name",
-          "description": "Description",
           "scheduledStart": "Scheduled Start",
           "scheduledEnd": "Scheduled End",
+          "description": "Description",
+          "actions": "Actions",
           "status": "Status",
-          "actions": "Actions"
+          "name": "Name"
         },
         "createModal": {
-          "title": "Create Maintenance Schedule",
-          "name": "Name",
-          "description": "Description",
           "scheduledStart": "Scheduled Start",
           "scheduledEnd": "Scheduled End",
+          "description": "Description",
+          "cancel": "Cancel",
           "create": "Create Schedule",
-          "cancel": "Cancel"
+          "title": "Create Maintenance Schedule",
+          "name": "Name"
+        },
+        "schedules": {
+          "createSchedule": "Create Schedule",
+          "title": "Maintenance Schedules"
         },
         "alerts": {
-          "enabled": "Maintenance mode enabled successfully!",
-          "disabled": "Maintenance mode disabled successfully!",
-          "enableFailed": "Failed to enable maintenance mode: {{message}}",
-          "disableFailed": "Failed to disable maintenance mode: {{message}}",
           "scheduleCreated": "Maintenance schedule created successfully!",
-          "scheduleFailed": "Failed to create schedule: {{message}}"
-        }
+          "scheduleFailed": "Failed to create schedule: {{message}}",
+          "disableFailed": "Failed to disable maintenance mode: {{message}}",
+          "enableFailed": "Failed to enable maintenance mode: {{message}}",
+          "disabled": "Maintenance mode disabled successfully!",
+          "enabled": "Maintenance mode enabled successfully!"
+        },
+        "buttons": {
+          "disable": "Disable Maintenance",
+          "enable": "Enable Maintenance"
+        },
+        "status": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        },
+        "estimatedEnd": "Estimated end: {{date}}",
+        "title": "Maintenance Mode"
       },
       "systemHealth": {
         "overview": {
-          "title": "System Health Overview",
+          "externalServices": "External Services",
           "database": "Database",
           "storage": "Storage",
-          "externalServices": "External Services"
+          "title": "System Health Overview"
         },
         "labels": {
-          "systemStatus": "System Status",
           "databaseResponse": "Database Response",
           "activeServices": "Active Services",
-          "storageUsed": "Storage Used",
-          "status": "Status",
           "responseTime": "Response Time",
+          "systemStatus": "System Status",
           "connections": "Connections",
-          "usedSpace": "Used Space"
+          "storageUsed": "Storage Used",
+          "usedSpace": "Used Space",
+          "status": "Status"
         }
       },
       "emailTemplates": {
-        "title": "Email Templates",
         "createTemplate": "Create Template",
         "goToTemplates": "Go to Email Templates",
-        "description": "Manage email templates for notifications"
-      }
-    },
-    "emailNotifications": {
-      "title": "Email Notifications",
-      "loading": "Loading email notifications...",
-      "refresh": "Refresh",
-      "sendEmail": "Send Email",
+        "description": "Manage email templates for notifications",
+        "title": "Email Templates"
+      },
       "tabs": {
-        "templates": "Templates",
-        "analytics": "Analytics",
-        "logs": "Email Logs",
-        "send": "Send Email"
+        "emailTemplates": "Email Templates",
+        "systemSettings": "System Settings",
+        "integrations": "Integrations",
+        "systemHealth": "System Health",
+        "maintenance": "Maintenance"
+      },
+      "loading": "Loading system configuration...",
+      "refresh": "Refresh",
+      "title": "System Configuration"
+    },
+    "integrations": {
+      "authentication": {
+        "clerkPublishableKeyPlaceholder": "pk_test_...",
+        "clerkSecretKeyPlaceholder": "sk_test_...",
+        "clerkPublishableKey": "Clerk Publishable Key",
+        "clerkSecretKey": "Clerk Secret Key",
+        "title": "Authentication (Clerk)"
       },
       "analytics": {
-        "labels": {
-          "emailsSent": "Emails Sent",
-          "deliveryRate": "Delivery Rate",
-          "openRate": "Open Rate",
-          "clickRate": "Click Rate",
-          "totalSent": "Total Sent",
-          "delivered": "Delivered",
-          "opened": "Opened",
-          "clicked": "Clicked"
-        },
-        "performance": {
-          "title": "Email Performance"
-        },
-        "eventsBreakdown": {
-          "title": "Events Breakdown"
-        }
+        "googleAnalyticsIdPlaceholder": "GA-XXXXXXXXX-X",
+        "facebookPixelIdPlaceholder": "123456789012345",
+        "googleAnalyticsId": "Google Analytics ID",
+        "facebookPixelId": "Facebook Pixel ID",
+        "title": "Analytics"
       },
-      "templates": {
-        "title": "Email Templates",
-        "createTemplate": "Create Template",
-        "tableHeaders": {
-          "name": "Name",
-          "event": "Event",
-          "category": "Category",
-          "subject": "Subject",
-          "status": "Status",
-          "updated": "Updated",
-          "actions": "Actions"
-        },
-        "status": {
-          "active": "Active",
-          "inactive": "Inactive"
-        },
-        "buttons": {
-          "edit": "Edit",
-          "preview": "Preview"
-        }
+      "saveIntegrationSettings": "Save Integration Settings",
+      "description": "Configure third-party integrations and API keys",
+      "saving": "Saving...",
+      "title": "Integration Settings"
+    },
+    "general": {
+      "platformSettings": {
+        "maintenanceMessagePlaceholder": "Enter maintenance message for users...",
+        "maintenanceModeInactive": "Platform is operational",
+        "maintenanceModeActive": "Platform is currently in maintenance mode",
+        "maintenanceMessage": "Maintenance Message",
+        "maintenanceMode": "Maintenance Mode",
+        "updateMessage": "Update Message",
+        "updating": "Updating...",
+        "title": "Platform Settings"
       },
-      "logs": {
-        "title": "Email Logs",
-        "tableHeaders": {
-          "event": "Event",
-          "recipient": "Recipient",
-          "status": "Status",
-          "sentAt": "Sent At",
-          "error": "Error"
-        }
+      "siteDescriptionPlaceholder": "Enter site description",
+      "contactEmailPlaceholder": "contact@example.com",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "siteNamePlaceholder": "Enter site name",
+      "siteDescription": "Site Description",
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone",
+      "description": "Basic information about your application",
+      "saveChanges": "Save Changes",
+      "siteName": "Site Name",
+      "saving": "Saving...",
+      "title": "General Settings"
+    },
+    "branding": {
+      "logosAssets": {
+        "sidebarLogoDescription": "Separate logo for the main app sidebar menu (optional - falls back to Main Logo if not set)",
+        "mainLogoDescription": "Used on login, signup, and other public-facing pages",
+        "adminFavicon": "Admin Favicon",
+        "sidebarLogo": "Sidebar Logo",
+        "adminLogo": "Admin Logo",
+        "mainLogo": "Main Logo (Public Pages)",
+        "favicon": "Favicon",
+        "title": "Logos & Assets"
       },
-      "send": {
-        "title": "Send Email",
-        "eventType": "Event Type",
-        "selectEventType": "Select Event Type",
-        "recipientEmail": "Recipient Email(s)",
-        "recipientEmailPlaceholder": "user@example.com or user1@example.com, user2@example.com",
-        "recipientEmailHint": "For bulk sending, separate multiple emails with commas",
-        "recipientName": "Recipient Name (Optional)",
-        "recipientNamePlaceholder": "John Doe",
-        "templateVariables": "Template Variables (JSON)",
-        "templateVariablesPlaceholder": "{\"firstName\": \"John\", \"lastName\": \"Doe\", \"verificationUrl\": \"https://...\"}",
-        "templateVariablesHint": "Enter template variables as JSON. Common variables: firstName, lastName, verificationUrl, resetUrl, etc.",
-        "buttons": {
-          "sendEmail": "Send Email",
-          "sendBulkEmail": "Send Bulk Email"
-        },
-        "eventTypes": {
-          "account_verification": "Account Verification",
-          "password_reset": "Password Reset",
-          "welcome_email": "Welcome Email",
-          "job_application_received": "Job Application Received",
-          "new_message": "New Message",
-          "order_confirmation": "Order Confirmation",
-          "subscription_activation": "Subscription Activation",
-          "system_maintenance": "System Maintenance"
-        },
-        "alerts": {
-          "sent": "Email sent successfully!",
-          "sendFailed": "Failed to send email: {{message}}",
-          "bulkSent": "Bulk email sent! Sent: {{sent}}, Failed: {{failed}}",
-          "bulkFailed": "Failed to send bulk emails: {{message}}"
-        }
+      "adminColors": {
+        "adminSecondaryColor": "Admin Secondary Color",
+        "adminPrimaryColor": "Admin Primary Color",
+        "adminAccentColor": "Admin Accent Color",
+        "title": "Admin Dashboard Colors"
+      },
+      "brandColors": {
+        "secondaryColor": "Secondary Color",
+        "primaryColor": "Primary Color",
+        "accentColor": "Accent Color",
+        "title": "Brand Colors"
+      },
+      "uploading": {
+        "adminFavicon": "Uploading admin favicon...",
+        "sidebarLogo": "Uploading sidebar logo...",
+        "adminLogo": "Uploading admin logo...",
+        "favicon": "Uploading favicon...",
+        "logo": "Uploading logo..."
+      },
+      "brandColorsSaveFailed": "Failed to save brand colors. Please try again.",
+      "uploaded": {
+        "adminFavicon": "✓ Admin favicon uploaded! Click \"Save Admin Favicon\" below to apply changes.",
+        "sidebarLogo": "✓ Sidebar logo uploaded! Click \"Save Sidebar Logo\" below to apply changes.",
+        "adminLogo": "✓ Admin logo uploaded! Click \"Save Admin Logo\" below to apply changes.",
+        "favicon": "✓ Favicon uploaded! Click \"Save Favicon\" below to apply changes.",
+        "logo": "✓ Logo uploaded! Click \"Save Logo\" below to apply changes."
+      },
+      "assetUploadFailed": "Failed to upload {{assetType}}. Please try again.",
+      "brandColorsSaved": "Brand colors saved successfully!",
+      "saveAdminFavicon": "Save Admin Favicon",
+      "assetSaveFailed": "Failed to save {{assetType}}. Please try again.",
+      "saveAdminColors": "Save Admin Colors",
+      "saveSidebarLogo": "Save Sidebar Logo",
+      "assetUploaded": "{{assetType}} uploaded successfully!",
+      "noAssetToSave": "No asset to save. Please upload a file first.",
+      "saveAdminLogo": "Save Admin Logo",
+      "description": "Customize your brand colors, logos, and visual identity",
+      "saveFavicon": "Save Favicon",
+      "assetSaved": "{{assetType}} saved successfully!",
+      "saveColors": "Save Colors",
+      "saveLogo": "Save Logo",
+      "saving": "Saving...",
+      "title": "Branding Settings"
+    },
+    "content": {
+      "heroContent": {
+        "heroSubtitlePlaceholder": "Enter hero subtitle",
+        "buttonLinkPlaceholder": "https://example.com",
+        "buttonTextPlaceholder": "Get Started",
+        "heroTitlePlaceholder": "Enter hero title",
+        "heroSubtitle": "Hero Subtitle",
+        "buttonLink": "Button Link",
+        "buttonText": "Button Text",
+        "heroTitle": "Hero Title",
+        "title": "Hero Content"
+      },
+      "heroImage": {
+        "title": "Hero Image"
+      },
+      "description": "Manage your homepage content and hero section",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "title": "Content Settings"
+    },
+    "tabs": {
+      "emailTemplates": "Email Templates",
+      "notifications": "Notifications",
+      "integrations": "Integrations",
+      "systemConfig": "System Config",
+      "branding": "Branding",
+      "content": "Content",
+      "general": "General"
+    },
+    "subtitle": "Manage your application settings and preferences",
+    "title": "Settings"
+  },
+  "admin": {
+    "discountTerminations": {
+      "actions": {
+        "sendNoticesAlert": "Notice sending functionality coming soon",
+        "markCompleted": "Mark Completed",
+        "sendNotices": "Send Notices"
+      },
+      "allActive": {
+        "description": "All active vendor discounts",
+        "tableTitle": "Active Vendor Discounts",
+        "empty": "No active discounts",
+        "title": "Active Discounts"
+      },
+      "queue": {
+        "description": "Clients pending discount termination",
+        "tableTitle": "Pending Terminations",
+        "empty": "No pending terminations",
+        "title": "Termination Queue"
+      },
+      "table": {
+        "activeSince": "Active Since",
+        "actions": "Actions",
+        "daycare": "Daycare",
+        "reason": "Reason",
+        "vendor": "Vendor"
+      }
+    },
+    "platformSettings": {
+      "general": {
+        "descriptionLabel": "Platform Description",
+        "nameLabel": "Platform Name",
+        "title": "General Settings"
+      },
+      "branding": {
+        "faviconLabel": "Favicon",
+        "logoLabel": "Logo",
+        "title": "Branding"
+      },
+      "title": "Platform Settings"
+    },
+    "designSystem": {
+      "formControls": {
+        "disabledInput": "Disabled Input",
+        "quantityInput": "Quantity Input",
+        "selectMenu": "Select Menu",
+        "textInput": "Text Input",
+        "option1": "Option 1",
+        "option2": "Option 2",
+        "option3": "Option 3",
+        "title": "Form Controls"
+      },
+      "buttons": {
+        "secondaryDisabled": "Secondary (Disabled)",
+        "outlineDisabled": "Outline (Disabled)",
+        "primaryDisabled": "Primary (Disabled)",
+        "disabledState": "Disabled State",
+        "mediumDefault": "Medium (Default)",
+        "extraSmall": "Extra Small",
+        "rightIcon": "Right Icon",
+        "smallIcon": "Small Icon",
+        "withIcons": "With Icons",
+        "leftIcon": "Left Icon",
+        "large": "Large",
+        "small": "Small"
+      },
+      "cards": {
+        "hoverEffectCardDesc": "Card with hover effect",
+        "standardCardDesc": "Basic card component with padding and shadow",
+        "hoverEffectCard": "Hover Effect Card",
+        "standardCard": "Standard Card"
+      },
+      "typography": {
+        "fontFamily": "Font Family: Inter",
+        "bodySmall": "Body text (small)",
+        "bodyBase": "Body text (base)",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "heading4": "Heading 4",
+        "link": "Link example"
+      },
+      "sections": {
+        "components": "Components",
+        "typography": "Typography",
+        "colors": "Colors"
+      },
+      "tabs": {
+        "pillsVariant": "Pills Variant",
+        "lineVariant": "Line Variant",
+        "content1": "This is content for tab 1",
+        "content2": "This is content for tab 2",
+        "content3": "This is content for tab 3",
+        "title": "Tabs",
+        "tab1": "Tab 1",
+        "tab2": "Tab 2",
+        "tab3": "Tab 3 (Disabled)"
+      },
+      "description": "Comprehensive design system and component library for ProCrèche Solutions",
+      "title": "Design System"
+    },
+    "partnersPage": {
+      "sections": {
+        "featuredPartners": "Featured Partners"
+      },
+      "buttons": {
+        "becomePartner": "Become a Partner"
+      },
+      "subtitle": "Trusted partners in early childhood education",
+      "title": "Our Partners"
+    },
+    "discountTerminationsPage": {
+      "active": {
+        "title": "Active Discounts"
+      },
+      "queue": {
+        "title": "Termination Queue"
+      }
+    },
+    "partners": {
+      "partnerCard": {
+        "learnMoreButton": "Learn More",
+        "partnerType": "Partner Type",
+        "logoAlt": "Partner logo"
+      },
+      "joinUs": {
+        "contactUsButton": "Contact Us",
+        "inquiryFormLink": "Partner Inquiry Form",
+        "contactUsAlert": "Contact form coming soon",
+        "subtitle": "Join our network of trusted providers",
+        "title": "Become a Partner"
+      },
+      "featured": {
+        "subtitle": "Leading organizations we work with",
+        "title": "Featured Partners"
+      },
+      "hero": {
+        "ctaButton": "Become a Partner",
+        "subtitle": "Trusted partners in early childhood education",
+        "title": "Our Partners"
       }
     }
+  },
+  "partners": {
+    "application": {
+      "organizationNamePlaceholder": "Enter your organization name",
+      "contactPersonPlaceholder": "Full name of contact person",
+      "countryRegionPlaceholder": "e.g., Switzerland",
+      "contactEmailPlaceholder": "contact@example.com",
+      "contactPhonePlaceholder": "+41 XX XXX XX XX",
+      "websiteUrlPlaceholder": "https://www.example.com",
+      "messagePlaceholder": "Describe your organization, the services you offer, and why you'd like to partner with us...",
+      "organizationName": "Organization Name",
+      "successMessage": "Thank you for your interest in partnering with ProCrèche Solutions. Our team will review your application and contact you within 3-5 business days.",
+      "contactPerson": "Contact Person",
+      "countryRegion": "Country/Region",
+      "contactEmail": "Email Address",
+      "contactPhone": "Phone Number",
+      "successTitle": "Application Submitted!",
+      "partnerType": "Partner Type",
+      "submitting": "Submitting...",
+      "websiteUrl": "Website URL",
+      "message": "Tell us about your organization",
+      "submit": "Submit Application",
+      "error": "Failed to submit application. Please try again.",
+      "title": "Partner Application"
+    },
+    "partnerCard": {
+      "learnMoreButton": "Learn More",
+      "partnerType": "Partner Type",
+      "logoAlt": "{{name}} logo"
+    },
+    "joinUs": {
+      "contactUsButton": "Contact Us",
+      "inquiryFormLink": "Partner Inquiry Form",
+      "contactUsAlert": "Contact form coming soon",
+      "subtitle": "Join our network of trusted providers",
+      "title": "Become a Partner"
+    },
+    "types": {
+      "governmental": "Governmental",
+      "technology": "Technology",
+      "corporate": "Corporate",
+      "nonProfit": "Non-Profit",
+      "academic": "Academic",
+      "media": "Media"
+    },
+    "allPartners": {
+      "title": "All Partners"
+    },
+    "featured": {
+      "subtitle": "Leading organizations we work with",
+      "title": "Featured Partners"
+    },
+    "searchPlaceholder": "Search partners...",
+    "error": {
+      "loadFailed": "Failed to load partners. Please try again later."
+    },
+    "hero": {
+      "ctaButton": "Become a Partner",
+      "subtitle": "Trusted partners in early childhood education",
+      "title": "Our Partners"
+    },
+    "partnersFound": "partners found",
+    "searchResults": "Search Results",
+    "noPartners": "No partners available yet",
+    "noResults": "No partners found matching your search",
+    "allTypes": "All Types"
+  },
+  "discountTerminations": {
+    "actions": {
+      "sendNoticesAlert": "Notice sending functionality coming soon",
+      "markCompleted": "Mark Completed",
+      "sendNotices": "Send Notices"
+    },
+    "allActive": {
+      "description": "All active vendor discounts",
+      "tableTitle": "Active Vendor Discounts",
+      "empty": "No active discounts",
+      "title": "Active Discounts"
+    },
+    "queue": {
+      "description": "Clients pending discount termination",
+      "tableTitle": "Pending Terminations",
+      "empty": "No pending terminations",
+      "title": "Termination Queue"
+    },
+    "table": {
+      "activeSince": "Active Since",
+      "actions": "Actions",
+      "daycare": "Daycare",
+      "reason": "Reason",
+      "vendor": "Vendor"
+    }
+  },
+  "platformSettings": {
+    "general": {
+      "descriptionLabel": "Platform Description",
+      "nameLabel": "Platform Name",
+      "title": "General Settings"
+    },
+    "branding": {
+      "faviconLabel": "Favicon",
+      "logoLabel": "Logo",
+      "title": "Branding"
+    },
+    "title": "Platform Settings"
+  },
+  "forms": {
+    "candidate": {
+      "certificationPlaceholder": "e.g., Early Childhood Education Diploma, First Aid Certificate...",
+      "experiencePlaceholder": "Describe relevant work experience...",
+      "educationPlaceholder": "Educational background and qualifications...",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "emailPlaceholder": "john.doe@example.com",
+      "skillPlaceholder": "Add a custom skill...",
+      "bioPlaceholder": "A brief introduction about the candidate..."
+    },
+    "organization": {
+      "languagePlaceholder": "e.g., German, French, English",
+      "pedagogyPlaceholder": "e.g., Montessori, Waldorf",
+      "websitePlaceholder": "https://example.com",
+      "regionPlaceholder": "e.g., Zurich",
+      "emailPlaceholder": "contact@example.com"
+    },
+    "job": {
+      "responsibilityPlaceholder": "Add a responsibility...",
+      "qualificationPlaceholder": "Add a qualification...",
+      "descriptionPlaceholder": "Describe the role, day-to-day responsibilities, and what makes this position special...",
+      "requirementPlaceholder": "Add a requirement...",
+      "locationPlaceholder": "e.g., Zurich, Switzerland",
+      "benefitPlaceholder": "Add a benefit...",
+      "salaryPlaceholder": "e.g., CHF 60,000 - 80,000",
+      "titlePlaceholder": "e.g., Early Childhood Educator"
+    }
+  },
+  "content": {
+    "statePolicies": {
+      "searchPlaceholder": "Search policies...",
+      "noResults": "No results found",
+      "addFirst": "Add First Policy",
+      "loading": "Loading policies...",
+      "empty": "No state policies yet",
+      "title": "State Policies"
+    },
+    "hrDocuments": {
+      "searchPlaceholder": "Search HR documents...",
+      "noResults": "No results found",
+      "addFirst": "Add First Document",
+      "loading": "Loading documents...",
+      "empty": "No HR documents yet",
+      "title": "HR Documents"
+    },
+    "eLearning": {
+      "searchPlaceholder": "Search e-learning...",
+      "noResults": "No results found",
+      "addFirst": "Add First Content",
+      "loading": "Loading content...",
+      "empty": "No e-learning content yet",
+      "title": "E-Learning Content",
+      "total": "Total"
+    },
+    "orDragDrop": "or drag and drop",
+    "selected": "Selected"
+  },
+  "designSystem": {
+    "formControls": {
+      "disabledInput": "Disabled Input",
+      "quantityInput": "Quantity Input",
+      "selectMenu": "Select Menu",
+      "textInput": "Text Input",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "title": "Form Controls"
+    },
+    "buttons": {
+      "secondaryDisabled": "Secondary (Disabled)",
+      "outlineDisabled": "Outline (Disabled)",
+      "primaryDisabled": "Primary (Disabled)",
+      "disabledState": "Disabled State",
+      "mediumDefault": "Medium (Default)",
+      "extraSmall": "Extra Small",
+      "rightIcon": "Right Icon",
+      "secondary": "Secondary",
+      "smallIcon": "Small Icon",
+      "withIcons": "With Icons",
+      "leftIcon": "Left Icon",
+      "variants": "Variants",
+      "outline": "Outline",
+      "primary": "Primary",
+      "danger": "Danger",
+      "ghost": "Ghost",
+      "large": "Large",
+      "light": "Light",
+      "sizes": "Sizes",
+      "small": "Small",
+      "title": "Buttons"
+    },
+    "cards": {
+      "hoverEffectCardDesc": "Card with hover effect",
+      "standardCardDesc": "Basic card component with padding and shadow",
+      "hoverEffectCard": "Hover Effect Card",
+      "standardCard": "Standard Card"
+    },
+    "sections": {
+      "formControls": "Form Controls",
+      "components": "Components",
+      "typography": "Typography",
+      "buttons": "Buttons",
+      "colors": "Colors",
+      "cards": "Cards"
+    },
+    "typography": {
+      "fontFamily": "Font Family: Inter",
+      "bodySmall": "Body text (small)",
+      "bodyBase": "Body text (base)",
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "heading4": "Heading 4",
+      "title": "Typography",
+      "link": "Link example"
+    },
+    "tabs": {
+      "pillsVariant": "Pills Variant",
+      "disabledTab": "Tab 3 (Disabled)",
+      "lineVariant": "Line Variant",
+      "content1": "This is content for tab 1",
+      "content2": "This is content for tab 2",
+      "content3": "This is content for tab 3",
+      "title": "Tabs",
+      "tab1": "Tab 1",
+      "tab2": "Tab 2",
+      "tab3": "Tab 3 (Disabled)"
+    },
+    "description": "Comprehensive design system and component library for ProCrèche Solutions",
+    "title": "Design System"
+  },
+  "servicesPage": {
+    "defaults": {
+      "priceNotAvailable": "N/A",
+      "flexible": "Flexible",
+      "onSite": "On-site"
+    },
+    "errors": {
+      "checkConnection": "Please check your connection and try again.",
+      "loadFailed": "Failed to load services"
+    },
+    "emptyState": {
+      "suggestion": "Try adjusting your search criteria or add a new service."
+    },
+    "addService": "Add Service",
+    "subtitle": "Manage services and offerings ({{count}} total)",
+    "title": "Services"
+  },
+  "partnersPage": {
+    "sections": {
+      "featuredPartners": "Featured Partners"
+    },
+    "buttons": {
+      "becomePartner": "Become a Partner"
+    },
+    "subtitle": "Trusted partners in early childhood education",
+    "title": "Our Partners"
+  },
+  "discountTerminationsPage": {
+    "active": {
+      "title": "Active Discounts"
+    },
+    "queue": {
+      "title": "Termination Queue"
+    }
+  },
+  "organizations": {
+    "emptyState": {
+      "description": "Try adjusting your search criteria or add a new organization.",
+      "title": "No organizations found"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "title": "Failed to load organizations"
+    },
+    "searchPlaceholder": "Search organizations...",
+    "actions": {
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "staffMembers": "staff members",
+    "addButton": "Add Organization",
+    "subtitle": "Manage daycare centers and organizations ({{count}} total)",
+    "title": "Organizations"
+  },
+  "translations": {
+    "descriptionPlaceholder": "Description (optional)",
+    "versionPlaceholder": "Version (e.g., v1.2.3)",
+    "searchPlaceholder": "Search keys or values..."
+  },
+  "jobListings": {
+    "emptyState": {
+      "description": "Try adjusting your search criteria or post a new job.",
+      "title": "No job listings found"
+    },
+    "statusFilter": {
+      "active": "Active",
+      "closed": "Closed",
+      "paused": "Paused",
+      "all": "All Status"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "title": "Failed to load job listings"
+    },
+    "searchPlaceholder": "Search jobs...",
+    "actions": {
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "addButton": "Post Job",
+    "subtitle": "Manage job postings and recruitment ({{count}} total)",
+    "title": "Job Listings"
+  },
+  "candidates": {
+    "emptyState": {
+      "description": "Try adjusting your search criteria or add a new candidate.",
+      "title": "No candidates found"
+    },
+    "searchPlaceholder": "Search candidates...",
+    "table": {
+      "appliedDate": "APPLIED DATE",
+      "experience": "EXPERIENCE",
+      "candidate": "CANDIDATE",
+      "position": "POSITION",
+      "status": "STATUS"
+    },
+    "statusFilter": {
+      "all": "All Status"
+    },
+    "addButton": "Add Candidate",
+    "subtitle": "Manage job applicants and candidates ({{count}} total)",
+    "title": "Candidates"
+  },
+  "fileUpload": {
+    "descriptionPlaceholder": "Describe this file...",
+    "tagPlaceholder": "Add tag...",
+    "urlPlaceholder": "https://example.com/image.png",
+    "clickBrowse": "Click to browse or drag and drop",
+    "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
+    "dragDrop": "or drag and drop",
+    "selected": "Selected"
+  },
+  "products": {
+    "emptyState": {
+      "description": "Try adjusting your search criteria or add a new product.",
+      "title": "No products found"
+    },
+    "categoryFilter": {
+      "all": "All Categories"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "title": "Failed to load products"
+    },
+    "searchPlaceholder": "Search products...",
+    "actions": {
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "addButton": "Add Product",
+    "subtitle": "Manage products and supplies ({{count}} total)",
+    "title": "Products"
+  },
+  "auth": {
+    "login": {
+      "emailPlaceholder": "admin@procreche.com",
+      "forgotPassword": "Forgot Password",
+      "passwordLabel": "Password",
+      "hidePassword": "Hide Password",
+      "showPassword": "Show Password",
+      "emailLabel": "Email",
+      "subtitle": "Pro Crèche Solutions Management Portal",
+      "title": "Admin Dashboard"
+    },
+    "signup": {
+      "termsPrefix": "I accept the",
+      "termsLink": "Terms and Conditions"
+    }
+  },
+  "messaging": {
+    "searchPlaceholder": "Search conversations...",
+    "typePlaceholder": "Type your message..."
+  },
+  "support": {
+    "searchPlaceholder": "Search tickets...",
+    "replyPlaceholder": "Type your reply...",
+    "table": {
+      "assignedTo": "Assigned To",
+      "priority": "Priority",
+      "created": "Created",
+      "status": "Status",
+      "ticket": "Ticket",
+      "user": "User"
+    },
+    "assignedToYou": "Assigned To You",
+    "selectTicket": "Select a ticket to view details",
+    "staffMember": "Staff Member",
+    "assignedTo": "Assigned To",
+    "assignToMe": "Assign To Me",
+    "unassigned": "Unassigned",
+    "assigning": "Assigning",
+    "noTickets": "No tickets found",
+    "sendReply": "Send Reply",
+    "subtitle": "Manage and respond to support tickets ({{total}} total)",
+    "sending": "Sending",
+    "staff": "Staff",
+    "title": "Support Tickets",
+    "user": "User"
   }
 }

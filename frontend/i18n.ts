@@ -4,8 +4,22 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 import { IndexedDBBackend } from './i18n/indexeddb-backend';
 
+// ============================================================
+// AUTOMATIC NAMESPACE DISCOVERY
+// ============================================================
+// Uses Vite's import.meta.glob to automatically discover all
+// translation files. No need to manually add imports when
+// creating new namespace files!
+// ============================================================
+
+// Dynamically import all translation JSON files
+const translationModules = import.meta.glob(
+  '../packages/translations/locales/*/*.json',
+  { eager: true, import: 'default' }
+) as Record<string, Record<string, unknown>>;
+
 // Helper function to strip [FR], [DE], [EN] prefixes from translation values
-const stripPrefixes = (obj: any): any => {
+const stripPrefixes = (obj: unknown): unknown => {
   if (typeof obj === 'string') {
     return obj.replace(/^\[(FR|DE|EN)\]\s*/i, '').trim();
   }
@@ -13,7 +27,7 @@ const stripPrefixes = (obj: any): any => {
     return obj.map(stripPrefixes);
   }
   if (obj && typeof obj === 'object') {
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       result[key] = stripPrefixes(value);
     }
@@ -21,6 +35,38 @@ const stripPrefixes = (obj: any): any => {
   }
   return obj;
 };
+
+// Build fallback resources from discovered modules
+// Structure: { en: { common: {...}, auth: {...} }, fr: {...}, de: {...} }
+const fallbackResources: Record<string, Record<string, unknown>> = {};
+const discoveredNamespaces = new Set<string>();
+
+for (const [path, module] of Object.entries(translationModules)) {
+  // Extract language and namespace from path
+  // Path format: ../packages/translations/locales/en/common.json
+  const match = path.match(/locales\/([^/]+)\/([^/]+)\.json$/);
+  if (!match) continue;
+
+  const [, lang, namespace] = match;
+  
+  // Initialize language object if needed
+  if (!fallbackResources[lang]) {
+    fallbackResources[lang] = {};
+  }
+  
+  // Add namespace with prefix stripping
+  fallbackResources[lang][namespace] = stripPrefixes(module);
+  discoveredNamespaces.add(namespace);
+}
+
+// Convert Set to Array for i18next config
+const nsArray = Array.from(discoveredNamespaces);
+
+// Log discovered namespaces in development
+if (import.meta.env.DEV) {
+  console.log('🌐 i18n: Auto-discovered namespaces:', nsArray);
+  console.log('🌐 i18n: Languages:', Object.keys(fallbackResources));
+}
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 // Ensure BASE_API_URL includes /api prefix since NestJS uses global prefix
@@ -31,107 +77,13 @@ const BASE_API_URL = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 const USE_BUNDLED_TRANSLATIONS = import.meta.env.VITE_USE_BUNDLED_TRANSLATIONS === 'true' || 
   import.meta.env.PROD; // Default to bundled in production builds
 
-// Fallback translations (for offline support)
-// These are still imported from the JSON files as fallback
-import commonEn from '@workspace/translations/locales/en/common.json';
-import authEn from '@workspace/translations/locales/en/auth.json';
-import dashboardEn from '@workspace/translations/locales/en/dashboard.json';
-import contentEn from '@workspace/translations/locales/en/content.json';
-import recruitmentEn from '@workspace/translations/locales/en/recruitment.json';
-import marketplaceEn from '@workspace/translations/locales/en/marketplace.json';
-import usersEn from '@workspace/translations/locales/en/users.json';
-import adminEn from '@workspace/translations/locales/en/admin.json';
-import signupEn from '@workspace/translations/locales/en/signup.json';
-import settingsEn from '@workspace/translations/locales/en/settings.json';
-import messagesEn from '@workspace/translations/locales/en/messages.json';
-import pricingEn from '@workspace/translations/locales/en/pricing.json';
-import parentLeadFormEn from '@workspace/translations/locales/en/parentLeadForm.json';
-
-import commonFr from '@workspace/translations/locales/fr/common.json';
-import authFr from '@workspace/translations/locales/fr/auth.json';
-import dashboardFr from '@workspace/translations/locales/fr/dashboard.json';
-import contentFr from '@workspace/translations/locales/fr/content.json';
-import recruitmentFr from '@workspace/translations/locales/fr/recruitment.json';
-import marketplaceFr from '@workspace/translations/locales/fr/marketplace.json';
-import usersFr from '@workspace/translations/locales/fr/users.json';
-import adminFr from '@workspace/translations/locales/fr/admin.json';
-import signupFr from '@workspace/translations/locales/fr/signup.json';
-import settingsFr from '@workspace/translations/locales/fr/settings.json';
-import messagesFr from '@workspace/translations/locales/fr/messages.json';
-import pricingFr from '@workspace/translations/locales/fr/pricing.json';
-import parentLeadFormFr from '@workspace/translations/locales/fr/parentLeadForm.json';
-
-import commonDe from '@workspace/translations/locales/de/common.json';
-import authDe from '@workspace/translations/locales/de/auth.json';
-import dashboardDe from '@workspace/translations/locales/de/dashboard.json';
-import contentDe from '@workspace/translations/locales/de/content.json';
-import recruitmentDe from '@workspace/translations/locales/de/recruitment.json';
-import marketplaceDe from '@workspace/translations/locales/de/marketplace.json';
-import usersDe from '@workspace/translations/locales/de/users.json';
-import adminDe from '@workspace/translations/locales/de/admin.json';
-import signupDe from '@workspace/translations/locales/de/signup.json';
-import settingsDe from '@workspace/translations/locales/de/settings.json';
-import messagesDe from '@workspace/translations/locales/de/messages.json';
-import pricingDe from '@workspace/translations/locales/de/pricing.json';
-import parentLeadFormDe from '@workspace/translations/locales/de/parentLeadForm.json';
-
-// Fallback resources (used when API is unavailable)
-// Strip prefixes from all fallback resources before using them
-const fallbackResources = {
-  en: {
-    common: stripPrefixes(commonEn),
-    auth: stripPrefixes(authEn),
-    dashboard: stripPrefixes(dashboardEn),
-    content: stripPrefixes(contentEn),
-    recruitment: stripPrefixes(recruitmentEn),
-    marketplace: stripPrefixes(marketplaceEn),
-    users: stripPrefixes(usersEn),
-    admin: stripPrefixes(adminEn),
-    signup: stripPrefixes(signupEn),
-    settings: stripPrefixes(settingsEn),
-    messages: stripPrefixes(messagesEn),
-    pricing: stripPrefixes(pricingEn),
-    parentLeadForm: stripPrefixes(parentLeadFormEn),
-  },
-  fr: {
-    common: stripPrefixes(commonFr),
-    auth: stripPrefixes(authFr),
-    dashboard: stripPrefixes(dashboardFr),
-    content: stripPrefixes(contentFr),
-    recruitment: stripPrefixes(recruitmentFr),
-    marketplace: stripPrefixes(marketplaceFr),
-    users: stripPrefixes(usersFr),
-    admin: stripPrefixes(adminFr),
-    signup: stripPrefixes(signupFr),
-    settings: stripPrefixes(settingsFr),
-    messages: stripPrefixes(messagesFr),
-    pricing: stripPrefixes(pricingFr),
-    parentLeadForm: stripPrefixes(parentLeadFormFr),
-  },
-  de: {
-    common: stripPrefixes(commonDe),
-    auth: stripPrefixes(authDe),
-    dashboard: stripPrefixes(dashboardDe),
-    content: stripPrefixes(contentDe),
-    recruitment: stripPrefixes(recruitmentDe),
-    marketplace: stripPrefixes(marketplaceDe),
-    users: stripPrefixes(usersDe),
-    admin: stripPrefixes(adminDe),
-    signup: stripPrefixes(signupDe),
-    settings: stripPrefixes(settingsDe),
-    messages: stripPrefixes(messagesDe),
-    pricing: stripPrefixes(pricingDe),
-    parentLeadForm: stripPrefixes(parentLeadFormDe),
-  },
-};
-
 // Initialize IndexedDB before i18n
 IndexedDBBackend.init()
   .then(() => {
     // Clear cache on app start to ensure fresh translations without prefixes
     // This is a one-time clear to remove any old cached data with prefixes
     const cacheVersion = localStorage.getItem('i18n-cache-version');
-    const currentVersion = '3.0'; // Increment this when translations structure changes - CLEANED PLACEHOLDERS
+    const currentVersion = '4.0'; // Increment this when translations structure changes - AUTO DISCOVERY
     
     if (cacheVersion !== currentVersion) {
       IndexedDBBackend.clearAll()
@@ -175,38 +127,16 @@ i18n
       default: ['en'],
     },
     supportedLngs: ['en', 'fr', 'de'],
-    ns: [
-      'common',
-      'auth',
-      'dashboard',
-      'settings',
-      'billing',
-      'elearning',
-      'supplier',
-      'hr',
-      'emails',
-      'marketplace',
-      'recruitment',
-      'users',
-      'content',
-      'messages',
-      'admin',
-      'profile',
-      'signup',
-      'pricing',
-      'parentLeadForm',
-    ],
+    ns: nsArray, // Auto-discovered namespaces
     defaultNS: 'common',
-    // Don't use fallback resources as primary - let API serve translations first
-    // Only use fallback if API fails
-    // resources: fallbackResources,
     backend: {
       loadPath: `${BASE_API_URL}/static-translations/{{lng}}/{{ns}}`,
       // Custom request function with production/development modes
       // Production: Use bundled JSON files (fast, no API dependency)
       // Development: Fetch from API (always get latest from database)
-      request: async (options: any, url: string, payload: any, callback: any) => {
-        const [lng, ns] = url.match(/\/static-translations\/([^/]+)\/([^/]+)/)?.slice(1) || [];
+      request: async (options: unknown, url: string, payload: unknown, callback: (err: unknown, result: { status: number; data: unknown }) => void) => {
+        const match = url.match(/\/static-translations\/([^/]+)\/([^/]+)/);
+        const [, lng, ns] = match || [];
         
         if (!lng || !ns) {
           return callback(null, { status: 404, data: {} });
@@ -214,7 +144,7 @@ i18n
 
         // Helper to get bundled translations
         const getBundledTranslations = () => {
-          const bundled = fallbackResources[lng as keyof typeof fallbackResources]?.[ns as keyof typeof fallbackResources['en']];
+          const bundled = fallbackResources[lng]?.[ns];
           return bundled ? stripPrefixes(bundled) : null;
         };
 
@@ -227,7 +157,7 @@ i18n
           }
           // If not in bundle, try dynamic import
           try {
-            const module = await import(`@workspace/translations/locales/${lng}/${ns}.json`);
+            const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
             const data = stripPrefixes(module.default || module);
             callback(null, { status: 200, data });
           } catch (e) {
@@ -268,7 +198,7 @@ i18n
             callback(null, { status: 200, data: bundled });
           } else {
             try {
-              const module = await import(`@workspace/translations/locales/${lng}/${ns}.json`);
+              const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
               const data = stripPrefixes(module.default || module);
               callback(null, { status: 200, data });
             } catch (e) {
@@ -280,21 +210,21 @@ i18n
     },
     interpolation: {
       escapeValue: false,
-      format: (value: any, format: string, lng: string) => {
+      format: (value: unknown, format: string | undefined, lng: string | undefined) => {
         // ICU formatting for dates, numbers, currency
         if (format === 'currency') {
           return new Intl.NumberFormat(lng, {
             style: 'currency',
             currency: 'CHF',
-          }).format(value);
+          }).format(value as number);
         }
         if (format === 'date') {
-          return new Intl.DateTimeFormat(lng).format(new Date(value));
+          return new Intl.DateTimeFormat(lng).format(new Date(value as string));
         }
         if (format === 'number') {
-          return new Intl.NumberFormat(lng).format(value);
+          return new Intl.NumberFormat(lng).format(value as number);
         }
-        return value;
+        return value as string;
       },
     },
     react: {
@@ -303,9 +233,12 @@ i18n
     // Performance optimizations
     updateMissing: false,
     saveMissing: false, // Disabled in production - use admin UI instead
-    cache: {
-      enabled: true,
-    },
+    // Log missing keys in development
+    missingKeyHandler: import.meta.env.DEV 
+      ? (lngs, ns, key) => {
+          console.warn(`⚠️ Missing translation key: ${ns}:${key} [${lngs.join(', ')}]`);
+        }
+      : undefined,
   });
 
 // Preload critical namespaces for all languages on app init

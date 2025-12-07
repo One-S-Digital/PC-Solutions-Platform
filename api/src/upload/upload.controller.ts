@@ -87,7 +87,11 @@ export class UploadController {
    * POST /api/upload/file
    */
   @Post('file')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    limits: {
+      fileSize: 100 * 1024 * 1024, // 100MB max (e-learning content can be large)
+    },
+  }))
   @UploadThrottle()
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
@@ -178,82 +182,6 @@ export class UploadController {
     }
   }
 
-  /**
-   * Upload a file and create an asset record
-   * POST /api/upload/file
-   * Body: multipart/form-data with 'file' and optional 'assetKind'
-   */
-  @Post('file')
-  @UseInterceptors(FileInterceptor('file', {
-    limits: {
-      fileSize: 100 * 1024 * 1024, // 100MB max (e-learning content can be large)
-    },
-  }))
-  async uploadFile(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-    @Body('assetKind') assetKindParam?: string,
-  ) {
-    try {
-      const context = (req as any).context;
-      
-      // Use accountId (AppUser.id) for asset ownership since Asset.uploader relation references AppUser
-      // accountId is set by EnsureProfileInterceptor from the AppUser table
-      const userId = context?.accountId;
-      
-      if (!userId) {
-        this.logger.warn('User account not found in request context for file upload');
-        throw new BadRequestException('User context not found');
-      }
-
-      if (!file) {
-        this.logger.warn('No file provided in upload request');
-        throw new BadRequestException('No file provided');
-      }
-
-      this.logger.log(`Processing file upload for user: ${userId}, file: ${file.originalname}, size: ${file.size}`);
-
-      // Determine asset kind from parameter or default to DOCUMENT
-      let assetKind: AssetKind = AssetKind.DOCUMENT;
-      if (assetKindParam) {
-        const validKinds = Object.values(AssetKind);
-        if (validKinds.includes(assetKindParam as AssetKind)) {
-          assetKind = assetKindParam as AssetKind;
-        } else {
-          this.logger.warn(`Invalid asset kind: ${assetKindParam}, defaulting to DOCUMENT`);
-        }
-      }
-
-      this.logger.log(`Asset kind: ${assetKind}`);
-
-      // Upload file using the upload service
-      const result = await this.uploadService.uploadFile(file, userId, assetKind);
-
-      this.logger.log(`File uploaded successfully: ${result.asset.id}`);
-
-      return {
-        success: true,
-        message: 'File uploaded successfully',
-        asset: {
-          id: result.asset.id,
-          kind: result.asset.kind,
-          filename: result.asset.filename,
-          publicUrl: result.publicUrl,
-          url: result.publicUrl,
-          storageKey: result.asset.storageKey,
-          mimeType: result.asset.mimeType,
-          size: result.asset.size,
-          createdAt: result.asset.createdAt,
-        },
-      };
-    } catch (error) {
-      this.logger.error(`File upload failed: ${error.message}`, error.stack);
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new BadRequestException(`File upload failed: ${error.message}`);
-    }
-  }
 
   /**
    * Delete an asset by ID

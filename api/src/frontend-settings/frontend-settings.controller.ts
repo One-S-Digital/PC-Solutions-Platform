@@ -28,13 +28,25 @@ export class FrontendSettingsController {
 
   @Get('public')
   @Public()
-  getPublicSettings() {
-    return this.frontendSettingsService.getPublicSettings().then((data) => ({
-      success: true,
-      message: 'Public frontend settings fetched',
-      data,
-      timestamp: new Date().toISOString(),
-    }));
+  async getPublicSettings() {
+    try {
+      const data = await this.frontendSettingsService.getPublicSettings();
+      return {
+        success: true,
+        message: 'Public frontend settings fetched',
+        data,
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      // Always return JSON, even on error
+      return {
+        success: false,
+        message: 'Failed to fetch public settings',
+        error: error instanceof Error ? error.message : String(error),
+        data: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 
   @Get()

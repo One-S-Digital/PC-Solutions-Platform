@@ -48,7 +48,6 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       return;
     }
 
-<<<<<<< HEAD
     // Prevent concurrent calls - if already loading, skip
     if (loadingConversationsRef.current) {
       return;
@@ -104,7 +103,6 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
     loadUserConversations();
   }, [currentUser, loadUserConversations]);
 
-<<<<<<< HEAD
   // Polling for real-time message updates (fallback when WebSocket is not available)
   // Note: With WebSocket, this polling is less critical but kept as a backup
   useEffect(() => {
@@ -442,7 +440,6 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       { id: currentUser.id, name: currentUser.name, role: currentUser.role },
       { id: recipientId, name: recipientName, role: recipientRole }
     ];
-<<<<<<< HEAD
     return await startConversation(participants);
   };
   

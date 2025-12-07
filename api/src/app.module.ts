@@ -1,7 +1,8 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { BullModule } from '@nestjs/bull';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -75,17 +76,17 @@ import {
       {
         name: 'short',
         ttl: 1, // 1 second
-        limit: 3, // 3 requests per second
+        limit: 30, // 30 requests per second (increased for dev/translation loading)
       },
       {
         name: 'medium',
         ttl: 10, // 10 seconds
-        limit: 20, // 20 requests per 10 seconds
+        limit: 200, // 200 requests per 10 seconds
       },
       {
         name: 'long',
         ttl: 60, // 1 minute
-        limit: 100, // 100 requests per minute
+        limit: 600, // 600 requests per minute
       },
       {
         name: AUTH_THROTTLE_KEY,
@@ -143,7 +144,7 @@ import {
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: CustomThrottlerGuard,
     },
   ],
 })

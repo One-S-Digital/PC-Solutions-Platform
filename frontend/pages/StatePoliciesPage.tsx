@@ -152,7 +152,11 @@ const StatePoliciesPage: React.FC = () => {
         });
 
         if (response.success && response.data) {
-          setPolicyAlerts(response.data);
+          // Ensure response.data is always an array
+          const alerts = Array.isArray(response.data) ? response.data : [];
+          setPolicyAlerts(alerts);
+        } else {
+          setPolicyAlerts([]);
         }
       } catch (error) {
         console.error('Failed to fetch Policy Alerts:', error);
@@ -254,6 +258,10 @@ const StatePoliciesPage: React.FC = () => {
   }, [searchTerm, filterCanton, filterPolicyType, filterCategory, policyDocs, isAdminOrSuperAdmin]);
 
   const activeGlobalAlerts = useMemo(() => {
+    // Ensure policyAlerts is always an array
+    if (!Array.isArray(policyAlerts)) {
+      return [];
+    }
     const now = new Date();
     return policyAlerts.filter(alert => 
         alert.isActive &&
@@ -456,7 +464,7 @@ const StatePoliciesPage: React.FC = () => {
             />
             <Card className="p-4 mt-8">
                 <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">Manage Existing Alerts</h2>
-                {policyAlerts.length === 0 ? <p className="text-gray-500">No custom alerts created yet.</p> : (
+                {!Array.isArray(policyAlerts) || policyAlerts.length === 0 ? <p className="text-gray-500">No custom alerts created yet.</p> : (
                     <ul className="space-y-2">
                         {policyAlerts.map(alert => (
                             <li key={alert.id} className="flex justify-between items-center p-2 bg-gray-50 rounded-md">

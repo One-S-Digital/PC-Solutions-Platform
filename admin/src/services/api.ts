@@ -245,29 +245,29 @@ export const apiService = {
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
 
   // Organizations
-  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/organizations'),
-  getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/organizations/${id}`),
-  createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/organizations', orgData),
-  updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/organizations/${id}`, orgData),
-  deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/organizations/${id}`),
+  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations'),
+  getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/compat/organizations/${id}`),
+  createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/compat/organizations', orgData),
+  updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/compat/organizations/${id}`, orgData),
+  deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/organizations/${id}`),
 
   // Products
 
-  getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/products'),
+  getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
   getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/products/${id}`),
   createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/products', productData),
   updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.put<ApiResponse<Product>>(`/products/${id}`, productData),
   deleteProduct: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/products/${id}`),
 
   // Services
-  getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/services'),
-  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/services/${id}`),
-  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/services', serviceData),
-  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.put<ApiResponse<Service>>(`/services/${id}`, serviceData),
-  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/services/${id}`),
+  getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/compat/services'),
+  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/compat/services/${id}`),
+  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/compat/services', serviceData),
+  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.put<ApiResponse<Service>>(`/compat/services/${id}`, serviceData),
+  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/services/${id}`),
 
   // Job Listings
-  getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/job-listings'),
+  getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/compat/job-listings'),
   createJobListing: (apiClient: AxiosInstance, jobData: {
     title: string;
     description?: string;
@@ -280,10 +280,10 @@ export const apiService = {
     qualifications?: string[];
     benefits?: string[];
     status?: string;
-  }) => apiClient.post<ApiResponse<JobListing>>('/job-listings', jobData),
+  }) => apiClient.post<ApiResponse<JobListing>>('/compat/job-listings', jobData),
 
   // Candidates
-  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/candidates'),
+  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates'),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
@@ -411,12 +411,12 @@ export const apiService = {
   deletePolicyAlert: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/policy-alerts/${id}`),
 
   // Parent Leads
-  getParentLeads: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<ParentLead[]>>('/parent-leads'),
+  getParentLeads: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<ParentLead[]>>('/compat/parent-leads'),
 
   // Orders
 
-  getOrders: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Order[]>>('/orders'),
-  getOrderRequests: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<OrderRequest[]>>('/order-requests'),
+  getOrders: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Order[]>>('/compat/orders'),
+  getOrderRequests: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<OrderRequest[]>>('/compat/order-requests'),
 
   // Messaging
   // NOTE: Endpoint paths changed from /messages/* to /messaging/* - ensure backend is deployed first

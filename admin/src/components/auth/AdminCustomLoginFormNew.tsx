@@ -22,7 +22,7 @@ const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 export default function AdminCustomLoginForm() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const { signIn, isLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
@@ -63,47 +63,47 @@ export default function AdminCustomLoginForm() {
           navigate('/dashboard');
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
-          setError('Failed to activate session. Please try again.');
+          setError(t('auth:errors.sessionActivationFailed'));
         }
       } else if (result.status === 'needs_first_factor') {
         // Handle 2FA if needed
-        setError('Two-factor authentication required');
+        setError(t('auth:errors.twoFactorRequired'));
       }
     } catch (err: any) {
       console.error('Admin login error:', err);
       
       // Parse Clerk error messages for better user experience
-      let errorMessage = 'An error occurred during login';
+      let errorMessage = t('auth:errors.genericLogin');
       
       if (err.errors && err.errors.length > 0) {
         const error = err.errors[0];
         switch (error.code) {
           case 'form_password_incorrect':
-            errorMessage = 'Incorrect password. Please try again.';
+            errorMessage = t('auth:errors.incorrectPassword');
             break;
           case 'form_identifier_not_found':
-            errorMessage = 'No admin account found with this email address.';
+            errorMessage = t('auth:errors.accountNotFound');
             break;
           case 'form_identifier_exists':
-            errorMessage = 'An account with this email already exists.';
+            errorMessage = t('auth:errors.accountExists');
             break;
           case 'form_password_pwned':
-            errorMessage = 'This password has been found in a data breach. Please choose a different password.';
+            errorMessage = t('auth:errors.passwordBreached');
             break;
           case 'form_password_not_strong_enough':
-            errorMessage = 'Password is not strong enough.';
+            errorMessage = t('auth:errors.passwordNotStrong');
             break;
           case 'form_password_validation_failed':
-            errorMessage = 'Password does not meet requirements.';
+            errorMessage = t('auth:errors.passwordRequirements');
             break;
           case 'form_identifier_invalid':
-            errorMessage = 'Please enter a valid email address.';
+            errorMessage = t('auth:errors.invalidEmail');
             break;
           case 'session_exists':
-            errorMessage = 'You are already signed in. Redirecting...';
+            errorMessage = t('auth:errors.sessionExists');
             break;
           default:
-            errorMessage = error.message || 'Invalid email or password';
+            errorMessage = error.message || t('auth:errors.invalidCredentials');
         }
       } else if (err.message) {
         errorMessage = err.message;
@@ -134,7 +134,7 @@ export default function AdminCustomLoginForm() {
       });
     } catch (error: any) {
       console.error('Google sign in error:', error);
-      const errorMessage = error.errors?.[0]?.message || 'Google sign in failed. Please try again.';
+      const errorMessage = error.errors?.[0]?.message || t('auth:errors.googleSignInFailed');
       setError(errorMessage);
       setIsLoading(false);
     }
@@ -193,14 +193,14 @@ export default function AdminCustomLoginForm() {
               <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
             </div>
             <h2 className="text-2xl font-bold text-swiss-charcoal text-center">
-              Active Admin Session
+              {t('auth:activeSession.title')}
             </h2>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800 text-center">
-                <strong>Welcome back, {user.fullName || user.firstName || 'Admin'}!</strong>
+                <strong>{t('auth:activeSession.welcomeBack', { name: user.fullName || user.firstName || t('common:admin') })}</strong>
               </p>
               <p className="text-xs text-blue-700 text-center mt-2">
-                You are already logged in to the admin dashboard. Choose an option below to continue.
+                {t('auth:activeSession.alreadyLoggedIn')}
               </p>
             </div>
             <div className="flex flex-col space-y-3">
@@ -211,7 +211,7 @@ export default function AdminCustomLoginForm() {
                 className="w-full"
                 onClick={() => navigate('/dashboard')}
               >
-                Go to Dashboard
+                {t('auth:activeSession.goToDashboard')}
               </Button>
               <Button
                 type="button"
@@ -220,21 +220,21 @@ export default function AdminCustomLoginForm() {
                 onClick={handleSignOut}
                 disabled={isSigningOut}
               >
-                {isSigningOut ? 'Signing Out...' : 'Sign Out'}
+                {isSigningOut ? t('auth:activeSession.signingOut') : t('common:buttons.signOut')}
               </Button>
             </div>
           </div>
 
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500">
-              Admin access required - Secured by Clerk
+              {t('auth:securedByClerk')}
             </p>
           </div>
         </Card>
 
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-500">
-            © 2024 Pro Crèche Solutions. All rights reserved.
+            {t('auth:copyright')}
           </p>
         </div>
       </div>
@@ -313,7 +313,7 @@ export default function AdminCustomLoginForm() {
           </div>
           <div>
             <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? t('auth:login.signingIn') : t('common:buttons.signIn')}
             </Button>
           </div>
         </form>
@@ -324,27 +324,27 @@ export default function AdminCustomLoginForm() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-2 bg-white text-gray-500">{t('auth:login.orContinueWith')}</span>
             </div>
           </div>
 
           <div className="mt-4">
             <Button variant="light" onClick={handleGoogleSignIn} className="w-full" disabled={isLoading}>
-              <GoogleIcon className="w-5 h-5 mr-2" /> Continue with Google
+              <GoogleIcon className="w-5 h-5 mr-2" /> {t('auth:login.continueWithGoogle')}
             </Button>
           </div>
         </div>
 
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-500">
-            Admin access required - Secured by Clerk
+            {t('auth:securedByClerk')}
           </p>
         </div>
       </Card>
 
       <div className="mt-8 text-center">
         <p className="text-xs text-gray-500">
-          © 2024 Pro Crèche Solutions. All rights reserved.
+          {t('auth:copyright')}
         </p>
       </div>
     </div>

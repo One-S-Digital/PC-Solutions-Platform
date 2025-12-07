@@ -265,7 +265,6 @@ const AdminSystemMonitoringPage: React.FC = () => {
             <ClockIcon className="w-6 h-6 mr-2" />
             {t('adminSystemMonitoringPage.recentEvents.title')}
         </h2>
-<<<<<<< HEAD
         {data.events.length === 0 ? (
           <p className="text-center text-gray-500 py-8">{t('adminSystemMonitoringPage.recentEvents.empty', 'No recent events')}</p>
         ) : (

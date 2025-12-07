@@ -21,12 +21,14 @@
     "extract:i18n-keys": "ts-node scripts/extract-i18n-keys.ts",
     "check:i18n-keys": "ts-node scripts/check-i18n-keys.ts",
     "check:untranslated": "node scripts/check-untranslated-strings.mjs",
-    "i18n:full-check": "npm run extract:i18n-keys && npm run check:i18n-keys && npm run generate:i18n-types"
+    "i18n:full-check": "npm run extract:i18n-keys && npm run check:i18n-keys && npm run generate:i18n-types",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
     "eslint-plugin-i18next": "^6.1.0",
     "glob": "^11.0.0",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "turbo": "^2.5.6",
