@@ -506,6 +506,80 @@ END $$;
   );
 };
 
+const ensureOrganizationDocumentsTable = () => {
+  const sql = `
+-- Create the organization_documents table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "public"."organization_documents" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "assetId" TEXT NOT NULL,
+    "documentType" TEXT NOT NULL DEFAULT 'CATALOG',
+    "title" TEXT,
+    "description" TEXT,
+    "displayOrder" INTEGER NOT NULL DEFAULT 0,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "organization_documents_pkey" PRIMARY KEY ("id")
+);
+
+-- Create indexes for organization_documents (if they don't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'organization_documents_organizationId_idx'
+    ) THEN
+        CREATE INDEX "organization_documents_organizationId_idx" ON "public"."organization_documents"("organizationId");
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'organization_documents_documentType_idx'
+    ) THEN
+        CREATE INDEX "organization_documents_documentType_idx" ON "public"."organization_documents"("documentType");
+    END IF;
+END $$;
+
+-- Add foreign key for organizationId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'organization_documents_organizationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."organization_documents" 
+        ADD CONSTRAINT "organization_documents_organizationId_fkey" 
+        FOREIGN KEY ("organizationId") REFERENCES "public"."organizations"("id") 
+        ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+-- Add foreign key for assetId (only if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'organization_documents_assetId_fkey'
+    ) THEN
+        ALTER TABLE "public"."organization_documents" 
+        ADD CONSTRAINT "organization_documents_assetId_fkey" 
+        FOREIGN KEY ("assetId") REFERENCES "public"."assets"("id") 
+        ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const ensureFoundationPagesEnhancements = () => {
   // First ensure parent_leads exists (prerequisite)
   ensureParentLeadsTable();
@@ -846,6 +920,14 @@ try {
   log('✅ parent_leads table check complete');
 } catch (error) {
   warn(`⚠️  Could not ensure parent_leads table: ${error.message}`);
+}
+
+log('🔁 Ensuring organization_documents table exists...');
+try {
+  ensureOrganizationDocumentsTable();
+  log('✅ organization_documents table check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure organization_documents table: ${error.message}`);
 }
 
 // log('🔁 Ensuring translation infrastructure is present...');
