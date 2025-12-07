@@ -9,22 +9,8 @@ import FoundationProfileForm from '../components/profile/edit/FoundationProfileF
 import EducatorProfileForm from '../components/profile/edit/EducatorProfileForm';
 import SupplierProfileForm from '../components/profile/edit/SupplierProfileForm';
 import ServiceProviderProfileForm from '../components/profile/edit/ServiceProviderProfileForm';
-import ProfileDocumentsSettings from '../components/settings/sections/ProfileDocumentsSettings';
-import OrganizationProfileSection from '../components/profile/edit/OrganizationProfileSection';
 import Button from '../components/ui/Button';
-import { 
-  ArrowLeftIcon, 
-  CheckCircleIcon,
-  UserCircleIcon,
-  BuildingOfficeIcon,
-  DocumentIcon 
-} from '@heroicons/react/24/outline';
-
-interface ProfileTab {
-  id: string;
-  nameKey: string;
-  icon: React.ElementType;
-}
+import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 const ProfileEditPage: React.FC = () => {
   const { t } = useTranslation(['common', 'settings']);
@@ -37,7 +23,6 @@ const ProfileEditPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile');
 
   useEffect(() => {
     if (!currentUser) {
@@ -289,35 +274,6 @@ const ProfileEditPage: React.FC = () => {
     setSaveSuccess(false);
   };
 
-  // Determine if user needs sidebar navigation (Supplier or Service Provider)
-  const needsSidebar = currentUser?.role === UserRole.PRODUCT_SUPPLIER || 
-                       currentUser?.role === UserRole.SERVICE_PROVIDER;
-
-  // Define tabs for sidebar navigation
-  const getTabs = (): ProfileTab[] => {
-    if (!needsSidebar) return [];
-    
-    return [
-      { 
-        id: 'profile', 
-        nameKey: 'common:settingsPage.profile', 
-        icon: UserCircleIcon 
-      },
-      { 
-        id: 'organization', 
-        nameKey: 'settings:profileEdit.organizationProfile', 
-        icon: BuildingOfficeIcon 
-      },
-      { 
-        id: 'documents', 
-        nameKey: 'common:settingsPage.profileDocuments', 
-        icon: DocumentIcon 
-      },
-    ];
-  };
-
-  const tabs = getTabs();
-
   if (!currentUser || isLoading || !formData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -344,75 +300,11 @@ const ProfileEditPage: React.FC = () => {
     }
   };
 
-  const renderActiveTabContent = () => {
-    switch (activeTab) {
-      case 'profile':
-        return renderProfileForm();
-      case 'organization':
-        return <OrganizationProfileSection formData={formData} onChange={handleFormChange} userRole={currentUser.role} />;
-      case 'documents':
-        return <ProfileDocumentsSettings userRole={currentUser.role} />;
-      default:
-        return renderProfileForm();
-    }
-  };
-
-  // For roles without sidebar, render simple layout
-  if (!needsSidebar) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="light"
-                  leftIcon={ArrowLeftIcon}
-                  onClick={() => navigate('/settings')}
-                >
-                  {t('common:buttons.back', 'Back')}
-                </Button>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  {t('common:settingsPage.profile', 'Edit Profile')}
-                </h1>
-              </div>
-              <div className="flex items-center space-x-3">
-                {saveSuccess && (
-                  <div className="flex items-center space-x-2 text-green-600">
-                    <CheckCircleIcon className="w-5 h-5" />
-                    <span className="text-sm font-medium">{t('common:buttons.profileUpdated', 'Profile updated!')}</span>
-                  </div>
-                )}
-                <Button
-                  variant="primary"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="bg-swiss-mint hover:bg-opacity-90"
-                >
-                  {isSaving
-                    ? `${t('common:buttons.saving', 'Saving')}...`
-                    : t('common:buttons.saveChanges', 'Save Changes')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Profile Form Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {renderProfileForm()}
-        </div>
-      </div>
-    );
-  }
-
-  // For Supplier and Service Provider, render layout with sidebar
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Button
@@ -433,50 +325,24 @@ const ProfileEditPage: React.FC = () => {
                   <span className="text-sm font-medium">{t('common:buttons.profileUpdated', 'Profile updated!')}</span>
                 </div>
               )}
-              {activeTab !== 'documents' && (
-                <Button
-                  variant="primary"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="bg-swiss-mint hover:bg-opacity-90"
-                >
-                  {isSaving
-                    ? `${t('common:buttons.saving', 'Saving')}...`
-                    : t('common:buttons.saveChanges', 'Save Changes')}
-                </Button>
-              )}
+              <Button
+                variant="primary"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="bg-swiss-mint hover:bg-opacity-90"
+              >
+                {isSaving
+                  ? `${t('common:buttons.saving', 'Saving')}...`
+                  : t('common:buttons.saveChanges', 'Save Changes')}
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content with Sidebar */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Navigation */}
-        <nav className="w-64 bg-white border-r border-gray-200 p-4 space-y-1 overflow-y-auto flex-shrink-0">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-left transition-colors
-                ${activeTab === tab.id
-                  ? 'bg-swiss-mint/10 text-swiss-mint'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'
-                }`}
-              aria-current={activeTab === tab.id ? 'page' : undefined}
-            >
-              <tab.icon className={`w-5 h-5 mr-3 ${activeTab === tab.id ? 'text-swiss-mint' : 'text-gray-400'}`} />
-              {t(tab.nameKey)}
-            </button>
-          ))}
-        </nav>
-
-        {/* Tab Content */}
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-5xl mx-auto">
-            {renderActiveTabContent()}
-          </div>
-        </main>
+      {/* Profile Form Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderProfileForm()}
       </div>
     </div>
   );

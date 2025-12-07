@@ -54,6 +54,7 @@ import SupplierOrdersPage from './pages/supplier/SupplierOrdersPage';
 import SupplierProductListingsPage from './pages/supplier/SupplierProductListingsPage';
 import SupplierAnalyticsPage from './pages/supplier/SupplierAnalyticsPage';
 import SupplierCompanyProfilePage from './pages/supplier/SupplierCompanyProfilePage';
+import SupplierOrganisationProfilePage from './pages/supplier/SupplierOrganisationProfilePage';
 import SupplierSupportPage from './pages/supplier/SupplierSupportPage';
 
 // Service Provider Pages
@@ -62,6 +63,7 @@ import ServiceProviderRequestsPage from './pages/service-provider/ServiceProvide
 import ServiceProviderListingsPage from './pages/service-provider/ServiceProviderListingsPage';
 import ServiceProviderAnalyticsPage from './pages/service-provider/ServiceProviderAnalyticsPage';
 import ServiceProviderCompanyProfilePage from './pages/service-provider/ServiceProviderCompanyProfilePage';
+import ServiceProviderOrganisationProfilePage from './pages/service-provider/ServiceProviderOrganisationProfilePage';
 import ServiceProviderSupportPage from './pages/service-provider/ServiceProviderSupportPage';
 import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
@@ -288,6 +290,9 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/supplier/company-profile" element={ // This route is effectively replaced by /settings
           <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><Navigate to="/settings" replace /></ProtectedRoute>
         } />
+        <Route path="/supplier/organisation-profile" element={
+          <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierOrganisationProfilePage /></ProtectedRoute>
+        } />
         <Route path="/supplier/support" element={
           <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierSupportPage /></ProtectedRoute>
         } />
@@ -307,6 +312,9 @@ const ProtectedLayout: React.FC = () => {
         } />
           <Route path="/service-provider/company-profile" element={ // This route is effectively replaced by /settings/service-provider
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><Navigate to="/settings/service-provider" replace /></ProtectedRoute>
+        } />
+        <Route path="/service-provider/organisation-profile" element={
+          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderOrganisationProfilePage /></ProtectedRoute>
         } />
         <Route path="/service-provider/support" element={
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSupportPage /></ProtectedRoute>
