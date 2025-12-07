@@ -166,6 +166,7 @@ export const API_ENDPOINTS = {
   // Security
   security: {
     passwordChange: "/security/password-change",
+    emailChange: "/security/email-change",
   },
 
   // Settings

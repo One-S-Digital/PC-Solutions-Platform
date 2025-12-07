@@ -545,7 +545,9 @@
     "notifications": {
       "infoUpdated": "Personal information updated successfully",
       "passwordChanged": "Password changed successfully",
-      "passwordChangedMessage": "Your password has been successfully updated. You can now use your new password to sign in."
+      "passwordChangedMessage": "Your password has been successfully updated. You can now use your new password to sign in.",
+      "emailChanged": "Email changed successfully",
+      "emailChangedMessage": "Your email address has been successfully updated."
     },
     "dangerZone": {
       "finalConfirmation": "Are you absolutely sure you want to delete your account? This action cannot be undone.",
@@ -571,6 +573,30 @@
       "confirmNewPasswordLabel": "Confirm New Password",
       "updatePasswordButton": "Update Password",
       "passwordUpdated": "Password Updated"
+    },
+    "changeEmail": {
+      "title": "Change Email Address",
+      "description": "Change the email address associated with your account. A verification code will be sent to your new email address.",
+      "currentEmailLabel": "Current email",
+      "newEmailLabel": "New Email Address",
+      "newEmailPlaceholder": "Enter your new email address",
+      "sendVerificationCode": "Send Verification Code",
+      "sending": "Sending...",
+      "verificationSent": "Verification code sent",
+      "verificationSentMessage": "Please check your new email for the verification code.",
+      "verificationCodeLabel": "Verification Code",
+      "verificationCodePlaceholder": "Enter 6-digit code",
+      "verificationSentTo": "A verification code has been sent to {{email}}. Please enter the code below to complete the email change.",
+      "verifyAndChange": "Verify & Change Email",
+      "verifying": "Verifying...",
+      "resendCode": "Resend Code",
+      "codeResent": "Verification code resent",
+      "codeResentMessage": "A new verification code has been sent to your email.",
+      "emailChanged": "Email changed successfully",
+      "emailChangedMessage": "Your email address has been successfully updated.",
+      "sameEmailError": "New email must be different from current email",
+      "enterCode": "Please enter the verification code",
+      "sessionExpired": "Session expired. Please try again."
     }
   },
   "settingsPrivacyData": {
