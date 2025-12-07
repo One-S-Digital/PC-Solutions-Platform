@@ -42,32 +42,41 @@ export class MessagingService {
   }
 
   async getUserConversations(userId: string) {
-    return this.prisma.conversation.findMany({
-      where: {
-        participants: {
-          some: {
-            userId,
-            isActive: true,
+    try {
+      return await this.prisma.conversation.findMany({
+        where: {
+          participants: {
+            some: {
+              userId,
+              isActive: true,
+            },
           },
         },
-      },
-      include: {
-        participants: {
-          include: {
-            user: true,
+        include: {
+          participants: {
+            include: {
+              user: true,
+            },
+          },
+          messages: {
+            include: {
+              sender: true,
+              receiver: true,
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 1,
           },
         },
-        messages: {
-          include: {
-            sender: true,
-            receiver: true,
-          },
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
-      },
-      orderBy: { lastMessageAt: 'desc' },
-    });
+        orderBy: { lastMessageAt: 'desc' },
+      });
+    } catch (error: unknown) {
+      // Handle case where conversations table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Conversations table does not exist, returning empty array');
+        return [];
+      }
+      throw error;
+    }
   }
 
   async findConversationById(id: string, userId: string) {

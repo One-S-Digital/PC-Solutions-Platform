@@ -183,6 +183,20 @@ export class DashboardController {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
 
+    // Helper to safely execute queries that might fail due to missing tables
+    const safeQuery = async <T>(query: Promise<T>, defaultValue: T): Promise<T> => {
+      try {
+        return await query;
+      } catch (error: unknown) {
+        // Handle case where table doesn't exist (P2021)
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+          console.warn('Table does not exist, returning default value');
+          return defaultValue;
+        }
+        throw error;
+      }
+    };
+
     // Calculate real stats from database
     const [
       totalJobListings,
@@ -200,12 +214,18 @@ export class DashboardController {
           jobListing: { foundationId: { in: organizationIds } },
         },
       }),
-      this.prisma.order.count({
-        where: { organizationId: { in: organizationIds } },
-      }),
-      this.prisma.serviceRequest.count({
-        where: { organizationId: { in: organizationIds } },
-      }),
+      safeQuery(
+        this.prisma.order.count({
+          where: { organizationId: { in: organizationIds } },
+        }),
+        0,
+      ),
+      safeQuery(
+        this.prisma.serviceRequest.count({
+          where: { organizationId: { in: organizationIds } },
+        }),
+        0,
+      ),
       this.prisma.jobListing.count({
         where: {
           foundationId: { in: organizationIds },
@@ -328,6 +348,20 @@ export class DashboardController {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
 
+    // Helper to safely execute queries that might fail due to missing tables
+    const safeQuery = async <T>(query: Promise<T>, defaultValue: T): Promise<T> => {
+      try {
+        return await query;
+      } catch (error: unknown) {
+        // Handle case where table doesn't exist (P2021)
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+          console.warn('Table does not exist, returning default value');
+          return defaultValue;
+        }
+        throw error;
+      }
+    };
+
     const [
       totalOrders,
       revenueThisMonth,
@@ -336,56 +370,71 @@ export class DashboardController {
       inventoryItems,
       fulfilledOrders,
     ] = await Promise.all([
-      this.prisma.order.count({
-        where: {
-          items: {
-            some: { product: { supplierId: { in: organizationIds } } },
-          },
-        },
-      }),
-      this.prisma.orderItem
-        .findMany({
-          where: {
-            product: { supplierId: { in: organizationIds } },
-            order: {
-              status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
-              createdAt: {
-                gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-              },
-            },
-          },
-          select: { price: true, quantity: true },
-        })
-        .then((items) => items.reduce((sum, item) => sum + item.price * item.quantity, 0)),
-      this.prisma.order
-        .groupBy({
-          by: ['organizationId'],
+      safeQuery(
+        this.prisma.order.count({
           where: {
             items: {
               some: { product: { supplierId: { in: organizationIds } } },
             },
           },
-        })
-        .then((result) => result.length),
-      this.prisma.order.count({
-        where: {
-          status: { in: ['PENDING', 'SUBMITTED'] },
-          items: {
-            some: { product: { supplierId: { in: organizationIds } } },
+        }),
+        0,
+      ),
+      safeQuery(
+        this.prisma.orderItem
+          .findMany({
+            where: {
+              product: { supplierId: { in: organizationIds } },
+              order: {
+                status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
+                createdAt: {
+                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                },
+              },
+            },
+            select: { price: true, quantity: true },
+          })
+          .then((items) => items.reduce((sum, item) => sum + item.price * item.quantity, 0)),
+        0,
+      ),
+      safeQuery(
+        this.prisma.order
+          .groupBy({
+            by: ['organizationId'],
+            where: {
+              items: {
+                some: { product: { supplierId: { in: organizationIds } } },
+              },
+            },
+          })
+          .then((result) => result.length),
+        0,
+      ),
+      safeQuery(
+        this.prisma.order.count({
+          where: {
+            status: { in: ['PENDING', 'SUBMITTED'] },
+            items: {
+              some: { product: { supplierId: { in: organizationIds } } },
+            },
           },
-        },
-      }),
+        }),
+        0,
+      ),
       this.prisma.product.count({
         where: { supplierId: { in: organizationIds } },
       }),
-      this.prisma.order.count({
-        where: {
-          status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
-          items: {
-            some: { product: { supplierId: { in: organizationIds } } },
+      safeQuery(
+        this.prisma.order.count({
+          where: {
+            status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
+            items: {
+              some: { product: { supplierId: { in: organizationIds } } },
+            },
           },
-        },
-      }),
+        }),
+        0,
+      ),
     ]);
 
     // Calculate fulfillment rate (default to 0 when no orders, not 100)
@@ -474,6 +523,20 @@ export class DashboardController {
     const now = new Date();
     const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
+    // Helper to safely execute queries that might fail due to missing tables
+    const safeQuery = async <T>(query: Promise<T>, defaultValue: T): Promise<T> => {
+      try {
+        return await query;
+      } catch (error: unknown) {
+        // Handle case where table doesn't exist (P2021)
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+          console.warn('Table does not exist, returning default value');
+          return defaultValue;
+        }
+        throw error;
+      }
+    };
+
     const [
       totalBookings,
       activeClients,
@@ -483,42 +546,57 @@ export class DashboardController {
       services,
       monthlyRevenue,
     ] = await Promise.all([
-      this.prisma.serviceRequest.count({
-        where: {
-          service: { provider: { organizationId: { in: organizationIds } } },
-        },
-      }),
-      this.prisma.serviceRequest
-        .groupBy({
-          by: ['organizationId'],
+      safeQuery(
+        this.prisma.serviceRequest.count({
           where: {
             service: { provider: { organizationId: { in: organizationIds } } },
           },
-        })
-        .then((result) => result.length),
-      this.prisma.serviceRequest.count({
-        where: {
-          status: { in: ['PENDING', 'NEW', 'IN_REVIEW'] },
-          service: { provider: { organizationId: { in: organizationIds } } },
-        },
-      }),
-      this.prisma.serviceRequest.count({
-        where: {
-          status: 'COMPLETED',
-          service: { provider: { organizationId: { in: organizationIds } } },
-        },
-      }),
-      // Count upcoming appointments (scheduled in the next 7 days)
-      this.prisma.serviceRequest.count({
-        where: {
-          service: { provider: { organizationId: { in: organizationIds } } },
-          scheduledAt: {
-            gte: now,
-            lte: sevenDaysFromNow,
+        }),
+        0,
+      ),
+      safeQuery(
+        this.prisma.serviceRequest
+          .groupBy({
+            by: ['organizationId'],
+            where: {
+              service: { provider: { organizationId: { in: organizationIds } } },
+            },
+          })
+          .then((result) => result.length),
+        0,
+      ),
+      safeQuery(
+        this.prisma.serviceRequest.count({
+          where: {
+            status: { in: ['PENDING', 'NEW', 'IN_REVIEW'] },
+            service: { provider: { organizationId: { in: organizationIds } } },
           },
-          status: { in: ['PENDING', 'CONFIRMED', 'SCHEDULED', 'ACCEPTED'] },
-        },
-      }),
+        }),
+        0,
+      ),
+      safeQuery(
+        this.prisma.serviceRequest.count({
+          where: {
+            status: 'COMPLETED',
+            service: { provider: { organizationId: { in: organizationIds } } },
+          },
+        }),
+        0,
+      ),
+      // Count upcoming appointments (scheduled in the next 7 days)
+      safeQuery(
+        this.prisma.serviceRequest.count({
+          where: {
+            service: { provider: { organizationId: { in: organizationIds } } },
+            scheduledAt: {
+              gte: now,
+              lte: sevenDaysFromNow,
+            },
+            status: { in: ['PENDING', 'CONFIRMED', 'SCHEDULED', 'ACCEPTED'] },
+          },
+        }),
+        0,
+      ),
       // Get all services for this provider
       this.prisma.service.findMany({
         where: {
@@ -533,22 +611,25 @@ export class DashboardController {
         },
       }),
       // Calculate monthly revenue from completed services
-      this.prisma.serviceRequest
-        .findMany({
-          where: {
-            service: { provider: { organizationId: { in: organizationIds } } },
-            status: 'COMPLETED',
-            updatedAt: {
-              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      safeQuery(
+        this.prisma.serviceRequest
+          .findMany({
+            where: {
+              service: { provider: { organizationId: { in: organizationIds } } },
+              status: 'COMPLETED',
+              updatedAt: {
+                gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+              },
             },
-          },
-          include: {
-            service: { select: { price: true } },
-          },
-        })
-        .then((requests) =>
-          requests.reduce((sum, req) => sum + (req.service?.price || 0), 0),
-        ),
+            include: {
+              service: { select: { price: true } },
+            },
+          })
+          .then((requests) =>
+            requests.reduce((sum, req) => sum + (req.service?.price || 0), 0),
+          ),
+        0,
+      ),
     ]);
 
     // Calculate service management stats
@@ -615,35 +696,44 @@ export class DashboardController {
         ? Math.min(parsedLimit, 100)
         : 10;
 
-    const bookings = await this.prisma.serviceRequest.findMany({
-      where: whereClause,
-      include: {
-        organization: true,
-        service: {
-          include: { provider: { include: { organization: true } } },
+    try {
+      const bookings = await this.prisma.serviceRequest.findMany({
+        where: whereClause,
+        include: {
+          organization: true,
+          service: {
+            include: { provider: { include: { organization: true } } },
+          },
         },
-      },
-      orderBy: upcoming === 'true' ? { scheduledAt: 'asc' } : { createdAt: 'desc' },
-      take: safeLimit,
-    });
+        orderBy: upcoming === 'true' ? { scheduledAt: 'asc' } : { createdAt: 'desc' },
+        take: safeLimit,
+      });
 
-    const bookingData = bookings.map((booking) => ({
-      id: booking.id,
-      clientName: booking.organization.name,
-      clientOrgId: booking.organization.id,
-      serviceId: booking.serviceId,
-      serviceType: booking.service.title,
-      serviceTitle: booking.service.title,
-      description: booking.description,
-      scheduledDate: booking.scheduledAt?.toISOString() || null,
-      requestedDate: booking.requestedAt?.toISOString() || booking.createdAt.toISOString(),
-      createdAt: booking.createdAt.toISOString(),
-      duration: 0,
-      totalAmount: booking.service.price || 0,
-      status: booking.status.toLowerCase(),
-    }));
+      const bookingData = bookings.map((booking) => ({
+        id: booking.id,
+        clientName: booking.organization.name,
+        clientOrgId: booking.organization.id,
+        serviceId: booking.serviceId,
+        serviceType: booking.service.title,
+        serviceTitle: booking.service.title,
+        description: booking.description,
+        scheduledDate: booking.scheduledAt?.toISOString() || null,
+        requestedDate: booking.requestedAt?.toISOString() || booking.createdAt.toISOString(),
+        createdAt: booking.createdAt.toISOString(),
+        duration: 0,
+        totalAmount: booking.service.price || 0,
+        status: booking.status.toLowerCase(),
+      }));
 
-    return wrapResponse(bookingData);
+      return wrapResponse(bookingData);
+    } catch (error: unknown) {
+      // Handle case where service_requests table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Service requests table does not exist, returning empty bookings list');
+        return wrapResponse([]);
+      }
+      throw error;
+    }
   }
 
   // ============================================
@@ -657,17 +747,33 @@ export class DashboardController {
   async getParentStats(@Request() req) {
     const userId = req.context.userId;
 
+    // Helper to safely execute queries that might fail due to missing tables
+    const safeCount = async (query: Promise<number>): Promise<number> => {
+      try {
+        return await query;
+      } catch (error: unknown) {
+        // Handle case where table doesn't exist (P2021)
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+          console.warn('Table does not exist, returning 0 for count');
+          return 0;
+        }
+        throw error;
+      }
+    };
+
     const [user, messagesUnread] = await Promise.all([
       this.prisma.user.findUnique({
         where: { id: userId },
         select: { email: true },
       }),
-      this.prisma.message.count({
-        where: {
-          receiverId: userId,
-          isRead: false,
-        },
-      }),
+      safeCount(
+        this.prisma.message.count({
+          where: {
+            receiverId: userId,
+            isRead: false,
+          },
+        }),
+      ),
     ]);
 
     // Get leads submitted by this parent
