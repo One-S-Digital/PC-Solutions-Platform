@@ -142,9 +142,9 @@ const SupplierOrganisationProfilePage: React.FC = () => {
 
     return (
       <div className="flex flex-wrap gap-2">
-        {uniqueItems.map(item => (
+        {uniqueItems.map((item, index) => (
           <span
-            key={item.toLowerCase()}
+            key={`${index}-${item}`}
             className="inline-flex items-center rounded-full bg-swiss-mint/10 px-2.5 py-1 text-xs font-medium text-swiss-mint"
           >
             {item}
