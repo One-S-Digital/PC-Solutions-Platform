@@ -1,36 +1,117 @@
-
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import { WrenchScrewdriverIcon, InboxArrowDownIcon, CalendarDaysIcon, StarIcon } from '@heroicons/react/24/outline';
+import { WrenchScrewdriverIcon, CalendarDaysIcon, StarIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
+
+interface ServiceProviderStats {
+  activeRequests: number;
+  completedServices: number;
+  upcomingAppointments: number;
+  customerRating: number;
+  totalServices: number;
+  activeServices: number;
+  pendingApproval: number;
+  categories: string[];
+  totalBookings: number;
+  monthlyRevenue: number;
+  activeClients: number;
+  pendingBookings: number;
+  averageRating: number;
+}
+
+interface Booking {
+  id: string;
+  clientName: string;
+  clientOrgId: string;
+  serviceId: string;
+  serviceType: string;
+  serviceTitle: string;
+  description?: string;
+  scheduledDate: string | null;
+  requestedDate: string;
+  createdAt: string;
+  duration: number;
+  totalAmount: number;
+  status: string;
+}
 
 const ServiceProviderDashboardPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
+  const { authenticatedRequest } = useAuthenticatedApi();
 
-  // Mock data for widgets
+  const [stats, setStats] = useState<ServiceProviderStats | null>(null);
+  const [upcomingAppointments, setUpcomingAppointments] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!currentUser?.orgId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch stats and upcoming bookings in parallel
+      const [statsRes, bookingsRes] = await Promise.all([
+        authenticatedRequest<ServiceProviderStats>('/dashboard/service-provider/stats'),
+        authenticatedRequest<Booking[]>('/dashboard/service-provider/bookings?upcoming=true&limit=5'),
+      ]);
+
+      if (statsRes.success && statsRes.data) {
+        setStats(statsRes.data);
+      }
+      if (bookingsRes.success && bookingsRes.data) {
+        setUpcomingAppointments(bookingsRes.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch service provider dashboard data:', err);
+      setError(t('serviceProviderDashboard.loadError', 'Failed to load dashboard data'));
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser?.orgId, authenticatedRequest, t]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-4">{error}</p>
+        <Button onClick={fetchData}>{t('common:retry', 'Retry')}</Button>
+      </div>
+    );
+  }
+
+  // Prepare display data from stats
   const serviceOverview = {
-    activeRequests: '5',
-    completedServices: '28',
-    upcomingAppointments: '3',
-    customerRating: '4.8',
+    activeRequests: stats?.activeRequests?.toString() || '0',
+    completedServices: stats?.completedServices?.toString() || '0',
+    upcomingAppointments: stats?.upcomingAppointments?.toString() || '0',
+    customerRating: stats?.customerRating?.toFixed(1) || '0.0',
   };
 
   const serviceManagement = {
-    listings: '8',
-    pendingApproval: '1',
-    categories: ['Cleaning', 'Workshops'],
+    listings: stats?.activeServices?.toString() || '0',
+    pendingApproval: stats?.pendingApproval?.toString() || '0',
+    categories: stats?.categories || [],
   };
-
-  const upcomingAppointments = [
-    { date: '2024-08-01', foundation: 'KinderWelt Vaud' },
-    { date: '2024-08-03', foundation: 'Happy Kids Geneva' },
-    { date: '2024-08-05', foundation: 'Little Stars Zurich' },
-  ];
 
   return (
     <div className="space-y-8">
@@ -86,9 +167,13 @@ const ServiceProviderDashboardPage: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">{t('serviceProviderDashboard.widgets.management.categories')}</p>
               <div className="flex flex-wrap gap-2 mt-1">
-                {serviceManagement.categories.map(cat => (
-                  <span key={cat} className="text-xs bg-swiss-mint/10 text-swiss-mint px-2 py-1 rounded-full">{cat}</span>
-                ))}
+                {serviceManagement.categories.length > 0 ? (
+                  serviceManagement.categories.slice(0, 5).map(cat => (
+                    <span key={cat} className="text-xs bg-swiss-mint/10 text-swiss-mint px-2 py-1 rounded-full">{cat}</span>
+                  ))
+                ) : (
+                  <span className="text-xs text-gray-400">{t('serviceProviderDashboard.widgets.management.noCategories', 'No categories yet')}</span>
+                )}
               </div>
             </div>
           </div>
@@ -103,15 +188,28 @@ const ServiceProviderDashboardPage: React.FC = () => {
             <CalendarDaysIcon className="w-6 h-6 mr-2 text-swiss-teal"/>
             {t('serviceProviderDashboard.widgets.appointments.title')}
           </h2>
-          <ul className="space-y-3">
-            {upcomingAppointments.map((appt, index) => (
-              <li key={index} className="p-3 bg-gray-50 rounded-md">
-                <p className="font-semibold text-swiss-charcoal">{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-                <p className="text-sm text-gray-600">{t('serviceProviderDashboard.widgets.appointments.with', { foundation: appt.foundation })}</p>
-              </li>
-            ))}
-          </ul>
-           <Button variant="outline" size="sm" className="w-full mt-5" onClick={() => navigate('/service-provider/requests')}>
+          {upcomingAppointments.length > 0 ? (
+            <ul className="space-y-3">
+              {upcomingAppointments.map((appt) => (
+                <li key={appt.id} className="p-3 bg-gray-50 rounded-md">
+                  <p className="font-semibold text-swiss-charcoal">
+                    {appt.scheduledDate 
+                      ? new Date(appt.scheduledDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+                      : t('serviceProviderDashboard.widgets.appointments.notScheduled', 'Not scheduled yet')
+                    }
+                  </p>
+                  <p className="text-sm text-gray-600">{t('serviceProviderDashboard.widgets.appointments.with', { foundation: appt.clientName })}</p>
+                  <p className="text-xs text-swiss-teal mt-1">{appt.serviceTitle}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-center py-6">
+              <CalendarDaysIcon className="w-12 h-12 mx-auto text-gray-300 mb-2" />
+              <p className="text-gray-500 text-sm">{t('serviceProviderDashboard.widgets.appointments.noAppointments', 'No upcoming appointments')}</p>
+            </div>
+          )}
+          <Button variant="outline" size="sm" className="w-full mt-5" onClick={() => navigate('/service-provider/requests')}>
             {t('serviceProviderDashboard.widgets.appointments.button')}
           </Button>
         </Card>
