@@ -191,7 +191,10 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
       return;
     }
 
-    if (!pendingEmailAddressId) {
+    // Use local variable to avoid race condition with async state updates
+    let emailIdToVerify = pendingEmailAddressId;
+
+    if (!emailIdToVerify) {
       // Try to find it again
       if (clerkUser) {
         const pendingEmail = clerkUser.emailAddresses.find(
@@ -199,7 +202,8 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                e.verification?.status !== 'verified'
         );
         if (pendingEmail) {
-          setPendingEmailAddressId(pendingEmail.id);
+          emailIdToVerify = pendingEmail.id;
+          setPendingEmailAddressId(emailIdToVerify);
         } else {
           addNotification({ 
             title: t('common:settingsAccountSecurity.changeEmail.sessionExpired', 'Session expired. Please try again.'), 
@@ -212,10 +216,20 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
       }
     }
 
+    if (!emailIdToVerify) {
+      addNotification({ 
+        title: t('common:settingsAccountSecurity.changeEmail.sessionExpired', 'Session expired. Please try again.'), 
+        message: '', 
+        type: 'error' 
+      });
+      handleCancelEmailChange();
+      return;
+    }
+
     setIsVerifyingEmail(true);
 
     try {
-      await verifyEmailChange(verificationCode, pendingEmailAddressId!);
+      await verifyEmailChange(verificationCode, emailIdToVerify);
       
       setEmailSuccess(true);
       setEmailChangeStep('input');
@@ -439,8 +453,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
             <form onSubmit={handleVerifyEmailChange}>
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
                 <p className="text-sm text-blue-800">
-                  {t('common:settingsAccountSecurity.changeEmail.verificationInstructions', 'A verification code has been sent to')} <span className="font-medium">{newEmail}</span>. 
-                  {t('common:settingsAccountSecurity.changeEmail.enterCodeBelow', ' Please enter the code below to complete the email change.')}
+                  {t('common:settingsAccountSecurity.changeEmail.verificationSentTo', 'A verification code has been sent to {{email}}. Please enter the code below to complete the email change.', { email: newEmail })}
                 </p>
               </div>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">

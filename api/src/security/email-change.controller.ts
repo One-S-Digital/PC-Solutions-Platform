@@ -53,33 +53,36 @@ export class EmailChangeController {
     }
 
     try {
-      // Update the user's email in the database
-      if (body.newEmail) {
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: { email: body.newEmail },
-        });
-
-        // Also update AppUser if exists
-        const appUser = await this.prisma.appUser.findUnique({ where: { clerkId: clerkUserId } });
-        if (appUser) {
-          await this.prisma.appUser.update({
-            where: { id: appUser.id },
+      // Use a transaction to ensure atomicity of all database updates
+      await this.prisma.$transaction(async (tx) => {
+        // Update the user's email in the database
+        if (body.newEmail) {
+          await tx.user.update({
+            where: { id: user.id },
             data: { email: body.newEmail },
           });
-        }
-      }
 
-      // Record the activity
-      await this.prisma.userActivity.create({
-        data: {
-          userId: user.id,
-          action: 'EMAIL_CHANGE',
-          details,
-          ipAddress: req.ip,
-          userAgent: req.headers['user-agent'],
-          createdAt,
-        },
+          // Also update AppUser if exists
+          const appUser = await tx.appUser.findUnique({ where: { clerkId: clerkUserId } });
+          if (appUser) {
+            await tx.appUser.update({
+              where: { id: appUser.id },
+              data: { email: body.newEmail },
+            });
+          }
+        }
+
+        // Record the activity
+        await tx.userActivity.create({
+          data: {
+            userId: user.id,
+            action: 'EMAIL_CHANGE',
+            details,
+            ipAddress: req.ip,
+            userAgent: req.headers['user-agent'],
+            createdAt,
+          },
+        });
       });
 
       return {
@@ -87,6 +90,7 @@ export class EmailChangeController {
         message: 'Email change recorded',
       };
     } catch (error) {
+      // Log detailed error for debugging purposes
       console.error('Failed to record email change event:', error);
       console.error('Error details:', {
         userId: user.id,
@@ -95,13 +99,7 @@ export class EmailChangeController {
         errorStack: error instanceof Error ? error.stack : undefined,
       });
 
-      if (error instanceof Error) {
-        throw new HttpException(
-          `Failed to record email change event: ${error.message}`,
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-
+      // Return generic error message to client to avoid leaking internal details
       throw new HttpException('Failed to record email change event', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
