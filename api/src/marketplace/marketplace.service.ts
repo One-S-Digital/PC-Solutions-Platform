@@ -472,23 +472,32 @@ export class MarketplaceService {
   async findAllOrders(organizationId?: string) {
     const where = organizationId ? { organizationId } : {};
 
-    return this.prisma.order.findMany({
-      where,
-      include: {
-        organization: true,
-        items: {
-          include: {
-            product: {
-              include: {
-                supplier: true,
-                imageAsset: true,
+    try {
+      return await this.prisma.order.findMany({
+        where,
+        include: {
+          organization: true,
+          items: {
+            include: {
+              product: {
+                include: {
+                  supplier: true,
+                  imageAsset: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (error: unknown) {
+      // Handle case where orders table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Orders table does not exist, returning empty array');
+        return [];
+      }
+      throw error;
+    }
   }
 
   async findOrderById(id: string) {
@@ -562,22 +571,31 @@ export class MarketplaceService {
   async findAllServiceRequests(organizationId?: string) {
     const where = organizationId ? { organizationId } : {};
 
-    return this.prisma.serviceRequest.findMany({
-      where,
-      include: {
-        organization: true,
-        service: {
-          include: {
-            provider: {
-              include: {
-                organization: true,
+    try {
+      return await this.prisma.serviceRequest.findMany({
+        where,
+        include: {
+          organization: true,
+          service: {
+            include: {
+              provider: {
+                include: {
+                  organization: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (error: unknown) {
+      // Handle case where service_requests table doesn't exist (P2021)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+        console.warn('Service requests table does not exist, returning empty array');
+        return [];
+      }
+      throw error;
+    }
   }
 
   async updateServiceRequestStatus(id: string, status: string) {
@@ -739,6 +757,20 @@ export class MarketplaceService {
 
   // Analytics
   async getMarketplaceStats() {
+    // Helper to safely execute queries that might fail due to missing tables
+    const safeCount = async (query: Promise<number>): Promise<number> => {
+      try {
+        return await query;
+      } catch (error: unknown) {
+        // Handle case where table doesn't exist (P2021)
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
+          console.warn('Table does not exist, returning 0 for count');
+          return 0;
+        }
+        throw error;
+      }
+    };
+
     const [
       totalProducts,
       totalServices,
@@ -750,8 +782,8 @@ export class MarketplaceService {
     ] = await Promise.all([
       this.prisma.product.count({ where: { isActive: true } }),
       this.prisma.service.count({ where: { isActive: true } }),
-      this.prisma.order.count(),
-      this.prisma.serviceRequest.count(),
+      safeCount(this.prisma.order.count()),
+      safeCount(this.prisma.serviceRequest.count()),
       this.prisma.catalog.count({ where: { isActive: true } }),
       this.prisma.organization.count({
         where: { type: 'PRODUCT_SUPPLIER' },

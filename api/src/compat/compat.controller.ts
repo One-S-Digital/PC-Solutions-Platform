@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
 
-@Controller()
+@Controller('compat')
 @UseGuards(RolesGuard)
 export class CompatController {
   constructor(private prisma: PrismaService) {}
@@ -545,6 +545,35 @@ export class CompatController {
   @Public()
   async getConversations() {
     return { success: true, message: 'OK', data: [], timestamp: new Date().toISOString() };
+  }
+
+  @Get('vendor-clients')
+  @Roles(UserRole.FOUNDATION)
+  async getVendorClients() {
+    // Return empty vendor clients list - this is a placeholder for future implementation
+    // Vendor clients would track which suppliers/service providers a foundation works with
+    return { success: true, message: 'OK', data: [], timestamp: new Date().toISOString() };
+  }
+
+  @Post('vendor-clients')
+  @Roles(UserRole.FOUNDATION)
+  async updateVendorClient(@Body() data: { vendorId: string; orgId: string; isActive: boolean; reason?: string; note?: string }) {
+    // Placeholder for vendor client management
+    // In a full implementation, this would store foundation-vendor relationships
+    return { 
+      success: true, 
+      message: 'Vendor client updated', 
+      data: {
+        id: `vc-${Date.now()}`,
+        vendorId: data.vendorId,
+        orgId: data.orgId,
+        isActive: data.isActive,
+        reason: data.reason,
+        note: data.note,
+        markedAt: new Date().toISOString(),
+      }, 
+      timestamp: new Date().toISOString() 
+    };
   }
 }
 
