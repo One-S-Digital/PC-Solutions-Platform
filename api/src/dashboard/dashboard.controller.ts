@@ -69,9 +69,15 @@ export class DashboardController {
   async getFoundationActivities(@Request() req, @Query('limit') limit?: string) {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
+    // Validate and bound the limit parameter
+    const parsedLimit = limit ? Number.parseInt(limit, 10) : 10;
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
     const activities = await this.dashboardService.getFoundationActivities(
       organizationIds,
-      limit ? parseInt(limit, 10) : 10,
+      safeLimit,
     );
     return wrapResponse(activities);
   }
@@ -342,6 +348,7 @@ export class DashboardController {
           where: {
             product: { supplierId: { in: organizationIds } },
             order: {
+              status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
               createdAt: {
                 gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
               },
@@ -381,8 +388,8 @@ export class DashboardController {
       }),
     ]);
 
-    // Calculate fulfillment rate
-    const fulfillmentRate = totalOrders > 0 ? (fulfilledOrders / totalOrders) * 100 : 100;
+    // Calculate fulfillment rate (default to 0 when no orders, not 100)
+    const fulfillmentRate = totalOrders > 0 ? (fulfilledOrders / totalOrders) * 100 : 0;
 
     const stats = {
       totalOrders,
@@ -469,7 +476,6 @@ export class DashboardController {
 
     const [
       totalBookings,
-      monthlyBookings,
       activeClients,
       pendingBookings,
       completedServices,
@@ -480,14 +486,6 @@ export class DashboardController {
       this.prisma.serviceRequest.count({
         where: {
           service: { provider: { organizationId: { in: organizationIds } } },
-        },
-      }),
-      this.prisma.serviceRequest.count({
-        where: {
-          service: { provider: { organizationId: { in: organizationIds } } },
-          createdAt: {
-            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-          },
         },
       }),
       this.prisma.serviceRequest
@@ -610,6 +608,13 @@ export class DashboardController {
       whereClause.status = { in: ['PENDING', 'CONFIRMED', 'SCHEDULED', 'ACCEPTED'] };
     }
 
+    // Validate and bound the limit parameter to prevent NaN and excessive queries
+    const parsedLimit = limit ? Number.parseInt(limit, 10) : 10;
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
+
     const bookings = await this.prisma.serviceRequest.findMany({
       where: whereClause,
       include: {
@@ -619,7 +624,7 @@ export class DashboardController {
         },
       },
       orderBy: upcoming === 'true' ? { scheduledAt: 'asc' } : { createdAt: 'desc' },
-      take: limit ? parseInt(limit, 10) : 10,
+      take: safeLimit,
     });
 
     const bookingData = bookings.map((booking) => ({

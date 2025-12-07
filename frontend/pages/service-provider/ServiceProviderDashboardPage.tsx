@@ -41,7 +41,7 @@ interface Booking {
 }
 
 const ServiceProviderDashboardPage: React.FC = () => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
   const { authenticatedRequest } = useAuthenticatedApi();
@@ -104,7 +104,7 @@ const ServiceProviderDashboardPage: React.FC = () => {
     activeRequests: stats?.activeRequests?.toString() || '0',
     completedServices: stats?.completedServices?.toString() || '0',
     upcomingAppointments: stats?.upcomingAppointments?.toString() || '0',
-    customerRating: stats?.customerRating?.toFixed(1) || '0.0',
+    customerRating: stats?.customerRating ? stats.customerRating.toFixed(1) : 'N/A',
   };
 
   const serviceManagement = {
@@ -194,7 +194,7 @@ const ServiceProviderDashboardPage: React.FC = () => {
                 <li key={appt.id} className="p-3 bg-gray-50 rounded-md">
                   <p className="font-semibold text-swiss-charcoal">
                     {appt.scheduledDate 
-                      ? new Date(appt.scheduledDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+                      ? new Date(appt.scheduledDate).toLocaleDateString(i18n.language, { weekday: 'long', month: 'long', day: 'numeric' })
                       : t('serviceProviderDashboard.widgets.appointments.notScheduled', 'Not scheduled yet')
                     }
                   </p>
