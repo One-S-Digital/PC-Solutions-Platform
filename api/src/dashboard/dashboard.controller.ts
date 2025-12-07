@@ -69,9 +69,15 @@ export class DashboardController {
   async getFoundationActivities(@Request() req, @Query('limit') limit?: string) {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
+    // Validate and bound the limit parameter
+    const parsedLimit = limit ? Number.parseInt(limit, 10) : 10;
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
     const activities = await this.dashboardService.getFoundationActivities(
       organizationIds,
-      limit ? parseInt(limit, 10) : 10,
+      safeLimit,
     );
     return wrapResponse(activities);
   }
@@ -322,58 +328,78 @@ export class DashboardController {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const [totalOrders, monthlyRevenue, activeCustomers, pendingOrders, inventoryItems] =
-      await Promise.all([
-        this.prisma.order.count({
+    const [
+      totalOrders,
+      revenueThisMonth,
+      activeCustomers,
+      pendingOrders,
+      inventoryItems,
+      fulfilledOrders,
+    ] = await Promise.all([
+      this.prisma.order.count({
+        where: {
+          items: {
+            some: { product: { supplierId: { in: organizationIds } } },
+          },
+        },
+      }),
+      this.prisma.orderItem
+        .findMany({
+          where: {
+            product: { supplierId: { in: organizationIds } },
+            order: {
+              status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
+              createdAt: {
+                gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+              },
+            },
+          },
+          select: { price: true, quantity: true },
+        })
+        .then((items) => items.reduce((sum, item) => sum + item.price * item.quantity, 0)),
+      this.prisma.order
+        .groupBy({
+          by: ['organizationId'],
           where: {
             items: {
               some: { product: { supplierId: { in: organizationIds } } },
             },
           },
-        }),
-        this.prisma.orderItem
-          .findMany({
-            where: {
-              product: { supplierId: { in: organizationIds } },
-              order: {
-                createdAt: {
-                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-                },
-              },
-            },
-            select: { price: true, quantity: true },
-          })
-          .then((items) => items.reduce((sum, item) => sum + item.price * item.quantity, 0)),
-        this.prisma.order
-          .groupBy({
-            by: ['organizationId'],
-            where: {
-              items: {
-                some: { product: { supplierId: { in: organizationIds } } },
-              },
-            },
-          })
-          .then((result) => result.length),
-        this.prisma.order.count({
-          where: {
-            status: 'PENDING',
-            items: {
-              some: { product: { supplierId: { in: organizationIds } } },
-            },
+        })
+        .then((result) => result.length),
+      this.prisma.order.count({
+        where: {
+          status: { in: ['PENDING', 'SUBMITTED'] },
+          items: {
+            some: { product: { supplierId: { in: organizationIds } } },
           },
-        }),
-        this.prisma.product.count({
-          where: { supplierId: { in: organizationIds } },
-        }),
-      ]);
+        },
+      }),
+      this.prisma.product.count({
+        where: { supplierId: { in: organizationIds } },
+      }),
+      this.prisma.order.count({
+        where: {
+          status: { in: ['FULFILLED', 'COMPLETED', 'DELIVERED'] },
+          items: {
+            some: { product: { supplierId: { in: organizationIds } } },
+          },
+        },
+      }),
+    ]);
+
+    // Calculate fulfillment rate (default to 0 when no orders, not 100)
+    const fulfillmentRate = totalOrders > 0 ? (fulfilledOrders / totalOrders) * 100 : 0;
 
     const stats = {
       totalOrders,
-      monthlyRevenue,
+      revenueThisMonth,
+      monthlyRevenue: revenueThisMonth, // Alias for backward compatibility
       activeCustomers,
       pendingOrders,
       inventoryItems,
       lowStockItems: 0,
+      fulfillmentRate,
     };
 
     return wrapResponse(stats);
@@ -445,49 +471,113 @@ export class DashboardController {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
 
-    const [totalBookings, monthlyBookings, activeClients, pendingBookings, completedServices] =
-      await Promise.all([
-        this.prisma.serviceRequest.count({
-          where: {
-            service: { provider: { organizationId: { in: organizationIds } } },
-          },
-        }),
-        this.prisma.serviceRequest.count({
-          where: {
-            service: { provider: { organizationId: { in: organizationIds } } },
-            createdAt: {
-              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-            },
-          },
-        }),
-        this.prisma.serviceRequest
-          .groupBy({
-            by: ['organizationId'],
-            where: {
-              service: { provider: { organizationId: { in: organizationIds } } },
-            },
-          })
-          .then((result) => result.length),
-        this.prisma.serviceRequest.count({
-          where: {
-            status: 'PENDING',
-            service: { provider: { organizationId: { in: organizationIds } } },
-          },
-        }),
-        this.prisma.serviceRequest.count({
-          where: {
-            status: 'COMPLETED',
-            service: { provider: { organizationId: { in: organizationIds } } },
-          },
-        }),
-      ]);
+    const now = new Date();
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    const stats = {
+    const [
       totalBookings,
-      monthlyRevenue: 0, // TODO: Calculate from actual service request prices
       activeClients,
       pendingBookings,
       completedServices,
+      upcomingAppointments,
+      services,
+      monthlyRevenue,
+    ] = await Promise.all([
+      this.prisma.serviceRequest.count({
+        where: {
+          service: { provider: { organizationId: { in: organizationIds } } },
+        },
+      }),
+      this.prisma.serviceRequest
+        .groupBy({
+          by: ['organizationId'],
+          where: {
+            service: { provider: { organizationId: { in: organizationIds } } },
+          },
+        })
+        .then((result) => result.length),
+      this.prisma.serviceRequest.count({
+        where: {
+          status: { in: ['PENDING', 'NEW', 'IN_REVIEW'] },
+          service: { provider: { organizationId: { in: organizationIds } } },
+        },
+      }),
+      this.prisma.serviceRequest.count({
+        where: {
+          status: 'COMPLETED',
+          service: { provider: { organizationId: { in: organizationIds } } },
+        },
+      }),
+      // Count upcoming appointments (scheduled in the next 7 days)
+      this.prisma.serviceRequest.count({
+        where: {
+          service: { provider: { organizationId: { in: organizationIds } } },
+          scheduledAt: {
+            gte: now,
+            lte: sevenDaysFromNow,
+          },
+          status: { in: ['PENDING', 'CONFIRMED', 'SCHEDULED', 'ACCEPTED'] },
+        },
+      }),
+      // Get all services for this provider
+      this.prisma.service.findMany({
+        where: {
+          provider: { organizationId: { in: organizationIds } },
+        },
+        select: {
+          id: true,
+          category: true,
+          categories: true,
+          isActive: true,
+          price: true,
+        },
+      }),
+      // Calculate monthly revenue from completed services
+      this.prisma.serviceRequest
+        .findMany({
+          where: {
+            service: { provider: { organizationId: { in: organizationIds } } },
+            status: 'COMPLETED',
+            updatedAt: {
+              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            },
+          },
+          include: {
+            service: { select: { price: true } },
+          },
+        })
+        .then((requests) =>
+          requests.reduce((sum, req) => sum + (req.service?.price || 0), 0),
+        ),
+    ]);
+
+    // Calculate service management stats
+    const activeServices = services.filter((s) => s.isActive).length;
+    const totalServices = services.length;
+
+    // Extract unique categories
+    const categoriesSet = new Set<string>();
+    services.forEach((s) => {
+      if (s.category) categoriesSet.add(s.category);
+      s.categories?.forEach((cat) => categoriesSet.add(cat));
+    });
+
+    const stats = {
+      // Overview stats
+      activeRequests: pendingBookings,
+      completedServices,
+      upcomingAppointments,
+      customerRating: 0, // TODO: Implement rating system
+      // Service management stats
+      totalServices,
+      activeServices,
+      pendingApproval: 0, // Services don't have approval workflow currently
+      categories: Array.from(categoriesSet),
+      // Legacy stats for compatibility
+      totalBookings,
+      monthlyRevenue,
+      activeClients,
+      pendingBookings,
       averageRating: 0,
     };
 
@@ -498,29 +588,56 @@ export class DashboardController {
   @Roles(UserRole.SERVICE_PROVIDER)
   @ApiOperation({ summary: 'Get service provider recent bookings' })
   @ApiResponse({ status: 200, description: 'Bookings retrieved successfully' })
-  async getServiceProviderBookings(@Request() req) {
+  async getServiceProviderBookings(
+    @Request() req,
+    @Query('upcoming') upcoming?: string,
+    @Query('limit') limit?: string,
+  ) {
     const userId = req.context.userId;
     const organizationIds = await this.getUserOrganizationIds(userId);
+    const now = new Date();
+
+    // Build where clause based on query params
+    const whereClause: any = {
+      service: { provider: { organizationId: { in: organizationIds } } },
+    };
+
+    // If upcoming=true, only return future scheduled appointments
+    if (upcoming === 'true') {
+      whereClause.scheduledAt = { gte: now };
+      whereClause.status = { in: ['PENDING', 'CONFIRMED', 'SCHEDULED', 'ACCEPTED'] };
+    }
+
+    // Validate and bound the limit parameter to prevent NaN and excessive queries
+    const parsedLimit = limit ? Number.parseInt(limit, 10) : 10;
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
 
     const bookings = await this.prisma.serviceRequest.findMany({
-      where: {
-        service: { provider: { organizationId: { in: organizationIds } } },
-      },
+      where: whereClause,
       include: {
         organization: true,
         service: {
           include: { provider: { include: { organization: true } } },
         },
       },
-      orderBy: { createdAt: 'desc' },
-      take: 10,
+      orderBy: upcoming === 'true' ? { scheduledAt: 'asc' } : { createdAt: 'desc' },
+      take: safeLimit,
     });
 
     const bookingData = bookings.map((booking) => ({
       id: booking.id,
       clientName: booking.organization.name,
+      clientOrgId: booking.organization.id,
+      serviceId: booking.serviceId,
       serviceType: booking.service.title,
-      scheduledDate: booking.scheduledAt?.toISOString() || booking.createdAt.toISOString(),
+      serviceTitle: booking.service.title,
+      description: booking.description,
+      scheduledDate: booking.scheduledAt?.toISOString() || null,
+      requestedDate: booking.requestedAt?.toISOString() || booking.createdAt.toISOString(),
+      createdAt: booking.createdAt.toISOString(),
       duration: 0,
       totalAmount: booking.service.price || 0,
       status: booking.status.toLowerCase(),
