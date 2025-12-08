@@ -175,7 +175,12 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     if (currentUser) {
       refreshLeads();
       refreshServiceRequests();
-      refreshVendorClients();
+      // Only load vendor clients for FOUNDATION users (backend requires FOUNDATION role)
+      if (currentUser.role === UserRole.FOUNDATION) {
+        refreshVendorClients();
+      } else {
+        setVendorClients([]);
+      }
     } else {
       setLeads([]);
       setServiceRequests([]);
