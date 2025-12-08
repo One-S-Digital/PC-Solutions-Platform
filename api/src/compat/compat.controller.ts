@@ -122,8 +122,47 @@ export class CompatController {
   @Public()
   async getOrders() {
     try {
-      const orders = await this.prisma.order.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
-      return { success: true, message: 'OK', data: orders, timestamp: new Date().toISOString() };
+      const orders = await this.prisma.order.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+        include: {
+          organization: true,
+          items: {
+            include: {
+              product: {
+                include: {
+                  supplier: true,
+                  imageAsset: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Transform orders to include supplierId and supplierName at root level for frontend compatibility
+      const transformedOrders = orders.map((order) => {
+        const firstItem = order.items[0];
+        const supplier = firstItem?.product?.supplier;
+
+        return {
+          ...order,
+          supplierId: supplier?.id ?? null,
+          supplierName: supplier?.name ?? null,
+          foundationOrgId: order.organizationId,
+          foundationId: order.organizationId,
+          requestDate: order.createdAt.toISOString(),
+          items: order.items.map((item) => ({
+            productId: item.productId,
+            productName: item.product?.title ?? 'Unknown Product',
+            quantity: item.quantity,
+            unitPrice: item.price,
+            imageUrl: item.product?.imageAsset?.publicUrl ?? null,
+          })),
+        };
+      });
+
+      return { success: true, message: 'OK', data: transformedOrders, timestamp: new Date().toISOString() };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
     }

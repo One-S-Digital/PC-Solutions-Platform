@@ -473,7 +473,7 @@ export class MarketplaceService {
     const where = organizationId ? { organizationId } : {};
 
     try {
-      return await this.prisma.order.findMany({
+      const orders = await this.prisma.order.findMany({
         where,
         include: {
           organization: true,
@@ -490,6 +490,33 @@ export class MarketplaceService {
         },
         orderBy: { createdAt: 'desc' },
       });
+
+      // Transform orders to include supplierId and supplierName at the root level
+      // These are derived from the first order item's product supplier
+      return orders.map((order) => {
+        const firstItem = order.items[0];
+        const supplier = firstItem?.product?.supplier;
+
+        return {
+          ...order,
+          // Add supplier info at root level for frontend compatibility
+          supplierId: supplier?.id ?? null,
+          supplierName: supplier?.name ?? null,
+          // Also add foundationOrgId for frontend compatibility (alias for organizationId)
+          foundationOrgId: order.organizationId,
+          foundationId: order.organizationId,
+          // Map requestDate from createdAt for frontend compatibility
+          requestDate: order.createdAt.toISOString(),
+          // Transform items to match frontend LineItem type
+          items: order.items.map((item) => ({
+            productId: item.productId,
+            productName: item.product?.title ?? 'Unknown Product',
+            quantity: item.quantity,
+            unitPrice: item.price,
+            imageUrl: item.product?.imageAsset?.publicUrl ?? null,
+          })),
+        };
+      });
     } catch (error: unknown) {
       // Handle case where orders table doesn't exist (P2021)
       if (error && typeof error === 'object' && 'code' in error && error.code === 'P2021') {
@@ -501,7 +528,7 @@ export class MarketplaceService {
   }
 
   async findOrderById(id: string) {
-    return this.prisma.order.findUnique({
+    const order = await this.prisma.order.findUnique({
       where: { id },
       include: {
         organization: true,
@@ -517,10 +544,34 @@ export class MarketplaceService {
         },
       },
     });
+
+    if (!order) {
+      return null;
+    }
+
+    // Transform order to include supplierId and supplierName at the root level
+    const firstItem = order.items[0];
+    const supplier = firstItem?.product?.supplier;
+
+    return {
+      ...order,
+      supplierId: supplier?.id ?? null,
+      supplierName: supplier?.name ?? null,
+      foundationOrgId: order.organizationId,
+      foundationId: order.organizationId,
+      requestDate: order.createdAt.toISOString(),
+      items: order.items.map((item) => ({
+        productId: item.productId,
+        productName: item.product?.title ?? 'Unknown Product',
+        quantity: item.quantity,
+        unitPrice: item.price,
+        imageUrl: item.product?.imageAsset?.publicUrl ?? null,
+      })),
+    };
   }
 
   async updateOrderStatus(id: string, status: string) {
-    return this.prisma.order.update({
+    const order = await this.prisma.order.update({
       where: { id },
       data: { status },
       include: {
@@ -537,6 +588,26 @@ export class MarketplaceService {
         },
       },
     });
+
+    // Transform order to include supplierId and supplierName at the root level
+    const firstItem = order.items[0];
+    const supplier = firstItem?.product?.supplier;
+
+    return {
+      ...order,
+      supplierId: supplier?.id ?? null,
+      supplierName: supplier?.name ?? null,
+      foundationOrgId: order.organizationId,
+      foundationId: order.organizationId,
+      requestDate: order.createdAt.toISOString(),
+      items: order.items.map((item) => ({
+        productId: item.productId,
+        productName: item.product?.title ?? 'Unknown Product',
+        quantity: item.quantity,
+        unitPrice: item.price,
+        imageUrl: item.product?.imageAsset?.publicUrl ?? null,
+      })),
+    };
   }
 
   // Service Request Management

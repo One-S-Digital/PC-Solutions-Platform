@@ -138,6 +138,16 @@ enum TranslationStatus {
   APPROVED
 }
 
+enum InquiryStatus {
+  NEW
+  PENDING
+  CONTACTED
+  QUOTED
+  FULFILLED
+  DECLINED
+  CANCELLED
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -270,6 +280,10 @@ model Organization {
   // Foundation-specific relations
   leadResponses    FoundationLeadResponse[] @relation("FoundationLeadResponses")
   calendarEvents   CalendarEvent[]          @relation("OrganizationCalendarEvents")
+
+  // Inquiry relations
+  sentInquiries     Inquiry[] @relation("InquiryBuyer")    // Inquiries this org has sent
+  receivedInquiries Inquiry[] @relation("InquirySupplier") // Inquiries this org has received (suppliers)
 
   @@map("organizations")
 }
@@ -639,6 +653,48 @@ model ServiceRequest {
   service      Service      @relation(fields: [serviceId], references: [id])
 
   @@map("service_requests")
+}
+
+// Supplier Inquiry Model - for suppliers who don't sell directly on platform
+model Inquiry {
+  id             String        @id @default(uuid())
+  organizationId String        // The foundation/buyer making the inquiry
+  supplierId     String        // The supplier receiving the inquiry
+  
+  // Inquiry details
+  subject        String?
+  message        String
+  productInterest String?      // Optional: specific product they're interested in
+  quantity       Int?          // Optional: estimated quantity needed
+  budget         String?       // Optional: budget range
+  urgency        String?       // Optional: LOW, MEDIUM, HIGH, URGENT
+  
+  // Contact preferences
+  contactName    String?
+  contactEmail   String?
+  contactPhone   String?
+  preferredContactMethod String? // EMAIL, PHONE, PLATFORM
+  
+  // Status tracking
+  status         InquiryStatus @default(NEW)
+  supplierNotes  String?       // Internal notes for supplier
+  responseMessage String?      // Supplier's response to the inquiry
+  quotedAmount   Float?        // If supplier provides a quote
+  
+  // Timestamps
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  respondedAt    DateTime?     // When supplier first responded
+  fulfilledAt    DateTime?     // When inquiry was fulfilled/converted
+
+  // Relations
+  organization   Organization  @relation("InquiryBuyer", fields: [organizationId], references: [id])
+  supplier       Organization  @relation("InquirySupplier", fields: [supplierId], references: [id])
+
+  @@index([supplierId, status])
+  @@index([organizationId])
+  @@index([createdAt])
+  @@map("inquiries")
 }
 
 model ParentLead {
