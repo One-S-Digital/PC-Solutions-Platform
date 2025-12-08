@@ -217,6 +217,53 @@ EOSQL
                 exit 1
             fi
         fi
+    elif echo "$MIGRATION_STATUS" | grep -q "20251220000008_add_company_profile_doc_asset_kind" || echo "$MIGRATION_LAST_OUTPUT" | grep -q "COMPANY_PROFILE_DOC"; then
+        echo "🔧 Detected failed AssetKind enum migration, ensuring enum value exists..."
+        
+        # Run the fix using prebuild script
+        if node ./scripts/prebuild-db-setup.mjs; then
+            echo "✅ AssetKind enum value added"
+        else
+            echo "⚠️  AssetKind enum fix had issues, but continuing..."
+        fi
+        
+        # Retry migration deployment
+        echo "🔄 Retrying migration deployment after fix..."
+        if run_prisma_migrate_deploy; then
+            echo "✅ Migrations deployed successfully after AssetKind fix"
+        else
+            echo "⚠️  Migration still failing, verifying enum state..."
+            
+            # Verify the enum value exists
+            VERIFY_TMP=$(mktemp)
+            if ! npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'
+SELECT 
+    CASE WHEN EXISTS (
+        SELECT 1 FROM pg_enum e
+        JOIN pg_type t ON e.enumtypid = t.oid
+        WHERE t.typname = 'AssetKind' AND e.enumlabel = 'COMPANY_PROFILE_DOC'
+    ) 
+    THEN 'COMPANY_PROFILE_DOC EXISTS' ELSE 'COMPANY_PROFILE_DOC MISSING' END as enum_check;
+EOSQL
+            then
+                :
+            fi
+            VERIFY_RESULT=$(cat "$VERIFY_TMP")
+            rm -f "$VERIFY_TMP"
+            
+            echo "$VERIFY_RESULT"
+            
+            if echo "$VERIFY_RESULT" | grep -q "EXISTS" && ! echo "$VERIFY_RESULT" | grep -q "MISSING"; then
+                echo "✅ Enum value exists, marking migration as applied..."
+                npx prisma migrate resolve --applied "20251220000008_add_company_profile_doc_asset_kind" --schema "$PRISMA_SCHEMA_PATH" || true
+                echo "✅ Build can continue - enum is correct"
+            else
+                echo "❌ Enum value is missing"
+                echo "📋 Final migration status:"
+                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
+                exit 1
+            fi
+        fi
     elif echo "$MIGRATION_STATUS" | grep -q "20251208000000_add_inquiries_table"; then
         echo "🔧 Detected failed inquiries table migration, ensuring table exists..."
         

@@ -163,6 +163,30 @@ const resolveMigration = (action, migration) => {
   );
 };
 
+const ensureAssetKindEnumValues = () => {
+  const sql = `
+-- Ensure COMPANY_PROFILE_DOC value exists in AssetKind enum
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_enum e
+        JOIN pg_type t ON e.enumtypid = t.oid
+        WHERE t.typname = 'AssetKind'
+          AND e.enumlabel = 'COMPANY_PROFILE_DOC'
+    ) THEN
+        ALTER TYPE "AssetKind" ADD VALUE 'COMPANY_PROFILE_DOC';
+    END IF;
+END
+$$;
+`;
+
+  runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+};
+
 const ensureMetadataColumn = () => {
   const sql = `
 DO $$
@@ -1297,6 +1321,11 @@ const handleFailedMigration = (migration) => {
       ensureMetadataColumn();
       resolveMigration('applied', migration);
       break;
+    case '20251220000008_add_company_profile_doc_asset_kind':
+      log(`   • Resolving ${migration} (COMPANY_PROFILE_DOC enum value)`);
+      ensureAssetKindEnumValues();
+      resolveMigration('applied', migration);
+      break;
     // case '20251114140526_add_i18n_translation_tables':
     //   log(`   • Resolving ${migration} (translation infrastructure)`);
     //   ensureTranslationInfrastructure();
@@ -1332,6 +1361,15 @@ const handleFailedMigration = (migration) => {
 log('🔧 Running database pre-build cleanup...');
 log(`📍 Database URL: ${process.env.DATABASE_URL ? '[SET]' : '[NOT SET]'}`);
 log(`📍 Schema path: ${SCHEMA_PATH}`);
+
+// Ensure AssetKind enum has all required values before other operations
+log('🔁 Ensuring AssetKind enum values exist...');
+try {
+  ensureAssetKindEnumValues();
+  log('✅ AssetKind enum values check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure AssetKind enum values: ${error.message}`);
+}
 
 // Ensure critical recruitment tables exist before migrations run
 log('🔁 Ensuring job_listings table exists...');
