@@ -657,21 +657,40 @@
         "fulfillmentRate": "Fulfillment Rate",
         "button": "View Analytics"
       },
+      "inquiries": {
+        "title": "Inquiries",
+        "new": "New",
+        "pending": "Pending",
+        "total": "Total",
+        "conversionRate": "Conversion",
+        "button": "View Inquiries"
+      },
       "products": {
         "title": "Products",
         "active": "Active",
         "pending": "Pending",
         "pendingApproval": "Pending Approval",
+        "lowStock": "Low Stock",
         "button": "Manage Products"
       },
       "orders": {
         "title": "Orders",
         "pending": "Pending",
+        "toFulfill": "To Fulfill",
         "button": "View Orders"
       }
     },
     "recentOrdersTitle": "Recent Orders",
-    "noRecentOrders": "No recent orders"
+    "noRecentOrders": "No recent orders",
+    "recentInquiriesTitle": "Recent Inquiries",
+    "noRecentInquiries": "No recent inquiries",
+    "recentInquiriesTable": {
+      "from": "From",
+      "subject": "Subject",
+      "status": "Status"
+    },
+    "noSalesYet": "No sales yet",
+    "loadError": "Failed to load dashboard data"
   },
   "supplierAnalyticsPage": {
     "orderRequestsTrend": "Order Requests Trend",
@@ -733,8 +752,12 @@
       "emptyState": "No products found"
     },
   "supplierOrdersPage": {
-    "title": "Orders",
+    "title": "Orders & Inquiries",
     "filterByStatus": "Filter by Status",
+    "tabs": {
+      "orders": "Direct Orders",
+      "inquiries": "Inquiries"
+    },
     "table": {
       "orderId": "Order ID",
       "date": "Date",
@@ -742,10 +765,61 @@
       "status": "Status",
       "foundation": "Foundation"
     },
+    "inquiryTable": {
+      "id": "ID",
+      "from": "From",
+      "subject": "Subject",
+      "date": "Date",
+      "urgency": "Urgency",
+      "status": "Status"
+    },
     "actions": {
       "ship": "Ship"
     },
-    "emptyState": "No orders found"
+    "emptyState": "No orders found",
+    "noInquiries": "No inquiries found",
+    "loadError": "Failed to load data",
+    "updateError": "Failed to update status"
+  },
+  "inquiryStatus": {
+    "new": "New",
+    "pending": "Pending",
+    "contacted": "Contacted",
+    "quoted": "Quoted",
+    "fulfilled": "Fulfilled",
+    "declined": "Declined",
+    "cancelled": "Cancelled"
+  },
+  "inquiryDetailModal": {
+    "title": "Inquiry Details",
+    "inquiryId": "Inquiry ID",
+    "date": "Date",
+    "status": "Status",
+    "urgency": "Urgency",
+    "from": "From",
+    "contactInfo": "Contact Information",
+    "preferredContact": "Preferred",
+    "message": "Message",
+    "productInterest": "Product Interest",
+    "quantity": "Est. Quantity",
+    "budget": "Budget",
+    "yourResponse": "Your Response",
+    "quotedAmount": "Quoted Amount",
+    "internalNotes": "Internal Notes",
+    "respondedAt": "First responded",
+    "fulfilledAt": "Fulfilled",
+    "viewProfile": "View Profile",
+    "quoteAmount": "Quote Amount (CHF)",
+    "responseMessage": "Response Message",
+    "responsePlaceholder": "Enter your response to the customer...",
+    "sendResponse": "Send Response",
+    "actions": {
+      "decline": "Decline",
+      "markPending": "Mark as Pending",
+      "contacted": "Mark as Contacted",
+      "sendQuote": "Send Quote",
+      "markFulfilled": "Mark as Fulfilled"
+    }
   },
   "supplierSupportPage": {
     "ticketSubmittedAlert": "Support ticket submitted successfully",

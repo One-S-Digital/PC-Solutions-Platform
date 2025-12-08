@@ -651,6 +651,79 @@ export interface Order {
   requestDate: string; // ISO
 }
 
+// Inquiry types for suppliers who don't sell directly on platform
+export enum InquiryStatus {
+  NEW = 'NEW',
+  PENDING = 'PENDING',
+  CONTACTED = 'CONTACTED',
+  QUOTED = 'QUOTED',
+  FULFILLED = 'FULFILLED',
+  DECLINED = 'DECLINED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum InquiryUrgency {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT',
+}
+
+export enum PreferredContactMethod {
+  EMAIL = 'EMAIL',
+  PHONE = 'PHONE',
+  PLATFORM = 'PLATFORM',
+}
+
+export interface Inquiry {
+  id: string;
+  organizationId: string;
+  supplierId: string;
+  
+  // Inquiry details
+  subject?: string;
+  message: string;
+  productInterest?: string;
+  quantity?: number;
+  budget?: string;
+  urgency?: InquiryUrgency;
+  
+  // Contact info
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  preferredContactMethod?: PreferredContactMethod;
+  
+  // Status and response
+  status: InquiryStatus;
+  supplierNotes?: string;
+  responseMessage?: string;
+  quotedAmount?: number;
+  
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+  respondedAt?: string;
+  fulfilledAt?: string;
+  
+  // Related entity names (populated by backend)
+  buyerName: string;
+  buyerOrgId: string;
+  supplierName: string;
+  
+  // Convenience field
+  requestDate: string;
+}
+
+export interface InquiryStats {
+  totalInquiries: number;
+  newInquiries: number;
+  pendingInquiries: number;
+  fulfilledInquiries: number;
+  conversionRate: string;
+  recentInquiries: Inquiry[];
+}
+
 export interface CartItem {
   productId: string;
   title: string;
