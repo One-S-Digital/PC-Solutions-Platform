@@ -220,7 +220,18 @@ api/src/crawler/
     └── classifier.spec.ts
 ```
 
-### 4.2 Crawler Service
+### 4.2 Crawler Strategy: Metadata-First (Minimal PDF Parsing)
+
+**Key Insight**: We don't need to parse all PDFs. Most classification and change detection can be done using:
+1. **Link metadata** from the source page (anchor text, URL, section heading)
+2. **HTTP headers** from HEAD requests (ETag, Last-Modified, Content-Length)
+
+**When to parse PDFs (rare cases):**
+- Classification confidence < 50%
+- Admin manually requests text extraction
+- Future: full-text search feature
+
+### 4.3 Crawler Service
 
 ```typescript
 // api/src/crawler/crawler.service.ts
@@ -240,6 +251,12 @@ interface CandidateDocument {
   anchorText: string;
 }
 
+interface HttpHeaders {
+  etag: string;
+  lastModified: string;
+  contentLength: string;
+}
+
 @Injectable()
 export class CrawlerService {
   private readonly logger = new Logger(CrawlerService.name);
@@ -255,6 +272,8 @@ export class CrawlerService {
     discovered: number;
     created: number;
     updated: number;
+    unchanged: number;
+    skipped: number;
     errors: string[];
   }> {
     const source = await this.prisma.cantonSource.findUnique({
@@ -266,21 +285,34 @@ export class CrawlerService {
       throw new Error(`Source ${sourceId} not found or inactive`);
     }
 
-    const results = { discovered: 0, created: 0, updated: 0, errors: [] as string[] };
+    const results = { 
+      discovered: 0, 
+      created: 0, 
+      updated: 0, 
+      unchanged: 0,
+      skipped: 0,
+      errors: [] as string[],
+    };
 
     try {
-      // Step 1: Fetch and parse source page
-      const html = await this.fetchWithRetry(source.url, source.renderType === 'dynamic');
+      // Step 1: Fetch and parse source page (only HTML page, not PDFs)
+      const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
       const candidates = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
       results.discovered = candidates.length;
+
+      this.logger.log(`Source ${source.label}: Found ${candidates.length} candidate links`);
 
       // Step 2: Process each candidate with rate limiting
       for (const candidate of candidates) {
         try {
-          await this.processCandidate(candidate, source, results);
-          await this.delay(2000); // 2s between requests - be respectful
+          const result = await this.processCandidate(candidate, source);
+          results[result]++;
+          
+          // Minimal delay - we're only doing HEAD requests for most docs
+          await this.delay(500);
         } catch (error) {
           results.errors.push(`${candidate.url}: ${error.message}`);
+          this.logger.error(`Failed to process ${candidate.url}: ${error.message}`);
         }
       }
 
@@ -313,35 +345,33 @@ export class CrawlerService {
   private async processCandidate(
     candidate: CandidateDocument,
     source: any,
-    results: any,
-  ): Promise<void> {
-    // Extract content
-    let contentText: string;
-    if (candidate.isPdf) {
-      const pdfBuffer = await this.fetchPdfBuffer(candidate.url);
-      contentText = await this.pdfParser.extractText(pdfBuffer);
-    } else {
-      const html = await this.fetchWithRetry(candidate.url, false);
-      contentText = this.htmlParser.extractMainText(html);
-    }
-
-    // Classify
-    const classification = this.classifier.classify(contentText, {
-      url: candidate.url,
+  ): Promise<'created' | 'updated' | 'unchanged' | 'skipped'> {
+    
+    // ==========================================
+    // STEP 1: Classify using METADATA ONLY (no download)
+    // ==========================================
+    const classification = this.classifier.classifyFromMetadata({
       anchorText: candidate.anchorText,
+      url: candidate.url,
       sectionHeading: candidate.sectionHeading,
       defaultLang: source.canton.defaultLang,
     });
 
-    if (!classification.isDaycareRelated || classification.confidence < 0.6) {
-      return; // Skip non-relevant documents
+    // High confidence it's NOT daycare-related → skip entirely
+    if (!classification.isDaycareRelated && classification.confidence > 0.7) {
+      this.logger.debug(`Skipping ${candidate.url} - not daycare-related (confidence: ${classification.confidence})`);
+      return 'skipped';
     }
 
-    // Generate content hash
-    const normalizedText = this.normalizeText(contentText);
-    const contentHash = createHash('sha256').update(normalizedText).digest('hex');
+    // ==========================================
+    // STEP 2: Get HTTP headers for change detection (HEAD request only)
+    // ==========================================
+    const headers = await this.fetchHeaders(candidate.url);
+    const changeHash = this.generateChangeHash(headers);
 
-    // Check if document already exists
+    // ==========================================
+    // STEP 3: Check if document exists
+    // ==========================================
     const existingAsset = await this.prisma.asset.findFirst({
       where: {
         category: 'STATE_POLICY',
@@ -350,103 +380,188 @@ export class CrawlerService {
     });
 
     if (existingAsset) {
-      // Check for changes
-      if (existingAsset.contentHash !== contentHash) {
-        // Content changed - create history record and flag for review
-        await this.prisma.policyCrawlHistory.create({
-          data: {
-            assetId: existingAsset.id,
-            sourceId: source.id,
-            contentHash,
-            changeType: 'updated',
-            contentText: normalizedText.slice(0, 50000), // Limit stored text
-          },
-        });
-
-        await this.prisma.asset.update({
-          where: { id: existingAsset.id },
-          data: {
-            contentHash,
-            lastCrawledAt: new Date(),
-            crawlStatus: 'pending_review', // Flag for admin review
-          },
-        });
-
-        results.updated++;
-      } else {
+      // Document exists - check if changed using hash
+      if (existingAsset.contentHash === changeHash) {
         // No change - just update lastCrawledAt
         await this.prisma.asset.update({
           where: { id: existingAsset.id },
           data: { lastCrawledAt: new Date() },
         });
+        return 'unchanged';
       }
-    } else {
-      // New document - create Asset with pending_review status
-      const newAsset = await this.prisma.asset.create({
-        data: {
-          kind: 'DOCUMENT',
-          category: 'STATE_POLICY',
-          contentCategory: classification.category, // 'Education Policy', etc.
-          
-          filename: candidate.title || this.extractFilename(candidate.url),
-          publicUrl: '', // Not hosting the file
-          storageKey: `crawler-${Date.now()}`, // Placeholder
-          mimeType: candidate.isPdf ? 'application/pdf' : 'text/html',
-          size: 0,
-          uploadedById: 'system', // System user ID
-          
-          title: this.cleanTitle(candidate.anchorText || candidate.title),
-          description: contentText.slice(0, 500),
-          contentPreview: contentText.slice(0, 300),
-          
-          country: 'Switzerland',
-          region: source.canton.name,
-          policyType: classification.docType,
-          language: classification.language,
-          status: 'Draft', // Will be set to Published on admin approval
-          
-          // Crawler-specific fields
-          crawlSourceId: source.id,
-          officialUrl: candidate.url,
-          contentHash,
-          lastCrawledAt: new Date(),
-          crawlStatus: 'pending_review',
-          
-          externalLink: candidate.url, // Important: link to official source
-          tags: classification.topics,
-        },
-      });
 
-      // Create initial history record
+      // Document changed - flag for review
       await this.prisma.policyCrawlHistory.create({
         data: {
-          assetId: newAsset.id,
+          assetId: existingAsset.id,
           sourceId: source.id,
-          contentHash,
-          changeType: 'new',
-          contentText: normalizedText.slice(0, 50000),
+          contentHash: changeHash,
+          changeType: 'updated',
         },
       });
 
-      results.created++;
+      await this.prisma.asset.update({
+        where: { id: existingAsset.id },
+        data: {
+          contentHash: changeHash,
+          lastCrawledAt: new Date(),
+          crawlStatus: 'pending_review',
+        },
+      });
+
+      return 'updated';
+    }
+
+    // ==========================================
+    // STEP 4: New document - only parse PDF if classification uncertain
+    // ==========================================
+    let contentText: string | undefined;
+    let finalClassification = classification;
+
+    // Only download and parse PDF if we're uncertain about classification
+    if (classification.confidence < 0.5 && candidate.isPdf) {
+      this.logger.log(`Low confidence (${classification.confidence.toFixed(2)}) for ${candidate.url}, parsing PDF...`);
+      
+      try {
+        const buffer = await this.fetchBuffer(candidate.url);
+        contentText = await this.pdfParser.extractText(buffer);
+        
+        // Re-classify with actual content
+        finalClassification = this.classifier.classifyFromContent(
+          contentText, 
+          candidate,
+          source.canton.defaultLang,
+        );
+
+        if (!finalClassification.isDaycareRelated) {
+          this.logger.debug(`After parsing, ${candidate.url} still not daycare-related - skipping`);
+          return 'skipped';
+        }
+      } catch (parseError) {
+        this.logger.warn(`Failed to parse PDF ${candidate.url}: ${parseError.message}`);
+        // Continue with metadata-based classification if parsing fails
+      }
+    }
+
+    // ==========================================
+    // STEP 5: Create new Asset
+    // ==========================================
+    const newAsset = await this.prisma.asset.create({
+      data: {
+        kind: 'DOCUMENT',
+        category: 'STATE_POLICY',
+        contentCategory: finalClassification.category,
+        
+        filename: this.extractFilename(candidate.url),
+        publicUrl: '', // Not hosting the file
+        storageKey: `crawler-${Date.now()}`,
+        mimeType: candidate.isPdf ? 'application/pdf' : 'text/html',
+        size: parseInt(headers.contentLength) || 0,
+        uploadedById: 'system',
+        
+        // Use anchor text as title (admin can refine)
+        title: this.cleanTitle(candidate.anchorText || candidate.title),
+        // Leave description empty - admin writes summary during review
+        description: '',
+        contentPreview: contentText?.slice(0, 300) || '',
+        
+        country: 'Switzerland',
+        region: source.canton.name,
+        policyType: finalClassification.docType,
+        language: finalClassification.language,
+        status: 'Draft',
+        
+        // Crawler-specific fields
+        crawlSourceId: source.id,
+        officialUrl: candidate.url,
+        contentHash: changeHash,
+        lastCrawledAt: new Date(),
+        crawlStatus: 'pending_review',
+        
+        externalLink: candidate.url,
+        tags: finalClassification.topics,
+      },
+    });
+
+    // Create initial history record
+    await this.prisma.policyCrawlHistory.create({
+      data: {
+        assetId: newAsset.id,
+        sourceId: source.id,
+        contentHash: changeHash,
+        changeType: 'new',
+        contentText: contentText?.slice(0, 50000), // Only if we parsed it
+      },
+    });
+
+    return 'created';
+  }
+
+  // ==========================================
+  // HTTP UTILITIES
+  // ==========================================
+
+  private async fetchHeaders(url: string): Promise<HttpHeaders> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(url, { 
+        method: 'HEAD',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+        },
+      });
+
+      return {
+        etag: response.headers.get('etag') || '',
+        lastModified: response.headers.get('last-modified') || '',
+        contentLength: response.headers.get('content-length') || '0',
+      };
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
-  private normalizeText(text: string): string {
-    return text
-      .toLowerCase()
-      .replace(/\s+/g, ' ')
-      .replace(/[^\w\sàâäéèêëïîôùûüç]/g, '')
-      .trim();
+  private generateChangeHash(headers: HttpHeaders): string {
+    // Combine headers into a change detection hash
+    // ETag is most reliable, fall back to Last-Modified + Content-Length
+    if (headers.etag) {
+      return createHash('md5').update(headers.etag).digest('hex');
+    }
+    const combined = `${headers.lastModified}|${headers.contentLength}`;
+    return createHash('md5').update(combined).digest('hex');
   }
 
-  private async fetchWithRetry(url: string, useDynamic: boolean, retries = 3): Promise<string> {
-    // Implementation with exponential backoff
-    // Uses Playwright for dynamic, fetch for static
+  private async fetchPage(url: string, useDynamic: boolean): Promise<string> {
+    if (useDynamic) {
+      // Use Playwright for JS-heavy pages (implement separately)
+      return this.fetchWithPlaywright(url);
+    }
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+      },
+    });
+    return response.text();
   }
 
-  private async fetchPdfBuffer(url: string): Promise<Buffer> {
-    // Fetch PDF as buffer
+  private async fetchBuffer(url: string): Promise<Buffer> {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+      },
+    });
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  }
+
+  private async fetchWithPlaywright(url: string): Promise<string> {
+    // Implement Playwright rendering for dynamic pages
+    // This is optional - only needed for JS-heavy canton sites
+    throw new Error('Playwright rendering not implemented');
   }
 
   private delay(ms: number): Promise<void> {
@@ -458,7 +573,8 @@ export class CrawlerService {
   }
 
   private extractFilename(url: string): string {
-    return url.split('/').pop() || 'document';
+    const pathname = new URL(url).pathname;
+    return pathname.split('/').pop() || 'document';
   }
 }
 ```
@@ -500,7 +616,7 @@ export class PdfParserService {
 }
 ```
 
-### 4.4 Classifier Service
+### 4.4 Classifier Service (Metadata-First)
 
 ```typescript
 // api/src/crawler/classifier/classifier.service.ts
@@ -517,28 +633,32 @@ interface ClassificationResult {
   topics: string[];
 }
 
+interface MetadataInput {
+  anchorText: string;
+  url: string;
+  sectionHeading?: string;
+  defaultLang: string;
+}
+
 @Injectable()
 export class ClassifierService {
-  classify(
-    content: string,
-    metadata: {
-      url: string;
-      anchorText: string;
-      sectionHeading?: string;
-      defaultLang: string;
-    },
-  ): ClassificationResult {
-    const language = this.detectLanguage(content, metadata.defaultLang);
-    const keywords = CLASSIFIER_CONFIG.keywords[language];
-    const negativeKeywords = CLASSIFIER_CONFIG.negativeKeywords[language];
+  
+  /**
+   * PRIMARY METHOD: Classify using metadata only (no PDF download)
+   * Used for 90%+ of documents
+   */
+  classifyFromMetadata(metadata: MetadataInput): ClassificationResult {
+    const lang = this.detectLanguageFromText(metadata.anchorText, metadata.defaultLang);
+    const keywords = CLASSIFIER_CONFIG.keywords[lang];
     
-    // Score positive keywords
     let score = 0;
     const foundTopics: string[] = [];
-    
+    const combinedText = `${metadata.anchorText} ${metadata.sectionHeading || ''}`.toLowerCase();
+
+    // Score from anchor text and section heading
     for (const [topic, terms] of Object.entries(keywords.topics)) {
       for (const term of terms) {
-        if (content.toLowerCase().includes(term.toLowerCase())) {
+        if (combinedText.includes(term.toLowerCase())) {
           score += keywords.weights[topic] || 1;
           if (!foundTopics.includes(topic)) {
             foundTopics.push(topic);
@@ -546,72 +666,160 @@ export class ClassifierService {
         }
       }
     }
+
+    // Score from URL path (very reliable signal)
+    const urlLower = metadata.url.toLowerCase();
+    const urlKeywords: Record<string, number> = {
+      'creche': 3, 'garderie': 3, 'accueil-de-jour': 4, 'accueil-prescolaire': 4,
+      'kita': 3, 'kinderbetreuung': 3, 'kindertagesstaette': 4, 'tagesstruktur': 3,
+      'nido': 3, 'asilo': 3,
+      'enfan': 2, 'kind': 2, 'bambin': 2,
+      'laje': 4, 'oaje': 4, 'laac': 4, // Swiss daycare law acronyms
+    };
     
-    // Section heading boost
+    for (const [kw, weight] of Object.entries(urlKeywords)) {
+      if (urlLower.includes(kw)) {
+        score += weight;
+        if (!foundTopics.includes('structure')) {
+          foundTopics.push('structure');
+        }
+      }
+    }
+
+    // Section heading boost (if link is under "Accueil de jour" section, high confidence)
     if (metadata.sectionHeading) {
-      for (const boostTerm of keywords.sectionBoosts) {
-        if (metadata.sectionHeading.toLowerCase().includes(boostTerm.toLowerCase())) {
+      for (const boost of keywords.sectionBoosts) {
+        if (metadata.sectionHeading.toLowerCase().includes(boost.toLowerCase())) {
           score *= 1.5;
           break;
+        }
+      }
+    }
+
+    // Negative signals from URL/anchor
+    const negativePatterns = ['adoption', 'steuer', 'impot', 'divorce', 'mariage', 'succession'];
+    for (const neg of negativePatterns) {
+      if (urlLower.includes(neg) || combinedText.includes(neg)) {
+        score *= 0.3;
+      }
+    }
+
+    const docType = this.detectDocTypeFromMetadata(metadata.anchorText, metadata.url, lang);
+    const category = this.mapToCategory(foundTopics);
+
+    return {
+      isDaycareRelated: score >= CLASSIFIER_CONFIG.threshold,
+      confidence: Math.min(score / 10, 1),
+      category,
+      docType,
+      language: lang,
+      topics: foundTopics,
+    };
+  }
+
+  /**
+   * SECONDARY METHOD: Classify using actual PDF content
+   * Only called when metadata-based confidence is low
+   */
+  classifyFromContent(
+    content: string,
+    candidate: { url: string; anchorText: string; sectionHeading?: string },
+    defaultLang: string,
+  ): ClassificationResult {
+    const lang = this.detectLanguageFromText(content, defaultLang);
+    const keywords = CLASSIFIER_CONFIG.keywords[lang];
+    const negativeKeywords = CLASSIFIER_CONFIG.negativeKeywords[lang];
+    
+    let score = 0;
+    const foundTopics: string[] = [];
+    const contentLower = content.toLowerCase();
+    
+    // Score from actual content
+    for (const [topic, terms] of Object.entries(keywords.topics)) {
+      for (const term of terms) {
+        // Count occurrences for better scoring
+        const regex = new RegExp(term.toLowerCase(), 'gi');
+        const matches = contentLower.match(regex);
+        if (matches) {
+          score += (keywords.weights[topic] || 1) * Math.min(matches.length, 3);
+          if (!foundTopics.includes(topic)) {
+            foundTopics.push(topic);
+          }
         }
       }
     }
     
     // Negative keyword penalty
     for (const term of negativeKeywords) {
-      if (content.toLowerCase().includes(term.toLowerCase())) {
+      if (contentLower.includes(term.toLowerCase())) {
         score *= 0.5;
       }
     }
     
-    // Determine document type
-    const docType = this.detectDocType(content, metadata.url, language);
-    
-    // Map to existing category structure
+    const docType = this.detectDocTypeFromContent(content, candidate.url, lang);
     const category = this.mapToCategory(foundTopics);
     
     return {
       isDaycareRelated: score >= CLASSIFIER_CONFIG.threshold,
-      confidence: Math.min(score / 10, 1),
+      confidence: Math.min(score / 15, 1), // Higher bar for content-based
       category,
       docType,
-      language,
+      language: lang,
       topics: foundTopics,
     };
   }
-  
-  private detectLanguage(content: string, defaultLang: string): 'fr' | 'de' | 'it' | 'en' {
-    // Simple keyword-based detection
-    const frCount = (content.match(/\b(le|la|les|de|des|du|un|une|et|est|sont|dans|pour|avec|sur|au|aux)\b/gi) || []).length;
-    const deCount = (content.match(/\b(der|die|das|und|ist|sind|für|mit|bei|von|zu|im|den|dem|ein|eine)\b/gi) || []).length;
-    const itCount = (content.match(/\b(il|la|le|di|del|della|e|è|sono|per|con|nel|nella|un|una)\b/gi) || []).length;
+
+  private detectLanguageFromText(text: string, defaultLang: string): 'fr' | 'de' | 'it' | 'en' {
+    if (!text || text.length < 20) return defaultLang as any;
+    
+    const frCount = (text.match(/\b(le|la|les|de|des|du|un|une|et|est|pour|avec|sur)\b/gi) || []).length;
+    const deCount = (text.match(/\b(der|die|das|und|ist|für|mit|von|zu|den|dem|ein)\b/gi) || []).length;
+    const itCount = (text.match(/\b(il|la|le|di|del|della|e|è|per|con|nel|un|una)\b/gi) || []).length;
     
     const max = Math.max(frCount, deCount, itCount);
-    if (max < 10) return defaultLang as any;
+    if (max < 3) return defaultLang as any;
     
     if (frCount === max) return 'fr';
     if (deCount === max) return 'de';
     if (itCount === max) return 'it';
     return defaultLang as any;
   }
-  
-  private detectDocType(content: string, url: string, lang: string): string {
+
+  private detectDocTypeFromMetadata(anchorText: string, url: string, lang: string): string {
+    const combined = `${anchorText} ${url}`.toLowerCase();
     const patterns = CLASSIFIER_CONFIG.docTypePatterns[lang];
     
     for (const [type, regexList] of Object.entries(patterns)) {
       for (const pattern of regexList) {
-        if (pattern.test(content) || pattern.test(url)) {
+        if (pattern.test(combined)) {
           return type;
         }
       }
     }
     
-    return 'Directive'; // Default
+    // Default based on file extension
+    if (url.toLowerCase().endsWith('.pdf')) {
+      return 'Directive';
+    }
+    return 'Guideline';
+  }
+
+  private detectDocTypeFromContent(content: string, url: string, lang: string): string {
+    const patterns = CLASSIFIER_CONFIG.docTypePatterns[lang];
+    
+    for (const [type, regexList] of Object.entries(patterns)) {
+      for (const pattern of regexList) {
+        if (pattern.test(content)) {
+          return type;
+        }
+      }
+    }
+    
+    return 'Directive';
   }
   
   private mapToCategory(topics: string[]): string {
-    // Map detected topics to existing POLICY_CATEGORIES
-    if (topics.includes('ratios') || topics.includes('authorisation') || topics.includes('staff')) {
+    if (topics.includes('ratios') || topics.includes('authorisation') || topics.includes('staff') || topics.includes('structure')) {
       return 'Education Policy';
     }
     if (topics.includes('safety') || topics.includes('health')) {
@@ -622,6 +830,9 @@ export class ClassifierService {
     }
     if (topics.includes('protection') || topics.includes('welfare')) {
       return 'Child Protection';
+    }
+    if (topics.includes('funding')) {
+      return 'Other'; // Financial support
     }
     return 'Other';
   }
@@ -1954,11 +2165,14 @@ async checkStaleSources() {
 ```bash
 # API
 cd api
-pnpm add pdfjs-dist cheerio
+pnpm add cheerio          # HTML parsing (required)
+pnpm add pdfjs-dist       # PDF parsing (optional, for low-confidence docs)
 
-# Dev dependencies for crawler
-pnpm add -D @types/pdfjs-dist
+# Optional: Playwright for JS-heavy sites (only if needed)
+# pnpm add playwright
 ```
+
+**Note on PDF parsing**: The `pdfjs-dist` dependency is only used for ~10% of documents where metadata-based classification has low confidence. Most change detection uses HTTP headers (ETag, Last-Modified) via HEAD requests.
 
 ---
 
@@ -1998,4 +2212,54 @@ pnpm add -D @types/pdfjs-dist
 | New frontend pages | Extend existing `StatePoliciesPage` |
 | Custom job queue | Use existing BullMQ + @nestjs/schedule |
 | Canton full names in DB | Canton code mapping + localized names |
-| Generic PDF parser | pdfjs-dist (Mozilla, actively maintained) |
+| Parse all PDFs for classification | **Metadata-first**: Parse only ~10% of PDFs |
+| Download PDFs for change detection | **HTTP headers**: Use ETag/Last-Modified via HEAD requests |
+
+---
+
+## Appendix: Metadata-First Crawling Strategy
+
+### Why We Don't Parse All PDFs
+
+| Concern | Full PDF Parsing | Metadata + HEAD Requests |
+|---------|-----------------|-------------------------|
+| **Bandwidth** | ~50MB per PDF × 1000s of docs | ~1KB per HEAD request |
+| **Speed** | 5-10 seconds per PDF | <100ms per document |
+| **Server load on cantons** | High (full downloads) | Minimal (HEAD only) |
+| **Classification accuracy** | 95%+ | 85-90% (sufficient for filtering) |
+| **Change detection reliability** | High (content hash) | High (ETag/Last-Modified) |
+| **Complexity** | High | Low |
+
+### What We Use Instead
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    CLASSIFICATION SOURCES                        │
+├─────────────────────────────────────────────────────────────────┤
+│  1. Anchor text: "Directives sur l'accueil de jour"    ✓ High  │
+│  2. URL path: "/themes/accueil-prescolaire/loi.pdf"    ✓ High  │
+│  3. Section heading: "Bases légales - Petite enfance"  ✓ High  │
+│  4. Page context: Link found in daycare section        ✓ Med   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    CHANGE DETECTION (HEAD request)              │
+├─────────────────────────────────────────────────────────────────┤
+│  ETag: "abc123def456"                  → Primary hash           │
+│  Last-Modified: "Wed, 21 Oct 2024..."  → Fallback               │
+│  Content-Length: 2458934               → Secondary signal       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### When We DO Parse PDFs (~10% of cases)
+
+1. **Low classification confidence** (<50%) - Need content to verify relevance
+2. **Admin requests extraction** - "Extract text" button in review UI
+3. **Auto-summary generation** - Extract first 300 chars for preview (optional)
+
+### Benefits
+
+- **Respectful**: Minimal load on cantonal government servers
+- **Fast**: Process 100+ documents per minute
+- **Cost-effective**: Minimal bandwidth and compute
+- **Accurate enough**: 85-90% accuracy is fine for filtering; admins review anyway
