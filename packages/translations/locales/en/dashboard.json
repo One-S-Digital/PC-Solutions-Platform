@@ -790,6 +790,17 @@
     "declined": "Declined",
     "cancelled": "Cancelled"
   },
+  "inquiryUrgency": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "preferredContactMethod": {
+    "email": "Email",
+    "phone": "Phone",
+    "platform": "Platform"
+  },
   "inquiryDetailModal": {
     "title": "Inquiry Details",
     "inquiryId": "Inquiry ID",

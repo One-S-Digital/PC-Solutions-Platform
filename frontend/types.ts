@@ -801,7 +801,7 @@ export interface PromoCode {
     description?: string; // e.g. "For first-time customers"
 }
 
-export type PreferredContactMethod = 'Email' | 'Phone' | 'Platform Form';
+export type SettingsPreferredContactMethod = 'Email' | 'Phone' | 'Platform Form';
 export type AvgResponseType = '< 24 h' | '2–3 d' | 'Other';
 export type DigestFrequency = 'Daily' | 'Weekly' | 'None';
 export type ConsultationLength = '30 min' | '60 min';
@@ -830,7 +830,7 @@ interface BaseSettings {
     canton?: string;
     regionsServed?: SwissCanton[];
     languagesSpoken?: SupportedLanguage[];
-    preferredContactMethod?: PreferredContactMethod;
+    preferredContactMethod?: SettingsPreferredContactMethod;
     avgResponseType?: AvgResponseType;
     externalBookingLink?: string;
     directOrderLink?: string; // Supplier only, but keep here for type simplicity

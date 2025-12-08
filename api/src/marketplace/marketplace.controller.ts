@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   Request,
+  ForbiddenException,
 } from '@nestjs/common';
 import { MarketplaceService } from './marketplace.service';
 import { InquiryService } from './inquiry.service';
@@ -274,7 +275,10 @@ export class MarketplaceController {
   @Roles(UserRole.PRODUCT_SUPPLIER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getReceivedInquiries(@Request() req, @Query('status') status?: string) {
     const supplierId = req.user.organizationId;
-    const inquiryStatus = status ? (status as InquiryStatus) : undefined;
+    // Validate status against enum values
+    const inquiryStatus = status && Object.values(InquiryStatus).includes(status as InquiryStatus)
+      ? (status as InquiryStatus)
+      : undefined;
     const inquiries = await this.inquiryService.findAllForSupplier(supplierId, inquiryStatus);
     return { success: true, data: inquiries };
   }
@@ -286,7 +290,10 @@ export class MarketplaceController {
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getSentInquiries(@Request() req, @Query('status') status?: string) {
     const buyerOrgId = req.user.organizationId;
-    const inquiryStatus = status ? (status as InquiryStatus) : undefined;
+    // Validate status against enum values
+    const inquiryStatus = status && Object.values(InquiryStatus).includes(status as InquiryStatus)
+      ? (status as InquiryStatus)
+      : undefined;
     const inquiries = await this.inquiryService.findAllForBuyer(buyerOrgId, inquiryStatus);
     return { success: true, data: inquiries };
   }
@@ -306,8 +313,14 @@ export class MarketplaceController {
    * Get a single inquiry by ID
    */
   @Get('inquiries/:id')
-  async getInquiryById(@Param('id') id: string) {
+  @Roles(UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getInquiryById(@Param('id') id: string, @Request() req) {
     const inquiry = await this.inquiryService.findOne(id);
+    // Verify the user has access to this inquiry (either as buyer or supplier)
+    const userOrgId = req.user.organizationId;
+    if (inquiry.supplierId !== userOrgId && inquiry.organizationId !== userOrgId) {
+      throw new ForbiddenException('You do not have access to this inquiry');
+    }
     return { success: true, data: inquiry };
   }
 

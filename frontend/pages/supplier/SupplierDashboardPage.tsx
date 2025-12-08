@@ -355,7 +355,7 @@ const SupplierDashboardPage: React.FC = () => {
                   {inquiryStats.recentInquiries.slice(0, 5).map((inquiry) => (
                     <tr key={inquiry.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/supplier/orders?tab=inquiries&inquiry=${inquiry.id}`)}>
                       <td className="px-3 py-2 whitespace-nowrap">{inquiry.buyerName}</td>
-                      <td className="px-3 py-2 max-w-xs truncate">{inquiry.subject || inquiry.message.substring(0, 30)}...</td>
+                      <td className="px-3 py-2 max-w-xs truncate">{inquiry.subject || (inquiry.message?.substring(0, 30) ?? '')}...</td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getInquiryStatusClass(inquiry.status)}`}>
                           {t(`inquiryStatus.${inquiry.status.toLowerCase()}` as const, inquiry.status)}

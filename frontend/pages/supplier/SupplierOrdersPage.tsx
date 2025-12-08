@@ -322,7 +322,7 @@ const SupplierOrdersPage: React.FC = () => {
                     <tr key={inquiry.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedInquiry(inquiry)}>
                       <td className="px-6 py-4 whitespace-nowrap font-medium text-swiss-teal">{inquiry.id.substring(0, 8)}...</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{inquiry.buyerName}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{inquiry.subject || inquiry.message.substring(0, 50)}...</td>
+                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{inquiry.subject || inquiry.message}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString(i18n.language)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {inquiry.urgency && (

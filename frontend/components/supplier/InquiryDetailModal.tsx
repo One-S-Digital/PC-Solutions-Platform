@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Inquiry, InquiryStatus } from '../../types';
@@ -21,6 +21,14 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
   const [showResponseForm, setShowResponseForm] = useState(false);
   const [selectedAction, setSelectedAction] = useState<InquiryStatus | null>(null);
 
+  // Reset form state when inquiry changes
+  useEffect(() => {
+    setResponseMessage('');
+    setQuotedAmount('');
+    setShowResponseForm(false);
+    setSelectedAction(null);
+  }, [inquiry?.id]);
+
   if (!isOpen || !inquiry) return null;
 
   const handleViewProfile = () => {
@@ -42,7 +50,8 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
 
   const handleSubmitResponse = () => {
     if (selectedAction) {
-      const amount = quotedAmount ? parseFloat(quotedAmount) : undefined;
+      const parsedAmount = parseFloat(quotedAmount);
+      const amount = quotedAmount && !isNaN(parsedAmount) ? parsedAmount : undefined;
       onUpdateStatus(inquiry.id, selectedAction, responseMessage || undefined, amount);
       setShowResponseForm(false);
       setResponseMessage('');
@@ -166,7 +175,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b">
           <h2 className="text-xl font-semibold text-swiss-charcoal">{t('inquiryDetailModal.title', 'Inquiry Details')}</h2>
-          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('common:buttons.close', 'Close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -192,7 +201,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
               <span className="block text-xs text-gray-500">{t('inquiryDetailModal.urgency', 'Urgency')}</span>
               {inquiry.urgency ? (
                 <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${getUrgencyColor(inquiry.urgency)}`}>
-                  {inquiry.urgency}
+                  {t(`inquiryUrgency.${inquiry.urgency.toLowerCase()}` as const, inquiry.urgency)}
                 </span>
               ) : (
                 <span className="text-gray-400">-</span>
@@ -237,7 +246,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
                 {inquiry.preferredContactMethod && (
                   <span className="flex items-center text-gray-500">
                     <ChatBubbleLeftRightIcon className="w-4 h-4 mr-1" />
-                    {t('inquiryDetailModal.preferredContact', 'Preferred')}: {inquiry.preferredContactMethod}
+                    {t('inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}
                   </span>
                 )}
               </div>
