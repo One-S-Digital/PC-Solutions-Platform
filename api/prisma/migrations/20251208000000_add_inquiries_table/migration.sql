@@ -1,12 +1,16 @@
 -- CreateEnum (if not exists)
-DO $$ BEGIN
-    CREATE TYPE "InquiryStatus" AS ENUM ('NEW', 'PENDING', 'CONTACTED', 'QUOTED', 'FULFILLED', 'DECLINED', 'CANCELLED');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'InquiryStatus'
+    ) THEN
+        CREATE TYPE "public"."InquiryStatus" AS ENUM ('NEW', 'PENDING', 'CONTACTED', 'QUOTED', 'FULFILLED', 'DECLINED', 'CANCELLED');
+    END IF;
+END
+$$;
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "inquiries" (
+CREATE TABLE IF NOT EXISTS "public"."inquiries" (
     "id" TEXT NOT NULL,
     "organizationId" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
@@ -20,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "inquiries" (
     "contactEmail" TEXT,
     "contactPhone" TEXT,
     "preferredContactMethod" TEXT,
-    "status" "InquiryStatus" NOT NULL DEFAULT 'NEW',
+    "status" "public"."InquiryStatus" NOT NULL DEFAULT 'NEW',
     "supplierNotes" TEXT,
     "responseMessage" TEXT,
     "quotedAmount" DOUBLE PRECISION,
@@ -33,23 +37,61 @@ CREATE TABLE IF NOT EXISTS "inquiries" (
 );
 
 -- CreateIndex
-CREATE INDEX IF NOT EXISTS "inquiries_supplierId_status_idx" ON "inquiries"("supplierId", "status");
-
--- CreateIndex
-CREATE INDEX IF NOT EXISTS "inquiries_organizationId_idx" ON "inquiries"("organizationId");
-
--- CreateIndex
-CREATE INDEX IF NOT EXISTS "inquiries_createdAt_idx" ON "inquiries"("createdAt");
-
--- AddForeignKey (if not exists)
-DO $$ BEGIN
-    ALTER TABLE "inquiries" ADD CONSTRAINT "inquiries_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-EXCEPTION
-    WHEN duplicate_object THEN null;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'inquiries_supplierId_status_idx'
+    ) THEN
+        CREATE INDEX "inquiries_supplierId_status_idx" ON "public"."inquiries"("supplierId", "status");
+    END IF;
 END $$;
 
-DO $$ BEGIN
-    ALTER TABLE "inquiries" ADD CONSTRAINT "inquiries_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-EXCEPTION
-    WHEN duplicate_object THEN null;
+-- CreateIndex
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'inquiries_organizationId_idx'
+    ) THEN
+        CREATE INDEX "inquiries_organizationId_idx" ON "public"."inquiries"("organizationId");
+    END IF;
+END $$;
+
+-- CreateIndex
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE indexname = 'inquiries_createdAt_idx'
+    ) THEN
+        CREATE INDEX "inquiries_createdAt_idx" ON "public"."inquiries"("createdAt");
+    END IF;
+END $$;
+
+-- AddForeignKey (if not exists)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'inquiries_organizationId_fkey'
+    ) THEN
+        ALTER TABLE "public"."inquiries" 
+        ADD CONSTRAINT "inquiries_organizationId_fkey" 
+        FOREIGN KEY ("organizationId") REFERENCES "public"."organizations"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'inquiries_supplierId_fkey'
+    ) THEN
+        ALTER TABLE "public"."inquiries" 
+        ADD CONSTRAINT "inquiries_supplierId_fkey" 
+        FOREIGN KEY ("supplierId") REFERENCES "public"."organizations"("id") 
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
 END $$;

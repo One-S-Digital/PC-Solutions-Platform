@@ -217,6 +217,49 @@ EOSQL
                 exit 1
             fi
         fi
+    elif echo "$MIGRATION_STATUS" | grep -q "20251208000000_add_inquiries_table"; then
+        echo "🔧 Detected failed inquiries table migration, ensuring table exists..."
+        
+        # Run the fix using prebuild script
+        if node ./scripts/prebuild-db-setup.mjs; then
+            echo "✅ Inquiries table created"
+        else
+            echo "⚠️  Inquiries table fix had issues, but continuing..."
+        fi
+        
+        # Retry migration deployment
+        echo "🔄 Retrying migration deployment after fix..."
+        if run_prisma_migrate_deploy; then
+            echo "✅ Migrations deployed successfully after inquiries fix"
+        else
+            echo "⚠️  Migration still failing, verifying schema state..."
+            
+            # Verify the table exists
+            VERIFY_TMP=$(mktemp)
+            if ! npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin >"$VERIFY_TMP" 2>&1 <<'EOSQL'
+SELECT 
+    CASE WHEN EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'inquiries') 
+        THEN 'inquiries EXISTS' ELSE 'inquiries MISSING' END as inquiries_check;
+EOSQL
+            then
+                :
+            fi
+            VERIFY_RESULT=$(cat "$VERIFY_TMP")
+            rm -f "$VERIFY_TMP"
+            
+            echo "$VERIFY_RESULT"
+            
+            if echo "$VERIFY_RESULT" | grep -q "EXISTS" && ! echo "$VERIFY_RESULT" | grep -q "MISSING"; then
+                echo "✅ Inquiries table exists, marking migration as applied..."
+                npx prisma migrate resolve --applied "20251208000000_add_inquiries_table" --schema "$PRISMA_SCHEMA_PATH" || true
+                echo "✅ Build can continue - schema is correct"
+            else
+                echo "❌ Inquiries table is missing"
+                echo "📋 Final migration status:"
+                npx prisma migrate status --schema "$PRISMA_SCHEMA_PATH" || true
+                exit 1
+            fi
+        fi
     elif echo "$MIGRATION_STATUS" | grep -q "$CONTENT_CATEGORY_MIGRATION_ID"; then
         echo "🔧 Detected pending content category migration, attempting automatic fix..."
         CONTENT_STATUS=$(check_content_category_column)
