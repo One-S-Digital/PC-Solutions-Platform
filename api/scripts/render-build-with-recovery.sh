@@ -217,7 +217,7 @@ EOSQL
                 exit 1
             fi
         fi
-    elif echo "$MIGRATION_STATUS" | grep -q "20251220000008_add_company_profile_doc_asset_kind" || echo "$MIGRATION_LAST_OUTPUT" | grep -q "COMPANY_PROFILE_DOC"; then
+    elif echo "$MIGRATION_STATUS" | grep -q "20251220000008_add_company_profile_doc_asset_kind" || echo "$MIGRATION_LAST_OUTPUT" | grep -qE "(enum.*COMPANY_PROFILE_DOC|COMPANY_PROFILE_DOC.*already exists)"; then
         echo "🔧 Detected failed AssetKind enum migration, ensuring enum value exists..."
         
         # Run the fix using prebuild script
