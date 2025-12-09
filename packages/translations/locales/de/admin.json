@@ -566,6 +566,49 @@
       }
     }
   },
+  "dashboard": {
+    "quickActions": {
+      "title": "Schnellaktionen",
+      "manageUsers": {
+        "title": "Benutzer verwalten",
+        "description": "Benutzer hinzufügen, bearbeiten oder entfernen"
+      },
+      "organizations": {
+        "title": "Organisationen",
+        "description": "Kindertagesstätten verwalten"
+      },
+      "orders": {
+        "title": "Bestellungen",
+        "description": "Aktuelle Bestellungen anzeigen"
+      },
+      "analytics": {
+        "title": "Analytik",
+        "description": "Plattformmetriken anzeigen"
+      }
+    },
+    "contentUploadSuccess": "Inhalt erfolgreich hochgeladen!"
+  },
+  "sidebar": {
+    "version": "Backend-Verwaltung v1.0",
+    "adminLogo": "Admin-Logo",
+    "dashboard": "Dashboard",
+    "users": "Benutzer",
+    "foundations": "Stiftungen",
+    "partners": "Partner",
+    "products": "Produkte",
+    "services": "Dienste",
+    "jobListings": "Stellenangebote",
+    "candidatePool": "Bewerberpool",
+    "parentLeads": "Eltern-Leads",
+    "ordersAppointments": "Bestellungen und Termine",
+    "content": "Inhalt",
+    "messages": "Nachrichten",
+    "support": "Support",
+    "systemMonitoring": "Systemüberwachung",
+    "translations": "Übersetzungen",
+    "designSystem": "Design-System",
+    "settings": "Einstellungen"
+  },
   "partners": {
     "application": {
       "organizationNamePlaceholder": "Geben Sie Ihren Organisationsnamen ein",
@@ -636,7 +679,37 @@
     "searchResults": "Suchergebnisse",
     "noPartners": "Noch keine Partner verfügbar",
     "noResults": "Keine Partner gefunden, die Ihrer Suche entsprechen",
-    "allTypes": "Alle Typen"
+    "allTypes": "Alle Typen",
+    "publicPage": {
+      "trustedBy": "Vertraut von führenden Organisationen",
+      "heroTitle": "Unsere Partner",
+      "heroSubtitle": "Wir arbeiten mit Branchenführern, akademischen Institutionen und innovativen Organisationen zusammen, um die besten Kinderbetreuungslösungen in der Schweiz zu liefern.",
+      "stats": {
+        "partners": "Partner",
+        "cantonsCovered": "Kantone Abgedeckt",
+        "daycaresServed": "Krippen Bedient",
+        "averageRating": "Durchschnittliche Bewertung"
+      },
+      "searchPlaceholder": "Partner nach Name, Beschreibung oder Standort suchen...",
+      "filters": "Filter",
+      "allPartners": "Alle Partner",
+      "featuredTitle": "Ausgewählte Partner",
+      "featuredSubtitle": "Unsere angesehensten Mitarbeiter",
+      "allPartnersTitle": "Alle Partner",
+      "noPartnersFound": "Keine Partner gefunden",
+      "tryAdjustingFilters": "Versuchen Sie, Ihre Suche oder Filter anzupassen",
+      "noPartnersAvailable": "Derzeit sind keine Partner verfügbar",
+      "clearFilters": "Filter Zurücksetzen",
+      "becomePartnerTitle": "Partner Werden",
+      "becomePartnerSubtitle": "Treten Sie unserem Netzwerk vertrauenswürdiger Partner bei und helfen Sie mit, die Zukunft der Kinderbetreuung in der Schweiz zu gestalten. Gemeinsam können wir etwas bewirken.",
+      "applyButton": "Bewerben Sie sich als Partner",
+      "contactUs": "Kontaktieren Sie Uns",
+      "visitWebsite": "Website Besuchen",
+      "featured": "Ausgewählt",
+      "signIn": "Anmelden",
+      "getStarted": "Loslegen",
+      "pricing": "Preise"
+    }
   },
   "discountTerminations": {
     "actions": {
@@ -714,6 +787,20 @@
     }
   },
   "content": {
+    "title": "Content-Verwaltung",
+    "description": "E-Learning-Materialien, HR-Dokumente und staatliche Richtlinien hochladen und verwalten",
+    "addELearning": "E-Learning-Inhalt hinzufügen",
+    "addHRDocument": "HR-Dokument hinzufügen",
+    "addStatePolicy": "Staatliche Richtlinie hinzufügen",
+    "updated": "Aktualisiert",
+    "view": "Ansehen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Inhalt löschen möchten?",
+    "deleteSuccess": "Inhalt erfolgreich gelöscht",
+    "updateSuccess": "Inhalt erfolgreich aktualisiert",
+    "uploadSuccess": "Inhalt erfolgreich hochgeladen",
+    "noFileUrl": "Keine Datei-URL für diesen Inhalt verfügbar",
     "statePolicies": {
       "searchPlaceholder": "Suchpolitik...",
       "noResults": "Keine Ergebnisse gefunden",
@@ -741,6 +828,36 @@
     },
     "orDragDrop": "oder ziehen und ablegen",
     "selected": "Ausgewählte"
+  },
+  "parentLeads": {
+    "title": "Eltern-Leads",
+    "subtitle": "Anfragen und Leads von Eltern verwalten ({{count}} insgesamt)",
+    "addLead": "Lead hinzufügen",
+    "table": {
+      "parent": "Elternteil",
+      "childInfo": "Kinderinformationen",
+      "location": "Standort",
+      "status": "Status",
+      "inquiryDate": "Anfragedatum",
+      "actions": "Aktionen"
+    },
+    "labels": {
+      "unknown": "Unbekannt",
+      "noEmail": "N/A",
+      "yearsOld": "Jahre alt"
+    },
+    "actions": {
+      "editStatus": "Status bearbeiten",
+      "delete": "Löschen"
+    },
+    "emptyState": {
+      "title": "Keine Eltern-Leads gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder einen neuen Lead hinzuzufügen."
+    },
+    "error": {
+      "loadFailed": "Fehler beim Laden der Eltern-Leads",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    }
   },
   "designSystem": {
     "formControls": {
@@ -852,23 +969,127 @@
     }
   },
   "organizations": {
+    "modal": {
+      "addTitle": "Organisation hinzufügen",
+      "editTitle": "Organisation bearbeiten"
+    },
+    "form": {
+      "basicInfo": "Grundinformationen",
+      "name": "Organisationsname",
+      "namePlaceholder": "Organisationsname eingeben",
+      "nameRequired": "Organisationsname ist erforderlich",
+      "saveFailed": "Fehler beim Speichern der Organisation",
+      "type": "Typ",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Kurze Beschreibung der Organisation",
+      "contactInfo": "Kontaktinformationen",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "address": "Adresse",
+      "addressPlaceholder": "Straßenadresse, Stadt",
+      "region": "Region/Kanton",
+      "website": "Website",
+      "daycareDetails": "Kindertagesstätte Details",
+      "capacity": "Kapazität (Kinder)",
+      "capacityPlaceholder": "Anzahl der Kinder",
+      "pedagogy": "Pädagogische Ansätze",
+      "languages": "Gesprochene Sprachen"
+    },
+    "types": {
+      "foundation": "Stiftung (Kindertagesstätte)",
+      "serviceProvider": "Dienstanbieter",
+      "productSupplier": "Produktlieferant",
+      "daycare": "Kindertagesstätte"
+    },
+    "actions": {
+      "create": "Organisation erstellen",
+      "save": "Änderungen speichern",
+      "delete": "Organisation löschen",
+      "edit": "Bearbeiten"
+    },
+    "delete": {
+      "title": "Organisation löschen",
+      "confirmation": "Sind Sie sicher, dass Sie löschen möchten",
+      "warning": " ? Diese Aktion kann nicht rückgängig gemacht werden und entfernt dauerhaft alle zugehörigen Daten, einschließlich Produkte, Dienstleistungen und Stellenangebote."
+    },
+    "title": "Organisationen",
+    "subtitle": "Kindertagesstätten und Organisationen verwalten ({{count}} insgesamt)",
+    "foundation": "Stiftung",
+    "organisation": "Organisation",
+    "tabs": {
+      "foundations": "Stiftungen",
+      "organisations": "Organisationen"
+    },
+    "foundationsDesc": {
+      "title": "Stiftungen (Kindertagesstätten)",
+      "subtitle": "Kinderbetreuungszentren und Kindertagesstätten, die auf der Plattform registriert sind"
+    },
+    "organisationsDesc": {
+      "title": "Organisationen (Dienstanbieter und Produktlieferanten)",
+      "subtitle": "Unternehmen, die Dienstleistungen oder Produkte für Kinderbetreuungsorganisationen bereitstellen"
+    },
+    "searchPlaceholder": "Organisationen nach Name, Adresse oder Region suchen...",
     "emptyState": {
+      "noResults": "Keine Organisationen gefunden",
+      "noData": "Noch keine Stiftungen",
+      "adjustSearch": "Versuchen Sie, Ihre Suchkriterien anzupassen",
+      "getStarted": "Beginnen Sie, indem Sie Ihre erste Stiftung hinzufügen",
       "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder eine neue Organisation hinzuzufügen.",
       "title": "Keine Organisationen gefunden"
     },
     "error": {
-      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-      "title": "Fehler beim Laden der Organisationen"
+      "title": "Fehler beim Laden der Organisationen",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
     },
-    "searchPlaceholder": "Organisationen suchen...",
-    "actions": {
-      "delete": "Löschen",
-      "edit": "Bearbeiten"
-    },
+    "childrenCapacity": "Kinderkapazität",
     "staffMembers": "Mitarbeiter",
-    "addButton": "Organisation hinzufügen",
-    "subtitle": "Kindertagesstätten und Organisationen verwalten ({{count}} insgesamt)",
-    "title": "Organisationen"
+    "addButton": "Organisation hinzufügen"
+  },
+  "users": {
+    "title": "Benutzerverwaltung",
+    "subtitle": "Alle Benutzer auf der Plattform verwalten",
+    "addUser": "Benutzer hinzufügen",
+    "editUser": {
+      "title": "Benutzer bearbeiten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "status": "Status",
+      "emailRequired": "E-Mail ist erforderlich",
+      "updateFailed": "Fehler beim Aktualisieren des Benutzers",
+      "saveChanges": "Änderungen speichern",
+      "saving": "Speichern..."
+    },
+    "deleteUser": {
+      "title": "Benutzer löschen",
+      "confirmation": "Sind Sie sicher, dass Sie löschen möchten",
+      "warning": " ? Diese Aktion kann nicht rückgängig gemacht werden und entfernt dauerhaft alle zugehörigen Daten.",
+      "deleting": "Löschen...",
+      "delete": "Benutzer löschen"
+    },
+    "table": {
+      "user": "Benutzer",
+      "role": "Rolle",
+      "organization": "Organisation",
+      "status": "Status",
+      "lastLogin": "Letzte Anmeldung",
+      "actions": "Aktionen"
+    },
+    "emptyState": {
+      "title": "Keine Benutzer gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder einen neuen Benutzer hinzuzufügen."
+    },
+    "error": {
+      "loadFailed": "Fehler beim Laden der Benutzer",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "labels": {
+      "unknown": "Unbekannt",
+      "noEmail": "Keine E-Mail",
+      "noOrganization": "Keine Organisation",
+      "never": "Nie"
+    }
   },
   "translations": {
     "descriptionPlaceholder": "Beschreibung (fakultativ)",
@@ -994,5 +1215,314 @@
     "staff": "Personal",
     "title": "Tickets unterstützen",
     "user": "Benutzer"
+  },
+  "partnersAdmin": {
+    "title": "Partner",
+    "subtitle": "Partnerorganisationen und Sponsoren verwalten ({{count}} insgesamt)",
+    "addPartner": "Partner hinzufügen",
+    "searchPlaceholder": "Partner suchen...",
+    "filters": {
+      "allTypes": "Alle Typen",
+      "allStatus": "Alle Status",
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "stats": {
+      "totalPartners": "Partner insgesamt",
+      "active": "Aktiv",
+      "featured": "Hervorgehoben",
+      "types": "Typen"
+    },
+    "emptyState": {
+      "noPartnersFound": "Keine Partner gefunden",
+      "noPartnersYet": "Noch keine Partner",
+      "tryAdjusting": "Versuchen Sie, Ihre Such- oder Filterkriterien anzupassen",
+      "getStarted": "Beginnen Sie, indem Sie Ihren ersten Partner hinzufügen"
+    },
+    "error": {
+      "loadFailed": "Fehler beim Laden der Partner",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    },
+    "modal": {
+      "addTitle": "Neuen Partner hinzufügen",
+      "editTitle": "Partner bearbeiten",
+      "basicInfo": "Grundinformationen",
+      "partnerName": "Partnername",
+      "partnerNameRequired": "Partnername ist erforderlich",
+      "type": "Typ",
+      "countryRegion": "Land/Region",
+      "countryRegionPlaceholder": "z.B. Schweiz",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Kurze Beschreibung des Partners",
+      "websiteUrl": "Website-URL",
+      "websiteUrlPlaceholder": "https://beispiel.com",
+      "logoUrl": "Logo-URL",
+      "logoUrlPlaceholder": "https://beispiel.com/logo.png",
+      "contactInfo": "Kontaktinformationen",
+      "contactPerson": "Kontaktperson",
+      "contactPersonPlaceholder": "Max Mustermann",
+      "email": "E-Mail",
+      "emailPlaceholder": "kontakt@beispiel.com",
+      "phone": "Telefon",
+      "phonePlaceholder": "+41 XX XXX XX XX",
+      "partnershipDetails": "Partnerschaftsdetails",
+      "partnershipStart": "Partnerschaftsbeginn",
+      "partnershipEnd": "Partnerschaftsende",
+      "displayOrder": "Anzeigereihenfolge",
+      "displayOrderPlaceholder": "0",
+      "displayOrderHint": "Niedrigere Zahlen erscheinen zuerst",
+      "visibility": "Sichtbarkeit",
+      "active": "Aktiv",
+      "featured": "Hervorgehoben",
+      "saving": "Speichern...",
+      "createPartner": "Partner erstellen",
+      "saveChanges": "Änderungen speichern",
+      "saveFailed": "Fehler beim Speichern des Partners"
+    },
+    "delete": {
+      "title": "Partner löschen",
+      "confirmation": "Sind Sie sicher, dass Sie {{name}} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleting": "Löschen...",
+      "deletePartner": "Partner löschen"
+    },
+    "card": {
+      "edit": "Bearbeiten",
+      "deactivate": "Deaktivieren",
+      "activate": "Aktivieren",
+      "removeFeatured": "Hervorhebung entfernen",
+      "markFeatured": "Als hervorgehoben markieren",
+      "delete": "Löschen",
+      "visitWebsite": "Website besuchen",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "since": "Seit {{year}}"
+    },
+    "types": {
+      "academic": "Akademisch",
+      "corporate": "Unternehmen",
+      "governmental": "Regierungsbehörde",
+      "nonProfit": "Gemeinnützig",
+      "non_profit": "Gemeinnützig",
+      "media": "Medien",
+      "technology": "Technologie"
+    }
+  },
+  "orders": {
+    "title": "Bestellungen",
+    "subtitle": "Kundenbestellungen und Lieferungen verwalten ({{count}} insgesamt)",
+    "createOrder": "Bestellung erstellen",
+    "table": {
+      "order": "Bestellung",
+      "customer": "Kunde",
+      "items": "Artikel",
+      "total": "Gesamt",
+      "status": "Status",
+      "date": "Datum",
+      "actions": "Aktionen"
+    },
+    "labels": {
+      "items": "Artikel",
+      "noEmail": "N/A"
+    },
+    "actions": {
+      "editOrder": "Bestellung bearbeiten",
+      "cancelOrder": "Bestellung stornieren"
+    },
+    "emptyState": {
+      "title": "Keine Bestellungen gefunden",
+      "description": "Versuchen Sie, Ihre Suchkriterien anzupassen oder erstellen Sie eine neue Bestellung."
+    },
+    "error": {
+      "loadFailed": "Fehler beim Laden der Bestellungen",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    }
+  },
+  "messaging": {
+    "title": "Nachrichten",
+    "searchPlaceholder": "Konversationen suchen...",
+    "typePlaceholder": "Geben Sie Ihre Nachricht ein...",
+    "emptyState": {
+      "noConversations": "Keine Konversationen gefunden",
+      "tryAdjusting": "Versuchen Sie, Ihre Suche anzupassen",
+      "startNew": "Starten Sie eine neue Konversation, um zu beginnen",
+      "selectConversation": "Wählen Sie eine Konversation",
+      "chooseConversation": "Wählen Sie eine Konversation aus der Liste, um mit dem Messaging zu beginnen.",
+      "noMessagesYet": "Noch keine Nachrichten. Starten Sie die Konversation!",
+      "noMessagesYetSnippet": "Noch keine Nachrichten"
+    },
+    "actions": {
+      "viewProfile": "Profil ansehen",
+      "call": "Anrufen"
+    },
+    "labels": {
+      "initializing": "Initialisierung...",
+      "failedToLoad": "Fehler beim Laden der Konversationen.",
+      "failedToLoadMessages": "Fehler beim Laden der Nachrichten."
+    }
+  },
+  "systemMonitor": {
+    "title": "Systemüberwachung",
+    "subtitle": "Echtzeitüberwachung der Systemgesundheit und -leistung",
+    "tabs": {
+      "overview": "Übersicht",
+      "metrics": "Metriken",
+      "alerts": "Warnungen",
+      "logs": "Fehlerprotokolle",
+      "analytics": "Analysen",
+      "security": "Sicherheit"
+    },
+    "status": {
+      "title": "Systemstatus",
+      "allSystemsOperational": "Alle Systeme funktionsfähig",
+      "systemIssuesDetected": "Systemprobleme erkannt",
+      "backendApi": "Backend-API",
+      "database": "Datenbank",
+      "authenticationService": "Authentifizierungsdienst",
+      "environment": "Umgebung:",
+      "uptime": "Betriebszeit:",
+      "version": "Version:",
+      "lastCheck": "Letzte Überprüfung:",
+      "justNow": "Gerade eben"
+    },
+    "metrics": {
+      "serverPerformance": "Serverleistung",
+      "databasePerformance": "Datenbankleistung",
+      "applicationPerformance": "Anwendungsleistung",
+      "requiresBackend": "Systemmetriken erfordern eine Backend-Überwachungsinfrastruktur. Derzeit werden verfügbare Gesundheitsdaten angezeigt."
+    },
+    "alerts": {
+      "title": "Systemwarnungen",
+      "createAlert": "Warnung erstellen",
+      "status": "Status",
+      "type": "Typ"
+    },
+    "logs": {
+      "title": "Fehlerprotokoll-Konsole",
+      "allLogs": "Alle Protokolle",
+      "noLogsFound": "Keine Protokolle gefunden"
+    },
+    "analytics": {
+      "performanceAnalytics": "Leistungsanalysen",
+      "userAnalytics": "Benutzeranalysen",
+      "geographicDistribution": "Geografische Verteilung",
+      "requiresBackend": "Leistungsanalysen erfordern, dass eine Backend-Überwachungsinfrastruktur konfiguriert ist.",
+      "requiresTracking": "Benutzeranalysen erfordern, dass eine Tracking-Infrastruktur konfiguriert ist. Siehe das Haupt-Dashboard für verfügbare Benutzerstatistiken.",
+      "requiresLocation": "Geografische Analysen erfordern die Implementierung der Benutzerstandortverfolgung. Diese Funktion zeigt die Benutzerverteilung nach Region an, sobald die Tracking-Infrastruktur konfiguriert ist."
+    },
+    "security": {
+      "title": "Sicherheitsübersicht",
+      "recentEvents": "Aktuelle Sicherheitsereignisse",
+      "settings": "Sicherheitseinstellungen",
+      "requiresBackend": "Sicherheitsmetriken erfordern, dass eine Sicherheitsüberwachungsinfrastruktur konfiguriert ist.",
+      "requiresAudit": "Die Protokollierung von Sicherheitsereignissen erfordert, dass eine Audit-Infrastruktur konfiguriert ist. Wenn aktiviert, zeigt dieser Abschnitt aktuelle Sicherheitsereignisse wie fehlgeschlagene Anmeldungen, verdächtige Aktivitäten und Sicherheitsscans an.",
+      "twoFactorAuth": "Zwei-Faktor-Authentifizierung",
+      "twoFactorAuthDesc": "2FA für alle Administratorkonten erforderlich",
+      "ipWhitelist": "IP-Whitelist",
+      "ipWhitelistDesc": "Administratorzugriff auf bestimmte IPs beschränken",
+      "sessionTimeout": "Sitzungstimeout",
+      "sessionTimeoutDesc": "Automatische Abmeldung nach 30 Minuten Inaktivität"
+    }
+  },
+  "translations": {
+    "title": "Übersetzungsverwaltung",
+    "subtitle": "Statische UI-Übersetzungen verwalten",
+    "tabs": {
+      "translations": "Übersetzungen",
+      "auditLogs": "Auditprotokolle",
+      "releases": "Versionen"
+    },
+    "releases": {
+      "title": "Übersetzungsversionen",
+      "versionPlaceholder": "Version (z.B. v1.2.3)",
+      "descriptionPlaceholder": "Beschreibung (optional)",
+      "createRelease": "Version erstellen",
+      "creating": "Erstellen...",
+      "description": "Das Erstellen einer Version invalidiert alle Caches und zwingt Clients, frische Übersetzungen abzurufen."
+    },
+    "filters": {
+      "namespace": "Namensraum",
+      "search": "Suchen"
+    },
+    "searchPlaceholder": "Nach Schlüsseln oder Werten suchen...",
+    "pagination": {
+      "showingResults": "Zeige {{start}} bis {{end}} von {{total}} Ergebnissen",
+      "pageOfTotal": "Seite {{page}} von {{totalPages}}"
+    },
+    "oneClickSync": {
+      "title": "Ein-Klick-Synchronisation",
+      "description": "Englische Schlüssel importieren → In Französisch und Deutsch übersetzen → In Dateien exportieren.",
+      "subDescription": "Das macht alles in einem Schritt! Dauert 5-10 Minuten.",
+      "button": "🔄 Vollständige Synchronisation aller Sprachen",
+      "syncing": "Synchronisierung... (dauert einige Minuten)"
+    },
+    "advanced": {
+      "title": "⚙️ Erweiterte Optionen (Einzelschritte)",
+      "expand": "Zum Erweitern klicken",
+      "importFromFiles": "Aus JSON-Dateien importieren",
+      "importFromFilesDesc": "EN/FR/DE aus packages/translations/locales in die Datenbank laden",
+      "import": "Importieren",
+      "importing": "Importieren...",
+      "scanFix": "Hartcodierte Zeichenfolgen scannen und reparieren",
+      "scanFixDesc": "Hartcodierte Zeichenfolgen im Code finden und Übersetzungsschlüssel erstellen",
+      "scan": "Scannen",
+      "scanning": "Scannen...",
+      "translateMissing": "Fehlende übersetzen (FR/DE)",
+      "translateMissingDesc": "Fehlende Schlüssel ins Französische und Deutsche übersetzen",
+      "translate": "Übersetzen",
+      "translating": "Übersetzen...",
+      "cleanPrefixes": "Präfixe bereinigen",
+      "cleanPrefixesDesc": "Präfixe [FR]/[DE]/[EN] aus Übersetzungen entfernen",
+      "clean": "Bereinigen",
+      "cleaning": "Bereinigen...",
+      "exportToFiles": "In JSON-Dateien exportieren",
+      "exportToFilesDesc": "Datenbankübersetzungen zurück in JSON-Dateien synchronisieren (erforderlich für Frontend)",
+      "export": "Exportieren"
+    },
+    "moreOptions": {
+      "title": "Weitere Optionen",
+      "show": "Anzeigen",
+      "hide": "Ausblenden",
+      "refresh": "Aktualisieren",
+      "fixEnLabels": "EN-Schlüsselbeschriftungen reparieren",
+      "fixingEnLabels": "EN-Beschriftungen reparieren...",
+      "approveSelected": "{{count}} Ausgewählte genehmigen",
+      "approving": "Genehmigen...",
+      "exportJson": "JSON exportieren",
+      "exportCsv": "CSV exportieren",
+      "import": "Importieren"
+    },
+    "table": {
+      "namespace": "Namensraum",
+      "key": "Schlüssel",
+      "actions": "Actions",
+      "noTranslationsFound": "Keine Übersetzungen gefunden"
+    },
+    "missing": "Fehlend",
+    "stats": {
+      "totalKeys": "Schlüssel insgesamt",
+      "needsReview": "Benötigt Überprüfung",
+      "namespaces": "Namensräume"
+    },
+    "audit": {
+      "title": "Auditprotokolle",
+      "date": "Datum",
+      "action": "Aktion",
+      "namespace": "Namensraum",
+      "key": "Schlüssel",
+      "language": "Sprache",
+      "user": "Benutzer",
+      "noLogsFound": "Keine Auditprotokolle gefunden"
+    },
+    "releasesList": {
+      "title": "Übersetzungsversionen",
+      "active": "Aktiv",
+      "created": "Erstellt:",
+      "by": "von",
+      "noReleasesFound": "Keine Versionen gefunden"
+    },
+    "error": {
+      "loadFailed": "Fehler beim Laden der Übersetzungen",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    }
   }
 }

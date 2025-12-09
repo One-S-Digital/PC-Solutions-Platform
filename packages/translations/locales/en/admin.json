@@ -553,6 +553,49 @@
       }
     }
   },
+  "dashboard": {
+    "quickActions": {
+      "title": "Quick Actions",
+      "manageUsers": {
+        "title": "Manage Users",
+        "description": "Add, edit, or remove users"
+      },
+      "organizations": {
+        "title": "Organizations",
+        "description": "Manage daycare centers"
+      },
+      "orders": {
+        "title": "Orders",
+        "description": "View recent orders"
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "View platform metrics"
+      }
+    },
+    "contentUploadSuccess": "Content uploaded successfully!"
+  },
+  "sidebar": {
+    "version": "Backend Management v1.0",
+    "adminLogo": "Admin Logo",
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "foundations": "Foundations",
+    "partners": "Partners",
+    "products": "Products",
+    "services": "Services",
+    "jobListings": "Job Listings",
+    "candidatePool": "Candidate Pool",
+    "parentLeads": "Parent Leads",
+    "ordersAppointments": "Orders Appointments",
+    "content": "Content",
+    "messages": "Messages",
+    "support": "Support",
+    "systemMonitoring": "System Monitoring",
+    "translations": "Translations",
+    "designSystem": "Design System",
+    "settings": "Settings"
+  },
   "partners": {
     "application": {
       "organizationNamePlaceholder": "Enter your organization name",
@@ -617,7 +660,37 @@
     "searchResults": "Search Results",
     "noPartners": "No partners available yet",
     "noResults": "No partners found matching your search",
-    "allTypes": "All Types"
+    "allTypes": "All Types",
+    "publicPage": {
+      "trustedBy": "Trusted by Leading Organizations",
+      "heroTitle": "Our Partners",
+      "heroSubtitle": "We collaborate with industry leaders, academic institutions, and innovative organizations to deliver the best childcare solutions in Switzerland.",
+      "stats": {
+        "partners": "Partners",
+        "cantonsCovered": "Cantons Covered",
+        "daycaresServed": "Daycares Served",
+        "averageRating": "Average Rating"
+      },
+      "searchPlaceholder": "Search partners by name, description, or location...",
+      "filters": "Filters",
+      "allPartners": "All Partners",
+      "featuredTitle": "Featured Partners",
+      "featuredSubtitle": "Our most distinguished collaborators",
+      "allPartnersTitle": "All Partners",
+      "noPartnersFound": "No partners found",
+      "tryAdjustingFilters": "Try adjusting your search or filters",
+      "noPartnersAvailable": "No partners are available at the moment",
+      "clearFilters": "Clear Filters",
+      "becomePartnerTitle": "Become a Partner",
+      "becomePartnerSubtitle": "Join our network of trusted partners and help shape the future of childcare in Switzerland. Together, we can make a difference.",
+      "applyButton": "Apply to Become a Partner",
+      "contactUs": "Contact Us",
+      "visitWebsite": "Visit Website",
+      "featured": "Featured",
+      "signIn": "Sign In",
+      "getStarted": "Get Started",
+      "pricing": "Pricing"
+    }
   },
   "discountTerminations": {
     "actions": {
@@ -688,6 +761,20 @@
     }
   },
   "content": {
+    "title": "Content Management",
+    "description": "Upload and manage e-learning materials, HR documents, and state policies",
+    "addELearning": "Add E-Learning Content",
+    "addHRDocument": "Add HR Document",
+    "addStatePolicy": "Add State Policy",
+    "updated": "Updated",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this content?",
+    "deleteSuccess": "Content deleted successfully",
+    "updateSuccess": "Content updated successfully",
+    "uploadSuccess": "Content uploaded successfully",
+    "noFileUrl": "No file URL available for this content",
     "statePolicies": {
       "searchPlaceholder": "Search policies...",
       "noResults": "No results found",
@@ -715,6 +802,36 @@
     },
     "orDragDrop": "or drag and drop",
     "selected": "Selected"
+  },
+  "parentLeads": {
+    "title": "Parent Leads",
+    "subtitle": "Manage parent inquiries and leads ({{count}} total)",
+    "addLead": "Add Lead",
+    "table": {
+      "parent": "Parent",
+      "childInfo": "Child Info",
+      "location": "Location",
+      "status": "Status",
+      "inquiryDate": "Inquiry Date",
+      "actions": "Actions"
+    },
+    "labels": {
+      "unknown": "Unknown",
+      "noEmail": "N/A",
+      "yearsOld": "years old"
+    },
+    "actions": {
+      "editStatus": "Edit Status",
+      "delete": "Delete"
+    },
+    "emptyState": {
+      "title": "No parent leads found",
+      "description": "Try adjusting your search criteria or add a new lead."
+    },
+    "error": {
+      "loadFailed": "Failed to load parent leads",
+      "description": "Please check your connection and try again."
+    }
   },
   "designSystem": {
     "formControls": {
@@ -826,23 +943,127 @@
     }
   },
   "organizations": {
+    "modal": {
+      "addTitle": "Add Organization",
+      "editTitle": "Edit Organization"
+    },
+    "form": {
+      "basicInfo": "Basic Information",
+      "name": "Organization Name",
+      "namePlaceholder": "Enter organization name",
+      "nameRequired": "Organization name is required",
+      "saveFailed": "Failed to save organization",
+      "type": "Type",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description of the organization",
+      "contactInfo": "Contact Information",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "addressPlaceholder": "Street address, City",
+      "region": "Region/Canton",
+      "website": "Website",
+      "daycareDetails": "Daycare Details",
+      "capacity": "Capacity (Children)",
+      "capacityPlaceholder": "Number of children",
+      "pedagogy": "Pedagogy Approaches",
+      "languages": "Languages Spoken"
+    },
+    "types": {
+      "foundation": "Foundation (Daycare)",
+      "serviceProvider": "Service Provider",
+      "productSupplier": "Product Supplier",
+      "daycare": "Daycare"
+    },
+    "actions": {
+      "create": "Create Organization",
+      "save": "Save Changes",
+      "delete": "Delete Organization",
+      "edit": "Edit"
+    },
+    "delete": {
+      "title": "Delete Organization",
+      "confirmation": "Are you sure you want to delete",
+      "warning": "? This action cannot be undone and will permanently remove all associated data including products, services, and job listings."
+    },
+    "title": "Organizations",
+    "subtitle": "Manage daycare centers and organizations ({{count}} total)",
+    "foundation": "Foundation",
+    "organisation": "Organisation",
+    "tabs": {
+      "foundations": "Foundations",
+      "organisations": "Organisations"
+    },
+    "foundationsDesc": {
+      "title": "Foundations (Daycares)",
+      "subtitle": "Childcare centers and daycare facilities registered on the platform"
+    },
+    "organisationsDesc": {
+      "title": "Organisations (Service Providers & Product Suppliers)",
+      "subtitle": "Companies providing services or products to childcare organizations"
+    },
+    "searchPlaceholder": "Search organizations by name, address, or region...",
     "emptyState": {
+      "noResults": "No organizations found",
+      "noData": "No foundations yet",
+      "adjustSearch": "Try adjusting your search criteria",
+      "getStarted": "Get started by adding your first foundation",
       "description": "Try adjusting your search criteria or add a new organization.",
       "title": "No organizations found"
     },
     "error": {
-      "description": "Please check your connection and try again.",
-      "title": "Failed to load organizations"
+      "title": "Failed to load organizations",
+      "description": "Please check your connection and try again."
     },
-    "searchPlaceholder": "Search organizations...",
-    "actions": {
-      "delete": "Delete",
-      "edit": "Edit"
-    },
+    "childrenCapacity": "children capacity",
     "staffMembers": "staff members",
-    "addButton": "Add Organization",
-    "subtitle": "Manage daycare centers and organizations ({{count}} total)",
-    "title": "Organizations"
+    "addButton": "Add Organization"
+  },
+  "users": {
+    "title": "Users Management",
+    "subtitle": "Manage all users across the platform",
+    "addUser": "Add User",
+    "editUser": {
+      "title": "Edit User",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "emailRequired": "Email is required",
+      "updateFailed": "Failed to update user",
+      "saveChanges": "Save Changes",
+      "saving": "Saving..."
+    },
+    "deleteUser": {
+      "title": "Delete User",
+      "confirmation": "Are you sure you want to delete",
+      "warning": "? This action cannot be undone and will permanently remove all associated data.",
+      "deleting": "Deleting...",
+      "delete": "Delete User"
+    },
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "organization": "Organization",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "actions": "Actions"
+    },
+    "emptyState": {
+      "title": "No users found",
+      "description": "Try adjusting your search criteria or add a new user."
+    },
+    "error": {
+      "loadFailed": "Failed to load users",
+      "description": "Please check your connection and try again."
+    },
+    "labels": {
+      "unknown": "Unknown",
+      "noEmail": "No email",
+      "noOrganization": "No organization",
+      "never": "Never"
+    }
   },
   "translations": {
     "descriptionPlaceholder": "Description (optional)",
@@ -968,5 +1189,314 @@
     "staff": "Staff",
     "title": "Support Tickets",
     "user": "User"
+  },
+  "partnersAdmin": {
+    "title": "Partners",
+    "subtitle": "Manage partner organizations and sponsors ({{count}} total)",
+    "addPartner": "Add Partner",
+    "searchPlaceholder": "Search partners...",
+    "filters": {
+      "allTypes": "All Types",
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "stats": {
+      "totalPartners": "Total Partners",
+      "active": "Active",
+      "featured": "Featured",
+      "types": "Types"
+    },
+    "emptyState": {
+      "noPartnersFound": "No partners found",
+      "noPartnersYet": "No partners yet",
+      "tryAdjusting": "Try adjusting your search or filter criteria",
+      "getStarted": "Get started by adding your first partner"
+    },
+    "error": {
+      "loadFailed": "Failed to load partners",
+      "description": "Please check your connection and try again."
+    },
+    "modal": {
+      "addTitle": "Add New Partner",
+      "editTitle": "Edit Partner",
+      "basicInfo": "Basic Information",
+      "partnerName": "Partner Name",
+      "partnerNameRequired": "Partner name is required",
+      "type": "Type",
+      "countryRegion": "Country/Region",
+      "countryRegionPlaceholder": "e.g., Switzerland",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description of the partner",
+      "websiteUrl": "Website URL",
+      "websiteUrlPlaceholder": "https://example.com",
+      "logoUrl": "Logo URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "contactInfo": "Contact Information",
+      "contactPerson": "Contact Person",
+      "contactPersonPlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "contact@example.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+41 XX XXX XX XX",
+      "partnershipDetails": "Partnership Details",
+      "partnershipStart": "Partnership Start",
+      "partnershipEnd": "Partnership End",
+      "displayOrder": "Display Order",
+      "displayOrderPlaceholder": "0",
+      "displayOrderHint": "Lower numbers appear first",
+      "visibility": "Visibility",
+      "active": "Active",
+      "featured": "Featured",
+      "saving": "Saving...",
+      "createPartner": "Create Partner",
+      "saveChanges": "Save Changes",
+      "saveFailed": "Failed to save partner"
+    },
+    "delete": {
+      "title": "Delete Partner",
+      "confirmation": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "deleting": "Deleting...",
+      "deletePartner": "Delete Partner"
+    },
+    "card": {
+      "edit": "Edit",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "removeFeatured": "Remove Featured",
+      "markFeatured": "Mark Featured",
+      "delete": "Delete",
+      "visitWebsite": "Visit Website",
+      "active": "Active",
+      "inactive": "Inactive",
+      "since": "Since {{year}}"
+    },
+    "types": {
+      "academic": "Academic",
+      "corporate": "Corporate",
+      "governmental": "Governmental",
+      "nonProfit": "Non-Profit",
+      "non_profit": "Non-Profit",
+      "media": "Media",
+      "technology": "Technology"
+    }
+  },
+  "orders": {
+    "title": "Orders",
+    "subtitle": "Manage customer orders and deliveries ({{count}} total)",
+    "createOrder": "Create Order",
+    "table": {
+      "order": "Order",
+      "customer": "Customer",
+      "items": "Items",
+      "total": "Total",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "labels": {
+      "items": "items",
+      "noEmail": "N/A"
+    },
+    "actions": {
+      "editOrder": "Edit Order",
+      "cancelOrder": "Cancel Order"
+    },
+    "emptyState": {
+      "title": "No orders found",
+      "description": "Try adjusting your search criteria or create a new order."
+    },
+    "error": {
+      "loadFailed": "Failed to load orders",
+      "description": "Please check your connection and try again."
+    }
+  },
+  "messaging": {
+    "title": "Messages",
+    "searchPlaceholder": "Search conversations...",
+    "typePlaceholder": "Type your message...",
+    "emptyState": {
+      "noConversations": "No conversations found",
+      "tryAdjusting": "Try adjusting your search",
+      "startNew": "Start a new conversation to get started",
+      "selectConversation": "Select a conversation",
+      "chooseConversation": "Choose a conversation from the list to start messaging.",
+      "noMessagesYet": "No messages yet. Start the conversation!",
+      "noMessagesYetSnippet": "No messages yet"
+    },
+    "actions": {
+      "viewProfile": "View Profile",
+      "call": "Call"
+    },
+    "labels": {
+      "initializing": "Initializing...",
+      "failedToLoad": "Failed to load conversations.",
+      "failedToLoadMessages": "Failed to load messages."
+    }
+  },
+  "systemMonitor": {
+    "title": "System Monitor",
+    "subtitle": "Real-time system health and performance monitoring",
+    "tabs": {
+      "overview": "Overview",
+      "metrics": "Metrics",
+      "alerts": "Alerts",
+      "logs": "Error Logs",
+      "analytics": "Analytics",
+      "security": "Security"
+    },
+    "status": {
+      "title": "System Status",
+      "allSystemsOperational": "All Systems Operational",
+      "systemIssuesDetected": "System Issues Detected",
+      "backendApi": "Backend API",
+      "database": "Database",
+      "authenticationService": "Authentication Service",
+      "environment": "Environment:",
+      "uptime": "Uptime:",
+      "version": "Version:",
+      "lastCheck": "Last Check:",
+      "justNow": "Just now"
+    },
+    "metrics": {
+      "serverPerformance": "Server Performance",
+      "databasePerformance": "Database Performance",
+      "applicationPerformance": "Application Performance",
+      "requiresBackend": "System metrics require backend monitoring infrastructure. Currently showing available health data."
+    },
+    "alerts": {
+      "title": "System Alerts",
+      "createAlert": "Create Alert",
+      "status": "status",
+      "type": "type"
+    },
+    "logs": {
+      "title": "Error Logs Console",
+      "allLogs": "All Logs",
+      "noLogsFound": "No logs found"
+    },
+    "analytics": {
+      "performanceAnalytics": "Performance Analytics",
+      "userAnalytics": "User Analytics",
+      "geographicDistribution": "Geographic Distribution",
+      "requiresBackend": "Performance analytics require backend monitoring infrastructure to be configured.",
+      "requiresTracking": "User analytics require tracking infrastructure to be configured. See the main Dashboard for available user statistics.",
+      "requiresLocation": "Geographic analytics require user location tracking to be implemented. This feature will display user distribution by region once the tracking infrastructure is configured."
+    },
+    "security": {
+      "title": "Security Overview",
+      "recentEvents": "Recent Security Events",
+      "settings": "Security Settings",
+      "requiresBackend": "Security metrics require security monitoring infrastructure to be configured.",
+      "requiresAudit": "Security event logging requires audit infrastructure to be configured. When enabled, this section will display recent security events such as failed logins, suspicious activity, and security scans.",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "twoFactorAuthDesc": "Require 2FA for all admin accounts",
+      "ipWhitelist": "IP Whitelist",
+      "ipWhitelistDesc": "Restrict admin access to specific IPs",
+      "sessionTimeout": "Session Timeout",
+      "sessionTimeoutDesc": "Auto-logout after 30 minutes of inactivity"
+    }
+  },
+  "translations": {
+    "title": "Translation Management",
+    "subtitle": "Manage static UI translations",
+    "tabs": {
+      "translations": "Translations",
+      "auditLogs": "Audit Logs",
+      "releases": "Releases"
+    },
+    "releases": {
+      "title": "Translation Releases",
+      "versionPlaceholder": "Version (e.g., v1.2.3)",
+      "descriptionPlaceholder": "Description (optional)",
+      "createRelease": "Create Release",
+      "creating": "Creating...",
+      "description": "Creating a release will invalidate all caches and force clients to fetch fresh translations."
+    },
+    "filters": {
+      "namespace": "Namespace",
+      "search": "Search"
+    },
+    "searchPlaceholder": "Search for keys or values...",
+    "pagination": {
+      "showingResults": "Showing {{start}} to {{end}} of {{total}} results",
+      "pageOfTotal": "Page {{page}} of {{totalPages}}"
+    },
+    "oneClickSync": {
+      "title": "One-Click Sync",
+      "description": "Import English keys → Translate to French & German → Export to files.",
+      "subDescription": "This does everything in one step! Takes 5-10 minutes.",
+      "button": "🔄 Full Sync All Languages",
+      "syncing": "Syncing... (this takes a few minutes)"
+    },
+    "advanced": {
+      "title": "⚙️ Advanced Options (Individual Steps)",
+      "expand": "Click to expand",
+      "importFromFiles": "Import from JSON Files",
+      "importFromFilesDesc": "Load EN/FR/DE from packages/translations/locales into database",
+      "import": "Import",
+      "importing": "Importing...",
+      "scanFix": "Scan & Fix Hardcoded Strings",
+      "scanFixDesc": "Find hardcoded strings in code and create translation keys",
+      "scan": "Scan",
+      "scanning": "Scanning...",
+      "translateMissing": "Translate Missing (FR/DE)",
+      "translateMissingDesc": "Translate missing keys to French and German",
+      "translate": "Translate",
+      "translating": "Translating...",
+      "cleanPrefixes": "Clean Prefixes",
+      "cleanPrefixesDesc": "Remove [FR]/[DE]/[EN] prefixes from translations",
+      "clean": "Clean",
+      "cleaning": "Cleaning...",
+      "exportToFiles": "Export to JSON Files",
+      "exportToFilesDesc": "Sync database translations back to JSON files (required for frontend)",
+      "export": "Export"
+    },
+    "moreOptions": {
+      "title": "More Options",
+      "show": "Show",
+      "hide": "Hide",
+      "refresh": "Refresh",
+      "fixEnLabels": "Fix EN Key Labels",
+      "fixingEnLabels": "Fixing EN Labels...",
+      "approveSelected": "Approve {{count}} Selected",
+      "approving": "Approving...",
+      "exportJson": "Export JSON",
+      "exportCsv": "Export CSV",
+      "import": "Import"
+    },
+    "table": {
+      "namespace": "Namespace",
+      "key": "Key",
+      "actions": "Actions",
+      "noTranslationsFound": "No translations found"
+    },
+    "missing": "Missing",
+    "stats": {
+      "totalKeys": "Total Keys",
+      "needsReview": "Needs Review",
+      "namespaces": "Namespaces"
+    },
+    "audit": {
+      "title": "Audit Logs",
+      "date": "Date",
+      "action": "Action",
+      "namespace": "Namespace",
+      "key": "Key",
+      "language": "Language",
+      "user": "User",
+      "noLogsFound": "No audit logs found"
+    },
+    "releasesList": {
+      "title": "Translation Releases",
+      "active": "Active",
+      "created": "Created:",
+      "by": "by",
+      "noReleasesFound": "No releases found"
+    },
+    "error": {
+      "loadFailed": "Failed to load translations",
+      "description": "Please check your connection and try again."
+    }
   }
 }

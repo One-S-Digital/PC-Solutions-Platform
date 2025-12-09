@@ -232,7 +232,7 @@ const Messaging: React.FC = () => {
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 flex items-center mb-4">
             <MessageSquare className="h-5 w-5 mr-2 text-swiss-teal" />
-            Messages
+            {t('admin:messaging.title', 'Messages')}
           </h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -249,7 +249,7 @@ const Messaging: React.FC = () => {
         <div className="flex-1 overflow-y-auto">
           {!apiClient && (
             <div className="flex items-center justify-center p-8">
-              <p className="text-sm text-gray-500">Initializing...</p>
+              <p className="text-sm text-gray-500">{t('admin:messaging.labels.initializing', 'Initializing...')}</p>
             </div>
           )}
           {isLoadingConversations && (
@@ -259,16 +259,16 @@ const Messaging: React.FC = () => {
           )}
           {conversationsError && (
             <div className="p-4 text-red-500">
-              <p className="font-medium">Failed to load conversations.</p>
-              <p className="text-xs mt-1">{conversationsError instanceof Error ? conversationsError.message : 'Unknown error'}</p>
+              <p className="font-medium">{t('admin:messaging.labels.failedToLoad', 'Failed to load conversations.')}</p>
+              <p className="text-xs mt-1">{conversationsError instanceof Error ? conversationsError.message : t('common:unknown', 'Unknown error')}</p>
             </div>
           )}
           {!isLoadingConversations && !conversationsError && apiClient && filteredConversations.length === 0 && (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <MessageSquare className="h-12 w-12 text-gray-300 mb-4" />
-              <h3 className="text-sm font-medium text-gray-900 mb-1">No conversations found</h3>
+              <h3 className="text-sm font-medium text-gray-900 mb-1">{t('admin:messaging.emptyState.noConversations', 'No conversations found')}</h3>
               <p className="text-xs text-gray-500">
-                {searchQuery ? 'Try adjusting your search' : 'Start a new conversation to get started'}
+                {searchQuery ? t('admin:messaging.emptyState.tryAdjusting', 'Try adjusting your search') : t('admin:messaging.emptyState.startNew', 'Start a new conversation to get started')}
               </p>
             </div>
           )}
@@ -310,7 +310,7 @@ const Messaging: React.FC = () => {
                 </div>
               </div>
               <div className="text-sm text-gray-600 truncate">
-                {conversation.lastMessageSnippet || 'No messages yet'}
+                {conversation.lastMessageSnippet || t('admin:messaging.emptyState.noMessagesYetSnippet', 'No messages yet')}
               </div>
             </div>
           ))}
@@ -359,7 +359,7 @@ const Messaging: React.FC = () => {
                             className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                           >
                             <User className="h-4 w-4 mr-2" />
-                            View Profile
+                            {t('admin:messaging.actions.viewProfile', 'View Profile')}
                           </button>
                         )}
                       </Menu.Item>
@@ -369,7 +369,7 @@ const Messaging: React.FC = () => {
                             className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                           >
                             <Phone className="h-4 w-4 mr-2" />
-                            Call
+                            {t('admin:messaging.actions.call', 'Call')}
                           </button>
                         )}
                       </Menu.Item>
@@ -387,12 +387,12 @@ const Messaging: React.FC = () => {
                 </div>
               )}
               {messagesError && (
-                <div className="p-4 text-red-500">Failed to load messages.</div>
+                <div className="p-4 text-red-500">{t('admin:messaging.labels.failedToLoadMessages', 'Failed to load messages.')}</div>
               )}
               {!isLoadingMessages && !messagesError && messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center p-8 text-center">
                   <MessageSquare className="h-12 w-12 text-gray-300 mb-4" />
-                  <p className="text-sm text-gray-500">No messages yet. Start the conversation!</p>
+                  <p className="text-sm text-gray-500">{t('admin:messaging.emptyState.noMessagesYet', 'No messages yet. Start the conversation!')}</p>
                 </div>
               )}
               {!isLoadingMessages && !messagesError && messages.map((message) => (
@@ -446,8 +446,8 @@ const Messaging: React.FC = () => {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <MessageSquare className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
-              <p className="text-gray-600">Choose a conversation from the list to start messaging.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:messaging.emptyState.selectConversation', 'Select a conversation')}</h3>
+              <p className="text-gray-600">{t('admin:messaging.emptyState.chooseConversation', 'Choose a conversation from the list to start messaging.')}</p>
             </div>
           </div>
         )}

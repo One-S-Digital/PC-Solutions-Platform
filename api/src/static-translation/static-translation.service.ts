@@ -1631,11 +1631,14 @@ export class StaticTranslationService {
           
           for (const [key, value] of Object.entries(flatKeys)) {
             if (typeof value === 'string') {
+              // CRITICAL: Strip prefixes at import time - never store prefixes in database
+              // This ensures clean data and prevents the need to strip prefixes in multiple places
+              const cleanValue = this.stripPrefixes(value);
               translations.push({
                 namespace,
                 key,
                 lang,
-                value,
+                value: cleanValue, // Store clean value without prefixes
               });
               
               const detailKey = `${lang}/${namespace}`;

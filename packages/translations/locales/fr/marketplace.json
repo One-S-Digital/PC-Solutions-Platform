@@ -57,7 +57,8 @@
     "noProductSuppliers": "Aucun fournisseur de produits n'a été trouvé",
     "noServiceProviders": "Aucun prestataire de services trouvé",
     "noServices": "Aucun service trouvé",
-    "noResults": "Aucun résultat n'a été trouvé. Essayez d'ajuster vos filtres."
+    "noResults": "Aucun résultat n'a été trouvé. Essayez d'ajuster vos filtres.",
+    "partnerOnboardingTBD": "Intégration des partenaires à venir"
   },
   "serviceCard": {
     "bookAppointment": "Prendre rendez-vous",
@@ -96,5 +97,8 @@
     "serviceProviders": "Prestataires de services"
   },
   "searchPlaceholder": "Rechercher {{activeTabLabel}}...",
-  "infoAlert": "Parcourir les produits et services de fournisseurs suisses vérifiés"
+  "infoAlert": "Parcourir les produits et services de fournisseurs suisses vérifiés",
+  "errors": {
+    "loadFailed": "Échec du chargement des données du marché"
+  }
 }

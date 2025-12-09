@@ -484,7 +484,9 @@
   "authentication": "Authentication",
   "clerkSecretKey": "Clerk Secret Key",
   "featurerequest": "Featurerequest",
-  "filters": "Filters",
+  "filters": {
+    "all": "All"
+  },
   "heroButtonLink": "Hero Button Link",
   "heroButtonText": "Hero Button",
   "secondaryColor": "Secondary Color",
@@ -556,5 +558,100 @@
   "-": "-",
   "_": "_",
   "a": "A",
-  "T": "T"
+  "T": "T",
+  "locations": {
+    "switzerland": "Switzerland"
+  },
+  "languageSwitcher": {
+    "enShort": "EN",
+    "enLong": "English",
+    "frShort": "FR",
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Deutsch",
+    "en": "English",
+    "fr": "French",
+    "de": "German",
+    "selectLanguage": "Select language (currently: {{currentLanguage}})"
+  },
+  "open": "Open",
+  "inprogress": "In Progress",
+  "total": "Total",
+  "cancel": "Cancel",
+  "submitted": "Submitted",
+  "accepted": "Accepted",
+  "processing": "Processing",
+  "shipped": "Shipped",
+  "fulfilled": "Fulfilled",
+  "cancelled": "Cancelled",
+  "declined": "Declined",
+  "refresh": "Refresh",
+  "admin": "Admin",
+  "foundation": "Foundation",
+  "educator": "Educator",
+  "parent": "Parent",
+  "add": "Add",
+  "placeholders": {
+    "searchorders": "Search orders...",
+    "searchparentleads": "Search parent leads...",
+    "searchusersbynameoremail": "Search users by name or email...",
+    "searchservices": "Search services...",
+    "41xxxxxxxxx": "+41 XX XXX XX XX"
+  },
+  "labels": {
+    "decreasequantity": "Decrease quantity",
+    "currentquantity": "Current quantity",
+    "increasequantity": "Increase quantity"
+  },
+  "errors": {
+    "errorrate": "Error rate"
+  },
+  "serviceProvider": {
+    "noServicesFound": "No services found"
+  },
+  "filters": "Filters",
+  "allnamespaces": "All namespaces",
+  "allpriority": "All priorities",
+  "allcategory": "All categories",
+  "viewedbysupplier": "Viewed by Supplier",
+  "featurerequest": "Feature Request",
+  "unknown": "Unknown",
+  "titles": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "cpuusage": "CPU Usage",
+    "memoryusage": "Memory Usage",
+    "activealerts": "Active Alerts",
+    "diskusage": "Disk Usage",
+    "uptime": "Uptime",
+    "activeconnections": "Active Connections",
+    "avgquerytime": "Avg Query Time",
+    "storageused": "Storage Used",
+    "connectionhealth": "Connection Health",
+    "activeusers": "Active Users",
+    "requestsmin": "Requests/min",
+    "responsetime": "Response Time",
+    "newuserstoday": "New Users Today",
+    "sessionduration": "Session Duration",
+    "pageviews": "Page Views",
+    "throughput": "Throughput",
+    "failedlogins": "Failed Logins",
+    "blockedips": "Blocked IPs",
+    "apihealth": "API Health",
+    "lastscan": "Last Scan"
+  },
+  "buttons": {
+    "edit": "Edit",
+    "previous": "Previous",
+    "next": "Next",
+    "view": "View",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "languageLabels": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
 }

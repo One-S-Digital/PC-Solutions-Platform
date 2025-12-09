@@ -50,7 +50,7 @@ class OrganizationService {
     if (filters.isActive !== undefined) params.append('isActive', filters.isActive.toString());
     
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/organizations?${params.toString()}`
+      `/compat/organizations?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch organizations');
@@ -79,7 +79,7 @@ class OrganizationService {
   // Get organization by ID
   async getOrganizationById(id: string): Promise<Organization> {
     const currentLang = i18n.language || 'en';
-    const response = await apiService.get<Organization>(`/organizations/${id}?lang=${currentLang}`);
+    const response = await apiService.get<Organization>(`/compat/organizations/${id}?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch organization');
     }
@@ -88,7 +88,7 @@ class OrganizationService {
 
   // Create organization (admin only)
   async createOrganization(data: OrganizationCreateData): Promise<Organization> {
-    const response = await apiService.post<Organization>('/organizations', data);
+    const response = await apiService.post<Organization>('/compat/organizations', data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to create organization');
     }
@@ -97,7 +97,7 @@ class OrganizationService {
 
   // Update organization
   async updateOrganization(id: string, data: OrganizationUpdateData): Promise<Organization> {
-    const response = await apiService.put<Organization>(`/organizations/${id}`, data);
+    const response = await apiService.put<Organization>(`/compat/organizations/${id}`, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update organization');
     }
@@ -106,7 +106,7 @@ class OrganizationService {
 
   // Delete organization (admin only)
   async deleteOrganization(id: string): Promise<void> {
-    const response = await apiService.delete(`/organizations/${id}`);
+    const response = await apiService.delete(`/compat/organizations/${id}`);
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete organization');
     }
@@ -115,27 +115,21 @@ class OrganizationService {
   // Get user's organizations
   async getUserOrganizations(): Promise<Organization[]> {
     const currentLang = i18n.language || 'en';
-    const response = await apiService.get<Organization[]>(`/organizations/my?lang=${currentLang}`);
+    const response = await apiService.get<Organization[]>(`/profiles/me/organizations?lang=${currentLang}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch user organizations');
     }
     return response.data.map(org => this.transformOrganization(org));
   }
 
-  // Join organization
+  // Join organization (not implemented - use profiles/me/organizations POST to create)
   async joinOrganization(organizationId: string): Promise<void> {
-    const response = await apiService.post(`/organizations/${organizationId}/join`);
-    if (!response.success) {
-      throw new Error(response.message || 'Failed to join organization');
-    }
+    throw new Error('Join organization not implemented. Use createOrganization or contact support.');
   }
 
-  // Leave organization
+  // Leave organization (not implemented)
   async leaveOrganization(organizationId: string): Promise<void> {
-    const response = await apiService.post(`/organizations/${organizationId}/leave`);
-    if (!response.success) {
-      throw new Error(response.message || 'Failed to leave organization');
-    }
+    throw new Error('Leave organization not implemented. Contact support.');
   }
 
   // Transform organization data to include legacy fields for UI compatibility

@@ -57,7 +57,8 @@
     "noProductSuppliers": "No product suppliers found",
     "noServiceProviders": "No service providers found",
     "noServices": "No services found",
-    "noResults": "No results found. Try adjusting your filters."
+    "noResults": "No results found. Try adjusting your filters.",
+    "partnerOnboardingTBD": "Partner Onboarding TBD"
   },
   "serviceCard": {
     "bookAppointment": "Book Appointment",
@@ -96,5 +97,8 @@
     "serviceProviders": "Service Providers"
   },
   "searchPlaceholder": "Search {{activeTabLabel}}...",
-  "infoAlert": "Browse products and services from verified Swiss providers"
+  "infoAlert": "Browse products and services from verified Swiss providers",
+  "errors": {
+    "loadFailed": "Failed to load marketplace data"
+  }
 }

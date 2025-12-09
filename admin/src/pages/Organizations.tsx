@@ -114,14 +114,14 @@ const OrganizationModal: React.FC<OrganizationModalProps> = ({
     setError(null)
     
     if (!formData.name?.trim()) {
-      setError('Organization name is required')
+      setError(t('admin:organizations.form.nameRequired', 'Organization name is required'))
       return
     }
     
     try {
       await onSave(formData)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save organization')
+      setError(err instanceof Error ? err.message : t('admin:organizations.form.saveFailed', 'Failed to save organization'))
     }
   }
 

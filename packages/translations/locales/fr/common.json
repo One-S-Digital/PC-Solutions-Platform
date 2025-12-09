@@ -483,7 +483,9 @@
   "authentication": "Authentification",
   "clerkSecretKey": "Clé secrète du greffier",
   "featurerequest": "Demande de caractéristiques",
-  "filters": "Filtres",
+  "filters": {
+    "all": "Tous"
+  },
   "heroButtonLink": "Lien du bouton Hero",
   "heroButtonText": "Bouton du héros",
   "secondaryColor": "Couleur secondaire",
@@ -555,5 +557,100 @@
   "-": "-",
   "_": "_",
   "a": "A",
-  "T": "T"
+  "T": "T",
+  "locations": {
+    "switzerland": "Suisse"
+  },
+  "languageSwitcher": {
+    "enShort": "EN",
+    "enLong": "Anglais",
+    "frShort": "FR",
+    "frLong": "Français",
+    "deShort": "DE",
+    "deLong": "Allemand",
+    "en": "Anglais",
+    "fr": "Français",
+    "de": "Allemand",
+    "selectLanguage": "Sélectionner la langue (actuellement : {{currentLanguage}})"
+  },
+  "open": "Ouvert",
+  "inprogress": "En cours",
+  "total": "Total",
+  "cancel": "Annuler",
+  "submitted": "Soumis",
+  "accepted": "Accepté",
+  "processing": "En traitement",
+  "shipped": "Expédié",
+  "fulfilled": "Rempli",
+  "cancelled": "Annulé",
+  "declined": "Refusé",
+  "refresh": "Actualiser",
+  "admin": "Admin",
+  "foundation": "Fondation",
+  "educator": "Éducateur",
+  "parent": "Parent",
+  "add": "Ajouter",
+  "placeholders": {
+    "searchorders": "Rechercher des commandes...",
+    "searchparentleads": "Rechercher des pistes de parents...",
+    "searchusersbynameoremail": "Rechercher des utilisateurs par nom ou email...",
+    "searchservices": "Rechercher des services...",
+    "41xxxxxxxxx": "+41 XX XXX XX XX"
+  },
+  "labels": {
+    "decreasequantity": "Diminuer la quantité",
+    "currentquantity": "Quantité actuelle",
+    "increasequantity": "Augmenter la quantité"
+  },
+  "errors": {
+    "errorrate": "Taux d'erreur"
+  },
+  "serviceProvider": {
+    "noServicesFound": "Aucun service trouvé"
+  },
+  "filters": "Filtres",
+  "allnamespaces": "Tous les espaces nominatifs",
+  "allpriority": "Toutes les priorités",
+  "allcategory": "Toutes les catégories",
+  "viewedbysupplier": "Vu par le fournisseur",
+  "featurerequest": "Demande de fonctionnalité",
+  "unknown": "Inconnu",
+  "titles": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "cpuusage": "Utilisation du processeur",
+    "memoryusage": "Utilisation de la mémoire",
+    "activealerts": "Alertes actives",
+    "diskusage": "Utilisation du disque",
+    "uptime": "Temps de fonctionnement",
+    "activeconnections": "Connexions actives",
+    "avgquerytime": "Temps de requête moyen",
+    "storageused": "Stockage utilisé",
+    "connectionhealth": "Santé de la connexion",
+    "activeusers": "Utilisateurs actifs",
+    "requestsmin": "Requêtes/min",
+    "responsetime": "Temps de réponse",
+    "newuserstoday": "Nouveaux utilisateurs aujourd'hui",
+    "sessionduration": "Durée de session",
+    "pageviews": "Pages vues",
+    "throughput": "Débit",
+    "failedlogins": "Connexions échouées",
+    "blockedips": "IP bloquées",
+    "apihealth": "Santé de l'API",
+    "lastscan": "Dernier scan"
+  },
+  "buttons": {
+    "edit": "Modifier",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "view": "Voir",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "languageLabels": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
 }

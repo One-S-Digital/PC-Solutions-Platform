@@ -187,6 +187,49 @@
     "total": "Insgesamt",
     "date": "Datum"
   },
+  "dashboard": {
+    "sidebar": {
+      "allUsersTitle": "Gesamtbenutzer",
+      "foundations": "Stiftungen",
+      "products": "Produkte",
+      "parentLeads": "Eltern-Leads",
+      "jobListings": "Stellenanzeigen",
+      "applications": "Bewerbungen",
+      "dashboard": "Dashboard"
+    },
+    "welcome": "Willkommen zurück, {{name}}!",
+    "adminSystemMonitoringPage": {
+      "overallStatus": {
+        "title": "Gesamtstatus des Systems",
+        "operational": "Betriebsbereit",
+        "down": "Ausgefallen"
+      },
+      "metadata": {
+        "environment": "Umgebung"
+      },
+      "serverPerformance": {
+        "uptimeDays": "Betriebszeit (Tage)"
+      },
+      "components": {
+        "api": "API",
+        "database": "Datenbank"
+      }
+    },
+    "adminContentManagementDashboardPage": {
+      "title": "Inhaltsverwaltung"
+    },
+    "eLearningPage": {
+      "title": "E-Learning-Artikel"
+    },
+    "hrProceduresPage": {
+      "title": "HR-Dokumente",
+      "backToCategoriesButton": "Zurück zu Kategorien"
+    },
+    "statePoliciesPage": {
+      "title": "Staatspolitik"
+    },
+    "total": "Gesamt"
+  },
   "activeOrganizations": "Aktive Organisationen",
   "common": {
     "description": "Beschreibung",
@@ -199,6 +242,8 @@
   "systemHealthy": "Alle Systeme betriebsbereit",
   "loadingStats": "Laden der Plattformstatistiken...",
   "jobsPosted": "Stellenanzeigen veröffentlicht",
+  "welcome": "Willkommen in Ihrem Admin-Dashboard!",
   "_NOTE": "This German translation file requires comprehensive review by a qualified German translator. Known issues: garbled text, '[DE]' placeholders, and inconsistent capitalization throughout. See CodeRabbit review for details.",
-  "live": "Live"
+  "live": "Live",
+  "total": "Gesamt"
 }

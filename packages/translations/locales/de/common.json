@@ -483,7 +483,9 @@
   "authentication": "Authentifizierung",
   "clerkSecretKey": "Angestellter Geheimschlüssel",
   "featurerequest": "Feature-Anfrage",
-  "filters": "Filter",
+  "filters": {
+    "all": "Alle"
+  },
   "heroButtonLink": "Heldentaste Link",
   "heroButtonText": "Heldentaste Text",
   "secondaryColor": "Sekundärfarbe",
@@ -555,5 +557,100 @@
   "-": "-",
   "_": "_",
   "a": "A",
-  "T": "T"
+  "T": "T",
+  "locations": {
+    "switzerland": "Schweiz"
+  },
+  "languageSwitcher": {
+    "enShort": "EN",
+    "enLong": "Englisch",
+    "frShort": "FR",
+    "frLong": "Französisch",
+    "deShort": "DE",
+    "deLong": "Deutsch",
+    "en": "Englisch",
+    "fr": "Französisch",
+    "de": "Deutsch",
+    "selectLanguage": "Sprache auswählen (aktuell: {{currentLanguage}})"
+  },
+  "open": "Offen",
+  "inprogress": "In Bearbeitung",
+  "total": "Gesamt",
+  "cancel": "Abbrechen",
+  "submitted": "Eingereicht",
+  "accepted": "Akzeptiert",
+  "processing": "In Bearbeitung",
+  "shipped": "Versandt",
+  "fulfilled": "Erfüllt",
+  "cancelled": "Storniert",
+  "declined": "Abgelehnt",
+  "refresh": "Aktualisieren",
+  "admin": "Admin",
+  "foundation": "Stiftung",
+  "educator": "Pädagoge",
+  "parent": "Elternteil",
+  "add": "Hinzufügen",
+  "placeholders": {
+    "searchorders": "Bestellungen suchen...",
+    "searchparentleads": "Eltern-Leads suchen...",
+    "searchusersbynameoremail": "Benutzer nach Name oder E-Mail suchen...",
+    "searchservices": "Dienste suchen...",
+    "41xxxxxxxxx": "+41 XX XXX XX XX"
+  },
+  "labels": {
+    "decreasequantity": "Menge verringern",
+    "currentquantity": "Aktuelle Menge",
+    "increasequantity": "Menge erhöhen"
+  },
+  "errors": {
+    "errorrate": "Fehlerrate"
+  },
+  "serviceProvider": {
+    "noServicesFound": "Keine Dienste gefunden"
+  },
+  "filters": "Filter",
+  "allnamespaces": "Alle Namensräume",
+  "allpriority": "Alle Prioritäten",
+  "allcategory": "Alle Kategorien",
+  "viewedbysupplier": "Vom Lieferanten angesehen",
+  "featurerequest": "Funktionsanfrage",
+  "unknown": "Unbekannt",
+  "titles": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "cpuusage": "CPU-Auslastung",
+    "memoryusage": "Speicherauslastung",
+    "activealerts": "Aktive Warnungen",
+    "diskusage": "Festplattenauslastung",
+    "uptime": "Betriebszeit",
+    "activeconnections": "Aktive Verbindungen",
+    "avgquerytime": "Durchschnittliche Abfragezeit",
+    "storageused": "Verwendeter Speicher",
+    "connectionhealth": "Verbindungsstatus",
+    "activeusers": "Aktive Benutzer",
+    "requestsmin": "Anfragen/min",
+    "responsetime": "Antwortzeit",
+    "newuserstoday": "Neue Benutzer heute",
+    "sessionduration": "Sitzungsdauer",
+    "pageviews": "Seitenaufrufe",
+    "throughput": "Durchsatz",
+    "failedlogins": "Fehlgeschlagene Anmeldungen",
+    "blockedips": "Blockierte IPs",
+    "apihealth": "API-Status",
+    "lastscan": "Letzter Scan"
+  },
+  "buttons": {
+    "edit": "Bearbeiten",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "view": "Ansehen",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "languageLabels": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
 }

@@ -833,6 +833,8 @@
       "eLearning": "E-Learning",
       "myProfile": "My Profile",
       "allUsers": "All Users",
+      "allUsersTitle": "Total Users",
+      "applications": "Applications",
       "jobBoard": "Job Board",
       "messages": "Messages",
       "partners": "Partners",
@@ -845,6 +847,7 @@
       "admins": "Admins",
       "users": "Users"
     },
+    "welcome": "Welcome back, {{name}}!",
     "supplierDashboardPage": {
       "products": "My Products",
       "welcome": "Welcome to your supplier dashboard",

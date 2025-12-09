@@ -38,7 +38,7 @@ interface EditUserModalProps {
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading }) => {
   const [formData, setFormData] = useState<Partial<User>>({})
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'admin']);
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     setError(null)
     
     if (!formData.email) {
-      setError('Email is required')
+      setError(t('admin:users.editUser.emailRequired', 'Email is required'))
       return
     }
     
@@ -69,7 +69,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
       // Merge formData with existing user to preserve required fields
       await onSave({ ...user, ...formData } as User)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update user')
+      setError(err instanceof Error ? err.message : t('admin:users.editUser.updateFailed', 'Failed to update user'))
     }
   }
 
@@ -79,7 +79,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Edit User</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.editUser.title', 'Edit User')}</h2>
           <button 
             onClick={onClose} 
             className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
@@ -99,7 +99,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.firstName', 'First Name')}</label>
                 <input
                   type="text"
                   className={STANDARD_INPUT_FIELD}
@@ -109,7 +109,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.lastName', 'Last Name')}</label>
                 <input
                   type="text"
                   className={STANDARD_INPUT_FIELD}
@@ -121,7 +121,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.email', 'Email')} <span className="text-red-500">*</span></label>
               <input
                 type="email"
                 className={STANDARD_INPUT_FIELD}
@@ -133,7 +133,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.role', 'Role')}</label>
               <select
                 className={STANDARD_INPUT_FIELD}
                 value={formData.role || ''}
@@ -150,7 +150,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.status', 'Status')}</label>
               <select
                 className={STANDARD_INPUT_FIELD}
                 value={formData.status || UserStatus.ACTIVE}
@@ -170,14 +170,14 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
               disabled={isLoading}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
             >
-              Cancel
+              {t('common:cancel', 'Cancel')}
             </button>
             <button
               type="submit"
               disabled={isLoading}
               className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
             >
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {isLoading ? t('admin:users.editUser.saving', 'Saving...') : t('admin:users.editUser.saveChanges', 'Save Changes')}
             </button>
           </div>
         </form>
@@ -196,6 +196,7 @@ interface DeleteConfirmModalProps {
 }
 
 const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
+  const { t } = useTranslation(['common', 'admin']);
   if (!isOpen || !user) return null
 
   return (
@@ -207,10 +208,10 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
           </div>
           
           <div className="mt-4 text-center">
-            <h3 className="text-lg font-semibold text-gray-900">Delete User</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('admin:users.deleteUser.title', 'Delete User')}</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to delete <span className="font-medium">{user.name || user.email}</span>? 
-              This action cannot be undone and will permanently remove all associated data.
+              {t('admin:users.deleteUser.confirmation', 'Are you sure you want to delete')} <span className="font-medium">{user.name || user.email}</span>? 
+              {t('admin:users.deleteUser.warning', ' This action cannot be undone and will permanently remove all associated data.')}
             </p>
           </div>
         </div>
@@ -222,7 +223,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
             disabled={isLoading}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {t('common:cancel', 'Cancel')}
           </button>
           <button
             type="button"
@@ -230,7 +231,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
             disabled={isLoading}
             className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
           >
-            {isLoading ? 'Deleting...' : 'Delete User'}
+            {isLoading ? t('admin:users.deleteUser.deleting', 'Deleting...') : t('admin:users.deleteUser.delete', 'Delete User')}
           </button>
         </div>
       </div>
@@ -239,7 +240,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
 }
 
 const Users: React.FC = () => {
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'admin']);
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
 
@@ -358,8 +359,8 @@ const Users: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load users</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:users.error.loadFailed', 'Failed to load users')}</div>
+        <p className="text-gray-600">{t('admin:users.error.description', 'Please check your connection and try again.')}</p>
       </div>
     )
   }
@@ -371,14 +372,14 @@ const Users: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
             <UsersIcon className="h-8 w-8 mr-3 text-swiss-teal" />
-            Users Management
+            {t('admin:users.title', 'Users Management')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage all users across the platform ({users.length} total)
+            {t('admin:users.subtitle', 'Manage all users across the platform')} ({users.length} {t('common:total', 'total')})
           </p>
         </div>
         <Button variant="primary" leftIcon={Plus}>
-          Add User
+          {t('admin:users.addUser', 'Add User')}
         </Button>
       </div>
 
@@ -423,22 +424,22 @@ const Users: React.FC = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                  {t('admin:users.table.user', 'User')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
+                  {t('admin:users.table.role', 'Role')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Organization
+                  {t('admin:users.table.organization', 'Organization')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {t('admin:users.table.status', 'Status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Login
+                  {t('admin:users.table.lastLogin', 'Last Login')}
                 </th>
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{t('admin:users.table.actions', 'Actions')}</span>
                 </th>
               </tr>
             </thead>
@@ -459,8 +460,8 @@ const Users: React.FC = () => {
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name || 'Unknown'}</div>
-                        <div className="text-sm text-gray-500">{user.email || 'No email'}</div>
+                        <div className="text-sm font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
+                        <div className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</div>
                       </div>
                     </div>
                   </td>
@@ -477,7 +478,7 @@ const Users: React.FC = () => {
                           {user.orgName}
                         </>
                       ) : (
-                        <span className="text-gray-400">No organization</span>
+                        <span className="text-gray-400">{t('admin:users.labels.noOrganization', 'No organization')}</span>
                       )}
                     </div>
                   </td>
@@ -491,7 +492,7 @@ const Users: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
+                    {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : t('admin:users.labels.never', 'Never')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Menu as="div" className="relative inline-block text-left">
@@ -516,7 +517,7 @@ const Users: React.FC = () => {
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Edit className="h-4 w-4 mr-2" />
-                                  Edit User
+                                  {t('admin:users.editUser.title', 'Edit User')}
                                 </button>
                               )}
                             </Menu.Item>
@@ -527,7 +528,7 @@ const Users: React.FC = () => {
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete User
+                                  {t('admin:users.deleteUser.delete', 'Delete User')}
                                 </button>
                               )}
                             </Menu.Item>
@@ -545,8 +546,8 @@ const Users: React.FC = () => {
         {filteredUsers.length === 0 && (
           <div className="text-center py-12">
             <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or add a new user.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:users.emptyState.title', 'No users found')}</h3>
+            <p className="text-gray-600">{t('admin:users.emptyState.description', 'Try adjusting your search criteria or add a new user.')}</p>
           </div>
         )}
       </Card>

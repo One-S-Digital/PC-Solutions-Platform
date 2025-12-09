@@ -28,7 +28,7 @@ type ContentType = 'e-learning' | 'hr' | 'policy';
 const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const apiClient = useApiClient()
-  const { t } = useTranslation(['dashboard', 'common'])
+  const { t } = useTranslation(['dashboard', 'common', 'admin'])
   const user = {
     fullName: 'Development User'
   }
@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
 
   const stats = [
     {
-      name: t('sidebar.allUsersTitle', 'Total Users'),
+      name: t('dashboard:sidebar.allUsersTitle', 'Total Users'),
       value: usersData,
       icon: Users,
       loading: usersLoading,
@@ -115,7 +115,7 @@ const Dashboard: React.FC = () => {
       link: '/users',
     },
     {
-      name: t('sidebar.foundations', 'Organizations'),
+      name: t('dashboard:sidebar.foundations', 'Foundations'),
       value: orgsData,
       icon: Building2,
       loading: orgsLoading,
@@ -124,7 +124,7 @@ const Dashboard: React.FC = () => {
       link: '/organizations',
     },
     {
-      name: t('sidebar.products', 'Products'),
+      name: t('dashboard:sidebar.products', 'Products'),
       value: productsData,
       icon: Package,
       loading: productsLoading,
@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
       link: '/products',
     },
     {
-      name: t('sidebar.parentLeads', 'Parent Leads'),
+      name: t('dashboard:sidebar.parentLeads', 'Parent Leads'),
       value: leadsData,
       icon: Heart,
       loading: parentLeadsLoading,
@@ -146,7 +146,7 @@ const Dashboard: React.FC = () => {
   // Additional job stats
   const jobStats = [
     {
-      name: t('sidebar.jobListings', 'Job Listings'),
+      name: t('dashboard:sidebar.jobListings', 'Job Listings'),
       value: totalJobs,
       icon: Briefcase,
       loading: jobListingsLoading,
@@ -258,7 +258,7 @@ const Dashboard: React.FC = () => {
       }
       fetchCounts()
 
-      alert('Content uploaded successfully!')
+      alert(t('admin:dashboard.contentUploadSuccess', 'Content uploaded successfully!'))
     } catch (error: any) {
       console.error('Content upload failed:', error)
       throw error
@@ -267,7 +267,7 @@ const Dashboard: React.FC = () => {
 
   const contentStats = [
     {
-      name: t('eLearningPage.title', 'E-Learning Items'),
+      name: t('dashboard:eLearningPage.title', 'E-Learning Items'),
       count: eLearningCount,
       icon: GraduationCap,
       loading: contentLoading,
@@ -277,7 +277,7 @@ const Dashboard: React.FC = () => {
       addAction: () => handleOpenContentModal('e-learning'),
     },
     {
-      name: t('hrProceduresPage.title', 'HR Documents'),
+      name: t('dashboard:hrProceduresPage.title', 'HR Documents'),
       count: hrDocsCount,
       icon: FileText,
       loading: contentLoading,
@@ -287,7 +287,7 @@ const Dashboard: React.FC = () => {
       addAction: () => handleOpenContentModal('hr'),
     },
     {
-      name: t('statePoliciesPage.title', 'State Policies'),
+      name: t('dashboard:statePoliciesPage.title', 'State Policies'),
       count: policiesCount,
       icon: Scale,
       loading: contentLoading,
@@ -302,8 +302,8 @@ const Dashboard: React.FC = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('sidebar.dashboard')}</h1>
-        <p className="mt-1 text-gray-500">{t('dashboardPage.welcome', { name: user?.fullName })}</p>
+        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboard:sidebar.dashboard', 'Dashboard')}</h1>
+        <p className="mt-1 text-gray-500">{t('dashboard:welcome', 'Welcome to your Admin Dashboard!')}</p>
       </div>
 
       {/* System Status */}
@@ -311,12 +311,12 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className={`w-3 h-3 rounded-full ${systemStatus ? 'bg-swiss-mint' : 'bg-red-500'} animate-pulse`}></div>
-            <h2 className="text-lg font-semibold text-swiss-charcoal">{t('adminSystemMonitoringPage.overallStatus.title', 'System Status')}</h2>
+            <h2 className="text-lg font-semibold text-swiss-charcoal">{t('dashboard:adminSystemMonitoringPage.overallStatus.title', 'Overall System Status')}</h2>
           </div>
           <div className="flex items-center space-x-2">
             <Activity className="h-5 w-5 text-gray-400" />
             <span className="text-sm text-gray-600">
-              {systemStatus ? t('adminSystemMonitoringPage.overallStatus.operational','All systems operational') : t('adminSystemMonitoringPage.overallStatus.down','System issues detected')}
+              {systemStatus ? t('dashboard:adminSystemMonitoringPage.overallStatus.operational', 'Operational') : t('dashboard:adminSystemMonitoringPage.overallStatus.down', 'Down')}
             </span>
           </div>
         </div>
@@ -324,20 +324,20 @@ const Dashboard: React.FC = () => {
         {healthData?.data && (
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-gray-500">{t('adminSystemMonitoringPage.metadata.environment','Environment')}:</span>
+              <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.metadata.environment', 'Environment')}:</span>
               <span className="ml-2 font-medium text-swiss-charcoal">{healthData.data.environment}</span>
             </div>
             <div>
-              <span className="text-gray-500">{t('adminSystemMonitoringPage.serverPerformance.uptimeDays','Uptime')}:</span>
+              <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.serverPerformance.uptimeDays', 'Uptime (Days)')}:</span>
               <span className="ml-2 font-medium text-swiss-charcoal">{Math.floor(healthData.data.uptime / 60)}m</span>
             </div>
             <div>
-              <span className="text-gray-500">{t('adminSystemMonitoringPage.components.api','API')}:</span>
-              <span className="ml-2 font-medium text-swiss-mint">{t('adminSystemMonitoringPage.overallStatus.operational','Connected')}</span>
+              <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.components.api', 'API')}:</span>
+              <span className="ml-2 font-medium text-swiss-mint">{t('dashboard:adminSystemMonitoringPage.overallStatus.operational', 'Operational')}</span>
             </div>
             <div>
-              <span className="text-gray-500">{t('adminSystemMonitoringPage.components.database','Database')}:</span>
-              <span className="ml-2 font-medium text-swiss-mint">{t('adminSystemMonitoringPage.overallStatus.operational','Connected')}</span>
+              <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.components.database', 'Database')}:</span>
+              <span className="ml-2 font-medium text-swiss-mint">{t('dashboard:adminSystemMonitoringPage.overallStatus.operational', 'Operational')}</span>
             </div>
           </div>
         )}
@@ -398,13 +398,13 @@ const Dashboard: React.FC = () => {
       {/* Content Management Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('adminContentManagementDashboardPage.title','Content Management')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('dashboard:adminContentManagementDashboardPage.title', 'Content Management')}</h2>
           <Button
             onClick={() => navigate('/content')}
             variant="outline"
             className="text-sm"
           >
-            {t('hrProceduresPage.backToCategoriesButton','View All Content')} →
+            {t('dashboard:hrProceduresPage.backToCategoriesButton', 'Back To Categories')} →
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -418,7 +418,7 @@ const Dashboard: React.FC = () => {
                   <button
                     onClick={stat.addAction}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    title={t('buttons.add', 'Add') + ' ' + stat.name}
+                    title={t('common:add', 'Add') + ' ' + stat.name}
                   >
                     <PlusCircle className="h-5 w-5 text-gray-400 hover:text-indigo-600" />
                   </button>
@@ -436,7 +436,7 @@ const Dashboard: React.FC = () => {
                 onClick={() => navigate(stat.link)}
                 className={`block w-full px-6 py-3 text-sm font-medium text-center ${stat.bgColor} ${stat.color} hover:opacity-80 transition-opacity`}
               >
-                {t('navbar.viewAll','View All')} →
+                {t('dashboard:navbar.viewAll','View All')} →
               </button>
             </Card>
           ))}
@@ -445,30 +445,30 @@ const Dashboard: React.FC = () => {
 
       {/* Quick Actions */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">{t('admin:dashboard.quickActions.title', 'Quick Actions')}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <Users className="h-6 w-6 text-swiss-teal mb-2" />
-            <h3 className="font-medium text-swiss-charcoal">Manage Users</h3>
-            <p className="text-sm text-gray-600">Add, edit, or remove users</p>
+            <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.manageUsers.title', 'Manage Users')}</h3>
+            <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.manageUsers.description', 'Add, edit, or remove users')}</p>
           </Card>
 
           <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <Building2 className="h-6 w-6 text-swiss-mint mb-2" />
-            <h3 className="font-medium text-swiss-charcoal">Organizations</h3>
-            <p className="text-sm text-gray-600">Manage daycare centers</p>
+            <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.organizations.title', 'Organizations')}</h3>
+            <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.organizations.description', 'Manage daycare centers')}</p>
           </Card>
 
           <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <ShoppingCart className="h-6 w-6 text-swiss-coral mb-2" />
-            <h3 className="font-medium text-swiss-charcoal">Orders</h3>
-            <p className="text-sm text-gray-600">View recent orders</p>
+            <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.orders.title', 'Orders')}</h3>
+            <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.orders.description', 'View recent orders')}</p>
           </Card>
 
           <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
             <TrendingUp className="h-6 w-6 text-swiss-sand mb-2" />
-            <h3 className="font-medium text-swiss-charcoal">Analytics</h3>
-            <p className="text-sm text-gray-600">View platform metrics</p>
+            <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.analytics.title', 'Analytics')}</h3>
+            <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.analytics.description', 'View platform metrics')}</p>
           </Card>
         </div>
       </Card>

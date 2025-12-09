@@ -57,7 +57,8 @@
     "noProductSuppliers": "Keine Produktlieferanten gefunden",
     "noServiceProviders": "Keine Dienstleister gefunden",
     "noServices": "Keine Dienste gefunden",
-    "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, Ihre Filter anzupassen."
+    "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, Ihre Filter anzupassen.",
+    "partnerOnboardingTBD": "Partner-Onboarding in Kürze"
   },
   "serviceCard": {
     "bookAppointment": "Termin vereinbaren",
@@ -96,5 +97,8 @@
     "serviceProviders": "Dienstleister"
   },
   "searchPlaceholder": "{{activeTabLabel}} suchen...",
-  "infoAlert": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Schweizer Anbietern"
+  "infoAlert": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Schweizer Anbietern",
+  "errors": {
+    "loadFailed": "Fehler beim Laden der Marktdaten"
+  }
 }

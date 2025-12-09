@@ -187,6 +187,49 @@
     "total": "Total",
     "date": "Date"
   },
+  "dashboard": {
+    "sidebar": {
+      "allUsersTitle": "Total des utilisateurs",
+      "foundations": "Fondations",
+      "products": "Produits",
+      "parentLeads": "Pistes de parents",
+      "jobListings": "Offres d'emploi",
+      "applications": "Candidatures",
+      "dashboard": "Tableau de bord"
+    },
+    "welcome": "Bon retour, {{name}} !",
+    "adminSystemMonitoringPage": {
+      "overallStatus": {
+        "title": "Statut global du système",
+        "operational": "Opérationnel",
+        "down": "Hors service"
+      },
+      "metadata": {
+        "environment": "Environnement"
+      },
+      "serverPerformance": {
+        "uptimeDays": "Temps de fonctionnement (jours)"
+      },
+      "components": {
+        "api": "API",
+        "database": "Base de données"
+      }
+    },
+    "adminContentManagementDashboardPage": {
+      "title": "Gestion de contenu"
+    },
+    "eLearningPage": {
+      "title": "Éléments d'apprentissage en ligne"
+    },
+    "hrProceduresPage": {
+      "title": "Documents RH",
+      "backToCategoriesButton": "Retour aux catégories"
+    },
+    "statePoliciesPage": {
+      "title": "Politiques d'État"
+    },
+    "total": "Total"
+  },
   "activeOrganizations": "Organisations actives",
   "common": {
     "description": "Description",
@@ -199,5 +242,7 @@
   "systemHealthy": "Tous les systèmes sont opérationnels",
   "loadingStats": "Chargement des statistiques de la plate-forme...",
   "jobsPosted": "offres d'emploi publiées",
-  "live": "Vivre"
+  "welcome": "Bienvenue sur votre tableau de bord d'administration !",
+  "live": "Live",
+  "total": "Total"
 }

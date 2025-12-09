@@ -566,6 +566,49 @@
       }
     }
   },
+  "dashboard": {
+    "quickActions": {
+      "title": "Actions rapides",
+      "manageUsers": {
+        "title": "Gérer les utilisateurs",
+        "description": "Ajouter, modifier ou supprimer des utilisateurs"
+      },
+      "organizations": {
+        "title": "Organisations",
+        "description": "Gérer les crèches"
+      },
+      "orders": {
+        "title": "Commandes",
+        "description": "Voir les commandes récentes"
+      },
+      "analytics": {
+        "title": "Analyses",
+        "description": "Voir les métriques de la plateforme"
+      }
+    },
+    "contentUploadSuccess": "Contenu téléchargé avec succès !"
+  },
+  "sidebar": {
+    "version": "Gestion Backend v1.0",
+    "adminLogo": "Logo Admin",
+    "dashboard": "Tableau de bord",
+    "users": "Utilisateurs",
+    "foundations": "Fondations",
+    "partners": "Partenaires",
+    "products": "Produits",
+    "services": "Services",
+    "jobListings": "Offres d'emploi",
+    "candidatePool": "Bassin de candidats",
+    "parentLeads": "Pistes de parents",
+    "ordersAppointments": "Commandes et rendez-vous",
+    "content": "Contenu",
+    "messages": "Messages",
+    "support": "Support",
+    "systemMonitoring": "Surveillance du système",
+    "translations": "Traductions",
+    "designSystem": "Système de design",
+    "settings": "Paramètres"
+  },
   "partners": {
     "application": {
       "organizationNamePlaceholder": "Entrez le nom de votre organisation",
@@ -636,7 +679,37 @@
     "searchResults": "Résultats de recherche",
     "noPartners": "Aucun partenaire disponible pour le moment",
     "noResults": "Aucun partenaire trouvé correspondant à votre recherche",
-    "allTypes": "Tous les types"
+    "allTypes": "Tous les types",
+    "publicPage": {
+      "trustedBy": "Reconnu par les organisations leaders",
+      "heroTitle": "Nos Partenaires",
+      "heroSubtitle": "Nous collaborons avec des leaders de l'industrie, des institutions académiques et des organisations innovantes pour offrir les meilleures solutions de garde d'enfants en Suisse.",
+      "stats": {
+        "partners": "Partenaires",
+        "cantonsCovered": "Cantons Couverts",
+        "daycaresServed": "Crèches Desservies",
+        "averageRating": "Note Moyenne"
+      },
+      "searchPlaceholder": "Rechercher des partenaires par nom, description ou localisation...",
+      "filters": "Filtres",
+      "allPartners": "Tous les Partenaires",
+      "featuredTitle": "Partenaires en Vedette",
+      "featuredSubtitle": "Nos collaborateurs les plus distingués",
+      "allPartnersTitle": "Tous les Partenaires",
+      "noPartnersFound": "Aucun partenaire trouvé",
+      "tryAdjustingFilters": "Essayez d'ajuster votre recherche ou vos filtres",
+      "noPartnersAvailable": "Aucun partenaire n'est disponible pour le moment",
+      "clearFilters": "Effacer les Filtres",
+      "becomePartnerTitle": "Devenir Partenaire",
+      "becomePartnerSubtitle": "Rejoignez notre réseau de partenaires de confiance et aidez à façonner l'avenir de la garde d'enfants en Suisse. Ensemble, nous pouvons faire la différence.",
+      "applyButton": "Postuler pour Devenir Partenaire",
+      "contactUs": "Nous Contacter",
+      "visitWebsite": "Visiter le Site Web",
+      "featured": "En Vedette",
+      "signIn": "Se Connecter",
+      "getStarted": "Commencer",
+      "pricing": "Tarification"
+    }
   },
   "discountTerminations": {
     "actions": {
@@ -714,6 +787,20 @@
     }
   },
   "content": {
+    "title": "Gestion de contenu",
+    "description": "Télécharger et gérer les matériels d'apprentissage en ligne, les documents RH et les politiques d'État",
+    "addELearning": "Ajouter du contenu E-Learning",
+    "addHRDocument": "Ajouter un document RH",
+    "addStatePolicy": "Ajouter une politique d'État",
+    "updated": "Mis à jour",
+    "view": "Voir",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce contenu ?",
+    "deleteSuccess": "Contenu supprimé avec succès",
+    "updateSuccess": "Contenu mis à jour avec succès",
+    "uploadSuccess": "Contenu téléchargé avec succès",
+    "noFileUrl": "Aucune URL de fichier disponible pour ce contenu",
     "statePolicies": {
       "searchPlaceholder": "Politiques de recherche...",
       "noResults": "Aucun résultat trouvé",
@@ -741,6 +828,36 @@
     },
     "orDragDrop": "ou par glisser-déposer",
     "selected": "Sélectionné"
+  },
+  "parentLeads": {
+    "title": "Pistes de parents",
+    "subtitle": "Gérer les demandes et pistes de parents ({{count}} au total)",
+    "addLead": "Ajouter une piste",
+    "table": {
+      "parent": "Parent",
+      "childInfo": "Informations sur l'enfant",
+      "location": "Localisation",
+      "status": "Statut",
+      "inquiryDate": "Date de demande",
+      "actions": "Actions"
+    },
+    "labels": {
+      "unknown": "Inconnu",
+      "noEmail": "N/A",
+      "yearsOld": "ans"
+    },
+    "actions": {
+      "editStatus": "Modifier le statut",
+      "delete": "Supprimer"
+    },
+    "emptyState": {
+      "title": "Aucune piste de parent trouvée",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez une nouvelle piste."
+    },
+    "error": {
+      "loadFailed": "Échec du chargement des pistes de parents",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    }
   },
   "designSystem": {
     "formControls": {
@@ -852,23 +969,127 @@
     }
   },
   "organizations": {
+    "modal": {
+      "addTitle": "Ajouter une organisation",
+      "editTitle": "Modifier l'organisation"
+    },
+    "form": {
+      "basicInfo": "Informations de base",
+      "name": "Nom de l'organisation",
+      "namePlaceholder": "Entrez le nom de l'organisation",
+      "nameRequired": "Le nom de l'organisation est requis",
+      "saveFailed": "Échec de l'enregistrement de l'organisation",
+      "type": "Type",
+      "description": "Description",
+      "descriptionPlaceholder": "Brève description de l'organisation",
+      "contactInfo": "Informations de contact",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "addressPlaceholder": "Adresse, Ville",
+      "region": "Région/Canton",
+      "website": "Site web",
+      "daycareDetails": "Détails de la garderie",
+      "capacity": "Capacité (Enfants)",
+      "capacityPlaceholder": "Nombre d'enfants",
+      "pedagogy": "Approches pédagogiques",
+      "languages": "Langues parlées"
+    },
+    "types": {
+      "foundation": "Fondation (Garderie)",
+      "serviceProvider": "Fournisseur de services",
+      "productSupplier": "Fournisseur de produits",
+      "daycare": "Garderie"
+    },
+    "actions": {
+      "create": "Créer l'organisation",
+      "save": "Enregistrer les modifications",
+      "delete": "Supprimer l'organisation",
+      "edit": "Modifier"
+    },
+    "delete": {
+      "title": "Supprimer l'organisation",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer",
+      "warning": " ? Cette action est irréversible et supprimera définitivement toutes les données associées, y compris les produits, services et offres d'emploi."
+    },
+    "title": "Organisations",
+    "subtitle": "Gérer les crèches et organisations ({{count}} au total)",
+    "foundation": "Fondation",
+    "organisation": "Organisation",
+    "tabs": {
+      "foundations": "Fondations",
+      "organisations": "Organisations"
+    },
+    "foundationsDesc": {
+      "title": "Fondations (Garderies)",
+      "subtitle": "Centres de garde d'enfants et établissements de garderie enregistrés sur la plateforme"
+    },
+    "organisationsDesc": {
+      "title": "Organisations (Fournisseurs de services et fournisseurs de produits)",
+      "subtitle": "Entreprises fournissant des services ou des produits aux organisations de garde d'enfants"
+    },
+    "searchPlaceholder": "Rechercher des organisations par nom, adresse ou région...",
     "emptyState": {
+      "noResults": "Aucune organisation trouvée",
+      "noData": "Aucune fondation pour le moment",
+      "adjustSearch": "Essayez d'ajuster vos critères de recherche",
+      "getStarted": "Commencez par ajouter votre première fondation",
       "description": "Essayez d'ajuster vos critères de recherche ou ajoutez une nouvelle organisation.",
       "title": "Aucune organisation trouvée"
     },
     "error": {
-      "description": "Veuillez vérifier votre connexion et réessayer.",
-      "title": "Échec du chargement des organisations"
+      "title": "Échec du chargement des organisations",
+      "description": "Veuillez vérifier votre connexion et réessayer."
     },
-    "searchPlaceholder": "Rechercher des organisations...",
-    "actions": {
-      "delete": "Supprimer",
-      "edit": "Modifier"
-    },
+    "childrenCapacity": "capacité d'enfants",
     "staffMembers": "membres du personnel",
-    "addButton": "Ajouter une organisation",
-    "subtitle": "Gérer les crèches et organisations ({{count}} au total)",
-    "title": "Organisations"
+    "addButton": "Ajouter une organisation"
+  },
+  "users": {
+    "title": "Gestion des utilisateurs",
+    "subtitle": "Gérer tous les utilisateurs de la plateforme",
+    "addUser": "Ajouter un utilisateur",
+    "editUser": {
+      "title": "Modifier l'utilisateur",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "E-mail",
+      "role": "Rôle",
+      "status": "Statut",
+      "emailRequired": "L'e-mail est requis",
+      "updateFailed": "Échec de la mise à jour de l'utilisateur",
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement..."
+    },
+    "deleteUser": {
+      "title": "Supprimer l'utilisateur",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer",
+      "warning": " ? Cette action est irréversible et supprimera définitivement toutes les données associées.",
+      "deleting": "Suppression...",
+      "delete": "Supprimer l'utilisateur"
+    },
+    "table": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "organization": "Organisation",
+      "status": "Statut",
+      "lastLogin": "Dernière connexion",
+      "actions": "Actions"
+    },
+    "emptyState": {
+      "title": "Aucun utilisateur trouvé",
+      "description": "Essayez d'ajuster vos critères de recherche ou ajoutez un nouvel utilisateur."
+    },
+    "error": {
+      "loadFailed": "Échec du chargement des utilisateurs",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "labels": {
+      "unknown": "Inconnu",
+      "noEmail": "Pas d'e-mail",
+      "noOrganization": "Aucune organisation",
+      "never": "Jamais"
+    }
   },
   "translations": {
     "descriptionPlaceholder": "Description (facultatif)",
@@ -994,5 +1215,314 @@
     "staff": "Personnel",
     "title": "Tickets de soutien",
     "user": "Utilisateur"
+  },
+  "partnersAdmin": {
+    "title": "Partenaires",
+    "subtitle": "Gérer les organisations partenaires et les sponsors ({{count}} au total)",
+    "addPartner": "Ajouter un partenaire",
+    "searchPlaceholder": "Rechercher des partenaires...",
+    "filters": {
+      "allTypes": "Tous les types",
+      "allStatus": "Tous les statuts",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "stats": {
+      "totalPartners": "Total des partenaires",
+      "active": "Actif",
+      "featured": "En vedette",
+      "types": "Types"
+    },
+    "emptyState": {
+      "noPartnersFound": "Aucun partenaire trouvé",
+      "noPartnersYet": "Pas encore de partenaires",
+      "tryAdjusting": "Essayez d'ajuster vos critères de recherche ou de filtre",
+      "getStarted": "Commencez par ajouter votre premier partenaire"
+    },
+    "error": {
+      "loadFailed": "Échec du chargement des partenaires",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    },
+    "modal": {
+      "addTitle": "Ajouter un nouveau partenaire",
+      "editTitle": "Modifier le partenaire",
+      "basicInfo": "Informations de base",
+      "partnerName": "Nom du partenaire",
+      "partnerNameRequired": "Le nom du partenaire est requis",
+      "type": "Type",
+      "countryRegion": "Pays/Région",
+      "countryRegionPlaceholder": "par ex. Suisse",
+      "description": "Description",
+      "descriptionPlaceholder": "Brève description du partenaire",
+      "websiteUrl": "URL du site web",
+      "websiteUrlPlaceholder": "https://exemple.com",
+      "logoUrl": "URL du logo",
+      "logoUrlPlaceholder": "https://exemple.com/logo.png",
+      "contactInfo": "Informations de contact",
+      "contactPerson": "Personne de contact",
+      "contactPersonPlaceholder": "Jean Dupont",
+      "email": "E-mail",
+      "emailPlaceholder": "contact@exemple.com",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+41 XX XXX XX XX",
+      "partnershipDetails": "Détails du partenariat",
+      "partnershipStart": "Début du partenariat",
+      "partnershipEnd": "Fin du partenariat",
+      "displayOrder": "Ordre d'affichage",
+      "displayOrderPlaceholder": "0",
+      "displayOrderHint": "Les nombres inférieurs apparaissent en premier",
+      "visibility": "Visibilité",
+      "active": "Actif",
+      "featured": "En vedette",
+      "saving": "Enregistrement...",
+      "createPartner": "Créer un partenaire",
+      "saveChanges": "Enregistrer les modifications",
+      "saveFailed": "Échec de l'enregistrement du partenaire"
+    },
+    "delete": {
+      "title": "Supprimer le partenaire",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action ne peut pas être annulée.",
+      "deleting": "Suppression...",
+      "deletePartner": "Supprimer le partenaire"
+    },
+    "card": {
+      "edit": "Modifier",
+      "deactivate": "Désactiver",
+      "activate": "Activer",
+      "removeFeatured": "Retirer de la vedette",
+      "markFeatured": "Marquer comme vedette",
+      "delete": "Supprimer",
+      "visitWebsite": "Visiter le site web",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "since": "Depuis {{year}}"
+    },
+    "types": {
+      "academic": "Académique",
+      "corporate": "Entreprise",
+      "governmental": "Gouvernemental",
+      "nonProfit": "À but non lucratif",
+      "non_profit": "À but non lucratif",
+      "media": "Médias",
+      "technology": "Technologie"
+    }
+  },
+  "orders": {
+    "title": "Commandes",
+    "subtitle": "Gérer les commandes et livraisons clients ({{count}} au total)",
+    "createOrder": "Créer une commande",
+    "table": {
+      "order": "Commande",
+      "customer": "Client",
+      "items": "Articles",
+      "total": "Total",
+      "status": "Statut",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "labels": {
+      "items": "articles",
+      "noEmail": "N/A"
+    },
+    "actions": {
+      "editOrder": "Modifier la commande",
+      "cancelOrder": "Annuler la commande"
+    },
+    "emptyState": {
+      "title": "Aucune commande trouvée",
+      "description": "Essayez d'ajuster vos critères de recherche ou créez une nouvelle commande."
+    },
+    "error": {
+      "loadFailed": "Échec du chargement des commandes",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    }
+  },
+  "messaging": {
+    "title": "Messages",
+    "searchPlaceholder": "Rechercher des conversations...",
+    "typePlaceholder": "Tapez votre message...",
+    "emptyState": {
+      "noConversations": "Aucune conversation trouvée",
+      "tryAdjusting": "Essayez d'ajuster votre recherche",
+      "startNew": "Démarrer une nouvelle conversation pour commencer",
+      "selectConversation": "Sélectionnez une conversation",
+      "chooseConversation": "Choisissez une conversation dans la liste pour commencer à envoyer des messages.",
+      "noMessagesYet": "Pas encore de messages. Commencez la conversation !",
+      "noMessagesYetSnippet": "Pas encore de messages"
+    },
+    "actions": {
+      "viewProfile": "Voir le profil",
+      "call": "Appeler"
+    },
+    "labels": {
+      "initializing": "Initialisation...",
+      "failedToLoad": "Échec du chargement des conversations.",
+      "failedToLoadMessages": "Échec du chargement des messages."
+    }
+  },
+  "systemMonitor": {
+    "title": "Surveillance du système",
+    "subtitle": "Surveillance en temps réel de la santé et des performances du système",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "metrics": "Métriques",
+      "alerts": "Alertes",
+      "logs": "Journaux d'erreur",
+      "analytics": "Analyses",
+      "security": "Sécurité"
+    },
+    "status": {
+      "title": "État du système",
+      "allSystemsOperational": "Tous les systèmes opérationnels",
+      "systemIssuesDetected": "Problèmes système détectés",
+      "backendApi": "API Backend",
+      "database": "Base de données",
+      "authenticationService": "Service d'authentification",
+      "environment": "Environnement :",
+      "uptime": "Temps de fonctionnement :",
+      "version": "Version :",
+      "lastCheck": "Dernière vérification :",
+      "justNow": "À l'instant"
+    },
+    "metrics": {
+      "serverPerformance": "Performances du serveur",
+      "databasePerformance": "Performances de la base de données",
+      "applicationPerformance": "Performances de l'application",
+      "requiresBackend": "Les métriques système nécessitent une infrastructure de surveillance backend. Affichage actuel des données de santé disponibles."
+    },
+    "alerts": {
+      "title": "Alertes système",
+      "createAlert": "Créer une alerte",
+      "status": "statut",
+      "type": "type"
+    },
+    "logs": {
+      "title": "Console des journaux d'erreur",
+      "allLogs": "Tous les journaux",
+      "noLogsFound": "Aucun journal trouvé"
+    },
+    "analytics": {
+      "performanceAnalytics": "Analyses de performance",
+      "userAnalytics": "Analyses utilisateur",
+      "geographicDistribution": "Distribution géographique",
+      "requiresBackend": "Les analyses de performance nécessitent qu'une infrastructure de surveillance backend soit configurée.",
+      "requiresTracking": "Les analyses utilisateur nécessitent qu'une infrastructure de suivi soit configurée. Consultez le tableau de bord principal pour les statistiques utilisateur disponibles.",
+      "requiresLocation": "Les analyses géographiques nécessitent l'implémentation du suivi de localisation des utilisateurs. Cette fonctionnalité affichera la distribution des utilisateurs par région une fois l'infrastructure de suivi configurée."
+    },
+    "security": {
+      "title": "Vue d'ensemble de la sécurité",
+      "recentEvents": "Événements de sécurité récents",
+      "settings": "Paramètres de sécurité",
+      "requiresBackend": "Les métriques de sécurité nécessitent qu'une infrastructure de surveillance de sécurité soit configurée.",
+      "requiresAudit": "L'enregistrement des événements de sécurité nécessite qu'une infrastructure d'audit soit configurée. Une fois activé, cette section affichera les événements de sécurité récents tels que les connexions échouées, les activités suspectes et les scans de sécurité.",
+      "twoFactorAuth": "Authentification à deux facteurs",
+      "twoFactorAuthDesc": "Exiger 2FA pour tous les comptes administrateur",
+      "ipWhitelist": "Liste blanche IP",
+      "ipWhitelistDesc": "Restreindre l'accès administrateur à des IP spécifiques",
+      "sessionTimeout": "Délai d'expiration de session",
+      "sessionTimeoutDesc": "Déconnexion automatique après 30 minutes d'inactivité"
+    }
+  },
+  "translations": {
+    "title": "Gestion des traductions",
+    "subtitle": "Gérer les traductions d'interface utilisateur statiques",
+    "tabs": {
+      "translations": "Traductions",
+      "auditLogs": "Journaux d'audit",
+      "releases": "Versions"
+    },
+    "releases": {
+      "title": "Versions de traduction",
+      "versionPlaceholder": "Version (par exemple, v1.2.3)",
+      "descriptionPlaceholder": "Description (facultatif)",
+      "createRelease": "Créer une version",
+      "creating": "Création...",
+      "description": "Créer une version invalidera tous les caches et forcera les clients à récupérer des traductions fraîches."
+    },
+    "filters": {
+      "namespace": "Espace de noms",
+      "search": "Rechercher"
+    },
+    "searchPlaceholder": "Rechercher des clés ou des valeurs...",
+    "pagination": {
+      "showingResults": "Affichage de {{start}} à {{end}} sur {{total}} résultats",
+      "pageOfTotal": "Page {{page}} sur {{totalPages}}"
+    },
+    "oneClickSync": {
+      "title": "Synchronisation en un clic",
+      "description": "Importer les clés anglaises → Traduire en français et allemand → Exporter vers les fichiers.",
+      "subDescription": "Cela fait tout en une seule étape ! Prend 5-10 minutes.",
+      "button": "🔄 Synchronisation complète de toutes les langues",
+      "syncing": "Synchronisation... (cela prend quelques minutes)"
+    },
+    "advanced": {
+      "title": "⚙️ Options avancées (étapes individuelles)",
+      "expand": "Cliquez pour développer",
+      "importFromFiles": "Importer depuis les fichiers JSON",
+      "importFromFilesDesc": "Charger EN/FR/DE depuis packages/translations/locales dans la base de données",
+      "import": "Importer",
+      "importing": "Importation...",
+      "scanFix": "Scanner et corriger les chaînes codées en dur",
+      "scanFixDesc": "Trouver les chaînes codées en dur dans le code et créer des clés de traduction",
+      "scan": "Scanner",
+      "scanning": "Scan en cours...",
+      "translateMissing": "Traduire les manquants (FR/DE)",
+      "translateMissingDesc": "Traduire les clés manquantes en français et allemand",
+      "translate": "Traduire",
+      "translating": "Traduction...",
+      "cleanPrefixes": "Nettoyer les préfixes",
+      "cleanPrefixesDesc": "Supprimer les préfixes [FR]/[DE]/[EN] des traductions",
+      "clean": "Nettoyer",
+      "cleaning": "Nettoyage...",
+      "exportToFiles": "Exporter vers les fichiers JSON",
+      "exportToFilesDesc": "Synchroniser les traductions de la base de données vers les fichiers JSON (requis pour le frontend)",
+      "export": "Exporter"
+    },
+    "moreOptions": {
+      "title": "Plus d'options",
+      "show": "Afficher",
+      "hide": "Masquer",
+      "refresh": "Actualiser",
+      "fixEnLabels": "Corriger les étiquettes de clés EN",
+      "fixingEnLabels": "Correction des étiquettes EN...",
+      "approveSelected": "Approuver {{count}} sélectionné(s)",
+      "approving": "Approbation...",
+      "exportJson": "Exporter JSON",
+      "exportCsv": "Exporter CSV",
+      "import": "Importer"
+    },
+    "table": {
+      "namespace": "Espace de noms",
+      "key": "Clé",
+      "actions": "Actions",
+      "noTranslationsFound": "Aucune traduction trouvée"
+    },
+    "missing": "Manquant",
+    "stats": {
+      "totalKeys": "Total des clés",
+      "needsReview": "Nécessite une révision",
+      "namespaces": "Espaces de noms"
+    },
+    "audit": {
+      "title": "Journaux d'audit",
+      "date": "Date",
+      "action": "Action",
+      "namespace": "Espace de noms",
+      "key": "Clé",
+      "language": "Langue",
+      "user": "Utilisateur",
+      "noLogsFound": "Aucun journal d'audit trouvé"
+    },
+    "releasesList": {
+      "title": "Versions de traduction",
+      "active": "Actif",
+      "created": "Créé :",
+      "by": "par",
+      "noReleasesFound": "Aucune version trouvée"
+    },
+    "error": {
+      "loadFailed": "Échec du chargement des traductions",
+      "description": "Veuillez vérifier votre connexion et réessayer."
+    }
   }
 }

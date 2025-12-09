@@ -74,7 +74,7 @@ const ServiceProviderCard: React.FC<{
           {provider.name}
         </h3>
         <p className="text-xs text-gray-500 text-center mb-2 flex items-center justify-center">
-          <WrenchScrewdriverIcon className="w-3.5 h-3.5 mr-1 opacity-70"/> {provider.region || 'Switzerland'}
+          <WrenchScrewdriverIcon className="w-3.5 h-3.5 mr-1 opacity-70"/> {provider.region || t('common:locations.switzerland', 'Switzerland')}
         </p>
         <div className="text-center mb-3 flex justify-center">
           <RatingStars rating={provider.rating} />
@@ -176,7 +176,7 @@ const MarketplacePage: React.FC = () => {
       setServiceProviders(providersResult.providers);
     } catch (err) {
       console.error('Failed to fetch marketplace data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load marketplace data');
+      setError(err instanceof Error ? err.message : t('marketplace:errors.loadFailed', 'Failed to load marketplace data'));
     } finally {
       setLoading(false);
     }
@@ -457,7 +457,7 @@ const MarketplacePage: React.FC = () => {
             variant="secondary" 
             leftIcon={FunnelIcon} 
             size="md" 
-            onClick={() => alert("Partner Onboarding TBD")}
+            onClick={() => alert(t('marketplace:messages.partnerOnboardingTBD', 'Partner Onboarding TBD'))}
           >
             {t('marketplace:buttons.partnerOnboarding')}
           </Button>
@@ -586,7 +586,7 @@ const MarketplacePage: React.FC = () => {
             </Button>
           </div>
           <Button variant="outline" size="sm" onClick={handleResetFilters}>
-            {t('common:buttons.resetFilters')}
+            {t('marketplace:buttons.resetFilters')}
           </Button>
         </div>
       </Card>

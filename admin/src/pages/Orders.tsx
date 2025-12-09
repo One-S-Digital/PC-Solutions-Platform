@@ -24,7 +24,7 @@ const Orders: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
   const apiClient = useApiClient()
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'admin']);
 
   const { data: ordersResponse, isLoading, error } = useQuery({
     queryKey: ['orders'],
@@ -77,8 +77,8 @@ const Orders: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load orders</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:orders.error.loadFailed', 'Failed to load orders')}</div>
+        <p className="text-gray-600">{t('admin:orders.error.description', 'Please check your connection and try again.')}</p>
       </div>
     )
   }
@@ -90,15 +90,15 @@ const Orders: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <ShoppingCart className="h-8 w-8 mr-3 text-swiss-teal" />
-            Orders
+            {t('admin:orders.title', 'Orders')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage customer orders and deliveries ({orders.length} total)
+            {t('admin:orders.subtitle', 'Manage customer orders and deliveries ({{count}} total)', { count: orders.length })}
           </p>
         </div>
         <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
           <Plus className="h-4 w-4 mr-2" />
-          Create Order
+          {t('admin:orders.createOrder', 'Create Order')}
         </button>
       </div>
 
@@ -144,25 +144,25 @@ const Orders: React.FC = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order
+                  {t('admin:orders.table.order', 'Order')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
+                  {t('admin:orders.table.customer', 'Customer')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Items
+                  {t('admin:orders.table.items', 'Items')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
+                  {t('admin:orders.table.total', 'Total')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {t('admin:orders.table.status', 'Status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  {t('admin:orders.table.date', 'Date')}
                 </th>
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{t('admin:orders.table.actions', 'Actions')}</span>
                 </th>
               </tr>
             </thead>
@@ -184,16 +184,16 @@ const Orders: React.FC = () => {
                       <div className="flex items-center">
                         <div className="text-sm text-gray-900 flex items-center">
                           <User className="h-4 w-4 mr-1" />
-                          {order.foundation?.name || 'N/A'}
+                          {order.foundation?.name || t('admin:orders.labels.noEmail', 'N/A')}
                         </div>
                       </div>
                       <div className="text-sm text-gray-500 flex items-center">
                         <Building2 className="h-3 w-3 mr-1" />
-                        {order.foundationOrg?.name || 'N/A'}
+                        {order.foundationOrg?.name || t('admin:orders.labels.noEmail', 'N/A')}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{order.itemCount} items</div>
+                      <div className="text-sm text-gray-900">{order.itemCount} {t('admin:orders.labels.items', 'items')}</div>
                       <div className="text-sm text-gray-500">{order.itemsPreview}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -235,7 +235,7 @@ const Orders: React.FC = () => {
                                     className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                   >
                                     <Edit className="h-4 w-4 mr-2" />
-                                    Edit Order
+                                    {t('admin:orders.actions.editOrder', 'Edit Order')}
                                   </button>
                                 )}
                               </Menu.Item>
@@ -245,7 +245,7 @@ const Orders: React.FC = () => {
                                     className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
-                                    Cancel Order
+                                    {t('admin:orders.actions.cancelOrder', 'Cancel Order')}
                                   </button>
                                 )}
                               </Menu.Item>
@@ -263,8 +263,8 @@ const Orders: React.FC = () => {
         {filteredOrders.length === 0 && (
           <div className="text-center py-12">
             <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or create a new order.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:orders.emptyState.title', 'No orders found')}</h3>
+            <p className="text-gray-600">{t('admin:orders.emptyState.description', 'Try adjusting your search criteria or create a new order.')}</p>
           </div>
         )}
       </div>

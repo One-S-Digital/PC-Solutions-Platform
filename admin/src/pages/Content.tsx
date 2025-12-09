@@ -255,11 +255,11 @@ export default function Content() {
           // Show success toast if we got a response (update likely succeeded)
           // The backend log confirms it updated, so even if response structure is unexpected, show success
           if (response && (response?.status === 200 || response?.data?.success)) {
-            showToast('Content updated successfully', 'success');
+            showToast(t('admin:content.updateSuccess', 'Content updated successfully'), 'success');
           } else {
             console.warn('Update response structure unexpected:', response);
             // Still show success since backend confirmed the update
-            showToast('Content updated successfully', 'success');
+            showToast(t('admin:content.updateSuccess', 'Content updated successfully'), 'success');
           }
         } catch (updateError: any) {
           console.error('Error during update API call:', updateError);
@@ -293,7 +293,7 @@ export default function Content() {
               }
 
               response = result.data;
-              showToast('Content uploaded successfully', 'success');
+              showToast(t('admin:content.uploadSuccess', 'Content uploaded successfully'), 'success');
       }
 
       // Check if response is successful (handle both update and upload responses)
@@ -355,7 +355,7 @@ export default function Content() {
   };
 
   const handleDelete = async (contentType: ContentType, id: string) => {
-    if (!confirm('Are you sure you want to delete this content?')) {
+    if (!confirm(t('admin:content.deleteConfirm', 'Are you sure you want to delete this content?'))) {
       return;
     }
 
@@ -371,7 +371,7 @@ export default function Content() {
       }
 
       if (response?.data.success) {
-        showToast('Content deleted successfully', 'success');
+        showToast(t('admin:content.deleteSuccess', 'Content deleted successfully'), 'success');
         // Refresh the appropriate content list
         if (contentType === 'e-learning') {
           await fetchELearningContent();
@@ -390,7 +390,7 @@ export default function Content() {
 
   const handleView = (content: UploadedContent) => {
     if (!content.fileUrl && !content.publicUrl) {
-      alert('No file URL available for this content');
+      alert(t('admin:content.noFileUrl', 'No file URL available for this content'));
       return;
     }
     setPreviewContent(content);
@@ -451,9 +451,9 @@ export default function Content() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Content Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin:content.title', 'Content Management')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Upload and manage e-learning materials, HR documents, and state policies
+          {t('admin:content.description', 'Upload and manage e-learning materials, HR documents, and state policies')}
         </p>
       </div>
 
@@ -471,7 +471,7 @@ export default function Content() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add E-Learning Content
+          {t('admin:content.addELearning', 'Add E-Learning Content')}
         </button>
         
         <button
@@ -479,7 +479,7 @@ export default function Content() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add HR Document
+          {t('admin:content.addHRDocument', 'Add HR Document')}
         </button>
         
         <button
@@ -487,7 +487,7 @@ export default function Content() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add State Policy
+          {t('admin:content.addStatePolicy', 'Add State Policy')}
         </button>
       </div>
 
@@ -730,6 +730,7 @@ function ContentCard({
   onDelete: () => void;
   onView: () => void;
 }) {
+  const { t } = useTranslation(['admin', 'common']);
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
       <div className="p-5">
@@ -745,26 +746,26 @@ function ContentCard({
           </span>
         )}
         <div className="text-xs text-gray-500 mb-4">
-          Updated: {new Date(item.updatedAt).toLocaleDateString()}
+          {t('admin:content.updated', 'Updated')}: {new Date(item.updatedAt).toLocaleDateString()}
         </div>
         <div className="flex gap-2">
           <button
             onClick={onView}
             className="flex-1 px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100"
           >
-            View
+            {t('admin:content.view', 'View')}
           </button>
           <button
             onClick={onEdit}
             className="flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100"
           >
-            Edit
+            {t('admin:content.edit', 'Edit')}
           </button>
           <button
             onClick={onDelete}
             className="flex-1 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100"
           >
-            Delete
+            {t('admin:content.delete', 'Delete')}
           </button>
         </div>
       </div>

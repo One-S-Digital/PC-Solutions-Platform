@@ -557,6 +557,7 @@ export class StaticTranslationController {
   @ApiOperation({ summary: 'Get static translations (public)' })
   @ApiResponse({ status: 200, description: 'Translations retrieved' })
   @ApiResponse({ status: 304, description: 'Not modified (ETag match)' })
+  @ApiResponse({ status: 400, description: 'Invalid language or namespace' })
   async getTranslations(
     @Param('lang') lang: string,
     @Param('namespace') namespace: string,
@@ -564,6 +565,41 @@ export class StaticTranslationController {
     @Query('v') version?: string,
     @Headers('if-none-match') ifNoneMatch?: string,
   ): Promise<void> {
+    // Debug logging to help diagnose issues
+    console.log(`[Translation] Request received: lang="${lang}", namespace="${namespace}"`);
+    
+    // Input validation - prevent injection and invalid requests
+    const supportedLangs = ['en', 'fr', 'de'];
+    if (!supportedLangs.includes(lang)) {
+      console.warn(`[Translation] Invalid language: "${lang}"`);
+      res.status(400).json({ 
+        error: 'Invalid language', 
+        message: `Language must be one of: ${supportedLangs.join(', ')}`,
+        received: lang 
+      });
+      return;
+    }
+    
+    // Validate namespace format - alphanumeric, underscore, hyphen, camelCase allowed
+    // Allow camelCase (e.g., parentLeadForm) and standard formats
+    const namespaceRegex = /^[a-zA-Z0-9_-]+$/;
+    const namespaceTest = namespaceRegex.test(namespace);
+    
+    if (!namespaceTest) {
+      // Log for debugging
+      console.warn(`[Translation] Invalid namespace format: "${namespace}" (length: ${namespace.length}, test: ${namespaceTest})`);
+      res.status(400).json({ 
+        error: 'Invalid namespace', 
+        message: 'Namespace must contain only letters, numbers, underscores, and hyphens',
+        received: namespace,
+        regexTest: namespaceTest,
+        regexPattern: '/^[a-zA-Z0-9_-]+$/'
+      });
+      return;
+    }
+    
+    console.log(`[Translation] Validation passed for: ${lang}/${namespace}`);
+    
     const { data, etag } = await this.service.getByNamespace(lang, namespace);
 
     // Check if client has cached version

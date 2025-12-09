@@ -178,7 +178,18 @@ i18n
           });
 
           if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+            // Try to get error details for debugging
+            let errorDetails = '';
+            try {
+              const errorData = await response.clone().json();
+              errorDetails = JSON.stringify(errorData, null, 2);
+              console.error(`[Translation] API Error ${response.status} for ${lng}/${ns}:`, errorData);
+            } catch (e) {
+              const errorText = await response.clone().text();
+              errorDetails = errorText;
+              console.error(`[Translation] API Error ${response.status} for ${lng}/${ns}:`, errorText);
+            }
+            throw new Error(`API error: ${response.status} - ${errorDetails}`);
           }
 
           let data = await response.json();
@@ -192,18 +203,35 @@ i18n
         } catch (error) {
           console.warn(`Failed to load translation ${lng}/${ns}:`, error);
 
-          // Fallback to bundled translations
+          // Fallback strategy: bundled -> English -> empty object
           const bundled = getBundledTranslations();
           if (bundled) {
             callback(null, { status: 200, data: bundled });
-          } else {
-            try {
-              const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
-              const data = stripPrefixes(module.default || module);
-              callback(null, { status: 200, data });
-            } catch (e) {
-              callback(null, { status: 200, data: {} });
+            return;
+          }
+          
+          // Try to load from bundled files as fallback
+          try {
+            const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
+            const data = stripPrefixes(module.default || module);
+            callback(null, { status: 200, data });
+            return;
+          } catch (e) {
+            // Last resort: Try English fallback if target language failed
+            if (lng !== 'en') {
+              try {
+                const enModule = await import(`../packages/translations/locales/en/${ns}.json`);
+                const enData = stripPrefixes(enModule.default || enModule);
+                console.warn(`Using English fallback for ${lng}/${ns}`);
+                callback(null, { status: 200, data: enData });
+                return;
+              } catch (enError) {
+                // If even English fails, return empty object
+                console.error(`Failed to load even English fallback for ${ns}:`, enError);
+              }
             }
+            // Return empty object as last resort (i18next will handle missing keys)
+            callback(null, { status: 200, data: {} });
           }
         }
       },
@@ -233,12 +261,17 @@ i18n
     // Performance optimizations
     updateMissing: false,
     saveMissing: false, // Disabled in production - use admin UI instead
-    // Log missing keys in development
-    missingKeyHandler: import.meta.env.DEV 
-      ? (lngs, ns, key) => {
-          console.warn(`⚠️ Missing translation key: ${ns}:${key} [${lngs.join(', ')}]`);
-        }
-      : undefined,
+    // Missing key handler - works in both dev and production
+    missingKeyHandler: (lngs, ns, key) => {
+      if (import.meta.env.DEV) {
+        // Development: Log warning
+        console.warn(`⚠️ Missing translation key: ${ns}:${key} [${lngs.join(', ')}]`);
+      } else {
+        // Production: Log to error tracking (silent to user, but track for monitoring)
+        // Fallback to English will happen automatically via i18next fallbackLng config
+        console.error(`[Translation Missing] ${ns}:${key} [${lngs.join(', ')}]`);
+      }
+    },
   });
 
 // Preload critical namespaces for all languages on app init
