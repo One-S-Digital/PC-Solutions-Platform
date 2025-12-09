@@ -1,4 +1,6 @@
 {
+  "admin": "Admin",
+  "add": "Add",
   "buttons": {
     "save": "Save",
     "saveChanges": "Save Changes",

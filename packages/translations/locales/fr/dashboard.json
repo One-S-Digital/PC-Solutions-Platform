@@ -187,16 +187,20 @@
     "total": "Total",
     "date": "Date"
   },
+  "sidebar": {
+    "allUsersTitle": "Total des utilisateurs",
+    "foundations": "Fondations",
+    "products": "Produits",
+    "parentLeads": "Pistes de parents",
+    "jobListings": "Offres d'emploi",
+    "applications": "Candidatures",
+    "dashboard": "Tableau de bord"
+  },
+  "platformSummary": "Résumé de la plateforme",
+  "loadingStats": "Chargement des statistiques de la plateforme...",
+  "registeredUsers": "Utilisateurs enregistrés sur la plateforme",
+  "total": "Total",
   "dashboard": {
-    "sidebar": {
-      "allUsersTitle": "Total des utilisateurs",
-      "foundations": "Fondations",
-      "products": "Produits",
-      "parentLeads": "Pistes de parents",
-      "jobListings": "Offres d'emploi",
-      "applications": "Candidatures",
-      "dashboard": "Tableau de bord"
-    },
     "welcome": "Bon retour, {{name}} !",
     "adminSystemMonitoringPage": {
       "overallStatus": {

@@ -1,4 +1,6 @@
 {
+  "admin": "Admin",
+  "add": "Hinzufügen",
   "buttons": {
     "save": "Speichern",
     "saveChanges": "Änderungen speichern",

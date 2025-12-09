@@ -596,22 +596,6 @@ export class CompatController {
     }
   }
 
-  @Get('vendor-clients')
-  @Public()
-  async getVendorClients() {
-    // VendorClient is a frontend-managed type without database backing yet
-    // Return empty array - frontend handles this gracefully with local state
-    return { success: true, message: 'OK', data: [], timestamp: new Date().toISOString() };
-  }
-
-  @Post('vendor-clients')
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION)
-  async updateVendorClient(@Body() data: any) {
-    // VendorClient is a frontend-managed type without database backing yet
-    // Return the data as-is to simulate successful update
-    return { success: true, message: 'Vendor client status updated', data, timestamp: new Date().toISOString() };
-  }
-
   @Get('messages/conversations')
   @Public()
   async getConversations() {

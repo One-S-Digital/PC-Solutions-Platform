@@ -1,4 +1,6 @@
 {
+  "admin": "Admin",
+  "add": "Ajouter",
   "buttons": {
     "save": "Enregistrer",
     "saveChanges": "Enregistrer les modifications",

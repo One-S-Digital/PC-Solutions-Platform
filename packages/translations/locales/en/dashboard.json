@@ -45,6 +45,7 @@
     "messages": "Messages",
     "users": "Users",
     "allUsers": "All Users",
+    "allUsersTitle": "Total Users",
     "admins": "Admins",
     "foundations": "Foundations",
     "productSuppliers": "Product Suppliers",
@@ -78,6 +79,10 @@
     "homeFindCreche": "Home / Find Crèche",
     "applications": "Applications"
   },
+  "platformSummary": "Platform Summary",
+  "loadingStats": "Loading platform statistics...",
+  "registeredUsers": "Registered users in the platform",
+  "total": "Total",
   "navbar": {
     "notificationsCount": "{{count}} notifications",
     "unreadMessages": "{{count}} unread messages",
