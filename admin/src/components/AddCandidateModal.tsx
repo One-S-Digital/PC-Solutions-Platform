@@ -188,7 +188,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
             onClick={handleClose}
             disabled={isSubmitting}
             className="p-1 rounded-full text-white/80 hover:bg-white/20 hover:text-white transition-colors disabled:opacity-50"
-            aria-label="Close"
+            aria-label={t('common:labels.close')}
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -214,7 +214,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                     value={formData.firstName}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="John"
+                    placeholder={t('admin:forms.candidate.firstNamePlaceholder')}
                   />
                   {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
                 </div>
@@ -230,7 +230,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                     value={formData.lastName}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="Doe"
+                    placeholder={t('admin:forms.candidate.lastNamePlaceholder')}
                   />
                   {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
                 </div>
@@ -248,7 +248,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                     value={formData.email}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="john.doe@example.com"
+                    placeholder={t('admin:forms.candidate.emailPlaceholder')}
                   />
                   {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
                 </div>
@@ -264,7 +264,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="+41 XX XXX XX XX"
+                    placeholder={t('common:placeholders.41xxxxxxxxx')}
                   />
                 </div>
               </div>
@@ -304,7 +304,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                   onChange={handleInputChange}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Describe relevant work experience..."
+                  placeholder={t('admin:forms.candidate.experiencePlaceholder')}
                 />
               </div>
 
@@ -319,7 +319,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                   onChange={handleInputChange}
                   rows={2}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Educational background and qualifications..."
+                  placeholder={t('admin:forms.candidate.educationPlaceholder')}
                 />
               </div>
             </div>
@@ -355,7 +355,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                   onChange={(e) => setNewSkill(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill(newSkill))}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Add a custom skill..."
+                  placeholder={t('admin:forms.candidate.skillPlaceholder')}
                 />
                 <button
                   type="button"
@@ -411,7 +411,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                   onChange={(e) => setNewCertification(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCertification())}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="e.g., Early Childhood Education Diploma, First Aid Certificate..."
+                  placeholder={t('admin:forms.candidate.certificationPlaceholder')}
                 />
                 <button
                   type="button"
@@ -437,7 +437,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
                 rows={3}
                 maxLength={500}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                placeholder="A brief introduction about the candidate..."
+                placeholder={t('admin:forms.candidate.bioPlaceholder')}
               />
               {formData.shortBio && (
                 <p className="text-xs text-gray-400 text-right">{formData.shortBio.length}/500</p>

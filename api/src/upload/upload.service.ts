@@ -271,10 +271,10 @@ export class UploadService {
   /**
    * Upload file and create asset record
    */
-  async uploadFile(file: Express.Multer.File, uploadedById: string, kind: AssetKind) {
+  async uploadFile(file: Express.Multer.File, uploadedById: string, kind: AssetKind, conversationId?: string) {
     try {
       // Upload to R2
-      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedById);
+      const uploadResult = await this.r2Service.uploadFile(file, kind, uploadedById, undefined, conversationId);
 
       // Create asset record
       const asset = await this.createAsset({
@@ -335,5 +335,65 @@ export class UploadService {
 
     this.logger.log(`Asset ${assetId} associated with organization ${organizationId} as ${associationType}`);
     return { success: true };
+  }
+
+  /**
+   * Verify user has access to file by storage key
+   * Returns asset if user has access, throws error otherwise
+   */
+  async verifyFileAccess(storageKey: string, appUserId: string) {
+    const asset = await this.prisma.asset.findFirst({
+      where: { storageKey },
+      include: {
+        uploader: {
+          select: {
+            id: true,
+            email: true,
+            clerkId: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    if (!asset) {
+      throw new NotFoundException('File not found');
+    }
+
+    // Fetch the requesting user's role from the database
+    const requestingUser = await this.prisma.appUser.findUnique({
+      where: { id: appUserId },
+      select: { role: true },
+    });
+
+    // Allow access if:
+    // 1. User is the uploader
+    // 2. User is SUPER_ADMIN or ADMIN
+    // 3. File is public (if you have a public flag - not implemented here)
+    const isOwner = asset.uploadedById === appUserId;
+    const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
+
+    if (!isOwner && !isAdmin) {
+      this.logger.warn(`Access denied to file ${storageKey} for user ${appUserId}`);
+      throw new ForbiddenException('Access denied to this file');
+    }
+
+    return asset;
+  }
+
+  /**
+   * Get asset by storage key (for download endpoint)
+   * @private This method should only be called after verifyFileAccess
+   */
+  private async getAssetByStorageKey(storageKey: string) {
+    const asset = await this.prisma.asset.findFirst({
+      where: { storageKey },
+    });
+
+    if (!asset) {
+      throw new NotFoundException('Asset not found');
+    }
+
+    return asset;
   }
 }

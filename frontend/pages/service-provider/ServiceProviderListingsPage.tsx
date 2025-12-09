@@ -154,7 +154,7 @@ const ServiceProviderListingsPage: React.FC = () => {
           availability: data.availability || 'By appointment',
           tags: data.tags || [],
           deliveryType: data.deliveryType || 'On-site',
-          priceInfo: data.priceInfo || 'Contact for quote',
+          priceInfo: data.priceInfo || t('serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
           imageUrl,
           isActive: true,
           ...data,

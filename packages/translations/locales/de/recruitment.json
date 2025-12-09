@@ -1,129 +1,225 @@
 {
-  "title": "Rekrutierung",
-  "jobListings": {
-    "title": "Stellenangebote",
-    "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
-    "viewDetails": "Stellendetails anzeigen"
-  },
-  "candidatePool": {
-    "title": "Kandidatenpool",
-    "noCandidates": "Keine Kandidaten verfügbar",
-    "viewProfile": "Profil anzeigen",
-    "searchPlaceholder": "Kandidaten suchen...",
-    "filterTitle": "Kandidaten filtern",
-    "emptyState": "Keine Kandidaten im Pool verfügbar"
-  },
-  "jobOffers": {
-    "searchPlaceholder": "Stellen suchen...",
-    "filterTitle": "Stellen filtern",
-    "activeJobsCount": "{{count}} aktive Stellenangebote",
-    "emptyState": "Keine Stellen gefunden"
-  },
-  "tabs": {
-    "jobOffers": "Stellenangebote",
-    "candidatePool": "Kandidatenpool"
+  "recruitment": {
+    "jobPostModal": {
+      "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
+      "qualificationPlaceholder": "Qualifikation hinzufügen",
+      "requirementPlaceholder": "Anforderung hinzufügen",
+      "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
+      "benefitPlaceholder": "Vorteil hinzufügen",
+      "addResponsibility": "Verantwortlichkeit hinzufügen",
+      "addQualification": "Qualifikation hinzufügen",
+      "responsibilities": "Verantwortlichkeiten",
+      "addRequirement": "Anforderung hinzufügen",
+      "qualifications": "Qualifikationen",
+      "contractType": "Vertragsart",
+      "requirements": "Anforderungen",
+      "description": "Stellenbeschreibung",
+      "salaryRange": "Gehaltsbereich",
+      "addBenefit": "Vorteil hinzufügen",
+      "editTitle": "Stellenangebot bearbeiten",
+      "startDate": "Startdatum",
+      "addTitle": "Neue Stelle ausschreiben",
+      "benefits": "Vorteile",
+      "jobTitle": "Stellenbezeichnung",
+      "location": "Standort",
+      "postJob": "Stelle veröffentlichen"
+    },
+    "viewApplicantsModal": {
+      "noApplicants": "Noch keine Bewerber",
+      "appliedOn": "Beworben am {{date}}",
+      "title": "Bewerber für {{jobTitle}}"
+    },
+    "candidatePool": {
+      "searchPlaceholder": "Kandidaten suchen...",
+      "noCandidates": "Keine Kandidaten verfügbar",
+      "filterTitle": "Kandidaten filtern",
+      "viewProfile": "Profil anzeigen",
+      "emptyState": "Keine Kandidaten im Pool verfügbar",
+      "title": "Kandidatenpool"
+    },
+    "jobDetailModal": {
+      "responsibilities": "Verantwortlichkeiten",
+      "jobDescription": "Stellenbeschreibung",
+      "qualifications": "Qualifikationen",
+      "overviewTitle": "Stellenübersicht",
+      "contractType": "Vertragsart",
+      "requirements": "Anforderungen",
+      "startDate": "Startdatum",
+      "applyNow": "Jetzt bewerben",
+      "benefits": "Vorteile",
+      "location": "Standort",
+      "salary": "Gehalt"
+    },
+    "jobOffers": {
+      "searchPlaceholder": "Stellen suchen...",
+      "activeJobsCount": "{{count}} aktive Stellenangebote",
+      "filterTitle": "Stellen filtern",
+      "emptyState": "Keine Stellen gefunden"
+    },
+    "buttons": {
+      "inviteToInterview": "Zum Interview einladen",
+      "viewApplicants": "Bewerber anzeigen",
+      "inviteToApply": "Zur Bewerbung einladen",
+      "addCandidate": "Kandidat hinzufügen",
+      "applyFilters": "Filter anwenden",
+      "postNewJob": "Neue Stelle ausschreiben",
+      "applyNow": "Jetzt bewerben",
+      "filters": "Filter"
+    },
+    "candidateCard": {
+      "viewProfile": "Profil anzeigen"
+    },
+    "jobListings": {
+      "viewDetails": "Stellendetails anzeigen",
+      "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
+      "title": "Stellenangebote"
+    },
+    "labels": {
+      "allContractTypes": "Alle Vertragsarten",
+      "allStatuses": "Alle Status",
+      "allRoles": "Alle Rollen",
+      "location": "Standort"
+    },
+    "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?",
+    "filters": {
+      "availability": "Verfügbarkeit",
+      "experience": "Erfahrung",
+      "location": "Standort"
+    },
+    "tabs": {
+      "candidatePool": "Kandidatenpool",
+      "jobOffers": "Stellenangebote"
+    },
+    "title": "Rekrutierung"
   },
   "jobPostModal": {
+    "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
+    "qualificationPlaceholder": "Qualifikation hinzufügen",
+    "requirementPlaceholder": "Anforderung hinzufügen",
+    "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
+    "benefitPlaceholder": "Vorteil hinzufügen",
+    "addResponsibility": "Verantwortlichkeit hinzufügen",
+    "addQualification": "Qualifikation hinzufügen",
+    "responsibilities": "Verantwortlichkeiten",
+    "addRequirement": "Anforderung hinzufügen",
+    "qualifications": "Qualifikationen",
+    "contractType": "Vertragsart",
+    "requirements": "Anforderungen",
+    "description": "Stellenbeschreibung",
+    "salaryRange": "Gehaltsbereich",
+    "addBenefit": "Vorteil hinzufügen",
     "editTitle": "Stellenangebot bearbeiten",
+    "startDate": "Startdatum",
     "addTitle": "Neue Stelle ausschreiben",
+    "benefits": "Vorteile",
     "jobTitle": "Stellenbezeichnung",
     "location": "Standort",
-    "contractType": "Vertragsart",
-    "startDate": "Startdatum",
-    "salaryRange": "Gehaltsbereich",
-    "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
-    "description": "Stellenbeschreibung",
-    "responsibilities": "Verantwortlichkeiten",
-    "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
-    "addResponsibility": "Verantwortlichkeit hinzufügen",
-    "qualifications": "Qualifikationen",
-    "qualificationPlaceholder": "Qualifikation hinzufügen",
-    "addQualification": "Qualifikation hinzufügen",
-    "benefits": "Vorteile",
-    "benefitPlaceholder": "Vorteil hinzufügen",
-    "addBenefit": "Vorteil hinzufügen",
-    "requirements": "Anforderungen",
-    "requirementPlaceholder": "Anforderung hinzufügen",
-    "addRequirement": "Anforderung hinzufügen",
     "postJob": "Stelle veröffentlichen"
   },
-  "jobDetailModal": {
-    "overviewTitle": "Stellenübersicht",
-    "location": "Standort",
-    "contractType": "Vertragsart",
-    "startDate": "Startdatum",
-    "salary": "Gehalt",
-    "jobDescription": "Stellenbeschreibung",
-    "responsibilities": "Verantwortlichkeiten",
-    "requirements": "Anforderungen",
-    "qualifications": "Qualifikationen",
-    "benefits": "Vorteile",
-    "applyNow": "Jetzt bewerben",
-    "noDescription": "Keine Beschreibung verfügbar."
-  },
-  "buttons": {
-    "postNewJob": "Neue Stelle ausschreiben",
-    "addCandidate": "Kandidat hinzufügen",
-    "applyNow": "Jetzt bewerben",
-    "inviteToApply": "Zur Bewerbung einladen",
-    "inviteToInterview": "Zum Interview einladen",
-    "viewApplicants": "Bewerber anzeigen",
-    "filters": "Filter",
-    "applyFilters": "Filter anwenden"
-  },
-  "labels": {
-    "location": "Standort",
-    "region": "Region",
-    "allContractTypes": "Alle Vertragsarten",
-    "allStatuses": "Alle Status",
-    "allRoles": "Alle Rollen",
-    "startDate": "Startdatum",
-    "applications": "Bewerbungen",
-    "startDateTbd": "Noch festzulegen",
-    "locationUnknown": "Standort wird definiert",
-    "availabilityDate": "Verfügbarkeitsdatum"
-  },
-  "filters": {
-    "all": "Alle",
-    "location": "Standort",
-    "experience": "Erfahrung",
-    "availability": "Verfügbarkeit"
-  },
-  "jobStatus": {
-    "draft": "Entwurf",
-    "published": "Veröffentlicht",
-    "filled": "Besetzt",
-    "closed": "Geschlossen"
-  },
-  "contractTypes": {
-    "fullTime": "Vollzeit",
-    "partTime": "Teilzeit",
-    "cdi": "Unbefristet",
-    "cdd": "Befristet",
-    "internship": "Praktikum"
-  },
-  "candidateCard": {
-    "viewProfile": "Profil anzeigen",
-    "roleUnknown": "Rolle nicht angegeben",
-    "availabilityUnknown": "Verfügbarkeit nicht angegeben",
-    "regionUnknown": "Region nicht angegeben"
-  },
   "viewApplicantsModal": {
-    "title": "Bewerber für {{jobTitle}}",
+    "unknownCandidate": "Bewerber",
     "noApplicants": "Noch keine Bewerber",
     "appliedOn": "Beworben am {{date}}",
     "loading": "Bewerbungen werden geladen...",
-    "unknownCandidate": "Bewerber"
+    "title": "Bewerber für {{jobTitle}}"
+  },
+  "application": {
+    "coverLetterPlaceholder": "Sagen Sie uns, warum Sie an dieser Stelle interessiert sind und warum Sie so gut zu uns passen..."
+  },
+  "candidateCard": {
+    "availabilityUnknown": "Verfügbarkeit nicht angegeben",
+    "regionUnknown": "Region nicht angegeben",
+    "roleUnknown": "Rolle nicht angegeben",
+    "viewProfile": "Profil anzeigen"
+  },
+  "candidatePool": {
+    "searchPlaceholder": "Kandidaten suchen...",
+    "noCandidates": "Keine Kandidaten verfügbar",
+    "filterTitle": "Kandidaten filtern",
+    "viewProfile": "Profil anzeigen",
+    "emptyState": "Keine Kandidaten im Pool verfügbar",
+    "title": "Kandidatenpool"
+  },
+  "jobDetailModal": {
+    "responsibilities": "Verantwortlichkeiten",
+    "jobDescription": "Stellenbeschreibung",
+    "qualifications": "Qualifikationen",
+    "noDescription": "Keine Beschreibung verfügbar.",
+    "overviewTitle": "Stellenübersicht",
+    "contractType": "Vertragsart",
+    "requirements": "Anforderungen",
+    "startDate": "Startdatum",
+    "applyNow": "Jetzt bewerben",
+    "benefits": "Vorteile",
+    "location": "Standort",
+    "salary": "Gehalt"
   },
   "errors": {
-    "loadJobsFailed": "Stellenangebote können nicht geladen werden.",
-    "saveJobFailed": "Stellenangebot konnte nicht gespeichert werden.",
-    "deleteJobFailed": "Stellenangebot konnte nicht gelöscht werden.",
+    "loadApplicationsFailed": "Bewerbungen können nicht geladen werden.",
     "loadCandidatesFailed": "Kandidaten können nicht geladen werden.",
-    "loadApplicationsFailed": "Bewerbungen können nicht geladen werden."
+    "deleteJobFailed": "Stellenangebot konnte nicht gelöscht werden.",
+    "loadJobsFailed": "Stellenangebote können nicht geladen werden.",
+    "saveJobFailed": "Stellenangebot konnte nicht gespeichert werden."
+  },
+  "jobOffers": {
+    "searchPlaceholder": "Stellen suchen...",
+    "activeJobsCount": "{{count}} aktive Stellenangebote",
+    "filterTitle": "Stellen filtern",
+    "emptyState": "Keine Stellen gefunden"
+  },
+  "buttons": {
+    "inviteToInterview": "Zum Interview einladen",
+    "viewApplicants": "Bewerber anzeigen",
+    "inviteToApply": "Zur Bewerbung einladen",
+    "addCandidate": "Kandidat hinzufügen",
+    "applyFilters": "Filter anwenden",
+    "postNewJob": "Neue Stelle ausschreiben",
+    "applyNow": "Jetzt bewerben",
+    "filters": "Filter"
+  },
+  "contractTypes": {
+    "internship": "Praktikum",
+    "fullTime": "Vollzeit",
+    "partTime": "Teilzeit",
+    "cdd": "Befristet",
+    "cdi": "Unbefristet"
   },
   "confirmations": {
     "deleteJob": "Möchten Sie dieses Stellenangebot wirklich löschen?"
   },
-  "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?"
+  "jobListings": {
+    "viewDetails": "Stellendetails anzeigen",
+    "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
+    "title": "Stellenangebote"
+  },
+  "labels": {
+    "allContractTypes": "Alle Vertragsarten",
+    "availabilityDate": "Verfügbarkeitsdatum",
+    "locationUnknown": "Standort wird definiert",
+    "applications": "Bewerbungen",
+    "startDateTbd": "Noch festzulegen",
+    "allStatuses": "Alle Status",
+    "startDate": "Startdatum",
+    "allRoles": "Alle Rollen",
+    "location": "Standort",
+    "region": "Region"
+  },
+  "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?",
+  "filters": {
+    "availability": "Verfügbarkeit",
+    "experience": "Erfahrung",
+    "location": "Standort",
+    "all": "Alle"
+  },
+  "jobStatus": {
+    "published": "Veröffentlicht",
+    "closed": "Geschlossen",
+    "filled": "Besetzt",
+    "draft": "Entwurf"
+  },
+  "tabs": {
+    "candidatePool": "Kandidatenpool",
+    "jobOffers": "Stellenangebote"
+  },
+  "title": "Rekrutierung"
 }

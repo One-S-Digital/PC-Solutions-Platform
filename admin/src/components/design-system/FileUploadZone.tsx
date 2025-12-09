@@ -1,5 +1,6 @@
 
 import React, { useState, DragEvent, ChangeEvent, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowUpTrayIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 
 interface FileUploadZoneProps {
@@ -17,6 +18,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   label = "Upload a file",
   multiple = false,
 }) => {
+  const { t } = useTranslation(['admin', 'common']);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -116,7 +118,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             >
               <span>{label}</span>
             </span>
-            <p className="pl-1 text-gray-500">or drag and drop</p>
+            <p className="pl-1 text-gray-500">{t('admin:fileUpload.dragDrop')}</p>
           </div>
           <p className="text-xs text-gray-500">
             {acceptedMimeTypes.replace(/\/\*/g, '').split(',').join(', ').toUpperCase()}. Max {maxFileSizeMB}MB.
@@ -134,7 +136,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       {fileName && !error && (
         <p className="mt-2 text-sm text-green-600 flex items-center">
           <PaperClipIcon className="w-4 h-4 mr-1.5" />
-          Selected: {fileName}
+          {t('admin:fileUpload.selected')} {fileName}
         </p>
       )}
       {error && <p className="mt-2 text-sm text-swiss-coral">{error}</p>}

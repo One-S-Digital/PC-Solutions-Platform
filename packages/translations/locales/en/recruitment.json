@@ -1,128 +1,223 @@
 {
-  "jobListings": {
-    "title": "Job Listings",
-    "noJobs": "No job listings available at the moment",
-    "viewDetails": "View Job Details"
-  },
-  "candidatePool": {
-    "title": "Candidate Pool",
-    "noCandidates": "No candidates available",
-    "viewProfile": "View Profile",
-    "searchPlaceholder": "Search candidates...",
-    "filterTitle": "Filter Candidates",
-    "emptyState": "No candidates available in the pool"
-  },
-  "jobOffers": {
-    "searchPlaceholder": "Search jobs...",
-    "filterTitle": "Filter Jobs",
-    "activeJobsCount": "{{count}} active job openings",
-    "emptyState": "No jobs found"
-  },
-  "tabs": {
-    "jobOffers": "Job Offers",
-    "candidatePool": "Candidate Pool"
+  "recruitment": {
+    "jobPostModal": {
+      "responsibilityPlaceholder": "Add a responsibility",
+      "qualificationPlaceholder": "Add a qualification",
+      "requirementPlaceholder": "Add a requirement",
+      "salaryRangePlaceholder": "e.g. CHF 60,000 - 80,000",
+      "benefitPlaceholder": "Add a benefit",
+      "addResponsibility": "Add Responsibility",
+      "addQualification": "Add Qualification",
+      "responsibilities": "Responsibilities",
+      "addRequirement": "Add Requirement",
+      "qualifications": "Qualifications",
+      "contractType": "Contract Type",
+      "requirements": "Requirements",
+      "description": "Job Description",
+      "salaryRange": "Salary Range",
+      "addBenefit": "Add Benefit",
+      "editTitle": "Edit Job Posting",
+      "startDate": "Start Date",
+      "addTitle": "Post New Job",
+      "benefits": "Benefits",
+      "jobTitle": "Job Title",
+      "location": "Location",
+      "postJob": "Post Job"
+    },
+    "viewApplicantsModal": {
+      "noApplicants": "No applicants yet",
+      "appliedOn": "Applied on {{date}}",
+      "title": "Applicants for {{jobTitle}}"
+    },
+    "candidatePool": {
+      "searchPlaceholder": "Search candidates...",
+      "noCandidates": "No candidates available",
+      "filterTitle": "Filter Candidates",
+      "viewProfile": "View Profile",
+      "emptyState": "No candidates available in the pool",
+      "title": "Candidate Pool"
+    },
+    "jobDetailModal": {
+      "responsibilities": "Responsibilities",
+      "jobDescription": "Job Description",
+      "qualifications": "Qualifications",
+      "overviewTitle": "Job Overview",
+      "contractType": "Contract Type",
+      "requirements": "Requirements",
+      "startDate": "Start Date",
+      "applyNow": "Apply Now",
+      "benefits": "Benefits",
+      "location": "Location",
+      "salary": "Salary"
+    },
+    "jobOffers": {
+      "searchPlaceholder": "Search jobs...",
+      "activeJobsCount": "{{count}} active job openings",
+      "filterTitle": "Filter Jobs",
+      "emptyState": "No jobs found"
+    },
+    "buttons": {
+      "inviteToInterview": "Invite to Interview",
+      "viewApplicants": "View Applicants",
+      "inviteToApply": "Invite to Apply",
+      "addCandidate": "Add Candidate",
+      "applyFilters": "Apply Filters",
+      "postNewJob": "Post New Job",
+      "applyNow": "Apply Now",
+      "filters": "Filters"
+    },
+    "candidateCard": {
+      "viewProfile": "View Profile"
+    },
+    "jobListings": {
+      "viewDetails": "View Job Details",
+      "noJobs": "No job listings available at the moment",
+      "title": "Job Listings"
+    },
+    "labels": {
+      "allContractTypes": "All Contract Types",
+      "allStatuses": "All Statuses",
+      "allRoles": "All Roles",
+      "location": "Location"
+    },
+    "confirmRemoveCandidate": "Are you sure you want to remove {{name}}?",
+    "filters": {
+      "availability": "Availability",
+      "experience": "Experience",
+      "location": "Location"
+    },
+    "tabs": {
+      "candidatePool": "Candidate Pool",
+      "jobOffers": "Job Offers"
+    }
   },
   "jobPostModal": {
-    "editTitle": "Edit Job Posting",
-    "addTitle": "Post New Job",
-    "jobTitle": "Job Title",
-    "location": "Location",
-    "contractType": "Contract Type",
-    "startDate": "Start Date",
-    "salaryRange": "Salary Range",
-    "salaryRangePlaceholder": "e.g. CHF 60,000 - 80,000",
-    "description": "Job Description",
-    "responsibilities": "Responsibilities",
     "responsibilityPlaceholder": "Add a responsibility",
-    "addResponsibility": "Add Responsibility",
-    "qualifications": "Qualifications",
     "qualificationPlaceholder": "Add a qualification",
-    "addQualification": "Add Qualification",
-    "benefits": "Benefits",
-    "benefitPlaceholder": "Add a benefit",
-    "addBenefit": "Add Benefit",
-    "requirements": "Requirements",
     "requirementPlaceholder": "Add a requirement",
+    "salaryRangePlaceholder": "e.g. CHF 60,000 - 80,000",
+    "benefitPlaceholder": "Add a benefit",
+    "addResponsibility": "Add Responsibility",
+    "addQualification": "Add Qualification",
+    "responsibilities": "Responsibilities",
     "addRequirement": "Add Requirement",
+    "qualifications": "Qualifications",
+    "contractType": "Contract Type",
+    "requirements": "Requirements",
+    "description": "Job Description",
+    "salaryRange": "Salary Range",
+    "addBenefit": "Add Benefit",
+    "editTitle": "Edit Job Posting",
+    "startDate": "Start Date",
+    "addTitle": "Post New Job",
+    "benefits": "Benefits",
+    "jobTitle": "Job",
+    "location": "Location",
     "postJob": "Post Job"
   },
-  "jobDetailModal": {
-    "overviewTitle": "Job Overview",
-    "location": "Location",
-    "contractType": "Contract Type",
-    "startDate": "Start Date",
-    "salary": "Salary",
-    "jobDescription": "Job Description",
-    "responsibilities": "Responsibilities",
-    "requirements": "Requirements",
-    "qualifications": "Qualifications",
-    "benefits": "Benefits",
-    "applyNow": "Apply Now",
-    "noDescription": "No description provided."
-  },
-  "buttons": {
-    "postNewJob": "Post New Job",
-    "addCandidate": "Add Candidate",
-    "applyNow": "Apply Now",
-    "inviteToApply": "Invite to Apply",
-    "inviteToInterview": "Invite to Interview",
-    "viewApplicants": "View Applicants",
-    "filters": "Filters",
-    "applyFilters": "Apply Filters"
-  },
-  "labels": {
-    "location": "Location",
-    "region": "Region",
-    "allContractTypes": "All Contract Types",
-    "allStatuses": "All Statuses",
-    "allRoles": "All Roles",
-    "startDate": "Start Date",
-    "applications": "Applications",
-    "startDateTbd": "To be determined",
-    "locationUnknown": "Location TBD",
-    "availabilityDate": "Availability Date"
-  },
-  "filters": {
-    "all": "All",
-    "location": "Location",
-    "experience": "Experience",
-    "availability": "Availability"
-  },
-  "jobStatus": {
-    "draft": "Draft",
-    "published": "Published",
-    "filled": "Filled",
-    "closed": "Closed"
-  },
-  "contractTypes": {
-    "fullTime": "Full-time",
-    "partTime": "Part-time",
-    "cdi": "CDI",
-    "cdd": "CDD",
-    "internship": "Internship"
-  },
-  "candidateCard": {
-    "viewProfile": "View Profile",
-    "roleUnknown": "Role not specified",
-    "availabilityUnknown": "Availability not provided",
-    "regionUnknown": "Region not specified"
-  },
   "viewApplicantsModal": {
-    "title": "Applicants for {{jobTitle}}",
+    "unknownCandidate": "Candidate",
     "noApplicants": "No applicants yet",
     "appliedOn": "Applied on {{date}}",
     "loading": "Loading applications...",
-    "unknownCandidate": "Candidate"
+    "title": "Applicants for {{jobTitle}}"
+  },
+  "application": {
+    "coverLetterPlaceholder": "Tell us why you're interested in this position and what makes you a great fit..."
+  },
+  "candidateCard": {
+    "availabilityUnknown": "Availability not provided",
+    "regionUnknown": "Region not specified",
+    "roleUnknown": "Role not specified",
+    "viewProfile": "View Profile"
+  },
+  "candidatePool": {
+    "searchPlaceholder": "Search candidates...",
+    "noCandidates": "No candidates available",
+    "filterTitle": "Filter Candidates",
+    "viewProfile": "View Profile",
+    "emptyState": "No candidates available in the pool",
+    "title": "Candidate Pool"
+  },
+  "jobDetailModal": {
+    "responsibilities": "Responsibilities",
+    "jobDescription": "Job Description",
+    "qualifications": "Qualifications",
+    "noDescription": "No description provided.",
+    "overviewTitle": "Job Overview",
+    "contractType": "Contract Type",
+    "requirements": "Requirements",
+    "startDate": "Start Date",
+    "applyNow": "Apply Now",
+    "benefits": "Benefits",
+    "location": "Location",
+    "salary": "Salary"
   },
   "errors": {
-    "loadJobsFailed": "Unable to load job listings.",
-    "saveJobFailed": "Unable to save the job listing.",
-    "deleteJobFailed": "Unable to delete the job listing.",
+    "loadApplicationsFailed": "Unable to load job applications.",
     "loadCandidatesFailed": "Unable to load candidates.",
-    "loadApplicationsFailed": "Unable to load job applications."
+    "deleteJobFailed": "Unable to delete the job listing.",
+    "loadJobsFailed": "Unable to load job listings.",
+    "saveJobFailed": "Unable to save the job listing."
+  },
+  "jobOffers": {
+    "searchPlaceholder": "Search jobs...",
+    "activeJobsCount": "{{count}} active job openings",
+    "filterTitle": "Filter Jobs",
+    "emptyState": "No jobs found"
+  },
+  "buttons": {
+    "inviteToInterview": "Invite To Interview",
+    "viewApplicants": "View Applicants",
+    "inviteToApply": "Invite To Apply",
+    "addCandidate": "Add Candidate",
+    "applyFilters": "Apply Filters",
+    "postNewJob": "Post New Job",
+    "applyNow": "Apply Now",
+    "filters": "Filters"
+  },
+  "contractTypes": {
+    "internship": "Internship",
+    "fullTime": "Full Time",
+    "partTime": "Part Time",
+    "cdd": "Cdd",
+    "cdi": "Cdi"
   },
   "confirmations": {
     "deleteJob": "Are you sure you want to delete this job listing?"
   },
-  "confirmRemoveCandidate": "Are you sure you want to remove {{name}}?"
+  "jobListings": {
+    "viewDetails": "View Job Details",
+    "noJobs": "No job listings available at the moment",
+    "title": "Job Listings"
+  },
+  "labels": {
+    "allContractTypes": "All Contract Types",
+    "availabilityDate": "Availability Date",
+    "locationUnknown": "Location TBD",
+    "applications": "Applications",
+    "startDateTbd": "To be determined",
+    "allStatuses": "All Statuses",
+    "startDate": "Start Date",
+    "allRoles": "All Roles",
+    "location": "Location",
+    "region": "Region"
+  },
+  "confirmRemoveCandidate": "Are you sure you want to remove {{name}}?",
+  "filters": {
+    "availability": "Availability",
+    "experience": "Experience",
+    "location": "Location",
+    "all": "All"
+  },
+  "jobStatus": {
+    "published": "Published",
+    "closed": "Closed",
+    "filled": "Filled",
+    "draft": "Draft"
+  },
+  "tabs": {
+    "candidatePool": "Candidate Pool",
+    "jobOffers": "Job Offers"
+  }
 }

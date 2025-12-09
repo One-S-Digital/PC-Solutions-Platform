@@ -245,29 +245,29 @@ export const apiService = {
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
 
   // Organizations
-  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/organizations'),
-  getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/organizations/${id}`),
-  createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/organizations', orgData),
-  updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/organizations/${id}`, orgData),
-  deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/organizations/${id}`),
+  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations'),
+  getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/compat/organizations/${id}`),
+  createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/compat/organizations', orgData),
+  updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/compat/organizations/${id}`, orgData),
+  deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/organizations/${id}`),
 
   // Products
 
-  getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/products'),
+  getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
   getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/products/${id}`),
   createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/products', productData),
   updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.put<ApiResponse<Product>>(`/products/${id}`, productData),
   deleteProduct: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/products/${id}`),
 
   // Services
-  getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/services'),
-  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/services/${id}`),
-  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/services', serviceData),
-  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.put<ApiResponse<Service>>(`/services/${id}`, serviceData),
-  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/services/${id}`),
+  getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/compat/services'),
+  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/compat/services/${id}`),
+  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/compat/services', serviceData),
+  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.put<ApiResponse<Service>>(`/compat/services/${id}`, serviceData),
+  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/services/${id}`),
 
   // Job Listings
-  getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/job-listings'),
+  getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/compat/job-listings'),
   createJobListing: (apiClient: AxiosInstance, jobData: {
     title: string;
     description?: string;
@@ -280,10 +280,10 @@ export const apiService = {
     qualifications?: string[];
     benefits?: string[];
     status?: string;
-  }) => apiClient.post<ApiResponse<JobListing>>('/job-listings', jobData),
+  }) => apiClient.post<ApiResponse<JobListing>>('/compat/job-listings', jobData),
 
   // Candidates
-  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/candidates'),
+  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates'),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
@@ -411,20 +411,21 @@ export const apiService = {
   deletePolicyAlert: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/policy-alerts/${id}`),
 
   // Parent Leads
-  getParentLeads: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<ParentLead[]>>('/parent-leads'),
+  getParentLeads: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<ParentLead[]>>('/compat/parent-leads'),
 
   // Orders
 
-  getOrders: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Order[]>>('/orders'),
-  getOrderRequests: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<OrderRequest[]>>('/order-requests'),
+  getOrders: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Order[]>>('/compat/orders'),
+  getOrderRequests: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<OrderRequest[]>>('/compat/order-requests'),
 
   // Messaging
-  getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messages/conversations'),
-  getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messages/conversations/${id}`),
-  createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messages/conversations', data),
-  getMessages: (apiClient: AxiosInstance, conversationId: string) => apiClient.get<ApiResponse<Message[]>>(`/messages/conversations/${conversationId}/messages`),
-  sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messages', data),
-  markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messages/${id}/read`),
+  // NOTE: Endpoint paths changed from /messages/* to /messaging/* - ensure backend is deployed first
+  getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messaging/conversations'),
+  getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messaging/conversations/${id}`),
+  createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messaging/conversations', data),
+  getMessages: (apiClient: AxiosInstance, conversationId: string) => apiClient.get<ApiResponse<Message[]>>(`/messaging/conversations/${conversationId}/messages`),
+  sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messaging/messages', data),
+  markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messaging/messages/${id}/read`),
 
   // System
   getCurrentUser: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User>>('/users/me'),
@@ -656,13 +657,15 @@ export const apiService = {
     targetLang: string,
     namespace?: string,
     keys?: string[],
-    force?: boolean
+    force?: boolean,
+    includePlaceholders?: boolean,
   ) => apiClient.post<ApiResponse<{ success: boolean; translated: number }>>('/static-translations/admin/translate-missing', {
     sourceLang,
     targetLang,
     namespace,
     keys,
     force,
+    includePlaceholders,
   }, {
     timeout: 300000, // 5 minutes timeout for translation operations (can take a while for large batches)
   }),
@@ -706,6 +709,103 @@ export const apiService = {
   ) => apiClient.post<ApiResponse<{ success: boolean; cleaned: number; affected: number }>>('/static-translations/admin/cleanup-prefixes', {}, {
     timeout: 300000, // 5 minutes timeout for cleanup operations (can take a while for large datasets)
   }),
+
+  // Support Tickets
+  getSupportTickets: (apiClient: AxiosInstance, filters?: {
+    status?: string;
+    priority?: string;
+    category?: string;
+    search?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.priority) params.append('priority', filters.priority);
+    if (filters?.category) params.append('category', filters.category);
+    if (filters?.search) params.append('search', filters.search);
+    
+    return apiClient.get<ApiResponse<any[]>>(`/support/admin/tickets${params.toString() ? `?${params.toString()}` : ''}`);
+  },
+
+  getSupportTicket: (apiClient: AxiosInstance, ticketId: string) => 
+    apiClient.get<ApiResponse<any>>(`/support/tickets/${ticketId}`),
+
+  updateTicketStatus: (apiClient: AxiosInstance, ticketId: string, status: string) =>
+    apiClient.patch<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/status`, { status }),
+
+  assignTicket: (apiClient: AxiosInstance, ticketId: string, assigneeId?: string) =>
+    apiClient.patch<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/assign`, { assigneeId }),
+
+  respondToTicket: (apiClient: AxiosInstance, ticketId: string, message: string) =>
+    apiClient.post<ApiResponse<any>>(`/support/tickets/${ticketId}/respond`, { message }),
+
+  getSupportTicketStats: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/support/admin/stats'),
+
+  importFromJsonFiles: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        imported: number;
+        details: Record<string, number>;
+      }>
+    >('/static-translations/admin/import-from-files'),
+
+  exportToJsonFiles: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        exported: number;
+        details: Record<string, number>;
+      }>
+    >('/static-translations/admin/export-to-files'),
+
+  fullSync: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        imported: number;
+        translatedFr: number;
+        translatedDe: number;
+        exported: number;
+        message: string;
+      }>
+    >('/static-translations/admin/full-sync', {}, { timeout: 600000 }), // 10 minute timeout
+
+  autoFixHardcodedStrings: (
+    apiClient: AxiosInstance
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        fixed: number;
+        skipped: number;
+        errors: number;
+        /** Number of completely new translation keys created by the script */
+        missingKeysCreated?: number;
+        /** Detailed per-file/per-key info from the script */
+        details?: any;
+        message: string;
+      }>
+    >('/static-translations/admin/auto-fix-hardcoded-strings', {}, {
+      timeout: 600000, // 10 minutes timeout for auto-fix operations (can take a while)
+    }),
+
+  fixEnglishPlaceholders: (apiClient: AxiosInstance) =>
+    apiClient.post<
+      ApiResponse<{
+        success: boolean;
+        cleaned: number;
+        affected: number;
+      }>
+    >('/static-translations/admin/fix-english-placeholders', {}, {
+      timeout: 300000, // 5 minutes timeout for cleanup operations
+    }),
 }
 
 // Export individual content functions for easier imports

@@ -5,6 +5,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import * as crypto from 'crypto';
 import { DeepLService } from './deepl.service';
+import { DEFAULT_LANGUAGE } from './translation.config';
 
 export interface MTProvider {
   translate(params: { text: string; from: string; to: string }): Promise<string>;
@@ -21,7 +22,7 @@ export interface TranslationResult {
 export class TranslationService {
   private readonly logger = new Logger(TranslationService.name);
   private readonly supportedLangs = ['en', 'fr', 'de'];
-  private readonly defaultLang = 'en';
+  private readonly defaultLang = DEFAULT_LANGUAGE;
 
   constructor(
     private prisma: PrismaService,
@@ -53,7 +54,7 @@ export class TranslationService {
    */
   async detectLanguage(text: string): Promise<TranslationResult> {
     if (!text || text.trim().length === 0) {
-      return { text, lang: this.defaultLang };
+      return { text, lang: this.defaultLang, confidence: 0 };
     }
 
     // Simple heuristic detection based on common words
@@ -71,13 +72,16 @@ export class TranslationService {
     const englishWords = ['the', 'and', 'with', 'for', 'from', 'to', 'in', 'on', 'at', 'is', 'are', 'have', 'will', 'be'];
     const englishCount = englishWords.filter(word => lowerText.includes(word)).length;
 
-    if (frenchCount > germanCount && frenchCount > englishCount) {
-      return { text, lang: 'fr', confidence: Math.min(frenchCount / 10, 0.9) };
-    } else if (germanCount > frenchCount && germanCount > englishCount) {
-      return { text, lang: 'de', confidence: Math.min(germanCount / 10, 0.9) };
-    } else {
-      return { text, lang: 'en', confidence: Math.min(englishCount / 10, 0.9) };
+    const counts = { fr: frenchCount, de: germanCount, en: englishCount };
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const [winnerLang, winnerCount] = sorted[0];
+
+    if (winnerCount === 0) {
+      this.logger.warn('Language detection low confidence, defaulting to en');
+      return { text, lang: this.defaultLang, confidence: 0 };
     }
+
+    return { text, lang: winnerLang, confidence: Math.min(winnerCount / 10, 0.9) };
   }
 
   /**
@@ -143,35 +147,34 @@ export class TranslationService {
             field,
             text,
             sourceHash,
-            origin: 'machine',
+            origin: 'human',
             verified: false,
           },
         });
       }
     }
 
-    // Try to enqueue async translation job, but fall back to DeepL if queue fails
-    // This ensures translations happen even if queue isn't working
+    // Try to enqueue async translation job, but fall back to synchronous translation if queue fails/missing
     let queueSucceeded = false;
     if (this.translationQueue) {
       try {
-      await this.translationQueue.add(
-        'translate-entity',
-        {
-          entityType,
-          entityId,
-          sourceLang: detection.lang,
-        },
-        {
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 2000,
+        await this.translationQueue.add(
+          'translate-entity',
+          {
+            entityType,
+            entityId,
+            sourceLang: detection.lang,
           },
-          removeOnComplete: true,
-          removeOnFail: false,
-        },
-      );
+          {
+            attempts: 3,
+            backoff: {
+              type: 'exponential',
+              delay: 2000,
+            },
+            removeOnComplete: true,
+            removeOnFail: false,
+          },
+        );
         this.logger.log(`Enqueued translation job for ${entityType}:${entityId}`);
         queueSucceeded = true;
       } catch (error) {
@@ -180,10 +183,17 @@ export class TranslationService {
       }
     }
 
-    // According to plan: ONLY enqueue, never translate synchronously
-    // If queue failed, log error but don't block - translations will be created when queue is available
     if (!queueSucceeded) {
-      this.logger.error(`Failed to enqueue translation for ${entityType}:${entityId} - translations will be created when queue is available`);
+      this.logger.error(`Failed to enqueue translation for ${entityType}:${entityId} - attempting inline translation fallback`);
+      if (this.deepLService?.isAvailable()) {
+        try {
+          await this.translateEntity(entityType, entityId);
+        } catch (inlineError) {
+          this.logger.error(`Inline translation fallback failed for ${entityType}:${entityId}: ${inlineError.message}`);
+        }
+      } else {
+        this.logger.error(`DeepL unavailable; translations for ${entityType}:${entityId} will remain pending until queue is restored`);
+      }
     }
   }
 
@@ -403,9 +413,41 @@ export class TranslationService {
       const text = await this.resolveField(entityType, entityId, field, lang);
       result[field] = text;
       
-      if (!text && lang !== 'en') {
-        hasMissingTranslations = true;
-      } else if (text && lang !== 'en' && sourceRecord) {
+      // Detect missing translations for ALL languages, including English
+      // This ensures English translations are created for German/French sources, etc.
+      if (!text) {
+          // Provide best-effort fallback to avoid blank UI
+          if (sourceRecord) {
+            const sourceTranslation = await this.prisma.entityTranslation.findUnique({
+              where: {
+                entityType_entityId_lang_field: {
+                  entityType,
+                  entityId,
+                  lang: sourceRecord.sourceLang,
+                  field,
+                },
+              },
+            });
+            if (sourceTranslation) {
+              result[field] = sourceTranslation.text;
+            } else if (this.defaultLang !== lang) {
+              const defaultTranslation = await this.prisma.entityTranslation.findUnique({
+                where: {
+                  entityType_entityId_lang_field: {
+                    entityType,
+                    entityId,
+                    lang: this.defaultLang,
+                    field,
+                  },
+                },
+              });
+              if (defaultTranslation) {
+                result[field] = defaultTranslation.text;
+              }
+            }
+          }
+          hasMissingTranslations = true;
+      } else if (text && sourceRecord) {
         // Check if translation text matches source text (which means it's wrong)
         const sourceTranslation = await this.prisma.entityTranslation.findUnique({
           where: {
@@ -438,14 +480,14 @@ export class TranslationService {
           // Don't queue again - treat as "untranslatable" and let frontend use source text
           if (existingTranslation && existingTranslation.text === sourceTranslation.text) {
             this.logger.debug(`Translation for ${entityType}:${entityId} ${field} ${lang} appears untranslatable (DeepL returned source text). Not queuing for retry.`);
-            // Return empty string so frontend falls back to source text, but don't queue new job
-            result[field] = '';
+            // Use source text so UI is not blank while avoiding re-queue
+            result[field] = sourceTranslation.text;
             // Don't set hasMissingTranslations or hasIncorrectTranslations - we've already tried
           } else {
             // Translation doesn't exist yet or is different - queue for translation
             this.logger.warn(`Incorrect translation detected for ${entityType}:${entityId} ${field} ${lang}: translation text matches source text, clearing and queuing for background fix`);
             hasIncorrectTranslations = true;
-            result[field] = '';
+            result[field] = sourceTranslation.text;
             hasMissingTranslations = true;
           }
         }
@@ -478,14 +520,22 @@ export class TranslationService {
     // According to plan: resolveEntity should ONLY return existing translations
     // Missing translations should be queued for background processing (non-blocking)
     // This ensures API responses are fast and translations happen async via queue
-    if (hasMissingTranslations && lang !== 'en') {
+    // Always queue translations for missing languages, regardless of target language
+    // This ensures English translations are created for German/French sources, etc.
+    if (hasMissingTranslations) {
       this.logger.log(`Missing translations detected for ${entityType}:${entityId} in ${lang}, queuing for background processing`);
       
       // Queue translation job for background processing (non-blocking)
-      // According to plan: ALL translation creation must be async via queue
       if (!this.translationQueue) {
-        this.logger.error(`Translation queue not available for ${entityType}:${entityId} - translations will NOT be processed!`);
-        return;
+        this.logger.error(`Translation queue not available for ${entityType}:${entityId} - attempting inline translation fallback`);
+        if (this.deepLService?.isAvailable()) {
+          try {
+            await this.translateEntity(entityType, entityId);
+          } catch (inlineError) {
+            this.logger.error(`Inline translation fallback failed for ${entityType}:${entityId}: ${inlineError.message}`);
+          }
+        }
+        return result;
       }
       
       // Log that we're attempting to queue
@@ -548,22 +598,7 @@ export class TranslationService {
     }
 
     // Fallback placeholder translation
-    this.logger.warn(`Using placeholder translation for ${from} -> ${to}. DeepL not available.`);
-    const translations: Record<string, Record<string, string>> = {
-      'en': {
-        'fr': `[FR] ${text}`,
-        'de': `[DE] ${text}`,
-      },
-      'fr': {
-        'en': `[EN] ${text}`,
-        'de': `[DE] ${text}`,
-      },
-      'de': {
-        'en': `[EN] ${text}`,
-        'fr': `[FR] ${text}`,
-      },
-    };
-
-    return translations[from]?.[to] || text;
+    this.logger.warn(`Using placeholder translation (returning source text) for ${from} -> ${to}. DeepL not available.`);
+    return text;
   }
 }

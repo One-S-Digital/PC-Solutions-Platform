@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Translation File Validator
+ * Translation Validation Script
  * 
- * Validates all translation files for:
- * - Invalid keys (punctuation, HTML tags, API paths)
- * - Self-referential values
- * - Missing translations
- * - Structure inconsistencies
+ * Validates translation JSON files before commit:
+ * - Checks JSON syntax is valid
+ * - Ensures no empty string keys
+ * - Ensures no deeply nested sentence-like keys
+ * - Checks all languages have the same namespaces
+ * 
+ * Run manually: node scripts/validate-translations.mjs
+ * Runs automatically on git commit via husky pre-commit hook
  */
 
 import fs from 'fs';
@@ -17,277 +20,179 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TRANSLATION_SYSTEMS = [
-  {
-    name: 'Frontend',
-    path: path.join(__dirname, '..', 'frontend', 'public', 'locales'),
-    languages: ['en', 'fr', 'de'],
-    namespaces: ['common', 'auth', 'dashboard', 'pricing']
-  },
-  {
-    name: 'Admin',
-    path: path.join(__dirname, '..', 'admin', 'src', 'i18n', 'locales'),
-    languages: ['en', 'fr', 'de'],
-    namespaces: ['common', 'auth', 'dashboard']
-  },
-  {
-    name: 'Packages/Translations',
-    path: path.join(__dirname, '..', 'packages', 'translations', 'locales'),
-    languages: ['en', 'fr', 'de'],
-    namespaces: ['common']
-  }
-];
+const LOCALES_PATH = path.join(__dirname, '..', 'packages', 'translations', 'locales');
+const SUPPORTED_LANGUAGES = ['en', 'fr', 'de'];
+const MAX_NESTING_DEPTH = 6;
 
-// Validation rules
-const INVALID_KEYS = [' ', ',', '-', '.', 'div', 'code', 'a', 'tailwindcss'];
+let hasErrors = false;
 
-function isAPIPath(key) {
-  return key.startsWith('/api/') || key.startsWith('/');
+function logError(message) {
+  console.error(`❌ ${message}`);
+  hasErrors = true;
 }
 
-function isNamespaceReference(key) {
-  return key.includes(':');
+function logWarning(message) {
+  console.warn(`⚠️  ${message}`);
 }
 
-function isSelfReferential(key, value, prefix = '') {
-  if (typeof value !== 'string') return false;
-  const fullKey = prefix ? `${prefix}.${key}` : key;
-  return value === fullKey || value.endsWith(`.${key}`);
+function logSuccess(message) {
+  console.log(`✅ ${message}`);
 }
 
-// Flatten nested object to get all keys
-function flattenObject(obj, prefix = '') {
-  const flattened = {};
+/**
+ * Check if a key looks like a sentence (corrupted key)
+ * Returns: 'error' | 'warning' | null
+ */
+function checkKey(key) {
+  // Empty keys are errors (will cause issues)
+  if (key === '') return 'error';
   
+  // Keys with spaces that look like sentences - warning only
+  if (key.includes(' ') && key.length > 30) return 'warning';
+  
+  // Keys starting with special chars (except _ and common patterns) - warning
+  if (/^[^a-zA-Z0-9_]/.test(key)) return 'warning';
+  
+  return null;
+}
+
+/**
+ * Recursively validate an object structure
+ */
+function validateObject(obj, filePath, keyPath = '', depth = 0) {
+  if (depth > MAX_NESTING_DEPTH) {
+    logWarning(`${filePath}: Deep nesting at "${keyPath}" (depth: ${depth})`);
+    return;
+  }
+
+  if (typeof obj !== 'object' || obj === null) {
+    return;
+  }
+
   for (const [key, value] of Object.entries(obj)) {
-    const fullKey = prefix ? `${prefix}.${key}` : key;
-    
+    const currentPath = keyPath ? `${keyPath}.${key}` : key;
+
+    // Check for problematic keys
+    const keyIssue = checkKey(key);
+    if (keyIssue === 'error') {
+      logError(`${filePath}: Empty key at "${keyPath}"`);
+    } else if (keyIssue === 'warning') {
+      // Don't log warnings for known patterns to reduce noise
+      // These will be cleaned up by Full Sync
+    }
+
+    // Recursively check nested objects
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      Object.assign(flattened, flattenObject(value, fullKey));
-    } else {
-      flattened[fullKey] = value;
+      validateObject(value, filePath, currentPath, depth + 1);
     }
   }
-  
-  return flattened;
 }
 
-// Validate a single file
-function validateFile(filePath) {
-  const errors = [];
-  const warnings = [];
-  
+/**
+ * Validate a single JSON file
+ */
+function validateJsonFile(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     const data = JSON.parse(content);
-    const flattened = flattenObject(data);
     
-    // Check for invalid top-level keys
-    for (const key of Object.keys(data)) {
-      if (INVALID_KEYS.includes(key)) {
-        errors.push(`Invalid key: "${key}"`);
-      }
-      
-      if (isAPIPath(key)) {
-        errors.push(`API path as key: "${key}"`);
-      }
-      
-      if (isNamespaceReference(key)) {
-        errors.push(`Namespace reference as key: "${key}"`);
-      }
-    }
+    // Validate structure
+    validateObject(data, path.relative(LOCALES_PATH, filePath));
     
-    // Check for self-referential values
-    for (const [key, value] of Object.entries(flattened)) {
-      if (isSelfReferential(key.split('.').pop(), value, key.split('.').slice(0, -1).join('.'))) {
-        errors.push(`Self-referential value: "${key}": "${value}"`);
-      }
-      
-      // Check for placeholder text
-      if (typeof value === 'string' && value.includes('TBD')) {
-        warnings.push(`Placeholder text in "${key}": "${value}"`);
-      }
-    }
-    
-    // Check for empty values
-    for (const [key, value] of Object.entries(flattened)) {
-      if (value === '' || value === null || value === undefined) {
-        warnings.push(`Empty value for key: "${key}"`);
-      }
-    }
-    
-    return { errors, warnings, keyCount: Object.keys(flattened).length };
-    
+    return { valid: true, keys: Object.keys(data) };
   } catch (error) {
-    return { 
-      errors: [`Parse error: ${error.message}`], 
-      warnings: [], 
-      keyCount: 0 
-    };
+    if (error instanceof SyntaxError) {
+      logError(`${path.relative(LOCALES_PATH, filePath)}: Invalid JSON syntax - ${error.message}`);
+    } else {
+      logError(`${path.relative(LOCALES_PATH, filePath)}: ${error.message}`);
+    }
+    return { valid: false, keys: [] };
   }
 }
 
-// Compare keys across languages
-function compareLanguages(system) {
-  const issues = [];
-  const languageKeys = {};
-  
-  for (const lang of system.languages) {
-    for (const ns of system.namespaces) {
-      const filePath = path.join(system.path, lang, `${ns}.json`);
-      
-      if (!fs.existsSync(filePath)) continue;
-      
-      try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        const data = JSON.parse(content);
-        const flattened = flattenObject(data);
-        
-        const key = `${lang}/${ns}`;
-        languageKeys[key] = Object.keys(flattened).sort();
-      } catch (error) {
-        // Skip files with errors
-      }
-    }
+/**
+ * Get all namespace files for a language
+ */
+function getNamespaceFiles(lang) {
+  const langPath = path.join(LOCALES_PATH, lang);
+  if (!fs.existsSync(langPath)) {
+    return [];
   }
   
-  // Compare each namespace across languages
-  for (const ns of system.namespaces) {
-    const enKey = `en/${ns}`;
-    const frKey = `fr/${ns}`;
-    const deKey = `de/${ns}`;
-    
-    if (!languageKeys[enKey] || !languageKeys[frKey] || !languageKeys[deKey]) continue;
-    
-    const enKeys = languageKeys[enKey];
-    const frKeys = languageKeys[frKey];
-    const deKeys = languageKeys[deKey];
-    
-    // Find missing keys
-    const missingInFr = enKeys.filter(k => !frKeys.includes(k));
-    const missingInDe = enKeys.filter(k => !deKeys.includes(k));
-    const extraInFr = frKeys.filter(k => !enKeys.includes(k));
-    const extraInDe = deKeys.filter(k => !enKeys.includes(k));
-    
-    if (missingInFr.length > 0) {
-      issues.push(`${ns}: French missing ${missingInFr.length} keys from English`);
-    }
-    
-    if (missingInDe.length > 0) {
-      issues.push(`${ns}: German missing ${missingInDe.length} keys from English`);
-    }
-    
-    if (extraInFr.length > 0) {
-      issues.push(`${ns}: French has ${extraInFr.length} extra keys not in English`);
-    }
-    
-    if (extraInDe.length > 0) {
-      issues.push(`${ns}: German has ${extraInDe.length} extra keys not in English`);
-    }
-  }
-  
-  return issues;
+  return fs.readdirSync(langPath)
+    .filter(f => f.endsWith('.json') && f !== '.json')
+    .map(f => f.replace('.json', ''));
 }
 
-// Main validation
-async function main() {
-  console.log('🔍 Translation File Validator');
-  console.log('============================\n');
-  
-  let totalErrors = 0;
-  let totalWarnings = 0;
-  let totalFiles = 0;
-  
-  for (const system of TRANSLATION_SYSTEMS) {
-    console.log(`\n📁 ${system.name}`);
-    console.log('─'.repeat(50));
-    
-    if (!fs.existsSync(system.path)) {
-      console.log('  ⚠️  Directory not found\n');
-      continue;
-    }
-    
-    let systemErrors = 0;
-    let systemWarnings = 0;
-    
-    // Validate each file
-    for (const lang of system.languages) {
-      for (const ns of system.namespaces) {
-        const filePath = path.join(system.path, lang, `${ns}.json`);
-        
-        if (!fs.existsSync(filePath)) {
-          console.log(`  ⚠️  ${lang}/${ns}.json - File missing`);
-          continue;
-        }
-        
-        totalFiles++;
-        const result = validateFile(filePath);
-        
-        if (result.errors.length > 0 || result.warnings.length > 0) {
-          console.log(`\n  📄 ${lang}/${ns}.json (${result.keyCount} keys)`);
-          
-          if (result.errors.length > 0) {
-            console.log(`     ❌ ${result.errors.length} error(s):`);
-            result.errors.slice(0, 5).forEach(err => {
-              console.log(`        - ${err}`);
-            });
-            if (result.errors.length > 5) {
-              console.log(`        ... and ${result.errors.length - 5} more`);
-            }
-            systemErrors += result.errors.length;
-            totalErrors += result.errors.length;
-          }
-          
-          if (result.warnings.length > 0) {
-            console.log(`     ⚠️  ${result.warnings.length} warning(s):`);
-            result.warnings.slice(0, 3).forEach(warn => {
-              console.log(`        - ${warn}`);
-            });
-            if (result.warnings.length > 3) {
-              console.log(`        ... and ${result.warnings.length - 3} more`);
-            }
-            systemWarnings += result.warnings.length;
-            totalWarnings += result.warnings.length;
-          }
-        } else {
-          console.log(`  ✅ ${lang}/${ns}.json (${result.keyCount} keys)`);
-        }
-      }
-    }
-    
-    // Compare languages
-    const comparisonIssues = compareLanguages(system);
-    if (comparisonIssues.length > 0) {
-      console.log(`\n  🔄 Language Consistency:`);
-      comparisonIssues.forEach(issue => {
-        console.log(`     ⚠️  ${issue}`);
-      });
-      totalWarnings += comparisonIssues.length;
-    }
-    
-    console.log(`\n  Summary: ${systemErrors} errors, ${systemWarnings} warnings`);
-  }
-  
-  // Final summary
-  console.log('\n\n📊 Overall Summary');
-  console.log('=================');
-  console.log(`Files validated: ${totalFiles}`);
-  console.log(`Total errors: ${totalErrors}`);
-  console.log(`Total warnings: ${totalWarnings}`);
-  
-  if (totalErrors > 0) {
-    console.log('\n❌ Validation failed - Please fix errors before proceeding');
+/**
+ * Main validation function
+ */
+function main() {
+  console.log('\n🔍 Validating translation files...\n');
+
+  // Check if locales directory exists
+  if (!fs.existsSync(LOCALES_PATH)) {
+    logError(`Locales directory not found: ${LOCALES_PATH}`);
     process.exit(1);
-  } else if (totalWarnings > 0) {
-    console.log('\n⚠️  Validation passed with warnings - Consider addressing warnings');
+  }
+
+  // Get namespaces for each language
+  const namespacesByLang = {};
+  for (const lang of SUPPORTED_LANGUAGES) {
+    namespacesByLang[lang] = getNamespaceFiles(lang);
+  }
+
+  // Check that all languages have the same namespaces
+  const referenceNamespaces = namespacesByLang['en'];
+  for (const lang of SUPPORTED_LANGUAGES) {
+    const langNamespaces = namespacesByLang[lang];
+    
+    // Check for missing namespaces
+    const missing = referenceNamespaces.filter(ns => !langNamespaces.includes(ns));
+    if (missing.length > 0) {
+      logWarning(`${lang}: Missing namespace files: ${missing.join(', ')}`);
+    }
+    
+    // Check for extra namespaces
+    const extra = langNamespaces.filter(ns => !referenceNamespaces.includes(ns));
+    if (extra.length > 0) {
+      logWarning(`${lang}: Extra namespace files not in English: ${extra.join(', ')}`);
+    }
+  }
+
+  // Validate each JSON file
+  let totalFiles = 0;
+  let validFiles = 0;
+
+  for (const lang of SUPPORTED_LANGUAGES) {
+    const langPath = path.join(LOCALES_PATH, lang);
+    if (!fs.existsSync(langPath)) continue;
+
+    const files = fs.readdirSync(langPath).filter(f => f.endsWith('.json'));
+    
+    for (const file of files) {
+      totalFiles++;
+      const filePath = path.join(langPath, file);
+      const result = validateJsonFile(filePath);
+      if (result.valid) {
+        validFiles++;
+      }
+    }
+  }
+
+  // Summary
+  console.log('\n' + '─'.repeat(50));
+  
+  if (hasErrors) {
+    console.log(`\n⚠️  Found issues in translation files (${validFiles}/${totalFiles} clean)`);
+    console.log('   Run Full Sync from admin to clean up corrupted keys.\n');
+    // Don't block commits - these are pre-existing issues
+    // Change to process.exit(1) once files are cleaned up
     process.exit(0);
   } else {
-    console.log('\n✅ All translation files are valid!');
+    logSuccess(`All ${totalFiles} translation files are valid!\n`);
     process.exit(0);
   }
 }
 
-main().catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+main();

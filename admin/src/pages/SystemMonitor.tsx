@@ -34,11 +34,13 @@ import { publicApi } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { LucideIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next';
 
 const SystemMonitor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'metrics' | 'alerts' | 'logs' | 'analytics' | 'security'>('overview')
   const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all')
   const queryClient = useQueryClient()
+  const { t } = useTranslation(['common', 'admin']);
 
   const { data: healthData, isLoading, error } = useQuery({
     queryKey: ['system-health'],
@@ -239,10 +241,10 @@ const SystemMonitor: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Monitor className="h-8 w-8 mr-3 text-swiss-teal" />
-            System Monitor
+            {t('admin:systemMonitor.title', 'System Monitor')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Real-time system health and performance monitoring
+            {t('admin:systemMonitor.subtitle', 'Real-time system health and performance monitoring')}
           </p>
         </div>
         <button
@@ -250,7 +252,7 @@ const SystemMonitor: React.FC = () => {
           className="flex items-center space-x-2 px-4 py-2 bg-swiss-teal text-white rounded-lg hover:bg-swiss-teal/90 transition-colors"
         >
           <RefreshCw className="h-4 w-4" />
-          <span>Refresh</span>
+          <span>{t('common:refresh')}</span>
         </button>
       </div>
 
@@ -258,12 +260,12 @@ const SystemMonitor: React.FC = () => {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {[
-            { id: 'overview', label: 'Overview' },
-            { id: 'metrics', label: 'Metrics' },
-            { id: 'alerts', label: 'Alerts' },
-            { id: 'logs', label: 'Error Logs' },
-            { id: 'analytics', label: 'Analytics' },
-            { id: 'security', label: 'Security' }
+            { id: 'overview', label: t('admin:systemMonitor.tabs.overview', 'Overview') },
+            { id: 'metrics', label: t('admin:systemMonitor.tabs.metrics', 'Metrics') },
+            { id: 'alerts', label: t('admin:systemMonitor.tabs.alerts', 'Alerts') },
+            { id: 'logs', label: t('admin:systemMonitor.tabs.logs', 'Error Logs') },
+            { id: 'analytics', label: t('admin:systemMonitor.tabs.analytics', 'Analytics') },
+            { id: 'security', label: t('admin:systemMonitor.tabs.security', 'Security') }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -286,7 +288,7 @@ const SystemMonitor: React.FC = () => {
           {/* System Status Overview */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">System Status</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('admin:systemMonitor.status.title', 'System Status')}</h2>
               <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${
                 systemStatus ? 'bg-green-100' : 'bg-red-100'
               }`}>
@@ -296,34 +298,34 @@ const SystemMonitor: React.FC = () => {
                 <span className={`text-sm font-medium ${
                   systemStatus ? 'text-green-700' : 'text-red-700'
                 }`}>
-                  {systemStatus ? 'All Systems Operational' : 'System Issues Detected'}
+                  {systemStatus ? t('admin:systemMonitor.status.allSystemsOperational', 'All Systems Operational') : t('admin:systemMonitor.status.systemIssuesDetected', 'System Issues Detected')}
                 </span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <StatusIndicator status={systemStatus} label="Backend API" />
-              <StatusIndicator status={true} label="Database" />
-              <StatusIndicator status={true} label="Authentication Service" />
+              <StatusIndicator status={systemStatus} label={t('admin:systemMonitor.status.backendApi', 'Backend API')} />
+              <StatusIndicator status={true} label={t('admin:systemMonitor.status.database', 'Database')} />
+              <StatusIndicator status={true} label={t('admin:systemMonitor.status.authenticationService', 'Authentication Service')} />
             </div>
 
             {healthData?.data && (
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Environment:</span>
+                  <span className="text-gray-500">{t('admin:systemMonitor.status.environment', 'Environment:')}</span>
                   <span className="ml-2 font-medium">{healthData.data.environment}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Uptime:</span>
+                  <span className="text-gray-500">{t('admin:systemMonitor.status.uptime', 'Uptime:')}</span>
                   <span className="ml-2 font-medium">{Math.floor(healthData.data.uptime / 60)}m</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Version:</span>
+                  <span className="text-gray-500">{t('admin:systemMonitor.status.version', 'Version:')}</span>
                   <span className="ml-2 font-medium">{healthData.data.version || '1.0.0'}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Last Check:</span>
-                  <span className="ml-2 font-medium">Just now</span>
+                  <span className="text-gray-500">{t('admin:systemMonitor.status.lastCheck', 'Last Check:')}</span>
+                  <span className="ml-2 font-medium">{t('admin:systemMonitor.status.justNow', 'Just now')}</span>
                 </div>
               </div>
             )}
@@ -332,7 +334,7 @@ const SystemMonitor: React.FC = () => {
           {/* Quick Metrics Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricCard
-              title="CPU Usage"
+              title={t('common:titles.cpuusage')}
               value={realMetricsAvailable ? (systemMetrics?.data?.cpu ?? 'N/A') : 'N/A'}
               unit={realMetricsAvailable && systemMetrics?.data?.cpu ? '%' : ''}
               icon={Cpu}
@@ -340,7 +342,7 @@ const SystemMonitor: React.FC = () => {
               percentage={realMetricsAvailable ? systemMetrics?.data?.cpu : undefined}
             />
             <MetricCard
-              title="Memory Usage"
+              title={t('common:titles.memoryusage')}
               value={realMetricsAvailable ? (systemMetrics?.data?.memory ?? 'N/A') : 'N/A'}
               unit={realMetricsAvailable && systemMetrics?.data?.memory ? '%' : ''}
               icon={Activity}
@@ -348,13 +350,13 @@ const SystemMonitor: React.FC = () => {
               percentage={realMetricsAvailable ? systemMetrics?.data?.memory : undefined}
             />
             <MetricCard
-              title="Active Alerts"
+              title={t('common:titles.activealerts')}
               value={realAlertsAvailable ? systemAlerts?.data?.filter((alert: any) => alert.status === 'active').length : 0}
               icon={AlertTriangle}
               color="red"
             />
             <MetricCard
-              title="Error Rate"
+              title={t('common:errors.errorrate')}
               value={realMetricsAvailable ? (systemMetrics?.data?.errorRate ?? 'N/A') : 'N/A'}
               unit={realMetricsAvailable && systemMetrics?.data?.errorRate !== undefined ? '%' : ''}
               icon={TrendingUp}
@@ -368,17 +370,17 @@ const SystemMonitor: React.FC = () => {
         <>
           {/* Server Metrics */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Server Performance</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('admin:systemMonitor.metrics.serverPerformance', 'Server Performance')}</h2>
             {!realMetricsAvailable && (
               <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-800">
-                  System metrics require backend monitoring infrastructure. Currently showing available health data.
+                  {t('admin:systemMonitor.metrics.requiresBackend', 'System metrics require backend monitoring infrastructure. Currently showing available health data.')}
                 </p>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
-                title="CPU Usage"
+                title={t('common:titles.cpuusage')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.cpu ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.cpu ? '%' : ''}
                 icon={Cpu}
@@ -386,7 +388,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.cpu : undefined}
               />
               <MetricCard
-                title="Memory Usage"
+                title={t('common:titles.memoryusage')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.memory ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.memory ? '%' : ''}
                 icon={Activity}
@@ -394,7 +396,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.memory : undefined}
               />
               <MetricCard
-                title="Disk Usage"
+                title={t('common:titles.diskusage')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.disk ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.disk ? '%' : ''}
                 icon={HardDrive}
@@ -402,7 +404,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.disk : undefined}
               />
               <MetricCard
-                title="Uptime"
+                title={t('common:titles.uptime')}
                 value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                 icon={Clock}
                 color="purple"
@@ -412,24 +414,24 @@ const SystemMonitor: React.FC = () => {
 
           {/* Database Metrics */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Database Performance</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('admin:systemMonitor.metrics.databasePerformance', 'Database Performance')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
-                title="Active Connections"
+                title={t('common:titles.activeconnections')}
                 value={realMetricsAvailable && systemMetrics?.data?.dbConnections ? `${systemMetrics.data.dbConnections}/${systemMetrics.data.maxConnections || 100}` : 'N/A'}
                 icon={Database}
                 color="blue"
                 percentage={realMetricsAvailable && systemMetrics?.data?.dbConnections ? (systemMetrics.data.dbConnections / (systemMetrics.data.maxConnections || 100)) * 100 : undefined}
               />
               <MetricCard
-                title="Avg Query Time"
+                title={t('common:titles.avgquerytime')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.queryTime ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.queryTime ? 'ms' : ''}
                 icon={Activity}
                 color="green"
               />
               <MetricCard
-                title="Storage Used"
+                title={t('common:titles.storageused')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.storage ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.storage ? '%' : ''}
                 icon={HardDrive}
@@ -437,7 +439,7 @@ const SystemMonitor: React.FC = () => {
                 percentage={realMetricsAvailable ? systemMetrics?.data?.storage : undefined}
               />
               <MetricCard
-                title="Connection Health"
+                title={t('common:titles.connectionhealth')}
                 value={systemStatus ? 'Healthy' : 'Unknown'}
                 icon={systemStatus ? CheckCircle : AlertCircle}
                 color={systemStatus ? 'green' : 'yellow'}
@@ -447,29 +449,29 @@ const SystemMonitor: React.FC = () => {
 
           {/* Application Metrics */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Application Performance</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('admin:systemMonitor.metrics.applicationPerformance', 'Application Performance')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
-                title="Active Users"
+                title={t('common:titles.activeusers')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.activeUsers ?? 'N/A') : 'N/A'}
                 icon={Users}
                 color="blue"
               />
               <MetricCard
-                title="Requests/min"
+                title={t('common:titles.requestsmin')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.requestsPerMinute ?? 'N/A') : 'N/A'}
                 icon={TrendingUp}
                 color="green"
               />
               <MetricCard
-                title="Response Time"
+                title={t('common:titles.responsetime')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.responseTime ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.responseTime ? 'ms' : ''}
                 icon={Wifi}
                 color="yellow"
               />
               <MetricCard
-                title="Error Rate"
+                title={t('common:errors.errorrate')}
                 value={realMetricsAvailable ? (systemMetrics?.data?.errorRate ?? 'N/A') : 'N/A'}
                 unit={realMetricsAvailable && systemMetrics?.data?.errorRate !== undefined ? '%' : ''}
                 icon={AlertTriangle}
@@ -485,7 +487,7 @@ const SystemMonitor: React.FC = () => {
           {/* Alerts Management */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">System Alerts</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('admin:systemMonitor.alerts.title', 'System Alerts')}</h2>
               <button
                 onClick={() => handleCreateAlert({
                   type: 'performance',
@@ -496,7 +498,7 @@ const SystemMonitor: React.FC = () => {
                 className="flex items-center space-x-2 px-4 py-2 bg-swiss-teal text-white rounded-lg hover:bg-swiss-teal/90 transition-colors"
               >
                 <Bell className="h-4 w-4" />
-                <span>Create Alert</span>
+                <span>{t('admin:systemMonitor.alerts.createAlert', 'Create Alert')}</span>
               </button>
             </div>
 
@@ -546,24 +548,24 @@ const SystemMonitor: React.FC = () => {
           {/* Error Logs Console */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Error Logs Console</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('admin:systemMonitor.logs.title', 'Error Logs Console')}</h2>
               <div className="flex items-center space-x-4">
                 <select
                   value={logFilter}
                   onChange={(e) => setLogFilter(e.target.value as any)}
                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 >
-                  <option value="all">All Logs</option>
-                  <option value="error">Errors</option>
-                  <option value="warning">Warnings</option>
-                  <option value="info">Info</option>
+                  <option value="all">{t('admin:systemMonitor.logs.allLogs', 'All Logs')}</option>
+                  <option value="error">{t('common:errors.errors', 'Errors')}</option>
+                  <option value="warning">{t('common:warnings', 'Warnings')}</option>
+                  <option value="info">{t('common:info', 'Info')}</option>
                 </select>
                 <button
                   onClick={handleExportLogs}
                   className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   <Download className="h-4 w-4" />
-                  <span>Export</span>
+                  <span>{t('common:export')}</span>
                 </button>
               </div>
             </div>
@@ -575,7 +577,7 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm max-h-96 overflow-y-auto">
                 {filteredLogs.length === 0 ? (
-                  <div className="text-gray-500">No logs found</div>
+                  <div className="text-gray-500">{t('admin:systemMonitor.logs.noLogsFound', 'No logs found')}</div>
                 ) : (
                   filteredLogs.map((log: any, index: number) => (
                     <div key={index} className="mb-2">
@@ -608,14 +610,14 @@ const SystemMonitor: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                 <BarChart3 className="h-5 w-5 mr-2 text-swiss-teal" />
-                Performance Analytics
+                {t('admin:systemMonitor.analytics.performanceAnalytics', 'Performance Analytics')}
               </h2>
             </div>
 
             {!performanceMetrics?.data && (
               <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-800">
-                  Performance analytics require backend monitoring infrastructure to be configured.
+                  {t('admin:systemMonitor.analytics.requiresBackend', 'Performance analytics require backend monitoring infrastructure to be configured.')}
                 </p>
               </div>
             )}
@@ -627,28 +629,28 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                  title="Response Time"
+                  title={t('common:titles.responsetime')}
                   value={performanceMetrics?.data?.avgResponseTime ?? 'N/A'}
                   unit={performanceMetrics?.data?.avgResponseTime ? 'ms' : ''}
                   icon={Zap}
                   color="blue"
                 />
                 <MetricCard
-                  title="Throughput"
+                  title={t('common:titles.throughput')}
                   value={performanceMetrics?.data?.requestsPerSecond ?? 'N/A'}
                   unit={performanceMetrics?.data?.requestsPerSecond ? 'req/s' : ''}
                   icon={TrendingUp}
                   color="green"
                 />
                 <MetricCard
-                  title="Error Rate"
+                  title={t('common:errors.errorrate')}
                   value={performanceMetrics?.data?.errorRate ?? 'N/A'}
                   unit={performanceMetrics?.data?.errorRate !== undefined ? '%' : ''}
                   icon={AlertCircle}
                   color="red"
                 />
                 <MetricCard
-                  title="Uptime"
+                  title={t('common:titles.uptime')}
                   value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
                   icon={CheckCircle}
                   color="green"
@@ -662,14 +664,14 @@ const SystemMonitor: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Users className="h-5 w-5 mr-2 text-swiss-teal" />
-                User Analytics
+                {t('admin:systemMonitor.analytics.userAnalytics', 'User Analytics')}
               </h2>
             </div>
 
             {!userAnalytics?.data && (
               <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-800">
-                  User analytics require tracking infrastructure to be configured. See the main Dashboard for available user statistics.
+                  {t('admin:systemMonitor.analytics.requiresTracking', 'User analytics require tracking infrastructure to be configured. See the main Dashboard for available user statistics.')}
                 </p>
               </div>
             )}
@@ -681,26 +683,26 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                  title="Active Users"
+                  title={t('common:titles.activeusers')}
                   value={userAnalytics?.data?.activeUsers ?? 'N/A'}
                   icon={Users}
                   color="blue"
                 />
                 <MetricCard
-                  title="New Users Today"
+                  title={t('common:titles.newuserstoday')}
                   value={userAnalytics?.data?.newUsersToday ?? 'N/A'}
                   icon={TrendingUp}
                   color="green"
                 />
                 <MetricCard
-                  title="Session Duration"
+                  title={t('common:titles.sessionduration')}
                   value={userAnalytics?.data?.avgSessionDuration ?? 'N/A'}
                   unit={userAnalytics?.data?.avgSessionDuration ? 'min' : ''}
                   icon={Clock}
                   color="purple"
                 />
                 <MetricCard
-                  title="Page Views"
+                  title={t('common:titles.pageviews')}
                   value={userAnalytics?.data?.pageViews ?? 'N/A'}
                   icon={Eye}
                   color="yellow"
@@ -714,14 +716,13 @@ const SystemMonitor: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Globe className="h-5 w-5 mr-2 text-swiss-teal" />
-                Geographic Distribution
+                {t('admin:systemMonitor.analytics.geographicDistribution', 'Geographic Distribution')}
               </h2>
             </div>
 
             <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
               <p className="text-sm text-gray-600 text-center">
-                Geographic analytics require user location tracking to be implemented.
-                This feature will display user distribution by region once the tracking infrastructure is configured.
+                {t('admin:systemMonitor.analytics.requiresLocation', 'Geographic analytics require user location tracking to be implemented. This feature will display user distribution by region once the tracking infrastructure is configured.')}
               </p>
             </div>
           </div>
@@ -735,14 +736,14 @@ const SystemMonitor: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Shield className="h-5 w-5 mr-2 text-swiss-teal" />
-                Security Overview
+                {t('admin:systemMonitor.security.title', 'Security Overview')}
               </h2>
             </div>
 
             {!securityMetrics?.data && (
               <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-800">
-                  Security metrics require security monitoring infrastructure to be configured.
+                  {t('admin:systemMonitor.security.requiresBackend', 'Security metrics require security monitoring infrastructure to be configured.')}
                 </p>
               </div>
             )}
@@ -754,25 +755,25 @@ const SystemMonitor: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                  title="Failed Logins"
+                  title={t('common:titles.failedlogins')}
                   value={securityMetrics?.data?.failedLogins ?? 'N/A'}
                   icon={AlertTriangle}
                   color="red"
                 />
                 <MetricCard
-                  title="Blocked IPs"
+                  title={t('common:titles.blockedips')}
                   value={securityMetrics?.data?.blockedIPs ?? 'N/A'}
                   icon={Shield}
                   color="blue"
                 />
                 <MetricCard
-                  title="API Health"
+                  title={t('common:titles.apihealth')}
                   value={systemStatus ? 'Healthy' : 'Unknown'}
                   icon={systemStatus ? CheckCircle : AlertCircle}
                   color={systemStatus ? 'green' : 'yellow'}
                 />
                 <MetricCard
-                  title="Last Scan"
+                  title={t('common:titles.lastscan')}
                   value={securityMetrics?.data?.lastScan ?? 'N/A'}
                   icon={Settings}
                   color="purple"
@@ -784,14 +785,12 @@ const SystemMonitor: React.FC = () => {
           {/* Security Events Notice */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Security Events</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('admin:systemMonitor.security.recentEvents', 'Recent Security Events')}</h2>
             </div>
 
             <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
               <p className="text-sm text-gray-600 text-center">
-                Security event logging requires audit infrastructure to be configured.
-                When enabled, this section will display recent security events such as failed logins, 
-                suspicious activity, and security scans.
+                {t('admin:systemMonitor.security.requiresAudit', 'Security event logging requires audit infrastructure to be configured. When enabled, this section will display recent security events such as failed logins, suspicious activity, and security scans.')}
               </p>
             </div>
           </div>
@@ -799,14 +798,14 @@ const SystemMonitor: React.FC = () => {
           {/* Security Settings */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Security Settings</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('admin:systemMonitor.security.settings', 'Security Settings')}</h2>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div>
-                  <h4 className="font-medium text-gray-900">Two-Factor Authentication</h4>
-                  <p className="text-sm text-gray-500">Require 2FA for all admin accounts</p>
+                  <h4 className="font-medium text-gray-900">{t('admin:systemMonitor.security.twoFactorAuth', 'Two-Factor Authentication')}</h4>
+                  <p className="text-sm text-gray-500">{t('admin:systemMonitor.security.twoFactorAuthDesc', 'Require 2FA for all admin accounts')}</p>
                 </div>
                 <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-swiss-teal">
                   <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6" />
@@ -815,8 +814,8 @@ const SystemMonitor: React.FC = () => {
 
               <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div>
-                  <h4 className="font-medium text-gray-900">IP Whitelist</h4>
-                  <p className="text-sm text-gray-500">Restrict admin access to specific IPs</p>
+                  <h4 className="font-medium text-gray-900">{t('admin:systemMonitor.security.ipWhitelist', 'IP Whitelist')}</h4>
+                  <p className="text-sm text-gray-500">{t('admin:systemMonitor.security.ipWhitelistDesc', 'Restrict admin access to specific IPs')}</p>
                 </div>
                 <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
                   <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
@@ -825,8 +824,8 @@ const SystemMonitor: React.FC = () => {
 
               <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div>
-                  <h4 className="font-medium text-gray-900">Session Timeout</h4>
-                  <p className="text-sm text-gray-500">Auto-logout after 30 minutes of inactivity</p>
+                  <h4 className="font-medium text-gray-900">{t('admin:systemMonitor.security.sessionTimeout', 'Session Timeout')}</h4>
+                  <p className="text-sm text-gray-500">{t('admin:systemMonitor.security.sessionTimeoutDesc', 'Auto-logout after 30 minutes of inactivity')}</p>
                 </div>
                 <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-swiss-teal">
                   <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6" />

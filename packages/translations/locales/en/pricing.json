@@ -1,128 +1,256 @@
 {
-  "sections": {
-    "basic": {
-      "title": "Basic",
-      "desc": "Essential tools for small daycares",
-      "price": "CHF 49"
+  "pricing": {
+    "pricingPage": {
+      "serviceProviderPlan": {
+        "features": {
+          "appointmentScheduling": "Appointment scheduling system",
+          "multiLanguageSupport": "Multi-language support",
+          "prioritySupport": "Priority support",
+          "revenueTracking": "Revenue tracking & reporting",
+          "serviceListings": "Service listings & marketplace access",
+          "crm": "Client relationship management"
+        },
+        "description": "Schedule appointments, manage client pipelines, and grow recurring revenue with childcare operators.",
+        "tagline": "Build lasting partnerships with professional daycares.",
+        "name": "Service Providers"
+      },
+      "enterprisePlan": {
+        "features": {
+          "everythingProfessional": "Everything in Professional",
+          "multiSiteManagement": "Multi-site management",
+          "customIntegrations": "Custom integrations & API access",
+          "whiteLabelBranding": "White-label branding options",
+          "advancedAnalytics": "Advanced analytics & reporting",
+          "accountManager": "Dedicated account manager"
+        },
+        "description": "Operate multiple locations with consistent quality thanks to analytics, integrations, and dedicated experts.",
+        "tagline": "Scale across sites with automation and premium support.",
+        "name": "Enterprise"
+      },
+      "professionalPlan": {
+        "features": {
+          "everythingEssential": "Everything in Essential",
+          "unlimitedEnquiries": "Unlimited parent enquiries",
+          "prioritySupport": "Priority support",
+          "recruitment": "Recruitment module",
+          "elearning": "Staff e-learning library",
+          "teamTools": "Team management tools"
+        },
+        "description": "Recruit and train staff, handle unlimited parent enquiries, and deliver excellence without adding admin burden.",
+        "tagline": "Grow confidently with full recruitment and training support.",
+        "name": "Professional"
+      },
+      "suppliersPlan": {
+        "features": {
+          "multiLanguageSupport": "Multi-language support",
+          "productListings": "Product listings & marketplace access",
+          "leadManagement": "Lead management workspace",
+          "salesAnalytics": "Sales analytics dashboard",
+          "orderTracking": "Order tracking & fulfillment",
+          "emailSupport": "Email support"
+        },
+        "description": "Promote your catalogue, manage leads, and track sales performance from one place.",
+        "tagline": "Fair, simple pricing to reach Swiss daycares.",
+        "name": "Suppliers"
+      },
+      "essentialPlan": {
+        "features": {
+          "everythingBasic": "Everything in Basic",
+          "enquiryTracker": "Parent enquiry tracker with quick replies",
+          "hrCompliance": "Swiss-validated HR & compliance library",
+          "leadInbox": "Parent leads inbox with auto-matching"
+        },
+        "description": "Win parents faster, stay compliant, and manage enquiries with ease—all from one simple dashboard.",
+        "tagline": "Save time with ready-to-go parent and HR workflows.",
+        "name": "Essential"
+      },
+      "basicPlan": {
+        "features": {
+          "emailSupport": "Email support",
+          "multilingual": "Multilingual interface (EN/FR/DE)",
+          "marketplace": "Supplier & service provider marketplace",
+          "policyhub": "Canton-specific policy hub"
+        },
+        "description": "Get immediate access to suppliers, compliance guidance, and support—everything you need to operate smoothly at a low cost.",
+        "tagline": "Essential tools for small daycares.",
+        "name": "Basic"
+      },
+      "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
+      "selectAndContinue": "Select and Continue",
+      "featureFallback": "Included feature",
+      "subtitleSignup": "Create your account to get started",
+      "titleSignup": "Sign Up",
+      "choosePlan": "Choose Your Plan",
+      "saveUpTo10": "Save up to 10%",
+      "whatYouGet": "What You Get",
+      "features": "Plan Features",
+      "subtitle": "Choose the plan that's right for your organization",
+      "monthly": "Monthly",
+      "popular": "Most Popular",
+      "annual": "Annual",
+      "plans": "Available Plans",
+      "title": "Pricing Plans"
     },
-    "essential": {
-      "title": "Essential",
-      "desc": "Save time with ready-to-go workflows",
-      "price": "CHF 99"
+    "suppliers": {
+      "serviceProvidersPlan": {
+        "price": "CHF 99",
+        "title": "Service Providers",
+        "desc": "Build partnerships with daycares"
+      },
+      "suppliersPlan": {
+        "price": "CHF 79",
+        "title": "Product Suppliers",
+        "desc": "Reach Swiss daycares with your products"
+      },
+      "title": "For Suppliers & Service Providers"
     },
-    "professional": {
-      "title": "Professional",
-      "desc": "Grow confidently with full support",
-      "price": "CHF 199"
-    },
-    "enterprise": {
-      "title": "Enterprise",
-      "desc": "Scale across sites with automation",
-      "price": "Custom"
-    }
-  },
-  "suppliers": {
-    "title": "For Suppliers & Service Providers",
-    "suppliersPlan": {
-      "title": "Product Suppliers",
-      "desc": "Reach Swiss daycares with your products",
-      "price": "CHF 79"
-    },
-    "serviceProvidersPlan": {
-      "title": "Service Providers",
-      "desc": "Build partnerships with daycares",
-      "price": "CHF 99"
+    "sections": {
+      "professional": {
+        "price": "CHF 199",
+        "title": "Professional",
+        "desc": "Grow confidently with full support"
+      },
+      "enterprise": {
+        "price": "Custom",
+        "title": "Enterprise",
+        "desc": "Scale across sites with automation"
+      },
+      "essential": {
+        "price": "CHF 99",
+        "title": "Essential",
+        "desc": "Save time with ready-to-go workflows"
+      },
+      "basic": {
+        "price": "CHF 49",
+        "title": "Basic",
+        "desc": "Essential tools for small daycares"
+      }
     }
   },
   "pricingPage": {
-    "title": "Pricing Plans",
-    "plans": "Available Plans",
-    "features": "Plan Features",
-    "monthly": "Monthly",
-    "annual": "Annual",
-    "saveUpTo10": "Save up to 10%",
-    "popular": "Most Popular",
-    "whatYouGet": "What You Get",
-    "selectAndContinue": "Select and Continue",
-    "choosePlan": "Choose Your Plan",
-    "titleSignup": "Sign Up",
-    "subtitleSignup": "Create your account to get started",
-    "subtitle": "Choose the plan that's right for your organization",
-    "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
-    "basicPlan": {
-      "name": "Basic",
-      "tagline": "Essential tools for small daycares.",
-      "description": "Get immediate access to suppliers, compliance guidance, and support—everything you need to operate smoothly at a low cost.",
+    "serviceProviderPlan": {
       "features": {
-        "marketplace": "Supplier & service provider marketplace",
-        "policyhub": "Canton-specific policy hub",
-        "multilingual": "Multilingual interface (EN/FR/DE)",
-        "emailSupport": "Email support"
-      }
-    },
-    "essentialPlan": {
-      "name": "Essential",
-      "tagline": "Save time with ready-to-go parent and HR workflows.",
-      "description": "Win parents faster, stay compliant, and manage enquiries with ease—all from one simple dashboard.",
-      "features": {
-        "everythingBasic": "Everything in Basic",
-        "leadInbox": "Parent leads inbox with auto-matching",
-        "hrCompliance": "Swiss-validated HR & compliance library",
-        "enquiryTracker": "Parent enquiry tracker with quick replies"
-      }
-    },
-    "professionalPlan": {
-      "name": "Professional",
-      "tagline": "Grow confidently with full recruitment and training support.",
-      "description": "Recruit and train staff, handle unlimited parent enquiries, and deliver excellence without adding admin burden.",
-      "features": {
-        "everythingEssential": "Everything in Essential",
-        "recruitment": "Recruitment module",
-        "unlimitedEnquiries": "Unlimited parent enquiries",
-        "elearning": "Staff e-learning library",
-        "teamTools": "Team management tools",
-        "prioritySupport": "Priority support"
-      }
+        "appointmentScheduling": "Appointment scheduling system",
+        "multiLanguageSupport": "Multi Language Support",
+        "prioritySupport": "Priority Support",
+        "revenueTracking": "Revenue tracking & reporting",
+        "serviceListings": "Service listings & marketplace access",
+        "crm": "Client relationship management"
+      },
+      "description": "Schedule appointments, manage client pipelines, and grow recurring revenue with childcare operators.",
+      "tagline": "Build lasting partnerships with professional daycares.",
+      "name": "Service Providers"
     },
     "enterprisePlan": {
-      "name": "Enterprise",
-      "tagline": "Scale across sites with automation and premium support.",
-      "description": "Operate multiple locations with consistent quality thanks to analytics, integrations, and dedicated experts.",
       "features": {
         "everythingProfessional": "Everything in Professional",
-        "multiSiteManagement": "Multi-site management",
-        "advancedAnalytics": "Advanced analytics & reporting",
-        "accountManager": "Dedicated account manager",
+        "multiSiteManagement": "Multi Site Management",
         "customIntegrations": "Custom integrations & API access",
-        "whiteLabelBranding": "White-label branding options"
-      }
+        "whiteLabelBranding": "White-label branding options",
+        "advancedAnalytics": "Advanced analytics & reporting",
+        "accountManager": "Dedicated account manager"
+      },
+      "description": "Operate multiple locations with consistent quality thanks to analytics, integrations, and dedicated experts.",
+      "tagline": "Scale across sites with automation and premium support.",
+      "name": "Enterprise"
+    },
+    "professionalPlan": {
+      "features": {
+        "everythingEssential": "Everything in Essential",
+        "unlimitedEnquiries": "Unlimited parent enquiries",
+        "prioritySupport": "Priority Support",
+        "recruitment": "Recruitment module",
+        "elearning": "Staff e-learning library",
+        "teamTools": "Team management tools"
+      },
+      "description": "Recruit and train staff, handle unlimited parent enquiries, and deliver excellence without adding admin burden.",
+      "tagline": "Grow confidently with full recruitment and training support.",
+      "name": "Professional"
     },
     "suppliersPlan": {
-      "name": "Suppliers",
-      "tagline": "Fair, simple pricing to reach Swiss daycares.",
-      "description": "Promote your catalogue, manage leads, and track sales performance from one place.",
       "features": {
+        "multiLanguageSupport": "Multi Language Support",
         "productListings": "Product listings & marketplace access",
         "leadManagement": "Lead management workspace",
-        "orderTracking": "Order tracking & fulfillment",
-        "multiLanguageSupport": "Multi-language support",
         "salesAnalytics": "Sales analytics dashboard",
-        "emailSupport": "Email support"
-      }
+        "orderTracking": "Order tracking & fulfillment",
+        "emailSupport": "Email Support"
+      },
+      "description": "Promote your catalogue, manage leads, and track sales performance from one place.",
+      "tagline": "Fair, simple pricing to reach Swiss daycares.",
+      "name": "Suppliers"
     },
-    "serviceProviderPlan": {
-      "name": "Service Providers",
-      "tagline": "Build lasting partnerships with professional daycares.",
-      "description": "Schedule appointments, manage client pipelines, and grow recurring revenue with childcare operators.",
+    "essentialPlan": {
       "features": {
-        "serviceListings": "Service listings & marketplace access",
-        "appointmentScheduling": "Appointment scheduling system",
-        "crm": "Client relationship management",
-        "revenueTracking": "Revenue tracking & reporting",
-        "multiLanguageSupport": "Multi-language support",
-        "prioritySupport": "Priority support"
-      }
+        "everythingBasic": "Everything in Basic",
+        "enquiryTracker": "Parent enquiry tracker with quick replies",
+        "hrCompliance": "Swiss-validated HR & compliance library",
+        "leadInbox": "Parent leads inbox with auto-matching"
+      },
+      "description": "Win parents faster, stay compliant, and manage enquiries with ease—all from one simple dashboard.",
+      "tagline": "Save time with ready-to-go parent and HR workflows.",
+      "name": "Essential"
     },
-    "featureFallback": "Included feature"
+    "basicPlan": {
+      "features": {
+        "emailSupport": "Email Support",
+        "multilingual": "Multilingual interface (EN/FR/DE)",
+        "marketplace": "Supplier & service provider marketplace",
+        "policyhub": "Canton-specific policy hub"
+      },
+      "description": "Get immediate access to suppliers, compliance guidance, and support—everything you need to operate smoothly at a low cost.",
+      "tagline": "Essential tools for small daycares.",
+      "name": "Basic"
+    },
+    "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
+    "selectAndContinue": "Select And Continue",
+    "featureFallback": "Included feature",
+    "subtitleSignup": "Create your account to get started",
+    "titleSignup": "Title Signup",
+    "choosePlan": "Choose Your Plan",
+    "saveUpTo10": "Save Up To10",
+    "whatYouGet": "What You Get",
+    "features": "Plan Features",
+    "subtitle": "Choose the plan that's right for your organization",
+    "monthly": "Monthly",
+    "popular": "Most Popular",
+    "annual": "Annual",
+    "plans": "Available Plans",
+    "title": "Pricing Plans"
+  },
+  "suppliers": {
+    "serviceProvidersPlan": {
+      "price": "CHF 99",
+      "title": "Service Providers",
+      "desc": "Build partnerships with daycares"
+    },
+    "suppliersPlan": {
+      "price": "CHF 79",
+      "title": "Product Suppliers",
+      "desc": "Reach Swiss daycares with your products"
+    },
+    "title": "For Suppliers & Service Providers"
+  },
+  "sections": {
+    "professional": {
+      "price": "CHF 199",
+      "title": "Professional",
+      "desc": "Grow confidently with full support"
+    },
+    "enterprise": {
+      "price": "Custom",
+      "title": "Enterprise",
+      "desc": "Scale across sites with automation"
+    },
+    "essential": {
+      "price": "CHF 99",
+      "title": "Essential",
+      "desc": "Save time with ready-to-go workflows"
+    },
+    "basic": {
+      "price": "CHF 49",
+      "title": "Basic",
+      "desc": "Essential tools for small daycares"
+    }
   }
 }

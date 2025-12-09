@@ -14,4 +14,4 @@ UPDATE "services" SET "categories" = ARRAY[category::text] WHERE "category" IS N
 ALTER TABLE "organizations" ADD COLUMN IF NOT EXISTS "productCategories" TEXT[] DEFAULT ARRAY[]::TEXT[];
 
 -- Migrate existing data: copy single productCategory to productCategories array for organizations
-UPDATE "organizations" SET "productCategories" = ARRAY[productCategory] WHERE "productCategory" IS NOT NULL AND "productCategory" != '';
+UPDATE "organizations" SET "productCategories" = ARRAY["productCategory"] WHERE "productCategory" IS NOT NULL AND "productCategory" != '';

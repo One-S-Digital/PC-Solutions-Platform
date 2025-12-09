@@ -152,7 +152,7 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
               value={formData.vatNumber || ''}
               onChange={(e) => onChange('vatNumber', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="CHE-123.456.789"
+              placeholder={t('common:placeholders.vatNumber')}
             />
           </div>
         </div>

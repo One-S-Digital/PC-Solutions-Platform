@@ -30,6 +30,12 @@ export class SupportService {
         status: 'OPEN',
       },
       include: {
+        user: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        assignee: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
         responses: {
           include: {
             user: {
@@ -51,6 +57,12 @@ export class SupportService {
     const tickets = await this.prisma.supportTicket.findMany({
       where: { userId },
       include: {
+        user: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        assignee: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
         responses: {
           include: {
             user: {
@@ -97,7 +109,10 @@ export class SupportService {
       where,
       include: {
         user: {
-          select: { firstName: true, lastName: true, email: true },
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        assignee: {
+          select: { id: true, firstName: true, lastName: true, email: true },
         },
         responses: {
           include: {
@@ -122,7 +137,10 @@ export class SupportService {
       where: { id: ticketId },
       include: {
         user: {
-          select: { firstName: true, lastName: true, email: true },
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        assignee: {
+          select: { id: true, firstName: true, lastName: true, email: true },
         },
         responses: {
           include: {
@@ -313,6 +331,23 @@ export class SupportService {
       createdAt: ticket.createdAt.toISOString(),
       updatedAt: ticket.updatedAt.toISOString(),
       resolvedAt: ticket.resolvedAt?.toISOString() || null,
+      assignedTo: ticket.assignedTo || null,
+      assignee: ticket.assignee
+        ? {
+            id: ticket.assignee.id,
+            firstName: ticket.assignee.firstName,
+            lastName: ticket.assignee.lastName,
+            email: ticket.assignee.email,
+          }
+        : null,
+      user: ticket.user
+        ? {
+            id: ticket.user.id,
+            firstName: ticket.user.firstName,
+            lastName: ticket.user.lastName,
+            email: ticket.user.email,
+          }
+        : undefined,
       responses: (ticket.responses || []).map((r: any) => ({
         id: r.id,
         message: r.message,

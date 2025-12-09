@@ -19,11 +19,17 @@ export const useFrontendSettings = () => {
         setError(response.message || 'Failed to load settings');
       }
     } catch (err: any) {
-      if (err.name === 'AbortError') return; // Ignore abort errors
+      // Silently ignore abort errors - they're expected when component unmounts
+      if (err.name === 'AbortError' || (err instanceof Error && err.name === 'AbortError')) {
+        return;
+      }
       console.error('Error fetching frontend settings:', err);
       setError(err.message || 'An error occurred');
     } finally {
-      setLoading(false);
+      // Only set loading to false if request wasn't aborted
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   };
 

@@ -149,57 +149,57 @@ const ParentLeadFormPage: React.FC = () => {
         ) : (
           <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-2" />
         )}
-        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('title')}</h1>
-        <p className="text-gray-600">{t('subtitle')}</p>
+        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('parentLeadForm:title')}</h1>
+        <p className="text-gray-600">{t('parentLeadForm:subtitle')}</p>
       </div>
       <Card className="w-full max-w-2xl p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.fullName')}</label>
-            <input type="text" name="contactName" id="contactName" value={formData.contactName} onChange={handleChange} required className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.fullName')} />
+            <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.fullName')}</label>
+            <input type="text" name="contactName" id="contactName" value={formData.contactName} onChange={handleChange} required className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.fullName')} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.email')}</label>
-              <input type="email" name="contactEmail" id="contactEmail" value={formData.contactEmail} onChange={handleChange} required className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.email')} />
+              <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.email')}</label>
+              <input type="email" name="contactEmail" id="contactEmail" value={formData.contactEmail} onChange={handleChange} required className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.email')} />
             </div>
             <div>
-              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.phoneNumber')}</label>
-              <input type="tel" name="contactPhone" id="contactPhone" value={formData.contactPhone} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.phoneNumber')} />
+              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.phoneNumber')}</label>
+              <input type="tel" name="contactPhone" id="contactPhone" value={formData.contactPhone} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.phoneNumber')} />
             </div>
           </div>
           
           <hr className="my-6"/>
-          <h2 className="text-lg font-semibold text-swiss-charcoal">{t('labels.childNeeds')}</h2>
+          <h2 className="text-lg font-semibold text-swiss-charcoal">{t('parentLeadForm:labels.childNeeds')}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.canton')}</label>
+              <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.canton')}</label>
               <select name="canton" id="canton" value={formData.canton} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
-                <option value="">{t('placeholders.canton')}</option>
+                <option value="">{t('parentLeadForm:placeholders.canton')}</option>
                 {SWISS_CANTONS.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.municipality')}</label>
-              <input type="text" name="municipality" id="municipality" value={formData.municipality} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.municipality')} />
+              <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.municipality')}</label>
+              <input type="text" name="municipality" id="municipality" value={formData.municipality} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.municipality')} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="childAge" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.childAge')}</label>
-              <input type="number" name="childAge" id="childAge" value={formData.childAge} onChange={handleChange} required min="0" max="72" className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.childAge')} />
+              <label htmlFor="childAge" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.childAge')}</label>
+              <input type="number" name="childAge" id="childAge" value={formData.childAge} onChange={handleChange} required min="0" max="72" className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.childAge')} />
             </div>
             <div>
-              <label htmlFor="desiredStartDate" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.startDate')}</label>
-              <input type="date" name="desiredStartDate" id="desiredStartDate" value={formData.desiredStartDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.startDate')} />
+              <label htmlFor="desiredStartDate" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.startDate')}</label>
+              <input type="date" name="desiredStartDate" id="desiredStartDate" value={formData.desiredStartDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
             </div>
           </div>
 
           <div>
-            <label htmlFor="specialNeeds" className="block text-sm font-medium text-gray-700 mb-1">{t('labels.specialNeeds')}</label>
-            <textarea name="specialNeeds" id="specialNeeds" value={formData.specialNeeds} onChange={handleChange} rows={3} className={STANDARD_INPUT_FIELD} placeholder={t('placeholders.specialRequirements')}></textarea>
+            <label htmlFor="specialNeeds" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.specialNeeds')}</label>
+            <textarea name="specialNeeds" id="specialNeeds" value={formData.specialNeeds} onChange={handleChange} rows={3} className={STANDARD_INPUT_FIELD} placeholder={t('parentLeadForm:placeholders.specialRequirements')}></textarea>
           </div>
 
           <div className="pt-2">

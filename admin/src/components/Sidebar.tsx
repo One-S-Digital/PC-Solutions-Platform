@@ -21,6 +21,7 @@ import {
   Palette,
   Globe,
   Handshake,
+  LifeBuoy,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -44,6 +45,7 @@ const navigation = [
   { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
   { key: 'content', href: '/content', icon: FileText },
   { key: 'messages', href: '/messaging', icon: MessageSquare },
+  { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'systemMonitoring', href: '/system', icon: Monitor },
   { key: 'translations', href: '/translations', icon: Globe },
   { key: 'designSystem', href: '/design-system', icon: Palette },
@@ -54,7 +56,7 @@ const navigation = [
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation()
   const { settings } = useSettings()
-  const { t } = useTranslation('dashboard')
+  const { t } = useTranslation(['dashboard', 'admin', 'common'])
 
   const getAdminLogo = () => {
     if (settings?.adminLogoAsset?.publicUrl) {
@@ -69,13 +71,13 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         {getAdminLogo() ? (
           <img
             src={getAdminLogo()}
-            alt="Admin Logo"
+            alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
             className="h-[69px] w-auto mr-2.5"
           />
         ) : (
           <Shield className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
         )}
-        <h1 className="text-2xl font-bold text-swiss-charcoal">Admin</h1>
+        <h1 className="text-2xl font-bold text-swiss-charcoal">{t('common:admin', 'Admin')}</h1>
       </div>
 
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
@@ -99,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
                 )}
               />
-              {t(`sidebar.${item.key}`)}
+              {t(`admin:sidebar.${item.key}`, item.key)}
             </NavLink>
           )
         })}
@@ -107,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       </nav>
 
       <div className="p-4 border-t border-gray-200/80 text-center">
-        <p className="text-xs text-gray-500">Backend Management v1.0</p>
+        <p className="text-xs text-gray-500">{t('admin:sidebar.version', 'Backend Management v1.0')}</p>
       </div>
     </div>
   )

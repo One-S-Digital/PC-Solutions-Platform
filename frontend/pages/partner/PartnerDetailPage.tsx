@@ -443,7 +443,7 @@ const PartnerDetailPage: React.FC = () => {
               ) : (
                 <ListBulletIcon className="w-6 h-6 mr-2 text-swiss-mint" />
               )}
-              {isSupplier ? t('sidebar.products') : t('sidebar.services')}
+              {isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}
             </h2>
             
             {isSupplier && (

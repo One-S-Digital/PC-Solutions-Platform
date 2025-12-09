@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useApiClient } from '../../services/api'
+import { useTranslation } from 'react-i18next';
 
 interface SimpleAssetUploaderProps {
   currentAssetId?: string
@@ -18,6 +19,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
   className = '',
   fetchDelay = 0
 }) => {
+  const { t } = useTranslation(['common']);
   const [dragOver, setDragOver] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -167,7 +169,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
         <div className="relative inline-block">
           <img
             src={previewUrl || currentAsset?.publicUrl}
-            alt="Preview"
+            alt={t('common:preview')}
             className="h-20 w-20 object-cover rounded-lg border border-gray-300"
           />
           <button

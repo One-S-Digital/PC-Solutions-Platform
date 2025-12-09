@@ -45,6 +45,19 @@ export interface SupportTicketResponse {
   createdAt: string;
   updatedAt: string;
   resolvedAt: string | null;
+  assignedTo?: string | null;
+  assignee?: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+  } | null;
+  user?: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+  };
   responses: {
     id: string;
     message: string;

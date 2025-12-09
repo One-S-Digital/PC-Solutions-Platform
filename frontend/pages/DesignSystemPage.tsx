@@ -74,21 +74,21 @@ const DesignSystemPage: React.FC = () => {
 
       {/* Buttons Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Buttons</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.buttons.title')}</h2>
         <Card className="p-8 space-y-6">
           <div>
-            <h3 className="font-medium mb-3">Variants</h3>
+            <h3 className="font-medium mb-3">{t('admin:designSystem.buttons.variants')}</h3>
             <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="danger">Danger</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="light">Light</Button>
+              <Button variant="primary">{t('admin:designSystem.buttons.primary')}</Button>
+              <Button variant="secondary">{t('admin:designSystem.buttons.secondary')}</Button>
+              <Button variant="danger">{t('admin:designSystem.buttons.danger')}</Button>
+              <Button variant="outline">{t('admin:designSystem.buttons.outline')}</Button>
+              <Button variant="ghost">{t('admin:designSystem.buttons.ghost')}</Button>
+              <Button variant="light">{t('admin:designSystem.buttons.light')}</Button>
             </div>
           </div>
            <div>
-            <h3 className="font-medium mb-3">Sizes</h3>
+            <h3 className="font-medium mb-3">{t('admin:designSystem.buttons.sizes')}</h3>
             <div className="flex flex-wrap items-center gap-4">
               <Button variant="primary" size="xs">{t('admin:designSystem.buttons.extraSmall')}</Button>
               <Button variant="primary" size="sm">{t('admin:designSystem.buttons.small')}</Button>
@@ -118,7 +118,7 @@ const DesignSystemPage: React.FC = () => {
 
        {/* Cards Section */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">Cards</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-swiss-charcoal">{t('admin:designSystem.sections.cards')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="p-6">
                 <h3 className="font-semibold mb-2">{t('admin:designSystem.cards.standardCard')}</h3>
@@ -138,7 +138,7 @@ const DesignSystemPage: React.FC = () => {
             <div className="space-y-4">
                 <div>
                     <label htmlFor="text-input" className="block text-sm font-medium text-gray-700 mb-1">{t('admin:designSystem.formControls.textInput')}</label>
-                    <input type="text" id="text-input" className={STANDARD_INPUT_FIELD} placeholder="e.g., Jane Doe"/>
+                    <input type="text" id="text-input" className={STANDARD_INPUT_FIELD} placeholder={t('common:placeholders.email')}/>
                 </div>
                  <div>
                     <label htmlFor="select-input" className="block text-sm font-medium text-gray-700 mb-1">{t('admin:designSystem.formControls.selectMenu')}</label>
@@ -150,7 +150,7 @@ const DesignSystemPage: React.FC = () => {
                 </div>
                 <div>
                     <label htmlFor="textarea-input" className="block text-sm font-medium text-gray-700 mb-1">Textarea</label>
-                    <textarea id="textarea-input" rows={4} className={STANDARD_INPUT_FIELD} placeholder="Enter details here..."></textarea>
+                    <textarea id="textarea-input" rows={4} className={STANDARD_INPUT_FIELD} placeholder={t('common:placeholders.enterDetails')}></textarea>
                 </div>
             </div>
              <div className="space-y-4">
@@ -160,7 +160,7 @@ const DesignSystemPage: React.FC = () => {
                 </div>
                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:designSystem.formControls.disabledInput')}</label>
-                    <input type="text" className={STANDARD_INPUT_FIELD} placeholder="You can't type here" disabled/>
+                    <input type="text" className={STANDARD_INPUT_FIELD} placeholder={t('common:placeholders.disabledInput')} disabled/>
                 </div>
             </div>
         </Card>

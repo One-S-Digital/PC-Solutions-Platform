@@ -31,14 +31,14 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
       case OrderRequestStatus.SUBMITTED:
         return (
           <>
-            <Button variant="danger" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('supplierDashboard.recentOrdersActions.decline')}</Button>
-            <Button variant="primary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('supplierDashboard.recentOrdersActions.accept')}</Button>
+            <Button variant="danger" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>
+            <Button variant="primary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>
           </>
         );
       case OrderRequestStatus.ACCEPTED:
-        return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t("orderRequestDetailModal.markAsProcessing")}</Button>;
+        return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t("dashboard:orderRequestDetailModal.markAsProcessing")}</Button>;
       case OrderRequestStatus.PROCESSING:
-        return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('supplierOrdersPage.actions.ship')}</Button>;
+        return <Button variant="secondary" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;
       default:
         return null;
     }
@@ -48,19 +48,19 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity" role="dialog" aria-modal="true">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('orderRequestDetailModal.title')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('dashboard:orderRequestDetailModal.title')}</h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600"><XMarkIcon className="w-6 h-6" /></button>
         </div>
         <div className="p-6 max-h-[70vh] overflow-y-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
-            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.orderId')}</span><span className="font-semibold">{order.id}</span></div>
-            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.date')}</span><span className="font-semibold">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>
-            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.status')}</span><span className="font-semibold">{t(`orderStatus.${order.status.toLowerCase().replace(/\s/g, '')}` as const, order.status)}</span></div>
-            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('orderRequestDetailModal.total')}</span><span className="font-semibold">CHF {order.totalAmount.toFixed(2)}</span></div>
+            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className="font-semibold">{order.id}</span></div>
+            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('dashboard:orderRequestDetailModal.date')}</span><span className="font-semibold">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>
+            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('dashboard:orderRequestDetailModal.status')}</span><span className="font-semibold">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\s/g, '')}` as const, order.status)}</span></div>
+            <div className="p-3 bg-gray-50 rounded-md"><span className="block text-xs text-gray-500">{t('dashboard:orderRequestDetailModal.total')}</span><span className="font-semibold">CHF {order.totalAmount.toFixed(2)}</span></div>
           </div>
           
           <div className="mb-4">
-            <h3 className="font-semibold mb-2">{t('supplierOrdersPage.table.foundation')}</h3>
+            <h3 className="font-semibold mb-2">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>
             <div className="flex items-center p-3 border rounded-md">
               {daycare?.logoUrl && <img src={daycare.logoUrl} alt={daycare?.name} className="w-12 h-12 rounded-full mr-3"/>}
               <div>
@@ -69,20 +69,20 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
               </div>
               {daycare && (
                 <Button variant="outline" size="sm" leftIcon={BuildingStorefrontIcon} className="ml-auto" onClick={handleViewProfile}>
-                  {t('orderRequestDetailModal.viewDaycareProfile')}
+                  {t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}
                 </Button>
               )}
             </div>
           </div>
 
-          <h3 className="font-semibold mb-2">{t('orderRequestDetailModal.lineItems')}</h3>
+          <h3 className="font-semibold mb-2">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>
           <div className="border rounded-md overflow-hidden">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-2 text-left font-medium text-gray-600">{t('orderRequestDetailModal.product')}</th>
-                  <th className="px-4 py-2 text-center font-medium text-gray-600">{t('orderRequestDetailModal.quantity')}</th>
-                  <th className="px-4 py-2 text-right font-medium text-gray-600">{t('orderRequestDetailModal.price')}</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-600">{t('dashboard:orderRequestDetailModal.product')}</th>
+                  <th className="px-4 py-2 text-center font-medium text-gray-600">{t('dashboard:orderRequestDetailModal.quantity')}</th>
+                  <th className="px-4 py-2 text-right font-medium text-gray-600">{t('dashboard:orderRequestDetailModal.price')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -102,7 +102,7 @@ const OrderRequestDetailModal: React.FC<OrderRequestDetailModalProps> = ({ order
           
           {order.notes && (
             <div className="mt-4">
-              <h3 className="font-semibold mb-1">{t('orderRequestDetailModal.notes')}</h3>
+              <h3 className="font-semibold mb-1">{t('dashboard:orderRequestDetailModal.notes')}</h3>
               <p className="text-sm p-3 bg-yellow-50 border border-yellow-200 rounded-md italic">{order.notes}</p>
             </div>
           )}

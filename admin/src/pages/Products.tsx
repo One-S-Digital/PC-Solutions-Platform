@@ -115,11 +115,11 @@ const Products: React.FC = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
               <option value="">{t('admin:products.categoryFilter.all')}</option>
-              <option value="Educational">Educational</option>
-              <option value="Safety">Safety</option>
-              <option value="Nutrition">Nutrition</option>
-              <option value="Hygiene">Hygiene</option>
-              <option value="Furniture">Furniture</option>
+              <option value="Educational">{t('common:educational')}</option>
+              <option value="Safety">{t('common:safety')}</option>
+              <option value="Nutrition">{t('common:nutrition')}</option>
+              <option value="Hygiene">{t('common:hygiene')}</option>
+              <option value="Furniture">{t('common:furniture')}</option>
             </select>
           </div>
         </div>

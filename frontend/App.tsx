@@ -266,6 +266,14 @@ const ProtectedLayout: React.FC = () => {
           } 
         />
         <Route 
+          path="/admin/support" 
+          element={
+            <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+              <FoundationSupportPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/design-system" 
           element={
             <ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
@@ -410,8 +418,8 @@ const App: React.FC = () => {
     <AppContextProvider>
       <FrontendSettingsManager />
       <CartProvider>
-        <MessagingProvider>
-          <NotificationProvider>
+        <NotificationProvider>
+          <MessagingProvider>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
@@ -420,8 +428,8 @@ const App: React.FC = () => {
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
             </Routes>
-          </NotificationProvider>
-        </MessagingProvider>
+          </MessagingProvider>
+        </NotificationProvider>
       </CartProvider>
     </AppContextProvider>
   );

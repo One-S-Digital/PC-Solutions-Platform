@@ -95,24 +95,34 @@ export class PartnersService {
   }
 
   async findActive() {
-    return this.prisma.partner.findMany({
-      where: { isActive: true },
-      orderBy: [
-        { isFeatured: 'desc' },
-        { displayOrder: 'asc' },
-        { name: 'asc' },
-      ],
-    });
+    try {
+      return await this.prisma.partner.findMany({
+        where: { isActive: true },
+        orderBy: [
+          { isFeatured: 'desc' },
+          { displayOrder: 'asc' },
+          { name: 'asc' },
+        ],
+      });
+    } catch (error) {
+      this.logger.error(`Error fetching active partners: ${(error as Error).message}`, (error as Error).stack);
+      throw error;
+    }
   }
 
   async findFeatured() {
-    return this.prisma.partner.findMany({
-      where: { isActive: true, isFeatured: true },
-      orderBy: [
-        { displayOrder: 'asc' },
-        { name: 'asc' },
-      ],
-    });
+    try {
+      return await this.prisma.partner.findMany({
+        where: { isActive: true, isFeatured: true },
+        orderBy: [
+          { displayOrder: 'asc' },
+          { name: 'asc' },
+        ],
+      });
+    } catch (error) {
+      this.logger.error(`Error fetching featured partners: ${(error as Error).message}`, (error as Error).stack);
+      throw error;
+    }
   }
 
   async findOne(id: string) {

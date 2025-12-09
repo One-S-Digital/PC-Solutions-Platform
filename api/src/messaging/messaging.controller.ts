@@ -25,13 +25,15 @@ export class MessagingController {
 
   // Conversation Management
   @Post('conversations')
-  createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
-    const creatorId = req.context.userId;
+  async createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
+    // Use profileUserId (User table ID) for conversation participants
+    const creatorId = req.context.profileUserId;
     return this.messagingService.createConversation(createConversationDto, creatorId);
   }
 
   @Get('conversations')
   getUserConversations(@Request() req) {
+    // Use Clerk ID for getUserConversations (service handles lookup)
     const userId = req.context.userId;
     return this.messagingService.getUserConversations(userId);
   }
@@ -47,6 +49,22 @@ export class MessagingController {
   createMessage(@Body() createMessageDto: CreateMessageDto, @Request() req) {
     const senderId = req.context.userId;
     return this.messagingService.createMessage(createMessageDto, senderId);
+  }
+
+  @Patch('messages/:id')
+  async updateMessage(
+    @Param('id') messageId: string,
+    @Body('content') content: string,
+    @Request() req,
+  ) {
+    const userId = req.context.userId;
+    return await this.messagingService.updateMessage(messageId, content, userId);
+  }
+
+  @Delete('messages/:id')
+  async deleteMessage(@Param('id') messageId: string, @Request() req) {
+    const userId = req.context.userId;
+    return await this.messagingService.deleteMessage(messageId, userId);
   }
 
   @Get('conversations/:id/messages')

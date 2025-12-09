@@ -123,7 +123,7 @@ const FoundationLeadsPage: React.FC = () => {
   }
   
   if (currentUser.plan === 'Basic') {
-    return <FeatureLock featureName={t('sidebar.parentLeads')} requiredPlan="Pro" />;
+    return <FeatureLock featureName={t('dashboard:sidebar.parentLeads')} requiredPlan="Pro" />;
   }
 
   // Render loading

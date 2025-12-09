@@ -122,7 +122,7 @@ class OrganizationService {
     return response.data.map(org => this.transformOrganization(org));
   }
 
-  // Join organization
+  // Join organization (not implemented - use profiles/me/organizations POST to create)
   async joinOrganization(organizationId: string): Promise<void> {
     const response = await apiService.post(`/compat/organizations/${organizationId}/join`);
     if (!response.success) {
@@ -130,7 +130,7 @@ class OrganizationService {
     }
   }
 
-  // Leave organization
+  // Leave organization (not implemented)
   async leaveOrganization(organizationId: string): Promise<void> {
     const response = await apiService.post(`/compat/organizations/${organizationId}/leave`);
     if (!response.success) {

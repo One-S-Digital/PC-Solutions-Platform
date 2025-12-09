@@ -1,5 +1,6 @@
 import { XMarkIcon, ArrowDownTrayIcon, LinkIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@clerk/clerk-react';
+import { useTranslation } from 'react-i18next';
 
 interface DocumentPreviewModalProps {
   isOpen: boolean;
@@ -295,7 +296,7 @@ export default function DocumentPreviewModal({
           className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2 hover:bg-blue-700"
         >
           <ArrowDownTrayIcon className="w-4 h-4" />
-          <span>Download File</span>
+          <span>{t('common:downloadfile')}</span>
         </button>
       </div>
     );
@@ -323,12 +324,12 @@ export default function DocumentPreviewModal({
               className="px-3 py-1.5 text-sm border border-gray-300 rounded flex items-center space-x-1 hover:bg-gray-50"
             >
               <ArrowDownTrayIcon className="w-4 h-4" />
-              <span>Download</span>
+              <span>{t('common:download')}</span>
             </button>
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Close"
+              aria-label={t('common:labels.close')}
             >
               <XMarkIcon className="w-6 h-6" />
             </button>

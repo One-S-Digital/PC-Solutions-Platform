@@ -11,6 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import { ensureSecureFileUrl } from '../utils/secureUrl';
 import i18n from '../i18n';
 
 interface CourseMaterialCardProps {
@@ -129,6 +130,45 @@ const ELearningTypeDisplayCard: React.FC<{title: string, icon: React.ElementType
   );
 };
 
+// Move outside component - mapping constants
+const EXTENSION_TO_MIME: Record<string, string> = {
+  'mp4': 'video/mp4',
+  'webm': 'video/webm',
+  'ogg': 'video/ogg',
+  'mov': 'video/quicktime',
+  'avi': 'video/x-msvideo',
+  'pdf': 'application/pdf',
+  'doc': 'application/msword',
+  'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'png': 'image/png',
+  'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
+  'gif': 'image/gif',
+  'webp': 'image/webp',
+};
+
+const TYPE_TO_MIME: Record<string, string> = {
+  'VIDEO': 'video/mp4',
+  'PDF': 'application/pdf',
+  'COURSE': 'application/octet-stream', // Courses may vary - use generic fallback
+  'LINK': 'text/html',
+};
+
+// Move outside component - helper function
+const getMimeType = (item: Course): string => {
+  const fileUrl = item.fileUrl || '';
+  
+  // Extract extension, removing query params and fragments
+  const urlPath = fileUrl.split('?')[0].split('#')[0];
+  const extension = urlPath.split('.').pop()?.toLowerCase();
+  
+  if (extension && EXTENSION_TO_MIME[extension]) {
+    return EXTENSION_TO_MIME[extension];
+  }
+  
+  return TYPE_TO_MIME[item.type] || 'application/octet-stream';
+};
+
 const ELearningPage: React.FC = () => {
   const { t } = useTranslation(['content', 'common']);
   const { currentUser } = useAppContext();
@@ -196,7 +236,8 @@ const ELearningPage: React.FC = () => {
             status: item.status || 'Published',
             lessons: item.lessons,
             duration: item.duration,
-            fileUrl: item.publicUrl || item.fileUrl || item.url,
+            // Convert public R2 URLs to secure download URLs
+            fileUrl: ensureSecureFileUrl(item.publicUrl || item.fileUrl || item.url),
             tags: item.tags || [],
             contentPreview: item.contentPreview || item.description,
           }));
@@ -367,7 +408,7 @@ const ELearningPage: React.FC = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         <ELearningTypeDisplayCard
-          title="All Content"
+          title={t('common:titles.allcontent')}
           icon={AcademicCapIcon}
           count={totalItems}
           colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -415,7 +456,7 @@ const ELearningPage: React.FC = () => {
           onClose={() => setPreviewItem(null)}
           fileUrl={previewItem.fileUrl}
           fileName={previewItem.title}
-          fileType={previewItem.type}
+          fileType={getMimeType(previewItem)}
         />
       )}
     </div>

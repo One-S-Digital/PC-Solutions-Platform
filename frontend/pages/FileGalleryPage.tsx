@@ -178,7 +178,7 @@ const FileGalleryPage: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
             <PaperClipIcon className="w-8 h-8 mr-3 text-swiss-mint" />
-            {t('sidebar.fileGallery')}
+            {t('dashboard:sidebar.fileGallery')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             {t('common:fileGallery.adminUploadNote', 'View and download your files')}

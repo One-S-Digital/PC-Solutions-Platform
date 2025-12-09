@@ -73,27 +73,32 @@ class ApiService {
     return this.baseUrl;
   }
 
-  private getAuthHeaders(): Record<string, string> {
-    // Note: For file uploads, don't set Content-Type - let browser set it with boundary
-    // For regular requests, this will be overridden
-    return {
+  private getAuthHeaders(token?: string): Record<string, string> {
+    const headers: Record<string, string> = {
       Accept: 'application/json',
     };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return headers;
   }
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit & { token?: string } = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const headers = this.getAuthHeaders();
+      const { token, ...fetchOptions } = options;
+      const headers = this.getAuthHeaders(token);
       
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
+        ...fetchOptions,
         headers: {
           'Content-Type': 'application/json',
           ...headers,
-          ...options.headers,
+          ...fetchOptions.headers,
         },
       });
 
@@ -106,9 +111,85 @@ class ApiService {
         );
       }
 
-      const data = await response.json();
-      return data;
+      // Read response body once
+      const text = await response.text();
+      
+      // Handle empty response body
+      if (!text || !text.trim()) {
+        return {
+          success: true,
+          data: undefined as T,
+        };
+      }
+
+      // Parse JSON response
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error('Failed to parse JSON response:', { text: text.substring(0, 200), endpoint, error });
+        throw new ApiError('Invalid JSON response from server', response.status);
+      }
+      
+      // Handle case where backend returns data directly (not wrapped in ApiResponse)
+      // Check if it's an array first
+      if (Array.isArray(data) && !('success' in data)) {
+        return {
+          success: true,
+          data: data as T,
+        };
+      }
+      
+      // If data is wrapped in ApiEnvelope format (success, version, timestamp, data or error)
+      if (data && typeof data === 'object' && 'success' in data) {
+        // Handle error response format from AllExceptionsFilter
+        if (data.error) {
+          return {
+            success: false,
+            message: data.error.message || data.message || 'An error occurred',
+            data: undefined,
+          };
+        }
+        // Handle success response with data
+        if ('data' in data) {
+          return {
+            success: data.success,
+            message: data.message,
+            data: data.data,
+          };
+        }
+        // Handle success response without explicit data field (data might be the object itself)
+        return {
+          success: data.success !== false, // Default to true if not explicitly false
+          message: data.message,
+          data: data,
+        };
+      }
+      
+      // Handle case where backend returns the object directly (e.g., conversation object with id, type, etc.)
+      // This happens when NestJS returns the result directly without wrapping
+      if (data && typeof data === 'object' && !('success' in data) && !('error' in data)) {
+        // Check if it looks like a direct data object (has common entity fields like id, createdAt, etc.)
+        if ('id' in data || Array.isArray(data) || (typeof data === 'object' && Object.keys(data).length > 0)) {
+          return {
+            success: true,
+            data: data as T,
+          };
+        }
+      }
+      
+      // Fallback: wrap any remaining data
+      console.warn('Unexpected response format:', { endpoint, data });
+      return {
+        success: true,
+        data: data as T,
+      };
     } catch (error) {
+      // Handle abort errors - don't convert to ApiError, just re-throw
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw error;
+      }
+      
       if (error instanceof ApiError) {
         throw error;
       }
@@ -120,11 +201,11 @@ class ApiService {
   }
 
   // Generic CRUD operations
-  async get<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
+  async get<T>(endpoint: string, options?: RequestInit & { token?: string }): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
 
-  async post<T>(endpoint: string, data?: any, options?: RequestInit): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, data?: any, options?: RequestInit & { token?: string }): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
@@ -132,7 +213,7 @@ class ApiService {
     });
   }
 
-  async put<T>(endpoint: string, data?: any, options?: RequestInit): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, data?: any, options?: RequestInit & { token?: string }): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
@@ -140,7 +221,7 @@ class ApiService {
     });
   }
 
-  async patch<T>(endpoint: string, data?: any, options?: RequestInit): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data?: any, options?: RequestInit & { token?: string }): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PATCH',
@@ -148,7 +229,7 @@ class ApiService {
     });
   }
 
-  async delete<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
+  async delete<T>(endpoint: string, options?: RequestInit & { token?: string }): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 
@@ -170,7 +251,7 @@ class ApiService {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       body: formData,
-      headers: this.getAuthHeaders(), // Include auth token
+      headers: this.getAuthHeaders(), // Note: token should be passed via options if needed
     });
 
     if (!response.ok) {
@@ -197,7 +278,7 @@ class ApiService {
     const response = await fetch(`${this.baseUrl}/upload/file`, {
       method: 'POST',
       body: formData,
-      headers: this.getAuthHeaders(),
+      headers: this.getAuthHeaders(), // Note: token should be passed via options if needed
     });
 
     if (!response.ok) {

@@ -20,7 +20,7 @@ interface AdminSignupFormData {
 }
 
 export default function AdminCustomSignupForm() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
@@ -73,9 +73,9 @@ export default function AdminCustomSignupForm() {
   const validateStep1 = (): boolean => {
     const newErrors: Partial<Record<keyof AdminSignupFormData, string>> = {};
 
-    if (!formData.firstName) newErrors.firstName = 'First name is required';
-    if (!formData.lastName) newErrors.lastName = 'Last name is required';
-    if (!formData.organizationName) newErrors.organizationName = 'Organization name is required';
+    if (!formData.firstName) newErrors.firstName = t('auth:signup.validation.firstNameRequired');
+    if (!formData.lastName) newErrors.lastName = t('auth:signup.validation.lastNameRequired');
+    if (!formData.organizationName) newErrors.organizationName = t('auth:signup.validation.organizationRequired');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -84,12 +84,12 @@ export default function AdminCustomSignupForm() {
   const validateStep2 = (): boolean => {
     const newErrors: Partial<Record<keyof AdminSignupFormData, string>> = {};
 
-    if (!formData.email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email address';
-    if (!formData.password) newErrors.password = 'Password is required';
-    else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!formData.termsAccepted) newErrors.termsAccepted = 'You must accept the terms and conditions';
+    if (!formData.email) newErrors.email = t('auth:signup.validation.emailRequired');
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = t('auth:signup.validation.emailInvalid');
+    if (!formData.password) newErrors.password = t('auth:signup.validation.passwordRequired');
+    else if (formData.password.length < 8) newErrors.password = t('auth:signup.validation.passwordTooShort');
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = t('auth:signup.validation.passwordsNoMatch');
+    if (!formData.termsAccepted) newErrors.termsAccepted = t('auth:signup.validation.termsRequired');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -129,7 +129,7 @@ export default function AdminCustomSignupForm() {
           setCurrentStep(3);
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
-          setErrors({ email: 'Failed to activate session. Please try logging in.' });
+          setErrors({ email: t('auth:errors.sessionActivationFailed') });
         }
       } else if (result.status === 'missing_requirements') {
         // Email verification required
@@ -140,30 +140,30 @@ export default function AdminCustomSignupForm() {
           return;
         } catch (verifyError: any) {
           console.error('Failed to prepare email verification:', verifyError);
-          setErrors({ email: 'Failed to send verification email. Please try again.' });
+          setErrors({ email: t('auth:signup.errors.verificationEmailFailed') });
         }
       }
     } catch (err: any) {
       console.error('Signup error:', err);
-      let errorMessage = 'An error occurred during signup';
+      let errorMessage = t('auth:signup.errors.genericSignup');
       
       if (err.errors && err.errors.length > 0) {
         const error = err.errors[0];
         switch (error.code) {
           case 'form_identifier_exists':
-            errorMessage = 'An account with this email already exists';
+            errorMessage = t('auth:errors.accountExists');
             break;
           case 'form_password_pwned':
-            errorMessage = 'This password has been found in a data breach. Please choose a different password';
+            errorMessage = t('auth:errors.passwordBreached');
             break;
           case 'form_password_not_strong_enough':
-            errorMessage = 'Password is not strong enough';
+            errorMessage = t('auth:errors.passwordNotStrong');
             break;
           case 'form_identifier_invalid':
-            errorMessage = 'Please enter a valid email address';
+            errorMessage = t('auth:errors.invalidEmail');
             break;
           default:
-            errorMessage = error.message || 'Invalid email or password';
+            errorMessage = error.message || t('auth:errors.invalidCredentials');
         }
       }
       
@@ -191,12 +191,12 @@ export default function AdminCustomSignupForm() {
           setCurrentStep(3);
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
-          setVerificationError('Failed to activate session. Please try logging in.');
+          setVerificationError(t('auth:errors.sessionActivationFailed'));
         }
       }
     } catch (err: any) {
       console.error('Verification error:', err);
-      const errorMessage = err.errors?.[0]?.message || 'Invalid verification code';
+      const errorMessage = err.errors?.[0]?.message || t('auth:signup.errors.invalidVerificationCode');
       setVerificationError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -219,9 +219,9 @@ export default function AdminCustomSignupForm() {
             className={`h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint ${errors[name] ? 'border-swiss-coral' : ''}`} 
           />
           <span className="ml-2 text-sm text-gray-600">
-            I accept the{' '}
+            {t('admin:auth.signup.termsPrefix')}{' '}
             <a href="#/terms" target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">
-              Terms and Conditions
+              {t('admin:auth.signup.termsLink')}
             </a>
           </span>
         </div>
@@ -241,7 +241,7 @@ export default function AdminCustomSignupForm() {
               type="button" 
               onClick={() => name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword)}
               className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-swiss-teal"
-              aria-label={(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'Hide password' : 'Show password'}
+              aria-label={(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? t('admin:auth.login.hidePassword') : t('admin:auth.login.showPassword')}
             >
               {(name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5"/>}
             </button>
@@ -252,8 +252,8 @@ export default function AdminCustomSignupForm() {
     </div>
   );
 
-  const progressText = currentStep === 1 ? 'Step 1 of 2: Basic Information' : 'Step 2 of 2: Account Details';
-  const formTitle = currentStep === 1 ? 'Create Admin Account' : 'Set Up Your Account';
+  const progressText = currentStep === 1 ? t('auth:signup.steps.step1') : t('auth:signup.steps.step2');
+  const formTitle = currentStep === 1 ? t('auth:signup.title') : t('auth:signup.titleStep2');
 
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4">
@@ -261,24 +261,26 @@ export default function AdminCustomSignupForm() {
         {currentStep === 3 ? (
             <div className="text-center">
                 <CheckCircleIcon className="w-16 h-16 text-swiss-mint mx-auto mb-4"/>
-                <h1 className="text-2xl font-bold text-swiss-charcoal">Account Created Successfully!</h1>
-                <p className="text-gray-600 mt-2 mb-6">Your admin account has been created. You can now access the admin dashboard.</p>
+                <h1 className="text-2xl font-bold text-swiss-charcoal">{t('auth:signup.success.title')}</h1>
+                <p className="text-gray-600 mt-2 mb-6">{t('auth:signup.success.message')}</p>
                 <Button onClick={() => navigate('/dashboard')} variant="primary" size="lg">
-                    Go to Dashboard
+                    {t('auth:activeSession.goToDashboard')}
                 </Button>
             </div>
         ) : (
         <>
             <div className="text-center mb-2">
-                {getAdminLogo(settings) ? (
-                  <img 
-                    src={getAdminLogo(settings)!} 
-                    alt="Admin Logo" 
-                    className="h-[92px] w-auto mx-auto mb-3"
-                  />
-                ) : (
-                  <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
-                )}
+                <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-2">
+                  {getAdminLogo(settings) ? (
+                    <img 
+                      src={getAdminLogo(settings)!} 
+                      alt={t('common:adminlogo')} 
+                      className="h-8 w-8 object-contain"
+                    />
+                  ) : (
+                    <SquaresPlusIcon className="h-8 w-8 text-white" />
+                  )}
+                </div>
                 <h1 className="text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
                 <p className="text-sm text-gray-500 mt-1">{progressText}</p>
             </div>

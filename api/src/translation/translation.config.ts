@@ -1,13 +1,17 @@
 /**
  * Field Registry - Defines which fields are translatable for each entity type
  * This follows the i18n specification for dynamic content translation
+ * 
+ * NOTE: Field names must match the actual database schema. Any changes to field names
+ * require corresponding migration of existing translations in the database.
  */
 export const FIELDS_BY_ENTITY: Record<string, string[]> = {
-  // User profile fields
-  user: ['display_name', 'bio'],
+  // User profile fields (only descriptive content - never passwords, names, emails)
+  // Changed from 'bio' to 'shortBio' to match schema
+  user: ['display_name', 'shortBio'],
   
-  // Organization fields
-  organization: ['name', 'description'],
+  // Organization fields (only description is translatable - name is a proper noun/identifier)
+  organization: ['description'],
   
   // Service provider fields
   service_provider: ['name', 'about', 'services'],
@@ -22,8 +26,8 @@ export const FIELDS_BY_ENTITY: Record<string, string[]> = {
   job_application: ['cover_letter'],
   
   // Job posting fields (job_listing in database)
-  job_listing: ['title', 'description', 'requirements'],
-  job_posting: ['title', 'description', 'requirements'], // Alias for compatibility
+  job_listing: ['title', 'description', 'requirements', 'responsibilities', 'qualifications', 'benefits'],
+  job_posting: ['title', 'description', 'requirements', 'responsibilities', 'qualifications', 'benefits'], // Alias for compatibility
   
   // Content fields (generic)
   content: ['title', 'body', 'excerpt'],

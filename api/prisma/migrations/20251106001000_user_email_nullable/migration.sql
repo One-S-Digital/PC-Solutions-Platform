@@ -5,11 +5,22 @@ UPDATE "public"."users"
 SET "email" = NULL
 WHERE "email" = '';
 
-UPDATE "public"."app_users"
-SET "email" = NULL
-WHERE "email" = '';
+-- Check if AppUser table exists and has email column before updating
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'AppUser' 
+    AND column_name = 'email'
+  ) THEN
+    UPDATE "public"."AppUser"
+    SET "email" = NULL
+    WHERE "email" = '';
+  END IF;
+END $$;
 
--- 2. Make users.email nullable (app_users.email is already nullable in schema).
+-- 2. Make users.email nullable (AppUser.email is already nullable in schema).
 ALTER TABLE "public"."users"
   ALTER COLUMN "email" DROP NOT NULL;
 
@@ -27,15 +38,23 @@ BEGIN
   END IF;
 END $$;
 
+-- Add constraint to AppUser if it exists and has email column
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conname = 'app_users_email_not_empty'
-      AND conrelid = 'public.app_users'::regclass
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'AppUser' 
+    AND column_name = 'email'
   ) THEN
-    ALTER TABLE "public"."app_users"
-      ADD CONSTRAINT "app_users_email_not_empty"
-      CHECK ("email" IS NULL OR btrim("email") <> '');
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_constraint
+      WHERE conname = 'AppUser_email_not_empty'
+        AND conrelid = 'public.AppUser'::regclass
+    ) THEN
+      ALTER TABLE "public"."AppUser"
+        ADD CONSTRAINT "AppUser_email_not_empty"
+        CHECK ("email" IS NULL OR btrim("email") <> '');
+    END IF;
   END IF;
 END $$;

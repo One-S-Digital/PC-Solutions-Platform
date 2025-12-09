@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { TranslationService } from './translation.service';
 import { DeepLService } from './deepl.service';
 import { ConfigService } from '@nestjs/config';
+import { FIELDS_BY_ENTITY, DEFAULT_LANGUAGE } from './translation.config';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -18,6 +19,17 @@ export class TranslationController {
     private configService: ConfigService,
   ) {}
 
+  private resolveFields(entityType: string, fields?: string): string[] {
+    const allowed = FIELDS_BY_ENTITY[entityType] || [];
+    const requested = fields ? fields.split(',').map(f => f.trim()).filter(Boolean) : allowed;
+    const selected = requested.filter((f) => allowed.includes(f));
+
+    if (selected.length === 0) {
+      throw new BadRequestException(`No valid translatable fields for entityType=${entityType}`);
+    }
+    return selected;
+  }
+
   @Get('entity/:entityType/:entityId')
   @ApiOperation({ summary: 'Get translated entity fields' })
   @ApiResponse({ status: 200, description: 'Translated fields retrieved successfully' })
@@ -27,11 +39,11 @@ export class TranslationController {
   async getTranslatedEntity(
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: string,
-    @Query('lang') lang: string = 'en',
+    @Query('lang') lang: string = DEFAULT_LANGUAGE,
     @Query('fields') fields?: string,
     @Query('includeMeta') includeMeta?: boolean,
   ) {
-    const fieldList = fields ? fields.split(',') : ['name', 'description', 'bio', 'title', 'about'];
+    const fieldList = this.resolveFields(entityType, fields);
     
     const resolvedFields = await this.translationService.resolveEntity(
       entityType,
@@ -66,8 +78,12 @@ export class TranslationController {
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: string,
     @Param('field') field: string,
-    @Query('lang') lang: string = 'en',
+    @Query('lang') lang: string = DEFAULT_LANGUAGE,
   ) {
+    if (!FIELDS_BY_ENTITY[entityType]?.includes(field)) {
+      throw new BadRequestException(`Field "${field}" is not translatable for entityType=${entityType}`);
+    }
+
     const text = await this.translationService.resolveField(
       entityType,
       entityId,
@@ -92,10 +108,10 @@ export class TranslationController {
   async getEntityWithMetadata(
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: string,
-    @Query('lang') lang: string = 'en',
+    @Query('lang') lang: string = DEFAULT_LANGUAGE,
     @Query('fields') fields?: string,
   ) {
-    const fieldList = fields ? fields.split(',') : ['name', 'description', 'bio', 'title', 'about'];
+    const fieldList = this.resolveFields(entityType, fields);
     
     const resolvedFields = await this.translationService.resolveEntity(
       entityType,

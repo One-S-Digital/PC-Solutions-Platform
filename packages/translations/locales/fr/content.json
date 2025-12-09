@@ -1,128 +1,260 @@
 {
+  "content": {
+    "contentManagementDashboard": {
+      "cards": {
+        "contentStatusFlags": "Indicateurs d'état du contenu",
+        "eLearningItems": "Eléments d'apprentissage en ligne",
+        "recentActivity": "Activité récente",
+        "statePolicies": "Politiques nationales",
+        "hrDocuments": "Documents RH"
+      },
+      "title": "Gestion du contenu"
+    },
+    "hrProcedures": {
+      "categoryDisplay": {
+        "viewCategoryAria": "Voir {{titre}}",
+        "documentsCount": "{{count}} documents"
+      },
+      "documentCard": {
+        "toggleFavoriteLabel": "Toggle Favorite",
+        "previewButtonLabel": "Avant-première",
+        "deleteButtonLabel": "Supprimer",
+        "downloadingAlert": "Téléchargement de l'alerte",
+        "lastUpdatedLabel": "Dernière mise à jour",
+        "editButtonLabel": "Editer",
+        "previewingAlert": "Prévisualisation de l'alerte",
+        "downloadButton": "Télécharger",
+        "categoryLabel": "Catégorie",
+        "languageLabel": "Langue",
+        "versionLabel": "Version"
+      },
+      "documentsInCategoryTitle": "{{catégorie}} Documents",
+      "backToCategoriesButton": "Retour aux catégories",
+      "buttons": {
+        "uploadDocument": "Télécharger un document"
+      },
+      "emptyState": {
+        "noDocuments": "Aucun document RH disponible"
+      },
+      "noDocumentsMatchSearch": "Aucun document ne correspond à votre recherche",
+      "confirmDeleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
+      "allDocumentsCategory": "Tous les documents",
+      "noDocumentsAvailable": "Aucun document disponible",
+      "uploadButton": "Télécharger le document",
+      "searchPlaceholder": "Recherche de documents...",
+      "categoriesTitle": "Catégories de documents RH",
+      "allItemsCount": "{{count}} documents",
+      "title": "Procédures RH"
+    },
+    "statePoliciesPage": {
+      "buttons": {
+        "addEditPolicy": "Ajouter/modifier la politique",
+        "manageAlerts": "Gérer les alertes"
+      },
+      "emptyState": {
+        "noPolicies": "Aucune politique disponible"
+      },
+      "sections": {
+        "compliance": "Conformité",
+        "downloads": "Téléchargements",
+        "updates": "Mises à jour"
+      },
+      "filters": {
+        "policyType": "Type de politique",
+        "canton": "Canton",
+        "region": "Région"
+      },
+      "tabs": {
+        "cantonal": "Cantonal",
+        "national": "Nationales"
+      },
+      "title": "Politiques nationales"
+    },
+    "eLearning": {
+      "buttons": {
+        "addNewContent": "Ajouter du nouveau contenu"
+      },
+      "emptyState": {
+        "noContent": "Aucun contenu disponible"
+      },
+      "actions": {
+        "downloadPdf": "Télécharger le PDF",
+        "viewCourse": "Voir le cours",
+        "watchVideo": "Voir la vidéo",
+        "openLink": "Ouvrir le lien"
+      },
+      "addNewContentButton": "Ajouter un nouveau contenu",
+      "externalLinksTitle": "Liens externes",
+      "searchPlaceholder": "Contenu de la recherche...",
+      "itemType": {
+        "courses": "Cours",
+        "videos": "Vidéos",
+        "links": "Liens",
+        "pdfs": "PDFs"
+      },
+      "noContentFound": "Pas de contenu disponible",
+      "categoryLabel": "Catégorie",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      "durationLabel": "Durée de l'accord",
+      "languageLabel": "Langue",
+      "coursesTitle": "Cours",
+      "lessonsCount": "{{count}} leçons",
+      "noItemsFound": "Aucun élément trouvé",
+      "tabs": {
+        "courses": "Cours",
+        "videos": "Vidéos",
+        "pdfs": "PDFs"
+      },
+      "updatedLabel": "Mise à jour",
+      "viewingAlert": "Visualisation",
+      "videosTitle": "Vidéos",
+      "pdfsTitle": "Documents PDF",
+      "title": "Apprentissage en ligne"
+    },
+    "statePolicies": {
+      "title": "Politiques nationales"
+    }
+  },
+  "statePoliciesPage": {
+    "emptyState": {
+      "noPoliciesFoundForFilters": "Aucune politique n'a été trouvée pour les filtres actuels.",
+      "noPoliciesMatchFilters": "Aucune politique ne correspond aux filtres actuels",
+      "noPolicies": "Aucune politique disponible"
+    },
+    "filters": {
+      "allCantonsRegions": "Tous les cantons Régions",
+      "policyType": "Type de politique",
+      "canton": "Canton",
+      "region": "Région"
+    },
+    "buttons": {
+      "addEditPolicy": "Ajouter Modifier la politique",
+      "manageAlerts": "Gérer les alertes"
+    },
+    "errors": {
+      "downloadFailed": "Le téléchargement du fichier a échoué. Veuillez réessayer."
+    },
+    "sections": {
+      "categories": "Catégories de politiques",
+      "compliance": "Conformité",
+      "downloads": "Téléchargements",
+      "updates": "Mises à jour"
+    },
+    "confirmDeleteAlert": "Êtes-vous sûr de vouloir supprimer cette alerte ?",
+    "labels": {
+      "effective": "Efficace",
+      "published": "Publié",
+      "category": "Catégorie",
+      "updated": "Mise à jour",
+      "type": "Type"
+    },
+    "tabs": {
+      "cantonal": "Cantonal",
+      "national": "Nationales"
+    },
+    "adminNote": "Utiliser le tableau de bord de l'administrateur pour ajouter/modifier des politiques",
+    "loading": "Chargement des politiques...",
+    "title": "Politiques nationales"
+  },
+  "contentManagementDashboard": {
+    "cards": {
+      "contentStatusFlags": "Indicateurs d'état du contenu",
+      "eLearningItems": "Eléments d'apprentissage",
+      "recentActivity": "Activité récente",
+      "statePolicies": "Politiques nationales",
+      "hrDocuments": "Documents RH"
+    },
+    "title": "Gestion du contenu"
+  },
+  "hrProcedures": {
+    "categoryDisplay": {
+      "viewCategoryAria": "Voir {{titre}}",
+      "documentsCount": "{{count}} documents"
+    },
+    "documentCard": {
+      "toggleFavoriteLabel": "Toggle Favorite",
+      "previewButtonLabel": "Avant-première",
+      "deleteButtonLabel": "Supprimer",
+      "downloadingAlert": "Téléchargement...",
+      "lastUpdatedLabel": "Dernière mise à jour",
+      "editButtonLabel": "Editer",
+      "previewingAlert": "Avant-première...",
+      "downloadButton": "Télécharger",
+      "categoryLabel": "Catégorie",
+      "languageLabel": "Langue",
+      "versionLabel": "Version"
+    },
+    "documentsInCategoryTitle": "{{catégorie}} Documents",
+    "backToCategoriesButton": "Retour aux catégories",
+    "buttons": {
+      "uploadDocument": "Télécharger un document"
+    },
+    "emptyState": {
+      "noDocuments": "Aucun document RH disponible"
+    },
+    "noDocumentsMatchSearch": "Aucun document ne correspond à votre recherche",
+    "confirmDeleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
+    "allDocumentsCategory": "Tous les documents",
+    "noDocumentsAvailable": "Pas de documents disponibles",
+    "uploadButton": "Télécharger le document",
+    "searchPlaceholder": "Recherche de documents...",
+    "categoriesTitle": "Catégories de documents RH",
+    "allItemsCount": "{{count}} documents",
+    "title": "Procédures RH"
+  },
+  "policyCategories": {
+    "Labor&Employment": "Travail et emploi",
+    "ChildProtection": "Protection de l'enfance",
+    "EducationPolicy": "Politique de l'éducation",
+    "Environmental": "Environnement",
+    "Health&Safety": "Santé et sécurité",
+    "DataPrivacy": "Protection des données",
+    "Other": "Autres politiques"
+  },
   "eLearning": {
-    "title": "E-Learning",
-    "coursesTitle": "Cours",
-    "videosTitle": "Vidéos",
-    "pdfsTitle": "Documents",
+    "buttons": {
+      "addNewContent": "Ajouter du nouveau contenu"
+    },
+    "emptyState": {
+      "noContent": "Aucun contenu disponible"
+    },
+    "actions": {
+      "downloadPdf": "Télécharger le Pdf",
+      "viewCourse": "Voir le cours",
+      "watchVideo": "Voir la vidéo",
+      "openLink": "Ouvrir le lien",
+      "viewLink": "Voir le lien",
+      "viewPdf": "Voir le PDF"
+    },
+    "addNewContentButton": "Ajouter un nouveau contenu",
     "externalLinksTitle": "Liens externes",
-    "addNewContentButton": "Ajouter du nouveau contenu",
-    "noContentFound": "Aucun contenu disponible",
-    "noItemsFound": "Aucun élément trouvé",
-    "categoryLabel": "Catégorie",
-    "languageLabel": "Langue",
-    "durationLabel": "Durée",
-    "updatedLabel": "Mis à jour",
-    "viewingAlert": "Affichage",
-    "lessonsCount": "{{count}} leçons",
-    "searchPlaceholder": "Rechercher du contenu...",
+    "searchPlaceholder": "Contenu de la recherche...",
     "itemType": {
       "courses": "Cours",
       "videos": "Vidéos",
-      "pdfs": "PDFs",
-      "links": "Liens"
+      "links": "Liens",
+      "pdfs": "Pdfs"
     },
-    "actions": {
-      "viewCourse": "Voir le cours",
-      "watchVideo": "Regarder la vidéo",
-      "downloadPdf": "Télécharger le PDF",
-      "openLink": "Ouvrir le lien",
-      "viewPdf": "Voir le PDF",
-      "viewLink": "Voir le lien"
-    },
+    "noContentFound": "Pas de contenu disponible",
+    "categoryLabel": "Catégorie",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "durationLabel": "Durée de l'accord",
+    "languageLabel": "Langue",
+    "coursesTitle": "Cours",
+    "lessonsCount": "{{count}} leçons",
+    "noItemsFound": "Aucun article trouvé",
     "tabs": {
       "courses": "Cours",
       "videos": "Vidéos",
       "pdfs": "PDFs"
     },
-    "emptyState": {
-      "noContent": "Aucun contenu disponible"
-    },
-    "buttons": {
-      "addNewContent": "Ajouter du nouveau contenu"
-    }
-  },
-  "hrProcedures": {
-    "title": "Procédures RH",
-    "categoriesTitle": "Catégories de documents RH",
-    "documentsInCategoryTitle": "Documents {{category}}",
-    "allDocumentsCategory": "Tous les documents",
-    "allItemsCount": "{{count}} documents",
-    "noDocumentsAvailable": "Aucun document disponible",
-    "noDocumentsMatchSearch": "Aucun document ne correspond à votre recherche",
-    "confirmDeleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
-    "backToCategoriesButton": "Retour aux catégories",
-    "searchPlaceholder": "Rechercher des documents...",
-    "uploadButton": "Télécharger un document",
-    "categoryDisplay": {
-      "documentsCount": "{{count}} documents",
-      "viewCategoryAria": "Voir {{title}}"
-    },
-    "documentCard": {
-      "categoryLabel": "Catégorie",
-      "languageLabel": "Langue",
-      "lastUpdatedLabel": "Dernière mise à jour",
-      "versionLabel": "Version",
-      "downloadButton": "Télécharger",
-      "previewButtonLabel": "Aperçu",
-      "editButtonLabel": "Modifier",
-      "deleteButtonLabel": "Supprimer",
-      "toggleFavoriteLabel": "Basculer le favori",
-      "downloadingAlert": "Téléchargement...",
-      "previewingAlert": "Aperçu..."
-    },
-    "uploadButton": {
-      "label": "Télécharger un document"
-    },
-    "emptyState": {
-      "noDocuments": "Aucun document RH disponible"
-    },
-    "buttons": {
-      "uploadDocument": "Télécharger un document"
-    }
+    "updatedLabel": "Mise à jour",
+    "viewingAlert": "Visualisation",
+    "videosTitle": "Vidéos",
+    "pdfsTitle": "Documents",
+    "title": "Apprentissage en ligne"
   },
   "statePolicies": {
-    "title": "Politiques d'État"
-  },
-  "statePoliciesPage": {
-    "title": "Politiques d'État",
-    "filters": {
-      "canton": "Canton",
-      "region": "Région",
-      "policyType": "Type de politique"
-    },
-    "tabs": {
-      "cantonal": "Cantonal",
-      "national": "National"
-    },
-    "sections": {
-      "compliance": "Conformité",
-      "updates": "Mises à jour",
-      "downloads": "Téléchargements"
-    },
-    "emptyState": {
-      "noPolicies": "Aucune politique disponible"
-    },
-    "buttons": {
-      "manageAlerts": "Gérer les alertes",
-      "addEditPolicy": "Ajouter/Modifier une politique"
-    },
-    "labels": {
-      "category": "Catégorie",
-      "type": "Type",
-      "published": "Publié",
-      "updated": "Mis à jour",
-      "effective": "Effectif"
-    }
-  },
-  "contentManagementDashboard": {
-    "title": "Gestion de contenu",
-    "cards": {
-      "eLearningItems": "Éléments E-Learning",
-      "hrDocuments": "Documents RH",
-      "statePolicies": "Politiques d'État",
-      "recentActivity": "Activité récente",
-      "contentStatusFlags": "Indicateurs de statut du contenu"
-    }
+    "title": "Politiques nationales"
   }
 }

@@ -4,6 +4,7 @@ import React, { ReactNode, useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const toggleMobileSidebar = () => {
+    const { t } = useTranslation(['common']);
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   };
 
@@ -44,7 +46,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 type="button"
                 className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white text-white hover:bg-gray-700"
                 onClick={closeMobileSidebar}
-                aria-label="Close sidebar"
+                aria-label={t('common:labels.closesidebar')}
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>

@@ -287,7 +287,6 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
       if (window.confirm(t('settingsPrivacyData.confirmGDPRDelete'))) {
           if (window.confirm(t('common:settingsAccountSecurity.dangerZone.finalConfirmation'))) {
               // Mock action: In a real app, this would trigger a backend process.
-              console.log("ACCOUNT DELETION INITIATED FOR USER:", currentUser?.id);
               alert(t('settingsPrivacyData.deletionRequestSubmittedHelpText'));
           }
       }
@@ -302,12 +301,12 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
         <form onSubmit={handleUpdateInfo}>
           <h3 className="text-lg font-medium text-gray-900">{t('common:settingsAccountSecurity.personalInfo.title')}</h3>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
-            <label htmlFor="firstName" className="form-label md:pt-2">First Name</label>
+            <label htmlFor="firstName" className="form-label md:pt-2">{t('common:settingsAccountSecurity.personalInfo.firstNameLabel')}</label>
             <div className="form-input-container">
               <input type="text" id="firstName" name="firstName" value={personalInfo.firstName} onChange={handlePersonalInfoChange} className={STANDARD_INPUT_FIELD} />
             </div>
 
-            <label htmlFor="lastName" className="form-label md:pt-2">Last Name</label>
+            <label htmlFor="lastName" className="form-label md:pt-2">{t('common:settingsAccountSecurity.personalInfo.lastNameLabel')}</label>
             <div className="form-input-container">
               <input type="text" id="lastName" name="lastName" value={personalInfo.lastName} onChange={handlePersonalInfoChange} className={STANDARD_INPUT_FIELD} />
             </div>
@@ -346,8 +345,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
           <h3 className="text-lg font-medium text-gray-900">{t('common:settingsAccountSecurity.changePassword.title')}</h3>
           <div className="mt-2 mb-4">
             <p className="text-sm text-gray-600">
-              For security reasons, you may need to sign out and sign back in before changing your password. 
-              If you encounter a verification error, please sign out and sign back in, then try again.
+              {t('common:settingsAccountSecurity.changePassword.securityMessage')}
             </p>
           </div>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
@@ -371,7 +369,7 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
           </div>
             <div className="mt-4 space-y-2">
                <Button type="submit" variant="secondary" disabled={isUpdatingPassword || passwordSuccess}>
-                 {isUpdatingPassword ? 'Updating...' : passwordSuccess ? t('common:settingsAccountSecurity.changePassword.passwordUpdated', 'Password Updated') : t('common:settingsAccountSecurity.changePassword.updatePasswordButton')}
+                 {isUpdatingPassword ? t('common:settingsAccountSecurity.changePassword.updating') : passwordSuccess ? t('common:settingsAccountSecurity.changePassword.passwordUpdated') : t('common:settingsAccountSecurity.changePassword.updatePasswordButton')}
                </Button>
                
                {/* Success Message */}
@@ -395,9 +393,11 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                {passwordError && (
                  <div className="mt-2">
                    <p className="text-sm text-swiss-coral font-medium">{passwordError}</p>
-                   {passwordError.includes('verification') && (
+                   {/* TODO: Use error codes instead of string matching for better i18n support */}
+                   {(passwordError.toLowerCase().includes('verification') || 
+                     passwordError.toLowerCase().includes(t('common:errors.verificationKeyword', 'verification').toLowerCase())) && (
                      <p className="text-sm text-gray-600 mt-1">
-                       Tip: Try signing out and signing back in, then attempt to change your password again.
+                       {t('common:settingsAccountSecurity.changePassword.verificationErrorTip')}
                      </p>
                    )}
                  </div>

@@ -38,6 +38,7 @@ interface PaginationInfo {
 }
 
 export default function Content() {
+  const { t } = useTranslation(['admin', 'common']);
   const apiClient = useApiClient();
   
   // Modal state
@@ -254,11 +255,11 @@ export default function Content() {
           // Show success toast if we got a response (update likely succeeded)
           // The backend log confirms it updated, so even if response structure is unexpected, show success
           if (response && (response?.status === 200 || response?.data?.success)) {
-            showToast('Content updated successfully', 'success');
+            showToast(t('admin:content.updateSuccess', 'Content updated successfully'), 'success');
           } else {
             console.warn('Update response structure unexpected:', response);
             // Still show success since backend confirmed the update
-            showToast('Content updated successfully', 'success');
+            showToast(t('admin:content.updateSuccess', 'Content updated successfully'), 'success');
           }
         } catch (updateError: any) {
           console.error('Error during update API call:', updateError);
@@ -292,7 +293,7 @@ export default function Content() {
               }
 
               response = result.data;
-              showToast('Content uploaded successfully', 'success');
+              showToast(t('admin:content.uploadSuccess', 'Content uploaded successfully'), 'success');
       }
 
       // Check if response is successful (handle both update and upload responses)
@@ -354,7 +355,7 @@ export default function Content() {
   };
 
   const handleDelete = async (contentType: ContentType, id: string) => {
-    if (!confirm('Are you sure you want to delete this content?')) {
+    if (!confirm(t('admin:content.deleteConfirm', 'Are you sure you want to delete this content?'))) {
       return;
     }
 
@@ -370,7 +371,7 @@ export default function Content() {
       }
 
       if (response?.data.success) {
-        showToast('Content deleted successfully', 'success');
+        showToast(t('admin:content.deleteSuccess', 'Content deleted successfully'), 'success');
         // Refresh the appropriate content list
         if (contentType === 'e-learning') {
           await fetchELearningContent();
@@ -389,7 +390,7 @@ export default function Content() {
 
   const handleView = (content: UploadedContent) => {
     if (!content.fileUrl && !content.publicUrl) {
-      alert('No file URL available for this content');
+      alert(t('admin:content.noFileUrl', 'No file URL available for this content'));
       return;
     }
     setPreviewContent(content);
@@ -450,9 +451,9 @@ export default function Content() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Content Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin:content.title', 'Content Management')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Upload and manage e-learning materials, HR documents, and state policies
+          {t('admin:content.description', 'Upload and manage e-learning materials, HR documents, and state policies')}
         </p>
       </div>
 
@@ -470,7 +471,7 @@ export default function Content() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add E-Learning Content
+          {t('admin:content.addELearning', 'Add E-Learning Content')}
         </button>
         
         <button
@@ -478,7 +479,7 @@ export default function Content() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add HR Document
+          {t('admin:content.addHRDocument', 'Add HR Document')}
         </button>
         
         <button
@@ -486,7 +487,7 @@ export default function Content() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add State Policy
+          {t('admin:content.addStatePolicy', 'Add State Policy')}
         </button>
       </div>
 
@@ -497,9 +498,9 @@ export default function Content() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <AcademicCapIcon className="h-8 w-8 text-indigo-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">E-Learning Content</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.eLearning.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({eLearningPagination.total} total)
+                ({eLearningPagination.total} {t('admin:content.eLearning.total')})
               </span>
             </div>
             
@@ -507,7 +508,7 @@ export default function Content() {
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search e-learning..."
+                placeholder={t('admin:content.eLearning.searchPlaceholder')}
                 value={eLearningSearch}
                 onChange={(e) => handleSearch('e-learning', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -519,20 +520,20 @@ export default function Content() {
           {isLoadingELearning ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading content...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.eLearning.loading')}</p>
             </div>
           ) : eLearningContent.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <AcademicCapIcon className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {eLearningSearch ? 'No results found' : 'No e-learning content yet'}
+                {eLearningSearch ? t('admin:content.eLearning.noResults') : t('admin:content.eLearning.empty')}
               </p>
               <button
                 onClick={() => handleOpenModal('e-learning')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add First Content
+                {t('admin:content.eLearning.addFirst')}
               </button>
             </div>
           ) : (
@@ -564,9 +565,9 @@ export default function Content() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <DocumentTextIcon className="h-8 w-8 text-green-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">HR Documents</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.hrDocuments.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({hrPagination.total} total)
+                ({hrPagination.total} {t('admin:content.eLearning.total')})
               </span>
             </div>
             
@@ -574,7 +575,7 @@ export default function Content() {
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search HR documents..."
+                placeholder={t('admin:content.hrDocuments.searchPlaceholder')}
                 value={hrSearch}
                 onChange={(e) => handleSearch('hr', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
@@ -586,20 +587,20 @@ export default function Content() {
           {isLoadingHR ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading documents...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.hrDocuments.loading')}</p>
             </div>
           ) : hrDocuments.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {hrSearch ? 'No results found' : 'No HR documents yet'}
+                {hrSearch ? t('admin:content.hrDocuments.noResults') : t('admin:content.hrDocuments.empty')}
               </p>
               <button
                 onClick={() => handleOpenModal('hr')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add First Document
+                {t('admin:content.hrDocuments.addFirst')}
               </button>
             </div>
           ) : (
@@ -631,9 +632,9 @@ export default function Content() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <ScaleIcon className="h-8 w-8 text-purple-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">State Policies</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.statePolicies.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({policyPagination.total} total)
+                ({policyPagination.total} {t('admin:content.eLearning.total')})
               </span>
             </div>
             
@@ -641,7 +642,7 @@ export default function Content() {
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search policies..."
+                placeholder={t('admin:content.statePolicies.searchPlaceholder')}
                 value={policySearch}
                 onChange={(e) => handleSearch('policy', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
@@ -653,20 +654,20 @@ export default function Content() {
           {isLoadingPolicies ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-              <p className="mt-2 text-sm text-gray-500">Loading policies...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.statePolicies.loading')}</p>
             </div>
           ) : statePolicies.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <ScaleIcon className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {policySearch ? 'No results found' : 'No state policies yet'}
+                {policySearch ? t('admin:content.statePolicies.noResults') : t('admin:content.statePolicies.empty')}
               </p>
               <button
                 onClick={() => handleOpenModal('policy')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add First Policy
+                {t('admin:content.statePolicies.addFirst')}
               </button>
             </div>
           ) : (
@@ -729,6 +730,7 @@ function ContentCard({
   onDelete: () => void;
   onView: () => void;
 }) {
+  const { t } = useTranslation(['admin', 'common']);
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
       <div className="p-5">
@@ -744,26 +746,26 @@ function ContentCard({
           </span>
         )}
         <div className="text-xs text-gray-500 mb-4">
-          Updated: {new Date(item.updatedAt).toLocaleDateString()}
+          {t('admin:content.updated', 'Updated')}: {new Date(item.updatedAt).toLocaleDateString()}
         </div>
         <div className="flex gap-2">
           <button
             onClick={onView}
             className="flex-1 px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100"
           >
-            View
+            {t('admin:content.view', 'View')}
           </button>
           <button
             onClick={onEdit}
             className="flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100"
           >
-            Edit
+            {t('admin:content.edit', 'Edit')}
           </button>
           <button
             onClick={onDelete}
             className="flex-1 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100"
           >
-            Delete
+            {t('admin:content.delete', 'Delete')}
           </button>
         </div>
       </div>

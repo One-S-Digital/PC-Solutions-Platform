@@ -122,6 +122,11 @@ const AdminSystemMonitoringPage: React.FC = () => {
     'API Improvement': 'text-purple-500',
   };
 
+  const getEventTypeTranslation = (eventType: SystemEventType): string => {
+    const key = eventType.replace(/\s/g, '');
+    return t(`adminSystemMonitoringPage.eventTypes.${key}`, eventType);
+  };
+
   const LogList: React.FC<{ logs: LogEntry[] }> = ({ logs }) => {
     if (logs.length === 0) {
       return <p className="text-center text-gray-400 py-8">{t('adminSystemMonitoringPage.rawLogConsole.emptyLogMessage')}</p>;
@@ -283,7 +288,7 @@ const AdminSystemMonitoringPage: React.FC = () => {
                           </div>
                           <div className="min-w-0 flex-1 py-1.5">
                           <div className="text-sm text-gray-500">
-                              <span className="font-medium text-gray-900">{t(`adminSystemMonitoringPage.eventTypes.${event.type.replace(/\s/g, '')}`)}</span>
+                              <span className="font-medium text-gray-900">{getEventTypeTranslation(event.type)}</span>
                               <span className="whitespace-nowrap ml-2">({new Date(event.timestamp).toLocaleString()})</span>
                           </div>
                           <p className="mt-0.5 text-sm text-gray-700">{event.message}</p>

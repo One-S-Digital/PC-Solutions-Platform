@@ -20,6 +20,7 @@ import {
 import { useAppContext } from '../../contexts/AppContext';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useRecruitmentApi } from '../../hooks/useRecruitmentApi';
+import { useTranslation } from 'react-i18next';
 
 const SectionCard: React.FC<{ title: string; icon: React.ElementType; children: React.ReactNode }> = ({
   title,
@@ -36,6 +37,7 @@ const SectionCard: React.FC<{ title: string; icon: React.ElementType; children: 
 );
 
 const CandidateProfilePage: React.FC = () => {
+  const { t } = useTranslation('common');
   const { candidateId } = useParams<{ candidateId: string }>();
   const navigate = useNavigate();
   const { toggleFavoriteCandidate, isCandidateFavorite } = useAppContext();
@@ -82,7 +84,7 @@ const CandidateProfilePage: React.FC = () => {
   }, [fetchCandidate]);
 
   if (loading) {
-    return <p className="text-center text-gray-500">Loading candidate…</p>;
+    return <p className="text-center text-gray-500">{t('candidateProfile.loading')}</p>;
   }
 
   if (error || !candidate) {
@@ -90,17 +92,17 @@ const CandidateProfilePage: React.FC = () => {
       <div className="p-6 text-center space-y-4">
         <UserCircleIcon className="w-12 h-12 mx-auto text-gray-400" />
         <div>
-          <p className="text-xl font-semibold text-swiss-charcoal">Candidate not found.</p>
+          <p className="text-xl font-semibold text-swiss-charcoal">{t('candidateProfile.notFound')}</p>
           <p className="text-gray-600">
-            {error || 'The profile you are looking for does not exist or the ID is incorrect.'}
+            {error || t('candidateProfile.notFoundDescription')}
           </p>
         </div>
         <div className="flex justify-center gap-3">
           <Button onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon} variant="outline">
-            Go Back
+            {t('candidateProfile.goBack')}
           </Button>
           <Button variant="primary" onClick={fetchCandidate}>
-            Retry
+            {t('candidateProfile.retry')}
           </Button>
         </div>
       </div>
@@ -143,7 +145,7 @@ const CandidateProfilePage: React.FC = () => {
   return (
     <div className="space-y-6">
       <Button variant="ghost" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon} className="mb-0">
-        Back to Candidate Pool
+        {t('candidateProfile.backToPool')}
       </Button>
 
       <Card className="p-6">
@@ -155,13 +157,13 @@ const CandidateProfilePage: React.FC = () => {
           />
           <div className="flex-grow text-center sm:text-left">
             <h1 className="text-3xl font-bold text-swiss-charcoal">{name}</h1>
-            <p className="text-xl text-swiss-teal mt-1">{currentRoleOrTitle ?? 'Role not specified'}</p>
+            <p className="text-xl text-swiss-teal mt-1">{currentRoleOrTitle ?? t('candidateProfile.roleNotSpecified')}</p>
             <div className="mt-2 space-y-1 text-sm text-gray-600">
               <p className="flex items-center justify-center sm:justify-start">
-                <MapPinIcon className="w-5 h-5 mr-2 text-gray-400" /> {location ?? 'Location not provided'}
+                <MapPinIcon className="w-5 h-5 mr-2 text-gray-400" /> {location ?? t('candidateProfile.locationNotProvided')}
               </p>
               <p className="flex items-center justify-center sm:justify-start">
-                <CalendarDaysIcon className="w-5 h-5 mr-2 text-gray-400" /> {availabilityStatus ?? 'Availability not provided'}
+                <CalendarDaysIcon className="w-5 h-5 mr-2 text-gray-400" /> {availabilityStatus ?? t('candidateProfile.availabilityNotProvided')}
               </p>
               {email && (
                 <p className="flex items-center justify-center sm:justify-start">
@@ -177,10 +179,10 @@ const CandidateProfilePage: React.FC = () => {
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-auto flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center flex-shrink-0">
             <Button variant="primary" leftIcon={PlusCircleIcon} size="md" className="w-full sm:w-auto" onClick={handleInviteToApply}>
-              Invite to Apply
+              {t('candidateProfile.inviteToApply')}
             </Button>
             <Button variant="outline" leftIcon={EnvelopeIcon} size="md" className="w-full sm:w-auto" onClick={handleSendMessage}>
-              Send Message
+              {t('candidateProfile.sendMessage')}
             </Button>
           </div>
         </div>
@@ -188,11 +190,11 @@ const CandidateProfilePage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <SectionCard title="Short Bio" icon={UserCircleIcon}>
-            <p className="text-gray-700 whitespace-pre-line">{shortBio ?? 'No bio provided yet.'}</p>
+          <SectionCard title={t('candidateProfile.sections.shortBio')} icon={UserCircleIcon}>
+            <p className="text-gray-700 whitespace-pre-line">{shortBio ?? t('candidateProfile.noBioProvided')}</p>
           </SectionCard>
 
-          <SectionCard title="Work Experience" icon={BriefcaseIcon}>
+          <SectionCard title={t('candidateProfile.sections.workExperience')} icon={BriefcaseIcon}>
             <div className="space-y-4">
               {workExperience && workExperience.length > 0 ? (
                 workExperience.map((exp, index) => (
@@ -210,29 +212,29 @@ const CandidateProfilePage: React.FC = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-500">No experience listed yet.</p>
+                <p className="text-sm text-gray-500">{t('candidateProfile.noExperienceListed')}</p>
               )}
             </div>
           </SectionCard>
 
-          <SectionCard title="Education" icon={AcademicCapIcon}>
+          <SectionCard title={t('candidateProfile.sections.education')} icon={AcademicCapIcon}>
             <div className="space-y-4">
               {education && education.length > 0 ? (
                 education.map((edu, index) => (
                   <div key={index} className="p-3 bg-gray-50 rounded-md">
                     <h3 className="font-semibold text-swiss-charcoal">{edu.degree}</h3>
                     <p className="text-sm text-swiss-teal">{edu.institutionName}</p>
-                    <p className="text-xs text-gray-500">Graduated: {edu.graduationYear}</p>
+                    <p className="text-xs text-gray-500">{t('candidateProfile.graduated')}: {edu.graduationYear}</p>
                     {edu.description && <p className="text-sm text-gray-600 mt-1">{edu.description}</p>}
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-500">No education details yet.</p>
+                <p className="text-sm text-gray-500">{t('candidateProfile.noEducationDetails')}</p>
               )}
             </div>
           </SectionCard>
 
-          <SectionCard title="Certifications" icon={StarIcon}>
+          <SectionCard title={t('candidateProfile.sections.certifications')} icon={StarIcon}>
             <div className="space-y-3">
               {certifications && certifications.length > 0 ? (
                 certifications.map((cert, index) => (
@@ -240,8 +242,8 @@ const CandidateProfilePage: React.FC = () => {
                     <h3 className="font-semibold text-swiss-charcoal">{cert.name}</h3>
                     <p className="text-sm text-swiss-teal">{cert.issuingOrganization}</p>
                     <p className="text-xs text-gray-500">
-                      Issued: {cert.issueDate}
-                      {cert.expiryDate && ` - Expires: ${cert.expiryDate}`}
+                      {t('candidateProfile.issued')}: {cert.issueDate}
+                      {cert.expiryDate && ` - ${t('candidateProfile.expires')}: ${cert.expiryDate}`}
                     </p>
                     {cert.credentialUrl && (
                       <a
@@ -250,20 +252,20 @@ const CandidateProfilePage: React.FC = () => {
                         rel="noopener noreferrer"
                         className="text-xs text-swiss-mint hover:underline"
                       >
-                        View Credential
+                        {t('candidateProfile.viewCredential')}
                       </a>
                     )}
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-500">No certifications listed yet.</p>
+                <p className="text-sm text-gray-500">{t('candidateProfile.noCertificationsListed')}</p>
               )}
             </div>
           </SectionCard>
         </div>
 
         <div className="lg:col-span-1 space-y-6">
-          <SectionCard title="Skills & Specialties" icon={StarIcon}>
+          <SectionCard title={t('candidateProfile.sections.skillsAndSpecialties')} icon={StarIcon}>
             <div className="flex flex-wrap gap-2">
               {skills.length > 0
                 ? skills.map(skill => (
@@ -271,28 +273,28 @@ const CandidateProfilePage: React.FC = () => {
                       {skill}
                     </span>
                   ))
-                : <span className="text-xs text-gray-500">No skills listed yet.</span>}
+                : <span className="text-xs text-gray-500">{t('candidateProfile.noSkillsListed')}</span>}
             </div>
           </SectionCard>
 
-          <SectionCard title="Availability & Preferences" icon={CalendarDaysIcon}>
+          <SectionCard title={t('candidateProfile.sections.availabilityAndPreferences')} icon={CalendarDaysIcon}>
             <div className="space-y-2 text-sm text-gray-700">
               <p>
-                <strong>Preferred Days:</strong> {availabilityPreferences?.days?.join(', ') ?? 'Not provided'}
+                <strong>{t('candidateProfile.preferredDays')}:</strong> {availabilityPreferences?.days?.join(', ') ?? t('candidateProfile.notProvided')}
               </p>
               <p>
-                <strong>Preferred Times:</strong> {availabilityPreferences?.times ?? 'Not provided'}
+                <strong>{t('candidateProfile.preferredTimes')}:</strong> {availabilityPreferences?.times ?? t('candidateProfile.notProvided')}
               </p>
               <p>
-                <strong>Contract Type:</strong> {availabilityPreferences?.contractType ?? 'Not provided'}
+                <strong>{t('candidateProfile.contractType')}:</strong> {availabilityPreferences?.contractType ?? t('candidateProfile.notProvided')}
               </p>
               <p>
-                <strong>Preferred Age Groups:</strong> {availabilityPreferences?.preferredAgeGroups?.join(', ') ?? 'Not provided'}
+                <strong>{t('candidateProfile.preferredAgeGroups')}:</strong> {availabilityPreferences?.preferredAgeGroups?.join(', ') ?? t('candidateProfile.notProvided')}
               </p>
             </div>
           </SectionCard>
 
-          <SectionCard title="CV & Documents" icon={PaperClipIcon}>
+          <SectionCard title={t('candidateProfile.sections.cvAndDocuments')} icon={PaperClipIcon}>
             <ul className="space-y-2">
               {documents && documents.length > 0 ? (
                 documents.map((doc, index) => (
@@ -311,7 +313,7 @@ const CandidateProfilePage: React.FC = () => {
                   </li>
                 ))
               ) : (
-                <li className="text-xs text-gray-500">No documents uploaded yet.</li>
+                <li className="text-xs text-gray-500">{t('candidateProfile.noDocumentsUploaded')}</li>
               )}
             </ul>
           </SectionCard>
@@ -321,13 +323,13 @@ const CandidateProfilePage: React.FC = () => {
       <Card className="p-6 mt-8">
         <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-3">
           <Button variant="primary" leftIcon={PlusCircleIcon} size="md" onClick={handleInviteToApply}>
-            Invite to Apply
+            {t('candidateProfile.inviteToApply')}
           </Button>
           <Button variant="outline" leftIcon={EnvelopeIcon} size="md" onClick={handleSendMessage}>
-            Send Message
+            {t('candidateProfile.sendMessage')}
           </Button>
           <Button variant="ghost" leftIcon={HeartIcon} size="md" onClick={() => toggleFavoriteCandidate(candidate.id)}>
-            {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+            {isFavorite ? t('candidateProfile.removeFromFavorites') : t('candidateProfile.addToFavorites')}
           </Button>
         </div>
       </Card>

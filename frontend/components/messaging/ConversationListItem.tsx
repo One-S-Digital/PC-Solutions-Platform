@@ -13,7 +13,7 @@ interface ConversationListItemProps {
 }
 
 const ConversationListItem: React.FC<ConversationListItemProps> = ({ conversation, isActive, onSelect }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['messages', 'common', 'dashboard']);
   const { currentUser } = useAppContext();
   const { getUnreadCountForConversation } = useMessaging();
 
@@ -30,7 +30,7 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({ conversatio
     avatarContent = <UserGroupIcon className="w-6 h-6" />;
   } else {
     const otherParticipantId = conversation.participantIds.find(id => id !== currentUser.id);
-    displayName = otherParticipantId ? conversation.participantNames[otherParticipantId] : t('unknownUser');
+    displayName = otherParticipantId ? conversation.participantNames[otherParticipantId] : t('messages:unknownUser');
     avatarContent = displayName?.substring(0, 2).toUpperCase() || '??';
   }
 
@@ -60,8 +60,8 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({ conversatio
           </div>
           <div className="flex justify-between items-center">
             <p className="text-xs text-gray-500 truncate pr-2">
-              {conversation.lastMessageSenderId === currentUser.id ? t('youPrefix') : ''}
-              {conversation.lastMessageSnippet || t('noMessagesYet')}
+              {conversation.lastMessageSenderId === currentUser.id ? t('messages:youPrefix') : ''}
+              {conversation.lastMessageSnippet || t('messages:noMessagesYet')}
             </p>
             {unreadCount > 0 && (
               <span className="bg-swiss-coral text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full flex-shrink-0">

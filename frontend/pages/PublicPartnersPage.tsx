@@ -101,14 +101,14 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getTypeColor(partner.type)} transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500`} />
       
       {/* Featured badge */}
-      {partner.isFeatured && (
-        <div className="absolute top-4 right-4 z-10">
-          <div className="flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full shadow-lg">
-            <StarIconSolid className="w-3.5 h-3.5 text-white" />
-            <span className="text-xs font-semibold text-white">Featured</span>
-          </div>
-        </div>
-      )}
+          {partner.isFeatured && (
+            <div className="absolute top-4 right-4 z-10">
+              <div className="flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full shadow-lg">
+                <StarIconSolid className="w-3.5 h-3.5 text-white" />
+                <span className="text-xs font-semibold text-white">{t('admin:partners.publicPage.featured')}</span>
+              </div>
+            </div>
+          )}
 
       <div className="p-6">
         {/* Header with logo and name */}
@@ -184,7 +184,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center w-full px-4 py-2.5 text-sm font-semibold text-swiss-teal bg-swiss-teal/5 rounded-xl hover:bg-swiss-teal hover:text-white transition-all duration-300 group/btn"
             >
-              <span>Visit Website</span>
+              <span>{t('admin:partners.publicPage.visitWebsite')}</span>
               <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2 transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform duration-300" />
             </a>
           </div>
@@ -344,13 +344,13 @@ const PublicPartnersPage: React.FC = () => {
                 to="/login"
                 className="inline-flex items-center px-4 py-2 text-sm font-semibold text-swiss-teal hover:text-swiss-charcoal transition-colors"
               >
-                Sign In
+                {t('admin:partners.publicPage.signIn')}
               </Link>
               <Link
                 to="/signup"
                 className="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-swiss-mint to-swiss-teal rounded-xl hover:shadow-lg hover:shadow-swiss-mint/25 transition-all duration-300"
               >
-                Get Started
+                {t('admin:partners.publicPage.getStarted')}
               </Link>
             </div>
           </div>
@@ -365,14 +365,14 @@ const PublicPartnersPage: React.FC = () => {
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-swiss-mint/10 rounded-full mb-6">
               <SparklesIcon className="w-5 h-5 text-swiss-mint" />
-              <span className="text-sm font-semibold text-swiss-teal">Trusted by Leading Organizations</span>
+              <span className="text-sm font-semibold text-swiss-teal">{t('admin:partners.publicPage.trustedBy')}</span>
             </div>
             
             <h1 className="text-5xl sm:text-6xl font-bold text-swiss-charcoal leading-tight">
-              Our{' '}
+              {t('admin:partners.publicPage.heroTitle').split(' ').slice(0, -1).join(' ')}{' '}
               <span className="relative">
                 <span className="bg-gradient-to-r from-swiss-mint to-swiss-teal bg-clip-text text-transparent">
-                  Partners
+                  {t('admin:partners.publicPage.heroTitle').split(' ').slice(-1)[0]}
                 </span>
                 <svg className="absolute -bottom-2 left-0 w-full h-3 text-swiss-sand" viewBox="0 0 100 12" preserveAspectRatio="none">
                   <path d="M0 6 Q 25 0, 50 6 T 100 6" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
@@ -381,8 +381,7 @@ const PublicPartnersPage: React.FC = () => {
             </h1>
             
             <p className="mt-6 text-xl text-gray-600 leading-relaxed">
-              We collaborate with industry leaders, academic institutions, and innovative organizations 
-              to deliver the best childcare solutions in Switzerland.
+              {t('admin:partners.publicPage.heroSubtitle')}
             </p>
 
             {/* Stats */}
@@ -390,25 +389,25 @@ const PublicPartnersPage: React.FC = () => {
               <StatCard
                 icon={BuildingStorefrontIcon}
                 value={partners.length || '50+'}
-                label="Partners"
+                label={t('admin:partners.publicPage.stats.partners')}
                 color="bg-swiss-mint"
               />
               <StatCard
                 icon={GlobeAltIcon}
                 value="26"
-                label="Cantons Covered"
+                label={t('admin:partners.publicPage.stats.cantonsCovered')}
                 color="bg-swiss-teal"
               />
               <StatCard
                 icon={HeartIcon}
                 value="1000+"
-                label="Daycares Served"
+                label={t('admin:partners.publicPage.stats.daycaresServed')}
                 color="bg-swiss-coral"
               />
               <StatCard
                 icon={StarIcon}
                 value="4.9"
-                label="Average Rating"
+                label={t('admin:partners.publicPage.stats.averageRating')}
                 color="bg-swiss-sand"
               />
             </div>
@@ -426,7 +425,7 @@ const PublicPartnersPage: React.FC = () => {
                 <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search partners by name, description, or location..."
+                  placeholder={t('admin:partners.publicPage.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-swiss-mint focus:border-transparent transition-all duration-300 placeholder-gray-400"
@@ -446,7 +445,7 @@ const PublicPartnersPage: React.FC = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className="md:hidden flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
               >
-                <span>Filters</span>
+                <span>{t('admin:partners.publicPage.filters')}</span>
                 <ChevronDownIcon className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
               </button>
             </div>
@@ -454,7 +453,7 @@ const PublicPartnersPage: React.FC = () => {
             {/* Filter chips */}
             <div className={`flex flex-wrap gap-2 mt-4 ${showFilters ? '' : 'hidden md:flex'}`}>
               <FilterChip
-                label="All Partners"
+                label={t('admin:partners.publicPage.allPartners')}
                 active={filterType === ''}
                 onClick={() => setFilterType('')}
                 count={partners.length}
@@ -482,8 +481,8 @@ const PublicPartnersPage: React.FC = () => {
                 <StarIconSolid className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-swiss-charcoal">Featured Partners</h2>
-                <p className="text-sm text-gray-500">Our most distinguished collaborators</p>
+                <h2 className="text-2xl font-bold text-swiss-charcoal">{t('admin:partners.publicPage.featuredTitle')}</h2>
+                <p className="text-sm text-gray-500">{t('admin:partners.publicPage.featuredSubtitle')}</p>
               </div>
             </div>
 
@@ -502,10 +501,10 @@ const PublicPartnersPage: React.FC = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold text-swiss-charcoal">
-                {searchQuery || filterType ? 'Search Results' : 'All Partners'}
+                {searchQuery || filterType ? t('admin:partners.searchResults') : t('admin:partners.publicPage.allPartnersTitle')}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                {filteredPartners.length} {filteredPartners.length === 1 ? 'partner' : 'partners'} found
+                {filteredPartners.length} {t('admin:partners.partnersFound')}
               </p>
             </div>
           </div>
@@ -523,7 +522,7 @@ const PublicPartnersPage: React.FC = () => {
               </div>
               <p className="text-red-600 mb-4">{error}</p>
               <Button variant="outline" onClick={fetchPartners}>
-                Try Again
+                {t('common:buttons.retry', 'Try Again')}
               </Button>
             </div>
           ) : filteredPartners.length === 0 ? (
@@ -531,11 +530,11 @@ const PublicPartnersPage: React.FC = () => {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
                 <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No partners found</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('admin:partners.publicPage.noPartnersFound')}</h3>
               <p className="text-gray-500 mb-4">
                 {searchQuery || filterType
-                  ? 'Try adjusting your search or filters'
-                  : 'No partners are available at the moment'}
+                  ? t('admin:partners.publicPage.tryAdjustingFilters')
+                  : t('admin:partners.publicPage.noPartnersAvailable')}
               </p>
               {(searchQuery || filterType) && (
                 <Button
@@ -545,7 +544,7 @@ const PublicPartnersPage: React.FC = () => {
                     setFilterType('');
                   }}
                 >
-                  Clear Filters
+                  {t('admin:partners.publicPage.clearFilters')}
                 </Button>
               )}
             </div>
@@ -573,11 +572,10 @@ const PublicPartnersPage: React.FC = () => {
           </div>
           
           <h2 className="text-4xl font-bold text-white mb-4">
-            Become a Partner
+            {t('admin:partners.publicPage.becomePartnerTitle')}
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join our network of trusted partners and help shape the future of childcare in Switzerland. 
-            Together, we can make a difference.
+            {t('admin:partners.publicPage.becomePartnerSubtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -585,7 +583,7 @@ const PublicPartnersPage: React.FC = () => {
               to="/signup"
               className="inline-flex items-center px-8 py-4 bg-white text-swiss-teal font-semibold rounded-xl hover:bg-gray-50 hover:shadow-xl transition-all duration-300"
             >
-              Apply to Become a Partner
+              {t('admin:partners.publicPage.applyButton')}
               <ArrowTopRightOnSquareIcon className="w-5 h-5 ml-2" />
             </Link>
             <a
@@ -593,7 +591,7 @@ const PublicPartnersPage: React.FC = () => {
               className="inline-flex items-center px-8 py-4 border-2 border-white/50 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
             >
               <EnvelopeIcon className="w-5 h-5 mr-2" />
-              Contact Us
+              {t('admin:partners.publicPage.contactUs')}
             </a>
           </div>
         </div>
@@ -621,9 +619,9 @@ const PublicPartnersPage: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-8 text-sm text-gray-400">
-              <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-              <Link to="/login" className="hover:text-white transition-colors">Sign In</Link>
-              <Link to="/signup" className="hover:text-white transition-colors">Get Started</Link>
+              <Link to="/pricing" className="hover:text-white transition-colors">{t('admin:partners.publicPage.pricing')}</Link>
+              <Link to="/login" className="hover:text-white transition-colors">{t('admin:partners.publicPage.signIn')}</Link>
+              <Link to="/signup" className="hover:text-white transition-colors">{t('admin:partners.publicPage.getStarted')}</Link>
             </div>
             
             <p className="text-sm text-gray-400">

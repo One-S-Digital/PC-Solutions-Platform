@@ -1,128 +1,260 @@
 {
-  "eLearning": {
-    "title": "E-Learning",
-    "coursesTitle": "Kurse",
-    "videosTitle": "Videos",
-    "pdfsTitle": "Dokumente",
-    "externalLinksTitle": "Externe Links",
-    "addNewContentButton": "Neuen Inhalt hinzufügen",
-    "noContentFound": "Kein Inhalt verfügbar",
-    "noItemsFound": "Keine Elemente gefunden",
-    "categoryLabel": "Kategorie",
-    "languageLabel": "Sprache",
-    "durationLabel": "Dauer",
-    "updatedLabel": "Aktualisiert",
-    "viewingAlert": "Anzeigen",
-    "lessonsCount": "{{count}} Lektionen",
-    "searchPlaceholder": "Inhalt durchsuchen...",
-    "itemType": {
-      "courses": "Kurse",
-      "videos": "Videos",
-      "pdfs": "PDFs",
-      "links": "Links"
+  "content": {
+    "contentManagementDashboard": {
+      "cards": {
+        "contentStatusFlags": "Inhaltsstatusindikatoren",
+        "eLearningItems": "E-Learning-Elemente",
+        "recentActivity": "Letzte Aktivität",
+        "statePolicies": "Staatliche Richtlinien",
+        "hrDocuments": "HR-Dokumente"
+      },
+      "title": "Inhaltsverwaltung"
     },
-    "actions": {
-      "viewCourse": "Kurs anzeigen",
-      "watchVideo": "Video ansehen",
-      "downloadPdf": "PDF herunterladen",
-      "openLink": "Link öffnen",
-      "viewPdf": "PDF anzeigen",
-      "viewLink": "Link anzeigen"
+    "hrProcedures": {
+      "categoryDisplay": {
+        "viewCategoryAria": "Ansicht {{Titel}}",
+        "documentsCount": "{{Zahl}} Dokumente"
+      },
+      "documentCard": {
+        "toggleFavoriteLabel": "Favorit umschalten",
+        "previewButtonLabel": "Vorschau",
+        "deleteButtonLabel": "Löschen",
+        "downloadingAlert": "Herunterladen...",
+        "lastUpdatedLabel": "Zuletzt aktualisiert",
+        "editButtonLabel": "bearbeiten",
+        "previewingAlert": "Vorschau...",
+        "downloadButton": "Herunterladen",
+        "categoryLabel": "Kategorie",
+        "languageLabel": "Sprache",
+        "versionLabel": "Version"
+      },
+      "documentsInCategoryTitle": "{{Kategorie}} Dokumente",
+      "backToCategoriesButton": "Zurück zu Kategorien",
+      "buttons": {
+        "uploadDocument": "Dokument hochladen"
+      },
+      "emptyState": {
+        "noDocuments": "Keine HR-Dokumente verfügbar"
+      },
+      "noDocumentsMatchSearch": "Keine Dokumente zu Ihrer Suche",
+      "confirmDeleteDocument": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
+      "allDocumentsCategory": "Alle Dokumente",
+      "noDocumentsAvailable": "Keine Dokumente verfügbar",
+      "uploadButton": "Dokument hochladen",
+      "searchPlaceholder": "Dokumente suchen...",
+      "categoriesTitle": "HR-Dokument-Kategorien",
+      "allItemsCount": "{{Zahl}} Dokumente",
+      "title": "HR-Verfahren"
     },
-    "confirmDelete": "Möchten Sie dieses Element wirklich löschen?",
-    "tabs": {
-      "courses": "Kurse",
-      "videos": "Videos",
-      "pdfs": "PDFs"
+    "statePoliciesPage": {
+      "buttons": {
+        "addEditPolicy": "Richtlinie hinzufügen/bearbeiten",
+        "manageAlerts": "Warnungen verwalten"
+      },
+      "emptyState": {
+        "noPolicies": "Keine Richtlinien verfügbar"
+      },
+      "sections": {
+        "compliance": "Einhaltung der Vorschriften",
+        "downloads": "Herunterladen",
+        "updates": "Aktualisierungen"
+      },
+      "filters": {
+        "policyType": "Richtlinientyp",
+        "canton": "Kanton",
+        "region": "Region"
+      },
+      "tabs": {
+        "cantonal": "Kantonal",
+        "national": "National"
+      },
+      "title": "Staatliche Richtlinien"
     },
-    "emptyState": {
-      "noContent": "Kein Inhalt verfügbar"
-    },
-    "buttons": {
-      "addNewContent": "Neuen Inhalt hinzufügen"
-    }
-  },
-  "hrProcedures": {
-    "title": "HR-Verfahren",
-    "categoriesTitle": "HR-Dokumentkategorien",
-    "documentsInCategoryTitle": "{{category}} Dokumente",
-    "allDocumentsCategory": "Alle Dokumente",
-    "allItemsCount": "{{count}} Dokumente",
-    "noDocumentsAvailable": "Keine Dokumente verfügbar",
-    "noDocumentsMatchSearch": "Keine Dokumente entsprechen Ihrer Suche",
-    "confirmDeleteDocument": "Möchten Sie dieses Dokument wirklich löschen?",
-    "backToCategoriesButton": "Zurück zu Kategorien",
-    "searchPlaceholder": "Dokumente durchsuchen...",
-    "uploadButton": "Dokument hochladen",
-    "categoryDisplay": {
-      "documentsCount": "{{count}} Dokumente",
-      "viewCategoryAria": "{{title}} anzeigen"
-    },
-    "documentCard": {
+    "eLearning": {
+      "buttons": {
+        "addNewContent": "Neuen Inhalt hinzufügen"
+      },
+      "emptyState": {
+        "noContent": "Kein Inhalt verfügbar"
+      },
+      "actions": {
+        "downloadPdf": "PDF herunterladen",
+        "viewCourse": "Kurs ansehen",
+        "watchVideo": "Video ansehen",
+        "openLink": "Link öffnen"
+      },
+      "addNewContentButton": "Neue Inhalte hinzufügen",
+      "externalLinksTitle": "Externe Links",
+      "searchPlaceholder": "Inhalt suchen...",
+      "itemType": {
+        "courses": "Kurse",
+        "videos": "Videos",
+        "links": "Links",
+        "pdfs": "PDFs"
+      },
+      "noContentFound": "Kein Inhalt verfügbar",
       "categoryLabel": "Kategorie",
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Artikel löschen möchten?",
+      "durationLabel": "Dauer",
       "languageLabel": "Sprache",
-      "lastUpdatedLabel": "Zuletzt aktualisiert",
-      "versionLabel": "Version",
-      "downloadButton": "Herunterladen",
-      "previewButtonLabel": "Vorschau",
-      "editButtonLabel": "Bearbeiten",
-      "deleteButtonLabel": "Löschen",
-      "toggleFavoriteLabel": "Favorit umschalten",
-      "downloadingAlert": "Herunterladen...",
-      "previewingAlert": "Vorschau..."
+      "coursesTitle": "Kurse",
+      "lessonsCount": "{{Zahl}} Lektionen",
+      "noItemsFound": "Keine Artikel gefunden",
+      "tabs": {
+        "courses": "Kurse",
+        "videos": "Videos",
+        "pdfs": "PDFs"
+      },
+      "updatedLabel": "Aktualisiert",
+      "viewingAlert": "Einsehen",
+      "videosTitle": "Videos",
+      "pdfsTitle": "PDF-Dokumente",
+      "title": "E-Learning"
     },
-    "uploadButton": {
-      "label": "Dokument hochladen"
-    },
-    "emptyState": {
-      "noDocuments": "Keine HR-Dokumente verfügbar"
-    },
-    "buttons": {
-      "uploadDocument": "Dokument hochladen"
+    "statePolicies": {
+      "title": "Staatliche Richtlinien"
     }
-  },
-  "statePolicies": {
-    "title": "Staatliche Richtlinien"
   },
   "statePoliciesPage": {
-    "title": "Staatliche Richtlinien",
+    "emptyState": {
+      "noPoliciesFoundForFilters": "Keine Richtlinien für aktuelle Filter gefunden.",
+      "noPoliciesMatchFilters": "Keine Richtlinien entsprechen den aktuellen Filtern",
+      "noPolicies": "Keine Richtlinien verfügbar"
+    },
     "filters": {
+      "allCantonsRegions": "Alle Kantone Regionen",
+      "policyType": "Richtlinientyp",
       "canton": "Kanton",
-      "region": "Region",
-      "policyType": "Richtlinientyp"
+      "region": "Region"
+    },
+    "buttons": {
+      "addEditPolicy": "Richtlinie hinzufügen/bearbeiten",
+      "manageAlerts": "Warnungen verwalten"
+    },
+    "errors": {
+      "downloadFailed": "Datei konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut."
+    },
+    "sections": {
+      "categories": "Politische Kategorien",
+      "compliance": "Einhaltung der Vorschriften",
+      "downloads": "Herunterladen",
+      "updates": "Aktualisierungen"
+    },
+    "confirmDeleteAlert": "Sind Sie sicher, dass Sie diese Meldung löschen möchten?",
+    "labels": {
+      "effective": "Wirksam",
+      "published": "Veröffentlicht",
+      "category": "Kategorie",
+      "updated": "Aktualisiert",
+      "type": "Typ"
     },
     "tabs": {
       "cantonal": "Kantonal",
       "national": "National"
     },
-    "sections": {
-      "compliance": "Compliance",
-      "updates": "Aktualisierungen",
-      "downloads": "Downloads"
-    },
-    "emptyState": {
-      "noPolicies": "Keine Richtlinien verfügbar"
-    },
-    "buttons": {
-      "manageAlerts": "Warnungen verwalten",
-      "addEditPolicy": "Richtlinie hinzufügen/bearbeiten"
-    },
-    "labels": {
-      "category": "Kategorie",
-      "type": "Typ",
-      "published": "Veröffentlicht",
-      "updated": "Aktualisiert",
-      "effective": "Wirksam"
-    }
+    "adminNote": "Admin Dashboard zum Hinzufügen/Bearbeiten von Richtlinien verwenden",
+    "loading": "Richtlinien laden...",
+    "title": "Staatliche Richtlinien"
   },
   "contentManagementDashboard": {
-    "title": "Inhaltsverwaltung",
     "cards": {
+      "contentStatusFlags": "Inhaltsstatusindikatoren",
       "eLearningItems": "E-Learning-Elemente",
-      "hrDocuments": "HR-Dokumente",
-      "statePolicies": "Staatliche Richtlinien",
       "recentActivity": "Letzte Aktivität",
-      "contentStatusFlags": "Inhaltsstatusindikatoren"
-    }
+      "statePolicies": "Staatliche Richtlinien",
+      "hrDocuments": "HR-Dokumente"
+    },
+    "title": "Inhaltsverwaltung"
+  },
+  "hrProcedures": {
+    "categoryDisplay": {
+      "viewCategoryAria": "{{title}} anzeigen",
+      "documentsCount": "{{count}} Dokumente"
+    },
+    "documentCard": {
+      "toggleFavoriteLabel": "Favorit umschalten",
+      "previewButtonLabel": "Vorschau",
+      "deleteButtonLabel": "Löschen",
+      "downloadingAlert": "Herunterladen...",
+      "lastUpdatedLabel": "Zuletzt aktualisiert",
+      "editButtonLabel": "Bearbeiten",
+      "previewingAlert": "Vorschau...",
+      "downloadButton": "Herunterladen",
+      "categoryLabel": "Kategorie",
+      "languageLabel": "Sprache",
+      "versionLabel": "Version"
+    },
+    "documentsInCategoryTitle": "{{category}} Dokumente",
+    "backToCategoriesButton": "Zurück zu Kategorien",
+    "buttons": {
+      "uploadDocument": "Dokument hochladen"
+    },
+    "emptyState": {
+      "noDocuments": "Keine HR-Dokumente verfügbar"
+    },
+    "noDocumentsMatchSearch": "Keine Dokumente entsprechen Ihrer Suche",
+    "confirmDeleteDocument": "Möchten Sie dieses Dokument wirklich löschen?",
+    "allDocumentsCategory": "Alle Dokumente",
+    "noDocumentsAvailable": "Keine Dokumente verfügbar",
+    "uploadButton": "[DE] Upload Document",
+    "searchPlaceholder": "Dokumente durchsuchen...",
+    "categoriesTitle": "HR-Dokumentkategorien",
+    "allItemsCount": "{{count}} Dokumente",
+    "title": "HR-Verfahren"
+  },
+  "policyCategories": {
+    "Labor&Employment": "Arbeit und Beschäftigung",
+    "ChildProtection": "Kinderschutz",
+    "EducationPolicy": "Bildungspolitik",
+    "Environmental": "Umwelt",
+    "Health&Safety": "Gesundheit und Sicherheit",
+    "DataPrivacy": "Datenschutz",
+    "Other": "Andere Politiken"
+  },
+  "eLearning": {
+    "buttons": {
+      "addNewContent": "Neuen Inhalt hinzufügen"
+    },
+    "emptyState": {
+      "noContent": "Kein Inhalt verfügbar"
+    },
+    "actions": {
+      "downloadPdf": "PDF herunterladen",
+      "viewCourse": "Kurs anzeigen",
+      "watchVideo": "Video ansehen",
+      "openLink": "Link öffnen",
+      "viewLink": "Link anzeigen",
+      "viewPdf": "PDF anzeigen"
+    },
+    "addNewContentButton": "Neuen Inhalt hinzufügen",
+    "externalLinksTitle": "Externe Links",
+    "searchPlaceholder": "Inhalt durchsuchen...",
+    "itemType": {
+      "courses": "Kurse",
+      "videos": "Videos",
+      "links": "Links",
+      "pdfs": "Pdfs"
+    },
+    "noContentFound": "Kein Inhalt verfügbar",
+    "categoryLabel": "Kategorie",
+    "confirmDelete": "Möchten Sie dieses Element wirklich löschen?",
+    "durationLabel": "Dauer",
+    "languageLabel": "Sprache",
+    "coursesTitle": "Kurse",
+    "lessonsCount": "{{count}} Lektionen",
+    "noItemsFound": "Keine Elemente gefunden",
+    "tabs": {
+      "courses": "Kurse",
+      "videos": "Videos",
+      "pdfs": "PDFs"
+    },
+    "updatedLabel": "Aktualisiert",
+    "viewingAlert": "Anzeigen",
+    "videosTitle": "Videos",
+    "pdfsTitle": "Dokumente",
+    "title": "E-Learning"
+  },
+  "statePolicies": {
+    "title": "Staatliche Richtlinien"
   }
 }

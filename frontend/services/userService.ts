@@ -51,17 +51,102 @@ class UserService {
   }
 
   // Get all users (admin only)
-  async getAllUsers(page = 1, limit = 20): Promise<{ users: User[]; pagination: any }> {
-    const response = await apiService.get<{ users: User[]; pagination: any }>(
-      `/users?page=${page}&limit=${limit}`
-    );
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to fetch users');
+  async getAllUsers(page = 1, limit = 20, token?: string): Promise<{ users: User[]; pagination: any }> {
+    try {
+      const response = await apiService.get<any>(
+        `/users?page=${page}&limit=${limit}`,
+        { token }
+      );
+      
+      // Check success - handle undefined as success if data exists
+      if (response.success === false) {
+        console.error('❌ Failed to fetch users');
+        throw new Error(response.message || 'Failed to fetch users');
+      }
+      
+      // If success is undefined but we have data, treat as success
+      if (response.success === undefined && !response.data) {
+        console.warn('⚠️ No success flag and no data');
+        return { users: [], pagination: {} };
+      }
+      
+      if (!response.data) {
+        console.warn('⚠️ No data in response, returning empty array');
+        return { users: [], pagination: {} };
+      }
+      
+      // Handle different response formats
+      let users: any[] = [];
+      let pagination: any = {};
+      
+      // The API response wrapper puts backend's { data: [], meta: {} } into:
+      // { success: true, data: [...users...], meta: {...} } OR
+      // { success: true, data: { data: [...users...], meta: {...} } }
+      
+      // Case 1: Direct array with meta at top level
+      if (Array.isArray(response.data)) {
+        users = response.data;
+        pagination = (response as any).meta || {};
+      }
+      // Case 2: Nested structure { data: { data: [], meta: {} } }
+      else if (response.data && typeof response.data === 'object' && response.data.data && Array.isArray(response.data.data)) {
+        users = response.data.data;
+        pagination = response.data.meta || {};
+      }
+      // Case 3: Object with users array { users: [], pagination: {} } (legacy)
+      else if (response.data && typeof response.data === 'object' && response.data.users && Array.isArray(response.data.users)) {
+        users = response.data.users;
+        pagination = response.data.pagination || response.data.meta || {};
+      }
+      // Case 4: Try to find any array in the response
+      else if (response.data && typeof response.data === 'object') {
+        // Look for any array property
+        for (const key in response.data) {
+          if (Array.isArray(response.data[key])) {
+            users = response.data[key];
+            // Check for meta or pagination
+            pagination = response.data.meta || response.data.pagination || (response as any).meta || {};
+            break;
+          }
+        }
+      }
+      
+      if (users.length === 0) {
+        console.warn('⚠️ No users found in response');
+        return { users: [], pagination: pagination };
+      }
+      
+      try {
+        return {
+          users: users.map(user => {
+            try {
+              return this.transformUser(user);
+            } catch (error) {
+              console.error('❌ Error transforming user:', error);
+              // Return a basic user object if transformation fails
+              return {
+                id: user.id || 'unknown',
+                clerkId: user.clerkId || '',
+                email: user.email || '',
+                firstName: user.firstName || null,
+                lastName: user.lastName || null,
+                role: user.role || 'USER',
+                name: user.email || 'Unknown User',
+                status: 'Active',
+                isActive: true,
+              } as User;
+            }
+          }),
+          pagination: pagination,
+        };
+      } catch (error) {
+        console.error('❌ Error mapping users:', error);
+        throw new Error('Failed to process users data');
+      }
+    } catch (error) {
+      console.error('❌ Error fetching users:', error);
+      throw error;
     }
-    return {
-      users: response.data.users.map(user => this.transformUser(user)),
-      pagination: response.data.pagination,
-    };
   }
 
   // Get user by ID (admin only)
@@ -101,10 +186,14 @@ class UserService {
 
   // Transform user data to include legacy fields for UI compatibility
   private transformUser(user: any): User {
+    const firstName = user.firstName || '';
+    const lastName = user.lastName || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    
     return {
       ...user,
       // Legacy fields for UI compatibility
-      name: `${user.firstName} ${user.lastName}`,
+      name: fullName || user.email || 'Unknown User',
       status: user.isActive ? 'Active' : 'Inactive',
       lastLogin: user.lastActiveAt,
       memberSince: user.createdAt,

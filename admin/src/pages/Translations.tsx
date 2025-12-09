@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Search,
@@ -14,6 +15,7 @@ import {
   Upload,
   History,
   Package,
+  Database,
 } from 'lucide-react';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -34,17 +36,19 @@ interface TranslationKey {
 }
 
 const LANGUAGES = ['en', 'fr', 'de'];
-const LANGUAGE_LABELS: Record<string, string> = {
-  en: 'English',
-  fr: 'Français',
-  de: 'Deutsch',
-};
+
+// Persist auto-fix state across dev-server reloads so Step 2 remains enabled
+// even when Vite reloads the page after the script edits files.
+const AUTO_FIX_STORAGE_KEY = 'translationAutoFixState';
 
 export default function Translations() {
+  const { t } = useTranslation(['admin', 'common']);
   const [selectedNamespace, setSelectedNamespace] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [limit] = useState(50);
+  const [autoFixJustRan, setAutoFixJustRan] = useState(false); // Track if auto-fix just ran
+  const [newKeysToTranslate, setNewKeysToTranslate] = useState<Array<{namespace: string; key: string}>>([]);
   const [editing, setEditing] = useState<{
     namespace: string;
     key: string;
@@ -56,11 +60,32 @@ export default function Translations() {
   const [newReleaseDescription, setNewReleaseDescription] = useState('');
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'translations' | 'audit' | 'releases'>('translations');
-  const [targetLang, setTargetLang] = useState<'fr' | 'de'>('fr');
   const [forceRetranslate, setForceRetranslate] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [includePlaceholders, setIncludePlaceholders] = useState(false);
 
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+
+  // Rehydrate auto-fix state from sessionStorage (survives Vite reloads)
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(AUTO_FIX_STORAGE_KEY);
+      if (!stored) return;
+      const parsed = JSON.parse(stored) as {
+        autoFixJustRan?: boolean;
+        newKeysToTranslate?: Array<{ namespace: string; key: string }>;
+      };
+
+      if (parsed?.newKeysToTranslate && parsed.newKeysToTranslate.length > 0) {
+        console.log('♻️ Restoring auto-fix state from sessionStorage:', parsed);
+        setNewKeysToTranslate(parsed.newKeysToTranslate);
+        setAutoFixJustRan(!!parsed.autoFixJustRan);
+      }
+    } catch (e) {
+      console.warn('Failed to restore auto-fix state from sessionStorage', e);
+    }
+  }, []);
 
   // Fetch namespaces
   const { data: namespacesResponse } = useQuery({
@@ -196,6 +221,219 @@ export default function Translations() {
     },
     onError: (error: any) => {
       alert(`Cleanup failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Cleanup English placeholders that look like raw keys (e.g. "supportPage.ticketForm.subjectLabel")
+  const fixEnglishPlaceholdersMutation = useMutation({
+    mutationFn: async () => {
+      return apiService.fixEnglishPlaceholders(apiClient);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      alert(
+        `✅ English cleanup complete!\n\n` +
+          `📊 Updated ${data.data.cleaned} English translations that looked like raw keys,\n` +
+          `out of ${data.data.affected} total English entries scanned.\n\n` +
+          `🔄 Translation version updated - frontend will reload translations automatically.\n\n` +
+          `💡 If you don't see changes immediately, refresh the page (Ctrl+R or F5) to clear the browser cache.`,
+      );
+    },
+    onError: (error: any) => {
+      alert(`Cleanup failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Import from JSON files mutation
+  const importFromFilesMutation = useMutation({
+    mutationFn: async () => {
+      const result = await apiService.importFromJsonFiles(apiClient);
+      return result;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      queryClient.invalidateQueries({ queryKey: ['namespaces'] });
+      
+      const details = Object.entries(data.data.details || {})
+        .map(([key, count]) => `  ${key}: ${count} keys`)
+        .join('\n');
+      
+      alert(
+        `✅ Successfully imported ${data.data.imported} translations from JSON files!\n\n` +
+        `📊 Details:\n${details}\n\n` +
+        `🔄 Translation cache cleared - you can now translate these keys.`
+      );
+    },
+    onError: (error: any) => {
+      alert(`Import failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Full Sync mutation - does everything in one click!
+  // Uses extended timeout since this can take 5-10 minutes
+  const fullSyncMutation = useMutation({
+    mutationFn: async () => {
+      // Create a custom axios instance with extended timeout for this long operation
+      const longTimeoutClient = apiClient;
+      // Note: The actual timeout is set on the client creation, but the server will continue
+      // even if the client times out. We handle this gracefully.
+      const result = await apiService.fullSync(longTimeoutClient);
+      return result;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      queryClient.invalidateQueries({ queryKey: ['namespaces'] });
+      
+      alert(
+        `🎉 Full Sync Complete!\n\n` +
+        `📥 Imported: ${data.data.imported} EN keys\n` +
+        `🇫🇷 Translated FR: ${data.data.translatedFr} keys\n` +
+        `🇩🇪 Translated DE: ${data.data.translatedDe} keys\n` +
+        `📤 Exported: ${data.data.exported} keys to JSON files\n\n` +
+        `✅ Now restart your frontend (pnpm dev) and refresh the page!`
+      );
+    },
+    onError: (error: any) => {
+      const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
+      
+      if (isTimeout) {
+        alert(
+          `⏱️ Request timed out, but the sync is still running on the server!\n\n` +
+          `The translation process takes 5-10 minutes. The server will continue processing.\n\n` +
+          `Please wait a few minutes, then:\n` +
+          `1. Restart your frontend (pnpm dev)\n` +
+          `2. Refresh this page\n` +
+          `3. Check the translation list for updated entries`
+        );
+      } else if (error.response?.status === 429) {
+        alert(
+          `⚠️ Rate limited: Please wait 5 minutes before running Full Sync again.\n\n` +
+          `This limit prevents overloading the translation service.`
+        );
+      } else {
+        alert(`Full sync failed: ${error.response?.data?.message || error.message}\n\nTry running individual steps from Advanced Options instead.`);
+      }
+    },
+  });
+
+  // Auto-fix hardcoded strings mutation
+  const autoFixMutation = useMutation({
+    mutationFn: async () => {
+      console.log('🔵 autoFixMutation: mutationFn called!');
+      const result = await apiService.autoFixHardcodedStrings(apiClient);
+      console.log('🔵 autoFixMutation: API result:', result);
+      return result;
+    },
+    onSuccess: (data) => {
+      console.log('🟢 autoFixMutation: onSuccess called!', data);
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      
+      const totalNewItems = (data.data.fixed || 0) + (data.data.missingKeysCreated || 0);
+      
+      // Enable the auto-translate button if strings were fixed or missing keys were created
+      if (totalNewItems > 0) {
+        // Extract the new keys that were created from the details
+        const newKeys: Array<{namespace: string; key: string}> = [];
+        
+        // Add keys from fixed hardcoded strings
+        if (data.data.details?.fixed) {
+          data.data.details.fixed.forEach((item: any) => {
+            // Parse the translation key to get namespace and key
+            // Format is "namespace:key.path.here"
+            const [namespace, ...keyParts] = item.translationKey.split(':');
+            if (namespace && keyParts.length > 0) {
+              const key = keyParts.join(':').replace(/:/g, '.'); // Convert back to dot notation
+              newKeys.push({ namespace, key });
+            }
+          });
+        }
+        
+        // Add keys from missing translations
+        if (data.data.details?.missingKeys) {
+          data.data.details.missingKeys.forEach((item: any) => {
+            newKeys.push({ namespace: item.namespace, key: item.keyPath });
+          });
+        }
+        
+        setNewKeysToTranslate(newKeys);
+        setAutoFixJustRan(true);
+
+        // Persist to sessionStorage so Step 2 stays enabled after a dev-server reload
+        try {
+          console.log('💾 Saving auto-fix state to sessionStorage:', {
+            autoFixJustRan: true,
+            newKeysToTranslate: newKeys,
+          });
+          sessionStorage.setItem(
+            AUTO_FIX_STORAGE_KEY,
+            JSON.stringify({
+              autoFixJustRan: true,
+              newKeysToTranslate: newKeys,
+            }),
+          );
+        } catch (e) {
+          console.warn('Failed to persist auto-fix state to sessionStorage', e);
+        }
+        alert(`✅ Successful translation check!\n\n📊 Results:\n• Fixed hardcoded strings: ${data.data.fixed || 0}\n• Missing keys created: ${data.data.missingKeysCreated || 0}\n• Skipped: ${data.data.skipped}\n• Errors: ${data.data.errors}\n\n${data.data.message}\n\n🌍 NEXT STEP: Click the "Auto-Translate FR/DE" button (Step 2, now enabled) to automatically translate the ${totalNewItems} new entries to French and German!`);
+      } else {
+        setNewKeysToTranslate([]);
+        setAutoFixJustRan(false);
+        try {
+          sessionStorage.removeItem(AUTO_FIX_STORAGE_KEY);
+        } catch (e) {
+          console.warn('Failed to clear auto-fix state from sessionStorage', e);
+        }
+        alert(
+          `✅ Translation check complete!\n\n📊 Results:\n• Fixed: ${data.data.fixed || 0}\n` +
+            `• Missing keys created: ${data.data.missingKeysCreated || 0}\n` +
+            `• Skipped: ${data.data.skipped}\n• Errors: ${data.data.errors}\n\n` +
+            `${data.data.message}\n\n💡 Everything is up to date!`,
+        );
+      }
+    },
+    onError: (error: any) => {
+      alert(`❌ Auto-fix failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Translate missing/prefixed strings (optionally forced)
+  const translateMissingMutation = useMutation({
+    mutationFn: async () => {
+      const ns = selectedNamespace || undefined;
+      const frResult = await apiService.translateMissing(
+        apiClient,
+        'en',
+        'fr',
+        ns,
+        includePlaceholders ? undefined : [],
+        forceRetranslate,
+        includePlaceholders,
+      );
+      const deResult = await apiService.translateMissing(
+        apiClient,
+        'en',
+        'de',
+        ns,
+        includePlaceholders ? undefined : [],
+        forceRetranslate,
+        includePlaceholders,
+      );
+      return { frResult, deResult };
+    },
+    onSuccess: ({ frResult, deResult }) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      const total = (frResult.data?.translated || 0) + (deResult.data?.translated || 0);
+      alert(
+        `✅ Translation complete!\n\n` +
+          `Scope: ${selectedNamespace || 'all namespaces'}\n` +
+          `Force re-translate: ${forceRetranslate ? 'Yes' : 'No'}\n` +
+          `FR translated: ${frResult.data?.translated || 0}\n` +
+          `DE translated: ${deResult.data?.translated || 0}\n` +
+          `Total: ${total}`,
+      );
+    },
+    onError: (error: any) => {
+      alert(`❌ Translation failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -336,8 +574,8 @@ export default function Translations() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load translations</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:translations.error.loadFailed', 'Failed to load translations')}</div>
+        <p className="text-gray-600">{t('admin:translations.error.description', 'Please check your connection and try again.')}</p>
       </div>
     );
   }
@@ -442,9 +680,9 @@ export default function Translations() {
         <div>
           <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center gap-3">
             <Globe className="h-8 w-8 text-swiss-mint" />
-            Translation Management
+            {t('admin:translations.title', 'Translation Management')}
           </h1>
-          <p className="text-gray-600 mt-1">Manage static UI translations</p>
+          <p className="text-gray-600 mt-1">{t('admin:translations.subtitle', 'Manage static UI translations')}</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -469,7 +707,7 @@ export default function Translations() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
-            Translations
+            {t('admin:translations.tabs.translations', 'Translations')}
           </button>
           <button
             onClick={() => setActiveTab('audit')}
@@ -480,7 +718,7 @@ export default function Translations() {
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
           >
             <History className="h-4 w-4" />
-            Audit Logs
+            {t('admin:translations.tabs.auditLogs', 'Audit Logs')}
           </button>
           <button
             onClick={() => setActiveTab('releases')}
@@ -491,7 +729,7 @@ export default function Translations() {
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
           >
             <Package className="h-4 w-4" />
-            Releases
+            {t('admin:translations.tabs.releases', 'Releases')}
           </button>
         </nav>
       </div>
@@ -502,18 +740,18 @@ export default function Translations() {
 
       {/* Release Management */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Translation Releases</h2>
+        <h2 className="text-xl font-semibold mb-4">{t('admin:translations.releases.title', 'Translation Releases')}</h2>
         <div className="flex gap-4">
           <input
             type="text"
-            placeholder="Version (e.g., v1.2.3)"
+            placeholder={t('admin:translations.releases.versionPlaceholder', 'Version (e.g., v1.2.3)')}
             value={newReleaseVersion}
             onChange={(e) => setNewReleaseVersion(e.target.value)}
             className="border rounded px-3 py-2 flex-1"
           />
           <input
             type="text"
-            placeholder="Description (optional)"
+            placeholder={t('admin:translations.releases.descriptionPlaceholder', 'Description (optional)')}
             value={newReleaseDescription}
             onChange={(e) => setNewReleaseDescription(e.target.value)}
             className="border rounded px-3 py-2 flex-1"
@@ -522,11 +760,11 @@ export default function Translations() {
             onClick={handleCreateRelease}
             disabled={releaseMutation.isPending || !newReleaseVersion}
           >
-            {releaseMutation.isPending ? 'Creating...' : 'Create Release'}
+            {releaseMutation.isPending ? t('admin:translations.releases.creating', 'Creating...') : t('admin:translations.releases.createRelease', 'Create Release')}
           </Button>
         </div>
         <p className="text-sm text-gray-500 mt-2">
-          Creating a release will invalidate all caches and force clients to fetch fresh translations.
+          {t('admin:translations.releases.description', 'Creating a release will invalidate all caches and force clients to fetch fresh translations.')}
         </p>
       </Card>
 
@@ -535,14 +773,14 @@ export default function Translations() {
         <div className="flex gap-4 mb-4">
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Namespace
+              {t('admin:translations.filters.namespace', 'Namespace')}
             </label>
             <select
               value={selectedNamespace}
               onChange={(e) => setSelectedNamespace(e.target.value)}
               className="w-full border rounded px-3 py-2"
             >
-              <option value="">All Namespaces</option>
+              <option value="">{t('common:allnamespaces', 'All namespaces')}</option>
               {namespaces.map((ns) => (
                 <option key={ns} value={ns}>
                   {ns}
@@ -552,13 +790,13 @@ export default function Translations() {
           </div>
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Search
+              {t('admin:translations.filters.search', 'Search')}
             </label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search keys or values..."
+                placeholder={t('admin:translations.searchPlaceholder', 'Search for keys or values...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full border rounded px-3 py-2 pl-10"
@@ -566,134 +804,262 @@ export default function Translations() {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 items-end flex-wrap">
-          <div className="flex gap-2 items-center flex-wrap">
-            <label className="text-sm font-medium text-gray-700">
-              Machine Translation:
-            </label>
-            <div className="flex items-center gap-2 border rounded-md px-3 py-1.5 bg-white">
-              <span className="text-sm text-gray-600">Translate to:</span>
-              <select
-                value={targetLang}
-                onChange={(e) => setTargetLang(e.target.value as 'fr' | 'de')}
-                className="text-sm border-0 focus:ring-0 focus:outline-none cursor-pointer bg-transparent"
-                disabled={translateMutation.isPending}
-              >
-                <option value="fr">Français (FR)</option>
-                <option value="de">Deutsch (DE)</option>
-              </select>
+        {/* ONE-CLICK SYNC - The main action */}
+        <Card className="p-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex-1">
+              <h2 className="text-xl font-bold text-emerald-900 flex items-center gap-2">
+                <Globe className="w-6 h-6" />
+                {t('admin:translations.oneClickSync.title', 'One-Click Sync')}
+              </h2>
+              <p className="text-sm text-emerald-700 mt-1">
+                {t('admin:translations.oneClickSync.description', 'Import English keys → Translate to French & German → Export to files.')}<br/>
+                <span className="text-xs opacity-75">{t('admin:translations.oneClickSync.subDescription', 'This does everything in one step! Takes 5-10 minutes.')}</span>
+              </p>
             </div>
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                checked={forceRetranslate}
-                onChange={(e) => setForceRetranslate(e.target.checked)}
-                disabled={translateMutation.isPending}
-                className="w-4 h-4"
-              />
-              <span className="text-gray-700">Force re-translate</span>
-            </label>
             <Button
               onClick={() => {
-                if (forceRetranslate) {
-                  if (!confirm(`This will re-translate ALL ${targetLang.toUpperCase()} translations, overwriting existing ones. Continue?`)) {
-                    return;
-                  }
+                if (
+                  confirm(
+                    '🔄 Full Sync will:\n\n' +
+                    '1. Import EN translations from JSON files\n' +
+                    '2. Translate missing keys to French (FR)\n' +
+                    '3. Translate missing keys to German (DE)\n' +
+                    '4. Export everything back to JSON files\n\n' +
+                    '⏱️ This takes 5-10 minutes. Continue?',
+                  )
+                ) {
+                  fullSyncMutation.mutate();
                 }
-                translateMutation.mutate({
-                  sourceLang: 'en',
-                  targetLang,
-                  namespace: selectedNamespace || undefined,
-                  force: forceRetranslate,
-                });
               }}
-              disabled={translateMutation.isPending}
+              disabled={fullSyncMutation.isPending}
               variant="primary"
-              className="text-sm px-4 py-1.5"
+              className="text-lg px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg"
             >
-              {translateMutation.isPending ? (
+              {fullSyncMutation.isPending ? (
                 <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
-                  Translating...
+                  <RefreshCw className="w-5 h-5 mr-2 animate-spin inline" />
+                  {t('admin:translations.oneClickSync.syncing', 'Syncing... (this takes a few minutes)')}
                 </>
               ) : (
                 <>
-                  <Globe className="w-4 h-4 mr-2 inline" />
-                  Translate EN→{targetLang.toUpperCase()}
-                </>
-              )}
-            </Button>
-            <div className="border-l border-gray-300 h-6 mx-1" />
-            <Button
-              onClick={() => {
-                if (confirm('This will remove [FR], [DE], and [EN] prefixes from all existing translations. Continue?')) {
-                  cleanupMutation.mutate();
-                }
-              }}
-              disabled={cleanupMutation.isPending}
-              variant="secondary"
-              className="text-sm px-3 py-1.5 text-orange-600 hover:text-orange-700 border-orange-200"
-            >
-              {cleanupMutation.isPending ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
-                  Cleaning...
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="w-4 h-4 mr-2 inline" />
-                  Clean Prefixes
+                  <Globe className="w-5 h-5 mr-2 inline" />
+                  {t('admin:translations.oneClickSync.button', '🔄 Full Sync All Languages')}
                 </>
               )}
             </Button>
           </div>
-          <div className="flex gap-2 items-center ml-auto">
-            {selectedKeys.size > 0 && (
-              <Button
-                onClick={handleBulkApprove}
-                disabled={bulkApproveMutation.isPending}
-                variant="secondary"
-                className="text-sm px-3 py-1"
-              >
-                {bulkApproveMutation.isPending
-                  ? 'Approving...'
-                  : `Approve ${selectedKeys.size} Selected`}
-              </Button>
-            )}
-            <Button
-              onClick={() =>
-                exportMutation.mutate({ format: 'json', namespace: selectedNamespace || undefined })
-              }
-              disabled={exportMutation.isPending}
-              variant="secondary"
-              className="text-sm px-3 py-1 flex items-center gap-2"
+        </Card>
+
+        {/* Advanced Options - Collapsed by default */}
+        <Card className="p-4">
+          <details className="group">
+            <summary className="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-gray-900">
+              <span className="text-sm font-medium">{t('admin:translations.advanced.title', '⚙️ Advanced Options (Individual Steps)')}</span>
+              <span className="text-xs text-gray-400">{t('admin:translations.advanced.expand', 'Click to expand')}</span>
+            </summary>
+            
+            <div className="mt-4 space-y-3 pt-4 border-t">
+              {/* Step 0 - Import from JSON files */}
+              <div className="p-3 rounded border border-blue-200 bg-blue-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-blue-800">{t('admin:translations.advanced.importFromFiles', 'Import from JSON Files')}</div>
+                    <div className="text-xs text-blue-600">{t('admin:translations.advanced.importFromFilesDesc', 'Load EN/FR/DE from packages/translations/locales into database')}</div>
+                  </div>
+                  <Button
+                    onClick={() => importFromFilesMutation.mutate()}
+                    disabled={importFromFilesMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-blue-700 hover:bg-blue-100"
+                  >
+                    {importFromFilesMutation.isPending ? t('admin:translations.advanced.importing', 'Importing...') : t('admin:translations.advanced.import', 'Import')}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step 1 - Scan & Fix */}
+              <div className="p-3 rounded border border-gray-200 bg-gray-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700">{t('admin:translations.advanced.scanFix', 'Scan & Fix Hardcoded Strings')}</div>
+                    <div className="text-xs text-gray-500">{t('admin:translations.advanced.scanFixDesc', 'Find hardcoded strings in code and create translation keys')}</div>
+                  </div>
+                  <Button
+                    onClick={() => autoFixMutation.mutate()}
+                    disabled={autoFixMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-gray-600 hover:bg-gray-100"
+                  >
+                    {autoFixMutation.isPending ? t('admin:translations.advanced.scanning', 'Scanning...') : t('admin:translations.advanced.scan', 'Scan')}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step 2 - Translate */}
+              <div className="p-3 rounded border border-gray-200 bg-gray-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700">{t('admin:translations.advanced.translateMissing', 'Translate Missing (FR/DE)')}</div>
+                    <div className="text-xs text-gray-500">{t('admin:translations.advanced.translateMissingDesc', 'Translate missing keys to French and German')}</div>
+                  </div>
+                  <Button
+                    onClick={() => translateMissingMutation.mutate()}
+                    disabled={translateMissingMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-gray-600 hover:bg-gray-100"
+                  >
+                    {translateMissingMutation.isPending ? t('admin:translations.advanced.translating', 'Translating...') : t('admin:translations.advanced.translate', 'Translate')}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step 3 - Clean Prefixes */}
+              <div className="p-3 rounded border border-gray-200 bg-gray-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700">{t('admin:translations.advanced.cleanPrefixes', 'Clean Prefixes')}</div>
+                    <div className="text-xs text-gray-500">{t('admin:translations.advanced.cleanPrefixesDesc', 'Remove [FR]/[DE]/[EN] prefixes from translations')}</div>
+                  </div>
+                  <Button
+                    onClick={() => cleanupMutation.mutate()}
+                    disabled={cleanupMutation.isPending}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-gray-600 hover:bg-gray-100"
+                  >
+                    {cleanupMutation.isPending ? t('admin:translations.advanced.cleaning', 'Cleaning...') : t('admin:translations.advanced.clean', 'Clean')}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Export to Files */}
+              <div className="p-3 rounded border border-green-200 bg-green-50/50">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div className="text-sm font-medium text-green-700">{t('admin:translations.advanced.exportToFiles', 'Export to JSON Files')}</div>
+                    <div className="text-xs text-green-600">{t('admin:translations.advanced.exportToFilesDesc', 'Sync database translations back to JSON files (required for frontend)')}</div>
+                  </div>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        const result = await apiService.exportToJsonFiles(apiClient);
+                        alert(`✅ Exported ${result.data.exported} translations to JSON files!\n\nNow restart your frontend (pnpm dev) and refresh.`);
+                      } catch (err: any) {
+                        alert(`Export failed: ${err.message}`);
+                      }
+                    }}
+                    variant="ghost"
+                    className="text-xs px-2 py-1 text-green-700 hover:bg-green-100"
+                  >
+                    {t('admin:translations.advanced.export', 'Export')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </details>
+        </Card>
+
+        {/* Additional Advanced Controls */}
+        <Card className="p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold text-gray-800">{t('admin:translations.moreOptions.title', 'More Options')}</div>
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="text-sm text-blue-600 hover:underline"
             >
-              <Download className="h-4 w-4" />
-              Export JSON
-            </Button>
-            <Button
-              onClick={() =>
-                exportMutation.mutate({ format: 'csv', namespace: selectedNamespace || undefined })
-              }
-              disabled={exportMutation.isPending}
-              variant="secondary"
-              className="text-sm px-3 py-1 flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </Button>
-            <label className="text-sm px-3 py-1 border rounded cursor-pointer flex items-center gap-2 hover:bg-gray-50">
-              <Upload className="h-4 w-4" />
-              Import
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileImport}
-                className="hidden"
-              />
-            </label>
+              {showAdvanced ? t('admin:translations.moreOptions.hide', 'Hide') : t('admin:translations.moreOptions.show', 'Show')}
+            </button>
           </div>
-        </div>
+          {showAdvanced && (
+            <div className="space-y-4">
+              <div className="flex gap-2 items-center flex-wrap">
+                <Button
+                  onClick={() => refetch()}
+                  variant="secondary"
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  {t('admin:translations.moreOptions.refresh', 'Refresh')}
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (
+                      confirm(
+                        'This will scan English translations for values that look like raw keys and replace them with readable labels.\n\nContinue?',
+                      )
+                    ) {
+                      fixEnglishPlaceholdersMutation.mutate();
+                    }
+                  }}
+                  disabled={fixEnglishPlaceholdersMutation.isPending}
+                  variant="secondary"
+                  className="text-sm px-3 py-1.5 text-indigo-600 hover:text-indigo-700 border-indigo-200"
+                >
+                  {fixEnglishPlaceholdersMutation.isPending ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin inline" />
+                      {t('admin:translations.moreOptions.fixingEnLabels', 'Fixing EN Labels...')}
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 mr-2 inline" />
+                      {t('admin:translations.moreOptions.fixEnLabels', 'Fix EN Key Labels')}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex gap-2 items-center flex-wrap">
+                {selectedKeys.size > 0 && (
+                  <Button
+                    onClick={handleBulkApprove}
+                    disabled={bulkApproveMutation.isPending}
+                    variant="secondary"
+                    className="text-sm px-3 py-1"
+                  >
+                    {bulkApproveMutation.isPending
+                      ? t('admin:translations.moreOptions.approving', 'Approving...')
+                      : t('admin:translations.moreOptions.approveSelected', 'Approve {{count}} Selected', { count: selectedKeys.size })}
+                  </Button>
+                )}
+                <Button
+                  onClick={() =>
+                    exportMutation.mutate({ format: 'json', namespace: selectedNamespace || undefined })
+                  }
+                  disabled={exportMutation.isPending}
+                  variant="secondary"
+                  className="text-sm px-3 py-1 flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  {t('admin:translations.moreOptions.exportJson', 'Export JSON')}
+                </Button>
+                <Button
+                  onClick={() =>
+                    exportMutation.mutate({ format: 'csv', namespace: selectedNamespace || undefined })
+                  }
+                  disabled={exportMutation.isPending}
+                  variant="secondary"
+                  className="text-sm px-3 py-1 flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  {t('admin:translations.moreOptions.exportCsv', 'Export CSV')}
+                </Button>
+                <label className="text-sm px-3 py-1 border rounded cursor-pointer flex items-center gap-2 hover:bg-gray-50">
+                  <Upload className="h-4 w-4" />
+                  {t('admin:translations.moreOptions.import', 'Import')}
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileImport}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          )}
+        </Card>
+
+      {/* End Filters / Actions card */}
       </Card>
 
       {/* Translation Table */}
@@ -734,21 +1100,21 @@ export default function Translations() {
                   />
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Namespace
+                  {t('admin:translations.table.namespace', 'Namespace')}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Key
+                  {t('admin:translations.table.key', 'Key')}
                 </th>
                 {LANGUAGES.map((lang) => (
                   <th
                     key={lang}
                     className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {LANGUAGE_LABELS[lang]}
+                    {t(`common:languageLabels.${lang}`, lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'Deutsch')}
                   </th>
                 ))}
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  {t('admin:translations.table.actions', 'Actions')}
                 </th>
               </tr>
             </thead>
@@ -756,7 +1122,7 @@ export default function Translations() {
               {filteredKeys.length === 0 ? (
                 <tr>
                   <td colSpan={LANGUAGES.length + 4} className="px-4 py-8 text-center text-gray-500">
-                    No translations found
+                    {t('admin:translations.table.noTranslationsFound', 'No translations found')}
                   </td>
                 </tr>
               ) : (
@@ -811,14 +1177,14 @@ export default function Translations() {
                                     onClick={saveTranslation}
                                     disabled={updateMutation.isPending}
                                     className="p-1 text-green-600 hover:bg-green-50 rounded"
-                                    title="Save"
+                                    title={t('common:titles.save')}
                                   >
                                     <Check className="h-4 w-4" />
                                   </button>
                                   <button
                                     onClick={() => setEditing(null)}
                                     className="p-1 text-red-600 hover:bg-red-50 rounded"
-                                    title="Cancel"
+                                    title={t('common:titles.cancel')}
                                   >
                                     <X className="h-4 w-4" />
                                   </button>
@@ -834,13 +1200,13 @@ export default function Translations() {
                                   }
                                 >
                                   {translation?.value || (
-                                    <span className="text-gray-400 italic">Missing</span>
+                                    <span className="text-gray-400 italic">{t('admin:translations.missing', 'Missing')}</span>
                                   )}
                                 </div>
                                 {translation?.needsReview && (
                                   <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
                                     <AlertCircle className="h-3 w-3" />
-                                    Needs Review
+                                    {t('admin:translations.stats.needsReview', 'Needs Review')}
                                   </div>
                                 )}
                                 {translation?.updatedAt && (
@@ -859,7 +1225,7 @@ export default function Translations() {
                                   }
                                   className="text-blue-600 text-xs mt-1 hover:underline"
                                 >
-                                  Edit
+                                  {t('common:buttons.edit', 'Edit')}
                                 </button>
                                 {translation?.needsReview && (
                                   <div className="flex items-center gap-1 mt-1">
@@ -882,7 +1248,7 @@ export default function Translations() {
                                       disabled={reviewMutation.isPending}
                                       className="text-green-600 text-xs hover:underline"
                                     >
-                                      Mark Reviewed
+                                      {t('admin:translations.moreOptions.approveSelected', 'Mark Reviewed', { count: 1 })}
                                     </button>
                                   </div>
                                 )}
@@ -905,9 +1271,11 @@ export default function Translations() {
         {pagination && pagination.totalPages > 1 && (
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-gray-700">
-              Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-              {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-              {pagination.total} results
+              {t('admin:translations.pagination.showingResults', 'Showing {{start}} to {{end}} of {{total}} results', {
+                start: (pagination.page - 1) * pagination.limit + 1,
+                end: Math.min(pagination.page * pagination.limit, pagination.total),
+                total: pagination.total,
+              })}
             </div>
             <div className="flex gap-2">
               <Button
@@ -916,10 +1284,13 @@ export default function Translations() {
                 variant="secondary"
                 className="text-sm px-3 py-1"
               >
-                Previous
+                {t('common:buttons.previous', 'Previous')}
               </Button>
               <span className="flex items-center px-4 text-sm text-gray-700">
-                Page {pagination.page} of {pagination.totalPages}
+                {t('admin:translations.pagination.pageOfTotal', 'Page {{page}} of {{totalPages}}', {
+                  page: pagination.page,
+                  totalPages: pagination.totalPages,
+                })}
               </span>
               <Button
                 onClick={() => setPage((p) => p + 1)}
@@ -927,7 +1298,7 @@ export default function Translations() {
                 variant="secondary"
                 className="text-sm px-3 py-1"
               >
-                Next
+                {t('common:buttons.next', 'Next')}
               </Button>
             </div>
           </div>
@@ -941,7 +1312,7 @@ export default function Translations() {
             <div className="text-2xl font-bold text-swiss-mint">
               {pagination?.total || keys.length}
             </div>
-            <div className="text-sm text-gray-600">Total Keys</div>
+            <div className="text-sm text-gray-600">{t('admin:translations.stats.totalKeys', 'Total Keys')}</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-swiss-mint">
@@ -952,13 +1323,13 @@ export default function Translations() {
                 0,
               )}
             </div>
-            <div className="text-sm text-gray-600">Needs Review</div>
+            <div className="text-sm text-gray-600">{t('admin:translations.stats.needsReview', 'Needs Review')}</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-swiss-mint">
               {namespaces.length}
             </div>
-            <div className="text-sm text-gray-600">Namespaces</div>
+            <div className="text-sm text-gray-600">{t('admin:translations.stats.namespaces', 'Namespaces')}</div>
           </div>
         </div>
       </Card>
@@ -967,28 +1338,28 @@ export default function Translations() {
 
       {activeTab === 'audit' && (
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Audit Logs</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('admin:translations.audit.title', 'Audit Logs')}</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Date
+                    {t('admin:translations.audit.date', 'Date')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Action
+                    {t('admin:translations.audit.action', 'Action')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Namespace
+                    {t('admin:translations.audit.namespace', 'Namespace')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Key
+                    {t('admin:translations.audit.key', 'Key')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Language
+                    {t('admin:translations.audit.language', 'Language')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    User
+                    {t('admin:translations.audit.user', 'User')}
                   </th>
                 </tr>
               </thead>
@@ -996,7 +1367,7 @@ export default function Translations() {
                 {auditLogsResponse?.data?.data?.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                      No audit logs found
+                      {t('admin:translations.audit.noLogsFound', 'No audit logs found')}
                     </td>
                   </tr>
                 ) : (
@@ -1031,10 +1402,10 @@ export default function Translations() {
 
       {activeTab === 'releases' && (
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Translation Releases</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('admin:translations.releasesList.title', 'Translation Releases')}</h2>
           <div className="space-y-4">
             {releasesResponse?.data?.data?.length === 0 ? (
-              <p className="text-gray-500">No releases found</p>
+              <p className="text-gray-500">{t('admin:translations.releasesList.noReleasesFound', 'No releases found')}</p>
             ) : (
               releasesResponse?.data?.data?.map((release: any) => (
                 <div
@@ -1049,7 +1420,7 @@ export default function Translations() {
                         <span className="font-semibold text-lg">{release.version}</span>
                         {release.isActive && (
                           <span className="px-2 py-1 text-xs bg-green-500 text-white rounded">
-                            Active
+                            {t('admin:translations.releasesList.active', 'Active')}
                           </span>
                         )}
                       </div>
@@ -1057,8 +1428,8 @@ export default function Translations() {
                         <p className="text-sm text-gray-600 mt-1">{release.description}</p>
                       )}
                       <p className="text-xs text-gray-500 mt-1">
-                        Created: {new Date(release.createdAt).toLocaleString()}
-                        {release.createdBy && ` by ${release.createdBy}`}
+                        {t('admin:translations.releasesList.created', 'Created:')} {new Date(release.createdAt).toLocaleString()}
+                        {release.createdBy && ` ${t('admin:translations.releasesList.by', 'by')} ${release.createdBy}`}
                       </p>
                     </div>
                   </div>

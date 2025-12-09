@@ -140,7 +140,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
               value={formData.vatNumber || ''}
               onChange={(e) => onChange('vatNumber', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="CHE-123.456.789"
+              placeholder={t('common:placeholders.vatNumber')}
             />
           </div>
         </div>
@@ -250,7 +250,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
               value={formData.directOrderLink || ''}
               onChange={(e) => onChange('directOrderLink', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="https://..."
+              placeholder={t('common:placeholders.url')}
             />
           </div>
 
@@ -264,7 +264,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
               value={formData.catalogUrl || ''}
               onChange={(e) => onChange('catalogUrl', e.target.value)}
               className={STANDARD_INPUT_FIELD}
-              placeholder="https://..."
+              placeholder={t('common:placeholders.url')}
             />
           </div>
         </div>

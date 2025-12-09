@@ -8,8 +8,16 @@ declare global {
       context?: {
         userId: string;
         appUserId: string;
+        profileUserId?: string | null;
         clerkUserId?: string;
         role?: string;
+        isPending?: boolean;
+      };
+      user?: {
+        clerkId: string;
+        role: string;
+        id: string | null;
+        isPending?: boolean;
       };
     }
   }

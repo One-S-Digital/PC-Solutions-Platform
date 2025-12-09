@@ -38,43 +38,51 @@ export class StaticTranslationService {
   ): Promise<{ data: Record<string, any>; etag: string }> {
     const cacheKey = `static:${lang}:${namespace}`;
 
-    // Try cache first
-    const cached = await this.cacheManager.get<{ data: Record<string, any>; etag: string }>(
-      cacheKey,
-    );
-    if (cached) {
-      return cached;
+    try {
+      // Try cache first
+      const cached = await this.cacheManager.get<{ data: Record<string, any>; etag: string }>(
+        cacheKey,
+      );
+      if (cached) {
+        return cached;
+      }
+
+      // Fetch from database
+      const translations = await this.prisma.staticTranslation.findMany({
+        where: {
+          lang,
+          namespace,
+        },
+        select: {
+          key: true,
+          value: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      });
+
+      this.logger.debug(`Found ${translations.length} translations for ${lang}/${namespace}`);
+
+      // Transform flat keys to nested object structure
+      const result = this.nestKeys(translations);
+
+      // Generate ETag from content hash
+      const latestUpdate = translations[0]?.updatedAt || new Date();
+      const etag = this.generateETag(result, latestUpdate);
+
+      const response = { data: result, etag };
+
+      // Cache result with ETag
+      await this.cacheManager.set(cacheKey, response, this.CACHE_TTL * 1000);
+
+      return response;
+    } catch (error) {
+      this.logger.error(`Error loading translations for ${lang}/${namespace}: ${error.message}`, error.stack);
+      // Return empty object on error to prevent 500
+      return { data: {}, etag: `"empty-${Date.now()}"` };
     }
-
-    // Fetch from database
-    const translations = await this.prisma.staticTranslation.findMany({
-      where: {
-        lang,
-        namespace,
-      },
-      select: {
-        key: true,
-        value: true,
-        updatedAt: true,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
-
-    // Transform flat keys to nested object structure
-    const result = this.nestKeys(translations);
-
-    // Generate ETag from content hash
-    const latestUpdate = translations[0]?.updatedAt || new Date();
-    const etag = this.generateETag(result, latestUpdate);
-
-    const response = { data: result, etag };
-
-    // Cache result with ETag
-    await this.cacheManager.set(cacheKey, response, this.CACHE_TTL * 1000);
-
-    return response;
   }
 
   /**
@@ -95,6 +103,18 @@ export class StaticTranslationService {
       where: { lang },
       select: { namespace: true },
       distinct: ['namespace'],
+    });
+    return result.map((r) => r.namespace);
+  }
+
+  /**
+   * Get all unique namespaces across all languages
+   */
+  async getAllNamespacesAcrossAllLangs(): Promise<string[]> {
+    const result = await this.prisma.staticTranslation.findMany({
+      select: { namespace: true },
+      distinct: ['namespace'],
+      orderBy: { namespace: 'asc' },
     });
     return result.map((r) => r.namespace);
   }
@@ -455,23 +475,64 @@ export class StaticTranslationService {
 
   /**
    * Helper: Transform flat keys to nested object
+   * Handles conflicting keys (e.g., when 'foo' is both a value and a parent)
    */
   private nestKeys(translations: Array<{ key: string; value: string }>): Record<string, any> {
     const result: Record<string, any> = {};
 
     for (const { key, value } of translations) {
-      const parts = key.split('.');
-      let current = result;
+      try {
+        const parts = key.split('.');
+        let current = result;
 
-      for (let i = 0; i < parts.length - 1; i++) {
-        const part = parts[i];
-        if (!current[part]) {
-          current[part] = {};
+        for (let i = 0; i < parts.length - 1; i++) {
+          const part = parts[i];
+          if (!current[part]) {
+            current[part] = {};
+          } else if (typeof current[part] !== 'object') {
+            // Conflict: key is already a string value but we need it to be an object
+            // Keep the existing string value and skip this nested key
+            this.logger.warn(`Key conflict: "${parts.slice(0, i + 1).join('.')}" is a string but "${key}" needs it to be an object. Skipping.`);
+            current = null;
+            break;
+          }
+          current = current[part];
         }
-        current = current[part];
-      }
 
-      current[parts[parts.length - 1]] = value;
+        if (current !== null) {
+          const lastPart = parts[parts.length - 1];
+          // Don't overwrite an object with a string
+          if (typeof current[lastPart] === 'object' && current[lastPart] !== null) {
+            this.logger.warn(`Key conflict: "${key}" would overwrite object with string. Skipping.`);
+          } else {
+            current[lastPart] = value;
+          }
+        }
+      } catch (err) {
+        this.logger.error(`Error processing key "${key}": ${err.message}`);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Flatten nested object into dot-notation keys
+   * Example: { a: { b: 'value' } } => { 'a.b': 'value' }
+   */
+  private flattenObject(obj: any, prefix = ''): Record<string, any> {
+    const result: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // Recursively flatten nested objects
+        Object.assign(result, this.flattenObject(value, newKey));
+      } else {
+        // Leaf node - add to result
+        result[newKey] = value;
+      }
     }
 
     return result;
@@ -531,6 +592,7 @@ export class StaticTranslationService {
     namespace?: string,
     keys?: string[],
     force: boolean = false,
+    includePlaceholders: boolean = true,
   ): Promise<number> {
     this.logger.log(`=== STARTING TRANSLATION: ${sourceLang} -> ${targetLang} (namespace: ${namespace || 'all'}, force: ${force}) ===`);
     // Wait for DeepL initialization and check availability
@@ -745,8 +807,14 @@ export class StaticTranslationService {
           continue;
         }
 
-        // If existing translation is a placeholder, we'll re-translate it
+        // If existing translation is a placeholder, we only re-translate if includePlaceholders is true
         if (existing && isPlaceholder(existing.value, source.value)) {
+          if (!includePlaceholders) {
+            this.logger.log(
+              `Skipping ${source.namespace}:${source.key} (${targetLang}) - placeholder detected but includePlaceholders=false`,
+            );
+            continue;
+          }
           if (isAdminDesignSystem) {
             adminDesignSystemProcessed++;
             this.logger.log(
@@ -770,6 +838,16 @@ export class StaticTranslationService {
         // CRITICAL: Strip any prefixes from source value before translating
         // This ensures we're translating the actual text, not a placeholder
         const cleanSourceValue = this.stripPrefixes(source.value);
+        
+        // CRITICAL: Skip entries with empty or invalid English source values
+        if (!cleanSourceValue || cleanSourceValue.trim().length === 0 || cleanSourceValue.trim() === '...') {
+          const errorMsg = `Skipping ${source.namespace}:${source.key} (${targetLang}) - English source value is empty or invalid: "${source.value}"`;
+          this.logger.warn(errorMsg);
+          if (isAdminDesignSystem) {
+            this.logger.warn(`⚠️ ADMIN.DESIGNSYSTEM: ${errorMsg}`);
+          }
+          continue; // Skip this entry - can't translate empty/invalid values
+        }
         
         if (isAdminDesignSystem) {
           this.logger.log(
@@ -1294,6 +1372,162 @@ export class StaticTranslationService {
   }
 
   /**
+   * Detect English translations where the value looks like a raw key
+   * (e.g. "supportPage.ticketForm.subjectLabel", "buttons.submitTicket")
+   * and replace them with a human‑readable label generated from the key.
+   *
+   * This is intended as a one-time or occasional cleanup for legacy data.
+   */
+  async cleanupEnglishKeyPlaceholders(): Promise<{
+    cleaned: number;
+    affected: number;
+    details?: {
+      updated: Array<{ namespace: string; key: string; oldValue: string; newValue: string }>;
+      skippedSample: Array<{ namespace: string; key: string; value: string }>;
+    };
+  }> {
+    const translations = await this.prisma.staticTranslation.findMany({
+      where: { lang: 'en' },
+      select: {
+        namespace: true,
+        key: true,
+        lang: true,
+        value: true,
+      },
+    });
+
+    let cleaned = 0;
+    const updated: Array<{ namespace: string; key: string; oldValue: string; newValue: string }> = [];
+    const skippedSample: Array<{ namespace: string; key: string; value: string }> = [];
+
+    for (const t of translations) {
+      const originalValue = t.value ?? '';
+      const trimmed = originalValue.trim();
+
+      // Only operate on obvious key-like placeholders:
+      // - value exactly equals the key (e.g. "supportPage.ticketForm.subjectLabel")
+      // - or value equals "namespace.key" or "namespace:key"
+      // - or value has dots/colons and no spaces and looks identifier-like
+      const fullDot = `${t.namespace}.${t.key}`;
+      const fullColon = `${t.namespace}:${t.key}`;
+
+      const looksLikeKey =
+        trimmed === t.key ||
+        trimmed === fullDot ||
+        trimmed === fullColon ||
+        (!trimmed.includes(' ') && /[.:]/.test(trimmed) && /^[a-z0-9:._]+$/i.test(trimmed));
+
+      if (!looksLikeKey) {
+        if (skippedSample.length < 50 && trimmed) {
+          skippedSample.push({ namespace: t.namespace, key: t.key, value: trimmed });
+        }
+        continue;
+      }
+
+      const newValue = this.humanizeKeyLabel(t.key, trimmed);
+
+      if (!newValue || newValue === originalValue) {
+        // Nothing to change
+        continue;
+      }
+
+      await this.prisma.staticTranslation.update({
+        where: {
+          namespace_key_lang: {
+            namespace: t.namespace,
+            key: t.key,
+            lang: 'en',
+          },
+        },
+        data: {
+          value: newValue,
+          updatedAt: new Date(),
+        },
+      });
+
+      cleaned++;
+      if (updated.length < 200) {
+        updated.push({
+          namespace: t.namespace,
+          key: t.key,
+          oldValue: originalValue,
+          newValue,
+        });
+      }
+
+      // Invalidate cache for this namespace/lang
+      await this.invalidateCache('en', t.namespace);
+    }
+
+    this.logger.log(
+      `Cleaned up ${cleaned} English translations that looked like raw keys out of ${translations.length} total en entries`,
+    );
+
+    // Update translation version to force frontend cache refresh
+    if (cleaned > 0) {
+      try {
+        const version = `v${Date.now()}`;
+        await this.createRelease(
+          version,
+          `Auto-fix: Cleaned up ${cleaned} English key placeholders`,
+          'system',
+        );
+        this.logger.log(`Updated translation version to ${version} to trigger frontend cache refresh`);
+      } catch (error) {
+        this.logger.warn('Failed to update translation version after cleanup:', error);
+        // Don't fail the whole operation if version update fails
+      }
+    }
+
+    return {
+      cleaned,
+      affected: translations.length,
+      details: {
+        updated,
+        skippedSample,
+      },
+    };
+  }
+
+  /**
+   * Generate a human‑readable English label from a translation key.
+   * Example:
+   *  - "supportPage.ticketForm.subjectLabel" -> "Subject"
+   *  - "buttons.submitTicket" -> "Submit ticket"
+   */
+  private humanizeKeyLabel(key: string, fallback: string): string {
+    if (!key) return fallback;
+
+    const parts = key.split('.');
+    let leaf = parts[parts.length - 1] || key;
+
+    // Strip very common suffixes that aren't useful to show to users
+    const suffixes = ['Label', 'Title', 'Text', 'Button', 'Placeholder', 'Message', 'Description'];
+    for (const suffix of suffixes) {
+      if (leaf.toLowerCase().endsWith(suffix.toLowerCase())) {
+        leaf = leaf.slice(0, -suffix.length) || leaf;
+        break;
+      }
+    }
+
+    // Convert camelCase / PascalCase / snake_case / kebab-case to words
+    let text = leaf
+      .replace(/[_\-]+/g, ' ')
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!text) {
+      text = leaf || fallback;
+    }
+
+    // Capitalize first letter
+    text = text.charAt(0).toUpperCase() + text.slice(1);
+
+    return text;
+  }
+
+  /**
    * Import translations from CSV string.
    * Expected headers: namespace,key,lang,value
    */
@@ -1343,6 +1577,97 @@ export class StaticTranslationService {
     }
 
     return this.bulkUpsert(translations, updatedBy);
+  }
+
+  /**
+   * Import translations from JSON files in packages/translations/locales
+   * Reads all JSON files for each language and imports them into the database
+   */
+  async importFromJsonFiles(updatedBy?: string): Promise<{ imported: number; details: any }> {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Use environment variable if set (for production), otherwise use default path (for development)
+    // In production, set TRANSLATION_LOCALES_PATH to the absolute path of the locales directory
+    const localesPath = process.env.TRANSLATION_LOCALES_PATH || 
+      path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
+    const languages = ['en', 'fr', 'de'];
+    
+    this.logger.log(`📦 Importing translations from JSON files in ${localesPath}`);
+    
+    if (!fs.existsSync(localesPath)) {
+      throw new Error(`Locales directory not found: ${localesPath}`);
+    }
+    
+    const translations: Array<{ namespace: string; key: string; lang: string; value: string }> = [];
+    const details: Record<string, number> = {};
+    
+    for (const lang of languages) {
+      const langPath = path.join(localesPath, lang);
+      
+      if (!fs.existsSync(langPath)) {
+        this.logger.warn(`Language directory not found: ${langPath}`);
+        continue;
+      }
+      
+      const files = fs.readdirSync(langPath).filter((f: string) => f.endsWith('.json'));
+      
+      for (const file of files) {
+        const namespace = file.replace('.json', '');
+        const filePath = path.join(langPath, file);
+        
+        try {
+          const content = fs.readFileSync(filePath, 'utf8');
+          const json = JSON.parse(content);
+          
+          // Validate JSON structure before processing
+          const validation = this.validateJsonStructure(json, filePath);
+          if (!validation.valid) {
+            this.logger.warn(`⚠️ Validation issues in ${filePath} (${validation.errors.length} errors) - proceeding with valid entries`);
+          }
+          
+          // Flatten nested JSON into flat keys
+          const flatKeys = this.flattenObject(json);
+          
+          for (const [key, value] of Object.entries(flatKeys)) {
+            if (typeof value === 'string') {
+              // CRITICAL: Strip prefixes at import time - never store prefixes in database
+              // This ensures clean data and prevents the need to strip prefixes in multiple places
+              const cleanValue = this.stripPrefixes(value);
+              translations.push({
+                namespace,
+                key,
+                lang,
+                value: cleanValue, // Store clean value without prefixes
+              });
+              
+              const detailKey = `${lang}/${namespace}`;
+              details[detailKey] = (details[detailKey] || 0) + 1;
+            }
+          }
+          
+          this.logger.log(`✅ Loaded ${namespace}.json (${lang}) - ${Object.keys(flatKeys).length} keys`);
+        } catch (error) {
+          this.logger.error(`❌ Error loading ${filePath}:`, error.message);
+        }
+      }
+    }
+    
+    this.logger.log(`📊 Total translations to import: ${translations.length}`);
+    this.logger.log(`📋 Details:`, details);
+    
+    if (translations.length === 0) {
+      return { imported: 0, details };
+    }
+    
+    const imported = await this.bulkUpsert(translations, updatedBy);
+    
+    // Invalidate cache after import
+    await this.cacheManager.reset();
+    
+    this.logger.log(`✅ Successfully imported ${imported} translations from JSON files`);
+    
+    return { imported, details };
   }
 
   /**
@@ -1401,6 +1726,535 @@ export class StaticTranslationService {
     }
 
     return rows;
+  }
+
+  /**
+   * Auto-fix hardcoded strings in frontend code
+   * Runs the automated script to find and fix hardcoded strings
+   */
+  async autoFixHardcodedStrings(): Promise<{
+    success: boolean;
+    fixed: number;
+    skipped: number;
+    errors: number;
+    missingKeysCreated?: number;
+    details?: any;
+    message: string;
+  }> {
+    try {
+      const { exec } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(exec);
+      const path = await import('path');
+      const fs = await import('fs');
+      
+      // Allow configuration via environment variable
+      const configuredScriptPath = process.env.AUTO_FIX_SCRIPT_PATH;
+      if (configuredScriptPath && fs.existsSync(configuredScriptPath)) {
+        const scriptDir = path.dirname(configuredScriptPath);
+        const projectRoot = path.dirname(scriptDir);
+        return this.runScript(configuredScriptPath, projectRoot);
+      }
+      
+      // Find project root by looking for package.json and scripts directory
+      // Start from __dirname (api/src/static-translation) and go up to find root
+      let projectRoot = __dirname;
+      let found = false;
+      const maxDepth = 10; // Prevent infinite loop
+      let depth = 0;
+      
+      while (depth < maxDepth && projectRoot !== path.dirname(projectRoot)) {
+        const scriptsDir = path.join(projectRoot, 'scripts');
+        const packageJson = path.join(projectRoot, 'package.json');
+        if (fs.existsSync(scriptsDir) && fs.existsSync(packageJson)) {
+          found = true;
+          break;
+        }
+        projectRoot = path.dirname(projectRoot);
+        depth++;
+      }
+      
+      if (!found) {
+        // Fallback: try process.cwd() or use a relative path from __dirname
+        projectRoot = process.cwd();
+        // If still in api directory, go up one level
+        if (path.basename(projectRoot) === 'api') {
+          projectRoot = path.dirname(projectRoot);
+        }
+      }
+      
+      const scriptPath = path.join(projectRoot, 'scripts', 'auto-fix-hardcoded-strings.mjs');
+      
+      // Check if script exists
+      if (!fs.existsSync(scriptPath)) {
+        // Try alternative paths
+        const altPath1 = path.resolve(process.cwd(), '..', 'scripts', 'auto-fix-hardcoded-strings.mjs');
+        const altPath2 = path.resolve(__dirname, '../../../scripts/auto-fix-hardcoded-strings.mjs');
+        
+        if (fs.existsSync(altPath1)) {
+          this.logger.log(`Using alternative path 1: ${altPath1}`);
+          const altCwd1 = path.dirname(path.dirname(altPath1)); // Go up from scripts to project root
+          return this.runScript(altPath1, altCwd1);
+        } else if (fs.existsSync(altPath2)) {
+          this.logger.log(`Using alternative path 2: ${altPath2}`);
+          const altCwd2 = path.dirname(path.dirname(altPath2)); // Go up from scripts to project root
+          return this.runScript(altPath2, altCwd2);
+        }
+        
+        throw new Error(`Script not found at ${scriptPath}. Also tried: ${altPath1}, ${altPath2}`);
+      }
+      
+      return this.runScript(scriptPath, projectRoot);
+    } catch (error: any) {
+      this.logger.error('Auto-fix script failed:', error);
+      return {
+        success: false,
+        fixed: 0,
+        skipped: 0,
+        errors: 1,
+        missingKeysCreated: 0,
+        message: `Auto-fix failed: ${error.message}`,
+      };
+    }
+  }
+
+  /**
+   * Helper method to run the auto-fix script
+   */
+  private async runScript(scriptPath: string, cwd: string): Promise<{
+    success: boolean;
+    fixed: number;
+    skipped: number;
+    errors: number;
+    missingKeysCreated?: number;
+    details?: any;
+    message: string;
+  }> {
+    const { exec } = await import('child_process');
+    const { promisify } = await import('util');
+    const execAsync = promisify(exec);
+    const path = await import('path');
+    const fs = await import('fs');
+    
+    this.logger.log(`Running auto-fix script from: ${cwd}`);
+    this.logger.log(`Script path: ${scriptPath}`);
+    
+    // Run the script - it outputs JSON to stdout and human-readable to stderr
+    let stdout: string;
+    let stderr: string;
+    try {
+      const result = await execAsync(`node "${scriptPath}"`, {
+        cwd: cwd, // Run from project root
+        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+        encoding: 'utf8',
+        timeout: 5 * 60 * 1000, // 5 minute timeout
+      });
+      stdout = result.stdout;
+      stderr = result.stderr;
+    } catch (execError: any) {
+      this.logger.error('Script execution failed:', execError);
+      return {
+        success: false,
+        fixed: 0,
+        skipped: 0,
+        errors: 1,
+        missingKeysCreated: 0,
+        message: `Script execution failed: ${execError.message}`,
+      };
+    }
+    
+    // Log stderr (human-readable output) for debugging
+    if (stderr) {
+      this.logger.log('Script output:', stderr);
+    }
+    
+    // Parse JSON from stdout
+    try {
+      // Extract JSON from stdout (may have other text)
+      const jsonMatch = stdout.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const result = JSON.parse(jsonMatch[0]);
+        this.logger.log(`Auto-fix completed: ${result.fixed} fixed, ${result.skipped} skipped, ${result.errors} errors`);
+        
+        // If strings were fixed, automatically sync to database
+        if (result.fixed > 0) {
+          this.logger.log('🔄 Auto-syncing translations to database...');
+          try {
+            const syncScriptPath = path.join(cwd, 'scripts', 'sync-json-to-database.mjs');
+            if (fs.existsSync(syncScriptPath)) {
+              await execAsync(`node "${syncScriptPath}"`, {
+                cwd: cwd,
+                maxBuffer: 10 * 1024 * 1024,
+                timeout: 60 * 1000, // 1 minute
+              });
+              this.logger.log('✅ Translations synced to database automatically!');
+              result.message = result.message + '\n\n✅ Translations automatically synced to database and ready to use!';
+            }
+          } catch (syncError: any) {
+            this.logger.warn('Database sync failed (non-fatal):', syncError.message);
+            result.message = result.message + '\n\n⚠️ Auto-sync to database failed. Please run manually: node scripts/sync-json-to-database.mjs';
+          }
+        }
+        
+        return result;
+      } else {
+        // Try parsing entire stdout
+        const result = JSON.parse(stdout.trim());
+        return result;
+      }
+    } catch (parseError) {
+      // If JSON parsing fails, try to extract info from stdout/stderr
+      const output = stdout + stderr;
+      const fixedMatch = output.match(/Fixed:\s*(\d+)/);
+      const skippedMatch = output.match(/Skipped:\s*(\d+)/);
+      const errorMatch = output.match(/Errors:\s*(\d+)/);
+      const missingKeysMatch = output.match(/Missing keys created:\s*(\d+)/);
+      
+      const foundAnyMatch = fixedMatch || skippedMatch || errorMatch || missingKeysMatch;
+      return {
+        success: foundAnyMatch ? true : false,
+        fixed: fixedMatch ? parseInt(fixedMatch[1]) : 0,
+        skipped: skippedMatch ? parseInt(skippedMatch[1]) : 0,
+        errors: errorMatch ? parseInt(errorMatch[1]) : 0,
+        missingKeysCreated: missingKeysMatch ? parseInt(missingKeysMatch[1]) : 0,
+        message: foundAnyMatch 
+          ? (output || 'Auto-fix completed successfully')
+          : `Failed to parse script output: ${output.substring(0, 500)}`,
+      };
+    }
+  }
+
+  /**
+   * Export translations from database to JSON files
+   * This syncs the database back to the filesystem so frontend can load them
+   */
+  async exportToJsonFiles(): Promise<{ exported: number; details: any }> {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Use environment variable if set (for production), otherwise use default path (for development)
+    const localesPath = process.env.TRANSLATION_LOCALES_PATH || 
+      path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
+    const languages = ['en', 'fr', 'de'];
+    
+    this.logger.log(`📤 Exporting translations to JSON files in ${localesPath}`);
+    
+    const details: Record<string, number> = {};
+    let totalExported = 0;
+    
+    for (const lang of languages) {
+      // Get all translations for this language
+      const translations = await this.prisma.staticTranslation.findMany({
+        where: { lang },
+        select: { namespace: true, key: true, value: true },
+        orderBy: [{ namespace: 'asc' }, { key: 'asc' }],
+      });
+      
+      // Group by namespace
+      const grouped: Record<string, Array<{ key: string; value: string }>> = {};
+      for (const t of translations) {
+        if (!grouped[t.namespace]) {
+          grouped[t.namespace] = [];
+        }
+        grouped[t.namespace].push({ key: t.key, value: t.value });
+      }
+      
+      // Write each namespace to a file
+      const langDir = path.join(localesPath, lang);
+      if (!fs.existsSync(langDir)) {
+        fs.mkdirSync(langDir, { recursive: true });
+      }
+      
+      for (const [namespace, keys] of Object.entries(grouped)) {
+        const nested = this.nestKeysForExport(keys);
+        const filePath = path.join(langDir, `${namespace}.json`);
+        fs.writeFileSync(filePath, JSON.stringify(nested, null, 2) + '\n', 'utf8');
+        
+        details[`${lang}/${namespace}`] = keys.length;
+        totalExported += keys.length;
+        this.logger.log(`  ✓ ${lang}/${namespace}.json (${keys.length} keys)`);
+      }
+    }
+    
+    this.logger.log(`✅ Exported ${totalExported} translations to JSON files`);
+    
+    return { exported: totalExported, details };
+  }
+
+  /**
+   * Convert flat keys to nested object for export
+   * IMPORTANT: Never creates _value objects - only clean nested structures with string leaves
+   */
+  private nestKeysForExport(translations: Array<{ key: string; value: string }>): Record<string, any> {
+    const result: Record<string, any> = {};
+    
+    // Build a set of all keys that have children (parent keys)
+    const parentKeys = new Set<string>();
+    for (const { key } of translations) {
+      const parts = key.split('.');
+      for (let i = 1; i < parts.length; i++) {
+        parentKeys.add(parts.slice(0, i).join('.'));
+      }
+    }
+    
+    // Sort by key length (longer first) so leaf nodes take precedence
+    const sorted = [...translations].sort((a, b) => b.key.length - a.key.length);
+    
+    for (const { key, value } of sorted) {
+      // Skip if this key is a parent of other keys (would cause conflict)
+      if (parentKeys.has(key)) {
+        this.logger.warn(`Skipping parent key with value: ${key}`);
+        continue;
+      }
+      
+      // Validate value is a string
+      if (typeof value !== 'string') {
+        this.logger.warn(`Skipping non-string value for key: ${key}`);
+        continue;
+      }
+      
+      const parts = key.split('.');
+      let current = result;
+      let valid = true;
+      
+      // Navigate/create path to parent
+      for (let i = 0; i < parts.length - 1; i++) {
+        const part = parts[i];
+        if (!current[part]) {
+          current[part] = {};
+        } else if (typeof current[part] !== 'object' || current[part] === null) {
+          valid = false;
+          break;
+        }
+        current = current[part];
+      }
+      
+      if (valid) {
+        const lastPart = parts[parts.length - 1];
+        if (typeof current[lastPart] !== 'object') {
+          current[lastPart] = value;
+        }
+      }
+    }
+    
+    // Final validation pass to clean any corrupt structures
+    return this.validateAndCleanNested(result);
+  }
+
+  /**
+   * Validate and clean nested object - ensures all leaf values are strings
+   * Fixes any corrupt _value or numeric key patterns
+   */
+  private validateAndCleanNested(obj: any, path = ''): Record<string, any> {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj;
+    }
+    
+    const result: Record<string, any> = {};
+    
+    for (const [key, value] of Object.entries(obj)) {
+      const fullPath = path ? `${path}.${key}` : key;
+      
+      if (typeof value === 'string') {
+        result[key] = value;
+      } else if (typeof value === 'object' && value !== null) {
+        // Check for corrupt _value or numeric key patterns
+        const hasCorruptPattern = '_value' in (value as any) || '0' in (value as any) || '1' in (value as any);
+        
+        if (hasCorruptPattern) {
+          // Extract the best string value from corrupt structure
+          const v = value as any;
+          const cleanValue = v._value || v['1'] || v['0'] || '';
+          if (typeof cleanValue === 'string' && cleanValue !== '0' && cleanValue !== '1') {
+            result[key] = cleanValue;
+            this.logger.warn(`Fixed corrupt structure at: ${fullPath}`);
+          }
+        } else {
+          // Recursively clean nested objects
+          const cleaned = this.validateAndCleanNested(value, fullPath);
+          if (Object.keys(cleaned).length > 0) {
+            result[key] = cleaned;
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Get budget status for admin dashboard
+   */
+  async getBudgetStatus(): Promise<any> {
+    return this.costTracking.getBudgetStatus();
+  }
+
+  /**
+   * Create a backup of all translations before bulk operations
+   * Returns backup ID for potential rollback
+   */
+  async createBackup(): Promise<{ backupId: string; count: number }> {
+    const backupId = `backup_${Date.now()}`;
+    this.logger.log(`📦 Creating backup: ${backupId}`);
+    
+    // Get all translations
+    const translations = await this.prisma.staticTranslation.findMany();
+    
+    // Store backup in audit log with special action
+    await this.prisma.translationAuditLog.create({
+      data: {
+        type: 'static',
+        action: 'backup',
+        lang: 'all',
+        userId: 'system',
+        oldValue: JSON.stringify({
+          backupId,
+          count: translations.length,
+          timestamp: new Date().toISOString(),
+        }),
+        newValue: JSON.stringify(translations.slice(0, 100)), // Store sample for verification
+      },
+    });
+    
+    this.logger.log(`   Backup created: ${translations.length} translations`);
+    return { backupId, count: translations.length };
+  }
+
+  /**
+   * Validate JSON structure before import
+   * Ensures all values are strings and keys are valid
+   */
+  private validateJsonStructure(json: any, filePath: string): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    const validateObject = (obj: any, path: string = '') => {
+      if (typeof obj !== 'object' || obj === null) {
+        errors.push(`${path}: Expected object, got ${typeof obj}`);
+        return;
+      }
+      
+      for (const [key, value] of Object.entries(obj)) {
+        const currentPath = path ? `${path}.${key}` : key;
+        
+        // Check for invalid key patterns
+        if (key === '' || key.startsWith('.') || key.endsWith('.')) {
+          errors.push(`${currentPath}: Invalid key format`);
+        }
+        
+        if (typeof value === 'string') {
+          // Valid leaf node
+          continue;
+        } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          // Nested object - recurse
+          validateObject(value, currentPath);
+        } else {
+          // Invalid value type
+          errors.push(`${currentPath}: Expected string or object, got ${typeof value}`);
+        }
+      }
+    };
+    
+    validateObject(json);
+    
+    if (errors.length > 0) {
+      this.logger.warn(`Validation errors in ${filePath}: ${errors.slice(0, 5).join(', ')}${errors.length > 5 ? ` ...and ${errors.length - 5} more` : ''}`);
+    }
+    
+    return { valid: errors.length === 0, errors };
+  }
+
+  /**
+   * Clean up old audit logs (retention policy: 90 days)
+   */
+  async cleanupAuditLogs(retentionDays: number = 90): Promise<number> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+    
+    const result = await this.prisma.translationAuditLog.deleteMany({
+      where: {
+        createdAt: { lt: cutoffDate },
+        action: { not: 'backup' }, // Keep backup records longer
+      },
+    });
+    
+    this.logger.log(`🧹 Cleaned up ${result.count} audit logs older than ${retentionDays} days`);
+    return result.count;
+  }
+
+  /**
+   * Full sync: Import EN, Translate FR/DE, Export to files
+   * This is the one-click solution for the admin panel
+   * Includes backup creation and validation
+   */
+  async fullSync(updatedBy?: string): Promise<{
+    imported: number;
+    translatedFr: number;
+    translatedDe: number;
+    exported: number;
+    backupId?: string;
+  }> {
+    this.logger.log('🔄 Starting full sync...');
+    
+    // Step 0: Create backup before any changes
+    this.logger.log('📦 Step 0: Creating backup...');
+    let backupId: string | undefined;
+    try {
+      const backup = await this.createBackup();
+      backupId = backup.backupId;
+      this.logger.log(`   Backup: ${backup.backupId} (${backup.count} translations)`);
+    } catch (error: any) {
+      this.logger.warn(`   Backup warning: ${error.message} (continuing anyway)`);
+    }
+    
+    // Step 1: Import EN from JSON files (with validation)
+    this.logger.log('📥 Step 1: Importing EN translations from JSON files...');
+    const importResult = await this.importFromJsonFiles(updatedBy);
+    this.logger.log(`   Imported: ${importResult.imported}`);
+    
+    // Step 2: Translate missing FR
+    this.logger.log('🇫🇷 Step 2: Translating to French...');
+    let translatedFr = 0;
+    try {
+      translatedFr = await this.translateMissing('en', 'fr', undefined, undefined, false, true);
+      this.logger.log(`   Translated FR: ${translatedFr}`);
+    } catch (error: any) {
+      this.logger.warn(`   FR translation error: ${error.message}`);
+    }
+    
+    // Step 3: Translate missing DE
+    this.logger.log('🇩🇪 Step 3: Translating to German...');
+    let translatedDe = 0;
+    try {
+      translatedDe = await this.translateMissing('en', 'de', undefined, undefined, false, true);
+      this.logger.log(`   Translated DE: ${translatedDe}`);
+    } catch (error: any) {
+      this.logger.warn(`   DE translation error: ${error.message}`);
+    }
+    
+    // Step 4: Export to JSON files
+    this.logger.log('📤 Step 4: Exporting to JSON files...');
+    const exportResult = await this.exportToJsonFiles();
+    this.logger.log(`   Exported: ${exportResult.exported}`);
+    
+    // Step 5: Cleanup old audit logs (run periodically)
+    try {
+      await this.cleanupAuditLogs(90);
+    } catch (error: any) {
+      this.logger.warn(`   Audit cleanup warning: ${error.message}`);
+    }
+    
+    // Clear cache
+    await this.cacheManager.reset();
+    
+    this.logger.log('✅ Full sync complete!');
+    
+    return {
+      imported: importResult.imported,
+      translatedFr,
+      translatedDe,
+      exported: exportResult.exported,
+      backupId,
+    };
   }
 }
 

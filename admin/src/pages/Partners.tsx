@@ -130,14 +130,14 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
     setError(null)
     
     if (!formData.name?.trim()) {
-      setError('Partner name is required')
+      setError(t('admin:partnersAdmin.modal.partnerNameRequired', 'Partner name is required'))
       return
     }
     
     try {
       await onSave(formData)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save partner')
+      setError(err instanceof Error ? err.message : t('admin:partnersAdmin.modal.saveFailed', 'Failed to save partner'))
     }
   }
 
@@ -175,7 +175,7 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
               <Dialog.Panel className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
                   <Dialog.Title as="h2" className="text-xl font-semibold text-gray-900">
-                    {mode === 'add' ? 'Add New Partner' : 'Edit Partner'}
+                    {mode === 'add' ? t('admin:partnersAdmin.modal.addTitle', 'Add New Partner') : t('admin:partnersAdmin.modal.editTitle', 'Edit Partner')}
                   </Dialog.Title>
                   <button 
                     onClick={onClose} 
@@ -196,11 +196,11 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
 
                     {/* Basic Information */}
                     <div className="space-y-4">
-                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Basic Information</h3>
+                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:partnersAdmin.modal.basicInfo', 'Basic Information')}</h3>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Partner Name <span className="text-red-500">*</span>
+                          {t('admin:partnersAdmin.modal.partnerName', 'Partner Name')} <span className="text-red-500">*</span>
                         </label>
                         <input
                           ref={nameInputRef}
@@ -208,116 +208,116 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
                           className={STANDARD_INPUT_FIELD}
                           value={formData.name || ''}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="Enter partner name"
+                          placeholder={t('admin:partnersAdmin.modal.partnerName', 'Enter partner name')}
                           required
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.type', 'Type')}</label>
                           <select
                             className={STANDARD_INPUT_FIELD}
                             value={formData.type || 'CORPORATE'}
                             onChange={(e) => setFormData({ ...formData, type: e.target.value as PartnerType })}
                           >
                             {PARTNER_TYPES.map((type) => (
-                              <option key={type.value} value={type.value}>{type.label}</option>
+                              <option key={type.value} value={type.value}>{t(`admin:partnersAdmin.types.${type.value.toLowerCase()}`, type.label)}</option>
                             ))}
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Country/Region</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.countryRegion', 'Country/Region')}</label>
                           <input
                             type="text"
                             className={STANDARD_INPUT_FIELD}
                             value={formData.countryRegion || ''}
                             onChange={(e) => setFormData({ ...formData, countryRegion: e.target.value })}
-                            placeholder="e.g., Switzerland"
+                            placeholder={t('admin:partnersAdmin.modal.countryRegionPlaceholder', 'e.g., Switzerland')}
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.description', 'Description')}</label>
                         <textarea
                           className={`${STANDARD_INPUT_FIELD} min-h-[80px]`}
                           value={formData.description || ''}
                           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                          placeholder="Brief description of the partner"
+                          placeholder={t('admin:partnersAdmin.modal.descriptionPlaceholder', 'Brief description of the partner')}
                           rows={3}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.websiteUrl', 'Website URL')}</label>
                         <input
                           type="url"
                           className={STANDARD_INPUT_FIELD}
                           value={formData.websiteUrl || ''}
                           onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
-                          placeholder="https://example.com"
+                          placeholder={t('admin:partnersAdmin.modal.websiteUrlPlaceholder', 'https://example.com')}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.logoUrl', 'Logo URL')}</label>
                         <input
                           type="url"
                           className={STANDARD_INPUT_FIELD}
                           value={formData.logoUrl || ''}
                           onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                          placeholder="https://example.com/logo.png"
+                          placeholder={t('admin:partnersAdmin.modal.logoUrlPlaceholder', 'https://example.com/logo.png')}
                         />
                       </div>
                     </div>
 
                     {/* Contact Information */}
                     <div className="space-y-4">
-                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Contact Information</h3>
+                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:partnersAdmin.modal.contactInfo', 'Contact Information')}</h3>
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.contactPerson', 'Contact Person')}</label>
                           <input
                             type="text"
                             className={STANDARD_INPUT_FIELD}
                             value={formData.contactPerson || ''}
                             onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
-                            placeholder="John Doe"
+                            placeholder={t('admin:partnersAdmin.modal.contactPersonPlaceholder', 'John Doe')}
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.email', 'Email')}</label>
                           <input
                             type="email"
                             className={STANDARD_INPUT_FIELD}
                             value={formData.contactEmail || ''}
                             onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                            placeholder="contact@example.com"
+                            placeholder={t('admin:partnersAdmin.modal.emailPlaceholder', 'contact@example.com')}
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.phone', 'Phone')}</label>
                         <input
                           type="tel"
                           className={STANDARD_INPUT_FIELD}
                           value={formData.contactPhone || ''}
                           onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                          placeholder="+41 XX XXX XX XX"
+                          placeholder={t('admin:partnersAdmin.modal.phonePlaceholder', '+41 XX XXX XX XX')}
                         />
                       </div>
                     </div>
 
                     {/* Partnership Details */}
                     <div className="space-y-4">
-                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Partnership Details</h3>
+                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:partnersAdmin.modal.partnershipDetails', 'Partnership Details')}</h3>
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Partnership Start</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.partnershipStart', 'Partnership Start')}</label>
                           <input
                             type="date"
                             className={STANDARD_INPUT_FIELD}
@@ -326,7 +326,7 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Partnership End</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.partnershipEnd', 'Partnership End')}</label>
                           <input
                             type="date"
                             className={STANDARD_INPUT_FIELD}
@@ -337,22 +337,22 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:partnersAdmin.modal.displayOrder', 'Display Order')}</label>
                         <input
                           type="number"
                           className={STANDARD_INPUT_FIELD}
                           value={formData.displayOrder || 0}
                           onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
                           min={0}
-                          placeholder="0"
+                          placeholder={t('admin:partnersAdmin.modal.displayOrderPlaceholder', '0')}
                         />
-                        <p className="mt-1 text-xs text-gray-500">Lower numbers appear first</p>
+                        <p className="mt-1 text-xs text-gray-500">{t('admin:partnersAdmin.modal.displayOrderHint', 'Lower numbers appear first')}</p>
                       </div>
                     </div>
 
                     {/* Status */}
                     <div className="space-y-4">
-                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Visibility</h3>
+                      <h3 className="text-sm font-medium text-gray-700 border-b pb-2">{t('admin:partnersAdmin.modal.visibility', 'Visibility')}</h3>
                       
                       <div className="flex items-center gap-6">
                         <label className="flex items-center gap-2 cursor-pointer">
@@ -362,7 +362,7 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                             className="w-4 h-4 text-swiss-teal border-gray-300 rounded focus:ring-swiss-teal"
                           />
-                          <span className="text-sm text-gray-700">Active</span>
+                          <span className="text-sm text-gray-700">{t('admin:partnersAdmin.modal.active', 'Active')}</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -371,7 +371,7 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
                             onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
                             className="w-4 h-4 text-amber-500 border-gray-300 rounded focus:ring-amber-500"
                           />
-                          <span className="text-sm text-gray-700">Featured</span>
+                          <span className="text-sm text-gray-700">{t('admin:partnersAdmin.modal.featured', 'Featured')}</span>
                         </label>
                       </div>
                     </div>
@@ -391,7 +391,7 @@ const PartnerModal: React.FC<PartnerModalProps> = ({
                       variant="primary"
                       disabled={isLoading}
                     >
-                      {isLoading ? 'Saving...' : mode === 'add' ? 'Create Partner' : 'Save Changes'}
+                      {isLoading ? t('admin:partnersAdmin.modal.saving', 'Saving...') : mode === 'add' ? t('admin:partnersAdmin.modal.createPartner', 'Create Partner') : t('admin:partnersAdmin.modal.saveChanges', 'Save Changes')}
                     </Button>
                   </div>
                 </form>
@@ -462,11 +462,10 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                   
                   <div className="mt-4 text-center">
                     <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900">
-                      Delete Partner
+                      {t('admin:partnersAdmin.delete.title', 'Delete Partner')}
                     </Dialog.Title>
                     <p className="mt-2 text-sm text-gray-600">
-                      Are you sure you want to delete <span className="font-medium">{partner?.name}</span>? 
-                      This action cannot be undone.
+                      {t('admin:partnersAdmin.delete.confirmation', 'Are you sure you want to delete {{name}}? This action cannot be undone.', { name: partner?.name })}
                     </p>
                   </div>
                 </div>
@@ -487,7 +486,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                     disabled={isLoading}
                     className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
                   >
-                    {isLoading ? 'Deleting...' : 'Delete Partner'}
+                    {isLoading ? t('admin:partnersAdmin.delete.deleting', 'Deleting...') : t('admin:partnersAdmin.delete.deletePartner', 'Delete Partner')}
                   </button>
                 </div>
               </Dialog.Panel>
@@ -509,6 +508,7 @@ interface PartnerCardProps {
 }
 
 const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, onToggleActive, onToggleFeatured }) => {
+  const { t } = useTranslation(['admin', 'common'])
   const getTypeIcon = () => {
     switch (partner.type) {
       case 'ACADEMIC':
@@ -548,8 +548,8 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
   }
 
   const getTypeLabel = () => {
-    const typeObj = PARTNER_TYPES.find(t => t.value === partner.type)
-    return typeObj?.label || partner.type
+    const typeObj = PARTNER_TYPES.find(type => type.value === partner.type)
+    return typeObj ? t(`admin:partnersAdmin.types.${typeObj.value.toLowerCase()}`, typeObj.label) : partner.type
   }
 
   return (
@@ -597,7 +597,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
                       className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                     >
                       <Edit className="h-4 w-4 mr-2" />
-                      Edit
+                      {t('admin:partnersAdmin.card.edit', 'Edit')}
                     </button>
                   )}
                 </Menu.Item>
@@ -610,12 +610,12 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
                       {partner.isActive ? (
                         <>
                           <EyeOff className="h-4 w-4 mr-2" />
-                          Deactivate
+                          {t('admin:partnersAdmin.card.deactivate', 'Deactivate')}
                         </>
                       ) : (
                         <>
                           <Eye className="h-4 w-4 mr-2" />
-                          Activate
+                          {t('admin:partnersAdmin.card.activate', 'Activate')}
                         </>
                       )}
                     </button>
@@ -628,7 +628,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
                       className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm ${partner.isFeatured ? 'text-amber-600' : 'text-gray-700'}`}
                     >
                       <Star className={`h-4 w-4 mr-2 ${partner.isFeatured ? 'fill-amber-500' : ''}`} />
-                      {partner.isFeatured ? 'Remove Featured' : 'Mark Featured'}
+                      {partner.isFeatured ? t('admin:partnersAdmin.card.removeFeatured', 'Remove Featured') : t('admin:partnersAdmin.card.markFeatured', 'Mark Featured')}
                     </button>
                   )}
                 </Menu.Item>
@@ -639,7 +639,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
                       className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
+                      {t('admin:partnersAdmin.card.delete', 'Delete')}
                     </button>
                   )}
                 </Menu.Item>
@@ -686,7 +686,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
             className="flex items-center text-sm text-swiss-teal hover:underline"
           >
             <ExternalLink className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span>Visit Website</span>
+            <span>{t('admin:partnersAdmin.card.visitWebsite', 'Visit Website')}</span>
           </a>
         )}
       </div>
@@ -694,12 +694,12 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onEdit, onDelete, on
       {/* Status badges */}
       <div className="mt-4 flex items-center gap-2">
         <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${partner.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
-          {partner.isActive ? 'Active' : 'Inactive'}
+          {partner.isActive ? t('admin:partnersAdmin.card.active', 'Active') : t('admin:partnersAdmin.card.inactive', 'Inactive')}
         </span>
         {partner.partnershipStart && (
           <span className="inline-flex items-center px-2 py-0.5 text-xs text-gray-500">
             <Calendar className="h-3 w-3 mr-1" />
-            Since {new Date(partner.partnershipStart).getFullYear()}
+            {t('admin:partnersAdmin.card.since', 'Since {{year}}', { year: new Date(partner.partnershipStart).getFullYear() })}
           </span>
         )}
       </div>
@@ -885,8 +885,8 @@ const Partners: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load partners</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:partnersAdmin.error.loadFailed', 'Failed to load partners')}</div>
+        <p className="text-gray-600">{t('admin:partnersAdmin.error.description', 'Please check your connection and try again.')}</p>
       </div>
     )
   }
@@ -898,10 +898,10 @@ const Partners: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Handshake className="h-8 w-8 mr-3 text-swiss-teal" />
-            Partners
+            {t('admin:partnersAdmin.title', 'Partners')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage partner organizations and sponsors ({partners.length} total)
+            {t('admin:partnersAdmin.subtitle', 'Manage partner organizations and sponsors ({{count}} total)', { count: partners.length })}
           </p>
         </div>
         <Button
@@ -909,7 +909,7 @@ const Partners: React.FC = () => {
           leftIcon={Plus}
           onClick={handleAddPartner}
         >
-          Add Partner
+          {t('admin:partnersAdmin.addPartner', 'Add Partner')}
         </Button>
       </div>
 
@@ -917,25 +917,25 @@ const Partners: React.FC = () => {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <StatsCard
-            title="Total Partners"
+            title={t('admin:partnersAdmin.stats.totalPartners', 'Total Partners')}
             value={stats.total}
             icon={<Handshake className="h-6 w-6 text-swiss-teal" />}
             color=""
           />
           <StatsCard
-            title="Active"
+            title={t('admin:partnersAdmin.stats.active', 'Active')}
             value={stats.active}
             icon={<Eye className="h-6 w-6 text-green-600" />}
             color=""
           />
           <StatsCard
-            title="Featured"
+            title={t('admin:partnersAdmin.stats.featured', 'Featured')}
             value={stats.featured}
             icon={<Star className="h-6 w-6 text-amber-500" />}
             color=""
           />
           <StatsCard
-            title="Types"
+            title={t('admin:partnersAdmin.stats.types', 'Types')}
             value={stats.byType.length}
             icon={<Globe className="h-6 w-6 text-blue-600" />}
             color=""
@@ -951,7 +951,7 @@ const Partners: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search partners..."
+                placeholder={t('admin:partnersAdmin.searchPlaceholder', 'Search partners...')}
                 className={`${STANDARD_INPUT_FIELD} pl-10`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -964,9 +964,9 @@ const Partners: React.FC = () => {
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as PartnerType | '')}
             >
-              <option value="">All Types</option>
+              <option value="">{t('admin:partnersAdmin.filters.allTypes', 'All Types')}</option>
               {PARTNER_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>{type.label}</option>
+                <option key={type.value} value={type.value}>{t(`admin:partnersAdmin.types.${type.value.toLowerCase()}`, type.label)}</option>
               ))}
             </select>
           </div>
@@ -976,9 +976,9 @@ const Partners: React.FC = () => {
               value={filterActive}
               onChange={(e) => setFilterActive(e.target.value)}
             >
-              <option value="">All Status</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
+              <option value="">{t('admin:partnersAdmin.filters.allStatus', 'All Status')}</option>
+              <option value="true">{t('admin:partnersAdmin.filters.active', 'Active')}</option>
+              <option value="false">{t('admin:partnersAdmin.filters.inactive', 'Inactive')}</option>
             </select>
           </div>
         </div>
@@ -1004,17 +1004,17 @@ const Partners: React.FC = () => {
           <Handshake className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             {searchQuery || filterType || filterActive
-              ? 'No partners found'
-              : 'No partners yet'}
+              ? t('admin:partnersAdmin.emptyState.noPartnersFound', 'No partners found')
+              : t('admin:partnersAdmin.emptyState.noPartnersYet', 'No partners yet')}
           </h3>
           <p className="text-gray-600 mb-4">
             {searchQuery || filterType || filterActive
-              ? 'Try adjusting your search or filter criteria'
-              : 'Get started by adding your first partner'}
+              ? t('admin:partnersAdmin.emptyState.tryAdjusting', 'Try adjusting your search or filter criteria')
+              : t('admin:partnersAdmin.emptyState.getStarted', 'Get started by adding your first partner')}
           </p>
           {!searchQuery && !filterType && !filterActive && (
             <Button variant="primary" leftIcon={Plus} onClick={handleAddPartner}>
-              Add Partner
+              {t('admin:partnersAdmin.addPartner', 'Add Partner')}
             </Button>
           )}
         </div>
