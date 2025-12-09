@@ -48,7 +48,7 @@ class MarketplaceService {
     if (filters.search) params.append('search', filters.search);
     
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/organizations?${params.toString()}`
+      `/compat/organizations?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch product suppliers');
@@ -73,7 +73,7 @@ class MarketplaceService {
     if (filters.search) params.append('search', filters.search);
     
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/organizations?${params.toString()}`
+      `/compat/organizations?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch service providers');
