@@ -1,5 +1,31 @@
 # Build Status & Troubleshooting
 
+## Current Issue: Render install fails before build (Resolved)
+
+### Error Message
+```
+pnpm install --frozen-lockfile
+ERR_PNPM_OUTDATED_LOCKFILE: Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json
+```
+
+### Root Cause
+- Husky (`"husky": "^9.1.7"`) was added to the root `package.json` but the workspace lockfile was never regenerated.
+- Render’s build command (`pnpm install --frozen-lockfile && cd api && pnpm run build:render`) runs a frozen install before any scripts, so the deployment dies before it can even attempt the API build.
+
+### Fix
+1. Run `pnpm install` locally and commit the refreshed `pnpm-lock.yaml`.
+2. Add `scripts/prebuild-lock-check.mjs` plus the `pnpm run prebuild:render` npm script to guard the lockfile before any Render build starts.
+3. Ensure every Render service executes the guard (see `render.yaml` – each `buildCommand` now starts with `pnpm run prebuild:render`).
+
+### Local Verification
+```bash
+pnpm run prebuild:render        # Fails fast if pnpm-lock.yaml is stale
+pnpm install --frozen-lockfile  # Succeeds locally after the fix
+cd api && pnpm run build:render # Optional – mirrors Render’s build
+```
+
+---
+
 ## Current Issue: Frontend Build Failing
 
 ### Error Message

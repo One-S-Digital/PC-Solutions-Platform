@@ -89,6 +89,9 @@ importers:
       helmet:
         specifier: ^8.1.0
         version: 8.1.0
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       lucide-react:
         specifier: ^0.544.0
         version: 0.544.0(react@19.1.1)
@@ -138,9 +141,6 @@ importers:
       glob:
         specifier: ^11.0.0
         version: 11.0.3
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
