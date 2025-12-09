@@ -4,7 +4,7 @@ import { useUser } from '@clerk/clerk-react';
 import { SettingsFormData, UserRole } from '../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
-import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon, CheckCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, EyeIcon, EyeSlashIcon, ShieldExclamationIcon, CheckCircleIcon, EnvelopeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import Button from '../../ui/Button';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
@@ -293,6 +293,9 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
   };
 
   const hasOrgName = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(userRole);
+  const emailErrorDescriptionId = 'change-email-error-feedback';
+  const showEmailInputError = Boolean(emailError && emailChangeStep === 'input');
+  const showVerificationError = Boolean(emailError && emailChangeStep === 'verify');
   
   return (
     <SettingsSectionWrapper title={t('settings:page.accountSecurity')} icon={UserCircleIcon}>
@@ -422,6 +425,36 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
             </p>
           </div>
 
+          {emailError && (
+            <div
+              className="mt-4 rounded-lg border border-swiss-coral/40 bg-swiss-coral/5 p-4"
+              role="alert"
+              aria-live="assertive"
+              id={emailErrorDescriptionId}
+            >
+              <div className="flex items-start">
+                <XCircleIcon className="h-5 w-5 text-swiss-coral mt-0.5 mr-3 flex-shrink-0" aria-hidden="true" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-swiss-coral">
+                    {t('common:settingsAccountSecurity.changeEmail.errorTitle', "We couldn't update your email address")}
+                  </p>
+                  <p className="text-sm text-gray-700 mt-1">{emailError}</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {emailChangeStep === 'input'
+                      ? t(
+                          'common:settingsAccountSecurity.changeEmail.errorHelpInput',
+                          'Please double-check the email address or try again with a different one.'
+                        )
+                      : t(
+                          'common:settingsAccountSecurity.changeEmail.errorHelpVerify',
+                          'Please re-enter the verification code or request a new one below.'
+                        )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {emailChangeStep === 'input' ? (
             <form onSubmit={handleInitiateEmailChange}>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4 items-start">
@@ -434,9 +467,16 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                     id="newEmail" 
                     name="newEmail" 
                     value={newEmail} 
-                    onChange={(e) => setNewEmail(e.target.value)} 
+                    onChange={(e) => {
+                      setNewEmail(e.target.value);
+                      if (emailError) {
+                        setEmailError(null);
+                      }
+                    }} 
                     placeholder={t('common:settingsAccountSecurity.changeEmail.newEmailPlaceholder', 'Enter your new email address')}
-                    className={STANDARD_INPUT_FIELD} 
+                    className={`${STANDARD_INPUT_FIELD} ${showEmailInputError ? 'border-swiss-coral focus:border-swiss-coral ring-1 ring-swiss-coral/30' : ''}`} 
+                    aria-invalid={showEmailInputError}
+                    aria-describedby={showEmailInputError ? emailErrorDescriptionId : undefined}
                     required
                   />
                 </div>
@@ -466,10 +506,17 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
                     id="verificationCode" 
                     name="verificationCode" 
                     value={verificationCode} 
-                    onChange={(e) => setVerificationCode(e.target.value)} 
+                    onChange={(e) => {
+                      setVerificationCode(e.target.value);
+                      if (emailError) {
+                        setEmailError(null);
+                      }
+                    }} 
                     placeholder={t('common:settingsAccountSecurity.changeEmail.verificationCodePlaceholder', 'Enter 6-digit code')}
-                    className={STANDARD_INPUT_FIELD} 
+                    className={`${STANDARD_INPUT_FIELD} ${showVerificationError ? 'border-swiss-coral focus:border-swiss-coral ring-1 ring-swiss-coral/30' : ''}`} 
                     maxLength={6}
+                    aria-invalid={showVerificationError}
+                    aria-describedby={showVerificationError ? emailErrorDescriptionId : undefined}
                     required
                   />
                 </div>
@@ -507,12 +554,6 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
             </div>
           )}
 
-          {/* Error Message */}
-          {emailError && (
-            <div className="mt-4">
-              <p className="text-sm text-swiss-coral font-medium">{emailError}</p>
-            </div>
-          )}
         </div>
 
         <hr />
