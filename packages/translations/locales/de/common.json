@@ -1208,5 +1208,9 @@
     "active": "[DE] Active",
     "archived": "[DE] Archived",
     "draft": "[DE] Draft"
+  },
+  "statePolicies": {
+    "policyCount_one": "{{count}} Richtlinie",
+    "policyCount_other": "{{count}} Richtlinien"
   }
 }

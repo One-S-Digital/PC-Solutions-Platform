@@ -89,14 +89,19 @@ const CourseMaterialCard: React.FC<CourseMaterialCardProps> = ({ item, onPreview
         </p>
         {item.tags && item.tags.length > 0 && (
           <div className="my-2">
-            {item.tags.map(tag => (
-              <span key={tag} className={`text-xs px-2 py-0.5 rounded-full mr-1 mb-1 inline-block ${
-                tag === 'Mandatory' ? 'bg-red-100 text-red-700' : 
+            {item.tags.map(tag => {
+              const tagKey = tag.toLowerCase() as 'mandatory' | 'new' | 'updated' | 'critical';
+              const tagColor = tag === 'Mandatory' ? 'bg-red-100 text-red-700' : 
                 tag === 'New' ? 'bg-blue-100 text-blue-700' : 
                 tag === 'Updated' ? 'bg-yellow-100 text-yellow-700' :
                 tag === 'Critical' ? 'bg-orange-100 text-orange-700' :
-                'bg-gray-100 text-gray-700'}`}>{tag}</span>
-            ))}
+                'bg-gray-100 text-gray-700';
+              return (
+                <span key={tag} className={`text-xs px-2 py-0.5 rounded-full mr-1 mb-1 inline-block ${tagColor}`}>
+                  {t(`eLearning.tags.${tagKey}`, tag)}
+                </span>
+              );
+            })}
           </div>
         )}
       </div>
@@ -125,7 +130,7 @@ const ELearningTypeDisplayCard: React.FC<{title: string, icon: React.ElementType
     >
       <Icon className="w-10 h-10 mb-3 text-current"/>
       <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
-      <p className="text-sm opacity-80 text-current">{count} {count === 1 ? 'item' : 'items'}</p>
+      <p className="text-sm opacity-80 text-current">{count} {t('eLearning.items', { count })}</p>
     </div>
   );
 };
@@ -398,7 +403,7 @@ const ELearningPage: React.FC = () => {
         </div>
       </Card>
 
-      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">Content Types</h2>
+      <h2 className="text-2xl font-semibold text-swiss-charcoal mt-6 mb-3">{t('eLearning.contentTypesTitle')}</h2>
       
       {isLoading && (
         <div className="text-center py-8">
@@ -408,7 +413,7 @@ const ELearningPage: React.FC = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         <ELearningTypeDisplayCard
-          title={t('common:titles.allcontent')}
+          title={t('eLearning.allContentTitle')}
           icon={AcademicCapIcon}
           count={totalItems}
           colorClasses="bg-gray-100 text-gray-700 hover:bg-gray-200"

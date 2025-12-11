@@ -70,14 +70,19 @@ const HRDocumentCard: React.FC<HRDocumentCardProps> = ({ doc, onToggleFavorite, 
           <CalendarDaysIcon className="w-4 h-4 inline mr-1" /> {t('hrProcedures.documentCard.lastUpdatedLabel')}: {new Date(doc.lastUpdated).toLocaleDateString()}
         </p>
         <div className="my-2">
-          {doc.tags.map(tag => (
-            <span key={tag} className={`text-xs px-2 py-0.5 rounded-full mr-1 mb-1 inline-block ${
-              tag === 'Mandatory' ? 'bg-red-100 text-red-700' : 
+          {doc.tags.map(tag => {
+            const tagKey = tag.toLowerCase() as 'mandatory' | 'new' | 'updated' | 'critical';
+            const tagColor = tag === 'Mandatory' ? 'bg-red-100 text-red-700' : 
               tag === 'New' ? 'bg-blue-100 text-blue-700' : 
               tag === 'Updated' ? 'bg-yellow-100 text-yellow-700' :
               tag === 'Critical' ? 'bg-orange-100 text-orange-700' :
-              'bg-gray-100 text-gray-700'}`}>{tag}</span>
-          ))}
+              'bg-gray-100 text-gray-700';
+            return (
+              <span key={tag} className={`text-xs px-2 py-0.5 rounded-full mr-1 mb-1 inline-block ${tagColor}`}>
+                {t(`eLearning.tags.${tagKey}`, tag)}
+              </span>
+            );
+          })}
         </div>
       </div>
       <div className="bg-gray-50 px-5 py-3 mt-auto border-t flex justify-end items-center space-x-2">
@@ -268,7 +273,7 @@ const HRProceduresPage: React.FC = () => {
         />
         {categoriesWithCounts.map(({ category, count }) => {
           const visualConfig = categoryVisuals[category] || { icon: DocumentTextIcon, colorClasses: 'bg-gray-500 text-white' };
-          const label = HR_CATEGORY_LABELS[category] || category;
+          const label = t(`hrProcedures.categories.${category.toLowerCase()}`, HR_CATEGORY_LABELS[category] || category);
           return (
             <CategoryDisplayCard 
               key={category} 
@@ -287,7 +292,7 @@ const HRProceduresPage: React.FC = () => {
       </div>
       
       <h2 className="text-2xl font-semibold text-swiss-charcoal mt-8 mb-4">
-        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory }) : t('hrProcedures.allDocumentsCategory')}
+        {selectedCategory ? t('hrProcedures.documentsInCategoryTitle', { category: t(`hrProcedures.categories.${selectedCategory.toLowerCase()}`, HR_CATEGORY_LABELS[selectedCategory] || selectedCategory) }) : t('hrProcedures.allDocumentsCategory')}
         <span className="text-base font-normal text-gray-500 ml-2">{t('hrProcedures.allItemsCount', { count: filteredDocs.length })}</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -301,7 +306,7 @@ const HRProceduresPage: React.FC = () => {
           />
         ))}
       </div>
-      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: HR_CATEGORY_LABELS[selectedCategory] || selectedCategory })}</p>}
+      {filteredDocs.length === 0 && selectedCategory && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsInCategory', { category: t(`hrProcedures.categories.${selectedCategory.toLowerCase()}`, HR_CATEGORY_LABELS[selectedCategory] || selectedCategory) })}</p>}
       {filteredDocs.length === 0 && !selectedCategory && totalPublishedDocs > 0 && <p className="text-center text-gray-500 py-8">{t('hrProcedures.noDocumentsMatchSearch')}</p>}
 
       {previewDoc && (

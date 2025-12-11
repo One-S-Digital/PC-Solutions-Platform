@@ -11,9 +11,19 @@
       "title": "Gestion du contenu"
     },
     "hrProcedures": {
+      "categories": {
+        "onboarding": "Intégration et orientation",
+        "policies": "Politiques et juridique",
+        "benefits": "Avantages et compensation",
+        "training": "Formation et certification",
+        "compliance": "Conformité et sécurité",
+        "performance": "Performance et évaluations",
+        "other": "Autres ressources"
+      },
       "categoryDisplay": {
         "viewCategoryAria": "Voir {{titre}}",
-        "documentsCount": "{{count}} documents"
+        "documentsCount_one": "{{count}} document",
+        "documentsCount_other": "{{count}} documents"
       },
       "documentCard": {
         "toggleFavoriteLabel": "Toggle Favorite",
@@ -44,6 +54,7 @@
       "searchPlaceholder": "Recherche de documents...",
       "categoriesTitle": "Catégories de documents RH",
       "allItemsCount": "{{count}} documents",
+      "adminUploadNote": "Utiliser le tableau de bord d'administration pour ajouter/modifier les documents",
       "title": "Procédures RH"
     },
     "statePoliciesPage": {
@@ -86,11 +97,22 @@
       "addNewContentButton": "Ajouter un nouveau contenu",
       "externalLinksTitle": "Liens externes",
       "searchPlaceholder": "Contenu de la recherche...",
+      "contentTypesTitle": "Types de contenu",
+      "allContentTitle": "Tout le contenu",
+      "allCategoriesLabel": "Toutes les catégories",
       "itemType": {
         "courses": "Cours",
         "videos": "Vidéos",
         "links": "Liens",
         "pdfs": "PDFs"
+      },
+      "items_one": "élément",
+      "items_other": "éléments",
+      "tags": {
+        "mandatory": "Obligatoire",
+        "new": "Nouveau",
+        "updated": "Mis à jour",
+        "critical": "Critique"
       },
       "noContentFound": "Pas de contenu disponible",
       "categoryLabel": "Catégorie",
@@ -109,6 +131,7 @@
       "viewingAlert": "Visualisation",
       "videosTitle": "Vidéos",
       "pdfsTitle": "Documents PDF",
+      "adminUploadNote": "Utiliser le tableau de bord d'administration pour ajouter/modifier le contenu",
       "title": "Apprentissage en ligne"
     },
     "statePolicies": {
@@ -169,7 +192,8 @@
   "hrProcedures": {
     "categoryDisplay": {
       "viewCategoryAria": "Voir {{titre}}",
-      "documentsCount": "{{count}} documents"
+      "documentsCount_one": "{{count}} document",
+      "documentsCount_other": "{{count}} documents"
     },
     "documentCard": {
       "toggleFavoriteLabel": "Toggle Favorite",

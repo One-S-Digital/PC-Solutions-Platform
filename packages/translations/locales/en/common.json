@@ -1166,5 +1166,9 @@
     "active": "Active",
     "archived": "Archived",
     "draft": "Draft"
+  },
+  "statePolicies": {
+    "policyCount_one": "{{count}} policy",
+    "policyCount_other": "{{count}} policies"
   }
 }

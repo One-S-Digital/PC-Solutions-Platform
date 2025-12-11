@@ -1180,5 +1180,9 @@
     "active": "[FR] Active",
     "archived": "[FR] Archived",
     "draft": "[FR] Draft"
+  },
+  "statePolicies": {
+    "policyCount_one": "{{count}} politique",
+    "policyCount_other": "{{count}} politiques"
   }
 }

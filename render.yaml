@@ -13,7 +13,7 @@ services:
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false  # Must be set manually in Render dashboard
       - key: VITE_API_URL
-        value: https://pc-solutions-api.onrender.com
+        value: https://pc-solutions-v2.onrender.com/api
       - key: VITE_SKIP_AUTH
         value: false
       - key: VITE_DEVELOPMENT_MODE
@@ -21,7 +21,7 @@ services:
 
   # API Backend Service
   - type: web
-    name: pc-solutions-api
+    name: pc-solutions-v2
     env: node
     plan: starter
     buildCommand: cd api && pnpm install && pnpm run build:render
@@ -39,6 +39,12 @@ services:
         fromDatabase:
           name: pc-solutions-db
           property: connectionString
+      # Required for Clerk JWT token validation (azp claim)
+      - key: ADMIN_ORIGIN
+        value: https://admin.procrechesolutions.com
+      - key: APP_ORIGIN
+        value: https://app.procrechesolutions.com
+        # Note: Update APP_ORIGIN if your frontend uses a different domain (e.g., dash.procrechesolutions.com)
 
   # Admin Panel Service
   - type: web
@@ -54,7 +60,9 @@ services:
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false  # Must be set manually in Render dashboard
       - key: VITE_API_URL
-        value: https://pc-solutions-api.onrender.com
+        value: https://pc-solutions-v2.onrender.com/api
+        # Note: Must include /api suffix as admin code uses this directly as baseURL
+        # Note: Using pc-solutions-v2 as that appears to be the actual service name in Render
       - key: VITE_SKIP_AUTH
         value: false
 

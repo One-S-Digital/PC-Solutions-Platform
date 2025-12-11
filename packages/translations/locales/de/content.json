@@ -11,9 +11,19 @@
       "title": "Inhaltsverwaltung"
     },
     "hrProcedures": {
+      "categories": {
+        "onboarding": "Einarbeitung und Orientierung",
+        "policies": "Richtlinien und Rechtliches",
+        "benefits": "Vorteile und Vergütung",
+        "training": "Schulung und Zertifizierung",
+        "compliance": "Compliance und Sicherheit",
+        "performance": "Leistung und Bewertungen",
+        "other": "Andere Ressourcen"
+      },
       "categoryDisplay": {
         "viewCategoryAria": "Ansicht {{Titel}}",
-        "documentsCount": "{{Zahl}} Dokumente"
+        "documentsCount_one": "{{count}} Dokument",
+        "documentsCount_other": "{{count}} Dokumente"
       },
       "documentCard": {
         "toggleFavoriteLabel": "Favorit umschalten",
@@ -43,7 +53,8 @@
       "uploadButton": "Dokument hochladen",
       "searchPlaceholder": "Dokumente suchen...",
       "categoriesTitle": "HR-Dokument-Kategorien",
-      "allItemsCount": "{{Zahl}} Dokumente",
+      "allItemsCount": "{{count}} Dokumente",
+      "adminUploadNote": "Admin-Dashboard verwenden, um Dokumente hinzuzufügen/zu bearbeiten",
       "title": "HR-Verfahren"
     },
     "statePoliciesPage": {
@@ -86,11 +97,22 @@
       "addNewContentButton": "Neue Inhalte hinzufügen",
       "externalLinksTitle": "Externe Links",
       "searchPlaceholder": "Inhalt suchen...",
+      "contentTypesTitle": "Inhaltstypen",
+      "allContentTitle": "Alle Inhalte",
+      "allCategoriesLabel": "Alle Kategorien",
       "itemType": {
         "courses": "Kurse",
         "videos": "Videos",
         "links": "Links",
         "pdfs": "PDFs"
+      },
+      "items_one": "Element",
+      "items_other": "Elemente",
+      "tags": {
+        "mandatory": "Obligatorisch",
+        "new": "Neu",
+        "updated": "Aktualisiert",
+        "critical": "Kritisch"
       },
       "noContentFound": "Kein Inhalt verfügbar",
       "categoryLabel": "Kategorie",
@@ -98,7 +120,7 @@
       "durationLabel": "Dauer",
       "languageLabel": "Sprache",
       "coursesTitle": "Kurse",
-      "lessonsCount": "{{Zahl}} Lektionen",
+      "lessonsCount": "{{count}} Lektionen",
       "noItemsFound": "Keine Artikel gefunden",
       "tabs": {
         "courses": "Kurse",
@@ -169,7 +191,8 @@
   "hrProcedures": {
     "categoryDisplay": {
       "viewCategoryAria": "{{title}} anzeigen",
-      "documentsCount": "{{count}} Dokumente"
+      "documentsCount_one": "{{count}} Dokument",
+      "documentsCount_other": "{{count}} Dokumente"
     },
     "documentCard": {
       "toggleFavoriteLabel": "Favorit umschalten",
@@ -211,49 +234,61 @@
     "DataPrivacy": "Datenschutz",
     "Other": "Andere Politiken"
   },
-  "eLearning": {
-    "buttons": {
-      "addNewContent": "Neuen Inhalt hinzufügen"
+    "eLearning": {
+      "buttons": {
+        "addNewContent": "Neuen Inhalt hinzufügen"
+      },
+      "emptyState": {
+        "noContent": "Kein Inhalt verfügbar"
+      },
+      "actions": {
+        "downloadPdf": "PDF herunterladen",
+        "viewCourse": "Kurs anzeigen",
+        "watchVideo": "Video ansehen",
+        "openLink": "Link öffnen",
+        "viewLink": "Link anzeigen",
+        "viewPdf": "PDF anzeigen"
+      },
+      "addNewContentButton": "Neuen Inhalt hinzufügen",
+      "externalLinksTitle": "Externe Links",
+      "searchPlaceholder": "Inhalt durchsuchen...",
+      "contentTypesTitle": "Inhaltstypen",
+      "allContentTitle": "Alle Inhalte",
+      "allCategoriesLabel": "Alle Kategorien",
+      "itemType": {
+        "courses": "Kurse",
+        "videos": "Videos",
+        "links": "Links",
+        "pdfs": "Pdfs"
+      },
+      "items_one": "Element",
+      "items_other": "Elemente",
+      "tags": {
+        "mandatory": "Obligatorisch",
+        "new": "Neu",
+        "updated": "Aktualisiert",
+        "critical": "Kritisch"
+      },
+      "noContentFound": "Kein Inhalt verfügbar",
+      "categoryLabel": "Kategorie",
+      "confirmDelete": "Möchten Sie dieses Element wirklich löschen?",
+      "durationLabel": "Dauer",
+      "languageLabel": "Sprache",
+      "coursesTitle": "Kurse",
+      "lessonsCount": "{{count}} Lektionen",
+      "noItemsFound": "Keine Elemente gefunden",
+      "tabs": {
+        "courses": "Kurse",
+        "videos": "Videos",
+        "pdfs": "PDFs"
+      },
+      "updatedLabel": "Aktualisiert",
+      "viewingAlert": "Anzeigen",
+      "videosTitle": "Videos",
+      "pdfsTitle": "Dokumente",
+      "adminUploadNote": "Admin-Dashboard verwenden, um Inhalte hinzuzufügen/zu bearbeiten",
+      "title": "E-Learning"
     },
-    "emptyState": {
-      "noContent": "Kein Inhalt verfügbar"
-    },
-    "actions": {
-      "downloadPdf": "PDF herunterladen",
-      "viewCourse": "Kurs anzeigen",
-      "watchVideo": "Video ansehen",
-      "openLink": "Link öffnen",
-      "viewLink": "Link anzeigen",
-      "viewPdf": "PDF anzeigen"
-    },
-    "addNewContentButton": "Neuen Inhalt hinzufügen",
-    "externalLinksTitle": "Externe Links",
-    "searchPlaceholder": "Inhalt durchsuchen...",
-    "itemType": {
-      "courses": "Kurse",
-      "videos": "Videos",
-      "links": "Links",
-      "pdfs": "Pdfs"
-    },
-    "noContentFound": "Kein Inhalt verfügbar",
-    "categoryLabel": "Kategorie",
-    "confirmDelete": "Möchten Sie dieses Element wirklich löschen?",
-    "durationLabel": "Dauer",
-    "languageLabel": "Sprache",
-    "coursesTitle": "Kurse",
-    "lessonsCount": "{{count}} Lektionen",
-    "noItemsFound": "Keine Elemente gefunden",
-    "tabs": {
-      "courses": "Kurse",
-      "videos": "Videos",
-      "pdfs": "PDFs"
-    },
-    "updatedLabel": "Aktualisiert",
-    "viewingAlert": "Anzeigen",
-    "videosTitle": "Videos",
-    "pdfsTitle": "Dokumente",
-    "title": "E-Learning"
-  },
   "statePolicies": {
     "title": "Staatliche Richtlinien"
   }
