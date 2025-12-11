@@ -66,7 +66,10 @@
       "filters": {
         "policyType": "Policy Type",
         "canton": "Canton",
-        "region": "Region"
+        "region": "Region",
+        "ariaLabelPolicyType": "Filter by policy type",
+        "ariaLabelCanton": "Filter by canton",
+        "ariaLabelCategory": "Filter by category"
       },
       "tabs": {
         "cantonal": "Cantonal",
@@ -130,7 +133,10 @@
       "allCantonsRegions": "All Cantons Regions",
       "policyType": "Policy Type",
       "canton": "Canton",
-      "region": "Region"
+      "region": "Region",
+      "ariaLabelPolicyType": "Filter by policy type",
+      "ariaLabelCanton": "Filter by canton",
+      "ariaLabelCategory": "Filter by category"
     },
     "buttons": {
       "addEditPolicy": "Add Edit Policy",

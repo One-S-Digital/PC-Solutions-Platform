@@ -73,7 +73,10 @@
       "filters": {
         "policyType": "Richtlinientyp",
         "canton": "Kanton",
-        "region": "Region"
+        "region": "Region",
+        "ariaLabelPolicyType": "Nach Richtlinientyp filtern",
+        "ariaLabelCanton": "Nach Kanton filtern",
+        "ariaLabelCategory": "Nach Kategorie filtern"
       },
       "tabs": {
         "cantonal": "Kantonal",
@@ -147,7 +150,10 @@
       "allCantonsRegions": "Alle Kantone Regionen",
       "policyType": "Richtlinientyp",
       "canton": "Kanton",
-      "region": "Region"
+      "region": "Region",
+      "ariaLabelPolicyType": "Nach Richtlinientyp filtern",
+      "ariaLabelCanton": "Nach Kanton filtern",
+      "ariaLabelCategory": "Nach Kategorie filtern"
     },
     "buttons": {
       "addEditPolicy": "Richtlinie hinzufügen/bearbeiten",

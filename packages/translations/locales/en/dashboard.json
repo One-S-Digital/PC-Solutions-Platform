@@ -202,12 +202,14 @@
       "jobApplication": "New job application submitted",
       "orderConfirmation": "Order confirmation received",
       "serviceUpdate": "Service request updated",
-      "newMessage": "New message received"
+      "newMessage": "New message received",
+      "noActivity": "No recent activity"
     },
     "calendar": {
       "event1": "Staff meeting",
       "event2": "Parent consultation",
-      "event3": "Training session"
+      "event3": "Training session",
+      "noEvents": "No events scheduled"
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -570,6 +572,7 @@
         "categories": "Categories",
         "button": "Manage Services",
         "newServiceButton": "Add New Service",
+        "noCategories": "No categories yet",
         "tags": {
           "cleaning": "Cleaning",
           "workshops": "Workshops"
@@ -578,6 +581,7 @@
       "appointments": {
         "title": "Upcoming Appointments",
         "with": "with",
+        "notScheduled": "Not scheduled yet",
         "button": "View All Appointments"
       }
     }

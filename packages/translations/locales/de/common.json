@@ -58,7 +58,9 @@
     "yes": "Ja",
     "no": "Nein",
     "ok": "OK",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "refresh": "Aktualisieren",
+    "verifyEmail": "E-Mail verifizieren"
   },
   "common": {
     "loading": "Laden...",
@@ -97,7 +99,9 @@
     "unauthorized": "Nicht autorisiert",
     "forbidden": "Zugriff verweigert",
     "notFound": "Ressource nicht gefunden",
-    "serverError": "Serverfehler"
+    "serverError": "Serverfehler",
+    "genericErrorTitle": "Etwas ist schiefgelaufen",
+    "genericErrorMessage": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, wenn das Problem besteht."
   },
   "notifications": {
     "errorTitle": "Fehler",
@@ -1211,6 +1215,80 @@
   },
   "statePolicies": {
     "policyCount_one": "{{count}} Richtlinie",
-    "policyCount_other": "{{count}} Richtlinien"
+    "policyCount_other": "{{count}} Richtlinien",
+    "criticalUpdate": "Kritisches Update",
+    "viewOnline": "Online ansehen",
+    "download": "Herunterladen",
+    "preview": "Vorschau",
+    "policyCount": "Richtlinien",
+    "allPolicyTypes": "Alle Richtlinientypen",
+    "allCategories": "Alle Kategorien",
+    "allPolicies": "Alle Richtlinien",
+    "policies": "Richtlinien",
+    "policy": "Richtlinie"
+  },
+  "goToPricingButton": "Zu den Preisen",
+  "goToDashboardButton": "Zum Dashboard",
+  "submissionSuccessTitle": "Konto erfolgreich erstellt",
+  "submissionSuccessMessage": "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden oder zum Dashboard wechseln.",
+  "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
+  "termsLink": "Geschäftsbedingungen",
+  "verifyEmail": "E-Mail bestätigen",
+  "verifyEmailMessage": "Wir haben Ihnen einen 6-stelligen Code gesendet. Geben Sie ihn unten ein, um zu bestätigen.",
+  "labels": {
+    "verificationCode": "Verifizierungscode"
+  },
+  "verifying": "Wird überprüft...",
+  "errors": {
+    "genericErrorTitle": "Etwas ist schiefgelaufen",
+    "genericErrorMessage": "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, wenn das Problem besteht."
+  },
+  "buttons": {
+    "verifyEmail": "E-Mail verifizieren"
+  },
+  "placeholders": {
+    "searchKeyword": "Nach Stichwort suchen"
+  },
+  "notAvailable": "Nicht verfügbar",
+  "marketplace": {
+    "contactForPricing": "Für Preise kontaktieren"
+  },
+  "roleManagement": {
+    "rolePageTitle": "Rollenverwaltung",
+    "allUsersTitle": "Alle Benutzer",
+    "searchPlaceholder": "Benutzer suchen...",
+    "filtersTBD": "Filter folgen",
+    "filtersButton": "Filter",
+    "addNewUserButton": "Benutzer hinzufügen",
+    "addNewUserTBD": "Benutzeranlage folgt",
+    "confirmDeleteUser": "Diesen Benutzer löschen?",
+    "cannotDeleteOwnAccount": "Eigener Account kann nicht gelöscht werden.",
+    "userProfileUpdated": "Benutzerprofil aktualisiert.",
+    "status": {
+      "pending": "Ausstehend"
+    },
+    "userDetailDrawer": {
+      "title": "Benutzerdetails",
+      "roleLabel": "Rolle",
+      "statusLabel": "Status",
+      "regionLabel": "Region",
+      "lastLoginLabel": "Letzter Login",
+      "orgLabel": "Organisation",
+      "adminActionsTitle": "Admin-Aktionen",
+      "changeRoleLabel": "Rolle ändern",
+      "updateRoleButton": "Rolle aktualisieren",
+      "suspendUserButton": "Benutzer sperren",
+      "activateUserButton": "Benutzer aktivieren",
+      "cannotModifyOwnAccount": "Eigener Account kann nicht geändert werden."
+    },
+    "table": {
+      "nameOrg": "Name / Organisation",
+      "role": "Rolle",
+      "status": "Status",
+      "region": "Region",
+      "lastLogin": "Letzter Login",
+      "actions": "Aktionen"
+    },
+    "emptyState": "Keine Benutzer gefunden."
   }
 }

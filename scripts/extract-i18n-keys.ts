@@ -10,8 +10,10 @@ import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
 
-const FRONTEND_DIR = path.join(__dirname, '../frontend');
-const OUTPUT_FILE = path.join(__dirname, '../i18n-used-keys.json');
+// Resolve paths from project root (works in CJS/TS-node)
+const ROOT_DIR = path.resolve(process.cwd());
+const FRONTEND_DIR = path.join(ROOT_DIR, 'frontend');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'i18n-used-keys.json');
 
 interface UsedKey {
   key: string;

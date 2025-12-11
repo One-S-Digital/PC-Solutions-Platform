@@ -131,9 +131,12 @@
     },
     "creatingAccount": "Création d'un compte...",
     "selectRoleTitle": "Sélectionnez votre rôle",
+    "selectRoleTitle.oauth": "Terminez votre inscription",
     "progress": {
       "step1": "Étape 1 de 2",
-      "step2": "Étape 2 de 2"
+      "step2": "Étape 2 de 2",
+      "oauthStep1": "Étape 1 : Connexion",
+      "oauthStep2": "Étape 2 : Complétez vos informations"
     },
     "detailsTitle": "Entrez vos détails pour {{role}}",
     "termsLabel": "J'accepte les termes et conditions",
@@ -296,9 +299,12 @@
   "completeProfile": "Profil complet",
   "creatingAccount": "Création d'un compte",
   "selectRoleTitle": "Sélectionnez votre rôle",
+  "selectRoleTitle.oauth": "Terminez votre inscription",
   "progress": {
     "step1": "Étape 1 de 2",
-    "step2": "Étape 2 de 2"
+    "step2": "Étape 2 de 2",
+    "oauthStep1": "Étape 1 : Connexion",
+    "oauthStep2": "Étape 2 : Complétez vos informations"
   },
   "detailsTitle": "Entrez vos détails pour {{role}}",
   "termsLabel": "J'accepte les termes et conditions",

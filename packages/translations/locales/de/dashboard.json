@@ -1,4 +1,36 @@
 {
+  "serviceProviderDashboardPage": {
+    "title": "Dienstanbieter-Dashboard",
+    "welcome": "Willkommen in Ihrem Dienstanbieter-Dashboard",
+    "services": "Meine Dienste",
+    "requests": "Serviceanfragen"
+  },
+  "dashboardPage": {
+    "defaultUser": "Benutzer",
+    "activeUsers": "Aktive Nutzer",
+    "newOrders": "Neue Bestellungen",
+    "openJobs": "Offene Stellen",
+    "pageViews": "Seitenaufrufe",
+    "welcome": "Willkommen zurück, {{name}}!",
+    "overviewSubtitle": "Das passiert heute bei {{appName}}",
+    "quickLinks": "Schnellzugriffe",
+    "browseMarketplace": "Marketplace durchsuchen",
+    "postNewJob": "Stelle veröffentlichen",
+    "manageUsers": "Benutzer verwalten",
+    "platformSettings": "Plattformeinstellungen",
+    "recentActivity": "Aktuelle Aktivitäten",
+    "viewDetailsFor": "Details anzeigen für {{name}}",
+    "activityLina": "Lina hat ein neues Richtliniendokument hochgeladen",
+    "activityEcoToys": "EcoToys hat ein neues Produkt eingereicht",
+    "activityJohn": "John hat sich auf die Erzieherstelle beworben",
+    "activityParent": "Ein Elternteil hat eine neue Anfrage eingereicht",
+    "timeAgo": {
+      "minutes": "{{count}} Minuten",
+      "hours": "{{count}} Stunden",
+      "yesterday": "Gestern",
+      "days": "{{count}} Tage"
+    }
+  },
   "serviceProviderDashboard": {
     "widgets": {
       "management": {
@@ -11,7 +43,8 @@
         "listings": "Anzeigen",
         "pending": "Ausstehend",
         "button": "Dienste verwalten",
-        "title": "Serviceverwaltung"
+        "title": "Serviceverwaltung",
+        "noCategories": "Noch keine Kategorien"
       },
       "overview": {
         "completedServices": "Abgeschlossene Dienste",
@@ -25,7 +58,8 @@
       "appointments": {
         "button": "Alle Termine anzeigen",
         "title": "Bevorstehende Termine",
-        "with": "mit"
+        "with": "mit",
+        "notScheduled": "Noch nicht geplant"
       }
     },
     "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Serviceanfragen und Termine.",
@@ -54,6 +88,7 @@
       "parentInquiry": "Neue Elternanfrage erhalten",
       "serviceUpdate": "Serviceanfrage aktualisiert",
       "newMessage": "Neue Nachricht erhalten",
+      "noActivity": "Keine aktuellen Aktivitäten",
       "title": "Letzte Aktivität"
     },
     "quickMessage": {
@@ -63,11 +98,18 @@
     "calendar": {
       "event1": "Mitarbeitertreffen",
       "event2": "Elternberatung",
-      "event3": "Schulungssitzung"
+      "event3": "Schulungssitzung",
+      "noEvents": "Keine Termine geplant"
     },
     "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindertagesstätten-Operationen.",
     "todayAtGlance": "Heute auf einen Blick",
     "title": "Foundation-Dashboard"
+  },
+  "supplierDashboardPage": {
+    "title": "Lieferanten-Dashboard",
+    "welcome": "Willkommen in Ihrem Lieferanten-Dashboard",
+    "products": "Meine Produkte",
+    "orders": "Bestellungen"
   },
   "supplierDashboard": {
     "widgets": {
@@ -93,6 +135,14 @@
         "pending": "Ausstehend",
         "button": "Bestellungen anzeigen",
         "title": "Bestellungen"
+      },
+      "inquiries": {
+        "title": "Anfragen",
+        "new": "Neu",
+        "pending": "Ausstehend",
+        "total": "Gesamt",
+        "conversionRate": "Konversion",
+        "button": "Anfragen anzeigen"
       }
     },
     "recentOrdersActions": {
@@ -110,7 +160,14 @@
     "noRecentOrders": "Keine letzten Bestellungen",
     "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Produktverkäufe und Bestellungen.",
     "noSalesYet": "Noch keine Verkäufe",
-    "title": "Lieferanten-Dashboard"
+    "title": "Lieferanten-Dashboard",
+    "recentInquiriesTitle": "Letzte Anfragen",
+    "noRecentInquiries": "Keine letzten Anfragen",
+    "recentInquiriesTable": {
+      "from": "Von",
+      "subject": "Betreff",
+      "status": "Status"
+    }
   },
   "educatorDashboard": {
     "applicationStatus": {
@@ -137,6 +194,108 @@
     },
     "welcome": "Willkommen zurück! Hier ist eine Übersicht über Ihre Bewerbungen und Ihr Profil.",
     "title": "Pädagogen-Dashboard"
+  },
+  "educatorDashboardPage": {
+    "title": "Pädagogen-Dashboard",
+    "welcome": "Willkommen auf Ihrem Pädagogen-Dashboard",
+    "applications": "Meine Bewerbungen",
+    "jobBoard": "Stellenbörse"
+  },
+  "educatorApplicationsPage": {
+    "title": "Meine Bewerbungen",
+    "status": {
+      "pending": "Ausstehend",
+      "reviewed": "Gesehen",
+      "accepted": "Angenommen",
+      "rejected": "Abgelehnt"
+    },
+    "table": {
+      "jobTitle": "Stellentitel",
+      "creche": "Krippe",
+      "status": "Status",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "actions": "Aktionen"
+    },
+    "viewingDetailsFor": "Details werden angezeigt für",
+    "emptyState": "Keine Bewerbungen gefunden",
+    "footerNote": "Bewerbungen werden in Echtzeit aktualisiert"
+  },
+  "educatorJobBoardPage": {
+    "title": "Stellenangebote",
+    "postedOn": "Veröffentlicht am",
+    "searchPlaceholder": "Jobs suchen...",
+    "noJobsFound": "Keine Jobs gefunden",
+    "errors": {
+      "loadJobs": "Stellenangebote können nicht geladen werden."
+    },
+    "unknownFoundation": "Unbekannte Stiftung"
+  },
+  "educatorProfilePage": {
+    "editProfile": "Profil bearbeiten",
+    "loadError": "Profil kann nicht geladen werden.",
+    "saveSuccess": "Profil aktualisiert!",
+    "roleUnknown": "Rolle nicht angegeben",
+    "locationUnknown": "Ort nicht angegeben",
+    "notProvided": "Nicht angegeben",
+    "skills": {
+      "title": "Fähigkeiten",
+      "empty": "Keine Fähigkeiten hinterlegt."
+    },
+    "availability": {
+      "title": "Verfügbarkeit",
+      "days": "Tage",
+      "times": "Zeiten",
+      "contract": "Vertrag",
+      "ageGroups": "Altersgruppen"
+    },
+    "documents": {
+      "title": "Dokumente",
+      "empty": "Keine Dokumente hochgeladen."
+    },
+    "bio": {
+      "title": "Über mich",
+      "empty": "Noch keine Bio vorhanden."
+    },
+    "experience": {
+      "title": "Erfahrung",
+      "empty": "Keine Erfahrung hinzugefügt."
+    },
+    "education": {
+      "title": "Ausbildung",
+      "graduated": "Abschluss",
+      "empty": "Keine Ausbildung hinzugefügt."
+    },
+    "certifications": {
+      "title": "Zertifizierungen",
+      "issued": "Ausgestellt",
+      "expires": "Läuft ab",
+      "empty": "Keine Zertifizierungen hinzugefügt."
+    }
+  },
+  "educatorSupportPage": {
+    "ticketSubmittedAlert": "Support-Ticket erfolgreich gesendet",
+    "faq": {
+      "updateProfile": {
+        "q": "Wie aktualisiere ich mein Profil?",
+        "a": "Gehen Sie zu Ihrer Profilseite, um Fähigkeiten, Qualifikationen, Erfahrungen und Verfügbarkeit zu aktualisieren. Ein vollständiges Profil erhöht Ihre Chancen auf passende Stellen."
+      },
+      "findJobs": {
+        "q": "Wie finde ich Stellenangebote?",
+        "a": "Durchsuchen Sie die Stellenbörse, um alle verfügbaren Positionen zu sehen. Filtern Sie nach Standort, Vertragsart und weiteren Kriterien. Klicken Sie auf eine Stelle, um Details zu sehen und sich zu bewerben."
+      },
+      "trackApplications": {
+        "q": "Wie verfolge ich meine Bewerbungen?",
+        "a": "In der Sektion Meine Bewerbungen sehen Sie den Status jeder Bewerbung und Updates der Arbeitgeber."
+      },
+      "notifications": {
+        "q": "Wie verwalte ich Benachrichtigungen?",
+        "a": "Gehen Sie zu Einstellungen > Benachrichtigungseinstellungen, um auszuwählen, welche E-Mail- oder In-App-Benachrichtigungen Sie erhalten."
+      }
+    },
+    "ticketForm": {
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems",
+      "messagePlaceholder": "Bitte geben Sie möglichst viele Details an"
+    }
   },
   "parentDashboard": {
     "quickActions": {

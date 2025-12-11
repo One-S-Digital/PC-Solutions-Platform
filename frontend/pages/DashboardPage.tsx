@@ -11,32 +11,32 @@ const DashboardPage: React.FC = () => {
   const { currentUser } = useAppContext();
   const navigate = useNavigate();
 
-  const userName = currentUser?.name.split(' ')[0] || t('dashboardPage.defaultUser');
+  const userName = currentUser?.name.split(' ')[0] || t('dashboard:dashboardPage.defaultUser');
 
   const stats = [
-    { key: 'activeUsers', name: t('dashboardPage.activeUsers'), value: '1,234', icon: UsersIcon, color: 'text-swiss-mint', bgColor: 'bg-swiss-mint/10', trend: '+5%' },
-    { key: 'newOrders', name: t('dashboardPage.newOrders'), value: '56', icon: ShoppingCartIcon, color: 'text-swiss-sand', bgColor: 'bg-swiss-sand/20', trend: '+12%' },
-    { key: 'openJobs', name: t('dashboardPage.openJobs'), value: '12', icon: BriefcaseIcon, color: 'text-swiss-teal', bgColor: 'bg-swiss-teal/10', trend: '-2%' },
-    { key: 'pageViews', name: t('dashboardPage.pageViews'), value: '25,678', icon: ChartBarIcon, color: 'text-swiss-coral', bgColor: 'bg-swiss-coral/10', trend: '+8%' },
+    { key: 'activeUsers', name: t('dashboard:dashboardPage.activeUsers'), value: '1,234', icon: UsersIcon, color: 'text-swiss-mint', bgColor: 'bg-swiss-mint/10', trend: '+5%' },
+    { key: 'newOrders', name: t('dashboard:dashboardPage.newOrders'), value: '56', icon: ShoppingCartIcon, color: 'text-swiss-sand', bgColor: 'bg-swiss-sand/20', trend: '+12%' },
+    { key: 'openJobs', name: t('dashboard:dashboardPage.openJobs'), value: '12', icon: BriefcaseIcon, color: 'text-swiss-teal', bgColor: 'bg-swiss-teal/10', trend: '-2%' },
+    { key: 'pageViews', name: t('dashboard:dashboardPage.pageViews'), value: '25,678', icon: ChartBarIcon, color: 'text-swiss-coral', bgColor: 'bg-swiss-coral/10', trend: '+8%' },
   ];
 
   const quickLinksData = [
-    {nameKey: 'dashboardPage.browseMarketplace', path: '/marketplace', icon: ShoppingCartIcon},
-    {nameKey: 'dashboardPage.postNewJob', path: '/recruitment', icon: BriefcaseIcon},
-    {nameKey: 'dashboardPage.manageUsers', path: '/users', icon: UsersIcon},
-    {nameKey: 'dashboardPage.platformSettings', path: '/settings', icon: SettingsIcon},
+    {nameKey: 'dashboard:dashboardPage.browseMarketplace', path: '/marketplace', icon: ShoppingCartIcon},
+    {nameKey: 'dashboard:dashboardPage.postNewJob', path: '/recruitment', icon: BriefcaseIcon},
+    {nameKey: 'dashboard:dashboardPage.manageUsers', path: '/users', icon: UsersIcon},
+    {nameKey: 'dashboard:dashboardPage.platformSettings', path: '/settings', icon: SettingsIcon},
   ];
 
   const recentActivityData = [
-      { id:1, user: 'Lina Meier', actionKey: 'dashboardPage.activityLina', timeRaw: 15, timeUnit: 'minutes', avatarSeed: 'lina'},
-      { id:2, user: 'EcoToys GmbH', actionKey: 'dashboardPage.activityEcoToys', timeRaw: 1, timeUnit: 'hours', avatarSeed: 'ecotoys'},
-      { id:3, user: 'John Smith', actionKey: 'dashboardPage.activityJohn', timeRaw: 3, timeUnit: 'hours', avatarSeed: 'john'},
-      { id:4, user: 'Parent Example', actionKey: 'dashboardPage.activityParent', timeRaw: 5, timeUnit: 'hours', avatarSeed: 'parent'},
+      { id:1, user: 'Lina Meier', actionKey: 'dashboard:dashboardPage.activityLina', timeRaw: 15, timeUnit: 'minutes', avatarSeed: 'lina'},
+      { id:2, user: 'EcoToys GmbH', actionKey: 'dashboard:dashboardPage.activityEcoToys', timeRaw: 1, timeUnit: 'hours', avatarSeed: 'ecotoys'},
+      { id:3, user: 'John Smith', actionKey: 'dashboard:dashboardPage.activityJohn', timeRaw: 3, timeUnit: 'hours', avatarSeed: 'john'},
+      { id:4, user: 'Parent Example', actionKey: 'dashboard:dashboardPage.activityParent', timeRaw: 5, timeUnit: 'hours', avatarSeed: 'parent'},
   ];
   
   const formatTimeAgo = (timeRaw: number, timeUnit: 'minutes' | 'hours' | 'yesterday') => {
-    if (timeUnit === 'yesterday') return t('dashboardPage.timeAgo.yesterday');
-    return t(`dashboardPage.timeAgo.${timeUnit}`, { count: timeRaw });
+    if (timeUnit === 'yesterday') return t('dashboard:dashboardPage.timeAgo.yesterday');
+    return t(`dashboard:dashboardPage.timeAgo.${timeUnit}`, { count: timeRaw });
   }
 
 
@@ -44,9 +44,9 @@ const DashboardPage: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-swiss-charcoal">
-          {t('dashboardPage.welcome', { name: userName })}
+          {t('dashboard:dashboardPage.welcome', { name: userName })}
         </h1>
-        <p className="text-gray-500 mt-1">{t('dashboardPage.overviewSubtitle', { appName: APP_NAME })}</p>
+        <p className="text-gray-500 mt-1">{t('dashboard:dashboardPage.overviewSubtitle', { appName: APP_NAME })}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -70,7 +70,7 @@ const DashboardPage: React.FC = () => {
                 <button
                     onClick={() => navigate(`/dashboard/details/${stat.key}`)} 
                     className={`font-medium ${stat.color} hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-current rounded`}
-                    aria-label={t('dashboardPage.viewDetailsFor', { name: stat.name })}
+                    aria-label={t('dashboard:dashboardPage.viewDetailsFor', { name: stat.name })}
                 >
                     {t('common:buttons.viewDetails')} &rarr;
                 </button>
@@ -81,7 +81,7 @@ const DashboardPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-5">{t('dashboardPage.recentActivity')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-5">{t('dashboard:dashboardPage.recentActivity')}</h2>
           <ul className="space-y-4">
             {recentActivityData.map(activity => (
               <li key={activity.id} className="flex items-center p-3 -m-3 rounded-lg hover:bg-gray-50 transition-colors">
@@ -98,7 +98,7 @@ const DashboardPage: React.FC = () => {
           </ul>
         </Card>
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-5">{t('dashboardPage.quickLinks')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-5">{t('dashboard:dashboardPage.quickLinks')}</h2>
            <ul className="space-y-2.5">
             {quickLinksData.map(link => {
                 const LinkIcon = link.icon;
