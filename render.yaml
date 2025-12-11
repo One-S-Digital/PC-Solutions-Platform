@@ -5,7 +5,7 @@ services:
     env: node
     plan: starter
     branch: merge/pcs-development-integration
-    buildCommand: cd frontend && pnpm install --frozen-lockfile=false && pnpm run build:render
+    buildCommand: pnpm run prebuild:render && cd frontend && pnpm install --frozen-lockfile=false && pnpm run build:render
     startCommand: cd frontend && pnpm run start
     envVars:
       - key: NODE_ENV
@@ -24,7 +24,7 @@ services:
     name: pc-solutions-v2
     env: node
     plan: starter
-    buildCommand: cd api && pnpm install && pnpm run build:render
+    buildCommand: pnpm run prebuild:render && cd api && pnpm install --frozen-lockfile && pnpm run build:render
     startCommand: cd api && pnpm run start:prod
     envVars:
       - key: NODE_ENV
@@ -52,7 +52,7 @@ services:
     env: node
     plan: starter
     branch: merge/pcs-development-integration
-    buildCommand: cd admin && pnpm install --frozen-lockfile=false && pnpm run build
+    buildCommand: pnpm run prebuild:render && cd admin && pnpm install --frozen-lockfile=false && pnpm run build
     startCommand: cd admin && pnpm run start
     envVars:
       - key: NODE_ENV

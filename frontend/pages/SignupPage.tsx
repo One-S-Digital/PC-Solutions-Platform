@@ -34,7 +34,10 @@ const SignupPage: React.FC = () => {
 
   // Detect if this is an OAuth user completing their profile (signed in but no backend user)
   // Important: Also check !isAuthLoading to avoid false positive while user data is being fetched
-  const isOAuthCompletion = isSignedIn && !currentUser && !isAuthLoading;
+  // CRITICAL: Must also verify user actually used OAuth (has externalAccounts) - otherwise this
+  // incorrectly triggers for email/password users who are waiting for webhook to create backend profile
+  const hasOAuthAccount = clerkUser?.externalAccounts && clerkUser.externalAccounts.length > 0;
+  const isOAuthCompletion = isSignedIn && !currentUser && !isAuthLoading && hasOAuthAccount;
 
   useEffect(() => {
     if (settingsError) {
