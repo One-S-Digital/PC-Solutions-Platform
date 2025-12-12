@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   Request,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -39,9 +40,16 @@ export class UsersController {
   }
 
   @Post('complete-profile')
+  @AllowPending()  // Allow pending users (those whose webhook hasn't processed yet) to complete profile
   async completeProfile(@Request() request, @Body() completeProfileDto: CompleteProfileDto) {
     const clerkId = request.user.clerkId;
-    const email = request.user.email;
+    // Get email from DTO (preferred) or fall back to request.user.email
+    // For pending users, request.user.email may be undefined, so DTO email is essential
+    const email = completeProfileDto.email || request.user?.email;
+    
+    if (!email) {
+      throw new BadRequestException('Email is required to complete profile');
+    }
     
     return this.usersService.completeProfile(clerkId, email, completeProfileDto);
   }

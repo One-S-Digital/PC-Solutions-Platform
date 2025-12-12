@@ -32,12 +32,19 @@ const SignupPage: React.FC = () => {
   const { currentUser, refreshCurrentUser, logout, isLoading: isAuthLoading } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
 
-  // Detect if this is an OAuth user completing their profile (signed in but no backend user)
+  // Detect if this is a user who needs to complete their profile (signed in but no backend user)
+  // This can happen for:
+  // 1. OAuth users (Google) who signed in but haven't selected a role yet
+  // 2. Email/password users whose webhook failed to create their AppUser record
   // Important: Also check !isAuthLoading to avoid false positive while user data is being fetched
-  // CRITICAL: Must also verify user actually used OAuth (has externalAccounts) - otherwise this
-  // incorrectly triggers for email/password users who are waiting for webhook to create backend profile
   const hasOAuthAccount = clerkUser?.externalAccounts && clerkUser.externalAccounts.length > 0;
-  const isOAuthCompletion = isSignedIn && !currentUser && !isAuthLoading && hasOAuthAccount;
+  
+  // Check if user needs to complete profile (signed in to Clerk but no backend user)
+  // This applies to BOTH OAuth users AND email/password users with failed webhooks
+  const needsProfileCompletion = isSignedIn && !currentUser && !isAuthLoading;
+  
+  // For backwards compatibility, keep isOAuthCompletion for OAuth-specific UI
+  const isOAuthCompletion = needsProfileCompletion && hasOAuthAccount;
 
   useEffect(() => {
     if (settingsError) {
@@ -168,16 +175,16 @@ const SignupPage: React.FC = () => {
     }
   }, [isSignedIn, currentStep, navigate, successRedirect]);
 
-  // Pre-fill form data for OAuth users (e.g., Google Sign Up)
+  // Pre-fill form data for users completing their profile (OAuth or email/password with failed webhook)
   useEffect(() => {
-    if (isOAuthCompletion && clerkUser) {
+    if (needsProfileCompletion && clerkUser) {
       setFormData(prev => ({
         ...prev,
         email: clerkUser.primaryEmailAddress?.emailAddress || prev.email,
         contactPerson: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || prev.contactPerson,
       }));
     }
-  }, [isOAuthCompletion, clerkUser]);
+  }, [needsProfileCompletion, clerkUser]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitleKey?: string }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
@@ -279,7 +286,7 @@ const SignupPage: React.FC = () => {
     return Object.keys(newErrors).length === 0 && captchaToken !== null;
   };
 
-  // Validation for OAuth users (no password required, email already verified by OAuth provider)
+  // Validation for users completing their profile (no password required - they already have a Clerk account)
   const validateOAuthProfile = (): boolean => {
     const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
     if (!selectedRole) return false;
@@ -292,8 +299,12 @@ const SignupPage: React.FC = () => {
     if (!formData.contactPerson) 
       newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'signup:errors.parentNameRequired' : 'signup:errors.contactPersonRequired');
     
-    // OAuth users don't need email validation - it's pre-filled from OAuth provider
-    // Password fields are not required for OAuth users
+    // Validate email is present (should be pre-filled from Clerk)
+    // This catches edge cases where Clerk user lacks primaryEmailAddress
+    if (!formData.email) {
+      newErrors.email = t('signup:errors.emailRequired');
+    }
+    // Password fields are not required for pending users (they already have Clerk accounts)
 
     if (requiresOrganizationDetails && !formData.phone) {
       newErrors.phone = t('signup:errors.phoneRequired');
@@ -364,6 +375,7 @@ const SignupPage: React.FC = () => {
 
        const payload = {
            role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
+           email: formData.email || clerkUser?.primaryEmailAddress?.emailAddress,  // Include email for pending users
            organisationName: formData.organisationName || undefined,
            contactPerson: formData.contactPerson || undefined,
            phone: formData.phone || undefined,
@@ -403,8 +415,8 @@ const SignupPage: React.FC = () => {
        }
     } catch (err: any) {
         console.error('Profile completion error:', err);
-        // For OAuth users, set error in a visible banner instead of on the read-only email field
-        if (isOAuthCompletion) {
+        // For users completing profile, set error in a visible banner instead of on the read-only email field
+        if (needsProfileCompletion) {
             setCompleteProfileError(err.message || t('signup:errors.profileCompletionFailed', 'An error occurred while completing your profile. Please try again.'));
         } else {
             setErrors({ email: err.message || 'An error occurred while completing your profile' });
@@ -418,15 +430,19 @@ const SignupPage: React.FC = () => {
     e.preventDefault();
     if (!selectedRole) return;
     
-    // If user is already authenticated (e.g. via Google OAuth) but missing backend profile
-    // we use OAuth-specific validation (no password required) and complete their profile
-    if (isOAuthCompletion) {
+    // If user is already authenticated but missing backend profile, complete their profile
+    // This handles both:
+    // 1. OAuth users (Google) who signed in but haven't selected a role
+    // 2. Email/password users whose webhook failed to create their AppUser record
+    if (needsProfileCompletion) {
+        // OAuth users don't need password validation
+        // Email/password users who are already signed in also don't need password (they already have a Clerk account)
         if (!validateOAuthProfile()) return;
         await handleCompleteProfile();
         return;
     }
 
-    // Regular email/password signup - use full validation including password
+    // Regular email/password signup for NEW users - use full validation including password
     if (!validateStep2()) return;
 
     if (!isLoaded || !signUp) return;
@@ -629,10 +645,10 @@ const SignupPage: React.FC = () => {
   );
 
   const progressText = currentStep === 1 
-    ? (isOAuthCompletion ? t('signup:progress.oauthStep1', 'Step 1: Select your role') : t('signup:progress.step1')) 
-    : (isOAuthCompletion ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile') : t('signup:progress.step2'));
+    ? (needsProfileCompletion ? t('signup:progress.oauthStep1', 'Step 1: Select your role') : t('signup:progress.step1')) 
+    : (needsProfileCompletion ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile') : t('signup:progress.step2'));
   const formTitle = currentStep === 1 
-    ? (isOAuthCompletion ? t('signup:selectRoleTitle.oauth', 'Complete Your Registration') : t('signup:selectRoleTitle')) 
+    ? (needsProfileCompletion ? t('signup:selectRoleTitle.oauth', 'Complete Your Registration') : t('signup:selectRoleTitle')) 
     : t('signup:detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
 
   if (!isLoaded) {
@@ -756,14 +772,16 @@ const SignupPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* OAuth completion notice */}
-                {isOAuthCompletion && !emailConflictError && (
+                {/* Profile completion notice - for users who are signed in but need to complete profile */}
+                {needsProfileCompletion && !emailConflictError && (
                   <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                     <p className="text-sm text-blue-800">
                       <strong>{t('signup:oauthCompletion.title', 'Almost there!')}</strong>
                     </p>
                     <p className="text-xs text-blue-700 mt-1">
-                      {t('signup:oauthCompletion.message', 'You\'re signed in with Google. Just complete your profile details below to finish setting up your account.')}
+                      {isOAuthCompletion 
+                        ? t('signup:oauthCompletion.message', 'You\'re signed in with Google. Just complete your profile details below to finish setting up your account.')
+                        : t('signup:profileCompletion.message', 'Your account was created but your profile setup wasn\'t completed. Please complete the details below to finish setting up your account.')}
                     </p>
                   </div>
                 )}
@@ -785,8 +803,8 @@ const SignupPage: React.FC = () => {
                       {requiresOrganizationDetails && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
                     {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
                     
-                    {/* Email field - read-only for OAuth users */}
-                    {isOAuthCompletion ? (
+                    {/* Email field - read-only for users completing their profile (already have Clerk account) */}
+                    {needsProfileCompletion ? (
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                           {t('signup:labels.email')}<span className="text-swiss-coral">*</span>
@@ -799,14 +817,18 @@ const SignupPage: React.FC = () => {
                           readOnly
                           className={`${STANDARD_INPUT_FIELD} bg-gray-100 cursor-not-allowed`}
                         />
-                        <p className="text-xs text-gray-500 mt-1">{t('signup:oauthCompletion.emailFromProvider', 'Email provided by Google')}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {isOAuthCompletion 
+                            ? t('signup:oauthCompletion.emailFromProvider', 'Email provided by Google')
+                            : t('signup:profileCompletion.emailFromAccount', 'Email from your account')}
+                        </p>
                       </div>
                     ) : (
                       renderField('email', 'labels.email', 'email', true, 'placeholders.email')
                     )}
                     
-                    {/* Password fields - only for regular email/password signup, not OAuth */}
-                    {!isOAuthCompletion && (
+                    {/* Password fields - only for NEW email/password signup, not for users completing profile */}
+                    {!needsProfileCompletion && (
                       <>
                         {renderField('password', 'labels.password', 'password', true, 'placeholders.password')}
                         {renderField('confirmPassword', 'labels.confirmPassword', 'password', true, 'placeholders.confirmPassword')}
@@ -867,8 +889,8 @@ const SignupPage: React.FC = () => {
                       </Button>
                       <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
                         {isLoading 
-                          ? (isOAuthCompletion ? t('signup:completingProfile', 'Completing Profile...') : t('signup:creatingAccount', 'Creating Account...')) 
-                          : (isOAuthCompletion ? t('signup:completeProfile', 'Complete Profile') : t('common:buttons.createAccount'))}
+                          ? (needsProfileCompletion ? t('signup:completingProfile', 'Completing Profile...') : t('signup:creatingAccount', 'Creating Account...')) 
+                          : (needsProfileCompletion ? t('signup:completeProfile', 'Complete Profile') : t('common:buttons.createAccount'))}
                       </Button>
                     </div>
                   </form>
@@ -950,8 +972,8 @@ const SignupPage: React.FC = () => {
               </Link>
             </p>
 
-            {/* Sign out option for OAuth users who want to start fresh */}
-            {isOAuthCompletion && (
+            {/* Sign out option for users completing profile who want to start fresh */}
+            {needsProfileCompletion && (
               <div className="mt-4 pt-4 border-t border-gray-200 text-center">
                 <p className="text-xs text-gray-500 mb-2">
                   {t('signup:oauthCompletion.wrongAccount', 'Wrong account? Sign out and try again.')}
