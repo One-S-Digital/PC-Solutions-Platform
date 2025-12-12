@@ -7,21 +7,28 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class ReconcileService {
   private readonly logger = new Logger(ReconcileService.name);
-  private clerk: any;
+  private clerk: any = null;
+  private isEnabled: boolean = false;
 
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
-    if (!clerkSecretKey) {
-      throw new Error('CLERK_SECRET_KEY is not configured');
+    if (clerkSecretKey) {
+      this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+      this.isEnabled = true;
+    } else {
+      this.logger.warn('CLERK_SECRET_KEY not configured - reconcile service will be disabled');
     }
-    this.clerk = createClerkClient({ secretKey: clerkSecretKey });
   }
 
   @Cron(CronExpression.EVERY_HOUR)
   async reconcileRoles() {
+    if (!this.isEnabled) {
+      return; // Skip if Clerk is not configured
+    }
+    
     this.logger.log('Starting role reconciliation');
     
     const batchSize = 100;

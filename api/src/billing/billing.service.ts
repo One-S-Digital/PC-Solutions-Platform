@@ -6,17 +6,29 @@ import Stripe from 'stripe';
 
 @Injectable()
 export class BillingService {
-  private stripe: Stripe;
+  private stripe: Stripe | null = null;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly logger: AppLoggerService,
   ) {
-    const stripeApiVersion = this.configService.get<string>('STRIPE_API_VERSION') || '2025-08-27.basil';
-    this.stripe = new Stripe(this.configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: stripeApiVersion as any,
-    });
+    const stripeSecretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
+    if (stripeSecretKey) {
+      const stripeApiVersion = this.configService.get<string>('STRIPE_API_VERSION') || '2025-08-27.basil';
+      this.stripe = new Stripe(stripeSecretKey, {
+        apiVersion: stripeApiVersion as any,
+      });
+    } else {
+      this.logger.warn('STRIPE_SECRET_KEY not configured - billing functionality will be disabled', 'BillingService');
+    }
+  }
+
+  private ensureStripeConfigured(): Stripe {
+    if (!this.stripe) {
+      throw new BadRequestException('Billing is not configured. Please contact support.');
+    }
+    return this.stripe;
   }
 
   async createCheckoutSession(
@@ -35,9 +47,10 @@ export class BillingService {
     }
 
     // Create Stripe customer if doesn't exist
+    const stripe = this.ensureStripeConfigured();
     let stripeCustomerId = user.stripeCustomerId;
     if (!stripeCustomerId) {
-      const customer = await this.stripe.customers.create({
+      const customer = await stripe.customers.create({
         email: user.email,
         name: `${user.firstName} ${user.lastName}`,
         metadata: {
@@ -98,7 +111,7 @@ export class BillingService {
       sessionConfig.mode = 'payment';
     }
 
-    const session = await this.stripe.checkout.sessions.create(sessionConfig, {
+    const session = await stripe.checkout.sessions.create(sessionConfig, {
       idempotencyKey: `${kind}-${cadence}-${userId}-${Date.now()}`,
     });
 
@@ -171,8 +184,9 @@ export class BillingService {
       throw new NotFoundException('User or Stripe customer not found');
     }
 
+    const stripe = this.ensureStripeConfigured();
     const appUrl = this.configService.get('APP_URL');
-    const session = await this.stripe.billingPortal.sessions.create({
+    const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
       return_url: `${appUrl}/billing/settings`,
     });
@@ -221,9 +235,10 @@ export class BillingService {
       throw new NotFoundException('Plan not found');
     }
 
+    const stripe = this.ensureStripeConfigured();
     if (kind === 'recurring') {
       // Handle subscription
-      const subscription = await this.stripe.subscriptions.retrieve(session.subscription as string);
+      const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
       
       await this.prisma.userSubscription.create({
         data: {
@@ -240,7 +255,7 @@ export class BillingService {
       });
     } else {
       // Handle one-time payment (license)
-      const paymentIntent = await this.stripe.paymentIntents.retrieve(session.payment_intent as string);
+      const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
       
       // Calculate access expiry (365 days from now)
       const accessExpiresAt = new Date();
