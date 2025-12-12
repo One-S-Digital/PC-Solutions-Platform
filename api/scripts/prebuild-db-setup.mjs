@@ -1240,7 +1240,9 @@ END $$;
 };
 
 const ensureTranslationInfrastructure = () => {
+  log('   Creating translation infrastructure tables...');
   const sql = `
+-- Ensure TranslationStatus enum exists
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -1251,6 +1253,7 @@ BEGIN
 END
 $$;
 
+-- Create entity_translations table
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -1306,12 +1309,184 @@ BEGIN
     END IF;
 END
 $$;
+
+-- Create entity_sources table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'entity_sources'
+    ) THEN
+        CREATE TABLE "entity_sources" (
+            "entityType" TEXT NOT NULL,
+            "entityId" TEXT NOT NULL,
+            "sourceLang" TEXT NOT NULL,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            CONSTRAINT "entity_sources_pkey" PRIMARY KEY ("entityType","entityId")
+        );
+    END IF;
+END
+$$;
+
+-- Create static_translations table (CRITICAL for admin translation page)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'static_translations'
+    ) THEN
+        CREATE TABLE "static_translations" (
+            "namespace" TEXT NOT NULL,
+            "key" TEXT NOT NULL,
+            "lang" TEXT NOT NULL,
+            "value" TEXT NOT NULL,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedBy" TEXT,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "needsReview" BOOLEAN NOT NULL DEFAULT false,
+            "reviewedBy" TEXT,
+            "reviewedAt" TIMESTAMP(3),
+            CONSTRAINT "static_translations_pkey" PRIMARY KEY ("namespace","key","lang")
+        );
+        
+        -- Create indexes for static_translations
+        CREATE INDEX IF NOT EXISTS "static_translations_namespace_lang_idx" ON "static_translations"("namespace", "lang");
+        CREATE INDEX IF NOT EXISTS "static_translations_key_idx" ON "static_translations"("key");
+    END IF;
+END
+$$;
+
+-- Create translation_memory table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'translation_memory'
+    ) THEN
+        CREATE TABLE "translation_memory" (
+            "id" TEXT NOT NULL,
+            "sourceTextHash" TEXT NOT NULL,
+            "sourceLang" TEXT NOT NULL,
+            "targetLang" TEXT NOT NULL,
+            "translatedText" TEXT NOT NULL,
+            "mtProvider" TEXT NOT NULL,
+            "usageCount" INTEGER NOT NULL DEFAULT 1,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "lastUsedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "translation_memory_pkey" PRIMARY KEY ("id")
+        );
+        
+        -- Create indexes for translation_memory
+        CREATE INDEX IF NOT EXISTS "translation_memory_sourceLang_targetLang_idx" ON "translation_memory"("sourceLang", "targetLang");
+        CREATE UNIQUE INDEX IF NOT EXISTS "translation_memory_sourceTextHash_sourceLang_targetLang_key" ON "translation_memory"("sourceTextHash", "sourceLang", "targetLang");
+    END IF;
+END
+$$;
+
+-- Create translation_releases table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'translation_releases'
+    ) THEN
+        CREATE TABLE "translation_releases" (
+            "id" TEXT NOT NULL,
+            "version" TEXT NOT NULL,
+            "description" TEXT,
+            "createdBy" TEXT,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "isActive" BOOLEAN NOT NULL DEFAULT false,
+            CONSTRAINT "translation_releases_pkey" PRIMARY KEY ("id")
+        );
+        
+        -- Create indexes for translation_releases
+        CREATE UNIQUE INDEX IF NOT EXISTS "translation_releases_version_key" ON "translation_releases"("version");
+        CREATE INDEX IF NOT EXISTS "translation_releases_isActive_createdAt_idx" ON "translation_releases"("isActive", "createdAt");
+    END IF;
+END
+$$;
+
+-- Create translation_audit_logs table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'translation_audit_logs'
+    ) THEN
+        CREATE TABLE "translation_audit_logs" (
+            "id" TEXT NOT NULL,
+            "type" TEXT NOT NULL,
+            "namespace" TEXT,
+            "entityType" TEXT,
+            "entityId" TEXT,
+            "key" TEXT,
+            "field" TEXT,
+            "lang" TEXT NOT NULL,
+            "action" TEXT NOT NULL,
+            "oldValue" TEXT,
+            "newValue" TEXT,
+            "userId" TEXT NOT NULL,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "translation_audit_logs_pkey" PRIMARY KEY ("id")
+        );
+        
+        -- Create indexes for translation_audit_logs
+        CREATE INDEX IF NOT EXISTS "translation_audit_logs_type_createdAt_idx" ON "translation_audit_logs"("type", "createdAt");
+        CREATE INDEX IF NOT EXISTS "translation_audit_logs_userId_createdAt_idx" ON "translation_audit_logs"("userId", "createdAt");
+    END IF;
+END
+$$;
+
+-- Create mt_cost_tracking table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'mt_cost_tracking'
+    ) THEN
+        CREATE TABLE "mt_cost_tracking" (
+            "id" TEXT NOT NULL,
+            "date" DATE NOT NULL,
+            "provider" TEXT NOT NULL,
+            "sourceLang" TEXT NOT NULL,
+            "targetLang" TEXT NOT NULL,
+            "characters" INTEGER NOT NULL,
+            "cost" DECIMAL(10,4) NOT NULL,
+            "jobCount" INTEGER NOT NULL DEFAULT 0,
+            CONSTRAINT "mt_cost_tracking_pkey" PRIMARY KEY ("id")
+        );
+        
+        -- Create indexes for mt_cost_tracking
+        CREATE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_idx" ON "mt_cost_tracking"("date", "provider");
+        CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_targetLang_key" ON "mt_cost_tracking"("date", "provider", "sourceLang", "targetLang");
+    END IF;
+END
+$$;
+
+-- Create indexes for entity_translations if they don't exist
+CREATE INDEX IF NOT EXISTS "entity_translations_entityType_lang_idx" ON "entity_translations"("entityType", "lang");
+CREATE INDEX IF NOT EXISTS "entity_translations_status_updatedAt_idx" ON "entity_translations"("status", "updatedAt");
 `;
 
   runPrisma(
     ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
     { silent: true, input: sql },
   );
+  log('   ✅ Translation infrastructure tables created/verified');
 };
 
 const handleFailedMigration = (migration) => {
@@ -1326,11 +1501,11 @@ const handleFailedMigration = (migration) => {
       ensureAssetKindEnumValues();
       resolveMigration('applied', migration);
       break;
-    // case '20251114140526_add_i18n_translation_tables':
-    //   log(`   • Resolving ${migration} (translation infrastructure)`);
-    //   ensureTranslationInfrastructure();
-    //   resolveMigration('applied', migration);
-    //   break;
+    case '20251114140526_add_i18n_translation_tables':
+      log(`   • Resolving ${migration} (translation infrastructure)`);
+      ensureTranslationInfrastructure();
+      resolveMigration('applied', migration);
+      break;
     case '20251119100000_add_categories_array_fields':
       log(`   • Resolving ${migration} (categories columns)`);
       ensureCategoriesColumns();
@@ -1460,8 +1635,14 @@ try {
   warn(`⚠️  Could not ensure inquiries table: ${error.message}`);
 }
 
-// log('🔁 Ensuring translation infrastructure is present...');
-// ensureTranslationInfrastructure();
+// Ensure all translation infrastructure tables exist (CRITICAL for admin translation page)
+log('🔁 Ensuring translation infrastructure tables exist...');
+try {
+  ensureTranslationInfrastructure();
+  log('✅ Translation infrastructure check complete');
+} catch (error) {
+  warn(`⚠️  Could not ensure translation infrastructure: ${error.message}`);
+}
 
 const failedMigrations = getFailedMigrations();
 const forcedMigrationsEnv = process.env.FORCE_RESOLVE_MIGRATIONS || '';
