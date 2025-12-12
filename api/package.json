@@ -53,6 +53,7 @@
     "create:test-users": "ts-node scripts/create-test-users.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.17.1",
     "@aws-sdk/client-s3": "^3.888.0",
     "@aws-sdk/s3-request-presigner": "^3.888.0",
     "@casl/ability": "^6.7.1",
@@ -111,7 +112,6 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
-    "@prisma/client": "^6.17.1",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/bcryptjs": "^2.4.2",
@@ -131,7 +131,7 @@
     "globals": "^16.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
-    "prisma": "^6.16.2",
+    "prisma": "^6.17.1",
     "rimraf": "^5.0.5",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
