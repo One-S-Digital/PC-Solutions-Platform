@@ -131,9 +131,12 @@
     },
     "creatingAccount": "Creating Account...",
     "selectRoleTitle": "Select Your Role",
+    "selectRoleTitle.oauth": "Complete Your Registration",
     "progress": {
       "step1": "Step 1 of 2",
-      "step2": "Step 2 of 2"
+      "step2": "Step 2 of 2",
+      "oauthStep1": "Step 1: Sign in",
+      "oauthStep2": "Step 2: Complete your details"
     },
     "detailsTitle": "Enter Your Details for {{role}}",
     "termsLabel": "I accept the terms and conditions",
@@ -296,9 +299,12 @@
   "completeProfile": "Complete Profile",
   "creatingAccount": "Creating Account",
   "selectRoleTitle": "Select Your Role",
+  "selectRoleTitle.oauth": "Complete Your Registration",
   "progress": {
     "step1": "Step 1 of 2",
-    "step2": "Step 2 of 2"
+    "step2": "Step 2 of 2",
+    "oauthStep1": "Step 1: Sign in",
+    "oauthStep2": "Step 2: Complete your details"
   },
   "detailsTitle": "Enter Your Details for {{role}}",
   "termsLabel": "I accept the terms and conditions",

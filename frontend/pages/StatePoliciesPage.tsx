@@ -92,7 +92,7 @@ const PolicyCategoryDisplayCard: React.FC<{title: string, icon: React.ElementTyp
     >
       <Icon className="w-10 h-10 mb-3 text-current"/>
       <h3 className="text-xl font-semibold mb-1 text-current">{title}</h3>
-      <p className="text-sm opacity-80 text-current">{t('common:statePolicies.policyCount', { count, defaultValue: '{{count}} policies' })}</p>
+      <p className="text-sm opacity-80 text-current">{t('common:statePolicies.policyCount', { count })}</p>
     </div>
   );
 };

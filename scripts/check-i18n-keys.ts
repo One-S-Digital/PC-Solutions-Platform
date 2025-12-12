@@ -9,8 +9,10 @@
 import fs from 'fs';
 import path from 'path';
 
-const LOCALES_DIR = path.join(__dirname, '../packages/translations/locales');
-const USED_KEYS_FILE = path.join(__dirname, '../i18n-used-keys.json');
+// Resolve paths from project root (works in CJS/TS-node)
+const ROOT_DIR = path.resolve(process.cwd());
+const LOCALES_DIR = path.join(ROOT_DIR, 'packages/translations/locales');
+const USED_KEYS_FILE = path.join(ROOT_DIR, 'i18n-used-keys.json');
 
 interface TranslationObject {
   [key: string]: string | TranslationObject;
@@ -184,7 +186,7 @@ async function checkKeys(): Promise<void> {
   }
 
   // Save report
-  const reportPath = path.join(__dirname, '../i18n-missing-keys.json');
+  const reportPath = path.join(ROOT_DIR, 'i18n-missing-keys.json');
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2), 'utf8');
   console.log(`📝 Report saved to: ${reportPath}\n`);
 

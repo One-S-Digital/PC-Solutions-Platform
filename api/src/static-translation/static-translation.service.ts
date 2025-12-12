@@ -1675,7 +1675,14 @@ export class StaticTranslationService {
         
         try {
           const content = fs.readFileSync(filePath, 'utf8');
-          const json = JSON.parse(content);
+          let json = JSON.parse(content);
+          
+          // Special handling for 'content' namespace to unwrap the top-level 'content' object
+          // This follows the documentation pattern where JSON files should start directly with keys
+          if (namespace === 'content' && json && typeof json === 'object' && 'content' in json) {
+            json = (json as { content: unknown }).content;
+            this.logger.log(`  🔄 Unwrapped content wrapper for ${lang}/${namespace}`);
+          }
           
           // Validate JSON structure before processing
           const validation = this.validateJsonStructure(json, filePath);

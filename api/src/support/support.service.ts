@@ -1,12 +1,21 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupportTicketResponse } from './dto/support.dto';
+import { MailgunService } from './mailgun.service';
+import { EmailTemplateService } from '../email-notification/email-template.service';
+import { UserRole } from '@prisma/client';
 
 const ALLOWED_STATUSES = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'] as const;
 
 @Injectable()
 export class SupportService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(SupportService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private mailgunService: MailgunService,
+    private emailTemplateService: EmailTemplateService,
+  ) {}
 
   /**
    * Create a new support ticket
@@ -45,6 +54,12 @@ export class SupportService {
           orderBy: { createdAt: 'asc' },
         },
       },
+    });
+
+    // Send email notifications (don't await - fire and forget)
+    this.sendTicketCreatedEmails(ticket).catch((error) => {
+      this.logger.error(`Failed to send ticket creation emails: ${error.message}`, error.stack);
+      // Don't throw - email failure shouldn't block ticket creation
     });
 
     return this.transformTicket(ticket);
@@ -315,6 +330,191 @@ export class SupportService {
       resolved: statusCounts['RESOLVED'] || 0,
       closed: statusCounts['CLOSED'] || 0,
     };
+  }
+
+  /**
+   * Get all admin email addresses for support notifications
+   */
+  private async getAdminEmails(): Promise<string[]> {
+    const admins = await this.prisma.appUser.findMany({
+      where: {
+        role: {
+          in: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
+        },
+        email: {
+          not: null,
+        },
+      },
+      select: {
+        email: true,
+      },
+    });
+
+    return admins
+      .map(admin => admin.email)
+      .filter((email): email is string => email !== null);
+  }
+
+  /**
+   * Send emails when a ticket is created
+   */
+  private async sendTicketCreatedEmails(ticket: any): Promise<void> {
+    const user = ticket.user;
+    if (!user || !user.email) {
+      this.logger.warn(`Cannot send ticket confirmation email - user email not found for ticket ${ticket.id}`);
+      return;
+    }
+
+    const userName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email;
+    const ticketUrl = `${process.env.FRONTEND_URL || 'https://platform.com'}/support/tickets/${ticket.id}`;
+    const adminTicketUrl = `${process.env.ADMIN_URL || 'https://admin.platform.com'}/support?ticket=${ticket.id}`;
+
+    // Priority labels for email
+    const priorityLabels: Record<string, string> = {
+      LOW: 'Low',
+      MEDIUM: 'Medium',
+      HIGH: 'High',
+      URGENT: 'Urgent',
+    };
+
+    const categoryLabels: Record<string, string> = {
+      GENERAL: 'General',
+      TECHNICAL: 'Technical Support',
+      BILLING: 'Billing',
+      FEATURE_REQUEST: 'Feature Request',
+    };
+
+    // 1. Send confirmation email to ticket creator via Mailgun
+    try {
+      if (!this.mailgunService.isConfigured()) {
+        this.logger.warn('Mailgun not configured - skipping support ticket emails');
+        return;
+      }
+
+      const customerTemplate = await this.emailTemplateService.getTemplate('support_ticket_created');
+      if (!customerTemplate) {
+        this.logger.warn('Support ticket created template not found - skipping customer email');
+      } else {
+        const payload = {
+          firstName: user.firstName || 'User',
+          lastName: user.lastName || '',
+          ticketId: ticket.id,
+          ticketSubject: ticket.subject,
+          ticketMessage: ticket.message,
+          ticketCategory: categoryLabels[ticket.category] || ticket.category,
+          ticketPriority: priorityLabels[ticket.priority] || ticket.priority,
+          ticketUrl: ticketUrl,
+          createdAt: new Date(ticket.createdAt).toLocaleString(),
+        };
+
+        const subject = this.processTemplate(customerTemplate.subject, payload);
+        const html = this.processTemplate(customerTemplate.htmlContent, payload);
+        const text = this.processTemplate(customerTemplate.textContent, payload);
+
+        const result = await this.mailgunService.sendEmail({
+          to: user.email,
+          subject,
+          html,
+          text,
+          tags: ['support_ticket_created'],
+          variables: {
+            userId: user.id,
+            ticketId: ticket.id,
+            event: 'support_ticket_created',
+          },
+        });
+
+        if (result.success) {
+          this.logger.log(`Ticket confirmation email sent to ${user.email} for ticket ${ticket.id}`);
+        } else {
+          this.logger.error(`Failed to send confirmation email: ${result.error}`);
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Failed to send confirmation email to ${user.email}: ${(error as Error).message}`);
+    }
+
+    // 2. Send notification email to all admins
+    try {
+      const adminEmails = await this.getAdminEmails();
+      
+      if (adminEmails.length === 0) {
+        this.logger.warn('No admin emails found - support team notification not sent');
+        return;
+      }
+
+      // Determine if urgent and set template variables accordingly
+      const isUrgent = ticket.priority === 'URGENT' || ticket.priority === 'HIGH';
+      const urgencyPrefix = isUrgent ? '🚨 URGENT: ' : '';
+      const headerTitle = isUrgent ? '🚨 URGENT' : 'New Support Ticket';
+      const headerColor = isUrgent ? '#f44336' : '#2196F3';
+      const borderColor = isUrgent ? '#f44336' : '#2196F3';
+      const urgentNotice = isUrgent
+        ? '<p class="urgent-notice">⚠️ This ticket is marked as URGENT and requires immediate attention.</p>'
+        : '';
+
+      // Get admin notification template
+      const adminTemplate = await this.emailTemplateService.getTemplate('support_ticket_notification');
+      if (!adminTemplate) {
+        this.logger.warn('Support ticket notification template not found - skipping admin emails');
+        return;
+      }
+
+      // Send to each admin individually via Mailgun
+      const emailPromises = adminEmails.map(async (adminEmail) => {
+        const payload = {
+          ticketId: ticket.id,
+          ticketSubject: ticket.subject,
+          ticketMessage: ticket.message,
+          ticketCategory: categoryLabels[ticket.category] || ticket.category,
+          ticketPriority: ticket.priority, // Use raw value for CSS class
+          customerName: userName,
+          customerEmail: user.email,
+          ticketUrl: adminTicketUrl,
+          createdAt: new Date(ticket.createdAt).toLocaleString(),
+          urgencyPrefix,
+          headerTitle,
+          headerColor,
+          borderColor,
+          urgentNotice,
+        };
+
+        const subject = this.processTemplate(adminTemplate.subject, payload);
+        const html = this.processTemplate(adminTemplate.htmlContent, payload);
+        const text = this.processTemplate(adminTemplate.textContent, payload);
+
+        return this.mailgunService.sendEmail({
+          to: adminEmail,
+          subject,
+          html,
+          text,
+          tags: ['support_ticket_notification', ticket.priority],
+          variables: {
+            ticketId: ticket.id,
+            event: 'support_ticket_notification',
+            priority: ticket.priority,
+          },
+        });
+      });
+
+      const results = await Promise.all(emailPromises);
+      const successCount = results.filter(r => r.success).length;
+      this.logger.log(`Support team notification emails sent to ${successCount}/${adminEmails.length} admins for ticket ${ticket.id}`);
+    } catch (error) {
+      this.logger.error(`Failed to send support team notification emails: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Process template with payload variables
+   */
+  private processTemplate(template: string, payload: any): string {
+    let processed = template;
+    Object.keys(payload).forEach(key => {
+      const regex = new RegExp(`{{${key}}}`, 'g');
+      processed = processed.replace(regex, payload[key] || '');
+    });
+    return processed;
   }
 
   /**

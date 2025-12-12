@@ -55,7 +55,17 @@ for (const [path, module] of Object.entries(translationModules)) {
   }
   
   // Add namespace with prefix stripping
-  fallbackResources[lang][namespace] = stripPrefixes(module);
+  // If the namespace is 'content' and the module has a 'content' wrapper, unwrap it
+  // This follows the documentation pattern where JSON files should start directly with keys
+  // (like common.json), not wrapped in a namespace object
+  let processedModule = stripPrefixes(module);
+  if (namespace === 'content' && processedModule && typeof processedModule === 'object' && 'content' in processedModule) {
+    processedModule = (processedModule as { content: unknown }).content;
+    if (import.meta.env.DEV) {
+      console.log(`[i18n] Unwrapped content namespace during bundle loading for ${lang}/${namespace}`);
+    }
+  }
+  fallbackResources[lang][namespace] = processedModule;
   discoveredNamespaces.add(namespace);
 }
 
@@ -83,7 +93,7 @@ IndexedDBBackend.init()
     // Clear cache on app start to ensure fresh translations without prefixes
     // This is a one-time clear to remove any old cached data with prefixes
     const cacheVersion = localStorage.getItem('i18n-cache-version');
-    const currentVersion = '4.0'; // Increment this when translations structure changes - AUTO DISCOVERY
+    const currentVersion = '4.4'; // Increment this when translations structure changes - AUTO DISCOVERY
     
     if (cacheVersion !== currentVersion) {
       IndexedDBBackend.clearAll()
@@ -145,7 +155,30 @@ i18n
         // Helper to get bundled translations
         const getBundledTranslations = () => {
           const bundled = fallbackResources[lng]?.[ns];
-          return bundled ? stripPrefixes(bundled) : null;
+          if (!bundled) {
+            if (import.meta.env.DEV) {
+              console.warn(`[i18n] No bundled translation found for ${lng}/${ns}`);
+            }
+            return null;
+          }
+          let processed = stripPrefixes(bundled);
+          // If the namespace is 'content' and the bundled data has a 'content' wrapper, unwrap it
+          if (ns === 'content' && processed && typeof processed === 'object' && 'content' in processed) {
+            processed = (processed as { content: unknown }).content;
+            if (import.meta.env.DEV) {
+              console.log(`[i18n] Unwrapped content namespace in getBundledTranslations for ${lng}/${ns}`);
+              const keys = Object.keys(processed as Record<string, unknown>);
+              console.log(`[i18n] Sample keys after unwrap:`, keys.slice(0, 10));
+              console.log(`[i18n] Has eLearning key:`, 'eLearning' in (processed as Record<string, unknown>));
+              if ('eLearning' in (processed as Record<string, unknown>)) {
+                const eLearning = (processed as Record<string, unknown>).eLearning;
+                if (eLearning && typeof eLearning === 'object') {
+                  console.log(`[i18n] eLearning keys:`, Object.keys(eLearning as Record<string, unknown>).slice(0, 10));
+                }
+              }
+            }
+          }
+          return processed;
         };
 
         // PRODUCTION MODE: Use bundled translations directly (faster, no API calls)
@@ -158,7 +191,15 @@ i18n
           // If not in bundle, try dynamic import
           try {
             const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
-            const data = stripPrefixes(module.default || module);
+            let data = stripPrefixes(module.default || module);
+            // If the namespace is 'content' and the module has a 'content' wrapper, unwrap it
+            if (ns === 'content' && data && typeof data === 'object' && 'content' in data) {
+              data = (data as { content: unknown }).content;
+              if (import.meta.env.DEV) {
+                console.log(`[i18n] Unwrapped content namespace in dynamic import for ${lng}/${ns}`);
+                console.log(`[i18n] Sample keys after unwrap:`, Object.keys(data as Record<string, unknown>).slice(0, 5));
+              }
+            }
             callback(null, { status: 200, data });
           } catch (e) {
             console.warn(`No bundled translation for ${lng}/${ns}`);
@@ -194,8 +235,31 @@ i18n
 
           let data = await response.json();
           data = stripPrefixes(data);
+          
+          // If the namespace is 'content' and the API data has a 'content' wrapper, unwrap it
+          if (ns === 'content' && data && typeof data === 'object' && 'content' in data) {
+            data = (data as { content: unknown }).content;
+            if (import.meta.env.DEV) {
+              console.log(`[i18n] Unwrapped content namespace from API for ${lng}/${ns}`);
+              const keys = Object.keys(data as Record<string, unknown>);
+              console.log(`[i18n] Sample keys after unwrap:`, keys.slice(0, 10));
+              console.log(`[i18n] Has eLearning key:`, 'eLearning' in (data as Record<string, unknown>));
+              if ('eLearning' in (data as Record<string, unknown>)) {
+                const eLearning = (data as Record<string, unknown>).eLearning;
+                if (eLearning && typeof eLearning === 'object') {
+                  console.log(`[i18n] eLearning keys:`, Object.keys(eLearning as Record<string, unknown>).slice(0, 10));
+                  console.log(`[i18n] Has contentTypesTitle:`, 'contentTypesTitle' in (eLearning as Record<string, unknown>));
+                }
+              }
+            }
+          } else if (ns === 'content' && import.meta.env.DEV) {
+            console.log(`[i18n] API data for ${lng}/${ns} structure:`, {
+              hasContentKey: data && typeof data === 'object' && 'content' in data,
+              topLevelKeys: data && typeof data === 'object' ? Object.keys(data as Record<string, unknown>).slice(0, 5) : []
+            });
+          }
 
-          // Cache in IndexedDB for offline use
+          // Cache in IndexedDB for offline use (save unwrapped data)
           const etag = response.headers.get('ETag');
           await IndexedDBBackend.save(lng, ns, data, etag || '');
 
@@ -235,6 +299,28 @@ i18n
           }
         }
       },
+    },
+    pluralSeparator: '_', // Use underscore for pluralization (e.g., items_one, items_other)
+    keySeparator: '.', // Use dot for nested keys
+    nsSeparator: ':', // Use colon for namespace separation
+    // Debug mode - log missing keys in development
+    missingKeyHandler: (lng: string[], ns: string[], key: string) => {
+      if (import.meta.env.DEV) {
+        console.warn(`[i18n] Missing translation key: ${ns.join(',')}:${key} for language ${lng.join(',')}`);
+        // Try to help debug by showing what keys are available
+        if (ns.includes('content')) {
+          const contentData = i18n.getResourceBundle(lng[0] || 'fr', 'content');
+          if (contentData) {
+            const topKeys = Object.keys(contentData).slice(0, 10);
+            console.warn(`[i18n] Available top-level keys in content namespace:`, topKeys);
+            if ('eLearning' in contentData) {
+              const eLearningKeys = Object.keys((contentData as Record<string, unknown>).eLearning as Record<string, unknown> || {}).slice(0, 10);
+              console.warn(`[i18n] Available eLearning keys:`, eLearningKeys);
+            }
+          }
+        }
+      }
+      return key; // Return key as fallback
     },
     interpolation: {
       escapeValue: false,

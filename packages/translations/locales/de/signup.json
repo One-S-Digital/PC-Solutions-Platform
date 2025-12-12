@@ -131,9 +131,12 @@
     },
     "creatingAccount": "Konto wird erstellt...",
     "selectRoleTitle": "Wählen Sie Ihre Rolle",
+    "selectRoleTitle.oauth": "Registrierung abschließen",
     "progress": {
       "step1": "Schritt 1 von 2",
-      "step2": "Schritt 2 von 2"
+      "step2": "Schritt 2 von 2",
+      "oauthStep1": "Schritt 1: Anmelden",
+      "oauthStep2": "Schritt 2: Daten vervollständigen"
     },
     "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
     "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
@@ -296,9 +299,12 @@
   "completeProfile": "Profil vervollständigen",
   "creatingAccount": "Konto wird erstellt...",
   "selectRoleTitle": "Wählen Sie Ihre Rolle",
+  "selectRoleTitle.oauth": "Registrierung abschließen",
   "progress": {
     "step1": "Schritt 1 von 2",
-    "step2": "Schritt 2 von 2"
+    "step2": "Schritt 2 von 2",
+    "oauthStep1": "Schritt 1: Anmelden",
+    "oauthStep2": "Schritt 2: Daten vervollständigen"
   },
   "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
   "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",

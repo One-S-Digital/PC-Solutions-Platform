@@ -58,7 +58,9 @@
     "yes": "Oui",
     "no": "Non",
     "ok": "OK",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "verifyEmail": "Vérifier l'e-mail"
   },
   "common": {
     "loading": "Chargement...",
@@ -97,7 +99,9 @@
     "unauthorized": "Accès non autorisé",
     "forbidden": "Accès interdit",
     "notFound": "Ressource non trouvée",
-    "serverError": "Erreur serveur"
+    "serverError": "Erreur serveur",
+    "genericErrorTitle": "Une erreur est survenue",
+    "genericErrorMessage": "Veuillez réessayer ou contacter le support si le problème persiste."
   },
   "notifications": {
     "errorTitle": "Erreur",
@@ -1180,5 +1184,83 @@
     "active": "[FR] Active",
     "archived": "[FR] Archived",
     "draft": "[FR] Draft"
+  },
+  "statePolicies": {
+    "policyCount_one": "{{count}} politique",
+    "policyCount_other": "{{count}} politiques",
+    "criticalUpdate": "Mise à jour critique",
+    "viewOnline": "Voir en ligne",
+    "download": "Télécharger",
+    "preview": "Aperçu",
+    "policyCount": "Politiques",
+    "allPolicyTypes": "Tous les types de politique",
+    "allCategories": "Toutes les catégories",
+    "allPolicies": "Toutes les politiques",
+    "policies": "Politiques",
+    "policy": "Politique"
+  },
+  "goToPricingButton": "Voir les tarifs",
+  "goToDashboardButton": "Aller au tableau de bord",
+  "submissionSuccessTitle": "Compte créé avec succès",
+  "submissionSuccessMessage": "Votre compte a été créé. Vous pouvez maintenant vous connecter ou accéder à votre tableau de bord.",
+  "termsLabel": "J'accepte les termes et conditions",
+  "termsLink": "Conditions générales d'utilisation",
+  "verifyEmail": "Vérifiez votre e-mail",
+  "verifyEmailMessage": "Nous vous avons envoyé un code à 6 chiffres. Saisissez-le ci-dessous pour vérifier.",
+  "labels": {
+    "verificationCode": "Code de vérification"
+  },
+  "verifying": "Vérification...",
+  "errors": {
+    "genericErrorTitle": "Une erreur est survenue",
+    "genericErrorMessage": "Veuillez réessayer ou contacter le support si le problème persiste."
+  },
+  "buttons": {
+    "verifyEmail": "Vérifier l'e-mail"
+  },
+  "placeholders": {
+    "searchKeyword": "Rechercher par mot-clé"
+  },
+  "notAvailable": "Non disponible",
+  "marketplace": {
+    "contactForPricing": "Contactez pour les tarifs"
+  },
+  "roleManagement": {
+    "rolePageTitle": "Gestion des rôles",
+    "allUsersTitle": "Tous les utilisateurs",
+    "searchPlaceholder": "Rechercher des utilisateurs...",
+    "filtersTBD": "Filtres à venir",
+    "filtersButton": "Filtres",
+    "addNewUserButton": "Ajouter un utilisateur",
+    "addNewUserTBD": "Création d'utilisateur à venir",
+    "confirmDeleteUser": "Supprimer cet utilisateur ?",
+    "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte.",
+    "userProfileUpdated": "Profil utilisateur mis à jour.",
+    "status": {
+      "pending": "En attente"
+    },
+    "userDetailDrawer": {
+      "title": "Détails de l'utilisateur",
+      "roleLabel": "Rôle",
+      "statusLabel": "Statut",
+      "regionLabel": "Région",
+      "lastLoginLabel": "Dernière connexion",
+      "orgLabel": "Organisation",
+      "adminActionsTitle": "Actions admin",
+      "changeRoleLabel": "Changer le rôle",
+      "updateRoleButton": "Mettre à jour le rôle",
+      "suspendUserButton": "Suspendre l'utilisateur",
+      "activateUserButton": "Activer l'utilisateur",
+      "cannotModifyOwnAccount": "Vous ne pouvez pas modifier votre propre compte."
+    },
+    "table": {
+      "nameOrg": "Nom / Organisation",
+      "role": "Rôle",
+      "status": "Statut",
+      "region": "Région",
+      "lastLogin": "Dernière connexion",
+      "actions": "Actions"
+    },
+    "emptyState": "Aucun utilisateur trouvé."
   }
 }

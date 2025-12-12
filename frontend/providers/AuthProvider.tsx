@@ -404,14 +404,28 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Properly sign out from Clerk
       await clerkSignOut();
+      
+      // Note: We do NOT reset isSigningOut here.
+      // The isSignedIn state from Clerk may not have updated yet,
+      // causing a brief flash of the "select role" screen on the login page.
+      // Instead, we let the useEffect below reset isSigningOut when
+      // Clerk's isSignedIn becomes false.
     } catch (error) {
       console.error('Logout error', error);
       // Still clear local state even if Clerk signOut fails
       setCurrentUser(null);
-    } finally {
+      // Only reset isSigningOut on error - the user needs to try again
       setIsSigningOut(false);
     }
   }, [clerkSignOut]);
+
+  // Reset isSigningOut flag when Clerk confirms sign-out is complete
+  // This prevents a flash of the "select role" screen during sign-out
+  useEffect(() => {
+    if (isSigningOut && clerkIsLoaded && !isSignedIn) {
+      setIsSigningOut(false);
+    }
+  }, [isSigningOut, clerkIsLoaded, isSignedIn]);
 
   const signup = async (formData: any, role: any): Promise<{ success: boolean; message?: string; redirectTo?: string }> => {
     // Clerk handles signup, this is just for compatibility

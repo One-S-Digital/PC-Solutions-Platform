@@ -178,15 +178,15 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
           request<ProfileResponse>('/profiles/me'),
         ]);
 
-        if (!serviceProviderRes.success || !serviceProviderRes.data) {
-          throw new Error(serviceProviderRes.message || 'Failed to load service provider settings');
-        }
-
         if (isCancelled) {
           return;
         }
 
-        const data = serviceProviderRes.data;
+        // Handle case where organization doesn't exist yet - use defaults instead of erroring
+        const data = serviceProviderRes.success && serviceProviderRes.data 
+          ? serviceProviderRes.data 
+          : {} as ServiceProviderSettingsData;
+        
         setServiceProviderSettings({
           companyName: data.companyName || currentUser.orgName || '',
           contactEmail: data.contactEmail || currentUser.email || '',

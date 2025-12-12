@@ -11,6 +11,15 @@
       "title": "Content Management"
     },
     "hrProcedures": {
+      "categories": {
+        "onboarding": "Onboarding & Orientation",
+        "policies": "Policies & Legal",
+        "benefits": "Benefits & Compensation",
+        "training": "Training & Certification",
+        "compliance": "Compliance & Safety",
+        "performance": "Performance & Reviews",
+        "other": "Other Resources"
+      },
       "categoryDisplay": {
         "viewCategoryAria": "View {{title}}",
         "documentsCount": "{{count}} documents"
@@ -38,6 +47,7 @@
       "categoriesTitle": "HR Document Categories",
       "allItemsCount": "{{count}} documents",
       "uploadButton": "Upload Document",
+      "adminUploadNote": "Use Admin Dashboard to add/edit documents",
       "title": "HR Procedures"
     },
     "statePoliciesPage": {
@@ -56,7 +66,10 @@
       "filters": {
         "policyType": "Policy Type",
         "canton": "Canton",
-        "region": "Region"
+        "region": "Region",
+        "ariaLabelPolicyType": "Filter by policy type",
+        "ariaLabelCanton": "Filter by canton",
+        "ariaLabelCategory": "Filter by category"
       },
       "tabs": {
         "cantonal": "Cantonal",
@@ -74,11 +87,22 @@
       "addNewContentButton": "Add New Content",
       "externalLinksTitle": "External Links",
       "searchPlaceholder": "Search content...",
+      "contentTypesTitle": "Content Types",
+      "allContentTitle": "All Content",
+      "allCategoriesLabel": "All Categories",
       "itemType": {
         "courses": "Courses",
         "videos": "Videos",
         "links": "Links",
         "pdfs": "PDFs"
+      },
+      "items_one": "item",
+      "items_other": "items",
+      "tags": {
+        "mandatory": "Mandatory",
+        "new": "New",
+        "updated": "Updated",
+        "critical": "Critical"
       },
       "noContentFound": "No content available",
       "categoryLabel": "Category",
@@ -92,6 +116,7 @@
       "viewingAlert": "Viewing",
       "videosTitle": "Videos",
       "pdfsTitle": "PDF Documents",
+      "adminUploadNote": "Use Admin Dashboard to add/edit content",
       "title": "E-Learning"
     },
     "statePolicies": {
@@ -108,7 +133,10 @@
       "allCantonsRegions": "All Cantons Regions",
       "policyType": "Policy Type",
       "canton": "Canton",
-      "region": "Region"
+      "region": "Region",
+      "ariaLabelPolicyType": "Filter by policy type",
+      "ariaLabelCanton": "Filter by canton",
+      "ariaLabelCategory": "Filter by category"
     },
     "buttons": {
       "addEditPolicy": "Add Edit Policy",
@@ -152,7 +180,8 @@
   "hrProcedures": {
     "categoryDisplay": {
       "viewCategoryAria": "View {{title}}",
-      "documentsCount": "{{count}} documents"
+      "documentsCount_one": "{{count}} document",
+      "documentsCount_other": "{{count}} documents"
     },
     "documentCard": {
       "toggleFavoriteLabel": "Toggle Favorite",
