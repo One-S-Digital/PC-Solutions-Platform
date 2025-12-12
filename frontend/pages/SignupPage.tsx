@@ -286,7 +286,7 @@ const SignupPage: React.FC = () => {
     return Object.keys(newErrors).length === 0 && captchaToken !== null;
   };
 
-  // Validation for OAuth users (no password required, email already verified by OAuth provider)
+  // Validation for users completing their profile (no password required - they already have a Clerk account)
   const validateOAuthProfile = (): boolean => {
     const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
     if (!selectedRole) return false;
@@ -299,8 +299,12 @@ const SignupPage: React.FC = () => {
     if (!formData.contactPerson) 
       newErrors.contactPerson = t(selectedRole === SignupRole.PARENT ? 'signup:errors.parentNameRequired' : 'signup:errors.contactPersonRequired');
     
-    // OAuth users don't need email validation - it's pre-filled from OAuth provider
-    // Password fields are not required for OAuth users
+    // Validate email is present (should be pre-filled from Clerk)
+    // This catches edge cases where Clerk user lacks primaryEmailAddress
+    if (!formData.email) {
+      newErrors.email = t('signup:errors.emailRequired');
+    }
+    // Password fields are not required for pending users (they already have Clerk accounts)
 
     if (requiresOrganizationDetails && !formData.phone) {
       newErrors.phone = t('signup:errors.phoneRequired');

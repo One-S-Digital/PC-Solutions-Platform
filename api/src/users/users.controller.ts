@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   Request,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -47,7 +48,7 @@ export class UsersController {
     const email = completeProfileDto.email || request.user?.email;
     
     if (!email) {
-      throw new Error('Email is required to complete profile');
+      throw new BadRequestException('Email is required to complete profile');
     }
     
     return this.usersService.completeProfile(clerkId, email, completeProfileDto);

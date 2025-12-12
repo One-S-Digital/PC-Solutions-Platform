@@ -213,8 +213,14 @@ const ProtectedLayout: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center text-sm">
             <button
               onClick={async () => {
-                await signOut();
-                navigate('/login', { replace: true });
+                try {
+                  await signOut();
+                  navigate('/login', { replace: true });
+                } catch (error) {
+                  console.error('Sign out failed:', error);
+                  // Force navigate to login even if sign-out fails
+                  navigate('/login', { replace: true });
+                }
               }}
               className="text-gray-500 hover:text-gray-700 underline"
             >
