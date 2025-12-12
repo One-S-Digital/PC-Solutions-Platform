@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsNotEmpty, IsInt, Min } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsNotEmpty, IsInt, Min, IsEmail } from 'class-validator';
 import { UserRole } from '@prisma/client';
 import { Type } from 'class-transformer';
 
@@ -6,6 +6,10 @@ export class CompleteProfileDto {
   @IsEnum(UserRole)
   @IsNotEmpty()
   role: UserRole;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
 
   @IsString()
   @IsOptional()
