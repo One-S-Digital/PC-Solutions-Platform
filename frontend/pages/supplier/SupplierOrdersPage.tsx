@@ -35,7 +35,10 @@ const SupplierOrdersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!currentUser?.orgId) return;
+    if (!currentUser?.orgId) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError(null);

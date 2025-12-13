@@ -37,6 +37,7 @@ const SupplierProductListingsPage: React.FC = () => {
 
   const loadProducts = useCallback(async () => {
     if (!currentUser?.orgId) {
+      setIsLoading(false);
       return;
     }
 

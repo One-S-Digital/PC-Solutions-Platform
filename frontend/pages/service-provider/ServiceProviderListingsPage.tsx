@@ -58,7 +58,10 @@ const ServiceProviderListingsPage: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
 
   const fetchServices = useCallback(async () => {
-    if (!currentUser?.orgId) return;
+    if (!currentUser?.orgId) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError(null);
