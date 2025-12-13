@@ -14,9 +14,8 @@ CREATE TABLE IF NOT EXISTS "public"."inquiries" (
     "id" TEXT NOT NULL,
     "organizationId" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
-    "subject" TEXT,
-    "message" TEXT NOT NULL,
-    "productInterest" TEXT,
+    "subject" TEXT NOT NULL,
+    "message" TEXT NOT NULL,    "productInterest" TEXT,
     "quantity" INTEGER,
     "budget" TEXT,
     "urgency" TEXT,
@@ -28,11 +27,9 @@ CREATE TABLE IF NOT EXISTS "public"."inquiries" (
     "supplierNotes" TEXT,
     "responseMessage" TEXT,
     "quotedAmount" DOUBLE PRECISION,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "quotedAmount" NUMERIC(12, 2),    "updatedAt" TIMESTAMP(3) NOT NULL,
     "respondedAt" TIMESTAMP(3),
-    "fulfilledAt" TIMESTAMP(3),
-
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "inquiries_pkey" PRIMARY KEY ("id")
 );
 

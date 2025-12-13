@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-cd -- "$(dirname -- "$0")/.."
-
+cd -- "$(dirname -- "$0")/.." || {
+  echo "Error: Failed to change to repository root directory"
+  exit 1
+}
 # Validate translation files before commit
 node scripts/validate-translations.mjs
 
