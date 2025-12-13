@@ -60,12 +60,20 @@ export interface TicketResponse {
   isStaff: boolean;
   createdAt: string;
   userName?: string;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  attachmentSize?: number | null;
+  attachmentMimeType?: string | null;
 }
 
 export interface SupportTicket {
   id: string;
   subject: string;
   message: string;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  attachmentSize?: number | null;
+  attachmentMimeType?: string | null;
   category: TicketCategory;
   priority: TicketPriority;
   status: TicketStatus;

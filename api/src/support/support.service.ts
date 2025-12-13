@@ -18,6 +18,32 @@ export class SupportService {
   ) {}
 
   /**
+   * Extract storage key from a full URL or return the key if it's already a key
+   */
+  private extractStorageKey(fileUrl?: string): string | undefined {
+    if (!fileUrl) return undefined;
+
+    if (fileUrl.startsWith('/api/upload/download/')) {
+      return fileUrl.replace('/api/upload/download/', '');
+    }
+
+    try {
+      const url = new URL(fileUrl);
+      return url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+    } catch {
+      return fileUrl;
+    }
+  }
+
+  /**
+   * Convert storage key to secure download URL
+   */
+  private toSecureDownloadUrl(storageKey?: string | null): string | null {
+    if (!storageKey) return null;
+    return `/api/upload/download/${storageKey}`;
+  }
+
+  /**
    * Create a new support ticket
    */
   async createTicket(
@@ -27,8 +53,14 @@ export class SupportService {
       message: string;
       category?: string;
       priority?: string;
+      attachmentUrl?: string;
+      attachmentName?: string;
+      attachmentSize?: number;
+      attachmentMimeType?: string;
     },
   ): Promise<SupportTicketResponse> {
+    const attachmentStorageKey = this.extractStorageKey(data.attachmentUrl);
+
     const ticket = await this.prisma.supportTicket.create({
       data: {
         userId,
@@ -37,6 +69,10 @@ export class SupportService {
         category: data.category || 'GENERAL',
         priority: data.priority || 'MEDIUM',
         status: 'OPEN',
+        attachmentUrl: attachmentStorageKey,
+        attachmentName: data.attachmentName,
+        attachmentSize: data.attachmentSize,
+        attachmentMimeType: data.attachmentMimeType,
       },
       include: {
         user: {
@@ -90,7 +126,7 @@ export class SupportService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return tickets.map((ticket) => this.transformTicket(ticket));
+    return tickets.map((ticket) => this.transformTicket(ticket, false));
   }
 
   /**
@@ -141,7 +177,7 @@ export class SupportService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return tickets.map((ticket) => this.transformTicket(ticket));
+    return tickets.map((ticket) => this.transformTicket(ticket, true));
   }
 
   /**
@@ -177,7 +213,7 @@ export class SupportService {
       throw new ForbiddenException('You do not have access to this ticket');
     }
 
-    return this.transformTicket(ticket);
+    return this.transformTicket(ticket, isAdmin);
   }
 
   /**
@@ -188,6 +224,12 @@ export class SupportService {
     userId: string,
     message: string,
     isStaff: boolean,
+    attachment?: {
+      attachmentUrl?: string;
+      attachmentName?: string;
+      attachmentSize?: number;
+      attachmentMimeType?: string;
+    },
   ): Promise<SupportTicketResponse> {
     const ticket = await this.prisma.supportTicket.findUnique({
       where: { id: ticketId },
@@ -202,6 +244,8 @@ export class SupportService {
       throw new ForbiddenException('You do not have access to this ticket');
     }
 
+    const attachmentStorageKey = this.extractStorageKey(attachment?.attachmentUrl);
+
     // Create the response
     await this.prisma.ticketResponse.create({
       data: {
@@ -209,6 +253,10 @@ export class SupportService {
         userId,
         message,
         isStaff,
+        attachmentUrl: attachmentStorageKey,
+        attachmentName: attachment?.attachmentName,
+        attachmentSize: attachment?.attachmentSize,
+        attachmentMimeType: attachment?.attachmentMimeType,
       },
     });
 
@@ -520,11 +568,15 @@ export class SupportService {
   /**
    * Transform database ticket to response format
    */
-  private transformTicket(ticket: any): SupportTicketResponse {
+  private transformTicket(ticket: any, isAdmin = false): SupportTicketResponse {
     return {
       id: ticket.id,
       subject: ticket.subject,
       message: ticket.message,
+      attachmentUrl: isAdmin ? this.toSecureDownloadUrl(ticket.attachmentUrl) : null,
+      attachmentName: isAdmin ? ticket.attachmentName || null : null,
+      attachmentSize: isAdmin ? ticket.attachmentSize ?? null : null,
+      attachmentMimeType: isAdmin ? ticket.attachmentMimeType || null : null,
       category: ticket.category,
       priority: ticket.priority,
       status: ticket.status,
@@ -553,6 +605,10 @@ export class SupportService {
         message: r.message,
         isStaff: r.isStaff,
         createdAt: r.createdAt.toISOString(),
+        attachmentUrl: isAdmin ? this.toSecureDownloadUrl(r.attachmentUrl) : null,
+        attachmentName: isAdmin ? r.attachmentName || null : null,
+        attachmentSize: isAdmin ? r.attachmentSize ?? null : null,
+        attachmentMimeType: isAdmin ? r.attachmentMimeType || null : null,
         userName: r.user
           ? `${r.user.firstName || ''} ${r.user.lastName || ''}`.trim() || 'Unknown'
           : 'Unknown',

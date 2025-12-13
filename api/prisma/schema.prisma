@@ -1846,6 +1846,10 @@ model SupportTicket {
   userId      String
   subject     String
   message     String    @db.Text
+  attachmentUrl       String?
+  attachmentName      String?
+  attachmentSize      Int?
+  attachmentMimeType  String?
   category    String    @default("GENERAL") // GENERAL, TECHNICAL, BILLING, FEATURE_REQUEST
   priority    String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
   status      String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
@@ -1871,6 +1875,10 @@ model TicketResponse {
   ticketId  String
   userId    String
   message   String   @db.Text
+  attachmentUrl       String?
+  attachmentName      String?
+  attachmentSize      Int?
+  attachmentMimeType  String?
   isStaff   Boolean  @default(false)
   createdAt DateTime @default(now())
 

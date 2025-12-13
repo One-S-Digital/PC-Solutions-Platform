@@ -92,6 +92,12 @@ export class SupportController {
       userId,
       responseDto.message,
       isAdmin,
+      {
+        attachmentUrl: responseDto.attachmentUrl,
+        attachmentName: responseDto.attachmentName,
+        attachmentSize: responseDto.attachmentSize,
+        attachmentMimeType: responseDto.attachmentMimeType,
+      },
     );
     return wrapResponse(ticket, 'Response added successfully');
   }

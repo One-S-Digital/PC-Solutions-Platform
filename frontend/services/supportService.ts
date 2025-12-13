@@ -9,12 +9,20 @@ export interface TicketResponse {
   isStaff: boolean;
   createdAt: string;
   userName?: string;
+   attachmentUrl?: string | null;
+   attachmentName?: string | null;
+   attachmentSize?: number | null;
+   attachmentMimeType?: string | null;
 }
 
 export interface SupportTicket {
   id: string;
   subject: string;
   message: string;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  attachmentSize?: number | null;
+  attachmentMimeType?: string | null;
   category: string;
   priority: string;
   status: string;
@@ -29,10 +37,18 @@ export interface CreateTicketData {
   message: string;
   category?: 'GENERAL' | 'TECHNICAL' | 'BILLING' | 'FEATURE_REQUEST';
   priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  attachmentUrl?: string;
+  attachmentName?: string;
+  attachmentSize?: number;
+  attachmentMimeType?: string;
 }
 
 export interface CreateTicketResponseData {
   message: string;
+  attachmentUrl?: string;
+  attachmentName?: string;
+  attachmentSize?: number;
+  attachmentMimeType?: string;
 }
 
 export type TicketCategory = 'GENERAL' | 'TECHNICAL' | 'BILLING' | 'FEATURE_REQUEST';

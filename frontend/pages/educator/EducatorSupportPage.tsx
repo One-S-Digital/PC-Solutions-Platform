@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
 import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
-import { STANDARD_INPUT_FIELD } from '../../constants';
 import { QuestionMarkCircleIcon, LifebuoyIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import FoundationSupportPage from '../foundation/FoundationSupportPage';
 
 interface FAQItemProps {
   questionKey: string;
@@ -37,17 +36,6 @@ const EducatorSupportPage: React.FC = () => {
     { questionKey: "educatorSupportPage.faq.notifications.q", answerKey: "educatorSupportPage.faq.notifications.a" },
   ];
 
-  const [ticketSubject, setTicketSubject] = useState('');
-  const [ticketMessage, setTicketMessage] = useState('');
-
-  const handleTicketSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Support ticket submitted by Educator:", { subject: ticketSubject, message: ticketMessage });
-    alert(t('dashboard:educatorSupportPage.ticketSubmittedAlert'));
-    setTicketSubject('');
-    setTicketMessage('');
-  };
-
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
@@ -73,38 +61,8 @@ const EducatorSupportPage: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-swiss-charcoal mb-4">{t('common:supportPage.submitTicketTitle')}</h2>
-        <form onSubmit={handleTicketSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="ticketSubjectEducator" className="block text-sm font-medium text-gray-700 mb-1">{t('common:supportPage.ticketForm.subjectLabel')}</label>
-            <input
-              type="text"
-              id="ticketSubjectEducator"
-              value={ticketSubject}
-              onChange={(e) => setTicketSubject(e.target.value)}
-              required
-              className={STANDARD_INPUT_FIELD}
-              placeholder={t('common:supportPage.ticketForm.subjectPlaceholder')}
-            />
-          </div>
-          <div>
-            <label htmlFor="ticketMessageEducator" className="block text-sm font-medium text-gray-700 mb-1">{t('common:supportPage.ticketForm.messageLabel')}</label>
-            <textarea
-              id="ticketMessageEducator"
-              value={ticketMessage}
-              onChange={(e) => setTicketMessage(e.target.value)}
-              required
-              rows={5}
-              className={STANDARD_INPUT_FIELD}
-              placeholder={t('common:supportPage.ticketForm.messagePlaceholder')}
-            />
-          </div>
-          <div>
-            <Button type="submit" variant="primary">{t('common:buttons.submitTicket')}</Button>
-          </div>
-        </form>
-      </Card>
+      {/* Full ticket experience */}
+      <FoundationSupportPage />
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsIn, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsIn, MinLength, MaxLength, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateTicketDto {
   @IsString()
@@ -20,6 +21,23 @@ export class CreateTicketDto {
   @IsOptional()
   @IsIn(['LOW', 'MEDIUM', 'HIGH', 'URGENT'])
   priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+
+  @IsString()
+  @IsOptional()
+  attachmentUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  attachmentName?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  attachmentSize?: number;
+
+  @IsString()
+  @IsOptional()
+  attachmentMimeType?: string;
 }
 
 export class CreateTicketResponseDto {
@@ -27,6 +45,23 @@ export class CreateTicketResponseDto {
   @MinLength(1)
   @MaxLength(5000)
   message: string;
+
+  @IsString()
+  @IsOptional()
+  attachmentUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  attachmentName?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  attachmentSize?: number;
+
+  @IsString()
+  @IsOptional()
+  attachmentMimeType?: string;
 }
 
 export class UpdateTicketStatusDto {
@@ -46,6 +81,10 @@ export interface SupportTicketResponse {
   updatedAt: string;
   resolvedAt: string | null;
   assignedTo?: string | null;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  attachmentSize?: number | null;
+  attachmentMimeType?: string | null;
   assignee?: {
     id: string;
     firstName: string | null;
@@ -64,5 +103,9 @@ export interface SupportTicketResponse {
     isStaff: boolean;
     createdAt: string;
     userName?: string;
+    attachmentUrl?: string | null;
+    attachmentName?: string | null;
+    attachmentSize?: number | null;
+    attachmentMimeType?: string | null;
   }[];
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LifeBuoy,
@@ -20,6 +20,14 @@ import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@clerk/clerk-react';
+
+type AttachmentInfo = {
+  url: string;
+  name: string;
+  size?: number;
+  mimeType?: string;
+};
 
 const Support: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,11 +36,117 @@ const Support: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<TicketCategory | ''>('');
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
+  const [replyAttachment, setReplyAttachment] = useState<AttachmentInfo | null>(null);
+  const [uploadingReplyFile, setUploadingReplyFile] = useState(false);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
+  const { getToken } = useAuth();
 
   const queryClient = useQueryClient();
+  const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+
+  const uploadSupportAttachment = useCallback(
+    async (file: File): Promise<AttachmentInfo> => {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication token not available');
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('assetKind', 'DOCUMENT');
+
+      const response = await fetch(`${apiBaseUrl}/upload/file`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || `Upload failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      const asset = data.asset || data.data?.asset;
+
+      if (!asset || !(asset.url || asset.publicUrl)) {
+        throw new Error('Upload response missing asset URL');
+      }
+
+      return {
+        url: asset.url || asset.publicUrl,
+        name: asset.filename || file.name,
+        size: asset.size ?? file.size,
+        mimeType: asset.mimeType || file.type,
+      };
+    },
+    [apiBaseUrl, getToken],
+  );
+
+  const downloadAttachment = useCallback(
+    async (fileUrl: string, fileName: string) => {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication token not available');
+      }
+
+      let downloadUrl = fileUrl;
+      if (fileUrl.startsWith('/api/upload/download/')) {
+        const storageKey = fileUrl.substring('/api/upload/download/'.length);
+        downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+      } else if (fileUrl.startsWith('http')) {
+        try {
+          const urlObj = new URL(fileUrl);
+          const path = urlObj.pathname.startsWith('/api/upload/download/')
+            ? urlObj.pathname.substring('/api/upload/download/'.length)
+            : urlObj.pathname.substring(1);
+          downloadUrl = `${apiBaseUrl}/upload/download/${path}`;
+        } catch {
+          downloadUrl = `${apiBaseUrl}/upload/download/${fileUrl.replace('/api/upload/download/', '')}`;
+        }
+      } else {
+        downloadUrl = `${apiBaseUrl}/upload/download/${fileUrl}`;
+      }
+
+      const response = await fetch(downloadUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    },
+    [apiBaseUrl, getToken],
+  );
+
+  const handleReplyFileSelect = useCallback(
+    async (file?: File | null) => {
+      if (!file) return;
+      setUploadingReplyFile(true);
+      try {
+        const attachment = await uploadSupportAttachment(file);
+        setReplyAttachment(attachment);
+      } catch (error) {
+        console.error('Failed to upload attachment', error);
+        alert(t('common:errors.submitFailed'));
+      } finally {
+        setUploadingReplyFile(false);
+      }
+    },
+    [uploadSupportAttachment, t],
+  );
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -102,11 +216,18 @@ const Support: React.FC = () => {
 
   // Reply to ticket mutation
   const replyMutation = useMutation({
-    mutationFn: ({ ticketId, message }: { ticketId: string; message: string }) =>
-      apiService.respondToTicket(apiClient, ticketId, message),
+    mutationFn: ({ ticketId, message, attachment }: { ticketId: string; message: string; attachment?: AttachmentInfo | null }) =>
+      apiService.respondToTicket(apiClient, ticketId, {
+        message,
+        attachmentUrl: attachment?.url,
+        attachmentName: attachment?.name,
+        attachmentSize: attachment?.size,
+        attachmentMimeType: attachment?.mimeType,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
       setReplyMessage('');
+      setReplyAttachment(null);
       if (selectedTicket) {
         apiService.getSupportTicket(apiClient, selectedTicket.id).then((response) => {
           setSelectedTicket(response.data.data);
@@ -125,7 +246,7 @@ const Support: React.FC = () => {
 
   const handleReply = () => {
     if (!selectedTicket || !replyMessage.trim()) return;
-    replyMutation.mutate({ ticketId: selectedTicket.id, message: replyMessage });
+    replyMutation.mutate({ ticketId: selectedTicket.id, message: replyMessage, attachment: replyAttachment });
   };
 
   const getStatusColor = (status: TicketStatus): string => {
@@ -488,6 +609,25 @@ const Support: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-sm text-gray-700">{selectedTicket.message}</p>
+                    {selectedTicket.attachmentUrl && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            downloadAttachment(
+                              selectedTicket.attachmentUrl || '',
+                              selectedTicket.attachmentName || selectedTicket.subject || 'attachment',
+                            ).catch((err) => console.error('Attachment download failed', err))
+                          }
+                          className="text-blue-600 hover:text-blue-800 text-xs font-medium underline"
+                        >
+                          {t('common:supportPage.downloadAttachment', 'Download attachment')}
+                        </button>
+                        {selectedTicket.attachmentName && (
+                          <span className="text-xs text-gray-600 truncate max-w-xs">{selectedTicket.attachmentName}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Responses */}
@@ -512,6 +652,25 @@ const Support: React.FC = () => {
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">{response.message}</p>
+                        {response.attachmentUrl && (
+                          <div className="mt-2 flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                downloadAttachment(
+                                  response.attachmentUrl || '',
+                                  response.attachmentName || 'attachment',
+                                ).catch((err) => console.error('Attachment download failed', err))
+                              }
+                              className="text-blue-600 hover:text-blue-800 text-xs font-medium underline"
+                            >
+                              {t('common:supportPage.downloadAttachment', 'Download attachment')}
+                            </button>
+                            {response.attachmentName && (
+                              <span className="text-xs text-gray-600 truncate max-w-xs">{response.attachmentName}</span>
+                            )}
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>
@@ -526,6 +685,31 @@ const Support: React.FC = () => {
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
                 />
+                <div className="flex flex-wrap items-center gap-3 mt-2">
+                  <input
+                    type="file"
+                    onChange={(e) => handleReplyFileSelect(e.target.files?.[0])}
+                    disabled={uploadingReplyFile}
+                    className="text-sm"
+                  />
+                  {uploadingReplyFile && (
+                    <span className="text-xs text-gray-500">
+                      {t('common:uploading', 'Uploading...')}
+                    </span>
+                  )}
+                  {replyAttachment && (
+                    <div className="flex items-center gap-2 text-sm text-gray-700 bg-white border border-gray-200 rounded px-2 py-1">
+                      <span className="truncate max-w-xs">{replyAttachment.name}</span>
+                      <button
+                        type="button"
+                        className="text-blue-600 hover:text-blue-800 text-xs"
+                        onClick={() => setReplyAttachment(null)}
+                      >
+                        {t('common:buttons.remove', 'Remove')}
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={handleReply}
                   disabled={!replyMessage.trim() || replyMutation.isPending}

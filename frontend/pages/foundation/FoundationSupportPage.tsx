@@ -29,6 +29,13 @@ import {
   TicketPriority,
 } from '../../services/supportService';
 
+type AttachmentInfo = {
+  url: string;
+  name: string;
+  size?: number;
+  mimeType?: string;
+};
+
 interface FAQItemProps {
   questionKey: string;
   answerKey: string;
@@ -53,7 +60,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ questionKey, answerKey }) => {
 
 const FoundationSupportPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
-  const { request } = useAuthenticatedApi();
+  const { request, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
 
   // State
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -63,6 +70,10 @@ const FoundationSupportPage: React.FC = () => {
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [newResponse, setNewResponse] = useState('');
+  const [ticketAttachment, setTicketAttachment] = useState<AttachmentInfo | null>(null);
+  const [responseAttachment, setResponseAttachment] = useState<AttachmentInfo | null>(null);
+  const [uploadingTicketFile, setUploadingTicketFile] = useState(false);
+  const [uploadingResponseFile, setUploadingResponseFile] = useState(false);
 
   // New ticket form
   const [ticketSubject, setTicketSubject] = useState('');
@@ -76,6 +87,55 @@ const FoundationSupportPage: React.FC = () => {
     { questionKey: "foundationSupportPage.faq.manageProfile.q", answerKey: "foundationSupportPage.faq.manageProfile.a" },
     { questionKey: "foundationSupportPage.faq.recruitment.q", answerKey: "foundationSupportPage.faq.recruitment.a" },
   ];
+
+  const uploadAttachment = useCallback(
+    async (file: File): Promise<AttachmentInfo> => {
+      const uploadResponse = await authenticatedUpload('/upload/file', file, { assetKind: 'DOCUMENT' });
+      const asset = (uploadResponse as any)?.asset || (uploadResponse as any)?.data?.asset;
+
+      if (!asset || !(asset.url || asset.publicUrl)) {
+        throw new Error('Upload did not return a file URL');
+      }
+
+      return {
+        url: asset.url || asset.publicUrl,
+        name: asset.filename || file.name,
+        size: asset.size ?? file.size,
+        mimeType: asset.mimeType || file.type,
+      };
+    },
+    [authenticatedUpload],
+  );
+
+  const handleTicketFileSelect = async (file?: File | null) => {
+    if (!file) return;
+    setUploadingTicketFile(true);
+    try {
+      const attachment = await uploadAttachment(file);
+      setTicketAttachment(attachment);
+      setError(null);
+    } catch (err) {
+      console.error('Error uploading ticket attachment:', err);
+      setError(t('common:errors.submitFailed'));
+    } finally {
+      setUploadingTicketFile(false);
+    }
+  };
+
+  const handleResponseFileSelect = async (file?: File | null) => {
+    if (!file) return;
+    setUploadingResponseFile(true);
+    try {
+      const attachment = await uploadAttachment(file);
+      setResponseAttachment(attachment);
+      setError(null);
+    } catch (err) {
+      console.error('Error uploading response attachment:', err);
+      setError(t('common:errors.submitFailed'));
+    } finally {
+      setUploadingResponseFile(false);
+    }
+  };
 
   // Fetch tickets
   const fetchTickets = useCallback(async () => {
@@ -110,6 +170,10 @@ const FoundationSupportPage: React.FC = () => {
         message: ticketMessage,
         category: ticketCategory,
         priority: ticketPriority,
+        attachmentUrl: ticketAttachment?.url,
+        attachmentName: ticketAttachment?.name,
+        attachmentSize: ticketAttachment?.size,
+        attachmentMimeType: ticketAttachment?.mimeType,
       });
 
       const res = await request(config.endpoint, {
@@ -122,6 +186,7 @@ const FoundationSupportPage: React.FC = () => {
         setTicketMessage('');
         setTicketCategory('GENERAL');
         setTicketPriority('MEDIUM');
+        setTicketAttachment(null);
         setShowNewTicketForm(false);
         setError(null);
         await fetchTickets();
@@ -144,7 +209,13 @@ const FoundationSupportPage: React.FC = () => {
     setSubmitting(true);
 
     try {
-      const config = supportApi.respondToTicketConfig(selectedTicket.id, { message: newResponse });
+      const config = supportApi.respondToTicketConfig(selectedTicket.id, {
+        message: newResponse,
+        attachmentUrl: responseAttachment?.url,
+        attachmentName: responseAttachment?.name,
+        attachmentSize: responseAttachment?.size,
+        attachmentMimeType: responseAttachment?.mimeType,
+      });
       const res = await request<SupportTicket>(config.endpoint, {
         method: config.method,
         body: config.body,
@@ -153,6 +224,7 @@ const FoundationSupportPage: React.FC = () => {
       if (res.success && res.data) {
         setSelectedTicket(res.data);
         setNewResponse('');
+        setResponseAttachment(null);
         setError(null);
         await fetchTickets();
       } else {
@@ -195,6 +267,26 @@ const FoundationSupportPage: React.FC = () => {
         {/* Original message */}
         <div className="bg-gray-50 rounded-lg p-4 mb-4">
           <p className="text-sm text-gray-700 whitespace-pre-wrap">{selectedTicket.message}</p>
+          {selectedTicket.attachmentUrl && (
+            <div className="mt-2 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                type="button"
+                onClick={() =>
+                  authenticatedDownload(
+                    selectedTicket.attachmentUrl || '',
+                    selectedTicket.attachmentName || selectedTicket.subject || 'attachment',
+                  )
+                }
+              >
+                {t('common:supportPage.downloadAttachment', 'Download attachment')}
+              </Button>
+              {selectedTicket.attachmentName && (
+                <span className="text-xs text-gray-600 truncate max-w-xs">{selectedTicket.attachmentName}</span>
+              )}
+            </div>
+          )}
           <p className="text-xs text-gray-400 mt-2">
             {new Date(selectedTicket.createdAt).toLocaleString(i18n.language)}
           </p>
@@ -216,6 +308,26 @@ const FoundationSupportPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-sm text-gray-700 whitespace-pre-wrap">{response.message}</p>
+              {response.attachmentUrl && (
+                <div className="mt-2 flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    type="button"
+                    onClick={() =>
+                      authenticatedDownload(
+                        response.attachmentUrl || '',
+                        response.attachmentName || 'attachment',
+                      )
+                    }
+                  >
+                    {t('common:supportPage.downloadAttachment', 'Download attachment')}
+                  </Button>
+                  {response.attachmentName && (
+                    <span className="text-xs text-gray-600 truncate max-w-xs">{response.attachmentName}</span>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -231,6 +343,32 @@ const FoundationSupportPage: React.FC = () => {
               className={STANDARD_INPUT_FIELD}
               required
             />
+            <div className="flex flex-wrap items-center gap-3 mt-2">
+              <input
+                type="file"
+                onChange={(e) => handleResponseFileSelect(e.target.files?.[0])}
+                disabled={uploadingResponseFile}
+                className="text-sm"
+              />
+              {uploadingResponseFile && (
+                <span className="text-xs text-gray-500">
+                  {t('common:uploading', 'Uploading...')}
+                </span>
+              )}
+              {responseAttachment && (
+                <div className="flex items-center gap-2 text-sm text-gray-700 bg-white border border-gray-200 rounded px-2 py-1">
+                  <span className="truncate max-w-xs">{responseAttachment.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    type="button"
+                    onClick={() => setResponseAttachment(null)}
+                  >
+                    {t('common:buttons.remove', 'Remove')}
+                  </Button>
+                </div>
+              )}
+            </div>
             <div className="flex justify-end mt-2">
               <Button type="submit" variant="primary" disabled={submitting || !newResponse.trim()}>
                 {submitting ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : t('common:buttons.reply')}
@@ -352,6 +490,37 @@ const FoundationSupportPage: React.FC = () => {
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('common:supportPage.ticketForm.messagePlaceholder')}
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('common:supportPage.ticketForm.attachmentLabel', 'Attachment (optional)')}
+                  </label>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input
+                      type="file"
+                      onChange={(e) => handleTicketFileSelect(e.target.files?.[0])}
+                      disabled={uploadingTicketFile}
+                      className="text-sm"
+                    />
+                    {uploadingTicketFile && (
+                      <span className="text-xs text-gray-500">
+                        {t('common:uploading', 'Uploading...')}
+                      </span>
+                    )}
+                    {ticketAttachment && (
+                      <div className="flex items-center gap-2 text-sm text-gray-700 bg-white border border-gray-200 rounded px-2 py-1">
+                        <span className="truncate max-w-xs">{ticketAttachment.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          type="button"
+                          onClick={() => setTicketAttachment(null)}
+                        >
+                          {t('common:buttons.remove', 'Remove')}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex justify-end gap-2">
                   <Button 

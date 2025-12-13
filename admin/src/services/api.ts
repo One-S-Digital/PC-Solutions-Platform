@@ -735,8 +735,12 @@ export const apiService = {
   assignTicket: (apiClient: AxiosInstance, ticketId: string, assigneeId?: string) =>
     apiClient.patch<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/assign`, { assigneeId }),
 
-  respondToTicket: (apiClient: AxiosInstance, ticketId: string, message: string) =>
-    apiClient.post<ApiResponse<any>>(`/support/tickets/${ticketId}/respond`, { message }),
+  respondToTicket: (
+    apiClient: AxiosInstance,
+    ticketId: string,
+    data: { message: string; attachmentUrl?: string; attachmentName?: string; attachmentSize?: number; attachmentMimeType?: string },
+  ) =>
+    apiClient.post<ApiResponse<any>>(`/support/tickets/${ticketId}/respond`, data),
 
   getSupportTicketStats: (apiClient: AxiosInstance) =>
     apiClient.get<ApiResponse<any>>('/support/admin/stats'),
