@@ -472,7 +472,7 @@ const Users: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to update user:', error)
-      throw error
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
     },
   })
 
@@ -487,7 +487,7 @@ const Users: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to delete user:', error)
-      throw error
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
     },
   })
 
@@ -503,7 +503,7 @@ const Users: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to elevate user:', error)
-      throw error
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
     },
   })
 
