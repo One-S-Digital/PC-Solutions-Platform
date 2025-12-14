@@ -364,16 +364,16 @@ export class UploadController {
 
   /**
    * Proxy endpoint to download files with authentication and authorization
-   * GET /api/upload/download/*
+   * GET /api/upload/download/*path
    */
-  @Options('download/*')
+  @Options('download/*path')
   async downloadFileOptions(@Req() req: Request, @Res() res: Response) {
     // Set restrictive CORS headers for preflight
     this.setCorsHeaders(req, res);
     res.status(200).send();
   }
 
-  @Get('download/*')
+  @Get('download/*path')
   @UploadThrottle()
   async downloadFile(
     @Req() req: Request,
