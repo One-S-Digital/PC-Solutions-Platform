@@ -35,7 +35,10 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true }));
 
   // Security middleware
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  }));
   // Resolve compression middleware across CJS/ESM export shapes
   let compressionFn: any;
   try {
