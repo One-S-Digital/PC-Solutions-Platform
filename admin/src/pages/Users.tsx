@@ -68,8 +68,17 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     }
     
     try {
-      // Merge formData with existing user to preserve required fields
-      await onSave({ ...user, ...formData } as User)
+      // Only send fields that are allowed by the UpdateUserDto
+      // The DTO whitelist allows: email, firstName, lastName, role, orgId, phoneNumber, address, avatarUrl, status
+      const updatePayload = {
+        id: user!.id, // needed for the mutation to identify the user
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        role: formData.role,
+        status: formData.status,
+      } as User
+      await onSave(updatePayload)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('admin:users.editUser.updateFailed', 'Failed to update user'))
     }

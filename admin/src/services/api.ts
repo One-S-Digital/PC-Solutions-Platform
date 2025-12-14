@@ -241,7 +241,12 @@ export const apiService = {
   getUsers: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User[]>>('/users'),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
-  updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => apiClient.patch<ApiResponse<User>>(`/users/${id}`, userData),
+  updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
+    // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, ...updateData } = userData
+    return apiClient.patch<ApiResponse<User>>(`/users/${id}`, updateData)
+  },
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
   
   // Role Elevation - Super Admin only
