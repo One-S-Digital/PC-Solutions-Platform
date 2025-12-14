@@ -555,8 +555,9 @@ export class StaticTranslationController {
    * Used by i18next-http-backend for runtime loading
    * Includes ETag and Cache-Control headers for efficient caching
    * NOTE: Must be defined LAST to avoid matching admin/system routes
+   * Regex constraint ensures only valid languages can match (prevents "admin" from matching)
    */
-  @Get(':lang/:namespace')
+  @Get(':lang(en|fr|de)/:namespace')
   @Public() // Public endpoint - no auth required
   @SkipThrottle() // Explicitly skip throttling for this endpoint
   @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=86400')
@@ -568,25 +569,15 @@ export class StaticTranslationController {
     @Param('lang') lang: string,
     @Param('namespace') namespace: string,
     @Res() res: Response,
+    @Request() req: any,
     @Query('v') version?: string,
     @Headers('if-none-match') ifNoneMatch?: string,
   ): Promise<void> {
     // Debug logging to help diagnose issues
     console.log(`[Translation] Request received: lang="${lang}", namespace="${namespace}"`);
     
-    // Guard: Reject admin/system routes that shouldn't match this pattern
-    const adminKeywords = ['admin', 'system', 'export', 'import', 'bulk', 'release', 'audit', 'budget', 'cleanup', 'fix', 'auto-fix', 'translate-missing', 'full-sync'];
-    if (adminKeywords.includes(lang.toLowerCase()) || adminKeywords.includes(namespace.toLowerCase())) {
-      console.warn(`[Translation] Admin/system route incorrectly matched as language route: lang="${lang}", namespace="${namespace}"`);
-      res.status(404).json({ 
-        error: 'Route not found', 
-        message: 'This endpoint is for language translations only. Use admin endpoints for admin operations.',
-        received: { lang, namespace }
-      });
-      return;
-    }
-    
     // Input validation - prevent injection and invalid requests
+    // Note: The regex constraint in the route already ensures lang is en|fr|de, but we validate again for safety
     const supportedLangs = ['en', 'fr', 'de'];
     if (!supportedLangs.includes(lang)) {
       console.warn(`[Translation] Invalid language: "${lang}"`);

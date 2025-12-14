@@ -1,4 +1,4 @@
-﻿import { NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
@@ -77,6 +77,17 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
+  // Add build commit header for deployment verification
+  app.use((req, res, next) => {
+    const buildCommit = process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown';
+    res.setHeader('x-build-commit', buildCommit);
+    next();
+  });
+
+  // Log build commit at startup
+  const buildCommit = process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown';
+  logger.log(`BUILD_COMMIT: ${buildCommit}`,  'Bootstrap');
+
   // CORS - Enhanced configuration
   const allowedOrigins = process.env.NODE_ENV === 'production' 
     ? [
@@ -89,15 +100,9 @@ async function bootstrap() {
     origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type', 
-      'Authorization', 
-      'X-Requested-With', 
-      'Accept',
-      'svix-id',
-      'svix-timestamp',
-      'svix-signature',
-    ],
+    // Temporarily allow all headers to diagnose CORS preflight issues
+    // TODO: Lock down to specific headers once we identify what the frontend is sending
+    allowedHeaders: '*',
     exposedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
     optionsSuccessStatus: 204,
