@@ -72,12 +72,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <img
             src={getAdminLogo()}
             alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
-            className="h-[69px] w-auto mr-2.5"
+            className="h-[69px] w-auto"
           />
         ) : (
-          <Shield className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
+          <Shield className="h-[69px] w-[69px] text-swiss-mint" />
         )}
-        <h1 className="text-2xl font-bold text-swiss-charcoal">{t('common:admin', 'Admin')}</h1>
       </div>
 
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
