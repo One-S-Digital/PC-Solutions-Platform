@@ -243,6 +243,14 @@ export const apiService = {
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => apiClient.patch<ApiResponse<User>>(`/users/${id}`, userData),
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
+  
+  // Role Elevation - Super Admin only
+  elevateUserToAdmin: (
+    apiClient: AxiosInstance, 
+    userId: string, 
+    targetRole: 'ADMIN' | 'SUPER_ADMIN',
+    reason?: string
+  ) => apiClient.post<ApiResponse<User>>(`/users/${userId}/elevate-to-admin`, { targetRole, reason }),
 
   // Organizations
   getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations'),

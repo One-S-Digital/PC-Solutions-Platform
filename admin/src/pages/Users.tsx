@@ -9,9 +9,11 @@ import {
   Trash2,
   MoreVertical,
   Shield,
+  ShieldCheck,
   Building2,
   X,
-  AlertTriangle
+  AlertTriangle,
+  UserCog
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
@@ -239,6 +241,192 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
   )
 }
 
+// Elevate to Admin Modal Component
+interface ElevateToAdminModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onConfirm: (targetRole: 'ADMIN' | 'SUPER_ADMIN', reason: string) => Promise<void>
+  isLoading: boolean
+}
+
+const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
+  const { t } = useTranslation(['common', 'admin']);
+  const [selectedRole, setSelectedRole] = useState<'ADMIN' | 'SUPER_ADMIN'>('ADMIN')
+  const [reason, setReason] = useState('')
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedRole('ADMIN')
+      setReason('')
+      setError(null)
+    }
+  }, [isOpen])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    
+    if (!reason.trim()) {
+      setError(t('admin:users.elevateUser.reasonRequired', 'Please provide a reason for this role elevation'))
+      return
+    }
+    
+    try {
+      await onConfirm(selectedRole, reason)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin:users.elevateUser.failed', 'Failed to elevate user'))
+    }
+  }
+
+  if (!isOpen || !user) return null
+
+  // Check if user is already an admin
+  const isAlreadyAdmin = user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-orange-500 to-red-500">
+          <h2 className="text-xl font-semibold text-white flex items-center">
+            <ShieldCheck className="w-6 h-6 mr-2" />
+            {t('admin:users.elevateUser.title', 'Elevate to Admin')}
+          </h2>
+          <button 
+            onClick={onClose} 
+            className="p-1 rounded-full text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+            disabled={isLoading}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            {isAlreadyAdmin && (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md text-sm">
+                <strong>{t('admin:users.elevateUser.alreadyAdmin', 'Note:')}</strong> {t('admin:users.elevateUser.alreadyAdminMessage', 'This user already has an admin role. You can change their role level below.')}
+              </div>
+            )}
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center space-x-3">
+                <div className="h-12 w-12 rounded-full bg-swiss-teal flex items-center justify-center">
+                  <span className="text-white font-medium text-lg">
+                    {(user.name || user.email || '?').charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</p>
+                  <p className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {t('admin:users.elevateUser.currentRole', 'Current role:')} <span className="font-medium">{user.role}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('admin:users.elevateUser.selectRole', 'Select Admin Role')}
+              </label>
+              <div className="space-y-2">
+                <label className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                  selectedRole === 'ADMIN' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'
+                }`}>
+                  <input
+                    type="radio"
+                    name="targetRole"
+                    value="ADMIN"
+                    checked={selectedRole === 'ADMIN'}
+                    onChange={() => setSelectedRole('ADMIN')}
+                    className="sr-only"
+                  />
+                  <Shield className={`w-5 h-5 mr-3 ${selectedRole === 'ADMIN' ? 'text-orange-500' : 'text-gray-400'}`} />
+                  <div>
+                    <p className={`font-medium ${selectedRole === 'ADMIN' ? 'text-orange-700' : 'text-gray-700'}`}>
+                      {t('common:admin', 'Admin')}
+                    </p>
+                    <p className="text-xs text-gray-500">{t('admin:users.elevateUser.adminDescription', 'Can manage users, content, and organizations')}</p>
+                  </div>
+                </label>
+                
+                <label className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                  selectedRole === 'SUPER_ADMIN' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300'
+                }`}>
+                  <input
+                    type="radio"
+                    name="targetRole"
+                    value="SUPER_ADMIN"
+                    checked={selectedRole === 'SUPER_ADMIN'}
+                    onChange={() => setSelectedRole('SUPER_ADMIN')}
+                    className="sr-only"
+                  />
+                  <ShieldCheck className={`w-5 h-5 mr-3 ${selectedRole === 'SUPER_ADMIN' ? 'text-red-500' : 'text-gray-400'}`} />
+                  <div>
+                    <p className={`font-medium ${selectedRole === 'SUPER_ADMIN' ? 'text-red-700' : 'text-gray-700'}`}>
+                      {t('common:superadmin', 'Super Admin')}
+                    </p>
+                    <p className="text-xs text-gray-500">{t('admin:users.elevateUser.superAdminDescription', 'Full system access including role management')}</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.elevateUser.reason', 'Reason for Elevation')} <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                className={STANDARD_INPUT_FIELD}
+                rows={3}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder={t('admin:users.elevateUser.reasonPlaceholder', 'Explain why this user needs admin privileges...')}
+                required
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('admin:users.elevateUser.reasonHint', 'This reason will be recorded in the audit log.')}
+              </p>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md shadow-sm disabled:opacity-50 ${
+                selectedRole === 'SUPER_ADMIN' 
+                  ? 'bg-red-600 hover:bg-red-700' 
+                  : 'bg-orange-600 hover:bg-orange-700'
+              }`}
+            >
+              {isLoading 
+                ? t('admin:users.elevateUser.elevating', 'Elevating...') 
+                : t('admin:users.elevateUser.confirm', 'Elevate User')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
   const [searchQuery, setSearchQuery] = useState('')
@@ -246,10 +434,22 @@ const Users: React.FC = () => {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
+
+  // Fetch current user to check if they are super admin
+  const { data: currentUserResponse } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => apiService.getCurrentUser(apiClient),
+    enabled: !!apiClient,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const currentUser = currentUserResponse?.data?.data
+  const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN
 
   const { data: usersResponse, isLoading, error } = useQuery({
     queryKey: ['users'],
@@ -272,7 +472,7 @@ const Users: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to update user:', error)
-      throw error
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
     },
   })
 
@@ -287,7 +487,23 @@ const Users: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to delete user:', error)
-      throw error
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
+    },
+  })
+
+  // Elevate user to admin mutation
+  const elevateUserMutation = useMutation({
+    mutationFn: ({ userId, targetRole, reason }: { userId: string; targetRole: 'ADMIN' | 'SUPER_ADMIN'; reason: string }) => 
+      apiService.elevateUserToAdmin(apiClient, userId, targetRole, reason),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setIsElevateModalOpen(false)
+      setSelectedUser(null)
+      logger.log('User elevated to admin successfully:', response.data)
+    },
+    onError: (error) => {
+      logger.error('Failed to elevate user:', error)
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
     },
   })
 
@@ -324,6 +540,12 @@ const Users: React.FC = () => {
     setIsDeleteModalOpen(true)
   }
 
+  // Handle opening elevate modal
+  const handleElevateClick = (user: User) => {
+    setSelectedUser(user)
+    setIsElevateModalOpen(true)
+  }
+
   // Handle saving user updates
   const handleUpdateUser = async (updatedUser: User) => {
     await updateUserMutation.mutateAsync(updatedUser)
@@ -336,6 +558,17 @@ const Users: React.FC = () => {
     }
   }
 
+  // Handle confirming elevation
+  const handleConfirmElevate = async (targetRole: 'ADMIN' | 'SUPER_ADMIN', reason: string) => {
+    if (selectedUser) {
+      await elevateUserMutation.mutateAsync({ 
+        userId: selectedUser.id, 
+        targetRole, 
+        reason 
+      })
+    }
+  }
+
   // Handle closing modals
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false)
@@ -344,6 +577,11 @@ const Users: React.FC = () => {
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false)
+    setSelectedUser(null)
+  }
+
+  const handleCloseElevateModal = () => {
+    setIsElevateModalOpen(false)
     setSelectedUser(null)
   }
 
@@ -508,7 +746,7 @@ const Users: React.FC = () => {
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                        <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                           <div className="py-1">
                             <Menu.Item>
                               {({ active }) => (
@@ -521,6 +759,22 @@ const Users: React.FC = () => {
                                 </button>
                               )}
                             </Menu.Item>
+                            {/* Show Elevate to Admin option only for Super Admins */}
+                            {isSuperAdmin && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => handleElevateClick(user)}
+                                    className={`${active ? 'bg-orange-50' : ''} flex items-center w-full px-4 py-2 text-sm text-orange-600`}
+                                  >
+                                    <UserCog className="h-4 w-4 mr-2" />
+                                    {user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN
+                                      ? t('admin:users.elevateUser.changeRole', 'Change Admin Role')
+                                      : t('admin:users.elevateUser.elevate', 'Elevate to Admin')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
                             <Menu.Item>
                               {({ active }) => (
                                 <button
@@ -569,6 +823,17 @@ const Users: React.FC = () => {
         onConfirm={handleConfirmDelete}
         isLoading={deleteUserMutation.isPending}
       />
+
+      {/* Elevate to Admin Modal - Only for Super Admins */}
+      {isSuperAdmin && (
+        <ElevateToAdminModal
+          isOpen={isElevateModalOpen}
+          onClose={handleCloseElevateModal}
+          user={selectedUser}
+          onConfirm={handleConfirmElevate}
+          isLoading={elevateUserMutation.isPending}
+        />
+      )}
     </div>
   )
 }
