@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+﻿import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
@@ -8,47 +8,9 @@ import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  // CORS configuration - more defensive approach
-  // Check NODE_ENV (case-insensitive) and also check if we're on Render
-  const isProduction = process.env.NODE_ENV === 'production' || 
-                       process.env.NODE_ENV === 'PRODUCTION' ||
-                       process.env.RENDER === 'true';
-  
-  const allowedOrigins = isProduction
-    ? [
-        'https://app.procrechesolutions.com', 
-        'https://admin.procrechesolutions.com'
-      ]
-    : true;
-
-  // Log CORS configuration for debugging
-  console.log('🔧 CORS Configuration:', {
-    NODE_ENV: process.env.NODE_ENV,
-    RENDER: process.env.RENDER,
-    isProduction,
-    allowedOrigins: Array.isArray(allowedOrigins) ? allowedOrigins : 'ALL (dev mode)',
-  });
-
   // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // We'll handle body parsing manually
-    cors: {
-      origin: allowedOrigins,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: [
-        'Content-Type', 
-        'Authorization', 
-        'X-Requested-With', 
-        'Accept',
-        'svix-id',
-        'svix-timestamp',
-        'svix-signature',
-      ],
-      exposedHeaders: ['Content-Type', 'Authorization'],
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
-    },
   });
   const logger = app.get(AppLoggerService);
   
@@ -73,10 +35,7 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true }));
 
   // Security middleware
-  app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginEmbedderPolicy: false,
-  }));
+  app.use(helmet());
   // Resolve compression middleware across CJS/ESM export shapes
   let compressionFn: any;
   try {
@@ -103,7 +62,7 @@ async function bootstrap() {
           constraints: error.constraints,
           children: error.children,
         }));
-        console.error('🔴 Global Validation Error:', JSON.stringify(formatted, null, 2));
+        console.error(' Global Validation Error:', JSON.stringify(formatted, null, 2));
         return new BadRequestException({
           message: 'Validation failed',
           errors: formatted,
@@ -118,34 +77,30 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
-  // Manual CORS middleware as fallback (ensures CORS headers are always set)
-  // This runs before the root handlers to ensure CORS is applied to all routes
-  app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    
-    // Check if origin is allowed
-    if (isProduction && Array.isArray(allowedOrigins)) {
-      if (origin && allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-      }
-    } else {
-      // Development mode - allow all origins
-      if (origin) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-      }
-    }
-    
-    // Set CORS headers for preflight requests
-    if (req.method === 'OPTIONS') {
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, svix-id, svix-timestamp, svix-signature');
-      res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-      return res.status(204).end();
-    }
-    
-    next();
+  // CORS - Enhanced configuration
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [
+        'https://app.procrechesolutions.com', 
+        'https://admin.procrechesolutions.com'
+      ]
+    : true;
+
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type', 
+      'Authorization', 
+      'X-Requested-With', 
+      'Accept',
+      'svix-id',
+      'svix-timestamp',
+      'svix-signature',
+    ],
+    exposedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   // CORS debugging middleware (only when DEBUG_CORS is enabled)
