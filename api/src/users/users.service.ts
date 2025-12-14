@@ -764,9 +764,15 @@ export class UsersService {
   }
 
   /**
-   * Elevate a user to admin role with full profile refresh.
+   * Elevate a user to admin role with full profile reset.
    * This is a specialized method for role elevation that ensures
-   * proper audit trail and Clerk synchronization.
+   * proper audit trail, Clerk synchronization, and profile cleanup.
+   * 
+   * When elevating from a general role (EDUCATOR, PARENT, etc.) to an admin role,
+   * the user's profile is reset to treat them as a fresh admin account:
+   * - Profile-specific data is cleared (workExperience, education, skills, etc.)
+   * - Organization associations are removed
+   * - Basic identity info is preserved (email, firstName, lastName)
    * 
    * @param userId - The AppUser ID to elevate
    * @param targetRole - The admin role to assign (ADMIN or SUPER_ADMIN)
@@ -799,14 +805,65 @@ export class UsersService {
     }
 
     const previousRole = appUser.role;
+    const isElevatingFromGeneralRole = !ELEVATED_ROLES.includes(previousRole);
+    
     this.logger.log(`🔺 [ELEVATE TO ADMIN] Elevating user ${userId} from ${previousRole} to ${targetRole}`);
 
-    // Use RoleSyncService for proper Clerk sync and audit trail
-    await this.roleSyncService.changeRole({
-      appUserId: userId,
-      newRole: targetRole,
-      changedBy,
-      reason: reason || `Role elevation to ${targetRole}`,
+    // Perform role change and profile reset in a transaction
+    await this.prisma.$transaction(async (tx) => {
+      // Use RoleSyncService for proper Clerk sync and audit trail
+      await this.roleSyncService.changeRole({
+        appUserId: userId,
+        newRole: targetRole,
+        changedBy,
+        reason: reason || `Role elevation to ${targetRole}`,
+        tx,
+      });
+
+      // If elevating from a general role to admin, reset the profile
+      if (isElevatingFromGeneralRole) {
+        this.logger.log(`🔄 [ELEVATE TO ADMIN] Resetting profile for user ${userId} (was ${previousRole})`);
+
+        // Check if User profile exists
+        const userProfile = await tx.user.findUnique({
+          where: { clerkId: appUser.clerkId },
+        });
+
+        if (userProfile) {
+          // Reset profile-specific fields but preserve identity info
+          await tx.user.update({
+            where: { clerkId: appUser.clerkId },
+            data: {
+              role: targetRole,
+              // Clear profile-specific data
+              workExperience: null,
+              education: null,
+              certifications: [],
+              skills: [],
+              availability: null,
+              cvUrl: null,
+              shortBio: null,
+              // Keep: email, firstName, lastName, phoneNumber, avatarAssetId
+            },
+          });
+          this.logger.log(`✅ [ELEVATE TO ADMIN] Profile data cleared for user ${userId}`);
+
+          // Remove all organization associations
+          const deletedOrgs = await tx.userOrganization.deleteMany({
+            where: { userId: userProfile.id },
+          });
+          
+          if (deletedOrgs.count > 0) {
+            this.logger.log(`✅ [ELEVATE TO ADMIN] Removed ${deletedOrgs.count} organization association(s) for user ${userId}`);
+          }
+        }
+      } else {
+        // Just update the role in User profile if it exists (switching between admin roles)
+        await tx.user.updateMany({
+          where: { clerkId: appUser.clerkId },
+          data: { role: targetRole },
+        });
+      }
     });
 
     this.logger.log(`✅ [ELEVATE TO ADMIN] User ${userId} elevated from ${previousRole} to ${targetRole}`);
@@ -826,6 +883,14 @@ export class UsersService {
 
     // Check if role is changing - if so, validate and use RoleSyncService for proper Clerk sync
     const isRoleChanging = updateUserDto.role && updateUserDto.role !== appUser.role;
+    const previousRole = appUser.role;
+    const targetRole = updateUserDto.role;
+    
+    // Check if we're elevating from a general role to an admin role
+    const isElevatingToAdmin = isRoleChanging && 
+      targetRole && 
+      ELEVATED_ROLES.includes(targetRole) && 
+      !ELEVATED_ROLES.includes(previousRole);
     
     // Validate role elevation if changing to an admin role
     if (isRoleChanging && updateUserDto.role) {
@@ -835,12 +900,12 @@ export class UsersService {
     // Update both AppUser and User profile in a transaction for data consistency
     const result = await this.prisma.$transaction(async (tx) => {
       // Handle role change through RoleSyncService (includes Clerk sync)
-      if (isRoleChanging) {
+      if (isRoleChanging && targetRole) {
         await this.roleSyncService.changeRole({
           appUserId: id,
-          newRole: updateUserDto.role as UserRole,
+          newRole: targetRole,
           changedBy: changedBy || 'system',
-          reason: 'Admin user update',
+          reason: isElevatingToAdmin ? `Role elevation from ${previousRole} to ${targetRole}` : 'Admin user update',
           tx,
         });
       }
@@ -861,20 +926,54 @@ export class UsersService {
       });
 
       if (existingUser) {
-        const userUpdateData: any = {};
-        if (updateUserDto.email !== undefined) userUpdateData.email = updateUserDto.email;
-        if (updateUserDto.firstName !== undefined) userUpdateData.firstName = updateUserDto.firstName;
-        if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
-        if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
-        // Role is already handled by RoleSyncService
-
-        if (Object.keys(userUpdateData).length > 0) {
+        // If elevating to admin from a general role, reset profile-specific data
+        if (isElevatingToAdmin) {
+          this.logger.log(`🔄 [UPDATE] Resetting profile for user ${id} during elevation from ${previousRole} to ${targetRole}`);
+          
           userProfile = await tx.user.update({
             where: { clerkId: appUser.clerkId },
-            data: userUpdateData,
+            data: {
+              role: targetRole,
+              email: updateUserDto.email || existingUser.email,
+              firstName: updateUserDto.firstName !== undefined ? updateUserDto.firstName : existingUser.firstName,
+              lastName: updateUserDto.lastName !== undefined ? updateUserDto.lastName : existingUser.lastName,
+              phoneNumber: updateUserDto.phoneNumber !== undefined ? updateUserDto.phoneNumber : existingUser.phoneNumber,
+              // Clear profile-specific data
+              workExperience: null,
+              education: null,
+              certifications: [],
+              skills: [],
+              availability: null,
+              cvUrl: null,
+              shortBio: null,
+            },
           });
+          
+          // Remove all organization associations
+          const deletedOrgs = await tx.userOrganization.deleteMany({
+            where: { userId: existingUser.id },
+          });
+          
+          if (deletedOrgs.count > 0) {
+            this.logger.log(`✅ [UPDATE] Removed ${deletedOrgs.count} organization association(s) for user ${id}`);
+          }
         } else {
-          userProfile = existingUser;
+          // Normal update - just update the provided fields
+          const userUpdateData: any = {};
+          if (updateUserDto.email !== undefined) userUpdateData.email = updateUserDto.email;
+          if (updateUserDto.firstName !== undefined) userUpdateData.firstName = updateUserDto.firstName;
+          if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
+          if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
+          if (isRoleChanging && targetRole) userUpdateData.role = targetRole;
+
+          if (Object.keys(userUpdateData).length > 0) {
+            userProfile = await tx.user.update({
+              where: { clerkId: appUser.clerkId },
+              data: userUpdateData,
+            });
+          } else {
+            userProfile = existingUser;
+          }
         }
       }
 
