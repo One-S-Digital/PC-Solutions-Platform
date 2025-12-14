@@ -161,9 +161,20 @@ export const useApiClient = () => {
 
     console.log('🔧 Creating production API client with baseURL:', API_BASE_URL)
 
+    // Enable retries ONLY for status polling requests (GET /static-translations/admin/full-sync/*/status)
     axiosRetry(apiWithAuth, {
-      retries: 0,
-      retryCondition: () => false,
+      retries: 3,
+      retryDelay: axiosRetry.exponentialDelay,
+      retryCondition: (error) => {
+        const url = error.config?.url ?? '';
+        const isStatusPoll =
+          url.includes('/static-translations/admin/full-sync/') &&
+          url.includes('/status');
+        const isGet = (error.config?.method ?? 'get').toLowerCase() === 'get';
+        const status = error.response?.status;
+        // Retry on network errors and HTTP 502/503/504 for status polling only
+        return isGet && isStatusPoll && (!status || [502, 503, 504].includes(status));
+      },
     })
 
 
@@ -812,7 +823,7 @@ export const apiService = {
         };
         error?: string;
       }>
-    >(`/static-translations/admin/full-sync/${jobId}/status`),
+    >(`/static-translations/admin/full-sync/${jobId}/status`, { timeout: 30000 }),
 
   autoFixHardcodedStrings: (
     apiClient: AxiosInstance

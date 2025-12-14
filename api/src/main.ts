@@ -8,9 +8,33 @@ import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [
+        'https://app.procrechesolutions.com', 
+        'https://admin.procrechesolutions.com'
+      ]
+    : true;
+
   // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // We'll handle body parsing manually
+    cors: {
+      origin: allowedOrigins,
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'X-Requested-With', 
+        'Accept',
+        'svix-id',
+        'svix-timestamp',
+        'svix-signature',
+      ],
+      exposedHeaders: ['Content-Type', 'Authorization'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    },
   });
   const logger = app.get(AppLoggerService);
   
@@ -30,19 +54,15 @@ async function bootstrap() {
     });
   }
   
-  // JSON parser for all other routes (skip webhook routes)
-  app.use((req, res, next) => {
-    if (req.originalUrl?.startsWith('/api/webhooks/clerk')) return next();
-    return express.json()(req, res, next);
-  });
-  
-  app.use((req, res, next) => {
-    if (req.originalUrl?.startsWith('/api/webhooks/clerk')) return next();
-    return express.urlencoded({ extended: true })(req, res, next);
-  });
+  // JSON parser for all other routes
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   // Security middleware
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  }));
   // Resolve compression middleware across CJS/ESM export shapes
   let compressionFn: any;
   try {
@@ -69,7 +89,7 @@ async function bootstrap() {
           constraints: error.constraints,
           children: error.children,
         }));
-        console.error(' Global Validation Error:', JSON.stringify(formatted, null, 2));
+        console.error('🔴 Global Validation Error:', JSON.stringify(formatted, null, 2));
         return new BadRequestException({
           message: 'Validation failed',
           errors: formatted,
@@ -83,37 +103,6 @@ async function bootstrap() {
 
   // Set global prefix
   app.setGlobalPrefix('api');
-
-  // Add build commit header for deployment verification
-  app.use((req, res, next) => {
-    const buildCommit = process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown';
-    res.setHeader('x-build-commit', buildCommit);
-    next();
-  });
-
-  // Log build commit at startup
-  const buildCommit = process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown';
-  logger.log(`BUILD_COMMIT: ${buildCommit}`,  'Bootstrap');
-
-  // CORS - Enhanced configuration
-  const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? [
-        'https://app.procrechesolutions.com', 
-        'https://admin.procrechesolutions.com'
-      ]
-    : true;
-
-  app.enableCors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    // Temporarily allow all headers to diagnose CORS preflight issues
-    // TODO: Lock down to specific headers once we identify what the frontend is sending
-    allowedHeaders: '*',
-    exposedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
 
   // CORS debugging middleware (only when DEBUG_CORS is enabled)
   if (process.env.DEBUG_CORS === 'true') {

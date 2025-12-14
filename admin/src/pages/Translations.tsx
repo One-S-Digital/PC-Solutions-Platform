@@ -299,24 +299,32 @@ export default function Translations() {
     },
   });
 
-  // Poll job status every 3 seconds
+  // Poll job status with adaptive interval (10s base, backoff to 20s/30s on failure)
   useEffect(() => {
     if (fullSyncStatus !== 'polling' || !fullSyncJobId) return;
 
-    const pollInterval = setInterval(async () => {
+    let pollInterval = 10000; // Start with 10 seconds
+    let consecutiveFailures = 0;
+    let pollTimeout: NodeJS.Timeout;
+
+    const poll = async () => {
       try {
         const result = await apiService.getFullSyncStatus(apiClient, fullSyncJobId);
         const job = result.data?.job;
 
         if (!job) {
-          clearInterval(pollInterval);
+          clearTimeout(pollTimeout);
           setFullSyncStatus('error');
           alert('Job not found');
           return;
         }
 
+        // Reset interval on success
+        consecutiveFailures = 0;
+        pollInterval = 10000;
+
         if (job.status === 'done') {
-          clearInterval(pollInterval);
+          clearTimeout(pollTimeout);
           setFullSyncStatus('done');
           queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
           queryClient.invalidateQueries({ queryKey: ['namespaces'] });
@@ -339,8 +347,9 @@ export default function Translations() {
             setFullSyncJobId(null);
             setFullSyncStatus('idle');
           }, 1000);
+          return;
         } else if (job.status === 'error') {
-          clearInterval(pollInterval);
+          clearTimeout(pollTimeout);
           setFullSyncStatus('error');
           alert(
             `❌ Full Sync Failed!\n\n` +
@@ -349,15 +358,29 @@ export default function Translations() {
           );
           setFullSyncJobId(null);
           setFullSyncStatus('idle');
+          return;
         }
         // If status is 'queued' or 'running', continue polling
       } catch (error: any) {
         console.error('Error polling job status:', error);
-        // Continue polling on error (might be temporary network issue)
+        consecutiveFailures++;
+        
+        // Backoff: 10s → 20s → 30s (max)
+        if (consecutiveFailures === 1) {
+          pollInterval = 20000;
+        } else if (consecutiveFailures >= 2) {
+          pollInterval = 30000;
+        }
       }
-    }, 3000); // Poll every 3 seconds
 
-    return () => clearInterval(pollInterval);
+      // Schedule next poll
+      pollTimeout = setTimeout(poll, pollInterval);
+    };
+
+    // Start polling
+    pollTimeout = setTimeout(poll, pollInterval);
+
+    return () => clearTimeout(pollTimeout);
   }, [fullSyncStatus, fullSyncJobId, apiClient, queryClient]);
 
   // Auto-fix hardcoded strings mutation
