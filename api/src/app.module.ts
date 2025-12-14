@@ -48,6 +48,7 @@ import { StaticTranslationModule } from './static-translation/static-translation
 import { SupportModule } from './support/support.module';
 import { PartnersModule } from './partners/partners.module';
 import { OrganizationDocumentsModule } from './organization-documents/organization-documents.module';
+import { CrawlerModule } from './crawler/crawler.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -140,6 +141,7 @@ import {
     SupportModule,
     PartnersModule,
     OrganizationDocumentsModule,
+    CrawlerModule,
   ],
   controllers: [AppController],
   providers: [

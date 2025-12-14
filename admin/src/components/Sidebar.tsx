@@ -22,6 +22,8 @@ import {
   Globe,
   Handshake,
   LifeBuoy,
+  MapPin,
+  FileCheck,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -44,6 +46,8 @@ const navigation = [
   { key: 'parentLeads', href: '/parent-leads', icon: Heart },
   { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
   { key: 'content', href: '/content', icon: FileText },
+  { key: 'cantons', href: '/cantons', icon: MapPin },
+  { key: 'policyReview', href: '/policies/review', icon: FileCheck },
   { key: 'messages', href: '/messaging', icon: MessageSquare },
   { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'systemMonitoring', href: '/system', icon: Monitor },

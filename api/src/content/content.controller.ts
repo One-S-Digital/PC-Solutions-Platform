@@ -215,6 +215,13 @@ export class ContentController {
     return this.contentService.getStatePolicies(query);
   }
 
+  // Get canton overview with document counts
+  @Get('state-policies/cantons')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.FOUNDATION, UserRole.PARENT, UserRole.PRODUCT_SUPPLIER)
+  async getCantonOverview() {
+    return this.contentService.getCantonOverview();
+  }
+
   @Post('state-policies/upload')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @UseInterceptors(FileInterceptor('file'))

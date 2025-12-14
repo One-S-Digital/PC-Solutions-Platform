@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { seedCantons } from '../scripts/seed-cantons';
 
 const prisma = new PrismaClient();
 
@@ -22,6 +23,10 @@ async function main() {
   // 5. Create Feature Flags
   console.log('🚩 Setting up feature flags...');
   await seedFeatureFlags();
+
+  // 6. Seed Cantons
+  console.log('🇨🇭 Seeding Swiss cantons...');
+  await seedCantons();
 
   console.log('✅ Seeding completed successfully!');
 }

@@ -8,6 +8,8 @@ import { NewspaperIcon, MagnifyingGlassIcon, CalendarDaysIcon, ArrowDownTrayIcon
 import { useAppContext } from '../contexts/AppContext';
 import PolicyAlertModal from '../components/admin/PolicyAlertModal';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import { PolicyDisclaimer } from '../components/shared/PolicyDisclaimer';
+import { CantonCard } from '../components/shared/CantonCard';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 import i18n from '../i18n'; 
@@ -134,6 +136,13 @@ const StatePoliciesPage: React.FC = () => {
   const [policyDocs, setPolicyDocs] = useState<PolicyDocument[]>([]);
   const [policyAlerts, setPolicyAlerts] = useState<PolicyAlert[]>([]);
   const [alertsLoading, setAlertsLoading] = useState(true);
+  const [cantonOverview, setCantonOverview] = useState<Array<{
+    code: string;
+    name: string;
+    documentsCount: number;
+    lastUpdatedAt?: string;
+  }>>([]);
+  const [selectedCanton, setSelectedCanton] = useState<string | null>(null);
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<PolicyAlert | null>(null);
@@ -215,6 +224,32 @@ const StatePoliciesPage: React.FC = () => {
     fetchStatePolicies();
   }, [authenticatedRequest, i18n.language]);
 
+  // Fetch canton overview
+  useEffect(() => {
+    const fetchCantonOverview = async () => {
+      try {
+        const response = await authenticatedRequest<{
+          success: boolean;
+          data: Array<{
+            code: string;
+            name: string;
+            documentsCount: number;
+            lastUpdatedAt?: string;
+          }>;
+        }>('/content/state-policies/cantons', {
+          method: 'GET'
+        });
+
+        if (response.success && response.data) {
+          setCantonOverview(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch canton overview:', error);
+      }
+    };
+    fetchCantonOverview();
+  }, [authenticatedRequest]);
+
   const cantons = ['All', ...new Set(policyDocs.map(d => d.region).filter(Boolean) as string[])];
   const policyTypeOptions: Array<'All' | PolicyType> = ['All', ...POLICY_TYPES_ENUM];
   const policyCategoryOptions: Array<'All' | PolicyCategory> = ['All', ...POLICY_CATEGORIES];
@@ -251,11 +286,11 @@ const StatePoliciesPage: React.FC = () => {
       (isAdminOrSuperAdmin || doc.status === 'Published' || doc.status === 'Approved') && 
       (doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
        (doc.contentPreview && doc.contentPreview.toLowerCase().includes(searchTerm.toLowerCase()))) &&
-      (filterCanton === 'All' || doc.region === filterCanton) &&
+      ((selectedCanton ? doc.region === selectedCanton : filterCanton === 'All') || doc.region === filterCanton) &&
       (filterPolicyType === 'All' || doc.policyType === filterPolicyType) &&
       (filterCategory === 'All' || doc.category === filterCategory)
     );
-  }, [searchTerm, filterCanton, filterPolicyType, filterCategory, policyDocs, isAdminOrSuperAdmin]);
+  }, [searchTerm, filterCanton, filterPolicyType, filterCategory, policyDocs, isAdminOrSuperAdmin, selectedCanton]);
 
   const activeGlobalAlerts = useMemo(() => {
     // Ensure policyAlerts is always an array
@@ -343,8 +378,18 @@ const StatePoliciesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('content:statePoliciesPage.title')}</h1>
+      {/* Legal Disclaimer - Always visible */}
+      <PolicyDisclaimer />
+
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-swiss-charcoal">
+            {t('content:statePoliciesPage.title', 'Cantonal Policies & Regulations')}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            {t('content:statePoliciesPage.subtitle', 'Official daycare policies from Swiss cantons')}
+          </p>
+        </div>
         {isAdminOrSuperAdmin && (
           <div className="flex items-center space-x-3">
             <Button variant="secondary" leftIcon={ShieldExclamationIcon} onClick={() => { setEditingAlert(null); setIsAlertModalOpen(true); }}>{t('content:statePoliciesPage.buttons.manageAlerts')}</Button>
@@ -362,6 +407,41 @@ const StatePoliciesPage: React.FC = () => {
             </div>
         </div>
       ))}
+
+      {/* Canton Overview Grid */}
+      {cantonOverview.length > 0 && (
+        <section aria-labelledby="canton-overview">
+          <h2 id="canton-overview" className="text-xl font-semibold mb-4">
+            {t('content:statePoliciesPage.selectCanton', 'Select a Canton')}
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+            <CantonCard
+              code="All"
+              name={t('common:all', 'All Cantons')}
+              count={policyDocs.length}
+              isSelected={!selectedCanton}
+              onClick={() => {
+                setSelectedCanton(null);
+                setFilterCanton('All');
+              }}
+            />
+            {cantonOverview.map(canton => (
+              <CantonCard
+                key={canton.code}
+                code={canton.code}
+                name={canton.name}
+                count={canton.documentsCount}
+                lastUpdated={canton.lastUpdatedAt}
+                isSelected={selectedCanton === canton.name}
+                onClick={() => {
+                  setSelectedCanton(canton.name);
+                  setFilterCanton(canton.name);
+                }}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <Card className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"> {/* Adjusted to 2 cols for better spacing */}

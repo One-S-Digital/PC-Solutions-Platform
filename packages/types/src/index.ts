@@ -13,6 +13,9 @@ export * from './user';
 // Platform Settings
 export * from './platform-settings';
 
+// Cantons
+export * from './cantons';
+
 // Re-export commonly used types
 export type {
   ApiEnvelope,
@@ -43,3 +46,15 @@ export type {
   MaintenanceMode,
   SystemConfiguration,
 } from './platform-settings';
+
+export type {
+  CantonCode,
+} from './cantons';
+
+export {
+  CANTON_CODES,
+  CANTON_DEFAULT_LANGUAGES,
+  getCantonName,
+  getCantonDefaultLanguage,
+  isValidCantonCode,
+} from './cantons';

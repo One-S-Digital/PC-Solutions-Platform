@@ -22,6 +22,9 @@ import DesignSystemPage from './pages/DesignSystem';
 import TranslationsPage from './pages/Translations';
 import AccessDeniedPage from './pages/AccessDenied';
 import SupportPage from './pages/Support';
+import CantonsPage from './pages/Cantons';
+import CantonDetailPage from './pages/CantonDetail';
+import PolicyReviewPage from './pages/PolicyReview';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -88,6 +91,9 @@ function App() {
           <Route path="content" element={<ContentPage />} />
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="support" element={<SupportPage />} />
+          <Route path="cantons" element={<CantonsPage />} />
+          <Route path="cantons/:code" element={<CantonDetailPage />} />
+          <Route path="policies/review" element={<PolicyReviewPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />

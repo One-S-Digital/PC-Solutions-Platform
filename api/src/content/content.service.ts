@@ -1325,6 +1325,48 @@ export class ContentService {
   }
 
   /**
+   * Get canton overview with document counts
+   */
+  async getCantonOverview() {
+    try {
+      const cantons = await this.prisma.canton.findMany({
+        where: { isActive: true },
+        orderBy: { name: 'asc' },
+      });
+
+      const docCounts = await this.prisma.asset.groupBy({
+        by: ['region'],
+        where: { 
+          category: 'STATE_POLICY',
+          status: 'Published',
+        },
+        _count: true,
+      });
+
+      const lastUpdates = await this.prisma.asset.groupBy({
+        by: ['region'],
+        where: { category: 'STATE_POLICY', status: 'Published' },
+        _max: { updatedAt: true },
+      });
+
+      return {
+        success: true,
+        data: cantons.map(canton => ({
+          code: canton.code,
+          name: canton.name,
+          documentsCount: docCounts.find(d => d.region === canton.name)?._count || 0,
+          lastUpdatedAt: lastUpdates.find(u => u.region === canton.name)?._max?.updatedAt?.toISOString(),
+        })),
+      };
+    } catch (error) {
+      this.logger.error('Failed to get canton overview:', error);
+      throw new BadRequestException(
+        `Failed to get canton overview: ${error.message}`,
+      );
+    }
+  }
+
+  /**
    * ========================================
    * TRANSFORM HELPERS
    * ========================================

@@ -370,6 +370,13 @@ model Asset {
   expirationDate DateTime? // Policy expiration date
   externalLink   String? // Link to official policy document
 
+  // NEW: Crawler integration fields
+  crawlSourceId     Int?      // FK to CantonSource (null = manually uploaded)
+  officialUrl       String?   // The canonical URL on official site (separate from publicUrl)
+  contentHash       String?   // Current content hash for change detection
+  lastCrawledAt     DateTime? // When crawler last checked this document
+  crawlStatus       String?   // 'pending_review', 'approved', 'rejected', 'manual'
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -401,6 +408,9 @@ model Asset {
   adminFavicons    FrontendSettings[] @relation("AdminFavicon")
   sidebarLogos     FrontendSettings[] @relation("SidebarLogo")
 
+  // Crawler relations
+  crawlSource CantonSource? @relation(fields: [crawlSourceId], references: [id])
+
   @@index([storageKey])
   @@index([etag])
   @@index([category])
@@ -411,6 +421,8 @@ model Asset {
   @@index([country])
   @@index([region])
   @@index([isCritical])
+  @@index([crawlSourceId])
+  @@index([crawlStatus])
   @@map("assets")
 }
 
@@ -1958,4 +1970,73 @@ model Partner {
   @@index([isFeatured])
   @@index([displayOrder])
   @@map("partners")
+}
+
+// Canton reference data for policy tracking
+model Canton {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique  // 'VD', 'FR', 'ZH'
+  name        String             // 'Vaud', 'Fribourg', 'Zurich'
+  nameDe      String?            // German name
+  nameIt      String?            // Italian name
+  nameFr      String?            // French name
+  defaultLang String   @default("de")  // 'fr', 'de', 'it'
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sources     CantonSource[]
+
+  @@map("cantons")
+}
+
+// Crawler source URLs
+model CantonSource {
+  id           Int       @id @default(autoincrement())
+  cantonId     Int
+  canton       Canton    @relation(fields: [cantonId], references: [id])
+  
+  label        String    // "SCAJE - Main Page"
+  url          String    // "https://www.vd.ch/themes/..."
+  sourceType   String    @default("landing")  // 'landing', 'directives', 'laws', 'federal'
+  renderType   String    @default("static")   // 'static' or 'dynamic' (needs Playwright)
+  cssSelector  String?   // Optional content container selector
+  
+  isActive     Boolean   @default(true)
+  crawlFrequencyDays Int @default(7)
+  
+  lastCrawlAt  DateTime?
+  lastCrawlStatus String?  // 'success', 'failed', 'partial'
+  lastCrawlError String?
+  nextCrawlAt  DateTime?
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  crawlHistory PolicyCrawlHistory[]
+  crawledAssets Asset[] // Assets created from this source
+
+  @@index([cantonId])
+  @@index([isActive, nextCrawlAt])
+  @@map("canton_sources")
+}
+
+// Track content changes (linked to existing Asset)
+model PolicyCrawlHistory {
+  id            Int       @id @default(autoincrement())
+  assetId       String    // Links to Asset.id where category = 'STATE_POLICY'
+  sourceId      Int
+  source        CantonSource @relation(fields: [sourceId], references: [id])
+  
+  contentHash   String    // SHA-256 of normalized text
+  fetchedAt     DateTime  @default(now())
+  changeType    String?   // 'new', 'updated', 'unchanged'
+  diffSummary   String?   // Admin notes on what changed
+  
+  // For internal indexing (not exposed to users)
+  contentText   String?   @db.Text
+  
+  @@index([assetId])
+  @@index([sourceId, fetchedAt])
+  @@map("policy_crawl_history")
 }
