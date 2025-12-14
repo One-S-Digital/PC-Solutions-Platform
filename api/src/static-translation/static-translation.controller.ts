@@ -376,9 +376,8 @@ export class StaticTranslationController {
    * Admin: Full sync - Import, Translate, and Export in one step
    * This is the simplified workflow that does everything at once
    * 
-   * NOTE: This is a long-running operation (5-10 mins). The frontend should
-   * handle timeouts gracefully - the sync will continue on the server even
-   * if the HTTP connection times out.
+   * Returns 202 Accepted immediately with a jobId. The sync runs in the background.
+   * Use the status endpoint to check progress.
    */
   @Post('admin/full-sync')
   @UseGuards(RolesGuard)
@@ -386,29 +385,86 @@ export class StaticTranslationController {
   @SkipThrottle({ default: false }) // Re-enable throttling for this endpoint
   @Throttle({ default: { limit: 1, ttl: 300000 } }) // Only allow 1 request per 5 minutes
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Full sync: Import EN, Translate FR/DE, Export to files (admin)' })
+  @ApiOperation({ summary: 'Start full sync: Import EN, Translate FR/DE, Export to files (admin)' })
+  @ApiResponse({ status: 202, description: 'Sync job started' })
   async fullSync(
     @Request() req: any,
-  ): Promise<{
-    success: boolean;
-    imported: number;
-    translatedFr: number;
-    translatedDe: number;
-    exported: number;
-    message: string;
-  }> {
-    console.log('[FullSync] Admin full-sync endpoint called', {
+    @Res() res: Response,
+  ): Promise<void> {
+    const startedAt = Date.now();
+    const userId = req.user?.id;
+    
+    console.log('[FullSync] START', {
+      userId,
       method: req.method,
       url: req.url,
       path: req.path,
-      userId: req.user?.id,
     });
-    const userId = req.user?.id;
-    const result = await this.service.fullSync(userId);
+
+    try {
+      const jobId = this.service.startFullSync(userId);
+      
+      console.log('[FullSync] Job queued', {
+        jobId,
+        userId,
+        ms: Date.now() - startedAt,
+      });
+
+      res.status(202).json({
+        success: true,
+        jobId,
+        message: 'Full sync job started. Use the status endpoint to check progress.',
+      });
+    } catch (error: any) {
+      console.error('[FullSync] FAIL (queue)', {
+        ms: Date.now() - startedAt,
+        userId,
+        message: error?.message,
+        stack: error?.stack,
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Admin: Get full sync job status
+   */
+  @Get('admin/full-sync/:jobId/status')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get full sync job status (admin)' })
+  @ApiResponse({ status: 200, description: 'Job status retrieved' })
+  @ApiResponse({ status: 404, description: 'Job not found' })
+  async fullSyncStatus(
+    @Param('jobId') jobId: string,
+  ): Promise<{
+    success: boolean;
+    job?: any;
+    error?: string;
+  }> {
+    const job = this.service.getFullSyncJob(jobId);
+    
+    if (!job) {
+      return {
+        success: false,
+        error: 'Job not found',
+      };
+    }
+
+    // Calculate duration if job is done
+    const duration = job.completedAt && job.startedAt
+      ? job.completedAt - job.startedAt
+      : job.startedAt
+      ? Date.now() - job.startedAt
+      : undefined;
+
     return {
       success: true,
-      ...result,
-      message: `Imported ${result.imported} EN keys, translated ${result.translatedFr} FR + ${result.translatedDe} DE, exported ${result.exported} to files`,
+      job: {
+        ...job,
+        duration,
+      },
     };
   }
 
@@ -555,9 +611,9 @@ export class StaticTranslationController {
    * Used by i18next-http-backend for runtime loading
    * Includes ETag and Cache-Control headers for efficient caching
    * NOTE: Must be defined LAST to avoid matching admin/system routes
-   * Regex constraint ensures only valid languages can match (prevents "admin" from matching)
+   * Admin routes are defined first, so they take precedence over this parameterized route
    */
-  @Get(':lang(en|fr|de)/:namespace')
+  @Get(':lang/:namespace')
   @Public() // Public endpoint - no auth required
   @SkipThrottle() // Explicitly skip throttling for this endpoint
   @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=86400')

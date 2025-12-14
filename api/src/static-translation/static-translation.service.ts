@@ -34,9 +34,21 @@ export type ProgressCallback = (progress: {
   details?: any;
 }) => void;
 
+interface FullSyncJob {
+  status: 'queued' | 'running' | 'done' | 'error';
+  progress?: string;
+  result?: any;
+  error?: any;
+  startedAt?: number;
+  completedAt?: number;
+}
+
 @Injectable()
 export class StaticTranslationService {
   private readonly logger = new Logger(StaticTranslationService.name);
+  
+  // Job queue for async full-sync operations (in-memory, single instance)
+  private fullSyncJobs = new Map<string, FullSyncJob>();
   
   // Increased cache TTL - invalidation is handled via releases, not expiry
   private readonly CACHE_TTL = 24 * 60 * 60; // 24 hours (was 15 minutes)
@@ -2319,6 +2331,92 @@ export class StaticTranslationService {
       exported: exportResult.exported,
       backupId,
     };
+  }
+
+  /**
+   * Start full sync asynchronously (non-blocking)
+   * Returns jobId immediately, sync runs in background
+   * Prevents duplicate jobs - if one is already queued/running, returns that jobId
+   */
+  startFullSync(userId?: string): string {
+    // Check for existing queued or running job
+    for (const [existingJobId, job] of this.fullSyncJobs.entries()) {
+      if (job.status === 'queued' || job.status === 'running') {
+        this.logger.log(`[FullSync] Job already in progress, returning existing jobId: ${existingJobId}`);
+        return existingJobId;
+      }
+    }
+
+    // Cleanup old jobs (older than 1 hour)
+    this.cleanupOldJobs();
+
+    const jobId = crypto.randomUUID();
+    const startedAt = Date.now();
+    
+    this.fullSyncJobs.set(jobId, {
+      status: 'queued',
+      startedAt,
+    });
+
+    // Run sync in background (non-blocking)
+    setImmediate(async () => {
+      this.fullSyncJobs.set(jobId, {
+        status: 'running',
+        progress: 'Starting full sync...',
+        startedAt,
+      });
+
+      try {
+        const result = await this.fullSync(userId);
+        this.fullSyncJobs.set(jobId, {
+          status: 'done',
+          result,
+          startedAt,
+          completedAt: Date.now(),
+        });
+        this.logger.log(`[FullSync] Job ${jobId} completed successfully`);
+      } catch (error: any) {
+        this.fullSyncJobs.set(jobId, {
+          status: 'error',
+          error: {
+            message: error?.message,
+            stack: error?.stack,
+          },
+          startedAt,
+          completedAt: Date.now(),
+        });
+        this.logger.error(`[FullSync] Job ${jobId} failed: ${error?.message}`);
+      }
+    });
+
+    return jobId;
+  }
+
+  /**
+   * Cleanup old jobs (older than 1 hour) to prevent memory leak
+   */
+  private cleanupOldJobs(): void {
+    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+    let cleaned = 0;
+
+    for (const [jobId, job] of this.fullSyncJobs.entries()) {
+      const jobTime = job.completedAt || job.startedAt || 0;
+      if (jobTime < oneHourAgo) {
+        this.fullSyncJobs.delete(jobId);
+        cleaned++;
+      }
+    }
+
+    if (cleaned > 0) {
+      this.logger.log(`[FullSync] Cleaned up ${cleaned} old job(s)`);
+    }
+  }
+
+  /**
+   * Get full sync job status
+   */
+  getFullSyncJob(jobId: string): FullSyncJob | null {
+    return this.fullSyncJobs.get(jobId) || null;
   }
 }
 

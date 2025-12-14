@@ -30,9 +30,16 @@ async function bootstrap() {
     });
   }
   
-  // JSON parser for all other routes
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // JSON parser for all other routes (skip webhook routes)
+  app.use((req, res, next) => {
+    if (req.originalUrl?.startsWith('/api/webhooks/clerk')) return next();
+    return express.json()(req, res, next);
+  });
+  
+  app.use((req, res, next) => {
+    if (req.originalUrl?.startsWith('/api/webhooks/clerk')) return next();
+    return express.urlencoded({ extended: true })(req, res, next);
+  });
 
   // Security middleware
   app.use(helmet());

@@ -782,13 +782,37 @@ export const apiService = {
     apiClient.post<
       ApiResponse<{
         success: boolean;
-        imported: number;
-        translatedFr: number;
-        translatedDe: number;
-        exported: number;
+        jobId: string;
         message: string;
       }>
-    >('/static-translations/admin/full-sync', {}, { timeout: 600000 }), // 10 minute timeout
+    >('/static-translations/admin/full-sync', {}, { timeout: 30000 }), // 30 second timeout (should return 202 immediately)
+
+  getFullSyncStatus: (
+    apiClient: AxiosInstance,
+    jobId: string
+  ) =>
+    apiClient.get<
+      ApiResponse<{
+        success: boolean;
+        job?: {
+          status: 'queued' | 'running' | 'done' | 'error';
+          progress?: string;
+          result?: {
+            imported: number;
+            translatedFr: number;
+            translatedDe: number;
+            exported: number;
+            backupId?: string;
+          };
+          error?: {
+            message: string;
+            stack?: string;
+          };
+          duration?: number;
+        };
+        error?: string;
+      }>
+    >(`/static-translations/admin/full-sync/${jobId}/status`),
 
   autoFixHardcodedStrings: (
     apiClient: AxiosInstance

@@ -269,52 +269,96 @@ export default function Translations() {
     },
   });
 
-  // Full Sync mutation - does everything in one click!
-  // Uses extended timeout since this can take 5-10 minutes
+  // Full Sync state
+  const [fullSyncJobId, setFullSyncJobId] = useState<string | null>(null);
+  const [fullSyncStatus, setFullSyncStatus] = useState<'idle' | 'polling' | 'done' | 'error'>('idle');
+
+  // Full Sync mutation - starts async job and returns jobId
   const fullSyncMutation = useMutation({
     mutationFn: async () => {
-      // Create a custom axios instance with extended timeout for this long operation
-      const longTimeoutClient = apiClient;
-      // Note: The actual timeout is set on the client creation, but the server will continue
-      // even if the client times out. We handle this gracefully.
-      const result = await apiService.fullSync(longTimeoutClient);
-      return result;
+      const result = await apiService.fullSync(apiClient);
+      if (result.status === 202 && result.data?.jobId) {
+        return result.data.jobId;
+      }
+      throw new Error('Failed to start full sync job');
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
-      queryClient.invalidateQueries({ queryKey: ['namespaces'] });
-      
-      alert(
-        `🎉 Full Sync Complete!\n\n` +
-        `📥 Imported: ${data.data.imported} EN keys\n` +
-        `🇫🇷 Translated FR: ${data.data.translatedFr} keys\n` +
-        `🇩🇪 Translated DE: ${data.data.translatedDe} keys\n` +
-        `📤 Exported: ${data.data.exported} keys to JSON files\n\n` +
-        `✅ Now restart your frontend (pnpm dev) and refresh the page!`
-      );
+    onSuccess: (jobId) => {
+      setFullSyncJobId(jobId);
+      setFullSyncStatus('polling');
     },
     onError: (error: any) => {
-      const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
-      
-      if (isTimeout) {
-        alert(
-          `⏱️ Request timed out, but the sync is still running on the server!\n\n` +
-          `The translation process takes 5-10 minutes. The server will continue processing.\n\n` +
-          `Please wait a few minutes, then:\n` +
-          `1. Restart your frontend (pnpm dev)\n` +
-          `2. Refresh this page\n` +
-          `3. Check the translation list for updated entries`
-        );
-      } else if (error.response?.status === 429) {
+      if (error.response?.status === 429) {
         alert(
           `⚠️ Rate limited: Please wait 5 minutes before running Full Sync again.\n\n` +
           `This limit prevents overloading the translation service.`
         );
       } else {
-        alert(`Full sync failed: ${error.response?.data?.message || error.message}\n\nTry running individual steps from Advanced Options instead.`);
+        alert(`Failed to start full sync: ${error.response?.data?.message || error.message}`);
       }
+      setFullSyncStatus('error');
     },
   });
+
+  // Poll job status every 3 seconds
+  useEffect(() => {
+    if (fullSyncStatus !== 'polling' || !fullSyncJobId) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const result = await apiService.getFullSyncStatus(apiClient, fullSyncJobId);
+        const job = result.data?.job;
+
+        if (!job) {
+          clearInterval(pollInterval);
+          setFullSyncStatus('error');
+          alert('Job not found');
+          return;
+        }
+
+        if (job.status === 'done') {
+          clearInterval(pollInterval);
+          setFullSyncStatus('done');
+          queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+          queryClient.invalidateQueries({ queryKey: ['namespaces'] });
+          
+          const duration = job.duration ? `${Math.round(job.duration / 1000)}s` : 'unknown';
+          const resultData = job.result;
+          
+          alert(
+            `🎉 Full Sync Complete!\n\n` +
+            `⏱️ Duration: ${duration}\n\n` +
+            `📥 Imported: ${resultData?.imported || 0} EN keys\n` +
+            `🇫🇷 Translated FR: ${resultData?.translatedFr || 0} keys\n` +
+            `🇩🇪 Translated DE: ${resultData?.translatedDe || 0} keys\n` +
+            `📤 Exported: ${resultData?.exported || 0} keys to JSON files\n\n` +
+            `✅ Now restart your frontend (pnpm dev) and refresh the page!`
+          );
+          
+          // Reset after showing alert
+          setTimeout(() => {
+            setFullSyncJobId(null);
+            setFullSyncStatus('idle');
+          }, 1000);
+        } else if (job.status === 'error') {
+          clearInterval(pollInterval);
+          setFullSyncStatus('error');
+          alert(
+            `❌ Full Sync Failed!\n\n` +
+            `${job.error?.message || 'Unknown error'}\n\n` +
+            `Try running individual steps from Advanced Options instead.`
+          );
+          setFullSyncJobId(null);
+          setFullSyncStatus('idle');
+        }
+        // If status is 'queued' or 'running', continue polling
+      } catch (error: any) {
+        console.error('Error polling job status:', error);
+        // Continue polling on error (might be temporary network issue)
+      }
+    }, 3000); // Poll every 3 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [fullSyncStatus, fullSyncJobId, apiClient, queryClient]);
 
   // Auto-fix hardcoded strings mutation
   const autoFixMutation = useMutation({
@@ -832,14 +876,16 @@ export default function Translations() {
                   fullSyncMutation.mutate();
                 }
               }}
-              disabled={fullSyncMutation.isPending}
+              disabled={fullSyncMutation.isPending || fullSyncStatus === 'polling'}
               variant="primary"
               className="text-lg px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg"
             >
-              {fullSyncMutation.isPending ? (
+              {fullSyncMutation.isPending || fullSyncStatus === 'polling' ? (
                 <>
                   <RefreshCw className="w-5 h-5 mr-2 animate-spin inline" />
-                  {t('admin:translations.oneClickSync.syncing', 'Syncing... (this takes a few minutes)')}
+                  {fullSyncStatus === 'polling' 
+                    ? t('admin:translations.oneClickSync.syncing', 'Syncing... (this takes a few minutes)')
+                    : t('admin:translations.oneClickSync.starting', 'Starting sync...')}
                 </>
               ) : (
                 <>
