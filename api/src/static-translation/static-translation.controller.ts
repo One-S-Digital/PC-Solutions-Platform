@@ -397,6 +397,12 @@ export class StaticTranslationController {
     exported: number;
     message: string;
   }> {
+    console.log('[FullSync] Admin full-sync endpoint called', {
+      method: req.method,
+      url: req.url,
+      path: req.path,
+      userId: req.user?.id,
+    });
     const userId = req.user?.id;
     const result = await this.service.fullSync(userId);
     return {
@@ -567,6 +573,18 @@ export class StaticTranslationController {
   ): Promise<void> {
     // Debug logging to help diagnose issues
     console.log(`[Translation] Request received: lang="${lang}", namespace="${namespace}"`);
+    
+    // Guard: Reject admin/system routes that shouldn't match this pattern
+    const adminKeywords = ['admin', 'system', 'export', 'import', 'bulk', 'release', 'audit', 'budget', 'cleanup', 'fix', 'auto-fix', 'translate-missing', 'full-sync'];
+    if (adminKeywords.includes(lang.toLowerCase()) || adminKeywords.includes(namespace.toLowerCase())) {
+      console.warn(`[Translation] Admin/system route incorrectly matched as language route: lang="${lang}", namespace="${namespace}"`);
+      res.status(404).json({ 
+        error: 'Route not found', 
+        message: 'This endpoint is for language translations only. Use admin endpoints for admin operations.',
+        received: { lang, namespace }
+      });
+      return;
+    }
     
     // Input validation - prevent injection and invalid requests
     const supportedLangs = ['en', 'fr', 'de'];
