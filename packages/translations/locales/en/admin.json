@@ -1042,6 +1042,24 @@
       "deleting": "Deleting...",
       "delete": "Delete User"
     },
+    "elevateUser": {
+      "title": "Elevate to Admin",
+      "elevate": "Elevate to Admin",
+      "changeRole": "Change Admin Role",
+      "selectRole": "Select Admin Role",
+      "currentRole": "Current role:",
+      "adminDescription": "Can manage users, content, and organizations",
+      "superAdminDescription": "Full system access including role management",
+      "reason": "Reason for Elevation",
+      "reasonPlaceholder": "Explain why this user needs admin privileges...",
+      "reasonRequired": "Please provide a reason for this role elevation",
+      "reasonHint": "This reason will be recorded in the audit log.",
+      "elevating": "Elevating...",
+      "confirm": "Elevate User",
+      "failed": "Failed to elevate user",
+      "alreadyAdmin": "Note:",
+      "alreadyAdminMessage": "This user already has an admin role. You can change their role level below."
+    },
     "table": {
       "user": "User",
       "role": "Role",

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger } from '@nestjs/common';
 import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,6 +6,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { PrincipalService } from '../principal/principal.service';
 import { RoleSyncService } from '../sync/role-sync.service';
+
+/**
+ * Roles that require SUPER_ADMIN privileges to assign
+ */
+const ELEVATED_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.ADMIN];
 
 const userProfileInclude = {
   avatarAsset: true,
@@ -735,7 +740,82 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string) {
+  /**
+   * Validate if a role change is allowed based on the caller's role.
+   * Only SUPER_ADMIN can elevate users to ADMIN or SUPER_ADMIN.
+   * 
+   * @param targetRole - The role to assign
+   * @param callerRole - The role of the user making the change
+   * @throws ForbiddenException if the caller cannot assign the target role
+   */
+  validateRoleElevation(targetRole: UserRole, callerRole?: UserRole): void {
+    if (!callerRole) {
+      // If no caller role provided, only allow non-elevated roles
+      if (ELEVATED_ROLES.includes(targetRole)) {
+        throw new ForbiddenException('Only SUPER_ADMIN can assign admin roles');
+      }
+      return;
+    }
+
+    // Only SUPER_ADMIN can assign ADMIN or SUPER_ADMIN roles
+    if (ELEVATED_ROLES.includes(targetRole) && callerRole !== UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can assign admin roles');
+    }
+  }
+
+  /**
+   * Elevate a user to admin role with full profile refresh.
+   * This is a specialized method for role elevation that ensures
+   * proper audit trail and Clerk synchronization.
+   * 
+   * @param userId - The AppUser ID to elevate
+   * @param targetRole - The admin role to assign (ADMIN or SUPER_ADMIN)
+   * @param changedBy - The clerkId or identifier of who made the change
+   * @param reason - Optional reason for the role change
+   */
+  async elevateToAdmin(
+    userId: string,
+    targetRole: UserRole,
+    changedBy: string,
+    reason?: string,
+  ) {
+    // Validate the target role is an admin role
+    if (!ELEVATED_ROLES.includes(targetRole)) {
+      throw new ForbiddenException('This method is only for elevating to admin roles');
+    }
+
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!appUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Don't allow re-elevation to the same role
+    if (appUser.role === targetRole) {
+      this.logger.log(`User ${userId} already has role ${targetRole}`);
+      return this.findByClerkId(appUser.clerkId);
+    }
+
+    const previousRole = appUser.role;
+    this.logger.log(`🔺 [ELEVATE TO ADMIN] Elevating user ${userId} from ${previousRole} to ${targetRole}`);
+
+    // Use RoleSyncService for proper Clerk sync and audit trail
+    await this.roleSyncService.changeRole({
+      appUserId: userId,
+      newRole: targetRole,
+      changedBy,
+      reason: reason || `Role elevation to ${targetRole}`,
+    });
+
+    this.logger.log(`✅ [ELEVATE TO ADMIN] User ${userId} elevated from ${previousRole} to ${targetRole}`);
+
+    // Return the fully refreshed user profile
+    return this.findByClerkId(appUser.clerkId);
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string, callerRole?: UserRole) {
     const appUser = await this.prisma.appUser.findUnique({
       where: { id },
     });
@@ -744,8 +824,13 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Check if role is changing - if so, use RoleSyncService for proper Clerk sync
+    // Check if role is changing - if so, validate and use RoleSyncService for proper Clerk sync
     const isRoleChanging = updateUserDto.role && updateUserDto.role !== appUser.role;
+    
+    // Validate role elevation if changing to an admin role
+    if (isRoleChanging && updateUserDto.role) {
+      this.validateRoleElevation(updateUserDto.role, callerRole);
+    }
 
     // Update both AppUser and User profile in a transaction for data consistency
     const result = await this.prisma.$transaction(async (tx) => {

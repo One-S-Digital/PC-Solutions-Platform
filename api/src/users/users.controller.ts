@@ -162,13 +162,42 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPER_ADMIN)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Request() request,
   ) {
-    return this.usersService.update(id, updateUserDto, this.getChangedBy(request));
+    const callerRole = request.context?.role || request.user?.role;
+    return this.usersService.update(id, updateUserDto, this.getChangedBy(request), callerRole);
+  }
+
+  /**
+   * Elevate a user to an admin role (ADMIN or SUPER_ADMIN).
+   * Only SUPER_ADMIN can perform this action.
+   * This endpoint ensures proper audit trail and syncs with Clerk.
+   */
+  @Post(':id/elevate-to-admin')
+  @Roles(UserRole.SUPER_ADMIN)
+  async elevateToAdmin(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: { targetRole: UserRole; reason?: string },
+    @Request() request,
+  ) {
+    this.logger.log(`🔺 [ELEVATE] Super admin ${this.getChangedBy(request)} elevating user ${id} to ${body.targetRole}`);
+    
+    const result = await this.usersService.elevateToAdmin(
+      id,
+      body.targetRole,
+      this.getChangedBy(request),
+      body.reason,
+    );
+    
+    return {
+      success: true,
+      message: `User elevated to ${body.targetRole} successfully`,
+      data: result,
+    };
   }
 
   @Delete(':id')
