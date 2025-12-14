@@ -428,14 +428,20 @@ export class StaticTranslationController {
 
   /**
    * Admin: Get full sync job status
+   * 
+   * CRITICAL: This endpoint must NEVER block.
+   * - Only reads from in-memory job state (no DB, no filesystem, no translation logic)
+   * - Returns immediately (<50ms)
+   * - No locks, no async operations
    */
   @Get('admin/full-sync/:jobId/status')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @SkipThrottle() // Skip throttling to ensure instant response
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get full sync job status (admin)' })
   @ApiResponse({ status: 200, description: 'Job status retrieved' })
-  @ApiResponse({ status: 404, description: 'Job not found' })
+  @ApiResponse({ status: 200, description: 'Job not found (returns success: false)' })
   async fullSyncStatus(
     @Param('jobId') jobId: string,
   ): Promise<{
@@ -443,29 +449,38 @@ export class StaticTranslationController {
     job?: any;
     error?: string;
   }> {
-    const job = this.service.getFullSyncJob(jobId);
-    
-    if (!job) {
+    try {
+      // Only read from in-memory Map - no DB, no filesystem, no async operations
+      const job = this.service.getFullSyncJob(jobId);
+      
+      if (!job) {
+        return {
+          success: false,
+          error: 'Job not found or expired',
+        };
+      }
+
+      // Calculate duration synchronously (only uses Date.now() and job timestamps)
+      const duration = job.completedAt && job.startedAt
+        ? job.completedAt - job.startedAt
+        : job.startedAt
+        ? Date.now() - job.startedAt
+        : undefined;
+
+      return {
+        success: true,
+        job: {
+          ...job,
+          duration,
+        },
+      };
+    } catch (error: any) {
+      // Always return JSON, never throw
       return {
         success: false,
-        error: 'Job not found',
+        error: error?.message || 'Failed to retrieve job status',
       };
     }
-
-    // Calculate duration if job is done
-    const duration = job.completedAt && job.startedAt
-      ? job.completedAt - job.startedAt
-      : job.startedAt
-      ? Date.now() - job.startedAt
-      : undefined;
-
-    return {
-      success: true,
-      job: {
-        ...job,
-        duration,
-      },
-    };
   }
 
   /**
