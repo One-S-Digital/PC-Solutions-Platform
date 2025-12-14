@@ -8,9 +8,33 @@ import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [
+        'https://app.procrechesolutions.com', 
+        'https://admin.procrechesolutions.com'
+      ]
+    : true;
+
   // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // We'll handle body parsing manually
+    cors: {
+      origin: allowedOrigins,
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'X-Requested-With', 
+        'Accept',
+        'svix-id',
+        'svix-timestamp',
+        'svix-signature',
+      ],
+      exposedHeaders: ['Content-Type', 'Authorization'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    },
   });
   const logger = app.get(AppLoggerService);
   
@@ -79,32 +103,6 @@ async function bootstrap() {
 
   // Set global prefix
   app.setGlobalPrefix('api');
-
-  // CORS - Enhanced configuration
-  const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? [
-        'https://app.procrechesolutions.com', 
-        'https://admin.procrechesolutions.com'
-      ]
-    : true;
-
-  app.enableCors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type', 
-      'Authorization', 
-      'X-Requested-With', 
-      'Accept',
-      'svix-id',
-      'svix-timestamp',
-      'svix-signature',
-    ],
-    exposedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
 
   // CORS debugging middleware (only when DEBUG_CORS is enabled)
   if (process.env.DEBUG_CORS === 'true') {
