@@ -73,6 +73,8 @@ export class StaticTranslationService {
   // Batch processing configuration
   private readonly BATCH_SIZE = 50; // Optimal batch size for DeepL API
   private readonly MAX_CONCURRENT_BATCHES = 3; // Parallel batch processing
+  // Chunk size for yielding inside heavy loops to keep event loop responsive
+  private readonly LOOP_YIELD_CHUNK = 500;
   
   // Configurable log level
   private readonly LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
@@ -106,6 +108,14 @@ export class StaticTranslationService {
     if (!isVerbose || this.LOG_LEVEL === 'debug') {
       this.logger.log(message);
     }
+  }
+
+  /**
+   * Yield back to the event loop from inside long-running loops.
+   * This helps keep the process responsive during heavy CPU/IO work.
+   */
+  private async yieldLoop(): Promise<void> {
+    await new Promise<void>((resolve) => setImmediate(resolve));
   }
 
   /**
@@ -835,6 +845,7 @@ export class StaticTranslationService {
     reportProgress(3, 6, 'Identifying translations to process...');
 
     let translatedCount = 0;
+    let processedCount = 0;
 
     // For each source translation, check if target translation exists
     let adminDesignSystemProcessed = 0;
@@ -842,6 +853,11 @@ export class StaticTranslationService {
     let adminDesignSystemTranslated = 0;
     
     for (const source of sourceTranslations) {
+      // Yield periodically to avoid blocking the event loop on very large datasets
+      if (processedCount > 0 && processedCount % this.LOOP_YIELD_CHUNK === 0) {
+        await this.yieldLoop();
+      }
+      processedCount++;
       const isAdminDesignSystem = source.namespace === 'admin' && source.key.startsWith('designSystem.');
       
       const existing = await this.prisma.staticTranslation.findUnique({
@@ -1687,6 +1703,7 @@ export class StaticTranslationService {
     
     const translations: Array<{ namespace: string; key: string; lang: string; value: string }> = [];
     const details: Record<string, number> = {};
+    let processedKeysCount = 0;
     
     for (const lang of languages) {
       const langPath = path.join(localesPath, lang);
@@ -1721,8 +1738,10 @@ export class StaticTranslationService {
           
           // Flatten nested JSON into flat keys
           const flatKeys = this.flattenObject(json);
-          
-          for (const [key, value] of Object.entries(flatKeys)) {
+          const entries = Object.entries(flatKeys);
+
+          for (let i = 0; i < entries.length; i++) {
+            const [key, value] = entries[i] as [string, any];
             if (typeof value === 'string') {
               // CRITICAL: Strip prefixes at import time - never store prefixes in database
               // This ensures clean data and prevents the need to strip prefixes in multiple places
@@ -1736,6 +1755,12 @@ export class StaticTranslationService {
               
               const detailKey = `${lang}/${namespace}`;
               details[detailKey] = (details[detailKey] || 0) + 1;
+
+              processedKeysCount++;
+              // Yield periodically to keep the event loop responsive on very large files
+              if (processedKeysCount > 0 && processedKeysCount % this.LOOP_YIELD_CHUNK === 0) {
+                await this.yieldLoop();
+              }
             }
           }
           
@@ -2034,6 +2059,7 @@ export class StaticTranslationService {
     
     const details: Record<string, number> = {};
     let totalExported = 0;
+    let processedTranslationsCount = 0;
     
     for (const lang of languages) {
       // Get all translations for this language
@@ -2045,11 +2071,18 @@ export class StaticTranslationService {
       
       // Group by namespace
       const grouped: Record<string, Array<{ key: string; value: string }>> = {};
-      for (const t of translations) {
+      for (let i = 0; i < translations.length; i++) {
+        const t = translations[i];
         if (!grouped[t.namespace]) {
           grouped[t.namespace] = [];
         }
         grouped[t.namespace].push({ key: t.key, value: t.value });
+
+        processedTranslationsCount++;
+        // Yield periodically when grouping large translation sets
+        if (processedTranslationsCount > 0 && processedTranslationsCount % this.LOOP_YIELD_CHUNK === 0) {
+          await this.yieldLoop();
+        }
       }
       
       // Write each namespace to a file
