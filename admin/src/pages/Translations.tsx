@@ -346,10 +346,8 @@ export default function Translations() {
   const warmUpApi = async () => {
     try {
       // Use cache buster to ensure fresh health check and wake up hibernated instance
-      const cacheBuster = `?ts=${Date.now()}`;
-      await apiClient.get(`/health${cacheBuster}`, {
-        headers: { 'Cache-Control': 'no-cache' },
-      });
+      // No custom headers to avoid CORS preflight issues
+      await apiClient.get(`/health?ts=${Date.now()}`);
       console.log('✅ API health check successful');
     } catch (error) {
       // Non-blocking: if health check fails, continue anyway

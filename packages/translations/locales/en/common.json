@@ -1197,7 +1197,8 @@
   },
   "verifying": "Verifying...",
   "placeholders": {
-    "searchKeyword": "Search by keyword"
+    "searchKeyword": "Search by keyword",
+    "enteryourpassword": "Enter your password"
   },
   "notAvailable": "Not available",
   "marketplace": {

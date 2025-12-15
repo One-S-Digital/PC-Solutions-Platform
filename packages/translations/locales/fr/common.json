@@ -1219,7 +1219,8 @@
     "verifyEmail": "Vérifier l'e-mail"
   },
   "placeholders": {
-    "searchKeyword": "Rechercher par mot-clé"
+    "searchKeyword": "Rechercher par mot-clé",
+    "enteryourpassword": "Entrez votre mot de passe"
   },
   "notAvailable": "Non disponible",
   "marketplace": {

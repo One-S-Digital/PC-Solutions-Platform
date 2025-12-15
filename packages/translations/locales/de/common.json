@@ -1247,7 +1247,8 @@
     "verifyEmail": "E-Mail verifizieren"
   },
   "placeholders": {
-    "searchKeyword": "Nach Stichwort suchen"
+    "searchKeyword": "Nach Stichwort suchen",
+    "enteryourpassword": "Geben Sie Ihr Passwort ein"
   },
   "notAvailable": "Nicht verfügbar",
   "marketplace": {
