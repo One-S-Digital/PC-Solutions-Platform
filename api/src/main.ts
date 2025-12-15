@@ -114,24 +114,6 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
-  // CORS debugging middleware (only when DEBUG_CORS is enabled)
-  if (process.env.DEBUG_CORS === 'true') {
-    app.use((req, res, next) => {
-      const isPreflight = req.method === 'OPTIONS';
-      
-      if (isPreflight || req.method === 'PUT' || req.method === 'PATCH') {
-        logger.debug('CORS Request', 'CORSMiddleware', {
-          method: req.method,
-          url: req.url,
-          origin: req.headers.origin,
-          isPreflight,
-        });
-      }
-      
-      next();
-    });
-  }
-
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
@@ -151,7 +133,28 @@ async function bootstrap() {
 
   const port = parseInt(process.env.PORT || '3000', 10);
   await app.listen(port, '0.0.0.0'); // Bind to all interfaces for Render
-  
+
+  // Log route map once at startup for debugging
+  try {
+    const server = app.getHttpServer();
+    const router = (server as any)?._events?.request?._router;
+    if (router?.stack) {
+      const routes = router.stack
+        .filter((l: any) => l.route)
+        .map(
+          (l: any) =>
+            Object.keys(l.route.methods)
+              .map((m) => m.toUpperCase())
+              .join(',') +
+            ' ' +
+            l.route.path,
+        );
+      logger.log(`ROUTES: ${JSON.stringify(routes)}`, 'Bootstrap');
+    }
+  } catch (e) {
+    logger.error('Failed to log route map', (e as any)?.message || e);
+  }
+
   logger.log(`Application is running on port ${port}`, 'Bootstrap');
   if (process.env.NODE_ENV !== 'production') {
     logger.log(`Swagger documentation: http://localhost:${port}/api/docs`, 'Bootstrap');
