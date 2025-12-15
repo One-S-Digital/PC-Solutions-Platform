@@ -857,7 +857,7 @@ export const apiService = {
         };
         error?: string;
       }>
-    >(`/static-translations/admin/full-sync/${jobId}/status`, { timeout: 30000 }),
+    >(`/static-translations/public/full-sync/${jobId}/status`, { timeout: 30000 }),
 
   autoFixHardcodedStrings: (
     apiClient: AxiosInstance
