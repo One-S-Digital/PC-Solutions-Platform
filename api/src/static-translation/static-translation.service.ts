@@ -1689,16 +1689,21 @@ export class StaticTranslationService {
     const fs = require('fs');
     const path = require('path');
     
-    // Use environment variable if set (for production), otherwise use default path (for development)
-    // In production, set TRANSLATION_LOCALES_PATH to the absolute path of the locales directory
+    // Path resolution priority:
+    // 1. TRANSLATION_LOCALES_PATH env var (if explicitly set)
+    // 2. dist/locales (production-safe, files copied during build)
+    // 3. ../packages/translations/locales (local development fallback)
+    const distLocalesPath = path.join(process.cwd(), 'dist', 'locales');
     const localesPath = process.env.TRANSLATION_LOCALES_PATH || 
-      path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
+      (fs.existsSync(distLocalesPath)
+        ? distLocalesPath
+        : path.join(process.cwd(), '..', 'packages', 'translations', 'locales'));
     const languages = ['en', 'fr', 'de'];
     
-    // Diagnostic logging to confirm import path and existence at runtime
+    // Startup diagnostic log: resolved path and existence
     const pathExists = fs.existsSync(localesPath);
     this.logger.log(
-      `📦 Importing translations from JSON files in ${localesPath} (exists=${pathExists})`,
+      `📦 Static translation locales path: ${localesPath} (exists=${pathExists})`,
     );
     
     if (!fs.existsSync(localesPath)) {
@@ -2059,9 +2064,15 @@ export class StaticTranslationService {
     const fs = require('fs');
     const path = require('path');
     
-    // Use environment variable if set (for production), otherwise use default path (for development)
+    // Path resolution priority:
+    // 1. TRANSLATION_LOCALES_PATH env var (if explicitly set)
+    // 2. dist/locales (production-safe, files copied during build)
+    // 3. ../packages/translations/locales (local development fallback)
+    const distLocalesPath = path.join(process.cwd(), 'dist', 'locales');
     const localesPath = process.env.TRANSLATION_LOCALES_PATH || 
-      path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
+      (fs.existsSync(distLocalesPath)
+        ? distLocalesPath
+        : path.join(process.cwd(), '..', 'packages', 'translations', 'locales'));
     const languages = ['en', 'fr', 'de'];
     
     this.logger.log(`📤 Exporting translations to JSON files in ${localesPath}`);
