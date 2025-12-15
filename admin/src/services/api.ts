@@ -89,17 +89,21 @@ const createDevApiClient = (getToken: () => Promise<string | null>) => {
       try {
         const token = await getToken();
         const url = config.url || '';
-        const isPublicStatus =
+        const isAdminStatus =
           url.includes('/static-translations/admin/full-sync/') &&
+          url.endsWith('/status');
+        const isPublicFullSyncStatus =
+          url.includes('/static-translations/public/full-sync/') &&
           url.endsWith('/status');
 
         // Ensure headers object exists
         config.headers = config.headers || {};
 
-        if (isPublicStatus) {
-          // Public status endpoint - DO NOT send Authorization
+        if (isAdminStatus || isPublicFullSyncStatus) {
+          // Public status endpoints - DO NOT send Authorization
           delete (config.headers as any).Authorization;
-          logger.log('🔧 Dev API Request (public status)', {
+          delete (config.headers as any).authorization;
+          logger.log('🔧 Dev API Request (public full-sync status, no auth)', {
             url: config.url,
             method: config.method,
             hasAuth: false,
@@ -201,17 +205,21 @@ export const useApiClient = () => {
         try {
           const token = await getToken()
           const url = config.url || ''
-          const isPublicStatus =
+          const isAdminStatus =
             url.includes('/static-translations/admin/full-sync/') &&
+            url.endsWith('/status')
+          const isPublicFullSyncStatus =
+            url.includes('/static-translations/public/full-sync/') &&
             url.endsWith('/status')
 
           // Ensure headers object exists
           config.headers = config.headers || {}
 
-          if (isPublicStatus) {
-            // Public status endpoint - DO NOT send Authorization
+          if (isAdminStatus || isPublicFullSyncStatus) {
+            // Public full-sync status endpoints - DO NOT send Authorization
             delete (config.headers as any).Authorization
-            logger.log('✅ Admin Dashboard API public status request (no auth):', {
+            delete (config.headers as any).authorization
+            logger.log('✅ Admin Dashboard API public full-sync status request (no auth):', {
               url: config.url,
               hasAuth: false,
             })
