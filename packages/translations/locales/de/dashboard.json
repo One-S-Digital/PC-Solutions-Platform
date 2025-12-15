@@ -289,28 +289,28 @@
   "parentSupportPage": {
     "faq": {
       "dataSecurity": {
-        "a": "TODO: a",
-        "q": "TODO: q"
+        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details.",
+        "q": "Is my personal information secure?"
       },
       "matchingProcess": {
-        "a": "TODO: a",
-        "q": "TODO: q"
+        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers.",
+        "q": "How does the matching process work?"
       },
       "responseTime": {
-        "a": "TODO: a",
-        "q": "TODO: q"
+        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard.",
+        "q": "How quickly will I receive responses?"
       }
     }
   },
   "platformSummary": "Plattform Zusammenfassung",
   "productUploadModal": {
-    "addTitle": "TODO: add Title",
-    "editTitle": "TODO: edit Title"
+    "addTitle": "Hinzufügen Titel",
+    "editTitle": "Bearbeiten Titel"
   },
   "productsAvailable": "Produkte im Katalog",
   "recruitmentPage": {
-    "subtitle": "TODO: subtitle",
-    "title": "TODO: title"
+    "subtitle": "Manage job postings and find qualified candidates",
+    "title": "Recruitment"
   },
   "registeredUsers": "registrierte Nutzer auf der Plattform",
   "serviceProviderDashboard": {
@@ -354,47 +354,47 @@
     "welcome": "Willkommen in Ihrem Dienstanbieter-Dashboard"
   },
   "serviceProviderSupportPage": {
-    "ticketSubmittedAlert": "TODO: ticket Submitted Alert"
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
   },
   "sidebar": {
     "allUsersTitle": "Gesamtbenutzer",
-    "analytics": "TODO: analytics",
+    "analytics": "Analytics",
     "applications": "Bewerbungen",
-    "billingSubscription": "TODO: billing Subscription",
-    "currentPlan": "TODO: current Plan",
+    "billingSubscription": "Billing & Subscription",
+    "currentPlan": "Current Plan",
     "dashboard": "Dashboard",
-    "discountTerminations": "TODO: discount Terminations",
-    "fileGallery": "TODO: file Gallery",
+    "discountTerminations": "Discount Terminations",
+    "fileGallery": "File Gallery",
     "foundations": "Stiftungen",
     "jobListings": "Stellenanzeigen",
-    "manageSubscriptionDesc": "TODO: manage Subscription Desc",
-    "messages": "TODO: messages",
-    "myProfile": "TODO: my Profile",
-    "ordersAppointments": "TODO: orders Appointments",
+    "manageSubscriptionDesc": "Manage your subscription and billing",
+    "messages": "Messages",
+    "myProfile": "My Profile",
+    "ordersAppointments": "Orders & Appointments",
     "parentLeads": "Eltern-Leads",
     "products": "Produkte",
-    "services": "TODO: services",
-    "settings": "TODO: settings",
-    "support": "TODO: support",
-    "supportFAQ": "TODO: support F A Q"
+    "services": "Services",
+    "settings": "Settings",
+    "support": "Support",
+    "supportFAQ": "Support & FAQ"
   },
   "supplierAnalyticsPage": {
-    "datePickerLabel": "TODO: date Picker",
-    "exportCsvAlert": "TODO: export Csv Alert",
-    "exportCsvButton": "TODO: export Csv Button",
-    "mockChartText": "TODO: mock Chart Text.",
-    "orderRequestsPerWeek": "TODO: order Requests Per Week",
-    "promoCodePerformance": "TODO: promo Code Performance",
-    "requestsByCanton": "TODO: requests By Canton",
+    "datePickerLabel": "Select Date Range",
+    "exportCsvAlert": "CSV export started",
+    "exportCsvButton": "Export CSV",
+    "mockChartText": "Mock chart visualization",
+    "orderRequestsPerWeek": "Order Requests Per Week",
+    "promoCodePerformance": "Promo Code Performance",
+    "requestsByCanton": "Requests by Canton",
     "table": {
-      "code": "TODO: code",
-      "estRevenueImpact": "TODO: est Revenue Impact",
-      "uses": "TODO: uses"
+      "code": "Code",
+      "estRevenueImpact": "Est. Revenue Impact",
+      "uses": "Uses"
     },
-    "topViewedProducts": "TODO: top Viewed Products"
+    "topViewedProducts": "Top Viewed Products"
   },
   "supplierCard": {
-    "viewProfileAndProducts": "TODO: view Profile And Products"
+    "viewProfileAndProducts": "Anzeigen profile and products"
   },
   "supplierDashboard": {
     "noRecentInquiries": "Keine letzten Anfragen",
@@ -462,31 +462,31 @@
   },
   "supplierOrdersPage": {
     "actions": {
-      "ship": "TODO: ship"
+      "ship": "Ship"
     },
     "table": {
-      "foundation": "TODO: foundation"
+      "foundation": "Foundation"
     }
   },
   "supplierProductListingsPage": {
-    "addProductButton": "TODO: add Product Button",
-    "emptyState": "TODO: empty State",
-    "searchPlaceholder": "TODO: Enter search",
+    "addProductButton": "Hinzufügen new product",
+    "emptyState": "No products found",
+    "searchPlaceholder": "Suchen by name, s k u, tags...",
     "table": {
-      "actions": "TODO: actions",
-      "price": "TODO: price",
-      "product": "TODO: product",
-      "stock": "TODO: stock",
-      "visibility": "TODO: visibility"
+      "actions": "Actions",
+      "price": "Price",
+      "product": "Product",
+      "stock": "Stock",
+      "visibility": "Visibility"
     },
-    "title": "TODO: title",
+    "title": "Product Listings",
     "visibility": {
-      "hidden": "TODO: hidden",
-      "visible": "TODO: visible"
+      "hidden": "Hidden",
+      "visible": "Visible"
     }
   },
   "supplierSupportPage": {
-    "ticketSubmittedAlert": "TODO: ticket Submitted Alert"
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
   },
   "systemHealthy": "Alle Systeme betriebsbereit",
   "total": "Gesamt",

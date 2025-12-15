@@ -33,11 +33,11 @@
   "contractTypes": {
     "cdd": "Befristet",
     "cdi": "Unbefristet",
-    "freelance": "TODO: freelance",
+    "freelance": "freelance",
     "fullTime": "Vollzeit",
     "internship": "Praktikum",
     "partTime": "Teilzeit",
-    "unknown": "TODO: unknown"
+    "unknown": "unknown"
   },
   "errors": {
     "deleteJobFailed": "Stellenangebot konnte nicht gelöscht werden.",
@@ -214,7 +214,7 @@
   },
   "recruitmentPage": {
     "labels": {
-      "locationUnknown": "TODO: location Unknown"
+      "locationUnknown": "location Unknown"
     }
   },
   "tabs": {

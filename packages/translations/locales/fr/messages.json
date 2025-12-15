@@ -4,9 +4,9 @@
     "newGroup": "Nouveau groupe",
     "sendMessage": "Envoyer"
   },
-  "confirmDelete": "TODO: confirm Delete",
-  "deleteMessage": "TODO: delete Message.",
-  "editMessage": "TODO: edit Message.",
+  "confirmDelete": "Confirmer Supprimer",
+  "deleteMessage": "Supprimer message.",
+  "editMessage": "Modifier message.",
   "emptyState": {
     "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
     "noConversationSelectedTitle": "Aucune conversation sélectionnée",
@@ -14,15 +14,15 @@
     "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
   },
   "errors": {
-    "fileTooLarge": "TODO: file Too Large"
+    "fileTooLarge": "file Too Large"
   },
   "filters": {
     "all": "Tous",
     "unread": "Non lu"
   },
-  "loadingMore": "TODO: loading More",
-  "messageDeleted": "TODO: message Deleted",
-  "messageUpdated": "TODO: message Updated",
+  "loadingMore": "Chargement... more",
+  "messageDeleted": "message Deleted",
+  "messageUpdated": "message Updated",
   "messages": {
     "buttons": {
       "newGroup": "Nouveau groupe",
@@ -53,11 +53,11 @@
   "noConversationsFound": "Aucune conversation trouvée",
   "noMessagesYet": "Aucun message pour l'instant",
   "placeholders": {
-    "addCaption": "TODO: add Caption",
+    "addCaption": "Ajouter caption",
     "searchConversations": "Recherche de conversations",
     "typeMessage": "Tapez un message..."
   },
-  "scrollForMore": "TODO: scroll For More",
+  "scrollForMore": "scroll For More",
   "searchPlaceholder": "Recherche de conversations...",
   "tabs": {
     "all": "Tous les messages",

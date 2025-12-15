@@ -33,11 +33,11 @@
   "contractTypes": {
     "cdd": "Cdd",
     "cdi": "Cdi",
-    "freelance": "TODO: freelance",
+    "freelance": "freelance",
     "fullTime": "Temps plein",
     "internship": "Stage",
     "partTime": "Temps partiel",
-    "unknown": "TODO: unknown"
+    "unknown": "unknown"
   },
   "errors": {
     "deleteJobFailed": "Impossible de supprimer l'offre d'emploi.",
@@ -214,7 +214,7 @@
   },
   "recruitmentPage": {
     "labels": {
-      "locationUnknown": "TODO: location Unknown"
+      "locationUnknown": "location Unknown"
     }
   },
   "tabs": {

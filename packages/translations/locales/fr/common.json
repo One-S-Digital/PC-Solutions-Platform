@@ -13,60 +13,60 @@
     "title": "[FR] Title"
   },
   "add": "Ajouter",
-  "addEmoji": "TODO: add Emoji",
+  "addEmoji": "Ajouter un emoji",
   "addPromoCodeModal": {
     "placeholder": "[FR] Placeholder"
   },
   "admin": "Admin",
   "adminSystemMonitoringPage": {
     "appPerformance": {
-      "activeUsers": "TODO: active Users",
-      "avgResponseTime": "TODO: avg Response Time",
-      "errorRate": "TODO: error Rate",
-      "requestsPerMinute": "TODO: requests Per Minute",
-      "title": "TODO: title"
+      "activeUsers": "Utilisateurs actifs",
+      "avgResponseTime": "Temps de réponse moyen",
+      "errorRate": "Taux d'erreur",
+      "requestsPerMinute": "Requêtes par minute",
+      "title": "Titre"
     },
     "components": {
-      "api": "TODO: api",
-      "authService": "TODO: auth Service",
-      "database": "TODO: database"
+      "api": "API",
+      "authService": "Service d'authentification",
+      "database": "Base de données"
     },
     "databasePerformance": {
-      "activeConnections": "TODO: active Connections",
-      "connectionHealth": "TODO: connection Health",
-      "queryTime": "TODO: query Time",
-      "storage": "TODO: storage",
-      "title": "TODO: title"
+      "activeConnections": "Connexions actives",
+      "connectionHealth": "État de la connexion",
+      "queryTime": "Temps de requête",
+      "storage": "Stockage",
+      "title": "Titre"
     },
     "metadata": {
-      "environment": "TODO: environment",
-      "lastCheck": "TODO: last Check",
-      "uptime": "TODO: uptime",
-      "version": "TODO: version"
+      "environment": "Environnement",
+      "lastCheck": "Dernière vérification",
+      "uptime": "Temps de fonctionnement",
+      "version": "Version"
     },
     "overallStatus": {
-      "title": "TODO: title"
+      "title": "Titre"
     },
     "rawLogConsole": {
-      "emptyLogMessage": "TODO: empty Log Message.",
+      "emptyLogMessage": "Vide log message.",
       "tabs": {
-        "all": "TODO: all",
-        "errors": "TODO: errors",
-        "info": "TODO: info",
-        "warnings": "TODO: warnings"
+        "all": "Tous",
+        "errors": "Erreurs",
+        "info": "Informations",
+        "warnings": "Avertissements"
       },
-      "title": "TODO: title"
+      "title": "Titre"
     },
     "recentEvents": {
-      "empty": "TODO: empty",
-      "title": "TODO: title"
+      "empty": "Vide",
+      "title": "Titre"
     },
     "serverPerformance": {
-      "cpuUsage": "TODO: cpu Usage",
-      "diskUsage": "TODO: disk Usage",
-      "memoryUsage": "TODO: memory Usage",
-      "title": "TODO: title",
-      "uptimeDays": "TODO: uptime Days"
+      "cpuUsage": "Utilisation du processeur",
+      "diskUsage": "Utilisation du disque",
+      "memoryUsage": "Utilisation de la mémoire",
+      "title": "Titre",
+      "uptimeDays": "Jours de fonctionnement"
     },
     "title": "[FR] Title"
   },
@@ -76,89 +76,89 @@
   },
   "appName": "ProCrèche Solutions Suisse",
   "ariaLabels": {
-    "gridView": "TODO: grid View",
-    "listView": "TODO: list View"
+    "gridView": "Vue en grille",
+    "listView": "Vue en liste"
   },
-  "attachFile": "TODO: attach File",
+  "attachFile": "Joindre un fichier",
   "back": "Dos",
   "benefits": "Avantages",
   "buttons": {
-    "accept": "TODO: accept",
-    "add": "TODO: add",
-    "applyNow": "TODO: apply Now",
-    "back": "TODO: back",
-    "cancel": "TODO: cancel",
-    "close": "TODO: close",
-    "confirm": "TODO: confirm",
-    "create": "TODO: create",
-    "createAccount": "TODO: create Account",
-    "delete": "TODO: delete",
-    "dismiss": "TODO: dismiss",
-    "edit": "TODO: edit",
-    "editProfile": "TODO: edit Profile",
-    "filter": "TODO: filter",
-    "goBack": "TODO: go Back",
-    "goToLogin": "TODO: go To Login",
-    "login": "TODO: login",
-    "profileUpdated": "TODO: profile Updated",
-    "refresh": "TODO: refresh",
-    "reject": "TODO: reject",
-    "remove": "TODO: remove",
-    "reply": "TODO: reply",
-    "retry": "TODO: retry",
-    "save": "TODO: save",
-    "saveChanges": "TODO: save Changes",
-    "saving": "TODO: saving",
-    "sendMessage": "TODO: send Message.",
-    "signup": "TODO: signup",
-    "submitEnquiry": "TODO: submit Enquiry",
-    "submitRequest": "TODO: submit Request",
-    "submitTicket": "TODO: submit Ticket",
+    "accept": "Accepter",
+    "add": "Ajouter",
+    "applyNow": "Postuler maintenant",
+    "back": "Retour",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "create": "Créer",
+    "createAccount": "Créer un compte",
+    "delete": "Supprimer",
+    "dismiss": "Ignorer",
+    "edit": "Modifier",
+    "editProfile": "Modifier le profil",
+    "filter": "Filtrer",
+    "goBack": "Retour",
+    "goToLogin": "Aller à la connexion",
+    "login": "Log In",
+    "profileUpdated": "Profile updated!",
+    "refresh": "Actualiser",
+    "reject": "Rejeter",
+    "remove": "Retirer",
+    "reply": "Répondre",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "sendMessage": "Envoyer un message",
+    "signup": "Créer un compte",
+    "submitEnquiry": "Soumettre une demande",
+    "submitRequest": "Soumettre une demande",
+    "submitTicket": "Soumettre un ticket",
     "verifyEmail": "Vérifier l'e-mail",
-    "view": "TODO: view",
-    "viewDetails": "TODO: view Details"
+    "view": "Voir",
+    "viewDetails": "Voir les détails"
   },
   "candidateCard": {
-    "viewProfile": "TODO: view Profile"
+    "viewProfile": "Voir le profil"
   },
   "candidateProfile": {
-    "addToFavorites": "TODO: add To Favorites",
-    "availabilityNotProvided": "TODO: availability Not Provided",
-    "backToPool": "TODO: back To Pool",
-    "contractType": "TODO: contract Type",
-    "expires": "TODO: expires",
-    "goBack": "TODO: go Back",
-    "graduated": "TODO: graduated",
-    "inviteToApply": "TODO: invite To Apply",
-    "issued": "TODO: issued",
-    "loading": "TODO: loading",
-    "locationNotProvided": "TODO: location Not Provided",
-    "noBioProvided": "TODO: no Bio Provided",
-    "noCertificationsListed": "TODO: no Certifications Listed",
-    "noDocumentsUploaded": "TODO: no Documents Uploaded",
-    "noEducationDetails": "TODO: no Education Details",
-    "noExperienceListed": "TODO: no Experience Listed",
-    "noSkillsListed": "TODO: no Skills Listed",
-    "notFound": "TODO: not Found",
-    "notFoundDescription": "TODO: not Found Description",
-    "notProvided": "TODO: not Provided",
-    "preferredAgeGroups": "TODO: preferred Age Groups",
-    "preferredDays": "TODO: preferred Days",
-    "preferredTimes": "TODO: preferred Times",
-    "removeFromFavorites": "TODO: remove From Favorites",
-    "retry": "TODO: retry",
-    "roleNotSpecified": "TODO: role Not Specified",
+    "addToFavorites": "Ajouter aux favoris",
+    "availabilityNotProvided": "Disponibilité non fournie",
+    "backToPool": "Retour au pool",
+    "contractType": "Type de contrat",
+    "expires": "Expire",
+    "goBack": "Retour",
+    "graduated": "Diplômé",
+    "inviteToApply": "Inviter à postuler",
+    "issued": "Émis",
+    "loading": "Chargement...",
+    "locationNotProvided": "Emplacement non fourni",
+    "noBioProvided": "Aucune biographie fournie",
+    "noCertificationsListed": "Aucune certification listée",
+    "noDocumentsUploaded": "Aucun document téléchargé",
+    "noEducationDetails": "Aucun détail d'éducation",
+    "noExperienceListed": "Aucune expérience listée",
+    "noSkillsListed": "Aucune compétence listée",
+    "notFound": "Non trouvé",
+    "notFoundDescription": "Description non trouvée",
+    "notProvided": "Non fourni",
+    "preferredAgeGroups": "Groupes d'âge préférés",
+    "preferredDays": "Jours préférés",
+    "preferredTimes": "Heures préférées",
+    "removeFromFavorites": "Retirer des favoris",
+    "retry": "Réessayer",
+    "roleNotSpecified": "Rôle non spécifié",
     "sections": {
-      "availabilityAndPreferences": "TODO: availability And Preferences",
-      "certifications": "TODO: certifications",
-      "cvAndDocuments": "TODO: cv And Documents",
-      "education": "TODO: education",
-      "shortBio": "TODO: short Bio",
-      "skillsAndSpecialties": "TODO: skills And Specialties",
-      "workExperience": "TODO: work Experience"
+      "availabilityAndPreferences": "Disponibilité et préférences",
+      "certifications": "Certifications",
+      "cvAndDocuments": "CV et documents",
+      "education": "Éducation",
+      "shortBio": "Biographie courte",
+      "skillsAndSpecialties": "Compétences et spécialités",
+      "workExperience": "Expérience professionnelle"
     },
-    "sendMessage": "TODO: send Message.",
-    "viewCredential": "TODO: view Credential"
+    "sendMessage": "send Message.",
+    "viewCredential": "Voir le justificatif"
   },
   "canton": "Canton",
   "capacity": "Capacité",
@@ -167,7 +167,7 @@
   },
   "childAge": "Child Age",
   "chooseRole": "Choisissez votre rôle",
-  "close": "TODO: close",
+  "close": "Fermer",
   "common": {
     "add": "Ajouter",
     "cancel": "Annuler",
@@ -282,98 +282,98 @@
     },
     "groupNameLabel": "[FR] Group Name",
     "groupNamePlaceholder": "[FR] Enter group name",
-    "loadingUsers": "TODO: loading Users",
-    "noUsersAvailable": "TODO: no Users Available",
+    "loadingUsers": "Chargement... users",
+    "noUsersAvailable": "no Users Available",
     "selectParticipantsLabel": "[FR] Select Participants",
     "title": "[FR] Title",
-    "titleNewChat": "TODO: title New Chat"
+    "titleNewChat": "Titre new chat"
   },
   "dashboardDetailPage": {
     "activeUsers": {
-      "aliceActivity": "TODO: alice Activity",
-      "bobActivity": "TODO: bob Activity",
-      "carolActivity": "TODO: carol Activity",
-      "davidActivity": "TODO: david Activity",
-      "recentActivity": "TODO: recent Activity",
-      "totalToday": "TODO: total Today"
+      "aliceActivity": "alice Activity",
+      "bobActivity": "bob Activity",
+      "carolActivity": "carol Activity",
+      "davidActivity": "david Activity",
+      "recentActivity": "recent Activity",
+      "totalToday": "total Today"
     },
-    "defaultTitle": "TODO: default Title",
-    "detailsFor": "TODO: details For",
+    "defaultTitle": "default Titre",
+    "detailsFor": "details For",
     "newOrders": {
-      "artFunPack": "TODO: art Fun Pack",
-      "ecotoysBlocks": "TODO: ecotoys Blocks",
-      "freshBitesMeal": "TODO: fresh Bites Meal",
-      "order789": "TODO: order789",
-      "order790": "TODO: order790",
-      "order791": "TODO: order791",
-      "recentOrders": "TODO: recent Orders",
+      "artFunPack": "art Fun Pack",
+      "ecotoysBlocks": "ecotoys Blocks",
+      "freshBitesMeal": "fresh Bites Meal",
+      "order789": "order789",
+      "order790": "order790",
+      "order791": "order791",
+      "recentOrders": "recent Orders",
       "status": {
-        "paid": "TODO: paid",
-        "pending": "TODO: pending"
+        "paid": "paid",
+        "pending": "pending"
       },
       "table": {
-        "amount": "TODO: amount",
-        "orderId": "TODO: order Id",
-        "product": "TODO: product",
-        "status": "TODO: status"
+        "amount": "amount",
+        "orderId": "order Id",
+        "product": "product",
+        "status": "status"
       },
-      "totalThisWeek": "TODO: total This Week"
+      "totalThisWeek": "total This Week"
     },
-    "noSpecificView": "TODO: no Specific View",
+    "noSpecificView": "no specific Voir",
     "openJobs": {
-      "applications": "TODO: applications",
-      "assistantEducatorLausanne": "TODO: assistant Educator Lausanne",
-      "currentPositions": "TODO: current Positions",
-      "daycareDirectorZurich": "TODO: daycare Director Zurich",
-      "leadEducatorGeneva": "TODO: lead Educator Geneva",
+      "applications": "applications",
+      "assistantEducatorLausanne": "assistant Educator Lausanne",
+      "currentPositions": "current Positions",
+      "daycareDirectorZurich": "daycare Director Zurich",
+      "leadEducatorGeneva": "lead Educator Geneva",
       "status": {
-        "interviewing": "TODO: interviewing",
-        "open": "TODO: open"
+        "interviewing": "interviewing",
+        "open": "open"
       },
-      "totalOpenPositions": "TODO: total Open Positions"
+      "totalOpenPositions": "total Open Positions"
     },
     "pageViews": {
-      "avgSession": "TODO: avg Session",
-      "dashboardViews": "TODO: dashboard Views",
-      "keyMetrics": "TODO: key Metrics",
-      "mockChartText": "TODO: mock Chart Text.",
-      "mostViewed": "TODO: most Viewed",
-      "sessionDuration": "TODO: session Duration",
-      "totalToday": "TODO: total Today",
-      "uniqueVisitors": "TODO: unique Visitors"
+      "avgSession": "avg Session",
+      "dashboardViews": "dashboard Views",
+      "keyMetrics": "key Metrics",
+      "mockChartText": "mock Chart Text.",
+      "mostViewed": "most Viewed",
+      "sessionDuration": "session Duration",
+      "totalToday": "total Today",
+      "uniqueVisitors": "unique Visitors"
     }
   },
   "dashboardPage": {
     "timeAgo": {
-      "days": "TODO: days",
-      "hours": "TODO: hours",
-      "minutes": "TODO: minutes",
-      "yesterday": "TODO: yesterday"
+      "days": "days",
+      "hours": "hours",
+      "minutes": "minutes",
+      "yesterday": "yesterday"
     }
   },
   "discountTerminations": {
     "actions": {
-      "markCompleted": "TODO: mark Completed",
-      "markCompletedError": "TODO: mark Completed Error",
-      "sendNotices": "TODO: send Notices",
-      "sendNoticesAlert": "TODO: send Notices Alert"
+      "markCompleted": "mark Completed",
+      "markCompletedError": "mark Completed Error",
+      "sendNotices": "send Notices",
+      "sendNoticesAlert": "send Notices Alert"
     },
     "allActive": {
-      "description": "TODO: description",
-      "tableTitle": "TODO: table Title",
-      "title": "TODO: title"
+      "description": "description",
+      "tableTitle": "table Titre",
+      "title": "Titre"
     },
     "queue": {
-      "description": "TODO: description",
-      "tableTitle": "TODO: table Title",
-      "title": "TODO: title"
+      "description": "description",
+      "tableTitle": "table Titre",
+      "title": "Titre"
     },
     "table": {
-      "actions": "TODO: actions",
-      "activeSince": "TODO: active Since",
-      "daycare": "TODO: daycare",
-      "reason": "TODO: reason",
-      "vendor": "TODO: vendor"
+      "actions": "actions",
+      "activeSince": "active Since",
+      "daycare": "daycare",
+      "reason": "reason",
+      "vendor": "vendor"
     }
   },
   "discountTerminationsPage": {
@@ -401,42 +401,42 @@
     }
   },
   "dontHaveAccount": "Vous n'avez pas de compte ?",
-  "download": "TODO: download",
+  "download": "download",
   "eLearning": {
     "actions": {
-      "viewCourse": "TODO: view Course",
-      "viewLink": "TODO: view Link",
-      "viewPdf": "TODO: view Pdf",
-      "watchVideo": "TODO: watch Video"
+      "viewCourse": "Voir course",
+      "viewLink": "Voir link",
+      "viewPdf": "Voir pdf",
+      "watchVideo": "watch Video"
     },
-    "adminUploadNote": "TODO: admin Upload Note",
-    "allCategoriesLabel": "TODO: all Categories",
-    "allContentTitle": "TODO: all Content Title",
-    "categoryLabel": "TODO: category",
-    "contentTypesTitle": "TODO: content Types Title",
-    "coursesTitle": "TODO: courses Title",
-    "downloadButton": "TODO: download Button",
-    "downloadFailed": "TODO: download Failed",
-    "externalLinksTitle": "TODO: external Links Title",
+    "adminUploadNote": "admin Upload Note",
+    "allCategoriesLabel": "Tous categories",
+    "allContentTitle": "Tous content Titre",
+    "categoryLabel": "category",
+    "contentTypesTitle": "content types Titre",
+    "coursesTitle": "courses Titre",
+    "downloadButton": "download Button",
+    "downloadFailed": "download Failed",
+    "externalLinksTitle": "external links Titre",
     "itemType": {
-      "courses": "TODO: courses",
-      "links": "TODO: links",
-      "pdfs": "TODO: pdfs",
-      "videos": "TODO: videos"
+      "courses": "courses",
+      "links": "links",
+      "pdfs": "pdfs",
+      "videos": "videos"
     },
-    "items": "TODO: items",
-    "languageLabel": "TODO: language",
-    "lessonsCount": "TODO: lessons Count",
-    "noContentFound": "TODO: no Content Found",
-    "noItemsFound": "TODO: no Items Found",
-    "pdfsTitle": "TODO: pdfs Title",
-    "previewButtonLabel": "TODO: preview Button",
-    "searchPlaceholder": "TODO: Enter search",
-    "title": "TODO: title",
-    "toggleFavoriteLabel": "TODO: toggle Favorite",
-    "updatedLabel": "TODO: updated",
-    "videosTitle": "TODO: videos Title",
-    "viewingAlert": "TODO: viewing Alert"
+    "items": "items",
+    "languageLabel": "language",
+    "lessonsCount": "lessons Count",
+    "noContentFound": "no Content Found",
+    "noItemsFound": "no Items Found",
+    "pdfsTitle": "pdfs Titre",
+    "previewButtonLabel": "preview Button",
+    "searchPlaceholder": "enter Rechercher",
+    "title": "Titre",
+    "toggleFavoriteLabel": "toggle Favorite",
+    "updatedLabel": "updated",
+    "videosTitle": "videos Titre",
+    "viewingAlert": "viewing Alert"
   },
   "eLearningTypes": {
     "course": "[FR] Course",
@@ -445,24 +445,24 @@
     "video": "[FR] Video"
   },
   "educatorApplicationsPage": {
-    "emptyState": "TODO: empty State",
-    "footerNote": "TODO: footer Note",
+    "emptyState": "Vide state",
+    "footerNote": "footer Note",
     "status": {
-      "accepted": "TODO: accepted",
-      "pending": "TODO: pending",
-      "rejected": "TODO: rejected",
-      "reviewed": "TODO: reviewed"
+      "accepted": "accepted",
+      "pending": "pending",
+      "rejected": "rejected",
+      "reviewed": "reviewed"
     },
     "table": {
-      "actions": "TODO: actions",
-      "creche": "TODO: creche",
-      "jobTitle": "TODO: job Title",
-      "lastUpdated": "TODO: last Updated",
-      "status": "TODO: status"
+      "actions": "actions",
+      "creche": "creche",
+      "jobTitle": "job Titre",
+      "lastUpdated": "last Updated",
+      "status": "status"
     },
     "title": "[FR] Title",
-    "unknownFoundation": "TODO: unknown Foundation",
-    "viewingDetailsFor": "TODO: viewing Details For"
+    "unknownFoundation": "unknown Foundation",
+    "viewingDetailsFor": "viewing Details For"
   },
   "educatorDashboard": {
     "applicationStatus": {
@@ -492,67 +492,67 @@
   },
   "educatorJobBoardPage": {
     "errors": {
-      "loadJobs": "TODO: load Jobs"
+      "loadJobs": "load Jobs"
     },
-    "noJobsFound": "TODO: no Jobs Found",
-    "postedOn": "TODO: posted On",
-    "searchPlaceholder": "TODO: Enter search",
-    "title": "TODO: title"
+    "noJobsFound": "no Jobs Found",
+    "postedOn": "posted On",
+    "searchPlaceholder": "enter Rechercher",
+    "title": "Titre"
   },
   "educatorProfilePage": {
     "availability": {
-      "add": "TODO: add",
-      "empty": "TODO: empty",
-      "placeholder": "TODO: placeholder"
+      "add": "Ajouter",
+      "empty": "Vide",
+      "placeholder": "placeholder"
     },
     "bio": {
-      "add": "TODO: add",
-      "empty": "TODO: empty",
-      "placeholder": "TODO: placeholder"
+      "add": "Ajouter",
+      "empty": "Vide",
+      "placeholder": "placeholder"
     },
     "certifications": {
-      "add": "TODO: add",
-      "empty": "TODO: empty",
-      "hint": "TODO: hint",
-      "placeholder": "TODO: placeholder"
+      "add": "Ajouter",
+      "empty": "Vide",
+      "hint": "hint",
+      "placeholder": "placeholder"
     },
     "documents": {
-      "confirmRemove": "TODO: confirm Remove",
-      "cvDocument": "TODO: cv Document",
-      "empty": "TODO: empty",
-      "hint": "TODO: hint",
-      "uploadCv": "TODO: upload Cv",
-      "viewDocument": "TODO: view Document"
+      "confirmRemove": "Confirmer Retirer",
+      "cvDocument": "cv Document",
+      "empty": "Vide",
+      "hint": "hint",
+      "uploadCv": "upload Cv",
+      "viewDocument": "Voir document"
     },
-    "editFullProfile": "TODO: edit Full Profile",
+    "editFullProfile": "Modifier full profile",
     "education": {
-      "add": "TODO: add",
-      "empty": "TODO: empty",
-      "graduated": "TODO: graduated",
-      "hint": "TODO: hint",
-      "placeholder": "TODO: placeholder"
+      "add": "Ajouter",
+      "empty": "Vide",
+      "graduated": "Diplômé",
+      "hint": "hint",
+      "placeholder": "placeholder"
     },
-    "educator": "TODO: educator",
+    "educator": "educator",
     "experience": {
-      "add": "TODO: add",
-      "empty": "TODO: empty",
-      "hint": "TODO: hint",
-      "placeholder": "TODO: placeholder"
+      "add": "Ajouter",
+      "empty": "Vide",
+      "hint": "hint",
+      "placeholder": "placeholder"
     },
-    "loadError": "TODO: load Error",
-    "saveError": "TODO: save Error",
-    "saveSuccess": "TODO: save Success",
+    "loadError": "load Error",
+    "saveError": "Enregistrer error",
+    "saveSuccess": "Enregistrer success",
     "skills": {
-      "add": "TODO: add",
-      "empty": "TODO: empty",
-      "hint": "TODO: hint",
-      "placeholder": "TODO: placeholder"
+      "add": "Ajouter",
+      "empty": "Vide",
+      "hint": "hint",
+      "placeholder": "placeholder"
     },
-    "unnamed": "TODO: unnamed"
+    "unnamed": "unnamed"
   },
   "emptyStates": {
-    "noProductSuppliers": "TODO: no Product Suppliers",
-    "noServices": "TODO: no Services"
+    "noProductSuppliers": "no Product Suppliers",
+    "noServices": "no Services"
   },
   "error": "Une erreur s'est produit",
   "errorBoundary": {
@@ -563,23 +563,23 @@
     "tryAgain": "[FR] Try Again"
   },
   "errors": {
-    "deleteFailed": "TODO: delete Failed",
-    "deleteMessageFailed": "TODO: delete Message Failed",
-    "downloadFailed": "TODO: download Failed",
-    "exportFailed": "TODO: export Failed",
-    "fetchFailed": "TODO: fetch Failed",
+    "deleteFailed": "Supprimer failed",
+    "deleteMessageFailed": "Supprimer message failed",
+    "downloadFailed": "download Failed",
+    "exportFailed": "export Failed",
+    "fetchFailed": "fetch Failed",
     "genericErrorMessage": "Veuillez réessayer ou contacter le support si le problème persiste.",
     "genericErrorTitle": "Une erreur est survenue",
-    "loadFailed": "TODO: load Failed",
-    "loadMessagesFailed": "TODO: load Messages Failed",
-    "loadingFiles": "TODO: loading Files",
-    "sendMessageFailed": "TODO: send Message Failed",
-    "submitFailed": "TODO: submit Failed",
-    "unknown": "TODO: unknown",
-    "unsupportedRole": "TODO: unsupported Role",
-    "updateFailed": "TODO: update Failed",
-    "updateMessageFailed": "TODO: update Message Failed",
-    "verificationKeyword": "TODO: verification Keyword"
+    "loadFailed": "load Failed",
+    "loadMessagesFailed": "load Messages Failed",
+    "loadingFiles": "error Chargement... files",
+    "sendMessageFailed": "send Message Failed",
+    "submitFailed": "Soumettre failed",
+    "unknown": "An unknown error occurred",
+    "unsupportedRole": "unsupported Role",
+    "updateFailed": "update Failed",
+    "updateMessageFailed": "update Message Failed",
+    "verificationKeyword": "verification"
   },
   "featureLock": {
     "message": "[FR] Message",
@@ -611,11 +611,11 @@
     "title": "[FR] Title",
     "uploadButton": "[FR] Upload",
     "uploadFile": "[FR] Upload File",
-    "uploadedFiles": "TODO: uploaded Files",
+    "uploadedFiles": "uploaded Files",
     "uploading": "[FR] Uploading"
   },
   "fileUploadZone": {
-    "defaultLabel": "TODO: default",
+    "defaultLabel": "default",
     "dragAndDrop": "[FR] Drag and drop files here"
   },
   "filters": {
@@ -632,37 +632,37 @@
     "selectOption": "Veuillez sélectionner une option"
   },
   "foundationAnalyticsPage": {
-    "completed": "TODO: completed",
-    "conversionRate": "TODO: conversion Rate",
-    "enrolled": "TODO: enrolled",
-    "enrollmentTrend": "TODO: enrollment Trend",
-    "inProgress": "TODO: in Progress",
-    "last30Days": "TODO: last30 Days",
-    "last6Months": "TODO: last6 Months",
-    "last7Days": "TODO: last7 Days",
-    "last90Days": "TODO: last90 Days",
-    "lastYear": "TODO: last Year",
-    "newLeads": "TODO: new Leads",
-    "noEnrollmentData": "TODO: no Enrollment Data",
-    "noLeadData": "TODO: no Lead Data",
-    "noSpendingData": "TODO: no Spending Data",
-    "noTrainingData": "TODO: no Training Data",
-    "notStarted": "TODO: not Started",
-    "parentLeadConversion": "TODO: parent Lead Conversion",
-    "spendingByCategory": "TODO: spending By Category",
-    "staffTrainingCompletion": "TODO: staff Training Completion",
+    "completed": "completed",
+    "conversionRate": "conversion Rate",
+    "enrolled": "enrolled",
+    "enrollmentTrend": "enrollment Trend",
+    "inProgress": "in Progress",
+    "last30Days": "last30 Days",
+    "last6Months": "last6 Months",
+    "last7Days": "last7 Days",
+    "last90Days": "last90 Days",
+    "lastYear": "last Year",
+    "newLeads": "new Leads",
+    "noEnrollmentData": "no Enrollment Data",
+    "noLeadData": "no Lead Data",
+    "noSpendingData": "no Spending Data",
+    "noTrainingData": "no Training Data",
+    "notStarted": "not Started",
+    "parentLeadConversion": "parent Lead Conversion",
+    "spendingByCategory": "spending By Category",
+    "staffTrainingCompletion": "staff Training Completion",
     "title": "[FR] Title",
-    "totalLeads": "TODO: total Leads",
-    "totalSpending": "TODO: total Spending",
-    "trainingCompletion": "TODO: training Completion"
+    "totalLeads": "total Leads",
+    "totalSpending": "total Spending",
+    "trainingCompletion": "training Completion"
   },
   "foundationDashboard": {
     "activity": {
-      "noActivity": "TODO: no Activity",
+      "noActivity": "no Activity",
       "title": "[FR] Title"
     },
     "calendar": {
-      "noEvents": "TODO: no Events"
+      "noEvents": "no Events"
     },
     "quickActions": {
       "title": "[FR] Title"
@@ -680,84 +680,84 @@
   },
   "foundationLeadsPage": {
     "accessDenied": {
-      "message": "TODO: message",
-      "title": "TODO: title"
+      "message": "message",
+      "title": "Titre"
     },
-    "allResponses": "TODO: all Responses",
-    "allStatuses": "TODO: all Statuses",
+    "allResponses": "Tous responses",
+    "allStatuses": "Tous statuses",
     "emptyState": {
-      "message": "TODO: message",
-      "title": "TODO: title"
+      "message": "message",
+      "title": "Titre"
     },
     "errors": {
-      "responseFailed": "TODO: response Failed"
+      "responseFailed": "response Failed"
     },
-    "searchPlaceholder": "TODO: Enter search",
-    "title": "TODO: title",
-    "totalLeads": "TODO: total Leads"
+    "searchPlaceholder": "enter Rechercher",
+    "title": "Titre",
+    "totalLeads": "total Leads"
   },
   "foundationOrdersAppointmentsPage": {
-    "cancelOrderAlert": "TODO: cancel Order Alert",
-    "exportCsvButton": "TODO: export Csv Button",
-    "exportCsvProductAlert": "TODO: export Csv Product Alert",
-    "exportCsvServiceAlert": "TODO: export Csv Service Alert",
-    "noProductOrders": "TODO: no Product Orders",
-    "noServiceAppointments": "TODO: no Service Appointments",
-    "productOrdersTab": "TODO: product Orders Tab",
-    "productOrdersTitle": "TODO: product Orders Title",
-    "requestedAbbr": "TODO: requested Abbr",
-    "rescheduleAlert": "TODO: reschedule Alert",
-    "rescheduleButton": "TODO: reschedule Button",
-    "serviceAppointmentsTab": "TODO: service Appointments Tab",
-    "serviceAppointmentsTitle": "TODO: service Appointments Title",
+    "cancelOrderAlert": "Annuler order alert",
+    "exportCsvButton": "export Csv Button",
+    "exportCsvProductAlert": "export Csv Product Alert",
+    "exportCsvServiceAlert": "export Csv Service Alert",
+    "noProductOrders": "no Product Orders",
+    "noServiceAppointments": "no Service Appointments",
+    "productOrdersTab": "product Orders Tab",
+    "productOrdersTitle": "product orders Titre",
+    "requestedAbbr": "requested Abbr",
+    "rescheduleAlert": "reschedule Alert",
+    "rescheduleButton": "reschedule Button",
+    "serviceAppointmentsTab": "service Appointments Tab",
+    "serviceAppointmentsTitle": "service appointments Titre",
     "table": {
-      "actions": "TODO: actions",
-      "date": "TODO: date",
-      "itemsQty": "TODO: items Qty",
-      "provider": "TODO: provider",
-      "refNo": "TODO: ref No",
-      "service": "TODO: service",
-      "status": "TODO: status",
-      "supplier": "TODO: supplier",
-      "total": "TODO: total"
+      "actions": "actions",
+      "date": "date",
+      "itemsQty": "items Qty",
+      "provider": "provider",
+      "refNo": "ref No",
+      "service": "service",
+      "status": "status",
+      "supplier": "supplier",
+      "total": "total"
     },
-    "unknownProvider": "TODO: unknown Provider",
-    "unknownService": "TODO: unknown Service",
-    "unknownSupplier": "TODO: unknown Supplier"
+    "unknownProvider": "unknown Provider",
+    "unknownService": "unknown Service",
+    "unknownSupplier": "unknown Supplier"
   },
   "foundationOrganisationProfilePage": {
     "actions": {
-      "openBookingLink": "TODO: open Booking Link",
-      "openDirectOrderLink": "TODO: open Direct Order Link"
+      "openBookingLink": "open Booking Link",
+      "openDirectOrderLink": "open Direct Order Link"
     },
     "empty": {
-      "languages": "TODO: languages",
-      "organizationName": "TODO: organization Name",
-      "organizationType": "TODO: organization Type",
-      "pedagogy": "TODO: pedagogy"
+      "languages": "languages",
+      "organizationName": "organization Name",
+      "organizationType": "organization Type",
+      "pedagogy": "pedagogy"
     },
     "labels": {
-      "address": "TODO: address",
-      "contactEmail": "TODO: contact Email",
-      "contactPerson": "TODO: contact Person",
-      "createdAt": "TODO: created At",
-      "languages": "TODO: languages",
-      "organizationId": "TODO: organization Id",
-      "pedagogy": "TODO: pedagogy",
-      "phoneNumber": "TODO: phone Number",
-      "updatedAt": "TODO: updated At",
-      "vatNumber": "TODO: vat Number"
+      "address": "address",
+      "contactEmail": "contact Email",
+      "contactPerson": "contact Person",
+      "createdAt": "created At",
+      "languages": "languages",
+      "organizationId": "organization Id",
+      "pedagogy": "pedagogy",
+      "phoneNumber": "phone Number",
+      "updatedAt": "updated At",
+      "vatNumber": "vat Number"
     },
-    "notProvided": "TODO: not Provided",
+    "notProvided": "Non fourni",
     "sections": {
       "contact": {
-        "title": "TODO: title"
+        "title": "Titre"
       },
       "metadata": {
-        "title": "TODO: title"
+        "title": "Titre"
       },
       "operations": {
-        "title": "TODO: title"
+        "title": "Titre"
       }
     },
     "title": "[FR] Title"
@@ -836,73 +836,73 @@
     "versionLabel": "[FR] Version"
   },
   "hrProcedures": {
-    "adminUploadNote": "TODO: admin Upload Note",
-    "allDocumentsCategory": "TODO: all Documents Category",
-    "allItemsCount": "TODO: all Items Count",
-    "categoriesTitle": "TODO: categories Title",
+    "adminUploadNote": "admin Upload Note",
+    "allDocumentsCategory": "Tous documents category",
+    "allItemsCount": "Tous items count",
+    "categoriesTitle": "categories Titre",
     "categoryDisplay": {
-      "documentsCount": "TODO: documents Count",
-      "viewCategoryAria": "TODO: view Category Aria"
+      "documentsCount": "documents Count",
+      "viewCategoryAria": "Voir category aria"
     },
     "documentCard": {
-      "categoryLabel": "TODO: category",
-      "downloadButton": "TODO: download Button",
-      "languageLabel": "TODO: language",
-      "lastUpdatedLabel": "TODO: last Updated",
-      "previewButtonLabel": "TODO: preview Button",
-      "toggleFavoriteLabel": "TODO: toggle Favorite",
-      "versionLabel": "TODO: version"
+      "categoryLabel": "category",
+      "downloadButton": "download Button",
+      "languageLabel": "language",
+      "lastUpdatedLabel": "last Updated",
+      "previewButtonLabel": "preview Button",
+      "toggleFavoriteLabel": "toggle Favorite",
+      "versionLabel": "Version"
     },
-    "documentsInCategoryTitle": "TODO: documents In Category Title",
-    "noDocumentsAvailable": "TODO: no Documents Available",
-    "noDocumentsInCategory": "TODO: no Documents In Category",
-    "noDocumentsMatchSearch": "TODO: no Documents Match Search",
-    "searchPlaceholder": "TODO: Enter search",
-    "title": "TODO: title"
+    "documentsInCategoryTitle": "documents in category Titre",
+    "noDocumentsAvailable": "no Documents Available",
+    "noDocumentsInCategory": "no Documents In Category",
+    "noDocumentsMatchSearch": "no documents match Rechercher",
+    "searchPlaceholder": "enter Rechercher",
+    "title": "Titre"
   },
-  "infoAlert": "TODO: info Alert",
+  "infoAlert": "Informations alert",
   "inquiryDetailModal": {
     "actions": {
-      "contacted": "TODO: contacted",
-      "decline": "TODO: decline",
-      "markFulfilled": "TODO: mark Fulfilled",
-      "markPending": "TODO: mark Pending",
-      "sendQuote": "TODO: send Quote"
+      "contacted": "contacted",
+      "decline": "decline",
+      "markFulfilled": "mark Fulfilled",
+      "markPending": "mark Pending",
+      "sendQuote": "send Quote"
     },
-    "budget": "TODO: budget",
-    "contactInfo": "TODO: contact Info",
-    "date": "TODO: date",
-    "from": "TODO: from",
-    "fulfilledAt": "TODO: fulfilled At",
-    "inquiryId": "TODO: inquiry Id",
-    "internalNotes": "TODO: internal Notes",
-    "message": "TODO: message",
-    "preferredContact": "TODO: preferred Contact",
-    "productInterest": "TODO: product Interest",
-    "quantity": "TODO: quantity",
-    "quoteAmount": "TODO: quote Amount",
-    "quotedAmount": "TODO: quoted Amount",
-    "respondedAt": "TODO: responded At",
-    "responseMessage": "TODO: response Message.",
-    "responsePlaceholder": "TODO: Enter response",
-    "sendResponse": "TODO: send Response",
-    "status": "TODO: status",
-    "title": "TODO: title",
-    "urgency": "TODO: urgency",
-    "viewProfile": "TODO: view Profile",
-    "yourResponse": "TODO: your Response"
+    "budget": "budget",
+    "contactInfo": "contact Informations",
+    "date": "date",
+    "from": "from",
+    "fulfilledAt": "fulfilled At",
+    "inquiryId": "inquiry Id",
+    "internalNotes": "internal Notes",
+    "message": "message",
+    "preferredContact": "preferred Contact",
+    "productInterest": "product Interest",
+    "quantity": "quantity",
+    "quoteAmount": "quote Amount",
+    "quotedAmount": "quoted Amount",
+    "respondedAt": "responded At",
+    "responseMessage": "response Message.",
+    "responsePlaceholder": "Enter response",
+    "sendResponse": "send Response",
+    "status": "status",
+    "title": "Titre",
+    "urgency": "urgency",
+    "viewProfile": "Voir le profil",
+    "yourResponse": "your Response"
   },
   "joinPlatform": "Rejoindre la plateforme",
   "labels": {
-    "allContractTypes": "TODO: all Contract Types",
-    "category": "TODO: category",
-    "closesidebar": "TODO: closesidebar",
-    "currentQuantity": "TODO: current Quantity",
-    "decreaseQuantity": "TODO: decrease Quantity",
-    "increaseQuantity": "TODO: increase Quantity",
-    "region": "TODO: region",
-    "sortBy": "TODO: sort By",
-    "supplierTags": "TODO: supplier Tags",
+    "allContractTypes": "Tous contract types",
+    "category": "category",
+    "closesidebar": "closesidebar",
+    "currentQuantity": "current Quantity",
+    "decreaseQuantity": "decrease Quantity",
+    "increaseQuantity": "increase Quantity",
+    "region": "region",
+    "sortBy": "sort By",
+    "supplierTags": "supplier Tags",
     "verificationCode": "Code de vérification"
   },
   "language": "Langue",
@@ -939,45 +939,45 @@
       "notInterested": "[FR] No t Interested"
     },
     "desiredStart": "[FR] Desired Start",
-    "email": "TODO: email",
+    "email": "email",
     "forLocation": "[FR] For Location",
     "messageSent": "[FR] Message Sent",
-    "noLocation": "TODO: no Location",
+    "noLocation": "no Location",
     "notes": "[FR] No tes",
-    "phone": "TODO: phone",
+    "phone": "phone",
     "questionFor": "[FR] Question For",
     "questionPlaceholder": "[FR] Enter question",
     "status": {
-      "converted": "TODO: converted",
+      "converted": "converted",
       "enrolled": "[FR] Enrolled",
       "interested": "[FR] Interested",
       "needsMoreInfo": "[FR] Needs More Info",
-      "new": "TODO: new",
+      "new": "new",
       "notInterested": "[FR] No t Interested",
       "notResponded": "[FR] No t Responded",
-      "processing": "TODO: processing"
+      "processing": "processing"
     },
     "submittedOn": "[FR] Submitted On",
     "title": "[FR] Title",
-    "yearsOld": "TODO: years Old",
+    "yearsOld": "years Old",
     "yourResponse": "[FR] Your Response"
   },
   "loading": "[FR] Loading",
   "locations": {
-    "switzerland": "TODO: switzerland"
+    "switzerland": "switzerland"
   },
   "loginPage": {
-    "accountNotFound": "TODO: account Not Found",
-    "almostThere": "TODO: almost There",
+    "accountNotFound": "account Not Found",
+    "almostThere": "almost There",
     "alreadyAccount": "Vous avez déjà un compte ?",
     "alreadySignedInDescription": "Vous pouvez accéder à votre tableau de bord ou vous déconnecter ci-dessous.",
     "alreadySignedInTitle": "Vous êtes déjà connecté(e)",
     "authServiceNotReady": "Le service d'authentification n'est pas prêt. Veuillez réessayer.",
     "backendSyncError": "Nous n'avons pas pu charger les détails de votre compte. Veuillez réessayer.",
     "backendUserCreationError": "La création de l'utilisateur sur le backend a échoué. Veuillez vérifier que le webhook Clerk est configuré.",
-    "completeProfile": "TODO: complete Profile",
-    "completeProfileMessage": "TODO: complete Profile Message.",
-    "completeRegistration": "TODO: complete Registration",
+    "completeProfile": "complete Profile",
+    "completeProfileMessage": "complete Profile Message.",
+    "completeRegistration": "complete Registration",
     "emailLabel": "Adresse e-mail",
     "emailPlaceholder": "Entrez votre e-mail",
     "errorBothFields": "Veuillez remplir l'e-mail et le mot de passe",
@@ -987,8 +987,8 @@
     "forgotPasswordTBD": "Fonctionnalité de réinitialisation du mot de passe à venir",
     "goToDashboard": "Aller au tableau de bord",
     "google": "Google",
-    "incorrectPassword": "TODO: incorrect Password",
-    "invalidEmail": "TODO: invalid Email",
+    "incorrectPassword": "incorrect Password",
+    "invalidEmail": "invalid Email",
     "loggingIn": "Connexion en cours...",
     "loginIncomplete": "Connexion incomplète. Veuillez réessayer.",
     "noAccount": "Vous n'avez pas de compte ?",
@@ -1006,14 +1006,14 @@
     "subtitle": "Connectez-vous à votre compte",
     "title": "",
     "twoFactorRequired": "Une authentification à deux facteurs est requise.",
-    "useAnotherAccount": "TODO: use Another Account",
+    "useAnotherAccount": "use Another Account",
     "viewPlans": "Voir les offres",
     "viewPlansPrompt": "Vous voulez voir nos offres ?"
   },
   "marketplace": {
     "contactForPricing": "Contactez pour les tarifs",
-    "variousProducts": "TODO: various Products",
-    "variousServices": "TODO: various Services"
+    "variousProducts": "various Products",
+    "variousServices": "various Services"
   },
   "marketplacePage": {
     "serviceCard": {
@@ -1023,7 +1023,7 @@
     }
   },
   "messages": {
-    "maxQuantityReached": "TODO: max Quantity Reached"
+    "maxQuantityReached": "max Quantity Reached"
   },
   "messagesPage": {
     "addEmoji": "Ajouter un emoji",
@@ -1041,18 +1041,18 @@
     "userNotLoggedIn": "[FR] User Not Logged In"
   },
   "navbar": {
-    "goBackPreviousPage": "TODO: go Back Previous Page",
-    "newMessages": "TODO: new Messages",
-    "noNewNotifications": "TODO: no New Notifications",
-    "notifications": "TODO: notifications",
-    "notificationsCount": "TODO: notifications Count",
-    "searchPlaceholder": "TODO: Enter search",
-    "signOut": "TODO: sign Out",
-    "toggleNavigation": "TODO: toggle Navigation",
-    "unreadMessages": "TODO: unread Messages",
-    "userMenu": "TODO: user Menu",
-    "viewAll": "TODO: view All",
-    "viewShoppingCart": "TODO: view Shopping Cart"
+    "goBackPreviousPage": "go Retour previous page",
+    "newMessages": "new Messages",
+    "noNewNotifications": "no New Notifications",
+    "notifications": "notifications",
+    "notificationsCount": "notifications Count",
+    "searchPlaceholder": "enter Rechercher",
+    "signOut": "sign Out",
+    "toggleNavigation": "toggle Navigation",
+    "unreadMessages": "unread Messages",
+    "userMenu": "user Menu",
+    "viewAll": "Voir Tous",
+    "viewShoppingCart": "Voir shopping cart"
   },
   "navigation": {
     "admin": "Administration",
@@ -1067,7 +1067,7 @@
     "users": "Utilisateurs"
   },
   "next": "Suivant",
-  "noData": "TODO: no Data",
+  "noData": "no Data",
   "notAvailable": "Non disponible",
   "notificationContext": {
     "useNotificationsError": "[FR] Use Notifications Error"
@@ -1082,14 +1082,14 @@
     "warningTitle": "Avertissement"
   },
   "notificationsPage": {
-    "clearAll": "TODO: clear All",
+    "clearAll": "clear Tous",
     "emptyState": {
-      "message": "TODO: message",
-      "title": "TODO: title"
+      "message": "message",
+      "title": "Titre"
     },
     "title": "[FR] Title"
   },
-  "or": "TODO: or",
+  "or": "or",
   "order": {
     "cannotSubmitMissingInfo": "[FR] Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
     "titleAndMessageRequired": "[FR] Title and message are required."
@@ -1140,13 +1140,13 @@
     "continueShopping": "[FR] Continue Shopping",
     "emptyCart": "[FR] Empty Cart",
     "itemsFrom": "[FR] Items From",
-    "notesPlaceholder": "TODO: Enter notes",
-    "orderError": "TODO: order Error",
-    "orderSuccess": "TODO: order Success",
+    "notesPlaceholder": "Enter notes",
+    "orderError": "order Error",
+    "orderSuccess": "order Success",
     "shippingNote": "[FR] Shipping Note",
     "specialInstructions": "[FR] Special Instructions",
-    "submitTo": "TODO: submit To",
-    "submitting": "TODO: submitting",
+    "submitTo": "Soumettre to",
+    "submitting": "submitting",
     "subtotal": "[FR] Subtotal",
     "title": "[FR] Title"
   },
@@ -1166,7 +1166,7 @@
       "pedagogy": "[FR] Pedagogy"
     },
     "saveButton": "[FR] Save Button",
-    "saveSuccess": "TODO: save Success",
+    "saveSuccess": "Enregistrer success",
     "subtitle": "[FR] Subtitle",
     "title": "[FR] Title"
   },
@@ -1200,25 +1200,25 @@
   },
   "parentEnquiriesPage": {
     "accessDenied": {
-      "message": "TODO: message",
-      "title": "TODO: title"
+      "message": "message",
+      "title": "Titre"
     },
     "card": {
-      "awaitingMatch": "TODO: awaiting Match",
-      "childInfo": "TODO: child Info",
-      "message": "TODO: message",
-      "notes": "TODO: notes",
-      "responsesTitle": "TODO: responses Title",
-      "submitted": "TODO: submitted",
-      "title": "TODO: title",
-      "waitingForMoreResponses": "TODO: waiting For More Responses"
+      "awaitingMatch": "awaiting Match",
+      "childInfo": "child Informations",
+      "message": "message",
+      "notes": "notes",
+      "responsesTitle": "responses Titre",
+      "submitted": "submitted",
+      "title": "Titre",
+      "waitingForMoreResponses": "waiting For More Responses"
     },
     "emptyState": {
       "message": {
-        "0": "TODO: 0",
-        "1": "TODO: 1"
+        "0": "0",
+        "1": "1"
       },
-      "title": "TODO: title"
+      "title": "Titre"
     },
     "title": "[FR] Title"
   },
@@ -1239,93 +1239,93 @@
     }
   },
   "partnerDetailPage": {
-    "aboutTitle": "TODO: about Title",
-    "addToOrderButton": "TODO: add To Order Button",
-    "applyPromoButton": "TODO: apply Promo Button",
-    "contactInfoTitle": "TODO: contact Info Title",
-    "directOrderButton": "TODO: direct Order Button",
-    "invalidPartnerIdMessage": "TODO: invalid Partner Id Message.",
-    "noProductsListed": "TODO: no Products Listed",
-    "noServicesListed": "TODO: no Services Listed",
-    "onlyFoundationsRequestService": "TODO: only Foundations Request Service",
-    "productAddedToOrder": "TODO: product Added To Order",
-    "productOutOfStock": "TODO: product Out Of Stock",
-    "promoCodePlaceholder": "TODO: Enter promo code",
-    "promoCodeTitle": "TODO: promo Code Title",
-    "ratingText": "TODO: rating Text.",
-    "ratingsReviewsTitle": "TODO: ratings Reviews Title",
-    "requestServiceButton": "TODO: request Service Button",
-    "requestSubmittedAlert": "TODO: request Submitted Alert",
-    "reviewsPlaceholder": "TODO: Enter reviews"
+    "aboutTitle": "about Titre",
+    "addToOrderButton": "Ajouter to order button",
+    "applyPromoButton": "apply Promo Button",
+    "contactInfoTitle": "contact Informations Titre",
+    "directOrderButton": "direct Order Button",
+    "invalidPartnerIdMessage": "invalid Partner Id Message.",
+    "noProductsListed": "no Products Listed",
+    "noServicesListed": "no Services Listed",
+    "onlyFoundationsRequestService": "only Foundations Request Service",
+    "productAddedToOrder": "product Added To Order",
+    "productOutOfStock": "product Out Of Stock",
+    "promoCodePlaceholder": "Enter promo code",
+    "promoCodeTitle": "promo code Titre",
+    "ratingText": "rating Text.",
+    "ratingsReviewsTitle": "ratings reviews Titre",
+    "requestServiceButton": "request Service Button",
+    "requestSubmittedAlert": "request Submitted Alert",
+    "reviewsPlaceholder": "Enter reviews"
   },
   "partners": {
     "allPartners": {
-      "title": "TODO: title"
+      "title": "Titre"
     },
-    "allTypes": "TODO: all Types",
+    "allTypes": "Tous types",
     "application": {
-      "contactEmail": "TODO: contact Email",
-      "contactEmailPlaceholder": "TODO: Enter contact email",
-      "contactPerson": "TODO: contact Person",
-      "contactPersonPlaceholder": "TODO: Enter contact person",
-      "contactPhone": "TODO: contact Phone",
-      "contactPhonePlaceholder": "TODO: Enter contact phone",
-      "countryRegion": "TODO: country Region",
-      "countryRegionPlaceholder": "TODO: Enter country region",
-      "error": "TODO: error",
-      "message": "TODO: message",
-      "messagePlaceholder": "TODO: Enter message",
-      "organizationName": "TODO: organization Name",
-      "organizationNamePlaceholder": "TODO: Enter organization name",
-      "partnerType": "TODO: partner Type",
-      "submit": "TODO: submit",
-      "submitting": "TODO: submitting",
-      "successMessage": "TODO: success Message.",
-      "successTitle": "TODO: success Title",
-      "title": "TODO: title",
-      "websiteUrl": "TODO: website Url",
-      "websiteUrlPlaceholder": "TODO: Enter website url"
+      "contactEmail": "contact Email",
+      "contactEmailPlaceholder": "Enter contact email",
+      "contactPerson": "contact Person",
+      "contactPersonPlaceholder": "Enter contact person",
+      "contactPhone": "contact Phone",
+      "contactPhonePlaceholder": "Enter contact phone",
+      "countryRegion": "country Region",
+      "countryRegionPlaceholder": "Enter country region",
+      "error": "error",
+      "message": "message",
+      "messagePlaceholder": "Enter message",
+      "organizationName": "organization Name",
+      "organizationNamePlaceholder": "Enter organization name",
+      "partnerType": "partner Type",
+      "submit": "Soumettre",
+      "submitting": "submitting",
+      "successMessage": "success Message.",
+      "successTitle": "success Titre",
+      "title": "Titre",
+      "websiteUrl": "website Url",
+      "websiteUrlPlaceholder": "Enter website url"
     },
     "error": {
-      "loadFailed": "TODO: load Failed"
+      "loadFailed": "load Failed"
     },
     "featured": {
-      "subtitle": "TODO: subtitle",
-      "title": "TODO: title"
+      "subtitle": "subtitle",
+      "title": "Titre"
     },
     "hero": {
-      "ctaButton": "TODO: cta Button",
-      "subtitle": "TODO: subtitle",
-      "title": "TODO: title"
+      "ctaButton": "cta Button",
+      "subtitle": "subtitle",
+      "title": "Titre"
     },
     "joinUs": {
-      "contactUsButton": "TODO: contact Us Button",
-      "inquiryFormLink": "TODO: inquiry Form Link",
-      "subtitle": "TODO: subtitle",
-      "title": "TODO: title"
+      "contactUsButton": "contact Us Button",
+      "inquiryFormLink": "inquiry Form Link",
+      "subtitle": "subtitle",
+      "title": "Titre"
     },
-    "noPartners": "TODO: no Partners",
-    "noResults": "TODO: no Results",
+    "noPartners": "no Partners",
+    "noResults": "no Results",
     "partnerCard": {
-      "learnMoreButton": "TODO: learn More Button",
-      "logoAlt": "TODO: logo Alt"
+      "learnMoreButton": "learn More Button",
+      "logoAlt": "logo Alt"
     },
-    "partnersFound": "TODO: partners Found",
-    "searchPlaceholder": "TODO: Enter search",
-    "searchResults": "TODO: search Results"
+    "partnersFound": "partners Found",
+    "searchPlaceholder": "enter Rechercher",
+    "searchResults": "Rechercher results"
   },
   "phoneNumber": "Numéro de téléphone",
   "placeholders": {
-    "41xxxxxxxxx": "TODO: 41xxxxxxxxx",
-    "disabledInput": "TODO: disabled Input",
-    "email": "TODO: email",
-    "enterDetails": "TODO: enter Details",
+    "41xxxxxxxxx": "41xxxxxxxxx",
+    "disabledInput": "disabled Input",
+    "email": "email",
+    "enterDetails": "enter Details",
     "enteryourpassword": "Entrez votre mot de passe",
     "searchKeyword": "Rechercher par mot-clé",
-    "select": "TODO: select",
-    "typeorselect": "TODO: typeorselect",
-    "url": "TODO: url",
-    "vatNumber": "TODO: vat Number"
+    "select": "select",
+    "typeorselect": "typeorselect",
+    "url": "https://example.com",
+    "vatNumber": "vat Number"
   },
   "policyAlertModal": {
     "labels": {
@@ -1336,7 +1336,7 @@
       "title": "[FR] Title",
       "type": "[FR] Type"
     },
-    "title": "TODO: title"
+    "title": "Titre"
   },
   "policyStatusOptions": {
     "active": "[FR] Active",
@@ -1344,78 +1344,78 @@
     "draft": "[FR] Draft"
   },
   "preferredLocation": "Lieu préféré",
-  "previewLabel": "TODO: Preview",
+  "previewLabel": "Preview",
   "preview": {
-    "downloadButton": "TODO: download Button",
-    "downloadToView": "TODO: download To View",
-    "externalLink": "TODO: external Link",
-    "iframeNote": "TODO: iframe Note",
-    "invalidUrl": "TODO: invalid Url",
-    "loadError": "TODO: load Error",
-    "loadErrorDescription": "TODO: load Error Description",
-    "noPreviewAvailable": "TODO: no Preview Available",
-    "openInNewTab": "TODO: open In New Tab",
-    "uploadIssue": "TODO: upload Issue"
+    "downloadButton": "Download",
+    "downloadToView": "download to Voir",
+    "externalLink": "External link",
+    "iframeNote": "Preview note",
+    "invalidUrl": "Invalid URL",
+    "loadError": "error Chargement... preview",
+    "loadErrorDescription": "Unable to load preview. Please try again.",
+    "noPreviewAvailable": "No preview available",
+    "openInNewTab": "Open in new tab",
+    "uploadIssue": "Upload issue"
   },
   "pricingPage": {
-    "annual": "TODO: annual",
-    "choosePlan": "TODO: choose Plan",
-    "monthly": "TODO: monthly",
-    "popular": "TODO: popular",
-    "saveUpTo10": "TODO: save Up To10",
-    "selectAndContinue": "TODO: select And Continue",
-    "subtitle": "TODO: subtitle",
-    "subtitleSignup": "TODO: subtitle Signup",
-    "suppliersAndProvidersTitle": "TODO: suppliers And Providers Title",
-    "title": "TODO: title",
-    "titleSignup": "TODO: title Signup",
-    "whatYouGet": "TODO: what You Get"
+    "annual": "annual",
+    "choosePlan": "choose Plan",
+    "monthly": "monthly",
+    "popular": "popular",
+    "saveUpTo10": "Enregistrer up to10",
+    "selectAndContinue": "select And Continue",
+    "subtitle": "subtitle",
+    "subtitleSignup": "subtitle Créer un compte",
+    "suppliersAndProvidersTitle": "suppliers and providers Titre",
+    "title": "Titre",
+    "titleSignup": "Titre Créer un compte",
+    "whatYouGet": "what You Get"
   },
   "productCategory": "Catégorie de produit",
-  "profile": "TODO: profile",
+  "profile": "profile",
   "qualifications": "Qualifications",
   "recruitment": {
     "addCandidate": "recrutement."
   },
   "recruitmentPage": {
     "contractTypes": {
-      "cdd": "TODO: cdd",
-      "cdi": "TODO: cdi",
-      "fullTime": "TODO: full Time",
-      "internship": "TODO: internship",
-      "partTime": "TODO: part Time"
+      "cdd": "cdd",
+      "cdi": "cdi",
+      "fullTime": "full Time",
+      "internship": "internship",
+      "partTime": "part Time"
     },
     "jobDetailModal": {
-      "applyNow": "TODO: apply Now",
-      "contractType": "TODO: contract Type",
-      "location": "TODO: location",
-      "overviewTitle": "TODO: overview Title",
-      "salary": "TODO: salary",
-      "startDate": "TODO: start Date"
+      "applyNow": "Postuler maintenant",
+      "contractType": "Type de contrat",
+      "location": "location",
+      "overviewTitle": "overview Titre",
+      "salary": "salary",
+      "startDate": "start Date"
     },
     "jobPostModal": {
-      "addTitle": "TODO: add Title",
-      "contractType": "TODO: contract Type",
-      "description": "TODO: description",
-      "editTitle": "TODO: edit Title",
-      "jobTitle": "TODO: job Title",
-      "location": "TODO: location",
-      "postJob": "TODO: post Job",
-      "salaryRange": "TODO: salary Range",
-      "salaryRangePlaceholder": "TODO: Enter salary range",
-      "startDate": "TODO: start Date"
+      "addTitle": "Ajouter Titre",
+      "contractType": "Type de contrat",
+      "description": "description",
+      "editTitle": "Modifier Titre",
+      "jobTitle": "job Titre",
+      "location": "location",
+      "postJob": "post Job",
+      "salaryRange": "salary Range",
+      "salaryRangePlaceholder": "Enter salary range",
+      "startDate": "start Date"
     },
     "viewApplicantsModal": {
-      "appliedOn": "TODO: applied On",
-      "loading": "TODO: loading",
-      "noApplicants": "TODO: no Applicants",
-      "title": "TODO: title",
-      "unknownCandidate": "TODO: unknown Candidate"
+      "appliedOn": "applied On",
+      "loading": "Chargement...",
+      "noApplicants": "no Applicants",
+      "title": "Titre",
+      "unknownCandidate": "unknown Candidate"
     }
   },
-  "refresh": "TODO: refresh",
+  "refresh": "Actualiser",
   "rememberMe": "Se souvenir de moi",
-  "remove": "TODO: remove",
+  "remove": "Retirer",
   "renameFileModal": {
     "label": "[FR] Label",
     "title": "[FR] Title"
@@ -1423,7 +1423,7 @@
   "requirements": "Exigences",
   "resetPassword": "Réinitialiser le mot de passe",
   "responsibilities": "Responsabilités",
-  "retry": "TODO: retry",
+  "retry": "Réessayer",
   "roleManagement": {
     "addNewUserButton": "Ajouter un utilisateur",
     "addNewUserTBD": "Création d'utilisateur à venir",
@@ -1471,7 +1471,7 @@
     "productSupplier": "Fournisseur de produits",
     "serviceProvider": "Prestataire de services"
   },
-  "searchPlaceholder": "TODO: Enter search",
+  "searchPlaceholder": "enter Rechercher",
   "serviceCategories": {
     "CLEANING": "Nettoyage et maintenance",
     "CONSULTING": "Conseil",
@@ -1489,20 +1489,20 @@
     "noServicesFound": "[FR] No services found"
   },
   "serviceProviderAnalyticsPage": {
-    "requestsByCanton": "TODO: requests By Canton",
-    "serviceRequestsPerWeek": "TODO: service Requests Per Week",
+    "requestsByCanton": "requests By Canton",
+    "serviceRequestsPerWeek": "service Requests Per Week",
     "title": "[FR] Title",
-    "topViewedServices": "TODO: top Viewed Services"
+    "topViewedServices": "top Viewed Services"
   },
   "serviceProviderDashboard": {
-    "loadError": "TODO: load Error",
+    "loadError": "load Error",
     "title": "[FR] Title",
     "welcomeMessage": "[FR] Welcome Message",
     "widgets": {
       "appointments": {
         "button": "[FR] Button",
-        "noAppointments": "TODO: no Appointments",
-        "notScheduled": "TODO: not Scheduled",
+        "noAppointments": "no Appointments",
+        "notScheduled": "not Scheduled",
         "title": "[FR] Title",
         "with": "[FR] With"
       },
@@ -1510,7 +1510,7 @@
         "button": "[FR] Button",
         "categories": "[FR] Categories",
         "listings": "[FR] Listings",
-        "noCategories": "TODO: no Categories",
+        "noCategories": "no Categories",
         "pending": "[FR] Pending",
         "title": "[FR] Title"
       },
@@ -1525,51 +1525,51 @@
     }
   },
   "serviceProviderListingsPage": {
-    "addNewServiceButton": "TODO: add New Service Button",
+    "addNewServiceButton": "Ajouter new service button",
     "card": {
-      "category": "TODO: category",
-      "delivery": "TODO: delivery"
+      "category": "category",
+      "delivery": "delivery"
     },
-    "confirmDelete": "TODO: confirm Delete",
-    "defaultPriceInfo": "TODO: default Price Info",
-    "deleteError": "TODO: delete Error",
+    "confirmDelete": "Confirmer Supprimer",
+    "defaultPriceInfo": "default price Informations",
+    "deleteError": "Supprimer error",
     "emptyState": {
-      "noMatch": "TODO: no Match",
-      "noServicesYet": "TODO: no Services Yet",
-      "title": "TODO: title"
+      "noMatch": "no Match",
+      "noServicesYet": "no Services Yet",
+      "title": "Titre"
     },
-    "loadError": "TODO: load Error",
-    "saveError": "TODO: save Error",
-    "searchPlaceholder": "TODO: Enter search",
+    "loadError": "load Error",
+    "saveError": "Enregistrer error",
+    "searchPlaceholder": "enter Rechercher",
     "title": "[FR] Title"
   },
   "serviceProviderOrganisationProfilePage": {
     "actions": {
-      "openBookingLink": "TODO: open Booking Link"
+      "openBookingLink": "open Booking Link"
     },
     "empty": {
-      "organizationName": "TODO: organization Name",
-      "regionsServed": "TODO: regions Served",
-      "serviceCategories": "TODO: service Categories"
+      "organizationName": "organization Name",
+      "regionsServed": "regions Served",
+      "serviceCategories": "service Categories"
     },
     "labels": {
-      "regionsServed": "TODO: regions Served",
-      "serviceCategories": "TODO: service Categories"
+      "regionsServed": "regions Served",
+      "serviceCategories": "service Categories"
     },
-    "title": "TODO: title"
+    "title": "Titre"
   },
   "serviceProviderRequestsPage": {
-    "emptyState": "TODO: empty State",
-    "filterByStatus": "TODO: filter By Status",
+    "emptyState": "Vide state",
+    "filterByStatus": "Filtrer by status",
     "table": {
-      "date": "TODO: date",
-      "foundation": "TODO: foundation",
-      "requestId": "TODO: request Id",
-      "service": "TODO: service",
-      "status": "TODO: status"
+      "date": "date",
+      "foundation": "foundation",
+      "requestId": "request Id",
+      "service": "service",
+      "status": "status"
     },
     "title": "[FR] Title",
-    "updateError": "TODO: update Error"
+    "updateError": "update Error"
   },
   "serviceRequestDetailModal": {
     "date": "[FR] Date",
@@ -1578,7 +1578,7 @@
     "notes": "[FR] No tes",
     "preferredDate": "[FR] Preferred Date",
     "requestId": "[FR] Request Id",
-    "schedule": "TODO: schedule",
+    "schedule": "schedule",
     "serviceName": "[FR] Service Name",
     "status": "[FR] Status",
     "title": "[FR] Title",
@@ -1606,13 +1606,13 @@
   "serviceType": "Type de service",
   "serviceUploadModal": {
     "addTitle": "[FR] Add Service",
-    "categoriesHelpText": "TODO: categories Help Text.",
+    "categoriesHelpText": "categories Help Text.",
     "currentImage": "[FR] Current Image",
     "editTitle": "[FR] Edit Title",
     "imageHelpText": "[FR] Image Help Text",
     "labels": {
       "availability": "[FR] Availability",
-      "categories": "TODO: categories",
+      "categories": "categories",
       "category": "[FR] Category",
       "deliveryType": "[FR] Delivery Type",
       "description": "[FR] Description",
@@ -1623,7 +1623,7 @@
     },
     "placeholders": {
       "availability": "[FR] Availability",
-      "categories": "TODO: categories",
+      "categories": "categories",
       "priceInfo": "[FR] Price Info",
       "tags": "[FR] Tags"
     }
@@ -1658,11 +1658,11 @@
       "currentPasswordLabel": "Mot de passe actuel",
       "newPasswordLabel": "Nouveau mot de passe",
       "passwordUpdated": "Mot de passe mis à jour",
-      "securityMessage": "TODO: security Message.",
+      "securityMessage": "Use a strong password and don't reuse it across sites.",
       "title": "Changer le mot de passe",
       "updatePasswordButton": "Mettre à jour le mot de passe",
-      "updating": "TODO: updating",
-      "verificationErrorTip": "TODO: verification Error Tip"
+      "updating": "Updating...",
+      "verificationErrorTip": "If you're stuck, try requesting a new verification code."
     },
     "dangerZone": {
       "deleteAccountButton": "Supprimer mon compte",
@@ -1682,8 +1682,8 @@
       "accountTypeLabel": "Type de compte",
       "contactNameLabel": "Nom du contact",
       "emailLabel": "E-mail",
-      "firstNameLabel": "TODO: first Name",
-      "lastNameLabel": "TODO: last Name",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
       "memberSinceLabel": "Membre depuis",
       "nameLabel": "Nom",
       "orgNameLabel": "Nom de l'organisation",
@@ -1847,14 +1847,14 @@
   },
   "showPassword": "Afficher le mot de passe",
   "sidebar": {
-    "ordersAppointments": "TODO: orders Appointments"
+    "ordersAppointments": "orders Appointments"
   },
   "signIn": "Se connecter",
   "signOut": "Se déconnecter",
   "sortOptions": {
-    "nameAsc": "TODO: name Asc",
-    "nameDesc": "TODO: name Desc",
-    "ratingDesc": "TODO: rating Desc"
+    "nameAsc": "name Asc",
+    "nameDesc": "name Desc",
+    "ratingDesc": "rating Desc"
   },
   "statePolicies": {
     "allCategories": "Toutes les catégories",
@@ -1893,20 +1893,20 @@
   "submissionSuccessTitle": "Compte créé avec succès",
   "submit": "Soumettre",
   "subtitles": {
-    "productSuppliers": "TODO: product Suppliers",
-    "serviceProviders": "TODO: service Providers"
+    "productSuppliers": "product Suppliers",
+    "serviceProviders": "service Providers"
   },
-  "success": "TODO: success",
+  "success": "success",
   "supplierAnalyticsPage": {
-    "datePickerLabel": "TODO: date Picker",
-    "exportCsvAlert": "TODO: export Csv Alert",
-    "exportCsvButton": "TODO: export Csv Button",
-    "mockChartText": "TODO: mock Chart Text.",
-    "promoCodePerformance": "TODO: promo Code Performance",
+    "datePickerLabel": "date Picker",
+    "exportCsvAlert": "export Csv Alert",
+    "exportCsvButton": "export Csv Button",
+    "mockChartText": "mock Chart Text.",
+    "promoCodePerformance": "promo Code Performance",
     "table": {
-      "code": "TODO: code",
-      "estRevenueImpact": "TODO: est Revenue Impact",
-      "uses": "TODO: uses"
+      "code": "code",
+      "estRevenueImpact": "est Revenue Impact",
+      "uses": "uses"
     }
   },
   "supplierCard": {
@@ -1914,16 +1914,16 @@
     "viewProfileAndProducts": "[FR] View Profile And Products"
   },
   "supplierDashboard": {
-    "loadError": "TODO: load Error",
-    "noRecentInquiries": "TODO: no Recent Inquiries",
+    "loadError": "load Error",
+    "noRecentInquiries": "no Recent Inquiries",
     "noRecentOrders": "[FR] No  Recent Orders",
     "noSalesYet": "[FR] No  Sales Yet",
     "recentInquiriesTable": {
-      "from": "TODO: from",
-      "status": "TODO: status",
-      "subject": "TODO: subject"
+      "from": "from",
+      "status": "status",
+      "subject": "subject"
     },
-    "recentInquiriesTitle": "TODO: recent Inquiries Title",
+    "recentInquiriesTitle": "recent inquiries Titre",
     "recentOrdersActions": {
       "accept": "[FR] Accept",
       "decline": "[FR] Decline"
@@ -1940,11 +1940,11 @@
     "welcomeMessage": "[FR] Welcome Message",
     "widgets": {
       "inquiries": {
-        "button": "TODO: button",
-        "conversionRate": "TODO: conversion Rate",
-        "new": "TODO: new",
-        "pending": "TODO: pending",
-        "title": "TODO: title"
+        "button": "button",
+        "conversionRate": "conversion Rate",
+        "new": "new",
+        "pending": "pending",
+        "title": "Titre"
       },
       "orders": {
         "button": "[FR] Button",
@@ -1970,45 +1970,45 @@
     }
   },
   "supplierOrdersPage": {
-    "emptyState": "TODO: empty State",
-    "filterByStatus": "TODO: filter By Status",
+    "emptyState": "Vide state",
+    "filterByStatus": "Filtrer by status",
     "inquiryTable": {
-      "date": "TODO: date",
-      "from": "TODO: from",
-      "id": "TODO: id",
-      "status": "TODO: status",
-      "subject": "TODO: subject",
-      "urgency": "TODO: urgency"
+      "date": "date",
+      "from": "from",
+      "id": "id",
+      "status": "status",
+      "subject": "subject",
+      "urgency": "urgency"
     },
-    "loadError": "TODO: load Error",
-    "noInquiries": "TODO: no Inquiries",
+    "loadError": "load Error",
+    "noInquiries": "no Inquiries",
     "table": {
-      "date": "TODO: date",
-      "foundation": "TODO: foundation",
-      "orderId": "TODO: order Id",
-      "status": "TODO: status",
-      "total": "TODO: total"
+      "date": "date",
+      "foundation": "foundation",
+      "orderId": "order Id",
+      "status": "status",
+      "total": "total"
     },
     "tabs": {
-      "inquiries": "TODO: inquiries",
-      "orders": "TODO: orders"
+      "inquiries": "inquiries",
+      "orders": "orders"
     },
     "title": "[FR] Title",
-    "updateError": "TODO: update Error"
+    "updateError": "update Error"
   },
   "supplierOrganisationProfilePage": {
     "actions": {
-      "openCatalog": "TODO: open Catalog",
-      "openDirectOrderLink": "TODO: open Direct Order Link"
+      "openCatalog": "open Catalog",
+      "openDirectOrderLink": "open Direct Order Link"
     },
     "empty": {
-      "organizationName": "TODO: organization Name",
-      "regionsServed": "TODO: regions Served"
+      "organizationName": "organization Name",
+      "regionsServed": "regions Served"
     },
     "labels": {
-      "regionsServed": "TODO: regions Served"
+      "regionsServed": "regions Served"
     },
-    "title": "TODO: title"
+    "title": "Titre"
   },
   "supplierProductListingsPage": {
     "title": "[FR] Title"
@@ -2018,41 +2018,41 @@
     "faqTitle": "Questions Fréquemment Posées",
     "furtherAssistanceText": "Si vous ne trouvez pas la réponse que vous cherchez, notre équipe de support est là pour vous aider. Contactez-nous à",
     "furtherAssistanceTitle": "Besoin d'Aide Supplémentaire ?",
-    "myTicketsTitle": "TODO: my Tickets Title",
-    "newTicketButton": "TODO: new Ticket Button",
-    "noTickets": "TODO: no Tickets",
+    "myTicketsTitle": "my tickets Titre",
+    "newTicketButton": "new Ticket Button",
+    "noTickets": "no Tickets",
     "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
-    "responses": "TODO: responses",
-    "staffResponse": "TODO: staff Response",
+    "responses": "responses",
+    "staffResponse": "staff Response",
     "submitTicketTitle": "Soumettre un Ticket de Support",
     "ticketForm": {
-      "categoryLabel": "TODO: category",
+      "categoryLabel": "category",
       "messageLabel": "Message",
       "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
-      "priorityLabel": "TODO: priority",
-      "responsePlaceholder": "TODO: Enter response",
+      "priorityLabel": "priority",
+      "responsePlaceholder": "Enter response",
       "subjectLabel": "Sujet",
       "subjectPlaceholder": "Brève description de votre problème",
       "submitButton": "Soumettre le Ticket"
     },
-    "viewTicket": "TODO: view Ticket",
-    "you": "TODO: you"
+    "viewTicket": "Voir ticket",
+    "you": "you"
   },
   "tabs": {
-    "productSuppliers": "TODO: product Suppliers",
-    "serviceProviders": "TODO: service Providers"
+    "productSuppliers": "product Suppliers",
+    "serviceProviders": "service Providers"
   },
   "termsLabel": "J'accepte les termes et conditions",
   "termsLink": "Conditions générales d'utilisation",
-  "tryAgain": "TODO: try Again",
+  "tryAgain": "try Again",
   "type": "Type",
-  "unknown": "TODO: unknown",
-  "uploading": "TODO: uploading",
+  "unknown": "unknown",
+  "uploading": "uploading",
   "userRoles": {
     "ADMIN": "Administrateur",
     "EDUCATOR": "Éducateur",
     "FOUNDATION": "Fondation",
-    "Foundation": "TODO: Foundation",
+    "Foundation": "Foundation",
     "PARENT": "Parent",
     "PRODUCT_SUPPLIER": "Fournisseur de produits",
     "Product Supplier": "Fournisseur de produits",
@@ -2074,31 +2074,31 @@
   },
   "verificationProgress": {
     "messages": {
-      "accountSetupComplete": "TODO: account Setup Complete",
-      "contactSupport": "TODO: contact Support",
-      "preparingAccount": "TODO: preparing Account",
-      "redirectingToDashboard": "TODO: redirecting To Dashboard",
-      "somethingWentWrong": "TODO: something Went Wrong",
-      "tryAgain": "TODO: try Again"
+      "accountSetupComplete": "account Setup Complete",
+      "contactSupport": "contact Support",
+      "preparingAccount": "preparing Account",
+      "redirectingToDashboard": "redirecting To Dashboard",
+      "somethingWentWrong": "something Went Wrong",
+      "tryAgain": "try Again"
     },
     "progress": {
-      "complete": "TODO: complete"
+      "complete": "complete"
     },
     "steps": {
-      "almostReady": "TODO: almost Ready",
-      "creatingAccount": "TODO: creating Account",
-      "settingUpProfile": "TODO: setting Up Profile",
-      "verifyingEmail": "TODO: verifying Email"
+      "almostReady": "almost Ready",
+      "creatingAccount": "creating Account",
+      "settingUpProfile": "setting Up Profile",
+      "verifyingEmail": "verifying Email"
     },
     "title": {
-      "processing": "TODO: processing",
-      "ready": "TODO: ready"
+      "processing": "processing",
+      "ready": "ready"
     }
   },
   "verifyEmail": "Vérifiez votre e-mail",
   "verifyEmailMessage": "Nous vous avons envoyé un code à 6 chiffres. Saisissez-le ci-dessous pour vérifier.",
   "verifying": "Vérification...",
-  "viewAll": "TODO: view All",
+  "viewAll": "Voir Tous",
   "welcome": "Bienvener",
   "welcomeBack": "Bon retour !"
 }
