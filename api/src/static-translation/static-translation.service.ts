@@ -2314,12 +2314,14 @@ export class StaticTranslationService {
       this.logger.warn(`   Backup warning: ${error.message} (continuing anyway)`);
     }
     logStep('Step 0: Backup complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 1: Import EN from JSON files (with validation)
     this.logger.log('📥 Step 1: Importing EN translations from JSON files...');
     const importResult = await this.importFromJsonFiles(updatedBy);
     this.logger.log(`   Imported: ${importResult.imported}`);
     logStep('Step 1: Import complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 2: Translate missing FR
     this.logger.log('🇫🇷 Step 2: Translating to French...');
@@ -2331,6 +2333,7 @@ export class StaticTranslationService {
       this.logger.warn(`   FR translation error: ${error.message}`);
     }
     logStep('Step 2: FR translation complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 3: Translate missing DE
     this.logger.log('🇩🇪 Step 3: Translating to German...');
@@ -2342,12 +2345,14 @@ export class StaticTranslationService {
       this.logger.warn(`   DE translation error: ${error.message}`);
     }
     logStep('Step 3: DE translation complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 4: Export to JSON files
     this.logger.log('📤 Step 4: Exporting to JSON files...');
     const exportResult = await this.exportToJsonFiles();
     this.logger.log(`   Exported: ${exportResult.exported}`);
     logStep('Step 4: Export complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 5: Cleanup old audit logs (run periodically)
     try {
@@ -2356,6 +2361,7 @@ export class StaticTranslationService {
       this.logger.warn(`   Audit cleanup warning: ${error.message}`);
     }
     logStep('Step 5: Audit cleanup complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
 
     // Clear cache
     await this.cacheManager.reset();
