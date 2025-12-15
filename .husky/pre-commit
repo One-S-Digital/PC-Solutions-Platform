@@ -1,8 +1,24 @@
 #!/usr/bin/env sh
-cd -- "$(dirname -- "$0")/.."
+. "$(dirname -- "$0")/_/husky.sh"
 
-# Validate translation files before commit
-node scripts/validate-translations.mjs
+# Run lint-staged on staged files (skip if not configured, fail if configured but errors)
+if pnpm list lint-staged >/dev/null 2>&1 || grep -q '"lint-staged"' package.json 2>/dev/null; then
+  pnpm lint-staged || exit 1
+else
+  echo "lint-staged not configured at repo root; skipping"
+fi
 
-# Run linting on staged files (optional - can be slow)
-# pnpm lint
+# Validate translation files (mandatory - fails commit on error)
+node scripts/validate-translations.mjs || exit 1
+
+# Extract i18n keys from codebase (mandatory - fails commit on error)
+pnpm run extract:i18n-keys || exit 1
+
+# Check for missing i18n keys (mandatory - fails commit on error)
+pnpm run check:i18n-keys || exit 1
+
+# Find hardcoded strings that should be translated (mandatory - fails commit on error)
+node scripts/find-hardcoded-strings.mjs || exit 1
+
+# Check for TODO placeholders in translation files (mandatory - fails commit on error)
+node scripts/check-no-todo-i18n.mjs || exit 1
