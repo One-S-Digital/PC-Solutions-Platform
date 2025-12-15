@@ -32,16 +32,19 @@ export class StaticTranslationPublicController {
     job?: any;
     message?: string;
     error?: string;
+    debug?: any;
   }> {
     try {
-      // In-memory read only - no DB/fs/translation logic
+      // In-memory only: job status + last full sync debug snapshot
       const job = this.service.getFullSyncJob(jobId);
+      const debug = this.service.getLastFullSyncDebug();
 
       if (!job) {
         return {
           success: true,
           job: null,
           message: 'Job not found or expired',
+          debug,
         };
       }
 
@@ -58,12 +61,14 @@ export class StaticTranslationPublicController {
           ...job,
           duration,
         },
+        debug,
       };
     } catch (e: any) {
       // Always return JSON, never throw
       return {
         success: false,
         error: e?.message || 'Failed to retrieve job status',
+        debug: this.service.getLastFullSyncDebug(),
       };
     }
   }

@@ -43,12 +43,29 @@ interface FullSyncJob {
   completedAt?: number;
 }
 
+interface FullSyncDebugStep {
+  label: string;
+  tMs: number;
+  heapMb: number;
+  atIso: string;
+}
+
+interface FullSyncDebugSnapshot {
+  jobId: string | null;
+  startTimeIso: string;
+  lastUpdatedIso: string;
+  steps: FullSyncDebugStep[];
+}
+
 @Injectable()
 export class StaticTranslationService {
   private readonly logger = new Logger(StaticTranslationService.name);
   
   // Job queue for async full-sync operations (in-memory, single instance)
   private fullSyncJobs = new Map<string, FullSyncJob>();
+
+  // In-memory debug snapshot of the last full sync run
+  private lastFullSyncDebug: FullSyncDebugSnapshot | null = null;
   
   // Increased cache TTL - invalidation is handled via releases, not expiry
   private readonly CACHE_TTL = 24 * 60 * 60; // 24 hours (was 15 minutes)
@@ -2262,7 +2279,7 @@ export class StaticTranslationService {
    * This is the one-click solution for the admin panel
    * Includes backup creation and validation
    */
-  async fullSync(updatedBy?: string): Promise<{
+  async fullSync(updatedBy?: string, jobId?: string): Promise<{
     imported: number;
     translatedFr: number;
     translatedDe: number;
@@ -2274,7 +2291,14 @@ export class StaticTranslationService {
     const logStep = (label: string) => {
       const ms = Date.now() - startTime;
       const heapMb = getHeapMb();
+      const atIso = new Date().toISOString();
       this.logger.log(`[FullSync] ${label} (t=${ms}ms, heap=${heapMb} MB)`);
+      this.updateFullSyncDebug(jobId ?? null, {
+        label,
+        tMs: ms,
+        heapMb,
+        atIso,
+      });
     };
 
     logStep('🔄 Starting full sync...');
@@ -2373,6 +2397,14 @@ export class StaticTranslationService {
       startedAt,
     });
 
+    // Initialize debug snapshot for this run
+    this.lastFullSyncDebug = {
+      jobId,
+      startTimeIso: new Date(startedAt).toISOString(),
+      lastUpdatedIso: new Date(startedAt).toISOString(),
+      steps: [],
+    };
+
     // Run sync in background (non-blocking)
     setImmediate(async () => {
       this.fullSyncJobs.set(jobId, {
@@ -2382,7 +2414,7 @@ export class StaticTranslationService {
       });
 
       try {
-        const result = await this.fullSync(userId);
+        const result = await this.fullSync(userId, jobId);
         this.fullSyncJobs.set(jobId, {
           status: 'done',
           result,
@@ -2419,6 +2451,12 @@ export class StaticTranslationService {
       if (jobTime < oneHourAgo) {
         this.fullSyncJobs.delete(jobId);
         cleaned++;
+
+        // If we're cleaning up the job that matches the last debug snapshot,
+        // clear the snapshot as well.
+        if (this.lastFullSyncDebug && this.lastFullSyncDebug.jobId === jobId) {
+          this.lastFullSyncDebug = null;
+        }
       }
     }
 
@@ -2432,6 +2470,40 @@ export class StaticTranslationService {
    */
   getFullSyncJob(jobId: string): FullSyncJob | null {
     return this.fullSyncJobs.get(jobId) || null;
+  }
+
+  /**
+   * Get the last full sync debug snapshot (in-memory only)
+   */
+  getLastFullSyncDebug(): FullSyncDebugSnapshot | null {
+    return this.lastFullSyncDebug;
+  }
+
+  /**
+   * Internal helper to update the in-memory full sync debug snapshot
+   */
+  private updateFullSyncDebug(jobId: string | null, step: FullSyncDebugStep): void {
+    if (!jobId) {
+      return;
+    }
+
+    const nowIso = step.atIso;
+
+    if (!this.lastFullSyncDebug || this.lastFullSyncDebug.jobId !== jobId) {
+      this.lastFullSyncDebug = {
+        jobId,
+        startTimeIso: new Date(Date.now() - step.tMs).toISOString(),
+        lastUpdatedIso: nowIso,
+        steps: [step],
+      };
+      return;
+    }
+
+    this.lastFullSyncDebug = {
+      ...this.lastFullSyncDebug,
+      lastUpdatedIso: nowIso,
+      steps: [...this.lastFullSyncDebug.steps, step],
+    };
   }
 }
 
