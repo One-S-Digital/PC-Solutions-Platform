@@ -279,7 +279,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               <button
                 onClick={() => setShowPreview(true)}
                 className="flex items-center space-x-2 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity cursor-pointer"
-                title={t('common:preview', 'Preview')}
+                title={t('common:previewLabel', 'Preview')}
               >
                 <DocumentIcon className="w-5 h-5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">

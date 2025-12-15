@@ -1,58 +1,69 @@
 {
-  "messages": {
-    "emptyState": {
-      "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
-      "noConversationSelectedTitle": "Aucune conversation sélectionnée",
-      "noConversationsYet": "Pas encore de conversations",
-      "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
-    },
-    "placeholders": {
-      "searchConversations": "Recherche de conversations...",
-      "typeMessage": "Tapez un message..."
-    },
-    "noConversationsFound": "Aucune conversation trouvée",
-    "buttons": {
-      "sendMessage": "Envoyer un message",
-      "newGroup": "Nouveau groupe"
-    },
-    "searchPlaceholder": "Recherche de conversations...",
-    "filters": {
-      "unread": "Non lu",
-      "all": "Tous"
-    },
-    "tabs": {
-      "unread": "Non lu",
-      "all": "Tous les messages"
-    },
-    "title": "Messages"
+  "buttons": {
+    "newChat": "Nouveau chat",
+    "newGroup": "Nouveau groupe",
+    "sendMessage": "Envoyer"
   },
+  "confirmDelete": "TODO: confirm Delete",
+  "deleteMessage": "TODO: delete Message.",
+  "editMessage": "TODO: edit Message.",
   "emptyState": {
     "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
     "noConversationSelectedTitle": "Aucune conversation sélectionnée",
     "noConversationsYet": "Pas encore de conversation",
     "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
   },
+  "errors": {
+    "fileTooLarge": "TODO: file Too Large"
+  },
+  "filters": {
+    "all": "Tous",
+    "unread": "Non lu"
+  },
+  "loadingMore": "TODO: loading More",
+  "messageDeleted": "TODO: message Deleted",
+  "messageUpdated": "TODO: message Updated",
+  "messages": {
+    "buttons": {
+      "newGroup": "Nouveau groupe",
+      "sendMessage": "Envoyer un message"
+    },
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
+      "noConversationSelectedTitle": "Aucune conversation sélectionnée",
+      "noConversationsYet": "Pas encore de conversations",
+      "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
+    },
+    "filters": {
+      "all": "Tous",
+      "unread": "Non lu"
+    },
+    "noConversationsFound": "Aucune conversation trouvée",
+    "placeholders": {
+      "searchConversations": "Recherche de conversations...",
+      "typeMessage": "Tapez un message..."
+    },
+    "searchPlaceholder": "Recherche de conversations...",
+    "tabs": {
+      "all": "Tous les messages",
+      "unread": "Non lu"
+    },
+    "title": "Messages"
+  },
+  "noConversationsFound": "Aucune conversation trouvée",
+  "noMessagesYet": "Aucun message pour l'instant",
   "placeholders": {
+    "addCaption": "TODO: add Caption",
     "searchConversations": "Recherche de conversations",
     "typeMessage": "Tapez un message..."
   },
-  "noConversationsFound": "Aucune conversation trouvée",
-  "buttons": {
-    "sendMessage": "Envoyer",
-    "newGroup": "Nouveau groupe",
-    "newChat": "Nouveau chat"
-  },
+  "scrollForMore": "TODO: scroll For More",
   "searchPlaceholder": "Recherche de conversations...",
-  "filters": {
-    "unread": "Non lu",
-    "all": "Tous"
-  },
-  "noMessagesYet": "Aucun message pour l'instant",
   "tabs": {
-    "unread": "Non lu",
-    "all": "Tous les messages"
+    "all": "Tous les messages",
+    "unread": "Non lu"
   },
+  "title": "Messages",
   "unknownUser": "Utilisateur inconnu",
-  "youPrefix": "Vous :",
-  "title": "Messages"
+  "youPrefix": "Vous :"
 }

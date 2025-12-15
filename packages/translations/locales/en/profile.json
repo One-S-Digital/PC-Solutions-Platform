@@ -1,39 +1,111 @@
 {
-  "title": "My Profile",
-  "subtitle": "Review your account details and organization information.",
   "actions": {
-    "goToSettings": "Update Profile"
+    "editProfile": "edit Profile",
+    "goToSettings": "Update Profile",
+    "viewFullProfile": "view Full Profile",
+    "viewOrganizationProfile": "view Organization Profile",
+    "viewPublicProfile": "view Public Profile"
   },
   "details": {
-    "sectionTitle": "Account Details",
-    "name": "Full Name",
     "email": "Email",
-    "role": "Role",
-    "status": "Status",
+    "lastActive": "Last Active",
     "memberSince": "Member Since",
-    "lastActive": "Last Active"
+    "name": "Full Name",
+    "role": "Role",
+    "sectionTitle": "Account Details",
+    "status": "Status"
   },
-  "organization": {
-    "sectionTitle": "Organization",
-    "name": "Organization Name",
-    "region": "Region",
-    "plan": "Plan",
-    "id": "Organization ID"
+  "documents": {
+    "download": "Download",
+    "downloadFailedMessage": "Failed to download document.",
+    "noFileUrl": "Document URL not available.",
+    "preview": "Preview",
+    "title": "Documents & Resources",
+    "types": {
+      "brochure": "Brochure",
+      "catalog": "Product Catalog",
+      "company_profile": "Company Profile",
+      "price_list": "Price List"
+    }
+  },
+  "educator": {
+    "availability": "availability",
+    "bio": "bio",
+    "certifications": "certifications",
+    "contact": "contact",
+    "contractType": "contract Type",
+    "documents": "documents",
+    "education": "education",
+    "experience": "experience",
+    "expires": "expires",
+    "graduated": "graduated",
+    "inviteToApply": "invite To Apply",
+    "issued": "issued",
+    "noCertifications": "no Certifications",
+    "noDocuments": "no Documents",
+    "noEducation": "no Education",
+    "noExperience": "no Experience",
+    "noSkills": "no Skills",
+    "notFound": "not Found",
+    "notFoundMessage": "not Found Message.",
+    "notProvided": "not Provided",
+    "preferredAgeGroups": "preferred Age Groups",
+    "preferredDays": "preferred Days",
+    "preferredTimes": "preferred Times",
+    "skills": "skills",
+    "viewCredential": "view Credential"
   },
   "empty": {
     "organization": "No organization information available yet."
   },
-  "documents": {
-    "title": "Documents & Resources",
-    "preview": "Preview",
-    "download": "Download",
-    "noFileUrl": "Document URL not available.",
-    "downloadFailedMessage": "Failed to download document.",
-    "types": {
-      "catalog": "Product Catalog",
-      "company_profile": "Company Profile",
-      "brochure": "Brochure",
-      "price_list": "Price List"
-    }
-  }
+  "organization": {
+    "about": "about",
+    "actions": {
+      "bookNow": "book Now",
+      "directOrder": "direct Order",
+      "viewCatalog": "view Catalog"
+    },
+    "bookService": "book Service",
+    "businessInfo": "business Info",
+    "capacity": "capacity",
+    "catalog": "catalog",
+    "children": "children",
+    "contact": "contact",
+    "contactPerson": "contact Person",
+    "deliveryType": "delivery Type",
+    "deliveryTypeNotSpecified": "delivery Type Not Specified",
+    "directOrder": "direct Order",
+    "email": "email",
+    "empty": {
+      "jobListings": "job Listings",
+      "products": "products",
+      "services": "services"
+    },
+    "id": "Organization ID",
+    "languages": "languages",
+    "minOrderQty": "min Order Qty",
+    "name": "Organization Name",
+    "noContactAvailable": "no Contact Available",
+    "noServiceCategories": "no Service Categories",
+    "notFound": "not Found",
+    "openRoles": "open Roles",
+    "organizationDetails": "organization Details",
+    "pedagogy": "pedagogy",
+    "phone": "phone",
+    "plan": "Plan",
+    "productCategory": "product Category",
+    "products": "products",
+    "region": "Region",
+    "regionsServed": "regions Served",
+    "sectionTitle": "Organization",
+    "serviceCategories": "service Categories",
+    "serviceType": "service Type",
+    "services": "services",
+    "setupRequired": "setup Required",
+    "vatNumber": "vat Number",
+    "viewCatalog": "view Catalog",
+    "website": "website"
+  },
+  "subtitle": "Review your account details and organization information.",
+  "title": "My Profile"
 }

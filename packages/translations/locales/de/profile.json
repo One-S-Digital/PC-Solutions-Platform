@@ -1,25 +1,104 @@
 {
-  "organization": {
-    "sectionTitle": "Organisation",
-    "region": "Region",
-    "name": "Name der Organisation",
-    "plan": "Tarif",
-    "id": "Organisations-ID"
-  },
   "actions": {
-    "goToSettings": "Profil aktualisieren"
+    "editProfile": "TODO: edit Profile",
+    "goToSettings": "Profil aktualisieren",
+    "viewFullProfile": "TODO: view Full Profile",
+    "viewOrganizationProfile": "TODO: view Organization Profile",
+    "viewPublicProfile": "TODO: view Public Profile"
   },
   "details": {
-    "sectionTitle": "Kontodaten",
-    "memberSince": "Mitglied seit",
-    "lastActive": "Zuletzt aktiv",
-    "status": "Status",
     "email": "E-Mail",
+    "lastActive": "Zuletzt aktiv",
+    "memberSince": "Mitglied seit",
     "name": "Vollständiger Name",
-    "role": "Rolle"
+    "role": "Rolle",
+    "sectionTitle": "Kontodaten",
+    "status": "Status"
+  },
+  "documents": {
+    "download": "TODO: download",
+    "downloadFailedMessage": "TODO: download Failed Message.",
+    "noFileUrl": "TODO: no File Url",
+    "preview": "TODO: preview",
+    "title": "TODO: title"
+  },
+  "educator": {
+    "availability": "TODO: availability",
+    "bio": "TODO: bio",
+    "certifications": "TODO: certifications",
+    "contact": "TODO: contact",
+    "contractType": "TODO: contract Type",
+    "documents": "TODO: documents",
+    "education": "TODO: education",
+    "experience": "TODO: experience",
+    "expires": "TODO: expires",
+    "graduated": "TODO: graduated",
+    "inviteToApply": "TODO: invite To Apply",
+    "issued": "TODO: issued",
+    "noCertifications": "TODO: no Certifications",
+    "noDocuments": "TODO: no Documents",
+    "noEducation": "TODO: no Education",
+    "noExperience": "TODO: no Experience",
+    "noSkills": "TODO: no Skills",
+    "notFound": "TODO: not Found",
+    "notFoundMessage": "TODO: not Found Message.",
+    "notProvided": "TODO: not Provided",
+    "preferredAgeGroups": "TODO: preferred Age Groups",
+    "preferredDays": "TODO: preferred Days",
+    "preferredTimes": "TODO: preferred Times",
+    "skills": "TODO: skills",
+    "viewCredential": "TODO: view Credential"
   },
   "empty": {
     "organization": "Noch keine Organisationsinformationen verfügbar."
+  },
+  "organization": {
+    "about": "TODO: about",
+    "actions": {
+      "bookNow": "TODO: book Now",
+      "directOrder": "TODO: direct Order",
+      "viewCatalog": "TODO: view Catalog"
+    },
+    "bookService": "TODO: book Service",
+    "businessInfo": "TODO: business Info",
+    "capacity": "TODO: capacity",
+    "catalog": "TODO: catalog",
+    "children": "TODO: children",
+    "contact": "TODO: contact",
+    "contactPerson": "TODO: contact Person",
+    "deliveryType": "TODO: delivery Type",
+    "deliveryTypeNotSpecified": "TODO: delivery Type Not Specified",
+    "directOrder": "TODO: direct Order",
+    "email": "TODO: email",
+    "empty": {
+      "jobListings": "TODO: job Listings",
+      "products": "TODO: products",
+      "services": "TODO: services"
+    },
+    "id": "Organisations-ID",
+    "languages": "TODO: languages",
+    "minOrderQty": "TODO: min Order Qty",
+    "name": "Name der Organisation",
+    "noContactAvailable": "TODO: no Contact Available",
+    "noServiceCategories": "TODO: no Service Categories",
+    "notFound": "TODO: not Found",
+    "openRoles": "TODO: open Roles",
+    "organizationDetails": "TODO: organization Details",
+    "pedagogy": "TODO: pedagogy",
+    "phone": "TODO: phone",
+    "plan": "Tarif",
+    "productCategory": "TODO: product Category",
+    "products": "TODO: products",
+    "region": "Region",
+    "regionsServed": "TODO: regions Served",
+    "sectionTitle": "Organisation",
+    "serviceCategories": "TODO: service Categories",
+    "serviceType": "TODO: service Type",
+    "services": "TODO: services",
+    "setupRequired": "TODO: setup Required",
+    "vatNumber": "TODO: vat Number",
+    "viewCatalog": "TODO: view Catalog",
+    "website": "TODO: website"
   },
   "subtitle": "Überprüfen Sie Ihre Konto- und Organisationsinformationen.",
   "title": "Mein Profil"

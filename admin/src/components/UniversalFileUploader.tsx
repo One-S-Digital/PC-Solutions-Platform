@@ -350,7 +350,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         {mimeType.startsWith('image/') && (
           <img
             src={previewUrl}
-            alt={t('common:preview')}
+            alt={t('common:previewLabel', 'Preview')}
             className="max-w-full max-h-48 object-contain border border-gray-200 rounded bg-white"
           />
         )}

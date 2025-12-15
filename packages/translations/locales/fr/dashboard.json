@@ -1,186 +1,101 @@
 {
-  "serviceProviderDashboardPage": {
-    "title": "Tableau de bord fournisseur de services",
-    "welcome": "Bienvenue sur votre tableau de bord fournisseur de services",
-    "services": "Mes services",
-    "requests": "Demandes de service"
+  "activeOrganizations": "Organisations actives",
+  "common": {
+    "description": "Description",
+    "status": "Statut",
+    "title": "Titre"
+  },
+  "dashboard": {
+    "adminContentManagementDashboardPage": {
+      "title": "Gestion de contenu"
+    },
+    "adminSystemMonitoringPage": {
+      "components": {
+        "api": "API",
+        "database": "Base de données"
+      },
+      "metadata": {
+        "environment": "Environnement"
+      },
+      "overallStatus": {
+        "down": "Hors service",
+        "operational": "Opérationnel",
+        "title": "Statut global du système"
+      },
+      "serverPerformance": {
+        "uptimeDays": "Temps de fonctionnement (jours)"
+      }
+    },
+    "eLearningPage": {
+      "title": "Éléments d'apprentissage en ligne"
+    },
+    "hrProceduresPage": {
+      "backToCategoriesButton": "Retour aux catégories",
+      "title": "Documents RH"
+    },
+    "statePoliciesPage": {
+      "title": "Politiques d'État"
+    },
+    "total": "Total",
+    "welcome": "Bon retour, {{name}} !"
   },
   "dashboardPage": {
-    "defaultUser": "Utilisateur",
     "activeUsers": "Utilisateurs actifs",
-    "newOrders": "Nouvelles commandes",
-    "openJobs": "Offres d'emploi ouvertes",
-    "pageViews": "Vues de page",
-    "welcome": "Bienvenue, {{name}} !",
-    "overviewSubtitle": "Voici ce qui se passe avec {{appName}} aujourd'hui",
-    "quickLinks": "Liens rapides",
-    "browseMarketplace": "Parcourir le marché",
-    "postNewJob": "Publier une offre",
-    "manageUsers": "Gérer les utilisateurs",
-    "platformSettings": "Paramètres de la plateforme",
-    "recentActivity": "Activité récente",
-    "viewDetailsFor": "Voir les détails pour {{name}}",
-    "activityLina": "Lina a téléversé un nouveau document de politique",
     "activityEcoToys": "EcoToys a soumis un nouveau produit",
     "activityJohn": "John a postulé pour le poste d'éducateur",
+    "activityLina": "Lina a téléversé un nouveau document de politique",
     "activityParent": "Un parent a soumis une nouvelle demande",
+    "browseMarketplace": "Parcourir le marché",
+    "defaultUser": "Utilisateur",
+    "manageUsers": "Gérer les utilisateurs",
+    "newOrders": "Nouvelles commandes",
+    "openJobs": "Offres d'emploi ouvertes",
+    "overviewSubtitle": "Voici ce qui se passe avec {{appName}} aujourd'hui",
+    "pageViews": "Vues de page",
+    "platformSettings": "Paramètres de la plateforme",
+    "postNewJob": "Publier une offre",
+    "quickLinks": "Liens rapides",
+    "recentActivity": "Activité récente",
     "timeAgo": {
-      "minutes": "{{count}} minutes",
+      "days": "{{count}} jours",
       "hours": "{{count}} heures",
-      "yesterday": "Hier",
-      "days": "{{count}} jours"
-    }
+      "minutes": "{{count}} minutes",
+      "yesterday": "Hier"
+    },
+    "viewDetailsFor": "Voir les détails pour {{name}}",
+    "welcome": "Bienvenue, {{name}} !"
   },
-  "serviceProviderDashboard": {
-    "widgets": {
-      "management": {
-        "newServiceButton": "Ajouter un nouveau service",
-        "tags": {
-          "workshops": "Ateliers",
-          "cleaning": "Nettoyage"
-        },
-        "categories": "Catégories",
-        "listings": "Listes",
-        "pending": "En attente",
-        "button": "Gérer les services",
-        "title": "Gestion des services",
-        "noCategories": "Aucune catégorie pour l'instant"
-      },
-      "overview": {
-        "completedServices": "Services achevés",
-        "newServiceButton": "Ajouter un nouveau service",
-        "activeRequests": "Demandes actives",
-        "customerRating": "Évaluation des clients",
-        "upcoming": "À venir",
-        "button": "Voir les demandes",
-        "title": "Vue d'ensemble"
-      },
-      "appointments": {
-        "button": "Voir tous les rendez-vous",
-        "title": "Prochains rendez-vous",
-        "with": "Avec",
-        "notScheduled": "Pas encore planifié"
-      }
+  "educatorApplicationsPage": {
+    "emptyState": "Aucune candidature trouvée",
+    "footerNote": "Les candidatures sont mises à jour en temps réel",
+    "status": {
+      "accepted": "Acceptée",
+      "pending": "En attente",
+      "rejected": "Refusée",
+      "reviewed": "Examinée"
     },
-    "welcomeMessage": "Bienvenue à tous ! Voici un aperçu de vos demandes de services et de vos rendez-vous.",
-    "title": "Tableau de bord du fournisseur de services"
-  },
-  "foundationDashboard": {
-    "quickStats": {
-      "upcomingAppointments": "Prochains rendez-vous",
-      "availableSpots": "Places disponibles",
-      "pendingApps": "Demandes en cours",
-      "enrolled": "Inscrits",
-      "title": "Statistiques rapides"
-    },
-    "quickActions": {
-      "browseMarketplace": "Parcourir le marché",
-      "viewParentLeads": "Voir les chefs de file des parents",
-      "viewAnalytics": "Voir les analyses",
-      "sendMessage": "Envoyer",
-      "addSpot": "Ajouter un point",
-      "postJob": "Poste de travail",
-      "title": "Actions rapides"
-    },
-    "activity": {
-      "orderConfirmation": "Confirmation de commande reçue",
-      "jobApplication": "Dépôt d'une nouvelle demande d'emploi",
-      "parentInquiry": "Nouvelle demande de renseignements des parents",
-      "serviceUpdate": "Mise à jour de la demande de service",
-      "newMessage": "Nouveau message reçu",
-      "noActivity": "Aucune activité récente",
-      "title": "Activité récente"
-    },
-    "quickMessage": {
-      "placeholder": "Tapez un message rapide...",
-      "title": "Message rapide"
-    },
-    "calendar": {
-      "event1": "Réunion du personnel",
-      "event2": "Consultation des parents",
-      "event3": "Session de formation",
-      "noEvents": "Aucun événement prévu"
-    },
-    "welcomeMessage": "Bienvenue à tous ! Voici un aperçu des activités de votre crèche.",
-    "todayAtGlance": "Aujourd'hui en un coup d'œil",
-    "title": "Tableau de bord de la fondation"
-  },
-  "supplierDashboardPage": {
-    "title": "Tableau de bord fournisseur",
-    "welcome": "Bienvenue sur votre tableau de bord fournisseur",
-    "products": "Mes produits",
-    "orders": "Commandes"
-  },
-  "supplierDashboard": {
-    "widgets": {
-      "products": {
-        "pendingApproval": "En attente d'approbation",
-        "lowStock": "Faible stock",
-        "pending": "En attente",
-        "active": "Actif",
-        "button": "Gérer les produits",
-        "title": "Produits"
-      },
-      "sales": {
-        "fulfillmentRate": "Taux d'exécution",
-        "revenueMonth": "Revenu (mois)",
-        "totalOrders": "Total des commandes",
-        "topSelling": "Meilleure vente",
-        "revenue": "Revenu",
-        "button": "Voir les analyses",
-        "title": "Aperçu des ventes"
-      },
-      "orders": {
-        "toFulfill": "À traiter",
-        "pending": "En attente",
-        "button": "Voir les commandes",
-        "title": "Commandes"
-      },
-      "inquiries": {
-        "title": "Demandes",
-        "new": "Nouvelles",
-        "pending": "En attente",
-        "total": "Total",
-        "conversionRate": "Conversion",
-        "button": "Voir les demandes"
-      }
-    },
-    "recentOrdersActions": {
-      "decline": "Déclin",
-      "accept": "Accepter"
-    },
-    "recentOrdersTable": {
+    "table": {
+      "actions": "Actions",
       "creche": "Crèche",
-      "status": "Statut",
-      "total": "Total",
-      "date": "Date",
-      "id": "Id"
-    },
-    "recentOrdersTitle": "Commandes récentes",
-    "noRecentOrders": "Pas de commandes récentes",
-    "welcomeMessage": "Nous sommes heureux de vous revoir ! Voici un aperçu des ventes et des commandes de vos produits.",
-    "noSalesYet": "Pas encore de ventes",
-    "title": "Tableau de bord fournisseur",
-    "recentInquiriesTitle": "Demandes récentes",
-    "noRecentInquiries": "Aucune demande récente",
-    "recentInquiriesTable": {
-      "from": "De",
-      "subject": "Sujet",
+      "jobTitle": "Titre du poste",
+      "lastUpdated": "Dernière mise à jour",
       "status": "Statut"
-    }
+    },
+    "title": "Mes candidatures",
+    "viewingDetailsFor": "Consultation des détails pour"
   },
   "educatorDashboard": {
     "applicationStatus": {
-      "interviews": "Interviews",
-      "submitted": "Soumis",
       "button": "Voir toutes les candidatures",
+      "interviews": "Interviews",
       "offers": "Offres",
-      "viewed": "Vu",
-      "title": "Statut de la demande"
+      "submitted": "Soumis",
+      "title": "Statut de la demande",
+      "viewed": "Vu"
     },
     "profileCompletion": {
-      "subtitle": "Complétez votre profil pour augmenter vos chances d'être embauché",
       "button": "Profil complet",
+      "subtitle": "Complétez votre profil pour augmenter vos chances d'être embauché",
       "title": "Complétez votre profil"
     },
     "recommendations": {
@@ -188,224 +103,391 @@
       "title": "Emplois recommandés"
     },
     "skills": {
-      "subtitle": "Maintenir ses compétences et ses qualifications à jour",
       "button": "Mise à jour des compétences",
+      "subtitle": "Maintenir ses compétences et ses qualifications à jour",
       "title": "Compétences et qualifications"
     },
-    "welcome": "Bienvenue ! Voici un aperçu de vos candidatures et de votre profil.",
-    "title": "Tableau de bord de l'éducateur"
+    "title": "Tableau de bord de l'éducateur",
+    "welcome": "Bienvenue ! Voici un aperçu de vos candidatures et de votre profil."
   },
   "educatorDashboardPage": {
-    "title": "Tableau de bord de l'éducateur",
-    "welcome": "Bienvenue sur votre tableau de bord éducateur",
     "applications": "Mes candidatures",
-    "jobBoard": "Offres d'emploi"
-  },
-  "educatorApplicationsPage": {
-    "title": "Mes candidatures",
-    "status": {
-      "pending": "En attente",
-      "reviewed": "Examinée",
-      "accepted": "Acceptée",
-      "rejected": "Refusée"
-    },
-    "table": {
-      "jobTitle": "Titre du poste",
-      "creche": "Crèche",
-      "status": "Statut",
-      "lastUpdated": "Dernière mise à jour",
-      "actions": "Actions"
-    },
-    "viewingDetailsFor": "Consultation des détails pour",
-    "emptyState": "Aucune candidature trouvée",
-    "footerNote": "Les candidatures sont mises à jour en temps réel"
+    "jobBoard": "Offres d'emploi",
+    "title": "Tableau de bord de l'éducateur",
+    "welcome": "Bienvenue sur votre tableau de bord éducateur"
   },
   "educatorJobBoardPage": {
-    "title": "Offres d'emploi",
-    "postedOn": "Publié le",
-    "searchPlaceholder": "Rechercher un poste...",
-    "noJobsFound": "Aucune offre trouvée",
     "errors": {
       "loadJobs": "Impossible de charger les offres."
     },
+    "noJobsFound": "Aucune offre trouvée",
+    "postedOn": "Publié le",
+    "searchPlaceholder": "Rechercher un poste...",
+    "title": "Offres d'emploi",
     "unknownFoundation": "Fondation inconnue"
   },
   "educatorProfilePage": {
-    "editProfile": "Modifier le profil",
-    "loadError": "Impossible de charger le profil.",
-    "saveSuccess": "Profil mis à jour !",
-    "roleUnknown": "Rôle non spécifié",
-    "locationUnknown": "Localisation non renseignée",
-    "notProvided": "Non fourni",
-    "skills": {
-      "title": "Compétences",
-      "empty": "Aucune compétence renseignée."
-    },
     "availability": {
-      "title": "Disponibilités",
+      "ageGroups": "Groupes d'âge",
+      "contract": "Contrat",
       "days": "Jours",
       "times": "Horaires",
-      "contract": "Contrat",
-      "ageGroups": "Groupes d'âge"
-    },
-    "documents": {
-      "title": "Documents",
-      "empty": "Aucun document téléversé."
+      "title": "Disponibilités"
     },
     "bio": {
-      "title": "À propos de moi",
-      "empty": "Aucune bio pour l'instant."
-    },
-    "experience": {
-      "title": "Expérience",
-      "empty": "Aucune expérience ajoutée."
-    },
-    "education": {
-      "title": "Formation",
-      "graduated": "Diplômé(e)",
-      "empty": "Aucune formation ajoutée."
+      "empty": "Aucune bio pour l'instant.",
+      "title": "À propos de moi"
     },
     "certifications": {
-      "title": "Certifications",
-      "issued": "Délivrée",
+      "empty": "Aucune certification ajoutée.",
       "expires": "Expire",
-      "empty": "Aucune certification ajoutée."
+      "issued": "Délivrée",
+      "title": "Certifications"
+    },
+    "documents": {
+      "empty": "Aucun document téléversé.",
+      "title": "Documents"
+    },
+    "editProfile": "Modifier le profil",
+    "education": {
+      "empty": "Aucune formation ajoutée.",
+      "graduated": "Diplômé(e)",
+      "title": "Formation"
+    },
+    "experience": {
+      "empty": "Aucune expérience ajoutée.",
+      "title": "Expérience"
+    },
+    "loadError": "Impossible de charger le profil.",
+    "locationUnknown": "Localisation non renseignée",
+    "notProvided": "Non fourni",
+    "roleUnknown": "Rôle non spécifié",
+    "saveSuccess": "Profil mis à jour !",
+    "skills": {
+      "empty": "Aucune compétence renseignée.",
+      "title": "Compétences"
     }
   },
   "educatorSupportPage": {
-    "ticketSubmittedAlert": "Ticket de support envoyé avec succès",
     "faq": {
-      "updateProfile": {
-        "q": "Comment mettre à jour mon profil ?",
-        "a": "Rendez-vous sur votre page profil pour mettre à jour vos compétences, qualifications, expériences et disponibilités. Un profil complet augmente vos chances d'être retenu."
-      },
       "findJobs": {
-        "q": "Comment trouver des offres d'emploi ?",
-        "a": "Parcourez le Job Board pour voir toutes les offres disponibles. Vous pouvez filtrer par lieu, type de contrat et autres critères. Cliquez sur une offre pour voir les détails et postuler."
-      },
-      "trackApplications": {
-        "q": "Comment suivre mes candidatures ?",
-        "a": "Consultez la section Mes candidatures. Vous y verrez le statut de chaque candidature et les mises à jour des employeurs."
+        "a": "Parcourez le Job Board pour voir toutes les offres disponibles. Vous pouvez filtrer par lieu, type de contrat et autres critères. Cliquez sur une offre pour voir les détails et postuler.",
+        "q": "Comment trouver des offres d'emploi ?"
       },
       "notifications": {
-        "q": "Comment gérer mes notifications ?",
-        "a": "Allez dans Paramètres > Préférences de notification pour choisir les alertes e-mail ou in-app que vous recevez."
+        "a": "Allez dans Paramètres > Préférences de notification pour choisir les alertes e-mail ou in-app que vous recevez.",
+        "q": "Comment gérer mes notifications ?"
+      },
+      "trackApplications": {
+        "a": "Consultez la section Mes candidatures. Vous y verrez le statut de chaque candidature et les mises à jour des employeurs.",
+        "q": "Comment suivre mes candidatures ?"
+      },
+      "updateProfile": {
+        "a": "Rendez-vous sur votre page profil pour mettre à jour vos compétences, qualifications, expériences et disponibilités. Un profil complet augmente vos chances d'être retenu.",
+        "q": "Comment mettre à jour mon profil ?"
       }
     },
     "ticketForm": {
-      "subjectPlaceholder": "Brève description de votre problème",
-      "messagePlaceholder": "Merci de donner le plus de détails possible"
-    }
+      "messagePlaceholder": "Merci de donner le plus de détails possible",
+      "subjectPlaceholder": "Brève description de votre problème"
+    },
+    "ticketSubmittedAlert": "Ticket de support envoyé avec succès"
   },
-  "parentDashboard": {
+  "foundationDashboard": {
+    "activity": {
+      "jobApplication": "Dépôt d'une nouvelle demande d'emploi",
+      "newMessage": "Nouveau message reçu",
+      "noActivity": "Aucune activité récente",
+      "orderConfirmation": "Confirmation de commande reçue",
+      "parentInquiry": "Nouvelle demande de renseignements des parents",
+      "serviceUpdate": "Mise à jour de la demande de service",
+      "title": "Activité récente"
+    },
+    "calendar": {
+      "event1": "Réunion du personnel",
+      "event2": "Consultation des parents",
+      "event3": "Session de formation",
+      "noEvents": "Aucun événement prévu"
+    },
     "quickActions": {
-      "browseServices": "Parcourir les services",
-      "updateProfile": "Mise à jour du profil",
-      "viewEnquiries": "Voir les demandes de renseignements",
-      "findDaycare": "Trouver une garderie",
-      "enquiries": "Mes demandes",
-      "title": "Actions rapides"
+      "addSpot": "Ajouter un point",
+      "browseMarketplace": "Parcourir le marché",
+      "postJob": "Poste de travail",
+      "sendMessage": "Envoyer",
+      "title": "Actions rapides",
+      "viewAnalytics": "Voir les analyses",
+      "viewParentLeads": "Voir les chefs de file des parents"
     },
-    "childProfile": {
-      "specialNeeds": "Besoins particuliers",
-      "languages": "Langues",
-      "location": "Localisation",
-      "button": "Mise à jour du profil",
-      "title": "Profil de l'enfant",
-      "name": "Nom",
-      "age": "L'âge"
+    "quickMessage": {
+      "placeholder": "Tapez un message rapide...",
+      "title": "Message rapide"
     },
-    "favorites": {
-      "subtitle": "Vos garderies et services sauvegardés",
-      "button": "Voir tous les favoris",
-      "title": "Favoris"
+    "quickStats": {
+      "availableSpots": "Places disponibles",
+      "enrolled": "Inscrits",
+      "pendingApps": "Demandes en cours",
+      "title": "Statistiques rapides",
+      "upcomingAppointments": "Prochains rendez-vous"
     },
-    "enquiry": {
-      "responded": "Répondu",
-      "responses": "Réponses",
-      "pending": "En attente",
-      "button": "Voir toutes les demandes",
-      "title": "Mes demandes",
-      "sent": "Envoyé"
-    },
-    "welcomeMessage": "Bienvenue ! Voici un aperçu de votre recherche et de vos demandes en matière de garde d'enfants.",
-    "title": "Tableau de bord des parents"
+    "title": "Tableau de bord de la fondation",
+    "todayAtGlance": "Aujourd'hui en un coup d'œil",
+    "welcomeMessage": "Bienvenue à tous ! Voici un aperçu des activités de votre crèche."
   },
+  "jobsPosted": "offres d'emploi publiées",
+  "live": "Live",
+  "loadingStats": "Chargement des statistiques de la plate-forme...",
   "orderRequestDetailModal": {
-    "viewDaycareProfile": "Voir le profil",
-    "markAsProcessing": "Marquer comme traitement",
+    "date": "Date",
     "foundation": "Fondation",
     "lineItems": "Postes de travail",
-    "quantity": "Quantité",
-    "orderId": "Identité de l'ordre",
-    "product": "Produit",
-    "status": "Statut",
+    "markAsProcessing": "Marquer comme traitement",
     "notes": "Notes",
+    "orderId": "Identité de l'ordre",
     "price": "Prix",
+    "product": "Produit",
+    "quantity": "Quantité",
+    "status": "Statut",
     "title": "Détails de la commande",
     "total": "Total",
-    "date": "Date"
+    "viewDaycareProfile": "Voir le profil"
+  },
+  "parentDashboard": {
+    "childProfile": {
+      "age": "L'âge",
+      "button": "Mise à jour du profil",
+      "languages": "Langues",
+      "location": "Localisation",
+      "name": "Nom",
+      "specialNeeds": "Besoins particuliers",
+      "title": "Profil de l'enfant"
+    },
+    "enquiry": {
+      "button": "Voir toutes les demandes",
+      "pending": "En attente",
+      "responded": "Répondu",
+      "responses": "Réponses",
+      "sent": "Envoyé",
+      "title": "Mes demandes"
+    },
+    "favorites": {
+      "button": "Voir tous les favoris",
+      "subtitle": "Vos garderies et services sauvegardés",
+      "title": "Favoris"
+    },
+    "quickActions": {
+      "browseServices": "Parcourir les services",
+      "enquiries": "Mes demandes",
+      "findDaycare": "Trouver une garderie",
+      "title": "Actions rapides",
+      "updateProfile": "Mise à jour du profil",
+      "viewEnquiries": "Voir les demandes de renseignements"
+    },
+    "title": "Tableau de bord des parents",
+    "welcomeMessage": "Bienvenue ! Voici un aperçu de votre recherche et de vos demandes en matière de garde d'enfants."
+  },
+  "parentSupportPage": {
+    "faq": {
+      "dataSecurity": {
+        "a": "TODO: a",
+        "q": "TODO: q"
+      },
+      "matchingProcess": {
+        "a": "TODO: a",
+        "q": "TODO: q"
+      },
+      "responseTime": {
+        "a": "TODO: a",
+        "q": "TODO: q"
+      }
+    }
+  },
+  "platformSummary": "Résumé de la plate-forme",
+  "productUploadModal": {
+    "addTitle": "TODO: add Title",
+    "editTitle": "TODO: edit Title"
+  },
+  "productsAvailable": "produits dans le catalogue",
+  "recruitmentPage": {
+    "subtitle": "TODO: subtitle",
+    "title": "TODO: title"
+  },
+  "registeredUsers": "utilisateurs enregistrés dans la plate-forme",
+  "serviceProviderDashboard": {
+    "title": "Tableau de bord du fournisseur de services",
+    "welcomeMessage": "Bienvenue à tous ! Voici un aperçu de vos demandes de services et de vos rendez-vous.",
+    "widgets": {
+      "appointments": {
+        "button": "Voir tous les rendez-vous",
+        "notScheduled": "Pas encore planifié",
+        "title": "Prochains rendez-vous",
+        "with": "Avec"
+      },
+      "management": {
+        "button": "Gérer les services",
+        "categories": "Catégories",
+        "listings": "Listes",
+        "newServiceButton": "Ajouter un nouveau service",
+        "noCategories": "Aucune catégorie pour l'instant",
+        "pending": "En attente",
+        "tags": {
+          "cleaning": "Nettoyage",
+          "workshops": "Ateliers"
+        },
+        "title": "Gestion des services"
+      },
+      "overview": {
+        "activeRequests": "Demandes actives",
+        "button": "Voir les demandes",
+        "completedServices": "Services achevés",
+        "customerRating": "Évaluation des clients",
+        "newServiceButton": "Ajouter un nouveau service",
+        "title": "Vue d'ensemble",
+        "upcoming": "À venir"
+      }
+    }
+  },
+  "serviceProviderDashboardPage": {
+    "requests": "Demandes de service",
+    "services": "Mes services",
+    "title": "Tableau de bord fournisseur de services",
+    "welcome": "Bienvenue sur votre tableau de bord fournisseur de services"
+  },
+  "serviceProviderSupportPage": {
+    "ticketSubmittedAlert": "TODO: ticket Submitted Alert"
   },
   "sidebar": {
     "allUsersTitle": "Total des utilisateurs",
-    "foundations": "Fondations",
-    "products": "Produits",
-    "parentLeads": "Pistes de parents",
-    "jobListings": "Offres d'emploi",
+    "analytics": "TODO: analytics",
     "applications": "Candidatures",
-    "dashboard": "Tableau de bord"
+    "billingSubscription": "TODO: billing Subscription",
+    "currentPlan": "TODO: current Plan",
+    "dashboard": "Tableau de bord",
+    "discountTerminations": "TODO: discount Terminations",
+    "fileGallery": "TODO: file Gallery",
+    "foundations": "Fondations",
+    "jobListings": "Offres d'emploi",
+    "manageSubscriptionDesc": "TODO: manage Subscription Desc",
+    "messages": "TODO: messages",
+    "myProfile": "TODO: my Profile",
+    "ordersAppointments": "TODO: orders Appointments",
+    "parentLeads": "Pistes de parents",
+    "products": "Produits",
+    "services": "TODO: services",
+    "settings": "TODO: settings",
+    "support": "TODO: support",
+    "supportFAQ": "TODO: support F A Q"
   },
-  "platformSummary": "Résumé de la plateforme",
-  "loadingStats": "Chargement des statistiques de la plateforme...",
-  "registeredUsers": "Utilisateurs enregistrés sur la plateforme",
-  "total": "Total",
-  "dashboard": {
-    "welcome": "Bon retour, {{name}} !",
-    "adminSystemMonitoringPage": {
-      "overallStatus": {
-        "title": "Statut global du système",
-        "operational": "Opérationnel",
-        "down": "Hors service"
+  "supplierAnalyticsPage": {
+    "datePickerLabel": "TODO: date Picker",
+    "exportCsvAlert": "TODO: export Csv Alert",
+    "exportCsvButton": "TODO: export Csv Button",
+    "mockChartText": "TODO: mock Chart Text.",
+    "orderRequestsPerWeek": "TODO: order Requests Per Week",
+    "promoCodePerformance": "TODO: promo Code Performance",
+    "requestsByCanton": "TODO: requests By Canton",
+    "table": {
+      "code": "TODO: code",
+      "estRevenueImpact": "TODO: est Revenue Impact",
+      "uses": "TODO: uses"
+    },
+    "topViewedProducts": "TODO: top Viewed Products"
+  },
+  "supplierCard": {
+    "viewProfileAndProducts": "TODO: view Profile And Products"
+  },
+  "supplierDashboard": {
+    "noRecentInquiries": "Aucune demande récente",
+    "noRecentOrders": "Pas de commandes récentes",
+    "noSalesYet": "Pas encore de ventes",
+    "recentInquiriesTable": {
+      "from": "De",
+      "status": "Statut",
+      "subject": "Sujet"
+    },
+    "recentInquiriesTitle": "Demandes récentes",
+    "recentOrdersActions": {
+      "accept": "Accepter",
+      "decline": "Déclin"
+    },
+    "recentOrdersTable": {
+      "creche": "Crèche",
+      "date": "Date",
+      "id": "Id",
+      "status": "Statut",
+      "total": "Total"
+    },
+    "recentOrdersTitle": "Commandes récentes",
+    "title": "Tableau de bord fournisseur",
+    "welcomeMessage": "Nous sommes heureux de vous revoir ! Voici un aperçu des ventes et des commandes de vos produits.",
+    "widgets": {
+      "inquiries": {
+        "button": "Voir les demandes",
+        "conversionRate": "Conversion",
+        "new": "Nouvelles",
+        "pending": "En attente",
+        "title": "Demandes",
+        "total": "Total"
       },
-      "metadata": {
-        "environment": "Environnement"
+      "orders": {
+        "button": "Voir les commandes",
+        "pending": "En attente",
+        "title": "Commandes",
+        "toFulfill": "À traiter"
       },
-      "serverPerformance": {
-        "uptimeDays": "Temps de fonctionnement (jours)"
+      "products": {
+        "active": "Actif",
+        "button": "Gérer les produits",
+        "lowStock": "Faible stock",
+        "pending": "En attente",
+        "pendingApproval": "En attente d'approbation",
+        "title": "Produits"
       },
-      "components": {
-        "api": "API",
-        "database": "Base de données"
+      "sales": {
+        "button": "Voir les analyses",
+        "fulfillmentRate": "Taux d'exécution",
+        "revenue": "Revenu",
+        "revenueMonth": "Revenu (mois)",
+        "title": "Aperçu des ventes",
+        "topSelling": "Meilleure vente",
+        "totalOrders": "Total des commandes"
       }
-    },
-    "adminContentManagementDashboardPage": {
-      "title": "Gestion de contenu"
-    },
-    "eLearningPage": {
-      "title": "Éléments d'apprentissage en ligne"
-    },
-    "hrProceduresPage": {
-      "title": "Documents RH",
-      "backToCategoriesButton": "Retour aux catégories"
-    },
-    "statePoliciesPage": {
-      "title": "Politiques d'État"
-    },
-    "total": "Total"
+    }
   },
-  "activeOrganizations": "Organisations actives",
-  "common": {
-    "description": "Description",
-    "status": "Statut",
-    "title": "Titre"
+  "supplierDashboardPage": {
+    "orders": "Commandes",
+    "products": "Mes produits",
+    "title": "Tableau de bord fournisseur",
+    "welcome": "Bienvenue sur votre tableau de bord fournisseur"
   },
-  "productsAvailable": "produits dans le catalogue",
-  "platformSummary": "Résumé de la plate-forme",
-  "registeredUsers": "utilisateurs enregistrés dans la plate-forme",
+  "supplierOrdersPage": {
+    "actions": {
+      "ship": "TODO: ship"
+    },
+    "table": {
+      "foundation": "TODO: foundation"
+    }
+  },
+  "supplierProductListingsPage": {
+    "addProductButton": "TODO: add Product Button",
+    "emptyState": "TODO: empty State",
+    "searchPlaceholder": "TODO: Enter search",
+    "table": {
+      "actions": "TODO: actions",
+      "price": "TODO: price",
+      "product": "TODO: product",
+      "stock": "TODO: stock",
+      "visibility": "TODO: visibility"
+    },
+    "title": "TODO: title",
+    "visibility": {
+      "hidden": "TODO: hidden",
+      "visible": "TODO: visible"
+    }
+  },
+  "supplierSupportPage": {
+    "ticketSubmittedAlert": "TODO: ticket Submitted Alert"
+  },
   "systemHealthy": "Tous les systèmes sont opérationnels",
-  "loadingStats": "Chargement des statistiques de la plate-forme...",
-  "jobsPosted": "offres d'emploi publiées",
-  "welcome": "Bienvenue sur votre tableau de bord d'administration !",
-  "live": "Live",
-  "total": "Total"
+  "total": "Total",
+  "welcome": "Bienvenue sur votre tableau de bord d'administration !"
 }

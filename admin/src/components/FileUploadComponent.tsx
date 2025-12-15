@@ -188,7 +188,7 @@ export default function FileUploadComponent({
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <img
               src={preview}
-              alt={t('common:preview')}
+              alt={t('common:previewLabel', 'Preview')}
               className="rounded border border-gray-200"
               style={{ width: previewWidth, height: previewHeight, objectFit: 'contain' }}
             />

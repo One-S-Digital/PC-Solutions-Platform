@@ -1,58 +1,69 @@
 {
-  "messages": {
-    "emptyState": {
-      "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
-      "noConversationSelectedTitle": "Keine Konversation ausgewählt",
-      "noConversationsYet": "Noch keine Konversationen",
-      "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
-    },
-    "placeholders": {
-      "searchConversations": "Konversationen durchsuchen...",
-      "typeMessage": "Nachricht eingeben..."
-    },
-    "noConversationsFound": "Keine Konversationen gefunden",
-    "buttons": {
-      "sendMessage": "Nachricht senden",
-      "newGroup": "Neue Gruppe"
-    },
-    "searchPlaceholder": "Konversationen durchsuchen...",
-    "filters": {
-      "unread": "Ungelesen",
-      "all": "Alle"
-    },
-    "tabs": {
-      "unread": "Ungelesen",
-      "all": "Alle Nachrichten"
-    },
-    "title": "Nachrichten"
+  "buttons": {
+    "newChat": "Neuer Chat",
+    "newGroup": "Neue Gruppe",
+    "sendMessage": "Nachricht senden"
   },
+  "confirmDelete": "TODO: confirm Delete",
+  "deleteMessage": "TODO: delete Message.",
+  "editMessage": "TODO: edit Message.",
   "emptyState": {
     "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
     "noConversationSelectedTitle": "Keine Konversation ausgewählt",
     "noConversationsYet": "Noch keine Konversationen",
     "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
   },
+  "errors": {
+    "fileTooLarge": "TODO: file Too Large"
+  },
+  "filters": {
+    "all": "Alle",
+    "unread": "Ungelesen"
+  },
+  "loadingMore": "TODO: loading More",
+  "messageDeleted": "TODO: message Deleted",
+  "messageUpdated": "TODO: message Updated",
+  "messages": {
+    "buttons": {
+      "newGroup": "Neue Gruppe",
+      "sendMessage": "Nachricht senden"
+    },
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
+      "noConversationSelectedTitle": "Keine Konversation ausgewählt",
+      "noConversationsYet": "Noch keine Konversationen",
+      "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
+    },
+    "filters": {
+      "all": "Alle",
+      "unread": "Ungelesen"
+    },
+    "noConversationsFound": "Keine Konversationen gefunden",
+    "placeholders": {
+      "searchConversations": "Konversationen durchsuchen...",
+      "typeMessage": "Nachricht eingeben..."
+    },
+    "searchPlaceholder": "Konversationen durchsuchen...",
+    "tabs": {
+      "all": "Alle Nachrichten",
+      "unread": "Ungelesen"
+    },
+    "title": "Nachrichten"
+  },
+  "noConversationsFound": "Keine Konversationen gefunden",
+  "noMessagesYet": "Noch keine Nachrichten",
   "placeholders": {
+    "addCaption": "TODO: add Caption",
     "searchConversations": "Konversationen durchsuchen...",
     "typeMessage": "Nachricht eingeben..."
   },
-  "noConversationsFound": "Keine Konversationen gefunden",
-  "buttons": {
-    "sendMessage": "Nachricht senden",
-    "newGroup": "Neue Gruppe",
-    "newChat": "Neuer Chat"
-  },
+  "scrollForMore": "TODO: scroll For More",
   "searchPlaceholder": "Konversationen durchsuchen...",
-  "filters": {
-    "unread": "Ungelesen",
-    "all": "Alle"
-  },
-  "noMessagesYet": "Noch keine Nachrichten",
   "tabs": {
-    "unread": "Ungelesen",
-    "all": "Alle Nachrichten"
+    "all": "Alle Nachrichten",
+    "unread": "Ungelesen"
   },
+  "title": "Nachrichten",
   "unknownUser": "Unbekannter Benutzer",
-  "youPrefix": "Sie: ",
-  "title": "Nachrichten"
+  "youPrefix": "Sie: "
 }
