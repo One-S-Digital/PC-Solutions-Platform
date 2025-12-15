@@ -88,23 +88,41 @@ const createDevApiClient = (getToken: () => Promise<string | null>) => {
     async (config) => {
       try {
         const token = await getToken();
-        
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-          logger.log('🔧 Dev API Request:', {
-            url: config.url,
-            method: config.method,
-            hasAuth: true,
-            mode: 'development'
-          });
-        } else {
-          // No token - might be public endpoint or user not logged in yet
-          logger.log('🔧 Dev API Request:', {
+        const url = config.url || '';
+        const isPublicStatus =
+          url.includes('/static-translations/admin/full-sync/') &&
+          url.endsWith('/status');
+
+        // Ensure headers object exists
+        config.headers = config.headers || {};
+
+        if (isPublicStatus) {
+          // Public status endpoint - DO NOT send Authorization
+          delete (config.headers as any).Authorization;
+          logger.log('🔧 Dev API Request (public status)', {
             url: config.url,
             method: config.method,
             hasAuth: false,
-            mode: 'development'
+            mode: 'development',
           });
+        } else {
+          if (token) {
+            (config.headers as any).Authorization = `Bearer ${token}`;
+            logger.log('🔧 Dev API Request:', {
+              url: config.url,
+              method: config.method,
+              hasAuth: true,
+              mode: 'development',
+            });
+          } else {
+            // No token - might be public endpoint or user not logged in yet
+            logger.log('🔧 Dev API Request:', {
+              url: config.url,
+              method: config.method,
+              hasAuth: false,
+              mode: 'development',
+            });
+          }
         }
       } catch (error) {
         logger.error('❌ Dev API token error:', error);
@@ -182,18 +200,34 @@ export const useApiClient = () => {
       async (config) => {
         try {
           const token = await getToken()
-          
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-            logger.log('✅ Admin Dashboard API token added:', {
+          const url = config.url || ''
+          const isPublicStatus =
+            url.includes('/static-translations/admin/full-sync/') &&
+            url.endsWith('/status')
+
+          // Ensure headers object exists
+          config.headers = config.headers || {}
+
+          if (isPublicStatus) {
+            // Public status endpoint - DO NOT send Authorization
+            delete (config.headers as any).Authorization
+            logger.log('✅ Admin Dashboard API public status request (no auth):', {
               url: config.url,
-              hasAuth: true
-            });
+              hasAuth: false,
+            })
           } else {
-            logger.warn('⚠️ Admin Dashboard API no token available:', {
-              url: config.url,
-              hasAuth: false
-            });
+            if (token) {
+              ;(config.headers as any).Authorization = `Bearer ${token}`
+              logger.log('✅ Admin Dashboard API token added:', {
+                url: config.url,
+                hasAuth: true,
+              })
+            } else {
+              logger.warn('⚠️ Admin Dashboard API no token available:', {
+                url: config.url,
+                hasAuth: false,
+              })
+            }
           }
         } catch (error) {
           logger.error('❌ Admin Dashboard API token error:', {
