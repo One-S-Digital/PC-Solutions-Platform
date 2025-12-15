@@ -2269,7 +2269,15 @@ export class StaticTranslationService {
     exported: number;
     backupId?: string;
   }> {
-    this.logger.log('🔄 Starting full sync...');
+    const startTime = Date.now();
+    const getHeapMb = () => Math.round(process.memoryUsage().heapUsed / (1024 * 1024));
+    const logStep = (label: string) => {
+      const ms = Date.now() - startTime;
+      const heapMb = getHeapMb();
+      this.logger.log(`[FullSync] ${label} (t=${ms}ms, heap=${heapMb} MB)`);
+    };
+
+    logStep('🔄 Starting full sync...');
     
     // Step 0: Create backup before any changes
     this.logger.log('📦 Step 0: Creating backup...');
@@ -2281,11 +2289,13 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   Backup warning: ${error.message} (continuing anyway)`);
     }
+    logStep('Step 0: Backup complete');
     
     // Step 1: Import EN from JSON files (with validation)
     this.logger.log('📥 Step 1: Importing EN translations from JSON files...');
     const importResult = await this.importFromJsonFiles(updatedBy);
     this.logger.log(`   Imported: ${importResult.imported}`);
+    logStep('Step 1: Import complete');
     
     // Step 2: Translate missing FR
     this.logger.log('🇫🇷 Step 2: Translating to French...');
@@ -2296,6 +2306,7 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   FR translation error: ${error.message}`);
     }
+    logStep('Step 2: FR translation complete');
     
     // Step 3: Translate missing DE
     this.logger.log('🇩🇪 Step 3: Translating to German...');
@@ -2306,11 +2317,13 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   DE translation error: ${error.message}`);
     }
+    logStep('Step 3: DE translation complete');
     
     // Step 4: Export to JSON files
     this.logger.log('📤 Step 4: Exporting to JSON files...');
     const exportResult = await this.exportToJsonFiles();
     this.logger.log(`   Exported: ${exportResult.exported}`);
+    logStep('Step 4: Export complete');
     
     // Step 5: Cleanup old audit logs (run periodically)
     try {
@@ -2318,10 +2331,12 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   Audit cleanup warning: ${error.message}`);
     }
-    
+    logStep('Step 5: Audit cleanup complete');
+
     // Clear cache
     await this.cacheManager.reset();
-    
+    logStep('Cache reset complete');
+
     this.logger.log('✅ Full sync complete!');
     
     return {
