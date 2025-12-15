@@ -8,35 +8,45 @@ import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? [
-        'https://app.procrechesolutions.com', 
-        'https://admin.procrechesolutions.com'
-      ]
-    : true;
-
   // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // We'll handle body parsing manually
-    cors: {
-      origin: allowedOrigins,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: [
-        'Content-Type', 
-        'Authorization', 
-        'X-Requested-With', 
-        'Accept',
-        'svix-id',
-        'svix-timestamp',
-        'svix-signature',
-      ],
-      exposedHeaders: ['Content-Type', 'Authorization'],
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
-    },
   });
   const logger = app.get(AppLoggerService);
+  
+  // CORS configuration - MUST run before helmet
+  const prodAllowed = new Set([
+    'https://app.procrechesolutions.com',
+    'https://admin.procrechesolutions.com',
+  ]);
+
+  app.enableCors({
+    origin: (origin, cb) => {
+      // Allow non-browser clients (curl/postman) with no Origin header
+      if (!origin) return cb(null, true);
+
+      // In non-production, allow all origins for easier testing
+      if (process.env.NODE_ENV !== 'production') return cb(null, true);
+
+      // In production, only allow known origins
+      return cb(null, prodAllowed.has(origin));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'svix-id',
+      'svix-timestamp',
+      'svix-signature',
+      'X-Trace-Id',
+    ],
+    exposedHeaders: ['Content-Type', 'Authorization', 'x-build-commit', 'X-Trace-Id'],
+    maxAge: 86400,
+    optionsSuccessStatus: 204,
+  });
   
   // Raw body for webhook route
   app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
@@ -60,7 +70,7 @@ async function bootstrap() {
 
   // Security middleware
   app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
     crossOriginEmbedderPolicy: false,
   }));
   // Resolve compression middleware across CJS/ESM export shapes
