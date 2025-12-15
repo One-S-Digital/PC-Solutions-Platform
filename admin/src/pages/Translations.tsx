@@ -17,6 +17,7 @@ import {
   Package,
   Database,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Card from '../components/design-system/Card';
@@ -299,31 +300,109 @@ export default function Translations() {
     },
   });
 
-  // Poll job status with adaptive interval (10s base, backoff to 20s/30s on failure)
+  // Retry wrapper with exponential backoff for Render hibernation resilience
+  const pollWithRetry = async (
+    fn: () => Promise<any>,
+    maxAttempts: number = 5
+  ): Promise<any> => {
+    const delays = [1000, 2000, 4000, 8000]; // 1s, 2s, 4s, 8s
+    let lastError: any;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await fn();
+      } catch (error: any) {
+        lastError = error;
+        
+        // Check if error is retryable (502, 503, 504, network error, or timeout)
+        const isRetryable =
+          error?.response?.status === 502 ||
+          error?.response?.status === 503 ||
+          error?.response?.status === 504 ||
+          error?.code === 'ERR_NETWORK' ||
+          error?.code === 'ECONNABORTED' ||
+          error?.message?.includes('timeout');
+
+        if (!isRetryable || attempt === maxAttempts - 1) {
+          // Not retryable or last attempt - throw immediately
+          throw error;
+        }
+
+        // Log retry with clear message
+        const delay = delays[Math.min(attempt, delays.length - 1)];
+        console.log(
+          `🔄 API waking up, retrying... (attempt ${attempt + 1}/${maxAttempts}, waiting ${delay}ms)`
+        );
+        
+        // Wait with exponential backoff
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    throw lastError;
+  };
+
+  // Warm up API with health check before starting polling (optional)
+  const warmUpApi = async () => {
+    try {
+      // Use cache buster to ensure fresh health check and wake up hibernated instance
+      const cacheBuster = `?ts=${Date.now()}`;
+      await apiClient.get(`/health${cacheBuster}`, {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      console.log('✅ API health check successful');
+    } catch (error) {
+      // Non-blocking: if health check fails, continue anyway
+      console.warn('⚠️ API health check failed, continuing anyway:', error);
+    }
+  };
+
+  // Poll job status with resilient retry on 503/network errors
   useEffect(() => {
     if (fullSyncStatus !== 'polling' || !fullSyncJobId) return;
 
     let pollInterval = 10000; // Start with 10 seconds
     let consecutiveFailures = 0;
+    let consecutiveMissingJobs = 0; // Track transient job missing cases
     let pollTimeout: NodeJS.Timeout;
+    let isMounted = true;
 
     const poll = async () => {
+      if (!isMounted) return;
+
       try {
-        const result = await apiService.getFullSyncStatus(apiClient, fullSyncJobId);
+        // Wrap the API call with retry logic for Render hibernation
+        const result = await pollWithRetry(() =>
+          apiService.getFullSyncStatus(apiClient, fullSyncJobId)
+        );
         const job = result.data?.job;
 
         if (!job) {
-          clearTimeout(pollTimeout);
-          setFullSyncStatus('error');
-          alert('Job not found');
+          // Treat missing job as transient - allow next poll before erroring
+          consecutiveMissingJobs++;
+          if (consecutiveMissingJobs >= 2) {
+            // Only error after 2 consecutive missing jobs (transient handling)
+            if (!isMounted) return;
+            clearTimeout(pollTimeout);
+            setFullSyncStatus('error');
+            toast.error('Job not found or expired. The sync may have completed or been cancelled.');
+            return;
+          }
+          // Allow next scheduled poll to run
+          console.warn('⚠️ Job not found, will retry on next poll cycle');
+          toast.warning('Job status temporarily unavailable, retrying...', { duration: 3000 });
           return;
         }
+
+        // Reset missing job counter on success
+        consecutiveMissingJobs = 0;
 
         // Reset interval on success
         consecutiveFailures = 0;
         pollInterval = 10000;
 
         if (job.status === 'done') {
+          if (!isMounted) return;
           clearTimeout(pollTimeout);
           setFullSyncStatus('done');
           queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
@@ -344,11 +423,14 @@ export default function Translations() {
           
           // Reset after showing alert
           setTimeout(() => {
-            setFullSyncJobId(null);
-            setFullSyncStatus('idle');
+            if (isMounted) {
+              setFullSyncJobId(null);
+              setFullSyncStatus('idle');
+            }
           }, 1000);
           return;
         } else if (job.status === 'error') {
+          if (!isMounted) return;
           clearTimeout(pollTimeout);
           setFullSyncStatus('error');
           alert(
@@ -362,10 +444,21 @@ export default function Translations() {
         }
         // If status is 'queued' or 'running', continue polling
       } catch (error: any) {
-        console.error('Error polling job status:', error);
+        // Only log non-retryable errors or final failures after all retries
+        if (
+          error?.response?.status !== 502 &&
+          error?.response?.status !== 503 &&
+          error?.response?.status !== 504 &&
+          error?.code !== 'ERR_NETWORK' &&
+          error?.code !== 'ECONNABORTED'
+        ) {
+          console.error('Error polling job status (non-retryable):', error);
+        }
+        
         consecutiveFailures++;
         
-        // Backoff: 10s → 20s → 30s (max)
+        // Backoff: 10s → 20s → 30s (max) for consecutive poll cycles
+        // Note: Individual requests already retry with exponential backoff via pollWithRetry
         if (consecutiveFailures === 1) {
           pollInterval = 20000;
         } else if (consecutiveFailures >= 2) {
@@ -374,13 +467,22 @@ export default function Translations() {
       }
 
       // Schedule next poll
-      pollTimeout = setTimeout(poll, pollInterval);
+      if (isMounted) {
+        pollTimeout = setTimeout(poll, pollInterval);
+      }
     };
 
-    // Start polling
-    pollTimeout = setTimeout(poll, pollInterval);
+    // Warm up API before starting polling (non-blocking)
+    warmUpApi().then(() => {
+      if (isMounted) {
+        pollTimeout = setTimeout(poll, pollInterval);
+      }
+    });
 
-    return () => clearTimeout(pollTimeout);
+    return () => {
+      isMounted = false;
+      clearTimeout(pollTimeout);
+    };
   }, [fullSyncStatus, fullSyncJobId, apiClient, queryClient]);
 
   // Auto-fix hardcoded strings mutation
