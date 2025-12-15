@@ -1695,7 +1695,11 @@ export class StaticTranslationService {
       path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
     const languages = ['en', 'fr', 'de'];
     
-    this.logger.log(`📦 Importing translations from JSON files in ${localesPath}`);
+    // Diagnostic logging to confirm import path and existence at runtime
+    const pathExists = fs.existsSync(localesPath);
+    this.logger.log(
+      `📦 Importing translations from JSON files in ${localesPath} (exists=${pathExists})`,
+    );
     
     if (!fs.existsSync(localesPath)) {
       throw new Error(`Locales directory not found: ${localesPath}`);
@@ -1714,6 +1718,11 @@ export class StaticTranslationService {
       }
       
       const files = fs.readdirSync(langPath).filter((f: string) => f.endsWith('.json'));
+      this.logger.log(
+        `📂 Found ${files.length} JSON files for language "${lang}" in ${langPath}: ${files.join(
+          ', ',
+        )}`,
+      );
       
       for (const file of files) {
         const namespace = file.replace('.json', '');
