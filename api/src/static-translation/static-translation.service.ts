@@ -207,7 +207,8 @@ export class StaticTranslationService {
         );
       }
 
-      const whereSql = Prisma.join(conditions, Prisma.sql` AND `);
+      // Prisma.join expects the separator as a string (not Prisma.sql)
+      const whereSql = Prisma.join(conditions, ' AND ');
 
       const countRows = await this.prisma.$queryRaw<{ count: bigint }[]>(
         Prisma.sql`
@@ -283,7 +284,8 @@ export class StaticTranslationService {
         Prisma.sql`(st.key ILIKE ${like} OR st.value ILIKE ${like} OR st.namespace ILIKE ${like} OR en.value ILIKE ${like})`,
       );
     }
-    const whereSql = Prisma.join(conditions, Prisma.sql` AND `);
+    // Prisma.join expects the separator as a string (not Prisma.sql)
+    const whereSql = Prisma.join(conditions, ' AND ');
 
     const countRows = await this.prisma.$queryRaw<{ count: bigint }[]>(
       Prisma.sql`
