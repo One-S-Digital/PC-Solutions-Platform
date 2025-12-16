@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '../components/ui/Button';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useAppContext } from '../contexts/AppContext';
+import { useMessagingSocket } from '../hooks/useMessagingSocket';
 
 const MessagesPage: React.FC = () => {
   const { t } = useTranslation(['messages', 'common']);
@@ -26,7 +27,27 @@ const MessagesPage: React.FC = () => {
   const { currentUser } = useAppContext();
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
-  // Removed duplicate loadUserConversations call - MessagingContext already loads on mount
+  // WebSocket connection for diagnostics
+  const { isConnected: isSocketConnected } = useMessagingSocket({
+    conversationId: activeConversationId,
+    userId: currentUser?.id || '',
+    userName: currentUser?.name || '',
+  });
+
+  // Diagnostic logs
+  useEffect(() => {
+    console.log('📊 MessagesPage: Conversations loaded via REST', {
+      conversationCount: conversations.length,
+      conversationIds: conversations.map(c => c.id),
+    });
+  }, [conversations]);
+
+  useEffect(() => {
+    console.log('📊 MessagesPage: WebSocket state', {
+      isSocketConnected,
+      activeConversationId,
+    });
+  }, [isSocketConnected, activeConversationId]);
 
   useEffect(() => {
     if (paramConversationId && paramConversationId !== activeConversationId) {

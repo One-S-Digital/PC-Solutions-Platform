@@ -59,6 +59,15 @@ class MessagingService {
     try {
       const response = await apiService.get<Conversation[]>('/messaging/conversations', { token });
       
+      console.log('📊 messagingService.getConversations: Raw API response', {
+        hasResponse: !!response,
+        success: response.success,
+        hasData: !!response.data,
+        dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
+        dataLength: Array.isArray(response.data) ? response.data.length : 'N/A',
+        dataStructure: response.data && typeof response.data === 'object' ? Object.keys(response.data).slice(0, 5) : 'N/A',
+      });
+      
       // Handle empty array case - this is valid
       if (response.success === false) {
         console.error('❌ Failed to fetch conversations');
@@ -67,11 +76,28 @@ class MessagingService {
       
       // If data is undefined or null, return empty array (valid - user has no conversations)
       if (response.data === undefined || response.data === null) {
+        console.log('📊 messagingService.getConversations: Response data is null/undefined, returning empty array');
         return [];
       }
       
-      // Ensure data is an array
-      const conversations = Array.isArray(response.data) ? response.data : [];
+      // Handle ResponseEnvelope: if data.data exists, use that (nested envelope)
+      let conversations: any[] = [];
+      if (response.data && typeof response.data === 'object' && 'data' in response.data && Array.isArray(response.data.data)) {
+        // Nested envelope: { success: true, data: { data: [...] } }
+        conversations = response.data.data;
+        console.log('📊 messagingService.getConversations: Unwrapped nested envelope, found', conversations.length, 'conversations');
+      } else if (Array.isArray(response.data)) {
+        // Direct array: { success: true, data: [...] }
+        conversations = response.data;
+        console.log('📊 messagingService.getConversations: Direct array in response.data, found', conversations.length, 'conversations');
+      } else {
+        console.warn('📊 messagingService.getConversations: Unexpected response.data format', {
+          type: typeof response.data,
+          isArray: Array.isArray(response.data),
+          keys: response.data && typeof response.data === 'object' ? Object.keys(response.data) : 'N/A',
+        });
+        conversations = [];
+      }
       
       // Transform and deduplicate by ID (keep first occurrence)
       const transformed = conversations.map(conv => this.transformConversation(conv));

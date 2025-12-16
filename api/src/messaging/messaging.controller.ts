@@ -9,6 +9,8 @@ import {
   Query,
   UseGuards,
   Request,
+  Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MessagingService } from './messaging.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -21,6 +23,8 @@ import { UserRole } from '@prisma/client';
 @Controller('messaging')
 @UseGuards(RolesGuard)
 export class MessagingController {
+  private readonly logger = new Logger('MessagingController');
+
   constructor(private readonly messagingService: MessagingService) {}
 
   // Conversation Management
@@ -33,9 +37,41 @@ export class MessagingController {
 
   @Get('conversations')
   getUserConversations(@Request() req) {
+    // Extract request metadata for logging
+    const requestId = req.headers['x-request-id'] || req.headers['x-trace-id'] || 'no-request-id';
+    const route = req.route?.path || req.url;
+    const contextUserId = req.context?.userId;
+    const authSub = (req as any).user?.sub;
+    const authAzp = (req as any).user?.azp;
+    const userRole = req.context?.role;
+
+    // Log request metadata
+    this.logger.log({
+      message: 'getUserConversations request',
+      route,
+      contextUserId: contextUserId || 'MISSING',
+      authSub: authSub || 'not-set',
+      authAzp: authAzp || 'not-set',
+      userRole: userRole || 'not-set',
+      requestId,
+    });
+
+    // Validate userId exists - throw error instead of silently returning empty
+    if (!contextUserId) {
+      this.logger.error({
+        message: 'getUserConversations: req.context.userId is missing',
+        route,
+        hasContext: !!req.context,
+        contextKeys: req.context ? Object.keys(req.context) : [],
+        authSub,
+        authAzp,
+        requestId,
+      });
+      throw new UnauthorizedException('User context not found. Authentication required.');
+    }
+
     // Use Clerk ID for getUserConversations (service handles lookup)
-    const userId = req.context.userId;
-    return this.messagingService.getUserConversations(userId);
+    return this.messagingService.getUserConversations(contextUserId, requestId);
   }
 
   @Get('conversations/:id')

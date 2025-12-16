@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional } from '@nestjs/common';
+import { Injectable, Inject, Optional, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -8,6 +8,7 @@ import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class MessagingService {
+  private readonly logger = new Logger('MessagingService');
   /**
    * Extract storage key from a full URL or return the key if it's already a key
    * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
@@ -79,7 +80,8 @@ export class MessagingService {
    * Resolve rawUserId (Clerk ID or AppUser ID) to User.id
    * @returns User.id or null if not found
    */
-  private async resolveUserId(rawUserId: string): Promise<string | null> {
+  private async resolveUserId(rawUserId: string, requestId?: string): Promise<string | null> {
+    const logContext = { rawUserId, requestId: requestId || 'no-request-id' };
     let userClerkId: string;
     let userAppUser;
 
@@ -100,6 +102,10 @@ export class MessagingService {
     }
 
     if (!userAppUser) {
+      this.logger.warn({
+        message: 'resolveUserId: AppUser not found',
+        ...logContext,
+      });
       return null;
     }
 
@@ -108,7 +114,17 @@ export class MessagingService {
       select: { id: true },
     });
 
-    return user?.id || null;
+    if (!user) {
+      this.logger.warn({
+        message: 'resolveUserId: User not found in User table',
+        ...logContext,
+        appUserId: userAppUser.id,
+        clerkId: userClerkId,
+      });
+      return null;
+    }
+
+    return user.id;
   }
 
   /**
@@ -169,11 +185,11 @@ export class MessagingService {
   async createConversation(createConversationDto: CreateConversationDto, creatorId: string) {
     const { type, title, participantIds } = createConversationDto;
 
-    console.log('🔵 [createConversation] Starting conversation creation:', {
+    this.logger.log({
+      message: 'createConversation: Starting',
       type,
-      title,
-      participantIds,
       creatorId,
+      participantCount: participantIds.length,
     });
 
     // The creatorId can be either AppUser.id or Clerk ID (user_xxx)
@@ -231,7 +247,8 @@ export class MessagingService {
       const missingIds = participantIds.filter(id => !foundIds.has(id));
       
       // Log for debugging
-      console.error('Invalid participant IDs:', {
+      this.logger.warn({
+        message: 'createConversation: Invalid participant IDs',
         requested: participantIds,
         found: participantAppUsers.map(u => u.id),
         missing: missingIds,
@@ -264,7 +281,10 @@ export class MessagingService {
       const stillMissing = participantIds.filter(id => !foundIds.has(id));
       
       if (stillMissing.length > 0) {
-        console.warn(`⚠️ Some participant IDs not found in either AppUser or User table and will be excluded: ${stillMissing.join(', ')}`);
+        this.logger.warn({
+          message: 'createConversation: Some participant IDs not found and will be excluded',
+          missingIds: stillMissing,
+        });
       }
       
       if (validParticipantIds.length === 0) {
@@ -315,7 +335,10 @@ export class MessagingService {
     
     if (validParticipantAppUsers.length < participantAppUsers.length) {
       const missingClerkIds = clerkIds.filter(id => !foundClerkIds.has(id));
-      console.warn(`⚠️ Some participants don't have User records and will be excluded: ${missingClerkIds.join(', ')}`);
+      this.logger.warn({
+        message: 'createConversation: Some participants do not have User records and will be excluded',
+        missingClerkIds,
+      });
     }
     
     // Map participant AppUser IDs to User IDs
@@ -331,9 +354,6 @@ export class MessagingService {
     // Ensure creator is in the participant list (avoid duplicates)
     const allParticipantIds = new Set([creatorUser.id, ...participantUserIds]);
     const uniqueParticipantIds = Array.from(allParticipantIds);
-    
-    console.log('🔵 [createConversation] Final participant User IDs:', uniqueParticipantIds);
-    console.log('🔵 [createConversation] Creating conversation in database...');
 
     try {
       const conversation = await this.prisma.conversation.create({
@@ -361,10 +381,10 @@ export class MessagingService {
       },
     });
       
-      console.log('✅ [createConversation] Conversation created successfully:', {
-        id: conversation.id,
+      this.logger.log({
+        message: 'createConversation: Conversation created successfully',
+        conversationId: conversation.id,
         type: conversation.type,
-        title: conversation.title,
         participantCount: conversation.participants.length,
       });
       
@@ -374,30 +394,29 @@ export class MessagingService {
         messages: this.transformMessagesForResponse(conversation.messages || []),
       };
     } catch (error) {
-      console.error('❌ [createConversation] Error creating conversation:', error);
-      console.error('❌ [createConversation] Error details:', {
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+      this.logger.error({
+        message: 'createConversation: Error creating conversation',
+        error: error instanceof Error ? error.message : String(error),
         code: (error as any)?.code,
-        meta: (error as any)?.meta,
       });
       throw error;
     }
   }
 
-  async getUserConversations(rawUserId: string) {
+  async getUserConversations(rawUserId: string, requestId?: string) {
+    const logContext = { rawUserId, requestId: requestId || 'no-request-id' };
+    
     try {
-      console.log('🔵 [getUserConversations] Starting with rawUserId:', rawUserId);
-      
       // Convert rawUserId (Clerk ID or AppUser ID) to User.id
-      const finalUserId = await this.resolveUserId(rawUserId);
+      const finalUserId = await this.resolveUserId(rawUserId, requestId);
       
       if (!finalUserId) {
-        console.warn('⚠️ [getUserConversations] User not found:', rawUserId);
+        this.logger.warn({
+          message: 'getUserConversations: User lookup failed',
+          ...logContext,
+        });
         return [];
       }
-
-      console.log('🔵 [getUserConversations] Final User ID:', finalUserId);
 
       // Get user's role for filtering
       const userWithRole = await this.prisma.user.findUnique({
@@ -470,6 +489,13 @@ export class MessagingService {
         orderBy: { lastMessageAt: 'desc' },
       });
 
+      this.logger.log({
+        message: 'getUserConversations: Query completed',
+        ...logContext,
+        finalUserId,
+        conversationCount: conversations.length,
+      });
+
       // Transform messages in conversations to use secure download URLs
       return conversations.map(conv => ({
         ...conv,
@@ -478,9 +504,18 @@ export class MessagingService {
     } catch (error: unknown) {
       // Handle case where conversations table doesn't exist (P2021)
       if (error && typeof error === 'object' && 'code' in error && (error as any).code === 'P2021') {
-        console.warn('Conversations table does not exist, returning empty array');
+        this.logger.warn({
+          message: 'getUserConversations: Conversations table does not exist',
+          ...logContext,
+          errorCode: 'P2021',
+        });
         return [];
       }
+      this.logger.error({
+        message: 'getUserConversations: Unexpected error',
+        ...logContext,
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -536,12 +571,6 @@ export class MessagingService {
     // Store only the storage key, which will be converted to secure download URL when retrieved
     const storageKey = this.extractStorageKey(fileUrl);
 
-    console.log('🔵 [createMessage] Starting message creation:', {
-      conversationId,
-      rawSenderId,
-      content: content?.substring(0, 50),
-    });
-
     // Convert senderId (Clerk ID or AppUser ID) to User.id
     // senderId can be either Clerk ID (user_xxx) or AppUser.id (UUID)
     let senderClerkId: string;
@@ -580,7 +609,6 @@ export class MessagingService {
     }
 
     const finalSenderUserId = senderUser.id;
-    console.log('🔵 [createMessage] Sender User ID:', finalSenderUserId);
 
     // Convert receiverId if provided (same logic)
     let finalReceiverUserId: string | null = null;
@@ -621,7 +649,6 @@ export class MessagingService {
       data: { lastMessageAt: new Date() },
     });
 
-    console.log('🔵 [createMessage] Creating message in database...');
     try {
       const message = await this.prisma.message.create({
         data: {
@@ -650,10 +677,10 @@ export class MessagingService {
         },
       });
       
-      console.log('✅ [createMessage] Message created successfully:', {
-        id: message.id,
+      this.logger.log({
+        message: 'createMessage: Message created successfully',
+        messageId: message.id,
         conversationId: message.conversationId,
-        senderId: message.senderId,
       });
       
       // Transform message to use secure download URL
@@ -666,7 +693,10 @@ export class MessagingService {
       
       return transformedMessage;
     } catch (error) {
-      console.error('❌ [createMessage] Error creating message:', error);
+      this.logger.error({
+        message: 'createMessage: Error creating message',
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
