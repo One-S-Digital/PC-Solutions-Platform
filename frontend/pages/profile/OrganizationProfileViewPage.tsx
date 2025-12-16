@@ -218,7 +218,13 @@ const OrganizationProfileViewPage: React.FC = () => {
                 <p className="text-gray-600 mt-3 max-w-2xl">{organization.description}</p>
               )}
             </div>
-            {currentUser && currentUser.id !== (organization as any).__rawData?.members?.[0]?.user?.id && (
+            {/* Show message button if logged in and not a member of this organization */}
+            {currentUser && (() => {
+              const orgData = (organization as any).__rawData || organization;
+              const members = orgData?.members || [];
+              const isOwnOrganization = members.some((m: any) => m?.user?.id === currentUser.id);
+              return !isOwnOrganization;
+            })() && (
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="primary"
