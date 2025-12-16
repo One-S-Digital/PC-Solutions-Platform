@@ -338,7 +338,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               type="file"
               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
               onChange={handleFileSelect}
-              className="sr-only"
+              className="hidden"
               disabled={isUploading}
             />
             
