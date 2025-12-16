@@ -38,6 +38,7 @@ export class EnsureProfileInterceptor implements NestInterceptor {
     req.context = {
       ...(req.context ?? {}),
       accountId: appUser.id,
+      appUserId: appUser.id, // Required by upload controller
       profileId: user.id,
       clerkUserId: appUser.clerkId,
       userId: appUser.clerkId,
