@@ -218,7 +218,12 @@ const OrganizationProfileViewPage: React.FC = () => {
                 <p className="text-gray-600 mt-3 max-w-2xl">{organization.description}</p>
               )}
             </div>
-            {currentUser && !((organization as any).__rawData?.members || []).some((m: any) => m?.user?.id === currentUser.id) && (
+            {currentUser && (
+              // Show message button if: user is not a member of this org OR user is admin/super admin
+              !((organization as any).__rawData?.members || []).some((m: any) => m?.user?.id === currentUser.id) ||
+              currentUser.role === UserRole.ADMIN ||
+              currentUser.role === UserRole.SUPER_ADMIN
+            ) && (
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="primary"
@@ -236,7 +241,7 @@ const OrganizationProfileViewPage: React.FC = () => {
       {/* Organization Details - Always visible */}
       <div className="w-full">
         {organization ? (
-          <OrganizationPublicProfile organization={organization} showActions={true} />
+          <OrganizationPublicProfile organization={organization} showActions={true} currentUser={currentUser} />
         ) : (
           <Card className="p-6">
             <p className="text-gray-500 text-center">Loading organization details...</p>

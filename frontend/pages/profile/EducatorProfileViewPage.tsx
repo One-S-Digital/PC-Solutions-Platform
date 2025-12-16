@@ -153,6 +153,7 @@ const EducatorProfileViewPage: React.FC = () => {
 
   const isOwnProfile = currentUser?.id === candidate.id;
   const isFoundationUser = currentUser?.role === UserRole.FOUNDATION;
+  const isAdminOrSuperAdmin = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
 
   return (
     <div className="space-y-6">
@@ -411,12 +412,14 @@ const EducatorProfileViewPage: React.FC = () => {
         </div>
       </div>
 
-      {!isOwnProfile && isFoundationUser && (
+      {!isOwnProfile && (isFoundationUser || isAdminOrSuperAdmin) && (
         <Card className="p-6">
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-3">
-            <Button variant="primary" leftIcon={PlusCircleIcon} onClick={handleInviteToApply}>
-              {t('profile:educator.inviteToApply', 'Invite to Apply')}
-            </Button>
+            {isFoundationUser && (
+              <Button variant="primary" leftIcon={PlusCircleIcon} onClick={handleInviteToApply}>
+                {t('profile:educator.inviteToApply', 'Invite to Apply')}
+              </Button>
+            )}
             <Button variant="outline" leftIcon={EnvelopeIcon} onClick={handleSendMessage}>
               {t('common:buttons.sendMessage', 'Send Message')}
             </Button>
