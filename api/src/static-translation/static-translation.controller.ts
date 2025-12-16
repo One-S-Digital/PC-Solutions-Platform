@@ -70,6 +70,42 @@ export class StaticTranslationController {
   }
 
   /**
+   * Admin: List translation issues (missing translations / needs review)
+   */
+  @Get('admin/issues')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List translation issues (admin)' })
+  async listIssues(
+    @Query('type') type: 'missing' | 'needsReview' = 'needsReview',
+    @Query('lang') lang?: string,
+    @Query('namespace') namespace?: string,
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 50;
+    const result = await this.service.listIssues({
+      type,
+      lang,
+      namespace,
+      search,
+      page: pageNum,
+      limit: limitNum,
+    });
+    return {
+      success: true,
+      version: 1,
+      message: 'Translation issues retrieved successfully',
+      data: result.data,
+      pagination: result.pagination,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
    * Admin: Get single translation
    */
   @Get('admin/:namespace/:key/:lang')

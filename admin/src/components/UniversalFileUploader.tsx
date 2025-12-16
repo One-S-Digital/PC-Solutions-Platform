@@ -48,7 +48,6 @@ interface UniversalFileUploaderProps {
 }
 
 const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
-  const { t } = useTranslation(['common']);
   kind,
   currentAsset,
   fallbackUrl,
@@ -64,6 +63,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
   accessRoles = [],
   className = '',
 }) => {
+  const { t } = useTranslation(['common']);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);

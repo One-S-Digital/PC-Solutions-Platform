@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Mailgun from 'mailgun.js';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
 const FormData = require('form-data');
 
 export interface MailgunEmailOptions {
