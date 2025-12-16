@@ -19,6 +19,7 @@ export class UploadController {
   private readonly logger = new Logger(UploadController.name);
   private readonly allowedOrigins: string[];
   private readonly malwareScanningEnabled: boolean;
+  private readonly malwareScanRequired: boolean;
 
   constructor(
     private readonly r2Service: CloudflareR2Service,
@@ -37,7 +38,12 @@ export class UploadController {
     const scanningConfig = this.configService.get<string>('MALWARE_SCANNING_ENABLED', 'true');
     this.malwareScanningEnabled = scanningConfig.toLowerCase() !== 'false';
     
-    this.logger.log(`Upload security initialized - CORS origins: ${this.allowedOrigins.join(', ')}, Malware scanning: ${this.malwareScanningEnabled ? 'enabled' : 'disabled'}`);
+    // Check if malware scanning is required (blocks uploads when scanner unavailable)
+    // Defaults to false - allows graceful degradation when scanner is down
+    const scanRequiredConfig = this.configService.get<string>('MALWARE_SCAN_REQUIRED', 'false');
+    this.malwareScanRequired = scanRequiredConfig.toLowerCase() === 'true';
+    
+    this.logger.log(`Upload security initialized - CORS origins: ${this.allowedOrigins.join(', ')}, Malware scanning: ${this.malwareScanningEnabled ? 'enabled' : 'disabled'}, Scan required: ${this.malwareScanRequired ? 'yes (blocks if unavailable)' : 'no (graceful degradation)'}`);
   }
 
   /**
@@ -144,13 +150,17 @@ export class UploadController {
             throw error; // Re-throw malware detection errors
           }
           
-          // Log error but continue upload if scanner is unavailable (graceful degradation)
-          this.logger.error(`⚠️ Malware scan failed (scanner unavailable): ${file.originalname}`, error);
+          // Log error when scanner is unavailable
+          this.logger.warn(`⚠️ Malware scan failed (scanner unavailable): ${file.originalname} - ${(error as Error).message || 'Connection refused'}`);
           
-          // Block uploads when scanner is unavailable in production
-          if (process.env.NODE_ENV === 'production') {
+          // Block uploads if MALWARE_SCAN_REQUIRED=true, otherwise allow graceful degradation
+          if (this.malwareScanRequired) {
+            this.logger.error(`❌ Upload blocked - malware scanning is required but scanner unavailable`);
             throw new ServiceUnavailableException('Security scanner unavailable. Please try again later.');
           }
+          
+          // Graceful degradation: allow upload to proceed with warning
+          this.logger.warn(`⚠️ Proceeding with upload without malware scan (MALWARE_SCAN_REQUIRED=false): ${file.originalname}`);
         }
       }
 
