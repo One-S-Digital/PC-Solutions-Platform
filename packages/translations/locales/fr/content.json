@@ -21,7 +21,7 @@
         "other": "Autres ressources"
       },
       "categoryDisplay": {
-        "viewCategoryAria": "Voir {{titre}}",
+        "viewCategoryAria": "Voir {{title}}",
         "documentsCount_one": "{{count}} document",
         "documentsCount_other": "{{count}} documents"
       },
@@ -38,7 +38,7 @@
         "languageLabel": "Langue",
         "versionLabel": "Version"
       },
-      "documentsInCategoryTitle": "{{catégorie}} Documents",
+      "documentsInCategoryTitle": "{{category}} Documents",
       "backToCategoriesButton": "Retour aux catégories",
       "buttons": {
         "uploadDocument": "Télécharger un document"
@@ -197,7 +197,7 @@
   },
   "hrProcedures": {
     "categoryDisplay": {
-      "viewCategoryAria": "Voir {{titre}}",
+      "viewCategoryAria": "Voir {{title}}",
       "documentsCount_one": "{{count}} document",
       "documentsCount_other": "{{count}} documents"
     },
@@ -214,7 +214,7 @@
       "languageLabel": "Langue",
       "versionLabel": "Version"
     },
-    "documentsInCategoryTitle": "{{catégorie}} Documents",
+    "documentsInCategoryTitle": "{{category}} Documents",
     "backToCategoriesButton": "Retour aux catégories",
     "buttons": {
       "uploadDocument": "Télécharger un document"

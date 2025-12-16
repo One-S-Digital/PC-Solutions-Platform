@@ -581,6 +581,10 @@
         "openingHoursLabel": "Opening Hours",
         "openingHoursPlaceholder": "e.g., Monday-Friday 7:00-18:00",
         "title": "Operations"
+      },
+      "edit": {
+        "title": "Update core organization profile information",
+        "subtitle": "Use the form below to adjust capacity, pedagogy and languages. Changes are saved directly to the database."
       }
     },
     "title": "Organization Profile"
@@ -1244,7 +1248,7 @@
     "topViewedProducts": "Top Viewed Products"
   },
   "supplierCard": {
-    "viewProfileAndProducts": "view Profile And Products"
+    "viewProfileAndProducts": "View Profile And Products"
   },
   "supplierDashboard": {
     "loadError": "Failed to load dashboard data",

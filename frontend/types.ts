@@ -457,6 +457,7 @@ export const POLICY_CATEGORIES = [
     'Other',
 ] as const;
 export type PolicyCategory = typeof POLICY_CATEGORIES[number];
+// i18n-ignore-next-line (enum fallback labels - display uses translation keys)
 export const POLICY_CATEGORY_LABELS: Record<PolicyCategory, string> = {
     'Education Policy': 'Education Policy',
     'Health & Safety': 'Health & Safety',

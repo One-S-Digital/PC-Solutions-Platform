@@ -231,6 +231,7 @@ const StatePoliciesPage: React.FC = () => {
       .map(([category, count]) => ({ category, count }));
   }, [policyDocs, isAdminOrSuperAdmin]);
 
+  // i18n-ignore-next-line (enum keys - display uses translation keys)
   const categoryVisuals: Record<PolicyCategory, {icon: React.ElementType, colorClasses: string}> = {
     'Education Policy': { icon: AcademicCapIcon, colorClasses: 'bg-blue-500 text-white' },
     'Health & Safety': { icon: ShieldCheckIcon, colorClasses: 'bg-green-500 text-white' },

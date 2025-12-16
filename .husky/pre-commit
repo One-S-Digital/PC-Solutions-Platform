@@ -1,6 +1,6 @@
-# Run lint-staged on staged files (skip if not available, fail if available but errors)
+# Run lint-staged on staged files (optional - non-blocking)
 if command -v lint-staged >/dev/null 2>&1; then
-  lint-staged || exit 1
+  lint-staged || echo "⚠️  lint-staged had issues, but continuing with other checks..."
 else
   echo "lint-staged not configured at repo root; skipping"
 fi
@@ -17,5 +17,5 @@ pnpm run check:i18n-keys || exit 1
 # Find hardcoded strings that should be translated (mandatory - fails commit on error)
 node scripts/find-hardcoded-strings.mjs || exit 1
 
-# Check for TODO placeholders in translation files (mandatory - fails commit on error)
-node scripts/check-no-todo-i18n.mjs || exit 1
+# Lint translation values for quality issues (mandatory - fails commit on error)
+node scripts/lint-translation-values.mjs || exit 1

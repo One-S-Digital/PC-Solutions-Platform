@@ -47,7 +47,13 @@
     "dragHint": "Drag to move, corners to resize",
     "qualityNote": "Image will be saved as high-quality JPEG",
     "processing": "Processing...",
-    "apply": "Apply Crop"
+    "apply": "Apply Crop",
+    "presets": {
+      "profilePhoto": "Profile Photo",
+      "logo": "Logo",
+      "coverImage": "Cover Image",
+      "banner": "Banner"
+    }
   },
   "avatarSection": {
     "uploadAvatar": "Upload Photo",

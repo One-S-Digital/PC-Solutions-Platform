@@ -277,7 +277,7 @@
       "published": "[DE] Published"
     },
     "title": {
-      "edit": "[DE] Edit"
+      "edit": "Bearbeiten {{contentType}}"
     }
   },
   "createAccount": "BONTO ERSTELLEN",
@@ -767,6 +767,10 @@
       },
       "operations": {
         "title": "Titel"
+      },
+      "edit": {
+        "title": "Kern-Organisationsprofilinformationen aktualisieren",
+        "subtitle": "Verwenden Sie das untenstehende Formular, um Kapazität, Pädagogik und Sprachen anzupassen. Änderungen werden direkt in der Datenbank gespeichert."
       }
     },
     "title": "FoundationorganisationProfilePage.titel"
@@ -905,13 +909,13 @@
   "job listing transformation correct maps API data to UI model": "AuflistungStransformation Korreke",
   "joinPlatform": "Die Plattform Beitrenen",
   "labels": {
-    "allContractTypes": "Alle contract types",
+    "allContractTypes": "Alle Vertragsarten",
     "category": "category",
     "closesidebar": "closesidebar",
     "currentQuantity": "current Quantity",
     "decreaseQuantity": "decrease Quantity",
     "increaseQuantity": "increase Quantity",
-    "region": "region",
+    "region": "Region",
     "sortBy": "sort By",
     "supplierTags": "supplier Tags",
     "verificationCode": "Verifizierungscode"
@@ -1937,8 +1941,8 @@
     }
   },
   "supplierCard": {
-    "specializesIn": "[DE] Specializes In",
-    "viewProfileAndProducts": "[DE] View Profile And Products"
+    "specializesIn": "Spezialisiert auf {{mainCategoriesTagline}}",
+    "viewProfileAndProducts": "Profil und Produkte anzeigen"
   },
   "supplierDashboard": {
     "loadError": "load Error",

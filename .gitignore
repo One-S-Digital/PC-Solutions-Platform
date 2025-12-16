@@ -38,6 +38,7 @@ yarn-error.log*
 
 # Translation system generated files
 translation-audit.json
+i18n-hardcoded-report.json
 *.backup
 *.old
 backups/

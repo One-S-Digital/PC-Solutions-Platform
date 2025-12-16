@@ -12,7 +12,7 @@
     },
     "serviceCard": {
       "bookAppointment": "Termin buchen",
-      "categoryLabel": "{{Kategorie}}",
+      "categoryLabel": "{{category}}",
       "viewProvider": "Ansicht Anbieter"
     },
     "subtitles": {

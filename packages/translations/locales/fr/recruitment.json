@@ -26,7 +26,7 @@
     "title": "Réserve de candidats",
     "viewProfile": "Voir le profil"
   },
-  "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{nom}} ?",
+  "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
   "confirmations": {
     "deleteJob": "Êtes-vous sûr de vouloir supprimer cette offre d'emploi ?"
   },
@@ -141,7 +141,7 @@
       "title": "Réserve de candidats",
       "viewProfile": "Voir le profil"
     },
-    "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{nom}} ?",
+    "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
     "filters": {
       "availability": "Disponibilité",
       "experience": "Expérience",

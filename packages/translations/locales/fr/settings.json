@@ -128,6 +128,12 @@
     "workExperiencePlaceholder": "Décrivez votre expérience professionnelle..."
   },
   "imageCropper": {
+    "presets": {
+      "profilePhoto": "Photo de profil",
+      "logo": "Logo",
+      "coverImage": "Image de couverture",
+      "banner": "Bannière"
+    },
     "apply": "Appliquer le recadrage",
     "dragHint": "Glissez pour déplacer, coins pour redimensionner",
     "processing": "Traitement...",

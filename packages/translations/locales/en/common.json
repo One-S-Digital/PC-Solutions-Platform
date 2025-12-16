@@ -933,13 +933,13 @@
   },
   "joinPlatform": "Join the platform",
   "labels": {
-    "allContractTypes": "all Contract Types",
+    "allContractTypes": "All Contract Types",
     "category": "category",
     "closesidebar": "closesidebar",
     "currentQuantity": "current Quantity",
     "decreaseQuantity": "decrease Quantity",
     "increaseQuantity": "increase Quantity",
-    "region": "region",
+    "region": "Region",
     "sortBy": "sort By",
     "supplierTags": "supplier Tags",
     "verificationCode": "Verification Code"
@@ -1953,7 +1953,7 @@
     }
   },
   "supplierCard": {
-    "specializesIn": "Specializes In",
+    "specializesIn": "Specializes in {{mainCategoriesTagline}}",
     "viewProfileAndProducts": "View Profile And Products"
   },
   "supplierDashboard": {

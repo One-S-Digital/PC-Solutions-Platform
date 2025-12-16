@@ -33,7 +33,7 @@
       "addNewUserTBD": "Benutzerfunktionalität demnächst hinzufügen",
       "allUsersTitle": "Alle Benutzer",
       "filtersButton": "Filter",
-      "rolePageTitle": "{{Rolle}} Benutzer",
+      "rolePageTitle": "{{role}} Benutzer",
       "noUsersFound": "Keine Benutzer für diese Rolle gefunden",
       "addNewUser": "Neuen Benutzer hinzufügen",
       "emptyState": "Keine Benutzer gefunden",

@@ -4,30 +4,31 @@ import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 
 // Standard image sizes for profile elements
+// Note: Labels are translated via settings:imageCropper.presets.* keys
 export const IMAGE_CROP_PRESETS = {
   AVATAR: {
     width: 256,
     height: 256,
     aspectRatio: 1,
-    label: 'Profile Photo',
+    labelKey: 'settings:imageCropper.presets.profilePhoto',
   },
   LOGO: {
     width: 256,
     height: 256,
     aspectRatio: 1,
-    label: 'Logo',
+    labelKey: 'settings:imageCropper.presets.logo',
   },
   COVER: {
     width: 1600,
     height: 400,
     aspectRatio: 4,
-    label: 'Cover Image',
+    labelKey: 'settings:imageCropper.presets.coverImage',
   },
   BANNER: {
     width: 1200,
     height: 400,
     aspectRatio: 3,
-    label: 'Banner',
+    labelKey: 'settings:imageCropper.presets.banner',
   },
 } as const;
 
@@ -426,7 +427,7 @@ const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
               </h2>
               <p className="text-sm text-gray-500">
                 {t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', { 
-                  type: presetConfig.label 
+                  type: t(presetConfig.labelKey)
                 })}
               </p>
             </div>

@@ -271,7 +271,7 @@
       "published": "[FR] Published"
     },
     "title": {
-      "edit": "[FR] Edit"
+      "edit": "Modifier {{contentType}}"
     }
   },
   "createAccount": "Créer un compte",
@@ -758,6 +758,10 @@
       },
       "operations": {
         "title": "Titre"
+      },
+      "edit": {
+        "title": "Mettre à jour les informations principales du profil de l'organisation",
+        "subtitle": "Utilisez le formulaire ci-dessous pour ajuster la capacité, la pédagogie et les langues. Les modifications sont enregistrées directement dans la base de données."
       }
     },
     "title": "[FR] Title"
@@ -894,13 +898,13 @@
   },
   "joinPlatform": "Rejoindre la plateforme",
   "labels": {
-    "allContractTypes": "Tous contract types",
+    "allContractTypes": "Tous les types de contrats",
     "category": "category",
     "closesidebar": "closesidebar",
     "currentQuantity": "current Quantity",
     "decreaseQuantity": "decrease Quantity",
     "increaseQuantity": "increase Quantity",
-    "region": "region",
+    "region": "Région",
     "sortBy": "sort By",
     "supplierTags": "supplier Tags",
     "verificationCode": "Code de vérification"
@@ -1910,8 +1914,8 @@
     }
   },
   "supplierCard": {
-    "specializesIn": "[FR] Specializes In",
-    "viewProfileAndProducts": "[FR] View Profile And Products"
+    "specializesIn": "Spécialisé dans {{mainCategoriesTagline}}",
+    "viewProfileAndProducts": "Voir le profil et les produits"
   },
   "supplierDashboard": {
     "loadError": "load Error",

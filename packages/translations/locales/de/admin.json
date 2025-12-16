@@ -947,7 +947,7 @@
       "suggestion": "Versuchen Sie, Ihre Suchkriterien anzupassen oder fügen Sie einen neuen Dienst hinzu."
     },
     "addService": "Dienst hinzufügen",
-    "subtitle": "Verwalten von Diensten und Angeboten ({{Zahl}} insgesamt)",
+    "subtitle": "Verwalten von Diensten und Angeboten ({{count}} insgesamt)",
     "title": "Dienstleistungen"
   },
   "partnersPage": {

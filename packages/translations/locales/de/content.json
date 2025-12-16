@@ -21,7 +21,7 @@
         "other": "Andere Ressourcen"
       },
       "categoryDisplay": {
-        "viewCategoryAria": "Ansicht {{Titel}}",
+        "viewCategoryAria": "Ansicht {{title}}",
         "documentsCount_one": "{{count}} Dokument",
         "documentsCount_other": "{{count}} Dokumente"
       },
@@ -38,7 +38,7 @@
         "languageLabel": "Sprache",
         "versionLabel": "Version"
       },
-      "documentsInCategoryTitle": "{{Kategorie}} Dokumente",
+      "documentsInCategoryTitle": "{{category}} Dokumente",
       "backToCategoriesButton": "Zurück zu Kategorien",
       "buttons": {
         "uploadDocument": "Dokument hochladen"

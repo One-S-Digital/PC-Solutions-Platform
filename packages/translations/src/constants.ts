@@ -17,6 +17,7 @@ export const DEFAULT_LANGUAGE: SupportedLanguage = 'en';
 
 export const DEFAULT_NAMESPACE: TranslationNamespace = 'common';
 
+// i18n-ignore-next-line (semantic constants for fallback translation system)
 export const SWISS_TERMINOLOGY: Record<string, { fr: string; de: string }> = {
   'Save': { fr: 'Enregistrer', de: 'Speichern' },
   'Cancel': { fr: 'Annuler', de: 'Abbrechen' },
