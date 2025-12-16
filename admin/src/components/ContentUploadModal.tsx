@@ -579,7 +579,10 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="policyCategory" value={formData.category || POLICY_BROAD_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {POLICY_BROAD_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            {POLICY_BROAD_CATEGORIES.map(c => {
+              const key = c.replace(/\s+/g, '').replace(/&/g, '&');
+              return <option key={c} value={c}>{t(`content.policyCategory.${key}`, c)}</option>;
+            })}
           </select>
         </div>
         {renderButtonSelect('language', formData.language, languageOptions, t('eLearningPage.languageLabel','Language'), true)}

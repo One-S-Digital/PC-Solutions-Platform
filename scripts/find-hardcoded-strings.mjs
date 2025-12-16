@@ -121,6 +121,19 @@ function isExcluded(text, line) {
     return true;
   }
   
+  // Exclude exported const arrays (data-only constants, not UI strings)
+  // Pattern: export const NAME = [ 'Value1', 'Value2' ] as const;
+  if (/export\s+const\s+\w+\s*=\s*\[/.test(line) || 
+      /\]\s+as\s+const/.test(line) ||
+      /export\s+const\s+\w+\s*=\s*\[/.test(line.split('\n').slice(Math.max(0, line.split('\n').indexOf(line) - 5)).join('\n'))) {
+    return true;
+  }
+  
+  // Exclude lines with i18n-ignore comment
+  if (line.includes('i18n-ignore') || line.includes('// i18n-ignore')) {
+    return true;
+  }
+  
   return false;
 }
 
@@ -128,9 +141,31 @@ function findHardcodedStrings(filePath, content) {
   const results = [];
   const lines = content.split('\n');
   
+  // Track if we're inside an exported const array (data-only constant)
+  let insideExportedConstArray = false;
+  let exportedConstArrayStart = -1;
+  
   lines.forEach((line, lineNumber) => {
     // Skip lines that are clearly not user-facing
     if (line.trim().startsWith('//') || line.trim().startsWith('*')) {
+      return;
+    }
+    
+    // Track exported const arrays (data-only constants)
+    if (/export\s+const\s+\w+\s*=\s*\[/.test(line)) {
+      insideExportedConstArray = true;
+      exportedConstArrayStart = lineNumber;
+    }
+    
+    // Check if we're closing the array
+    if (insideExportedConstArray && (/\];?\s*$/.test(line) || /\]\s+as\s+const/.test(line))) {
+      insideExportedConstArray = false;
+      exportedConstArrayStart = -1;
+      return; // Skip the closing line
+    }
+    
+    // Skip all lines inside exported const arrays (these are data values, not UI strings)
+    if (insideExportedConstArray) {
       return;
     }
     

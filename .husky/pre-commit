@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run lint-staged on staged files (skip if not configured, fail if configured but errors)
-if pnpm list lint-staged >/dev/null 2>&1 || grep -q '"lint-staged"' package.json 2>/dev/null; then
-  pnpm lint-staged || exit 1
+# Run lint-staged on staged files (skip if not available, fail if available but errors)
+if command -v lint-staged >/dev/null 2>&1; then
+  lint-staged || exit 1
 else
   echo "lint-staged not configured at repo root; skipping"
 fi

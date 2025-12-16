@@ -1002,6 +1002,7 @@
     "yourResponse": "Your Response"
   },
   "loading": "Loading",
+  "uploadFile": "Upload a file",
   "locations": {
     "switzerland": "switzerland"
   },
@@ -2136,6 +2137,19 @@
       "processing": "processing",
       "ready": "ready"
     }
+  },
+  "settingsDebug": {
+    "skipAuth": "Skip Auth",
+    "hasApiClient": "Has API Client",
+    "saving": "Saving",
+    "fetchAttempts": "Fetch Attempts",
+    "successes": "Successes",
+    "failures": "Failures",
+    "lastStatus": "Last Status",
+    "lastTransport": "Last Transport",
+    "lastDuration": "Last Duration",
+    "lastSuccess": "Last Success",
+    "lastIssue": "Last Issue"
   },
   "verifyEmail": "Verify your email",
   "verifyEmailMessage": "We sent you a 6-digit code. Enter it below to verify.",

@@ -30,6 +30,17 @@
     "eLearningPage": {
       "title": "E-Learning-Artikel"
     },
+    "content": {
+      "policyCategory": {
+        "EducationPolicy": "Bildungspolitik",
+        "Health&Safety": "Gesundheit und Sicherheit",
+        "Labor&Employment": "Arbeit und Beschäftigung",
+        "ChildProtection": "Kinderschutz",
+        "DataPrivacy": "Datenschutz",
+        "Environmental": "Umwelt",
+        "Other": "Sonstiges"
+      }
+    },
     "hrProceduresPage": {
       "backToCategoriesButton": "Zurück zu Kategorien",
       "title": "HR-Dokumente"

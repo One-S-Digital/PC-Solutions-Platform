@@ -2095,6 +2095,20 @@
       "ready": "ready"
     }
   },
+  "settingsDebug": {
+    "skipAuth": "Ignorer l'authentification",
+    "hasApiClient": "A un client API",
+    "saving": "Enregistrement",
+    "fetchAttempts": "Tentatives de récupération",
+    "successes": "Succès",
+    "failures": "Échecs",
+    "lastStatus": "Dernier statut",
+    "lastTransport": "Dernier transport",
+    "lastDuration": "Dernière durée",
+    "lastSuccess": "Dernier succès",
+    "lastIssue": "Dernier problème"
+  },
+  "uploadFile": "Télécharger un fichier",
   "verifyEmail": "Vérifiez votre e-mail",
   "verifyEmailMessage": "Nous vous avons envoyé un code à 6 chiffres. Saisissez-le ci-dessous pour vérifier.",
   "verifying": "Vérification...",

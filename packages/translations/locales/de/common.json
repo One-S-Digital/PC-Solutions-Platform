@@ -2123,6 +2123,20 @@
       "ready": "ready"
     }
   },
+  "settingsDebug": {
+    "skipAuth": "Authentifizierung überspringen",
+    "hasApiClient": "Hat API-Client",
+    "saving": "Wird gespeichert",
+    "fetchAttempts": "Abrufversuche",
+    "successes": "Erfolge",
+    "failures": "Fehler",
+    "lastStatus": "Letzter Status",
+    "lastTransport": "Letzter Transport",
+    "lastDuration": "Letzte Dauer",
+    "lastSuccess": "Letzter Erfolg",
+    "lastIssue": "Letztes Problem"
+  },
+  "uploadFile": "Datei hochladen",
   "verifyEmail": "E-Mail bestätigen",
   "verifyEmailMessage": "Wir haben Ihnen einen 6-stelligen Code gesendet. Geben Sie ihn unten ein, um zu bestätigen.",
   "verifying": "Wird überprüft...",

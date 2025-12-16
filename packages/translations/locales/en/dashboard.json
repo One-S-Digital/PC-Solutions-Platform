@@ -127,7 +127,16 @@
     "uploading": "Uploading...",
     "version": "Version",
     "videoSource": "Video Source",
-    "videoUrl": "Video URL"
+    "videoUrl": "Video URL",
+    "policyCategory": {
+      "EducationPolicy": "Education Policy",
+      "Health&Safety": "Health & Safety",
+      "Labor&Employment": "Labor & Employment",
+      "ChildProtection": "Child Protection",
+      "DataPrivacy": "Data Privacy",
+      "Environmental": "Environmental",
+      "Other": "Other"
+    }
   },
   "dashboardDetailPage": {
     "activeUsers": {

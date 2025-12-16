@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, Bug, ChevronDown, ChevronUp, Copy, Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import settingsDebugger, {
   SettingsDebuggerState,
   SettingsDebugEvent,
@@ -88,6 +89,7 @@ const summariseDetails = (details?: SettingsDebugEvent['details']) => {
 }
 
 const SettingsDebugPanel: React.FC = () => {
+  const { t } = useTranslation('common')
   const [state, setState] = useState<SettingsDebuggerState>(() => settingsDebugger.getState())
   const [expanded, setExpanded] = useState(true)
   const [copied, setCopied] = useState(false)
@@ -113,24 +115,24 @@ const SettingsDebugPanel: React.FC = () => {
   const hasCriticalInsight = state.insights.some((insight) => insight.severity === 'critical')
 
   const snapshotStats = [
-    { label: 'Skip Auth', value: formatBoolean(state.snapshot.skipAuth) },
-    { label: 'Has API Client', value: formatBoolean(state.snapshot.hasApiClient) },
-    { label: 'Loading', value: formatBoolean(state.snapshot.loading) },
-    { label: 'Saving', value: formatBoolean(state.snapshot.saving) },
-    { label: 'Fetch Attempts', value: state.snapshot.fetchAttempts },
-    { label: 'Successes', value: state.snapshot.fetchSuccesses },
-    { label: 'Failures', value: state.snapshot.fetchFailures },
-    { label: 'Last Status', value: state.snapshot.lastFetchStatus ?? '—' },
-    { label: 'Last Transport', value: state.snapshot.lastFetchTransport ?? '—' },
+    { label: t('settingsDebug.skipAuth', 'Skip Auth'), value: formatBoolean(state.snapshot.skipAuth) },
+    { label: t('settingsDebug.hasApiClient', 'Has API Client'), value: formatBoolean(state.snapshot.hasApiClient) },
+    { label: t('loading', 'Loading'), value: formatBoolean(state.snapshot.loading) },
+    { label: t('settingsDebug.saving', 'Saving'), value: formatBoolean(state.snapshot.saving) },
+    { label: t('settingsDebug.fetchAttempts', 'Fetch Attempts'), value: state.snapshot.fetchAttempts },
+    { label: t('settingsDebug.successes', 'Successes'), value: state.snapshot.fetchSuccesses },
+    { label: t('settingsDebug.failures', 'Failures'), value: state.snapshot.fetchFailures },
+    { label: t('settingsDebug.lastStatus', 'Last Status'), value: state.snapshot.lastFetchStatus ?? '—' },
+    { label: t('settingsDebug.lastTransport', 'Last Transport'), value: state.snapshot.lastFetchTransport ?? '—' },
     {
-      label: 'Last Duration',
+      label: t('settingsDebug.lastDuration', 'Last Duration'),
       value:
         state.snapshot.lastFetchDurationMs !== null
           ? `${state.snapshot.lastFetchDurationMs}ms`
           : '—',
     },
-    { label: 'Last Success', value: formatRelativeTime(state.snapshot.lastSuccessTimestamp) },
-    { label: 'Last Issue', value: state.snapshot.lastIssue ?? '—' },
+    { label: t('settingsDebug.lastSuccess', 'Last Success'), value: formatRelativeTime(state.snapshot.lastSuccessTimestamp) },
+    { label: t('settingsDebug.lastIssue', 'Last Issue'), value: state.snapshot.lastIssue ?? '—' },
   ]
 
   const copyPayload = {

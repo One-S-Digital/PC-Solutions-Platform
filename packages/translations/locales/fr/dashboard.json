@@ -29,6 +29,17 @@
     "eLearningPage": {
       "title": "Éléments d'apprentissage en ligne"
     },
+    "content": {
+      "policyCategory": {
+        "EducationPolicy": "Politique éducative",
+        "Health&Safety": "Santé et sécurité",
+        "Labor&Employment": "Travail et emploi",
+        "ChildProtection": "Protection de l'enfance",
+        "DataPrivacy": "Confidentialité des données",
+        "Environmental": "Environnemental",
+        "Other": "Autre"
+      }
+    },
     "hrProceduresPage": {
       "backToCategoriesButton": "Retour aux catégories",
       "title": "Documents RH"
