@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run lint-staged on staged files (skip if not available, fail if available but errors)
 if command -v lint-staged >/dev/null 2>&1; then
   lint-staged || exit 1
