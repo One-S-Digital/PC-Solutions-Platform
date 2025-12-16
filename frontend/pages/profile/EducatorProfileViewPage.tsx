@@ -80,10 +80,14 @@ const EducatorProfileViewPage: React.FC = () => {
     fetchCandidate();
   }, [id, getCandidateById]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!candidate) return;
-    const conversationId = startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    navigate(`/messages/${conversationId}`);
+    try {
+      const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
   };
 
   const handleInviteToApply = async () => {

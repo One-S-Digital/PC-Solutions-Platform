@@ -123,21 +123,26 @@ const OrganizationProfileViewPage: React.FC = () => {
     fetchOrganization();
   }, [id, request]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!organization || !currentUser) return;
     
     // Find the primary contact user for this organization from the API response
     const orgData = (organization as any).__rawData || organization;
     const primaryMember = orgData.members?.[0]?.user;
     if (primaryMember) {
-      const conversationId = startOrGetConversation(
-        primaryMember.id,
-        primaryMember.firstName && primaryMember.lastName
-          ? `${primaryMember.firstName} ${primaryMember.lastName}`
-          : organization.name,
-        primaryMember.role || UserRole.FOUNDATION
-      );
-      navigate(`/messages/${conversationId}`);
+      try {
+        const conversationId = await startOrGetConversation(
+          primaryMember.id,
+          primaryMember.firstName && primaryMember.lastName
+            ? `${primaryMember.firstName} ${primaryMember.lastName}`
+            : organization.name,
+          primaryMember.role || UserRole.FOUNDATION
+        );
+        navigate(`/messages/${conversationId}`);
+      } catch (error) {
+        console.error('Failed to start conversation:', error);
+        alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));
+      }
     } else {
       alert(t('profile:organization.noContactAvailable', 'No contact available for this organization.'));
     }

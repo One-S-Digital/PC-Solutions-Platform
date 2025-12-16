@@ -34,10 +34,14 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
     onClose();
   };
 
-  const handleSendMessage = (application: Application) => {
-    const conversationId = startOrGetConversation(application.candidateId, application.candidateName ?? '', UserRole.EDUCATOR);
-    navigate(`/messages/${conversationId}`);
-    onClose();
+  const handleSendMessage = async (application: Application) => {
+    try {
+      const conversationId = await startOrGetConversation(application.candidateId, application.candidateName ?? '', UserRole.EDUCATOR);
+      navigate(`/messages/${conversationId}`);
+      onClose();
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
   };
 
   const bodyContent = () => {

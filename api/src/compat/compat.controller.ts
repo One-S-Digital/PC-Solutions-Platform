@@ -443,6 +443,20 @@ export class CompatController {
               },
             },
           },
+          members: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  role: true,
+                },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
         },
       });
       if (!org) {

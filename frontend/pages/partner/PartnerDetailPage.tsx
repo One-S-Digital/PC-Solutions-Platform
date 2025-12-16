@@ -181,13 +181,33 @@ const PartnerDetailPage: React.FC = () => {
   const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
 
-  const handleSendMessage = () => {
-    if (!partner) {
-      alert("Could not find organization to message.");
+  const handleSendMessage = async () => {
+    if (!partner || !currentUser) {
+      alert(t('partnerDetailPage.noContactAvailable', 'Could not find organization to message.'));
       return;
     }
-    // For now, navigate to messages with a placeholder
-    navigate('/messages');
+    
+    // Find the primary contact user for this organization
+    const rawData = (partner as any).__rawData || partner;
+    const primaryMember = rawData.members?.[0]?.user;
+    
+    if (primaryMember) {
+      try {
+        const conversationId = await startOrGetConversation(
+          primaryMember.id,
+          primaryMember.firstName && primaryMember.lastName
+            ? `${primaryMember.firstName} ${primaryMember.lastName}`
+            : partner.name,
+          primaryMember.role || (isSupplier ? UserRole.PRODUCT_SUPPLIER : UserRole.SERVICE_PROVIDER)
+        );
+        navigate(`/messages/${conversationId}`);
+      } catch (error) {
+        console.error('Failed to start conversation:', error);
+        alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));
+      }
+    } else {
+      alert(t('partnerDetailPage.noContactAvailable', 'No contact available for this organization.'));
+    }
   };
 
   const handleOpenServiceRequestModal = (service: Service) => {
