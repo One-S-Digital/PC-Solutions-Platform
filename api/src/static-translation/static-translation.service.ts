@@ -270,7 +270,7 @@ export class StaticTranslationService {
     }
 
     // needsReview
-    const conditions: Prisma.Sql[] = [Prisma.sql`st.needs_review = true`];
+    const conditions: Prisma.Sql[] = [Prisma.sql`st."needsReview" = true`];
     if (lang) {
       conditions.push(Prisma.sql`st.lang = ${lang}`);
     }
@@ -316,9 +316,9 @@ export class StaticTranslationService {
           st.key AS key,
           st.lang AS lang,
           st.value AS value,
-          st.updated_at AS "updatedAt",
-          st.updated_by AS "updatedBy",
-          st.needs_review AS "needsReview",
+          st."updatedAt" AS "updatedAt",
+          st."updatedBy" AS "updatedBy",
+          st."needsReview" AS "needsReview",
           en.value AS "enValue"
         FROM static_translations st
         JOIN static_translations en
@@ -326,7 +326,7 @@ export class StaticTranslationService {
          AND en.key = st.key
          AND en.lang = 'en'
         WHERE ${whereSql}
-        ORDER BY st.updated_at DESC
+        ORDER BY st."updatedAt" DESC
         LIMIT ${limit} OFFSET ${offset}
       `,
     );
