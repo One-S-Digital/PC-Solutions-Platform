@@ -318,19 +318,20 @@ export const apiService = {
   deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/organizations/${id}`),
 
   // Products
-
+  // Note: GET list uses compat controller, CRUD operations use marketplace controller
   getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
-  getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/products/${id}`),
-  createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/products', productData),
-  updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.put<ApiResponse<Product>>(`/products/${id}`, productData),
-  deleteProduct: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/products/${id}`),
+  getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/marketplace/products/${id}`),
+  createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/marketplace/products', productData),
+  updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.patch<ApiResponse<Product>>(`/marketplace/products/${id}`, productData),
+  deleteProduct: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/marketplace/products/${id}`),
 
   // Services
+  // Note: GET list uses compat controller, CRUD operations use marketplace controller
   getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/compat/services'),
-  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/compat/services/${id}`),
-  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/compat/services', serviceData),
-  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.put<ApiResponse<Service>>(`/compat/services/${id}`, serviceData),
-  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/services/${id}`),
+  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/marketplace/services/${id}`),
+  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/marketplace/services', serviceData),
+  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.patch<ApiResponse<Service>>(`/marketplace/services/${id}`, serviceData),
+  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/marketplace/services/${id}`),
 
   // Job Listings
   getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/compat/job-listings'),
@@ -361,7 +362,7 @@ export const apiService = {
     education?: string;
     availability?: string;
     shortBio?: string;
-  }) => apiClient.post<ApiResponse<Candidate>>('/candidates', candidateData),
+  }) => apiClient.post<ApiResponse<Candidate>>('/compat/candidates', candidateData),
 
 
   // Content Management - E-Learning

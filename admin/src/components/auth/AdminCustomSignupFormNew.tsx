@@ -270,17 +270,15 @@ export default function AdminCustomSignupForm() {
         ) : (
         <>
             <div className="text-center mb-2">
-                <div className="mx-auto h-16 w-16 bg-swiss-mint rounded-full flex items-center justify-center mb-2">
-                  {getAdminLogo(settings) ? (
-                    <img 
-                      src={getAdminLogo(settings)!} 
-                      alt={t('common:adminlogo')} 
-                      className="h-8 w-8 object-contain"
-                    />
-                  ) : (
-                    <SquaresPlusIcon className="h-8 w-8 text-white" />
-                  )}
-                </div>
+                {getAdminLogo(settings) ? (
+                  <img 
+                    src={getAdminLogo(settings)!} 
+                    alt={t('common:adminlogo')} 
+                    className="h-16 w-auto mx-auto mb-2"
+                  />
+                ) : (
+                  <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-2" />
+                )}
                 <h1 className="text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
                 <p className="text-sm text-gray-500 mt-1">{progressText}</p>
             </div>
