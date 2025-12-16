@@ -5,7 +5,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { Public } from '../auth/decorators/public.decorator';
 import { UserRole } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { PrincipalService } from '../principal/principal.service';
@@ -348,8 +347,7 @@ export class ProfileController {
   }
 
   @Get('organization/:id')
-  @Public()
-  @ApiOperation({ summary: 'Get organization profile by ID (public endpoint)' })
+  @ApiOperation({ summary: 'Get organization profile by ID' })
   @ApiResponse({ status: 200, description: 'Organization profile retrieved successfully' })
   async getOrganizationProfile(@Param('id') id: string) {
     const organization = await this.prisma.organization.findUnique({

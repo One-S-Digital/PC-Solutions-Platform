@@ -19,7 +19,6 @@ import { UserRole } from '@prisma/client';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { Public } from '../auth/decorators/public.decorator';
 import { EnsureProfileInterceptor } from '../principal/ensure-profile.interceptor';
 import { OrganizationDocumentsService } from './organization-documents.service';
 import {
@@ -183,12 +182,12 @@ export class OrganizationDocumentsController {
   }
 
   /**
-   * Get public documents for a specific organization (for public profile viewing)
-   * This endpoint is public and does not require authentication
+   * Get documents for a specific organization (for viewing organization profiles)
+   * Any authenticated user can access this endpoint to view organization documents
+   * No @Roles() decorator means all authenticated users are allowed
    */
   @Get('public/:organizationId')
-  @Public()
-  @ApiOperation({ summary: 'Get public organization documents' })
+  @ApiOperation({ summary: 'Get organization documents for profile viewing' })
   @ApiParam({ name: 'organizationId', description: 'Organization ID' })
   @ApiResponse({
     status: 200,
