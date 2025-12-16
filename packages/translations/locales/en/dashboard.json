@@ -820,11 +820,12 @@
     },
     "emptyState": {
       "message": {
-        "0": "You haven't submitted any enquiries yet.",
-        "1": "Start by filling out the enquiry form to find suitable childcare options."
+        "0": "You haven't submitted any enquiries yet. Start by filling out the ",
+        "1": "enquiry form"
       },
       "title": "No enquiries yet"
-    }
+    },
+    "title": "My Enquiries"
   },
   "parentLeadFormPage": {
     "authenticatedSuccessMessage": "Your enquiry has been submitted and saved to your dashboard.",

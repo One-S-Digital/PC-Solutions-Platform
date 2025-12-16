@@ -641,29 +641,29 @@
     "selectOption": "Bitte wählen Sie eine Option"
   },
   "foundationAnalyticsPage": {
-    "completed": "completed",
-    "conversionRate": "conversion Rate",
-    "enrolled": "enrolled",
-    "enrollmentTrend": "enrollment Trend",
-    "inProgress": "in Progress",
-    "last30Days": "last30 Days",
-    "last6Months": "last6 Months",
-    "last7Days": "last7 Days",
-    "last90Days": "last90 Days",
-    "lastYear": "last Year",
-    "newLeads": "new Leads",
-    "noEnrollmentData": "no Enrollment Data",
-    "noLeadData": "no Lead Data",
-    "noSpendingData": "no Spending Data",
-    "noTrainingData": "no Training Data",
-    "notStarted": "not Started",
-    "parentLeadConversion": "parent Lead Conversion",
-    "spendingByCategory": "spending By Category",
-    "staffTrainingCompletion": "staff Training Completion",
-    "title": "[DE] Title",
-    "totalLeads": "total Leads",
-    "totalSpending": "total Spending",
-    "trainingCompletion": "training Completion"
+    "completed": "Abgeschlossen",
+    "conversionRate": "Konversionsrate",
+    "enrolled": "Eingeschrieben",
+    "enrollmentTrend": "Einschreibungstrend",
+    "inProgress": "In Bearbeitung",
+    "last30Days": "Letzte 30 Tage",
+    "last6Months": "Letzte 6 Monate",
+    "last7Days": "Letzte 7 Tage",
+    "last90Days": "Letzte 90 Tage",
+    "lastYear": "Letztes Jahr",
+    "newLeads": "Neue Leads",
+    "noEnrollmentData": "Keine Einschreibungsdaten",
+    "noLeadData": "Keine Lead-Daten",
+    "noSpendingData": "Keine Ausgabendaten",
+    "noTrainingData": "Keine Schulungsdaten",
+    "notStarted": "Nicht begonnen",
+    "parentLeadConversion": "Eltern-Lead-Konversion",
+    "spendingByCategory": "Ausgaben nach Kategorie",
+    "staffTrainingCompletion": "Abschluss der Mitarbeiterschulung",
+    "title": "Analysen",
+    "totalLeads": "Gesamt Leads",
+    "totalSpending": "Gesamtausgaben",
+    "trainingCompletion": "Schulungsabschluss"
   },
   "foundationDashboard": {
     "activity": {
@@ -689,50 +689,50 @@
   },
   "foundationLeadsPage": {
     "accessDenied": {
-      "message": "message",
-      "title": "Titel"
+      "message": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen.",
+      "title": "Zugriff verweigert"
     },
-    "allResponses": "Alle responses",
-    "allStatuses": "Alle statuses",
+    "allResponses": "Alle Antworten",
+    "allStatuses": "Alle Status",
     "emptyState": {
-      "message": "message",
-      "title": "Titel"
+      "message": "Es gibt derzeit keine neuen Elternanfragen, die zu Ihrer Krippe passen.",
+      "title": "Keine eingehenden Leads"
     },
     "errors": {
-      "responseFailed": "response Failed"
+      "responseFailed": "Antwort konnte nicht gesendet werden"
     },
-    "searchPlaceholder": "Enter Suchen",
-    "title": "Titel",
-    "totalLeads": "total Leads"
+    "searchPlaceholder": "Suche nach Name, E-Mail oder Standort...",
+    "title": "Eingehende Eltern-Leads",
+    "totalLeads": "Gesamt Leads"
   },
   "foundationOrdersAppointmentsPage": {
-    "cancelOrderAlert": "Abbrechen order alert",
-    "exportCsvButton": "export Csv Button",
-    "exportCsvProductAlert": "export Csv Product Alert",
-    "exportCsvServiceAlert": "export Csv Service Alert",
-    "noProductOrders": "no Product Orders",
-    "noServiceAppointments": "no Service Appointments",
-    "productOrdersTab": "product Orders Tab",
-    "productOrdersTitle": "Product orders Titel",
-    "requestedAbbr": "requested Abbr",
-    "rescheduleAlert": "reschedule Alert",
-    "rescheduleButton": "reschedule Button",
-    "serviceAppointmentsTab": "service Appointments Tab",
-    "serviceAppointmentsTitle": "Service appointments Titel",
+    "cancelOrderAlert": "Sind Sie sicher, dass Sie diese Bestellung stornieren möchten?",
+    "exportCsvButton": "CSV exportieren",
+    "exportCsvProductAlert": "CSV-Export der Produktbestellungen gestartet",
+    "exportCsvServiceAlert": "CSV-Export der Dienstleistungstermine gestartet",
+    "noProductOrders": "Keine Produktbestellungen gefunden",
+    "noServiceAppointments": "Keine Dienstleistungstermine gefunden",
+    "productOrdersTab": "Produktbestellungen",
+    "productOrdersTitle": "Produktbestellungen",
+    "requestedAbbr": "Angef.",
+    "rescheduleAlert": "Sind Sie sicher, dass Sie diesen Termin neu planen möchten?",
+    "rescheduleButton": "Neu planen",
+    "serviceAppointmentsTab": "Dienstleistungstermine",
+    "serviceAppointmentsTitle": "Dienstleistungstermine",
     "table": {
-      "actions": "actions",
-      "date": "date",
-      "itemsQty": "items Qty",
-      "provider": "provider",
-      "refNo": "ref No",
-      "service": "service",
-      "status": "status",
-      "supplier": "supplier",
-      "total": "total"
+      "actions": "Aktionen",
+      "date": "Datum",
+      "itemsQty": "Artikelmenge",
+      "provider": "Anbieter",
+      "refNo": "Ref.-Nr.",
+      "service": "Service",
+      "status": "Status",
+      "supplier": "Lieferant",
+      "total": "Gesamt"
     },
-    "unknownProvider": "unknown Provider",
-    "unknownService": "unknown Service",
-    "unknownSupplier": "unknown Supplier"
+    "unknownProvider": "Unbekannter Anbieter",
+    "unknownService": "Unbekannter Service",
+    "unknownSupplier": "Unbekannter Lieferant"
   },
   "foundationOrganisationProfilePage": {
     "actions": {
@@ -910,15 +910,15 @@
   "joinPlatform": "Die Plattform Beitrenen",
   "labels": {
     "allContractTypes": "Alle Vertragsarten",
-    "category": "category",
-    "closesidebar": "closesidebar",
-    "currentQuantity": "current Quantity",
-    "decreaseQuantity": "decrease Quantity",
-    "increaseQuantity": "increase Quantity",
+    "category": "Kategorie",
+    "closesidebar": "Seitenleiste schließen",
+    "currentQuantity": "Aktuelle Menge",
+    "decreaseQuantity": "Menge verringern",
+    "increaseQuantity": "Menge erhöhen",
     "region": "Region",
-    "sortBy": "sort By",
-    "supplierTags": "supplier Tags",
-    "verificationCode": "Verifizierungscode"
+    "sortBy": "Sortieren nach",
+    "supplierTags": "Lieferanten-Tags",
+    "verificationCode": "Bestätigungscode"
   },
   "language": "Sprache",
   "languageSwitcher": {
@@ -1060,18 +1060,18 @@
     "userNotLoggedIn": "[DE] User Not Logged In"
   },
   "navbar": {
-    "goBackPreviousPage": "Go Zurück previous page",
-    "newMessages": "new Messages",
-    "noNewNotifications": "no New Notifications",
-    "notifications": "notifications",
-    "notificationsCount": "notifications Count",
-    "searchPlaceholder": "Enter Suchen",
-    "signOut": "sign Out",
-    "toggleNavigation": "toggle Navigation",
-    "unreadMessages": "unread Messages",
-    "userMenu": "user Menu",
-    "viewAll": "Anzeigen Alle",
-    "viewShoppingCart": "Anzeigen shopping cart"
+    "goBackPreviousPage": "Zurück zur vorherigen Seite",
+    "newMessages": "Neue Nachrichten",
+    "noNewNotifications": "Keine neuen Benachrichtigungen",
+    "notifications": "Benachrichtigungen",
+    "notificationsCount": "{{count}} Benachrichtigungen",
+    "searchPlaceholder": "Suchen...",
+    "signOut": "Abmelden",
+    "toggleNavigation": "Navigation umschalten",
+    "unreadMessages": "Ungelesene Nachrichten",
+    "userMenu": "Benutzermenü",
+    "viewAll": "Alle anzeigen",
+    "viewShoppingCart": "Warenkorb anzeigen"
   },
   "navigation": {
     "admin": "Administration",
@@ -1221,27 +1221,27 @@
   },
   "parentEnquiriesPage": {
     "accessDenied": {
-      "message": "message",
-      "title": "Titel"
+      "message": "Sie müssen als Elternteil angemeldet sein, um Anfragen anzuzeigen",
+      "title": "Zugriff verweigert"
     },
     "card": {
-      "awaitingMatch": "awaiting Match",
-      "childInfo": "Child Informationen",
-      "message": "message",
-      "notes": "notes",
-      "responsesTitle": "Responses Titel",
-      "submitted": "submitted",
-      "title": "Titel",
-      "waitingForMoreResponses": "waiting For More Responses"
+      "awaitingMatch": "Warten auf Übereinstimmung",
+      "childInfo": "Kinderinformationen",
+      "message": "Ihre Anfrage wurde an relevante Anbieter gesendet",
+      "notes": "Zusätzliche Notizen",
+      "responsesTitle": "Antworten",
+      "submitted": "Eingereicht am {{date}}",
+      "title": "Anfragedetails",
+      "waitingForMoreResponses": "Warten auf weitere Antworten..."
     },
     "emptyState": {
       "message": {
-        "0": "0",
-        "1": "1"
+        "0": "Sie haben noch keine Anfragen eingereicht. ",
+        "1": "Anfrageformular"
       },
-      "title": "Titel"
+      "title": "Noch keine Anfragen"
     },
-    "title": "[DE] Title"
+    "title": "Meine Anfragen"
   },
   "parentLeadFormPage": {
     "title": "[DE] Title"
@@ -1249,13 +1249,16 @@
   "parentSupportPage": {
     "faq": {
       "dataSecurity": {
-        "a": "[DE] A"
+        "a": "Ja, wir nehmen Datensicherheit ernst. Ihre Informationen sind verschlüsselt und werden nur mit Krippen geteilt, bei denen Sie eine Anfrage gestellt haben. Lesen Sie unsere Datenschutzrichtlinie für weitere Details.",
+        "q": "Sind meine persönlichen Daten sicher?"
       },
       "matchingProcess": {
-        "a": "[DE] A"
+        "a": "Unser System passt die Bedürfnisse Ihres Kindes an geeignete Krippen basierend auf Standort, Alter, besonderen Anforderungen und Verfügbarkeit an. Sie erhalten Antworten von passenden Anbietern.",
+        "q": "Wie funktioniert der Matching-Prozess?"
       },
       "responseTime": {
-        "a": "[DE] A"
+        "a": "Die meisten Krippen antworten innerhalb von 2-3 Werktagen. Sie können den Status Ihrer Anfragen in Ihrem Dashboard verfolgen.",
+        "q": "Wie schnell erhalte ich Antworten?"
       }
     }
   },
@@ -1516,10 +1519,13 @@
     "noServicesFound": "[DE] No services found"
   },
   "serviceProviderAnalyticsPage": {
-    "requestsByCanton": "requests By Canton",
-    "serviceRequestsPerWeek": "service Requests Per Week",
-    "title": "[DE] Title",
-    "topViewedServices": "top Viewed Services"
+    "requestDistributionByCanton": "Verteilung der Anfragen nach Kanton",
+    "requestsByCanton": "Anfragen nach Kanton",
+    "serviceRequestsPerWeek": "Service-Anfragen pro Woche",
+    "serviceRequestsTrend": "Trend der Service-Anfragen",
+    "serviceViews": "Service-Aufrufe",
+    "title": "Analysen",
+    "topViewedServices": "Meist angesehene Services"
   },
   "serviceProviderDashboard": {
     "loadError": "load Error",
@@ -1552,23 +1558,23 @@
     }
   },
   "serviceProviderListingsPage": {
-    "addNewServiceButton": "Hinzufügen new service button",
+    "addNewServiceButton": "Neuen Service hinzufügen",
     "card": {
-      "category": "category",
-      "delivery": "delivery"
+      "category": "Kategorie",
+      "delivery": "Lieferung"
     },
-    "confirmDelete": "Bestätigen Löschen",
-    "defaultPriceInfo": "Default price Informationen",
-    "deleteError": "Löschen error",
+    "confirmDelete": "Sind Sie sicher, dass Sie diesen Service löschen möchten?",
+    "defaultPriceInfo": "Kontaktieren Sie uns für ein Angebot",
+    "deleteError": "Fehler beim Löschen",
     "emptyState": {
-      "noMatch": "no Match",
-      "noServicesYet": "no Services Yet",
-      "title": "Titel"
+      "noMatch": "Keine Services entsprechen Ihren Suchkriterien",
+      "noServicesYet": "Sie haben noch keine Services erstellt",
+      "title": "Keine Services gefunden"
     },
-    "loadError": "load Error",
-    "saveError": "Speichern error",
-    "searchPlaceholder": "Enter Suchen",
-    "title": "[DE] Title"
+    "loadError": "Fehler beim Laden",
+    "saveError": "Fehler beim Speichern",
+    "searchPlaceholder": "Services suchen...",
+    "title": "Meine Services"
   },
   "serviceProviderOrganisationProfilePage": {
     "actions": {
@@ -2039,6 +2045,7 @@
     "labels": {
       "regionsServed": "regions Served"
     },
+    "subtitle": "Anzeigen und Verwalten der Informationen zum Unternehmensprofil.",
     "title": "Titel"
   },
   "supplierProductListingsPage": {
@@ -2049,9 +2056,9 @@
     "faqTitle": "Häufig Gestellte Fragen",
     "furtherAssistanceText": "Wenn Sie die gesuchte Antwort nicht finden, ist unser Support-Team hier, um Ihnen zu helfen. Kontaktieren Sie uns unter",
     "furtherAssistanceTitle": "Benötigen Sie Weitere Hilfe?",
-    "myTicketsTitle": "My tickets Titel",
-    "newTicketButton": "new Ticket Button",
-    "noTickets": "no Tickets",
+    "myTicketsTitle": "Meine Tickets",
+    "newTicketButton": "Neues Ticket",
+    "noTickets": "Keine Tickets",
     "orSubmitTicket": "oder senden Sie unten ein Support-Ticket.",
     "responses": "responses",
     "staffResponse": "staff Response",

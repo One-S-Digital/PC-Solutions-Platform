@@ -632,29 +632,29 @@
     "selectOption": "Veuillez sélectionner une option"
   },
   "foundationAnalyticsPage": {
-    "completed": "completed",
-    "conversionRate": "conversion Rate",
-    "enrolled": "enrolled",
-    "enrollmentTrend": "enrollment Trend",
-    "inProgress": "in Progress",
-    "last30Days": "last30 Days",
-    "last6Months": "last6 Months",
-    "last7Days": "last7 Days",
-    "last90Days": "last90 Days",
-    "lastYear": "last Year",
-    "newLeads": "new Leads",
-    "noEnrollmentData": "no Enrollment Data",
-    "noLeadData": "no Lead Data",
-    "noSpendingData": "no Spending Data",
-    "noTrainingData": "no Training Data",
-    "notStarted": "not Started",
-    "parentLeadConversion": "parent Lead Conversion",
-    "spendingByCategory": "spending By Category",
-    "staffTrainingCompletion": "staff Training Completion",
-    "title": "[FR] Title",
-    "totalLeads": "total Leads",
-    "totalSpending": "total Spending",
-    "trainingCompletion": "training Completion"
+    "completed": "Terminé",
+    "conversionRate": "Taux de conversion",
+    "enrolled": "Inscrit",
+    "enrollmentTrend": "Tendance des inscriptions",
+    "inProgress": "En cours",
+    "last30Days": "30 derniers jours",
+    "last6Months": "6 derniers mois",
+    "last7Days": "7 derniers jours",
+    "last90Days": "90 derniers jours",
+    "lastYear": "Dernière année",
+    "newLeads": "Nouveaux prospects",
+    "noEnrollmentData": "Aucune donnée d'inscription",
+    "noLeadData": "Aucune donnée de prospect",
+    "noSpendingData": "Aucune donnée de dépense",
+    "noTrainingData": "Aucune donnée de formation",
+    "notStarted": "Non commencé",
+    "parentLeadConversion": "Conversion des prospects parents",
+    "spendingByCategory": "Dépenses par catégorie",
+    "staffTrainingCompletion": "Achèvement de la formation du personnel",
+    "title": "Analytiques",
+    "totalLeads": "Total des prospects",
+    "totalSpending": "Total des dépenses",
+    "trainingCompletion": "Achèvement de la formation"
   },
   "foundationDashboard": {
     "activity": {
@@ -680,50 +680,50 @@
   },
   "foundationLeadsPage": {
     "accessDenied": {
-      "message": "message",
-      "title": "Titre"
+      "message": "Vous n'avez pas la permission d'accéder à cette page.",
+      "title": "Accès refusé"
     },
-    "allResponses": "Tous responses",
-    "allStatuses": "Tous statuses",
+    "allResponses": "Toutes les réponses",
+    "allStatuses": "Tous les statuts",
     "emptyState": {
-      "message": "message",
-      "title": "Titre"
+      "message": "Il n'y a actuellement aucune nouvelle demande parent correspondant à votre crèche.",
+      "title": "Aucun prospect entrant"
     },
     "errors": {
-      "responseFailed": "response Failed"
+      "responseFailed": "Échec de l'envoi de la réponse"
     },
-    "searchPlaceholder": "enter Rechercher",
-    "title": "Titre",
-    "totalLeads": "total Leads"
+    "searchPlaceholder": "Rechercher par nom, e-mail ou localisation...",
+    "title": "Prospects parents entrants",
+    "totalLeads": "Total des prospects"
   },
   "foundationOrdersAppointmentsPage": {
-    "cancelOrderAlert": "Annuler order alert",
-    "exportCsvButton": "export Csv Button",
-    "exportCsvProductAlert": "export Csv Product Alert",
-    "exportCsvServiceAlert": "export Csv Service Alert",
-    "noProductOrders": "no Product Orders",
-    "noServiceAppointments": "no Service Appointments",
-    "productOrdersTab": "product Orders Tab",
-    "productOrdersTitle": "product orders Titre",
-    "requestedAbbr": "requested Abbr",
-    "rescheduleAlert": "reschedule Alert",
-    "rescheduleButton": "reschedule Button",
-    "serviceAppointmentsTab": "service Appointments Tab",
-    "serviceAppointmentsTitle": "service appointments Titre",
+    "cancelOrderAlert": "Êtes-vous sûr de vouloir annuler cette commande ?",
+    "exportCsvButton": "Exporter CSV",
+    "exportCsvProductAlert": "Export CSV des commandes de produits démarré",
+    "exportCsvServiceAlert": "Export CSV des rendez-vous de services démarré",
+    "noProductOrders": "Aucune commande de produit trouvée",
+    "noServiceAppointments": "Aucun rendez-vous de service trouvé",
+    "productOrdersTab": "Commandes de produits",
+    "productOrdersTitle": "Commandes de produits",
+    "requestedAbbr": "Dem.",
+    "rescheduleAlert": "Êtes-vous sûr de vouloir reprogrammer ce rendez-vous ?",
+    "rescheduleButton": "Reprogrammer",
+    "serviceAppointmentsTab": "Rendez-vous de services",
+    "serviceAppointmentsTitle": "Rendez-vous de services",
     "table": {
-      "actions": "actions",
-      "date": "date",
-      "itemsQty": "items Qty",
-      "provider": "provider",
-      "refNo": "ref No",
-      "service": "service",
-      "status": "status",
-      "supplier": "supplier",
-      "total": "total"
+      "actions": "Actions",
+      "date": "Date",
+      "itemsQty": "Qté d'articles",
+      "provider": "Fournisseur",
+      "refNo": "N° réf.",
+      "service": "Service",
+      "status": "Statut",
+      "supplier": "Fournisseur",
+      "total": "Total"
     },
-    "unknownProvider": "unknown Provider",
-    "unknownService": "unknown Service",
-    "unknownSupplier": "unknown Supplier"
+    "unknownProvider": "Fournisseur inconnu",
+    "unknownService": "Service inconnu",
+    "unknownSupplier": "Fournisseur inconnu"
   },
   "foundationOrganisationProfilePage": {
     "actions": {
@@ -1045,18 +1045,18 @@
     "userNotLoggedIn": "[FR] User Not Logged In"
   },
   "navbar": {
-    "goBackPreviousPage": "go Retour previous page",
-    "newMessages": "new Messages",
-    "noNewNotifications": "no New Notifications",
-    "notifications": "notifications",
-    "notificationsCount": "notifications Count",
-    "searchPlaceholder": "enter Rechercher",
-    "signOut": "sign Out",
-    "toggleNavigation": "toggle Navigation",
-    "unreadMessages": "unread Messages",
-    "userMenu": "user Menu",
-    "viewAll": "Voir Tous",
-    "viewShoppingCart": "Voir shopping cart"
+    "goBackPreviousPage": "Retourner à la page précédente",
+    "newMessages": "Nouveaux messages",
+    "noNewNotifications": "Aucune nouvelle notification",
+    "notifications": "Notifications",
+    "notificationsCount": "{{count}} notifications",
+    "searchPlaceholder": "Rechercher...",
+    "signOut": "Déconnexion",
+    "toggleNavigation": "Basculer la navigation",
+    "unreadMessages": "Messages non lus",
+    "userMenu": "Menu utilisateur",
+    "viewAll": "Voir tout",
+    "viewShoppingCart": "Voir le panier"
   },
   "navigation": {
     "admin": "Administration",
@@ -1204,27 +1204,27 @@
   },
   "parentEnquiriesPage": {
     "accessDenied": {
-      "message": "message",
-      "title": "Titre"
+      "message": "Vous devez être connecté en tant que parent pour voir les demandes",
+      "title": "Accès refusé"
     },
     "card": {
-      "awaitingMatch": "awaiting Match",
-      "childInfo": "child Informations",
-      "message": "message",
-      "notes": "notes",
-      "responsesTitle": "responses Titre",
-      "submitted": "submitted",
-      "title": "Titre",
-      "waitingForMoreResponses": "waiting For More Responses"
+      "awaitingMatch": "En attente de correspondance",
+      "childInfo": "Informations sur l'enfant",
+      "message": "Votre demande a été envoyée aux fournisseurs concernés",
+      "notes": "Notes supplémentaires",
+      "responsesTitle": "Réponses",
+      "submitted": "Soumis le {{date}}",
+      "title": "Détails de la demande",
+      "waitingForMoreResponses": "En attente de plus de réponses..."
     },
     "emptyState": {
       "message": {
-        "0": "0",
-        "1": "1"
+        "0": "Vous n'avez pas encore soumis de demandes. ",
+        "1": "formulaire de demande"
       },
-      "title": "Titre"
+      "title": "Aucune demande pour le moment"
     },
-    "title": "[FR] Title"
+    "title": "Mes demandes"
   },
   "parentLeadFormPage": {
     "title": "[FR] Title"
@@ -1232,13 +1232,16 @@
   "parentSupportPage": {
     "faq": {
       "dataSecurity": {
-        "a": "[FR] A"
+        "a": "Oui, nous prenons la sécurité des données au sérieux. Vos informations sont cryptées et partagées uniquement avec les crèches auprès desquelles vous avez fait une demande. Lisez notre Politique de confidentialité pour plus de détails.",
+        "q": "Mes informations personnelles sont-elles sécurisées ?"
       },
       "matchingProcess": {
-        "a": "[FR] A"
+        "a": "Notre système fait correspondre les besoins de votre enfant avec des crèches appropriées en fonction de la localisation, de l'âge, des besoins spéciaux et de la disponibilité. Vous recevrez des réponses des fournisseurs correspondants.",
+        "q": "Comment fonctionne le processus de correspondance ?"
       },
       "responseTime": {
-        "a": "[FR] A"
+        "a": "La plupart des crèches répondent dans les 2-3 jours ouvrables. Vous pouvez suivre le statut de vos demandes dans votre tableau de bord.",
+        "q": "À quelle rapidité vais-je recevoir des réponses ?"
       }
     }
   },
@@ -1493,10 +1496,13 @@
     "noServicesFound": "[FR] No services found"
   },
   "serviceProviderAnalyticsPage": {
-    "requestsByCanton": "requests By Canton",
-    "serviceRequestsPerWeek": "service Requests Per Week",
-    "title": "[FR] Title",
-    "topViewedServices": "top Viewed Services"
+    "requestDistributionByCanton": "Répartition des demandes par canton",
+    "requestsByCanton": "Demandes par canton",
+    "serviceRequestsPerWeek": "Demandes de services par semaine",
+    "serviceRequestsTrend": "Tendance des demandes de services",
+    "serviceViews": "Vues de services",
+    "title": "Analytiques",
+    "topViewedServices": "Services les plus consultés"
   },
   "serviceProviderDashboard": {
     "loadError": "load Error",
@@ -1529,23 +1535,23 @@
     }
   },
   "serviceProviderListingsPage": {
-    "addNewServiceButton": "Ajouter new service button",
+    "addNewServiceButton": "Ajouter un nouveau service",
     "card": {
-      "category": "category",
-      "delivery": "delivery"
+      "category": "Catégorie",
+      "delivery": "Livraison"
     },
-    "confirmDelete": "Confirmer Supprimer",
-    "defaultPriceInfo": "default price Informations",
-    "deleteError": "Supprimer error",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce service ?",
+    "defaultPriceInfo": "Contacter pour un devis",
+    "deleteError": "Erreur lors de la suppression",
     "emptyState": {
-      "noMatch": "no Match",
-      "noServicesYet": "no Services Yet",
-      "title": "Titre"
+      "noMatch": "Aucun service ne correspond à vos critères de recherche",
+      "noServicesYet": "Vous n'avez pas encore créé de services",
+      "title": "Aucun service trouvé"
     },
-    "loadError": "load Error",
-    "saveError": "Enregistrer error",
-    "searchPlaceholder": "enter Rechercher",
-    "title": "[FR] Title"
+    "loadError": "Erreur lors du chargement",
+    "saveError": "Erreur lors de l'enregistrement",
+    "searchPlaceholder": "Rechercher des services...",
+    "title": "Mes services"
   },
   "serviceProviderOrganisationProfilePage": {
     "actions": {
@@ -2012,6 +2018,7 @@
     "labels": {
       "regionsServed": "regions Served"
     },
+    "subtitle": "Consultez et gérez les informations du profil de votre entreprise.",
     "title": "Titre"
   },
   "supplierProductListingsPage": {
@@ -2022,9 +2029,9 @@
     "faqTitle": "Questions Fréquemment Posées",
     "furtherAssistanceText": "Si vous ne trouvez pas la réponse que vous cherchez, notre équipe de support est là pour vous aider. Contactez-nous à",
     "furtherAssistanceTitle": "Besoin d'Aide Supplémentaire ?",
-    "myTicketsTitle": "my tickets Titre",
-    "newTicketButton": "new Ticket Button",
-    "noTickets": "no Tickets",
+    "myTicketsTitle": "Mes tickets",
+    "newTicketButton": "Nouveau ticket",
+    "noTickets": "Aucun ticket",
     "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
     "responses": "responses",
     "staffResponse": "staff Response",

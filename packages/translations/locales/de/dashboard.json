@@ -297,19 +297,43 @@
     "title": "Eltern-Dashboard",
     "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindergartensuche und Anfragen."
   },
+  "parentEnquiriesPage": {
+    "accessDenied": {
+      "message": "Sie müssen als Elternteil angemeldet sein, um Anfragen anzuzeigen",
+      "title": "Zugriff verweigert"
+    },
+    "card": {
+      "awaitingMatch": "Warten auf Übereinstimmung",
+      "childInfo": "Kinderinformationen",
+      "message": "Ihre Anfrage wurde an relevante Anbieter gesendet",
+      "notes": "Zusätzliche Notizen",
+      "responsesTitle": "Antworten",
+      "submitted": "Eingereicht am {{date}}",
+      "title": "Anfragedetails",
+      "waitingForMoreResponses": "Warten auf weitere Antworten..."
+    },
+    "emptyState": {
+      "message": {
+        "0": "Sie haben noch keine Anfragen eingereicht. Beginnen Sie mit dem Ausfüllen des ",
+        "1": "Anfrageformulars"
+      },
+      "title": "Noch keine Anfragen"
+    },
+    "title": "Meine Anfragen"
+  },
   "parentSupportPage": {
     "faq": {
       "dataSecurity": {
-        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details.",
-        "q": "Is my personal information secure?"
+        "a": "Ja, wir nehmen Datensicherheit ernst. Ihre Informationen sind verschlüsselt und werden nur mit Krippen geteilt, bei denen Sie eine Anfrage gestellt haben. Lesen Sie unsere Datenschutzrichtlinie für weitere Details.",
+        "q": "Sind meine persönlichen Daten sicher?"
       },
       "matchingProcess": {
-        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers.",
-        "q": "How does the matching process work?"
+        "a": "Unser System passt die Bedürfnisse Ihres Kindes an geeignete Krippen basierend auf Standort, Alter, besonderen Anforderungen und Verfügbarkeit an. Sie erhalten Antworten von passenden Anbietern.",
+        "q": "Wie funktioniert der Matching-Prozess?"
       },
       "responseTime": {
-        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard.",
-        "q": "How quickly will I receive responses?"
+        "a": "Die meisten Krippen antworten innerhalb von 2-3 Werktagen. Sie können den Status Ihrer Anfragen in Ihrem Dashboard verfolgen.",
+        "q": "Wie schnell erhalte ich Antworten?"
       }
     }
   },
@@ -365,44 +389,91 @@
     "welcome": "Willkommen in Ihrem Dienstanbieter-Dashboard"
   },
   "serviceProviderSupportPage": {
-    "ticketSubmittedAlert": "Support ticket submitted successfully"
+    "faq": {
+      "listService": {
+        "a": "Gehen Sie zu Meine Services und klicken Sie auf 'Neuen Service hinzufügen'. Füllen Sie die Servicedetails aus, legen Sie die Preise fest und geben Sie die Verfügbarkeit an. Services werden überprüft, bevor sie live geschaltet werden.",
+        "q": "Wie liste ich einen neuen Service auf?"
+      },
+      "profileInfo": {
+        "a": "Gehen Sie zu Einstellungen > Unternehmensprofil, um Ihre Geschäftsinformationen, Kontaktdaten und Servicedeskriptionen zu aktualisieren.",
+        "q": "Wie aktualisiere ich meine Profilinformationen?"
+      },
+      "respondRequests": {
+        "a": "Zeigen Sie eingehende Anfragen im Bereich Service-Anfragen an. Sie können Anfragen akzeptieren, ablehnen oder Termine direkt von dort aus planen.",
+        "q": "Wie antworte ich auf Service-Anfragen?"
+      },
+      "updateAvailability": {
+        "a": "Aktualisieren Sie Ihren Verfügbarkeitskalender in Einstellungen > Kontakt und Buchung. Sie können Ihre bevorzugten Arbeitszeiten und -tage festlegen.",
+        "q": "Wie aktualisiere ich meine Verfügbarkeit?"
+      }
+    },
+    "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
   },
   "sidebar": {
+    "admins": "Administratoren",
+    "allUsers": "Alle Benutzer",
     "allUsersTitle": "Gesamtbenutzer",
-    "analytics": "Analytics",
+    "analytics": "Analysen",
     "applications": "Bewerbungen",
-    "billingSubscription": "Billing & Subscription",
-    "currentPlan": "Current Plan",
+    "billingSubscription": "Abrechnung und Abonnement",
+    "candidatePool": "Kandidatenpool",
+    "content": "Inhalt",
+    "currentPlan": "Aktueller Plan",
     "dashboard": "Dashboard",
-    "discountTerminations": "Discount Terminations",
-    "fileGallery": "File Gallery",
+    "dashboardHome": "Dashboard-Startseite",
+    "designSystem": "Design-System",
+    "discountTerminations": "Rabattkündigungen",
+    "eLearning": "E-Learning",
+    "fileGallery": "Dateigalerie",
     "foundations": "Stiftungen",
+    "homeFindCreche": "Startseite / Krippe finden",
+    "hrProcedures": "HR-Verfahren",
+    "jobBoard": "Stellenbörse",
     "jobListings": "Stellenanzeigen",
-    "manageSubscriptionDesc": "Manage your subscription and billing",
-    "messages": "Messages",
-    "myProfile": "My Profile",
-    "ordersAppointments": "Orders & Appointments",
+    "manageSubscriptionDesc": "Verwalten Sie Ihr Abonnement und Ihre Abrechnung",
+    "marketplace": "Marktplatz",
+    "messages": "Nachrichten",
+    "myProfile": "Mein Profil",
+    "myRequests": "Meine Anfragen",
+    "orders": "Bestellungen",
+    "ordersAppointments": "Bestellungen und Termine",
+    "organisationProfile": "Organisationsprofil",
     "parentLeads": "Eltern-Leads",
+    "parents": "Eltern",
+    "partners": "Partner",
+    "platformSettings": "Plattformeinstellungen",
+    "productMarketplace": "Produktmarktplatz",
+    "productSuppliers": "Produktlieferanten",
     "products": "Produkte",
-    "services": "Services",
-    "settings": "Settings",
+    "recruitment": "Rekrutierung",
+    "serviceMarketplace": "Dienstleistungsmarktplatz",
+    "serviceProviders": "Dienstleister",
+    "services": "Dienste",
+    "settings": "Einstellungen",
+    "statePolicies": "Staatspolitik",
     "support": "Support",
-    "supportFAQ": "Support & FAQ"
+    "supportFAQ": "Support und FAQ",
+    "systemMonitoring": "Systemüberwachung",
+    "translations": "Übersetzungen",
+    "users": "Benutzer"
   },
   "supplierAnalyticsPage": {
-    "datePickerLabel": "Select Date Range",
-    "exportCsvAlert": "CSV export started",
-    "exportCsvButton": "Export CSV",
-    "mockChartText": "Mock chart visualization",
-    "orderRequestsPerWeek": "Order Requests Per Week",
-    "promoCodePerformance": "Promo Code Performance",
-    "requestsByCanton": "Requests by Canton",
+    "datePickerLabel": "Datumsbereich auswählen",
+    "exportCsvAlert": "CSV-Export gestartet",
+    "exportCsvButton": "CSV exportieren",
+    "mockChartText": "Simulierte Diagrammvisualisierung",
+    "orderRequestsPerWeek": "Bestellanfragen pro Woche",
+    "orderRequestsTrend": "Trend der Bestellanfragen",
+    "productViews": "Produktansichten",
+    "promoCodePerformance": "Leistung des Aktionscodes",
+    "requestsByCanton": "Anfragen nach Kanton",
+    "requestsDistribution": "Verteilung der Anfragen",
     "table": {
       "code": "Code",
-      "estRevenueImpact": "Est. Revenue Impact",
-      "uses": "Uses"
+      "estRevenueImpact": "Geschätzte Umsatzauswirkung",
+      "uses": "Verwendungen"
     },
-    "topViewedProducts": "Top Viewed Products"
+    "topViewedProducts": "Meist angesehene Produkte"
   },
   "supplierCard": {
     "viewProfileAndProducts": "Profil und Produkte anzeigen"

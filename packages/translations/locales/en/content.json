@@ -56,20 +56,35 @@
         "manageAlerts": "Manage Alerts"
       },
       "emptyState": {
-        "noPolicies": "No policies available"
+        "noPolicies": "No policies available",
+        "noPoliciesFoundForFilters": "No policies found for selected filters",
+        "noPoliciesMatchFilters": "No policies match your filters"
       },
+      "errors": {
+        "downloadFailed": "Download failed"
+      },
+      "filters": {
+        "allCantonsRegions": "All Cantons and Regions",
+        "ariaLabelCategory": "Filter by category",
+        "ariaLabelCanton": "Filter by canton",
+        "ariaLabelPolicyType": "Filter by policy type",
+        "canton": "Canton",
+        "policyType": "Policy Type",
+        "region": "Region"
+      },
+      "labels": {
+        "category": "Category",
+        "effective": "Effective",
+        "published": "Published",
+        "type": "Type",
+        "updated": "Updated"
+      },
+      "loading": "Loading...",
       "sections": {
+        "categories": "Categories",
         "compliance": "Compliance",
         "downloads": "Downloads",
         "updates": "Updates"
-      },
-      "filters": {
-        "policyType": "Policy Type",
-        "canton": "Canton",
-        "region": "Region",
-        "ariaLabelPolicyType": "Filter by policy type",
-        "ariaLabelCanton": "Filter by canton",
-        "ariaLabelCategory": "Filter by category"
       },
       "tabs": {
         "cantonal": "Cantonal",

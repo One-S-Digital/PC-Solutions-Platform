@@ -672,29 +672,29 @@
     "selectOption": "Please select an option"
   },
   "foundationAnalyticsPage": {
-    "completed": "completed",
-    "conversionRate": "conversion Rate",
-    "enrolled": "enrolled",
-    "enrollmentTrend": "enrollment Trend",
-    "inProgress": "in Progress",
-    "last30Days": "last30 Days",
-    "last6Months": "last6 Months",
-    "last7Days": "last7 Days",
-    "last90Days": "last90 Days",
-    "lastYear": "last Year",
-    "newLeads": "new Leads",
-    "noEnrollmentData": "no Enrollment Data",
-    "noLeadData": "no Lead Data",
-    "noSpendingData": "no Spending Data",
-    "noTrainingData": "no Training Data",
-    "notStarted": "not Started",
-    "parentLeadConversion": "parent Lead Conversion",
-    "spendingByCategory": "spending By Category",
-    "staffTrainingCompletion": "staff Training Completion",
-    "title": "Title",
-    "totalLeads": "total Leads",
-    "totalSpending": "total Spending",
-    "trainingCompletion": "training Completion"
+    "completed": "Completed",
+    "conversionRate": "Conversion Rate",
+    "enrolled": "Enrolled",
+    "enrollmentTrend": "Enrollment Trend",
+    "inProgress": "In Progress",
+    "last30Days": "Last 30 Days",
+    "last6Months": "Last 6 Months",
+    "last7Days": "Last 7 Days",
+    "last90Days": "Last 90 Days",
+    "lastYear": "Last Year",
+    "newLeads": "New Leads",
+    "noEnrollmentData": "No Enrollment Data",
+    "noLeadData": "No Lead Data",
+    "noSpendingData": "No Spending Data",
+    "noTrainingData": "No Training Data",
+    "notStarted": "Not Started",
+    "parentLeadConversion": "Parent Lead Conversion",
+    "spendingByCategory": "Spending by Category",
+    "staffTrainingCompletion": "Staff Training Completion",
+    "title": "Analytics",
+    "totalLeads": "Total Leads",
+    "totalSpending": "Total Spending",
+    "trainingCompletion": "Training Completion"
   },
   "foundationDashboard": {
     "activity": {
@@ -720,50 +720,50 @@
   },
   "foundationLeadsPage": {
     "accessDenied": {
-      "message": "message",
-      "title": "title"
+      "message": "You do not have permission to access this page.",
+      "title": "Access Denied"
     },
-    "allResponses": "all Responses",
-    "allStatuses": "all Statuses",
+    "allResponses": "All Responses",
+    "allStatuses": "All Statuses",
     "emptyState": {
-      "message": "message",
-      "title": "title"
+      "message": "There are currently no new parent enquiries matching your daycare.",
+      "title": "No Incoming Leads"
     },
     "errors": {
-      "responseFailed": "response Failed"
+      "responseFailed": "Failed to send response"
     },
-    "searchPlaceholder": "Enter search",
-    "title": "title",
-    "totalLeads": "total Leads"
+    "searchPlaceholder": "Search by name, email, or location...",
+    "title": "Incoming Parent Leads",
+    "totalLeads": "Total Leads"
   },
   "foundationOrdersAppointmentsPage": {
-    "cancelOrderAlert": "cancel Order Alert",
-    "exportCsvButton": "export Csv Button",
-    "exportCsvProductAlert": "export Csv Product Alert",
-    "exportCsvServiceAlert": "export Csv Service Alert",
-    "noProductOrders": "no Product Orders",
-    "noServiceAppointments": "no Service Appointments",
-    "productOrdersTab": "product Orders Tab",
-    "productOrdersTitle": "product Orders Title",
-    "requestedAbbr": "requested Abbr",
-    "rescheduleAlert": "reschedule Alert",
-    "rescheduleButton": "reschedule Button",
-    "serviceAppointmentsTab": "service Appointments Tab",
-    "serviceAppointmentsTitle": "service Appointments Title",
+    "cancelOrderAlert": "Are you sure you want to cancel this order?",
+    "exportCsvButton": "Export CSV",
+    "exportCsvProductAlert": "Product orders CSV export started",
+    "exportCsvServiceAlert": "Service appointments CSV export started",
+    "noProductOrders": "No product orders found",
+    "noServiceAppointments": "No service appointments found",
+    "productOrdersTab": "Product Orders",
+    "productOrdersTitle": "Product Orders",
+    "requestedAbbr": "Req.",
+    "rescheduleAlert": "Are you sure you want to reschedule this appointment?",
+    "rescheduleButton": "Reschedule",
+    "serviceAppointmentsTab": "Service Appointments",
+    "serviceAppointmentsTitle": "Service Appointments",
     "table": {
-      "actions": "actions",
-      "date": "date",
-      "itemsQty": "items Qty",
-      "provider": "provider",
-      "refNo": "ref No",
-      "service": "service",
-      "status": "status",
-      "supplier": "supplier",
-      "total": "total"
+      "actions": "Actions",
+      "date": "Date",
+      "itemsQty": "Items Qty",
+      "provider": "Provider",
+      "refNo": "Ref No",
+      "service": "Service",
+      "status": "Status",
+      "supplier": "Supplier",
+      "total": "Total"
     },
-    "unknownProvider": "unknown Provider",
-    "unknownService": "unknown Service",
-    "unknownSupplier": "unknown Supplier"
+    "unknownProvider": "Unknown Provider",
+    "unknownService": "Unknown Service",
+    "unknownSupplier": "Unknown Supplier"
   },
   "foundationOrganisationProfilePage": {
     "actions": {
@@ -1081,16 +1081,16 @@
     "userNotLoggedIn": "User Not Logged In"
   },
   "navbar": {
-    "goBackPreviousPage": "go Back Previous Page",
-    "newMessages": "new Messages",
-    "noNewNotifications": "no New Notifications",
-    "notifications": "notifications",
-    "notificationsCount": "notifications Count",
-    "searchPlaceholder": "Enter search",
-    "signOut": "sign Out",
-    "toggleNavigation": "toggle Navigation",
-    "unreadMessages": "unread Messages",
-    "userMenu": "user Menu",
+    "goBackPreviousPage": "Go back to previous page",
+    "newMessages": "New messages",
+    "noNewNotifications": "No new notifications",
+    "notifications": "Notifications",
+    "notificationsCount": "{{count}} notifications",
+    "searchPlaceholder": "Search...",
+    "signOut": "Sign Out",
+    "toggleNavigation": "Toggle navigation",
+    "unreadMessages": "Unread messages",
+    "userMenu": "User menu",
     "viewAll": "view All",
     "viewShoppingCart": "view Shopping Cart"
   },
@@ -2051,6 +2051,7 @@
     "labels": {
       "regionsServed": "regions Served"
     },
+    "subtitle": "View and manage your company profile information.",
     "title": "title"
   },
   "supplierProductListingsPage": {
@@ -2061,9 +2062,9 @@
     "faqTitle": "Frequently Asked Questions",
     "furtherAssistanceText": "If you can't find the answer you're looking for, our support team is here to help. Contact us at",
     "furtherAssistanceTitle": "Need Further Assistance?",
-    "myTicketsTitle": "my Tickets Title",
-    "newTicketButton": "new Ticket Button",
-    "noTickets": "no Tickets",
+    "myTicketsTitle": "My Tickets",
+    "newTicketButton": "New Ticket",
+    "noTickets": "No tickets",
     "orSubmitTicket": "or submit a support ticket below.",
     "responses": "responses",
     "staffResponse": "staff Response",

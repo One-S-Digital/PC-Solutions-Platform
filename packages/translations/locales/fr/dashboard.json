@@ -296,19 +296,43 @@
     "title": "Tableau de bord des parents",
     "welcomeMessage": "Bienvenue ! Voici un aperçu de votre recherche et de vos demandes en matière de garde d'enfants."
   },
+  "parentEnquiriesPage": {
+    "accessDenied": {
+      "message": "Vous devez être connecté en tant que parent pour voir les demandes",
+      "title": "Accès refusé"
+    },
+    "card": {
+      "awaitingMatch": "En attente de correspondance",
+      "childInfo": "Informations sur l'enfant",
+      "message": "Votre demande a été envoyée aux fournisseurs concernés",
+      "notes": "Notes supplémentaires",
+      "responsesTitle": "Réponses",
+      "submitted": "Soumis le {{date}}",
+      "title": "Détails de la demande",
+      "waitingForMoreResponses": "En attente de plus de réponses..."
+    },
+    "emptyState": {
+      "message": {
+        "0": "Vous n'avez pas encore soumis de demandes. Commencez par remplir le ",
+        "1": "formulaire de demande"
+      },
+      "title": "Aucune demande pour le moment"
+    },
+    "title": "Mes demandes"
+  },
   "parentSupportPage": {
     "faq": {
       "dataSecurity": {
-        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details.",
-        "q": "Is my personal information secure?"
+        "a": "Oui, nous prenons la sécurité des données au sérieux. Vos informations sont cryptées et partagées uniquement avec les crèches auprès desquelles vous avez fait une demande. Lisez notre Politique de confidentialité pour plus de détails.",
+        "q": "Mes informations personnelles sont-elles sécurisées ?"
       },
       "matchingProcess": {
-        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers.",
-        "q": "How does the matching process work?"
+        "a": "Notre système fait correspondre les besoins de votre enfant avec des crèches appropriées en fonction de la localisation, de l'âge, des besoins spéciaux et de la disponibilité. Vous recevrez des réponses des fournisseurs correspondants.",
+        "q": "Comment fonctionne le processus de correspondance ?"
       },
       "responseTime": {
-        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard.",
-        "q": "How quickly will I receive responses?"
+        "a": "La plupart des crèches répondent dans les 2-3 jours ouvrables. Vous pouvez suivre le statut de vos demandes dans votre tableau de bord.",
+        "q": "À quelle rapidité vais-je recevoir des réponses ?"
       }
     }
   },
@@ -364,44 +388,91 @@
     "welcome": "Bienvenue sur votre tableau de bord fournisseur de services"
   },
   "serviceProviderSupportPage": {
-    "ticketSubmittedAlert": "Support ticket submitted successfully"
+    "faq": {
+      "listService": {
+        "a": "Allez dans Mes services et cliquez sur 'Ajouter un nouveau service'. Remplissez les détails du service, définissez le prix et spécifiez la disponibilité. Les services sont examinés avant d'être mis en ligne.",
+        "q": "Comment lister un nouveau service ?"
+      },
+      "profileInfo": {
+        "a": "Allez dans Paramètres > Profil de l'entreprise pour mettre à jour vos informations professionnelles, vos coordonnées et vos descriptions de services.",
+        "q": "Comment mettre à jour mes informations de profil ?"
+      },
+      "respondRequests": {
+        "a": "Consultez les demandes entrantes dans la section Demandes de services. Vous pouvez accepter, refuser ou planifier des rendez-vous directement depuis là.",
+        "q": "Comment répondre aux demandes de services ?"
+      },
+      "updateAvailability": {
+        "a": "Mettez à jour votre calendrier de disponibilité dans Paramètres > Contact et réservation. Vous pouvez définir vos heures et jours de travail préférés.",
+        "q": "Comment mettre à jour ma disponibilité ?"
+      }
+    },
+    "ticketSubmittedAlert": "Ticket de support soumis avec succès"
   },
   "sidebar": {
+    "admins": "Administrateurs",
+    "allUsers": "Tous les utilisateurs",
     "allUsersTitle": "Total des utilisateurs",
-    "analytics": "Analytics",
+    "analytics": "Analytiques",
     "applications": "Candidatures",
-    "billingSubscription": "Billing & Subscription",
-    "currentPlan": "Current Plan",
+    "billingSubscription": "Facturation et abonnement",
+    "candidatePool": "Réserve de candidats",
+    "content": "Contenu",
+    "currentPlan": "Plan actuel",
     "dashboard": "Tableau de bord",
-    "discountTerminations": "Discount Terminations",
-    "fileGallery": "File Gallery",
+    "dashboardHome": "Accueil du tableau de bord",
+    "designSystem": "Système de design",
+    "discountTerminations": "Résiliations de remise",
+    "eLearning": "E-Learning",
+    "fileGallery": "Galerie de fichiers",
     "foundations": "Fondations",
+    "homeFindCreche": "Accueil / Trouver une crèche",
+    "hrProcedures": "Procédures RH",
+    "jobBoard": "Tableau d'emploi",
     "jobListings": "Offres d'emploi",
-    "manageSubscriptionDesc": "Manage your subscription and billing",
+    "manageSubscriptionDesc": "Gérez votre abonnement et votre facturation",
+    "marketplace": "Marché",
     "messages": "Messages",
-    "myProfile": "My Profile",
-    "ordersAppointments": "Orders & Appointments",
+    "myProfile": "Mon profil",
+    "myRequests": "Mes demandes",
+    "orders": "Commandes",
+    "ordersAppointments": "Commandes et rendez-vous",
+    "organisationProfile": "Profil de l'organisation",
     "parentLeads": "Pistes de parents",
+    "parents": "Parents",
+    "partners": "Partenaires",
+    "platformSettings": "Paramètres de la plateforme",
+    "productMarketplace": "Marché des produits",
+    "productSuppliers": "Fournisseurs de produits",
     "products": "Produits",
+    "recruitment": "Recrutement",
+    "serviceMarketplace": "Marché des services",
+    "serviceProviders": "Fournisseurs de services",
     "services": "Services",
-    "settings": "Settings",
+    "settings": "Paramètres",
+    "statePolicies": "Politiques nationales",
     "support": "Support",
-    "supportFAQ": "Support & FAQ"
+    "supportFAQ": "Support et FAQ",
+    "systemMonitoring": "Surveillance du système",
+    "translations": "Traductions",
+    "users": "Utilisateurs"
   },
   "supplierAnalyticsPage": {
-    "datePickerLabel": "Select Date Range",
-    "exportCsvAlert": "CSV export started",
-    "exportCsvButton": "Export CSV",
-    "mockChartText": "Mock chart visualization",
-    "orderRequestsPerWeek": "Order Requests Per Week",
-    "promoCodePerformance": "Promo Code Performance",
-    "requestsByCanton": "Requests by Canton",
+    "datePickerLabel": "Sélectionner la plage de dates",
+    "exportCsvAlert": "Export CSV démarré",
+    "exportCsvButton": "Exporter CSV",
+    "mockChartText": "Visualisation de graphique simulée",
+    "orderRequestsPerWeek": "Demandes de commande par semaine",
+    "orderRequestsTrend": "Tendance des demandes de commande",
+    "productViews": "Vues de produits",
+    "promoCodePerformance": "Performance du code promotionnel",
+    "requestsByCanton": "Demandes par canton",
+    "requestsDistribution": "Répartition des demandes",
     "table": {
       "code": "Code",
-      "estRevenueImpact": "Est. Revenue Impact",
-      "uses": "Uses"
+      "estRevenueImpact": "Impact estimé sur les revenus",
+      "uses": "Utilisations"
     },
-    "topViewedProducts": "Top Viewed Products"
+    "topViewedProducts": "Produits les plus consultés"
   },
   "supplierCard": {
     "viewProfileAndProducts": "Voir le profil et les produits"
