@@ -23,6 +23,7 @@ type OrganizationPublicProfileProps = {
   user?: User;
   organization?: Organization;
   showActions?: boolean;
+  currentUser?: User; // The currently logged-in user (for admin/super admin access checks)
 };
 
 const SectionTitle: React.FC<{ icon: React.ElementType; title: string }> = ({ icon: Icon, title }) => (
@@ -35,7 +36,8 @@ const SectionTitle: React.FC<{ icon: React.ElementType; title: string }> = ({ ic
 const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({ 
   user, 
   organization: organizationProp, 
-  showActions = true 
+  showActions = true,
+  currentUser,
 }) => {
   const { t } = useTranslation(['profile', 'common']);
   
@@ -554,8 +556,11 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             </Card>
           )}
 
-          {/* Documents Section - For Suppliers and Service Providers */}
-          {(role === UserRole.PRODUCT_SUPPLIER || role === UserRole.SERVICE_PROVIDER) && (
+          {/* Documents Section - For Suppliers and Service Providers, or when viewed by Admin/Super Admin */}
+          {(role === UserRole.PRODUCT_SUPPLIER || 
+            role === UserRole.SERVICE_PROVIDER || 
+            currentUser?.role === UserRole.ADMIN || 
+            currentUser?.role === UserRole.SUPER_ADMIN) && (
             <OrganizationDocumentsList organizationId={organization.id} />
           )}
         </div>
