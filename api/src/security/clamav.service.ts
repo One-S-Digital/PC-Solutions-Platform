@@ -1,6 +1,6 @@
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import clamd from 'clamdjs';
+import * as clamd from 'clamdjs';
 
 @Injectable()
 export class ClamAVService {
