@@ -670,6 +670,18 @@ export const apiService = {
     params?: { namespace?: string; lang?: string; search?: string; page?: number; limit?: number }
   ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/keys', { params }),
 
+  getTranslationIssues: (
+    apiClient: AxiosInstance,
+    params?: {
+      type?: 'missing' | 'needsReview';
+      lang?: string;
+      namespace?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    },
+  ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/issues', { params }),
+
   getTranslation: (
     apiClient: AxiosInstance,
     namespace: string,

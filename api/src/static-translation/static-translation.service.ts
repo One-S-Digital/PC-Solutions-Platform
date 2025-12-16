@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { DeepLService } from '../translation/deepl.service';
 import { TranslationMemoryService } from '../translation/translation-memory.service';
 import { CostTrackingService } from '../translation/cost-tracking.service';
+import { Prisma } from '@prisma/client';
 
 export interface StaticTranslationDto {
   namespace: string;
@@ -22,6 +23,23 @@ export interface TranslationQuality {
   score: number; // 0-100
   issues: string[];
   isValid: boolean;
+}
+
+export type StaticTranslationIssueType = 'missing' | 'needsReview';
+
+export interface StaticTranslationIssue {
+  type: StaticTranslationIssueType;
+  namespace: string;
+  key: string;
+  /** Target language for the issue (e.g. fr/de). For "missing" this is the missing language. */
+  lang: string;
+  /** English source value (when available) */
+  enValue?: string | null;
+  /** Current value in target language (null for missing) */
+  value?: string | null;
+  needsReview?: boolean;
+  updatedAt?: Date | null;
+  updatedBy?: string | null;
 }
 
 /**
@@ -127,6 +145,214 @@ export class StaticTranslationService {
       chunks.push(array.slice(i, i + chunkSize));
     }
     return chunks;
+  }
+
+  /**
+   * List translation issues for the admin UI.
+   *
+   * Supported issue types:
+   * - "missing": English key exists but target language is missing
+   * - "needsReview": target translation exists and is flagged for review
+   */
+  async listIssues(params: {
+    type: StaticTranslationIssueType;
+    lang?: string;
+    namespace?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    data: StaticTranslationIssue[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasMore: boolean;
+    };
+  }> {
+    const type = params.type;
+    const lang = params.lang?.trim();
+    const namespace = params.namespace?.trim();
+    const search = params.search?.trim();
+    const page = Math.max(1, params.page ?? 1);
+    const limit = Math.min(200, Math.max(1, params.limit ?? 50));
+    const offset = (page - 1) * limit;
+
+    if (type === 'missing') {
+      if (!lang) {
+        throw new Error('lang is required for missing issues');
+      }
+      if (lang === 'en') {
+        // Missing EN isn't meaningful in our system (EN is source-of-truth)
+        return {
+          data: [],
+          pagination: { page, limit, total: 0, totalPages: 0, hasMore: false },
+        };
+      }
+
+      const conditions: Prisma.Sql[] = [
+        Prisma.sql`en.lang = 'en'`,
+        Prisma.sql`st.namespace IS NULL`, // missing target row
+      ];
+
+      if (namespace) {
+        conditions.push(Prisma.sql`en.namespace = ${namespace}`);
+      }
+
+      if (search) {
+        const like = `%${search}%`;
+        conditions.push(
+          Prisma.sql`(en.key ILIKE ${like} OR en.value ILIKE ${like} OR en.namespace ILIKE ${like})`,
+        );
+      }
+
+      const whereSql = Prisma.join(conditions, Prisma.sql` AND `);
+
+      const countRows = await this.prisma.$queryRaw<{ count: bigint }[]>(
+        Prisma.sql`
+          SELECT COUNT(*)::bigint AS count
+          FROM static_translations en
+          LEFT JOIN static_translations st
+            ON st.namespace = en.namespace
+           AND st.key = en.key
+           AND st.lang = ${lang}
+          WHERE ${whereSql}
+        `,
+      );
+      const total = Number(countRows?.[0]?.count ?? 0);
+
+      const rows = await this.prisma.$queryRaw<
+        Array<{
+          namespace: string;
+          key: string;
+          lang: string;
+          enValue: string | null;
+        }>
+      >(
+        Prisma.sql`
+          SELECT
+            en.namespace AS namespace,
+            en.key AS key,
+            ${lang} AS lang,
+            en.value AS "enValue"
+          FROM static_translations en
+          LEFT JOIN static_translations st
+            ON st.namespace = en.namespace
+           AND st.key = en.key
+           AND st.lang = ${lang}
+          WHERE ${whereSql}
+          ORDER BY en.namespace ASC, en.key ASC
+          LIMIT ${limit} OFFSET ${offset}
+        `,
+      );
+
+      const data: StaticTranslationIssue[] = rows.map((r) => ({
+        type: 'missing',
+        namespace: r.namespace,
+        key: r.key,
+        lang: r.lang,
+        enValue: r.enValue,
+        value: null,
+        needsReview: false,
+      }));
+
+      return {
+        data,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: total === 0 ? 0 : Math.ceil(total / limit),
+          hasMore: offset + limit < total,
+        },
+      };
+    }
+
+    // needsReview
+    const conditions: Prisma.Sql[] = [Prisma.sql`st.needs_review = true`];
+    if (lang) {
+      conditions.push(Prisma.sql`st.lang = ${lang}`);
+    }
+    if (namespace) {
+      conditions.push(Prisma.sql`st.namespace = ${namespace}`);
+    }
+    if (search) {
+      const like = `%${search}%`;
+      conditions.push(
+        Prisma.sql`(st.key ILIKE ${like} OR st.value ILIKE ${like} OR st.namespace ILIKE ${like} OR en.value ILIKE ${like})`,
+      );
+    }
+    const whereSql = Prisma.join(conditions, Prisma.sql` AND `);
+
+    const countRows = await this.prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
+        SELECT COUNT(*)::bigint AS count
+        FROM static_translations st
+        JOIN static_translations en
+          ON en.namespace = st.namespace
+         AND en.key = st.key
+         AND en.lang = 'en'
+        WHERE ${whereSql}
+      `,
+    );
+    const total = Number(countRows?.[0]?.count ?? 0);
+
+    const rows = await this.prisma.$queryRaw<
+      Array<{
+        namespace: string;
+        key: string;
+        lang: string;
+        value: string | null;
+        updatedAt: Date | null;
+        updatedBy: string | null;
+        needsReview: boolean;
+        enValue: string | null;
+      }>
+    >(
+      Prisma.sql`
+        SELECT
+          st.namespace AS namespace,
+          st.key AS key,
+          st.lang AS lang,
+          st.value AS value,
+          st.updated_at AS "updatedAt",
+          st.updated_by AS "updatedBy",
+          st.needs_review AS "needsReview",
+          en.value AS "enValue"
+        FROM static_translations st
+        JOIN static_translations en
+          ON en.namespace = st.namespace
+         AND en.key = st.key
+         AND en.lang = 'en'
+        WHERE ${whereSql}
+        ORDER BY st.updated_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `,
+    );
+
+    const data: StaticTranslationIssue[] = rows.map((r) => ({
+      type: 'needsReview',
+      namespace: r.namespace,
+      key: r.key,
+      lang: r.lang,
+      value: r.value,
+      enValue: r.enValue,
+      needsReview: r.needsReview,
+      updatedAt: r.updatedAt,
+      updatedBy: r.updatedBy,
+    }));
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
+        hasMore: offset + limit < total,
+      },
+    };
   }
 
   /**
