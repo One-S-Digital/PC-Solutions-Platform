@@ -28,7 +28,6 @@ interface AssetUploaderProps {
 }
 
 const AssetUploader: React.FC<AssetUploaderProps> = ({
-  const { t } = useTranslation(['common']);
   kind,
   currentAsset,
   fallbackUrl,
@@ -38,8 +37,9 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
   description,
   maxSize = 2 * 1024 * 1024, // 2MB default
   acceptedTypes = ['image/png', 'image/svg+xml'],
-  requireSquare = false
+  requireSquare = false,
 }) => {
+  const { t } = useTranslation(['common']);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
