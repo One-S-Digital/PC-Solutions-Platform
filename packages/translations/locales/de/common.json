@@ -1950,7 +1950,7 @@
   },
   "supplierCard": {
     "specializesIn": "Spezialisiert auf {{mainCategoriesTagline}}",
-    "viewProfileAndProducts": "Profil und Produkte anzeigen"
+    "viewProfileAndProducts": "Profil anzeigen"
   },
   "supplierDashboard": {
     "loadError": "load Error",

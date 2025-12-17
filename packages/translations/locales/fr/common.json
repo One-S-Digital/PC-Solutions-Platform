@@ -1923,7 +1923,7 @@
   },
   "supplierCard": {
     "specializesIn": "Spécialisé dans {{mainCategoriesTagline}}",
-    "viewProfileAndProducts": "Voir le profil et les produits"
+    "viewProfileAndProducts": "Voir le profil"
   },
   "supplierDashboard": {
     "loadError": "load Error",
