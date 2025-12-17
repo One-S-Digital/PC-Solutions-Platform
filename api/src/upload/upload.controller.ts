@@ -34,16 +34,18 @@ export class UploadController {
     const appOrigin = this.configService.get<string>('APP_ORIGIN');
     this.allowedOrigins = [adminOrigin, appOrigin].filter((origin): origin is string => !!origin);
     
-    // Check if malware scanning is enabled (defaults to true in production)
-    const scanningConfig = this.configService.get<string>('MALWARE_SCANNING_ENABLED', 'true');
-    this.malwareScanningEnabled = scanningConfig.toLowerCase() !== 'false';
+    // Check if malware scanning is enabled
+    // Defaults to false - ClamAV requires separate infrastructure
+    // Enable only if CLAMAV_HOST is configured and accessible
+    const scanningConfig = this.configService.get<string>('MALWARE_SCANNING_ENABLED', 'false');
+    this.malwareScanningEnabled = scanningConfig.toLowerCase() === 'true';
     
     // Check if malware scanning is required (blocks uploads when scanner unavailable)
-    // Defaults to false - allows graceful degradation when scanner is down
+    // Only relevant if MALWARE_SCANNING_ENABLED=true
     const scanRequiredConfig = this.configService.get<string>('MALWARE_SCAN_REQUIRED', 'false');
     this.malwareScanRequired = scanRequiredConfig.toLowerCase() === 'true';
     
-    this.logger.log(`Upload security initialized - CORS origins: ${this.allowedOrigins.join(', ')}, Malware scanning: ${this.malwareScanningEnabled ? 'enabled' : 'disabled'}, Scan required: ${this.malwareScanRequired ? 'yes (blocks if unavailable)' : 'no (graceful degradation)'}`);
+    this.logger.log(`Upload security initialized - CORS origins: ${this.allowedOrigins.join(', ')}, Malware scanning: ${this.malwareScanningEnabled ? 'enabled' : 'disabled'}${this.malwareScanningEnabled ? `, Scan required: ${this.malwareScanRequired ? 'yes' : 'no (graceful degradation)'}` : ''}`);
   }
 
   /**
