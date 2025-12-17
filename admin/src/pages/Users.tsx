@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner'
 
 import logger from '../utils/logger'
 
@@ -558,12 +559,31 @@ const Users: React.FC = () => {
 
   // Handle viewing user profile - opens the frontend partner/profile page
   const handleViewProfile = (user: User) => {
-    if (user.orgId) {
-      // Get the frontend URL from environment or use relative path
-      const frontendUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin.replace('admin.', '')
-      window.open(`${frontendUrl}/partner/${user.orgId}`, '_blank')
+    if (!user.orgId) {
+      toast.error(t('admin:users.viewProfile.noOrganization', 'This user has no organization profile to view'))
+      return
+    }
+    
+    // Get the frontend URL from environment variable
+    const frontendUrl = import.meta.env.VITE_FRONTEND_URL
+    
+    if (!frontendUrl) {
+      // Fallback: try to construct URL based on current origin
+      // This handles common patterns: admin.domain.com -> domain.com, localhost:3001 -> localhost:3000
+      const currentOrigin = window.location.origin
+      let derivedUrl = currentOrigin
+      
+      if (currentOrigin.includes('admin.')) {
+        derivedUrl = currentOrigin.replace('admin.', '')
+      } else if (currentOrigin.includes('localhost:3001')) {
+        derivedUrl = currentOrigin.replace(':3001', ':3000')
+      } else if (currentOrigin.includes(':3001')) {
+        derivedUrl = currentOrigin.replace(':3001', ':3000')
+      }
+      
+      window.open(`${derivedUrl}/partner/${user.orgId}`, '_blank', 'noopener,noreferrer')
     } else {
-      alert(t('admin:users.viewProfile.noOrganization', 'This user has no organization profile to view'))
+      window.open(`${frontendUrl}/partner/${user.orgId}`, '_blank', 'noopener,noreferrer')
     }
   }
 
