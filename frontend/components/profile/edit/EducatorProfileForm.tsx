@@ -7,13 +7,14 @@ import CoverImageSection from './shared/CoverImageSection';
 import ContactDetailsSection from './shared/ContactDetailsSection';
 import AvatarSection from './shared/AvatarSection';
 import FileUploadZone from '../../ui/FileUploadZone';
+import { AvailabilityScheduler } from '../../availability';
+import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../../../types/availability';
 import ChipInput from '../../ui/ChipInput';
 import {
   UserCircleIcon,
   BriefcaseIcon,
   AcademicCapIcon,
   StarIcon,
-  CalendarDaysIcon,
   PaperClipIcon,
   DocumentTextIcon,
   XMarkIcon,
@@ -24,6 +25,34 @@ interface EducatorProfileFormProps {
   formData: SettingsFormData;
   onChange: (field: keyof SettingsFormData, value: any) => void;
 }
+
+// Helper function to parse availability settings from various formats
+const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string | undefined): EducatorAvailabilitySettings => {
+  if (!value) {
+    return createEmptyAvailabilitySettings();
+  }
+  
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object' && 'employmentType' in parsed) {
+        return parsed as EducatorAvailabilitySettings;
+      }
+    } catch {
+      // If string can't be parsed, return default with notes containing the old value
+      return {
+        ...createEmptyAvailabilitySettings(),
+        notes: value,
+      };
+    }
+  }
+  
+  if (typeof value === 'object' && 'employmentType' in value) {
+    return value as EducatorAvailabilitySettings;
+  }
+  
+  return createEmptyAvailabilitySettings();
+};
 
 const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
@@ -258,25 +287,13 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
         </div>
       </div>
 
-      {/* Availability */}
+      {/* Availability Schedule */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <CalendarDaysIcon className="w-5 h-5 mr-2 text-swiss-mint" />
-          {t('settings:educatorProfile.availability', 'Availability')}
-        </h3>
-        <div>
-          <label htmlFor="availability" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('settings:educatorProfile.availabilityLabel', 'Availability Information')}
-          </label>
-          <textarea
-            id="availability"
-            rows={3}
-            value={formData.availability || ''}
-            onChange={(e) => onChange('availability', e.target.value)}
-            className={STANDARD_INPUT_FIELD}
-            placeholder={t('settings:educatorProfile.availabilityPlaceholder', 'Describe your availability...')}
-          />
-        </div>
+        <AvailabilityScheduler
+          value={parseAvailabilitySettings(formData.availabilitySettings)}
+          onChange={(settings) => onChange('availabilitySettings', settings)}
+          showPreview={true}
+        />
       </div>
 
       {/* CV / Resume Upload */}

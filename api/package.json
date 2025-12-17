@@ -36,6 +36,7 @@
     "start:test": "NODE_ENV=test nest start --watch",
     "db:verify": "ts-node scripts/verify-schema.ts",
     "db:verify:sql": "psql $DATABASE_URL -f scripts/verify-db-schema.sql",
+    "db:verify:availability": "psql $DATABASE_URL -f scripts/verify-educator-availability.sql",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:message-urls": "ts-node scripts/migrate-message-file-urls.ts",
@@ -49,6 +50,9 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "db:init": "./scripts/init-database.sh",
+    "db:setup": "node scripts/prebuild-complete-db-setup.mjs",
+    "db:setup:recovery": "node scripts/prebuild-db-setup.mjs",
+    "prebuild:db": "node scripts/prebuild-complete-db-setup.mjs",
     "import:translations": "ts-node scripts/import-static-translations.ts",
     "create:test-users": "ts-node scripts/create-test-users.ts"
   },

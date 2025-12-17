@@ -129,6 +129,112 @@
     "workExperienceLabel": "Expérience professionnelle",
     "workExperiencePlaceholder": "Décrivez votre expérience professionnelle..."
   },
+  "availability": {
+    "title": "Horaire de disponibilité",
+    "subtitle": "Définissez votre emploi du temps pour que les crèches puissent vous trouver pour des remplacements",
+    "employmentType": {
+      "label": "Préférence de type d'emploi",
+      "fullTime": "Temps plein",
+      "fullTimeDesc": "Disponible pour des postes à temps plein (40h/semaine)",
+      "partTime": "Temps partiel",
+      "partTimeDesc": "Disponible pour des postes à temps partiel",
+      "customSchedule": "Remplacement/Suppléance",
+      "customScheduleDesc": "Disponible pour du travail de remplacement avec des horaires spécifiques"
+    },
+    "weeklySchedule": {
+      "title": "Horaire hebdomadaire",
+      "subtitle": "Définissez votre disponibilité régulière pour chaque jour",
+      "days": {
+        "sunday": "Dimanche",
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "saturday": "Samedi"
+      },
+      "daysShort": {
+        "sunday": "Dim",
+        "monday": "Lun",
+        "tuesday": "Mar",
+        "wednesday": "Mer",
+        "thursday": "Jeu",
+        "friday": "Ven",
+        "saturday": "Sam"
+      },
+      "notAvailable": "Non disponible",
+      "addSlot": "Ajouter un créneau",
+      "removeSlot": "Supprimer",
+      "hoursPerWeek": "heures/semaine",
+      "daysLabel": "jours",
+      "quickActions": {
+        "title": "Actions rapides",
+        "enableWeekdays": "Activer les jours ouvrables",
+        "clearAll": "Tout effacer",
+        "copyMondayToWeekdays": "Copier le lundi sur les jours ouvrables"
+      }
+    },
+    "timeSlot": {
+      "from": "De",
+      "to": "à",
+      "invalid": "L'heure de fin doit être après l'heure de début"
+    },
+    "dateOverrides": {
+      "title": "Exceptions de dates",
+      "subtitle": "Marquez des dates spécifiques comme non disponibles ou ajoutez des heures supplémentaires",
+      "addOverride": "Ajouter une exception",
+      "editOverride": "Modifier l'exception",
+      "unavailable": "Non disponible",
+      "customHours": "Heures personnalisées",
+      "availableHours": "Heures disponibles",
+      "reason": "Raison (optionnel)",
+      "reasonPlaceholder": {
+        "unavailable": "ex., Jour férié, Vacances, Formation",
+        "custom": "ex., Heures supplémentaires disponibles"
+      },
+      "noOverrides": "Aucune exception de date définie",
+      "noOverridesHint": "Ajoutez des exceptions pour les jours fériés, vacances ou heures supplémentaires",
+      "pastOverrides": "{{count}} exception(s) passée(s)",
+      "validation": {
+        "selectDate": "Veuillez sélectionner une date",
+        "dateExists": "Cette date a déjà une exception",
+        "pastDate": "Impossible de définir une exception pour les dates passées"
+      }
+    },
+    "preview": {
+      "title": "Aperçu du calendrier",
+      "available": "Disponible",
+      "partiallyAvailable": "Partiellement disponible",
+      "unavailable": "Non disponible",
+      "override": "Exception"
+    },
+    "notes": {
+      "title": "Notes supplémentaires",
+      "placeholder": "Ajoutez des informations supplémentaires sur votre disponibilité (ex., zones préférées, distance de déplacement, conditions particulières)..."
+    },
+    "presets": {
+      "title": "Configuration rapide",
+      "fullTimeStandard": "Temps plein standard",
+      "fullTimeStandardDesc": "Lundi au vendredi, 8h00 - 17h00",
+      "partTimeMornings": "Matinées temps partiel",
+      "partTimeMorningsDesc": "Lundi au vendredi, 8h00 - 12h00",
+      "partTimeAfternoons": "Après-midis temps partiel",
+      "partTimeAfternoonsDesc": "Lundi au vendredi, 13h00 - 18h00",
+      "flexibleWeekdays": "Jours ouvrables flexibles",
+      "flexibleWeekdaysDesc": "Lundi au vendredi, horaires flexibles",
+      "apply": "Appliquer"
+    },
+    "advanced": {
+      "title": "Paramètres avancés",
+      "timezone": "Fuseau horaire",
+      "availableFrom": "Disponible à partir du (optionnel)",
+      "availableUntil": "Disponible jusqu'au (optionnel)"
+    },
+    "info": {
+      "title": "Comment ça fonctionne",
+      "description": "Votre disponibilité est visible par les crèches recherchant du personnel de remplacement. Elles peuvent filtrer par jours et heures où vous êtes disponible pour trouver le candidat idéal."
+    }
+  },
   "imageCropper": {
     "presets": {
       "profilePhoto": "Photo de profil",

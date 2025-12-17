@@ -1,3 +1,6 @@
+// Re-export availability types for convenience
+export type { EducatorAvailabilitySettings } from './types/availability';
+
 export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN = 'ADMIN',
@@ -877,7 +880,8 @@ interface BaseSettings {
     education?: string;
     certifications?: string[];
     skills?: string[];
-    availability?: string;
+    availability?: string; // Legacy: simple text availability
+    availabilitySettings?: EducatorAvailabilitySettings; // New: structured availability schedule
     cvUrl?: string;
 }
 
