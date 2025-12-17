@@ -236,68 +236,85 @@ export class MessagingService {
     const creatorRole = creatorUser.role;
     
     // Get AppUsers for all participants to find their clerkIds
-    // Filter out any invalid IDs first
+    // Participant IDs can be: AppUser.id, User.id (profile), or Clerk ID
+    // First, try to find by AppUser.id
     let participantAppUsers = await this.prisma.appUser.findMany({
       where: { id: { in: participantIds } },
       select: { id: true, clerkId: true },
     });
     
-    if (participantAppUsers.length !== participantIds.length) {
-      const foundIds = new Set(participantAppUsers.map(u => u.id));
-      const missingIds = participantIds.filter(id => !foundIds.has(id));
-      
-      // Log for debugging
-      this.logger.warn({
-        message: 'createConversation: Invalid participant IDs',
-        requested: participantIds,
-        found: participantAppUsers.map(u => u.id),
-        missing: missingIds,
+    const foundAppUserIds = new Set(participantAppUsers.map(u => u.id));
+    const missingIds = participantIds.filter(id => !foundAppUserIds.has(id));
+    
+    if (missingIds.length > 0) {
+      this.logger.log({
+        message: 'createConversation: Some IDs not found in AppUser table, checking User table',
+        missingIds,
       });
       
       // Try to find missing IDs in the User table (they might be User.id instead of AppUser.id)
-      // If found, get their AppUser records via clerkId
-      const missingUserRecords = await this.prisma.user.findMany({
+      const userRecordsById = await this.prisma.user.findMany({
         where: { id: { in: missingIds } },
         select: { id: true, clerkId: true },
       });
       
-      if (missingUserRecords.length > 0) {
-        // These are User.id, need to find corresponding AppUser records
-        const clerkIds = missingUserRecords.map(u => u.clerkId);
+      // Create a map of User.id -> clerkId for found records
+      const userIdToClerkId = new Map(userRecordsById.map(u => [u.id, u.clerkId]));
+      const foundClerkIdsFromUserTable = userRecordsById.map(u => u.clerkId);
+      
+      if (foundClerkIdsFromUserTable.length > 0) {
+        // Get corresponding AppUser records via clerkId
         const correspondingAppUsers = await this.prisma.appUser.findMany({
-          where: { clerkId: { in: clerkIds } },
+          where: { clerkId: { in: foundClerkIdsFromUserTable } },
           select: { id: true, clerkId: true },
         });
         
         // Add found AppUsers to the list
         participantAppUsers.push(...correspondingAppUsers);
         
-        // Update foundIds
-        correspondingAppUsers.forEach(u => foundIds.add(u.id));
-      }
-      
-      // Filter out any remaining invalid IDs (those not found in either AppUser or User table)
-      const validParticipantIds = participantIds.filter(id => foundIds.has(id));
-      const stillMissing = participantIds.filter(id => !foundIds.has(id));
-      
-      if (stillMissing.length > 0) {
-        this.logger.warn({
-          message: 'createConversation: Some participant IDs not found and will be excluded',
-          missingIds: stillMissing,
+        // Track which User.id values have been resolved
+        correspondingAppUsers.forEach(appUser => {
+          // Find the User.id that corresponds to this clerkId
+          userRecordsById.forEach(userRecord => {
+            if (userRecord.clerkId === appUser.clerkId) {
+              foundAppUserIds.add(userRecord.id); // Mark the User.id as found
+            }
+          });
+          foundAppUserIds.add(appUser.id);
         });
       }
       
-      if (validParticipantIds.length === 0) {
-        throw new Error(`No valid participant IDs found. All requested IDs were invalid: ${participantIds.join(', ')}`);
+      // Check for any remaining IDs that might be Clerk IDs
+      const stillMissingIds = missingIds.filter(id => !foundAppUserIds.has(id) && !userIdToClerkId.has(id));
+      const potentialClerkIds = stillMissingIds.filter(id => id.startsWith('user_'));
+      
+      if (potentialClerkIds.length > 0) {
+        const clerkIdAppUsers = await this.prisma.appUser.findMany({
+          where: { clerkId: { in: potentialClerkIds } },
+          select: { id: true, clerkId: true },
+        });
+        participantAppUsers.push(...clerkIdAppUsers);
+        clerkIdAppUsers.forEach(u => foundAppUserIds.add(u.clerkId));
       }
       
-      // Update participantIds array to only include valid ones
-      participantIds.length = 0;
-      participantIds.push(...validParticipantIds);
+      // Final check for remaining invalid IDs
+      const finalMissingIds = participantIds.filter(id => {
+        // Check if it's found as AppUser.id, User.id (resolved to AppUser), or Clerk ID
+        if (foundAppUserIds.has(id)) return false;
+        if (userIdToClerkId.has(id)) return false;
+        return true;
+      });
       
-      // Also filter participantAppUsers to only include those with valid IDs
-      const validAppUserIds = new Set(validParticipantIds);
-      participantAppUsers = participantAppUsers.filter(u => validAppUserIds.has(u.id));
+      if (finalMissingIds.length > 0) {
+        this.logger.warn({
+          message: 'createConversation: Some participant IDs not found and will be excluded',
+          missingIds: finalMissingIds,
+        });
+      }
+      
+      if (participantAppUsers.length === 0) {
+        throw new Error(`No valid participant IDs found. All requested IDs were invalid: ${participantIds.join(', ')}`);
+      }
     }
     
     // Get User records for all participants by clerkId (including roles for access control)
