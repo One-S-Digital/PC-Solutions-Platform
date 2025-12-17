@@ -606,6 +606,33 @@
     "trainingCompletion": "Schulungsabschluss",
     "trainingStatus": "Schulungsstatus"
   },
+  "foundationLeadsPage": {
+    "accessDenied": {
+      "message": "Sie müssen als Stiftung mit einer gültigen Organisations-ID angemeldet sein, um diese Seite anzuzeigen.",
+      "title": "Zugriff verweigert"
+    },
+    "allResponses": "Alle Antworten",
+    "allStatuses": "Alle Status",
+    "emptyState": {
+      "message": "Es gibt derzeit keine neuen Elternanfragen, die zu Ihrer Kindertagesstätte passen.",
+      "title": "Keine eingehenden Leads"
+    },
+    "searchPlaceholder": "Leads suchen...",
+    "title": "Eingehende Elternanfragen",
+    "totalLeads": "Leads gesamt"
+  },
+  "leadCard": {
+    "status": {
+      "converted": "Konvertiert",
+      "enrolled": "Eingeschrieben",
+      "interested": "Interessiert",
+      "needsMoreInfo": "Benötigt weitere Informationen",
+      "new": "Neu",
+      "notInterested": "Nicht interessiert",
+      "notResponded": "Nicht geantwortet",
+      "processing": "In Bearbeitung"
+    }
+  },
   "foundationSupportPage": {
     "faq": {
       "manageLeads": {

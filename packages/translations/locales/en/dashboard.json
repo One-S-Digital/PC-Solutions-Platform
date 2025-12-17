@@ -535,11 +535,27 @@
       "message": "You must be logged in as a Foundation with a valid Organization ID to view this page.",
       "title": "Access Denied"
     },
+    "allResponses": "All responses",
+    "allStatuses": "All statuses",
     "emptyState": {
       "message": "There are currently no new parent enquiries matching your daycare.",
       "title": "No Incoming Leads"
     },
-    "title": "Incoming Parent Leads"
+    "searchPlaceholder": "Search leads...",
+    "title": "Incoming Parent Leads",
+    "totalLeads": "Total leads"
+  },
+  "leadCard": {
+    "status": {
+      "converted": "Converted",
+      "enrolled": "Enrolled",
+      "interested": "Interested",
+      "needsMoreInfo": "Needs More Info",
+      "new": "New",
+      "notInterested": "Not Interested",
+      "notResponded": "Not Responded",
+      "processing": "Processing"
+    }
   },
   "foundationOrdersAppointmentsPage": {
     "cancelOrderAlert": "Order {{orderId}} cancelled successfully",
