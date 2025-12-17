@@ -266,6 +266,39 @@ END $$;
 };
 
 /**
+ * Ensure educator availability settings column exists in users table.
+ * Matches migration `20251217100000_add_educator_availability_settings`.
+ * This enables the Calendly-style scheduling feature for educators.
+ */
+const ensureEducatorAvailabilitySettings = () => {
+  const sql = `
+-- Add availabilitySettings JSONB column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'users' 
+        AND column_name = 'availabilitySettings'
+    ) THEN
+        ALTER TABLE "public"."users" ADD COLUMN "availabilitySettings" JSONB;
+        
+        -- Add a comment to document the field
+        COMMENT ON COLUMN "public"."users"."availabilitySettings" IS 'Structured availability settings for educators (Calendly-style scheduling). Contains employmentType, weeklySchedule, dateOverrides, timezone, and notes.';
+    END IF;
+END $$;
+
+-- Create index for querying by employment type (commonly used in searches)
+CREATE INDEX IF NOT EXISTS "users_availability_employment_type_idx" 
+ON "public"."users" ((("availabilitySettings"->>'employmentType')));
+`;
+
+  log('Ensuring users.availabilitySettings exists (educator scheduling)...');
+  runSql(sql);
+  log('✅ Educator availability settings column verified.');
+};
+
+/**
  * Ensure all translation infrastructure tables exist.
  * Matches migration `20251114140526_add_i18n_translation_tables`.
  * CRITICAL: Fixes admin translation page 500 error when static_translations table is missing.
@@ -506,6 +539,15 @@ const main = async () => {
     await resolveMigration('applied', '20251217000000_add_message_file_columns');
   } catch (e) {
     warn(`⚠️  message file columns handler failed: ${e.message}`);
+  }
+
+  // Educator availability settings (Calendly-style scheduling for replacement staff)
+  try {
+    ensureEducatorAvailabilitySettings();
+    await resolveMigration('rolled-back', '20251217100000_add_educator_availability_settings');
+    await resolveMigration('applied', '20251217100000_add_educator_availability_settings');
+  } catch (e) {
+    warn(`⚠️  educator availability settings handler failed: ${e.message}`);
   }
 
   log('Done.');
