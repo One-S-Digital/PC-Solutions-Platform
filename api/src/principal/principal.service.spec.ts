@@ -121,6 +121,49 @@ describe('PrincipalService', () => {
       expect(results).toHaveLength(5);
       expect(prisma.user.upsert).toHaveBeenCalledTimes(5);
     });
+
+    it('passes null email to create when appUser.email is null (not empty string)', async () => {
+      const mockAppUser = {
+        id: 'app-1',
+        clerkId: 'clerk_null_email',
+        email: null, // AppUser has no email
+        role: UserRole.SUPER_ADMIN,
+      };
+
+      const mockUser = {
+        id: 'user-1',
+        clerkId: 'clerk_null_email',
+        email: null,
+        firstName: null,
+        lastName: null,
+        role: UserRole.SUPER_ADMIN,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      prisma.appUser.findUnique.mockResolvedValue(mockAppUser as any);
+      prisma.user.upsert.mockResolvedValue(mockUser as any);
+
+      await service.getOrBootstrapAccountAndProfile('clerk_null_email');
+
+      // Verify that email is passed as null, not as empty string ''
+      // This is critical because the DB has a constraint: users_email_not_empty
+      // which allows NULL but rejects empty strings
+      expect(prisma.user.upsert).toHaveBeenCalledWith({
+        where: { clerkId: 'clerk_null_email' },
+        update: {
+          email: undefined, // null ?? undefined = undefined
+          role: UserRole.SUPER_ADMIN,
+        },
+        create: {
+          clerkId: 'clerk_null_email',
+          email: null, // Must be null, NOT ''
+          role: UserRole.SUPER_ADMIN,
+          isActive: true,
+        },
+      });
+    });
   });
 
   describe('getOrDefaultNotificationPrefs', () => {

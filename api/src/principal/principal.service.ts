@@ -60,7 +60,7 @@ export class PrincipalService {
       },
       create: {
         clerkId,
-        email: appUser.email ?? '',
+        email: appUser.email, // Allow NULL - do not fall back to empty string
         role: appUser.role,
         isActive: true,
       },

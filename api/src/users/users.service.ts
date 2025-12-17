@@ -676,7 +676,7 @@ export class UsersService {
         user = await this.prisma.user.create({
           data: {
             clerkId,
-            email: appUser.email || updateUserDto.email || '',
+            email: appUser.email || updateUserDto.email || null, // Allow NULL - do not use empty string
             firstName: updateUserDto.firstName || null,
             lastName: updateUserDto.lastName || null,
             role: appUser.role,
