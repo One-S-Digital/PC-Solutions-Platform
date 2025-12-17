@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import ChipInput from '../../components/ui/ChipInput';
 import { STANDARD_INPUT_FIELD } from '../../constants';
 import {
     UserCircleIcon, IdentificationIcon, CalendarDaysIcon,
@@ -89,11 +90,11 @@ const EducatorProfilePage: React.FC = () => {
   
   // Temporary edit values
   const [tempBio, setTempBio] = useState('');
-  const [tempSkills, setTempSkills] = useState('');
+  const [tempSkills, setTempSkills] = useState<string[]>([]);
   const [tempAvailability, setTempAvailability] = useState('');
   const [tempExperience, setTempExperience] = useState('');
   const [tempEducation, setTempEducation] = useState('');
-  const [tempCertifications, setTempCertifications] = useState('');
+  const [tempCertifications, setTempCertifications] = useState<string[]>([]);
 
   const fetchProfile = useCallback(async () => {
     if (!currentUser) {
@@ -218,17 +219,16 @@ const EducatorProfilePage: React.FC = () => {
 
   // Skills editing handlers
   const handleEditSkills = () => {
-    setTempSkills(profile?.skills?.join(', ') || '');
+    setTempSkills(profile?.skills || []);
     setEditingSkills(true);
   };
   const handleSaveSkills = async () => {
-    const skillsArray = tempSkills.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    const success = await saveProfile({ skills: skillsArray });
+    const success = await saveProfile({ skills: tempSkills });
     if (success) setEditingSkills(false);
   };
   const handleCancelSkills = () => {
     setEditingSkills(false);
-    setTempSkills('');
+    setTempSkills([]);
   };
 
   // Availability editing handlers
@@ -275,17 +275,16 @@ const EducatorProfilePage: React.FC = () => {
 
   // Certifications editing handlers
   const handleEditCertifications = () => {
-    setTempCertifications(profile?.certifications?.join(', ') || '');
+    setTempCertifications(profile?.certifications || []);
     setEditingCertifications(true);
   };
   const handleSaveCertifications = async () => {
-    const certsArray = tempCertifications.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    const success = await saveProfile({ certifications: certsArray });
+    const success = await saveProfile({ certifications: tempCertifications });
     if (success) setEditingCertifications(false);
   };
   const handleCancelCertifications = () => {
     setEditingCertifications(false);
-    setTempCertifications('');
+    setTempCertifications([]);
   };
 
   // CV upload handler
@@ -393,14 +392,13 @@ const EducatorProfilePage: React.FC = () => {
           >
             {editingSkills ? (
               <div className="space-y-3">
-                <input
-                  type="text"
-                  value={tempSkills}
-                  onChange={(e) => setTempSkills(e.target.value)}
-                  className={STANDARD_INPUT_FIELD}
+                <ChipInput
+                  selectedChips={tempSkills}
+                  onChange={setTempSkills}
                   placeholder={t('educatorProfilePage.skills.placeholder', 'e.g., Early Childhood Education, First Aid, Bilingual')}
+                  allowCustomValues={true}
                 />
-                <p className="text-xs text-gray-500">{t('educatorProfilePage.skills.hint', 'Separate skills with commas')}</p>
+                <p className="text-xs text-gray-500">{t('educatorProfilePage.skills.hint', 'Type and press Enter to add skills')}</p>
                 <div className="flex justify-end space-x-2">
                   <Button variant="light" size="sm" onClick={handleCancelSkills}>
                     {t('common:buttons.cancel')}
@@ -686,14 +684,13 @@ const EducatorProfilePage: React.FC = () => {
           >
             {editingCertifications ? (
               <div className="space-y-3">
-                <input
-                  type="text"
-                  value={tempCertifications}
-                  onChange={(e) => setTempCertifications(e.target.value)}
-                  className={STANDARD_INPUT_FIELD}
+                <ChipInput
+                  selectedChips={tempCertifications}
+                  onChange={setTempCertifications}
                   placeholder={t('educatorProfilePage.certifications.placeholder', 'e.g., CPR Certified, Early Childhood Education Certificate, First Aid')}
+                  allowCustomValues={true}
                 />
-                <p className="text-xs text-gray-500">{t('educatorProfilePage.certifications.hint', 'Separate certifications with commas')}</p>
+                <p className="text-xs text-gray-500">{t('educatorProfilePage.certifications.hint', 'Type and press Enter to add certifications')}</p>
                 <div className="flex justify-end space-x-2">
                   <Button variant="light" size="sm" onClick={handleCancelCertifications}>
                     {t('common:buttons.cancel')}

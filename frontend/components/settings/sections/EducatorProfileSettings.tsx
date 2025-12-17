@@ -4,6 +4,7 @@ import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
+import ChipInput from '../../ui/ChipInput';
 import Button from '../../ui/Button';
 import { 
   UserCircleIcon, 
@@ -80,20 +81,12 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     onChange(field as keyof SettingsFormData, value);
   };
 
-  const handleSkillsChange = (value: string) => {
-    // Split by comma, trim each part, but keep empty strings to preserve commas during typing
-    const skillsArray = value.split(',').map(s => s.trim());
-    // Only filter out empty strings if the value doesn't end with a comma (user is still typing)
-    const filteredSkills = value.endsWith(',') ? skillsArray : skillsArray.filter(s => s.length > 0);
-    handleFieldChange('skills', filteredSkills);
+  const handleSkillsChange = (newSkills: string[]) => {
+    handleFieldChange('skills', newSkills);
   };
 
-  const handleCertificationsChange = (value: string) => {
-    // Split by comma, trim each part, but keep empty strings to preserve commas during typing
-    const certsArray = value.split(',').map(s => s.trim());
-    // Only filter out empty strings if the value doesn't end with a comma (user is still typing)
-    const filteredCerts = value.endsWith(',') ? certsArray : certsArray.filter(s => s.length > 0);
-    handleFieldChange('certifications', filteredCerts);
+  const handleCertificationsChange = (newCertifications: string[]) => {
+    handleFieldChange('certifications', newCertifications);
   };
 
   // Avatar handlers
@@ -311,29 +304,18 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
             <label htmlFor="skills" className="form-label">
-              {t('settings:educatorProfile.skillsLabel', 'Skills (comma-separated)')}
+              {t('settings:educatorProfile.skillsLabel', 'Skills')}
             </label>
             <div className="form-input-container">
-              <input
-                type="text"
-                id="skills"
-                value={Array.isArray(profileData.skills) ? profileData.skills.join(', ') : ''}
-                onChange={(e) => handleSkillsChange(e.target.value)}
-                className={STANDARD_INPUT_FIELD}
+              <ChipInput
+                selectedChips={Array.isArray(profileData.skills) ? profileData.skills : []}
+                onChange={handleSkillsChange}
                 placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}
+                allowCustomValues={true}
               />
-              {Array.isArray(profileData.skills) && profileData.skills.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {profileData.skills.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-swiss-mint/10 text-swiss-mint"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}
+              </p>
             </div>
           </div>
         </div>
@@ -404,17 +386,18 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
             <label htmlFor="certifications" className="form-label">
-              {t('settings:educatorProfile.certificationsLabel', 'Certifications (comma-separated)')}
+              {t('settings:educatorProfile.certificationsLabel', 'Certifications')}
             </label>
             <div className="form-input-container">
-              <input
-                type="text"
-                id="certifications"
-                value={Array.isArray(profileData.certifications) ? profileData.certifications.join(', ') : ''}
-                onChange={(e) => handleCertificationsChange(e.target.value)}
-                className={STANDARD_INPUT_FIELD}
+              <ChipInput
+                selectedChips={Array.isArray(profileData.certifications) ? profileData.certifications : []}
+                onChange={handleCertificationsChange}
                 placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}
+                allowCustomValues={true}
               />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}
+              </p>
             </div>
           </div>
         </div>
