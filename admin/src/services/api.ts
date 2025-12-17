@@ -19,8 +19,7 @@ import {
   SystemUsageAnalytics,
   Partner,
   PartnerStats,
-  PartnerType,
-  OrganizationDocument
+  PartnerType
 } from '../types/api'
 import { AxiosInstance } from 'axios'
 
@@ -639,18 +638,6 @@ export const apiService = {
     apiClient.get<ApiResponse<RevenueAnalytics>>('/admin/analytics/revenue', { params: { timeRange } }),
   getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
     apiClient.get<ApiResponse<SystemUsageAnalytics>>('/admin/analytics/system', { params: { timeRange } }),
-
-  // Organization Documents (for admin viewing user profiles)
-  getOrganizationDocuments: (apiClient: AxiosInstance, organizationId: string) =>
-    apiClient.get<ApiResponse<OrganizationDocument[]>>(`/organization-documents/organization/${organizationId}`),
-  
-  // Products by Supplier
-  getProductsBySupplier: (apiClient: AxiosInstance, supplierId: string) =>
-    apiClient.get<ApiResponse<Product[]>>('/marketplace/products', { params: { supplierId } }),
-  
-  // Services by Provider
-  getServicesByProvider: (apiClient: AxiosInstance, providerId: string) =>
-    apiClient.get<ApiResponse<Service[]>>('/marketplace/services', { params: { providerId } }),
 
   // Partners Management
   getPartners: (apiClient: AxiosInstance, params?: { type?: PartnerType; isActive?: boolean; isFeatured?: boolean; search?: string }) => 

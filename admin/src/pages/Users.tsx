@@ -14,7 +14,7 @@ import {
   X,
   AlertTriangle,
   UserCog,
-  Eye
+  ExternalLink
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
@@ -29,7 +29,6 @@ import Button from '../components/design-system/Button'
 import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import UserProfileModal from '../components/UserProfileModal'
 
 // Edit User Modal Component
 interface EditUserModalProps {
@@ -446,7 +445,6 @@ const Users: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
@@ -558,10 +556,15 @@ const Users: React.FC = () => {
     setIsElevateModalOpen(true)
   }
 
-  // Handle opening profile modal
+  // Handle viewing user profile - opens the frontend partner/profile page
   const handleViewProfile = (user: User) => {
-    setSelectedUser(user)
-    setIsProfileModalOpen(true)
+    if (user.orgId) {
+      // Get the frontend URL from environment or use relative path
+      const frontendUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin.replace('admin.', '')
+      window.open(`${frontendUrl}/partner/${user.orgId}`, '_blank')
+    } else {
+      alert(t('admin:users.viewProfile.noOrganization', 'This user has no organization profile to view'))
+    }
   }
 
   // Handle saving user updates
@@ -600,11 +603,6 @@ const Users: React.FC = () => {
 
   const handleCloseElevateModal = () => {
     setIsElevateModalOpen(false)
-    setSelectedUser(null)
-  }
-
-  const handleCloseProfileModal = () => {
-    setIsProfileModalOpen(false)
     setSelectedUser(null)
   }
 
@@ -771,17 +769,20 @@ const Users: React.FC = () => {
                       >
                         <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                           <div className="py-1">
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleViewProfile(user)}
-                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  <Eye className="h-4 w-4 mr-2" />
-                                  {t('admin:users.viewProfile.title', 'View Profile')}
-                                </button>
-                              )}
-                            </Menu.Item>
+                            {/* View Profile - Only for users with organizations (suppliers/service providers) */}
+                            {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => handleViewProfile(user)}
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                  >
+                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                    {t('admin:users.viewProfile.title', 'View Profile')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
                             <Menu.Item>
                               {({ active }) => (
                                 <button
@@ -868,13 +869,6 @@ const Users: React.FC = () => {
           isLoading={elevateUserMutation.isPending}
         />
       )}
-
-      {/* User Profile Modal */}
-      <UserProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={handleCloseProfileModal}
-        user={selectedUser}
-      />
     </div>
   )
 }
