@@ -29,13 +29,19 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
   const { currentUser } = useAppContext();
 
   const handleSkillsChange = (value: string) => {
-    const skillsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    onChange('skills', skillsArray);
+    // Split by comma, trim each part, but keep empty strings to preserve commas during typing
+    const skillsArray = value.split(',').map(s => s.trim());
+    // Only filter out empty strings if the value doesn't end with a comma (user is still typing)
+    const filteredSkills = value.endsWith(',') ? skillsArray : skillsArray.filter(s => s.length > 0);
+    onChange('skills', filteredSkills);
   };
 
   const handleCertificationsChange = (value: string) => {
-    const certsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    onChange('certifications', certsArray);
+    // Split by comma, trim each part, but keep empty strings to preserve commas during typing
+    const certsArray = value.split(',').map(s => s.trim());
+    // Only filter out empty strings if the value doesn't end with a comma (user is still typing)
+    const filteredCerts = value.endsWith(',') ? certsArray : certsArray.filter(s => s.length > 0);
+    onChange('certifications', filteredCerts);
   };
 
   const handleAvatarChange = (url: string, assetId?: string) => {

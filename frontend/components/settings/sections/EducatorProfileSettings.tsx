@@ -81,13 +81,19 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
   };
 
   const handleSkillsChange = (value: string) => {
-    const skillsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    handleFieldChange('skills', skillsArray);
+    // Split by comma, trim each part, but keep empty strings to preserve commas during typing
+    const skillsArray = value.split(',').map(s => s.trim());
+    // Only filter out empty strings if the value doesn't end with a comma (user is still typing)
+    const filteredSkills = value.endsWith(',') ? skillsArray : skillsArray.filter(s => s.length > 0);
+    handleFieldChange('skills', filteredSkills);
   };
 
   const handleCertificationsChange = (value: string) => {
-    const certsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    handleFieldChange('certifications', certsArray);
+    // Split by comma, trim each part, but keep empty strings to preserve commas during typing
+    const certsArray = value.split(',').map(s => s.trim());
+    // Only filter out empty strings if the value doesn't end with a comma (user is still typing)
+    const filteredCerts = value.endsWith(',') ? certsArray : certsArray.filter(s => s.length > 0);
+    handleFieldChange('certifications', filteredCerts);
   };
 
   // Avatar handlers
