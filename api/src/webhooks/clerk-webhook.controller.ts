@@ -27,62 +27,30 @@ interface ClerkWebhookEvent {
 export class ClerkWebhookController {
   private readonly logger = new Logger(ClerkWebhookController.name);
   private clerk: any;
-  private webhookSecret: string;
+  private webhookSecret: string = '';
 
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
   ) {
-    console.log('\n' + '='.repeat(80));
-    console.log('🚀 [WEBHOOK INIT] Starting Clerk Webhook Controller Initialization');
-    console.log('='.repeat(80));
-    
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const webhookSecret = this.configService.get<string>('CLERK_WEBHOOK_SECRET');
-    
-    // Log to both console and logger for visibility
-    const initDebug = {
-      timestamp: new Date().toISOString(),
-      nodeEnv: process.env.NODE_ENV,
-      hasClerkSecretKey: !!clerkSecretKey,
-      hasWebhookSecret: !!webhookSecret,
-      clerkSecretKeyPrefix: clerkSecretKey ? clerkSecretKey.substring(0, 10) + '...' : '❌ MISSING',
-      clerkSecretKeySuffix: clerkSecretKey ? '...' + clerkSecretKey.substring(clerkSecretKey.length - 4) : 'N/A',
-      clerkSecretKeyLength: clerkSecretKey?.length || 0,
-      webhookSecretPrefix: webhookSecret ? webhookSecret.substring(0, 10) + '...' : '❌ MISSING',
-      webhookSecretSuffix: webhookSecret ? '...' + webhookSecret.substring(webhookSecret.length - 4) : 'N/A',
-      webhookSecretLength: webhookSecret?.length || 0,
-      allEnvVars: Object.keys(process.env).filter(key => 
-        key.includes('CLERK') || key.includes('WEBHOOK')
-      ),
-    };
-    
-    console.log('🔍 [WEBHOOK INIT] Configuration check:', JSON.stringify(initDebug, null, 2));
-    this.logger.log('🔧 [WEBHOOK INIT] Initializing Clerk webhook controller', initDebug);
-    
-    if (!clerkSecretKey) {
-      const error = '❌ [WEBHOOK INIT] CLERK_SECRET_KEY is not configured';
-      console.error(error);
-      console.error('   Set CLERK_SECRET_KEY in your environment variables');
-      this.logger.error(error);
-      throw new Error('CLERK_SECRET_KEY is not configured');
+
+    // Disable the noisy startup-time "configuration check" logging and avoid crashing the
+    // entire API when webhooks aren't configured. If secrets are missing, the webhook
+    // endpoints will respond with an error, but the service will still start.
+    if (!clerkSecretKey || !webhookSecret) {
+      this.clerk = null;
+      this.webhookSecret = '';
+      this.logger.warn(
+        '[WEBHOOK INIT] Clerk webhook is not configured (missing CLERK_SECRET_KEY and/or CLERK_WEBHOOK_SECRET). Webhook endpoints are disabled.',
+      );
+      return;
     }
-    if (!webhookSecret) {
-      const error = '❌ [WEBHOOK INIT] CLERK_WEBHOOK_SECRET is not configured';
-      console.error(error);
-      console.error('   Set CLERK_WEBHOOK_SECRET in your environment variables');
-      console.error('   Get this value from Clerk Dashboard > Webhooks > Signing Secret');
-      this.logger.error(error);
-      throw new Error('CLERK_WEBHOOK_SECRET is not configured');
-    }
-    
+
     this.clerk = createClerkClient({ secretKey: clerkSecretKey });
     this.webhookSecret = webhookSecret;
-    
-    console.log('✅ [WEBHOOK INIT] Clerk webhook controller initialized successfully');
-    console.log('✅ [WEBHOOK INIT] Ready to receive webhooks at: POST /api/webhooks/clerk');
-    console.log('='.repeat(80) + '\n');
-    this.logger.log('✅ [WEBHOOK INIT] Clerk webhook controller initialized successfully');
+    this.logger.log('[WEBHOOK INIT] Clerk webhook controller initialized');
   }
 
   @Get('health')

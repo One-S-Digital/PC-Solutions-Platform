@@ -10,8 +10,7 @@
   },
   "scripts": {
     "postinstall": "prisma generate",
-    "prebuild": "rimraf dist && node scripts/prebuild-run-migrations.mjs && node scripts/fix-asset-url-constraint.mjs && node scripts/prebuild-db-setup.mjs",
-    "prebuild:render": "node scripts/prebuild-run-migrations.mjs && node scripts/fix-asset-url-constraint.mjs && node scripts/prebuild-db-setup.mjs",
+    "prebuild": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "copy:locales": "node scripts/copy-locales.mjs",
     "build": "nest build && pnpm run copy:locales",
     "build:render": "SKIP_SEED=true ./scripts/render-build-with-recovery.sh && SKIP_SEED=true node ./scripts/seed-once.js && pnpm run build",

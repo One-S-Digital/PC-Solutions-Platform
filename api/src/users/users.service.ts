@@ -266,6 +266,20 @@ export class UsersService {
           reason: 'Profile completion role update',
         });
       }
+      
+      // Sync email to both AppUser and User if provided and AppUser email is missing
+      if (email && !existingUser.email) {
+        this.logger.log(`📧 [COMPLETE PROFILE] Syncing email to existing user...`);
+        await this.prisma.appUser.update({
+          where: { id: existingUser.id },
+          data: { email },
+        });
+        // Also update User table if it exists
+        await this.prisma.user.updateMany({
+          where: { clerkId },
+          data: { email },
+        });
+      }
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
       // This can happen when:
@@ -676,7 +690,7 @@ export class UsersService {
         user = await this.prisma.user.create({
           data: {
             clerkId,
-            email: appUser.email || updateUserDto.email || '',
+            email: appUser.email || updateUserDto.email || null, // Allow NULL - do not use empty string
             firstName: updateUserDto.firstName || null,
             lastName: updateUserDto.lastName || null,
             role: appUser.role,
@@ -1049,6 +1063,23 @@ export class UsersService {
       updatedAt: updatedAppUser.updatedAt,
       organizations: [],
     };
+  }
+
+  /**
+   * Update a user's role by Clerk ID.
+   * Used for syncing admin roles from Clerk publicMetadata to the database.
+   */
+  async updateRoleByClerkId(clerkId: string, newRole: UserRole, changedBy: string, reason?: string) {
+    this.logger.log(`🔄 [UPDATE ROLE BY CLERK ID] Updating role for ${clerkId} to ${newRole}`);
+    
+    await this.roleSyncService.changeRoleByClerkId({
+      clerkId,
+      newRole,
+      changedBy,
+      reason: reason || 'Role update by Clerk ID',
+    });
+    
+    this.logger.log(`✅ [UPDATE ROLE BY CLERK ID] Role updated for ${clerkId} to ${newRole}`);
   }
 
   async removeRole(userId: string, role: UserRole, changedBy?: string) {

@@ -4,6 +4,7 @@ import { STANDARD_INPUT_FIELD } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
+import ChipInput from '../../ui/ChipInput';
 import Button from '../../ui/Button';
 import { 
   UserCircleIcon, 
@@ -52,7 +53,6 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     skills: Array.isArray(settings.skills) ? settings.skills : [],
     availability: settings.availability || '',
     cvUrl: settings.cvUrl || '',
-    avatarUrl: settings.avatarUrl || '',
     avatarAssetId: settings.avatarAssetId || '',
   });
 
@@ -70,7 +70,6 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       skills: Array.isArray(settings.skills) ? settings.skills : [],
       availability: settings.availability || '',
       cvUrl: settings.cvUrl || '',
-      avatarUrl: settings.avatarUrl || '',
       avatarAssetId: settings.avatarAssetId || '',
     });
   }, [settings, currentUser]);
@@ -80,14 +79,12 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     onChange(field as keyof SettingsFormData, value);
   };
 
-  const handleSkillsChange = (value: string) => {
-    const skillsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    handleFieldChange('skills', skillsArray);
+  const handleSkillsChange = (newSkills: string[]) => {
+    handleFieldChange('skills', newSkills);
   };
 
-  const handleCertificationsChange = (value: string) => {
-    const certsArray = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    handleFieldChange('certifications', certsArray);
+  const handleCertificationsChange = (newCertifications: string[]) => {
+    handleFieldChange('certifications', newCertifications);
   };
 
   // Avatar handlers
@@ -117,8 +114,8 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       const response = await upload('/upload/file', croppedFile, { assetKind: 'AVATAR' });
       
       if (response.success && response.asset) {
-        const uploadedUrl = response.asset.publicUrl || response.asset.url;
-        handleFieldChange('avatarUrl', uploadedUrl);
+        // Only save the avatarAssetId, not the URL
+        // The URL will be computed from the asset relation on the backend
         if (response.asset.id) {
           handleFieldChange('avatarAssetId', response.asset.id);
         }
@@ -146,7 +143,8 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     onChange('cvAssetId', '');
   };
 
-  const avatarUrl = profileData.avatarUrl || currentUser?.avatarUrl || 
+  // Use avatarUrl from settings (computed from asset relation on backend)
+  const avatarUrl = settings.avatarUrl || currentUser?.avatarUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.firstName + ' ' + profileData.lastName)}&background=48CFAE&color=fff&size=128&rounded=true`;
 
   return (
@@ -305,29 +303,18 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
             <label htmlFor="skills" className="form-label">
-              {t('settings:educatorProfile.skillsLabel', 'Skills (comma-separated)')}
+              {t('settings:educatorProfile.skillsLabel', 'Skills')}
             </label>
             <div className="form-input-container">
-              <input
-                type="text"
-                id="skills"
-                value={Array.isArray(profileData.skills) ? profileData.skills.join(', ') : ''}
-                onChange={(e) => handleSkillsChange(e.target.value)}
-                className={STANDARD_INPUT_FIELD}
+              <ChipInput
+                selectedChips={Array.isArray(profileData.skills) ? profileData.skills : []}
+                onChange={handleSkillsChange}
                 placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}
+                allowCustomValues={true}
               />
-              {Array.isArray(profileData.skills) && profileData.skills.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {profileData.skills.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-swiss-mint/10 text-swiss-mint"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}
+              </p>
             </div>
           </div>
         </div>
@@ -398,17 +385,18 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
             <label htmlFor="certifications" className="form-label">
-              {t('settings:educatorProfile.certificationsLabel', 'Certifications (comma-separated)')}
+              {t('settings:educatorProfile.certificationsLabel', 'Certifications')}
             </label>
             <div className="form-input-container">
-              <input
-                type="text"
-                id="certifications"
-                value={Array.isArray(profileData.certifications) ? profileData.certifications.join(', ') : ''}
-                onChange={(e) => handleCertificationsChange(e.target.value)}
-                className={STANDARD_INPUT_FIELD}
+              <ChipInput
+                selectedChips={Array.isArray(profileData.certifications) ? profileData.certifications : []}
+                onChange={handleCertificationsChange}
                 placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}
+                allowCustomValues={true}
               />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}
+              </p>
             </div>
           </div>
         </div>

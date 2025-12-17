@@ -27,8 +27,9 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { useMessaging } from '../../contexts/MessagingContext';
+import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
+import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { organizationService } from '../../services/organizationService';
 
@@ -131,7 +132,7 @@ const PartnerDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
   const cart = useCart();
-  const { startOrGetConversation } = useMessaging();
+  const { sendMessageToOrganization } = useOrganizationMessaging();
   
   const [partner, setPartner] = useState<Organization | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -181,13 +182,10 @@ const PartnerDetailPage: React.FC = () => {
   const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
 
-  const handleSendMessage = () => {
-    if (!partner) {
-      alert("Could not find organization to message.");
-      return;
-    }
-    // For now, navigate to messages with a placeholder
-    navigate('/messages');
+  const handleSendMessage = async () => {
+    if (!partner || !currentUser) return;
+    const fallbackRole = isSupplier ? UserRole.PRODUCT_SUPPLIER : UserRole.SERVICE_PROVIDER;
+    await sendMessageToOrganization(partner, fallbackRole);
   };
 
   const handleOpenServiceRequestModal = (service: Service) => {
@@ -536,6 +534,11 @@ const PartnerDetailPage: React.FC = () => {
               </Card>
             )}
           </Card>
+
+          {/* Documents Section - For Suppliers and Service Providers */}
+          {(isSupplier || isServiceProvider) && (
+            <OrganizationDocumentsList organizationId={partner.id} />
+          )}
         </div>
       </div>
       

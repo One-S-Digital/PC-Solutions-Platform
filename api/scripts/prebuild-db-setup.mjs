@@ -119,6 +119,41 @@ $$;
   log('✅ assets.metadata verified.');
 };
 
+const ensureAssetUrlConstraintFixed = () => {
+  // Legacy hotfix: some production DBs may still have a NOT NULL "url" column that Prisma
+  // no longer writes to. Make it nullable and sync data between url/publicUrl if needed.
+  // Safe to re-run.
+  const sql = `
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'assets'
+        AND column_name = 'url'
+        AND table_schema = 'public'
+    ) THEN
+        -- Sync data to publicUrl if publicUrl is empty or null, but url has data
+        UPDATE "assets"
+        SET "publicUrl" = "url"
+        WHERE ("publicUrl" IS NULL OR "publicUrl" = '') AND "url" IS NOT NULL AND "url" != '';
+
+        -- Sync data from publicUrl to url if url is empty (keeps legacy readers consistent)
+        UPDATE "assets"
+        SET "url" = "publicUrl"
+        WHERE ("url" IS NULL OR "url" = '') AND "publicUrl" IS NOT NULL AND "publicUrl" != '';
+
+        -- Make url nullable to prevent insert errors from Prisma (which doesn't know about 'url')
+        ALTER TABLE "assets" ALTER COLUMN "url" DROP NOT NULL;
+    END IF;
+END $$;
+`;
+
+  log('Ensuring legacy assets.url (if present) will not block inserts...');
+  runSql(sql);
+  log('✅ assets.url legacy constraint handled (or column absent).');
+};
+
 const ensureCategoriesColumns = () => {
   // Matches prisma migration `20251119100000_add_categories_array_fields`, but guarded.
   const sql = `
@@ -163,6 +198,71 @@ $$;
   log('Ensuring categories array columns exist + are backfilled...');
   runSql(sql);
   log('✅ Categories columns verified.');
+};
+
+/**
+ * Ensure message file columns exist in messages table.
+ * Matches migration `20251221000000_add_message_file_columns`.
+ * CRITICAL: Fixes messaging "The column messages.fileUrl does not exist" error.
+ */
+const ensureMessageFileColumns = () => {
+  const sql = `
+-- Add fileUrl column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'fileUrl'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "fileUrl" TEXT;
+    END IF;
+END $$;
+
+-- Add fileName column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'fileName'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "fileName" TEXT;
+    END IF;
+END $$;
+
+-- Add fileSize column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'fileSize'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "fileSize" BIGINT;
+    END IF;
+END $$;
+
+-- Add mimeType column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'mimeType'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "mimeType" TEXT;
+    END IF;
+END $$;
+`;
+
+  log('Ensuring messages file columns exist (fileUrl, fileName, fileSize, mimeType)...');
+  runSql(sql);
+  log('✅ Messages file columns verified.');
 };
 
 /**
@@ -373,12 +473,13 @@ const main = async () => {
 
   // Known migration handlers (documented in api/scripts/README-MIGRATION-RECOVERY.md)
   try {
+    ensureAssetUrlConstraintFixed();
     ensureAssetMetadataColumn();
     // If the migration previously failed, clearing it first makes "applied" resolve more reliable.
     await resolveMigration('rolled-back', '20251104140358_add_asset_metadata_field');
     await resolveMigration('applied', '20251104140358_add_asset_metadata_field');
   } catch (e) {
-    warn(`⚠️  assets.metadata handler failed: ${e.message}`);
+    warn(`⚠️  asset schema/legacy handler failed: ${e.message}`);
   }
 
   try {
@@ -396,6 +497,15 @@ const main = async () => {
     await resolveMigration('applied', '20251114140526_add_i18n_translation_tables');
   } catch (e) {
     warn(`⚠️  translation infrastructure handler failed: ${e.message}`);
+  }
+
+  // Message file columns (fixes messaging "fileUrl does not exist" error)
+  try {
+    ensureMessageFileColumns();
+    await resolveMigration('rolled-back', '20251217000000_add_message_file_columns');
+    await resolveMigration('applied', '20251217000000_add_message_file_columns');
+  } catch (e) {
+    warn(`⚠️  message file columns handler failed: ${e.message}`);
   }
 
   log('Done.');

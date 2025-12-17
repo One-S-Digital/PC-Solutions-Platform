@@ -1955,7 +1955,7 @@
   },
   "supplierCard": {
     "specializesIn": "Specializes in {{mainCategoriesTagline}}",
-    "viewProfileAndProducts": "View Profile And Products"
+    "viewProfileAndProducts": "View Profile"
   },
   "supplierDashboard": {
     "loadError": "load Error",
