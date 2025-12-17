@@ -80,20 +80,28 @@ const EducatorProfileViewPage: React.FC = () => {
     fetchCandidate();
   }, [id, getCandidateById]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!candidate) return;
-    const conversationId = startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    navigate(`/messages/${conversationId}`);
+    try {
+      const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
   };
 
   const handleInviteToApply = async () => {
     if (!candidate || !currentUser) return;
-    const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    await sendMessage(
-      conversationId,
-      `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
-    );
-    navigate(`/messages/${conversationId}`);
+    try {
+      const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+      await sendMessage(
+        conversationId,
+        `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
+      );
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+    }
   };
 
   if (loading) {
