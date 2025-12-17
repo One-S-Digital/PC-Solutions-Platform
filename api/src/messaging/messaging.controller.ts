@@ -30,8 +30,11 @@ export class MessagingController {
   // Conversation Management
   @Post('conversations')
   async createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
-    // Use profileUserId (User table ID) for conversation participants
-    const creatorId = req.context.profileUserId;
+    // Use userId (Clerk ID) for conversation participants - the service handles Clerk ID lookup
+    const creatorId = req.context.userId;
+    if (!creatorId) {
+      throw new UnauthorizedException('User context not found. Authentication required.');
+    }
     return this.messagingService.createConversation(createConversationDto, creatorId);
   }
 
