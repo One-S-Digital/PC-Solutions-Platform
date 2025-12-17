@@ -164,7 +164,7 @@
       "addSlot": "Ajouter un créneau",
       "removeSlot": "Supprimer",
       "hoursPerWeek": "heures/semaine",
-      "days": "jours",
+      "daysLabel": "jours",
       "quickActions": {
         "title": "Actions rapides",
         "enableWeekdays": "Activer les jours ouvrables",

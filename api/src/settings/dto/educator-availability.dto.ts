@@ -140,6 +140,9 @@ export class EducatorAvailabilitySettingsDto {
 
   @IsOptional()
   @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'nextAvailableDate must be in YYYY-MM-DD format',
+  })
   nextAvailableDate?: string;
 }
 

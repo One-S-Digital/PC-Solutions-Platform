@@ -67,6 +67,19 @@ const DateOverrideModal: React.FC<DateOverrideModalProps> = ({
       return;
     }
 
+    // Validate time slots for CUSTOM type
+    if (type === 'CUSTOM') {
+      if (slots.length === 0) {
+        setError('Please add at least one time slot');
+        return;
+      }
+      const hasInvalidSlot = slots.some(slot => !slot.start || !slot.end || slot.start >= slot.end);
+      if (hasInvalidSlot) {
+        setError('Please ensure all time slots have valid start and end times');
+        return;
+      }
+    }
+
     const override: DateOverride = {
       id: existingOverride?.id || crypto.randomUUID(),
       date,

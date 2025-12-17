@@ -164,7 +164,7 @@
       "addSlot": "Zeitfenster hinzufügen",
       "removeSlot": "Entfernen",
       "hoursPerWeek": "Stunden/Woche",
-      "days": "Tage",
+      "daysLabel": "Tage",
       "quickActions": {
         "title": "Schnellaktionen",
         "enableWeekdays": "Werktage aktivieren",

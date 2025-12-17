@@ -210,7 +210,7 @@
       "addSlot": "Add time slot",
       "removeSlot": "Remove",
       "hoursPerWeek": "hours/week",
-      "days": "days",
+      "daysLabel": "days",
       "quickActions": {
         "title": "Quick actions",
         "enableWeekdays": "Enable weekdays",
