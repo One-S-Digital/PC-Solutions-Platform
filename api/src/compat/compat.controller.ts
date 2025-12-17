@@ -443,6 +443,9 @@ export class CompatController {
               },
             },
           },
+          // Include organization members with user details for messaging functionality.
+          // Ordered by creation date ascending; the first member (oldest) is assumed
+          // to be the primary contact for the organization.
           members: {
             include: {
               user: {

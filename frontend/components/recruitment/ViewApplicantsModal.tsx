@@ -41,6 +41,7 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Failed to start conversation:', error);
+      alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));
     }
   };
 

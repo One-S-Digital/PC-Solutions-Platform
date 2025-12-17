@@ -92,12 +92,16 @@ const EducatorProfileViewPage: React.FC = () => {
 
   const handleInviteToApply = async () => {
     if (!candidate || !currentUser) return;
-    const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    await sendMessage(
-      conversationId,
-      `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
-    );
-    navigate(`/messages/${conversationId}`);
+    try {
+      const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+      await sendMessage(
+        conversationId,
+        `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
+      );
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+    }
   };
 
   if (loading) {

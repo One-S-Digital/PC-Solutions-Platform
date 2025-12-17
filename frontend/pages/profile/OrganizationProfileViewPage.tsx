@@ -9,7 +9,7 @@ import OrganizationPublicProfile from '../../components/profile/OrganizationPubl
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { Organization, UserRole } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
-import { useMessaging } from '../../contexts/MessagingContext';
+import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 
 const OrganizationProfileViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +17,7 @@ const OrganizationProfileViewPage: React.FC = () => {
   const { t } = useTranslation(['profile', 'common']);
   const { request } = useAuthenticatedApi();
   const { currentUser } = useAppContext();
-  const { startOrGetConversation } = useMessaging();
+  const { sendMessageToOrganization } = useOrganizationMessaging();
 
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
@@ -125,27 +125,7 @@ const OrganizationProfileViewPage: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!organization || !currentUser) return;
-    
-    // Find the primary contact user for this organization from the API response
-    const orgData = (organization as any).__rawData || organization;
-    const primaryMember = orgData.members?.[0]?.user;
-    if (primaryMember) {
-      try {
-        const conversationId = await startOrGetConversation(
-          primaryMember.id,
-          primaryMember.firstName && primaryMember.lastName
-            ? `${primaryMember.firstName} ${primaryMember.lastName}`
-            : organization.name,
-          primaryMember.role || UserRole.FOUNDATION
-        );
-        navigate(`/messages/${conversationId}`);
-      } catch (error) {
-        console.error('Failed to start conversation:', error);
-        alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));
-      }
-    } else {
-      alert(t('profile:organization.noContactAvailable', 'No contact available for this organization.'));
-    }
+    await sendMessageToOrganization(organization, UserRole.FOUNDATION);
   };
 
   if (loading) {

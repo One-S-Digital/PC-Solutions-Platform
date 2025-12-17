@@ -27,7 +27,7 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { useMessaging } from '../../contexts/MessagingContext';
+import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { organizationService } from '../../services/organizationService';
@@ -131,7 +131,7 @@ const PartnerDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
   const cart = useCart();
-  const { startOrGetConversation } = useMessaging();
+  const { sendMessageToOrganization } = useOrganizationMessaging();
   
   const [partner, setPartner] = useState<Organization | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -182,32 +182,9 @@ const PartnerDetailPage: React.FC = () => {
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
 
   const handleSendMessage = async () => {
-    if (!partner || !currentUser) {
-      alert(t('partnerDetailPage.noContactAvailable', 'Could not find organization to message.'));
-      return;
-    }
-    
-    // Find the primary contact user for this organization
-    const rawData = (partner as any).__rawData || partner;
-    const primaryMember = rawData.members?.[0]?.user;
-    
-    if (primaryMember) {
-      try {
-        const conversationId = await startOrGetConversation(
-          primaryMember.id,
-          primaryMember.firstName && primaryMember.lastName
-            ? `${primaryMember.firstName} ${primaryMember.lastName}`
-            : partner.name,
-          primaryMember.role || (isSupplier ? UserRole.PRODUCT_SUPPLIER : UserRole.SERVICE_PROVIDER)
-        );
-        navigate(`/messages/${conversationId}`);
-      } catch (error) {
-        console.error('Failed to start conversation:', error);
-        alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));
-      }
-    } else {
-      alert(t('partnerDetailPage.noContactAvailable', 'No contact available for this organization.'));
-    }
+    if (!partner || !currentUser) return;
+    const fallbackRole = isSupplier ? UserRole.PRODUCT_SUPPLIER : UserRole.SERVICE_PROVIDER;
+    await sendMessageToOrganization(partner, fallbackRole);
   };
 
   const handleOpenServiceRequestModal = (service: Service) => {
