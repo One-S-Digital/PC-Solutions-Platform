@@ -242,7 +242,7 @@ BEGIN
         AND table_name = 'messages' 
         AND column_name = 'fileSize'
     ) THEN
-        ALTER TABLE "public"."messages" ADD COLUMN "fileSize" INTEGER;
+        ALTER TABLE "public"."messages" ADD COLUMN "fileSize" BIGINT;
     END IF;
 END $$;
 
@@ -502,8 +502,8 @@ const main = async () => {
   // Message file columns (fixes messaging "fileUrl does not exist" error)
   try {
     ensureMessageFileColumns();
-    await resolveMigration('rolled-back', '20251221000000_add_message_file_columns');
-    await resolveMigration('applied', '20251221000000_add_message_file_columns');
+    await resolveMigration('rolled-back', '20251217000000_add_message_file_columns');
+    await resolveMigration('applied', '20251217000000_add_message_file_columns');
   } catch (e) {
     warn(`⚠️  message file columns handler failed: ${e.message}`);
   }

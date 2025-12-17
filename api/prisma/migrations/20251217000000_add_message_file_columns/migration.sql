@@ -49,7 +49,7 @@ BEGIN
         AND table_name = 'messages' 
         AND column_name = 'fileSize'
     ) THEN
-        ALTER TABLE "public"."messages" ADD COLUMN "fileSize" INTEGER;
+        ALTER TABLE "public"."messages" ADD COLUMN "fileSize" BIGINT;
         RAISE NOTICE '✅ Added fileSize column to messages table';
     ELSE
         RAISE NOTICE '⏭️  fileSize column already exists in messages table';
