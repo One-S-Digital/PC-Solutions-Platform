@@ -165,6 +165,25 @@ const ProtectedLayout: React.FC = () => {
       );
     }
     
+    // Check if user has admin role in Clerk's publicMetadata
+    // Admin/Super Admin users don't need to complete a profile
+    const clerkRole = (clerkUser?.publicMetadata as { role?: string })?.role;
+    const isAdminRole = clerkRole === 'ADMIN' || clerkRole === 'SUPER_ADMIN';
+    
+    if (isAdminRole) {
+      // Admin user without backend record - show loading while we wait for auto-creation
+      // The backend /users/me endpoint will auto-create admin users
+      return (
+        <div className="min-h-screen bg-page-bg flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
+            <p className="text-gray-600">Setting up your admin account...</p>
+            <p className="text-sm text-gray-400 mt-2">This may take a moment</p>
+          </div>
+        </div>
+      );
+    }
+    
     // Backend sync failed (not loading anymore, but no user)
     // Show a manual "Complete Profile" page instead of auto-redirecting
     // This handles OAuth users and email/password users whose webhook failed
