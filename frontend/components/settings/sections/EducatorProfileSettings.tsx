@@ -5,6 +5,7 @@ import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
 import Button from '../../ui/Button';
+import ChipInput from '../../ui/ChipInput';
 import { AvailabilityScheduler } from '../../availability';
 import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../../../types/availability';
 import { 
