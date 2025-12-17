@@ -29,6 +29,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
+import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { organizationService } from '../../services/organizationService';
 
@@ -533,6 +534,11 @@ const PartnerDetailPage: React.FC = () => {
               </Card>
             )}
           </Card>
+
+          {/* Documents Section - For Suppliers and Service Providers */}
+          {(isSupplier || isServiceProvider) && (
+            <OrganizationDocumentsList organizationId={partner.id} />
+          )}
         </div>
       </div>
       
