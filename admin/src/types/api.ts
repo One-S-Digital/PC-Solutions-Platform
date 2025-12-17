@@ -490,3 +490,30 @@ export interface PartnerStats {
   featured: number;
   byType: Array<{ type: PartnerType; count: number }>;
 }
+
+// Organization Document types
+export type OrganizationDocumentType = 'CATALOG' | 'PRICELIST' | 'BROCHURE' | 'CERTIFICATION' | 'OTHER';
+
+export interface OrganizationDocument {
+  id: string;
+  organizationId: string;
+  type: OrganizationDocumentType;
+  title: string;
+  description?: string;
+  assetId: string;
+  publicUrl?: string;
+  filename?: string;
+  mimeType?: string;
+  size?: number;
+  isPublic: boolean;
+  createdAt: string;
+  updatedAt: string;
+  asset?: {
+    id: string;
+    publicUrl: string;
+    filename: string;
+    originalName?: string;
+    size: number;
+    mimeType: string;
+  };
+}

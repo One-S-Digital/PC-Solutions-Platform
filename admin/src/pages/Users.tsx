@@ -13,7 +13,8 @@ import {
   Building2,
   X,
   AlertTriangle,
-  UserCog
+  UserCog,
+  Eye
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
@@ -28,6 +29,7 @@ import Button from '../components/design-system/Button'
 import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
+import UserProfileModal from '../components/UserProfileModal'
 
 // Edit User Modal Component
 interface EditUserModalProps {
@@ -444,6 +446,7 @@ const Users: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
@@ -555,6 +558,12 @@ const Users: React.FC = () => {
     setIsElevateModalOpen(true)
   }
 
+  // Handle opening profile modal
+  const handleViewProfile = (user: User) => {
+    setSelectedUser(user)
+    setIsProfileModalOpen(true)
+  }
+
   // Handle saving user updates
   const handleUpdateUser = async (updatedUser: User) => {
     await updateUserMutation.mutateAsync(updatedUser)
@@ -591,6 +600,11 @@ const Users: React.FC = () => {
 
   const handleCloseElevateModal = () => {
     setIsElevateModalOpen(false)
+    setSelectedUser(null)
+  }
+
+  const handleCloseProfileModal = () => {
+    setIsProfileModalOpen(false)
     setSelectedUser(null)
   }
 
@@ -760,6 +774,17 @@ const Users: React.FC = () => {
                             <Menu.Item>
                               {({ active }) => (
                                 <button
+                                  onClick={() => handleViewProfile(user)}
+                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                >
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  {t('admin:users.viewProfile.title', 'View Profile')}
+                                </button>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
                                   onClick={() => handleEditUser(user)}
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                 >
@@ -843,6 +868,13 @@ const Users: React.FC = () => {
           isLoading={elevateUserMutation.isPending}
         />
       )}
+
+      {/* User Profile Modal */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={handleCloseProfileModal}
+        user={selectedUser}
+      />
     </div>
   )
 }
