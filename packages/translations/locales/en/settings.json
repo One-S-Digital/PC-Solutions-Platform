@@ -173,6 +173,112 @@
     "cvUrlPlaceholder": "https://example.com/cv.pdf",
     "cvUrlHint": "Link to your CV or resume document"
   },
+  "availability": {
+    "title": "Availability Schedule",
+    "subtitle": "Set your working schedule so daycares can find you for replacement positions",
+    "employmentType": {
+      "label": "Employment Type Preference",
+      "fullTime": "Full-Time",
+      "fullTimeDesc": "Available for full-time positions (40h/week)",
+      "partTime": "Part-Time",
+      "partTimeDesc": "Available for part-time positions",
+      "customSchedule": "Replacement/Substitute",
+      "customScheduleDesc": "Available for replacement work with specific hours"
+    },
+    "weeklySchedule": {
+      "title": "Weekly Schedule",
+      "subtitle": "Set your regular availability for each day",
+      "days": {
+        "sunday": "Sunday",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday"
+      },
+      "daysShort": {
+        "sunday": "Sun",
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat"
+      },
+      "notAvailable": "Unavailable",
+      "addSlot": "Add time slot",
+      "removeSlot": "Remove",
+      "hoursPerWeek": "hours/week",
+      "days": "days",
+      "quickActions": {
+        "title": "Quick actions",
+        "enableWeekdays": "Enable weekdays",
+        "clearAll": "Clear all",
+        "copyMondayToWeekdays": "Copy Monday to weekdays"
+      }
+    },
+    "timeSlot": {
+      "from": "From",
+      "to": "to",
+      "invalid": "End time must be after start time"
+    },
+    "dateOverrides": {
+      "title": "Date Overrides",
+      "subtitle": "Mark specific dates as unavailable or add extra hours",
+      "addOverride": "Add Date Override",
+      "editOverride": "Edit Date Override",
+      "unavailable": "Unavailable",
+      "customHours": "Custom Hours",
+      "availableHours": "Available Hours",
+      "reason": "Reason (optional)",
+      "reasonPlaceholder": {
+        "unavailable": "e.g., Holiday, Vacation, Training",
+        "custom": "e.g., Extra hours available"
+      },
+      "noOverrides": "No date overrides set",
+      "noOverridesHint": "Add overrides for holidays, vacations, or extra hours",
+      "pastOverrides": "{{count}} past override(s)",
+      "validation": {
+        "selectDate": "Please select a date",
+        "dateExists": "This date already has an override",
+        "pastDate": "Cannot set override for past dates"
+      }
+    },
+    "preview": {
+      "title": "Calendar Preview",
+      "available": "Available",
+      "partiallyAvailable": "Partially Available",
+      "unavailable": "Unavailable",
+      "override": "Override"
+    },
+    "notes": {
+      "title": "Additional Notes",
+      "placeholder": "Add any additional information about your availability (e.g., preferred areas, travel distance, special conditions)..."
+    },
+    "presets": {
+      "title": "Quick Setup",
+      "fullTimeStandard": "Full-Time Standard",
+      "fullTimeStandardDesc": "Monday to Friday, 8:00 AM - 5:00 PM",
+      "partTimeMornings": "Part-Time Mornings",
+      "partTimeMorningsDesc": "Monday to Friday, 8:00 AM - 12:00 PM",
+      "partTimeAfternoons": "Part-Time Afternoons",
+      "partTimeAfternoonsDesc": "Monday to Friday, 1:00 PM - 6:00 PM",
+      "flexibleWeekdays": "Flexible Weekdays",
+      "flexibleWeekdaysDesc": "Monday to Friday, flexible hours",
+      "apply": "Apply"
+    },
+    "advanced": {
+      "title": "Advanced Settings",
+      "timezone": "Timezone",
+      "availableFrom": "Available From (optional)",
+      "availableUntil": "Available Until (optional)"
+    },
+    "info": {
+      "title": "How it works",
+      "description": "Your availability is visible to daycares searching for replacement staff. They can filter by days and times you're available to find the perfect match for their needs."
+    }
+  },
   "profileEdit": {
     "organizationProfile": "Organization Profile",
     "profile": "Profile",

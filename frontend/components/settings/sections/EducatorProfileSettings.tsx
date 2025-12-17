@@ -5,13 +5,14 @@ import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
 import Button from '../../ui/Button';
+import { AvailabilityScheduler } from '../../availability';
+import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../../../types/availability';
 import { 
   UserCircleIcon, 
   PhotoIcon, 
   BriefcaseIcon, 
   AcademicCapIcon, 
   StarIcon, 
-  CalendarDaysIcon, 
   PaperClipIcon,
   CameraIcon,
   ArrowPathIcon,
@@ -21,6 +22,34 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
+
+// Helper function to parse availability settings from various formats
+const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string | undefined): EducatorAvailabilitySettings => {
+  if (!value) {
+    return createEmptyAvailabilitySettings();
+  }
+  
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object' && 'employmentType' in parsed) {
+        return parsed as EducatorAvailabilitySettings;
+      }
+    } catch {
+      // If string can't be parsed, return default with notes containing the old value
+      return {
+        ...createEmptyAvailabilitySettings(),
+        notes: value,
+      };
+    }
+  }
+  
+  if (typeof value === 'object' && 'employmentType' in value) {
+    return value as EducatorAvailabilitySettings;
+  }
+  
+  return createEmptyAvailabilitySettings();
+};
 
 interface EducatorProfileSettingsProps {
   settings: SettingsFormData;
@@ -421,27 +450,13 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
 
         <hr />
 
-        {/* Availability */}
+        {/* Availability Schedule */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-            <CalendarDaysIcon className="w-5 h-5 mr-2 text-swiss-mint" />
-            {t('settings:educatorProfile.availability', 'Availability')}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
-            <label htmlFor="availability" className="form-label">
-              {t('settings:educatorProfile.availabilityLabel', 'Availability Information')}
-            </label>
-            <div className="form-input-container">
-              <textarea
-                id="availability"
-                rows={3}
-                value={profileData.availability}
-                onChange={(e) => handleFieldChange('availability', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('settings:educatorProfile.availabilityPlaceholder', 'Describe your availability...')}
-              />
-            </div>
-          </div>
+          <AvailabilityScheduler
+            value={parseAvailabilitySettings(settings.availabilitySettings)}
+            onChange={(newSettings) => onChange('availabilitySettings', newSettings)}
+            showPreview={true}
+          />
         </div>
 
         <hr />

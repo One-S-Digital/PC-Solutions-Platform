@@ -158,14 +158,15 @@ model User {
   role      UserRole
 
   // Additional fields for educators from onboarding guide
-  phoneNumber    String?
-  workExperience String? // JSON string or text field
-  education      String? // JSON string or text field
-  certifications String[] // Array of certifications
-  skills         String[] // Array of skills
-  availability   String? // Availability information
-  cvUrl          String? // URL to CV document
-  shortBio       String? // Short bio/description for profile
+  phoneNumber          String?
+  workExperience       String? // JSON string or text field
+  education            String? // JSON string or text field
+  certifications       String[] // Array of certifications
+  skills               String[] // Array of skills
+  availability         String? // Legacy: simple text availability information
+  availabilitySettings Json?   // New: structured Calendly-style availability schedule
+  cvUrl                String? // URL to CV document
+  shortBio             String? // Short bio/description for profile
 
   // Avatar asset relation
   avatarAssetId String?
