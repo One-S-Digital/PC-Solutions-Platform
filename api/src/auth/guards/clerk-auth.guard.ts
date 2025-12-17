@@ -138,6 +138,24 @@ export class ClerkAuthGuard implements CanActivate {
         
         // Also fetch the User profile record
         const userProfile = await this.prisma.user.findUnique({ where: { clerkId: payload.sub } });
+        // Best-effort: resolve primary organizationId for org-scoped endpoints
+        const primaryOrg = userProfile
+          ? await this.prisma.userOrganization.findFirst({
+              where: {
+                userId: userProfile.id,
+                // Prefer membership matching the user's current role
+                ...(appUser?.role ? { role: appUser.role } : {}),
+              },
+              select: { organizationId: true },
+            })
+          : null;
+        const fallbackOrg = !primaryOrg && userProfile
+          ? await this.prisma.userOrganization.findFirst({
+              where: { userId: userProfile.id },
+              select: { organizationId: true },
+            })
+          : null;
+        const organizationId = primaryOrg?.organizationId ?? fallbackOrg?.organizationId ?? null;
         
         if (!appUser) {
           if (this.authDebug) {
@@ -152,6 +170,7 @@ export class ClerkAuthGuard implements CanActivate {
             profileUserId: userProfile?.id || null,
             clerkUserId: payload.sub,
             isPending: true,
+            organizationId,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
           request.user = {
@@ -159,6 +178,7 @@ export class ClerkAuthGuard implements CanActivate {
             role: 'PENDING',
             id: userProfile?.id || null,
             isPending: true,
+            organizationId,
           };
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user set for pending user', { context: request.context, user: request.user });
@@ -170,12 +190,14 @@ export class ClerkAuthGuard implements CanActivate {
             appUserId: appUser.id,
             profileUserId: userProfile?.id || null,
             clerkUserId: payload.sub,
+            organizationId,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
           request.user = {
             clerkId: payload.sub,
             role: appUser.role,
             id: userProfile?.id || null,
+            organizationId,
           };
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });

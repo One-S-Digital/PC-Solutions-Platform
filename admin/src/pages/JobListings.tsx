@@ -51,6 +51,10 @@ const JobListings: React.FC = () => {
 
   const jobs: JobListing[] = jobsResponse?.data?.data || []
 
+  const statusOptions = Array.from(
+    new Set(jobs.map((job) => job.status).filter(Boolean))
+  ) as Array<JobListing['status']>
+
   const filteredJobs = jobs.filter((job: JobListing) => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesStatus = !selectedStatus || job.status === selectedStatus
@@ -126,9 +130,11 @@ const JobListings: React.FC = () => {
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
               <option value="">{t('admin:jobListings.statusFilter.all')}</option>
-              <option value="ACTIVE">{t('admin:jobListings.statusFilter.active')}</option>
-              <option value="PAUSED">{t('admin:jobListings.statusFilter.paused')}</option>
-              <option value="CLOSED">{t('admin:jobListings.statusFilter.closed')}</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -150,11 +156,13 @@ const JobListings: React.FC = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  job.status === 'ACTIVE' 
+                  job.status === 'PUBLISHED'
                     ? 'bg-green-100 text-green-800'
-                    : job.status === 'PAUSED'
+                    : job.status === 'DRAFT'
                     ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-gray-100 text-gray-800'
+                    : job.status === 'FILLED'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-gray-100 text-gray-800' // CLOSED or unknown
                 }`}>
                   {job.status}
                 </span>

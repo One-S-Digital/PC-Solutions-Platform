@@ -224,7 +224,8 @@ export interface JobListing {
   id: string;
   title: string;
   organizationName: string;
-  status: 'ACTIVE' | 'PAUSED' | 'CLOSED';
+  // Backend prisma enum: JobStatus (DRAFT | PUBLISHED | CLOSED | FILLED)
+  status: 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'FILLED';
   description: string;
   location: string;
   type: string;
