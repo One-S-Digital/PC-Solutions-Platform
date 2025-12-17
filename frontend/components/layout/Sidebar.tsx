@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     },
     { path: '/hr-procedures', nameKey: 'sidebar.hrProcedures', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION] },
     { path: '/e-learning', nameKey: 'sidebar.eLearning', icon: AcademicCapIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon, roles: [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.EDUCATOR, UserRole.PARENT] },
+    { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon, roles: [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER] },
     { path: '/foundation/analytics', nameKey: 'sidebar.analytics', icon: PresentationChartLineIcon, roles: [UserRole.FOUNDATION] },
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]},
     { path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon, roles: [UserRole.FOUNDATION] }, // Kept for Foundation, hidden for Admin/SA
@@ -102,11 +102,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/educator/profile', nameKey: 'sidebar.myProfile', icon: IdentificationIcon, roles: [UserRole.EDUCATOR] },
     { path: '/educator/applications', nameKey: 'sidebar.applications', icon: ClipboardDocumentListIcon, roles: [UserRole.EDUCATOR] },
     { path: '/file-gallery', nameKey: 'sidebar.fileGallery', icon: PaperClipIcon, roles: [UserRole.EDUCATOR] },
+    { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon, roles: [UserRole.EDUCATOR] },
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.EDUCATOR]},
     { path: '/educator/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.EDUCATOR] },
     { path: '/parent/dashboard', nameKey: 'sidebar.dashboardHome', icon: HomeIcon, roles: [UserRole.PARENT], exact: true },
     { path: '/parent-lead-form', nameKey: 'sidebar.homeFindCreche', icon: PuzzlePieceIcon, roles: [UserRole.PARENT] },
     { path: '/parent/enquiries', nameKey: 'sidebar.myRequests', icon: ClipboardDocumentListIcon, roles: [UserRole.PARENT] },
+    { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon, roles: [UserRole.PARENT] },
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.PARENT]},
     { path: '/parent/support', nameKey: 'sidebar.supportFAQ', icon: QuestionMarkCircleIcon, roles: [UserRole.PARENT] },
     { 
