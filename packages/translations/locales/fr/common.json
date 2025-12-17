@@ -1786,18 +1786,20 @@
     "promoRedemptionAlertsToggle": "Alertes de Rédemption de Code Promo"
   },
   "settingsPage": {
-    "analyticsPreferences": "[FR] Analytics Preferences",
-    "companyProfile": "[FR] Company Profile",
-    "contactBooking": "[FR] Contact Booking",
-    "defaults": "[FR] Defaults",
-    "loading": "[FR] Loading",
-    "noSectionsAvailable": "[FR] No settings sections available",
-    "notificationPreferences": "[FR] No tification Preferences",
-    "privacyData": "[FR] Privacy Data",
+    "accountSecurity": "Compte et sécurité",
+    "analyticsPreferences": "Préférences d'analyse",
+    "billingSubscription": "Facturation et abonnement",
+    "companyProfile": "Profil de l'entreprise",
+    "contactBooking": "Contact et réservation",
+    "defaults": "Paramètres par défaut",
+    "loading": "Chargement des paramètres...",
+    "noSectionsAvailable": "Aucune section de paramètres disponible",
+    "notificationPreferences": "Préférences de notification",
+    "privacyData": "Données de confidentialité",
     "profile": "Modifier le profil",
-    "promoCodeManager": "[FR] Promo Code Manager",
-    "teamPermissions": "[FR] Team Permissions",
-    "unsavedChangesPrompt": "[FR] You have unsaved changes. Are you sure you want to leave?"
+    "promoCodeManager": "Gestionnaire de codes promo",
+    "teamPermissions": "Équipe et permissions",
+    "unsavedChangesPrompt": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir partir ?"
   },
   "settingsPrivacyData": {
     "confirmGDPRDelete": "Êtes-vous sûr de vouloir demander la suppression des données ? Cette action est irréversible.",

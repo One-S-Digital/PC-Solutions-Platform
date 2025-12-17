@@ -605,6 +605,33 @@
     "trainingCompletion": "Achèvement de la formation",
     "trainingStatus": "Statut de la formation"
   },
+  "foundationLeadsPage": {
+    "accessDenied": {
+      "message": "Vous devez être connecté en tant que Fondation avec un ID d'organisation valide pour voir cette page.",
+      "title": "Accès refusé"
+    },
+    "allResponses": "Toutes les réponses",
+    "allStatuses": "Tous les statuts",
+    "emptyState": {
+      "message": "Il n'y a actuellement aucune nouvelle demande de renseignements parent correspondant à votre crèche.",
+      "title": "Aucun prospect entrant"
+    },
+    "searchPlaceholder": "Rechercher des pistes...",
+    "title": "Pistes de parents entrantes",
+    "totalLeads": "Total des pistes"
+  },
+  "leadCard": {
+    "status": {
+      "converted": "Converti",
+      "enrolled": "Inscrit",
+      "interested": "Intéressé",
+      "needsMoreInfo": "Besoin de plus d'informations",
+      "new": "Nouveau",
+      "notInterested": "Non intéressé",
+      "notResponded": "Pas de réponse",
+      "processing": "En traitement"
+    }
+  },
   "foundationOrdersAppointmentsPage": {
     "cancelOrderAlert": "Commande {{orderId}} annulée avec succès",
     "exportCsvButton": "Exporter CSV",
