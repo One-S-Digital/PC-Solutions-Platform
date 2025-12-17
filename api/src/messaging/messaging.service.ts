@@ -238,7 +238,7 @@ export class MessagingService {
     // Get AppUsers for all participants to find their clerkIds
     // Participant IDs can be: AppUser.id, User.id (profile), or Clerk ID
     // First, try to find by AppUser.id
-    let participantAppUsers = await this.prisma.appUser.findMany({
+    const participantAppUsers = await this.prisma.appUser.findMany({
       where: { id: { in: participantIds } },
       select: { id: true, clerkId: true },
     });
