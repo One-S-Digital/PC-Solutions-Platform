@@ -52,6 +52,17 @@ export class PrincipalService {
       throw new NotFoundException('User not found in system');
     }
 
+    // If appUser.email is null, check if the User record already has an email
+    // This handles the case where User was created before AppUser got its email synced
+    let emailForCreate: string | null = appUser.email;
+    if (!emailForCreate) {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { clerkId },
+        select: { email: true },
+      });
+      emailForCreate = existingUser?.email ?? null;
+    }
+
     const user = await this.prisma.user.upsert({
       where: { clerkId },
       update: {
@@ -60,7 +71,7 @@ export class PrincipalService {
       },
       create: {
         clerkId,
-        email: appUser.email ?? '',
+        email: emailForCreate, // Use existing User email if AppUser email is null
         role: appUser.role,
         isActive: true,
       },
