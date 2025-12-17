@@ -161,7 +161,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
     if (currentUser.role !== UserRole.SERVICE_PROVIDER) {
       setServiceProviderSettings(null);
       setOrganizationDetails(null);
-      setError(t('organizationProfileForm.accessDenied', 'Access denied.'));
+      setError(t('common:organizationProfileForm.accessDenied', 'Access denied.'));
       setIsLoading(false);
       return;
     }

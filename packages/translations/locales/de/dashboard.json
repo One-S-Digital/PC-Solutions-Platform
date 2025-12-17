@@ -658,6 +658,40 @@
     },
     "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
   },
+  "inquiryDetailModal": {
+    "actions": {
+      "contacted": "Als kontaktiert markieren",
+      "decline": "Ablehnen",
+      "markFulfilled": "Als erfüllt markieren",
+      "markPending": "Als ausstehend markieren",
+      "sendQuote": "Angebot senden"
+    },
+    "budget": "Budget",
+    "contactInfo": "Kontaktinformationen",
+    "date": "Datum",
+    "from": "Von",
+    "fulfilledAt": "Erfüllt",
+    "inquiryId": "Anfrage-ID",
+    "internalNotes": "Interne Notizen",
+    "message": "Nachricht",
+    "preferredContact": "Bevorzugt",
+    "productInterest": "Produktinteresse",
+    "quantity": "Geschätzte Menge",
+    "quoteAmount": "Angebotssumme (CHF)",
+    "quotedAmount": "Angebotene Summe",
+    "respondedAt": "Zuerst geantwortet",
+    "responseMessage": "Antwortnachricht",
+    "responsePlaceholder": "Geben Sie Ihre Antwort an den Kunden ein...",
+    "sendResponse": "Antwort senden",
+    "status": "Status",
+    "title": "Anfragedetails",
+    "urgency": "Dringlichkeit",
+    "viewProfile": "Profil anzeigen",
+    "yourResponse": "Ihre Antwort"
+  },
+  "organizationProfileForm": {
+    "saveSuccess": "Organisationsprofil erfolgreich gespeichert"
+  },
   "foundationOrganisationProfilePage": {
     "actions": {
       "openBookingLink": "Buchungslink öffnen",

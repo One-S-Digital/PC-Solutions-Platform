@@ -41,11 +41,11 @@ const ParentEnquiriesPage: React.FC = () => {
   
   const getFoundationResponseStatusInfo = (status: FoundationLeadResponseStatus) => {
     switch(status) {
-        case FoundationLeadResponseStatus.INTERESTED: return { text: t('leadCard.status.interested'), color: "text-green-600"};
-        case FoundationLeadResponseStatus.NOT_INTERESTED: return { text: t('leadCard.status.notInterested'), color: "text-red-600"};
-        case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { text: t('leadCard.status.needsMoreInfo'), color: "text-orange-600"};
-        case FoundationLeadResponseStatus.ENROLLED: return { text: t('leadCard.status.enrolled'), color: "text-purple-600"};
-        default: return { text: t('leadCard.status.notResponded'), color: "text-gray-500"};
+        case FoundationLeadResponseStatus.INTERESTED: return { text: t('dashboard:leadCard.status.interested'), color: "text-green-600"};
+        case FoundationLeadResponseStatus.NOT_INTERESTED: return { text: t('dashboard:leadCard.status.notInterested'), color: "text-red-600"};
+        case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { text: t('dashboard:leadCard.status.needsMoreInfo'), color: "text-orange-600"};
+        case FoundationLeadResponseStatus.ENROLLED: return { text: t('dashboard:leadCard.status.enrolled'), color: "text-purple-600"};
+        default: return { text: t('dashboard:leadCard.status.notResponded'), color: "text-gray-500"};
     }
   };
   

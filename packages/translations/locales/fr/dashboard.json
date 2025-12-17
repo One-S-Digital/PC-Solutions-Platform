@@ -688,6 +688,40 @@
     },
     "ticketSubmittedAlert": "Ticket de support soumis avec succès"
   },
+  "inquiryDetailModal": {
+    "actions": {
+      "contacted": "Marquer comme contacté",
+      "decline": "Refuser",
+      "markFulfilled": "Marquer comme rempli",
+      "markPending": "Marquer comme en attente",
+      "sendQuote": "Envoyer un devis"
+    },
+    "budget": "Budget",
+    "contactInfo": "Informations de contact",
+    "date": "Date",
+    "from": "De",
+    "fulfilledAt": "Rempli",
+    "inquiryId": "ID de la demande",
+    "internalNotes": "Notes internes",
+    "message": "Message",
+    "preferredContact": "Préféré",
+    "productInterest": "Intérêt pour le produit",
+    "quantity": "Quantité estimée",
+    "quoteAmount": "Montant du devis (CHF)",
+    "quotedAmount": "Montant cité",
+    "respondedAt": "Première réponse",
+    "responseMessage": "Message de réponse",
+    "responsePlaceholder": "Entrez votre réponse au client...",
+    "sendResponse": "Envoyer la réponse",
+    "status": "Statut",
+    "title": "Détails de la demande",
+    "urgency": "Urgence",
+    "viewProfile": "Voir le profil",
+    "yourResponse": "Votre réponse"
+  },
+  "organizationProfileForm": {
+    "saveSuccess": "Profil de l'organisation enregistré avec succès"
+  },
   "foundationOrganisationProfilePage": {
     "actions": {
       "openBookingLink": "Ouvrir le lien de réservation",

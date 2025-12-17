@@ -162,7 +162,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
     if (currentUser.role !== UserRole.PRODUCT_SUPPLIER) {
       setSupplierSettings(null);
       setOrganizationDetails(null);
-      setError(t('organizationProfileForm.accessDenied', 'Access denied.'));
+      setError(t('common:organizationProfileForm.accessDenied', 'Access denied.'));
       setIsLoading(false);
       return;
     }

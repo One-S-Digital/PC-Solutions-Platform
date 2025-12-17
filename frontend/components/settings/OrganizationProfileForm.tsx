@@ -170,8 +170,9 @@ const OrganizationProfileForm: React.FC = () => {
     }
   };
 
+  // Explicit namespace to avoid dashboard/common collision
   if (!currentUser || currentUser.role !== UserRole.FOUNDATION) {
-    return <p>{t('organizationProfileForm.accessDenied')}</p>;
+    return <p>{t('common:organizationProfileForm.accessDenied')}</p>;
   }
 
   if (isLoading || !profile) {
@@ -184,19 +185,19 @@ const OrganizationProfileForm: React.FC = () => {
 
   return (
     <Card className="p-6">
-      <h2 className="text-xl font-semibold text-swiss-charcoal mb-1">{t('organizationProfileForm.title')}</h2>
-      <p className="text-sm text-gray-500 mb-6">{t('organizationProfileForm.subtitle')}</p>
+      <h2 className="text-xl font-semibold text-swiss-charcoal mb-1">{t('common:organizationProfileForm.title')}</h2>
+      <p className="text-sm text-gray-500 mb-6">{t('common:organizationProfileForm.subtitle')}</p>
 
       {isSaved && (
         <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
-          {t('organizationProfileForm.saveSuccess')}
+          {t('dashboard:organizationProfileForm.saveSuccess')}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="capacity" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('organizationProfileForm.labels.capacity')}
+            {t('common:organizationProfileForm.labels.capacity')}
           </label>
           <input
             type="number"
@@ -211,7 +212,7 @@ const OrganizationProfileForm: React.FC = () => {
 
         <div>
           <label htmlFor="pedagogy" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('organizationProfileForm.labels.pedagogy')}
+            {t('common:organizationProfileForm.labels.pedagogy')}
           </label>
           <input
             type="text"
@@ -220,14 +221,14 @@ const OrganizationProfileForm: React.FC = () => {
             value={profile.pedagogy.join(', ')}
             onChange={handlePedagogyChange}
             className={STANDARD_INPUT_FIELD}
-            placeholder={t('organizationProfileForm.placeholders.pedagogy')}
+            placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}
           />
-          <p className="text-xs text-gray-500 mt-1">{t('organizationProfileForm.helpText.commaSeparated')}</p>
+          <p className="text-xs text-gray-500 mt-1">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>
         </div>
 
         <div>
           <label htmlFor="languages" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('organizationProfileForm.labels.languages')}
+            {t('common:organizationProfileForm.labels.languages')}
           </label>
           <input
             type="text"
@@ -236,14 +237,14 @@ const OrganizationProfileForm: React.FC = () => {
             value={profile.languages.join(', ')}
             onChange={handleLanguagesChange}
             className={STANDARD_INPUT_FIELD}
-            placeholder={t('organizationProfileForm.placeholders.languages')}
+            placeholder={t('common:organizationProfileForm.placeholders.languages')}
           />
-          <p className="text-xs text-gray-500 mt-1">{t('organizationProfileForm.helpText.commaSeparated')}</p>
+          <p className="text-xs text-gray-500 mt-1">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>
         </div>
 
         <div className="pt-2">
           <Button type="submit" variant="primary" disabled={isSaving}>
-            {isSaving ? `${t('common:buttons.saveChanges')}...` : t('organizationProfileForm.saveButton')}
+            {isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}
           </Button>
         </div>
       </form>

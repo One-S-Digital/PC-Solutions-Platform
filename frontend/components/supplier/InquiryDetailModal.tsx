@@ -12,6 +12,7 @@ interface InquiryDetailModalProps {
   onUpdateStatus: (inquiryId: string, newStatus: InquiryStatus, responseMessage?: string, quotedAmount?: number) => void;
 }
 
+// Explicit namespace to avoid dashboard/common collision
 const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen, onClose, onUpdateStatus }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
@@ -91,8 +92,8 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {selectedAction === InquiryStatus.QUOTED 
-                ? t('inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')
-                : t('inquiryDetailModal.responseMessage', 'Response Message')}
+                ? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')
+                : t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}
             </label>
             {selectedAction === InquiryStatus.QUOTED && (
               <input
@@ -107,7 +108,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
             <textarea
               value={responseMessage}
               onChange={(e) => setResponseMessage(e.target.value)}
-              placeholder={t('inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}
+              placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}
               rows={3}
               className="w-full px-3 py-2 border rounded-md focus:ring-swiss-teal focus:border-swiss-teal"
             />
@@ -117,7 +118,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
               {t('common:buttons.cancel', 'Cancel')}
             </Button>
             <Button variant="primary" onClick={handleSubmitResponse}>
-              {t('inquiryDetailModal.sendResponse', 'Send Response')}
+              {t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}
             </Button>
           </div>
         </div>
@@ -129,13 +130,13 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
         return (
           <>
             <Button variant="danger" onClick={() => handleQuickStatusUpdate(InquiryStatus.DECLINED)}>
-              {t('inquiryDetailModal.actions.decline', 'Decline')}
+              {t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}
             </Button>
             <Button variant="secondary" onClick={() => handleQuickStatusUpdate(InquiryStatus.PENDING)}>
-              {t('inquiryDetailModal.actions.markPending', 'Mark as Pending')}
+              {t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}
             </Button>
             <Button variant="primary" onClick={() => handleQuickStatusUpdate(InquiryStatus.CONTACTED)}>
-              {t('inquiryDetailModal.actions.contacted', 'Mark as Contacted')}
+              {t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}
             </Button>
           </>
         );
@@ -144,13 +145,13 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
         return (
           <>
             <Button variant="danger" onClick={() => handleQuickStatusUpdate(InquiryStatus.DECLINED)}>
-              {t('inquiryDetailModal.actions.decline', 'Decline')}
+              {t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}
             </Button>
             <Button variant="secondary" onClick={() => handleQuickStatusUpdate(InquiryStatus.QUOTED)}>
-              {t('inquiryDetailModal.actions.sendQuote', 'Send Quote')}
+              {t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}
             </Button>
             <Button variant="primary" onClick={() => onUpdateStatus(inquiry.id, InquiryStatus.FULFILLED)}>
-              {t('inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}
+              {t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}
             </Button>
           </>
         );
@@ -158,10 +159,10 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
         return (
           <>
             <Button variant="danger" onClick={() => handleQuickStatusUpdate(InquiryStatus.DECLINED)}>
-              {t('inquiryDetailModal.actions.decline', 'Decline')}
+              {t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}
             </Button>
             <Button variant="primary" onClick={() => onUpdateStatus(inquiry.id, InquiryStatus.FULFILLED)}>
-              {t('inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}
+              {t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}
             </Button>
           </>
         );
@@ -174,7 +175,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity" role="dialog" aria-modal="true">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('inquiryDetailModal.title', 'Inquiry Details')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('common:buttons.close', 'Close')}>
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -184,21 +185,21 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           {/* Status and Date */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
             <div className="p-3 bg-gray-50 rounded-md">
-              <span className="block text-xs text-gray-500">{t('inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>
+              <span className="block text-xs text-gray-500">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>
               <span className="font-semibold">{inquiry.id.substring(0, 8)}...</span>
             </div>
             <div className="p-3 bg-gray-50 rounded-md">
-              <span className="block text-xs text-gray-500">{t('inquiryDetailModal.date', 'Date')}</span>
+              <span className="block text-xs text-gray-500">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>
               <span className="font-semibold">{new Date(inquiry.createdAt).toLocaleDateString(i18n.language)}</span>
             </div>
             <div className="p-3 bg-gray-50 rounded-md">
-              <span className="block text-xs text-gray-500">{t('inquiryDetailModal.status', 'Status')}</span>
+              <span className="block text-xs text-gray-500">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>
               <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusColor(inquiry.status)}`}>
                 {t(`inquiryStatus.${inquiry.status.toLowerCase()}` as const, inquiry.status)}
               </span>
             </div>
             <div className="p-3 bg-gray-50 rounded-md">
-              <span className="block text-xs text-gray-500">{t('inquiryDetailModal.urgency', 'Urgency')}</span>
+              <span className="block text-xs text-gray-500">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>
               {inquiry.urgency ? (
                 <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${getUrgencyColor(inquiry.urgency)}`}>
                   {t(`inquiryUrgency.${inquiry.urgency.toLowerCase()}` as const, inquiry.urgency)}
@@ -211,7 +212,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           
           {/* From Organization */}
           <div className="mb-6">
-            <h3 className="font-semibold mb-2">{t('inquiryDetailModal.from', 'From')}</h3>
+            <h3 className="font-semibold mb-2">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>
             <div className="flex items-center p-3 border rounded-md">
               <div className="w-12 h-12 bg-swiss-teal/10 rounded-full flex items-center justify-center mr-3">
                 <BuildingStorefrontIcon className="w-6 h-6 text-swiss-teal" />
@@ -221,7 +222,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
                 {inquiry.contactName && <p className="text-sm text-gray-500">{inquiry.contactName}</p>}
               </div>
               <Button variant="outline" size="sm" leftIcon={BuildingStorefrontIcon} onClick={handleViewProfile}>
-                {t('inquiryDetailModal.viewProfile', 'View Profile')}
+                {t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}
               </Button>
             </div>
           </div>
@@ -229,7 +230,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           {/* Contact Information */}
           {(inquiry.contactEmail || inquiry.contactPhone) && (
             <div className="mb-6">
-              <h3 className="font-semibold mb-2">{t('inquiryDetailModal.contactInfo', 'Contact Information')}</h3>
+              <h3 className="font-semibold mb-2">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>
               <div className="flex flex-wrap gap-4">
                 {inquiry.contactEmail && (
                   <a href={`mailto:${inquiry.contactEmail}`} className="flex items-center text-swiss-teal hover:underline">
@@ -246,7 +247,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
                 {inquiry.preferredContactMethod && (
                   <span className="flex items-center text-gray-500">
                     <ChatBubbleLeftRightIcon className="w-4 h-4 mr-1" />
-                    {t('inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}
+                    {t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}
                   </span>
                 )}
               </div>
@@ -255,7 +256,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
 
           {/* Inquiry Details */}
           <div className="mb-6">
-            <h3 className="font-semibold mb-2">{inquiry.subject || t('inquiryDetailModal.message', 'Message')}</h3>
+            <h3 className="font-semibold mb-2">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>
             <div className="p-4 bg-gray-50 rounded-md">
               <p className="whitespace-pre-wrap">{inquiry.message}</p>
             </div>
@@ -265,19 +266,19 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {inquiry.productInterest && (
               <div className="p-3 border rounded-md">
-                <span className="block text-xs text-gray-500 mb-1">{t('inquiryDetailModal.productInterest', 'Product Interest')}</span>
+                <span className="block text-xs text-gray-500 mb-1">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>
                 <span className="font-medium">{inquiry.productInterest}</span>
               </div>
             )}
             {inquiry.quantity && (
               <div className="p-3 border rounded-md">
-                <span className="block text-xs text-gray-500 mb-1">{t('inquiryDetailModal.quantity', 'Est. Quantity')}</span>
+                <span className="block text-xs text-gray-500 mb-1">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>
                 <span className="font-medium">{inquiry.quantity}</span>
               </div>
             )}
             {inquiry.budget && (
               <div className="p-3 border rounded-md">
-                <span className="block text-xs text-gray-500 mb-1">{t('inquiryDetailModal.budget', 'Budget')}</span>
+                <span className="block text-xs text-gray-500 mb-1">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>
                 <span className="font-medium">{inquiry.budget}</span>
               </div>
             )}
@@ -286,10 +287,10 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           {/* Quote / Response */}
           {(inquiry.quotedAmount || inquiry.responseMessage) && (
             <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-md">
-              <h3 className="font-semibold mb-2 text-purple-700">{t('inquiryDetailModal.yourResponse', 'Your Response')}</h3>
+              <h3 className="font-semibold mb-2 text-purple-700">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>
               {inquiry.quotedAmount && (
                 <p className="text-lg font-bold text-purple-700 mb-2">
-                  {t('inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}
+                  {t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}
                 </p>
               )}
               {inquiry.responseMessage && (
@@ -301,7 +302,7 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           {/* Supplier Notes */}
           {inquiry.supplierNotes && (
             <div className="mb-6">
-              <h3 className="font-semibold mb-1">{t('inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>
+              <h3 className="font-semibold mb-1">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>
               <p className="text-sm p-3 bg-yellow-50 border border-yellow-200 rounded-md italic">{inquiry.supplierNotes}</p>
             </div>
           )}
@@ -309,10 +310,10 @@ const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({ inquiry, isOpen
           {/* Timestamps */}
           <div className="text-xs text-gray-500 space-y-1">
             {inquiry.respondedAt && (
-              <p>{t('inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>
+              <p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>
             )}
             {inquiry.fulfilledAt && (
-              <p>{t('inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>
+              <p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>
             )}
           </div>
         </div>

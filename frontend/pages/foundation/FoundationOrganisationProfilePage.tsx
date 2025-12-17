@@ -152,7 +152,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
     if (currentUser.role !== UserRole.FOUNDATION) {
       setFoundationSettings(null);
       setOrganizationDetails(null);
-      setError(t('organizationProfileForm.accessDenied', 'Access denied.'));
+      setError(t('common:organizationProfileForm.accessDenied', 'Access denied.'));
       setIsLoading(false);
       return;
     }
@@ -384,7 +384,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-lg border border-gray-100 p-4 shadow-sm">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                  {t('organizationProfileForm.labels.capacity', 'Capacity')}
+                  {t('common:organizationProfileForm.labels.capacity', 'Capacity')}
                 </p>
                 <div className="mt-2 flex items-center gap-2 text-lg font-semibold text-swiss-charcoal">
                   <UserGroupIcon className="h-5 w-5 text-swiss-mint" />
@@ -456,7 +456,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
               <div className="space-y-4">
                 <InfoItem
                   icon={UserGroupIcon}
-                  label={t('organizationProfileForm.labels.capacity', 'Capacity')}
+                  label={t('common:organizationProfileForm.labels.capacity', 'Capacity')}
                   value={capacityValue}
                 />
                 <InfoItem
