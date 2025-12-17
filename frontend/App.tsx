@@ -165,6 +165,7 @@ const ProtectedLayout: React.FC = () => {
       );
     }
     
+    
     // Backend sync failed (not loading anymore, but no user)
     // Show a manual "Complete Profile" page instead of auto-redirecting
     // This handles OAuth users and email/password users whose webhook failed
