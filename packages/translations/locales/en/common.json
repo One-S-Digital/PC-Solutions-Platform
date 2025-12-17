@@ -608,7 +608,9 @@
     "loadFailed": "load Failed",
     "loadMessagesFailed": "load Messages Failed",
     "loadingFiles": "Error loading files",
+    "messagingFailed": "Failed to start conversation. Please try again.",
     "networkError": "Network error occurred",
+    "noContactAvailable": "No contact available for this organization.",
     "notFound": "Resource not found",
     "sendMessageFailed": "send Message Failed",
     "serverError": "Server error occurred",
@@ -2068,20 +2070,20 @@
     "noTickets": "No tickets",
     "orSubmitTicket": "or submit a support ticket below.",
     "responses": "responses",
-    "staffResponse": "staff Response",
+    "staffResponse": "Staff Response",
     "submitTicketTitle": "Submit a Support Ticket",
     "ticketForm": {
-      "categoryLabel": "category",
+      "categoryLabel": "Category",
       "messageLabel": "Message",
       "messagePlaceholder": "Please provide detailed information about your issue",
-      "priorityLabel": "priority",
+      "priorityLabel": "Priority",
       "responsePlaceholder": "Enter response",
       "subjectLabel": "Subject",
       "subjectPlaceholder": "Brief description of your issue",
       "submitButton": "Submit Ticket"
     },
-    "viewTicket": "view Ticket",
-    "you": "you"
+    "viewTicket": "View Ticket",
+    "you": "You"
   },
   "tabs": {
     "productSuppliers": "product Suppliers",

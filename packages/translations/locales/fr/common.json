@@ -573,6 +573,8 @@
     "loadFailed": "load Failed",
     "loadMessagesFailed": "load Messages Failed",
     "loadingFiles": "error Chargement... files",
+    "messagingFailed": "Échec du démarrage de la conversation. Veuillez réessayer.",
+    "noContactAvailable": "Aucun contact disponible pour cette organisation.",
     "sendMessageFailed": "send Message Failed",
     "submitFailed": "Soumettre failed",
     "unknown": "An unknown error occurred",
@@ -2037,21 +2039,21 @@
     "newTicketButton": "Nouveau ticket",
     "noTickets": "Aucun ticket",
     "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
-    "responses": "responses",
-    "staffResponse": "staff Response",
+    "responses": "réponses",
+    "staffResponse": "Réponse du personnel",
     "submitTicketTitle": "Soumettre un Ticket de Support",
     "ticketForm": {
-      "categoryLabel": "category",
+      "categoryLabel": "Catégorie",
       "messageLabel": "Message",
       "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
-      "priorityLabel": "priority",
-      "responsePlaceholder": "Enter response",
+      "priorityLabel": "Priorité",
+      "responsePlaceholder": "Entrez votre réponse",
       "subjectLabel": "Sujet",
       "subjectPlaceholder": "Brève description de votre problème",
       "submitButton": "Soumettre le Ticket"
     },
-    "viewTicket": "Voir ticket",
-    "you": "you"
+    "viewTicket": "Voir le ticket",
+    "you": "Vous"
   },
   "tabs": {
     "productSuppliers": "product Suppliers",
