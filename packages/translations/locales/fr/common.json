@@ -764,7 +764,8 @@
         "subtitle": "Utilisez le formulaire ci-dessous pour ajuster la capacité, la pédagogie et les langues. Les modifications sont enregistrées directement dans la base de données."
       }
     },
-    "title": "[FR] Title"
+    "subtitle": "Consultez les détails du profil de votre organisation tirés directement de la base de données.",
+    "title": "Profil de l'organisation"
   },
   "goToDashboardButton": "Aller au tableau de bord",
   "goToPricingButton": "Voir les tarifs",
@@ -952,14 +953,14 @@
     "questionFor": "[FR] Question For",
     "questionPlaceholder": "[FR] Enter question",
     "status": {
-      "converted": "converted",
-      "enrolled": "[FR] Enrolled",
-      "interested": "[FR] Interested",
-      "needsMoreInfo": "[FR] Needs More Info",
-      "new": "new",
-      "notInterested": "[FR] No t Interested",
-      "notResponded": "[FR] No t Responded",
-      "processing": "processing"
+      "converted": "Converti",
+      "enrolled": "Inscrit",
+      "interested": "Intéressé",
+      "needsMoreInfo": "Besoin de plus d'informations",
+      "new": "Nouveau",
+      "notInterested": "Non intéressé",
+      "notResponded": "Pas de réponse",
+      "processing": "En traitement"
     },
     "submittedOn": "[FR] Submitted On",
     "title": "[FR] Title",
@@ -1496,6 +1497,7 @@
     "noServicesFound": "[FR] No services found"
   },
   "serviceProviderAnalyticsPage": {
+    "mockChartText": "Visualisation de graphique {{type}} simulée",
     "requestDistributionByCanton": "Répartition des demandes par canton",
     "requestsByCanton": "Demandes par canton",
     "serviceRequestsPerWeek": "Demandes de services par semaine",

@@ -133,7 +133,7 @@
       "loadJobs": "Stellenangebote können nicht geladen werden."
     },
     "noJobsFound": "Keine Jobs gefunden",
-    "postedOn": "Veröffentlicht am",
+    "postedOn": "Veröffentlicht am {{date}}",
     "searchPlaceholder": "Jobs suchen...",
     "title": "Stellenangebote",
     "unknownFoundation": "Unbekannte Stiftung"
@@ -243,7 +243,7 @@
     },
     "title": "Foundation-Dashboard",
     "todayAtGlance": "Heute auf einen Blick",
-    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindertagesstätten-Operationen."
+    "welcomeMessage": "Willkommen zurück {{name}}! Hier ist eine Übersicht über Ihre Kindertagesstätten-Operationen."
   },
   "jobsPosted": "Stellenanzeigen veröffentlicht",
   "live": "Live",
@@ -295,7 +295,7 @@
       "viewEnquiries": "Anfragen anzeigen"
     },
     "title": "Eltern-Dashboard",
-    "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Kindergartensuche und Anfragen."
+    "welcomeMessage": "Willkommen zurück {{name}}! Hier ist eine Übersicht über Ihre Kindergartensuche und Anfragen."
   },
   "parentEnquiriesPage": {
     "accessDenied": {
@@ -304,12 +304,12 @@
     },
     "card": {
       "awaitingMatch": "Warten auf Übereinstimmung",
-      "childInfo": "Kinderinformationen",
+      "childInfo": "Kinderinformationen: Alter {{age}}, Gewünschtes Startdatum {{date}}",
       "message": "Ihre Anfrage wurde an relevante Anbieter gesendet",
       "notes": "Zusätzliche Notizen",
       "responsesTitle": "Antworten",
       "submitted": "Eingereicht am {{date}}",
-      "title": "Anfragedetails",
+      "title": "Anfragedetails: {{canton}}{{municipality}}",
       "waitingForMoreResponses": "Warten auf weitere Antworten..."
     },
     "emptyState": {
@@ -348,6 +348,16 @@
     "title": "Recruitment"
   },
   "registeredUsers": "registrierte Nutzer auf der Plattform",
+  "serviceProviderAnalyticsPage": {
+    "mockChartText": "Simulierte {{type}} Diagrammvisualisierung",
+    "requestDistributionByCanton": "Verteilung der Anfragen nach Kanton",
+    "requestsByCanton": "Anfragen nach Kanton",
+    "serviceRequestsPerWeek": "Service-Anfragen pro Woche",
+    "serviceRequestsTrend": "Trend der Service-Anfragen",
+    "serviceViews": "Service-Aufrufe",
+    "title": "Analysen",
+    "topViewedServices": "Meist angesehene Services"
+  },
   "serviceProviderDashboard": {
     "title": "Dienstanbieter-Dashboard",
     "welcomeMessage": "Willkommen zurück! Hier ist eine Übersicht über Ihre Serviceanfragen und Termine.",
@@ -461,7 +471,7 @@
     "datePickerLabel": "Datumsbereich auswählen",
     "exportCsvAlert": "CSV-Export gestartet",
     "exportCsvButton": "CSV exportieren",
-    "mockChartText": "Simulierte Diagrammvisualisierung",
+    "mockChartText": "Simulierte {{type}} Diagrammvisualisierung",
     "orderRequestsPerWeek": "Bestellanfragen pro Woche",
     "orderRequestsTrend": "Trend der Bestellanfragen",
     "productViews": "Produktansichten",
@@ -567,8 +577,109 @@
       "visible": "Visible"
     }
   },
+  "foundationAnalyticsPage": {
+    "completed": "Abgeschlossen",
+    "conversionRate": "Konversionsrate",
+    "enrolled": "Eingeschrieben",
+    "enrollmentTrend": "Einschreibungstrend",
+    "inProgress": "In Bearbeitung",
+    "last30Days": "Letzte 30 Tage",
+    "last6Months": "Letzte 6 Monate",
+    "last7Days": "Letzte 7 Tage",
+    "last90Days": "Letzte 90 Tage",
+    "lastYear": "Letztes Jahr",
+    "leadFunnel": "Lead-Trichter",
+    "mockDataVisualization": "Mock-Datenvisualisierung",
+    "monthlyEnrollment": "Monatliche Einschreibungen",
+    "newLeads": "Neue Leads",
+    "noEnrollmentData": "Keine Einschreibungsdaten",
+    "noLeadData": "Keine Lead-Daten",
+    "noSpendingData": "Keine Ausgabendaten",
+    "noTrainingData": "Keine Schulungsdaten",
+    "notStarted": "Nicht begonnen",
+    "parentLeadConversion": "Eltern-Lead-Konversion",
+    "spendingByCategory": "Ausgaben nach Kategorie",
+    "staffTrainingCompletion": "Abschluss der Mitarbeiterschulung",
+    "title": "Analysen",
+    "totalLeads": "Gesamt Leads",
+    "totalSpending": "Gesamtausgaben",
+    "trainingCompletion": "Schulungsabschluss",
+    "trainingStatus": "Schulungsstatus"
+  },
+  "foundationSupportPage": {
+    "faq": {
+      "manageLeads": {
+        "a": "Sie können Eltern-Leads von Ihrem Dashboard aus anzeigen und darauf antworten. Verwenden Sie die Schnellaktionen, um Leads als interessiert, nicht interessiert zu markieren oder weitere Informationen anzufordern.",
+        "q": "Wie verwalte ich eingehende Eltern-Leads?"
+      },
+      "manageProfile": {
+        "a": "Gehen Sie zu Organisationsprofil, um Ihr Branding, Ihre Kontaktinformationen, Öffnungszeiten und andere Details zu aktualisieren, die Eltern sehen.",
+        "q": "Wie verwalte ich mein Organisationsprofil?"
+      },
+      "recruitment": {
+        "a": "Navigieren Sie zu Rekrutierung > Stellenanzeigen und klicken Sie auf 'Neue Stelle veröffentlichen', um eine Stellenanzeige zu erstellen. Sie können Bewerber anzeigen und den Einstellungsprozess von dort aus verwalten.",
+        "q": "Wie veröffentliche ich Stellenangebote?"
+      },
+      "useMarketplace": {
+        "a": "Durchsuchen Sie Produkte und Dienstleistungen von verifizierten Lieferanten. Fügen Sie Artikel zu Ihrem Bestellwagen hinzu und übermitteln Sie Bestellungen direkt über die Plattform.",
+        "q": "Wie nutze ich den Marktplatz?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems"
+    },
+    "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
+  },
+  "foundationOrganisationProfilePage": {
+    "actions": {
+      "openBookingLink": "Buchungslink öffnen",
+      "openDirectOrderLink": "Direktbestellungslink öffnen"
+    },
+    "alert": {
+      "infoSaved": "Profilinformationen erfolgreich gespeichert"
+    },
+    "empty": {
+      "languages": "Noch keine Sprachen hinzugefügt.",
+      "organizationName": "Organisationsname nicht festgelegt",
+      "organizationType": "Organisationstyp nicht angegeben",
+      "pedagogy": "Keine Pädagogikstile erfasst."
+    },
+    "labels": {
+      "address": "Standort",
+      "contactEmail": "Primäre E-Mail",
+      "contactPerson": "Kontaktperson",
+      "createdAt": "Erstellt",
+      "languages": "Sprachen",
+      "organizationId": "Organisations-ID",
+      "pedagogy": "Pädagogik",
+      "phoneNumber": "Telefonnummer",
+      "updatedAt": "Zuletzt aktualisiert",
+      "vatNumber": "Umsatzsteuer-ID"
+    },
+    "loadError": "Organisationsprofildetails konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "notProvided": "Nicht angegeben",
+    "saveButton": "Profil speichern",
+    "sections": {
+      "contact": {
+        "title": "Kontakt und Standort"
+      },
+      "edit": {
+        "subtitle": "Verwenden Sie das untenstehende Formular, um Kapazität, Pädagogik und Sprachen anzupassen. Änderungen werden direkt in der Datenbank gespeichert.",
+        "title": "Kern-Organisationsprofilinformationen aktualisieren"
+      },
+      "metadata": {
+        "title": "Organisationsmetadaten"
+      },
+      "operations": {
+        "title": "Betrieb"
+      }
+    },
+    "subtitle": "Überprüfen Sie die Details des Organisationsprofils, die direkt aus der Datenbank abgerufen wurden.",
+    "title": "Organisationsprofil"
+  },
   "supplierSupportPage": {
-    "ticketSubmittedAlert": "Support ticket submitted successfully"
+    "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
   },
   "systemHealthy": "Alle Systeme betriebsbereit",
   "total": "Gesamt",

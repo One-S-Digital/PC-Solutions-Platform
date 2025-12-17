@@ -1529,6 +1529,7 @@
     "noServicesFound": "No services found"
   },
   "serviceProviderAnalyticsPage": {
+    "mockChartText": "Mock {{type}} chart visualization",
     "requestsByCanton": "requests By Canton",
     "serviceRequestsPerWeek": "service Requests Per Week",
     "title": "Title",

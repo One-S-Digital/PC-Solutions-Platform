@@ -132,7 +132,7 @@
       "loadJobs": "Impossible de charger les offres."
     },
     "noJobsFound": "Aucune offre trouvée",
-    "postedOn": "Publié le",
+    "postedOn": "Publié le {{date}}",
     "searchPlaceholder": "Rechercher un poste...",
     "title": "Offres d'emploi",
     "unknownFoundation": "Fondation inconnue"
@@ -242,7 +242,7 @@
     },
     "title": "Tableau de bord de la fondation",
     "todayAtGlance": "Aujourd'hui en un coup d'œil",
-    "welcomeMessage": "Bienvenue à tous ! Voici un aperçu des activités de votre crèche."
+    "welcomeMessage": "Bienvenue {{name}} ! Voici un aperçu des activités de votre crèche."
   },
   "jobsPosted": "offres d'emploi publiées",
   "live": "Live",
@@ -294,7 +294,7 @@
       "viewEnquiries": "Voir les demandes de renseignements"
     },
     "title": "Tableau de bord des parents",
-    "welcomeMessage": "Bienvenue ! Voici un aperçu de votre recherche et de vos demandes en matière de garde d'enfants."
+    "welcomeMessage": "Bienvenue {{name}} ! Voici un aperçu de votre recherche et de vos demandes en matière de garde d'enfants."
   },
   "parentEnquiriesPage": {
     "accessDenied": {
@@ -303,12 +303,12 @@
     },
     "card": {
       "awaitingMatch": "En attente de correspondance",
-      "childInfo": "Informations sur l'enfant",
+      "childInfo": "Informations sur l'enfant : Âge {{age}}, Date de début souhaitée {{date}}",
       "message": "Votre demande a été envoyée aux fournisseurs concernés",
       "notes": "Notes supplémentaires",
       "responsesTitle": "Réponses",
       "submitted": "Soumis le {{date}}",
-      "title": "Détails de la demande",
+      "title": "Détails de la demande : {{canton}}{{municipality}}",
       "waitingForMoreResponses": "En attente de plus de réponses..."
     },
     "emptyState": {
@@ -347,6 +347,16 @@
     "title": "Recruitment"
   },
   "registeredUsers": "utilisateurs enregistrés dans la plate-forme",
+  "serviceProviderAnalyticsPage": {
+    "mockChartText": "Visualisation de graphique {{type}} simulée",
+    "requestDistributionByCanton": "Répartition des demandes par canton",
+    "requestsByCanton": "Demandes par canton",
+    "serviceRequestsPerWeek": "Demandes de services par semaine",
+    "serviceRequestsTrend": "Tendance des demandes de services",
+    "serviceViews": "Vues de services",
+    "title": "Analytiques",
+    "topViewedServices": "Services les plus consultés"
+  },
   "serviceProviderDashboard": {
     "title": "Tableau de bord du fournisseur de services",
     "welcomeMessage": "Bienvenue à tous ! Voici un aperçu de vos demandes de services et de vos rendez-vous.",
@@ -460,7 +470,7 @@
     "datePickerLabel": "Sélectionner la plage de dates",
     "exportCsvAlert": "Export CSV démarré",
     "exportCsvButton": "Exporter CSV",
-    "mockChartText": "Visualisation de graphique simulée",
+    "mockChartText": "Visualisation de graphique {{type}} simulée",
     "orderRequestsPerWeek": "Demandes de commande par semaine",
     "orderRequestsTrend": "Tendance des demandes de commande",
     "productViews": "Vues de produits",
@@ -566,8 +576,140 @@
       "visible": "Visible"
     }
   },
+  "foundationAnalyticsPage": {
+    "completed": "Terminé",
+    "conversionRate": "Taux de conversion",
+    "enrolled": "Inscrit",
+    "enrollmentTrend": "Tendance des inscriptions",
+    "inProgress": "En cours",
+    "last30Days": "30 derniers jours",
+    "last6Months": "6 derniers mois",
+    "last7Days": "7 derniers jours",
+    "last90Days": "90 derniers jours",
+    "lastYear": "Dernière année",
+    "leadFunnel": "Entonnoir de prospects",
+    "mockDataVisualization": "Visualisation de données fictives",
+    "monthlyEnrollment": "Inscriptions mensuelles",
+    "newLeads": "Nouveaux prospects",
+    "noEnrollmentData": "Aucune donnée d'inscription",
+    "noLeadData": "Aucune donnée de prospect",
+    "noSpendingData": "Aucune donnée de dépense",
+    "noTrainingData": "Aucune donnée de formation",
+    "notStarted": "Non commencé",
+    "parentLeadConversion": "Conversion des prospects parents",
+    "spendingByCategory": "Dépenses par catégorie",
+    "staffTrainingCompletion": "Achèvement de la formation du personnel",
+    "title": "Analytiques",
+    "totalLeads": "Total des prospects",
+    "totalSpending": "Total des dépenses",
+    "trainingCompletion": "Achèvement de la formation",
+    "trainingStatus": "Statut de la formation"
+  },
+  "foundationOrdersAppointmentsPage": {
+    "cancelOrderAlert": "Commande {{orderId}} annulée avec succès",
+    "exportCsvButton": "Exporter CSV",
+    "exportCsvProductAlert": "Export CSV des commandes de produits démarré",
+    "exportCsvServiceAlert": "Export CSV des rendez-vous de services démarré",
+    "noProductOrders": "Aucune commande de produit trouvée",
+    "noServiceAppointments": "Aucun rendez-vous de service trouvé",
+    "notApplicable": "N/A",
+    "preferredAbbr": "Préf.",
+    "productOrdersTab": "Commandes de produits",
+    "productOrdersTitle": "Commandes de produits",
+    "requestedAbbr": "Dem.",
+    "rescheduleAlert": "Rendez-vous {{requestId}} reprogrammé avec succès",
+    "rescheduleButton": "Reprogrammer",
+    "serviceAppointmentsTab": "Rendez-vous de services",
+    "serviceAppointmentsTitle": "Rendez-vous de services",
+    "table": {
+      "actions": "Actions",
+      "date": "Date",
+      "itemsQty": "Qté d'articles",
+      "provider": "Fournisseur",
+      "refNo": "N° réf.",
+      "service": "Service",
+      "status": "Statut",
+      "supplier": "Fournisseur",
+      "total": "Total"
+    },
+    "unknownProvider": "Fournisseur inconnu",
+    "unknownService": "Service inconnu",
+    "unknownSupplier": "Fournisseur inconnu"
+  },
+  "foundationSupportPage": {
+    "faq": {
+      "manageLeads": {
+        "a": "Vous pouvez consulter et répondre aux prospects parents depuis votre tableau de bord. Utilisez les actions rapides pour marquer les prospects comme intéressés, non intéressés ou demander plus d'informations.",
+        "q": "Comment gérer les prospects parents entrants ?"
+      },
+      "manageProfile": {
+        "a": "Allez dans Profil de l'organisation pour mettre à jour votre image de marque, vos coordonnées, vos heures d'ouverture et autres détails que les parents voient.",
+        "q": "Comment gérer mon profil d'organisation ?"
+      },
+      "recruitment": {
+        "a": "Accédez à Recrutement > Offres d'emploi et cliquez sur 'Publier une nouvelle offre' pour créer une offre d'emploi. Vous pouvez consulter les candidats et gérer le processus d'embauche depuis là.",
+        "q": "Comment publier des offres d'emploi ?"
+      },
+      "useMarketplace": {
+        "a": "Parcourez les produits et services de fournisseurs vérifiés. Ajoutez des articles à votre panier de commande et soumettez des commandes directement via la plateforme.",
+        "q": "Comment utiliser le marché ?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+      "subjectPlaceholder": "Brève description de votre problème"
+    },
+    "ticketSubmittedAlert": "Ticket de support soumis avec succès"
+  },
+  "foundationOrganisationProfilePage": {
+    "actions": {
+      "openBookingLink": "Ouvrir le lien de réservation",
+      "openDirectOrderLink": "Ouvrir le lien de commande directe"
+    },
+    "alert": {
+      "infoSaved": "Informations du profil enregistrées avec succès"
+    },
+    "empty": {
+      "languages": "Aucune langue ajoutée pour le moment.",
+      "organizationName": "Nom de l'organisation non défini",
+      "organizationType": "Type d'organisation non spécifié",
+      "pedagogy": "Aucun style pédagogique enregistré."
+    },
+    "labels": {
+      "address": "Localisation",
+      "contactEmail": "Email principal",
+      "contactPerson": "Personne de contact",
+      "createdAt": "Créé",
+      "languages": "Langues",
+      "organizationId": "ID de l'organisation",
+      "pedagogy": "Pédagogie",
+      "phoneNumber": "Numéro de téléphone",
+      "updatedAt": "Dernière mise à jour",
+      "vatNumber": "Numéro de TVA"
+    },
+    "loadError": "Impossible de charger les détails du profil de l'organisation. Veuillez réessayer.",
+    "notProvided": "Non fourni",
+    "saveButton": "Enregistrer le profil",
+    "sections": {
+      "contact": {
+        "title": "Contact et localisation"
+      },
+      "edit": {
+        "subtitle": "Utilisez le formulaire ci-dessous pour ajuster la capacité, la pédagogie et les langues. Les modifications sont enregistrées directement dans la base de données.",
+        "title": "Mettre à jour les informations principales du profil de l'organisation"
+      },
+      "metadata": {
+        "title": "Métadonnées de l'organisation"
+      },
+      "operations": {
+        "title": "Opérations"
+      }
+    },
+    "subtitle": "Consultez les détails du profil de votre organisation tirés directement de la base de données.",
+    "title": "Profil de l'organisation"
+  },
   "supplierSupportPage": {
-    "ticketSubmittedAlert": "Support ticket submitted successfully"
+    "ticketSubmittedAlert": "Ticket de support soumis avec succès"
   },
   "systemHealthy": "Tous les systèmes sont opérationnels",
   "total": "Total",

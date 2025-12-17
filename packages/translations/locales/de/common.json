@@ -773,7 +773,8 @@
         "subtitle": "Verwenden Sie das untenstehende Formular, um Kapazität, Pädagogik und Sprachen anzupassen. Änderungen werden direkt in der Datenbank gespeichert."
       }
     },
-    "title": "FoundationorganisationProfilePage.titel"
+    "subtitle": "Überprüfen Sie die Details des Organisationsprofils, die direkt aus der Datenbank abgerufen wurden.",
+    "title": "Organisationsprofil"
   },
   "goToDashboardButton": "Zum Dashboard",
   "goToPricingButton": "Zu den Preisen",
@@ -963,14 +964,14 @@
     "questionFor": "[DE] Question For",
     "questionPlaceholder": "[DE] Enter question",
     "status": {
-      "converted": "converted",
-      "enrolled": "[DE] Enrolled",
-      "interested": "LeadCard.status.intereste",
-      "needsMoreInfo": "[DE] Needs More Info",
-      "new": "new",
-      "notInterested": "LeadCard.status.notintereste",
-      "notResponded": "LeadCard.status.noTrespondiert",
-      "processing": "processing"
+      "converted": "Konvertiert",
+      "enrolled": "Eingeschrieben",
+      "interested": "Interessiert",
+      "needsMoreInfo": "Benötigt weitere Informationen",
+      "new": "Neu",
+      "notInterested": "Nicht interessiert",
+      "notResponded": "Nicht geantwortet",
+      "processing": "In Bearbeitung"
     },
     "submittedOn": "[DE] Submitted On",
     "title": "[DE] Title",
@@ -1519,6 +1520,7 @@
     "noServicesFound": "[DE] No services found"
   },
   "serviceProviderAnalyticsPage": {
+    "mockChartText": "Simulierte {{type}} Diagrammvisualisierung",
     "requestDistributionByCanton": "Verteilung der Anfragen nach Kanton",
     "requestsByCanton": "Anfragen nach Kanton",
     "serviceRequestsPerWeek": "Service-Anfragen pro Woche",

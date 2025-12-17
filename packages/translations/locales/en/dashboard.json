@@ -377,7 +377,7 @@
       "loadJobs": "Unable to load job listings."
     },
     "noJobsFound": "No jobs found",
-    "postedOn": "Posted on",
+    "postedOn": "Posted on {{date}}",
     "searchPlaceholder": "Search jobs...",
     "title": "Job Listings",
     "unknownFoundation": "Unknown foundation"
@@ -455,14 +455,32 @@
     "upload": "Upload Files"
   },
   "foundationAnalyticsPage": {
+    "completed": "Completed",
+    "conversionRate": "Conversion Rate",
+    "enrolled": "Enrolled",
     "enrollmentTrend": "Enrollment Trend",
+    "inProgress": "In Progress",
+    "last30Days": "Last 30 Days",
+    "last6Months": "Last 6 Months",
+    "last7Days": "Last 7 Days",
+    "last90Days": "Last 90 Days",
+    "lastYear": "Last Year",
     "leadFunnel": "Lead Funnel",
     "mockDataVisualization": "Mock Data Visualization",
     "monthlyEnrollment": "Monthly Enrollment",
+    "newLeads": "New Leads",
+    "noEnrollmentData": "No Enrollment Data",
+    "noLeadData": "No Lead Data",
+    "noSpendingData": "No Spending Data",
+    "noTrainingData": "No Training Data",
+    "notStarted": "Not Started",
     "parentLeadConversion": "Parent Lead Conversion",
     "spendingByCategory": "Spending by Category",
     "staffTrainingCompletion": "Staff Training Completion",
     "title": "Analytics",
+    "totalLeads": "Total Leads",
+    "totalSpending": "Total Spending",
+    "trainingCompletion": "Training Completion",
     "trainingStatus": "Training Status"
   },
   "foundationDashboard": {
@@ -503,7 +521,7 @@
     },
     "title": "Foundation Dashboard",
     "todayAtGlance": "Today at a Glance",
-    "welcomeMessage": "Welcome back! Here's an overview of your daycare operations."
+    "welcomeMessage": "Welcome back {{name}}! Here's an overview of your daycare operations."
   },
   "foundationDashboardPage": {
     "overview": "Overview",
@@ -524,7 +542,7 @@
     "title": "Incoming Parent Leads"
   },
   "foundationOrdersAppointmentsPage": {
-    "cancelOrderAlert": "Order cancelled successfully",
+    "cancelOrderAlert": "Order {{orderId}} cancelled successfully",
     "exportCsvButton": "Export CSV",
     "exportCsvProductAlert": "Product orders CSV export started",
     "exportCsvServiceAlert": "Service appointments CSV export started",
@@ -534,7 +552,7 @@
     "preferredAbbr": "Pref.",
     "productOrdersTab": "Product Orders",
     "productOrdersTitle": "Product Orders",
-    "rescheduleAlert": "Appointment rescheduled successfully",
+    "rescheduleAlert": "Appointment {{requestId}} rescheduled successfully",
     "rescheduleButton": "Reschedule",
     "serviceAppointmentsTab": "Service Appointments",
     "serviceAppointmentsTitle": "Service Appointments",
@@ -552,12 +570,36 @@
     "unknownProvider": "Unknown Provider"
   },
   "foundationOrganisationProfilePage": {
+    "actions": {
+      "openBookingLink": "Open booking link",
+      "openDirectOrderLink": "Open direct order link"
+    },
     "alert": {
       "infoSaved": "Profile information saved successfully"
     },
+    "empty": {
+      "languages": "No languages added yet.",
+      "organizationName": "Organization name not set",
+      "organizationType": "Organization type not specified",
+      "pedagogy": "No pedagogy styles recorded."
+    },
+    "labels": {
+      "address": "Location",
+      "contactEmail": "Primary email",
+      "contactPerson": "Contact person",
+      "createdAt": "Created",
+      "languages": "Languages",
+      "organizationId": "Organization ID",
+      "pedagogy": "Pedagogy",
+      "phoneNumber": "Phone number",
+      "updatedAt": "Last updated",
+      "vatNumber": "VAT number"
+    },
+    "loadError": "Unable to load organization profile details. Please try again.",
     "mock": {
       "pedagogyStatement": "Our pedagogy is based on the principles of respect, creativity, and individual development. We believe in providing a nurturing environment where children can explore, learn, and grow at their own pace."
     },
+    "notProvided": "Not provided",
     "saveButton": "Save Profile",
     "sections": {
       "branding": {
@@ -566,6 +608,16 @@
         "pedagogyStatementLabel": "Pedagogy Statement",
         "pedagogyStatementPlaceholder": "Describe your educational approach and philosophy...",
         "title": "Branding & Identity"
+      },
+      "contact": {
+        "title": "Contact & Location"
+      },
+      "edit": {
+        "subtitle": "Use the form below to adjust capacity, pedagogy and languages. Changes are saved directly to the database.",
+        "title": "Update core organization profile information"
+      },
+      "metadata": {
+        "title": "Organization metadata"
       },
       "online": {
         "acceptingLeadsLabel": "Accepting New Leads",
@@ -581,12 +633,9 @@
         "openingHoursLabel": "Opening Hours",
         "openingHoursPlaceholder": "e.g., Monday-Friday 7:00-18:00",
         "title": "Operations"
-      },
-      "edit": {
-        "title": "Update core organization profile information",
-        "subtitle": "Use the form below to adjust capacity, pedagogy and languages. Changes are saved directly to the database."
       }
     },
+    "subtitle": "Review your organization profile details pulled directly from the database.",
     "title": "Organization Profile"
   },
   "foundationSupportPage": {
@@ -795,7 +844,7 @@
       "viewEnquiries": "View Enquiries"
     },
     "title": "Parent Dashboard",
-    "welcomeMessage": "Welcome back! Here's an overview of your childcare search and enquiries."
+    "welcomeMessage": "Welcome back {{name}}! Here's an overview of your childcare search and enquiries."
   },
   "parentDashboardPage": {
     "findCreche": "Find a Crèche",
@@ -810,12 +859,12 @@
     },
     "card": {
       "awaitingMatch": "Awaiting Match",
-      "childInfo": "Child Information",
+      "childInfo": "Child Information: Age {{age}}, Desired Start Date {{date}}",
       "message": "Your enquiry has been sent to relevant providers",
       "notes": "Additional Notes",
       "responsesTitle": "Responses",
       "submitted": "Submitted on {{date}}",
-      "title": "Enquiry Details",
+      "title": "Enquiry Details: {{canton}}{{municipality}}",
       "waitingForMoreResponses": "Waiting for more responses..."
     },
     "emptyState": {
@@ -1234,7 +1283,7 @@
     "datePickerLabel": "Select Date Range",
     "exportCsvAlert": "CSV export started",
     "exportCsvButton": "Export CSV",
-    "mockChartText": "Mock chart visualization",
+    "mockChartText": "Mock {{type}} chart visualization",
     "orderRequestsPerWeek": "Order Requests Per Week",
     "orderRequestsTrend": "Order Requests Trend",
     "productViews": "Product Views",
