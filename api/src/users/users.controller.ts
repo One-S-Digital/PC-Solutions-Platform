@@ -92,20 +92,22 @@ export class UsersController {
     const clerkId = request.user.clerkId;
     let user = await this.usersService.findByClerkId(clerkId);
     
-    if (!user) {
-      // User doesn't exist yet - check if they're an admin in Clerk
-      // Admin/Super Admin users created directly in Clerk should be auto-created
-      // without needing to complete a profile
-      if (this.clerk) {
-        try {
-          const clerkUser = await this.clerk.users.getUser(clerkId);
-          const clerkRole = clerkUser.publicMetadata?.role as string;
+    // Check if we need to handle admin role sync from Clerk
+    // This handles two cases:
+    // 1. User doesn't exist in DB but has admin role in Clerk -> auto-create
+    // 2. User exists in DB with wrong role but has admin role in Clerk -> auto-update
+    if (this.clerk) {
+      try {
+        const clerkUser = await this.clerk.users.getUser(clerkId);
+        const clerkRole = clerkUser.publicMetadata?.role as string;
+        
+        // Check if user has ADMIN or SUPER_ADMIN role in Clerk's publicMetadata
+        if (clerkRole === UserRole.ADMIN || clerkRole === UserRole.SUPER_ADMIN) {
           
-          // Check if user has ADMIN or SUPER_ADMIN role in Clerk's publicMetadata
-          if (clerkRole === UserRole.ADMIN || clerkRole === UserRole.SUPER_ADMIN) {
+          if (!user) {
+            // Case 1: User doesn't exist - auto-create admin user
             this.logger.log(`🔐 [AUTO-CREATE ADMIN] Detected admin user ${clerkId} with role ${clerkRole} in Clerk publicMetadata. Auto-creating...`);
             
-            // Auto-create the admin user
             const email = clerkUser.emailAddresses?.[0]?.emailAddress || `${clerkId}@admin.local`;
             const firstName = clerkUser.firstName || 'Admin';
             const lastName = clerkUser.lastName || 'User';
@@ -127,13 +129,38 @@ export class UsersController {
                 data: user,
               };
             }
+          } else if (user.role !== clerkRole) {
+            // Case 2: User exists but role doesn't match Clerk - sync the role
+            this.logger.log(`🔄 [ADMIN ROLE SYNC] User ${clerkId} exists with role ${user.role} but Clerk has ${clerkRole}. Syncing...`);
+            
+            try {
+              // Update the user's role to match Clerk
+              await this.usersService.updateRoleByClerkId(clerkId, clerkRole as UserRole, 'system', 'Admin role sync from Clerk publicMetadata');
+              
+              // Refetch the user with updated role
+              user = await this.usersService.findByClerkId(clerkId);
+              
+              this.logger.log(`✅ [ADMIN ROLE SYNC] Successfully synced role for user ${clerkId} to ${clerkRole}`);
+              
+              if (user) {
+                return {
+                  success: true,
+                  data: user,
+                };
+              }
+            } catch (syncError) {
+              this.logger.warn(`⚠️ [ADMIN ROLE SYNC] Failed to sync role: ${syncError.message}`);
+              // Continue with existing user if sync fails
+            }
           }
-        } catch (error) {
-          this.logger.warn(`⚠️ [AUTO-CREATE ADMIN] Failed to check/create admin user: ${error.message}`);
-          // Continue to return pending response if auto-creation fails
         }
+      } catch (error) {
+        this.logger.warn(`⚠️ [AUTO-CREATE ADMIN] Failed to check/create admin user: ${error.message}`);
+        // Continue to return pending response if auto-creation fails
       }
-      
+    }
+    
+    if (!user) {
       // User doesn't exist yet (webhook hasn't processed) and not an admin
       // Return a temporary response indicating the user is being processed
       return {

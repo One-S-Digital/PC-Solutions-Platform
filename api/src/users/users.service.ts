@@ -1051,6 +1051,23 @@ export class UsersService {
     };
   }
 
+  /**
+   * Update a user's role by Clerk ID.
+   * Used for syncing admin roles from Clerk publicMetadata to the database.
+   */
+  async updateRoleByClerkId(clerkId: string, newRole: UserRole, changedBy: string, reason?: string) {
+    this.logger.log(`🔄 [UPDATE ROLE BY CLERK ID] Updating role for ${clerkId} to ${newRole}`);
+    
+    await this.roleSyncService.changeRoleByClerkId({
+      clerkId,
+      newRole,
+      changedBy,
+      reason: reason || 'Role update by Clerk ID',
+    });
+    
+    this.logger.log(`✅ [UPDATE ROLE BY CLERK ID] Role updated for ${clerkId} to ${newRole}`);
+  }
+
   async removeRole(userId: string, role: UserRole, changedBy?: string) {
     // Use RoleSyncService for proper Clerk sync - sets to default PARENT role
     await this.roleSyncService.changeRole({
