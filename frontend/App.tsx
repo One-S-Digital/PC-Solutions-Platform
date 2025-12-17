@@ -166,19 +166,54 @@ const ProtectedLayout: React.FC = () => {
     }
     
     // Check if user has admin role in Clerk's publicMetadata
-    // Admin/Super Admin users don't need to complete a profile
+    // Admin/Super Admin users don't need to complete a profile - they should be auto-created
     const clerkRole = (clerkUser?.publicMetadata as { role?: string })?.role;
     const isAdminRole = clerkRole === 'ADMIN' || clerkRole === 'SUPER_ADMIN';
     
     if (isAdminRole) {
-      // Admin user without backend record - show loading while we wait for auto-creation
-      // The backend /users/me endpoint will auto-create admin users
+      // Admin user without backend record - the backend /users/me endpoint will auto-create them
+      // Show a loading screen with retry option in case auto-creation fails
       return (
-        <div className="min-h-screen bg-page-bg flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
-            <p className="text-gray-600">Setting up your admin account...</p>
-            <p className="text-sm text-gray-400 mt-2">This may take a moment</p>
+        <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="w-16 h-16 bg-swiss-mint/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-swiss-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            
+            <h1 className="text-2xl font-bold text-swiss-charcoal mb-2">
+              Admin Account Setup
+            </h1>
+            
+            <p className="text-gray-600 mb-6">
+              Setting up your admin account. This should only take a moment.
+            </p>
+            
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-swiss-mint mx-auto mb-6"></div>
+            
+            <button
+              onClick={() => window.location.reload()}
+              className="text-swiss-mint hover:underline text-sm"
+            >
+              Taking too long? Click to refresh
+            </button>
+            
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={async () => {
+                  try {
+                    await signOut();
+                    navigate('/login', { replace: true });
+                  } catch (error) {
+                    navigate('/login', { replace: true });
+                  }
+                }}
+                className="text-gray-500 hover:text-gray-700 text-sm"
+              >
+                Sign out and use a different account
+              </button>
+            </div>
           </div>
         </div>
       );
