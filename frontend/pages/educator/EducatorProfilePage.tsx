@@ -120,7 +120,7 @@ const EducatorProfilePage: React.FC = () => {
           cvUrl: data.cvUrl || '',
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
-          avatarUrl: currentUser.avatarUrl,
+          avatarUrl: data.avatarUrl || currentUser.avatarUrl, // Use backend avatarUrl, fallback to currentUser
         });
       } else {
         // Initialize with defaults if no data
@@ -137,7 +137,7 @@ const EducatorProfilePage: React.FC = () => {
           cvUrl: '',
           shortBio: '',
           avatarAssetId: '',
-          avatarUrl: currentUser.avatarUrl,
+          avatarUrl: currentUser.avatarUrl || '', // Fallback to currentUser
         });
       }
     } catch (err) {
