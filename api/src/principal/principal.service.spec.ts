@@ -20,6 +20,7 @@ describe('PrincipalService', () => {
               upsert: jest.fn(),
             },
             user: {
+              findUnique: jest.fn(),
               upsert: jest.fn(),
             },
             userNotificationPreferences: {
@@ -122,7 +123,7 @@ describe('PrincipalService', () => {
       expect(prisma.user.upsert).toHaveBeenCalledTimes(5);
     });
 
-    it('passes null email to create when appUser.email is null (not empty string)', async () => {
+    it('passes null email to create when appUser.email is null and no existing User (not empty string)', async () => {
       const mockAppUser = {
         id: 'app-1',
         clerkId: 'clerk_null_email',
@@ -143,6 +144,7 @@ describe('PrincipalService', () => {
       };
 
       prisma.appUser.findUnique.mockResolvedValue(mockAppUser as any);
+      prisma.user.findUnique.mockResolvedValue(null); // No existing User
       prisma.user.upsert.mockResolvedValue(mockUser as any);
 
       await service.getOrBootstrapAccountAndProfile('clerk_null_email');
@@ -159,6 +161,50 @@ describe('PrincipalService', () => {
         create: {
           clerkId: 'clerk_null_email',
           email: null, // Must be null, NOT ''
+          role: UserRole.SUPER_ADMIN,
+          isActive: true,
+        },
+      });
+    });
+
+    it('uses existing User email when appUser.email is null', async () => {
+      const mockAppUser = {
+        id: 'app-1',
+        clerkId: 'clerk_existing_email',
+        email: null, // AppUser has no email
+        role: UserRole.SUPER_ADMIN,
+      };
+
+      const existingUserEmail = { email: 'existing@example.com' };
+
+      const mockUser = {
+        id: 'user-1',
+        clerkId: 'clerk_existing_email',
+        email: 'existing@example.com',
+        firstName: null,
+        lastName: null,
+        role: UserRole.SUPER_ADMIN,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      prisma.appUser.findUnique.mockResolvedValue(mockAppUser as any);
+      prisma.user.findUnique.mockResolvedValue(existingUserEmail as any); // Existing User has email
+      prisma.user.upsert.mockResolvedValue(mockUser as any);
+
+      await service.getOrBootstrapAccountAndProfile('clerk_existing_email');
+
+      // Verify that the existing User email is used for create
+      expect(prisma.user.upsert).toHaveBeenCalledWith({
+        where: { clerkId: 'clerk_existing_email' },
+        update: {
+          email: undefined,
+          role: UserRole.SUPER_ADMIN,
+        },
+        create: {
+          clerkId: 'clerk_existing_email',
+          email: 'existing@example.com', // Uses existing User's email
           role: UserRole.SUPER_ADMIN,
           isActive: true,
         },

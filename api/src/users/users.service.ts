@@ -266,6 +266,20 @@ export class UsersService {
           reason: 'Profile completion role update',
         });
       }
+      
+      // Sync email to both AppUser and User if provided and AppUser email is missing
+      if (email && !existingUser.email) {
+        this.logger.log(`📧 [COMPLETE PROFILE] Syncing email to existing user...`);
+        await this.prisma.appUser.update({
+          where: { id: existingUser.id },
+          data: { email },
+        });
+        // Also update User table if it exists
+        await this.prisma.user.updateMany({
+          where: { clerkId },
+          data: { email },
+        });
+      }
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
       // This can happen when:
