@@ -53,7 +53,6 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     skills: Array.isArray(settings.skills) ? settings.skills : [],
     availability: settings.availability || '',
     cvUrl: settings.cvUrl || '',
-    avatarUrl: settings.avatarUrl || '',
     avatarAssetId: settings.avatarAssetId || '',
   });
 
@@ -71,7 +70,6 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       skills: Array.isArray(settings.skills) ? settings.skills : [],
       availability: settings.availability || '',
       cvUrl: settings.cvUrl || '',
-      avatarUrl: settings.avatarUrl || '',
       avatarAssetId: settings.avatarAssetId || '',
     });
   }, [settings, currentUser]);
@@ -116,8 +114,8 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       const response = await upload('/upload/file', croppedFile, { assetKind: 'AVATAR' });
       
       if (response.success && response.asset) {
-        const uploadedUrl = response.asset.publicUrl || response.asset.url;
-        handleFieldChange('avatarUrl', uploadedUrl);
+        // Only save the avatarAssetId, not the URL
+        // The URL will be computed from the asset relation on the backend
         if (response.asset.id) {
           handleFieldChange('avatarAssetId', response.asset.id);
         }
@@ -145,7 +143,8 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     onChange('cvAssetId', '');
   };
 
-  const avatarUrl = profileData.avatarUrl || currentUser?.avatarUrl || 
+  // Use avatarUrl from settings (computed from asset relation on backend)
+  const avatarUrl = settings.avatarUrl || currentUser?.avatarUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.firstName + ' ' + profileData.lastName)}&background=48CFAE&color=fff&size=128&rounded=true`;
 
   return (

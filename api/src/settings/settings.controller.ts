@@ -280,7 +280,9 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getEducatorSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId);
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+      avatarAsset: true, // Include avatar asset relation
+    });
 
     return {
       success: true,
@@ -297,6 +299,7 @@ export class SettingsController {
         cvUrl: user.cvUrl ?? '',
         shortBio: user.shortBio ?? '',
         avatarAssetId: user.avatarAssetId ?? '',
+        avatarUrl: (user as any).avatarAsset?.publicUrl ?? '', // Compute from asset relation
       },
     };
   }

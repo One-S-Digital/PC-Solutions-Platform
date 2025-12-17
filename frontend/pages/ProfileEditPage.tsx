@@ -124,6 +124,7 @@ const ProfileEditPage: React.FC = () => {
           cvUrl: data.cvUrl || '',
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
+          avatarUrl: data.avatarUrl || '', // Computed from asset relation on backend
         } as Partial<SettingsFormData>;
       }
 
