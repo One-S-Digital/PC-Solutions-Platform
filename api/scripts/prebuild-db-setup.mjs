@@ -201,6 +201,71 @@ $$;
 };
 
 /**
+ * Ensure message file columns exist in messages table.
+ * Matches migration `20251221000000_add_message_file_columns`.
+ * CRITICAL: Fixes messaging "The column messages.fileUrl does not exist" error.
+ */
+const ensureMessageFileColumns = () => {
+  const sql = `
+-- Add fileUrl column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'fileUrl'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "fileUrl" TEXT;
+    END IF;
+END $$;
+
+-- Add fileName column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'fileName'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "fileName" TEXT;
+    END IF;
+END $$;
+
+-- Add fileSize column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'fileSize'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "fileSize" INTEGER;
+    END IF;
+END $$;
+
+-- Add mimeType column if missing
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'messages' 
+        AND column_name = 'mimeType'
+    ) THEN
+        ALTER TABLE "public"."messages" ADD COLUMN "mimeType" TEXT;
+    END IF;
+END $$;
+`;
+
+  log('Ensuring messages file columns exist (fileUrl, fileName, fileSize, mimeType)...');
+  runSql(sql);
+  log('✅ Messages file columns verified.');
+};
+
+/**
  * Ensure all translation infrastructure tables exist.
  * Matches migration `20251114140526_add_i18n_translation_tables`.
  * CRITICAL: Fixes admin translation page 500 error when static_translations table is missing.
@@ -432,6 +497,15 @@ const main = async () => {
     await resolveMigration('applied', '20251114140526_add_i18n_translation_tables');
   } catch (e) {
     warn(`⚠️  translation infrastructure handler failed: ${e.message}`);
+  }
+
+  // Message file columns (fixes messaging "fileUrl does not exist" error)
+  try {
+    ensureMessageFileColumns();
+    await resolveMigration('rolled-back', '20251221000000_add_message_file_columns');
+    await resolveMigration('applied', '20251221000000_add_message_file_columns');
+  } catch (e) {
+    warn(`⚠️  message file columns handler failed: ${e.message}`);
   }
 
   log('Done.');
