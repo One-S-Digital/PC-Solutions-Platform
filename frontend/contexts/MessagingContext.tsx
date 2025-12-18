@@ -276,18 +276,31 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       }
       
       // Build payload dynamically - only include file fields for IMAGE/FILE messages
+      const finalMessageType = messageType || 'TEXT';
+      const trimmedContent = content ? content.trim() : '';
+      
       const payload: any = {
         conversationId,
-        content: content.trim() || '', // Ensure content is a string
-        messageType: messageType || 'TEXT',
+        messageType: finalMessageType,
       };
       
+      // Include content only if it's not empty (for TEXT) or as optional caption (for IMAGE/FILE)
+      if (trimmedContent.length > 0) {
+        payload.content = trimmedContent;
+      }
+      // For IMAGE/FILE with empty caption, don't include content field (backend allows it to be optional)
+      
       // Only include file fields for IMAGE/FILE messages when fileMetadata is provided
-      if ((messageType === 'IMAGE' || messageType === 'FILE') && fileMetadata) {
-        // Only include file fields that are actually present and not empty
+      if ((finalMessageType === 'IMAGE' || finalMessageType === 'FILE') && fileMetadata) {
+        // fileUrl is required for IMAGE/FILE messages
         if (fileMetadata.fileUrl && fileMetadata.fileUrl.trim()) {
           payload.fileUrl = fileMetadata.fileUrl.trim();
+        } else {
+          // This should not happen if frontend validation is correct, but handle gracefully
+          throw new Error('fileUrl is required for IMAGE/FILE messages');
         }
+        
+        // Optional file metadata
         if (fileMetadata.fileName && fileMetadata.fileName.trim()) {
           payload.fileName = fileMetadata.fileName.trim();
         }

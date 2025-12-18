@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional, Logger, ForbiddenException } from '@nestjs/common';
+import { Injectable, Inject, Optional, Logger, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -13,6 +13,12 @@ export class MessagingService {
    * Extract storage key from a full URL or return the key if it's already a key
    * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
    * Returns the storage key portion, or null if fileUrl is invalid/missing
+   */
+  /**
+   * Extract storage key from a full URL or return the key if it's already a key
+   * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
+   * Returns the storage key portion, or null if fileUrl is invalid/missing
+   * Tolerant of both storage keys and full URLs - never throws on parsing errors
    */
   private extractStorageKey(fileUrl: string | undefined | null): string | null {
     // Return null for missing/invalid values - let validation handle it
@@ -36,13 +42,22 @@ export class MessagingService {
       // Return path if it's not empty, otherwise return null
       return path.length > 0 ? path : null;
     } catch {
-      // If it's not a valid URL, check if it looks like a storage key (no http/https)
+      // If it's not a valid URL, check if it looks like a storage key
       // Storage keys typically don't contain :// or start with http
       if (!trimmed.includes('://') && !trimmed.startsWith('http')) {
-        // Assume it's already a storage key
-        return trimmed;
+        // Check if it matches expected storage key patterns (e.g., uploads/..., messages/..., elearning/...)
+        const storageKeyPattern = /^(uploads|messages|elearning|documents|avatars|logos)\/.+/;
+        if (storageKeyPattern.test(trimmed)) {
+          // Assume it's already a storage key
+          return trimmed;
+        }
+        // If it doesn't match pattern but looks like a key (no protocol), still accept it
+        // This allows for flexibility in storage key formats
+        if (trimmed.length > 0 && !trimmed.includes('://')) {
+          return trimmed;
+        }
       }
-      // Invalid format - return null
+      // Invalid format - return null (validation will handle the error)
       return null;
     }
   }
@@ -713,10 +728,43 @@ export class MessagingService {
   async createMessage(createMessageDto: CreateMessageDto, rawSenderId: string) {
     const { conversationId, receiverId, content, messageType, fileUrl, fileName, fileSize, mimeType } = createMessageDto;
     
+    // Validate message content and file requirements based on messageType
+    const finalMessageType = messageType || 'TEXT';
+    const trimmedContent = content ? content.trim() : '';
+    const hasContent = trimmedContent.length > 0;
+    const hasFile = fileUrl && fileUrl.trim().length > 0;
+    
+    // Validation rules
+    if (finalMessageType === 'TEXT') {
+      // TEXT messages: content must be non-empty, no file fields allowed
+      if (!hasContent) {
+        throw new BadRequestException('TEXT messages must have non-empty content');
+      }
+      // Ignore file fields for TEXT messages
+    } else if (finalMessageType === 'IMAGE' || finalMessageType === 'FILE') {
+      // IMAGE/FILE messages: fileUrl is required, content is optional (caption)
+      if (!hasFile) {
+        throw new BadRequestException(`${finalMessageType} messages must have a file attachment (fileUrl is required)`);
+      }
+    } else {
+      throw new BadRequestException(`Invalid messageType: ${finalMessageType}`);
+    }
+    
+    // If neither content nor file is present, reject
+    if (!hasContent && !hasFile) {
+      throw new BadRequestException('Message must have content or an attachment');
+    }
+    
     // Extract storage key from fileUrl to avoid storing full public URLs (security)
     // Store only the storage key, which will be converted to secure download URL when retrieved
     // Only extract if fileUrl is provided (for IMAGE/FILE messages)
-    const storageKey = fileUrl ? this.extractStorageKey(fileUrl) : null;
+    let storageKey: string | null = null;
+    if (hasFile && fileUrl) {
+      storageKey = this.extractStorageKey(fileUrl);
+      if (!storageKey) {
+        throw new BadRequestException('Invalid fileUrl format. Expected storage key or valid URL.');
+      }
+    }
 
     // Convert senderId (Clerk ID or AppUser ID) to User.id
     // senderId can be either Clerk ID (user_xxx) or AppUser.id (UUID)
@@ -802,12 +850,12 @@ export class MessagingService {
         conversationId,
         senderId: finalSenderUserId,
         receiverId: finalReceiverUserId,
-        content,
-        messageType: messageType || 'TEXT',
+        content: trimmedContent || '', // Use trimmed content or empty string
+        messageType: finalMessageType,
       };
       
       // Only include file fields for IMAGE/FILE messages
-      if (messageType === 'IMAGE' || messageType === 'FILE') {
+      if (finalMessageType === 'IMAGE' || finalMessageType === 'FILE') {
         messageData.fileUrl = storageKey || null;
         messageData.fileName = fileName || null;
         messageData.fileSize = fileSize || null;

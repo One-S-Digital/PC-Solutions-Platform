@@ -187,7 +187,31 @@ class MessagingService {
   }
 
   async sendMessage(data: MessageCreateData, token?: string): Promise<Message> {
+    // DEV-only logging: log exact payload being sent
+    if (import.meta.env.DEV) {
+      console.log('[messagingService.sendMessage] Payload:', {
+        conversationId: data.conversationId,
+        content: data.content,
+        messageType: data.messageType,
+        fileUrl: data.fileUrl,
+        fileName: data.fileName,
+        fileSize: data.fileSize,
+        mimeType: data.mimeType,
+        receiverId: (data as any).receiverId,
+      });
+    }
+    
     const response = await apiService.post<Message>('/messaging/messages', data, { token });
+    
+    // DEV-only logging: log response
+    if (import.meta.env.DEV) {
+      console.log('[messagingService.sendMessage] Response:', {
+        success: response.success,
+        message: response.message,
+        status: response.data ? 'OK' : 'ERROR',
+      });
+    }
+    
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to send message');
     }
