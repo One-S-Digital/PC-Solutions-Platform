@@ -262,25 +262,25 @@ const Subscriptions: React.FC = () => {
   // Stats cards
   const statsCards = [
     {
-      title: 'Active Subscriptions',
+      title: t('admin:subscriptions.stats.activeSubscriptions'),
       value: analytics?.activeSubscriptions || 0,
       icon: <CreditCard className="w-6 h-6 text-green-600" />,
       color: 'bg-green-50 border-green-200',
     },
     {
-      title: 'Trial Subscriptions',
+      title: t('admin:subscriptions.stats.trialSubscriptions'),
       value: analytics?.trialSubscriptions || 0,
       icon: <Clock className="w-6 h-6 text-blue-600" />,
       color: 'bg-blue-50 border-blue-200',
     },
     {
-      title: 'Expiring Soon',
+      title: t('admin:subscriptions.stats.expiringSoon'),
       value: analytics?.expiringWithin30Days || 0,
       icon: <AlertTriangle className="w-6 h-6 text-yellow-600" />,
       color: 'bg-yellow-50 border-yellow-200',
     },
     {
-      title: 'Monthly Revenue',
+      title: t('admin:subscriptions.stats.monthlyRevenue'),
       value: formatCurrency(analytics?.monthlyRecurringRevenue || 0),
       icon: <DollarSign className="w-6 h-6 text-purple-600" />,
       color: 'bg-purple-50 border-purple-200',
@@ -293,15 +293,15 @@ const Subscriptions: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Subscription Management</h1>
-          <p className="text-gray-500 mt-1">Manage subscriptions, plans, and billing</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('admin:subscriptions.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('admin:subscriptions.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
-          New Subscription
+          {t('admin:subscriptions.newSubscription')}
         </button>
       </div>
 
@@ -329,7 +329,7 @@ const Subscriptions: React.FC = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search by name or email..."
+            placeholder={t('admin:subscriptions.filters.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -341,10 +341,10 @@ const Subscriptions: React.FC = () => {
           onChange={(e) => setSelectedStatus(e.target.value as SubscriptionStatus | '')}
           className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
-          <option value="">All Statuses</option>
+          <option value="">{t('admin:subscriptions.filters.allStatuses')}</option>
           {Object.values(SubscriptionStatus).map((status) => (
             <option key={status} value={status}>
-              {SubscriptionStatusLabels[status]}
+              {t(`admin:subscriptions.status.${status.toLowerCase()}`)}
             </option>
           ))}
         </select>
@@ -354,7 +354,7 @@ const Subscriptions: React.FC = () => {
           onChange={(e) => setSelectedPlanId(e.target.value)}
           className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
-          <option value="">All Plans</option>
+          <option value="">{t('admin:subscriptions.filters.allPlans')}</option>
           {plans.map((plan) => (
             <option key={plan.id} value={plan.id}>
               {plan.name}
@@ -370,7 +370,7 @@ const Subscriptions: React.FC = () => {
           }}
           className="px-4 py-2 text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50"
         >
-          Clear Filters
+          {t('admin:subscriptions.filters.clearFilters')}
         </button>
       </div>
 
@@ -390,7 +390,7 @@ const Subscriptions: React.FC = () => {
             </div>
           ) : subscriptionData.subscriptions.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
-              No subscriptions found
+              {t('admin:subscriptions.noSubscriptions')}
             </div>
           ) : (
             <>
@@ -399,19 +399,19 @@ const Subscriptions: React.FC = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Subscriber
+                        {t('admin:subscriptions.table.subscriber')}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Plan
+                        {t('admin:subscriptions.table.plan')}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Status
+                        {t('admin:subscriptions.table.status')}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Period End
+                        {t('admin:subscriptions.table.periodEnd')}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Actions
+                        {t('admin:subscriptions.table.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -443,7 +443,7 @@ const Subscriptions: React.FC = () => {
                               SubscriptionStatusColors[subscription.status]
                             }`}
                           >
-                            {SubscriptionStatusLabels[subscription.status]}
+                            {t(`admin:subscriptions.status.${subscription.status.toLowerCase()}`)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600">
@@ -510,8 +510,11 @@ const Subscriptions: React.FC = () => {
               {/* Pagination */}
               <div className="flex items-center justify-between px-4 py-3 border-t">
                 <div className="text-sm text-gray-600">
-                  Showing {(page - 1) * limit + 1} to{' '}
-                  {Math.min(page * limit, subscriptionData.total)} of {subscriptionData.total}
+                  {t('admin:subscriptions.pagination.showing', {
+                    from: (page - 1) * limit + 1,
+                    to: Math.min(page * limit, subscriptionData.total),
+                    total: subscriptionData.total,
+                  })}
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -519,14 +522,14 @@ const Subscriptions: React.FC = () => {
                     disabled={page === 1}
                     className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Previous
+                    {t('admin:subscriptions.pagination.previous')}
                   </button>
                   <button
                     onClick={() => setPage(page + 1)}
                     disabled={page >= subscriptionData.totalPages}
                     className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Next
+                    {t('admin:subscriptions.pagination.next')}
                   </button>
                 </div>
               </div>
@@ -540,7 +543,7 @@ const Subscriptions: React.FC = () => {
           {selectedSubscription ? (
             <div className="bg-white rounded-lg border">
               <div className="p-4 border-b flex justify-between items-center">
-                <h3 className="font-semibold text-gray-900">Subscription Details</h3>
+                <h3 className="font-semibold text-gray-900">{t('admin:subscriptions.details.title')}</h3>
                 <button
                   onClick={() => setSelectedSubscription(null)}
                   className="text-gray-400 hover:text-gray-600"
@@ -550,7 +553,7 @@ const Subscriptions: React.FC = () => {
               </div>
               <div className="p-4 space-y-4">
                 <div>
-                  <label className="text-xs text-gray-500 uppercase">Subscriber</label>
+                  <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.subscriber')}</label>
                   <div className="flex items-center gap-2 mt-1">
                     {getSubscriberIcon(selectedSubscription)}
                     <span className="font-medium">{getSubscriberName(selectedSubscription)}</span>
@@ -559,58 +562,58 @@ const Subscriptions: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs text-gray-500 uppercase">Plan</label>
+                    <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.plan')}</label>
                     <p className="font-medium">{selectedSubscription.plan?.name || 'Unknown'}</p>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 uppercase">Tier</label>
+                    <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.tier')}</label>
                     <p className="font-medium">
-                      {SubscriptionTierLabels[selectedSubscription.tier]}
+                      {t(`admin:subscriptions.tier.${selectedSubscription.tier.toLowerCase()}`)}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs text-gray-500 uppercase">Status</label>
+                  <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.status')}</label>
                   <div className="mt-1">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full ${
                         SubscriptionStatusColors[selectedSubscription.status]
                       }`}
                     >
-                      {SubscriptionStatusLabels[selectedSubscription.status]}
+                      {t(`admin:subscriptions.status.${selectedSubscription.status.toLowerCase()}`)}
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs text-gray-500 uppercase">Period Start</label>
+                    <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.periodStart')}</label>
                     <p className="text-sm">{formatDate(selectedSubscription.currentPeriodStart)}</p>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 uppercase">Period End</label>
+                    <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.periodEnd')}</label>
                     <p className="text-sm">{formatDate(selectedSubscription.currentPeriodEnd)}</p>
                   </div>
                 </div>
 
                 {selectedSubscription.trialEnd && (
                   <div>
-                    <label className="text-xs text-gray-500 uppercase">Trial End</label>
+                    <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.trialEnd')}</label>
                     <p className="text-sm">{formatDate(selectedSubscription.trialEnd)}</p>
                   </div>
                 )}
 
                 <div>
-                  <label className="text-xs text-gray-500 uppercase">Type</label>
+                  <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.type')}</label>
                   <p className="text-sm">
-                    {selectedSubscription.isManual ? 'Manual' : 'Stripe-managed'}
+                    {selectedSubscription.isManual ? t('admin:subscriptions.details.manual') : t('admin:subscriptions.details.stripeManaged')}
                   </p>
                 </div>
 
                 {selectedSubscription.notes && (
                   <div>
-                    <label className="text-xs text-gray-500 uppercase">Notes</label>
+                    <label className="text-xs text-gray-500 uppercase">{t('admin:subscriptions.details.notes')}</label>
                     <p className="text-sm text-gray-600 mt-1">{selectedSubscription.notes}</p>
                   </div>
                 )}
@@ -625,7 +628,7 @@ const Subscriptions: React.FC = () => {
                       className="flex items-center justify-center gap-1 px-3 py-2 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"
                     >
                       <Calendar className="w-4 h-4" />
-                      Extend
+                      {t('admin:subscriptions.actions.extend')}
                     </button>
                     <button
                       onClick={() =>
@@ -634,7 +637,7 @@ const Subscriptions: React.FC = () => {
                       className="flex items-center justify-center gap-1 px-3 py-2 text-sm bg-green-50 text-green-600 rounded-lg hover:bg-green-100"
                     >
                       <RefreshCcw className="w-4 h-4" />
-                      Renew
+                      {t('admin:subscriptions.actions.renew')}
                     </button>
                     <button
                       onClick={() =>
@@ -643,7 +646,7 @@ const Subscriptions: React.FC = () => {
                       className="flex items-center justify-center gap-1 px-3 py-2 text-sm bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100"
                     >
                       <ArrowUpCircle className="w-4 h-4" />
-                      Upgrade
+                      {t('admin:subscriptions.actions.upgrade')}
                     </button>
                     <button
                       onClick={() =>
@@ -652,7 +655,7 @@ const Subscriptions: React.FC = () => {
                       className="flex items-center justify-center gap-1 px-3 py-2 text-sm bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100"
                     >
                       <ArrowDownCircle className="w-4 h-4" />
-                      Downgrade
+                      {t('admin:subscriptions.actions.downgrade')}
                     </button>
                   </div>
                   <button
@@ -660,7 +663,7 @@ const Subscriptions: React.FC = () => {
                     className="w-full flex items-center justify-center gap-1 px-3 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Delete Subscription
+                    {t('admin:subscriptions.actions.delete')}
                   </button>
                 </div>
               </div>
@@ -668,7 +671,7 @@ const Subscriptions: React.FC = () => {
           ) : (
             <div className="bg-white rounded-lg border p-8 text-center text-gray-500">
               <CreditCard className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>Select a subscription to view details</p>
+              <p>{t('admin:subscriptions.details.selectSubscription')}</p>
             </div>
           )}
 
@@ -677,13 +680,13 @@ const Subscriptions: React.FC = () => {
             <div className="p-4 border-b">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                Expiring Soon
+                {t('admin:subscriptions.expiring.title')}
               </h3>
             </div>
             <div className="p-4">
               {expiringSubscriptions.length === 0 ? (
                 <p className="text-sm text-gray-500 text-center py-4">
-                  No subscriptions expiring soon
+                  {t('admin:subscriptions.expiring.noSubscriptions')}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -715,33 +718,23 @@ const Subscriptions: React.FC = () => {
       {showActionModal.type && showActionModal.subscription && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4 capitalize">
-              {showActionModal.type} Subscription
+            <h3 className="text-lg font-semibold mb-4">
+              {t(`admin:subscriptions.modal.${showActionModal.type}.title`)}
             </h3>
 
             <p className="text-gray-600 mb-4">
-              {showActionModal.type === 'pause' &&
-                'Pause this subscription. The subscriber will lose access until resumed.'}
-              {showActionModal.type === 'cancel' &&
-                'Cancel this subscription. This action can be reversed by renewal.'}
-              {showActionModal.type === 'renew' &&
-                'Renew this subscription for another billing period.'}
-              {showActionModal.type === 'extend' &&
-                'Extend the subscription period by additional days.'}
-              {showActionModal.type === 'upgrade' && 'Upgrade to a higher plan.'}
-              {showActionModal.type === 'downgrade' &&
-                'Downgrade to a lower plan (takes effect at period end).'}
+              {t(`admin:subscriptions.modal.${showActionModal.type}.description`)}
             </p>
 
             {(showActionModal.type === 'pause' ||
               showActionModal.type === 'cancel' ||
               showActionModal.type === 'extend') && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:subscriptions.modal.reason')}</label>
                 <textarea
                   value={actionReason}
                   onChange={(e) => setActionReason(e.target.value)}
-                  placeholder="Enter reason..."
+                  placeholder={t('admin:subscriptions.modal.reasonPlaceholder')}
                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   rows={3}
                 />
@@ -751,7 +744,7 @@ const Subscriptions: React.FC = () => {
             {showActionModal.type === 'extend' && (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Additional Days
+                  {t('admin:subscriptions.modal.extend.additionalDays')}
                 </label>
                 <input
                   type="number"
@@ -766,13 +759,13 @@ const Subscriptions: React.FC = () => {
 
             {(showActionModal.type === 'upgrade' || showActionModal.type === 'downgrade') && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Plan</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:subscriptions.modal.newPlan')}</label>
                 <select
                   value={selectedNewPlanId}
                   onChange={(e) => setSelectedNewPlanId(e.target.value)}
                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">Select a plan...</option>
+                  <option value="">{t('admin:subscriptions.modal.selectPlan')}</option>
                   {plans
                     .filter((p) => p.id !== showActionModal.subscription?.planId)
                     .map((plan) => (
@@ -794,7 +787,7 @@ const Subscriptions: React.FC = () => {
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-900"
               >
-                Cancel
+                {t('admin:subscriptions.modal.cancel')}
               </button>
               <button
                 onClick={handleAction}
@@ -807,7 +800,7 @@ const Subscriptions: React.FC = () => {
                 }
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Confirm
+                {t('admin:subscriptions.modal.confirm')}
               </button>
             </div>
           </div>
@@ -838,6 +831,7 @@ const CreateSubscriptionModal: React.FC<{
   onSuccess: () => void;
   apiClient: any;
 }> = ({ plans, onClose, onSuccess, apiClient }) => {
+  const { t } = useTranslation(['admin', 'common']);
   const [formData, setFormData] = useState({
     userId: '',
     organizationId: '',
@@ -876,7 +870,7 @@ const CreateSubscriptionModal: React.FC<{
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold">Create New Subscription</h3>
+          <h3 className="text-lg font-semibold">{t('admin:subscriptions.create.title')}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
@@ -885,7 +879,7 @@ const CreateSubscriptionModal: React.FC<{
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Subscriber Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Subscriber Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('admin:subscriptions.create.subscriberType')}</label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -896,7 +890,7 @@ const CreateSubscriptionModal: React.FC<{
                   className="text-blue-600"
                 />
                 <Users className="w-4 h-4" />
-                User
+                {t('admin:subscriptions.create.user')}
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -907,7 +901,7 @@ const CreateSubscriptionModal: React.FC<{
                   className="text-blue-600"
                 />
                 <Building2 className="w-4 h-4" />
-                Organization
+                {t('admin:subscriptions.create.organization')}
               </label>
             </div>
           </div>
@@ -915,7 +909,7 @@ const CreateSubscriptionModal: React.FC<{
           {/* Subscriber ID */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {subscriberType === 'user' ? 'User ID' : 'Organization ID'}
+              {subscriberType === 'user' ? t('admin:subscriptions.create.userId') : t('admin:subscriptions.create.organizationId')}
             </label>
             <input
               type="text"
@@ -926,7 +920,7 @@ const CreateSubscriptionModal: React.FC<{
                   [subscriberType === 'user' ? 'userId' : 'organizationId']: e.target.value,
                 })
               }
-              placeholder={`Enter ${subscriberType === 'user' ? 'user' : 'organization'} ID...`}
+              placeholder={subscriberType === 'user' ? t('admin:subscriptions.create.userIdPlaceholder') : t('admin:subscriptions.create.organizationIdPlaceholder')}
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -934,7 +928,7 @@ const CreateSubscriptionModal: React.FC<{
 
           {/* Plan Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:subscriptions.create.plan')}</label>
             <select
               value={formData.planId}
               onChange={(e) => {
@@ -948,7 +942,7 @@ const CreateSubscriptionModal: React.FC<{
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             >
-              <option value="">Select a plan...</option>
+              <option value="">{t('admin:subscriptions.create.selectPlan')}</option>
               {plans.filter((p) => p.isActive).map((plan) => (
                 <option key={plan.id} value={plan.id}>
                   {plan.name} - {new Intl.NumberFormat('de-CH', {
@@ -962,7 +956,7 @@ const CreateSubscriptionModal: React.FC<{
 
           {/* Duration */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Duration (months)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:subscriptions.create.duration')}</label>
             <input
               type="number"
               value={formData.durationMonths}
@@ -986,18 +980,18 @@ const CreateSubscriptionModal: React.FC<{
                 className="text-blue-600 rounded"
               />
               <label htmlFor="includeTrial" className="text-sm text-gray-700">
-                Include {selectedPlan.trialDays}-day trial period
+                {t('admin:subscriptions.create.includeTrial', { days: selectedPlan.trialDays })}
               </label>
             </div>
           )}
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:subscriptions.create.notes')}</label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Add notes..."
+              placeholder={t('admin:subscriptions.create.notesPlaceholder')}
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               rows={3}
             />
@@ -1010,14 +1004,14 @@ const CreateSubscriptionModal: React.FC<{
               onClick={onClose}
               className="px-4 py-2 text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {t('admin:subscriptions.modal.cancel')}
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {createMutation.isPending ? 'Creating...' : 'Create Subscription'}
+              {createMutation.isPending ? t('admin:subscriptions.create.creating') : t('admin:subscriptions.create.createButton')}
             </button>
           </div>
         </form>
