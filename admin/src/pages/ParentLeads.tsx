@@ -110,7 +110,7 @@ const ParentLeads: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as LeadMainStatus | '')}
             >
-              <option value="">{t('common:allstatus')}</option>
+              <option value="">{t('common:filters.status.all')}</option>
               {Object.values(LeadMainStatus).map((status) => (
                 <option key={status} value={status}>
                   {status}

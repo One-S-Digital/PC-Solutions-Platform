@@ -661,7 +661,23 @@
     "dragAndDrop": "Drag and drop files here"
   },
   "filters": {
-    "all": "All"
+    "all": "All",
+    "title": "Filters",
+    "roles": {
+      "all": "All roles"
+    },
+    "status": {
+      "all": "All statuses"
+    },
+    "priority": {
+      "all": "All priorities"
+    },
+    "category": {
+      "all": "All categories"
+    },
+    "categories": {
+      "all": "All categories"
+    }
   },
   "firstName": "First Name",
   "forms": {
@@ -1364,6 +1380,15 @@
     "enterDetails": "enter Details",
     "enteryourpassword": "Enter your password",
     "searchKeyword": "Search by keyword",
+    "searchOrders": "Search orders...",
+    "searchParentLeads": "Search parent leads...",
+    "searchServices": "Search services...",
+    "searchTickets": "Search tickets...",
+    "searchUsersByNameOrEmail": "Search users by name or email...",
+    "searchusersbynameoremail": "Search users by name or email...",
+    "searchservices": "Search services...",
+    "searchparentleads": "Search parent leads...",
+    "searchorders": "Search orders...",
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
@@ -2071,6 +2096,12 @@
     "orSubmitTicket": "or submit a support ticket below.",
     "responses": "responses",
     "staffResponse": "Staff Response",
+    "stats": {
+      "inProgress": "In Progress",
+      "open": "Open",
+      "resolved": "Resolved",
+      "total": "Total"
+    },
     "submitTicketTitle": "Submit a Support Ticket",
     "ticketForm": {
       "categoryLabel": "Category",

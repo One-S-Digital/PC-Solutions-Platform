@@ -235,10 +235,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
         if (isCancelled) {
           return;
         }
-        const fallbackMessage = t(
-          'supplierOrganisationProfilePage.loadError',
-          'Unable to load organization profile details. Please try again.',
-        );
+        const fallbackMessage = t('dashboard:supplierOrganisationProfilePage.loadError');
         console.error('Failed to load supplier organization profile', fetchError);
         setError(fallbackMessage);
         addNotification({

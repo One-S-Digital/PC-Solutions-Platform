@@ -554,28 +554,108 @@
   },
   "supplierOrdersPage": {
     "actions": {
-      "ship": "Ship"
+      "ship": "Versenden"
     },
+    "emptyState": "Keine Bestellungen gefunden",
+    "filterByStatus": "Nach Status filtern",
+    "inquiryTable": {
+      "date": "Datum",
+      "from": "Von",
+      "id": "ID",
+      "status": "Status",
+      "subject": "Betreff",
+      "urgency": "Dringlichkeit"
+    },
+    "loadError": "Daten konnten nicht geladen werden",
+    "noInquiries": "Keine Anfragen gefunden",
     "table": {
-      "foundation": "Foundation"
-    }
+      "date": "Datum",
+      "foundation": "Stiftung",
+      "orderId": "Bestell-ID",
+      "status": "Status",
+      "total": "Gesamt"
+    },
+    "tabs": {
+      "inquiries": "Anfragen",
+      "orders": "Direktbestellungen"
+    },
+    "title": "Bestellungen und Anfragen",
+    "updateError": "Status konnte nicht aktualisiert werden"
+  },
+  "supplierOrganisationProfilePage": {
+    "loadError": "Organisationsprofildetails konnten nicht geladen werden. Bitte versuchen Sie es erneut."
   },
   "supplierProductListingsPage": {
-    "addProductButton": "Hinzufügen new product",
-    "emptyState": "No products found",
-    "searchPlaceholder": "Suchen by name, s k u, tags...",
-    "table": {
-      "actions": "Actions",
-      "price": "Price",
-      "product": "Product",
-      "stock": "Stock",
-      "visibility": "Visibility"
+    "addProductButton": "Produkt hinzufügen",
+    "confirmDelete": "Sind Sie sicher, dass Sie dieses Produkt löschen möchten?",
+    "emptyState": "Keine Produkte gefunden",
+    "noOrgMessage": "Sie benötigen eine Organisation, um Produktlisten zu verwalten.",
+    "notifications": {
+      "createErrorMessage": "Bitte überprüfen Sie das Formular und versuchen Sie es erneut.",
+      "createErrorTitle": "Produkt konnte nicht gespeichert werden",
+      "createSuccessMessage": "Ihr Produkt wurde im Marktplatz veröffentlicht.",
+      "createSuccessTitle": "Produkt gespeichert",
+      "deleteErrorMessage": "Bitte versuchen Sie es später erneut.",
+      "deleteErrorTitle": "Produkt konnte nicht gelöscht werden",
+      "deleteSuccessMessage": "Das Produkt wurde entfernt.",
+      "deleteSuccessTitle": "Produkt gelöscht",
+      "loadErrorMessage": "Bitte versuchen Sie es in Kürze erneut.",
+      "loadErrorTitle": "Produkte konnten nicht geladen werden",
+      "missingOrgMessage": "Sie benötigen eine Organisations-ID, um Produkte zu verwalten.",
+      "missingOrgTitle": "Organisation erforderlich",
+      "toggleErrorMessage": "Bitte versuchen Sie es erneut.",
+      "toggleErrorTitle": "Sichtbarkeit konnte nicht aktualisiert werden",
+      "toggleHidden": "Das Produkt ist im Marktplatz ausgeblendet.",
+      "toggleSuccessTitle": "Sichtbarkeit aktualisiert",
+      "toggleVisible": "Das Produkt ist jetzt im Marktplatz sichtbar.",
+      "updateSuccessMessage": "Ihr Produkt wurde erfolgreich aktualisiert."
     },
-    "title": "Product Listings",
+    "searchPlaceholder": "Nach Name, SKU, Tags suchen...",
+    "subtitle": "Veröffentlichen Sie genaue Listen und halten Sie Kindertagesstätten auf dem Laufenden.",
+    "table": {
+      "actions": "Aktionen",
+      "price": "Preis",
+      "product": "Produkt",
+      "stock": "Bestand",
+      "toggleVisibility": "Sichtbarkeit umschalten",
+      "visibility": "Sichtbarkeit"
+    },
+    "title": "Produktlisten",
     "visibility": {
-      "hidden": "Hidden",
-      "visible": "Visible"
+      "hidden": "Ausgeblendet",
+      "visible": "Sichtbar"
     }
+  },
+  "supplierOrganisationProfilePage": {
+    "loadError": "Organisationsprofildetails konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+  },
+  "serviceProviderListingsPage": {
+    "addNewServiceButton": "Service hinzufügen",
+    "card": {
+      "category": "Kategorie",
+      "delivery": "Lieferung"
+    },
+    "confirmDelete": "Sind Sie sicher, dass Sie diesen Service löschen möchten?",
+    "emptyState": {
+      "noMatch": "Keine Services entsprechen Ihren Suchkriterien",
+      "noServicesYet": "Sie haben noch keine Services erstellt",
+      "title": "Keine Services gefunden"
+    },
+    "searchPlaceholder": "Services suchen...",
+    "title": "Meine Services"
+  },
+  "serviceProviderRequestsPage": {
+    "emptyState": "Keine Serviceanfragen gefunden",
+    "filterByStatus": "Nach Status filtern",
+    "table": {
+      "date": "Datum",
+      "foundation": "Stiftung",
+      "requestId": "Anfrage-ID",
+      "service": "Service",
+      "status": "Status"
+    },
+    "title": "Serviceanfragen",
+    "updateError": "Status der Anfrage konnte nicht aktualisiert werden"
   },
   "foundationAnalyticsPage": {
     "completed": "Abgeschlossen",
@@ -740,6 +820,28 @@
     "title": "Organisationsprofil"
   },
   "supplierSupportPage": {
+    "faq": {
+      "addProduct": {
+        "a": "Gehen Sie zu Produkte und klicken Sie auf 'Neues Produkt hinzufügen'. Füllen Sie die Produktdetails aus, legen Sie den Preis fest und laden Sie Bilder hoch. Produkte werden vor der Veröffentlichung überprüft.",
+        "q": "Wie füge ich ein neues Produkt hinzu?"
+      },
+      "commissionRates": {
+        "a": "Die Provisionssätze variieren je nach Produktkategorie und Abonnementplan. Überprüfen Sie Ihre Abonnementdetails in Einstellungen > Abrechnung und Abonnement.",
+        "q": "Wie sind die Provisionssätze?"
+      },
+      "manageProfile": {
+        "a": "Aktualisieren Sie Ihre Unternehmensinformationen, Kontaktdaten und Geschäftszeiten in Einstellungen > Unternehmensprofil.",
+        "q": "Wie verwalte ich mein Lieferantenprofil?"
+      },
+      "processOrders": {
+        "a": "Zeigen Sie alle Bestellungen im Bereich Bestellungen an. Sie können Bestellungen akzeptieren, ablehnen oder als versendet markieren. Bestellungen werden automatisch mit dem Dashboard der Stiftung synchronisiert.",
+        "q": "Wie bearbeite ich Bestellungen?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems"
+    },
     "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
   },
   "systemHealthy": "Alle Systeme betriebsbereit",

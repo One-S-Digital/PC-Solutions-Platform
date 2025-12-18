@@ -199,7 +199,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:open')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.open')}</p>
               <p className="text-2xl font-bold text-yellow-600">{stats.open}</p>
             </div>
             <AlertCircle className="h-8 w-8 text-yellow-500" />
@@ -208,7 +208,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:inprogress')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.inProgress')}</p>
               <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
             </div>
             <Clock className="h-8 w-8 text-blue-500" />
@@ -217,7 +217,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:resolved')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.resolved')}</p>
               <p className="text-2xl font-bold text-green-600">{stats.resolved}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-500" />
@@ -226,7 +226,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:total')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.total')}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
             <TrendingUp className="h-8 w-8 text-gray-500" />
@@ -238,7 +238,7 @@ const Support: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="h-5 w-5 text-gray-500" />
-          <h2 className="text-lg font-semibold text-gray-900">{t('common:filters')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('common:filters.title')}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
@@ -256,7 +256,7 @@ const Support: React.FC = () => {
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value as TicketStatus | '')}
           >
-            <option value="">{t('common:allstatus')}</option>
+            <option value="">{t('common:filters.status.all')}</option>
             <option value="OPEN">{t('common:open')}</option>
             <option value="IN_PROGRESS">{t('common:inprogress')}</option>
             <option value="RESOLVED">{t('common:resolved')}</option>
@@ -267,7 +267,7 @@ const Support: React.FC = () => {
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value as TicketPriority | '')}
           >
-            <option value="">{t('common:allpriority')}</option>
+            <option value="">{t('common:filters.priority.all')}</option>
             <option value="LOW">{t('common:low')}</option>
             <option value="MEDIUM">{t('common:medium')}</option>
             <option value="HIGH">{t('common:high')}</option>
@@ -278,7 +278,7 @@ const Support: React.FC = () => {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value as TicketCategory | '')}
           >
-            <option value="">{t('common:allcategory')}</option>
+            <option value="">{t('common:filters.category.all')}</option>
             <option value="GENERAL">{t('common:general')}</option>
             <option value="TECHNICAL">{t('common:technical')}</option>
             <option value="BILLING">{t('common:billing')}</option>

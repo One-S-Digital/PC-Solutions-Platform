@@ -683,7 +683,7 @@ const Users: React.FC = () => {
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
             >
-              <option value="">{t('common:allroles')}</option>
+              <option value="">{t('common:filters.roles.all')}</option>
               <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
               <option value={UserRole.ADMIN}>{t('common:admin')}</option>
               <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>

@@ -81,7 +81,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to update request status:', err);
-      alert(t('serviceProviderRequestsPage.updateError', 'Failed to update request status'));
+      alert(t('dashboard:serviceProviderRequestsPage.updateError', 'Failed to update request status'));
     }
   };
 
@@ -97,10 +97,10 @@ const ServiceProviderRequestsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('serviceProviderRequestsPage.title')}</h1>
+      <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboard:serviceProviderRequestsPage.title')}</h1>
       <Card className="p-4">
         <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-sm font-medium mr-2">{t('serviceProviderRequestsPage.filterByStatus')}:</span>
+            <span className="text-sm font-medium mr-2">{t('dashboard:serviceProviderRequestsPage.filterByStatus')}:</span>
             {requestStatuses.map(status => (
                 <Button 
                     key={status} 
@@ -118,11 +118,11 @@ const ServiceProviderRequestsPage: React.FC = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('serviceProviderRequestsPage.table.requestId')}</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('serviceProviderRequestsPage.table.foundation')}</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('serviceProviderRequestsPage.table.service')}</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('serviceProviderRequestsPage.table.date')}</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('serviceProviderRequestsPage.table.status')}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:serviceProviderRequestsPage.table.requestId')}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:serviceProviderRequestsPage.table.foundation')}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:serviceProviderRequestsPage.table.service')}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:serviceProviderRequestsPage.table.date')}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:serviceProviderRequestsPage.table.status')}</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -144,7 +144,7 @@ const ServiceProviderRequestsPage: React.FC = () => {
           {filteredRequests.length === 0 && (
             <div className="text-center py-10 text-gray-500">
               <InboxIcon className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-              {t('serviceProviderRequestsPage.emptyState')}
+              {t('dashboard:serviceProviderRequestsPage.emptyState')}
             </div>
           )}
         </div>

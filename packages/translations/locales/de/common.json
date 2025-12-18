@@ -628,7 +628,23 @@
     "dragAndDrop": "[DE] Drag and drop files here"
   },
   "filters": {
-    "all": "Alle"
+    "all": "Alle",
+    "title": "Filter",
+    "roles": {
+      "all": "Alle Rollen"
+    },
+    "status": {
+      "all": "Alle Status"
+    },
+    "priority": {
+      "all": "Alle Prioritäten"
+    },
+    "category": {
+      "all": "Alle Kategorien"
+    },
+    "categories": {
+      "all": "Alle Kategorien"
+    }
   },
   "firstName": "Vorname",
   "forgot password link exists if applicable": "Passwortvergessen, GiBt es GegeblenenFalls Vorhanden",
@@ -1349,6 +1365,15 @@
     "enterDetails": "enter Details",
     "enteryourpassword": "Geben Sie Ihr Passwort ein",
     "searchKeyword": "Nach Stichwort suchen",
+    "searchOrders": "Bestellungen suchen...",
+    "searchParentLeads": "Elternanfragen suchen...",
+    "searchServices": "Services suchen...",
+    "searchTickets": "Tickets suchen...",
+    "searchUsersByNameOrEmail": "Benutzer nach Namen oder E-Mail suchen...",
+    "searchusersbynameoremail": "Benutzer nach Namen oder E-Mail suchen...",
+    "searchservices": "Services suchen...",
+    "searchparentleads": "Elternanfragen suchen...",
+    "searchorders": "Bestellungen suchen...",
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
@@ -2066,6 +2091,12 @@
     "orSubmitTicket": "oder senden Sie unten ein Support-Ticket.",
     "responses": "Antworten",
     "staffResponse": "Mitarbeiter-Antwort",
+    "stats": {
+      "inProgress": "In Bearbeitung",
+      "open": "Offen",
+      "resolved": "Gelöst",
+      "total": "Gesamt"
+    },
     "submitTicketTitle": "Support-Ticket Senden",
     "ticketForm": {
       "categoryLabel": "Kategorie",

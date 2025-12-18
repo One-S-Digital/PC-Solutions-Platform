@@ -123,7 +123,7 @@ const Orders: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
-              <option value="">{t('common:allstatus')}</option>
+              <option value="">{t('common:filters.status.all')}</option>
               <option value="Submitted">{t('common:submitted')}</option>
               <option value="ViewedBySupplier">{t('common:viewedbysupplier')}</option>
               <option value="Accepted">{t('common:accepted')}</option>

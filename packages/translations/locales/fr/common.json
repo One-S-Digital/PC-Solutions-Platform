@@ -621,7 +621,23 @@
     "dragAndDrop": "[FR] Drag and drop files here"
   },
   "filters": {
-    "all": "Tous"
+    "all": "Tous",
+    "title": "Filtres",
+    "roles": {
+      "all": "Tous les rôles"
+    },
+    "status": {
+      "all": "Tous les statuts"
+    },
+    "priority": {
+      "all": "Toutes les priorités"
+    },
+    "category": {
+      "all": "Toutes les catégories"
+    },
+    "categories": {
+      "all": "Toutes les catégories"
+    }
   },
   "firstName": "Prénom",
   "forms": {
@@ -1332,6 +1348,15 @@
     "enterDetails": "enter Details",
     "enteryourpassword": "Entrez votre mot de passe",
     "searchKeyword": "Rechercher par mot-clé",
+    "searchOrders": "Rechercher des commandes...",
+    "searchParentLeads": "Rechercher des pistes de parents...",
+    "searchServices": "Rechercher des services...",
+    "searchTickets": "Rechercher des tickets...",
+    "searchUsersByNameOrEmail": "Rechercher des utilisateurs par nom ou email...",
+    "searchusersbynameoremail": "Rechercher des utilisateurs par nom ou email...",
+    "searchservices": "Rechercher des services...",
+    "searchparentleads": "Rechercher des pistes de parents...",
+    "searchorders": "Rechercher des commandes...",
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
@@ -2041,6 +2066,12 @@
     "orSubmitTicket": "ou soumettez un ticket de support ci-dessous.",
     "responses": "réponses",
     "staffResponse": "Réponse du personnel",
+    "stats": {
+      "inProgress": "En cours",
+      "open": "Ouvert",
+      "resolved": "Résolu",
+      "total": "Total"
+    },
     "submitTicketTitle": "Soumettre un Ticket de Support",
     "ticketForm": {
       "categoryLabel": "Catégorie",

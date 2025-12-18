@@ -553,28 +553,108 @@
   },
   "supplierOrdersPage": {
     "actions": {
-      "ship": "Ship"
+      "ship": "Expédier"
     },
+    "emptyState": "Aucune commande trouvée",
+    "filterByStatus": "Filtrer par statut",
+    "inquiryTable": {
+      "date": "Date",
+      "from": "De",
+      "id": "ID",
+      "status": "Statut",
+      "subject": "Sujet",
+      "urgency": "Urgence"
+    },
+    "loadError": "Échec du chargement des données",
+    "noInquiries": "Aucune demande trouvée",
     "table": {
-      "foundation": "Foundation"
-    }
+      "date": "Date",
+      "foundation": "Fondation",
+      "orderId": "ID de commande",
+      "status": "Statut",
+      "total": "Total"
+    },
+    "tabs": {
+      "inquiries": "Demandes",
+      "orders": "Commandes directes"
+    },
+    "title": "Commandes et demandes",
+    "updateError": "Échec de la mise à jour du statut"
+  },
+  "supplierOrganisationProfilePage": {
+    "loadError": "Impossible de charger les détails du profil de l'organisation. Veuillez réessayer."
   },
   "supplierProductListingsPage": {
-    "addProductButton": "Ajouter new product",
-    "emptyState": "No products found",
-    "searchPlaceholder": "Rechercher by name, s k u, tags...",
+    "addProductButton": "Ajouter un produit",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit ?",
+    "emptyState": "Aucun produit trouvé",
+    "noOrgMessage": "Vous avez besoin d'une organisation pour gérer les listes de produits.",
+    "notifications": {
+      "createErrorMessage": "Veuillez vérifier le formulaire et réessayer.",
+      "createErrorTitle": "Impossible d'enregistrer le produit",
+      "createSuccessMessage": "Votre produit a été publié sur le marché.",
+      "createSuccessTitle": "Produit enregistré",
+      "deleteErrorMessage": "Veuillez réessayer plus tard.",
+      "deleteErrorTitle": "Impossible de supprimer le produit",
+      "deleteSuccessMessage": "Le produit a été supprimé.",
+      "deleteSuccessTitle": "Produit supprimé",
+      "loadErrorMessage": "Veuillez réessayer dans quelques instants.",
+      "loadErrorTitle": "Impossible de charger les produits",
+      "missingOrgMessage": "Vous avez besoin d'un ID d'organisation pour gérer les produits.",
+      "missingOrgTitle": "Organisation requise",
+      "toggleErrorMessage": "Veuillez réessayer.",
+      "toggleErrorTitle": "Impossible de mettre à jour la visibilité",
+      "toggleHidden": "Le produit est masqué du marché.",
+      "toggleSuccessTitle": "Visibilité mise à jour",
+      "toggleVisible": "Le produit est maintenant visible sur le marché.",
+      "updateSuccessMessage": "Votre produit a été mis à jour avec succès."
+    },
+    "searchPlaceholder": "Rechercher par nom, SKU, tags...",
+    "subtitle": "Publiez des listes précises et tenez les garderies informées.",
     "table": {
       "actions": "Actions",
-      "price": "Price",
-      "product": "Product",
+      "price": "Prix",
+      "product": "Produit",
       "stock": "Stock",
-      "visibility": "Visibility"
+      "toggleVisibility": "Basculer la visibilité",
+      "visibility": "Visibilité"
     },
-    "title": "Product Listings",
+    "title": "Listes de produits",
     "visibility": {
-      "hidden": "Hidden",
+      "hidden": "Masqué",
       "visible": "Visible"
     }
+  },
+  "supplierOrganisationProfilePage": {
+    "loadError": "Impossible de charger les détails du profil de l'organisation. Veuillez réessayer."
+  },
+  "serviceProviderListingsPage": {
+    "addNewServiceButton": "Ajouter un service",
+    "card": {
+      "category": "Catégorie",
+      "delivery": "Livraison"
+    },
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce service ?",
+    "emptyState": {
+      "noMatch": "Aucun service ne correspond à vos critères de recherche",
+      "noServicesYet": "Vous n'avez pas encore créé de services",
+      "title": "Aucun service trouvé"
+    },
+    "searchPlaceholder": "Rechercher des services...",
+    "title": "Mes services"
+  },
+  "serviceProviderRequestsPage": {
+    "emptyState": "Aucune demande de service trouvée",
+    "filterByStatus": "Filtrer par statut",
+    "table": {
+      "date": "Date",
+      "foundation": "Fondation",
+      "requestId": "ID de demande",
+      "service": "Service",
+      "status": "Statut"
+    },
+    "title": "Demandes de service",
+    "updateError": "Échec de la mise à jour du statut de la demande"
   },
   "foundationAnalyticsPage": {
     "completed": "Terminé",
@@ -770,6 +850,28 @@
     "title": "Profil de l'organisation"
   },
   "supplierSupportPage": {
+    "faq": {
+      "addProduct": {
+        "a": "Allez dans Produits et cliquez sur 'Ajouter un produit'. Remplissez les détails du produit, définissez le prix et téléchargez des images. Les produits seront examinés avant d'être mis en ligne.",
+        "q": "Comment ajouter un nouveau produit ?"
+      },
+      "commissionRates": {
+        "a": "Les taux de commission varient selon la catégorie de produit et le plan d'abonnement. Consultez les détails de votre abonnement dans Paramètres > Facturation et abonnement.",
+        "q": "Quels sont les taux de commission ?"
+      },
+      "manageProfile": {
+        "a": "Mettez à jour les informations de votre entreprise, vos coordonnées et vos heures d'ouverture dans Paramètres > Profil de l'entreprise.",
+        "q": "Comment gérer mon profil fournisseur ?"
+      },
+      "processOrders": {
+        "a": "Consultez toutes les commandes dans la section Commandes. Vous pouvez accepter, refuser ou marquer les commandes comme expédiées. Les commandes sont automatiquement synchronisées avec le tableau de bord de la fondation.",
+        "q": "Comment traiter les commandes ?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+      "subjectPlaceholder": "Brève description de votre problème"
+    },
     "ticketSubmittedAlert": "Ticket de support soumis avec succès"
   },
   "systemHealthy": "Tous les systèmes sont opérationnels",

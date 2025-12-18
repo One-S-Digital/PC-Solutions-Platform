@@ -1204,7 +1204,8 @@
       "service": "Service",
       "status": "Status"
     },
-    "title": "Service Requests"
+    "title": "Service Requests",
+    "updateError": "Failed to update request status"
   },
   "serviceProviderSupportPage": {
     "faq": {
@@ -1444,6 +1445,9 @@
       "hidden": "Hidden",
       "visible": "Visible"
     }
+  },
+  "supplierOrganisationProfilePage": {
+    "loadError": "Unable to load organization profile details. Please try again."
   },
   "supplierSupportPage": {
     "faq": {

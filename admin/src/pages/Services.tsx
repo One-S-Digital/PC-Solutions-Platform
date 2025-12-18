@@ -118,7 +118,7 @@ const Services: React.FC = () => {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
-              <option value="">{t('common:allcategories')}</option>
+              <option value="">{t('common:filters.categories.all')}</option>
               <option value="Childcare">{t('common:childcare')}</option>
               <option value="Education">{t('common:education')}</option>
               <option value="Health">{t('common:health')}</option>
