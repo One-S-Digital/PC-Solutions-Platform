@@ -175,8 +175,11 @@ const Messaging: React.FC = () => {
   const { data: messagesResponse, isLoading: isLoadingMessages, error: messagesError } = useQuery({
     queryKey: ['messages', selectedConversationId],
     queryFn: async () => {
+      if (!selectedConversationId) {
+        throw new Error('Conversation ID is required');
+      }
       try {
-        const response = await apiService.getMessages(apiClient, selectedConversationId!);
+        const response = await apiService.getMessages(apiClient, selectedConversationId);
         return response;
       } catch (error) {
         if (isDev) {
@@ -186,6 +189,8 @@ const Messaging: React.FC = () => {
       }
     },
     enabled: !!selectedConversationId && !!apiClient,
+    refetchOnWindowFocus: false, // Prevent unnecessary refetches
+    staleTime: 0, // Always refetch when conversation changes
     onError: (error) => {
       if (isDev) {
         console.error('Failed to fetch messages:', error);
@@ -195,7 +200,11 @@ const Messaging: React.FC = () => {
 
   const messages = useMemo(
     () => {
-      const rawMessages = messagesResponse?.data?.data || []
+      // Handle both response shapes: wrapped ApiResponse or raw array
+      const rawMessages =
+        messagesResponse?.data?.data || // wrapped ApiResponse
+        messagesResponse?.data ||       // raw array
+        []
       // Backend returns messages in descending order (newest first), reverse for display (oldest first)
       return rawMessages.map((msg: any) => transformMessage(msg, currentUserId)).reverse()
     },
@@ -213,13 +222,21 @@ const Messaging: React.FC = () => {
   const sendMessageMutation = useMutation({
     mutationFn: (messageData: { conversationId: string; content: string }) =>
       apiService.sendMessage(apiClient, messageData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    onSuccess: async () => {
+      // Clear input immediately for better UX
       setNewMessage('');
+      
+      // Invalidate and immediately refetch messages to show the new message
+      await queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
+      await queryClient.refetchQueries({ queryKey: ['messages', selectedConversationId] });
+      
+      // Invalidate conversations to update last message preview
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
     onError: (error) => {
-      logger.error('Failed to send message:', error);
+      if (import.meta.env.DEV) {
+        logger.error('Failed to send message:', error);
+      }
       // You might want to show an error toast to the user
     },
   });
@@ -492,25 +509,7 @@ const Messaging: React.FC = () => {
         isOpen={isNewConversationModalOpen}
         onClose={() => setIsNewConversationModalOpen(false)}
         onConversationCreated={async (conversationId) => {
-          // Immediately set the selected conversation to ensure UI updates
-          // This works even if the conversation list hasn't refreshed yet
-          setSelectedConversation((prev) => {
-            // If we already have it selected, keep it
-            if (prev?.id === conversationId) return prev
-            // Otherwise create a temporary conversation object until refetch completes
-            return {
-              id: conversationId,
-              participantId: '',
-              participantName: '',
-              participantType: 'USER' as any,
-              organizationName: '',
-              lastMessageSnippet: '',
-              lastMessageAt: new Date().toISOString(),
-              unreadCount: 0,
-            }
-          })
-          
-          // Invalidate and refetch conversations
+          // Invalidate and refetch conversations first to get the full conversation data
           await queryClient.invalidateQueries({ queryKey: ['conversations'] })
           const conversationsData = await queryClient.fetchQuery({
             queryKey: ['conversations'],
@@ -526,9 +525,31 @@ const Messaging: React.FC = () => {
             conversationsData?.data ||       // raw array
             []
           const newConv = rawConversations.find((c: any) => c.id === conversationId)
+          
           if (newConv) {
             const transformed = transformConversation(newConv, currentUserId)
             setSelectedConversation(transformed)
+            
+            // Immediately refetch messages for the new conversation
+            await queryClient.invalidateQueries({ queryKey: ['messages', conversationId] })
+            await queryClient.refetchQueries({ queryKey: ['messages', conversationId] })
+          } else {
+            // Fallback: create temporary conversation object if not found in list
+            // This should rarely happen, but ensures UI doesn't break
+            setSelectedConversation({
+              id: conversationId,
+              participantId: '',
+              participantName: '',
+              participantType: 'USER' as any,
+              organizationName: '',
+              lastMessageSnippet: '',
+              lastMessageAt: new Date().toISOString(),
+              unreadCount: 0,
+            })
+            
+            // Still try to fetch messages
+            await queryClient.invalidateQueries({ queryKey: ['messages', conversationId] })
+            await queryClient.refetchQueries({ queryKey: ['messages', conversationId] })
           }
         }}
         currentUserId={currentUserId}
