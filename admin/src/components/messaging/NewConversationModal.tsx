@@ -153,9 +153,9 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
       })
 
       if (existingConv) {
-        // Return existing conversation in a shape that onSuccess can handle
-        // Match the shape of createConversation response (either wrapped or raw)
-        return { data: { data: existingConv } }
+        // Return existing conversation in a simpler shape that onSuccess can handle
+        // onSuccess will check both response?.data?.data and response?.data
+        return { data: existingConv }
       }
 
       // Create new conversation
@@ -172,16 +172,22 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
         response?.data?.data || // wrapped ApiResponse
         response?.data          // raw conversation
       
-      if (conversation?.id) {
-        queryClient.invalidateQueries({ queryKey: ['conversations'] })
-        toast.success(t('admin:messaging.newConversation.success', 'Conversation started!'))
-        onConversationCreated(conversation.id)
-        onClose()
-        setSearchQuery('')
-        setSelectedUser(null)
-      } else if (isDev) {
-        console.error('❌ Conversation response missing ID:', { response, conversation })
+      const conversationId = conversation?.id
+      
+      if (!conversationId) {
+        if (import.meta.env.DEV) {
+          console.warn('[NewConversationModal] Missing conversation id from createConversation response', response)
+        }
+        toast.error(t('admin:messaging.newConversation.error', 'Failed to start conversation'))
+        return
       }
+      
+      queryClient.invalidateQueries({ queryKey: ['conversations'] })
+      toast.success(t('admin:messaging.newConversation.success', 'Conversation started!'))
+      onConversationCreated(conversationId)
+      onClose()
+      setSearchQuery('')
+      setSelectedUser(null)
     },
     onError: (error: any) => {
       const errorMessage = error?.response?.data?.message || error?.message || 

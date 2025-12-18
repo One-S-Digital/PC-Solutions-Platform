@@ -116,6 +116,43 @@ const Messaging: React.FC = () => {
     }
   })
 
+  // Helper to get timestamp for deduplication
+  const toTimestamp = (c: any): number => {
+    const dateStr = c.updatedAt || c.lastMessageAt || c.createdAt || '0'
+    return new Date(dateStr).getTime()
+  }
+
+  // Deduplicate DIRECT conversations (keep newest per other participant)
+  const dedupeConversations = (convs: any[], currentUserId?: string): any[] => {
+    const directMap = new Map<string, any>()
+    const passthrough: any[] = []
+
+    for (const c of convs) {
+      // Non-DIRECT conversations pass through as-is
+      if (c?.type !== 'DIRECT') {
+        passthrough.push(c)
+        continue
+      }
+
+      // For DIRECT conversations, find the other participant
+      const participants = c?.participants || []
+      const otherUserId = participants
+        .map((p: any) => p.userId || p.user?.id)
+        .find((id: string) => id && id !== currentUserId)
+
+      // Use otherUserId as key, or fallback to conversation id
+      const key = `DIRECT:${otherUserId || c.id}`
+
+      // Keep the conversation with the latest timestamp
+      const existing = directMap.get(key)
+      if (!existing || toTimestamp(c) > toTimestamp(existing)) {
+        directMap.set(key, c)
+      }
+    }
+
+    return [...passthrough, ...Array.from(directMap.values())]
+  }
+
   const conversations: Conversation[] = useMemo(
     () => {
       // Handle both response shapes: wrapped ApiResponse or raw array
@@ -123,7 +160,11 @@ const Messaging: React.FC = () => {
         conversationsResponse?.data?.data || // wrapped ApiResponse
         conversationsResponse?.data ||       // raw array
         []
-      const transformed = rawConversations.map((conv: any) => transformConversation(conv, currentUserId))
+      
+      // Deduplicate DIRECT conversations before transforming
+      const deduped = dedupeConversations(rawConversations, currentUserId)
+      
+      const transformed = deduped.map((conv: any) => transformConversation(conv, currentUserId))
       return transformed;
     },
     [conversationsResponse, currentUserId]
@@ -451,6 +492,24 @@ const Messaging: React.FC = () => {
         isOpen={isNewConversationModalOpen}
         onClose={() => setIsNewConversationModalOpen(false)}
         onConversationCreated={async (conversationId) => {
+          // Immediately set the selected conversation to ensure UI updates
+          // This works even if the conversation list hasn't refreshed yet
+          setSelectedConversation((prev) => {
+            // If we already have it selected, keep it
+            if (prev?.id === conversationId) return prev
+            // Otherwise create a temporary conversation object until refetch completes
+            return {
+              id: conversationId,
+              participantId: '',
+              participantName: '',
+              participantType: 'USER' as any,
+              organizationName: '',
+              lastMessageSnippet: '',
+              lastMessageAt: new Date().toISOString(),
+              unreadCount: 0,
+            }
+          })
+          
           // Invalidate and refetch conversations
           await queryClient.invalidateQueries({ queryKey: ['conversations'] })
           const conversationsData = await queryClient.fetchQuery({
@@ -461,8 +520,11 @@ const Messaging: React.FC = () => {
             },
           })
           
-          // Find and select the newly created conversation
-          const rawConversations = conversationsData?.data?.data || []
+          // Find and select the newly created conversation (handle both response shapes)
+          const rawConversations =
+            conversationsData?.data?.data || // wrapped ApiResponse
+            conversationsData?.data ||       // raw array
+            []
           const newConv = rawConversations.find((c: any) => c.id === conversationId)
           if (newConv) {
             const transformed = transformConversation(newConv, currentUserId)
