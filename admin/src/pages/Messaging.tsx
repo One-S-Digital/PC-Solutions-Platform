@@ -1,5 +1,3 @@
-console.log('📦 Messaging.tsx module loaded');
-
 import React, { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
@@ -81,13 +79,13 @@ const Messaging: React.FC = () => {
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
+  const isDev = import.meta.env.DEV
+
   // Get current user's database ID
   const { data: currentUserResponse } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      console.log('👤 Fetching current user...');
       const response = await apiService.getCurrentUser(apiClient);
-      console.log('👤 Current user response:', response?.data);
       return response;
     },
     enabled: !!apiClient,
@@ -97,52 +95,31 @@ const Messaging: React.FC = () => {
   const currentUserRole = currentUserResponse?.data?.data?.role
   const isAdmin = currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN'
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('💬 Messaging component mounted/updated:', {
-      hasApiClient: !!apiClient,
-      hasCurrentUserResponse: !!currentUserResponse,
-      currentUserId,
-      apiClientBaseURL: apiClient?.defaults?.baseURL
-    });
-  }, [apiClient, currentUserId, currentUserResponse])
-
   const { data: conversationsResponse, isLoading: isLoadingConversations, error: conversationsError } = useQuery({
     queryKey: ['conversations'],
     queryFn: async () => {
-      console.log('📨 Fetching conversations...', { apiClient: !!apiClient, baseURL: apiClient?.defaults?.baseURL });
       try {
         const response = await apiService.getConversations(apiClient);
-        console.log('📨 Conversations response:', {
-          hasResponse: !!response,
-          hasData: !!response?.data,
-          hasNestedData: !!response?.data?.data,
-          dataType: Array.isArray(response?.data?.data) ? 'array' : typeof response?.data?.data,
-          dataLength: Array.isArray(response?.data?.data) ? response.data.data.length : 'N/A',
-          fullResponse: response?.data
-        });
         return response;
       } catch (error) {
-        console.error('❌ Error fetching conversations:', error);
+        if (isDev) {
+          console.error('Failed to fetch conversations:', error);
+        }
         throw error;
       }
     },
     enabled: !!apiClient,
     onError: (error) => {
-      console.error('❌ Failed to fetch conversations:', error);
+      if (isDev) {
+        console.error('Failed to fetch conversations:', error);
+      }
     }
   })
 
   const conversations: Conversation[] = useMemo(
     () => {
       const rawConversations = conversationsResponse?.data?.data || []
-      console.log('🔄 Transforming conversations:', {
-        rawCount: rawConversations.length,
-        currentUserId,
-        rawConversations: rawConversations.slice(0, 2) // Log first 2 for debugging
-      });
       const transformed = rawConversations.map((conv: any) => transformConversation(conv, currentUserId))
-      console.log('🔄 Transformed conversations:', transformed.slice(0, 2));
       return transformed;
     },
     [conversationsResponse, currentUserId]
@@ -153,25 +130,21 @@ const Messaging: React.FC = () => {
   const { data: messagesResponse, isLoading: isLoadingMessages, error: messagesError } = useQuery({
     queryKey: ['messages', selectedConversationId],
     queryFn: async () => {
-      console.log('💬 Fetching messages for conversation:', selectedConversationId);
       try {
         const response = await apiService.getMessages(apiClient, selectedConversationId!);
-        console.log('💬 Messages response:', {
-          hasResponse: !!response,
-          hasData: !!response?.data,
-          hasNestedData: !!response?.data?.data,
-          dataType: Array.isArray(response?.data?.data) ? 'array' : typeof response?.data?.data,
-          dataLength: Array.isArray(response?.data?.data) ? response.data.data.length : 'N/A'
-        });
         return response;
       } catch (error) {
-        console.error('❌ Error fetching messages:', error);
+        if (isDev) {
+          console.error('Failed to fetch messages:', error);
+        }
         throw error;
       }
     },
     enabled: !!selectedConversationId && !!apiClient,
     onError: (error) => {
-      console.error('❌ Failed to fetch messages:', error);
+      if (isDev) {
+        console.error('Failed to fetch messages:', error);
+      }
     }
   })
 

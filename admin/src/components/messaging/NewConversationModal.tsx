@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { X, Search, User, Building2, Mail } from 'lucide-react'
@@ -14,6 +14,8 @@ interface NewConversationModalProps {
   currentUserId?: string
 }
 
+const isDev = import.meta.env.DEV
+
 const NewConversationModal: React.FC<NewConversationModalProps> = ({
   isOpen,
   onClose,
@@ -25,32 +27,90 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
   const queryClient = useQueryClient()
   
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Fetch users with search
-  const { data: usersResponse, isLoading: isLoadingUsers } = useQuery({
-    queryKey: ['adminUsers', searchQuery],
+  // Debounce search query (400ms delay)
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 400)
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [searchQuery])
+
+  // Reset search when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('')
+      setDebouncedSearchQuery('')
+      setSelectedUser(null)
+    }
+  }, [isOpen])
+
+  // Fetch users with search - only when query has 2+ characters
+  const shouldFetch = isOpen && !!apiClient && debouncedSearchQuery.trim().length >= 2
+  
+  const { data: usersResponse, isLoading: isLoadingUsers, error: usersError } = useQuery({
+    queryKey: ['adminUsers', debouncedSearchQuery],
     queryFn: async () => {
-      const response = await apiService.getAdminUsers(apiClient, {
-        page: 1,
-        limit: 50,
-        search: searchQuery || undefined,
-      })
-      return response
+      if (isDev) {
+        console.log('🔍 Fetching users for query:', debouncedSearchQuery)
+      }
+      
+      try {
+        const response = await apiService.getAdminUsers(apiClient, {
+          page: 1,
+          limit: 50,
+          search: debouncedSearchQuery.trim(),
+        })
+        
+        if (isDev) {
+          const userCount = response?.data?.data?.users?.length || 0
+          console.log(`✅ GET /admin/users responded with ${userCount} users`)
+        }
+        
+        return response
+      } catch (error: any) {
+        if (isDev) {
+          console.error('❌ Error fetching users:', error)
+        }
+        throw error
+      }
     },
-    enabled: isOpen && !!apiClient,
+    enabled: shouldFetch,
     staleTime: 30000, // Cache for 30 seconds
+    retry: 1,
   })
 
   const users = useMemo(() => {
     const allUsers = usersResponse?.data?.data?.users || []
+    
     // Filter out current user and admin users (only show non-admin users)
-    return allUsers.filter(
-      (user: UserType) => 
-        user.id !== currentUserId && 
-        user.role !== 'ADMIN' && 
-        user.role !== 'SUPER_ADMIN'
-    )
+    // Normalize roles to uppercase for comparison
+    return allUsers.filter((user: UserType) => {
+      // Only exclude current user if currentUserId exists and matches
+      if (currentUserId && user.id === currentUserId) {
+        return false
+      }
+      
+      // Normalize role to uppercase for comparison
+      const userRole = (user.role || '').toUpperCase()
+      if (userRole === 'ADMIN' || userRole === 'SUPER_ADMIN') {
+        return false
+      }
+      
+      return true
+    })
   }, [usersResponse, currentUserId])
 
   // Create conversation mutation
@@ -155,15 +215,41 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  // Trigger search on Enter if query is valid
+                  if (e.key === 'Enter' && searchQuery.trim().length >= 2) {
+                    setDebouncedSearchQuery(searchQuery.trim())
+                  }
+                }}
               />
             </div>
           </div>
 
           {/* User List */}
           <div className="flex-1 overflow-y-auto p-4">
-            {isLoadingUsers ? (
+            {usersError ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <User className="h-12 w-12 text-gray-300 mb-4" />
+                <p className="text-sm font-medium text-red-600 mb-1">
+                  {t('admin:messaging.newConversation.error', 'Failed to load users')}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {t('admin:messaging.newConversation.tryAgain', 'Please try again')}
+                </p>
+              </div>
+            ) : isLoadingUsers ? (
               <div className="flex items-center justify-center py-8">
                 <LoadingSpinner />
+              </div>
+            ) : searchQuery.trim().length < 2 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <User className="h-12 w-12 text-gray-300 mb-4" />
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  {t('admin:messaging.newConversation.startTyping', 'Start typing to search for users')}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {t('admin:messaging.newConversation.typeAtLeast', 'Type at least 2 characters to search')}
+                </p>
               </div>
             ) : users.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -172,10 +258,7 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
                   {t('admin:messaging.newConversation.noUsersFound', 'No users found')}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {searchQuery 
-                    ? t('admin:messaging.newConversation.tryDifferentSearch', 'Try a different search term')
-                    : t('admin:messaging.newConversation.startTyping', 'Start typing to search for users')
-                  }
+                  {t('admin:messaging.newConversation.tryDifferentSearch', 'Try a different search term')}
                 </p>
               </div>
             ) : (

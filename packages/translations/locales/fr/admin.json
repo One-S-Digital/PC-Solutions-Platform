@@ -1370,6 +1370,8 @@
       "noUsersFound": "Aucun utilisateur trouvé",
       "tryDifferentSearch": "Essayez un autre terme de recherche",
       "startTyping": "Commencez à taper pour rechercher des utilisateurs",
+      "typeAtLeast": "Tapez au moins 2 caractères pour rechercher",
+      "tryAgain": "Veuillez réessayer",
       "success": "Conversation démarrée !",
       "error": "Échec du démarrage de la conversation"
     }
