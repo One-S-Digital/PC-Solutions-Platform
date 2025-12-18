@@ -12,24 +12,38 @@ export class MessagingService {
   /**
    * Extract storage key from a full URL or return the key if it's already a key
    * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
-   * Returns the storage key portion
+   * Returns the storage key portion, or null if fileUrl is invalid/missing
    */
-  private extractStorageKey(fileUrl: string | undefined): string | undefined {
-    if (!fileUrl) return undefined;
+  private extractStorageKey(fileUrl: string | undefined | null): string | null {
+    // Return null for missing/invalid values - let validation handle it
+    if (!fileUrl || typeof fileUrl !== 'string' || fileUrl.trim().length === 0) {
+      return null;
+    }
+    
+    const trimmed = fileUrl.trim();
     
     // If it's already a relative download URL, extract the key
-    if (fileUrl.startsWith('/api/upload/download/')) {
-      return fileUrl.replace('/api/upload/download/', '');
+    if (trimmed.startsWith('/api/upload/download/')) {
+      const key = trimmed.replace('/api/upload/download/', '').trim();
+      return key.length > 0 ? key : null;
     }
     
     // If it's a full URL, extract the path after the domain
     try {
-      const url = new URL(fileUrl);
-      // Remove leading slash and return the path
-      return url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+      const url = new URL(trimmed);
+      // Extract path and remove leading slash
+      const path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+      // Return path if it's not empty, otherwise return null
+      return path.length > 0 ? path : null;
     } catch {
-      // If it's not a valid URL, assume it's already a storage key
-      return fileUrl;
+      // If it's not a valid URL, check if it looks like a storage key (no http/https)
+      // Storage keys typically don't contain :// or start with http
+      if (!trimmed.includes('://') && !trimmed.startsWith('http')) {
+        // Assume it's already a storage key
+        return trimmed;
+      }
+      // Invalid format - return null
+      return null;
     }
   }
 
@@ -701,7 +715,8 @@ export class MessagingService {
     
     // Extract storage key from fileUrl to avoid storing full public URLs (security)
     // Store only the storage key, which will be converted to secure download URL when retrieved
-    const storageKey = this.extractStorageKey(fileUrl);
+    // Only extract if fileUrl is provided (for IMAGE/FILE messages)
+    const storageKey = fileUrl ? this.extractStorageKey(fileUrl) : null;
 
     // Convert senderId (Clerk ID or AppUser ID) to User.id
     // senderId can be either Clerk ID (user_xxx) or AppUser.id (UUID)
@@ -782,18 +797,31 @@ export class MessagingService {
     });
 
     try {
+      // Prepare message data - ensure file fields are null for TEXT messages
+      const messageData: any = {
+        conversationId,
+        senderId: finalSenderUserId,
+        receiverId: finalReceiverUserId,
+        content,
+        messageType: messageType || 'TEXT',
+      };
+      
+      // Only include file fields for IMAGE/FILE messages
+      if (messageType === 'IMAGE' || messageType === 'FILE') {
+        messageData.fileUrl = storageKey || null;
+        messageData.fileName = fileName || null;
+        messageData.fileSize = fileSize || null;
+        messageData.mimeType = mimeType || null;
+      } else {
+        // TEXT messages should have null file fields
+        messageData.fileUrl = null;
+        messageData.fileName = null;
+        messageData.fileSize = null;
+        messageData.mimeType = null;
+      }
+      
       const message = await this.prisma.message.create({
-        data: {
-          conversationId,
-          senderId: finalSenderUserId,
-          receiverId: finalReceiverUserId,
-          content,
-          messageType,
-          fileUrl: storageKey, // Store only the storage key, not the full URL
-          fileName,
-          fileSize,
-          mimeType,
-        },
+        data: messageData,
         include: {
           sender: true,
           receiver: true,

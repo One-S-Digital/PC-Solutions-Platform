@@ -31,7 +31,7 @@ export class CreateMessageDto {
   messageType?: MessageType;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   fileUrl?: string;
 
   @IsOptional()
