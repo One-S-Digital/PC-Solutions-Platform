@@ -10,6 +10,7 @@ import {
   Product, 
   Service, 
   ApiResponse,
+  InviteUserResponse,
   AnalyticsOverview,
   UserAnalytics,
   OrgAnalytics,
@@ -300,7 +301,7 @@ export const apiService = {
   inviteUser: (
     apiClient: AxiosInstance,
     payload: { email: string; role: UserRole; redirectUrl?: string; reason?: string },
-  ) => apiClient.post<ApiResponse<any>>('/users/invite', payload),
+  ) => apiClient.post<ApiResponse<InviteUserResponse>>('/users/invite', payload),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
     // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

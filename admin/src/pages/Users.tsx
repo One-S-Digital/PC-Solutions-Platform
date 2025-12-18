@@ -677,8 +677,13 @@ const Users: React.FC = () => {
       toast.success(t('admin:users.addUser.inviteSent', 'Invitation sent'))
       logger.log('User invitation created successfully')
     },
-    onError: (error) => {
+    onError: (error: any) => {
       logger.error('Failed to invite user:', error)
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        t('admin:users.addUser.failed', 'Failed to send invitation')
+      toast.error(message)
     },
   })
 

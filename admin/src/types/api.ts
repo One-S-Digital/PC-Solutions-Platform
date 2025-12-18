@@ -460,6 +460,15 @@ export interface ApiResponse<T> {
   timestamp: string;
 }
 
+export interface InviteUserResponse {
+  id: string;
+  emailAddress: string;
+  status?: string;
+  createdAt?: number;
+  publicMetadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 // Partner types
 export type PartnerType = 'ACADEMIC' | 'CORPORATE' | 'GOVERNMENTAL' | 'NON_PROFIT' | 'MEDIA' | 'TECHNOLOGY';
 

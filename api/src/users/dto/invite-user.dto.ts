@@ -1,8 +1,9 @@
-import { IsEmail, IsEnum, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
 import { UserRole } from '@prisma/client';
 
 export class InviteUserDto {
   @IsEmail()
+  @MaxLength(255)
   email: string;
 
   @IsEnum(UserRole)
@@ -14,6 +15,7 @@ export class InviteUserDto {
    */
   @IsOptional()
   @IsUrl({ require_tld: false })
+  @MaxLength(2048)
   redirectUrl?: string;
 
   /**
@@ -22,6 +24,7 @@ export class InviteUserDto {
    */
   @IsOptional()
   @IsString()
+  @MaxLength(500)
   reason?: string;
 }
 

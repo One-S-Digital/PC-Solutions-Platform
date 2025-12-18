@@ -13,6 +13,7 @@ import {
   Logger,
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -97,11 +98,43 @@ export class UsersController {
 
     // Clerk SDK (v5) invitation API.
     // We keep types loose here to avoid coupling to SDK internals.
-    const invitation = await (this.clerk as any).invitations.createInvitation({
-      emailAddress: dto.email,
-      redirectUrl: dto.redirectUrl,
-      publicMetadata: { role: dto.role },
-    });
+    const maskedEmail = dto.email ? `${dto.email.substring(0, 3)}***@${dto.email.split('@')[1] || '***'}` : '***';
+    let invitation: any;
+    try {
+      invitation = await (this.clerk as any).invitations.createInvitation({
+        emailAddress: dto.email,
+        redirectUrl: dto.redirectUrl,
+        publicMetadata: { role: dto.role },
+      });
+    } catch (error: any) {
+      const status = error?.status ?? error?.response?.status;
+      const code = error?.errors?.[0]?.code ?? error?.code;
+      const message = error?.message ?? error?.errors?.[0]?.message ?? 'Unknown Clerk error';
+
+      this.logger.error('Failed to create Clerk invitation', {
+        maskedEmail,
+        role: dto.role,
+        status,
+        code,
+        message,
+        errors: error?.errors,
+      });
+
+      // Common cases: already invited / duplicate, validation, rate limiting
+      if (status === 429 || code === 'rate_limited') {
+        throw new BadRequestException('Invitation rate limit exceeded. Please try again later.');
+      }
+
+      if (status === 422 || code === 'duplicate_record' || code === 'form_identifier_exists') {
+        throw new BadRequestException('An invitation has already been sent to this email');
+      }
+
+      if (status >= 400 && status < 500) {
+        throw new BadRequestException('Failed to send invitation. Please check the email and try again.');
+      }
+
+      throw new InternalServerErrorException('Failed to send invitation. Please try again later.');
+    }
 
     return {
       success: true,
