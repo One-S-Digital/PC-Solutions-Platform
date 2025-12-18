@@ -22,6 +22,7 @@ import {
   PartnerType
 } from '../types/api'
 import { AxiosInstance } from 'axios'
+import { UserRole } from '../types'
 
 
 // Use environment variable for API base URL, fallback to '/api' for development
@@ -296,6 +297,10 @@ export const apiService = {
     apiClient.get<ApiResponse<{ users: User[]; total: number; page: number; limit: number; totalPages: number }>>('/admin/users', { params }),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
+  inviteUser: (
+    apiClient: AxiosInstance,
+    payload: { email: string; role: UserRole; redirectUrl?: string; reason?: string },
+  ) => apiClient.post<ApiResponse<any>>('/users/invite', payload),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
     // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -4,7 +4,6 @@ import {
   Users as UsersIcon, 
   Plus, 
   Search, 
-  Filter,
   Edit,
   Trash2,
   MoreVertical,
@@ -38,9 +37,10 @@ interface EditUserModalProps {
   user: User | null
   onSave: (user: User) => Promise<void>
   isLoading: boolean
+  currentUserRole?: UserRole
 }
 
-const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading }) => {
+const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading, currentUserRole }) => {
   const [formData, setFormData] = useState<Partial<User>>({})
   const { t } = useTranslation(['common', 'admin']);
   const [error, setError] = useState<string | null>(null)
@@ -87,6 +87,10 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
   }
 
   if (!isOpen || !user) return null
+
+  const canAssignSuperAdmin = currentUserRole === UserRole.SUPER_ADMIN
+  const isEditingSuperAdmin = user.role === UserRole.SUPER_ADMIN
+  const lockRole = !canAssignSuperAdmin && isEditingSuperAdmin
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -151,8 +155,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 className={STANDARD_INPUT_FIELD}
                 value={formData.role || ''}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+                disabled={lockRole}
               >
-                <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+                {(canAssignSuperAdmin || isEditingSuperAdmin) && (
+                  <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+                )}
                 <option value={UserRole.ADMIN}>{t('common:admin')}</option>
                 <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
                 <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
@@ -160,6 +167,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
                 <option value={UserRole.PARENT}>{t('common:parent')}</option>
               </select>
+              {!canAssignSuperAdmin && (
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('admin:users.editUser.roleHint', 'You cannot assign the Super Admin role.')}
+                </p>
+              )}
             </div>
 
             <div>
@@ -438,6 +450,143 @@ const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClo
   )
 }
 
+// Add User Modal Component (invites user via Clerk)
+interface AddUserModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onInvite: (payload: { email: string; role: UserRole }) => Promise<void>
+  isLoading: boolean
+  canInviteSuperAdmin: boolean
+}
+
+const AddUserModal: React.FC<AddUserModalProps> = ({
+  isOpen,
+  onClose,
+  onInvite,
+  isLoading,
+  canInviteSuperAdmin,
+}) => {
+  const { t } = useTranslation(['common', 'admin'])
+  const [email, setEmail] = useState('')
+  const [role, setRole] = useState<UserRole>(UserRole.PARENT)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setEmail('')
+      setRole(UserRole.PARENT)
+      setError(null)
+    }
+  }, [isOpen])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    if (!email.trim()) {
+      setError(t('admin:users.addUser.emailRequired', 'Email is required'))
+      return
+    }
+
+    if (!canInviteSuperAdmin && role === UserRole.SUPER_ADMIN) {
+      setError(t('admin:users.addUser.superAdminNotAllowed', 'Only Super Admin can add a Super Admin'))
+      return
+    }
+
+    try {
+      await onInvite({ email: email.trim(), role })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin:users.addUser.failed', 'Failed to invite user'))
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.addUser', 'Add User')}</h2>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            disabled={isLoading}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.addUser.email', 'Email')} <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                className={STANDARD_INPUT_FIELD}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t('common:placeholders.emailaddress')}
+                required
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t(
+                  'admin:users.addUser.emailHint',
+                  'We will send an invitation email. The user will appear in the list after they sign up.',
+                )}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.addUser.role', 'Role')}
+              </label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+              >
+                {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>}
+                <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+                <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+                <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+                <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+                <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+                <option value={UserRole.PARENT}>{t('common:parent')}</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+            >
+              {isLoading ? t('admin:users.addUser.sending', 'Sending...') : t('admin:users.addUser.sendInvite', 'Send Invite')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
   const [searchQuery, setSearchQuery] = useState('')
@@ -446,6 +595,7 @@ const Users: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
@@ -461,6 +611,7 @@ const Users: React.FC = () => {
 
   const currentUser = currentUserResponse?.data?.data
   const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN
+  const canInviteSuperAdmin = isSuperAdmin
 
   const { data: usersResponse, isLoading, error } = useQuery({
     queryKey: ['users'],
@@ -515,6 +666,19 @@ const Users: React.FC = () => {
     onError: (error) => {
       logger.error('Failed to elevate user:', error)
       // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
+    },
+  })
+
+  // Invite user mutation (Admin + Super Admin; backend blocks ADMIN -> SUPER_ADMIN)
+  const inviteUserMutation = useMutation({
+    mutationFn: (payload: { email: string; role: UserRole }) => apiService.inviteUser(apiClient, payload),
+    onSuccess: () => {
+      setIsAddUserModalOpen(false)
+      toast.success(t('admin:users.addUser.inviteSent', 'Invitation sent'))
+      logger.log('User invitation created successfully')
+    },
+    onError: (error) => {
+      logger.error('Failed to invite user:', error)
     },
   })
 
@@ -626,6 +790,13 @@ const Users: React.FC = () => {
     setSelectedUser(null)
   }
 
+  const handleCloseAddUserModal = () => {
+    setIsAddUserModalOpen(false)
+  }
+
+  const handleInviteUser = async (payload: { email: string; role: UserRole }) => {
+    await inviteUserMutation.mutateAsync(payload)
+  }
 
   if (isLoading) {
     return (
@@ -657,7 +828,7 @@ const Users: React.FC = () => {
             {t('admin:users.subtitle', 'Manage all users across the platform')} ({users.length} {t('common:total', 'total')})
           </p>
         </div>
-        <Button variant="primary" leftIcon={Plus}>
+        <Button variant="primary" leftIcon={Plus} onClick={() => setIsAddUserModalOpen(true)}>
           {t('admin:users.addUser', 'Add User')}
         </Button>
       </div>
@@ -868,6 +1039,7 @@ const Users: React.FC = () => {
         user={selectedUser}
         onSave={handleUpdateUser}
         isLoading={updateUserMutation.isPending}
+        currentUserRole={currentUser?.role}
       />
 
       {/* Delete Confirmation Modal */}
@@ -889,6 +1061,15 @@ const Users: React.FC = () => {
           isLoading={elevateUserMutation.isPending}
         />
       )}
+
+      {/* Add User Modal */}
+      <AddUserModal
+        isOpen={isAddUserModalOpen}
+        onClose={handleCloseAddUserModal}
+        onInvite={handleInviteUser}
+        isLoading={inviteUserMutation.isPending}
+        canInviteSuperAdmin={canInviteSuperAdmin}
+      />
     </div>
   )
 }

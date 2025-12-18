@@ -12,11 +12,13 @@ import {
   Request,
   Logger,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
+import { InviteUserDto } from './dto/invite-user.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
@@ -69,6 +71,44 @@ export class UsersController {
   @Roles(UserRole.SUPER_ADMIN)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  /**
+   * Invite a user by email and pre-assign a role.
+   *
+   * Permission rules:
+   * - SUPER_ADMIN can invite users with ANY role (including SUPER_ADMIN).
+   * - ADMIN can invite users with any role EXCEPT SUPER_ADMIN.
+   *
+   * Note: This creates a Clerk invitation; the user will appear in the DB after signup + webhook processing.
+   */
+  @Post('invite')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async inviteUser(@Body() dto: InviteUserDto, @Request() request) {
+    const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
+
+    if (callerRole === UserRole.ADMIN && dto.role === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can create SUPER_ADMIN users');
+    }
+
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    // Clerk SDK (v5) invitation API.
+    // We keep types loose here to avoid coupling to SDK internals.
+    const invitation = await (this.clerk as any).invitations.createInvitation({
+      emailAddress: dto.email,
+      redirectUrl: dto.redirectUrl,
+      publicMetadata: { role: dto.role },
+    });
+
+    return {
+      success: true,
+      message: 'Invitation created successfully',
+      data: invitation,
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Get()
