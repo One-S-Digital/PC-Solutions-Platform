@@ -180,4 +180,21 @@ export class MessagingController {
   getMessagingStats() {
     return this.messagingService.getMessagingStats();
   }
+
+  // Recipients (for user picker)
+  @Get('recipients')
+  async getRecipients(
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Request() req?: any,
+  ) {
+    const requesterId = req.context?.userId;
+    if (!requesterId) {
+      throw new UnauthorizedException('User context not found. Authentication required.');
+    }
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 50;
+    return this.messagingService.getRecipients(requesterId, search, pageNum, limitNum);
+  }
 }

@@ -48,41 +48,49 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
     }
   }, [searchQuery])
 
-  // Reset search when modal closes
+  // Reset search when modal closes, trigger initial load when opens
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('')
       setDebouncedSearchQuery('')
       setSelectedUser(null)
+    } else {
+      // Trigger initial load when modal opens
+      setDebouncedSearchQuery('')
     }
   }, [isOpen])
 
-  // Fetch users with search - only when query has 2+ characters
-  const shouldFetch = isOpen && !!apiClient && debouncedSearchQuery.trim().length >= 2
+  // Fetch recipients - load initial list on open (empty search), then search when query has 2+ characters
+  const shouldFetch = isOpen && !!apiClient && (debouncedSearchQuery.trim().length === 0 || debouncedSearchQuery.trim().length >= 2)
   
   const { data: usersResponse, isLoading: isLoadingUsers, error: usersError } = useQuery({
-    queryKey: ['adminUsers', debouncedSearchQuery],
+    queryKey: ['messagingRecipients', debouncedSearchQuery],
     queryFn: async () => {
       if (isDev) {
-        console.log('🔍 Fetching users for query:', debouncedSearchQuery)
+        console.log('🔍 Fetching recipients for query:', debouncedSearchQuery || '(initial load)')
       }
       
       try {
-        const response = await apiService.getAdminUsers(apiClient, {
-          page: 1,
-          limit: 50,
-          search: debouncedSearchQuery.trim(),
+        // Use the new messaging recipients endpoint for consistency
+        const response = await apiClient.get('/messaging/recipients', {
+          params: {
+            page: 1,
+            limit: 50,
+            ...(debouncedSearchQuery.trim().length >= 2 && { search: debouncedSearchQuery.trim() }),
+          },
         })
         
         if (isDev) {
-          const userCount = response?.data?.data?.users?.length || 0
-          console.log(`✅ GET /admin/users responded with ${userCount} users`)
+          // Handle both response structures: direct or wrapped in ApiResponse
+          const recipients = response?.data?.recipients || response?.data?.data?.recipients || []
+          const recipientCount = recipients.length
+          console.log(`✅ GET /messaging/recipients responded with ${recipientCount} recipients`)
         }
         
         return response
       } catch (error: any) {
         if (isDev) {
-          console.error('❌ Error fetching users:', error)
+          console.error('❌ Error fetching recipients:', error)
         }
         throw error
       }
@@ -93,25 +101,21 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
   })
 
   const users = useMemo(() => {
-    const allUsers = usersResponse?.data?.data?.users || []
+    // Backend already filters by role-based access, so we just need to transform the response
+    // Handle both response structures: direct or wrapped in ApiResponse
+    const recipients = usersResponse?.data?.recipients || usersResponse?.data?.data?.recipients || []
     
-    // Filter out current user and admin users (only show non-admin users)
-    // Normalize roles to uppercase for comparison
-    return allUsers.filter((user: UserType) => {
-      // Only exclude current user if currentUserId exists and matches
-      if (currentUserId && user.id === currentUserId) {
-        return false
-      }
-      
-      // Normalize role to uppercase for comparison
-      const userRole = (user.role || '').toUpperCase()
-      if (userRole === 'ADMIN' || userRole === 'SUPER_ADMIN') {
-        return false
-      }
-      
-      return true
-    })
-  }, [usersResponse, currentUserId])
+    // Transform recipients to UserType format
+    return recipients.map((recipient: any) => ({
+      id: recipient.id,
+      name: recipient.name,
+      email: recipient.email,
+      firstName: recipient.name.split(' ')[0] || '',
+      lastName: recipient.name.split(' ').slice(1).join(' ') || '',
+      role: recipient.role,
+      orgName: recipient.organizationName || undefined,
+    } as UserType))
+  }, [usersResponse])
 
   // Create conversation mutation
   const createConversationMutation = useMutation({
@@ -241,24 +245,22 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
               <div className="flex items-center justify-center py-8">
                 <LoadingSpinner />
               </div>
-            ) : searchQuery.trim().length < 2 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <User className="h-12 w-12 text-gray-300 mb-4" />
-                <p className="text-sm font-medium text-gray-900 mb-1">
-                  {t('admin:messaging.newConversation.startTyping', 'Start typing to search for users')}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {t('admin:messaging.newConversation.typeAtLeast', 'Type at least 2 characters to search')}
-                </p>
-              </div>
             ) : users.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <User className="h-12 w-12 text-gray-300 mb-4" />
                 <p className="text-sm font-medium text-gray-900 mb-1">
-                  {t('admin:messaging.newConversation.noUsersFound', 'No users found')}
+                  {searchQuery.trim().length > 0
+                    ? t('admin:messaging.newConversation.noUsersFound', 'No users found')
+                    : t('admin:messaging.newConversation.noUsersAvailable', 'No users available')
+                  }
                 </p>
                 <p className="text-xs text-gray-500">
-                  {t('admin:messaging.newConversation.tryDifferentSearch', 'Try a different search term')}
+                  {searchQuery.trim().length >= 2
+                    ? t('admin:messaging.newConversation.tryDifferentSearch', 'Try a different search term')
+                    : searchQuery.trim().length > 0
+                    ? t('admin:messaging.newConversation.typeAtLeast', 'Type at least 2 characters to search')
+                    : ''
+                  }
                 </p>
               </div>
             ) : (

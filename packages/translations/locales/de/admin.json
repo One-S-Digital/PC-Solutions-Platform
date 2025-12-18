@@ -1368,6 +1368,7 @@
       "starting": "Starte...",
       "cancel": "Abbrechen",
       "noUsersFound": "Keine Benutzer gefunden",
+      "noUsersAvailable": "Keine Benutzer verfügbar",
       "tryDifferentSearch": "Versuchen Sie einen anderen Suchbegriff",
       "startTyping": "Beginnen Sie mit der Eingabe, um nach Benutzern zu suchen",
       "typeAtLeast": "Geben Sie mindestens 2 Zeichen ein, um zu suchen",

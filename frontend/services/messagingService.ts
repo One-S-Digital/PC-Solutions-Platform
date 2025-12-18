@@ -246,6 +246,43 @@ class MessagingService {
     }
   }
 
+  // Recipients (for user picker)
+  async getRecipients(search?: string, page: number = 1, limit: number = 50, token?: string): Promise<{
+    recipients: Array<{
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+      organizationName: string | null;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const params: any = { page, limit };
+    if (search && search.trim().length > 0) {
+      params.search = search.trim();
+    }
+    const response = await apiService.get<{
+      recipients: Array<{
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+        organizationName: string | null;
+      }>;
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>('/messaging/recipients', { token, params });
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to fetch recipients');
+    }
+    return response.data;
+  }
+
   // Transform conversation data to include legacy fields for UI compatibility
   private transformConversation(conv: any): Conversation {
     const participants = conv.participants || [];

@@ -29,13 +29,15 @@ import { UserRole } from '../types'
 // Use environment variable for API base URL, fallback to '/api' for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
-// Log the API base URL for debugging
-console.log('🔧 API Base URL configured:', {
-  VITE_API_URL: import.meta.env.VITE_API_URL,
-  API_BASE_URL: API_BASE_URL,
-  NODE_ENV: import.meta.env.NODE_ENV,
-  MODE: import.meta.env.MODE
-})
+// Log the API base URL for debugging (dev only)
+if (import.meta.env.DEV) {
+  console.log('🔧 API Base URL configured:', {
+    VITE_API_URL: import.meta.env.VITE_API_URL,
+    API_BASE_URL: API_BASE_URL,
+    NODE_ENV: import.meta.env.NODE_ENV,
+    MODE: import.meta.env.MODE
+  })
+}
 
 // Create axios instance
 const api = axios.create({
@@ -68,7 +70,9 @@ const isDevelopmentMode = () => {
 
 // Development API client (with auth using getToken callback)
 const createDevApiClient = (getToken: () => Promise<string | null>) => {
-  console.log('🔧 Creating development API client with baseURL:', API_BASE_URL)
+  if (import.meta.env.DEV) {
+    console.log('🔧 Creating development API client with baseURL:', API_BASE_URL)
+  }
   
   const devApi = axios.create({
     baseURL: API_BASE_URL,
@@ -183,7 +187,9 @@ export const useApiClient = () => {
       },
     })
 
-    console.log('🔧 Creating production API client with baseURL:', API_BASE_URL)
+    if (import.meta.env.DEV) {
+      console.log('🔧 Creating production API client with baseURL:', API_BASE_URL)
+    }
 
     // Enable retries ONLY for status polling requests (GET /static-translations/admin/full-sync/*/status)
     axiosRetry(apiWithAuth, {
@@ -549,7 +555,9 @@ export const apiService = {
   // Logo and Favicon Uploads
   uploadLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/logo`
-    console.log('🔄 API: uploadLogo called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadLogo called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -565,7 +573,9 @@ export const apiService = {
 
   uploadFavicon: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/favicon`
-    console.log('🔄 API: uploadFavicon called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadFavicon called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -581,7 +591,9 @@ export const apiService = {
 
   uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-logo`
-    console.log('🔄 API: uploadAdminLogo called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadAdminLogo called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -597,7 +609,9 @@ export const apiService = {
 
   uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-favicon`
-    console.log('🔄 API: uploadAdminFavicon called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadAdminFavicon called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -613,7 +627,9 @@ export const apiService = {
 
   uploadSidebarLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/sidebar-logo`
-    console.log('🔄 API: uploadSidebarLogo called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadSidebarLogo called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/sidebar-logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

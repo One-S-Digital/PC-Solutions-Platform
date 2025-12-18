@@ -276,17 +276,20 @@
   },
   "createAccount": "Créer un compte",
   "createGroupChatModal": {
-    "createButton": "[FR] Create Button",
+    "title": "Créer un chat de groupe",
+    "titleNewChat": "Nouveau chat",
+    "groupNameLabel": "Nom du groupe",
+    "groupNamePlaceholder": "Entrez le nom du groupe (optionnel)",
+    "selectParticipantsLabel": "Sélectionner les participants",
+    "searchPlaceholder": "Rechercher des utilisateurs par nom ou e-mail...",
+    "loadingUsers": "Chargement des utilisateurs...",
+    "noUsersAvailable": "Aucun utilisateur disponible",
+    "noUsersFound": "Aucun utilisateur trouvé",
+    "createButton": "Créer",
     "error": {
-      "minParticipants": "[FR] Min Participants"
-    },
-    "groupNameLabel": "[FR] Group Name",
-    "groupNamePlaceholder": "[FR] Enter group name",
-    "loadingUsers": "Chargement... users",
-    "noUsersAvailable": "no Users Available",
-    "selectParticipantsLabel": "[FR] Select Participants",
-    "title": "[FR] Title",
-    "titleNewChat": "Titre new chat"
+      "minParticipants": "Veuillez sélectionner au moins un autre participant",
+      "createFailed": "Échec de la création de la conversation. Veuillez réessayer."
+    }
   },
   "dashboardDetailPage": {
     "activeUsers": {

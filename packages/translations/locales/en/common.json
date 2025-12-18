@@ -310,17 +310,20 @@
   },
   "createAccount": "Create Account",
   "createGroupChatModal": {
-    "createButton": "Create Button",
-    "error": {
-      "minParticipants": "Min Participants"
-    },
+    "title": "Create Group Chat",
+    "titleNewChat": "New Chat",
     "groupNameLabel": "Group Name",
-    "groupNamePlaceholder": "Enter group name",
-    "loadingUsers": "loading Users",
-    "noUsersAvailable": "no Users Available",
+    "groupNamePlaceholder": "Enter group name (optional)",
     "selectParticipantsLabel": "Select Participants",
-    "title": "Title",
-    "titleNewChat": "title New Chat"
+    "searchPlaceholder": "Search users by name or email...",
+    "loadingUsers": "Loading users...",
+    "noUsersAvailable": "No users available",
+    "noUsersFound": "No users found",
+    "createButton": "Create",
+    "error": {
+      "minParticipants": "Please select at least one other participant",
+      "createFailed": "Failed to create conversation. Please try again."
+    }
   },
   "dashboardDetailPage": {
     "activeUsers": {

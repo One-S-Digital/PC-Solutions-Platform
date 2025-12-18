@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional, Logger } from '@nestjs/common';
+import { Injectable, Inject, Optional, Logger, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -138,15 +138,8 @@ export class MessagingService {
         return Object.values(UserRole);
       
       case UserRole.ADMIN:
-        // Admin can message: ADMIN, EDUCATOR, PARENT, FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER
-        return [
-          UserRole.ADMIN,
-          UserRole.EDUCATOR,
-          UserRole.PARENT,
-          UserRole.FOUNDATION,
-          UserRole.PRODUCT_SUPPLIER,
-          UserRole.SERVICE_PROVIDER,
-        ];
+        // Admin can message anyone (handled separately in getRecipients and createConversation)
+        return Object.values(UserRole);
       
       case UserRole.EDUCATOR:
         // Educator can message: EDUCATOR, ADMIN, PARENT
@@ -165,12 +158,22 @@ export class MessagingService {
         ];
       
       case UserRole.FOUNDATION:
-      case UserRole.PRODUCT_SUPPLIER:
-      case UserRole.SERVICE_PROVIDER:
-        // Foundation/Supplier/Service Provider can message each other + ADMIN
+        // Foundation can message: FOUNDATION, ADMIN
         return [
           UserRole.FOUNDATION,
+          UserRole.ADMIN,
+        ];
+      
+      case UserRole.PRODUCT_SUPPLIER:
+        // Product Supplier can message: PRODUCT_SUPPLIER, ADMIN
+        return [
           UserRole.PRODUCT_SUPPLIER,
+          UserRole.ADMIN,
+        ];
+      
+      case UserRole.SERVICE_PROVIDER:
+        // Service Provider can message: SERVICE_PROVIDER, ADMIN
+        return [
           UserRole.SERVICE_PROVIDER,
           UserRole.ADMIN,
         ];
@@ -182,6 +185,118 @@ export class MessagingService {
   }
 
   // Conversation Management
+  /**
+   * Get available recipients for messaging (for user picker)
+   * ADMIN/SUPER_ADMIN can see all users, others see only allowed roles
+   */
+  async getRecipients(requesterId: string, search?: string, page: number = 1, limit: number = 50) {
+    const logContext = { requesterId, search, page, limit };
+    
+    try {
+      // Resolve requester to User.id
+      const requesterUserId = await this.resolveUserId(requesterId);
+      if (!requesterUserId) {
+        this.logger.warn({
+          message: 'getRecipients: Requester lookup failed',
+          ...logContext,
+        });
+        throw new Error('Requester not found');
+      }
+
+      // Get requester's role
+      const requesterUser = await this.prisma.user.findUnique({
+        where: { id: requesterUserId },
+        select: { id: true, role: true },
+      });
+
+      if (!requesterUser) {
+        throw new Error('Requester user record not found');
+      }
+
+      const requesterRole = requesterUser.role;
+      const skip = (page - 1) * limit;
+
+      // Build base query
+      const where: any = {
+        isActive: true, // Only active users
+      };
+
+      // Apply role-based filtering (unless ADMIN/SUPER_ADMIN)
+      if (requesterRole !== UserRole.SUPER_ADMIN && requesterRole !== UserRole.ADMIN) {
+        const allowedRoles = this.getAllowedMessagingRoles(requesterRole);
+        where.role = { in: allowedRoles };
+      }
+
+      // Apply search filter (after role filtering)
+      if (search && search.trim().length > 0) {
+        const searchTerm = search.trim();
+        where.OR = [
+          { firstName: { contains: searchTerm, mode: 'insensitive' } },
+          { lastName: { contains: searchTerm, mode: 'insensitive' } },
+          { email: { contains: searchTerm, mode: 'insensitive' } },
+        ];
+      }
+
+      // Exclude requester from results
+      where.id = { not: requesterUserId };
+
+      // Fetch users with organization info
+      const [users, total] = await Promise.all([
+        this.prisma.user.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: [
+            { firstName: 'asc' },
+            { lastName: 'asc' },
+          ],
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+            organizations: {
+              take: 1,
+              include: {
+                organization: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        this.prisma.user.count({ where }),
+      ]);
+
+      // Transform to minimal response format
+      const recipients = users.map(user => ({
+        id: user.id,
+        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User',
+        email: user.email || '',
+        role: user.role,
+        organizationName: user.organizations?.[0]?.organization?.name || null,
+      }));
+
+      return {
+        recipients,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
+    } catch (error) {
+      this.logger.error({
+        message: 'getRecipients: Error fetching recipients',
+        error: error instanceof Error ? error.message : String(error),
+        ...logContext,
+      });
+      throw error;
+    }
+  }
+
   async createConversation(createConversationDto: CreateConversationDto, creatorId: string) {
     const { type, title, participantIds } = createConversationDto;
 
@@ -325,8 +440,8 @@ export class MessagingService {
     });
 
     // Role-based access control: Check if creator can message each participant
-    // SUPER_ADMIN can message anyone
-    if (creatorRole !== UserRole.SUPER_ADMIN) {
+    // ADMIN and SUPER_ADMIN can message anyone
+    if (creatorRole !== UserRole.SUPER_ADMIN && creatorRole !== UserRole.ADMIN) {
       const allowedRoles = this.getAllowedMessagingRoles(creatorRole);
       const unauthorizedParticipants = participantUsers.filter(
         participant => !allowedRoles.includes(participant.role)
@@ -334,7 +449,7 @@ export class MessagingService {
 
       if (unauthorizedParticipants.length > 0) {
         const unauthorizedRoles = unauthorizedParticipants.map(p => p.role).join(', ');
-        throw new Error(
+        throw new ForbiddenException(
           `You do not have permission to message users with the following roles: ${unauthorizedRoles}. ` +
           `Your role (${creatorRole}) can only message: ${allowedRoles.join(', ')}`
         );
@@ -1070,4 +1185,5 @@ export class MessagingService {
       totalUsers,
     };
   }
+
 }

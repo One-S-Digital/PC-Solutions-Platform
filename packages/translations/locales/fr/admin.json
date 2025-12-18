@@ -1368,6 +1368,7 @@
       "starting": "Démarrage...",
       "cancel": "Annuler",
       "noUsersFound": "Aucun utilisateur trouvé",
+      "noUsersAvailable": "Aucun utilisateur disponible",
       "tryDifferentSearch": "Essayez un autre terme de recherche",
       "startTyping": "Commencez à taper pour rechercher des utilisateurs",
       "typeAtLeast": "Tapez au moins 2 caractères pour rechercher",
