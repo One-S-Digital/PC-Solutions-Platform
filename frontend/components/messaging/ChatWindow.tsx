@@ -237,12 +237,40 @@ const ChatWindow: React.FC = () => {
       const asset = uploadResponse.asset;
       const fileUrl = asset.publicUrl || asset.url;
       
+      // Extract storage key from full URL (backend expects storage key, not full URL)
+      let storageKey: string | null = null;
+      if (fileUrl) {
+        // If it's already a storage key (no http/https), use as-is
+        if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
+          // Remove /api/upload/download/ prefix if present
+          storageKey = fileUrl.replace(/^\/api\/upload\/download\//, '');
+        } else {
+          // Extract storage key from full URL
+          try {
+            const url = new URL(fileUrl);
+            // Get pathname without leading slash
+            const pathname = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+            storageKey = pathname;
+          } catch {
+            // If URL parsing fails, try to extract from common patterns
+            const match = fileUrl.match(/\/(uploads|messages|elearning)\/.+$/);
+            if (match) {
+              storageKey = match[0].substring(1); // Remove leading slash
+            }
+          }
+        }
+      }
+      
+      if (!storageKey) {
+        throw new Error('Failed to extract storage key from uploaded file URL');
+      }
+      
       // Store the file as pending instead of sending immediately
       setPendingFile({
         fileName: asset.filename || file.name,
         fileSize: asset.size || file.size,
         mimeType: asset.mimeType || asset.contentType || file.type,
-        fileUrl: fileUrl,
+        fileUrl: storageKey, // Store storage key, not full URL
         isImage: isImage,
       });
     } catch (error) {

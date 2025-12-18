@@ -275,17 +275,32 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         return;
       }
       
-      const newMessage = await messagingService.sendMessage({
+      // Build payload dynamically - only include file fields for IMAGE/FILE messages
+      const payload: any = {
         conversationId,
-        content,
-        messageType,
-        ...(fileMetadata && {
-          fileUrl: fileMetadata.fileUrl,
-          fileName: fileMetadata.fileName,
-          fileSize: fileMetadata.fileSize,
-          mimeType: fileMetadata.mimeType,
-        })
-      }, token);
+        content: content.trim() || '', // Ensure content is a string
+        messageType: messageType || 'TEXT',
+      };
+      
+      // Only include file fields for IMAGE/FILE messages when fileMetadata is provided
+      if ((messageType === 'IMAGE' || messageType === 'FILE') && fileMetadata) {
+        // Only include file fields that are actually present and not empty
+        if (fileMetadata.fileUrl && fileMetadata.fileUrl.trim()) {
+          payload.fileUrl = fileMetadata.fileUrl.trim();
+        }
+        if (fileMetadata.fileName && fileMetadata.fileName.trim()) {
+          payload.fileName = fileMetadata.fileName.trim();
+        }
+        if (fileMetadata.fileSize !== undefined && fileMetadata.fileSize !== null) {
+          payload.fileSize = fileMetadata.fileSize;
+        }
+        if (fileMetadata.mimeType && fileMetadata.mimeType.trim()) {
+          payload.mimeType = fileMetadata.mimeType.trim();
+        }
+      }
+      // TEXT messages: do NOT include any file fields (backend requirement)
+      
+      const newMessage = await messagingService.sendMessage(payload, token);
 
       // Add message to local state immediately for optimistic UI
       setMessagesByConversation(prev => ({
