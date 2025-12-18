@@ -1358,6 +1358,20 @@
       "initializing": "Initialisation...",
       "failedToLoad": "Échec du chargement des conversations.",
       "failedToLoadMessages": "Échec du chargement des messages."
+    },
+    "newConversation": {
+      "title": "Nouvelle conversation",
+      "button": "Nouvelle conversation",
+      "searchPlaceholder": "Rechercher des utilisateurs par nom ou e-mail...",
+      "selectUser": "Sélectionnez un utilisateur pour démarrer une conversation",
+      "startConversation": "Démarrer la conversation",
+      "starting": "Démarrage...",
+      "cancel": "Annuler",
+      "noUsersFound": "Aucun utilisateur trouvé",
+      "tryDifferentSearch": "Essayez un autre terme de recherche",
+      "startTyping": "Commencez à taper pour rechercher des utilisateurs",
+      "success": "Conversation démarrée !",
+      "error": "Échec du démarrage de la conversation"
     }
   },
   "systemMonitor": {

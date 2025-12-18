@@ -1358,6 +1358,20 @@
       "initializing": "Initialisierung...",
       "failedToLoad": "Fehler beim Laden der Konversationen.",
       "failedToLoadMessages": "Fehler beim Laden der Nachrichten."
+    },
+    "newConversation": {
+      "title": "Neue Konversation",
+      "button": "Neue Konversation",
+      "searchPlaceholder": "Benutzer nach Name oder E-Mail suchen...",
+      "selectUser": "Wählen Sie einen Benutzer aus, um eine Konversation zu starten",
+      "startConversation": "Konversation starten",
+      "starting": "Starte...",
+      "cancel": "Abbrechen",
+      "noUsersFound": "Keine Benutzer gefunden",
+      "tryDifferentSearch": "Versuchen Sie einen anderen Suchbegriff",
+      "startTyping": "Beginnen Sie mit der Eingabe, um nach Benutzern zu suchen",
+      "success": "Konversation gestartet!",
+      "error": "Fehler beim Starten der Konversation"
     }
   },
   "systemMonitor": {

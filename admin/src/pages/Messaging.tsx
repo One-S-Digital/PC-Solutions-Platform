@@ -26,6 +26,7 @@ import { useApiClient, apiService } from '../services/api'
 import logger from '../utils/logger'
 
 import { Conversation, Message } from '../types/api'
+import NewConversationModal from '../components/messaging/NewConversationModal'
 
 // Transform backend conversation data to match frontend format
 const transformConversation = (conv: any, currentUserId?: string): Conversation => {
@@ -76,6 +77,7 @@ const Messaging: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [newMessage, setNewMessage] = useState('')
+  const [isNewConversationModalOpen, setIsNewConversationModalOpen] = useState(false)
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
@@ -92,6 +94,8 @@ const Messaging: React.FC = () => {
   })
 
   const currentUserId = currentUserResponse?.data?.data?.id
+  const currentUserRole = currentUserResponse?.data?.data?.role
+  const isAdmin = currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN'
 
   // Debug logging
   React.useEffect(() => {
@@ -230,10 +234,22 @@ const Messaging: React.FC = () => {
       {/* Conversations List */}
       <div className="w-1/3 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center mb-4">
-            <MessageSquare className="h-5 w-5 mr-2 text-swiss-teal" />
-            {t('admin:messaging.title', 'Messages')}
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <MessageSquare className="h-5 w-5 mr-2 text-swiss-teal" />
+              {t('admin:messaging.title', 'Messages')}
+            </h2>
+            {isAdmin && (
+              <button
+                onClick={() => setIsNewConversationModalOpen(true)}
+                className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-swiss-mint hover:bg-swiss-teal rounded-lg transition-colors"
+                title={t('admin:messaging.newConversation.button', 'New Conversation')}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {t('admin:messaging.newConversation.button', 'New Conversation')}
+              </button>
+            )}
+          </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
@@ -452,6 +468,32 @@ const Messaging: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* New Conversation Modal */}
+      <NewConversationModal
+        isOpen={isNewConversationModalOpen}
+        onClose={() => setIsNewConversationModalOpen(false)}
+        onConversationCreated={async (conversationId) => {
+          // Invalidate and refetch conversations
+          await queryClient.invalidateQueries({ queryKey: ['conversations'] })
+          const conversationsData = await queryClient.fetchQuery({
+            queryKey: ['conversations'],
+            queryFn: async () => {
+              const response = await apiService.getConversations(apiClient)
+              return response
+            },
+          })
+          
+          // Find and select the newly created conversation
+          const rawConversations = conversationsData?.data?.data || []
+          const newConv = rawConversations.find((c: any) => c.id === conversationId)
+          if (newConv) {
+            const transformed = transformConversation(newConv, currentUserId)
+            setSelectedConversation(transformed)
+          }
+        }}
+        currentUserId={currentUserId}
+      />
     </div>
   )
 }

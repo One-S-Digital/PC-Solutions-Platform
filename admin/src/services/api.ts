@@ -292,6 +292,8 @@ export const publicApi = {
 export const apiService = {
   // Users
   getUsers: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User[]>>('/users'),
+  getAdminUsers: (apiClient: AxiosInstance, params?: { page?: number; limit?: number; search?: string; role?: string }) => 
+    apiClient.get<ApiResponse<{ users: User[]; total: number; page: number; limit: number; totalPages: number }>>('/admin/users', { params }),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
@@ -489,7 +491,8 @@ export const apiService = {
   // NOTE: Endpoint paths changed from /messages/* to /messaging/* - ensure backend is deployed first
   getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messaging/conversations'),
   getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messaging/conversations/${id}`),
-  createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messaging/conversations', data),
+  createConversation: (apiClient: AxiosInstance, data: { type: 'DIRECT' | 'GROUP' | 'SUPPORT'; participantIds: string[]; title?: string }) => 
+    apiClient.post<ApiResponse<any>>('/messaging/conversations', data),
   getMessages: (apiClient: AxiosInstance, conversationId: string) => apiClient.get<ApiResponse<Message[]>>(`/messaging/conversations/${conversationId}/messages`),
   sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messaging/messages', data),
   markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messaging/messages/${id}/read`),

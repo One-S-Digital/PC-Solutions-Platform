@@ -1350,6 +1350,20 @@
       "initializing": "Initializing...",
       "failedToLoad": "Failed to load conversations.",
       "failedToLoadMessages": "Failed to load messages."
+    },
+    "newConversation": {
+      "title": "New Conversation",
+      "button": "New Conversation",
+      "searchPlaceholder": "Search users by name or email...",
+      "selectUser": "Select a user to start a conversation",
+      "startConversation": "Start Conversation",
+      "starting": "Starting...",
+      "cancel": "Cancel",
+      "noUsersFound": "No users found",
+      "tryDifferentSearch": "Try a different search term",
+      "startTyping": "Start typing to search for users",
+      "success": "Conversation started!",
+      "error": "Failed to start conversation"
     }
   },
   "systemMonitor": {
