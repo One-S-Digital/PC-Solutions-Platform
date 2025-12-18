@@ -728,11 +728,33 @@ export class MessagingService {
   async createMessage(createMessageDto: CreateMessageDto, rawSenderId: string) {
     const { conversationId, receiverId, content, messageType, fileUrl, fileName, fileSize, mimeType } = createMessageDto;
     
+    // DEV-only logging
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.debug({
+        message: 'createMessage: Received DTO',
+        conversationId,
+        content: content ? `${content.substring(0, 50)}...` : undefined,
+        messageType,
+        hasFileUrl: !!fileUrl,
+        fileUrl: fileUrl ? `${fileUrl.substring(0, 50)}...` : undefined,
+      });
+    }
+    
     // Validate message content and file requirements based on messageType
     const finalMessageType = messageType || 'TEXT';
     const trimmedContent = content ? content.trim() : '';
     const hasContent = trimmedContent.length > 0;
     const hasFile = fileUrl && fileUrl.trim().length > 0;
+    
+    // DEV-only logging
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.debug({
+        message: 'createMessage: Validation state',
+        finalMessageType,
+        hasContent,
+        hasFile,
+      });
+    }
     
     // Validation rules
     if (finalMessageType === 'TEXT') {

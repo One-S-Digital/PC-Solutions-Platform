@@ -275,43 +275,65 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         return;
       }
       
-      // Build payload dynamically - only include file fields for IMAGE/FILE messages
+      // Build payload dynamically - strict rules for TEXT vs IMAGE/FILE
       const finalMessageType = messageType || 'TEXT';
       const trimmedContent = content ? content.trim() : '';
       
-      const payload: any = {
-        conversationId,
-        messageType: finalMessageType,
-      };
+      let payload: any;
       
-      // Include content only if it's not empty (for TEXT) or as optional caption (for IMAGE/FILE)
-      if (trimmedContent.length > 0) {
-        payload.content = trimmedContent;
+      // TEXT messages: content is required, no file fields
+      if (finalMessageType === 'TEXT') {
+        if (!trimmedContent || trimmedContent.length === 0) {
+          throw new Error('TEXT messages must have non-empty content');
+        }
+        
+        payload = {
+          conversationId,
+          content: trimmedContent,
+          messageType: 'TEXT' as const,
+        };
+        
+        // DEV-only logging
+        if (import.meta.env.DEV) {
+          console.log('[MessagingContext.sendMessage] TEXT payload:', payload);
+        }
       }
-      // For IMAGE/FILE with empty caption, don't include content field (backend allows it to be optional)
-      
-      // Only include file fields for IMAGE/FILE messages when fileMetadata is provided
-      if ((finalMessageType === 'IMAGE' || finalMessageType === 'FILE') && fileMetadata) {
-        // fileUrl is required for IMAGE/FILE messages
-        if (fileMetadata.fileUrl && fileMetadata.fileUrl.trim()) {
-          payload.fileUrl = fileMetadata.fileUrl.trim();
-        } else {
-          // This should not happen if frontend validation is correct, but handle gracefully
+      // IMAGE/FILE messages: fileUrl required, content optional
+      else if ((finalMessageType === 'IMAGE' || finalMessageType === 'FILE') && fileMetadata) {
+        if (!fileMetadata.fileUrl || !fileMetadata.fileUrl.trim()) {
           throw new Error('fileUrl is required for IMAGE/FILE messages');
         }
         
-        // Optional file metadata
+        payload = {
+          conversationId,
+          messageType: finalMessageType,
+          fileUrl: fileMetadata.fileUrl.trim(),
+        };
+        
+        // Optional caption
+        if (trimmedContent.length > 0) {
+          payload.content = trimmedContent;
+        }
+        
+        // Optional file metadata (only include if present and valid)
         if (fileMetadata.fileName && fileMetadata.fileName.trim()) {
           payload.fileName = fileMetadata.fileName.trim();
         }
-        if (fileMetadata.fileSize !== undefined && fileMetadata.fileSize !== null) {
+        if (fileMetadata.fileSize !== undefined && fileMetadata.fileSize !== null && fileMetadata.fileSize > 0) {
           payload.fileSize = fileMetadata.fileSize;
         }
         if (fileMetadata.mimeType && fileMetadata.mimeType.trim()) {
           payload.mimeType = fileMetadata.mimeType.trim();
         }
+        
+        // DEV-only logging
+        if (import.meta.env.DEV) {
+          console.log('[MessagingContext.sendMessage] IMAGE/FILE payload:', payload);
+        }
+      } else {
+        // Fallback: should not reach here
+        throw new Error(`Invalid message type: ${finalMessageType}`);
       }
-      // TEXT messages: do NOT include any file fields (backend requirement)
       
       const newMessage = await messagingService.sendMessage(payload, token);
 
