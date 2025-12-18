@@ -118,7 +118,11 @@ const Messaging: React.FC = () => {
 
   const conversations: Conversation[] = useMemo(
     () => {
-      const rawConversations = conversationsResponse?.data?.data || []
+      // Handle both response shapes: wrapped ApiResponse or raw array
+      const rawConversations =
+        conversationsResponse?.data?.data || // wrapped ApiResponse
+        conversationsResponse?.data ||       // raw array
+        []
       const transformed = rawConversations.map((conv: any) => transformConversation(conv, currentUserId))
       return transformed;
     },

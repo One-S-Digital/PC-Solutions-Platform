@@ -125,8 +125,12 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
       }
       
       // Check if conversation already exists
+      // Handle both response shapes: wrapped ApiResponse or raw array
       const conversationsResponse = await apiService.getConversations(apiClient)
-      const existingConversations = conversationsResponse?.data?.data || []
+      const existingConversations =
+        conversationsResponse?.data?.data || // wrapped ApiResponse
+        conversationsResponse?.data ||       // raw array
+        []
       
       // Find existing conversation with this participant
       // The backend returns participants with user.id (database User.id)
@@ -149,7 +153,8 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
       })
 
       if (existingConv) {
-        // Return existing conversation
+        // Return existing conversation in a shape that onSuccess can handle
+        // Match the shape of createConversation response (either wrapped or raw)
         return { data: { data: existingConv } }
       }
 
@@ -162,7 +167,11 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
       })
     },
     onSuccess: (response) => {
-      const conversation = response?.data?.data
+      // Handle both response shapes: wrapped ApiResponse or raw conversation
+      const conversation =
+        response?.data?.data || // wrapped ApiResponse
+        response?.data          // raw conversation
+      
       if (conversation?.id) {
         queryClient.invalidateQueries({ queryKey: ['conversations'] })
         toast.success(t('admin:messaging.newConversation.success', 'Conversation started!'))
@@ -170,6 +179,8 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
         onClose()
         setSearchQuery('')
         setSelectedUser(null)
+      } else if (isDev) {
+        console.error('❌ Conversation response missing ID:', { response, conversation })
       }
     },
     onError: (error: any) => {
