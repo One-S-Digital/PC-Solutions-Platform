@@ -22,6 +22,7 @@ import {
   Globe,
   Handshake,
   LifeBuoy,
+  CreditCard,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -46,6 +47,7 @@ const navigation = [
   { key: 'content', href: '/content', icon: FileText },
   { key: 'messages', href: '/messaging', icon: MessageSquare },
   { key: 'support', href: '/support', icon: LifeBuoy },
+  { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
   { key: 'systemMonitoring', href: '/system', icon: Monitor },
   { key: 'translations', href: '/translations', icon: Globe },
   { key: 'designSystem', href: '/design-system', icon: Palette },

@@ -22,6 +22,7 @@ import DesignSystemPage from './pages/DesignSystem';
 import TranslationsPage from './pages/Translations';
 import AccessDeniedPage from './pages/AccessDenied';
 import SupportPage from './pages/Support';
+import SubscriptionsPage from './pages/Subscriptions';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -88,6 +89,7 @@ function App() {
           <Route path="content" element={<ContentPage />} />
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="support" element={<SupportPage />} />
+          <Route path="subscriptions" element={<SubscriptionsPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />
