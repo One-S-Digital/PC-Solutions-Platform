@@ -8,9 +8,9 @@ import { PrincipalService } from '../principal/principal.service';
 import { RoleSyncService } from '../sync/role-sync.service';
 
 /**
- * Roles that require SUPER_ADMIN privileges to assign
+ * Roles considered "admin-level" roles in the system.
  */
-const ELEVATED_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.ADMIN];
+const ADMIN_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.ADMIN];
 
 const userProfileInclude = {
   avatarAsset: true,
@@ -756,24 +756,34 @@ export class UsersService {
 
   /**
    * Validate if a role change is allowed based on the caller's role.
-   * Only SUPER_ADMIN can elevate users to ADMIN or SUPER_ADMIN.
+   *
+   * Rules (per admin dashboard requirements):
+   * - SUPER_ADMIN can assign any role.
+   * - ADMIN can assign ADMIN and any non-super-admin role, but cannot assign SUPER_ADMIN.
+   * - ADMIN cannot change (demote) an existing SUPER_ADMIN.
    * 
    * @param targetRole - The role to assign
    * @param callerRole - The role of the user making the change
+   * @param previousRole - Optional: current role of the target user (for demotion protection)
    * @throws ForbiddenException if the caller cannot assign the target role
    */
-  validateRoleElevation(targetRole: UserRole, callerRole?: UserRole): void {
+  validateRoleElevation(targetRole: UserRole, callerRole?: UserRole, previousRole?: UserRole): void {
+    // Default-deny only the most privileged escalation if callerRole is missing
     if (!callerRole) {
-      // If no caller role provided, only allow non-elevated roles
-      if (ELEVATED_ROLES.includes(targetRole)) {
-        throw new ForbiddenException('Only SUPER_ADMIN can assign admin roles');
+      if (targetRole === UserRole.SUPER_ADMIN) {
+        throw new ForbiddenException('Only SUPER_ADMIN can assign SUPER_ADMIN role');
       }
       return;
     }
 
-    // Only SUPER_ADMIN can assign ADMIN or SUPER_ADMIN roles
-    if (ELEVATED_ROLES.includes(targetRole) && callerRole !== UserRole.SUPER_ADMIN) {
-      throw new ForbiddenException('Only SUPER_ADMIN can assign admin roles');
+    // Admin cannot create/promote SUPER_ADMIN
+    if (callerRole === UserRole.ADMIN && targetRole === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can assign SUPER_ADMIN role');
+    }
+
+    // Admin cannot demote an existing SUPER_ADMIN
+    if (callerRole === UserRole.ADMIN && previousRole === UserRole.SUPER_ADMIN && targetRole !== UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can change a SUPER_ADMIN role');
     }
   }
 
@@ -800,7 +810,7 @@ export class UsersService {
     reason?: string,
   ) {
     // Validate the target role is an admin role
-    if (!ELEVATED_ROLES.includes(targetRole)) {
+    if (!ADMIN_ROLES.includes(targetRole)) {
       throw new ForbiddenException('This method is only for elevating to admin roles');
     }
 
@@ -819,7 +829,7 @@ export class UsersService {
     }
 
     const previousRole = appUser.role;
-    const isElevatingFromGeneralRole = !ELEVATED_ROLES.includes(previousRole);
+    const isElevatingFromGeneralRole = !ADMIN_ROLES.includes(previousRole);
     
     this.logger.log(`🔺 [ELEVATE TO ADMIN] Elevating user ${userId} from ${previousRole} to ${targetRole}`);
 
@@ -903,12 +913,12 @@ export class UsersService {
     // Check if we're elevating from a general role to an admin role
     const isElevatingToAdmin = isRoleChanging && 
       targetRole && 
-      ELEVATED_ROLES.includes(targetRole) && 
-      !ELEVATED_ROLES.includes(previousRole);
+      ADMIN_ROLES.includes(targetRole) && 
+      !ADMIN_ROLES.includes(previousRole);
     
     // Validate role elevation if changing to an admin role
     if (isRoleChanging && updateUserDto.role) {
-      this.validateRoleElevation(updateUserDto.role, callerRole);
+      this.validateRoleElevation(updateUserDto.role, callerRole, previousRole);
     }
 
     // Update both AppUser and User profile in a transaction for data consistency

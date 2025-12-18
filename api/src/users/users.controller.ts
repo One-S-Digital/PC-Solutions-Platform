@@ -12,11 +12,14 @@ import {
   Request,
   Logger,
   BadRequestException,
+  ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
+import { InviteUserDto } from './dto/invite-user.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
@@ -69,6 +72,76 @@ export class UsersController {
   @Roles(UserRole.SUPER_ADMIN)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  /**
+   * Invite a user by email and pre-assign a role.
+   *
+   * Permission rules:
+   * - SUPER_ADMIN can invite users with ANY role (including SUPER_ADMIN).
+   * - ADMIN can invite users with any role EXCEPT SUPER_ADMIN.
+   *
+   * Note: This creates a Clerk invitation; the user will appear in the DB after signup + webhook processing.
+   */
+  @Post('invite')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async inviteUser(@Body() dto: InviteUserDto, @Request() request) {
+    const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
+
+    if (callerRole === UserRole.ADMIN && dto.role === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can create SUPER_ADMIN users');
+    }
+
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    // Clerk SDK (v5) invitation API.
+    // We keep types loose here to avoid coupling to SDK internals.
+    const maskedEmail = dto.email ? `${dto.email.substring(0, 3)}***@${dto.email.split('@')[1] || '***'}` : '***';
+    let invitation: any;
+    try {
+      invitation = await (this.clerk as any).invitations.createInvitation({
+        emailAddress: dto.email,
+        redirectUrl: dto.redirectUrl,
+        publicMetadata: { role: dto.role },
+      });
+    } catch (error: any) {
+      const status = error?.status ?? error?.response?.status;
+      const code = error?.errors?.[0]?.code ?? error?.code;
+      const message = error?.message ?? error?.errors?.[0]?.message ?? 'Unknown Clerk error';
+
+      this.logger.error('Failed to create Clerk invitation', {
+        maskedEmail,
+        role: dto.role,
+        status,
+        code,
+        message,
+        errors: error?.errors,
+      });
+
+      // Common cases: already invited / duplicate, validation, rate limiting
+      if (status === 429 || code === 'rate_limited') {
+        throw new BadRequestException('Invitation rate limit exceeded. Please try again later.');
+      }
+
+      if (status === 422 || code === 'duplicate_record' || code === 'form_identifier_exists') {
+        throw new BadRequestException('An invitation has already been sent to this email');
+      }
+
+      if (status >= 400 && status < 500) {
+        throw new BadRequestException('Failed to send invitation. Please check the email and try again.');
+      }
+
+      throw new InternalServerErrorException('Failed to send invitation. Please try again later.');
+    }
+
+    return {
+      success: true,
+      message: 'Invitation created successfully',
+      data: invitation,
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Get()
