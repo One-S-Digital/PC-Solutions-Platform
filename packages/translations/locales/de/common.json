@@ -1110,6 +1110,7 @@
   "next": "[DE] Next",
   "noData": "no Data",
   "non-super-admin cannot access super-admin routes": "Nick-super-admin Köns",
+  "none": "Keine",
   "notAvailable": "Nicht verfügbar",
   "notificationContext": {
     "useNotificationsError": "[DE] Use Notifications Error"

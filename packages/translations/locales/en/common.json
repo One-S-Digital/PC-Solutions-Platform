@@ -1129,6 +1129,7 @@
   },
   "next": "Next",
   "noData": "no Data",
+  "none": "None",
   "notAvailable": "Not available",
   "notificationContext": {
     "useNotificationsError": "Use Notifications Error"

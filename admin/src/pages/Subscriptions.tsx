@@ -46,49 +46,50 @@ import { toast } from 'sonner';
 // Locale constant for currency formatting
 const CURRENCY_LOCALE = 'de-CH';
 
-// Role configuration with icons and colors
-const roleConfig: Record<string, { icon: React.ReactNode; color: string; bgColor: string; label: string }> = {
+// Role configuration with icons and colors - labels are translation keys
+const roleConfig: Record<string, { icon: React.ReactNode; color: string; bgColor: string; labelKey: string }> = {
   [UserRole.FOUNDATION]: {
     icon: <Building2 className="w-8 h-8" />,
     color: 'text-teal-600',
     bgColor: 'bg-teal-50 border-teal-200 hover:bg-teal-100',
-    label: 'Foundations',
+    labelKey: 'admin:subscriptions.roles.foundations',
   },
   [UserRole.PRODUCT_SUPPLIER]: {
     icon: <Package className="w-8 h-8" />,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 border-blue-200 hover:bg-blue-100',
-    label: 'Product Suppliers',
+    labelKey: 'admin:subscriptions.roles.productSuppliers',
   },
   [UserRole.SERVICE_PROVIDER]: {
     icon: <Wrench className="w-8 h-8" />,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50 border-purple-200 hover:bg-purple-100',
-    label: 'Service Providers',
+    labelKey: 'admin:subscriptions.roles.serviceProviders',
   },
   [UserRole.EDUCATOR]: {
     icon: <GraduationCap className="w-8 h-8" />,
     color: 'text-indigo-600',
     bgColor: 'bg-indigo-50 border-indigo-200 hover:bg-indigo-100',
-    label: 'Educators',
+    labelKey: 'admin:subscriptions.roles.educators',
   },
   [UserRole.PARENT]: {
     icon: <Heart className="w-8 h-8" />,
     color: 'text-pink-600',
     bgColor: 'bg-pink-50 border-pink-200 hover:bg-pink-100',
-    label: 'Parents',
+    labelKey: 'admin:subscriptions.roles.parents',
   },
 };
 
 // Subscription status options - reusing SubscriptionStatusColors for consistency
+// Labels are translation keys under admin:subscriptions.status.*
 const subscriptionStatusOptions = [
-  { value: SubscriptionStatus.ACTIVE, label: 'Active', color: SubscriptionStatusColors[SubscriptionStatus.ACTIVE] },
-  { value: SubscriptionStatus.INACTIVE, label: 'Inactive', color: SubscriptionStatusColors[SubscriptionStatus.INACTIVE] },
-  { value: SubscriptionStatus.PAUSED, label: 'Paused', color: SubscriptionStatusColors[SubscriptionStatus.PAUSED] },
-  { value: SubscriptionStatus.CANCELLED, label: 'Cancelled', color: SubscriptionStatusColors[SubscriptionStatus.CANCELLED] },
-  { value: SubscriptionStatus.TRIAL, label: 'Trial', color: SubscriptionStatusColors[SubscriptionStatus.TRIAL] },
-  { value: SubscriptionStatus.PENDING, label: 'Pending', color: SubscriptionStatusColors[SubscriptionStatus.PENDING] },
-  { value: SubscriptionStatus.EXPIRED, label: 'Expired', color: SubscriptionStatusColors[SubscriptionStatus.EXPIRED] },
+  { value: SubscriptionStatus.ACTIVE, labelKey: 'active', color: SubscriptionStatusColors[SubscriptionStatus.ACTIVE] },
+  { value: SubscriptionStatus.INACTIVE, labelKey: 'inactive', color: SubscriptionStatusColors[SubscriptionStatus.INACTIVE] },
+  { value: SubscriptionStatus.PAUSED, labelKey: 'paused', color: SubscriptionStatusColors[SubscriptionStatus.PAUSED] },
+  { value: SubscriptionStatus.CANCELLED, labelKey: 'cancelled', color: SubscriptionStatusColors[SubscriptionStatus.CANCELLED] },
+  { value: SubscriptionStatus.TRIAL, labelKey: 'trial', color: SubscriptionStatusColors[SubscriptionStatus.TRIAL] },
+  { value: SubscriptionStatus.PENDING, labelKey: 'pending', color: SubscriptionStatusColors[SubscriptionStatus.PENDING] },
+  { value: SubscriptionStatus.EXPIRED, labelKey: 'expired', color: SubscriptionStatusColors[SubscriptionStatus.EXPIRED] },
 ];
 
 // Edit Subscription Modal Component
@@ -180,7 +181,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
               <p className="font-medium text-gray-900">
                 {user.firstName && user.lastName
                   ? `${user.firstName} ${user.lastName}`
-                  : user.name || user.email || 'Unknown'}
+                  : user.name || user.email || t('common:unknown', 'Unknown')}
               </p>
               <p className="text-sm text-gray-500">{user.email}</p>
               <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 mt-1">
@@ -203,7 +204,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
             >
               {subscriptionStatusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {t(`admin:subscriptions.status.${option.labelKey}`)}
                 </option>
               ))}
             </select>
@@ -248,10 +249,10 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
           {/* Current subscription info */}
           {subscription && (
             <div className="p-3 bg-blue-50 rounded-lg text-sm">
-              <p className="text-blue-800 font-medium mb-1">Current Subscription Info</p>
-              <p className="text-blue-600">Plan: {subscription.plan?.name || 'None'}</p>
+              <p className="text-blue-800 font-medium mb-1">{t('admin:subscriptions.editSubscription.currentInfo', 'Current Subscription Info')}</p>
+              <p className="text-blue-600">{t('admin:subscriptions.editSubscription.planLabel', 'Plan')}: {subscription.plan?.name || t('common:none', 'None')}</p>
               <p className="text-blue-600">
-                Period: {subscription.currentPeriodStart ? new Date(subscription.currentPeriodStart).toLocaleDateString() : 'N/A'} - {subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
+                {t('admin:subscriptions.editSubscription.periodLabel', 'Period')}: {subscription.currentPeriodStart ? new Date(subscription.currentPeriodStart).toLocaleDateString() : t('common:notAvailable', 'N/A')} - {subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : t('common:notAvailable', 'N/A')}
               </p>
             </div>
           )}
@@ -428,13 +429,13 @@ const Subscriptions: React.FC = () => {
     if (!subscription) {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-          No Subscription
+          {t('admin:subscriptions.noSubscription', 'No Subscription')}
         </span>
       );
     }
     return (
       <span className={`px-2 py-1 text-xs font-medium rounded-full ${SubscriptionStatusColors[subscription.status]}`}>
-        {subscription.status}
+        {t(`admin:subscriptions.status.${subscription.status.toLowerCase()}`)}
       </span>
     );
   };
@@ -515,7 +516,7 @@ const Subscriptions: React.FC = () => {
                   className={`${config.bgColor} border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 transform hover:scale-105`}
                 >
                   <div className={`${config.color} mb-4`}>{config.icon}</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{config.label}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t(config.labelKey)}</h3>
                   <div className="space-y-1">
                     <p className="text-sm text-gray-600">
                       <span className="font-medium text-gray-900">{userCount}</span> {t('admin:subscriptions.totalUsers', 'total users')}
@@ -554,7 +555,7 @@ const Subscriptions: React.FC = () => {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {roleConfig[selectedRole]?.label} {t('admin:subscriptions.subscriptions', 'Subscriptions')}
+                  {roleConfig[selectedRole]?.labelKey ? t(roleConfig[selectedRole].labelKey) : selectedRole} {t('admin:subscriptions.subscriptions', 'Subscriptions')}
                 </h2>
                 <p className="text-gray-600">
                   {t('admin:subscriptions.managingUsers', 'Managing {{count}} users', { count: usersByRole[selectedRole]?.length || 0 })}
@@ -633,13 +634,13 @@ const Subscriptions: React.FC = () => {
                                 <p className="font-medium text-gray-900">
                                   {user.firstName && user.lastName
                                     ? `${user.firstName} ${user.lastName}`
-                                    : user.name || 'Unknown'}
+                                    : user.name || t('common:unknown', 'Unknown')}
                                 </p>
                               </div>
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-600">
-                            {user.email || 'N/A'}
+                            {user.email || t('common:notAvailable', 'N/A')}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-600">
                             {user.orgName || '-'}
