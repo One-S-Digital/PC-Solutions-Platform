@@ -138,5 +138,5 @@ CREATE INDEX IF NOT EXISTS "subscription_notes_subscription_id_idx" ON "subscrip
 
 -- Add indexes to subscriptions table for new queries
 CREATE INDEX IF NOT EXISTS "subscriptions_status_idx" ON "subscriptions"("status");
-CREATE INDEX IF NOT EXISTS "subscriptions_current_period_end_idx" ON "subscriptions"("current_period_end");
+CREATE INDEX IF NOT EXISTS "subscriptions_currentPeriodEnd_idx" ON "subscriptions"("currentPeriodEnd");
 CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_manual");
