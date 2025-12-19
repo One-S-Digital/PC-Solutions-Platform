@@ -73,6 +73,9 @@ enum JobContractType {
   CDI
   CDD
   INTERNSHIP
+  REPLACEMENT
+  TEMPORARY
+  FREELANCE
 }
 
 enum ServiceCategory {
