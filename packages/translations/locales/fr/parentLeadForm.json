@@ -1,0 +1,70 @@
+{
+  "parentLeadForm": {
+    "placeholders": {
+      "specialRequirements": "Veuillez décrire toute exigence particulière, tout régime alimentaire, toute condition médicale ou toute autre information importante concernant votre enfant...",
+      "municipality": "Sélectionner la municipalité",
+      "phoneNumber": "+41 XX XXX XX XX",
+      "startDate": "Sélectionner la date",
+      "childAge": "Saisir l'âge en mois",
+      "fullName": "Saisissez votre nom complet",
+      "canton": "Sélectionner un canton",
+      "email": "your.email@example.com"
+    },
+    "buttons": {
+      "viewMyEnquiries": "Voir mes demandes de renseignements",
+      "submitEnquiry": "Soumettre une demande"
+    },
+    "labels": {
+      "municipality": "Municipalité",
+      "specialNeeds": "Exigences particulières",
+      "phoneNumber": "Numéro de téléphone",
+      "childNeeds": "Besoins particuliers de l'enfant",
+      "startDate": "Date de début souhaitée",
+      "childAge": "Âge de l'enfant (en mois)",
+      "fullName": "Nom complet",
+      "canton": "Canton",
+      "email": "Adresse électronique"
+    },
+    "messages": {
+      "submitting": "Soumettre votre demande...",
+      "success": "Votre demande a été soumise avec succès !",
+      "error": "L'envoi de la demande a échoué. Veuillez réessayer."
+    },
+    "subtitle": "Faites-nous part de vos besoins et nous vous aiderons à trouver la meilleure solution de garde d'enfants.",
+    "title": "Trouvez la crèche qui vous convient"
+  },
+  "placeholders": {
+    "specialRequirements": "Veuillez décrire toute exigence particulière, tout régime alimentaire, toute condition médicale ou toute autre information importante concernant votre enfant...",
+    "municipality": "Sélectionner la municipalité",
+    "phoneNumber": "+41 XX XXX XX XX",
+    "startDate": "Sélectionner la date",
+    "childAge": "Saisir l'âge en mois",
+    "fullName": "Saisissez votre nom complet",
+    "canton": "Sélectionner un canton",
+    "email": "your.email@example.com"
+  },
+  "buttons": {
+    "backToDashboard": "Retour au tableau de bord",
+    "viewMyEnquiries": "Voir mes demandes de renseignements",
+    "submitEnquiry": "Soumettre une demande",
+    "backToHome": "Retour à l'accueil"
+  },
+  "labels": {
+    "municipality": "Municipalité",
+    "specialNeeds": "Exigences particulières",
+    "phoneNumber": "Numéro de téléphone",
+    "childNeeds": "Besoins particuliers de l'enfant",
+    "startDate": "Date de début souhaitée",
+    "childAge": "Âge de l'enfant (en mois)",
+    "fullName": "Nom complet",
+    "canton": "Canton",
+    "email": "Adresse électronique"
+  },
+  "messages": {
+    "submitting": "Soumettre votre demande...",
+    "success": "Votre demande a été soumise avec succès !",
+    "error": "L'envoi de la demande a échoué. Veuillez réessayer."
+  },
+  "subtitle": "Faites-nous part de vos besoins et nous vous aiderons à trouver la meilleure solution de garde d'enfants.",
+  "title": "Trouvez la crèche qui vous convient"
+}

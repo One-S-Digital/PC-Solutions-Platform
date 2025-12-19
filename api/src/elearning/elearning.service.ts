@@ -12,7 +12,10 @@ export class ElearningService {
   constructor(private prisma: PrismaService) {}
 
   // Course Management
-  async createCourse(createCourseDto: CreateCourseDto, createdBy: string) {
+  async createCourse(
+    createCourseDto: CreateCourseDto,
+    createdByAppUserId: string,
+  ) {
     return this.prisma.course.create({
       data: {
         title: createCourseDto.title,
@@ -23,7 +26,7 @@ export class ElearningService {
         estimatedDuration: createCourseDto.estimatedDuration,
         thumbnailUrl: createCourseDto.thumbnailUrl,
         status: createCourseDto.status,
-        createdBy,
+        createdBy: createdByAppUserId,
       },
       include: {
         category: true,
@@ -333,7 +336,7 @@ export class ElearningService {
 
     // Calculate score
     let correctAnswers = 0;
-    let totalQuestions = quiz.questions.length;
+    const totalQuestions = quiz.questions.length;
 
     for (const question of quiz.questions) {
       const userAnswer = answers.find(a => a.questionId === question.id);

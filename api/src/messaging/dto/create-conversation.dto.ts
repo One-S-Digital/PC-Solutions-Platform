@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
-import { ConversationType, MessageType } from '@repo/types';
+import { ConversationType, MessageType } from '@workspace/types';
 
 export class CreateConversationDto {
   @IsEnum(ConversationType)

@@ -4,6 +4,8 @@ import {
   IsEmail,
   IsInt,
   IsString,
+  IsOptional,
+  IsUUID,
   Min,
 } from 'class-validator';
 
@@ -15,24 +17,55 @@ export class UpdateFoundationSettingsDto {
   contactEmail: string;
 
   @IsString()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @IsString()
-  address: string;
+  @IsOptional()
+  contactPerson?: string;
 
   @IsString()
-  canton: string;
+  @IsOptional()
+  address?: string;
+
+  @IsString()
+  @IsOptional()
+  canton?: string;
 
   @IsArray()
   @IsString({ each: true })
-  languages: string[];
+  @IsOptional()
+  regionsServed?: string[];
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  vatNumber?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  languages?: string[];
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  capacity: number;
+  @IsOptional()
+  capacity?: number;
 
   @IsArray()
   @IsString({ each: true })
-  pedagogy: string[];
+  @IsOptional()
+  pedagogy?: string[];
+
+  @IsUUID()
+  @IsOptional()
+  logoAssetId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  coverAssetId?: string;
 }

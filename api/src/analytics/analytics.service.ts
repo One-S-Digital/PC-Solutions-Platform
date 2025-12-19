@@ -10,7 +10,7 @@ export class AnalyticsService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get user registrations by day
+    // Get user registrations by day from User table (actual platform users)
     const registrations = await this.prisma.user.groupBy({
       by: ['createdAt'],
       where: {
@@ -26,19 +26,24 @@ export class AnalyticsService {
       },
     });
 
-    // Get total users
+    // Get total users from User table (actual registered platform users)
     const totalUsers = await this.prisma.user.count();
     
-    // Get active users (logged in within last 30 days)
+    // Active users are defined as users active within the last 30 days
+    const ACTIVE_USER_WINDOW_MS = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+    const activeWindowStart = new Date(Date.now() - ACTIVE_USER_WINDOW_MS);
+    
+    // Get active users based on lastActiveAt or recent creation/update
     const activeUsers = await this.prisma.user.count({
       where: {
-        lastActiveAt: {
-          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        },
+        OR: [
+          { lastActiveAt: { gte: activeWindowStart } },
+          { updatedAt: { gte: activeWindowStart } },
+        ],
       },
     });
 
-    // Get users by role
+    // Get users by role from User table
     const usersByRole = await this.prisma.user.groupBy({
       by: ['role'],
       _count: {

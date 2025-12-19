@@ -1,5 +1,7 @@
-import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
-import { ServiceCategory } from '@repo/types';
+import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean, IsArray, IsIn } from 'class-validator';
+import { ServiceCategory } from '@workspace/types';
+
+export const SERVICE_DELIVERY_TYPES = ['On-site', 'Remote', 'Hybrid'] as const;
 
 export class CreateServiceDto {
   @IsString()
@@ -15,6 +17,27 @@ export class CreateServiceDto {
   @IsOptional()
   @IsNumber()
   price?: number;
+
+  @IsOptional()
+  @IsString()
+  priceInfo?: string;
+
+  @IsOptional()
+  @IsString()
+  availability?: string;
+
+  @IsOptional()
+  @IsIn(SERVICE_DELIVERY_TYPES)
+  deliveryType?: (typeof SERVICE_DELIVERY_TYPES)[number];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }
 
 export class UpdateServiceDto {
@@ -37,4 +60,25 @@ export class UpdateServiceDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsString()
+  priceInfo?: string;
+
+  @IsOptional()
+  @IsString()
+  availability?: string;
+
+  @IsOptional()
+  @IsIn(SERVICE_DELIVERY_TYPES)
+  deliveryType?: (typeof SERVICE_DELIVERY_TYPES)[number];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }

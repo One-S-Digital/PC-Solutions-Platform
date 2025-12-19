@@ -9,6 +9,8 @@ import {
   Query,
   UseGuards,
   Request,
+  Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MessagingService } from './messaging.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -21,19 +23,58 @@ import { UserRole } from '@prisma/client';
 @Controller('messaging')
 @UseGuards(RolesGuard)
 export class MessagingController {
+  private readonly logger = new Logger('MessagingController');
+
   constructor(private readonly messagingService: MessagingService) {}
 
   // Conversation Management
   @Post('conversations')
-  createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
+  async createConversation(@Body() createConversationDto: CreateConversationDto, @Request() req) {
+    // Use userId (Clerk ID) for conversation participants - the service handles Clerk ID lookup
     const creatorId = req.context.userId;
+    if (!creatorId) {
+      throw new UnauthorizedException('User context not found. Authentication required.');
+    }
     return this.messagingService.createConversation(createConversationDto, creatorId);
   }
 
   @Get('conversations')
   getUserConversations(@Request() req) {
-    const userId = req.context.userId;
-    return this.messagingService.getUserConversations(userId);
+    // Extract request metadata for logging
+    const requestId = req.headers['x-request-id'] || req.headers['x-trace-id'] || 'no-request-id';
+    const route = req.route?.path || req.url;
+    const contextUserId = req.context?.userId;
+    const authSub = (req as any).user?.sub;
+    const authAzp = (req as any).user?.azp;
+    const userRole = req.context?.role;
+
+    // Log request metadata
+    this.logger.log({
+      message: 'getUserConversations request',
+      route,
+      contextUserId: contextUserId || 'MISSING',
+      authSub: authSub || 'not-set',
+      authAzp: authAzp || 'not-set',
+      userRole: userRole || 'not-set',
+      requestId,
+    });
+
+    // Validate userId exists - throw error instead of silently returning empty
+    if (!contextUserId) {
+      this.logger.error({
+        message: 'getUserConversations: req.context.userId is missing',
+        route,
+        hasContext: !!req.context,
+        contextKeys: req.context ? Object.keys(req.context) : [],
+        authSub,
+        authAzp,
+        requestId,
+      });
+      throw new UnauthorizedException('User context not found. Authentication required.');
+    }
+
+    // Use Clerk ID for getUserConversations (service handles lookup)
+    return this.messagingService.getUserConversations(contextUserId, requestId);
   }
 
   @Get('conversations/:id')
@@ -47,6 +88,22 @@ export class MessagingController {
   createMessage(@Body() createMessageDto: CreateMessageDto, @Request() req) {
     const senderId = req.context.userId;
     return this.messagingService.createMessage(createMessageDto, senderId);
+  }
+
+  @Patch('messages/:id')
+  async updateMessage(
+    @Param('id') messageId: string,
+    @Body('content') content: string,
+    @Request() req,
+  ) {
+    const userId = req.context.userId;
+    return await this.messagingService.updateMessage(messageId, content, userId);
+  }
+
+  @Delete('messages/:id')
+  async deleteMessage(@Param('id') messageId: string, @Request() req) {
+    const userId = req.context.userId;
+    return await this.messagingService.deleteMessage(messageId, userId);
   }
 
   @Get('conversations/:id/messages')
@@ -122,5 +179,22 @@ export class MessagingController {
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   getMessagingStats() {
     return this.messagingService.getMessagingStats();
+  }
+
+  // Recipients (for user picker)
+  @Get('recipients')
+  async getRecipients(
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Request() req?: any,
+  ) {
+    const requesterId = req.context?.userId;
+    if (!requesterId) {
+      throw new UnauthorizedException('User context not found. Authentication required.');
+    }
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 50;
+    return this.messagingService.getRecipients(requesterId, search, pageNum, limitNum);
   }
 }

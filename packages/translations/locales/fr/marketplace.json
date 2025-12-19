@@ -1,0 +1,104 @@
+{
+  "marketplace": {
+    "emptyStates": {
+      "noProductSuppliers": "Aucun fournisseur de produits n'a été trouvé",
+      "noServices": "Aucun service trouvé"
+    },
+    "messages": {
+      "noProductSuppliers": "Aucun fournisseur de produits n'a été trouvé",
+      "noServiceProviders": "Aucun prestataire de services trouvé",
+      "noServices": "Aucun service trouvé",
+      "noResults": "Aucun résultat n'a été trouvé. Essayez d'ajuster vos filtres."
+    },
+    "serviceCard": {
+      "bookAppointment": "Prendre rendez-vous",
+      "categoryLabel": "{{category}}",
+      "viewProvider": "Voir le fournisseur"
+    },
+    "subtitles": {
+      "productSuppliers": "Parcourir les produits de fournisseurs vérifiés",
+      "serviceProviders": "Découvrez des services professionnels pour votre crèche"
+    },
+    "buttons": {
+      "partnerOnboarding": "Embarquement des partenaires",
+      "resetFilters": "Réinitialiser les filtres",
+      "viewDetails": "Voir les détails",
+      "contact": "Contacter le fournisseur"
+    },
+    "sortOptions": {
+      "ratingDesc": "La plus cotée",
+      "nameDesc": "Nom (Z-A)",
+      "nameAsc": "Nom (A-Z)"
+    },
+    "labels": {
+      "categoryFilter": "Filtrer par catégorie",
+      "regionFilter": "Filtrer par région",
+      "searchByName": "Recherche par nom",
+      "supplierTags": "Tags",
+      "category": "Catégorie",
+      "region": "Région",
+      "sortBy": "Trier par"
+    },
+    "tabs": {
+      "productSuppliers": "Fournisseurs de produits",
+      "serviceProviders": "Prestataires de services"
+    },
+    "searchPlaceholder": "Rechercher {{activeTabLabel}}...",
+    "infoAlert": "Parcourir les produits et services de fournisseurs suisses vérifiés"
+  },
+  "serviceRequest": {
+    "detailsPlaceholder": "Nombre d'enfants pour l'atelier, zones spécifiques pour le nettoyage, etc."
+  },
+  "emptyStates": {
+    "noProductSuppliers": "Aucun fournisseur de produits n'a été trouvé",
+    "noServices": "Aucun service trouvé"
+  },
+  "messages": {
+    "noProductSuppliers": "Aucun fournisseur de produits n'a été trouvé",
+    "noServiceProviders": "Aucun prestataire de services trouvé",
+    "noServices": "Aucun service trouvé",
+    "noResults": "Aucun résultat n'a été trouvé. Essayez d'ajuster vos filtres.",
+    "partnerOnboardingTBD": "Intégration des partenaires à venir"
+  },
+  "serviceCard": {
+    "bookAppointment": "Prendre rendez-vous",
+    "categoryLabel": "Catégorie",
+    "viewProvider": "Voir le fournisseur"
+  },
+  "subtitles": {
+    "productSuppliers": "Parcourir les produits de fournisseurs vérifiés",
+    "serviceProviders": "Découvrez des services professionnels pour votre crèche"
+  },
+  "buttons": {
+    "partnerOnboarding": "Embarquement des partenaires",
+    "resetFilters": "Réinitialiser les filtres",
+    "viewDetails": "Voir les détails",
+    "contact": "Contacter le fournisseur"
+  },
+  "sortOptions": {
+    "ratingDesc": "La plus cotée",
+    "nameDesc": "Nom (Z-A)",
+    "nameAsc": "Nom (A-Z)"
+  },
+  "cart": {
+    "notesPlaceholder": "par exemple, délais de livraison préférentiels, emballages spécifiques..."
+  },
+  "labels": {
+    "categoryFilter": "Filtrer par catégorie",
+    "regionFilter": "Filtrer par région",
+    "searchByName": "Recherche par nom",
+    "supplierTags": "Tags",
+    "category": "Catégorie",
+    "region": "Région",
+    "sortBy": "Trier par"
+  },
+  "tabs": {
+    "productSuppliers": "Fournisseurs de produits",
+    "serviceProviders": "Prestataires de services"
+  },
+  "searchPlaceholder": "Rechercher {{activeTabLabel}}...",
+  "infoAlert": "Parcourir les produits et services de fournisseurs suisses vérifiés",
+  "errors": {
+    "loadFailed": "Échec du chargement des données du marché"
+  }
+}

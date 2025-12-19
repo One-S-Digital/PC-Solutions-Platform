@@ -1,13 +1,13 @@
 {
   "name": "admin",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "build": "cd ../packages/ui && pnpm run build && cd ../../admin && vite build",
     "build:with-deps": "cd ../packages/ui && pnpm run build && cd ../../admin && vite build",
     "dev": "vite",
-    "start": "vite preview --port 4174",
+    "start": "serve -s dist -l 3000",
     "extract-i18n": "i18next-parser",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -18,12 +18,13 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@clerk/clerk-js": "^5.0.0",
-    "@clerk/clerk-react": "^5.0.0",
+    "@clerk/clerk-js": "^5.102.1",
+    "@clerk/clerk-react": "^5.53.3",
     "@headlessui/react": "^2.0.0",
     "@heroicons/react": "^2.1.0",
-    "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "^5.89.0",
+    "@workspace/types": "workspace:*",
     "clsx": "^2.1.0",
     "i18next": "^25.5.2",
     "i18next-parser": "^8.0.0",
@@ -32,6 +33,7 @@
     "react-i18next": "^15.0.0",
     "react-router-dom": "^6.28.0",
     "recharts": "^2.12.0",
+    "sonner": "^2.0.7",
     "tailwindcss": "^3.4.0"
   },
   "devDependencies": {

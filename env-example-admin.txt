@@ -1,0 +1,31 @@
+# Admin Dashboard Environment Variables
+# Copy this file to admin/.env and update with your actual values
+
+# Clerk Authentication (REQUIRED)
+# Get this from: https://clerk.com (same publishable key as API and Frontend)
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
+
+# API Configuration
+VITE_API_URL=http://localhost:3000/api
+
+# Environment
+VITE_NODE_ENV=development
+
+# Optional: Custom branding for admin
+VITE_APP_NAME="PC Solutions Admin"
+VITE_APP_VERSION="1.0.0"
+
+# Optional: Feature flags
+VITE_ENABLE_USER_MANAGEMENT=true
+VITE_ENABLE_CONTENT_MODERATION=true
+VITE_ENABLE_ANALYTICS=true
+VITE_ENABLE_SYSTEM_SETTINGS=true
+
+# Optional: Admin-specific settings
+VITE_ADMIN_THEME=light
+VITE_PAGE_SIZE=25
+VITE_ENABLE_REAL_TIME_UPDATES=true
+
+# Optional: Analytics (if using)
+VITE_GA_TRACKING_ID=
+VITE_HOTJAR_ID=

@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from '@repo/types';
+import { UserRole } from '@workspace/types';
 
 export const ROLES_KEY = 'roles';
 

@@ -4,18 +4,6 @@ import { ClerkProvider } from '@clerk/clerk-react';
 // Get the publishable key from environment variables
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-// Debug logging for environment variables
-console.log('🔧 Admin Clerk Environment Variables:', {
-  VITE_CLERK_PUBLISHABLE_KEY: clerkPubKey ? 'SET' : 'NOT SET',
-});
-
-if (!clerkPubKey) {
-  console.error('Clerk Publishable Key is missing. Please set VITE_CLERK_PUBLISHABLE_KEY in your environment.');
-} else {
-  console.log('Clerk Publishable Key loaded successfully.');
-  console.log('Running as Admin App with custom login pages');
-}
-
 interface AppProviderProps {
   children: React.ReactNode;
 }
@@ -38,6 +26,7 @@ export function AppProvider({ children }: AppProviderProps) {
       publishableKey={clerkPubKey}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
+      afterSignOutUrl="/sign-in"
     >
       {children}
     </ClerkProvider>

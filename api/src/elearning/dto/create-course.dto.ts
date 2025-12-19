@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsArray, ValidateNested, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CourseStatus, ContentType, QuizType } from '@repo/types';
+import { CourseStatus, ContentType, QuizType } from '@workspace/types';
 
 export class CreateCourseDto {
   @IsString()

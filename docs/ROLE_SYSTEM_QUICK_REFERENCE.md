@@ -21,8 +21,8 @@ npm run test:auth
 - `GET /api/users/me` - Get current user info
 
 ### Role Management (Admin/Super Admin only)
-- `GET /api/admin/role-management/users/:clerkUserId` - Get user role and history
-- `PATCH /api/admin/role-management/users/:clerkUserId/role` - Change user role
+- `GET /api/admin/role-management/users/:clerkId` - Get user role and history
+- `PATCH /api/admin/role-management/users/:clerkId/role` - Change user role
 - `GET /api/admin/role-management/history` - Get all role changes
 
 ### Health Checks (Public)

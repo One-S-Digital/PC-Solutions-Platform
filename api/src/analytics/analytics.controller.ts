@@ -5,6 +5,31 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 
+/**
+ * Standard API response envelope for analytics endpoints
+ */
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+/**
+ * Wraps data in a standard API response envelope
+ * @param data - The data to wrap
+ * @param message - Optional message (defaults to 'OK')
+ * @returns Standardized API response object
+ */
+function wrapResponse<T>(data: T, message = 'OK'): ApiResponse<T> {
+  return {
+    success: true,
+    message,
+    data,
+    timestamp: new Date().toISOString(),
+  };
+}
+
 @Controller('admin/analytics')
 @UseGuards(RolesGuard)
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
@@ -12,37 +37,44 @@ export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Get('overview')
-  getDashboardOverview() {
-    return this.analyticsService.getDashboardOverview();
+  async getDashboardOverview() {
+    const data = await this.analyticsService.getDashboardOverview();
+    return wrapResponse(data);
   }
 
   @Get('users')
-  getUserGrowthMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.analyticsService.getUserGrowthMetrics(timeRange);
+  async getUserGrowthMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
+    const data = await this.analyticsService.getUserGrowthMetrics(timeRange);
+    return wrapResponse(data);
   }
 
   @Get('organizations')
-  getOrganizationActivityMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.analyticsService.getOrganizationActivityMetrics(timeRange);
+  async getOrganizationActivityMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
+    const data = await this.analyticsService.getOrganizationActivityMetrics(timeRange);
+    return wrapResponse(data);
   }
 
   @Get('products')
-  getProductPerformanceMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.analyticsService.getProductPerformanceMetrics(timeRange);
+  async getProductPerformanceMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
+    const data = await this.analyticsService.getProductPerformanceMetrics(timeRange);
+    return wrapResponse(data);
   }
 
   @Get('jobs')
-  getJobMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.analyticsService.getJobMetrics(timeRange);
+  async getJobMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
+    const data = await this.analyticsService.getJobMetrics(timeRange);
+    return wrapResponse(data);
   }
 
   @Get('revenue')
-  getRevenueMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.analyticsService.getRevenueMetrics(timeRange);
+  async getRevenueMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
+    const data = await this.analyticsService.getRevenueMetrics(timeRange);
+    return wrapResponse(data);
   }
 
   @Get('system')
-  getSystemUsageMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.analyticsService.getSystemUsageMetrics(timeRange);
+  async getSystemUsageMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
+    const data = await this.analyticsService.getSystemUsageMetrics(timeRange);
+    return wrapResponse(data);
   }
 }

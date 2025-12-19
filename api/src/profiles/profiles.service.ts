@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '@repo/types';
+import { UserRole } from '@workspace/types';
+import { TranslationService } from '../translation/translation.service';
+import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 @Injectable()
 export class ProfilesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly translationService: TranslationService,
+  ) {}
 
   async getUserProfile(userId: string) {
     return this.prisma.user.findUnique({
@@ -49,6 +54,21 @@ export class ProfilesService {
         role: userRole,
       }
     });
+
+    // Save translatable fields and trigger translation (only description - name is a proper noun/identifier)
+    const translatableFields = FIELDS_BY_ENTITY.organization?.length ? FIELDS_BY_ENTITY.organization : ['description'];
+    const translationPayload: Record<string, any> = {
+      description: organization.description || '',
+    };
+    
+    if (translationPayload.description && translationPayload.description.trim().length > 0) {
+      await this.translationService.saveEntityWithTranslations(
+        'organization',
+        organization.id,
+        translationPayload,
+        translatableFields,
+      );
+    }
 
     return organization;
   }

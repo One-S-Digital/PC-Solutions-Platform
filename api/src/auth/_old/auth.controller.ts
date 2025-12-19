@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { AuthService } from '../auth/auth.service';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { UserRole, OrganizationType, SignupDataDto } from '@repo/types';
+import { UserRole, OrganizationType, SignupDataDto } from '@workspace/types';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthThrottle } from '../common/decorators/throttle.decorator';
 

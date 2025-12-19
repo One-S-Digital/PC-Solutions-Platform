@@ -70,11 +70,24 @@ export class OutboxWorker {
     
     this.logger.log(`Mirroring role to Clerk: ${clerkUserId} -> ${role}`);
     
-    // Update Clerk user metadata
-    await this.clerk.users.updateUser(clerkUserId, {
-      publicMetadata: { role },
-      unsafeMetadata: { role: undefined }, // Clear unsafe metadata
-    });
+    try {
+      // First check if user exists in Clerk
+      await this.clerk.users.getUser(clerkUserId);
+      
+      // Update Clerk user metadata
+      await this.clerk.users.updateUser(clerkUserId, {
+        publicMetadata: { role },
+        unsafeMetadata: { role: undefined }, // Clear unsafe metadata
+      });
+      
+      this.logger.log(`Successfully mirrored role for ${clerkUserId}`);
+    } catch (error) {
+      if (error?.status === 404) {
+        this.logger.warn(`User ${clerkUserId} not found in Clerk, skipping role mirror`);
+        return; // Don't throw error for non-existent users
+      }
+      throw error; // Re-throw other errors
+    }
   }
 
   private async handleJobError(
@@ -83,6 +96,17 @@ export class OutboxWorker {
   ) {
     const errorMessage = error?.message || String(error);
     const attempts = Number(job.attempts) + 1;
+    
+    // If job has failed too many times, delete it to prevent infinite retries
+    if (attempts >= 100) {
+      this.logger.warn(
+        `Outbox job ${job.id} has failed ${attempts} times, deleting to prevent infinite retries`
+      );
+      await this.prisma.outbox.delete({
+        where: { id: Number(job.id) },
+      });
+      return;
+    }
     
     // Calculate next retry with exponential backoff (max 60 seconds)
     const delaySeconds = Math.min(60, Math.pow(2, Math.min(6, attempts)) * 1);

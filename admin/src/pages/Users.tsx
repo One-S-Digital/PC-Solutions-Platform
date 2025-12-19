@@ -1,34 +1,617 @@
-import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import React, { useState, useEffect } from 'react'
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
   Plus, 
   Search, 
-  Filter,
   Edit,
   Trash2,
   MoreVertical,
   Shield,
-  Building2
+  ShieldCheck,
+  Building2,
+  X,
+  AlertTriangle,
+  UserCog,
+  ExternalLink
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner'
 
 import logger from '../utils/logger'
 
 import { User } from '../types/api'
-import { UserRole } from '../types'
+import { UserRole, UserStatus } from '../types'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import Card from '../components/design-system/Card'
+import Button from '../components/design-system/Button'
+import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 
+// Edit User Modal Component
+interface EditUserModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onSave: (user: User) => Promise<void>
+  isLoading: boolean
+  currentUserRole?: UserRole
+}
+
+const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading, currentUserRole }) => {
+  const [formData, setFormData] = useState<Partial<User>>({})
+  const { t } = useTranslation(['common', 'admin']);
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (user && isOpen) {
+      setFormData({
+        id: user.id,
+        name: user.name || '',
+        email: user.email || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        role: user.role,
+        status: user.status,
+      })
+      setError(null)
+    }
+  }, [user, isOpen])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    
+    if (!formData.email) {
+      setError(t('admin:users.editUser.emailRequired', 'Email is required'))
+      return
+    }
+    
+    try {
+      // Only send fields that are allowed by the UpdateUserDto
+      // The DTO whitelist allows: email, firstName, lastName, role, orgId, phoneNumber, address, avatarUrl, status
+      const updatePayload = {
+        id: user!.id, // needed for the mutation to identify the user
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        role: formData.role,
+        status: formData.status,
+      } as User
+      await onSave(updatePayload)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin:users.editUser.updateFailed', 'Failed to update user'))
+    }
+  }
+
+  if (!isOpen || !user) return null
+
+  const canAssignSuperAdmin = currentUserRole === UserRole.SUPER_ADMIN
+  const isEditingSuperAdmin = user.role === UserRole.SUPER_ADMIN
+  const lockRole = !canAssignSuperAdmin && isEditingSuperAdmin
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.editUser.title', 'Edit User')}</h2>
+          <button 
+            onClick={onClose} 
+            className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            disabled={isLoading}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.firstName', 'First Name')}</label>
+                <input
+                  type="text"
+                  className={STANDARD_INPUT_FIELD}
+                  value={formData.firstName || ''}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  placeholder={t('common:placeholders.firstname')}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.lastName', 'Last Name')}</label>
+                <input
+                  type="text"
+                  className={STANDARD_INPUT_FIELD}
+                  value={formData.lastName || ''}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  placeholder={t('common:placeholders.lastname')}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.email', 'Email')} <span className="text-red-500">*</span></label>
+              <input
+                type="email"
+                className={STANDARD_INPUT_FIELD}
+                value={formData.email || ''}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder={t('common:placeholders.emailaddress')}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.role', 'Role')}</label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={formData.role || ''}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+                disabled={lockRole}
+              >
+                {(canAssignSuperAdmin || isEditingSuperAdmin) && (
+                  <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+                )}
+                <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+                <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+                <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+                <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+                <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+                <option value={UserRole.PARENT}>{t('common:parent')}</option>
+              </select>
+              {!canAssignSuperAdmin && (
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('admin:users.editUser.roleHint', 'You cannot assign the Super Admin role.')}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin:users.editUser.status', 'Status')}</label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={formData.status || UserStatus.ACTIVE}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as UserStatus })}
+              >
+                <option value={UserStatus.ACTIVE}>{t('common:active')}</option>
+                <option value={UserStatus.PENDING}>{t('common:pending')}</option>
+                <option value={UserStatus.INACTIVE}>{t('common:inactive')}</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+            >
+              {isLoading ? t('admin:users.editUser.saving', 'Saving...') : t('admin:users.editUser.saveChanges', 'Save Changes')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Delete Confirmation Modal Component
+interface DeleteConfirmModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onConfirm: () => Promise<void>
+  isLoading: boolean
+}
+
+const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
+  const { t } = useTranslation(['common', 'admin']);
+  if (!isOpen || !user) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+            <AlertTriangle className="w-6 h-6 text-red-600" />
+          </div>
+          
+          <div className="mt-4 text-center">
+            <h3 className="text-lg font-semibold text-gray-900">{t('admin:users.deleteUser.title', 'Delete User')}</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              {t('admin:users.deleteUser.confirmation', 'Are you sure you want to delete')} <span className="font-medium">{user.name || user.email}</span>? 
+              {t('admin:users.deleteUser.warning', ' This action cannot be undone and will permanently remove all associated data.')}
+            </p>
+          </div>
+        </div>
+
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isLoading}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+          >
+            {t('common:cancel', 'Cancel')}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
+          >
+            {isLoading ? t('admin:users.deleteUser.deleting', 'Deleting...') : t('admin:users.deleteUser.delete', 'Delete User')}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Elevate to Admin Modal Component
+interface ElevateToAdminModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onConfirm: (targetRole: 'ADMIN' | 'SUPER_ADMIN', reason: string) => Promise<void>
+  isLoading: boolean
+}
+
+const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
+  const { t } = useTranslation(['common', 'admin']);
+  const [selectedRole, setSelectedRole] = useState<'ADMIN' | 'SUPER_ADMIN'>('ADMIN')
+  const [reason, setReason] = useState('')
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedRole('ADMIN')
+      setReason('')
+      setError(null)
+    }
+  }, [isOpen])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    
+    if (!reason.trim()) {
+      setError(t('admin:users.elevateUser.reasonRequired', 'Please provide a reason for this role elevation'))
+      return
+    }
+    
+    try {
+      await onConfirm(selectedRole, reason)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin:users.elevateUser.failed', 'Failed to elevate user'))
+    }
+  }
+
+  if (!isOpen || !user) return null
+
+  // Check if user is already an admin
+  const isAlreadyAdmin = user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-orange-500 to-red-500">
+          <h2 className="text-xl font-semibold text-white flex items-center">
+            <ShieldCheck className="w-6 h-6 mr-2" />
+            {t('admin:users.elevateUser.title', 'Elevate to Admin')}
+          </h2>
+          <button 
+            onClick={onClose} 
+            className="p-1 rounded-full text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+            disabled={isLoading}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            {isAlreadyAdmin && (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md text-sm">
+                <strong>{t('admin:users.elevateUser.alreadyAdmin', 'Note:')}</strong> {t('admin:users.elevateUser.alreadyAdminMessage', 'This user already has an admin role. You can change their role level below.')}
+              </div>
+            )}
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center space-x-3">
+                <div className="h-12 w-12 rounded-full bg-swiss-teal flex items-center justify-center">
+                  <span className="text-white font-medium text-lg">
+                    {(user.name || user.email || '?').charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</p>
+                  <p className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {t('admin:users.elevateUser.currentRole', 'Current role:')} <span className="font-medium">{user.role}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('admin:users.elevateUser.selectRole', 'Select Admin Role')}
+              </label>
+              <div className="space-y-2">
+                <label className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                  selectedRole === 'ADMIN' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'
+                }`}>
+                  <input
+                    type="radio"
+                    name="targetRole"
+                    value="ADMIN"
+                    checked={selectedRole === 'ADMIN'}
+                    onChange={() => setSelectedRole('ADMIN')}
+                    className="sr-only"
+                  />
+                  <Shield className={`w-5 h-5 mr-3 ${selectedRole === 'ADMIN' ? 'text-orange-500' : 'text-gray-400'}`} />
+                  <div>
+                    <p className={`font-medium ${selectedRole === 'ADMIN' ? 'text-orange-700' : 'text-gray-700'}`}>
+                      {t('common:admin', 'Admin')}
+                    </p>
+                    <p className="text-xs text-gray-500">{t('admin:users.elevateUser.adminDescription', 'Can manage users, content, and organizations')}</p>
+                  </div>
+                </label>
+                
+                <label className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                  selectedRole === 'SUPER_ADMIN' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300'
+                }`}>
+                  <input
+                    type="radio"
+                    name="targetRole"
+                    value="SUPER_ADMIN"
+                    checked={selectedRole === 'SUPER_ADMIN'}
+                    onChange={() => setSelectedRole('SUPER_ADMIN')}
+                    className="sr-only"
+                  />
+                  <ShieldCheck className={`w-5 h-5 mr-3 ${selectedRole === 'SUPER_ADMIN' ? 'text-red-500' : 'text-gray-400'}`} />
+                  <div>
+                    <p className={`font-medium ${selectedRole === 'SUPER_ADMIN' ? 'text-red-700' : 'text-gray-700'}`}>
+                      {t('common:superadmin', 'Super Admin')}
+                    </p>
+                    <p className="text-xs text-gray-500">{t('admin:users.elevateUser.superAdminDescription', 'Full system access including role management')}</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.elevateUser.reason', 'Reason for Elevation')} <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                className={STANDARD_INPUT_FIELD}
+                rows={3}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder={t('admin:users.elevateUser.reasonPlaceholder', 'Explain why this user needs admin privileges...')}
+                required
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('admin:users.elevateUser.reasonHint', 'This reason will be recorded in the audit log.')}
+              </p>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md shadow-sm disabled:opacity-50 ${
+                selectedRole === 'SUPER_ADMIN' 
+                  ? 'bg-red-600 hover:bg-red-700' 
+                  : 'bg-orange-600 hover:bg-orange-700'
+              }`}
+            >
+              {isLoading 
+                ? t('admin:users.elevateUser.elevating', 'Elevating...') 
+                : t('admin:users.elevateUser.confirm', 'Elevate User')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Add User Modal Component (invites user via Clerk)
+interface AddUserModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onInvite: (payload: { email: string; role: UserRole }) => Promise<void>
+  isLoading: boolean
+  canInviteSuperAdmin: boolean
+}
+
+const AddUserModal: React.FC<AddUserModalProps> = ({
+  isOpen,
+  onClose,
+  onInvite,
+  isLoading,
+  canInviteSuperAdmin,
+}) => {
+  const { t } = useTranslation(['common', 'admin'])
+  const [email, setEmail] = useState('')
+  const [role, setRole] = useState<UserRole>(UserRole.PARENT)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setEmail('')
+      setRole(UserRole.PARENT)
+      setError(null)
+    }
+  }, [isOpen])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    if (!email.trim()) {
+      setError(t('admin:users.addUser.emailRequired', 'Email is required'))
+      return
+    }
+
+    if (!canInviteSuperAdmin && role === UserRole.SUPER_ADMIN) {
+      setError(t('admin:users.addUser.superAdminNotAllowed', 'Only Super Admin can add a Super Admin'))
+      return
+    }
+
+    try {
+      await onInvite({ email: email.trim(), role })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin:users.addUser.failed', 'Failed to invite user'))
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.addUser', 'Add User')}</h2>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            disabled={isLoading}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.addUser.email', 'Email')} <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                className={STANDARD_INPUT_FIELD}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t('common:placeholders.emailaddress')}
+                required
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t(
+                  'admin:users.addUser.emailHint',
+                  'We will send an invitation email. The user will appear in the list after they sign up.',
+                )}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.addUser.role', 'Role')}
+              </label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+              >
+                {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>}
+                <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+                <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+                <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+                <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+                <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+                <option value={UserRole.PARENT}>{t('common:parent')}</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+            >
+              {isLoading ? t('admin:users.addUser.sending', 'Sending...') : t('admin:users.addUser.sendInvite', 'Send Invite')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 const Users: React.FC = () => {
+  const { t } = useTranslation(['common', 'admin']);
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
+  const queryClient = useQueryClient()
+
+  // Fetch current user to check if they are super admin
+  const { data: currentUserResponse } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => apiService.getCurrentUser(apiClient),
+    enabled: !!apiClient,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const currentUser = currentUserResponse?.data?.data
+  const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN
+  const canInviteSuperAdmin = isSuperAdmin
 
   const { data: usersResponse, isLoading, error } = useQuery({
     queryKey: ['users'],
@@ -40,37 +623,185 @@ const Users: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Update user mutation
+  const updateUserMutation = useMutation({
+    mutationFn: (updatedUser: User) => apiService.updateUser(apiClient, updatedUser.id, updatedUser),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setIsEditModalOpen(false)
+      setSelectedUser(null)
+      logger.log('User updated successfully')
+    },
+    onError: (error) => {
+      logger.error('Failed to update user:', error)
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
+    },
+  })
+
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => apiService.deleteUser(apiClient, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setIsDeleteModalOpen(false)
+      setSelectedUser(null)
+      logger.log('User deleted successfully')
+    },
+    onError: (error) => {
+      logger.error('Failed to delete user:', error)
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
+    },
+  })
+
+  // Elevate user to admin mutation
+  const elevateUserMutation = useMutation({
+    mutationFn: ({ userId, targetRole, reason }: { userId: string; targetRole: 'ADMIN' | 'SUPER_ADMIN'; reason: string }) => 
+      apiService.elevateUserToAdmin(apiClient, userId, targetRole, reason),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setIsElevateModalOpen(false)
+      setSelectedUser(null)
+      logger.log('User elevated to admin successfully:', response.data)
+    },
+    onError: (error) => {
+      logger.error('Failed to elevate user:', error)
+      // Don't rethrow - let mutateAsync handle the rejection in the modal's try/catch
+    },
+  })
+
+  // Invite user mutation (Admin + Super Admin; backend blocks ADMIN -> SUPER_ADMIN)
+  const inviteUserMutation = useMutation({
+    mutationFn: (payload: { email: string; role: UserRole }) => apiService.inviteUser(apiClient, payload),
+    onSuccess: () => {
+      setIsAddUserModalOpen(false)
+      toast.success(t('admin:users.addUser.inviteSent', 'Invitation sent'))
+      logger.log('User invitation created successfully')
+    },
+    onError: (error: any) => {
+      logger.error('Failed to invite user:', error)
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        t('admin:users.addUser.failed', 'Failed to send invitation')
+      toast.error(message)
+    },
+  })
+
   const users: User[] = usersResponse?.data?.data || []
 
   const roleColors: Record<UserRole, string> = {
     [UserRole.SUPER_ADMIN]: 'bg-red-100 text-red-800',
     [UserRole.ADMIN]: 'bg-orange-100 text-orange-800',
-    [UserRole.FOUNDATION]: 'bg-blue-100 text-blue-800',
-    [UserRole.PRODUCT_SUPPLIER]: 'bg-green-100 text-green-800',
-    [UserRole.SERVICE_PROVIDER]: 'bg-purple-100 text-purple-800',
+    [UserRole.FOUNDATION]: 'bg-swiss-teal/10 text-swiss-teal',
+    [UserRole.PRODUCT_SUPPLIER]: 'bg-swiss-mint/10 text-swiss-mint',
+    [UserRole.SERVICE_PROVIDER]: 'bg-swiss-sand/20 text-swiss-sand',
     [UserRole.EDUCATOR]: 'bg-indigo-100 text-indigo-800',
-    [UserRole.PARENT]: 'bg-pink-100 text-pink-800',
+    [UserRole.PARENT]: 'bg-swiss-coral/10 text-swiss-coral',
   }
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    const userName = user.name || ''
+    const userEmail = user.email || ''
+    const matchesSearch = userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         userEmail.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesRole = !selectedRole || user.role === selectedRole
     return matchesSearch && matchesRole
   })
 
+  // Handle opening edit modal
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user)
+    setIsEditModalOpen(true)
+  }
 
-  const handleUpdateUser = async (updatedUser: User) => {
-    try {
-      await apiService.updateUser(apiClient, updatedUser.id, updatedUser)
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-      setIsEditModalOpen(false)
-    } catch (error) {
-      logger.error('Failed to update user:', error)
-      // You might want to show an error message to the user
+  // Handle opening delete modal
+  const handleDeleteClick = (user: User) => {
+    setSelectedUser(user)
+    setIsDeleteModalOpen(true)
+  }
+
+  // Handle opening elevate modal
+  const handleElevateClick = (user: User) => {
+    setSelectedUser(user)
+    setIsElevateModalOpen(true)
+  }
+
+  // Handle viewing user profile - opens the frontend partner/profile page
+  const handleViewProfile = (user: User) => {
+    if (!user.orgId) {
+      toast.error(t('admin:users.viewProfile.noOrganization', 'This user has no organization profile to view'))
+      return
+    }
+    
+    // Get the frontend URL from environment variable
+    const frontendUrl = import.meta.env.VITE_FRONTEND_URL
+    
+    if (!frontendUrl) {
+      // Fallback: try to construct URL based on current origin
+      // This handles common patterns: admin.domain.com -> domain.com, localhost:3001 -> localhost:3000
+      const currentOrigin = window.location.origin
+      let derivedUrl = currentOrigin
+      
+      if (currentOrigin.includes('admin.')) {
+        derivedUrl = currentOrigin.replace('admin.', '')
+      } else if (currentOrigin.includes('localhost:3001')) {
+        derivedUrl = currentOrigin.replace(':3001', ':3000')
+      } else if (currentOrigin.includes(':3001')) {
+        derivedUrl = currentOrigin.replace(':3001', ':3000')
+      }
+      
+      window.open(`${derivedUrl}/partner/${user.orgId}`, '_blank', 'noopener,noreferrer')
+    } else {
+      window.open(`${frontendUrl}/partner/${user.orgId}`, '_blank', 'noopener,noreferrer')
     }
   }
 
+  // Handle saving user updates
+  const handleUpdateUser = async (updatedUser: User) => {
+    await updateUserMutation.mutateAsync(updatedUser)
+  }
+
+  // Handle confirming delete
+  const handleConfirmDelete = async () => {
+    if (selectedUser) {
+      await deleteUserMutation.mutateAsync(selectedUser.id)
+    }
+  }
+
+  // Handle confirming elevation
+  const handleConfirmElevate = async (targetRole: 'ADMIN' | 'SUPER_ADMIN', reason: string) => {
+    if (selectedUser) {
+      await elevateUserMutation.mutateAsync({ 
+        userId: selectedUser.id, 
+        targetRole, 
+        reason 
+      })
+    }
+  }
+
+  // Handle closing modals
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setSelectedUser(null)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+    setSelectedUser(null)
+  }
+
+  const handleCloseElevateModal = () => {
+    setIsElevateModalOpen(false)
+    setSelectedUser(null)
+  }
+
+  const handleCloseAddUserModal = () => {
+    setIsAddUserModalOpen(false)
+  }
+
+  const handleInviteUser = async (payload: { email: string; role: UserRole }) => {
+    await inviteUserMutation.mutateAsync(payload)
+  }
 
   if (isLoading) {
     return (
@@ -83,8 +814,8 @@ const Users: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load users</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:users.error.loadFailed', 'Failed to load users')}</div>
+        <p className="text-gray-600">{t('admin:users.error.description', 'Please check your connection and try again.')}</p>
       </div>
     )
   }
@@ -94,30 +825,29 @@ const Users: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
             <UsersIcon className="h-8 w-8 mr-3 text-swiss-teal" />
-            Users Management
+            {t('admin:users.title', 'Users Management')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage all users across the platform ({users.length} total)
+            {t('admin:users.subtitle', 'Manage all users across the platform')} ({users.length} {t('common:total', 'total')})
           </p>
         </div>
-        <button className="btn-primary flex items-center">
-          <Plus className="h-4 w-4 mr-2" />
-          Add User
-        </button>
+        <Button variant="primary" leftIcon={Plus} onClick={() => setIsAddUserModalOpen(true)}>
+          {t('admin:users.addUser', 'Add User')}
+        </Button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <Card className="p-6">
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users by name or email..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+                placeholder={t('common:placeholders.searchusersbynameoremail')}
+                className={`${STANDARD_INPUT_FIELD} pl-10`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -125,46 +855,46 @@ const Users: React.FC = () => {
           </div>
           <div className="sm:w-48">
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              className={STANDARD_INPUT_FIELD}
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
             >
-              <option value="">All Roles</option>
-              <option value={UserRole.SUPER_ADMIN}>Super Admin</option>
-              <option value={UserRole.ADMIN}>Admin</option>
-              <option value={UserRole.FOUNDATION}>Foundation</option>
-              <option value={UserRole.PRODUCT_SUPPLIER}>Product Supplier</option>
-              <option value={UserRole.SERVICE_PROVIDER}>Service Provider</option>
-              <option value={UserRole.EDUCATOR}>Educator</option>
-              <option value={UserRole.PARENT}>Parent</option>
+              <option value="">{t('common:filters.roles.all')}</option>
+              <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+              <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+              <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+              <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+              <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+              <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+              <option value={UserRole.PARENT}>{t('common:parent')}</option>
             </select>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                  {t('admin:users.table.user', 'User')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
+                  {t('admin:users.table.role', 'Role')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Organization
+                  {t('admin:users.table.organization', 'Organization')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {t('admin:users.table.status', 'Status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Login
+                  {t('admin:users.table.lastLogin', 'Last Login')}
                 </th>
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{t('admin:users.table.actions', 'Actions')}</span>
                 </th>
               </tr>
             </thead>
@@ -179,14 +909,14 @@ const Users: React.FC = () => {
                         ) : (
                           <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center">
                             <span className="text-white font-medium text-sm">
-                              {user.name.charAt(0)}
+                              {(user.name || user.email || '?').charAt(0).toUpperCase()}
                             </span>
                           </div>
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
+                        <div className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</div>
                       </div>
                     </div>
                   </td>
@@ -203,7 +933,7 @@ const Users: React.FC = () => {
                           {user.orgName}
                         </>
                       ) : (
-                        <span className="text-gray-400">No organization</span>
+                        <span className="text-gray-400">{t('admin:users.labels.noOrganization', 'No organization')}</span>
                       )}
                     </div>
                   </td>
@@ -217,7 +947,7 @@ const Users: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
+                    {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : t('admin:users.labels.never', 'Never')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Menu as="div" className="relative inline-block text-left">
@@ -233,25 +963,57 @@ const Users: React.FC = () => {
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                        <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                           <div className="py-1">
+                            {/* View Profile - Only for users with organizations (suppliers/service providers) */}
+                            {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => handleViewProfile(user)}
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                  >
+                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                    {t('admin:users.viewProfile.title', 'View Profile')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
                             <Menu.Item>
                               {({ active }) => (
                                 <button
+                                  onClick={() => handleEditUser(user)}
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Edit className="h-4 w-4 mr-2" />
-                                  Edit User
+                                  {t('admin:users.editUser.title', 'Edit User')}
                                 </button>
                               )}
                             </Menu.Item>
+                            {/* Show Elevate to Admin option only for Super Admins */}
+                            {isSuperAdmin && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => handleElevateClick(user)}
+                                    className={`${active ? 'bg-orange-50' : ''} flex items-center w-full px-4 py-2 text-sm text-orange-600`}
+                                  >
+                                    <UserCog className="h-4 w-4 mr-2" />
+                                    {user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN
+                                      ? t('admin:users.elevateUser.changeRole', 'Change Admin Role')
+                                      : t('admin:users.elevateUser.elevate', 'Elevate to Admin')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
                             <Menu.Item>
                               {({ active }) => (
                                 <button
+                                  onClick={() => handleDeleteClick(user)}
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete User
+                                  {t('admin:users.deleteUser.delete', 'Delete User')}
                                 </button>
                               )}
                             </Menu.Item>
@@ -269,11 +1031,50 @@ const Users: React.FC = () => {
         {filteredUsers.length === 0 && (
           <div className="text-center py-12">
             <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or add a new user.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:users.emptyState.title', 'No users found')}</h3>
+            <p className="text-gray-600">{t('admin:users.emptyState.description', 'Try adjusting your search criteria or add a new user.')}</p>
           </div>
         )}
-      </div>
+      </Card>
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        user={selectedUser}
+        onSave={handleUpdateUser}
+        isLoading={updateUserMutation.isPending}
+        currentUserRole={currentUser?.role}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        user={selectedUser}
+        onConfirm={handleConfirmDelete}
+        isLoading={deleteUserMutation.isPending}
+      />
+
+      {/* Elevate to Admin Modal - Only for Super Admins */}
+      {isSuperAdmin && (
+        <ElevateToAdminModal
+          isOpen={isElevateModalOpen}
+          onClose={handleCloseElevateModal}
+          user={selectedUser}
+          onConfirm={handleConfirmElevate}
+          isLoading={elevateUserMutation.isPending}
+        />
+      )}
+
+      {/* Add User Modal */}
+      <AddUserModal
+        isOpen={isAddUserModalOpen}
+        onClose={handleCloseAddUserModal}
+        onInvite={handleInviteUser}
+        isLoading={inviteUserMutation.isPending}
+        canInviteSuperAdmin={canInviteSuperAdmin}
+      />
     </div>
   )
 }

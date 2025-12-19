@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
+exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobContractType = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
 // User Roles
 exports.UserRole = {
     SUPER_ADMIN: 'SUPER_ADMIN',
@@ -22,8 +22,13 @@ exports.SubscriptionTier = {
 exports.SubscriptionStatus = {
     ACTIVE: 'ACTIVE',
     INACTIVE: 'INACTIVE',
+    PAUSED: 'PAUSED',
     CANCELLED: 'CANCELLED',
+    EXPIRED: 'EXPIRED',
+    TRIAL: 'TRIAL',
     PAST_DUE: 'PAST_DUE',
+    PENDING: 'PENDING',
+    GRACE_PERIOD: 'GRACE_PERIOD',
 };
 // Asset Kinds
 exports.AssetKind = {
@@ -40,6 +45,9 @@ exports.AssetKind = {
     FRONTEND_OG_IMAGE: 'FRONTEND_OG_IMAGE',
     ADMIN_LOGO: 'ADMIN_LOGO',
     ADMIN_FAVICON: 'ADMIN_FAVICON',
+    SIDEBAR_LOGO: 'SIDEBAR_LOGO',
+    ELEARNING: 'ELEARNING',
+    COMPANY_PROFILE_DOC: 'COMPANY_PROFILE_DOC',
 };
 // Organization Types
 exports.OrganizationType = {
@@ -53,6 +61,17 @@ exports.JobStatus = {
     PUBLISHED: 'PUBLISHED',
     CLOSED: 'CLOSED',
     FILLED: 'FILLED',
+};
+// Job Contract Types
+exports.JobContractType = {
+    FULL_TIME: 'FULL_TIME',
+    PART_TIME: 'PART_TIME',
+    CDI: 'CDI',
+    CDD: 'CDD',
+    INTERNSHIP: 'INTERNSHIP',
+    REPLACEMENT: 'REPLACEMENT',
+    TEMPORARY: 'TEMPORARY',
+    FREELANCE: 'FREELANCE',
 };
 // Service Categories
 exports.ServiceCategory = {

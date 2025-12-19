@@ -1,0 +1,41 @@
+name: Validate Translations
+
+on:
+  push:
+    paths:
+      - 'packages/translations/locales/**'
+      - 'scripts/validate-translations.mjs'
+      - '.github/workflows/validate-translations.yml'
+  pull_request:
+    paths:
+      - 'packages/translations/locales/**'
+      - 'scripts/validate-translations.mjs'
+
+jobs:
+  validate:
+    name: Validate Translation Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Run Translation Validation
+        run: node scripts/validate-translations.mjs
+      
+      - name: Check Translation Coverage
+        run: node scripts/audit-translations.mjs
+      
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: translation-validation-report
+          path: |
+            translation-audit.json
+          retention-days: 30

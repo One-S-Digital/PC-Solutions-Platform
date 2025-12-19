@@ -1,0 +1,318 @@
+{
+  "signup": {
+    "roles": {
+      "productSupplier": {
+        "description": "Sell products to childcare organizations",
+        "label": "Product Supplier"
+      },
+      "serviceProvider": {
+        "description": "Offer services to childcare organizations",
+        "label": "Service Provider"
+      },
+      "foundation": {
+        "description": "Manage your daycare operations, recruit staff, and procure services",
+        "label": "Foundation (Daycare)"
+      },
+      "superAdmin": {
+        "description": "Full system access and management",
+        "label": "Super Admin"
+      },
+      "educator": {
+        "description": "Find employment opportunities in childcare",
+        "label": "Educator/Candidate"
+      },
+      "parent": {
+        "description": "Find childcare services for your children",
+        "label": "Parent"
+      },
+      "admin": {
+        "description": "Administrative access to platform management",
+        "label": "Admin"
+      }
+    },
+    "errors": {
+      "organisationNameRequired": "Organisation name is required",
+      "childStartDateRequired": "Child start date is required",
+      "contactPersonRequired": "Contact person is required",
+      "serviceTypeRequired": "Service type is required",
+      "parentNameRequired": "Parent name is required",
+      "firstNameRequired": "First name is required",
+      "capacityRequired": "Capacity is required",
+      "categoryRequired": "Category is required",
+      "childAgeRequired": "Child's age is required",
+      "lastNameRequired": "Last name is required",
+      "passwordRequired": "Password is required",
+      "passwordsNoMatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "captchaRequired": "Please complete the CAPTCHA verification",
+      "cantonRequired": "Canton is required",
+      "captchaExpired": "CAPTCHA has expired. Please try again",
+      "emailRequired": "Email is required",
+      "phoneRequired": "Phone number is required",
+      "termsRequired": "You must accept the terms and conditions",
+      "captchaError": "CAPTCHA verification failed. Please try again",
+      "emailInvalid": "Please enter a valid email address"
+    },
+    "placeholders": {
+      "organisationName": "Enter organization name",
+      "confirmPassword": "Confirm your password",
+      "contactPerson": "Enter contact person name",
+      "organisation": "Your organisation name",
+      "serviceType": "Enter service type",
+      "parentName": "Enter your full name",
+      "firstName": "Enter your first name",
+      "category": "Enter product category",
+      "lastName": "Enter your last name",
+      "password": "At least 6 characters",
+      "select": "Select",
+      "email": "you@example.com",
+      "phone": "+41 XX XXX XX XX"
+    },
+    "submissionSuccessMessage": "Your account has been created. You can now log in to access the platform.",
+    "fields": {
+      "organisationName": "Organisation Name",
+      "confirmPassword": "Confirm Password",
+      "childStartDate": "Child's Start Date",
+      "contactPerson": "Contact Person",
+      "termsAccepted": "I accept the terms and conditions",
+      "organisation": "Organisation Name",
+      "serviceType": "Service Type",
+      "firstName": "First Name",
+      "startDate": "Preferred Start Date",
+      "capacity": "Capacity",
+      "category": "Category",
+      "childAge": "Child's Age",
+      "fullName": "Full Name",
+      "lastName": "Last Name",
+      "password": "Password",
+      "canton": "Canton",
+      "email": "Email Address",
+      "phone": "Phone Number"
+    },
+    "labels": {
+      "organisationName": "Organization Name",
+      "confirmPassword": "Confirm Password",
+      "childStartDate": "Desired Start Date",
+      "contactPerson": "Contact Person",
+      "serviceType": "Service Type",
+      "parentName": "Your Name",
+      "capacity": "Capacity",
+      "category": "Product Category",
+      "childAge": "Child's Age",
+      "password": "Password",
+      "canton": "Canton",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "submissionSuccessTitle": "Account Created Successfully",
+    "buttons": {
+      "createAccount": "Create Account",
+      "goBack": "Go Back"
+    },
+    "role": {
+      "productSupplier": "Product Supplier",
+      "serviceProvider": "Service Provider",
+      "foundation": "Foundation (Daycare)",
+      "superAdmin": "Super Admin",
+      "educator": "Educator/Candidate",
+      "supplier": "Product Supplier",
+      "parent": "Parent",
+      "admin": "Admin"
+    },
+    "goToDashboardButton": "Go to Dashboard",
+    "createAccountTitle": "Create your account",
+    "steps": {
+      "step1": {
+        "title": "Select Your Role"
+      },
+      "step2": {
+        "title": "Enter Your Details"
+      }
+    },
+    "creatingAccount": "Creating Account...",
+    "selectRoleTitle": "Select Your Role",
+    "selectRoleTitle.oauth": "Complete Your Registration",
+    "progress": {
+      "step1": "Step 1 of 2",
+      "step2": "Step 2 of 2",
+      "oauthStep1": "Step 1: Sign in",
+      "oauthStep2": "Step 2: Complete your details"
+    },
+    "detailsTitle": "Enter Your Details for {{role}}",
+    "termsLabel": "I accept the terms and conditions",
+    "termsLink": "Terms and Conditions",
+    "subtitle": "Choose your role to get started",
+    "title": "Join PC Solutions Platform"
+  },
+  "profileCompletion": {
+    "message": "Please complete your profile to continue",
+    "emailFromAccount": "Email from account"
+  },
+  "errors": {
+    "profileCompletionFailedTitle": "Profile Completion Failed",
+    "organisationNameRequired": "Organisation Name Required",
+    "invalidVerificationCode": "Invalid Verification Code",
+    "profileCompletionFailed": "An error occurred while completing your profile. Please try again.",
+    "childStartDateRequired": "Child Start Date Required",
+    "contactPersonRequired": "Contact person is required",
+    "serviceTypeRequired": "Service Type Required",
+    "parentNameRequired": "Parent name is required",
+    "firstNameRequired": "First name is required",
+    "capacityRequired": "Capacity Required",
+    "categoryRequired": "Category Required",
+    "childAgeRequired": "Child Age Required",
+    "lastNameRequired": "Last name is required",
+    "passwordRequired": "Password Required",
+    "passwordsNoMatch": "Passwords No Match",
+    "passwordTooShort": "Password Too Short",
+    "captchaRequired": "Captcha Required",
+    "cantonRequired": "Canton Required",
+    "captchaExpired": "Captcha Expired",
+    "accountExists": "An account with this email already exists",
+    "emailRequired": "Email Required",
+    "passwordPwned": "This password has been found in a data breach. Please choose a different password",
+    "phoneRequired": "Phone Required",
+    "termsRequired": "Terms Required",
+    "captchaError": "Captcha Error",
+    "emailInvalid": "Email Invalid",
+    "passwordWeak": "Password is not strong enough"
+  },
+  "oauthCompletion": {
+    "emailFromProvider": "Email provided by Google",
+    "wrongAccount": "Wrong account? Sign out and try again.",
+    "message": "You're signed in with Google. Just complete your profile details below to finish setting up your account.",
+    "title": "Almost there!"
+  },
+  "roles": {
+    "productSupplier": {
+      "description": "Sell products to childcare organizations",
+      "label": "Product Supplier"
+    },
+    "serviceProvider": {
+      "description": "Offer services to childcare organizations",
+      "label": "Service Provider"
+    },
+    "foundation": {
+      "description": "Manage your daycare operations, recruit staff, and procure services",
+      "label": "Foundation (Daycare)"
+    },
+    "superAdmin": {
+      "description": "Full system access and management",
+      "label": "Super Admin"
+    },
+    "educator": {
+      "description": "Find employment opportunities in childcare",
+      "label": "Educator/Candidate"
+    },
+    "parent": {
+      "description": "Find childcare services for your children",
+      "label": "Parent"
+    },
+    "admin": {
+      "description": "Administrative access to platform management",
+      "label": "Admin"
+    }
+  },
+  "emailConflict": {
+    "signOutAndLogin": "Sign Out & Log In",
+    "instructions": "Please sign out and log in with your existing account to continue.",
+    "tryAgain": "Start Over",
+    "message": "An account with this email address was already created. It looks like you may have previously signed up using a different method (email/password).",
+    "title": "Account Already Exists"
+  },
+  "placeholders": {
+    "organisationName": "Enter organization name",
+    "confirmPassword": "Confirm your password",
+    "contactPerson": "Enter contact person name",
+    "organisation": "Your organisation name",
+    "serviceType": "Enter service type",
+    "parentName": "Enter your full name",
+    "firstName": "Enter your first name",
+    "category": "Enter product category",
+    "lastName": "Enter your last name",
+    "password": "At least 6 characters",
+    "select": "Select",
+    "email": "you@example.com",
+    "phone": "+41 XX XXX XX XX"
+  },
+  "submissionSuccessMessage": "Your account has been created. You can now log in to access the platform.",
+  "fields": {
+    "organisationName": "Organisation Name",
+    "confirmPassword": "Confirm Password",
+    "childStartDate": "Child's Start Date",
+    "contactPerson": "Contact Person",
+    "termsAccepted": "I accept the terms and conditions",
+    "organisation": "Organisation Name",
+    "serviceType": "Service Type",
+    "firstName": "First Name",
+    "startDate": "Preferred Start Date",
+    "capacity": "Capacity",
+    "category": "Category",
+    "childAge": "Child's Age",
+    "fullName": "Full Name",
+    "lastName": "Last Name",
+    "password": "Password",
+    "canton": "Canton",
+    "email": "Email Address",
+    "phone": "Phone Number"
+  },
+  "labels": {
+    "organisationName": "Organization Name",
+    "confirmPassword": "Confirm Password",
+    "childStartDate": "Desired Start Date",
+    "contactPerson": "Contact Person",
+    "serviceType": "Service Type",
+    "parentName": "Your Name",
+    "capacity": "Capacity",
+    "category": "Product Category",
+    "childAge": "Child's Age",
+    "password": "Password",
+    "canton": "Canton",
+    "email": "Email",
+    "phone": "Phone"
+  },
+  "submissionSuccessTitle": "Account Created Successfully",
+  "buttons": {
+    "createAccount": "Create Account",
+    "goBack": "Go Back"
+  },
+  "roleSubtitle": {
+    "educator": "Find Job"
+  },
+  "role": {
+    "productSupplier": "Product Supplier",
+    "serviceProvider": "Service Provider",
+    "foundation": "Foundation (Daycare)",
+    "superAdmin": "Super Admin",
+    "educator": "Educator/Candidate",
+    "supplier": "Product Supplier",
+    "parent": "Parent",
+    "admin": "Admin"
+  },
+  "goToDashboardButton": "Go To Dashboard",
+  "createAccountTitle": "Create your account",
+  "completingProfile": "Completing Profile",
+  "steps": {
+    "step1": {
+      "title": "Select Your Role"
+    },
+    "step2": {
+      "title": "Enter Your Details"
+    }
+  },
+  "completeProfile": "Complete Profile",
+  "creatingAccount": "Creating Account",
+  "selectRoleTitle": "Select Your Role",
+  "selectRoleTitle.oauth": "Complete Your Registration",
+  "progress": {
+    "step1": "Step 1 of 2",
+    "step2": "Step 2 of 2",
+    "oauthStep1": "Step 1: Sign in",
+    "oauthStep2": "Step 2: Complete your details"
+  },
+  "detailsTitle": "Enter Your Details for {{role}}",
+  "termsLabel": "I accept the terms and conditions",
+  "termsLink": "Terms and Conditions",
+  "subtitle": "Choose your role to get started",
+  "title": "Join PC Solutions Platform"
+}

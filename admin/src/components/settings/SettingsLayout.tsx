@@ -1,6 +1,7 @@
 import React from 'react'
 import { Tab } from '@headlessui/react'
 import { Settings as SettingsIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import GeneralSettings from './GeneralSettings'
 import BrandingSettings from './BrandingSettings'
 import ContentSettings from './ContentSettings'
@@ -9,31 +10,33 @@ import IntegrationSettings from './IntegrationSettings'
 import EmailNotificationPage from '../../pages/EmailNotificationPage'
 import SystemConfigurationPage from '../../pages/SystemConfigurationPage'
 
-const tabs = [
-  { name: 'General', component: GeneralSettings },
-  { name: 'Branding', component: BrandingSettings },
-  { name: 'Content', component: ContentSettings },
-  { name: 'Notifications', component: NotificationSettings },
-  { name: 'Integrations', component: IntegrationSettings },
-  { name: 'Email Templates', component: EmailNotificationPage },
-  { name: 'System Config', component: SystemConfigurationPage },
-]
+const SettingsLayout: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
+  
+  const tabs = [
+    { name: t('admin:settings.tabs.general'), key: 'general', component: GeneralSettings },
+    { name: t('admin:settings.tabs.branding'), key: 'branding', component: BrandingSettings },
+    { name: t('admin:settings.tabs.content'), key: 'content', component: ContentSettings },
+    { name: t('admin:settings.tabs.notifications'), key: 'notifications', component: NotificationSettings },
+    { name: t('admin:settings.tabs.integrations'), key: 'integrations', component: IntegrationSettings },
+    { name: t('admin:settings.tabs.emailTemplates'), key: 'emailTemplates', component: EmailNotificationPage },
+    { name: t('admin:settings.tabs.systemConfig'), key: 'systemConfig', component: SystemConfigurationPage },
+  ]
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-const SettingsLayout: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center">
           <SettingsIcon className="h-8 w-8 mr-3 text-swiss-teal" />
-          Settings
+          {t('admin:settings.title')}
         </h1>
         <p className="mt-1 text-gray-500">
-          Manage your application settings and preferences
+          {t('admin:settings.subtitle')}
         </p>
       </div>
 
@@ -44,7 +47,7 @@ const SettingsLayout: React.FC = () => {
             <Tab.List className="flex space-x-8 px-6">
               {tabs.map((tab) => (
                 <Tab
-                  key={tab.name}
+                  key={tab.key}
                   className={({ selected }) =>
                     classNames(
                       'py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200',
@@ -58,21 +61,19 @@ const SettingsLayout: React.FC = () => {
                 </Tab>
               ))}
             </Tab.List>
-          </div>
-          
-          <Tab.Panels>
-            {tabs.map((tab, idx) => (
-              <Tab.Panel
-                key={idx}
-                className="p-6"
-              >
-                <tab.component />
-              </Tab.Panel>
-            ))}
-          </Tab.Panels>
-        </Tab.Group>
+            </div>
+
+            <Tab.Panels>
+              {tabs.map((tab, idx) => (
+                <Tab.Panel key={idx} className="p-6">
+                  <tab.component />
+                </Tab.Panel>
+              ))}
+            </Tab.Panels>
+          </Tab.Group>
+        </div>
+
       </div>
-    </div>
   )
 }
 

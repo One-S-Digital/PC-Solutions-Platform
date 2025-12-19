@@ -1,7 +1,9 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
+import { BullModule } from '@nestjs/bull';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -26,6 +28,7 @@ import { LeadsModule } from './leads/leads.module';
 import { FrontendSettingsModule } from './frontend-settings/frontend-settings.module';
 import { MockModule } from './mock.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ContentModule } from './content/content.module';
 import { UserManagementModule } from './user-management/user-management.module';
 import { ContentModerationModule } from './content-moderation/content-moderation.module';
 import { SystemMonitoringModule } from './system-monitoring/system-monitoring.module';
@@ -37,6 +40,15 @@ import { RoleManagementModule } from './admin/role-management/role-management.mo
 import { SyncModule } from './sync/sync.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { CompatModule } from './compat/compat.module';
+import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
+import { ContentManagementModule } from './content-management/content-management.module';
+import { PolicyAlertsModule } from './policy-alerts/policy-alerts.module';
+import { TranslationErrorsModule } from './translation-errors/translation-errors.module';
+import { StaticTranslationModule } from './static-translation/static-translation.module';
+import { SupportModule } from './support/support.module';
+import { PartnersModule } from './partners/partners.module';
+import { OrganizationDocumentsModule } from './organization-documents/organization-documents.module';
+import { PromoCodesModule } from './promo-codes/promo-codes.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -55,21 +67,28 @@ import {
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+        password: process.env.REDIS_PASSWORD,
+      },
+    }),
     ThrottlerModule.forRoot([
       {
         name: 'short',
         ttl: 1, // 1 second
-        limit: 3, // 3 requests per second
+        limit: 30, // 30 requests per second (increased for dev/translation loading)
       },
       {
         name: 'medium',
         ttl: 10, // 10 seconds
-        limit: 20, // 20 requests per 10 seconds
+        limit: 200, // 200 requests per 10 seconds
       },
       {
         name: 'long',
         ttl: 60, // 1 minute
-        limit: 100, // 100 requests per minute
+        limit: 600, // 600 requests per minute
       },
       {
         name: AUTH_THROTTLE_KEY,
@@ -102,6 +121,7 @@ import {
     FrontendSettingsModule,
     MockModule,
     AnalyticsModule,
+    ContentModule,
     UserManagementModule,
     ContentModerationModule,
     SystemMonitoringModule,
@@ -113,13 +133,22 @@ import {
     SyncModule,
     WebhooksModule,
     CompatModule,
+    PlatformSettingsModule,
+    ContentManagementModule,
+    PolicyAlertsModule,
+    TranslationErrorsModule,
+    StaticTranslationModule,
+    SupportModule,
+    PartnersModule,
+    OrganizationDocumentsModule,
+    PromoCodesModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: CustomThrottlerGuard,
     },
   ],
 })

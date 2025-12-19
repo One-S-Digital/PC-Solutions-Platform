@@ -2,157 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Swiss Modern Design System - Frontend (Light Theme) */
-:root {
-  /* Swiss Color Palette */
-  --swiss-mint: #10B981;
-  --swiss-teal: #14B8A6;
-  --swiss-coral: #F97316;
-  --swiss-sand: #F59E0B;
-  --swiss-charcoal: #374151;
-  --swiss-gray: #6B7280;
-  --swiss-light: #F9FAFB;
-  --swiss-white: #FFFFFF;
-  
-  /* Swiss Color Variations */
-  --swiss-mint-light: #D1FAE5;
-  --swiss-mint-dark: #059669;
-  --swiss-teal-light: #CCFBF1;
-  --swiss-teal-dark: #0D9488;
-  --swiss-coral-light: #FED7AA;
-  --swiss-coral-dark: #EA580C;
-  --swiss-sand-light: #FEF3C7;
-  --swiss-sand-dark: #D97706;
-  
-  /* Typography */
-  --font-swiss: 'Inter', system-ui, sans-serif;
-  
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  
-  /* Shadows */
-  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-interactive: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-minimal: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  
-  /* Border Radius */
-  --radius-button: 0.5rem;
-  --radius-card: 0.75rem;
-  --radius-input: 0.5rem;
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-/* Base Styles */
-* {
-  box-sizing: border-box;
+::-webkit-scrollbar-thumb {
+  background-color: #227C9D; /* swiss-teal */
+  border-radius: 3px;
 }
 
-html {
-  font-family: var(--font-swiss);
-  line-height: 1.6;
+::-webkit-scrollbar-track {
+  background-color: #F3F4F6; /* swiss-light-gray */
+}
+
+body {
+  font-family: 'Nunito', 'Inter', sans-serif;
+  background-color: #F3F4F6; /* Base background for the entire page */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+/* Hide number input arrows */
+.no-spinners::-webkit-outer-spin-button,
+.no-spinners::-webkit-inner-spin-button {
+  -webkit-appearance: none;
   margin: 0;
-  background-color: var(--swiss-light);
-  color: var(--swiss-charcoal);
-  min-height: 100vh;
 }
 
-/* Frontend Page Background */
-.frontend-page {
-  background-color: var(--swiss-light);
-  min-height: 100vh;
+.no-spinners {
+  -moz-appearance: textfield;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-swiss);
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--swiss-charcoal);
+/* Global styles for settings form layout */
+.form-label {
+  @apply text-xs sm:text-sm font-medium text-gray-700;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
-h5 { font-size: 1.125rem; }
-h6 { font-size: 1rem; }
-
-/* Links */
-a {
-  color: var(--swiss-teal);
-  text-decoration: none;
-  transition: color 0.2s ease;
+.form-input-container {
+  @apply mt-1 md:mt-0; /* Stack on mobile, align on desktop */
 }
 
-a:hover {
-  color: var(--swiss-mint);
-  text-decoration: underline;
-}
-
-/* Buttons */
-button {
-  font-family: var(--font-swiss);
-  font-weight: 500;
-  border-radius: var(--radius-button);
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Form Elements */
-input, textarea, select {
-  font-family: var(--font-swiss);
-  border-radius: var(--radius-input);
-  border: 1px solid #D1D5DB;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  border-color: var(--swiss-mint);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-/* Cards */
-.card {
-  background-color: var(--swiss-white);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-soft);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-interactive);
-  transform: translateY(-1px);
-}
-
-/* Swiss Modern Components */
-@layer components {
-  .btn-primary {
-    @apply bg-swiss-mint text-white hover:bg-swiss-mint-dark focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2;
+/* Responsive text utilities */
+@layer utilities {
+  .text-responsive-xs {
+    @apply text-[10px] sm:text-xs lg:text-sm;
   }
   
-  .btn-secondary {
-    @apply bg-swiss-teal text-white hover:bg-swiss-teal-dark focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2;
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm lg:text-base;
   }
   
-  .btn-outline {
-    @apply border border-swiss-mint text-swiss-mint hover:bg-swiss-mint hover:text-white focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2;
+  .text-responsive-base {
+    @apply text-sm sm:text-base lg:text-lg;
   }
   
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-input focus:ring-2 focus:ring-swiss-mint focus:border-swiss-mint;
+  .text-responsive-lg {
+    @apply text-base sm:text-lg lg:text-xl;
   }
   
-  .card-swiss {
-    @apply bg-white rounded-card shadow-soft hover:shadow-interactive transition-all duration-200;
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+}
+
+/* Responsive spacing utilities */
+@layer utilities {
+  .p-responsive {
+    @apply p-3 sm:p-4 md:p-6 lg:p-8;
+  }
+  
+  .px-responsive {
+    @apply px-3 sm:px-4 md:px-6 lg:px-8;
+  }
+  
+  .py-responsive {
+    @apply py-2 sm:py-3 md:py-4 lg:py-6;
+  }
+  
+  .gap-responsive {
+    @apply gap-2 sm:gap-3 md:gap-4 lg:gap-6;
+  }
+  
+  .space-y-responsive > * + * {
+    @apply mt-3 sm:mt-4 md:mt-6 lg:mt-8;
+  }
+}
+
+/* Card responsive utilities */
+@layer utilities {
+  .card-padding {
+    @apply p-3 sm:p-4 md:p-5 lg:p-6;
+  }
+}
+
+/* Mobile-friendly touch targets */
+@layer utilities {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}
+
+/* Responsive hiding utilities */
+@layer utilities {
+  .hide-on-mobile {
+    @apply hidden sm:block;
+  }
+  
+  .show-on-mobile {
+    @apply block sm:hidden;
+  }
+}
+
+/* Ensure smooth scrolling behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improve input appearance on mobile */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
   }
 }

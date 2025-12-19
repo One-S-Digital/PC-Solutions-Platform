@@ -1,15 +1,16 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Upload, Check, AlertCircle } from 'lucide-react';
 import { apiService, useApiClient } from '../services/api';
-
+import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
 import { UploadedAsset } from '../types/api';
+import { useTranslation } from 'react-i18next';
 
 
 interface AssetUploaderProps {
   kind: 'logo' | 'admin_logo' | 'favicon' | 'admin_favicon' | 'hero';
   currentAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     size: number;
     mimeType: string;
@@ -36,9 +37,11 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
   description,
   maxSize = 2 * 1024 * 1024, // 2MB default
   acceptedTypes = ['image/png', 'image/svg+xml'],
-  requireSquare = false
+  requireSquare = false,
 }) => {
+  const { t } = useTranslation(['common']);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -110,6 +113,7 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
     }
 
     setUploading(true);
+    setUploadProgress(0);
     setError(null);
 
     try {
@@ -117,14 +121,32 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
       formData.append('file', file);
       formData.append('kind', kind);
 
-      const response = await apiService.uploadAsset(apiClient, formData);
+      const result = await retryWithBackoff(
+        async () => apiService.uploadAsset(apiClient, formData, (progress) => {
+          setUploadProgress(progress);
+        }),
+        {
+          ...RetryPresets.upload,
+          onRetry: (error, attempt, delay) => {
+            console.log(`Upload retry attempt ${attempt} after ${delay}ms:`, error.message);
+            setUploadProgress(0); // Reset progress on retry
+          },
+        }
+      );
+
+      if (!result.success) {
+        throw result.error;
+      }
+
+      const response = result.data;
       
-      if (response.data.success) {
+      if (response?.data.success) {
         const assetData = response.data.data;
+        setUploadProgress(100);
         onAssetChange(assetData);
         setShowUrlInput(false);
       } else {
-        setError(response.data.message || 'Upload failed');
+        setError(response?.data.message || 'Upload failed');
       }
 
     } catch (error: unknown) {
@@ -156,6 +178,7 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
       setError(getErrorMessage(error));
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -194,7 +217,7 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
   };
 
   const getPreviewUrl = () => {
-    if (currentAsset) return currentAsset.url;
+    if (currentAsset) return currentAsset.publicUrl;
     if (fallbackUrl) return fallbackUrl;
     return null;
   };
@@ -235,9 +258,20 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
         />
 
         {uploading ? (
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
-            <p className="text-sm text-gray-600">Uploading...</p>
+          <div className="flex flex-col items-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="w-full max-w-xs">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Uploading...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </div>
           </div>
         ) : currentAsset ? (
           <div className="flex flex-col items-center">
@@ -294,12 +328,12 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
             {currentAsset?.mimeType === 'image/svg+xml' || previewUrl.endsWith('.svg') ? (
               <div 
                 className="w-16 h-16 border border-gray-200 rounded bg-white flex items-center justify-center"
-                dangerouslySetInnerHTML={{ __html: `<img src="${previewUrl}" alt="Preview" style="max-width: 100%; max-height: 100%;" />` }}
+                dangerouslySetInnerHTML={{ __html: `<img src="${previewUrl}" alt={t('common:previewLabel', 'Preview')} style="max-width: 100%; max-height: 100%;" />` }}
               />
             ) : (
               <img
                 src={previewUrl}
-                alt="Preview"
+                alt={t('common:previewLabel', 'Preview')}
                 className="w-16 h-16 object-contain border border-gray-200 rounded bg-white"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;

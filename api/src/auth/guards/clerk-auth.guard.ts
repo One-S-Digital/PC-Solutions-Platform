@@ -11,12 +11,19 @@ export class ClerkAuthGuard implements CanActivate {
   private readonly authorizedParties: string[];
   private readonly jwtKey?: string;
   private readonly authDebug: boolean;
+  private readonly secretKey: string;
 
   constructor(
     private configService: ConfigService,
     private reflector: Reflector,
     private prisma: PrismaService,
   ) {
+    // Get Clerk secret key
+    this.secretKey = this.configService.get<string>('CLERK_SECRET_KEY', '');
+    if (!this.secretKey) {
+      throw new Error('CLERK_SECRET_KEY is not configured');
+    }
+
     // Determine issuer based on Clerk instance
     const publishableKey = this.configService.get<string>('CLERK_PUBLISHABLE_KEY', '');
     if (publishableKey.includes('test')) {
@@ -52,6 +59,13 @@ export class ClerkAuthGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    
+    // Allow OPTIONS requests (CORS preflight) - they don't have auth headers
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+    
     // Check if route is public
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -62,7 +76,6 @@ export class ClerkAuthGuard implements CanActivate {
       return true;
     }
     
-    const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
     
     if (!authHeader?.startsWith('Bearer ')) {
@@ -83,6 +96,7 @@ export class ClerkAuthGuard implements CanActivate {
     
     try {
       const options: any = {
+        secretKey: this.secretKey,
         authorizedParties: this.authorizedParties.length > 0 ? this.authorizedParties : undefined,
         clockSkewInMs: 60_000,
       };
@@ -98,10 +112,11 @@ export class ClerkAuthGuard implements CanActivate {
 
       if (this.authDebug) {
         const req = context.switchToHttp().getRequest();
-        // eslint-disable-next-line no-console
+         
         console.log('🔐 Auth Debug:', {
           path: req.url,
           method: req.method,
+          hasSecretKey: !!this.secretKey,
           hasJwtKey: !!this.jwtKey,
           configuredIssuer: this.issuer,
           tokenIssuer: decodedPayload?.iss,
@@ -119,30 +134,56 @@ export class ClerkAuthGuard implements CanActivate {
 
       // Populate request.context (user role from AppUser), so RolesGuard can authorize
       try {
-        let appUser = await this.prisma.appUser.findUnique({ where: { clerkUserId: payload.sub } });
+        const appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
+        
+        // Also fetch the User profile record
+        const userProfile = await this.prisma.user.findUnique({ where: { clerkId: payload.sub } });
+        
         if (!appUser) {
           if (this.authDebug) {
-            // eslint-disable-next-line no-console
-            console.log('🔐 Auth Debug: AppUser missing, creating baseline user with PARENT role', { userId: payload.sub });
+            console.log('🔐 Auth Debug: AppUser missing, user may be pending webhook processing', { userId: payload.sub });
           }
-          // Create a baseline user; admins can later promote via role management
-          appUser = await this.prisma.appUser.create({
-            data: { clerkUserId: payload.sub, role: 'PARENT' },
-          });
-        }
-        request.context = {
-          userId: payload.sub,
-          role: appUser.role,
-          appUserId: appUser.id,
-        };
-        if (this.authDebug) {
-          // eslint-disable-next-line no-console
-          console.log('🔐 Auth Debug: request.context populated', request.context);
+          // Don't create AppUser here - let webhook handle it
+          // Set minimal context for pending users
+          request.context = {
+            userId: payload.sub,
+            role: 'PENDING',
+            appUserId: null,
+            profileUserId: userProfile?.id || null,
+            clerkUserId: payload.sub,
+            isPending: true,
+          };
+          // FIX: Also set request.user for backward compatibility with UsersController
+          request.user = {
+            clerkId: payload.sub,
+            role: 'PENDING',
+            id: userProfile?.id || null,
+            isPending: true,
+          };
+          if (this.authDebug) {
+            console.log('🔐 Auth Debug: request.context and request.user set for pending user', { context: request.context, user: request.user });
+          }
+        } else {
+          request.context = {
+            userId: payload.sub,
+            role: appUser.role,
+            appUserId: appUser.id,
+            profileUserId: userProfile?.id || null,
+            clerkUserId: payload.sub,
+          };
+          // FIX: Also set request.user for backward compatibility with UsersController
+          request.user = {
+            clerkId: payload.sub,
+            role: appUser.role,
+            id: userProfile?.id || null,
+          };
+          if (this.authDebug) {
+            console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
+          }
         }
       } catch (e) {
         if (this.authDebug) {
-          // eslint-disable-next-line no-console
-          console.error('🔐 Auth Debug: failed to load/create AppUser', e);
+          console.error('🔐 Auth Debug: failed to load AppUser', e);
         }
         // non-fatal; RolesGuard will handle missing context
       }
@@ -150,10 +191,10 @@ export class ClerkAuthGuard implements CanActivate {
     } catch (error: any) {
       const reason = error?.reason || error?.message || 'unknown';
       const action = error?.action;
-      // eslint-disable-next-line no-console
+       
       console.error('Token verification failed:', { reason, action });
       if (reason === 'jwk-failed-to-resolve' && !this.jwtKey) {
-        // eslint-disable-next-line no-console
+         
         console.error('Clerk JWK fetch failed. Set CLERK_JWT_KEY env with your instance JWT public key to enable offline verification.');
       }
       throw new UnauthorizedException('Invalid token');

@@ -1,0 +1,294 @@
+{
+  "application": {
+    "coverLetterPlaceholder": "Sagen Sie uns, warum Sie an dieser Stelle interessiert sind und warum Sie so gut zu uns passen..."
+  },
+  "buttons": {
+    "addCandidate": "Kandidat hinzufügen",
+    "applyFilters": "Filter anwenden",
+    "applyNow": "Jetzt bewerben",
+    "filters": "Filter",
+    "inviteToApply": "Zur Bewerbung einladen",
+    "inviteToInterview": "Zum Interview einladen",
+    "postNewJob": "Neue Stelle ausschreiben",
+    "viewApplicants": "Bewerber anzeigen"
+  },
+  "candidateCard": {
+    "availabilityUnknown": "Verfügbarkeit nicht angegeben",
+    "regionUnknown": "Region nicht angegeben",
+    "roleUnknown": "Rolle nicht angegeben",
+    "viewProfile": "Profil anzeigen"
+  },
+  "candidatePool": {
+    "emptyState": "Keine Kandidaten im Pool verfügbar",
+    "filterTitle": "Kandidaten filtern",
+    "noCandidates": "Keine Kandidaten verfügbar",
+    "searchPlaceholder": "Kandidaten suchen...",
+    "title": "Kandidatenpool",
+    "viewProfile": "Profil anzeigen"
+  },
+  "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?",
+  "confirmations": {
+    "deleteJob": "Möchten Sie dieses Stellenangebot wirklich löschen?"
+  },
+  "contractTypes": {
+    "cdd": "Befristet (CDD)",
+    "cdi": "Unbefristet (CDI)",
+    "freelance": "Freiberuflich",
+    "fullTime": "Vollzeit",
+    "internship": "Praktikum",
+    "partTime": "Teilzeit",
+    "replacement": "Vertretung/Aushilfe",
+    "temporary": "Temporär",
+    "unknown": "Unbekannt"
+  },
+  "employmentTypes": {
+    "FULL_TIME": {
+      "label": "Vollzeit",
+      "description": "Unbefristete Stelle (40 Std./Woche)"
+    },
+    "PART_TIME": {
+      "label": "Teilzeit",
+      "description": "Flexible Arbeitsstunden"
+    },
+    "REPLACEMENT": {
+      "label": "Vertretung/Aushilfe",
+      "description": "Temporäre Vertretung für abwesendes Personal"
+    }
+  },
+  "errors": {
+    "deleteJobFailed": "Stellenangebot konnte nicht gelöscht werden.",
+    "loadApplicationsFailed": "Bewerbungen können nicht geladen werden.",
+    "loadCandidatesFailed": "Kandidaten können nicht geladen werden.",
+    "loadJobsFailed": "Stellenangebote können nicht geladen werden.",
+    "saveJobFailed": "Stellenangebot konnte nicht gespeichert werden."
+  },
+  "filters": {
+    "all": "Alle",
+    "availability": "Verfügbarkeit",
+    "experience": "Erfahrung",
+    "location": "Standort"
+  },
+  "jobDetailModal": {
+    "applyNow": "Jetzt bewerben",
+    "benefits": "Vorteile",
+    "contractType": "Vertragsart",
+    "jobDescription": "Stellenbeschreibung",
+    "location": "Standort",
+    "noDescription": "Keine Beschreibung verfügbar.",
+    "overviewTitle": "Stellenübersicht",
+    "qualifications": "Qualifikationen",
+    "requirements": "Anforderungen",
+    "responsibilities": "Verantwortlichkeiten",
+    "salary": "Gehalt",
+    "startDate": "Startdatum"
+  },
+  "jobListings": {
+    "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
+    "title": "Stellenangebote",
+    "viewDetails": "Stellendetails anzeigen"
+  },
+  "jobOffers": {
+    "activeJobsCount": "{{count}} aktive Stellenangebote",
+    "emptyState": "Keine Stellen gefunden",
+    "filterTitle": "Stellen filtern",
+    "searchPlaceholder": "Stellen suchen..."
+  },
+  "jobPostModal": {
+    "addBenefit": "Vorteil hinzufügen",
+    "addQualification": "Qualifikation hinzufügen",
+    "addRequirement": "Anforderung hinzufügen",
+    "addResponsibility": "Verantwortlichkeit hinzufügen",
+    "addTitle": "Neue Stelle ausschreiben",
+    "benefitPlaceholder": "Vorteil hinzufügen",
+    "benefits": "Vorteile",
+    "contractType": "Vertragsart",
+    "description": "Stellenbeschreibung",
+    "editTitle": "Stellenangebot bearbeiten",
+    "employmentType": "Beschäftigungsart",
+    "jobTitle": "Stellenbezeichnung",
+    "location": "Standort",
+    "postJob": "Stelle veröffentlichen",
+    "qualificationPlaceholder": "Qualifikation hinzufügen",
+    "qualifications": "Qualifikationen",
+    "requirementPlaceholder": "Anforderung hinzufügen",
+    "requirements": "Anforderungen",
+    "responsibilities": "Verantwortlichkeiten",
+    "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
+    "salaryRange": "Gehaltsbereich",
+    "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
+    "startDate": "Startdatum",
+    "workSchedule": {
+      "title": "Arbeitszeitpräferenzen",
+      "expectedHours": "Erwartete Stunden",
+      "hoursPerWeek": "Stunden/Woche",
+      "preferredTimeSlot": "Bevorzugte Arbeitszeit",
+      "preferredDays": "Bevorzugte Arbeitstage",
+      "timeSlots": {
+        "MORNING": "Vormittag",
+        "AFTERNOON": "Nachmittag",
+        "FULL_DAY": "Ganztags",
+        "FLEXIBLE": "Flexibel"
+      },
+      "days": {
+        "monday": "Montag",
+        "tuesday": "Dienstag",
+        "wednesday": "Mittwoch",
+        "thursday": "Donnerstag",
+        "friday": "Freitag",
+        "saturday": "Samstag",
+        "sunday": "Sonntag"
+      }
+    }
+  },
+  "jobStatus": {
+    "closed": "Geschlossen",
+    "draft": "Entwurf",
+    "filled": "Besetzt",
+    "published": "Veröffentlicht"
+  },
+  "labels": {
+    "allContractTypes": "Alle Vertragsarten",
+    "allRoles": "Alle Rollen",
+    "allStatuses": "Alle Status",
+    "applications": "Bewerbungen",
+    "availabilityDate": "Verfügbarkeitsdatum",
+    "location": "Standort",
+    "locationUnknown": "Standort wird definiert",
+    "region": "Region",
+    "startDate": "Startdatum",
+    "startDateTbd": "Noch festzulegen"
+  },
+  "recruitment": {
+    "buttons": {
+      "addCandidate": "Kandidat hinzufügen",
+      "applyFilters": "Filter anwenden",
+      "applyNow": "Jetzt bewerben",
+      "filters": "Filter",
+      "inviteToApply": "Zur Bewerbung einladen",
+      "inviteToInterview": "Zum Interview einladen",
+      "postNewJob": "Neue Stelle ausschreiben",
+      "viewApplicants": "Bewerber anzeigen"
+    },
+    "candidateCard": {
+      "viewProfile": "Profil anzeigen"
+    },
+    "candidatePool": {
+      "emptyState": "Keine Kandidaten im Pool verfügbar",
+      "filterTitle": "Kandidaten filtern",
+      "noCandidates": "Keine Kandidaten verfügbar",
+      "searchPlaceholder": "Kandidaten suchen...",
+      "title": "Kandidatenpool",
+      "viewProfile": "Profil anzeigen"
+    },
+    "confirmRemoveCandidate": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?",
+    "filters": {
+      "availability": "Verfügbarkeit",
+      "experience": "Erfahrung",
+      "location": "Standort"
+    },
+    "jobDetailModal": {
+      "applyNow": "Jetzt bewerben",
+      "benefits": "Vorteile",
+      "contractType": "Vertragsart",
+      "jobDescription": "Stellenbeschreibung",
+      "location": "Standort",
+      "overviewTitle": "Stellenübersicht",
+      "qualifications": "Qualifikationen",
+      "requirements": "Anforderungen",
+      "responsibilities": "Verantwortlichkeiten",
+      "salary": "Gehalt",
+      "startDate": "Startdatum"
+    },
+    "jobListings": {
+      "noJobs": "Derzeit sind keine Stellenangebote verfügbar",
+      "title": "Stellenangebote",
+      "viewDetails": "Stellendetails anzeigen"
+    },
+    "jobOffers": {
+      "activeJobsCount": "{{count}} aktive Stellenangebote",
+      "emptyState": "Keine Stellen gefunden",
+      "filterTitle": "Stellen filtern",
+      "searchPlaceholder": "Stellen suchen..."
+    },
+    "jobPostModal": {
+      "addBenefit": "Vorteil hinzufügen",
+      "addQualification": "Qualifikation hinzufügen",
+      "addRequirement": "Anforderung hinzufügen",
+      "addResponsibility": "Verantwortlichkeit hinzufügen",
+      "addTitle": "Neue Stelle ausschreiben",
+      "benefitPlaceholder": "Vorteil hinzufügen",
+      "benefits": "Vorteile",
+      "contractType": "Vertragsart",
+      "description": "Stellenbeschreibung",
+      "editTitle": "Stellenangebot bearbeiten",
+      "employmentType": "Beschäftigungsart",
+      "jobTitle": "Stellenbezeichnung",
+      "location": "Standort",
+      "postJob": "Stelle veröffentlichen",
+      "qualificationPlaceholder": "Qualifikation hinzufügen",
+      "qualifications": "Qualifikationen",
+      "requirementPlaceholder": "Anforderung hinzufügen",
+      "requirements": "Anforderungen",
+      "responsibilities": "Verantwortlichkeiten",
+      "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
+      "salaryRange": "Gehaltsbereich",
+      "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
+      "startDate": "Startdatum",
+      "workSchedule": {
+        "title": "Arbeitszeitpräferenzen",
+        "expectedHours": "Erwartete Stunden",
+        "hoursPerWeek": "Stunden/Woche",
+        "preferredTimeSlot": "Bevorzugte Arbeitszeit",
+        "preferredDays": "Bevorzugte Arbeitstage",
+        "timeSlots": {
+          "MORNING": "Vormittag",
+          "AFTERNOON": "Nachmittag",
+          "FULL_DAY": "Ganztags",
+          "FLEXIBLE": "Flexibel"
+        },
+        "days": {
+          "monday": "Montag",
+          "tuesday": "Dienstag",
+          "wednesday": "Mittwoch",
+          "thursday": "Donnerstag",
+          "friday": "Freitag",
+          "saturday": "Samstag",
+          "sunday": "Sonntag"
+        }
+      }
+    },
+    "labels": {
+      "allContractTypes": "Alle Vertragsarten",
+      "allRoles": "Alle Rollen",
+      "allStatuses": "Alle Status",
+      "location": "Standort"
+    },
+    "tabs": {
+      "candidatePool": "Kandidatenpool",
+      "jobOffers": "Stellenangebote"
+    },
+    "title": "Rekrutierung",
+    "viewApplicantsModal": {
+      "appliedOn": "Beworben am {{date}}",
+      "noApplicants": "Noch keine Bewerber",
+      "title": "Bewerber für {{jobTitle}}"
+    }
+  },
+  "recruitmentPage": {
+    "labels": {
+      "locationUnknown": "location Unknown"
+    }
+  },
+  "tabs": {
+    "candidatePool": "Kandidatenpool",
+    "jobOffers": "Stellenangebote"
+  },
+  "title": "Rekrutierung",
+  "viewApplicantsModal": {
+    "appliedOn": "Beworben am {{date}}",
+    "loading": "Bewerbungen werden geladen...",
+    "noApplicants": "Noch keine Bewerber",
+    "title": "Bewerber für {{jobTitle}}",
+    "unknownCandidate": "Bewerber"
+  }
+}

@@ -1,10 +1,15 @@
-import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
-import { JobStatus } from '@repo/types';
+import { IsArray, IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
+import { JobContractType, JobStatus } from '@workspace/types';
 
 export class CreateJobListingDto {
   @IsString()
   title: string;
 
+  // Optional foundation override (used by ADMIN/SUPER_ADMIN in dev/testing)
+  @IsOptional()
+  @IsString()
+  foundationId?: string;
+
   @IsOptional()
   @IsString()
   description?: string;
@@ -13,6 +18,16 @@ export class CreateJobListingDto {
   @IsArray()
   @IsString({ each: true })
   requirements?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  responsibilities?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  qualifications?: string[];
 
   @IsOptional()
   @IsArray()
@@ -28,36 +43,16 @@ export class CreateJobListingDto {
   salary?: string;
 
   @IsOptional()
-  @IsEnum(JobStatus)
-  status?: JobStatus;
-}
-
-export class UpdateJobListingDto {
-  @IsOptional()
   @IsString()
-  title?: string;
+  salaryRange?: string;
 
   @IsOptional()
-  @IsString()
-  description?: string;
+  @IsEnum(JobContractType)
+  contractType?: JobContractType;
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  requirements?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  benefits?: string[];
-
-  @IsOptional()
-  @IsString()
-  location?: string;
-
-  @IsOptional()
-  @IsString()
-  salary?: string;
+  @IsISO8601()
+  startDate?: string;
 
   @IsOptional()
   @IsEnum(JobStatus)

@@ -2,6 +2,8 @@ import {
   IsArray,
   IsEmail,
   IsString,
+  IsOptional,
+  IsUUID,
 } from 'class-validator';
 
 export class UpdateServiceProviderSettingsDto {
@@ -12,21 +14,61 @@ export class UpdateServiceProviderSettingsDto {
   contactEmail: string;
 
   @IsString()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @IsString()
-  address: string;
+  @IsOptional()
+  contactPerson?: string;
 
   @IsString()
-  canton: string;
+  @IsOptional()
+  address?: string;
+
+  @IsString()
+  @IsOptional()
+  canton?: string;
 
   @IsArray()
   @IsString({ each: true })
-  serviceCategories: string[];
+  @IsOptional()
+  regionsServed?: string[];
 
   @IsString()
-  deliveryType: string;
+  @IsOptional()
+  description?: string;
 
   @IsString()
-  bookingLink: string;
+  @IsOptional()
+  vatNumber?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  languages?: string[];
+
+  @IsString()
+  @IsOptional()
+  serviceType?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  serviceCategories?: string[];
+
+  @IsString()
+  @IsOptional()
+  deliveryType?: string;
+
+  @IsString()
+  @IsOptional()
+  bookingLink?: string;
+
+  @IsUUID()
+  @IsOptional()
+  logoAssetId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  coverAssetId?: string;
 }

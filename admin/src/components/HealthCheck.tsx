@@ -193,8 +193,8 @@ const HealthCheck: React.FC = () => {
                       {assetData.assetInfo.width && assetData.assetInfo.height && (
                         <span>Dimensions: {assetData.assetInfo.width}×{assetData.assetInfo.height}</span>
                       )}
-                      {assetData.assetInfo.url && (
-                        <span className="break-all">URL: {assetData.assetInfo.url}</span>
+                      {assetData.assetInfo.publicUrl && (
+                        <span className="break-all">URL: {assetData.assetInfo.publicUrl}</span>
                       )}
                     </div>
                   </div>

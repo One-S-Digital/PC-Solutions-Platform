@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateFrontendSettingsDto } from './dto/update-frontend-settings.dto';
 import { UploadService } from '../upload/upload.service';
-import { AssetKind } from '@repo/types';
+import { AssetKind } from '@workspace/types';
 
 @Injectable()
 export class FrontendSettingsService {
@@ -40,6 +40,7 @@ export class FrontendSettingsService {
       logoAsset: settings.logoAsset,
       faviconAsset: settings.faviconAsset,
       ogImageAsset: settings.ogImageAsset,
+      sidebarLogoAsset: settings.sidebarLogoAsset,
     };
   }
 
@@ -51,6 +52,7 @@ export class FrontendSettingsService {
         ogImageAsset: true,
         adminLogoAsset: true,
         adminFaviconAsset: true,
+        sidebarLogoAsset: true,
       },
     });
     
@@ -76,6 +78,7 @@ export class FrontendSettingsService {
           ogImageAsset: true,
           adminLogoAsset: true,
           adminFaviconAsset: true,
+          sidebarLogoAsset: true,
         },
       });
     }
@@ -96,6 +99,7 @@ export class FrontendSettingsService {
           ogImageAsset: true,
           adminLogoAsset: true,
           adminFaviconAsset: true,
+          sidebarLogoAsset: true,
         },
       });
     } else {
@@ -109,6 +113,7 @@ export class FrontendSettingsService {
           ogImageAsset: true,
           adminLogoAsset: true,
           adminFaviconAsset: true,
+          sidebarLogoAsset: true,
         },
       });
     }
@@ -116,9 +121,9 @@ export class FrontendSettingsService {
     return settings;
   }
 
-  async uploadLogo(file: Express.Multer.File, uploadedBy: string) {
+  async uploadLogo(file: Express.Multer.File, uploadedById: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_LOGO);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.FRONTEND_LOGO);
 
     // Update frontend settings with new logo
     const settings = await this.getSettings();
@@ -130,9 +135,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadFavicon(file: Express.Multer.File, uploadedBy: string) {
+  async uploadFavicon(file: Express.Multer.File, uploadedById: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_FAVICON);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.FRONTEND_FAVICON);
 
     // Update frontend settings with new favicon
     const settings = await this.getSettings();
@@ -144,9 +149,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadOgImage(file: Express.Multer.File, uploadedBy: string) {
+  async uploadOgImage(file: Express.Multer.File, uploadedById: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.FRONTEND_OG_IMAGE);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.FRONTEND_OG_IMAGE);
 
     // Update frontend settings with new OG image
     const settings = await this.getSettings();
@@ -158,9 +163,9 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadAdminLogo(file: Express.Multer.File, uploadedBy: string) {
+  async uploadAdminLogo(file: Express.Multer.File, uploadedById: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.ADMIN_LOGO);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.ADMIN_LOGO);
 
     // Update frontend settings with new admin logo
     const settings = await this.getSettings();
@@ -172,15 +177,29 @@ export class FrontendSettingsService {
     return uploadResult;
   }
 
-  async uploadAdminFavicon(file: Express.Multer.File, uploadedBy: string) {
+  async uploadAdminFavicon(file: Express.Multer.File, uploadedById: string) {
     // Use the existing upload service
-    const uploadResult = await this.uploadService.uploadFile(file, uploadedBy, AssetKind.ADMIN_FAVICON);
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.ADMIN_FAVICON);
 
     // Update frontend settings with new admin favicon
     const settings = await this.getSettings();
     await this.prisma.frontendSettings.update({
       where: { id: settings.id },
       data: { adminFaviconAssetId: uploadResult.asset.id },
+    });
+
+    return uploadResult;
+  }
+
+  async uploadSidebarLogo(file: Express.Multer.File, uploadedById: string) {
+    // Use the existing upload service
+    const uploadResult = await this.uploadService.uploadFile(file, uploadedById, AssetKind.SIDEBAR_LOGO);
+
+    // Update frontend settings with new sidebar logo
+    const settings = await this.getSettings();
+    await this.prisma.frontendSettings.update({
+      where: { id: settings.id },
+      data: { sidebarLogoAssetId: uploadResult.asset.id },
     });
 
     return uploadResult;

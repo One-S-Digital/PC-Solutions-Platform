@@ -45,6 +45,20 @@ services:
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD:-devpassword}"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
   api:
     build:
       context: ./api
@@ -52,6 +66,9 @@ services:
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://pc_solutions_user:pc_solutions_password@postgres:5432/pc_solutions_dev
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=devpassword
       - CLAMAV_HOST=clamav
       - CLAMAV_PORT=3310
       - UPLOAD_MODE=local
@@ -72,6 +89,8 @@ services:
         condition: service_healthy
       mailpit:
         condition: service_started
+      redis:
+        condition: service_healthy
     volumes:
       - ./api/uploads:/app/uploads
       - ./api:/app
@@ -81,3 +100,4 @@ services:
 volumes:
   postgres_data:
   clamav_data:
+  redis_data:

@@ -6,7 +6,7 @@ This guide provides detailed instructions for setting up environment variables f
 
 ### 1. API Environment Variables
 
-Create a `.env` file in `apps/api/` with the following variables:
+Create a `.env` file in `api/` with the following variables:
 
 ```bash
 # Database
@@ -32,6 +32,22 @@ STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret_here
 
 # Translation Service (DeepL)
 DEEPL_API_KEY=your_deepl_api_key_here
+
+# Email Services
+# SendGrid (for all emails except support tickets)
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+
+# Mailgun (for support ticket emails only)
+MAILGUN_API_KEY=your_mailgun_api_key_here
+MAILGUN_DOMAIN=your_domain.com  # e.g., mg.yourdomain.com
+
+# Email Configuration (used by both services)
+FROM_EMAIL=noreply@yourdomain.com
+FROM_NAME="Pro Crèche Solutions"
+
+# Frontend URLs (for email links)
+FRONTEND_URL=http://localhost:3000
+ADMIN_URL=http://localhost:3001
 
 # Monitoring
 PROMETHEUS_SCRAPE_TOKEN=your_prometheus_token_here
@@ -93,6 +109,13 @@ In your Render API service, set the following environment variables:
 | `STRIPE_SECRET_KEY` | Stripe secret key (production) | `sk_live_...` |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | `whsec_...` |
 | `DEEPL_API_KEY` | DeepL API key for translations | `your_deepl_key` |
+| `SENDGRID_API_KEY` | SendGrid API key (for all emails except support tickets) | `SG.xxx...` |
+| `MAILGUN_API_KEY` | Mailgun API key (for support ticket emails only) | `your_mailgun_key` |
+| `MAILGUN_DOMAIN` | Mailgun verified domain | `mg.yourdomain.com` |
+| `FROM_EMAIL` | Default sender email address | `noreply@yourdomain.com` |
+| `FROM_NAME` | Default sender name | `Pro Crèche Solutions` |
+| `FRONTEND_URL` | Frontend URL for email links | `https://app.yourdomain.com` |
+| `ADMIN_URL` | Admin URL for email links | `https://admin.yourdomain.com` |
 | `PROMETHEUS_SCRAPE_TOKEN` | Token for metrics scraping | `random_token_string` |
 
 ### 3. Frontend Service Environment Variables

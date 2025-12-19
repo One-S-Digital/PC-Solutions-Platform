@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
-import { ConversationType, MessageType } from '@repo/types';
+import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsUrl, Matches } from 'class-validator';
+import { ConversationType, MessageType } from '@workspace/types';
 
 export class CreateConversationDto {
   @IsEnum(ConversationType)
@@ -23,10 +23,30 @@ export class CreateMessageDto {
   @IsString()
   receiverId?: string;
 
+  @IsOptional()
   @IsString()
-  content: string;
+  content?: string;
 
   @IsOptional()
   @IsEnum(MessageType)
   messageType?: MessageType;
+
+  @IsOptional()
+  @IsString()
+  fileUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^[a-zA-Z0-9._-]+$/, {
+    message: 'fileName must contain only alphanumeric characters, dots, hyphens, and underscores'
+  })
+  fileName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  fileSize?: number;
+
+  @IsOptional()
+  @IsString()
+  mimeType?: string;
 }

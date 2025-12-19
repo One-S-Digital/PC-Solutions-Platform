@@ -1,0 +1,200 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { MagnifyingGlassIcon, BellIcon, ChevronDownIcon, ArrowLeftIcon, ShoppingCartIcon, UserCircleIcon, CogIcon, Bars3Icon } from '@heroicons/react/24/outline'; // Added Bars3Icon
+import { useAppContext } from '../../contexts/AppContext';
+import { useCart } from '../../contexts/CartContext';
+import { useMessaging } from '../../contexts/MessagingContext';
+import { ICON_INPUT_FIELD } from '../../constants';
+import { useNavigate, Link } from 'react-router-dom';
+import OrderSummaryDrawer from '../cart/OrderSummaryDrawer';
+import { UserRole, AppNotification } from '../../types';
+import { useNotifications } from '../../contexts/NotificationContext';
+import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
+import { useTranslation } from 'react-i18next'; // Import useTranslation
+
+interface NavbarProps {
+  onMobileMenuToggle: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
+  const { t } = useTranslation(['dashboard', 'common']); // Initialize useTranslation
+  const { currentUser, logout } = useAppContext();
+  const { getCartItemCount } = useCart();
+  const { conversations, getUnreadCountForConversation } = useMessaging();
+  const { notifications, removeNotification } = useNotifications();
+  
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const cartItemCount = getCartItemCount();
+
+  const totalUnreadMessages = useMemo(() => {
+    if (!currentUser) return 0;
+    return conversations.reduce((acc, conv) => acc + getUnreadCountForConversation(conv.id), 0);
+  }, [conversations, getUnreadCountForConversation, currentUser]);
+
+  const totalNotificationsCount = notifications.length + totalUnreadMessages;
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setDropdownOpen(false);
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Navigate to login even if logout fails
+      navigate('/login', { replace: true });
+    }
+  };
+
+  return (
+    <>
+      <header className="h-14 sm:h-16 lg:h-20 bg-white border-b border-gray-200/80 flex items-center justify-between px-2 sm:px-4 lg:px-8 shadow-minimal">
+        <div className="flex items-center">
+          {/* Hamburger Menu Button - Mobile Only */}
+          <button
+            type="button"
+            className="md:hidden p-1.5 sm:p-2 -ml-1 sm:-ml-2 mr-1 sm:mr-2 rounded-md text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-swiss-mint"
+            onClick={onMobileMenuToggle}
+            aria-label={t('navbar.toggleNavigation')}
+          >
+            <Bars3Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+          </button>
+
+          <button
+            onClick={() => navigate(-1)}
+            className="p-1.5 sm:p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-swiss-mint/50 transition-colors mr-0 sm:mr-2 lg:mr-4"
+            aria-label={t('navbar.goBackPreviousPage')}
+          >
+            <ArrowLeftIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+          </button>
+          <div className="relative hidden md:block">
+            <div className="absolute inset-y-0 left-0 pl-3 lg:pl-3.5 flex items-center pointer-events-none">
+              <MagnifyingGlassIcon className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder={t('navbar.searchPlaceholder')}
+              className={`${ICON_INPUT_FIELD} w-40 md:w-56 lg:w-80 leading-5 text-xs md:text-sm transition-colors`}
+              aria-label={t('navbar.searchPlaceholder')}
+            />
+          </div>
+        </div>
+        <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3 xl:space-x-4">
+          <LanguageSwitcher />
+
+          {currentUser?.role === UserRole.FOUNDATION && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-1.5 sm:p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none transition-colors"
+              aria-label={t('navbar.viewShoppingCart')}
+            >
+              <ShoppingCartIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-0.5 sm:-top-1 -right-1 sm:-right-1.5 flex items-center justify-center h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-swiss-coral text-white text-[10px] sm:text-xs font-bold">
+                  {cartItemCount}
+                </span>
+              )}
+            </button>
+          )}
+
+          <div className="relative">
+              <button 
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="relative p-1.5 sm:p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none transition-colors"
+                  aria-label={t('navbar.notifications')}
+              >
+                <BellIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                {totalNotificationsCount > 0 && (
+                    <span className="absolute -top-0.5 sm:-top-1 -right-1 sm:-right-1.5 block h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-swiss-coral ring-2 ring-white"></span>
+                )}
+              </button>
+               {notificationsOpen && (
+                <div 
+                  onMouseLeave={() => setNotificationsOpen(false)}
+                  className="origin-top-right absolute right-0 mt-2 w-64 sm:w-80 rounded-card shadow-soft bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 py-2"
+                >
+                  <div className="px-4 py-2 text-sm font-medium text-swiss-charcoal border-b border-gray-200">
+                    {t('navbar.notificationsCount', { count: totalNotificationsCount })}
+                  </div>
+                  <div className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
+                      {notifications.map(notif => (
+                           <div key={notif.id} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
+                              <Link to={notif.link || '#'} className="block" onClick={() => { setNotificationsOpen(false); if(!notif.link) removeNotification(notif.id); }}>
+                                <p className={`font-medium ${notif.type === 'error' ? 'text-red-600' : notif.type === 'warning' ? 'text-yellow-600' : 'text-swiss-charcoal'}`}>{notif.title}</p>
+                                <p className="text-xs text-gray-500">{notif.message}</p>
+                              </Link>
+                                <button onClick={() => removeNotification(notif.id)} className="text-xs text-gray-400 hover:text-red-500 mt-1 float-right">
+                                  {t('common:buttons.dismiss')}
+                                </button>
+                          </div>
+                      ))}
+                      {totalUnreadMessages > 0 && (
+                         <Link to="/messages" className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setNotificationsOpen(false)}>
+                            <p className="font-medium text-swiss-teal">{t('navbar.newMessages')}</p>
+                            <p className="text-xs text-gray-500">{t('navbar.unreadMessages', { count: totalUnreadMessages })}</p>
+                        </Link>
+                      )}
+                      {notifications.length === 0 && totalUnreadMessages === 0 && (
+                         <p className="px-4 py-3 text-sm text-gray-500 text-center">{t('navbar.noNewNotifications')}</p>
+                      )}
+                  </div>
+                   {(notifications.length > 0 || totalUnreadMessages > 0) &&
+                        <Link to="/notifications" className="block px-4 py-2 text-center text-sm font-medium text-swiss-mint hover:underline" onClick={() => setNotificationsOpen(false)}>
+                          {t('navbar.viewAll')}
+                        </Link>
+                   }
+                </div>
+              )}
+          </div>
+          
+          {currentUser && (
+            <div className="relative">
+              <button 
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint/50 p-0.5"
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+                aria-label={t('navbar.userMenu')}
+              >
+                <img 
+                  className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full border-2 border-transparent hover:border-swiss-mint/30" 
+                  src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`}
+                  alt={currentUser.name} 
+                />
+                <span className="ml-2 lg:ml-2.5 hidden lg:block text-swiss-charcoal font-medium text-sm">{currentUser.name}</span>
+                <ChevronDownIcon className="ml-1 lg:ml-1.5 h-4 w-4 lg:h-5 lg:w-5 text-gray-400 hidden lg:block" />
+              </button>
+              {dropdownOpen && (
+                <div 
+                  onMouseLeave={() => setDropdownOpen(false)}
+                  className="origin-top-right absolute right-0 mt-2 w-48 sm:w-56 rounded-card shadow-soft bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 py-1"
+                  role="menu"
+                >
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-200">
+                      <p className="text-xs sm:text-sm font-medium text-swiss-charcoal truncate">{currentUser.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
+                  </div>
+                  <Link to="/settings" role="menuitem" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-swiss-mint transition-colors" onClick={() => setDropdownOpen(false)}>
+                    {t('dashboard:sidebar.settings')}
+                  </Link>
+                  <button 
+                    role="menuitem"
+                    onClick={handleLogout} 
+                    className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors border-t border-gray-100"
+                  >
+                    {t('navbar.signOut')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+      <OrderSummaryDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
+  );
+};
+
+export default Navbar;

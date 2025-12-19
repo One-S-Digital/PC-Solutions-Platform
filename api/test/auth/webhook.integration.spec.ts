@@ -108,7 +108,7 @@ describe('Webhook Integration Tests', () => {
       
       // Verify user created
       const appUser = await prisma.appUser.findUnique({
-        where: { clerkUserId: userId }
+        where: { clerkId: userId }
       });
       
       expect(appUser).toBeTruthy();
@@ -117,6 +117,7 @@ describe('Webhook Integration Tests', () => {
       // Cleanup
       if (appUser) {
         await prisma.appUser.delete({ where: { id: appUser.id } });
+        await prisma.user.delete({ where: { clerkId: userId } }).catch(() => {});
       }
     });
 
@@ -149,7 +150,7 @@ describe('Webhook Integration Tests', () => {
       
       // Verify user created with default role
       const appUser = await prisma.appUser.findUnique({
-        where: { clerkUserId: userId }
+        where: { clerkId: userId }
       });
       
       expect(appUser).toBeTruthy();
@@ -158,6 +159,7 @@ describe('Webhook Integration Tests', () => {
       // Cleanup
       if (appUser) {
         await prisma.appUser.delete({ where: { id: appUser.id } });
+        await prisma.user.delete({ where: { clerkId: userId } }).catch(() => {});
       }
     });
   });
@@ -203,13 +205,14 @@ describe('Webhook Integration Tests', () => {
       
       // Verify only one user created
       const count = await prisma.appUser.count({
-        where: { clerkUserId: userId }
+        where: { clerkId: userId }
       });
       
       expect(count).toBe(1);
       
       // Cleanup
-      await prisma.appUser.deleteMany({ where: { clerkUserId: userId } });
+      await prisma.appUser.deleteMany({ where: { clerkId: userId } });
+      await prisma.user.deleteMany({ where: { clerkId: userId } });
     });
   });
 });

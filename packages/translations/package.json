@@ -1,0 +1,73 @@
+{
+  "name": "@workspace/translations",
+  "version": "1.0.0",
+  "description": "Shared translation package for Swiss terminology and common translations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "i18next": "^23.7.6",
+    "react-i18next": "^13.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0"
+  },
+  "files": [
+    "dist",
+    "locales"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./locales/*": "./locales/*",
+    "./locales/en/common.json": "./locales/en/common.json",
+    "./locales/en/auth.json": "./locales/en/auth.json",
+    "./locales/en/dashboard.json": "./locales/en/dashboard.json",
+    "./locales/en/pricing.json": "./locales/en/pricing.json",
+    "./locales/en/signup.json": "./locales/en/signup.json",
+    "./locales/en/parentLeadForm.json": "./locales/en/parentLeadForm.json",
+    "./locales/en/marketplace.json": "./locales/en/marketplace.json",
+    "./locales/en/recruitment.json": "./locales/en/recruitment.json",
+    "./locales/en/users.json": "./locales/en/users.json",
+    "./locales/en/content.json": "./locales/en/content.json",
+    "./locales/en/messages.json": "./locales/en/messages.json",
+    "./locales/en/admin.json": "./locales/en/admin.json",
+    "./locales/en/settings.json": "./locales/en/settings.json",
+    "./locales/en/profile.json": "./locales/en/profile.json",
+    "./locales/fr/common.json": "./locales/fr/common.json",
+    "./locales/fr/auth.json": "./locales/fr/auth.json",
+    "./locales/fr/dashboard.json": "./locales/fr/dashboard.json",
+    "./locales/fr/pricing.json": "./locales/fr/pricing.json",
+    "./locales/fr/signup.json": "./locales/fr/signup.json",
+    "./locales/fr/parentLeadForm.json": "./locales/fr/parentLeadForm.json",
+    "./locales/fr/marketplace.json": "./locales/fr/marketplace.json",
+    "./locales/fr/recruitment.json": "./locales/fr/recruitment.json",
+    "./locales/fr/users.json": "./locales/fr/users.json",
+    "./locales/fr/content.json": "./locales/fr/content.json",
+    "./locales/fr/messages.json": "./locales/fr/messages.json",
+    "./locales/fr/admin.json": "./locales/fr/admin.json",
+    "./locales/fr/settings.json": "./locales/fr/settings.json",
+    "./locales/fr/profile.json": "./locales/fr/profile.json",
+    "./locales/de/common.json": "./locales/de/common.json",
+    "./locales/de/auth.json": "./locales/de/auth.json",
+    "./locales/de/dashboard.json": "./locales/de/dashboard.json",
+    "./locales/de/pricing.json": "./locales/de/pricing.json",
+    "./locales/de/signup.json": "./locales/de/signup.json",
+    "./locales/de/parentLeadForm.json": "./locales/de/parentLeadForm.json",
+    "./locales/de/marketplace.json": "./locales/de/marketplace.json",
+    "./locales/de/recruitment.json": "./locales/de/recruitment.json",
+    "./locales/de/users.json": "./locales/de/users.json",
+    "./locales/de/content.json": "./locales/de/content.json",
+    "./locales/de/messages.json": "./locales/de/messages.json",
+    "./locales/de/admin.json": "./locales/de/admin.json",
+    "./locales/de/settings.json": "./locales/de/settings.json",
+    "./locales/de/profile.json": "./locales/de/profile.json"
+  }
+}

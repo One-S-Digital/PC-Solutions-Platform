@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
-import { CourseStatus } from '@repo/types';
+import { CourseStatus } from '@workspace/types';
 
 export class UpdateCourseDto {
   @IsOptional()

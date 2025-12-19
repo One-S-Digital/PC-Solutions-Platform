@@ -1,0 +1,1520 @@
+{
+  "adminContentManagementDashboardPage": {
+    "addContent": "Add Content",
+    "announcements": "Announcements",
+    "content": "Content Overview",
+    "editContent": "Edit Content",
+    "policies": "Policy Management",
+    "title": "Content Management"
+  },
+  "adminDiscountTerminationsPage": {
+    "manage": "Manage Terminations",
+    "terminations": "Active Terminations",
+    "title": "Discount Terminations"
+  },
+  "adminPlatformSettings": {
+    "branding": {
+      "faviconLabel": "Favicon",
+      "logoLabel": "Platform Logo",
+      "title": "Branding"
+    },
+    "general": {
+      "descriptionLabel": "Platform Description",
+      "nameLabel": "Platform Name",
+      "title": "General Settings"
+    },
+    "title": "Platform Settings"
+  },
+  "adminSystemMonitoringPage": {
+    "appPerformance": {
+      "activeUsers": "Active Users",
+      "avgResponseTime": "Average Response Time",
+      "errorRate": "Error Rate",
+      "requestsPerMinute": "Requests per Minute",
+      "title": "Application Performance"
+    },
+    "components": {
+      "api": "API",
+      "authService": "Auth Service",
+      "database": "Database"
+    },
+    "databasePerformance": {
+      "activeConnections": "Active Connections",
+      "connectionHealth": "Connection Health",
+      "degraded": "Degraded",
+      "healthy": "Healthy",
+      "queryTime": "Query Time",
+      "storage": "Storage",
+      "title": "Database Performance"
+    },
+    "eventTypes": {
+      "error": "Error",
+      "info": "Information",
+      "warning": "Warning"
+    },
+    "metadata": {
+      "environment": "Environment",
+      "lastCheck": "Last Check",
+      "uptime": "Uptime",
+      "version": "Version"
+    },
+    "overallStatus": {
+      "degraded": "Degraded",
+      "down": "Down",
+      "operational": "Operational",
+      "title": "Overall System Status"
+    },
+    "rawLogConsole": {
+      "emptyLogMessage": "No logs available",
+      "tabs": {
+        "all": "All Logs",
+        "errors": "Errors",
+        "info": "Info",
+        "warnings": "Warnings"
+      },
+      "title": "Raw Log Console"
+    },
+    "recentEvents": {
+      "title": "Recent Events"
+    },
+    "serverPerformance": {
+      "cpuUsage": "CPU Usage",
+      "diskUsage": "Disk Usage",
+      "memoryUsage": "Memory Usage",
+      "title": "Server Performance",
+      "uptimeDays": "Uptime (Days)"
+    }
+  },
+  "candidateProfilePage": {
+    "experience": "Work Experience",
+    "title": "Candidate Profile"
+  },
+  "common": {
+    "description": "Description",
+    "status": "Status",
+    "title": "Title"
+  },
+  "content": {
+    "accessRoles": "Access Roles",
+    "allowedEl": "PDF, MP4, DOCX files allowed",
+    "allowedHr": "PDF, DOCX files allowed",
+    "browse": "Browse",
+    "country": "Country",
+    "critical": "Critical",
+    "criticality": "Criticality",
+    "currentFile": "Current File: {{url}}",
+    "effectiveDate": "Effective Date",
+    "expirationDate": "Expiration Date",
+    "externalVideoUrl": "External Video URL (YouTube, Vimeo, etc.)",
+    "fileType": "File Type",
+    "linkUrl": "Link URL",
+    "markCritical": "Mark as Critical",
+    "normal": "Normal",
+    "numLessons": "Number of Lessons",
+    "orDragDrop": "or drag and drop",
+    "policyLink": "Link to Official Policy (optional)",
+    "policyType": "Policy Type",
+    "preview": "Content Preview",
+    "region": "Region/Canton",
+    "reviewDate": "Review Date",
+    "selected": "Selected:",
+    "supportsVideoHelp": "Supports YouTube, Vimeo, and direct video URLs",
+    "type": "Content Type",
+    "upload": "Upload",
+    "uploadFile": "Upload File",
+    "uploadTypeFile": "Upload {{type}} File",
+    "uploadVideo": "Upload Video File",
+    "uploading": "Uploading...",
+    "version": "Version",
+    "videoSource": "Video Source",
+    "videoUrl": "Video URL",
+    "policyCategory": {
+      "EducationPolicy": "Education Policy",
+      "Health&Safety": "Health & Safety",
+      "Labor&Employment": "Labor & Employment",
+      "ChildProtection": "Child Protection",
+      "DataPrivacy": "Data Privacy",
+      "Environmental": "Environmental",
+      "Other": "Other"
+    }
+  },
+  "dashboardDetailPage": {
+    "activeUsers": {
+      "aliceActivity": "Alice Activity",
+      "bobActivity": "Bob Activity",
+      "carolActivity": "Carol Activity",
+      "davidActivity": "David Activity",
+      "recentActivity": "Recent Activity",
+      "totalToday": "Total Today"
+    },
+    "defaultTitle": "Default Title",
+    "detailsFor": "Details For",
+    "newOrders": {
+      "artFunPack": "Art Fun Pack",
+      "ecotoysBlocks": "Ecotoys Blocks",
+      "freshBitesMeal": "Fresh Bites Meal",
+      "order789": "Order789",
+      "order790": "Order790",
+      "order791": "Order791",
+      "recentOrders": "Recent Orders",
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending"
+      },
+      "table": {
+        "amount": "Amount",
+        "orderId": "Order Id",
+        "product": "Product",
+        "status": "Status"
+      },
+      "totalThisWeek": "Total This Week"
+    },
+    "noSpecificView": "No  Specific View",
+    "openJobs": {
+      "applications": "Applications",
+      "assistantEducatorLausanne": "Assistant Educator Lausanne",
+      "currentPositions": "Current Positions",
+      "daycareDirectorZurich": "Daycare Director Zurich",
+      "leadEducatorGeneva": "Lead Educator Geneva",
+      "status": {
+        "interviewing": "Interviewing",
+        "open": "Open"
+      },
+      "totalOpenPositions": "Total Open Positions"
+    },
+    "pageViews": {
+      "avgSession": "Avg Session",
+      "dashboardViews": "Dashboard Views",
+      "keyMetrics": "Key Metrics",
+      "mockChartText": "Mock Chart Text",
+      "mostViewed": "Most Viewed",
+      "sessionDuration": "Session Duration",
+      "totalToday": "Total Today",
+      "uniqueVisitors": "Unique Visitors"
+    }
+  },
+  "dashboardPage": {
+    "activeUsers": "active Users",
+    "activityEcoToys": "EcoToys submitted a new product",
+    "activityJohn": "John applied for the educator position",
+    "activityLina": "Lina uploaded a new policy document",
+    "activityParent": "A parent submitted a new enquiry",
+    "announcements": "Announcements",
+    "browseMarketplace": "Browse Marketplace",
+    "defaultUser": "User",
+    "manageUsers": "Manage Users",
+    "newOrders": "new Orders",
+    "notifications": "Notifications",
+    "openJobs": "open Jobs",
+    "overview": "Overview",
+    "overviewSubtitle": "Here's what's happening with {{appName}} today",
+    "pageViews": "page Views",
+    "platformSettings": "Platform Settings",
+    "postNewJob": "Post New Job",
+    "quickActions": "Quick Actions",
+    "quickLinks": "Quick Links",
+    "recentActivity": "Recent Activity",
+    "timeAgo": {
+      "days": "{{count}} days ago",
+      "hours": "{{count}} hours ago",
+      "minutes": "{{count}} minutes ago",
+      "yesterday": "Yesterday"
+    },
+    "upcomingMeetings": "Upcoming Meetings",
+    "viewDetailsFor": "View details for",
+    "welcome": "Welcome back, {{name}}!"
+  },
+  "designSystemPage": {
+    "(240)": "(240)",
+    "Branding": "Branding",
+    "Favicon": "Favicon",
+    "Refresh": "Refresh",
+    "SUPER_ADMIN": "SUPER_ADMIN",
+    "Show": "Show",
+    "View Favorites TBD": "View Favorites TBD",
+    "buttons": {
+      "disabledState": "Disabled State",
+      "extraSmall": "Extra Small",
+      "large": "Large",
+      "leftIcon": "Left Icon",
+      "mediumDefault": "Medium (Default)",
+      "outlineDisabled": "Outline Disabled",
+      "primaryDisabled": "Primary Disabled",
+      "rightIcon": "Right Icon",
+      "secondaryDisabled": "Secondary Disabled",
+      "small": "Small",
+      "smallIcon": "Small Icon",
+      "withIcons": "With Icons"
+    },
+    "cards": {
+      "hoverEffectCard": "Hover Effect Card",
+      "hoverEffectCardDesc": "This card has a subtle scale and shadow transition on hover, useful for interactive elements.",
+      "standardCard": "Standard Card",
+      "standardCardDesc": "This is a standard card component with a soft shadow. It's the base for most content containers."
+    },
+    "description": "A living reference for all UI components and design tokens in the Pro Crèche Solutions application.",
+    "formControls": {
+      "disabledInput": "Disabled Input",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "quantityInput": "Quantity Input",
+      "selectMenu": "Select Menu",
+      "textInput": "Text Input",
+      "title": "Form Controls"
+    },
+    "keys)": "keys)",
+    "loaded": "loaded",
+    "sidebar.parentLeads": "Parent Leads",
+    "sidebar.products": "Products",
+    "sidebar.services": "Services",
+    "tabs": {
+      "content1": "This is the content for Tab 1.",
+      "content2": "This is the content for Tab 2.",
+      "content3": "This is a disabled tab.",
+      "lineVariant": "Line Variant",
+      "pillsVariant": "Pills Variant (Default)",
+      "tab1": "Tab 1",
+      "tab2": "Tab 2",
+      "tab3": "Tab 3",
+      "title": "Tabs"
+    },
+    "title": "Design System",
+    "typography": {
+      "bodyBase": "Body Text (Base): Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+      "bodySmall": "Body Text (Small): Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
+      "fontFamily": "Font Family: Nunito, Inter, sans-serif",
+      "heading1": "Heading 1: The quick brown fox",
+      "heading2": "Heading 2: The quick brown fox",
+      "heading3": "Heading 3: The quick brown fox",
+      "heading4": "Heading 4: The quick brown fox",
+      "link": "This is a link"
+    }
+  },
+  "eLearningPage": {
+    "actions": {
+      "downloadPdf": "Download PDF",
+      "openLink": "Open Link",
+      "viewCourse": "View Course",
+      "watchVideo": "Watch Video"
+    },
+    "addNewContentButton": "Add New Content",
+    "categoryLabel": "Category",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "coursesTitle": "Courses",
+    "durationLabel": "Duration",
+    "externalLinksTitle": "External Links",
+    "itemType": {
+      "courses": "Courses",
+      "links": "External Links",
+      "pdfs": "PDFs",
+      "videos": "Videos"
+    },
+    "languageLabel": "Language",
+    "lessonsCount": "{{count}} lessons",
+    "noContentFound": "No content found",
+    "noItemsFound": "No items found",
+    "pdfsTitle": "PDFs",
+    "searchPlaceholder": "Search content...",
+    "title": "E-Learning",
+    "updatedLabel": "Updated",
+    "videosTitle": "Videos",
+    "viewingAlert": "You are viewing external content"
+  },
+  "educatorApplicationsPage": {
+    "emptyState": "No applications found",
+    "footerNote": "Applications are updated in real-time",
+    "status": {
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "reviewed": "Reviewed"
+    },
+    "table": {
+      "actions": "Actions",
+      "creche": "Crèche",
+      "jobTitle": "Job Title",
+      "lastUpdated": "Last Updated",
+      "status": "Status"
+    },
+    "title": "My Applications",
+    "viewingDetailsFor": "Viewing details for"
+  },
+  "educatorDashboard": {
+    "applicationStatus": {
+      "button": "View All Applications",
+      "interviews": "Interviews",
+      "offers": "Offers",
+      "submitted": "Submitted",
+      "title": "Application Status",
+      "viewed": "Viewed"
+    },
+    "profileCompletion": {
+      "button": "Complete Profile",
+      "subtitle": "Complete your profile to increase your chances of getting hired",
+      "title": "Complete Your Profile"
+    },
+    "recommendations": {
+      "match": "Match",
+      "title": "Recommended Jobs"
+    },
+    "skills": {
+      "button": "Update Skills",
+      "subtitle": "Keep your skills and qualifications up to date",
+      "title": "Skills & Qualifications"
+    },
+    "title": "Educator Dashboard",
+    "welcome": "Welcome back! Here's an overview of your job applications and profile."
+  },
+  "educatorDashboardPage": {
+    "applications": "My Applications",
+    "jobBoard": "Job Board",
+    "title": "Educator Dashboard",
+    "welcome": "Welcome to your educator dashboard"
+  },
+  "educatorJobBoardPage": {
+    "errors": {
+      "loadJobs": "Unable to load job listings."
+    },
+    "noJobsFound": "No jobs found",
+    "postedOn": "Posted on {{date}}",
+    "searchPlaceholder": "Search jobs...",
+    "title": "Job Listings",
+    "unknownFoundation": "Unknown foundation"
+  },
+  "educatorProfilePage": {
+    "availability": {
+      "ageGroups": "Age Groups",
+      "contract": "Contract",
+      "days": "Days",
+      "times": "Times",
+      "title": "Availability"
+    },
+    "bio": {
+      "empty": "No bio information yet.",
+      "title": "About Me"
+    },
+    "certifications": {
+      "empty": "No certifications added yet.",
+      "expires": "Expires",
+      "issued": "Issued",
+      "title": "Certifications"
+    },
+    "documents": {
+      "empty": "No documents uploaded yet.",
+      "title": "Documents"
+    },
+    "editProfile": "Edit Profile",
+    "education": {
+      "empty": "No education added yet.",
+      "graduated": "Graduated",
+      "title": "Education"
+    },
+    "experience": {
+      "empty": "No experience added yet.",
+      "title": "Experience"
+    },
+    "loadError": "Unable to load profile.",
+    "locationUnknown": "Location not provided",
+    "notProvided": "Not provided",
+    "roleUnknown": "Role not specified",
+    "saveSuccess": "Profile changes saved!",
+    "skills": {
+      "empty": "No skills listed yet.",
+      "title": "Skills"
+    }
+  },
+  "educatorSupportPage": {
+    "faq": {
+      "findJobs": {
+        "a": "Browse the Job Board to see all available positions. You can filter by location, contract type, and other criteria. Click on a job to view details and apply.",
+        "q": "How do I find job openings?"
+      },
+      "notifications": {
+        "a": "Go to Settings > Notification Preferences to customize which notifications you receive via email or in-app.",
+        "q": "How do I manage notifications?"
+      },
+      "trackApplications": {
+        "a": "View all your applications in the My Applications section. You can see the status of each application and any updates from employers.",
+        "q": "How do I track my job applications?"
+      },
+      "updateProfile": {
+        "a": "Go to your profile page to update your skills, qualifications, experience, and availability. A complete profile increases your chances of being matched with suitable positions.",
+        "q": "How do I update my profile?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Please provide detailed information about your issue",
+      "subjectPlaceholder": "Brief description of your issue"
+    },
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
+  },
+  "fileGalleryPage": {
+    "files": "All Files",
+    "title": "File Gallery",
+    "upload": "Upload Files"
+  },
+  "foundationAnalyticsPage": {
+    "completed": "Completed",
+    "conversionRate": "Conversion Rate",
+    "enrolled": "Enrolled",
+    "enrollmentTrend": "Enrollment Trend",
+    "inProgress": "In Progress",
+    "last30Days": "Last 30 Days",
+    "last6Months": "Last 6 Months",
+    "last7Days": "Last 7 Days",
+    "last90Days": "Last 90 Days",
+    "lastYear": "Last Year",
+    "leadFunnel": "Lead Funnel",
+    "mockDataVisualization": "Mock Data Visualization",
+    "monthlyEnrollment": "Monthly Enrollment",
+    "newLeads": "New Leads",
+    "noEnrollmentData": "No Enrollment Data",
+    "noLeadData": "No Lead Data",
+    "noSpendingData": "No Spending Data",
+    "noTrainingData": "No Training Data",
+    "notStarted": "Not Started",
+    "parentLeadConversion": "Parent Lead Conversion",
+    "spendingByCategory": "Spending by Category",
+    "staffTrainingCompletion": "Staff Training Completion",
+    "title": "Analytics",
+    "totalLeads": "Total Leads",
+    "totalSpending": "Total Spending",
+    "trainingCompletion": "Training Completion",
+    "trainingStatus": "Training Status"
+  },
+  "foundationDashboard": {
+    "activity": {
+      "jobApplication": "New job application submitted",
+      "newMessage": "New message received",
+      "noActivity": "No recent activity",
+      "orderConfirmation": "Order confirmation received",
+      "parentInquiry": "New parent inquiry received",
+      "serviceUpdate": "Service request updated",
+      "title": "Recent Activity"
+    },
+    "calendar": {
+      "event1": "Staff meeting",
+      "event2": "Parent consultation",
+      "event3": "Training session",
+      "noEvents": "No events scheduled"
+    },
+    "quickActions": {
+      "addSpot": "Add Spot",
+      "browseMarketplace": "Browse Marketplace",
+      "postJob": "Post Job",
+      "sendMessage": "Send Message",
+      "title": "Quick Actions",
+      "viewAnalytics": "View Analytics",
+      "viewParentLeads": "View Parent Leads"
+    },
+    "quickMessage": {
+      "placeholder": "Type a quick message...",
+      "title": "Quick Message"
+    },
+    "quickStats": {
+      "availableSpots": "Available Spots",
+      "enrolled": "Enrolled",
+      "pendingApps": "Pending Applications",
+      "title": "Quick Stats",
+      "upcomingAppointments": "Upcoming Appointments"
+    },
+    "title": "Foundation Dashboard",
+    "todayAtGlance": "Today at a Glance",
+    "welcomeMessage": "Welcome back {{name}}! Here's an overview of your daycare operations."
+  },
+  "foundationDashboardPage": {
+    "overview": "Overview",
+    "quickActions": "Quick Actions",
+    "recentActivity": "Recent Activity",
+    "title": "Foundation Dashboard",
+    "welcome": "Welcome to your foundation dashboard"
+  },
+  "foundationLeadsPage": {
+    "accessDenied": {
+      "message": "You must be logged in as a Foundation with a valid Organization ID to view this page.",
+      "title": "Access Denied"
+    },
+    "allResponses": "All responses",
+    "allStatuses": "All statuses",
+    "emptyState": {
+      "message": "There are currently no new parent enquiries matching your daycare.",
+      "title": "No Incoming Leads"
+    },
+    "searchPlaceholder": "Search leads...",
+    "title": "Incoming Parent Leads",
+    "totalLeads": "Total leads"
+  },
+  "leadCard": {
+    "status": {
+      "converted": "Converted",
+      "enrolled": "Enrolled",
+      "interested": "Interested",
+      "needsMoreInfo": "Needs More Info",
+      "new": "New",
+      "notInterested": "Not Interested",
+      "notResponded": "Not Responded",
+      "processing": "Processing"
+    }
+  },
+  "foundationOrdersAppointmentsPage": {
+    "cancelOrderAlert": "Order {{orderId}} cancelled successfully",
+    "exportCsvButton": "Export CSV",
+    "exportCsvProductAlert": "Product orders CSV export started",
+    "exportCsvServiceAlert": "Service appointments CSV export started",
+    "noProductOrders": "No product orders found",
+    "noServiceAppointments": "No service appointments found",
+    "notApplicable": "N/A",
+    "preferredAbbr": "Pref.",
+    "productOrdersTab": "Product Orders",
+    "productOrdersTitle": "Product Orders",
+    "rescheduleAlert": "Appointment {{requestId}} rescheduled successfully",
+    "rescheduleButton": "Reschedule",
+    "serviceAppointmentsTab": "Service Appointments",
+    "serviceAppointmentsTitle": "Service Appointments",
+    "table": {
+      "actions": "Actions",
+      "date": "Date",
+      "itemsQty": "Items/Qty",
+      "provider": "Provider",
+      "refNo": "Ref No",
+      "service": "Service",
+      "status": "Status",
+      "supplier": "Supplier",
+      "total": "Total"
+    },
+    "unknownProvider": "Unknown Provider"
+  },
+  "foundationOrganisationProfilePage": {
+    "actions": {
+      "openBookingLink": "Open booking link",
+      "openDirectOrderLink": "Open direct order link"
+    },
+    "alert": {
+      "infoSaved": "Profile information saved successfully"
+    },
+    "empty": {
+      "languages": "No languages added yet.",
+      "organizationName": "Organization name not set",
+      "organizationType": "Organization type not specified",
+      "pedagogy": "No pedagogy styles recorded."
+    },
+    "labels": {
+      "address": "Location",
+      "contactEmail": "Primary email",
+      "contactPerson": "Contact person",
+      "createdAt": "Created",
+      "languages": "Languages",
+      "organizationId": "Organization ID",
+      "pedagogy": "Pedagogy",
+      "phoneNumber": "Phone number",
+      "updatedAt": "Last updated",
+      "vatNumber": "VAT number"
+    },
+    "loadError": "Unable to load organization profile details. Please try again.",
+    "mock": {
+      "pedagogyStatement": "Our pedagogy is based on the principles of respect, creativity, and individual development. We believe in providing a nurturing environment where children can explore, learn, and grow at their own pace."
+    },
+    "notProvided": "Not provided",
+    "saveButton": "Save Profile",
+    "sections": {
+      "branding": {
+        "coverImageLabel": "Cover Image",
+        "logoLabel": "Logo",
+        "pedagogyStatementLabel": "Pedagogy Statement",
+        "pedagogyStatementPlaceholder": "Describe your educational approach and philosophy...",
+        "title": "Branding & Identity"
+      },
+      "contact": {
+        "title": "Contact & Location"
+      },
+      "edit": {
+        "subtitle": "Use the form below to adjust capacity, pedagogy and languages. Changes are saved directly to the database.",
+        "title": "Update core organization profile information"
+      },
+      "metadata": {
+        "title": "Organization metadata"
+      },
+      "online": {
+        "acceptingLeadsLabel": "Accepting New Leads",
+        "bookingLinkLabel": "Booking Link",
+        "bookingLinkPlaceholder": "https://your-booking-system.com",
+        "socialMediaLinkLabel": "Social Media Links",
+        "socialMediaLinkPlaceholder": "Facebook, Instagram, LinkedIn...",
+        "title": "Online Presence"
+      },
+      "operations": {
+        "contactInfoLabel": "Contact Information",
+        "contactInfoPlaceholder": "Phone, email, address...",
+        "openingHoursLabel": "Opening Hours",
+        "openingHoursPlaceholder": "e.g., Monday-Friday 7:00-18:00",
+        "title": "Operations"
+      }
+    },
+    "subtitle": "Review your organization profile details pulled directly from the database.",
+    "title": "Organization Profile"
+  },
+  "foundationSupportPage": {
+    "faq": {
+      "manageLeads": {
+        "a": "You can view and respond to parent leads from your dashboard. Use the quick actions to mark leads as interested, not interested, or request more information.",
+        "q": "How do I manage incoming parent leads?"
+      },
+      "manageProfile": {
+        "a": "Go to Organization Profile to update your branding, contact information, opening hours, and other details that parents see.",
+        "q": "How do I manage my organization profile?"
+      },
+      "recruitment": {
+        "a": "Navigate to Recruitment > Job Listings and click 'Post New Job' to create a job posting. You can view applicants and manage the hiring process from there.",
+        "q": "How do I post job openings?"
+      },
+      "useMarketplace": {
+        "a": "Browse products and services from verified suppliers. Add items to your order cart and submit orders directly through the platform.",
+        "q": "How do I use the marketplace?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Please provide detailed information about your issue",
+      "subjectPlaceholder": "Brief description of your issue"
+    },
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
+  },
+  "hrProceduresPage": {
+    "allDocumentsCategory": "All Documents",
+    "allItemsCount": "{{count}} items",
+    "backToCategoriesButton": "Back to Categories",
+    "categoriesTitle": "Categories",
+    "categoryDisplay": {
+      "documentsCount": "{{count}} documents",
+      "viewCategoryAria": "View category {{category}}"
+    },
+    "confirmDeleteDocument": "Are you sure you want to delete this document?",
+    "documentsInCategoryTitle": "Documents in {{category}}",
+    "noDocumentsAvailable": "No documents available",
+    "noDocumentsInCategory": "No documents in this category",
+    "noDocumentsMatchSearch": "No documents match your search",
+    "searchPlaceholder": "Search documents...",
+    "title": "HR Procedures",
+    "uploadButton": "Upload Document"
+  },
+  "inquiryDetailModal": {
+    "actions": {
+      "contacted": "Mark as Contacted",
+      "decline": "Decline",
+      "markFulfilled": "Mark as Fulfilled",
+      "markPending": "Mark as Pending",
+      "sendQuote": "Send Quote"
+    },
+    "budget": "Budget",
+    "contactInfo": "Contact Information",
+    "date": "Date",
+    "from": "From",
+    "fulfilledAt": "Fulfilled",
+    "inquiryId": "Inquiry ID",
+    "internalNotes": "Internal Notes",
+    "message": "Message",
+    "preferredContact": "Preferred",
+    "productInterest": "Product Interest",
+    "quantity": "Est. Quantity",
+    "quoteAmount": "Quote Amount (CHF)",
+    "quotedAmount": "Quoted Amount",
+    "respondedAt": "First responded",
+    "responseMessage": "Response Message",
+    "responsePlaceholder": "Enter your response to the customer...",
+    "sendResponse": "Send Response",
+    "status": "Status",
+    "title": "Inquiry Details",
+    "urgency": "Urgency",
+    "viewProfile": "View Profile",
+    "yourResponse": "Your Response"
+  },
+  "inquiryStatus": {
+    "cancelled": "Cancelled",
+    "contacted": "Contacted",
+    "declined": "Declined",
+    "fulfilled": "Fulfilled",
+    "new": "New",
+    "pending": "Pending",
+    "quoted": "Quoted"
+  },
+  "inquiryUrgency": {
+    "high": "High",
+    "low": "Low",
+    "medium": "Medium",
+    "urgent": "Urgent"
+  },
+  "loadingStats": "Loading platform statistics...",
+  "marketplacePage": {
+    "ariaLabels": {
+      "gridView": "Switch to grid view",
+      "listView": "Switch to list view"
+    },
+    "buttons": {
+      "partnerOnboarding": "Partner Onboarding"
+    },
+    "emptyStates": {
+      "noProductSuppliers": "No product suppliers available",
+      "noServices": "No services available"
+    },
+    "infoAlert": "Partner Onboarding TBD",
+    "labels": {
+      "category": "Category",
+      "region": "Region",
+      "sortBy": "Sort by",
+      "supplierTags": "Supplier Tags"
+    },
+    "searchPlaceholder": "Search partners...",
+    "sortOptions": {
+      "nameAsc": "Name (A-Z)",
+      "nameDesc": "Name (Z-A)",
+      "ratingDesc": "Rating (High to Low)"
+    },
+    "subtitles": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    },
+    "tabs": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    }
+  },
+  "messagesPage": {
+    "filters": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "newGroupButton": "New Group",
+    "noConversationSelectedSubtitle": "Choose a conversation from the list to view messages",
+    "noConversationSelectedTitle": "Select a conversation to start messaging",
+    "noConversationsFound": "No conversations found",
+    "noConversationsYet": "No conversations yet",
+    "title": "Messages"
+  },
+  "navbar": {
+    "goBackPreviousPage": "Go back to previous page",
+    "newMessages": "New messages",
+    "noNewNotifications": "No new notifications",
+    "notifications": "Notifications",
+    "notificationsCount": "{{count}} notifications",
+    "searchPlaceholder": "Search...",
+    "signOut": "Sign out",
+    "toggleNavigation": "Toggle navigation",
+    "unreadMessages": "{{count}} unread messages",
+    "userMenu": "User menu",
+    "viewAll": "View all",
+    "viewShoppingCart": "View shopping cart"
+  },
+  "notificationsPage": {
+    "clearAll": "Clear All",
+    "emptyState": {
+      "message": "You're all caught up! New notifications will appear here.",
+      "title": "No notifications"
+    }
+  },
+  "orderRequestDetailModal": {
+    "date": "date",
+    "lineItems": "line Items",
+    "markAsProcessing": "mark As Processing",
+    "notes": "notes",
+    "orderId": "order Id",
+    "price": "price",
+    "product": "product",
+    "quantity": "quantity",
+    "status": "status",
+    "title": "title",
+    "total": "total",
+    "viewDaycareProfile": "view Daycare Profile"
+  },
+  "organizationProfileForm": {
+    "saveSuccess": "Organization profile saved successfully"
+  },
+  "parentDashboard": {
+    "childProfile": {
+      "age": "Age",
+      "button": "Update Profile",
+      "languages": "Languages",
+      "location": "Location",
+      "name": "Name",
+      "specialNeeds": "Special Needs",
+      "title": "Child Profile"
+    },
+    "enquiry": {
+      "button": "View All Enquiries",
+      "pending": "Pending",
+      "responded": "Responded",
+      "responses": "Responses",
+      "sent": "Sent",
+      "title": "My Enquiries"
+    },
+    "favorites": {
+      "button": "View All Favorites",
+      "subtitle": "Your saved daycares and services",
+      "title": "Favorites"
+    },
+    "quickActions": {
+      "browseServices": "Browse Services",
+      "enquiries": "My Enquiries",
+      "findDaycare": "Find Daycare",
+      "title": "Quick Actions",
+      "updateProfile": "Update Profile",
+      "viewEnquiries": "View Enquiries"
+    },
+    "title": "Parent Dashboard",
+    "welcomeMessage": "Welcome back {{name}}! Here's an overview of your childcare search and enquiries."
+  },
+  "parentDashboardPage": {
+    "findCreche": "Find a Crèche",
+    "myChildren": "My Children",
+    "title": "Parent Dashboard",
+    "welcome": "Welcome to your parent dashboard"
+  },
+  "parentEnquiriesPage": {
+    "accessDenied": {
+      "message": "You need to be logged in as a parent to view enquiries",
+      "title": "Access Denied"
+    },
+    "card": {
+      "awaitingMatch": "Awaiting Match",
+      "childInfo": "Child Information: Age {{age}}, Desired Start Date {{date}}",
+      "message": "Your enquiry has been sent to relevant providers",
+      "notes": "Additional Notes",
+      "responsesTitle": "Responses",
+      "submitted": "Submitted on {{date}}",
+      "title": "Enquiry Details: {{canton}}{{municipality}}",
+      "waitingForMoreResponses": "Waiting for more responses..."
+    },
+    "emptyState": {
+      "message": {
+        "0": "You haven't submitted any enquiries yet. Start by filling out the ",
+        "1": "enquiry form"
+      },
+      "title": "No enquiries yet"
+    },
+    "title": "My Enquiries"
+  },
+  "parentLeadFormPage": {
+    "authenticatedSuccessMessage": "Your enquiry has been submitted and saved to your dashboard.",
+    "errorAllFields": "Please fill in all required fields",
+    "helpText": {
+      "specialNeeds": "Please describe any special requirements or needs"
+    },
+    "labels": {
+      "canton": "Canton",
+      "childAge": "Child's Age",
+      "desiredStartDate": "Desired Start Date",
+      "municipality": "Municipality",
+      "specialNeeds": "Special Needs",
+      "yourEmail": "Your Email",
+      "yourFullName": "Your Full Name",
+      "yourPhone": "Your Phone"
+    },
+    "sectionTitleChildNeeds": "Child's Needs",
+    "subtitle": "Tell us about your childcare needs",
+    "thankYouTitle": "Thank You!",
+    "unauthenticatedSuccessMessage": "Your enquiry has been submitted successfully. We'll contact you soon!"
+  },
+  "parentSupportPage": {
+    "faq": {
+      "dataSecurity": {
+        "a": "Yes, we take data security seriously. Your information is encrypted and only shared with daycares you've enquired with. Read our Privacy Policy for more details.",
+        "q": "Is my personal information secure?"
+      },
+      "matchingProcess": {
+        "a": "Our system matches your child's needs with suitable daycares based on location, age, special requirements, and availability. You'll receive responses from matching providers.",
+        "q": "How does the matching process work?"
+      },
+      "responseTime": {
+        "a": "Most daycares respond within 2-3 business days. You can track the status of your enquiries in your dashboard.",
+        "q": "How quickly will I receive responses?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Please provide detailed information about your issue",
+      "subjectPlaceholder": "Brief description of your issue"
+    }
+  },
+  "partnerDetailPage": {
+    "aboutTitle": "About",
+    "addToOrderButton": "Add to Order",
+    "applyPromoButton": "Apply",
+    "contactInfoTitle": "Contact Information",
+    "directOrderButton": "Direct Order",
+    "invalidPartnerIdMessage": "Could not find a user associated with this organization to message.",
+    "loadingPartnerDetails": "Loading partner details...",
+    "noProductsListed": "No products listed",
+    "noServicesListed": "No services listed",
+    "onlyFoundationsRequestService": "Only foundations can request services",
+    "productAddedToOrder": "Product added to order successfully",
+    "productOutOfStock": "Product is currently out of stock",
+    "promoCodePlaceholder": "Enter promo code",
+    "promoCodeTitle": "Promo Code",
+    "ratingText": "Rating",
+    "ratingsReviewsTitle": "Ratings & Reviews",
+    "requestServiceButton": "Request Service",
+    "requestSubmittedAlert": "Service request submitted successfully",
+    "reviewsPlaceholder": "No reviews yet"
+  },
+  "partnersPage": {
+    "featured": {
+      "subtitle": "Meet our top-rated childcare providers and suppliers",
+      "title": "Featured Partners"
+    },
+    "hero": {
+      "ctaButton": "Become a Partner",
+      "subtitle": "Discover trusted childcare providers and suppliers",
+      "title": "Our Partners"
+    },
+    "joinUs": {
+      "contactUsAlert": "Contact us to learn more about partnership opportunities",
+      "contactUsButton": "Contact Us",
+      "inquiryFormLink": "Partnership Inquiry Form",
+      "subtitle": "Become part of Switzerland's leading childcare platform",
+      "title": "Join Our Network"
+    },
+    "partnerCard": {
+      "learnMoreButton": "Learn More",
+      "logoAlt": "{{partnerName}} logo",
+      "partnerType": "{{type}} Partner"
+    }
+  },
+  "platformSummary": "Platform Summary",
+  "preferredContactMethod": {
+    "email": "Email",
+    "phone": "Phone",
+    "platform": "Platform"
+  },
+  "productUploadModal": {
+    "addTitle": "add Title",
+    "editTitle": "edit Title"
+  },
+  "recruitmentPage": {
+    "buttons": {
+      "addCandidate": "Add Candidate",
+      "applyFilters": "Apply Filters",
+      "filters": "Filters",
+      "postNewJob": "Post New Job",
+      "viewApplicants": "View Applicants"
+    },
+    "candidateCard": {
+      "experience": "Experience",
+      "name": "Candidate Name",
+      "skills": "Skills",
+      "viewProfile": "View Profile"
+    },
+    "candidatePool": {
+      "emptyState": "No candidates found",
+      "filterTitle": "Filter Candidates",
+      "searchPlaceholder": "Search candidates..."
+    },
+    "confirmRemoveCandidate": "Are you sure you want to remove this candidate?",
+    "filters": {
+      "all": "All"
+    },
+    "foundationSupportPage": {
+      "faq": {
+        "manageLeads": {
+          "a": "You can view and respond to parent leads from your dashboard. Use the quick actions to mark leads as interested, not interested, or request more information.",
+          "q": "How do I manage incoming parent leads?"
+        },
+        "manageProfile": {
+          "a": "Go to Organization Profile to update your branding, contact information, opening hours, and other details that parents see.",
+          "q": "How do I manage my organization profile?"
+        },
+        "recruitment": {
+          "a": "Navigate to Recruitment > Job Listings and click 'Post New Job' to create a job posting. You can view applicants and manage the hiring process from there.",
+          "q": "How do I post job openings?"
+        },
+        "useMarketplace": {
+          "a": "Browse products and services from verified suppliers. Add items to your order cart and submit orders directly through the platform.",
+          "q": "How do I use the marketplace?"
+        }
+      }
+    },
+    "jobDetailModal": {
+      "apply": "Apply Now",
+      "applyNow": "Apply Now",
+      "close": "Close",
+      "contractType": "Contract Type",
+      "location": "Location",
+      "overviewTitle": "Job Overview",
+      "salary": "Salary",
+      "startDate": "Start Date",
+      "title": "Job Details"
+    },
+    "jobOffers": {
+      "activeJobsCount": "{{count}} active jobs",
+      "emptyState": "No job offers found",
+      "filterTitle": "Filter Jobs",
+      "searchPlaceholder": "Search job offers..."
+    },
+    "jobPostModal": {
+      "addBenefit": "Add Benefit",
+      "addQualification": "Add Qualification",
+      "addRequirement": "Add Requirement",
+      "addResponsibility": "Add Responsibility",
+      "addTitle": "Add New Job Posting",
+      "benefitPlaceholder": "Benefit",
+      "benefits": "Benefits",
+      "contractType": "Contract Type",
+      "description": "Job Description",
+      "editTitle": "Edit Job Posting",
+      "jobTitle": "Job Title",
+      "location": "Location",
+      "postJob": "Post Job",
+      "qualificationPlaceholder": "Qualification",
+      "qualifications": "Qualifications",
+      "requirementPlaceholder": "Requirement",
+      "requirements": "Requirements",
+      "responsibilities": "Responsibilities",
+      "responsibilityPlaceholder": "Responsibility",
+      "salaryRange": "Salary Range",
+      "salaryRangePlaceholder": "e.g., CHF 4,500 - 5,500",
+      "startDate": "Start Date",
+      "submit": "Submit Job Post",
+      "title": "Post Job"
+    },
+    "labels": {
+      "allContractTypes": "All Contract Types",
+      "allRoles": "All Roles",
+      "allStatuses": "All Statuses",
+      "availabilityDate": "Availability Date",
+      "location": "Location",
+      "region": "Region"
+    },
+    "subtitle": "Manage job postings and find qualified candidates",
+    "supplierSupportPage": {
+      "faq": {
+        "addProduct": {
+          "a": "Go to Products and click 'Add New Product'. Fill in the product details, set pricing, and upload images. Products will be reviewed before going live.",
+          "q": "How do I add a new product?"
+        },
+        "commissionRates": {
+          "a": "Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription.",
+          "q": "What are the commission rates?"
+        },
+        "manageProfile": {
+          "a": "Update your company information, contact details, and business hours in Settings > Company Profile.",
+          "q": "How do I manage my supplier profile?"
+        },
+        "processOrders": {
+          "a": "View all orders in the Orders section. You can accept, decline, or mark orders as shipped. Orders are automatically synced with the foundation's dashboard.",
+          "q": "How do I process orders?"
+        }
+      }
+    },
+    "supportPage": {
+      "emailLinkText": "support@procrechesolutions.com",
+      "faqTitle": "Frequently Asked Questions",
+      "furtherAssistanceText": "If you can't find the answer you're looking for, our support team is here to help. Contact us at",
+      "furtherAssistanceTitle": "Need Further Assistance?",
+      "orSubmitTicket": "or submit a support ticket below.",
+      "submitTicketTitle": "Submit a Support Ticket",
+      "ticketForm": {
+        "messageLabel": "Message",
+        "messagePlaceholder": "Please provide detailed information about your issue",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "Brief description of your issue",
+        "submitButton": "Submit Ticket"
+      }
+    },
+    "tabs": {
+      "candidatePool": "Candidate Pool",
+      "jobOffers": "Job Offers"
+    },
+    "title": "Recruitment",
+    "viewApplicantsModal": {
+      "applicants": "Applicants",
+      "appliedOn": "Applied on",
+      "noApplicants": "No applicants yet",
+      "title": "View Applicants"
+    }
+  },
+  "registeredUsers": "Registered users in the platform",
+  "serviceProviderAnalyticsPage": {
+    "requestDistributionByCanton": "Request Distribution by Canton",
+    "requestsByCanton": "Requests by Canton",
+    "serviceRequestsPerWeek": "Service Requests Per Week",
+    "serviceRequestsTrend": "Service Requests Trend",
+    "serviceViews": "Service Views",
+    "title": "Analytics",
+    "topViewedServices": "Top Viewed Services"
+  },
+  "serviceProviderDashboard": {
+    "title": "Service Provider Dashboard",
+    "welcomeMessage": "Welcome back! Here's an overview of your service requests and appointments.",
+    "widgets": {
+      "appointments": {
+        "button": "View All Appointments",
+        "notScheduled": "Not scheduled yet",
+        "title": "Upcoming Appointments",
+        "with": "with"
+      },
+      "management": {
+        "button": "Manage Services",
+        "categories": "Categories",
+        "listings": "Listings",
+        "newServiceButton": "Add New Service",
+        "noCategories": "No categories yet",
+        "pending": "Pending",
+        "tags": {
+          "cleaning": "Cleaning",
+          "workshops": "Workshops"
+        },
+        "title": "Service Management"
+      },
+      "overview": {
+        "activeRequests": "Active Requests",
+        "button": "View Requests",
+        "completedServices": "Completed Services",
+        "customerRating": "Customer Rating",
+        "newServiceButton": "Add New Service",
+        "title": "Overview",
+        "upcoming": "Upcoming"
+      }
+    }
+  },
+  "serviceProviderDashboardPage": {
+    "requests": "Service Requests",
+    "services": "My Services",
+    "title": "Service Provider Dashboard",
+    "welcome": "Welcome to your service provider dashboard"
+  },
+  "serviceProviderListingsPage": {
+    "addNewServiceButton": "Add New Service",
+    "card": {
+      "category": "Category",
+      "delivery": "Delivery"
+    },
+    "confirmDelete": "Are you sure you want to delete this service?",
+    "emptyState": {
+      "noMatch": "No services match your search criteria",
+      "noServicesYet": "You haven't created any services yet",
+      "title": "No Services Found"
+    },
+    "searchPlaceholder": "Search services...",
+    "title": "My Services"
+  },
+  "serviceProviderRequestsPage": {
+    "emptyState": "No service requests found",
+    "filterByStatus": "Filter by Status",
+    "table": {
+      "date": "Date",
+      "foundation": "Foundation",
+      "requestId": "Request ID",
+      "service": "Service",
+      "status": "Status"
+    },
+    "title": "Service Requests",
+    "updateError": "Failed to update request status"
+  },
+  "serviceProviderSupportPage": {
+    "faq": {
+      "listService": {
+        "a": "Go to My Services and click 'Add New Service'. Fill in service details, set pricing, and specify availability. Services are reviewed before going live.",
+        "q": "How do I list a new service?"
+      },
+      "profileInfo": {
+        "a": "Go to Settings > Company Profile to update your business information, contact details, and service descriptions.",
+        "q": "How do I update my profile information?"
+      },
+      "respondRequests": {
+        "a": "View incoming requests in the Service Requests section. You can accept, decline, or schedule appointments directly from there.",
+        "q": "How do I respond to service requests?"
+      },
+      "updateAvailability": {
+        "a": "Update your availability calendar in Settings > Contact & Booking. You can set your preferred working hours and days.",
+        "q": "How do I update my availability?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Please provide detailed information about your issue",
+      "subjectPlaceholder": "Brief description of your issue"
+    },
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
+  },
+  "settingsPage": {
+    "accountSecurity": "Account & Security",
+    "billingSubscription": "Billing & Subscription",
+    "title": "Settings"
+  },
+  "sidebar": {
+    "admins": "Admins",
+    "allUsers": "All Users",
+    "allUsersTitle": "Total Users",
+    "analytics": "Analytics",
+    "applications": "Applications",
+    "billingSubscription": "Billing & Subscription",
+    "candidatePool": "Candidate Pool",
+    "content": "Content",
+    "currentPlan": "Current Plan",
+    "dashboard": "Dashboard",
+    "dashboardHome": "Dashboard Home",
+    "designSystem": "Design System",
+    "discountTerminations": "Discount Terminations",
+    "eLearning": "E-Learning",
+    "fileGallery": "File Gallery",
+    "foundations": "Foundations",
+    "homeFindCreche": "Home / Find Crèche",
+    "hrProcedures": "HR Procedures",
+    "jobBoard": "Job Board",
+    "jobListings": "Job Listings",
+    "manageSubscriptionDesc": "Manage your subscription and billing",
+    "marketplace": "Marketplace",
+    "messages": "Messages",
+    "myProfile": "My Profile",
+    "myRequests": "My Requests",
+    "orders": "Orders",
+    "ordersAppointments": "Orders & Appointments",
+    "organisationProfile": "Organization Profile",
+    "parentLeads": "Parent Leads",
+    "parents": "Parents",
+    "partners": "Partners",
+    "platformSettings": "Platform Settings",
+    "productMarketplace": "Product Marketplace",
+    "productSuppliers": "Product Suppliers",
+    "products": "Products",
+    "recruitment": "Recruitment",
+    "serviceMarketplace": "Service Marketplace",
+    "serviceProviders": "Service Providers",
+    "services": "Services",
+    "settings": "Settings",
+    "statePolicies": "State Policies",
+    "support": "Support",
+    "supportFAQ": "Support & FAQ",
+    "systemMonitoring": "System Monitoring",
+    "translations": "Translations",
+    "users": "Users"
+  },
+  "statePoliciesPage": {
+    "compliance": "Compliance Status",
+    "policies": "Policy Documents",
+    "title": "State Policies"
+  },
+  "stockStatus": {
+    "discontinued": "Discontinued",
+    "instock": "In Stock",
+    "lowstock": "Low Stock",
+    "outofstock": "Out of Stock"
+  },
+  "supplierAnalyticsPage": {
+    "datePickerLabel": "Select Date Range",
+    "exportCsvAlert": "CSV export started",
+    "exportCsvButton": "Export CSV",
+    "mockChartText": "Mock {{type}} chart visualization",
+    "orderRequestsPerWeek": "Order Requests Per Week",
+    "orderRequestsTrend": "Order Requests Trend",
+    "productViews": "Product Views",
+    "promoCodePerformance": "Promo Code Performance",
+    "requestsByCanton": "Requests by Canton",
+    "requestsDistribution": "Requests Distribution",
+    "table": {
+      "code": "Code",
+      "estRevenueImpact": "Est. Revenue Impact",
+      "uses": "Uses"
+    },
+    "topViewedProducts": "Top Viewed Products"
+  },
+  "supplierCard": {
+    "viewProfileAndProducts": "View Profile"
+  },
+  "supplierDashboard": {
+    "loadError": "Failed to load dashboard data",
+    "noRecentInquiries": "No recent inquiries",
+    "noRecentOrders": "No recent orders",
+    "noSalesYet": "No sales yet",
+    "recentInquiriesTable": {
+      "from": "From",
+      "status": "Status",
+      "subject": "Subject"
+    },
+    "recentInquiriesTitle": "Recent Inquiries",
+    "recentOrdersActions": {
+      "accept": "accept",
+      "decline": "decline"
+    },
+    "recentOrdersTitle": "Recent Orders",
+    "title": "Supplier Dashboard",
+    "welcomeMessage": "Welcome back! Here's an overview of your product sales and orders.",
+    "widgets": {
+      "inquiries": {
+        "button": "View Inquiries",
+        "conversionRate": "Conversion",
+        "new": "New",
+        "pending": "Pending",
+        "title": "Inquiries",
+        "total": "Total"
+      },
+      "orders": {
+        "button": "View Orders",
+        "pending": "Pending",
+        "title": "Orders",
+        "toFulfill": "To Fulfill"
+      },
+      "products": {
+        "active": "Active",
+        "button": "Manage Products",
+        "lowStock": "Low Stock",
+        "pending": "Pending",
+        "pendingApproval": "Pending Approval",
+        "title": "Products"
+      },
+      "sales": {
+        "button": "View Analytics",
+        "fulfillmentRate": "Fulfillment Rate",
+        "revenue": "Revenue",
+        "revenueMonth": "Revenue (Month)",
+        "title": "Sales Overview",
+        "topSelling": "Top Selling",
+        "totalOrders": "Total Orders"
+      }
+    }
+  },
+  "supplierDashboardPage": {
+    "orders": "Orders",
+    "products": "My Products",
+    "title": "Supplier Dashboard",
+    "welcome": "Welcome to your supplier dashboard"
+  },
+  "supplierOrdersPage": {
+    "actions": {
+      "ship": "Ship"
+    },
+    "emptyState": "No orders found",
+    "filterByStatus": "Filter by Status",
+    "inquiryTable": {
+      "date": "Date",
+      "from": "From",
+      "id": "ID",
+      "status": "Status",
+      "subject": "Subject",
+      "urgency": "Urgency"
+    },
+    "loadError": "Failed to load data",
+    "noInquiries": "No inquiries found",
+    "table": {
+      "date": "Date",
+      "foundation": "Foundation",
+      "orderId": "Order ID",
+      "status": "Status",
+      "total": "Total"
+    },
+    "tabs": {
+      "inquiries": "Inquiries",
+      "orders": "Direct Orders"
+    },
+    "title": "Orders & Inquiries",
+    "updateError": "Failed to update status"
+  },
+  "supplierProductListingsPage": {
+    "addProductButton": "Add New Product",
+    "confirmDelete": "Are you sure you want to delete this product?",
+    "emptyState": "No products found",
+    "noOrgMessage": "You need an organization to manage product listings.",
+    "notifications": {
+      "createErrorMessage": "Please review the form and try again.",
+      "createErrorTitle": "Unable to save product",
+      "createSuccessMessage": "Your product was published to the marketplace.",
+      "createSuccessTitle": "Product saved",
+      "deleteErrorMessage": "Please try again later.",
+      "deleteErrorTitle": "Unable to delete product",
+      "deleteSuccessMessage": "The product has been removed.",
+      "deleteSuccessTitle": "Product deleted",
+      "loadErrorMessage": "Please try again shortly.",
+      "loadErrorTitle": "Unable to load products",
+      "missingOrgMessage": "You need an organization ID to manage products.",
+      "missingOrgTitle": "Organization required",
+      "toggleErrorMessage": "Please try again.",
+      "toggleErrorTitle": "Unable to update visibility",
+      "toggleHidden": "The product is hidden from the marketplace.",
+      "toggleSuccessTitle": "Visibility updated",
+      "toggleVisible": "The product is now visible in the marketplace.",
+      "updateSuccessMessage": "Your product was updated successfully."
+    },
+    "searchPlaceholder": "Search by name, SKU, tags...",
+    "subtitle": "Publish accurate listings and keep daycares informed.",
+    "table": {
+      "actions": "Actions",
+      "price": "Price",
+      "product": "Product",
+      "stock": "Stock",
+      "toggleVisibility": "Toggle visibility",
+      "visibility": "Visibility"
+    },
+    "title": "Product Listings",
+    "visibility": {
+      "hidden": "Hidden",
+      "visible": "Visible"
+    }
+  },
+  "supplierOrganisationProfilePage": {
+    "loadError": "Unable to load organization profile details. Please try again."
+  },
+  "supplierSupportPage": {
+    "faq": {
+      "addProduct": {
+        "a": "Go to Products and click 'Add New Product'. Fill in the product details, set pricing, and upload images. Products will be reviewed before going live.",
+        "q": "How do I add a new product?"
+      },
+      "commissionRates": {
+        "a": "Commission rates vary by product category and subscription plan. Check your subscription details in Settings > Billing & Subscription.",
+        "q": "What are the commission rates?"
+      },
+      "manageProfile": {
+        "a": "Update your company information, contact details, and business hours in Settings > Company Profile.",
+        "q": "How do I manage my supplier profile?"
+      },
+      "processOrders": {
+        "a": "View all orders in the Orders section. You can accept, decline, or mark orders as shipped. Orders are automatically synced with the foundation's dashboard.",
+        "q": "How do I process orders?"
+      }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Please provide detailed information about your issue",
+      "subjectPlaceholder": "Brief description of your issue"
+    },
+    "ticketSubmittedAlert": "Support ticket submitted successfully"
+  },
+  "total": "Total",
+  "usersPage": {
+    "addNewUserButton": "Add New User",
+    "addNewUserTBD": "Add New User TBD",
+    "allUsersTitle": "All Users",
+    "cannotDeleteOwnAccount": "You cannot delete your own account",
+    "confirmDeleteUser": "Are you sure you want to delete this user?",
+    "emptyState": "No users found",
+    "filtersButton": "Filters",
+    "filtersTBD": "Filters TBD",
+    "rolePageTitle": "Role Management",
+    "searchPlaceholder": "Search users...",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "suspended": "Suspended"
+    },
+    "table": {
+      "actions": "Actions",
+      "lastLogin": "Last Login",
+      "nameOrg": "Name / Organization",
+      "region": "Region",
+      "role": "Role",
+      "status": "Status"
+    },
+    "userDetailDrawer": {
+      "activateUserButton": "Activate User",
+      "adminActionsTitle": "Admin Actions",
+      "cannotModifyOwnAccount": "You cannot modify your own account",
+      "changeRoleLabel": "Change Role",
+      "lastLoginLabel": "Last Login",
+      "orgLabel": "Organization",
+      "regionLabel": "Region",
+      "roleLabel": "Role",
+      "statusLabel": "Status",
+      "suspendUserButton": "Suspend User",
+      "title": "User Details",
+      "updateRoleButton": "Update Role"
+    },
+    "userProfileUpdated": "User profile updated successfully"
+  },
+  "welcome": "Welcome to your Admin Dashboard!"
+}

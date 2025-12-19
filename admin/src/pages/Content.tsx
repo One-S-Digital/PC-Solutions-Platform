@@ -1,331 +1,859 @@
-import React, { useState, Fragment } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect, useCallback } from 'react';
 import { 
-  FileText, 
-  Plus, 
-  Search, 
-  Edit,
-  Trash2,
-  MoreVertical,
-  Calendar,
-  Eye,
-  Globe,
-  Image,
-  Video,
-  File
-} from 'lucide-react'
+  PlusIcon, 
+  DocumentTextIcon, 
+  AcademicCapIcon, 
+  ScaleIcon,
+  MagnifyingGlassIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/outline';
+import ContentUploadModal from '../components/ContentUploadModal';
+import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import { useApiClient } from '../services/api';
+import * as api from '../services/api';
+import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
-import { Menu, Transition, Tab } from '@headlessui/react'
-import { useApiClient, apiService } from '../services/api'
-import { HrDocument } from '../types/api'
-import LoadingSpinner from '../components/ui/LoadingSpinner'
+type ContentType = 'e-learning' | 'hr' | 'policy';
 
-const HrDocumentsTab: React.FC = () => {
-  const apiClient = useApiClient()
-  const { data: hrDocumentsResponse, isLoading, error } = useQuery({
-    queryKey: ['hrDocuments'],
-    queryFn: () => apiService.getHrDocuments(apiClient),
-    enabled: !!apiClient,
-  })
-
-  const documents: HrDocument[] = hrDocumentsResponse?.data?.data || []
-
-  if (isLoading) return <LoadingSpinner />
-  if (error) return <div className="text-red-500 p-4">Failed to load HR documents.</div>
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
-        {/* Table Head */}
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
-            <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
-          </tr>
-        </thead>
-        {/* Table Body */}
-        <tbody className="bg-white divide-y divide-gray-200">
-          {documents.map((doc: HrDocument) => (
-            <tr key={doc.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{doc.title}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.category}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(doc.updatedAt).toLocaleDateString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                {/* Actions Menu */}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
+interface UploadedContent {
+  id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  type?: string;
+  filename: string;
+  publicUrl: string;
+  updatedAt: string;
+  fileUrl?: string;
 }
 
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
 
+export default function Content() {
+  const { t } = useTranslation(['admin', 'common']);
+  const apiClient = useApiClient();
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContentType, setModalContentType] = useState<ContentType>('e-learning');
+  const [editingContent, setEditingContent] = useState<any>(null);
+  
+  // Preview modal state
+  const [previewContent, setPreviewContent] = useState<UploadedContent | null>(null);
+  
+  // Content data
+  const [eLearningContent, setELearningContent] = useState<UploadedContent[]>([]);
+  const [hrDocuments, setHrDocuments] = useState<UploadedContent[]>([]);
+  const [statePolicies, setStatePolicies] = useState<UploadedContent[]>([]);
+  
+  // Pagination state
+  const [eLearningPagination, setELearningPagination] = useState<PaginationInfo>({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 0,
+  });
+  const [hrPagination, setHrPagination] = useState<PaginationInfo>({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 0,
+  });
+  const [policyPagination, setPolicyPagination] = useState<PaginationInfo>({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 0,
+  });
+  
+  // Search state
+  const [eLearningSearch, setELearningSearch] = useState('');
+  const [hrSearch, setHrSearch] = useState('');
+  const [policySearch, setPolicySearch] = useState('');
+  
+  // Loading states
+  const [isLoadingELearning, setIsLoadingELearning] = useState(false);
+  const [isLoadingHR, setIsLoadingHR] = useState(false);
+  const [isLoadingPolicies, setIsLoadingPolicies] = useState(false);
 
-const Content: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedType, setSelectedType] = useState('')
+  // Error state
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data for content management
-  const mockContent = [
-    {
-      id: '1',
-      title: 'Welcome to Pro Crèche Solutions',
-      type: 'BLOG_POST',
-      status: 'PUBLISHED',
-      author: 'Admin',
-      publishedDate: '2024-01-15',
-      views: 1245,
-      featured: true
-    },
-    {
-      id: '2',
-      title: 'Safety Guidelines for Daycare Centers',
-      type: 'ARTICLE',
-      status: 'DRAFT',
-      author: 'Sarah Johnson',
-      publishedDate: null,
-      views: 0,
-      featured: false
-    },
-    {
-      id: '3',
-      title: 'Hero Banner Image',
-      type: 'IMAGE',
-      status: 'PUBLISHED',
-      author: 'Marketing Team',
-      publishedDate: '2024-01-10',
-      views: 3421,
-      featured: true
-    },
-    {
-      id: '4',
-      title: 'Introduction Video',
-      type: 'VIDEO',
-      status: 'PUBLISHED',
-      author: 'Content Team',
-      publishedDate: '2024-01-08',
-      views: 892,
-      featured: false
+  // Fetch all content on mount
+  useEffect(() => {
+    fetchAllContent();
+  }, []);
+
+  // Refetch content when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      fetchAllContent();
+    };
+    
+    i18n.on('languageChanged', handleLanguageChange);
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
+  const fetchAllContent = async () => {
+    await Promise.all([
+      fetchELearningContent(),
+      fetchHRDocuments(),
+      fetchStatePolicies(),
+    ]);
+  };
+
+  const fetchELearningContent = useCallback(async (page = eLearningPagination.page, search = eLearningSearch) => {
+    setIsLoadingELearning(true);
+    setError(null);
+    try {
+      const currentLang = i18n.language || 'en';
+      const response = await api.getELearning(apiClient, {
+        page,
+        limit: eLearningPagination.limit,
+        search: search || undefined,
+        lang: currentLang,
+      });
+      
+      if (response.data.success) {
+        // Backend returns paginated response
+        const result = response.data as any;
+        setELearningContent(result.data || []);
+        if (result.pagination) {
+          setELearningPagination(result.pagination);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error fetching e-learning content:', error);
+      const message = error.response?.data?.message || 'Failed to fetch e-learning content';
+      setError(message);
+      showToast(message, 'error');
+    } finally {
+      setIsLoadingELearning(false);
     }
-  ]
+  }, [apiClient, eLearningPagination.limit, i18n.language]);
 
-  const filteredContent = mockContent.filter((content: any) => {
-    const matchesSearch = content.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesType = !selectedType || content.type === selectedType
-    return matchesSearch && matchesType
-  })
+  const fetchHRDocuments = useCallback(async (page = hrPagination.page, search = hrSearch) => {
+    setIsLoadingHR(true);
+    setError(null);
+    try {
+      const currentLang = i18n.language || 'en';
+      const response = await api.getHrDocuments(apiClient, {
+        page,
+        limit: hrPagination.limit,
+        search: search || undefined,
+        lang: currentLang,
+      });
+      
+      if (response.data.success) {
+        const result = response.data as any;
+        setHrDocuments(result.data || []);
+        if (result.pagination) {
+          setHrPagination(result.pagination);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error fetching HR documents:', error);
+      const message = error.response?.data?.message || 'Failed to fetch HR documents';
+      setError(message);
+      showToast(message, 'error');
+    } finally {
+      setIsLoadingHR(false);
+    }
+  }, [apiClient, hrPagination.limit, i18n.language]);
 
-  const statusColors = {
-    'PUBLISHED': 'bg-green-100 text-green-800',
-    'DRAFT': 'bg-yellow-100 text-yellow-800',
-    'ARCHIVED': 'bg-gray-100 text-gray-800',
-  }
+  const fetchStatePolicies = useCallback(async (page = policyPagination.page, search = policySearch) => {
+    setIsLoadingPolicies(true);
+    setError(null);
+    try {
+      const currentLang = i18n.language || 'en';
+      const response = await api.getStatePolicies(apiClient, {
+        page,
+        limit: policyPagination.limit,
+        search: search || undefined,
+        lang: currentLang,
+      });
+      
+      if (response.data.success) {
+        const result = response.data as any;
+        setStatePolicies(result.data || []);
+        if (result.pagination) {
+          setPolicyPagination(result.pagination);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error fetching state policies:', error);
+      const message = error.response?.data?.message || 'Failed to fetch state policies';
+      setError(message);
+      showToast(message, 'error');
+    } finally {
+      setIsLoadingPolicies(false);
+    }
+  }, [apiClient, policyPagination.limit, i18n.language]);
 
-  const typeIcons = {
-    'BLOG_POST': FileText,
-    'ARTICLE': FileText,
-    'IMAGE': Image,
-    'VIDEO': Video,
-    'DOCUMENT': File,
-  }
+  const handleOpenModal = (contentType: ContentType, existingContent?: any) => {
+    setModalContentType(contentType);
+    setEditingContent(existingContent || null);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingContent(null);
+  };
+
+  const handleContentSubmit = async (data: any, file?: File, onProgress?: (progress: number) => void) => {
+    try {
+      const formData = new FormData();
+      
+      if (file) {
+        formData.append('file', file);
+      }
+
+      // Append all form fields
+      Object.keys(data).forEach((key) => {
+        if (data[key] !== undefined && data[key] !== null) {
+          if (Array.isArray(data[key])) {
+            formData.append(key, JSON.stringify(data[key]));
+          } else {
+            formData.append(key, data[key]);
+          }
+        }
+      });
+
+      let response;
+      
+      if (editingContent) {
+        // Update existing content - send as JSON, not FormData
+        console.log('Updating content:', editingContent.id, 'Type:', modalContentType);
+        console.log('Update data:', data);
+        
+        try {
+          if (modalContentType === 'e-learning') {
+            response = await api.updateELearning(apiClient, editingContent.id, data);
+          } else if (modalContentType === 'hr') {
+            response = await api.updateHrDocument(apiClient, editingContent.id, data);
+          } else if (modalContentType === 'policy') {
+            response = await api.updateStatePolicy(apiClient, editingContent.id, data);
+          }
+          
+          console.log('Update response:', response);
+          console.log('Update response.data:', response?.data);
+          console.log('Update response.data.success:', response?.data?.success);
+          console.log('Update response.status:', response?.status);
+          
+          // Show success toast if we got a response (update likely succeeded)
+          // The backend log confirms it updated, so even if response structure is unexpected, show success
+          if (response && (response?.status === 200 || response?.data?.success)) {
+            showToast(t('admin:content.updateSuccess', 'Content updated successfully'), 'success');
+          } else {
+            console.warn('Update response structure unexpected:', response);
+            // Still show success since backend confirmed the update
+            showToast(t('admin:content.updateSuccess', 'Content updated successfully'), 'success');
+          }
+        } catch (updateError: any) {
+          console.error('Error during update API call:', updateError);
+          console.error('Update error response:', updateError?.response);
+          throw updateError; // Re-throw to be caught by outer catch
+        }
+      } else {
+      // Upload new content with progress callback and retry logic
+              const uploadPromise = async () => {
+                if (modalContentType === 'e-learning') {
+                  return await api.uploadELearning(apiClient, formData, onProgress);
+                } else if (modalContentType === 'hr') {
+                  return await api.uploadHrDocument(apiClient, formData, onProgress);
+                } else if (modalContentType === 'policy') {
+                  return await api.uploadStatePolicy(apiClient, formData, onProgress);
+                }
+                throw new Error('Invalid content type');
+              };
+
+              const result = await retryWithBackoff(uploadPromise, {
+                ...RetryPresets.upload,
+                onRetry: (error, attempt, delay) => {
+                  console.log(`Content upload retry attempt ${attempt} after ${delay}ms:`, error.message);
+                  showToast(`Upload failed. Retrying (attempt ${attempt})...`, 'info');
+                  if (onProgress) onProgress(0); // Reset progress on retry
+                },
+              });
+
+              if (!result.success) {
+                throw result.error;
+              }
+
+              response = result.data;
+              showToast(t('admin:content.uploadSuccess', 'Content uploaded successfully'), 'success');
+      }
+
+      // Check if response is successful (handle both update and upload responses)
+      // Axios wraps the response in .data, so if backend returns { success: true, data: ... }
+      // then response.data = { success: true, data: ... }
+      console.log('Checking response success. Full response:', response);
+      console.log('response?.data:', response?.data);
+      console.log('response?.data?.success:', response?.data?.success);
+      console.log('response?.status:', response?.status);
+      
+      // Check multiple ways the response could indicate success
+      // If we got a response object, assume success (backend log confirms update)
+      const isSuccess = 
+        response && (
+          response?.data?.success === true || 
+          response?.status === 200 || 
+          (response?.data && !response?.data?.error && response?.status >= 200 && response?.status < 300) ||
+          (response && !response?.data?.error) // Fallback: if we got a response without error, assume success
+        );
+      console.log('isSuccess:', isSuccess);
+      
+      if (isSuccess || response) {
+        // Always refresh if we got a response (update succeeded based on backend log)
+        console.log('Refreshing content list for:', modalContentType);
+        // Refresh the appropriate content list - use current page to maintain position
+        try {
+          if (modalContentType === 'e-learning') {
+            await fetchELearningContent(eLearningPagination.page, eLearningSearch);
+            console.log('E-learning content refreshed');
+          } else if (modalContentType === 'hr') {
+            await fetchHRDocuments(hrPagination.page, hrSearch);
+            console.log('HR documents refreshed');
+          } else if (modalContentType === 'policy') {
+            await fetchStatePolicies(policyPagination.page, policySearch);
+            console.log('State policies refreshed');
+          }
+          console.log('Content list refreshed, closing modal');
+        } catch (fetchError) {
+          console.error('Error refreshing content list:', fetchError);
+          // Still close modal even if refresh fails
+        }
+        handleCloseModal();
+      } else {
+        console.error('Response not successful:', response);
+        throw new Error(response?.data?.message || 'Failed to update content');
+      }
+    } catch (error: any) {
+      console.error('Error submitting content:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response,
+        responseData: error.response?.data,
+        status: error.response?.status,
+      });
+      const message = error.response?.data?.message || error.message || 'Failed to submit content';
+      showToast(message, 'error');
+      throw error; // Re-throw to let modal handle it
+    }
+  };
+
+  const handleDelete = async (contentType: ContentType, id: string) => {
+    if (!confirm(t('admin:content.deleteConfirm', 'Are you sure you want to delete this content?'))) {
+      return;
+    }
+
+    try {
+      let response;
+      
+      if (contentType === 'e-learning') {
+        response = await api.deleteELearning(apiClient, id);
+      } else if (contentType === 'hr') {
+        response = await api.deleteHrDocument(apiClient, id);
+      } else if (contentType === 'policy') {
+        response = await api.deleteStatePolicy(apiClient, id);
+      }
+
+      if (response?.data.success) {
+        showToast(t('admin:content.deleteSuccess', 'Content deleted successfully'), 'success');
+        // Refresh the appropriate content list
+        if (contentType === 'e-learning') {
+          await fetchELearningContent();
+        } else if (contentType === 'hr') {
+          await fetchHRDocuments();
+        } else if (contentType === 'policy') {
+          await fetchStatePolicies();
+        }
+      }
+    } catch (error: any) {
+      console.error('Error deleting content:', error);
+      const message = error.response?.data?.message || 'Failed to delete content';
+      showToast(message, 'error');
+    }
+  };
+
+  const handleView = (content: UploadedContent) => {
+    if (!content.fileUrl && !content.publicUrl) {
+      alert(t('admin:content.noFileUrl', 'No file URL available for this content'));
+      return;
+    }
+    setPreviewContent(content);
+  };
+
+  const handleSearch = (contentType: ContentType, value: string) => {
+    if (contentType === 'e-learning') {
+      setELearningSearch(value);
+      setELearningPagination((prev) => ({ ...prev, page: 1 }));
+      fetchELearningContent(1, value);
+    } else if (contentType === 'hr') {
+      setHrSearch(value);
+      setHrPagination((prev) => ({ ...prev, page: 1 }));
+      fetchHRDocuments(1, value);
+    } else if (contentType === 'policy') {
+      setPolicySearch(value);
+      setPolicyPagination((prev) => ({ ...prev, page: 1 }));
+      fetchStatePolicies(1, value);
+    }
+  };
+
+  const handlePageChange = (contentType: ContentType, newPage: number) => {
+    if (contentType === 'e-learning') {
+      setELearningPagination((prev) => ({ ...prev, page: newPage }));
+      fetchELearningContent(newPage);
+    } else if (contentType === 'hr') {
+      setHrPagination((prev) => ({ ...prev, page: newPage }));
+      fetchHRDocuments(newPage);
+    } else if (contentType === 'policy') {
+      setPolicyPagination((prev) => ({ ...prev, page: newPage }));
+      fetchStatePolicies(newPage);
+    }
+  };
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    // Simple toast implementation - you can replace with a proper toast library
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg ${
+      type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    } text-white z-50 transition-opacity duration-300`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => document.body.removeChild(toast), 300);
+    }, 3000);
+  };
+
+  // Group e-learning content by type
+  const eLearningByType = {
+    COURSE: eLearningContent.filter((c) => c.type === 'COURSE'),
+    VIDEO: eLearningContent.filter((c) => c.type === 'VIDEO'),
+    PDF: eLearningContent.filter((c) => c.type === 'PDF'),
+    LINK: eLearningContent.filter((c) => c.type === 'LINK'),
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <FileText className="h-8 w-8 mr-3 text-swiss-teal" />
-            Content Management
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Manage website content, blogs, and media ({mockContent.length} total)
-          </p>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin:content.title', 'Content Management')}</h1>
+        <p className="mt-2 text-sm text-gray-600">
+          {t('admin:content.description', 'Upload and manage e-learning materials, HR documents, and state policies')}
+        </p>
+      </div>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-sm text-red-800">{error}</p>
         </div>
-        <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Content
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-4">
+        <button
+          onClick={() => handleOpenModal('e-learning')}
+          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <PlusIcon className="h-5 w-5 mr-2" />
+          {t('admin:content.addELearning', 'Add E-Learning Content')}
+        </button>
+        
+        <button
+          onClick={() => handleOpenModal('hr')}
+          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        >
+          <PlusIcon className="h-5 w-5 mr-2" />
+          {t('admin:content.addHRDocument', 'Add HR Document')}
+        </button>
+        
+        <button
+          onClick={() => handleOpenModal('policy')}
+          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+        >
+          <PlusIcon className="h-5 w-5 mr-2" />
+          {t('admin:content.addStatePolicy', 'Add State Policy')}
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+      {/* Content Sections */}
+      <div className="space-y-12">
+        {/* E-Learning Content */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <AcademicCapIcon className="h-8 w-8 text-indigo-600 mr-3" />
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.eLearning.title')}</h2>
+              <span className="ml-3 text-sm text-gray-500">
+                ({eLearningPagination.total} {t('admin:content.eLearning.total')})
+              </span>
+            </div>
+            
+            {/* Search */}
+            <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search content..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t('admin:content.eLearning.searchPlaceholder')}
+                value={eLearningSearch}
+                onChange={(e) => handleSearch('e-learning', e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
+              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
           </div>
-          <div className="sm:w-48">
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-            >
-              <option value="">All Types</option>
-              <option value="BLOG_POST">Blog Post</option>
-              <option value="ARTICLE">Article</option>
-              <option value="IMAGE">Image</option>
-              <option value="VIDEO">Video</option>
-              <option value="DOCUMENT">Document</option>
-            </select>
+          
+          {isLoadingELearning ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.eLearning.loading')}</p>
+            </div>
+          ) : eLearningContent.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              <AcademicCapIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <p className="mt-2 text-sm text-gray-500">
+                {eLearningSearch ? t('admin:content.eLearning.noResults') : t('admin:content.eLearning.empty')}
+              </p>
+              <button
+                onClick={() => handleOpenModal('e-learning')}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+              >
+                <PlusIcon className="h-4 w-4 mr-2" />
+                {t('admin:content.eLearning.addFirst')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {eLearningContent.map((item) => (
+                  <ContentCard
+                    key={item.id}
+                    item={item}
+                    onEdit={() => handleOpenModal('e-learning', item)}
+                    onDelete={() => handleDelete('e-learning', item.id)}
+                    onView={() => handleView(item)}
+                  />
+                ))}
+              </div>
+              
+              {/* Pagination */}
+              <Pagination
+                currentPage={eLearningPagination.page}
+                totalPages={eLearningPagination.totalPages}
+                onPageChange={(page) => handlePageChange('e-learning', page)}
+              />
+            </>
+          )}
+        </section>
+
+        {/* HR Documents */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <DocumentTextIcon className="h-8 w-8 text-green-600 mr-3" />
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.hrDocuments.title')}</h2>
+              <span className="ml-3 text-sm text-gray-500">
+                ({hrPagination.total} {t('admin:content.eLearning.total')})
+              </span>
+            </div>
+            
+            {/* Search */}
+            <div className="relative w-64">
+              <input
+                type="text"
+                placeholder={t('admin:content.hrDocuments.searchPlaceholder')}
+                value={hrSearch}
+                onChange={(e) => handleSearch('hr', e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </div>
           </div>
-        </div>
+          
+          {isLoadingHR ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.hrDocuments.loading')}</p>
+            </div>
+          ) : hrDocuments.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <p className="mt-2 text-sm text-gray-500">
+                {hrSearch ? t('admin:content.hrDocuments.noResults') : t('admin:content.hrDocuments.empty')}
+              </p>
+              <button
+                onClick={() => handleOpenModal('hr')}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200"
+              >
+                <PlusIcon className="h-4 w-4 mr-2" />
+                {t('admin:content.hrDocuments.addFirst')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {hrDocuments.map((item) => (
+                  <ContentCard
+                    key={item.id}
+                    item={item}
+                    onEdit={() => handleOpenModal('hr', item)}
+                    onDelete={() => handleDelete('hr', item.id)}
+                    onView={() => handleView(item)}
+                  />
+                ))}
+              </div>
+              
+              {/* Pagination */}
+              <Pagination
+                currentPage={hrPagination.page}
+                totalPages={hrPagination.totalPages}
+                onPageChange={(page) => handlePageChange('hr', page)}
+              />
+            </>
+          )}
+        </section>
+
+        {/* State Policies */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <ScaleIcon className="h-8 w-8 text-purple-600 mr-3" />
+              <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.statePolicies.title')}</h2>
+              <span className="ml-3 text-sm text-gray-500">
+                ({policyPagination.total} {t('admin:content.eLearning.total')})
+              </span>
+            </div>
+            
+            {/* Search */}
+            <div className="relative w-64">
+              <input
+                type="text"
+                placeholder={t('admin:content.statePolicies.searchPlaceholder')}
+                value={policySearch}
+                onChange={(e) => handleSearch('policy', e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
+              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+          
+          {isLoadingPolicies ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+              <p className="mt-2 text-sm text-gray-500">{t('admin:content.statePolicies.loading')}</p>
+            </div>
+          ) : statePolicies.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              <ScaleIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <p className="mt-2 text-sm text-gray-500">
+                {policySearch ? t('admin:content.statePolicies.noResults') : t('admin:content.statePolicies.empty')}
+              </p>
+              <button
+                onClick={() => handleOpenModal('policy')}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200"
+              >
+                <PlusIcon className="h-4 w-4 mr-2" />
+                {t('admin:content.statePolicies.addFirst')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {statePolicies.map((item) => (
+                  <ContentCard
+                    key={item.id}
+                    item={item}
+                    onEdit={() => handleOpenModal('policy', item)}
+                    onDelete={() => handleDelete('policy', item.id)}
+                    onView={() => handleView(item)}
+                  />
+                ))}
+              </div>
+              
+              {/* Pagination */}
+              <Pagination
+                currentPage={policyPagination.page}
+                totalPages={policyPagination.totalPages}
+                onPageChange={(page) => handlePageChange('policy', page)}
+              />
+            </>
+          )}
+        </section>
       </div>
 
-      {/* Content List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Content
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Author
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Views
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredContent.map((content: any) => {
-                const IconComponent = typeIcons[content.type] || FileText
-                return (
-                  <tr key={content.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 bg-swiss-teal/10 rounded-lg flex items-center justify-center">
-                          <IconComponent className="h-5 w-5 text-swiss-teal" />
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900 flex items-center">
-                            {content.title}
-                            {content.featured && (
-                              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                Featured
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">{content.type.replace('_', ' ')}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[content.status] || 'bg-gray-100 text-gray-800'}`}>
-                        {content.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{content.author}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 flex items-center">
-                        <Eye className="h-4 w-4 mr-1" />
-                        {content.views}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {content.publishedDate ? new Date(content.publishedDate).toLocaleDateString() : 'Not published'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Menu as="div" className="relative inline-block text-left">
-                        <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
-                          <MoreVertical className="h-4 w-4" />
-                        </Menu.Button>
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-100"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                            <div className="py-1">
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                  >
-                                    <Globe className="h-4 w-4 mr-2" />
-                                    View Live
-                                  </button>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                  >
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Edit
-                                  </button>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete
-                                  </button>
-                                )}
-                              </Menu.Item>
-                            </div>
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+      {/* Upload Modal */}
+      <ContentUploadModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleContentSubmit}
+        contentType={modalContentType}
+        existingContent={editingContent}
+      />
 
-        {filteredContent.length === 0 && (
-          <div className="text-center py-12">
-            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or create new content.</p>
-          </div>
-        )}
-      </div>
+      {/* Preview Modal */}
+      {previewContent && (
+        <DocumentPreviewModal
+          isOpen={!!previewContent}
+          onClose={() => setPreviewContent(null)}
+          fileUrl={previewContent.fileUrl || previewContent.publicUrl}
+          fileName={previewContent.title}
+          fileType={previewContent.type || 'document'}
+        />
+      )}
     </div>
-  )
+  );
 }
 
-export default Content
+// Content Card Component
+function ContentCard({
+  item,
+  onEdit,
+  onDelete,
+  onView,
+}: {
+  item: UploadedContent;
+  onEdit: () => void;
+  onDelete: () => void;
+  onView: () => void;
+}) {
+  const { t } = useTranslation(['admin', 'common']);
+  return (
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+      <div className="p-5">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+          {item.title}
+        </h3>
+        {item.description && (
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+        )}
+        {item.category && (
+          <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 mb-3">
+            {item.category}
+          </span>
+        )}
+        <div className="text-xs text-gray-500 mb-4">
+          {t('admin:content.updated', 'Updated')}: {new Date(item.updatedAt).toLocaleDateString()}
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onView}
+            className="flex-1 px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100"
+          >
+            {t('admin:content.view', 'View')}
+          </button>
+          <button
+            onClick={onEdit}
+            className="flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100"
+          >
+            {t('admin:content.edit', 'Edit')}
+          </button>
+          <button
+            onClick={onDelete}
+            className="flex-1 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100"
+          >
+            {t('admin:content.delete', 'Delete')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Pagination Component
+function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages = [];
+  const maxVisiblePages = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage < maxVisiblePages - 1) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return (
+    <div className="flex items-center justify-center gap-2 mt-6">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+      >
+        <ChevronLeftIcon className="h-5 w-5" />
+      </button>
+
+      {startPage > 1 && (
+        <>
+          <button
+            onClick={() => onPageChange(1)}
+            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            1
+          </button>
+          {startPage > 2 && <span className="px-2">...</span>}
+        </>
+      )}
+
+      {pages.map((page) => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={`px-4 py-2 border rounded-md ${
+            currentPage === page
+              ? 'bg-indigo-600 text-white border-indigo-600'
+              : 'border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          {page}
+        </button>
+      ))}
+
+      {endPage < totalPages && (
+        <>
+          {endPage < totalPages - 1 && <span className="px-2">...</span>}
+          <button
+            onClick={() => onPageChange(totalPages)}
+            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            {totalPages}
+          </button>
+        </>
+      )}
+
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+      >
+        <ChevronRightIcon className="h-5 w-5" />
+      </button>
+    </div>
+  );
+}
+

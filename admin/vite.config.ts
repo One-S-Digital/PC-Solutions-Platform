@@ -11,6 +11,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@repo/ui': path.resolve(__dirname, '../packages/ui/src'),
+      '@workspace/translations': path.resolve(__dirname, '../packages/translations'),
     },
   },
   server: {

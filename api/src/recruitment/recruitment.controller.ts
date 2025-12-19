@@ -1,17 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  ForbiddenException,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
   Query,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { RecruitmentService } from './recruitment.service';
-import { CreateJobListingDto, UpdateJobListingDto } from './dto/create-job-listing.dto';
+import { CreateJobListingDto } from './dto/create-job-listing.dto';
+import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-job-application.dto';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -37,18 +40,33 @@ export class RecruitmentController {
     @Query('status') status?: string,
     @Query('location') location?: string,
     @Query('search') search?: string,
+    @Query('contractType') contractType?: string,
+    @Query('lang') lang?: string,
+    @Request() req?,
   ) {
+    const normalizedContractType = contractType ? contractType.toUpperCase() : undefined;
+    const isPublicRole = !req?.user || [
+      UserRole.EDUCATOR,
+      UserRole.PARENT,
+      UserRole.SERVICE_PROVIDER,
+      UserRole.PRODUCT_SUPPLIER,
+    ].includes(req.user.role);
+    const publishedOnly = isPublicRole;
+
     return this.recruitmentService.findAllJobListings({
       foundationId,
       status,
       location,
       search,
+      contractType: normalizedContractType,
+      publishedOnly,
+      lang: lang || 'en',
     });
   }
 
   @Get('job-listings/:id')
-  findJobListingById(@Param('id') id: string) {
-    return this.recruitmentService.findJobListingById(id);
+  findJobListingById(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.recruitmentService.findJobListingById(id, lang || 'en');
   }
 
   @Patch('job-listings/:id')
@@ -61,6 +79,25 @@ export class RecruitmentController {
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   deleteJobListing(@Param('id') id: string) {
     return this.recruitmentService.deleteJobListing(id);
+  }
+
+  @Get('job-listings/:id/applications')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getJobListingApplications(@Param('id') id: string, @Request() req) {
+    const listing = await this.recruitmentService.findJobListingById(id, 'en');
+
+    if (!listing) {
+      throw new NotFoundException('Job listing not found');
+    }
+
+    if (
+      req.user.role === UserRole.FOUNDATION &&
+      listing.foundationId !== req.user.organizationId
+    ) {
+      throw new ForbiddenException('You can only view applications for your own job listings');
+    }
+
+    return this.recruitmentService.findJobApplicationsForJob(id);
   }
 
   // Job Application endpoints
@@ -82,6 +119,32 @@ export class RecruitmentController {
       jobListingId,
       status,
     });
+  }
+
+  @Get('applications/my')
+  @Roles(UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  getMyJobApplications(@Request() req) {
+    const candidateId = req.context.userId;
+    return this.recruitmentService.findJobApplicationsForCandidate(candidateId);
+  }
+
+  @Get('applications/job/:id')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getApplicationsForJob(@Param('id') id: string, @Request() req) {
+    const listing = await this.recruitmentService.findJobListingById(id, 'en');
+
+    if (!listing) {
+      throw new NotFoundException('Job listing not found');
+    }
+
+    if (
+      req.user.role === UserRole.FOUNDATION &&
+      listing.foundationId !== req.user.organizationId
+    ) {
+      throw new ForbiddenException('You can only view applications for your own job listings');
+    }
+
+    return this.recruitmentService.findJobApplicationsForJob(id);
   }
 
   @Get('applications/:id')
@@ -119,8 +182,12 @@ export class RecruitmentController {
   }
 
   @Get('candidates/:id')
-  findCandidateById(@Param('id') id: string) {
-    return this.recruitmentService.findCandidateById(id);
+  async findCandidateById(@Param('id') id: string) {
+    const candidate = await this.recruitmentService.findCandidateById(id);
+    if (!candidate) {
+      throw new NotFoundException('Candidate not found');
+    }
+    return candidate;
   }
 
   // Matching endpoints

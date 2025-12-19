@@ -1,7 +1,7 @@
 module.exports = {
-  locales: ['en'],
+  locales: ['en'], // Only extract to English as per specification
   defaultNamespace: 'common',
-  output: 'src/i18n/locales/$LOCALE/$NAMESPACE.json',
+  output: 'public/locales/$LOCALE/$NAMESPACE.json',
   useKeysAsDefaultValue: false,
   defaultValue: (locale, ns, key, value) => value || '',
   keySeparator: '.',
@@ -9,15 +9,16 @@ module.exports = {
   createOldCatalogs: false,
   sort: true,
   keepRemoved: true,
-  // Only scan source files, not node_modules
+  // Only scan frontend source files, not dynamic content
   input: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.test.{js,jsx,ts,tsx}',
     '!src/**/*.spec.{js,jsx,ts,tsx}',
   ],
-  // Don't extract from dynamic content
+  // Don't extract from dynamic content or API responses
   exclude: [
-    'src/i18n/**',
-    'src/services/translationApi.ts',
+    'src/services/**',
+    'src/api/**',
+    'src/constants.ts', // Avoid extracting from mock data
   ],
 };

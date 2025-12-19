@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Public } from './public.decorator';
 import { UserSyncService } from './user-sync.service';
 import { Webhook } from 'svix';
-import { UserRole } from '@repo/types';
+import { UserRole } from '@workspace/types';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 
 interface ClerkWebhookEvent {

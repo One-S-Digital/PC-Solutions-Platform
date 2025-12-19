@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "newChat": "Nouveau chat",
+    "newGroup": "Nouveau groupe",
+    "sendMessage": "Envoyer"
+  },
+  "confirmDelete": "Confirmer Supprimer",
+  "deleteMessage": "Supprimer message.",
+  "editMessage": "Modifier message.",
+  "emptyState": {
+    "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
+    "noConversationSelectedTitle": "Aucune conversation sélectionnée",
+    "noConversationsYet": "Pas encore de conversation",
+    "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
+  },
+  "errors": {
+    "fileTooLarge": "file Too Large"
+  },
+  "filters": {
+    "all": "Tous",
+    "unread": "Non lu"
+  },
+  "loadingMore": "Chargement... more",
+  "messageDeleted": "message Deleted",
+  "messageUpdated": "message Updated",
+  "messages": {
+    "buttons": {
+      "newGroup": "Nouveau groupe",
+      "sendMessage": "Envoyer un message"
+    },
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Sélectionnez une conversation pour commencer à envoyer des messages",
+      "noConversationSelectedTitle": "Aucune conversation sélectionnée",
+      "noConversationsYet": "Pas encore de conversations",
+      "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
+    },
+    "filters": {
+      "all": "Tous",
+      "unread": "Non lu"
+    },
+    "noConversationsFound": "Aucune conversation trouvée",
+    "placeholders": {
+      "searchConversations": "Recherche de conversations...",
+      "typeMessage": "Tapez un message..."
+    },
+    "searchPlaceholder": "Recherche de conversations...",
+    "tabs": {
+      "all": "Tous les messages",
+      "unread": "Non lu"
+    },
+    "title": "Messages"
+  },
+  "noConversationsFound": "Aucune conversation trouvée",
+  "noMessagesYet": "Aucun message pour l'instant",
+  "placeholders": {
+    "addCaption": "Ajouter caption",
+    "searchConversations": "Recherche de conversations",
+    "typeMessage": "Tapez un message..."
+  },
+  "scrollForMore": "scroll For More",
+  "searchPlaceholder": "Recherche de conversations...",
+  "tabs": {
+    "all": "Tous les messages",
+    "unread": "Non lu"
+  },
+  "title": "Messages",
+  "unknownUser": "Utilisateur inconnu",
+  "youPrefix": "Vous :"
+}

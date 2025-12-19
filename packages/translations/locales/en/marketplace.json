@@ -1,0 +1,104 @@
+{
+  "marketplace": {
+    "emptyStates": {
+      "noProductSuppliers": "No product suppliers found",
+      "noServices": "No services found"
+    },
+    "messages": {
+      "noProductSuppliers": "No product suppliers found",
+      "noServiceProviders": "No service providers found",
+      "noServices": "No services found",
+      "noResults": "No results found. Try adjusting your filters."
+    },
+    "serviceCard": {
+      "bookAppointment": "Book Appointment",
+      "categoryLabel": "{{category}}",
+      "viewProvider": "View Provider"
+    },
+    "subtitles": {
+      "productSuppliers": "Browse products from verified suppliers",
+      "serviceProviders": "Discover professional services for your daycare"
+    },
+    "buttons": {
+      "partnerOnboarding": "Partner Onboarding",
+      "resetFilters": "Reset Filters",
+      "viewDetails": "View Details",
+      "contact": "Contact Supplier"
+    },
+    "sortOptions": {
+      "ratingDesc": "Highest Rated",
+      "nameDesc": "Name (Z-A)",
+      "nameAsc": "Name (A-Z)"
+    },
+    "labels": {
+      "categoryFilter": "Filter by category",
+      "regionFilter": "Filter by region",
+      "searchByName": "Search by name",
+      "supplierTags": "Tags",
+      "category": "Category",
+      "region": "Region",
+      "sortBy": "Sort By"
+    },
+    "tabs": {
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers"
+    },
+    "searchPlaceholder": "Search {{activeTabLabel}}...",
+    "infoAlert": "Browse products and services from verified Swiss providers"
+  },
+  "serviceRequest": {
+    "detailsPlaceholder": "e.g., Number of children for workshop, specific areas for cleaning..."
+  },
+  "emptyStates": {
+    "noProductSuppliers": "No product suppliers found",
+    "noServices": "No services found"
+  },
+  "messages": {
+    "noProductSuppliers": "No product suppliers found",
+    "noServiceProviders": "No service providers found",
+    "noServices": "No services found",
+    "noResults": "No results found. Try adjusting your filters.",
+    "partnerOnboardingTBD": "Partner Onboarding TBD"
+  },
+  "serviceCard": {
+    "bookAppointment": "Book Appointment",
+    "categoryLabel": "Category",
+    "viewProvider": "View Provider"
+  },
+  "subtitles": {
+    "productSuppliers": "Browse products from verified suppliers",
+    "serviceProviders": "Discover professional services for your daycare"
+  },
+  "buttons": {
+    "partnerOnboarding": "Partner Onboarding",
+    "resetFilters": "Reset Filters",
+    "viewDetails": "View Details",
+    "contact": "Contact Supplier"
+  },
+  "sortOptions": {
+    "ratingDesc": "Highest Rated",
+    "nameDesc": "Name (Z-A)",
+    "nameAsc": "Name (A-Z)"
+  },
+  "cart": {
+    "notesPlaceholder": "e.g., Preferred delivery times, specific packaging..."
+  },
+  "labels": {
+    "categoryFilter": "Filter by category",
+    "regionFilter": "Filter by region",
+    "searchByName": "Search By Name",
+    "supplierTags": "Tags",
+    "category": "Category",
+    "region": "Region",
+    "sortBy": "Sort By"
+  },
+  "tabs": {
+    "productSuppliers": "Product Suppliers",
+    "serviceProviders": "Service Providers"
+  },
+  "searchPlaceholder": "Search {{activeTabLabel}}...",
+  "infoAlert": "Browse products and services from verified Swiss providers",
+  "errors": {
+    "loadFailed": "Failed to load marketplace data"
+  }
+}

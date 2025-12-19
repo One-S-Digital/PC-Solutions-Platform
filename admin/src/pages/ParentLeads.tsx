@@ -19,11 +19,13 @@ import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { LeadMainStatus } from '../types'
 import { ParentLead } from '../types/api'
+import { useTranslation } from 'react-i18next';
 
 const ParentLeads: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<LeadMainStatus | ''>('')
   const apiClient = useApiClient()
+  const { t } = useTranslation(['common', 'admin']);
 
   const { data: leadsResponse, isLoading, error } = useQuery({
     queryKey: ['parent-leads'],
@@ -62,8 +64,8 @@ const ParentLeads: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load parent leads</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:parentLeads.error.loadFailed', 'Failed to load parent leads')}</div>
+        <p className="text-gray-600">{t('admin:parentLeads.error.description', 'Please check your connection and try again.')}</p>
       </div>
     )
   }
@@ -75,15 +77,15 @@ const ParentLeads: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Heart className="h-8 w-8 mr-3 text-swiss-teal" />
-            Parent Leads
+            {t('admin:parentLeads.title', 'Parent Leads')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage parent inquiries and leads ({leads.length} total)
+            {t('admin:parentLeads.subtitle', 'Manage parent inquiries and leads ({{count}} total)', { count: leads.length })}
           </p>
         </div>
         <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
           <Plus className="h-4 w-4 mr-2" />
-          Add Lead
+          {t('admin:parentLeads.addLead', 'Add Lead')}
         </button>
       </div>
 
@@ -95,7 +97,7 @@ const ParentLeads: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search parent leads..."
+                placeholder={t('common:placeholders.searchparentleads')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -108,7 +110,7 @@ const ParentLeads: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as LeadMainStatus | '')}
             >
-              <option value="">All Status</option>
+              <option value="">{t('common:filters.status.all')}</option>
               {Object.values(LeadMainStatus).map((status) => (
                 <option key={status} value={status}>
                   {status}
@@ -126,29 +128,29 @@ const ParentLeads: React.FC = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Parent
+                  {t('admin:parentLeads.table.parent', 'Parent')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Child Info
+                  {t('admin:parentLeads.table.childInfo', 'Child Info')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
+                  {t('admin:parentLeads.table.location', 'Location')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {t('admin:parentLeads.table.status', 'Status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Inquiry Date
+                  {t('admin:parentLeads.table.inquiryDate', 'Inquiry Date')}
                 </th>
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{t('admin:parentLeads.table.actions', 'Actions')}</span>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredLeads.map((lead) => {
-                const displayName = lead.parent?.name || lead.contactName || 'Unknown'
-                const displayEmail = lead.parent?.email || lead.contactEmail || 'N/A'
+                const displayName = lead.parent?.name || lead.contactName || t('admin:parentLeads.labels.unknown', 'Unknown')
+                const displayEmail = lead.parent?.email || lead.contactEmail || t('admin:parentLeads.labels.noEmail', 'N/A')
                 return (
                 <tr key={lead.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -178,7 +180,7 @@ const ParentLeads: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900 flex items-center">
                       <Baby className="h-4 w-4 mr-1" />
-                      {lead.childAge} years old
+                      {lead.childAge} {t('admin:parentLeads.labels.yearsOld', 'years old')}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -224,7 +226,7 @@ const ParentLeads: React.FC = () => {
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                 >
                                   <Edit className="h-4 w-4 mr-2" />
-                                  Edit Status
+                                  {t('admin:parentLeads.actions.editStatus', 'Edit Status')}
                                 </button>
                               )}
                             </Menu.Item>
@@ -234,7 +236,7 @@ const ParentLeads: React.FC = () => {
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete
+                                  {t('admin:parentLeads.actions.delete', 'Delete')}
                                 </button>
                               )}
                             </Menu.Item>
@@ -252,8 +254,8 @@ const ParentLeads: React.FC = () => {
         {filteredLeads.length === 0 && (
           <div className="text-center py-12">
             <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No parent leads found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or add a new lead.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:parentLeads.emptyState.title', 'No parent leads found')}</h3>
+            <p className="text-gray-600">{t('admin:parentLeads.emptyState.description', 'Try adjusting your search criteria or add a new lead.')}</p>
           </div>
         )}
       </div>

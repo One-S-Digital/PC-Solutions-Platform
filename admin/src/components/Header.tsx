@@ -1,6 +1,8 @@
 import React from 'react'
 import { useUser, useClerk } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
+import LanguageSwitcher from './design-system/LanguageSwitcher'
+import { useTranslation } from 'react-i18next'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -9,6 +11,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { user } = useUser()
   const { signOut } = useClerk()
+  const { t } = useTranslation(['dashboard','common'])
 
   const handleSignOut = () => {
     signOut()
@@ -27,12 +30,13 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
           </button>
           <div className="ml-4 lg:ml-0">
             <h1 className="text-lg font-semibold text-swiss-charcoal">
-              Admin Dashboard
+              {t('sidebar.dashboard')}
             </h1>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
+          <LanguageSwitcher />
           <button className="p-2 text-gray-400 hover:text-gray-500">
             <Bell className="h-5 w-5" />
           </button>
@@ -53,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
               onClick={handleSignOut}
               className="text-sm text-gray-500 hover:text-gray-700"
             >
-              Sign out
+              {t('navbar.signOut')}
             </button>
           </div>
         </div>

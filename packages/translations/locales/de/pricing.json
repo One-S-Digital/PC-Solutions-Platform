@@ -1,0 +1,258 @@
+{
+  "pricing": {
+    "pricingPage": {
+      "serviceProviderPlan": {
+        "features": {
+          "appointmentScheduling": "Terminplanungssystem",
+          "multiLanguageSupport": "Mehrsprachige Unterstützung",
+          "prioritySupport": "Priorisierter Support",
+          "revenueTracking": "Umsatzverfolgung & Reporting",
+          "serviceListings": "Servicepräsentationen & Marktplatzzugang",
+          "crm": "Kundenbeziehungsmanagement"
+        },
+        "description": "Planen Sie Termine, steuern Sie Ihren Kundenstamm und steigern Sie wiederkehrende Umsätze mit Betreuungsträgern.",
+        "tagline": "Bauen Sie nachhaltige Partnerschaften mit professionellen Kitas auf.",
+        "name": "Anbieter von Dienstleistungen"
+      },
+      "enterprisePlan": {
+        "features": {
+          "everythingProfessional": "Alles aus Professional",
+          "multiSiteManagement": "Multi-Standort-Management",
+          "customIntegrations": "Individuelle Integrationen & API-Zugang",
+          "whiteLabelBranding": "White-Label-Branding-Optionen",
+          "advancedAnalytics": "Erweiterte Analysen & Berichte",
+          "accountManager": "Dedizierte Kundenbetreuung"
+        },
+        "description": "Steuern Sie mehrere Einrichtungen mit gleichbleibender Qualität dank Analysen, Integrationen und dedizierten Expert:innen.",
+        "tagline": "Skalieren Sie mehrere Standorte mit Automatisierung und Premium-Support.",
+        "name": "Unternehmen"
+      },
+      "professionalPlan": {
+        "features": {
+          "everythingEssential": "Alles aus Essential",
+          "unlimitedEnquiries": "Unbegrenzte Elternanfragen",
+          "prioritySupport": "Priorisierter Support",
+          "recruitment": "Recruiting-Modul",
+          "elearning": "E-Learning-Bibliothek für Mitarbeitende",
+          "teamTools": "Team-Management-Tools"
+        },
+        "description": "Rekrutieren und schulen Sie Ihr Team, bearbeiten Sie unbegrenzt Elternanfragen und bieten Sie exzellenten Service ohne Zusatzaufwand.",
+        "tagline": "Wachsen Sie mit integrierter Personalgewinnung und Schulung.",
+        "name": "Professionell"
+      },
+      "suppliersPlan": {
+        "features": {
+          "multiLanguageSupport": "Mehrsprachige Unterstützung",
+          "productListings": "Produktpräsentationen & Marktplatzzugang",
+          "leadManagement": "Lead-Management-Arbeitsbereich",
+          "salesAnalytics": "Umsatzanalyse-Dashboard",
+          "orderTracking": "Auftragsverfolgung & Abwicklung",
+          "emailSupport": "E-Mail-Support"
+        },
+        "description": "Präsentieren Sie Ihr Sortiment, verwalten Sie Leads und verfolgen Sie Umsätze in einer Oberfläche.",
+        "tagline": "Einfache, faire Preise, um Schweizer Kitas zu erreichen.",
+        "name": "Anbieter"
+      },
+      "essentialPlan": {
+        "features": {
+          "everythingBasic": "Alles aus Basic",
+          "enquiryTracker": "Elternanfragen mit Schnellantworten verfolgen",
+          "hrCompliance": "Schweizer HR- & Compliance-Bibliothek",
+          "leadInbox": "Posteingang für Eltern-Leads mit Automatching"
+        },
+        "description": "Gewinnen Sie Eltern schneller, bleiben Sie konform und verwalten Sie Anfragen mühelos – alles in einem Dashboard.",
+        "tagline": "Sparen Sie Zeit mit fertigen Eltern- und HR-Workflows.",
+        "name": "Wesentlich"
+      },
+      "basicPlan": {
+        "features": {
+          "emailSupport": "E-Mail-Support",
+          "multilingual": "Mehrsprachige Oberfläche (DE/FR/EN)",
+          "marketplace": "Marktplatz für Lieferanten und Dienstleister",
+          "policyhub": "Kantonales Regelwerk im Überblick"
+        },
+        "description": "Sofortiger Zugang zu Lieferanten, Compliance-Hinweisen und Support – alles für einen reibungslosen Betrieb zum kleinen Preis.",
+        "tagline": "Unverzichtbare Tools für kleinere Kitas.",
+        "name": "Grundlegend"
+      },
+      "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister",
+      "selectAndContinue": "Auswählen und fortfahren",
+      "featureFallback": "Inklusive Leistung",
+      "subtitleSignup": "Erstellen Sie Ihr Konto und legen Sie los",
+      "titleSignup": "Registrierung",
+      "choosePlan": "Plan auswählen",
+      "saveUpTo10": "Bis zu 10 % sparen",
+      "whatYouGet": "Leistungen im Überblick",
+      "features": "Leistungsübersicht",
+      "subtitle": "Wählen Sie den passenden Plan für Ihre Organisation",
+      "billing": "Abrechnungsinformationen",
+      "monthly": "Monatlich",
+      "popular": "Am beliebtesten",
+      "annual": "Jährlich",
+      "plans": "Verfügbare Pakete",
+      "title": "Preispläne"
+    },
+    "suppliers": {
+      "serviceProvidersPlan": {
+        "price": "CHF 99",
+        "title": "Dienstleister",
+        "desc": "Bauen Sie Partnerschaften mit Kitas auf"
+      },
+      "suppliersPlan": {
+        "price": "CHF 79",
+        "title": "Produktlieferanten",
+        "desc": "Erreichen Sie Schweizer Kitas mit Ihren Produkten"
+      },
+      "title": "Für Lieferanten und Dienstleister"
+    },
+    "sections": {
+      "professional": {
+        "price": "CHF 199",
+        "title": "Professionell",
+        "desc": "Wachsen Sie selbstbewusst mit voller Unterstützung"
+      },
+      "enterprise": {
+        "price": "Individuell",
+        "title": "Unternehmen",
+        "desc": "Skalieren Sie über Standorte mit Automatisierung"
+      },
+      "essential": {
+        "price": "CHF 99",
+        "title": "Wesentlich",
+        "desc": "Sparen Sie Zeit mit sofort einsatzbereiten Workflows"
+      },
+      "basic": {
+        "price": "CHF 49",
+        "title": "Basis",
+        "desc": "Wesentliche Tools für kleine Kitas"
+      }
+    }
+  },
+  "pricingPage": {
+    "serviceProviderPlan": {
+      "features": {
+        "appointmentScheduling": "Terminplanungssystem",
+        "multiLanguageSupport": "Mehrsprachige Unterstützung",
+        "prioritySupport": "Priorisierter Support",
+        "revenueTracking": "Umsatzverfolgung & Reporting",
+        "serviceListings": "Servicepräsentationen & Marktplatzzugang",
+        "crm": "Kundenbeziehungsmanagement"
+      },
+      "description": "Planen Sie Termine, steuern Sie Ihren Kundenstamm und steigern Sie wiederkehrende Umsätze mit Betreuungsträgern.",
+      "tagline": "Bauen Sie nachhaltige Partnerschaften mit professionellen Kitas auf.",
+      "name": "Anbieter von Dienstleistungen"
+    },
+    "enterprisePlan": {
+      "features": {
+        "everythingProfessional": "Alles aus Professional",
+        "multiSiteManagement": "Multi-Standort-Management",
+        "customIntegrations": "Individuelle Integrationen & API-Zugang",
+        "whiteLabelBranding": "White-Label-Branding-Optionen",
+        "advancedAnalytics": "Erweiterte Analysen & Berichte",
+        "accountManager": "Dedizierte Kundenbetreuung"
+      },
+      "description": "Steuern Sie mehrere Einrichtungen mit gleichbleibender Qualität dank Analysen, Integrationen und dedizierten Expert:innen.",
+      "tagline": "Skalieren Sie mehrere Standorte mit Automatisierung und Premium-Support.",
+      "name": "Unternehmen"
+    },
+    "professionalPlan": {
+      "features": {
+        "everythingEssential": "Alles aus Essential",
+        "unlimitedEnquiries": "Unbegrenzte Elternanfragen",
+        "prioritySupport": "Priorisierter Support",
+        "recruitment": "Recruiting-Modul",
+        "elearning": "E-Learning-Bibliothek für Mitarbeitende",
+        "teamTools": "Team-Management-Tools"
+      },
+      "description": "Rekrutieren und schulen Sie Ihr Team, bearbeiten Sie unbegrenzt Elternanfragen und bieten Sie exzellenten Service ohne Zusatzaufwand.",
+      "tagline": "Wachsen Sie mit integrierter Personalgewinnung und Schulung.",
+      "name": "Professionell"
+    },
+    "suppliersPlan": {
+      "features": {
+        "multiLanguageSupport": "Mehrsprachige Unterstützung",
+        "productListings": "Produktpräsentationen & Marktplatzzugang",
+        "leadManagement": "Lead-Management-Arbeitsbereich",
+        "salesAnalytics": "Umsatzanalyse-Dashboard",
+        "orderTracking": "Auftragsverfolgung & Abwicklung",
+        "emailSupport": "E-Mail-Support"
+      },
+      "description": "Präsentieren Sie Ihr Sortiment, verwalten Sie Leads und verfolgen Sie Umsätze in einer Oberfläche.",
+      "tagline": "Einfache, faire Preise, um Schweizer Kitas zu erreichen.",
+      "name": "Anbieter"
+    },
+    "essentialPlan": {
+      "features": {
+        "everythingBasic": "Alles aus Basic",
+        "enquiryTracker": "Elternanfragen mit Schnellantworten verfolgen",
+        "hrCompliance": "Schweizer HR- & Compliance-Bibliothek",
+        "leadInbox": "Posteingang für Eltern-Leads mit Automatching"
+      },
+      "description": "Gewinnen Sie Eltern schneller, bleiben Sie konform und verwalten Sie Anfragen mühelos – alles in einem Dashboard.",
+      "tagline": "Sparen Sie Zeit mit fertigen Eltern- und HR-Workflows.",
+      "name": "Wesentlich"
+    },
+    "basicPlan": {
+      "features": {
+        "emailSupport": "E-Mail-Support",
+        "multilingual": "Mehrsprachige Oberfläche (DE/FR/EN)",
+        "marketplace": "Marktplatz für Lieferanten und Dienstleister",
+        "policyhub": "Kantonales Regelwerk im Überblick"
+      },
+      "description": "Sofortiger Zugang zu Lieferanten, Compliance-Hinweisen und Support – alles für einen reibungslosen Betrieb zum kleinen Preis.",
+      "tagline": "Unverzichtbare Tools für kleinere Kitas.",
+      "name": "Grundlegend"
+    },
+    "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister",
+    "selectAndContinue": "Auswählen und fortfahren",
+    "featureFallback": "Inklusive Leistung",
+    "subtitleSignup": "Erstellen Sie Ihr Konto und legen Sie los",
+    "titleSignup": "Registrierung",
+    "choosePlan": "Plan auswählen",
+    "saveUpTo10": "Bis zu 10 % sparen",
+    "whatYouGet": "Leistungen im Überblick",
+    "features": "Leistungsübersicht",
+    "subtitle": "Wählen Sie den passenden Plan für Ihre Organisation",
+    "billing": "Abrechnungsinformationen",
+    "monthly": "Monatlich",
+    "popular": "Am beliebtesten",
+    "annual": "Jährlich",
+    "plans": "Verfügbare Pakete",
+    "title": "Preispläne"
+  },
+  "suppliers": {
+    "serviceProvidersPlan": {
+      "price": "CHF 99",
+      "title": "Dienstleister",
+      "desc": "Bauen Sie Partnerschaften mit Kitas auf"
+    },
+    "suppliersPlan": {
+      "price": "CHF 79",
+      "title": "Produktlieferanten",
+      "desc": "Erreichen Sie Schweizer Kitas mit Ihren Produkten"
+    },
+    "title": "Für Lieferanten und Dienstleister"
+  },
+  "sections": {
+    "professional": {
+      "price": "CHF 199",
+      "title": "Professionell",
+      "desc": "Wachsen Sie selbstbewusst mit voller Unterstützung"
+    },
+    "enterprise": {
+      "price": "Individuell",
+      "title": "Unternehmen",
+      "desc": "Skalieren Sie über Standorte mit Automatisierung"
+    },
+    "essential": {
+      "price": "CHF 99",
+      "title": "Wesentlich",
+      "desc": "Sparen Sie Zeit mit sofort einsatzbereiten Workflows"
+    },
+    "basic": {
+      "price": "CHF 49",
+      "title": "Basis",
+      "desc": "Wesentliche Tools für kleine Kitas"
+    }
+  }
+}

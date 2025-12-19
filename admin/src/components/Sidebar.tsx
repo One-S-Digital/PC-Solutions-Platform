@@ -17,10 +17,16 @@ import {
   Monitor,
   Mail,
   X,
-  Shield
+  Shield,
+  Palette,
+  Globe,
+  Handshake,
+  LifeBuoy,
+  CreditCard,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
+import { useTranslation } from 'react-i18next'
 
 interface SidebarProps {
   sidebarOpen: boolean
@@ -28,28 +34,35 @@ interface SidebarProps {
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Organizations', href: '/organizations', icon: Building2 },
-  { name: 'Products', href: '/products', icon: Package },
-  { name: 'Services', href: '/services', icon: Wrench },
-  { name: 'Job Listings', href: '/job-listings', icon: Briefcase },
-  { name: 'Candidates', href: '/candidates', icon: UserCheck },
-  { name: 'Parent Leads', href: '/parent-leads', icon: Heart },
-  { name: 'Orders', href: '/orders', icon: ShoppingCart },
-  { name: 'Content', href: '/content', icon: FileText },
-  { name: 'Messaging', href: '/messaging', icon: MessageSquare },
-  { name: 'System Monitor', href: '/system', icon: Monitor },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { key: 'dashboard', href: '/dashboard', icon: BarChart3 },
+  { key: 'users', href: '/users', icon: Users },
+  { key: 'foundations', href: '/organizations', icon: Building2 },
+  { key: 'partners', href: '/partners', icon: Handshake },
+  { key: 'products', href: '/products', icon: Package },
+  { key: 'services', href: '/services', icon: Wrench },
+  { key: 'jobListings', href: '/job-listings', icon: Briefcase },
+  { key: 'candidatePool', href: '/candidates', icon: UserCheck },
+  { key: 'parentLeads', href: '/parent-leads', icon: Heart },
+  { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
+  { key: 'content', href: '/content', icon: FileText },
+  { key: 'messages', href: '/messaging', icon: MessageSquare },
+  { key: 'support', href: '/support', icon: LifeBuoy },
+  { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
+  { key: 'systemMonitoring', href: '/system', icon: Monitor },
+  { key: 'translations', href: '/translations', icon: Globe },
+  { key: 'designSystem', href: '/design-system', icon: Palette },
+  { key: 'settings', href: '/settings', icon: Settings },
 ]
+
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation()
   const { settings } = useSettings()
+  const { t } = useTranslation(['dashboard', 'admin', 'common'])
 
   const getAdminLogo = () => {
-    if (settings?.adminLogoAsset?.url) {
-      return settings.adminLogoAsset.url
+    if (settings?.adminLogoAsset?.publicUrl) {
+      return settings.adminLogoAsset.publicUrl
     }
     return null
   }
@@ -60,23 +73,21 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         {getAdminLogo() ? (
           <img
             src={getAdminLogo()}
-            alt="Admin Logo"
-            className="h-9 w-9 object-contain mr-2.5"
+            alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
+            className="h-[69px] w-auto"
           />
         ) : (
-          <div className="h-9 w-9 bg-swiss-mint mr-2.5 flex items-center justify-center rounded">
-            <Shield className="h-5 w-5 text-white" />
-          </div>
+          <Shield className="h-[69px] w-[69px] text-swiss-mint" />
         )}
-        <h1 className="text-2xl font-bold text-swiss-charcoal">Admin</h1>
       </div>
 
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        {/* Main Navigation */}
         {navigation.map((item) => {
           const isActive = location.pathname === item.href
           return (
             <NavLink
-              key={item.name}
+              key={item.key}
               to={item.href}
               className={clsx(
                 'group flex items-center px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
@@ -91,14 +102,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
                 )}
               />
-              {item.name}
+              {t(`admin:sidebar.${item.key}`, item.key)}
             </NavLink>
           )
         })}
+
       </nav>
 
       <div className="p-4 border-t border-gray-200/80 text-center">
-        <p className="text-xs text-gray-500">Backend Management v1.0</p>
+        <p className="text-xs text-gray-500">{t('admin:sidebar.version', 'Backend Management v1.0')}</p>
       </div>
     </div>
   )

@@ -1,8 +1,9 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { AssetKind } from '@repo/types';
+import { AssetKind } from '@prisma/client';
+import { createHash } from 'crypto';
 
 export interface UploadResult {
   key: string;
@@ -10,6 +11,8 @@ export interface UploadResult {
   filename: string;
   mimeType: string;
   size: number;
+  etag?: string;
+  checksum?: string;
 }
 
 export interface PresignedUploadData {
@@ -59,16 +62,16 @@ export class CloudflareR2Service {
     filename: string,
     mimeType: string,
     assetKind: AssetKind,
-    userId: string,
+    appUserId: string,
   ): Promise<PresignedUploadData> {
-    const key = this.generateStorageKey(filename, assetKind, userId);
+    const key = this.generateStorageKey(filename, assetKind, appUserId, undefined);
     
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
       ContentType: mimeType,
       Metadata: {
-        'uploaded-by': userId,
+        'uploaded-by': appUserId,
         'asset-kind': assetKind,
         'original-filename': filename,
       },
@@ -91,12 +94,14 @@ export class CloudflareR2Service {
   }
 
   /**
-   * Upload file directly from server
+   * Upload file directly from server with checksum verification
    */
   async uploadFile(
     file: Express.Multer.File,
     assetKind: AssetKind,
-    userId: string,
+    appUserId: string,
+    subcategory?: string,
+    conversationId?: string,
   ): Promise<UploadResult> {
     try {
       // Validate file first
@@ -104,30 +109,50 @@ export class CloudflareR2Service {
       
       // Check if R2 is properly configured
       if (!this.isConfigured()) {
+        // Development mode fallback: store locally
+        const isDevelopment = process.env.NODE_ENV !== 'production';
+        if (isDevelopment) {
+          this.logger.warn('⚠️ R2 not configured. Using development fallback (local storage simulation)');
+          return this.uploadFileLocalFallback(file, assetKind, appUserId, subcategory, conversationId);
+        }
         throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
       }
 
-      const key = this.generateStorageKey(file.originalname, assetKind, userId);
+      const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
+      
+      // Calculate SHA-256 checksum
+      const checksum = this.calculateChecksum(file.buffer);
       
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
+        ChecksumSHA256: checksum, // S3-compatible checksum
         Metadata: {
-          'uploaded-by': userId,
+          'uploaded-by': appUserId,
           'asset-kind': assetKind,
           'original-filename': file.originalname,
+          'checksum-sha256': checksum,
         },
       });
 
-      this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key}`);
+      this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key} with checksum: ${checksum.substring(0, 16)}...`);
       
       await this.s3Client.send(command);
       
+      // Verify upload by fetching ETag
+      const headCommand = new HeadObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+      
+      const headResponse = await this.s3Client.send(headCommand);
+      const etag = headResponse.ETag?.replace(/"/g, '') || '';
+      
       const publicUrl = `${this.publicUrl}/${key}`;
       
-      this.logger.log(`File uploaded successfully: ${key}`);
+      this.logger.log(`File uploaded successfully: ${key}, ETag: ${etag}`);
       
       return {
         key,
@@ -135,13 +160,15 @@ export class CloudflareR2Service {
         filename: file.originalname,
         mimeType: file.mimetype,
         size: file.size,
+        etag,
+        checksum,
       };
     } catch (error) {
       this.logger.error('Failed to upload file', {
         error: error.message,
         filename: file?.originalname,
         assetKind,
-        userId,
+        userId: appUserId,
         stack: error.stack,
       });
       
@@ -150,6 +177,33 @@ export class CloudflareR2Service {
       }
       
       throw new BadRequestException(`Failed to upload file: ${error.message}`);
+    }
+  }
+
+  /**
+   * Calculate SHA-256 checksum (base64 encoded for S3 compatibility)
+   */
+  private calculateChecksum(buffer: Buffer): string {
+    return createHash('sha256').update(buffer).digest('base64');
+  }
+
+  /**
+   * Check if a file exists in R2
+   */
+  async exists(key: string): Promise<boolean> {
+    try {
+      const command = new HeadObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+      
+      await this.s3Client.send(command);
+      return true;
+    } catch (error) {
+      if (error.name === 'NotFound' || error.name === 'NoSuchKey') {
+        return false;
+      }
+      throw error;
     }
   }
 
@@ -206,6 +260,9 @@ export class CloudflareR2Service {
       FRONTEND_OG_IMAGE: 5 * 1024 * 1024, // 5MB
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
+      SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
+      ELEARNING: 100 * 1024 * 1024, // 100MB - for videos, PDFs, courses
+      COMPANY_PROFILE_DOC: 50 * 1024 * 1024, // 50MB - for catalogs, company profiles
     };
 
     const allowedTypes = {
@@ -222,6 +279,25 @@ export class CloudflareR2Service {
       FRONTEND_OG_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
       ADMIN_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
       ADMIN_FAVICON: ['image/x-icon', 'image/png', 'image/jpeg'],
+      SIDEBAR_LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
+      ELEARNING: [
+        'application/pdf',
+        'video/mp4',
+        'video/quicktime',
+        'video/x-msvideo', // AVI
+        'video/webm',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      ],
+      COMPANY_PROFILE_DOC: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      ],
     };
 
     const maxSize = maxSizes[assetKind];
@@ -245,12 +321,33 @@ export class CloudflareR2Service {
   /**
    * Generate storage key for file organization
    */
-  private generateStorageKey(filename: string, assetKind: AssetKind, userId: string): string {
+  private generateStorageKey(
+    filename: string, 
+    assetKind: AssetKind, 
+    appUserId: string,
+    subcategory?: string,
+    conversationId?: string,
+  ): string {
     const timestamp = Date.now();
-    const extension = filename.split('.').pop()?.toLowerCase() || '';
     const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
-    
-    return `${assetKind.toLowerCase()}/${userId}/${timestamp}-${sanitizedFilename}`;
+    const sanitizedSubcategory = subcategory ? subcategory.replace(/[^a-zA-Z0-9-]/g, '_').toLowerCase() : null;
+
+    // Special handling for message attachments - organize by conversation
+    // If conversationId is provided, use messages folder structure
+    // SECURITY NOTE: Files from different users share the same conversation folder.
+    // Conversation-level authorization MUST be enforced at the API/service layer
+    // to prevent unauthorized file uploads and access.
+    if (conversationId) {
+      const sanitizedConversationId = conversationId.replace(/[^a-zA-Z0-9-]/g, '_');
+      return `messages/${sanitizedConversationId}/${timestamp}-${sanitizedFilename}`;
+    }
+
+    // If subcategory provided, use it as a subfolder
+    if (sanitizedSubcategory) {
+      return `${assetKind.toLowerCase()}/${sanitizedSubcategory}/${appUserId}/${timestamp}-${sanitizedFilename}`;
+    }
+
+    return `${assetKind.toLowerCase()}/${appUserId}/${timestamp}-${sanitizedFilename}`;
   }
 
   /**
@@ -308,6 +405,85 @@ export class CloudflareR2Service {
       this.logger.error('Failed to get file info', error);
       return null;
     }
+  }
+
+  /**
+   * Get file as a stream for proxying/downloading
+   */
+  async getFileStream(key: string): Promise<{ stream: any; contentType: string; size: number }> {
+    // Check if R2 is configured
+    if (!this.isConfigured()) {
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      if (isDevelopment) {
+        this.logger.warn(`⚠️ R2 not configured. Cannot download file: ${key}`);
+        this.logger.warn('File downloads require R2 to be properly configured.');
+        this.logger.warn('Files uploaded in development mode without R2 are not actually stored.');
+        throw new BadRequestException(
+          'File downloads are not available in development mode without R2 configuration. ' +
+          'Please configure R2_ENDPOINT, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY environment variables.'
+        );
+      }
+      throw new BadRequestException('File storage is not properly configured. Please contact administrator.');
+    }
+
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+
+      const response = await this.s3Client.send(command);
+      
+      if (!response.Body) {
+        throw new Error('File body is empty');
+      }
+
+      return {
+        stream: response.Body as any, // AWS SDK returns a readable stream
+        contentType: response.ContentType || 'application/octet-stream',
+        size: response.ContentLength || 0,
+      };
+    } catch (error) {
+      this.logger.error('Failed to get file stream');
+      this.logger.error(`Error details: ${error.message || error}`);
+      this.logger.error(`Attempted to fetch key: ${key}`);
+      this.logger.error(`Bucket: ${this.bucketName}`);
+      
+      // Check if it's a NoSuchKey error (file doesn't exist)
+      if (error.name === 'NoSuchKey' || error.message?.includes('NoSuchKey')) {
+        throw new BadRequestException(`File not found: ${key}`);
+      }
+      
+      throw new BadRequestException(`Failed to get file stream: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Development fallback: simulate file upload without R2
+   * This stores file metadata in memory and returns mock URLs
+   */
+  private uploadFileLocalFallback(
+    file: Express.Multer.File,
+    assetKind: AssetKind,
+    appUserId: string,
+    subcategory?: string,
+    conversationId?: string,
+  ): UploadResult {
+    const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
+    const mockUrl = `http://localhost:3000/uploads/${key}`;
+    
+    this.logger.log(`📦 Development fallback: Simulating upload for ${file.originalname}`);
+    this.logger.log(`   File size: ${file.size} bytes`);
+    this.logger.log(`   Mock URL: ${mockUrl}`);
+    this.logger.log(`   ⚠️  Note: File is NOT actually stored. Configure R2 for production.`);
+    
+    return {
+      key,
+      url: mockUrl,
+      filename: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+    };
   }
 
   /**

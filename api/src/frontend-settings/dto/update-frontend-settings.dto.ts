@@ -34,6 +34,10 @@ export class UpdateFrontendSettingsDto {
   @IsUUID()
   adminFaviconAssetId?: string;
 
+  @IsOptional()
+  @IsUUID()
+  sidebarLogoAssetId?: string;
+
   // Branding Colors
   @IsOptional()
   @IsHexColor()

@@ -1,0 +1,294 @@
+{
+  "application": {
+    "coverLetterPlaceholder": "Dites-nous pourquoi vous êtes intéressé(e) par ce poste et ce qui fait de vous un(e) candidat(e) idéal(e)..."
+  },
+  "buttons": {
+    "addCandidate": "Ajouter un candidat",
+    "applyFilters": "Appliquer les filtres",
+    "applyNow": "Postuler",
+    "filters": "Filtres",
+    "inviteToApply": "Invitation à postuler",
+    "inviteToInterview": "Invitation à un entretien",
+    "postNewJob": "Publier un nouvel emploi",
+    "viewApplicants": "Voir les candidats"
+  },
+  "candidateCard": {
+    "availabilityUnknown": "Disponibilité non communiquée",
+    "regionUnknown": "Région non spécifiée",
+    "roleUnknown": "Rôle non spécifié",
+    "viewProfile": "Voir le profil"
+  },
+  "candidatePool": {
+    "emptyState": "Pas de candidats disponibles dans la réserve",
+    "filterTitle": "Filtrer les candidats",
+    "noCandidates": "Pas de candidats disponibles",
+    "searchPlaceholder": "Rechercher des candidats...",
+    "title": "Réserve de candidats",
+    "viewProfile": "Voir le profil"
+  },
+  "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+  "confirmations": {
+    "deleteJob": "Êtes-vous sûr de vouloir supprimer cette offre d'emploi ?"
+  },
+  "contractTypes": {
+    "cdd": "CDD (Durée déterminée)",
+    "cdi": "CDI (Durée indéterminée)",
+    "freelance": "Freelance",
+    "fullTime": "Temps plein",
+    "internship": "Stage",
+    "partTime": "Temps partiel",
+    "replacement": "Remplacement/Suppléance",
+    "temporary": "Temporaire",
+    "unknown": "Inconnu"
+  },
+  "employmentTypes": {
+    "FULL_TIME": {
+      "label": "Temps plein",
+      "description": "Poste permanent (40h/semaine)"
+    },
+    "PART_TIME": {
+      "label": "Temps partiel",
+      "description": "Poste à horaires flexibles"
+    },
+    "REPLACEMENT": {
+      "label": "Remplacement/Suppléance",
+      "description": "Couverture temporaire du personnel absent"
+    }
+  },
+  "errors": {
+    "deleteJobFailed": "Impossible de supprimer l'offre d'emploi.",
+    "loadApplicationsFailed": "Impossible de charger les demandes d'emploi.",
+    "loadCandidatesFailed": "Impossible de charger les candidats.",
+    "loadJobsFailed": "Impossible de charger les offres d'emploi.",
+    "saveJobFailed": "Impossible d'enregistrer l'offre d'emploi."
+  },
+  "filters": {
+    "all": "Tous",
+    "availability": "Disponibilité",
+    "experience": "Expérience",
+    "location": "Localisation"
+  },
+  "jobDetailModal": {
+    "applyNow": "Postuler",
+    "benefits": "Avantages",
+    "contractType": "Type de contrat",
+    "jobDescription": "Description de l'emploi",
+    "location": "Localisation",
+    "noDescription": "Aucune description n'est fournie.",
+    "overviewTitle": "Aperçu du poste",
+    "qualifications": "Qualifications",
+    "requirements": "Exigences",
+    "responsibilities": "Responsabilités",
+    "salary": "Salaire",
+    "startDate": "Date de début"
+  },
+  "jobListings": {
+    "noJobs": "Aucune offre d'emploi n'est disponible pour le moment",
+    "title": "Offres d'emploi",
+    "viewDetails": "Voir les détails de l'emploi"
+  },
+  "jobOffers": {
+    "activeJobsCount": "{{count}} offres d'emploi actives",
+    "emptyState": "Aucun emploi trouvé",
+    "filterTitle": "Filtrer les emplois",
+    "searchPlaceholder": "Rechercher des emplois..."
+  },
+  "jobPostModal": {
+    "addBenefit": "Ajouter une prestation",
+    "addQualification": "Ajouter une qualification",
+    "addRequirement": "Ajouter une exigence",
+    "addResponsibility": "Ajouter une responsabilité",
+    "addTitle": "Publier un nouvel emploi",
+    "benefitPlaceholder": "Ajouter une prestation",
+    "benefits": "Avantages",
+    "contractType": "Type de contrat",
+    "description": "Description de l'emploi",
+    "editTitle": "Modifier l'offre d'emploi",
+    "employmentType": "Type d'emploi",
+    "jobTitle": "Titre du poste",
+    "location": "Localisation",
+    "postJob": "Publier l'offre",
+    "qualificationPlaceholder": "Ajouter une qualification",
+    "qualifications": "Qualifications",
+    "requirementPlaceholder": "Ajouter une exigence",
+    "requirements": "Exigences",
+    "responsibilities": "Responsabilités",
+    "responsibilityPlaceholder": "Ajouter une responsabilité",
+    "salaryRange": "Fourchette des salaires",
+    "salaryRangePlaceholder": "par exemple, 60 000 - 80 000 CHF",
+    "startDate": "Date de début",
+    "workSchedule": {
+      "title": "Préférences d'horaires de travail",
+      "expectedHours": "Heures prévues",
+      "hoursPerWeek": "heures/semaine",
+      "preferredTimeSlot": "Créneau horaire préféré",
+      "preferredDays": "Jours de travail préférés",
+      "timeSlots": {
+        "MORNING": "Matin",
+        "AFTERNOON": "Après-midi",
+        "FULL_DAY": "Journée complète",
+        "FLEXIBLE": "Flexible"
+      },
+      "days": {
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "saturday": "Samedi",
+        "sunday": "Dimanche"
+      }
+    }
+  },
+  "jobStatus": {
+    "closed": "Fermé",
+    "draft": "Projet",
+    "filled": "Rempli",
+    "published": "Publié"
+  },
+  "labels": {
+    "allContractTypes": "Tous les types de contrats",
+    "allRoles": "Tous les rôles",
+    "allStatuses": "Tous les statuts",
+    "applications": "Applications",
+    "availabilityDate": "Date de disponibilité",
+    "location": "Localisation",
+    "locationUnknown": "Lieu à déterminer",
+    "region": "Région",
+    "startDate": "Date de début",
+    "startDateTbd": "A déterminer"
+  },
+  "recruitment": {
+    "buttons": {
+      "addCandidate": "Ajouter un candidat",
+      "applyFilters": "Appliquer les filtres",
+      "applyNow": "Postuler",
+      "filters": "Filtres",
+      "inviteToApply": "Invitation à postuler",
+      "inviteToInterview": "Invitation à un entretien",
+      "postNewJob": "Publier un nouvel emploi",
+      "viewApplicants": "Voir les candidats"
+    },
+    "candidateCard": {
+      "viewProfile": "Voir le profil"
+    },
+    "candidatePool": {
+      "emptyState": "Pas de candidats disponibles dans la réserve",
+      "filterTitle": "Filtrer les candidats",
+      "noCandidates": "Pas de candidats disponibles",
+      "searchPlaceholder": "Rechercher des candidats...",
+      "title": "Réserve de candidats",
+      "viewProfile": "Voir le profil"
+    },
+    "confirmRemoveCandidate": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+    "filters": {
+      "availability": "Disponibilité",
+      "experience": "Expérience",
+      "location": "Localisation"
+    },
+    "jobDetailModal": {
+      "applyNow": "Postuler",
+      "benefits": "Avantages",
+      "contractType": "Type de contrat",
+      "jobDescription": "Description de l'emploi",
+      "location": "Localisation",
+      "overviewTitle": "Aperçu du poste",
+      "qualifications": "Qualifications",
+      "requirements": "Exigences",
+      "responsibilities": "Responsabilités",
+      "salary": "Salaire",
+      "startDate": "Date de début"
+    },
+    "jobListings": {
+      "noJobs": "Aucune offre d'emploi n'est disponible pour le moment",
+      "title": "Offres d'emploi",
+      "viewDetails": "Voir les détails de l'emploi"
+    },
+    "jobOffers": {
+      "activeJobsCount": "{{count}} offres d'emploi actives",
+      "emptyState": "Aucun emploi trouvé",
+      "filterTitle": "Filtrer les emplois",
+      "searchPlaceholder": "Rechercher des emplois..."
+    },
+    "jobPostModal": {
+      "addBenefit": "Ajouter une prestation",
+      "addQualification": "Ajouter une qualification",
+      "addRequirement": "Ajouter une exigence",
+      "addResponsibility": "Ajouter une responsabilité",
+      "addTitle": "Publier un nouvel emploi",
+      "benefitPlaceholder": "Ajouter une prestation",
+      "benefits": "Avantages",
+      "contractType": "Type de contrat",
+      "description": "Description de l'emploi",
+      "editTitle": "Modifier l'offre d'emploi",
+      "employmentType": "Type d'emploi",
+      "jobTitle": "Titre du poste",
+      "location": "Localisation",
+      "postJob": "Publier l'offre",
+      "qualificationPlaceholder": "Ajouter une qualification",
+      "qualifications": "Qualifications",
+      "requirementPlaceholder": "Ajouter une exigence",
+      "requirements": "Exigences",
+      "responsibilities": "Responsabilités",
+      "responsibilityPlaceholder": "Ajouter une responsabilité",
+      "salaryRange": "Fourchette des salaires",
+      "salaryRangePlaceholder": "par exemple, 60 000 - 80 000 CHF",
+      "startDate": "Date de début",
+      "workSchedule": {
+        "title": "Préférences d'horaires de travail",
+        "expectedHours": "Heures prévues",
+        "hoursPerWeek": "heures/semaine",
+        "preferredTimeSlot": "Créneau horaire préféré",
+        "preferredDays": "Jours de travail préférés",
+        "timeSlots": {
+          "MORNING": "Matin",
+          "AFTERNOON": "Après-midi",
+          "FULL_DAY": "Journée complète",
+          "FLEXIBLE": "Flexible"
+        },
+        "days": {
+          "monday": "Lundi",
+          "tuesday": "Mardi",
+          "wednesday": "Mercredi",
+          "thursday": "Jeudi",
+          "friday": "Vendredi",
+          "saturday": "Samedi",
+          "sunday": "Dimanche"
+        }
+      }
+    },
+    "labels": {
+      "allContractTypes": "Tous les types de contrats",
+      "allRoles": "Tous les rôles",
+      "allStatuses": "Tous les statuts",
+      "location": "Localisation"
+    },
+    "tabs": {
+      "candidatePool": "Réserve de candidats",
+      "jobOffers": "Offres d'emploi"
+    },
+    "title": "Recrutement",
+    "viewApplicantsModal": {
+      "appliedOn": "Appliqué le {{date}}",
+      "noApplicants": "Pas encore de candidats",
+      "title": "Les candidats à {{jobTitle}}"
+    }
+  },
+  "recruitmentPage": {
+    "labels": {
+      "locationUnknown": "location Unknown"
+    }
+  },
+  "tabs": {
+    "candidatePool": "Réserve de candidats",
+    "jobOffers": "Offres d'emploi"
+  },
+  "title": "Recrutement",
+  "viewApplicantsModal": {
+    "appliedOn": "Appliqué le {{date}}",
+    "loading": "Chargement des applications...",
+    "noApplicants": "Pas encore de candidats",
+    "title": "Les candidats à {{jobTitle}}",
+    "unknownCandidate": "Candidat"
+  }
+}

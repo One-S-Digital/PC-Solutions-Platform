@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, Check, AlertCircle, File, Image, Video, FileText, Info, Tag } from 'lucide-react';
 import { apiService, useApiClient } from '../services/api';
-
+import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
 import { FileTypeInfo } from '../types/api';
+import { useTranslation } from 'react-i18next';
 
 
 interface Asset {
@@ -11,7 +12,7 @@ interface Asset {
   category: string;
   filename: string;
   originalName: string;
-  url: string;
+  publicUrl: string;
   size: number;
   mimeType: string;
   width?: number;
@@ -62,7 +63,9 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
   accessRoles = [],
   className = '',
 }) => {
+  const { t } = useTranslation(['common']);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -139,6 +142,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
     }
 
     setUploading(true);
+    setUploadProgress(0);
     setError(null);
 
     try {
@@ -160,16 +164,34 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         formData.append('accessRoles', JSON.stringify(accessRoles));
       }
 
-      const response = await apiService.uploadUniversalFile(apiClient, formData);
+      const result = await retryWithBackoff(
+        async () => apiService.uploadUniversalFile(apiClient, formData, (progress) => {
+          setUploadProgress(progress);
+        }),
+        {
+          ...RetryPresets.upload,
+          onRetry: (error, attempt, delay) => {
+            console.log(`Upload retry attempt ${attempt} after ${delay}ms:`, error.message);
+            setUploadProgress(0); // Reset progress on retry
+          },
+        }
+      );
+
+      if (!result.success) {
+        throw result.error;
+      }
+
+      const response = result.data;
       
-      if (response.data.success) {
+      if (response?.data.success) {
         const assetData = response.data.data;
+        setUploadProgress(100);
         onAssetChange(assetData);
         setShowUrlInput(false);
         setFileDescription('');
         setError(null);
       } else {
-        setError(response.data.message || 'Upload failed');
+        setError(response?.data.message || 'Upload failed');
       }
 
 
@@ -180,6 +202,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
 
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -228,7 +251,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
   };
 
   const getPreviewUrl = () => {
-    if (currentAsset) return currentAsset.url;
+    if (currentAsset) return currentAsset.publicUrl;
     if (fallbackUrl) return fallbackUrl;
     return null;
   };
@@ -307,7 +330,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
           <h4 className="text-sm font-medium text-gray-700 mb-2">Current Image (Fallback URL)</h4>
           <img
             src={previewUrl}
-            alt="Fallback preview"
+            alt={t('common:fallbackpreview')}
             className="max-w-full max-h-32 object-contain border border-gray-200 rounded bg-white"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -327,7 +350,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         {mimeType.startsWith('image/') && (
           <img
             src={previewUrl}
-            alt="Preview"
+            alt={t('common:previewLabel', 'Preview')}
             className="max-w-full max-h-48 object-contain border border-gray-200 rounded bg-white"
           />
         )}
@@ -473,9 +496,20 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         />
 
         {uploading ? (
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
-            <p className="text-sm text-gray-600">Uploading...</p>
+          <div className="flex flex-col items-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="w-full max-w-xs">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Uploading...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </div>
           </div>
         ) : currentAsset ? (
           <div className="flex flex-col items-center">
@@ -551,7 +585,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
             ))}
             <input
               type="text"
-              placeholder="Add tag..."
+              placeholder={t('common:placeholders.addtag')}
               className="px-2 py-1 border border-gray-300 rounded text-xs"
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
@@ -574,7 +608,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
           <textarea
             value={fileDescription}
             onChange={(e) => setFileDescription(e.target.value)}
-            placeholder="Describe this file..."
+            placeholder={t('common:placeholders.describethisfile')}
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           />

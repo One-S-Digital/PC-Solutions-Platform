@@ -3,7 +3,9 @@ import {
   IsArray,
   IsEmail,
   IsInt,
+  IsOptional,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
 
@@ -34,4 +36,8 @@ export class UpdateParentSettingsDto {
 
   @IsString()
   specialRequirements: string;
+
+  @IsUUID()
+  @IsOptional()
+  avatarAssetId?: string;
 }

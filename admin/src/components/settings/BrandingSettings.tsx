@@ -5,32 +5,26 @@ import { apiService } from '../../services/api'
 import { useUser } from '@clerk/clerk-react'
 import SimpleAssetUploader from './SimpleAssetUploader'
 import LoadingSpinner from '../ui/LoadingSpinner'
+import Card from '../design-system/Card'
+import Button from '../design-system/Button'
+import { STANDARD_INPUT_FIELD } from '../../constants/design-system'
 import logger from '../../utils/logger'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
+
+// Define supported asset types for type safety
+type BrandingAssetType = 'logo' | 'sidebarLogo' | 'adminLogo' | 'favicon' | 'adminFavicon';
 
 const BrandingSettings: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, refreshSettings, loading, error, saving } = useSettings()
   const apiClient = useApiClient()
   const { user } = useUser()
-  const [uploadingAssets, setUploadingAssets] = useState<Record<string, boolean>>({})
-  const [uploadedAssets, setUploadedAssets] = useState<Record<string, string>>({})
+  const [uploadingAssets, setUploadingAssets] = useState<Record<BrandingAssetType, boolean>>({} as Record<BrandingAssetType, boolean>)
+  const [uploadedAssets, setUploadedAssets] = useState<Record<BrandingAssetType, string>>({} as Record<BrandingAssetType, string>)
 
-  // Log API client configuration for debugging
-  console.log('🔧 BrandingSettings API client config:', {
-    baseURL: apiClient.defaults.baseURL,
-    timeout: apiClient.defaults.timeout,
-    headers: apiClient.defaults.headers
-  })
 
-  // Log user authentication status
-  console.log('🔧 BrandingSettings user auth status:', {
-    isSignedIn: user ? true : false,
-    userId: user?.id,
-    userRole: user?.publicMetadata?.role,
-    userEmail: user?.emailAddresses?.[0]?.emailAddress
-  })
-
-  const handleUploadAndUpdate = async (assetType: string, file: File) => {
+  const handleUploadAndUpdate = async (assetType: BrandingAssetType, file: File) => {
     setUploadingAssets(prev => ({ ...prev, [assetType]: true }))
     
     try {
@@ -58,6 +52,9 @@ const BrandingSettings: React.FC = () => {
         case 'adminFavicon':
           response = await apiService.uploadAdminFavicon(apiClient, formData)
           break
+        case 'sidebarLogo':
+          response = await apiService.uploadSidebarLogo(apiClient, formData)
+          break
         default:
           throw new Error(`Unknown asset type: ${assetType}`)
       }
@@ -68,7 +65,7 @@ const BrandingSettings: React.FC = () => {
         // Store the uploaded asset ID for the save button
         setUploadedAssets(prev => ({ ...prev, [assetType]: response.data.data.id }))
         
-        toast.success(`${assetType} uploaded successfully!`)
+        toast.success(t('admin:settings.branding.assetUploaded', { assetType }))
         logger.log(`✅ ${assetType} uploaded successfully`)
       } else {
         throw new Error(response.data?.message || 'Upload failed')
@@ -76,17 +73,17 @@ const BrandingSettings: React.FC = () => {
     } catch (e) {
       console.error('❌ Upload error for', assetType, ':', e)
       logger.error('Failed to upload asset:', assetType, e)
-      toast.error(`Failed to upload ${assetType}. Please try again.`)
+      toast.error(t('admin:settings.branding.assetUploadFailed', { assetType }))
       throw e
     } finally {
       setUploadingAssets(prev => ({ ...prev, [assetType]: false }))
     }
   }
 
-  const handleSaveAsset = async (assetType: string) => {
+  const handleSaveAsset = async (assetType: BrandingAssetType) => {
     const assetId = uploadedAssets[assetType]
     if (!assetId) {
-      toast.error('No asset to save. Please upload a file first.')
+      toast.error(t('admin:settings.branding.noAssetToSave'))
       return
     }
 
@@ -100,11 +97,11 @@ const BrandingSettings: React.FC = () => {
       // Clear the uploaded asset from state
       setUploadedAssets(prev => ({ ...prev, [assetType]: '' }))
       
-      toast.success(`${assetType} saved successfully!`)
+      toast.success(t('admin:settings.branding.assetSaved', { assetType }))
       logger.log(`✅ ${assetType} saved successfully`)
     } catch (e) {
       logger.error('Failed to save asset:', assetType, e)
-      toast.error(`Failed to save ${assetType}. Please try again.`)
+      toast.error(t('admin:settings.branding.assetSaveFailed', { assetType }))
     }
   }
 
@@ -123,11 +120,11 @@ const BrandingSettings: React.FC = () => {
     
     try {
       await updateSettings(updates)
-      toast.success('Brand colors saved successfully!')
+      toast.success(t('admin:settings.branding.brandColorsSaved'))
       logger.log('✅ Branding settings saved successfully!')
     } catch (error) {
       logger.error('❌ Error saving branding settings:', error)
-      toast.error('Failed to save brand colors. Please try again.')
+      toast.error(t('admin:settings.branding.brandColorsSaveFailed'))
     }
   }
 
@@ -136,27 +133,27 @@ const BrandingSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-semibold text-swiss-charcoal">Branding Settings</h3>
+        <h3 className="text-xl font-semibold text-swiss-charcoal">{t('admin:settings.branding.title')}</h3>
         <p className="mt-1 text-gray-500">
-          Customize your brand colors, logos, and visual identity
+          {t('admin:settings.branding.description')}
         </p>
       </div>
 
       {error && (
-        <div className="rounded-card bg-red-50 border border-red-200 p-4">
+        <Card className="bg-red-50 border border-red-200 p-4">
           <div className="text-sm text-red-700 font-medium">{error}</div>
-        </div>
+        </Card>
       )}
 
       <div className="space-y-6">
         {/* Brand Colors */}
-        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Brand Colors</h4>
+        <Card className="p-6">
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.branding.brandColors.title')}</h4>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               <div>
                 <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Primary Color
+                  {t('admin:settings.branding.brandColors.primaryColor')}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
@@ -169,14 +166,14 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="primaryColor"
                     defaultValue={settings?.primaryColor || '#3B82F6'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Secondary Color
+                  {t('admin:settings.branding.brandColors.secondaryColor')}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
@@ -189,14 +186,14 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="secondaryColor"
                     defaultValue={settings?.secondaryColor || '#10B981'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Accent Color
+                  {t('admin:settings.branding.brandColors.accentColor')}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
@@ -209,32 +206,32 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="accentColor"
                     defaultValue={settings?.accentColor || '#F59E0B'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end pt-4 border-t border-gray-200">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
                 disabled={saving}
-                className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {saving ? 'Saving...' : 'Save Colors'}
-              </button>
+                {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveColors')}
+              </Button>
             </div>
           </form>
-        </div>
+        </Card>
 
         {/* Admin Dashboard Colors */}
-        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Admin Dashboard Colors</h4>
+        <Card className="p-6">
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.branding.adminColors.title')}</h4>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               <div>
                 <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Admin Primary Color
+                  {t('admin:settings.branding.adminColors.adminPrimaryColor')}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
@@ -247,14 +244,14 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="adminPrimaryColor"
                     defaultValue={settings?.adminPrimaryColor || '#1F2937'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Admin Secondary Color
+                  {t('admin:settings.branding.adminColors.adminSecondaryColor')}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
@@ -267,14 +264,14 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="adminSecondaryColor"
                     defaultValue={settings?.adminSecondaryColor || '#374151'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Admin Accent Color
+                  {t('admin:settings.branding.adminColors.adminAccentColor')}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
@@ -287,133 +284,220 @@ const BrandingSettings: React.FC = () => {
                     type="text"
                     name="adminAccentColor"
                     defaultValue={settings?.adminAccentColor || '#3B82F6'}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                    className={STANDARD_INPUT_FIELD}
                   />
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end pt-4 border-t border-gray-200">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
                 disabled={saving}
-                className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {saving ? 'Saving...' : 'Save Admin Colors'}
-              </button>
+                {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveAdminColors')}
+              </Button>
             </div>
           </form>
-        </div>
+        </Card>
 
         {/* Logos & Assets */}
-        <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
-          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Logos & Assets</h4>
+        <Card className="p-6">
+          <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.branding.logosAssets.title')}</h4>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                Main Logo
+                {t('admin:settings.branding.logosAssets.mainLogo')}
               </label>
+              <p className="text-xs text-gray-500 mb-2">
+                {t('admin:settings.branding.logosAssets.mainLogoDescription')}
+              </p>
               <SimpleAssetUploader
                 currentAssetId={settings?.logoAssetId}
                 onUpload={(file: File) => handleUploadAndUpdate('logo', file)}
                 accept="image/*"
                 maxSize={5 * 1024 * 1024}
+                fetchDelay={0}
               />
               {uploadingAssets.logo && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading logo...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">{t('admin:settings.branding.uploading.logo')}</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.logo && (
-                <div className="mt-2 flex justify-end">
-                  <button
-                    onClick={() => handleSaveAsset('logo')}
-                    disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                  >
-                    {saving ? 'Saving...' : 'Save Logo'}
-                  </button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">{t('admin:settings.branding.uploaded.logo')}</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('logo')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveLogo')}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                Admin Logo
+                {t('admin:settings.branding.logosAssets.sidebarLogo')}
+              </label>
+              <p className="text-xs text-gray-500 mb-2">
+                {t('admin:settings.branding.logosAssets.sidebarLogoDescription')}
+              </p>
+              <SimpleAssetUploader
+                currentAssetId={settings?.sidebarLogoAssetId}
+                onUpload={(file: File) => handleUploadAndUpdate('sidebarLogo', file)}
+                accept="image/*"
+                maxSize={5 * 1024 * 1024}
+                fetchDelay={200}
+              />
+              {uploadingAssets.sidebarLogo && (
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">{t('admin:settings.branding.uploading.sidebarLogo')}</span>
+                  </div>
+                </div>
+              )}
+              {uploadedAssets.sidebarLogo && (
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">{t('admin:settings.branding.uploaded.sidebarLogo')}</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('sidebarLogo')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveSidebarLogo')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-swiss-charcoal mb-2">
+                {t('admin:settings.branding.logosAssets.adminLogo')}
               </label>
               <SimpleAssetUploader
                 currentAssetId={settings?.adminLogoAssetId}
                 onUpload={(file: File) => handleUploadAndUpdate('adminLogo', file)}
                 accept="image/*"
                 maxSize={5 * 1024 * 1024}
+                fetchDelay={300}
               />
               {uploadingAssets.adminLogo && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading admin logo...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">{t('admin:settings.branding.uploading.adminLogo')}</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.adminLogo && (
-                <div className="mt-2 flex justify-end">
-                  <button
-                    onClick={() => handleSaveAsset('adminLogo')}
-                    disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                  >
-                    {saving ? 'Saving...' : 'Save Admin Logo'}
-                  </button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">{t('admin:settings.branding.uploaded.adminLogo')}</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('adminLogo')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveAdminLogo')}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                Favicon
+                {t('admin:settings.branding.logosAssets.favicon')}
               </label>
               <SimpleAssetUploader
                 currentAssetId={settings?.faviconAssetId}
                 onUpload={(file: File) => handleUploadAndUpdate('favicon', file)}
                 accept="image/x-icon,image/png"
                 maxSize={1 * 1024 * 1024}
+                fetchDelay={600}
               />
               {uploadingAssets.favicon && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading favicon...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">{t('admin:settings.branding.uploading.favicon')}</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.favicon && (
-                <div className="mt-2 flex justify-end">
-                  <button
-                    onClick={() => handleSaveAsset('favicon')}
-                    disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                  >
-                    {saving ? 'Saving...' : 'Save Favicon'}
-                  </button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">{t('admin:settings.branding.uploaded.favicon')}</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('favicon')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveFavicon')}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-swiss-charcoal mb-2">
-                Admin Favicon
+                {t('admin:settings.branding.logosAssets.adminFavicon')}
               </label>
               <SimpleAssetUploader
                 currentAssetId={settings?.adminFaviconAssetId}
                 onUpload={(file: File) => handleUploadAndUpdate('adminFavicon', file)}
                 accept="image/x-icon,image/png"
                 maxSize={1 * 1024 * 1024}
+                fetchDelay={900}
               />
               {uploadingAssets.adminFavicon && (
-                <div className="mt-2 text-sm text-swiss-teal">Uploading admin favicon...</div>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <span className="text-sm text-blue-700">{t('admin:settings.branding.uploading.adminFavicon')}</span>
+                  </div>
+                </div>
               )}
               {uploadedAssets.adminFavicon && (
-                <div className="mt-2 flex justify-end">
-                  <button
-                    onClick={() => handleSaveAsset('adminFavicon')}
-                    disabled={saving}
-                    className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                  >
-                    {saving ? 'Saving...' : 'Save Admin Favicon'}
-                  </button>
+                <div className="mt-2 space-y-2">
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-sm text-green-700">{t('admin:settings.branding.uploaded.adminFavicon')}</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSaveAsset('adminFavicon')}
+                      variant="primary"
+                      disabled={saving}
+                    >
+                      {saving ? t('admin:settings.branding.saving') : t('admin:settings.branding.saveAdminFavicon')}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )

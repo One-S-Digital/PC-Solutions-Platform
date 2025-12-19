@@ -2,11 +2,11 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType, ClerkUser } from '@repo/types';
+import { UserRole, OrganizationType, ClerkUser } from '@workspace/types';
 import { ClerkAuthService } from './clerk-auth.service';
 
 // Re-export ClerkUser for compatibility
-export type { ClerkUser } from '@repo/types';
+export type { ClerkUser } from '@workspace/types';
 
 @Injectable()
 export class AuthService {
@@ -105,9 +105,9 @@ export class AuthService {
       await this.prisma.user.create({
         data: {
           clerkId: clerkUser.id,
-          email: clerkUser.email_addresses[0]?.email_address || '',
-          firstName: clerkUser.first_name || '',
-          lastName: clerkUser.last_name || '',
+          email: clerkUser.email_addresses[0]?.email_address || null, // Allow NULL - do not use empty string
+          firstName: clerkUser.first_name || null,
+          lastName: clerkUser.last_name || null,
           role: role,
           phoneNumber: clerkUser.public_metadata?.phoneNumber || null,
         },

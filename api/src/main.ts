@@ -1,31 +1,82 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as express from 'express';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { AppLoggerService } from './common/logger.service';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
+  // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // We'll handle body parsing manually
   });
   const logger = app.get(AppLoggerService);
   
+  // CORS configuration - MUST run before helmet
+  const prodAllowed = new Set([
+    'https://app.procrechesolutions.com',
+    'https://admin.procrechesolutions.com',
+  ]);
+
+  app.enableCors({
+    origin: (origin, cb) => {
+      // Allow non-browser clients (curl/postman) with no Origin header
+      if (!origin) return cb(null, true);
+
+      // In non-production, allow all origins for easier testing
+      if (process.env.NODE_ENV !== 'production') return cb(null, true);
+
+      // In production, only allow known origins
+      return cb(null, prodAllowed.has(origin));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'svix-id',
+      'svix-timestamp',
+      'svix-signature',
+      'X-Trace-Id',
+    ],
+    exposedHeaders: ['Content-Type', 'Authorization', 'x-build-commit', 'X-Trace-Id'],
+    maxAge: 86400,
+    optionsSuccessStatus: 204,
+  });
+  
   // Raw body for webhook route
   app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
+  
+  // Webhook body parsing debug middleware (only in development or when DEBUG_WEBHOOKS is enabled)
+  if (process.env.NODE_ENV !== 'production' || process.env.DEBUG_WEBHOOKS === 'true') {
+    app.use('/api/webhooks/clerk', (req, res, next) => {
+      logger.debug('Webhook request intercepted', 'WebhookMiddleware', {
+        method: req.method,
+        url: req.url,
+        contentType: req.headers['content-type'],
+        contentLength: req.headers['content-length'],
+      });
+      next();
+    });
+  }
   
   // JSON parser for all other routes
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
   // Security middleware
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+  }));
   // Resolve compression middleware across CJS/ESM export shapes
   let compressionFn: any;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     const mod = require('compression');
     compressionFn = (mod && mod.default) ? mod.default : mod;
   } catch (err) {
@@ -41,42 +92,27 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (errors) => {
+        const formatted = errors.map((error) => ({
+          field: error.property,
+          value: error.value,
+          constraints: error.constraints,
+          children: error.children,
+        }));
+        console.error('🔴 Global Validation Error:', JSON.stringify(formatted, null, 2));
+        return new BadRequestException({
+          message: 'Validation failed',
+          errors: formatted,
+        });
+      },
     }),
   );
 
   // Global exception filter
-  app.useGlobalFilters(new GlobalExceptionFilter(logger));
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Set global prefix
   app.setGlobalPrefix('api');
-
-  // CORS
-  app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? [
-          'https://app.procrechesolutions.com', 
-          'https://admin.procrechesolutions.com'
-        ]
-      : true,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  });
-
-  // CORS debugging middleware (development only)
-  if (process.env.NODE_ENV !== 'production') {
-    app.use((req, res, next) => {
-      console.log('🔧 CORS Debug:', {
-        origin: req.headers.origin,
-        method: req.method,
-        url: req.url,
-        allowedOrigins: process.env.NODE_ENV === 'production' 
-          ? ['https://app.procrechesolutions.com', 'https://admin.procrechesolutions.com']
-          : 'all'
-      });
-      next();
-    });
-  }
 
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
@@ -97,9 +133,29 @@ async function bootstrap() {
 
   const port = parseInt(process.env.PORT || '3000', 10);
   await app.listen(port, '0.0.0.0'); // Bind to all interfaces for Render
-  
+
+  // Log route map once at startup for debugging
+  try {
+    const server = app.getHttpServer();
+    const router = (server as any)?._events?.request?._router;
+    if (router?.stack) {
+      const routes = router.stack
+        .filter((l: any) => l.route)
+        .map(
+          (l: any) =>
+            Object.keys(l.route.methods)
+              .map((m) => m.toUpperCase())
+              .join(',') +
+            ' ' +
+            l.route.path,
+        );
+      logger.log(`ROUTES: ${JSON.stringify(routes)}`, 'Bootstrap');
+    }
+  } catch (e) {
+    logger.error('Failed to log route map', (e as any)?.message || e);
+  }
+
   logger.log(`Application is running on port ${port}`, 'Bootstrap');
-  console.log(`Server started on port ${port}`);
   if (process.env.NODE_ENV !== 'production') {
     logger.log(`Swagger documentation: http://localhost:${port}/api/docs`, 'Bootstrap');
   }

@@ -18,8 +18,13 @@ export type SubscriptionTier = (typeof SubscriptionTier)[keyof typeof Subscripti
 export declare const SubscriptionStatus: {
     readonly ACTIVE: "ACTIVE";
     readonly INACTIVE: "INACTIVE";
+    readonly PAUSED: "PAUSED";
     readonly CANCELLED: "CANCELLED";
+    readonly EXPIRED: "EXPIRED";
+    readonly TRIAL: "TRIAL";
     readonly PAST_DUE: "PAST_DUE";
+    readonly PENDING: "PENDING";
+    readonly GRACE_PERIOD: "GRACE_PERIOD";
 };
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus];
 export declare const AssetKind: {
@@ -36,6 +41,9 @@ export declare const AssetKind: {
     readonly FRONTEND_OG_IMAGE: "FRONTEND_OG_IMAGE";
     readonly ADMIN_LOGO: "ADMIN_LOGO";
     readonly ADMIN_FAVICON: "ADMIN_FAVICON";
+    readonly SIDEBAR_LOGO: "SIDEBAR_LOGO";
+    readonly ELEARNING: "ELEARNING";
+    readonly COMPANY_PROFILE_DOC: "COMPANY_PROFILE_DOC";
 };
 export type AssetKind = (typeof AssetKind)[keyof typeof AssetKind];
 export declare const OrganizationType: {
@@ -51,6 +59,17 @@ export declare const JobStatus: {
     readonly FILLED: "FILLED";
 };
 export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus];
+export declare const JobContractType: {
+    readonly FULL_TIME: "FULL_TIME";
+    readonly PART_TIME: "PART_TIME";
+    readonly CDI: "CDI";
+    readonly CDD: "CDD";
+    readonly INTERNSHIP: "INTERNSHIP";
+    readonly REPLACEMENT: "REPLACEMENT";
+    readonly TEMPORARY: "TEMPORARY";
+    readonly FREELANCE: "FREELANCE";
+};
+export type JobContractType = (typeof JobContractType)[keyof typeof JobContractType];
 export declare const ServiceCategory: {
     readonly CLEANING: "CLEANING";
     readonly IT_SUPPORT: "IT_SUPPORT";

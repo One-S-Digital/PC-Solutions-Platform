@@ -23,6 +23,7 @@ export interface FrontendSettings {
   secondaryColor: string;
   accentColor?: string;
   adminLogoAssetId?: string;
+  sidebarLogoAssetId?: string;
   adminPrimaryColor: string;
   adminSecondaryColor: string;
   adminAccentColor: string;
@@ -50,7 +51,7 @@ export interface FrontendSettings {
   // Asset relations
   logoAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -60,7 +61,7 @@ export interface FrontendSettings {
   };
   faviconAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -70,7 +71,7 @@ export interface FrontendSettings {
   };
   adminLogoAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -80,7 +81,17 @@ export interface FrontendSettings {
   };
   adminFaviconAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    width?: number;
+    height?: number;
+  };
+  sidebarLogoAsset?: {
+    id: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -90,7 +101,7 @@ export interface FrontendSettings {
   };
   ogImageAsset?: {
     id: string;
-    url: string;
+    publicUrl: string;
     filename: string;
     originalName: string;
     size: number;
@@ -123,7 +134,8 @@ export interface Product {
   brochureUrl?: string;
   brochureAssetId?: string;
   description: string;
-  category: string;
+  category: string; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   tags: string[];
   imageUrl?: string;
   imageAssetId?: string;
@@ -140,7 +152,8 @@ export interface Service {
   providerName: string;
   providerLogo?: string;
   description: string;
-  category: ServiceCategory;
+  category: ServiceCategory; // Legacy single category
+  categories?: string[]; // New: flexible category tags
   availability: string;
   tags: string[];
   imageUrl?: string;
@@ -153,8 +166,8 @@ export interface Service {
 export interface Organization {
   id: string;
   name: string;
-  type: string; // Should be an enum
-  region: string;
+  type: string; // OrganizationType: FOUNDATION, SERVICE_PROVIDER, PRODUCT_SUPPLIER
+  region?: string;
   logoUrl?: string;
   logoAssetId?: string;
   coverImageUrl?: string;
@@ -327,7 +340,7 @@ export interface FileHealth {
 
 export interface UploadedAsset {
   id: string;
-  url: string;
+  publicUrl: string;
   filename: string;
   size: number;
   mimeType: string;
@@ -364,6 +377,61 @@ export interface DbHealth {
   status: 'OK' | 'ERROR';
   details?: string;
 }
+
+// Admin Analytics Types - Real-time dashboard statistics
+export interface UserAnalytics {
+  totalUsers: number;
+  activeUsers: number;
+  registrations: Array<{ date: string; count: number }>;
+  usersByRole: Array<{ role: string; count: number }>;
+}
+
+export interface OrgAnalytics {
+  totalOrganizations: number;
+  activeOrganizations: number;
+  registrations: Array<{ date: string; count: number }>;
+  orgsByType: Array<{ type: string; count: number }>;
+}
+
+export interface ProductAnalytics {
+  totalProducts: number;
+  newProducts: number;
+  productsByCategory: Array<{ category: string; count: number }>;
+  productsByStatus: Array<{ status: string; count: number }>;
+}
+
+export interface JobAnalytics {
+  totalJobs: number;
+  totalApplications: number;
+  newJobs: number;
+  newApplications: number;
+  jobsByStatus: Array<{ status: string; count: number }>;
+}
+
+export interface RevenueAnalytics {
+  totalSubscriptions: number;
+  activeSubscriptions: number;
+  totalRevenue: number;
+  revenueByPlan: Array<{ planName: string; count: number; revenue: number }>;
+}
+
+export interface SystemUsageAnalytics {
+  apiRequests: number;
+  dbConnections: number;
+  slowQueries: number;
+  storageUsed: number;
+}
+
+export interface AnalyticsOverview {
+  users: UserAnalytics;
+  organizations: OrgAnalytics;
+  products: ProductAnalytics;
+  jobs: JobAnalytics;
+  revenue: RevenueAnalytics;
+  system: SystemUsageAnalytics;
+  lastUpdated: string;
+}
+
 export interface LegacyUploadResult {
   id: string;
   url: string;
@@ -390,4 +458,44 @@ export interface ApiResponse<T> {
     prevPage?: number;
   };
   timestamp: string;
+}
+
+export interface InviteUserResponse {
+  id: string;
+  emailAddress: string;
+  status?: string;
+  createdAt?: number;
+  publicMetadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+// Partner types
+export type PartnerType = 'ACADEMIC' | 'CORPORATE' | 'GOVERNMENTAL' | 'NON_PROFIT' | 'MEDIA' | 'TECHNOLOGY';
+
+export interface Partner {
+  id: string;
+  name: string;
+  type: PartnerType;
+  description?: string;
+  websiteUrl?: string;
+  countryRegion?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPerson?: string;
+  logoAssetId?: string;
+  logoUrl?: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  displayOrder: number;
+  partnershipStart?: string;
+  partnershipEnd?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PartnerStats {
+  total: number;
+  active: number;
+  featured: number;
+  byType: Array<{ type: PartnerType; count: number }>;
 }

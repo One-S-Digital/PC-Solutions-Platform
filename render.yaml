@@ -1,86 +1,74 @@
 services:
-  # API Service
-  - type: web
-    name: pc-solutions-api
-    env: node
-    plan: starter
-    buildCommand: pnpm install --frozen-lockfile && cd api && pnpm run build:render
-    startCommand: cd api && pnpm run start:prod
-    healthCheckPath: /api/health/ready
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 3000
-      - key: DATABASE_URL
-        fromDatabase:
-          name: pc-solutions-db
-          property: connectionString
-      - key: CLERK_SECRET_KEY
-        sync: false
-      - key: CLERK_PUBLISHABLE_KEY
-        sync: false
-      - key: CLERK_WEBHOOK_SECRET
-        sync: false
-      - key: R2_ACCESS_KEY_ID
-        sync: false
-      - key: R2_SECRET_ACCESS_KEY
-        sync: false
-      - key: R2_BUCKET_NAME
-        sync: false
-      - key: R2_ENDPOINT
-        sync: false
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: ADMIN_ORIGIN
-        value: https://admin.procrechesolutions.com
-      - key: APP_ORIGIN
-        value: https://app.procrechesolutions.com
-      - key: DEEPL_API_KEY
-        sync: false
-      - key: PROMETHEUS_SCRAPE_TOKEN
-        sync: false
-
-  # Frontend Service (Primary)
+  # Frontend Web Service
   - type: web
     name: pc-solutions-frontend
     env: node
     plan: starter
-    buildCommand: echo "=== CLERK KEY DEBUG ===" && echo "VITE_CLERK_PUBLISHABLE_KEY length:" $(echo -n "$VITE_CLERK_PUBLISHABLE_KEY" | wc -c) && echo "Key starts with:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | cut -c1-10) && echo "Key format check:" $(echo "$VITE_CLERK_PUBLISHABLE_KEY" | grep -o '^pk_[a-z]*_[a-zA-Z0-9]*' || echo 'INVALID FORMAT') && echo "=== END DEBUG ===" && pnpm install --frozen-lockfile && pnpm run build --filter=frontend
-    startCommand: cd frontend && npx serve -s dist
+    branch: merge/pcs-development-integration
+    buildCommand: pnpm run prebuild:render && cd frontend && pnpm install --frozen-lockfile=false && pnpm run build:render
+    startCommand: cd frontend && pnpm run start
     envVars:
-      - key: VITE_NODE_ENV
+      - key: NODE_ENV
         value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
-        sync: false
+        sync: false  # Must be set manually in Render dashboard
       - key: VITE_API_URL
         value: https://pc-solutions-v2.onrender.com/api
-      - key: VITE_CLERK_SIGN_IN_URL
-        value: /sign-in
-      - key: VITE_CLERK_SIGN_UP_URL
-        value: /sign-up
+      - key: VITE_SKIP_AUTH
+        value: false
+      - key: VITE_DEVELOPMENT_MODE
+        value: false
 
-  # Admin Service (Satellite)
+  # API Backend Service
+  - type: web
+    name: pc-solutions-v2
+    env: node
+    plan: starter
+    buildCommand: pnpm run prebuild:render && cd api && pnpm install --frozen-lockfile && pnpm run build:render
+    startCommand: cd api && pnpm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLERK_SECRET_KEY
+        sync: false  # Must be set manually in Render dashboard
+      - key: CLERK_WEBHOOK_SECRET
+        sync: false  # Must be set manually in Render dashboard
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pc-solutions-db
+          property: connectionString
+      # Required for Clerk JWT token validation (azp claim)
+      - key: ADMIN_ORIGIN
+        value: https://admin.procrechesolutions.com
+      - key: APP_ORIGIN
+        value: https://app.procrechesolutions.com
+        # Note: Update APP_ORIGIN if your frontend uses a different domain (e.g., dash.procrechesolutions.com)
+
+  # Admin Panel Service
   - type: web
     name: pc-solutions-admin
     env: node
     plan: starter
-    buildCommand: pnpm install --frozen-lockfile && pnpm run build --filter=admin
-    startCommand: cd admin && npx serve -s dist
+    branch: merge/pcs-development-integration
+    buildCommand: pnpm run prebuild:render && cd admin && pnpm install --frozen-lockfile=false && pnpm run build
+    startCommand: cd admin && pnpm run start
     envVars:
-      - key: VITE_NODE_ENV
+      - key: NODE_ENV
         value: production
       - key: VITE_CLERK_PUBLISHABLE_KEY
-        sync: false
+        sync: false  # Must be set manually in Render dashboard
       - key: VITE_API_URL
         value: https://pc-solutions-v2.onrender.com/api
-      - key: VITE_CLERK_SIGN_IN_URL
-        value: /sign-in
-      - key: VITE_CLERK_SIGN_UP_URL
-        value: /sign-up
+        # Note: Must include /api suffix as admin code uses this directly as baseURL
+        # Note: Using pc-solutions-v2 as that appears to be the actual service name in Render
+      - key: VITE_SKIP_AUTH
+        value: false
 
 databases:
+  # PostgreSQL Database
   - name: pc-solutions-db
     plan: starter
+    databaseName: pc_solutions_prod
+    user: pc_solutions_user

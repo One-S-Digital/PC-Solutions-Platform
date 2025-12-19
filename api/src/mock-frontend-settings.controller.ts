@@ -29,7 +29,7 @@ export class MockFrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const userId = req.context?.userId || 'mock-user-id';
+      const userId = req.context?.appUserId || req.context?.userId || 'mock-user-id';
       const result = await this.frontendSettingsService.uploadLogo(file, userId);
       
       return {
@@ -58,7 +58,7 @@ export class MockFrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const userId = req.context?.userId || 'mock-user-id';
+      const userId = req.context?.appUserId || req.context?.userId || 'mock-user-id';
       const result = await this.frontendSettingsService.uploadFavicon(file, userId);
       
       return {
@@ -87,7 +87,7 @@ export class MockFrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const userId = req.context?.userId || 'mock-user-id';
+      const userId = req.context?.appUserId || req.context?.userId || 'mock-user-id';
       const result = await this.frontendSettingsService.uploadOgImage(file, userId);
       
       return {
@@ -116,7 +116,7 @@ export class MockFrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const userId = req.context?.userId || 'mock-user-id';
+      const userId = req.context?.appUserId || req.context?.userId || 'mock-user-id';
       const result = await this.frontendSettingsService.uploadAdminLogo(file, userId);
       
       return {
@@ -145,7 +145,7 @@ export class MockFrontendSettingsController {
         throw new Error('No file provided');
       }
       
-      const userId = req.context?.userId || 'mock-user-id';
+      const userId = req.context?.appUserId || req.context?.userId || 'mock-user-id';
       const result = await this.frontendSettingsService.uploadAdminFavicon(file, userId);
       
       return {

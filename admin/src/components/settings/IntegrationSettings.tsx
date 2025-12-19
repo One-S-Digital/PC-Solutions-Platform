@@ -1,8 +1,10 @@
 import React from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import LoadingSpinner from '../ui/LoadingSpinner'
+import { useTranslation } from 'react-i18next'
 
 const IntegrationSettings: React.FC = () => {
+  const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, loading, error, saving } = useSettings()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,9 +24,9 @@ const IntegrationSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-semibold text-swiss-charcoal">Integration Settings</h3>
+        <h3 className="text-xl font-semibold text-swiss-charcoal">{t('admin:settings.integrations.title')}</h3>
         <p className="mt-1 text-gray-500">
-          Configure third-party integrations and API keys
+          {t('admin:settings.integrations.description')}
         </p>
       </div>
 
@@ -38,11 +40,11 @@ const IntegrationSettings: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Authentication (Clerk) */}
           <div>
-            <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Authentication (Clerk)</h4>
+            <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.integrations.authentication.title')}</h4>
             <div className="space-y-4">
               <div>
                 <label htmlFor="clerkPublishableKey" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Clerk Publishable Key
+                  {t('admin:settings.integrations.authentication.clerkPublishableKey')}
                 </label>
                 <input
                   type="text"
@@ -50,13 +52,13 @@ const IntegrationSettings: React.FC = () => {
                   id="clerkPublishableKey"
                   defaultValue={settings?.clerkPublishableKey || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="pk_test_..."
+                  placeholder={t('admin:settings.integrations.authentication.clerkPublishableKeyPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="clerkSecretKey" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Clerk Secret Key
+                  {t('admin:settings.integrations.authentication.clerkSecretKey')}
                 </label>
                 <input
                   type="password"
@@ -64,7 +66,7 @@ const IntegrationSettings: React.FC = () => {
                   id="clerkSecretKey"
                   defaultValue={settings?.clerkSecretKey || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="sk_test_..."
+                  placeholder={t('admin:settings.integrations.authentication.clerkSecretKeyPlaceholder')}
                 />
               </div>
             </div>
@@ -72,11 +74,11 @@ const IntegrationSettings: React.FC = () => {
 
           {/* Analytics */}
           <div>
-            <h4 className="text-lg font-medium text-swiss-charcoal mb-6">Analytics</h4>
+            <h4 className="text-lg font-medium text-swiss-charcoal mb-6">{t('admin:settings.integrations.analytics.title')}</h4>
             <div className="space-y-4">
               <div>
                 <label htmlFor="googleAnalyticsId" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Google Analytics ID
+                  {t('admin:settings.integrations.analytics.googleAnalyticsId')}
                 </label>
                 <input
                   type="text"
@@ -84,13 +86,13 @@ const IntegrationSettings: React.FC = () => {
                   id="googleAnalyticsId"
                   defaultValue={settings?.googleAnalyticsId || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="GA-XXXXXXXXX-X"
+                  placeholder={t('admin:settings.integrations.analytics.googleAnalyticsIdPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="facebookPixelId" className="block text-sm font-medium text-swiss-charcoal mb-2">
-                  Facebook Pixel ID
+                  {t('admin:settings.integrations.analytics.facebookPixelId')}
                 </label>
                 <input
                   type="text"
@@ -98,7 +100,7 @@ const IntegrationSettings: React.FC = () => {
                   id="facebookPixelId"
                   defaultValue={settings?.facebookPixelId || ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
-                  placeholder="123456789012345"
+                  placeholder={t('admin:settings.integrations.analytics.facebookPixelIdPlaceholder')}
                 />
               </div>
             </div>
@@ -110,7 +112,7 @@ const IntegrationSettings: React.FC = () => {
               disabled={saving}
               className="inline-flex justify-center rounded-button bg-swiss-teal py-2.5 px-6 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
-              {saving ? 'Saving...' : 'Save Integration Settings'}
+              {saving ? t('admin:settings.integrations.saving') : t('admin:settings.integrations.saveIntegrationSettings')}
             </button>
           </div>
         </form>

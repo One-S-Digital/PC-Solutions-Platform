@@ -2,6 +2,12 @@
 const { PrismaClient } = require('@prisma/client');
 
 async function main() {
+  // Skip seeding during build - database may not be available
+  if (process.env.SKIP_SEED === 'true') {
+    console.log('ℹ️  Seed: Skipped (SKIP_SEED=true)');
+    return;
+  }
+
   const prisma = new PrismaClient();
   try {
     const seedClerkUserId = process.env.SEED_CLERK_USER_ID || '';
@@ -17,7 +23,6 @@ async function main() {
           siteKeywords: 'childcare, daycare, switzerland, education',
           primaryColor: '#3B82F6',
           secondaryColor: '#1E40AF',
-          // accent color might be present depending on schema; use any cast
           accentColor: '#F59E0B',
           adminPrimaryColor: '#1F2937',
           adminSecondaryColor: '#374151',
@@ -36,8 +41,8 @@ async function main() {
     // 2) Seed SUPER_ADMIN AppUser if SEED_CLERK_USER_ID provided
     if (seedClerkUserId) {
       await prisma.appUser.upsert({
-        where: { clerkUserId: seedClerkUserId },
-        create: { clerkUserId: seedClerkUserId, role: 'SUPER_ADMIN' },
+        where: { clerkId: seedClerkUserId },
+        create: { clerkId: seedClerkUserId, role: 'SUPER_ADMIN' },
         update: { role: 'SUPER_ADMIN' },
       });
       console.log('🌱 Seed: AppUser upserted to SUPER_ADMIN for', seedClerkUserId);
@@ -56,7 +61,7 @@ async function main() {
     let orgId;
     if (orgCount === 0) {
       const org = await prisma.organization.create({
-        data: { name: 'Sample Organization', type: 'SERVICE_PROVIDER', isActive: true },
+        data: { name: 'Sample Organization', type: 'SERVICE_PROVIDER' },
         select: { id: true },
       });
       orgId = org.id;
@@ -67,29 +72,35 @@ async function main() {
     }
 
     if (productCount === 0 && orgId) {
-      await prisma.product.create({
-        data: {
-          title: 'Sample Product',
-          description: 'Demo product',
-          category: 'general',
-          supplierId: orgId,
-          isActive: true,
-        },
-      });
-      console.log('🌱 Seed: product created');
+      try {
+        await prisma.product.create({
+          data: {
+            title: 'Sample Product',
+            description: 'Demo product',
+            category: 'general',
+            supplierId: orgId,
+          },
+        });
+        console.log('🌱 Seed: product created');
+      } catch (err) {
+        console.log('⚠️ Seed: product creation skipped (schema mismatch)');
+      }
     }
 
     if (serviceCount === 0 && orgId) {
-      await prisma.service.create({
-        data: {
-          title: 'Sample Service',
-          description: 'Demo service',
-          category: 'CLEANING',
-          providerId: orgId,
-          isActive: true,
-        },
-      });
-      console.log('🌱 Seed: service created');
+      try {
+        await prisma.service.create({
+          data: {
+            title: 'Sample Service',
+            description: 'Demo service',
+            category: 'CLEANING',
+            providerId: orgId,
+          },
+        });
+        console.log('🌱 Seed: service created');
+      } catch (err) {
+        console.log('⚠️ Seed: service creation skipped (schema mismatch)');
+      }
     }
 
     if (jobCount === 0 && orgId) {

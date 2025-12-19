@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "newChat": "Neuer Chat",
+    "newGroup": "Neue Gruppe",
+    "sendMessage": "Nachricht senden"
+  },
+  "confirmDelete": "Bestätigen Löschen",
+  "deleteMessage": "Löschen message.",
+  "editMessage": "Bearbeiten message.",
+  "emptyState": {
+    "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
+    "noConversationSelectedTitle": "Keine Konversation ausgewählt",
+    "noConversationsYet": "Noch keine Konversationen",
+    "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
+  },
+  "errors": {
+    "fileTooLarge": "file Too Large"
+  },
+  "filters": {
+    "all": "Alle",
+    "unread": "Ungelesen"
+  },
+  "loadingMore": "Laden... more",
+  "messageDeleted": "message Deleted",
+  "messageUpdated": "message Updated",
+  "messages": {
+    "buttons": {
+      "newGroup": "Neue Gruppe",
+      "sendMessage": "Nachricht senden"
+    },
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
+      "noConversationSelectedTitle": "Keine Konversation ausgewählt",
+      "noConversationsYet": "Noch keine Konversationen",
+      "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
+    },
+    "filters": {
+      "all": "Alle",
+      "unread": "Ungelesen"
+    },
+    "noConversationsFound": "Keine Konversationen gefunden",
+    "placeholders": {
+      "searchConversations": "Konversationen durchsuchen...",
+      "typeMessage": "Nachricht eingeben..."
+    },
+    "searchPlaceholder": "Konversationen durchsuchen...",
+    "tabs": {
+      "all": "Alle Nachrichten",
+      "unread": "Ungelesen"
+    },
+    "title": "Nachrichten"
+  },
+  "noConversationsFound": "Keine Konversationen gefunden",
+  "noMessagesYet": "Noch keine Nachrichten",
+  "placeholders": {
+    "addCaption": "Hinzufügen caption",
+    "searchConversations": "Konversationen durchsuchen...",
+    "typeMessage": "Nachricht eingeben..."
+  },
+  "scrollForMore": "scroll For More",
+  "searchPlaceholder": "Konversationen durchsuchen...",
+  "tabs": {
+    "all": "Alle Nachrichten",
+    "unread": "Ungelesen"
+  },
+  "title": "Nachrichten",
+  "unknownUser": "Unbekannter Benutzer",
+  "youPrefix": "Sie: "
+}

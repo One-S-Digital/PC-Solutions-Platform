@@ -1,13 +1,17 @@
 /**
  * Field Registry - Defines which fields are translatable for each entity type
  * This follows the i18n specification for dynamic content translation
+ * 
+ * NOTE: Field names must match the actual database schema. Any changes to field names
+ * require corresponding migration of existing translations in the database.
  */
 export const FIELDS_BY_ENTITY: Record<string, string[]> = {
-  // User profile fields
-  user: ['display_name', 'bio'],
+  // User profile fields (only descriptive content - never passwords, names, emails)
+  // Changed from 'bio' to 'shortBio' to match schema
+  user: ['display_name', 'shortBio'],
   
-  // Organization fields
-  organization: ['name', 'description', 'about'],
+  // Organization fields (only description is translatable - name is a proper noun/identifier)
+  organization: ['description'],
   
   // Service provider fields
   service_provider: ['name', 'about', 'services'],
@@ -19,13 +23,23 @@ export const FIELDS_BY_ENTITY: Record<string, string[]> = {
   service: ['title', 'description'],
   
   // Job application fields
-  job_application: ['headline', 'cover_letter', 'portfolio_summary'],
+  job_application: ['cover_letter'],
   
-  // Job posting fields
-  job_posting: ['title', 'description', 'requirements'],
+  // Job posting fields (job_listing in database)
+  job_listing: ['title', 'description', 'requirements', 'responsibilities', 'qualifications', 'benefits'],
+  job_posting: ['title', 'description', 'requirements', 'responsibilities', 'qualifications', 'benefits'], // Alias for compatibility
   
-  // Content fields
+  // Content fields (generic)
   content: ['title', 'body', 'excerpt'],
+  
+  // E-learning content (stored in Asset table with category ELEARNING)
+  elearning: ['title', 'description', 'content_preview'],
+  
+  // HR documents (stored in Asset table with category HR_DOCUMENT)
+  hr_document: ['title', 'description', 'content_preview'],
+  
+  // State policies (stored in Asset table with category STATE_POLICY)
+  state_policy: ['title', 'description', 'content_preview'],
   
   // Event fields
   event: ['title', 'description'],

@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 
 import EditServiceModal from '../components/services/EditServiceModal'
 import { Service } from '../types/api'
+import { formatServiceCategory } from '../utils/serviceFormatting'
 
 
 const Services: React.FC = () => {
@@ -30,7 +31,7 @@ const Services: React.FC = () => {
   const [selectedService, setSelectedService] = useState<Service | null>(null)
 
   const apiClient = useApiClient()
-  const { t } = useTranslation()
+  const { t } = useTranslation(['admin', 'common'])
 
   const { data: servicesResponse, isLoading, error } = useQuery({
     queryKey: ['services'],
@@ -71,8 +72,8 @@ const Services: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Failed to load services</div>
-        <p className="text-gray-600">Please check your connection and try again.</p>
+        <div className="text-red-500 mb-4">{t('admin:servicesPage.errors.loadFailed')}</div>
+        <p className="text-gray-600">{t('admin:servicesPage.errors.checkConnection')}</p>
       </div>
     )
   }
@@ -84,15 +85,15 @@ const Services: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Wrench className="h-8 w-8 mr-3 text-swiss-teal" />
-            Services
+            {t('admin:servicesPage.title')}
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage services and offerings ({services.length} total)
+            {t('admin:servicesPage.subtitle', { count: services.length })}
           </p>
         </div>
         <button className="bg-swiss-mint hover:bg-swiss-teal text-white px-4 py-2 rounded-lg flex items-center">
           <Plus className="h-4 w-4 mr-2" />
-          Add Service
+          {t('admin:servicesPage.addService')}
         </button>
       </div>
 
@@ -104,7 +105,7 @@ const Services: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search services..."
+                placeholder={t('common:placeholders.searchservices')}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -117,12 +118,12 @@ const Services: React.FC = () => {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
-              <option value="">All Categories</option>
-              <option value="Childcare">Childcare</option>
-              <option value="Education">Education</option>
-              <option value="Health">Health</option>
-              <option value="Nutrition">Nutrition</option>
-              <option value="Special Needs">Special Needs</option>
+              <option value="">{t('common:filters.categories.all')}</option>
+              <option value="Childcare">{t('common:childcare')}</option>
+              <option value="Education">{t('common:education')}</option>
+              <option value="Health">{t('common:health')}</option>
+              <option value="Nutrition">{t('common:nutrition')}</option>
+              <option value="Special Needs">{t('common:specialneeds')}</option>
             </select>
           </div>
         </div>
@@ -140,18 +141,18 @@ const Services: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{service.title}</h3>
-                    <p className="text-sm text-gray-600">{service.category}</p>
+                    <p className="text-sm text-gray-600">{formatServiceCategory(t, service.category)}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <Clock className="h-4 w-4" />
-                      <span>{service.availability || 'Flexible'}</span>
+                      <span>{service.availability || t('admin:servicesPage.defaults.flexible')}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <MapPin className="h-4 w-4" />
-                      <span>{service.deliveryType || 'On-site'}</span>
+                      <span>{service.deliveryType || t('admin:servicesPage.defaults.onSite')}</span>
                     </div>
                   </div>
                   <Menu as="div" className="relative">
@@ -175,7 +176,7 @@ const Services: React.FC = () => {
                                 className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                               >
                                 <Edit className="h-4 w-4 mr-2" />
-                                Edit
+                                {t('common:buttons.edit')}
                               </button>
                             )}
                           </Menu.Item>
@@ -185,7 +186,7 @@ const Services: React.FC = () => {
                                 className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
+                                {t('common:buttons.delete')}
                               </button>
                             )}
                           </Menu.Item>
@@ -200,7 +201,7 @@ const Services: React.FC = () => {
                 <p className="text-sm text-gray-600 mb-3">{service.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <span className="text-lg font-semibold text-green-600">{service.priceInfo || 'N/A'}</span>
+                    <span className="text-lg font-semibold text-green-600">{service.priceInfo || t('admin:servicesPage.defaults.priceNotAvailable')}</span>
                     <div className="flex items-center space-x-1">
                       <Users className="h-4 w-4 text-gray-400" />
                       <span className="text-sm text-gray-600">{service.providerName}</span>
@@ -216,8 +217,8 @@ const Services: React.FC = () => {
       {filteredServices.length === 0 && (
         <div className="text-center py-12">
           <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('serviceProvider.noServicesFound')}</h3>
-          <p className="text-gray-600">Try adjusting your search criteria or add a new service.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('common:serviceProvider.noServicesFound')}</h3>
+          <p className="text-gray-600">{t('admin:servicesPage.emptyState.suggestion')}</p>
         </div>
       )}
     </div>

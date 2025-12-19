@@ -1,0 +1,70 @@
+{
+  "parentLeadForm": {
+    "placeholders": {
+      "specialRequirements": "Bitte beschreiben Sie besondere Anforderungen, Ernährungsbedürfnisse, medizinische Bedingungen oder andere wichtige Informationen über Ihr Kind...",
+      "municipality": "Gemeinde auswählen",
+      "phoneNumber": "+41 XX XXX XX XX",
+      "startDate": "Datum auswählen",
+      "childAge": "Alter in Monaten eingeben",
+      "fullName": "Geben Sie Ihren vollständigen Namen ein",
+      "canton": "Kanton auswählen",
+      "email": "ihre.email@beispiel.com"
+    },
+    "buttons": {
+      "viewMyEnquiries": "Meine Anfragen anzeigen",
+      "submitEnquiry": "Anfrage senden"
+    },
+    "labels": {
+      "municipality": "Gemeinde",
+      "specialNeeds": "Besondere Anforderungen",
+      "phoneNumber": "Telefonnummer",
+      "childNeeds": "Besondere Bedürfnisse des Kindes",
+      "startDate": "Bevorzugtes Startdatum",
+      "childAge": "Alter des Kindes (in Monaten)",
+      "fullName": "Vollständiger Name",
+      "canton": "Kanton",
+      "email": "E-Mail-Adresse"
+    },
+    "messages": {
+      "submitting": "Ihre Anfrage wird gesendet...",
+      "success": "Ihre Anfrage wurde erfolgreich gesendet!",
+      "error": "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut."
+    },
+    "subtitle": "Erzählen Sie uns von Ihren Bedürfnissen und wir helfen Ihnen, die beste Kinderbetreuungslösung zu finden",
+    "title": "Finden Sie Ihre perfekte Kita"
+  },
+  "placeholders": {
+    "specialRequirements": "Bitte beschreiben Sie besondere Anforderungen, Ernährungsbedürfnisse, medizinische Bedingungen oder andere wichtige Informationen über Ihr Kind...",
+    "municipality": "Gemeinde auswählen",
+    "phoneNumber": "+41 XX XXX XX XX",
+    "startDate": "Datum auswählen",
+    "childAge": "Alter in Monaten eingeben",
+    "fullName": "Geben Sie Ihren vollständigen Namen ein",
+    "canton": "Kanton auswählen",
+    "email": "ihre.email@beispiel.com"
+  },
+  "buttons": {
+    "backToDashboard": "Zurück zum Dashboard",
+    "viewMyEnquiries": "Meine Anfragen anzeigen",
+    "submitEnquiry": "Anfrage senden",
+    "backToHome": "Zurück zur Startseite"
+  },
+  "labels": {
+    "municipality": "Gemeinde",
+    "specialNeeds": "Besondere Anforderungen",
+    "phoneNumber": "Telefonnummer",
+    "childNeeds": "Besondere Bedürfnisse des Kindes",
+    "startDate": "Bevorzugtes Startdatum",
+    "childAge": "Alter des Kindes (in Monaten)",
+    "fullName": "Vollständiger Name",
+    "canton": "Kanton",
+    "email": "E-Mail-Adresse"
+  },
+  "messages": {
+    "submitting": "Ihre Anfrage wird gesendet...",
+    "success": "Ihre Anfrage wurde erfolgreich gesendet!",
+    "error": "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut."
+  },
+  "subtitle": "Erzählen Sie uns von Ihren Bedürfnissen und wir helfen Ihnen, die beste Kinderbetreuungslösung zu finden",
+  "title": "Finden Sie Ihre perfekte Kita"
+}
