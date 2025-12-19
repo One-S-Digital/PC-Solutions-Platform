@@ -1546,7 +1546,7 @@ model SubscriptionSchedule {
   isProcessed     Boolean   @default(false) @map("is_processed")
   processedAt     DateTime? @map("processed_at")
   createdBy       String    @map("created_by")
-  createdAt       DateTime  @default(now())
+  createdAt       DateTime  @default(now()) @map("created_at")
   
   subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
   
