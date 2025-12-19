@@ -21,8 +21,12 @@ When deploying to Render or other production environments, database migrations c
 - Safe to run multiple times (idempotent)
 
 **Handled Migrations:**
-- `20251104140358_add_asset_metadata_field` - Ensures metadata column exists
-- `20251119100000_add_categories_array_fields` - Ensures category columns exist
+- `20251104140358_add_asset_metadata_field` - Ensures metadata column exists + legacy URL constraint fix
+- `20251119100000_add_categories_array_fields` - Ensures category columns exist with backfill
+- `20251114140526_add_i18n_translation_tables` - Ensures translation infrastructure exists
+- `20251217000000_add_message_file_columns` - Ensures message file attachment columns exist
+- `20251217100000_add_educator_availability_settings` - Ensures educator scheduling column exists
+- `20251218000000_subscription_management_system` - Ensures enhanced subscription schema exists
 
 ### 2. `render-build-with-recovery.sh`
 **Primary build script for Render**
@@ -118,17 +122,42 @@ npx prisma migrate deploy
 
 To add a handler for a new problematic migration:
 
-1. Edit `prebuild-db-setup.mjs`
-2. Add your recovery function (like `ensureCategoriesColumns`)
-3. Add case to `handleFailedMigration` switch statement:
+1. **Create a recovery function in `prebuild-db-setup.mjs`:**
+   ```javascript
+   const ensureYourFeature = () => {
+     const sql = `
+       -- Your idempotent SQL here
+       -- Use IF NOT EXISTS checks
+       -- Use proper quoting for identifiers
+       ALTER TABLE "your_table" ADD COLUMN IF NOT EXISTS "your_column" TEXT;
+     `;
+     
+     log('Ensuring your feature exists...');
+     runSql(sql);
+     log('✅ Your feature verified.');
+   };
+   ```
 
-```javascript
-case '20251119100000_your_migration':
-  log(`   • Resolving ${migration} (description)`);
-  ensureYourFix();
-  resolveMigration('applied', migration);
-  break;
-```
+2. **Add handler in the `main()` function:**
+   ```javascript
+   // Your feature description
+   try {
+     ensureYourFeature();
+     await resolveMigration('rolled-back', '20251219000000_your_migration_name');
+     await resolveMigration('applied', '20251219000000_your_migration_name');
+   } catch (e) {
+     warn(`⚠️  your feature handler failed: ${e.message}`);
+   }
+   ```
+
+3. **Update this README** to document the new handler
+
+**Key principles:**
+- Use `IF NOT EXISTS` for all schema changes
+- Check for existing constraints before adding
+- Safe to run multiple times (idempotent)
+- Handle both rolled-back and applied states
+- Add informative log messages
 
 ## Monitoring
 

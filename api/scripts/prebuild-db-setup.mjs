@@ -299,6 +299,174 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
 };
 
 /**
+ * Ensure subscription management system schema exists.
+ * Matches migration `20251218000000_subscription_management_system`.
+ * Adds new subscription statuses, audit logging, scheduling, and enhanced fields.
+ */
+const ensureSubscriptionManagementSystem = () => {
+  const sql = `
+-- Add new enum values to SubscriptionStatus
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'PAUSED' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'SubscriptionStatus')) THEN
+        ALTER TYPE "SubscriptionStatus" ADD VALUE 'PAUSED';
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'EXPIRED' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'SubscriptionStatus')) THEN
+        ALTER TYPE "SubscriptionStatus" ADD VALUE 'EXPIRED';
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'TRIAL' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'SubscriptionStatus')) THEN
+        ALTER TYPE "SubscriptionStatus" ADD VALUE 'TRIAL';
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'PENDING' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'SubscriptionStatus')) THEN
+        ALTER TYPE "SubscriptionStatus" ADD VALUE 'PENDING';
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'GRACE_PERIOD' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'SubscriptionStatus')) THEN
+        ALTER TYPE "SubscriptionStatus" ADD VALUE 'GRACE_PERIOD';
+    END IF;
+END$$;
+
+-- Add new columns to subscriptions table
+ALTER TABLE "subscriptions" 
+    ADD COLUMN IF NOT EXISTS "trial_start" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "trial_end" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "paused_at" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "paused_until" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "is_manual" BOOLEAN NOT NULL DEFAULT true,
+    ADD COLUMN IF NOT EXISTS "activated_by" TEXT,
+    ADD COLUMN IF NOT EXISTS "activated_at" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "grace_period_end" TIMESTAMP(3),
+    ADD COLUMN IF NOT EXISTS "cancellation_reason" TEXT,
+    ADD COLUMN IF NOT EXISTS "notes" TEXT,
+    ADD COLUMN IF NOT EXISTS "metadata" JSONB;
+
+-- Add new columns to subscription_plans table
+ALTER TABLE "subscription_plans" 
+    ADD COLUMN IF NOT EXISTS "code" TEXT,
+    ADD COLUMN IF NOT EXISTS "allowed_roles" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    ADD COLUMN IF NOT EXISTS "trial_days" INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS "display_order" INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS "stripe_product_id" TEXT;
+
+-- Create unique index on subscription_plans code (only for non-null values)
+CREATE UNIQUE INDEX IF NOT EXISTS "subscription_plans_code_key" ON "subscription_plans"("code") WHERE "code" IS NOT NULL;
+
+-- Create SubscriptionAction table for audit logging
+CREATE TABLE IF NOT EXISTS "subscription_actions" (
+    "id" TEXT NOT NULL,
+    "subscription_id" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
+    "previous_status" TEXT,
+    "new_status" TEXT NOT NULL,
+    "reason" TEXT,
+    "notes" TEXT,
+    "performed_by" TEXT NOT NULL,
+    "performed_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "metadata" JSONB,
+    
+    CONSTRAINT "subscription_actions_pkey" PRIMARY KEY ("id")
+);
+
+-- Create SubscriptionSchedule table for scheduled actions
+CREATE TABLE IF NOT EXISTS "subscription_schedules" (
+    "id" TEXT NOT NULL,
+    "subscription_id" TEXT NOT NULL,
+    "scheduled_action" TEXT NOT NULL,
+    "scheduled_date" TIMESTAMP(3) NOT NULL,
+    "target_plan_id" TEXT,
+    "is_processed" BOOLEAN NOT NULL DEFAULT false,
+    "processed_at" TIMESTAMP(3),
+    "created_by" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT "subscription_schedules_pkey" PRIMARY KEY ("id")
+);
+
+-- Create SubscriptionNote table for admin notes
+CREATE TABLE IF NOT EXISTS "subscription_notes" (
+    "id" TEXT NOT NULL,
+    "subscription_id" TEXT NOT NULL,
+    "note" TEXT NOT NULL,
+    "is_internal" BOOLEAN NOT NULL DEFAULT true,
+    "created_by" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT "subscription_notes_pkey" PRIMARY KEY ("id")
+);
+
+-- Add foreign key constraints (safely)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'subscription_actions_subscription_id_fkey'
+        AND table_name = 'subscription_actions'
+    ) THEN
+        ALTER TABLE "subscription_actions" 
+            ADD CONSTRAINT "subscription_actions_subscription_id_fkey" 
+            FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'subscription_schedules_subscription_id_fkey'
+        AND table_name = 'subscription_schedules'
+    ) THEN
+        ALTER TABLE "subscription_schedules" 
+            ADD CONSTRAINT "subscription_schedules_subscription_id_fkey" 
+            FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'subscription_notes_subscription_id_fkey'
+        AND table_name = 'subscription_notes'
+    ) THEN
+        ALTER TABLE "subscription_notes" 
+            ADD CONSTRAINT "subscription_notes_subscription_id_fkey" 
+            FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END$$;
+
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS "subscription_actions_subscription_id_idx" ON "subscription_actions"("subscription_id");
+CREATE INDEX IF NOT EXISTS "subscription_actions_performed_at_idx" ON "subscription_actions"("performed_at");
+CREATE INDEX IF NOT EXISTS "subscription_schedules_scheduled_date_is_processed_idx" ON "subscription_schedules"("scheduled_date", "is_processed");
+CREATE INDEX IF NOT EXISTS "subscription_notes_subscription_id_idx" ON "subscription_notes"("subscription_id");
+
+-- Add indexes to subscriptions table for new queries
+CREATE INDEX IF NOT EXISTS "subscriptions_status_idx" ON "subscriptions"("status");
+CREATE INDEX IF NOT EXISTS "subscriptions_current_period_end_idx" ON "subscriptions"("current_period_end");
+CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_manual");
+`;
+
+  log('Ensuring subscription management system schema exists...');
+  runSql(sql);
+  log('✅ Subscription management system schema verified.');
+};
+
+/**
  * Ensure all translation infrastructure tables exist.
  * Matches migration `20251114140526_add_i18n_translation_tables`.
  * CRITICAL: Fixes admin translation page 500 error when static_translations table is missing.
@@ -548,6 +716,15 @@ const main = async () => {
     await resolveMigration('applied', '20251217100000_add_educator_availability_settings');
   } catch (e) {
     warn(`⚠️  educator availability settings handler failed: ${e.message}`);
+  }
+
+  // Subscription management system (enhanced subscription features)
+  try {
+    ensureSubscriptionManagementSystem();
+    await resolveMigration('rolled-back', '20251218000000_subscription_management_system');
+    await resolveMigration('applied', '20251218000000_subscription_management_system');
+  } catch (e) {
+    warn(`⚠️  subscription management system handler failed: ${e.message}`);
   }
 
   log('Done.');
