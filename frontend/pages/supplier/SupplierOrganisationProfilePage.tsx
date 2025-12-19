@@ -23,6 +23,7 @@ import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import ProfileDocumentsSettings from '../../components/settings/sections/ProfileDocumentsSettings';
+import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { UserRole } from '../../types';
 
 interface SupplierSettingsData {
@@ -553,6 +554,9 @@ const SupplierOrganisationProfilePage: React.FC = () => {
               </div>
             )}
           </Card>
+
+          {/* Promo Codes Section */}
+          <PromoCodesDisplaySection isOwnProfile={true} />
 
           {/* Documents Section */}
           <Card className="p-6">
