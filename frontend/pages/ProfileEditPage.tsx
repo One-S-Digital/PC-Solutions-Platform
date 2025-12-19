@@ -347,7 +347,7 @@ const ProfileEditPage: React.FC = () => {
                 content: <EducatorProfileForm formData={formData} onChange={handleFormChange} />,
               },
               {
-                label: t('settings:availabilitySchedule.tab', 'Availability Schedule'),
+                label: t('settings:availability.title', 'Availability Schedule'),
                 content: (
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <AvailabilityScheduler

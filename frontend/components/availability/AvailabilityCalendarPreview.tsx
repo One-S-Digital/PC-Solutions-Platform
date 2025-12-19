@@ -3,10 +3,10 @@ import {
   EducatorAvailabilitySettings, 
   getDateAvailabilityStatus, 
   DateAvailabilityStatus,
-  DAY_LABELS_SHORT,
   DayOfWeek
 } from '../../types/availability';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 interface AvailabilityCalendarPreviewProps {
   settings: EducatorAvailabilitySettings;
@@ -17,7 +17,17 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
   settings,
   startOnMonday = true,
 }) => {
+  const { t } = useTranslation(['settings']);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const dayKey: Record<DayOfWeek, string> = {
+    0: 'sunday',
+    1: 'monday',
+    2: 'tuesday',
+    3: 'wednesday',
+    4: 'thursday',
+    5: 'friday',
+    6: 'saturday',
+  };
 
   // Get the first day of the month
   const firstDayOfMonth = useMemo(() => {
@@ -103,7 +113,9 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
     <div className="bg-white rounded-lg border border-gray-200 p-3">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-medium text-gray-700">Availability Preview</h4>
+        <h4 className="text-xs font-medium text-gray-700">
+          {t('settings:availability.preview.title', 'Calendar Preview')}
+        </h4>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -134,7 +146,10 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
               key={day}
               className="text-center text-[10px] font-medium text-gray-500 py-0.5"
             >
-              {DAY_LABELS_SHORT[day]}
+              {t(
+                `settings:availability.weeklySchedule.daysShort.${dayKey[day]}`,
+                dayKey[day]
+              )}
             </div>
           ))}
         </div>
@@ -169,19 +184,27 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-3 pt-3 border-t border-gray-100">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded bg-swiss-mint" />
-          <span className="text-[11px] text-gray-600">Available</span>
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.available', 'Available')}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded bg-yellow-400" />
-          <span className="text-[11px] text-gray-600">Partial</span>
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.partiallyAvailable', 'Partially Available')}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded bg-blue-400" />
-          <span className="text-[11px] text-gray-600">Override</span>
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.override', 'Override')}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded bg-gray-100" />
-          <span className="text-[11px] text-gray-600">Unavailable</span>
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.unavailable', 'Unavailable')}
+          </span>
         </div>
       </div>
     </div>
