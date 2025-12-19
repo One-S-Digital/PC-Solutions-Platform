@@ -59,7 +59,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar onMobileMenuToggle={toggleMobileSidebar} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-page-bg p-8"> {/* Increased padding */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-page-bg p-3 sm:p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>

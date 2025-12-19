@@ -366,7 +366,7 @@ const MarketplacePage: React.FC = () => {
   };
 
   const gridClass = viewMode === 'grid' 
-    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+    ? 'grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' 
     : 'grid-cols-1';
 
   const tabsConfig = [
@@ -439,17 +439,17 @@ const MarketplacePage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-bold text-swiss-charcoal">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-swiss-charcoal">
             {activeTabLabel}
           </h1>
           {activeTabIndex === 0 && 
-            <p className="text-gray-500 mt-1">{t('subtitles.productSuppliers')}</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">{t('subtitles.productSuppliers')}</p>
           }
           {activeTabIndex === 1 &&
-            <p className="text-gray-500 mt-1">{t('subtitles.serviceProviders')}</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">{t('subtitles.serviceProviders')}</p>
           }
         </div>
         {currentUser?.role === UserRole.ADMIN && (
@@ -458,20 +458,21 @@ const MarketplacePage: React.FC = () => {
             leftIcon={FunnelIcon} 
             size="md" 
             onClick={() => alert(t('marketplace:messages.partnerOnboardingTBD', 'Partner Onboarding TBD'))}
+            className="text-xs sm:text-sm"
           >
             {t('marketplace:buttons.partnerOnboarding')}
           </Button>
         )}
       </div>
       
-      <div className="bg-swiss-teal/5 border-l-4 border-swiss-teal text-swiss-teal p-4 rounded-card flex items-start" role="alert">
-        <InformationCircleIcon className="h-5 w-5 mr-2.5 mt-0.5 flex-shrink-0"/>
-        <p className="text-sm">
+      <div className="bg-swiss-teal/5 border-l-4 border-swiss-teal text-swiss-teal p-3 sm:p-4 rounded-card flex items-start" role="alert">
+        <InformationCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-2.5 mt-0.5 flex-shrink-0"/>
+        <p className="text-xs sm:text-sm">
           {t('infoAlert')}
         </p>
       </div>
 
-      <Card className="p-5">
+      <Card className="p-3 sm:p-4 lg:p-5">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           <div className="relative lg:col-span-2">
             <label htmlFor="searchMarketplace" className="sr-only">

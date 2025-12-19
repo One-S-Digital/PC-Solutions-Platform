@@ -20,6 +20,8 @@
 body {
   font-family: 'Nunito', 'Inter', sans-serif;
   background-color: #F3F4F6; /* Base background for the entire page */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Hide number input arrows */
@@ -35,9 +37,102 @@ body {
 
 /* Global styles for settings form layout */
 .form-label {
-  @apply text-sm font-medium text-gray-700;
+  @apply text-xs sm:text-sm font-medium text-gray-700;
 }
 
 .form-input-container {
   @apply mt-1 md:mt-0; /* Stack on mobile, align on desktop */
+}
+
+/* Responsive text utilities */
+@layer utilities {
+  .text-responsive-xs {
+    @apply text-[10px] sm:text-xs lg:text-sm;
+  }
+  
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm lg:text-base;
+  }
+  
+  .text-responsive-base {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+  
+  .text-responsive-lg {
+    @apply text-base sm:text-lg lg:text-xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+}
+
+/* Responsive spacing utilities */
+@layer utilities {
+  .p-responsive {
+    @apply p-3 sm:p-4 md:p-6 lg:p-8;
+  }
+  
+  .px-responsive {
+    @apply px-3 sm:px-4 md:px-6 lg:px-8;
+  }
+  
+  .py-responsive {
+    @apply py-2 sm:py-3 md:py-4 lg:py-6;
+  }
+  
+  .gap-responsive {
+    @apply gap-2 sm:gap-3 md:gap-4 lg:gap-6;
+  }
+  
+  .space-y-responsive > * + * {
+    @apply mt-3 sm:mt-4 md:mt-6 lg:mt-8;
+  }
+}
+
+/* Card responsive utilities */
+@layer utilities {
+  .card-padding {
+    @apply p-3 sm:p-4 md:p-5 lg:p-6;
+  }
+}
+
+/* Mobile-friendly touch targets */
+@layer utilities {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}
+
+/* Responsive hiding utilities */
+@layer utilities {
+  .hide-on-mobile {
+    @apply hidden sm:block;
+  }
+  
+  .show-on-mobile {
+    @apply block sm:hidden;
+  }
+}
+
+/* Ensure smooth scrolling behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improve input appearance on mobile */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
 }

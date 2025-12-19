@@ -41,32 +41,32 @@ const DashboardPage: React.FC = () => {
 
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-swiss-charcoal">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-swiss-charcoal">
           {t('dashboard:dashboardPage.welcome', { name: userName })}
         </h1>
-        <p className="text-gray-500 mt-1">{t('dashboard:dashboardPage.overviewSubtitle', { appName: APP_NAME })}</p>
+        <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">{t('dashboard:dashboardPage.overviewSubtitle', { appName: APP_NAME })}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
         {stats.map((stat) => (
           <Card key={stat.key} className="p-0 overflow-hidden" hoverEffect>
-            <div className="p-5">
+            <div className="p-3 sm:p-4 lg:p-5">
                 <div className="flex justify-between items-start">
-                    <div className={`p-2.5 inline-flex rounded-lg ${stat.bgColor}`}>
-                        <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    <div className={`p-1.5 sm:p-2 lg:p-2.5 inline-flex rounded-lg ${stat.bgColor}`}>
+                        <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 ${stat.color}`} />
                     </div>
                     {stat.trend && (
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${stat.trend.startsWith('+') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        <span className={`text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-full ${stat.trend.startsWith('+') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                             {stat.trend}
                         </span>
                     )}
                 </div>
-                <h3 className="text-3xl font-semibold text-swiss-charcoal mt-3">{stat.value}</h3>
-                <p className="text-sm text-gray-500">{stat.name}</p>
+                <h3 className="text-lg sm:text-2xl lg:text-3xl font-semibold text-swiss-charcoal mt-2 sm:mt-3">{stat.value}</h3>
+                <p className="text-xs sm:text-sm text-gray-500 truncate">{stat.name}</p>
             </div>
-            <div className={`px-5 py-2.5 text-xs text-center ${stat.bgColor}`}>
+            <div className={`px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 text-[10px] sm:text-xs text-center ${stat.bgColor}`}>
                 <button
                     onClick={() => navigate(`/dashboard/details/${stat.key}`)} 
                     className={`font-medium ${stat.color} hover:underline focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-current rounded`}
@@ -79,38 +79,38 @@ const DashboardPage: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-5">{t('dashboard:dashboardPage.recentActivity')}</h2>
-          <ul className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        <Card className="lg:col-span-2 p-3 sm:p-4 lg:p-6">
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-swiss-charcoal mb-3 sm:mb-4 lg:mb-5">{t('dashboard:dashboardPage.recentActivity')}</h2>
+          <ul className="space-y-2 sm:space-y-3 lg:space-y-4">
             {recentActivityData.map(activity => (
-              <li key={activity.id} className="flex items-center p-3 -m-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <img src={`https://picsum.photos/seed/${activity.avatarSeed}/40/40`} className="w-10 h-10 rounded-full mr-4 border border-gray-200" alt={`${activity.user} avatar`} />
-                <div>
-                  <p className="text-sm">
+              <li key={activity.id} className="flex items-center p-2 sm:p-3 -m-2 sm:-m-3 rounded-lg hover:bg-gray-50 transition-colors">
+                <img src={`https://picsum.photos/seed/${activity.avatarSeed}/40/40`} className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-full mr-2 sm:mr-3 lg:mr-4 border border-gray-200" alt={`${activity.user} avatar`} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium text-swiss-charcoal">{activity.user}</span>
                     <span className="text-gray-600"> {t(activity.actionKey)}.</span>
                   </p>
-                  <p className="text-xs text-gray-400">{formatTimeAgo(activity.timeRaw, activity.timeUnit as 'minutes' | 'hours' | 'yesterday')}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">{formatTimeAgo(activity.timeRaw, activity.timeUnit as 'minutes' | 'hours' | 'yesterday')}</p>
                 </div>
               </li>
             ))}
           </ul>
         </Card>
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-5">{t('dashboard:dashboardPage.quickLinks')}</h2>
-           <ul className="space-y-2.5">
+        <Card className="p-3 sm:p-4 lg:p-6">
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-swiss-charcoal mb-3 sm:mb-4 lg:mb-5">{t('dashboard:dashboardPage.quickLinks')}</h2>
+           <ul className="space-y-1.5 sm:space-y-2 lg:space-y-2.5">
             {quickLinksData.map(link => {
                 const LinkIcon = link.icon;
                 return (
                     <li key={link.nameKey}>
                         <button
                         onClick={() => navigate(link.path)}
-                        className="flex items-center text-swiss-teal hover:text-swiss-mint hover:underline font-medium group transition-colors p-2 -m-2 rounded-md hover:bg-swiss-mint/5 w-full text-left focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-swiss-mint/70"
+                        className="flex items-center text-xs sm:text-sm lg:text-base text-swiss-teal hover:text-swiss-mint hover:underline font-medium group transition-colors p-1.5 sm:p-2 -m-1.5 sm:-m-2 rounded-md hover:bg-swiss-mint/5 w-full text-left focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-swiss-mint/70"
                         aria-label={t(link.nameKey)}
                         >
-                        <LinkIcon className="w-5 h-5 mr-2.5 text-swiss-teal/70 group-hover:text-swiss-mint transition-colors"/>
-                        {t(link.nameKey)}
+                        <LinkIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 lg:w-5 lg:h-5 mr-1.5 sm:mr-2 lg:mr-2.5 text-swiss-teal/70 group-hover:text-swiss-mint transition-colors flex-shrink-0"/>
+                        <span className="truncate">{t(link.nameKey)}</span>
                         </button>
                     </li>
                 );
