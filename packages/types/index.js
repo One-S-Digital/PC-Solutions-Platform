@@ -69,6 +69,9 @@ exports.JobContractType = {
     CDI: 'CDI',
     CDD: 'CDD',
     INTERNSHIP: 'INTERNSHIP',
+    REPLACEMENT: 'REPLACEMENT',
+    TEMPORARY: 'TEMPORARY',
+    FREELANCE: 'FREELANCE',
 };
 // Service Categories
 exports.ServiceCategory = {

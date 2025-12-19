@@ -65,6 +65,9 @@ export declare const JobContractType: {
     readonly CDI: "CDI";
     readonly CDD: "CDD";
     readonly INTERNSHIP: "INTERNSHIP";
+    readonly REPLACEMENT: "REPLACEMENT";
+    readonly TEMPORARY: "TEMPORARY";
+    readonly FREELANCE: "FREELANCE";
 };
 export type JobContractType = (typeof JobContractType)[keyof typeof JobContractType];
 export declare const ServiceCategory: {
