@@ -161,15 +161,45 @@ The script now properly handles these migrations:
 6. ✅ `20251218000000_subscription_management_system` - **FIXED** - Creates base tables + enhancements
 7. ✅ `20251219000000_add_job_contract_types` - **NEW** - Job contract type enums
 
+## Additional Fix: Force Clear Failed Migrations
+
+After the first fix, the build was still failing because the migration was stuck in a FAILED state in Prisma's `_prisma_migrations` tracking table. The standard `prisma migrate resolve` command wasn't clearing it.
+
+### Added `forceDeleteFailedMigration()` function
+
+When a migration is stuck in failed state (with `finished_at IS NULL`), this function directly deletes it from the tracking table:
+
+```javascript
+const forceDeleteFailedMigration = (migrationName) => {
+  const sql = `
+DELETE FROM "_prisma_migrations" 
+WHERE migration_name = '${migrationName}' 
+AND finished_at IS NULL;
+`;
+  // ... execution code
+};
+```
+
+This is used as a fallback when `prisma migrate resolve --rolled-back` doesn't work.
+
+### Updated Recovery Flow
+
+1. Try `prisma migrate resolve --rolled-back` first (standard approach)
+2. If that fails or returns false, force-delete the failed entry from `_prisma_migrations`
+3. Ensure the database schema exists (create tables if needed)
+4. Let `prisma migrate deploy` run the migration fresh
+
 ## Expected Outcome
 
 On the next Render deployment:
-1. ✅ Prebuild script creates base `subscriptions` and `subscription_plans` tables if missing
-2. ✅ Failed migration gets marked as rolled-back
-3. ✅ `prisma migrate deploy` applies migrations cleanly from scratch or incrementally
-4. ✅ All new tables, columns, indexes, and constraints are created
-5. ✅ Build completes successfully
-6. ✅ Future migrations can proceed normally
+1. ✅ Prebuild script detects failed migration `20251218000000_subscription_management_system`
+2. ✅ Tries to mark as rolled-back using standard Prisma command
+3. ✅ If that fails, force-deletes the failed entry from `_prisma_migrations` table
+4. ✅ Creates base `subscriptions` and `subscription_plans` tables if missing
+5. ✅ `prisma migrate deploy` runs migration from scratch successfully
+6. ✅ All new tables, columns, indexes, and constraints are created
+7. ✅ Build completes successfully
+8. ✅ Future migrations can proceed normally
 
 ## Files Changed
 

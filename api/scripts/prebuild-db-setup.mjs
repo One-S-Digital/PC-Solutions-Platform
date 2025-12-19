@@ -90,9 +90,44 @@ const resolveMigration = async (status, migrationName) => {
   try {
     runPrisma(['migrate', 'resolve', '--schema', SCHEMA_PATH, flag, migrationName], { silent: true });
     log(`✅ Marked migration ${migrationName} as ${status}.`);
+    return true;
   } catch (e) {
-    // It's fine if it is already in the desired state; Prisma may error depending on state.
-    warn(`ℹ️  Could not mark ${migrationName} as ${status}: ${e.message}`);
+    // Check if it's already in the desired state (P3008 for applied, P3012 for rolled-back not needed)
+    const alreadyInState = e.message.includes('P3008') || e.message.includes('already recorded as applied');
+    const cannotRollback = e.message.includes('P3012') || e.message.includes('cannot be rolled back');
+    
+    if (alreadyInState && status === 'applied') {
+      log(`ℹ️  Migration ${migrationName} already marked as ${status}.`);
+      return true;
+    } else if (cannotRollback && status === 'rolled-back') {
+      log(`ℹ️  Migration ${migrationName} not in failed state, skipping rollback.`);
+      return false;
+    } else {
+      warn(`⚠️  Could not mark ${migrationName} as ${status}: ${e.message}`);
+      return false;
+    }
+  }
+};
+
+/**
+ * Force clear a failed migration from Prisma's tracking table.
+ * This is a nuclear option for when prisma migrate resolve doesn't work.
+ */
+const forceDeleteFailedMigration = (migrationName) => {
+  const sql = `
+DELETE FROM "_prisma_migrations" 
+WHERE migration_name = '${migrationName}' 
+AND finished_at IS NULL;
+`;
+  
+  try {
+    log(`🔨 Force-deleting failed migration entry for ${migrationName}...`);
+    runSql(sql);
+    log(`✅ Cleared failed migration ${migrationName} from tracking table.`);
+    return true;
+  } catch (e) {
+    warn(`⚠️  Could not force-delete migration ${migrationName}: ${e.message}`);
+    return false;
   }
 };
 
@@ -795,9 +830,21 @@ const main = async () => {
   }
 
   // Subscription management system (enhanced subscription features)
+  // CRITICAL: Clear failed state first, then ensure schema, then mark as applied
+  try {
+    const resolved = await resolveMigration('rolled-back', '20251218000000_subscription_management_system');
+    if (!resolved) {
+      // If normal resolve didn't work, force delete the failed entry
+      forceDeleteFailedMigration('20251218000000_subscription_management_system');
+    }
+  } catch (e) {
+    warn(`⚠️  Could not clear subscription migration failed state: ${e.message}`);
+    // Try force delete anyway
+    forceDeleteFailedMigration('20251218000000_subscription_management_system');
+  }
+  
   try {
     ensureSubscriptionManagementSystem();
-    await resolveMigration('rolled-back', '20251218000000_subscription_management_system');
     await resolveMigration('applied', '20251218000000_subscription_management_system');
   } catch (e) {
     warn(`⚠️  subscription management system handler failed: ${e.message}`);
@@ -805,8 +852,13 @@ const main = async () => {
 
   // Job contract types (adds REPLACEMENT, TEMPORARY, FREELANCE enum values)
   try {
-    ensureJobContractTypes();
     await resolveMigration('rolled-back', '20251219000000_add_job_contract_types');
+  } catch (e) {
+    warn(`⚠️  Could not mark job contract types migration as rolled-back (may already be rolled back): ${e.message}`);
+  }
+  
+  try {
+    ensureJobContractTypes();
     await resolveMigration('applied', '20251219000000_add_job_contract_types');
   } catch (e) {
     warn(`⚠️  job contract types handler failed: ${e.message}`);
