@@ -302,9 +302,54 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
  * Ensure subscription management system schema exists.
  * Matches migration `20251218000000_subscription_management_system`.
  * Adds new subscription statuses, audit logging, scheduling, and enhanced fields.
+ * 
+ * CRITICAL: This ensures base tables exist (from init migration) before adding enhancements.
+ * If base tables are missing, they will be created. This is proper recovery, not masking errors.
  */
 const ensureSubscriptionManagementSystem = () => {
   const sql = `
+-- Ensure base subscriptions table exists (from init migration)
+CREATE TABLE IF NOT EXISTS "subscriptions" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+    "organizationId" TEXT,
+    "planId" TEXT NOT NULL,
+    "stripeSubscriptionId" TEXT,
+    "stripeCustomerId" TEXT,
+    "tier" "SubscriptionTier" NOT NULL,
+    "status" "SubscriptionStatus" NOT NULL DEFAULT 'ACTIVE',
+    "currentPeriodStart" TIMESTAMP(3),
+    "currentPeriodEnd" TIMESTAMP(3),
+    "cancelAtPeriodEnd" BOOLEAN NOT NULL DEFAULT false,
+    "canceledAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "subscriptions_pkey" PRIMARY KEY ("id")
+);
+
+-- Ensure base indexes exist for subscriptions
+CREATE INDEX IF NOT EXISTS "subscriptions_userId_idx" ON "subscriptions"("userId");
+CREATE INDEX IF NOT EXISTS "subscriptions_organizationId_idx" ON "subscriptions"("organizationId");
+CREATE UNIQUE INDEX IF NOT EXISTS "subscriptions_stripeSubscriptionId_key" ON "subscriptions"("stripeSubscriptionId");
+
+-- Ensure base subscription_plans table exists (from init migration)
+CREATE TABLE IF NOT EXISTS "subscription_plans" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'CHF',
+    "billingPeriod" TEXT NOT NULL DEFAULT 'monthly',
+    "features" TEXT[],
+    "limits" JSONB NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isPopular" BOOLEAN NOT NULL DEFAULT false,
+    "stripePriceId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "subscription_plans_pkey" PRIMARY KEY ("id")
+);
+
 -- Add new enum values to SubscriptionStatus
 DO $$
 BEGIN
@@ -464,6 +509,37 @@ CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_
   log('Ensuring subscription management system schema exists...');
   runSql(sql);
   log('✅ Subscription management system schema verified.');
+};
+
+/**
+ * Ensure job contract type enum has new values.
+ * Matches migration `20251219000000_add_job_contract_types`.
+ * Adds REPLACEMENT, TEMPORARY, FREELANCE to JobContractType enum.
+ */
+const ensureJobContractTypes = () => {
+  const sql = `
+-- Add new enum values to JobContractType
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'JobContractType') THEN
+        IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'REPLACEMENT' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
+            ALTER TYPE "JobContractType" ADD VALUE 'REPLACEMENT';
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'TEMPORARY' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
+            ALTER TYPE "JobContractType" ADD VALUE 'TEMPORARY';
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'FREELANCE' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
+            ALTER TYPE "JobContractType" ADD VALUE 'FREELANCE';
+        END IF;
+    END IF;
+END$$;
+`;
+
+  log('Ensuring JobContractType enum has new values (REPLACEMENT, TEMPORARY, FREELANCE)...');
+  runSql(sql);
+  log('✅ Job contract types verified.');
 };
 
 /**
@@ -725,6 +801,15 @@ const main = async () => {
     await resolveMigration('applied', '20251218000000_subscription_management_system');
   } catch (e) {
     warn(`⚠️  subscription management system handler failed: ${e.message}`);
+  }
+
+  // Job contract types (adds REPLACEMENT, TEMPORARY, FREELANCE enum values)
+  try {
+    ensureJobContractTypes();
+    await resolveMigration('rolled-back', '20251219000000_add_job_contract_types');
+    await resolveMigration('applied', '20251219000000_add_job_contract_types');
+  } catch (e) {
+    warn(`⚠️  job contract types handler failed: ${e.message}`);
   }
 
   log('Done.');
