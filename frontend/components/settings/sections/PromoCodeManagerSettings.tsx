@@ -119,7 +119,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
         code: formData.code.toUpperCase(),
         discountType: formData.discountType,
         value: Number(formData.value),
-        expiryDate: new Date(formData.expiryDate).toISOString(),
+        expiryDate: new Date(`${formData.expiryDate}T23:59:59`).toISOString(),
         description: formData.description || undefined,
         maxUsage: formData.maxUsage ? parseInt(formData.maxUsage) : undefined,
         ...(editingPromo && { status: formData.status }),
