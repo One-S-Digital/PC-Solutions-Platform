@@ -3,6 +3,8 @@
  * Provides API endpoint helpers + types for the educator dashboard
  */
 
+import { API_ENDPOINTS } from './api-endpoints';
+
 export interface EducatorDashboardStats {
   applicationsSent: number;
   interviewsScheduled: number;
@@ -17,8 +19,20 @@ export type EducatorJobApplicationStatus =
   | 'pending'
   | 'reviewed'
   | 'accepted'
-  | 'rejected'
-  | string;
+  | 'rejected';
+
+export interface EducatorDashboardProfile {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  shortBio?: string;
+  skills?: string[];
+  certifications?: string[];
+  workExperience?: string;
+  education?: string;
+  availability?: string;
+  cvUrl?: string;
+}
 
 export interface EducatorDashboardJob {
   id: string;
@@ -31,18 +45,14 @@ export interface EducatorDashboardJob {
   status: EducatorJobApplicationStatus;
 }
 
-export const EDUCATOR_DASHBOARD_ENDPOINTS = {
-  stats: '/dashboard/educator/stats',
-  jobs: '/dashboard/educator/jobs',
-};
-
 /**
  * Hook-compatible endpoint helpers.
  * These are intended to be used with `useAuthenticatedApi`.
  */
 export const educatorDashboardApi = {
-  getStatsEndpoint: () => EDUCATOR_DASHBOARD_ENDPOINTS.stats,
-  getJobsEndpoint: () => EDUCATOR_DASHBOARD_ENDPOINTS.jobs,
+  getStatsEndpoint: () => API_ENDPOINTS.dashboard.educatorStats,
+  getJobsEndpoint: () => API_ENDPOINTS.dashboard.educatorJobs,
+  getProfileEndpoint: () => API_ENDPOINTS.settings.educator,
 };
 
 export default educatorDashboardApi;

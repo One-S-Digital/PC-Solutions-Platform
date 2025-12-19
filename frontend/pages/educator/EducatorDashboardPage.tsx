@@ -8,7 +8,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
-import { educatorDashboardApi, EducatorDashboardJob, EducatorDashboardStats } from '../../services/educatorDashboardService';
+import { educatorDashboardApi, EducatorDashboardJob, EducatorDashboardProfile, EducatorDashboardStats } from '../../services/educatorDashboardService';
 
 const EducatorDashboardPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
@@ -22,7 +22,7 @@ const EducatorDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const computeProfileCompletion = useCallback((profile: any): number => {
+  const computeProfileCompletion = useCallback((profile: EducatorDashboardProfile | null): number => {
     const checks: Array<boolean> = [
       Boolean(profile?.firstName),
       Boolean(profile?.lastName),
@@ -48,7 +48,7 @@ const EducatorDashboardPage: React.FC = () => {
       const [statsRes, jobsRes, profileRes] = await Promise.all([
         request<EducatorDashboardStats>(educatorDashboardApi.getStatsEndpoint()),
         request<EducatorDashboardJob[]>(educatorDashboardApi.getJobsEndpoint()),
-        request<{ success: boolean; data?: any }>('/settings/educator'),
+        request<{ success: boolean; data?: EducatorDashboardProfile }>(educatorDashboardApi.getProfileEndpoint()),
       ]);
 
       if (statsRes.success && statsRes.data) {
@@ -63,7 +63,7 @@ const EducatorDashboardPage: React.FC = () => {
         setRecommendedJobs([]);
       }
 
-      const profileData = (profileRes as any)?.data ?? null;
+      const profileData = profileRes?.data ?? null;
       setProfileCompletion(computeProfileCompletion(profileData));
     } catch (err) {
       console.error('Failed to fetch educator dashboard data:', err);

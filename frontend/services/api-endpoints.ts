@@ -178,6 +178,7 @@ export const API_ENDPOINTS = {
     frontend: "/admin/frontend-settings",
     userSettings: "/settings/user",
     organizationSettings: "/settings/organization",
+    educator: "/settings/educator",
   },
 
   // Billing & Subscriptions
