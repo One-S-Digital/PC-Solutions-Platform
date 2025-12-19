@@ -399,32 +399,52 @@ const SettingsPage: React.FC = () => {
         variant="line"
         activeTab={activeTabIndex > -1 ? activeTabIndex : 0}
         onTabChange={index => setActiveSectionId(availableSections[index].id)}
-        className="flex-1 overflow-y-auto pt-6 px-8"
+        className="flex-1 overflow-y-auto pt-3 sm:pt-4 lg:pt-6 px-3 sm:px-4 lg:px-8"
       />
     );
   };
 
   const renderDefaultLayout = () => (
-    <div className="flex flex-1 overflow-hidden">
-      <nav className="w-64 bg-white border-r border-gray-200 p-4 space-y-1 overflow-y-auto flex-shrink-0">
+    <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+      {/* Mobile/Tablet: Horizontal scrollable navigation */}
+      <nav className="lg:hidden flex overflow-x-auto bg-white border-b border-gray-200 p-2 sm:p-3 space-x-2 flex-shrink-0">
         {availableSections.map(section => (
           <button
             key={section.id}
             onClick={() => scrollToSection(section.id)}
-            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-left transition-colors
+            className={`flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors
               ${activeSectionId === section.id
                 ? 'bg-swiss-mint/10 text-swiss-mint'
                 : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'
               }`}
             aria-current={activeSectionId === section.id ? 'page' : undefined}
           >
-            <section.icon className={`w-5 h-5 mr-3 ${activeSectionId === section.id ? 'text-swiss-mint' : 'text-gray-400'}`} />
+            <section.icon className={`w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 ${activeSectionId === section.id ? 'text-swiss-mint' : 'text-gray-400'}`} />
             {t(section.nameKey)}
           </button>
         ))}
       </nav>
 
-      <main className="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth">
+      {/* Desktop: Vertical sidebar navigation */}
+      <nav className="hidden lg:block w-56 xl:w-64 bg-white border-r border-gray-200 p-3 xl:p-4 space-y-1 overflow-y-auto flex-shrink-0">
+        {availableSections.map(section => (
+          <button
+            key={section.id}
+            onClick={() => scrollToSection(section.id)}
+            className={`w-full flex items-center px-2.5 xl:px-3 py-2 xl:py-2.5 text-sm font-medium rounded-md text-left transition-colors
+              ${activeSectionId === section.id
+                ? 'bg-swiss-mint/10 text-swiss-mint'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'
+              }`}
+            aria-current={activeSectionId === section.id ? 'page' : undefined}
+          >
+            <section.icon className={`w-4 h-4 xl:w-5 xl:h-5 mr-2 xl:mr-3 flex-shrink-0 ${activeSectionId === section.id ? 'text-swiss-mint' : 'text-gray-400'}`} />
+            <span className="truncate">{t(section.nameKey)}</span>
+          </button>
+        ))}
+      </nav>
+
+      <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 xl:p-8 space-y-4 sm:space-y-6 lg:space-y-8 scroll-smooth">
         {availableSections.map(section => {
           const SectionComponent = section.component;
           return (
@@ -434,8 +454,8 @@ const SettingsPage: React.FC = () => {
           );
         })}
         {availableSections.length === 0 && (
-          <Card className="p-6 text-center">
-            <p className="text-gray-600">{t('settings:page.noSectionsAvailable')}</p>
+          <Card className="p-4 sm:p-6 text-center">
+            <p className="text-sm sm:text-base text-gray-600">{t('settings:page.noSectionsAvailable')}</p>
           </Card>
         )}
       </main>
@@ -445,29 +465,30 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full bg-page-bg">
-      <div className="sticky top-0 z-30 bg-page-bg/80 backdrop-blur-md px-8 py-4 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
-          <div className="flex items-center space-x-3">
+      <div className="sticky top-0 z-30 bg-page-bg/80 backdrop-blur-md px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-swiss-charcoal">{t('settings:page.title')}</h1>
+          <div className="flex items-center flex-wrap gap-2 sm:space-x-2 lg:space-x-3">
               {showEditProfileButton && (
                 <Button
                   variant="outline"
                   leftIcon={PencilSquareIcon}
                   onClick={() => navigate('/settings/profile')}
+                  className="text-xs sm:text-sm"
                 >
                   {t('common:buttons.editProfile', 'Edit Profile')}
                 </Button>
               )}
               {availableSections.length > 1 && (
                 <>
-                  <Button variant="light" onClick={handleCancel}>
+                  <Button variant="light" onClick={handleCancel} className="text-xs sm:text-sm">
                     {t('common:buttons.cancel')}
                   </Button>
                   <Button
                     variant="primary"
                     onClick={handleSave}
                     disabled={!isDirty || isSaving}
-                    className="bg-swiss-mint hover:bg-opacity-90"
+                    className="bg-swiss-mint hover:bg-opacity-90 text-xs sm:text-sm"
                   >
                     {isSaving
                       ? `${t('common:buttons.saveChanges')}...`
