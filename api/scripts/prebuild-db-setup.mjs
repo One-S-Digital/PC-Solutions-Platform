@@ -345,6 +345,21 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
  */
 const ensureSubscriptionManagementSystem = () => {
   const sql = `
+-- Ensure base enums exist (required for subscriptions table)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'SubscriptionStatus') THEN
+        CREATE TYPE "SubscriptionStatus" AS ENUM ('ACTIVE', 'INACTIVE', 'CANCELLED', 'PAST_DUE');
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'SubscriptionTier') THEN
+        CREATE TYPE "SubscriptionTier" AS ENUM ('BASIC', 'ESSENTIAL', 'PROFESSIONAL', 'ENTERPRISE');
+    END IF;
+END $$;
+
 -- Ensure base subscriptions table exists (from init migration)
 CREATE TABLE IF NOT EXISTS "subscriptions" (
     "id" TEXT NOT NULL,
@@ -539,7 +554,7 @@ CREATE INDEX IF NOT EXISTS "subscription_notes_subscription_id_idx" ON "subscrip
 
 -- Add indexes to subscriptions table for new queries
 CREATE INDEX IF NOT EXISTS "subscriptions_status_idx" ON "subscriptions"("status");
-CREATE INDEX IF NOT EXISTS "subscriptions_current_period_end_idx" ON "subscriptions"("current_period_end");
+CREATE INDEX IF NOT EXISTS "subscriptions_currentPeriodEnd_idx" ON "subscriptions"("currentPeriodEnd");
 CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_manual");
 `;
 
