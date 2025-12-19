@@ -44,8 +44,9 @@ const JobEmploymentTypeSelector: React.FC<JobEmploymentTypeSelectorProps> = ({
             <button
               key={type}
               type="button"
-              onClick={() => !disabled && onChange(type)}
+              onClick={() => onChange(type)}
               disabled={disabled}
+              aria-pressed={isSelected}
               className={`
                 relative flex flex-col items-center p-4 rounded-lg border-2 transition-all
                 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:ring-offset-2

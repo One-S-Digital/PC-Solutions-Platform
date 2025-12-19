@@ -221,9 +221,10 @@
       "contractType": "Type de contrat",
       "description": "Description de l'emploi",
       "editTitle": "Modifier l'offre d'emploi",
+      "employmentType": "Type d'emploi",
       "jobTitle": "Titre du poste",
       "location": "Localisation",
-      "postJob": "Poste de travail",
+      "postJob": "Publier l'offre",
       "qualificationPlaceholder": "Ajouter une qualification",
       "qualifications": "Qualifications",
       "requirementPlaceholder": "Ajouter une exigence",
@@ -232,7 +233,29 @@
       "responsibilityPlaceholder": "Ajouter une responsabilité",
       "salaryRange": "Fourchette des salaires",
       "salaryRangePlaceholder": "par exemple, 60 000 - 80 000 CHF",
-      "startDate": "Date de début"
+      "startDate": "Date de début",
+      "workSchedule": {
+        "title": "Préférences d'horaires de travail",
+        "expectedHours": "Heures prévues",
+        "hoursPerWeek": "heures/semaine",
+        "preferredTimeSlot": "Créneau horaire préféré",
+        "preferredDays": "Jours de travail préférés",
+        "timeSlots": {
+          "MORNING": "Matin",
+          "AFTERNOON": "Après-midi",
+          "FULL_DAY": "Journée complète",
+          "FLEXIBLE": "Flexible"
+        },
+        "days": {
+          "monday": "Lundi",
+          "tuesday": "Mardi",
+          "wednesday": "Mercredi",
+          "thursday": "Jeudi",
+          "friday": "Vendredi",
+          "saturday": "Samedi",
+          "sunday": "Dimanche"
+        }
+      }
     },
     "labels": {
       "allContractTypes": "Tous les types de contrats",

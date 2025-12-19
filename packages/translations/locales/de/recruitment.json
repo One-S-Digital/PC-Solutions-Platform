@@ -221,6 +221,7 @@
       "contractType": "Vertragsart",
       "description": "Stellenbeschreibung",
       "editTitle": "Stellenangebot bearbeiten",
+      "employmentType": "Beschäftigungsart",
       "jobTitle": "Stellenbezeichnung",
       "location": "Standort",
       "postJob": "Stelle veröffentlichen",
@@ -232,7 +233,29 @@
       "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
       "salaryRange": "Gehaltsbereich",
       "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
-      "startDate": "Startdatum"
+      "startDate": "Startdatum",
+      "workSchedule": {
+        "title": "Arbeitszeitpräferenzen",
+        "expectedHours": "Erwartete Stunden",
+        "hoursPerWeek": "Stunden/Woche",
+        "preferredTimeSlot": "Bevorzugte Arbeitszeit",
+        "preferredDays": "Bevorzugte Arbeitstage",
+        "timeSlots": {
+          "MORNING": "Vormittag",
+          "AFTERNOON": "Nachmittag",
+          "FULL_DAY": "Ganztags",
+          "FLEXIBLE": "Flexibel"
+        },
+        "days": {
+          "monday": "Montag",
+          "tuesday": "Dienstag",
+          "wednesday": "Mittwoch",
+          "thursday": "Donnerstag",
+          "friday": "Freitag",
+          "saturday": "Samstag",
+          "sunday": "Sonntag"
+        }
+      }
     },
     "labels": {
       "allContractTypes": "Alle Vertragsarten",

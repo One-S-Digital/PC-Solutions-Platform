@@ -41,7 +41,8 @@ const WorkScheduleSelector: React.FC<WorkScheduleSelectorProps> = ({
   };
 
   const handleHoursChange = (hours: string) => {
-    const numHours = hours ? parseInt(hours, 10) : undefined;
+    const parsed = parseInt(hours, 10);
+    const numHours = hours && !Number.isNaN(parsed) ? parsed : undefined;
     onChange({ ...value, expectedHoursPerWeek: numHours });
   };
 
@@ -85,6 +86,7 @@ const WorkScheduleSelector: React.FC<WorkScheduleSelectorProps> = ({
               type="button"
               onClick={() => handleTimeSlotChange(slot)}
               disabled={disabled}
+              aria-pressed={value.preferredTimeSlot === slot}
               className={`
                 px-3 py-1.5 text-sm rounded-full border transition-colors
                 ${value.preferredTimeSlot === slot
@@ -114,6 +116,7 @@ const WorkScheduleSelector: React.FC<WorkScheduleSelectorProps> = ({
                 type="button"
                 onClick={() => handleDayToggle(day.key)}
                 disabled={disabled}
+                aria-pressed={isSelected}
                 className={`
                   w-10 h-10 text-xs font-medium rounded-lg border transition-colors
                   ${isSelected

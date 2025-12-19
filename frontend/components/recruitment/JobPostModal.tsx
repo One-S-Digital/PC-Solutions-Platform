@@ -106,7 +106,9 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
       salary: formData.salary || undefined,
       salaryRange: formData.salaryRange || undefined,
       employmentType: formData.employmentType,
-      workSchedule: formData.workSchedule,
+      workSchedule: (formData.employmentType === 'PART_TIME' || formData.employmentType === 'REPLACEMENT')
+        ? formData.workSchedule
+        : undefined,
       status: formData.status ?? JobStatus.PUBLISHED,
     };
     onSubmit(sanitizedData);

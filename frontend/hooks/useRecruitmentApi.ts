@@ -42,6 +42,8 @@ const transformJobListing = (data: any): JobListing => ({
   foundationName: data.foundation?.name ?? data.foundationName,
   location: data.location ?? undefined,
   contractType: data.contractType as JobContractType,
+  employmentType: data.employmentType ?? undefined,
+  workSchedule: data.workSchedule ?? undefined,
   startDate: data.startDate ?? undefined,
   status: data.status as JobStatus,
   description: data.description ?? undefined,
