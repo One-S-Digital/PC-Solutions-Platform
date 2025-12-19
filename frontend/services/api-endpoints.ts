@@ -38,7 +38,10 @@ export const API_ENDPOINTS = {
     foundation: "/dashboard/foundation",
     supplier: "/dashboard/supplier",
     serviceProvider: "/dashboard/service-provider",
+    // NOTE: educator dashboard endpoints are split (stats + jobs)
     educator: "/dashboard/educator",
+    educatorStats: "/dashboard/educator/stats",
+    educatorJobs: "/dashboard/educator/jobs",
     parent: "/dashboard/parent",
     admin: "/dashboard/admin",
   },
@@ -175,6 +178,7 @@ export const API_ENDPOINTS = {
     frontend: "/admin/frontend-settings",
     userSettings: "/settings/user",
     organizationSettings: "/settings/organization",
+    educator: "/settings/educator",
   },
 
   // Billing & Subscriptions
