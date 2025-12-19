@@ -591,7 +591,7 @@
     "content": "Content",
     "messages": "Messages",
     "support": "Support",
-    "subscriptions": "Subscriptions",
+    "subscriptions": "Subscription Management",
     "systemMonitoring": "System Monitoring",
     "translations": "Translations",
     "designSystem": "Design System",
@@ -1539,6 +1539,14 @@
     "title": "Subscription Management",
     "subtitle": "Manage subscriptions, plans, and billing",
     "newSubscription": "New Subscription",
+    "selectRoleType": "Select User Type to Manage Subscriptions",
+    "totalUsers": "total users",
+    "subscribed": "subscribed",
+    "backToRoles": "Back to Role Selection",
+    "subscriptions": "Subscriptions",
+    "managingUsers": "Managing {{count}} users",
+    "searchUsers": "Search users by name or email...",
+    "noUsersFound": "No users found",
     "stats": {
       "activeSubscriptions": "Active Subscriptions",
       "trialSubscriptions": "Trial Subscriptions",
@@ -1556,6 +1564,14 @@
       "plan": "Plan",
       "status": "Status",
       "periodEnd": "Period End",
+      "actions": "Actions"
+    },
+    "userTable": {
+      "user": "User",
+      "email": "Email",
+      "organization": "Organization",
+      "subscriptionStatus": "Subscription Status",
+      "plan": "Plan",
       "actions": "Actions"
     },
     "status": {
@@ -1606,6 +1622,20 @@
     "expiring": {
       "title": "Expiring Soon",
       "noSubscriptions": "No subscriptions expiring soon"
+    },
+    "editSubscription": {
+      "title": "Edit Subscription",
+      "status": "Subscription Status",
+      "plan": "Subscription Plan",
+      "selectPlan": "Select a plan...",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Add notes about this subscription...",
+      "edit": "Edit",
+      "saving": "Saving...",
+      "save": "Save Changes"
+    },
+    "createSubscription": {
+      "title": "Create Subscription"
     },
     "modal": {
       "pause": {
