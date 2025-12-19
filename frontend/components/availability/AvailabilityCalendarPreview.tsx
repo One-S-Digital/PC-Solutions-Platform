@@ -3,10 +3,10 @@ import {
   EducatorAvailabilitySettings, 
   getDateAvailabilityStatus, 
   DateAvailabilityStatus,
-  DAY_LABELS_SHORT,
   DayOfWeek
 } from '../../types/availability';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 interface AvailabilityCalendarPreviewProps {
   settings: EducatorAvailabilitySettings;
@@ -17,7 +17,17 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
   settings,
   startOnMonday = true,
 }) => {
+  const { t } = useTranslation(['settings']);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const dayKey: Record<DayOfWeek, string> = {
+    0: 'sunday',
+    1: 'monday',
+    2: 'tuesday',
+    3: 'wednesday',
+    4: 'thursday',
+    5: 'friday',
+    6: 'saturday',
+  };
 
   // Get the first day of the month
   const firstDayOfMonth = useMemo(() => {
@@ -100,10 +110,12 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
   });
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-gray-200 p-3">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-medium text-gray-700">Availability Preview</h4>
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-xs font-medium text-gray-700">
+          {t('settings:availability.preview.title', 'Calendar Preview')}
+        </h4>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -112,7 +124,7 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
           >
             <ChevronLeftIcon className="w-4 h-4 text-gray-600" />
           </button>
-          <span className="text-sm font-medium text-gray-900 min-w-[140px] text-center">
+          <span className="text-xs font-medium text-gray-900 min-w-[110px] text-center">
             {monthYear}
           </span>
           <button
@@ -125,60 +137,74 @@ const AvailabilityCalendarPreview: React.FC<AvailabilityCalendarPreviewProps> = 
         </div>
       </div>
 
-      {/* Day headers */}
-      <div className="grid grid-cols-7 gap-1 mb-1">
-        {dayHeaders.map((day) => (
-          <div
-            key={day}
-            className="text-center text-xs font-medium text-gray-500 py-1"
-          >
-            {DAY_LABELS_SHORT[day]}
-          </div>
-        ))}
-      </div>
-
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
-        {calendarDays.map(({ date, isCurrentMonth }, index) => {
-          const status = getDateAvailabilityStatus(settings, date);
-          const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
-          
-          return (
+      {/* Compact calendar (constrained width so it doesn't balloon on desktop) */}
+      <div className="mx-auto w-full max-w-[320px]">
+        {/* Day headers */}
+        <div className="grid grid-cols-7 gap-0.5 mb-0.5">
+          {dayHeaders.map((day) => (
             <div
-              key={index}
-              className={`
-                relative aspect-square flex items-center justify-center text-xs rounded
-                transition-colors
-                ${!isCurrentMonth ? 'opacity-30' : ''}
-                ${isPast ? 'opacity-40' : ''}
-                ${getStatusColor(status)}
-                ${isToday(date) ? 'ring-2 ring-swiss-mint ring-offset-1' : ''}
-              `}
-              title={`${date.toLocaleDateString()}: ${status}`}
+              key={day}
+              className="text-center text-[10px] font-medium text-gray-500 py-0.5"
             >
-              {date.getDate()}
+              {t(
+                `settings:availability.weeklySchedule.daysShort.${dayKey[day]}`,
+                dayKey[day]
+              )}
             </div>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-0.5">
+          {calendarDays.map(({ date, isCurrentMonth }, index) => {
+            const status = getDateAvailabilityStatus(settings, date);
+            const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
+
+            return (
+              <div
+                key={index}
+                className={`
+                  relative aspect-square flex items-center justify-center text-[10px] rounded-md
+                  transition-colors
+                  ${!isCurrentMonth ? 'opacity-25' : ''}
+                  ${isPast ? 'opacity-40' : ''}
+                  ${getStatusColor(status)}
+                  ${isToday(date) ? 'ring-2 ring-swiss-mint ring-offset-1' : ''}
+                `}
+                title={`${date.toLocaleDateString()}: ${status}`}
+              >
+                {date.getDate()}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-gray-100">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-3 pt-3 border-t border-gray-100">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-swiss-mint" />
-          <span className="text-xs text-gray-600">Available</span>
+          <div className="w-2.5 h-2.5 rounded bg-swiss-mint" />
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.available', 'Available')}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-yellow-400" />
-          <span className="text-xs text-gray-600">Partial</span>
+          <div className="w-2.5 h-2.5 rounded bg-yellow-400" />
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.partiallyAvailable', 'Partially Available')}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-blue-400" />
-          <span className="text-xs text-gray-600">Override</span>
+          <div className="w-2.5 h-2.5 rounded bg-blue-400" />
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.override', 'Override')}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-gray-100" />
-          <span className="text-xs text-gray-600">Unavailable</span>
+          <div className="w-2.5 h-2.5 rounded bg-gray-100" />
+          <span className="text-[11px] text-gray-600">
+            {t('settings:availability.preview.unavailable', 'Unavailable')}
+          </span>
         </div>
       </div>
     </div>

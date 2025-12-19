@@ -11,6 +11,39 @@ import SupplierProfileForm from '../components/profile/edit/SupplierProfileForm'
 import ServiceProviderProfileForm from '../components/profile/edit/ServiceProviderProfileForm';
 import Button from '../components/ui/Button';
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import Tabs from '../components/ui/Tabs';
+import { AvailabilityScheduler } from '../components/availability';
+import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../types/availability';
+
+// Helper function to parse availability settings from various formats
+const parseAvailabilitySettings = (
+  value: EducatorAvailabilitySettings | string | undefined
+): EducatorAvailabilitySettings => {
+  if (!value) {
+    return createEmptyAvailabilitySettings();
+  }
+
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object' && 'employmentType' in parsed) {
+        return parsed as EducatorAvailabilitySettings;
+      }
+    } catch {
+      // If string can't be parsed, return default with notes containing the old value
+      return {
+        ...createEmptyAvailabilitySettings(),
+        notes: value,
+      };
+    }
+  }
+
+  if (typeof value === 'object' && 'employmentType' in value) {
+    return value as EducatorAvailabilitySettings;
+  }
+
+  return createEmptyAvailabilitySettings();
+};
 
 const ProfileEditPage: React.FC = () => {
   const { t } = useTranslation(['common', 'settings']);
@@ -23,6 +56,7 @@ const ProfileEditPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   useEffect(() => {
     if (!currentUser) {
@@ -121,6 +155,7 @@ const ProfileEditPage: React.FC = () => {
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
           skills: Array.isArray(data.skills) ? data.skills : [],
           availability: data.availability || '',
+          availabilitySettings: data.availabilitySettings,
           cvUrl: data.cvUrl || '',
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
@@ -219,22 +254,28 @@ const ProfileEditPage: React.FC = () => {
           }),
         });
       } else if (currentUser.role === UserRole.EDUCATOR) {
+        const educatorPayload: Record<string, any> = {
+          firstName: payload.firstName || '',
+          lastName: payload.lastName || '',
+          email: payload.email || currentUser.email,
+          phoneNumber: payload.phoneNumber || '',
+          workExperience: payload.workExperience || '',
+          education: payload.education || '',
+          certifications: Array.isArray(payload.certifications) ? payload.certifications : [],
+          skills: Array.isArray(payload.skills) ? payload.skills : [],
+          availability: payload.availability || '',
+          cvUrl: payload.cvUrl || '',
+          shortBio: payload.shortBio || '',
+          avatarAssetId: payload.avatarAssetId || '',
+        };
+
+        if (payload.availabilitySettings !== undefined) {
+          educatorPayload.availabilitySettings = payload.availabilitySettings;
+        }
+
         saveRequest = request('/settings/educator', {
           method: 'PATCH',
-          body: JSON.stringify({
-            firstName: payload.firstName || '',
-            lastName: payload.lastName || '',
-            email: payload.email || currentUser.email,
-            phoneNumber: payload.phoneNumber || '',
-            workExperience: payload.workExperience || '',
-            education: payload.education || '',
-            certifications: Array.isArray(payload.certifications) ? payload.certifications : [],
-            skills: Array.isArray(payload.skills) ? payload.skills : [],
-            availability: payload.availability || '',
-            cvUrl: payload.cvUrl || '',
-            shortBio: payload.shortBio || '',
-            avatarAssetId: payload.avatarAssetId || '',
-          }),
+          body: JSON.stringify(educatorPayload),
         });
       } else {
         throw new Error('Unsupported role');
@@ -295,7 +336,31 @@ const ProfileEditPage: React.FC = () => {
       case UserRole.SERVICE_PROVIDER:
         return <ServiceProviderProfileForm formData={formData} onChange={handleFormChange} />;
       case UserRole.EDUCATOR:
-        return <EducatorProfileForm formData={formData} onChange={handleFormChange} />;
+        return (
+          <Tabs
+            variant="line"
+            activeTab={activeTabIndex}
+            onTabChange={setActiveTabIndex}
+            tabs={[
+              {
+                label: t('common:settingsPage.profile', 'Profile'),
+                content: <EducatorProfileForm formData={formData} onChange={handleFormChange} />,
+              },
+              {
+                label: t('settings:availability.title', 'Availability Schedule'),
+                content: (
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <AvailabilityScheduler
+                      value={parseAvailabilitySettings((formData as any).availabilitySettings)}
+                      onChange={(settings) => handleFormChange('availabilitySettings', settings)}
+                      showPreview={true}
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
+        );
       default:
         return <div className="p-6 text-center text-gray-600">{t('common:errors.unsupportedRole', 'Unsupported role')}</div>;
     }

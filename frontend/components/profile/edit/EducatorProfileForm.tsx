@@ -7,8 +7,6 @@ import CoverImageSection from './shared/CoverImageSection';
 import ContactDetailsSection from './shared/ContactDetailsSection';
 import AvatarSection from './shared/AvatarSection';
 import FileUploadZone from '../../ui/FileUploadZone';
-import { AvailabilityScheduler } from '../../availability';
-import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../../../types/availability';
 import ChipInput from '../../ui/ChipInput';
 import {
   UserCircleIcon,
@@ -25,34 +23,6 @@ interface EducatorProfileFormProps {
   formData: SettingsFormData;
   onChange: (field: keyof SettingsFormData, value: any) => void;
 }
-
-// Helper function to parse availability settings from various formats
-const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string | undefined): EducatorAvailabilitySettings => {
-  if (!value) {
-    return createEmptyAvailabilitySettings();
-  }
-  
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value);
-      if (parsed && typeof parsed === 'object' && 'employmentType' in parsed) {
-        return parsed as EducatorAvailabilitySettings;
-      }
-    } catch {
-      // If string can't be parsed, return default with notes containing the old value
-      return {
-        ...createEmptyAvailabilitySettings(),
-        notes: value,
-      };
-    }
-  }
-  
-  if (typeof value === 'object' && 'employmentType' in value) {
-    return value as EducatorAvailabilitySettings;
-  }
-  
-  return createEmptyAvailabilitySettings();
-};
 
 const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
@@ -285,15 +255,6 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             {t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}
           </p>
         </div>
-      </div>
-
-      {/* Availability Schedule */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <AvailabilityScheduler
-          value={parseAvailabilitySettings(formData.availabilitySettings)}
-          onChange={(settings) => onChange('availabilitySettings', settings)}
-          showPreview={true}
-        />
       </div>
 
       {/* CV / Resume Upload */}
