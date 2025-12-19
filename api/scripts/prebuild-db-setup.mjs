@@ -110,27 +110,22 @@ const resolveMigration = async (status, migrationName) => {
 };
 
 /**
- * Force mark a failed migration as applied by updating the tracking table directly.
- * This is used when:
- * 1. The migration is stuck in failed state (finished_at IS NULL)
- * 2. We've manually ensured the schema changes exist
- * 3. Standard prisma migrate resolve commands don't work
- * 
- * This KEEPS the migration in history (doesn't delete it), just marks it complete.
+ * Force mark a failed migration as rolled-back by updating the tracking table directly.
+ * This clears the failed state so prisma migrate deploy can run the migration fresh.
  */
-const forceMarkMigrationApplied = (migrationName) => {
+const forceMarkMigrationRolledBack = (migrationName) => {
   const sql = `
 UPDATE "_prisma_migrations" 
 SET finished_at = NOW(),
-    success = true,
-    rolled_back_at = NULL
-WHERE migration_name = '${migrationName}';
+    rolled_back_at = NOW()
+WHERE migration_name = '${migrationName}' 
+AND finished_at IS NULL;
 `;
   
   try {
-    log(`🔨 Force-marking migration ${migrationName} as applied...`);
+    log(`🔨 Force-marking migration ${migrationName} as rolled-back...`);
     runSql(sql);
-    log(`✅ Marked migration ${migrationName} as successfully applied.`);
+    log(`✅ Marked migration ${migrationName} as rolled-back. Prisma will re-run it.`);
     return true;
   } catch (e) {
     warn(`⚠️  Could not force-mark migration ${migrationName}: ${e.message}`);
@@ -791,90 +786,82 @@ const main = async () => {
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
 
   // Known migration handlers (documented in api/scripts/README-MIGRATION-RECOVERY.md)
+  // For already-applied migrations, just ensure schema exists (idempotent safety net)
   try {
     ensureAssetUrlConstraintFixed();
     ensureAssetMetadataColumn();
-    // If the migration previously failed, clearing it first makes "applied" resolve more reliable.
-    await resolveMigration('rolled-back', '20251104140358_add_asset_metadata_field');
-    await resolveMigration('applied', '20251104140358_add_asset_metadata_field');
   } catch (e) {
-    warn(`⚠️  asset schema/legacy handler failed: ${e.message}`);
+    warn(`⚠️  asset schema verification failed: ${e.message}`);
   }
 
   try {
     ensureCategoriesColumns();
-    await resolveMigration('rolled-back', '20251119100000_add_categories_array_fields');
-    await resolveMigration('applied', '20251119100000_add_categories_array_fields');
   } catch (e) {
-    warn(`⚠️  categories handler failed: ${e.message}`);
+    warn(`⚠️  categories schema verification failed: ${e.message}`);
   }
 
-  // Translation infrastructure (fixes admin translation page 500 error)
   try {
     ensureTranslationInfrastructure();
-    await resolveMigration('rolled-back', '20251114140526_add_i18n_translation_tables');
-    await resolveMigration('applied', '20251114140526_add_i18n_translation_tables');
   } catch (e) {
-    warn(`⚠️  translation infrastructure handler failed: ${e.message}`);
+    warn(`⚠️  translation infrastructure verification failed: ${e.message}`);
   }
 
-  // Message file columns (fixes messaging "fileUrl does not exist" error)
   try {
     ensureMessageFileColumns();
-    await resolveMigration('rolled-back', '20251217000000_add_message_file_columns');
-    await resolveMigration('applied', '20251217000000_add_message_file_columns');
   } catch (e) {
-    warn(`⚠️  message file columns handler failed: ${e.message}`);
+    warn(`⚠️  message file columns verification failed: ${e.message}`);
   }
 
-  // Educator availability settings (Calendly-style scheduling for replacement staff)
   try {
     ensureEducatorAvailabilitySettings();
-    await resolveMigration('rolled-back', '20251217100000_add_educator_availability_settings');
-    await resolveMigration('applied', '20251217100000_add_educator_availability_settings');
   } catch (e) {
-    warn(`⚠️  educator availability settings handler failed: ${e.message}`);
+    warn(`⚠️  educator availability settings verification failed: ${e.message}`);
   }
 
   // Subscription management system (enhanced subscription features)
-  // Strategy: Ensure schema exists, then mark migration as applied (keeping history intact)
+  // Strategy: 
+  // 1. Clear failed state (mark as rolled-back)
+  // 2. Ensure schema exists (so migration won't fail when Prisma runs it)
+  // 3. Let `prisma migrate deploy` run the migration normally and mark it applied
   try {
-    log('🔧 Handling subscription management system migration...');
+    log('🔧 Preparing for subscription management system migration...');
     
-    // Step 1: Ensure the database schema is correct (create tables, add columns)
-    ensureSubscriptionManagementSystem();
-    log('✅ Subscription schema ensured.');
+    // Step 1: Clear failed state - try standard command first
+    let cleared = await resolveMigration('rolled-back', '20251218000000_subscription_management_system');
     
-    // Step 2: Try to mark as applied using standard Prisma command
-    const resolved = await resolveMigration('applied', '20251218000000_subscription_management_system');
-    
-    // Step 3: If standard command fails, force-update the tracking table
-    if (!resolved) {
-      log('⚠️  Standard resolve failed, force-marking migration as applied...');
-      forceMarkMigrationApplied('20251218000000_subscription_management_system');
+    // If standard command doesn't work, force-update the tracking table
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
     }
+    
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+    
+    // Step 2: Ensure schema exists so migration will succeed when Prisma runs it
+    ensureSubscriptionManagementSystem();
+    log('✅ Database schema prepared for migration.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+    
   } catch (e) {
-    warn(`⚠️  Subscription management system handler failed: ${e.message}`);
-    // Even if there's an error, try to mark as applied
+    warn(`⚠️  Subscription management system preparation failed: ${e.message}`);
+    // Try force rollback anyway
     try {
-      forceMarkMigrationApplied('20251218000000_subscription_management_system');
+      forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
+      ensureSubscriptionManagementSystem();
     } catch (e2) {
-      error(`❌ Could not recover from failed migration: ${e2.message}`);
+      error(`❌ Could not prepare for migration: ${e2.message}`);
     }
   }
 
   // Job contract types (adds REPLACEMENT, TEMPORARY, FREELANCE enum values)
   try {
-    await resolveMigration('rolled-back', '20251219000000_add_job_contract_types');
-  } catch (e) {
-    warn(`⚠️  Could not mark job contract types migration as rolled-back (may already be rolled back): ${e.message}`);
-  }
-  
-  try {
+    log('🔧 Preparing for job contract types migration...');
     ensureJobContractTypes();
-    await resolveMigration('applied', '20251219000000_add_job_contract_types');
+    log('✅ Job contract types schema prepared.');
   } catch (e) {
-    warn(`⚠️  job contract types handler failed: ${e.message}`);
+    warn(`⚠️  job contract types preparation failed: ${e.message}`);
   }
 
   log('Done.');
