@@ -6,25 +6,7 @@ import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
-
-/**
- * Standard API response envelope
- */
-interface ApiResponseEnvelope<T> {
-  success: boolean;
-  message: string;
-  data: T;
-  timestamp: string;
-}
-
-function wrapResponse<T>(data: T, message = 'OK'): ApiResponseEnvelope<T> {
-  return {
-    success: true,
-    message,
-    data,
-    timestamp: new Date().toISOString(),
-  };
-}
+import { wrapResponse } from '../common/utils/response.util';
 
 @ApiTags('analytics')
 @Controller('analytics/foundation')

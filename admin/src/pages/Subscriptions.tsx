@@ -90,6 +90,8 @@ const subscriptionStatusOptions = [
   { value: SubscriptionStatus.TRIAL, labelKey: 'trial', color: SubscriptionStatusColors[SubscriptionStatus.TRIAL] },
   { value: SubscriptionStatus.PENDING, labelKey: 'pending', color: SubscriptionStatusColors[SubscriptionStatus.PENDING] },
   { value: SubscriptionStatus.EXPIRED, labelKey: 'expired', color: SubscriptionStatusColors[SubscriptionStatus.EXPIRED] },
+  { value: SubscriptionStatus.PAST_DUE, labelKey: 'past_due', color: SubscriptionStatusColors[SubscriptionStatus.PAST_DUE] },
+  { value: SubscriptionStatus.GRACE_PERIOD, labelKey: 'grace_period', color: SubscriptionStatusColors[SubscriptionStatus.GRACE_PERIOD] },
 ];
 
 // Edit Subscription Modal Component
@@ -555,7 +557,7 @@ const Subscriptions: React.FC = () => {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {roleConfig[selectedRole]?.labelKey ? t(roleConfig[selectedRole].labelKey) : selectedRole} {t('admin:subscriptions.subscriptions', 'Subscriptions')}
+                  {t(roleConfig[selectedRole].labelKey)} {t('admin:subscriptions.subscriptions', 'Subscriptions')}
                 </h2>
                 <p className="text-gray-600">
                   {t('admin:subscriptions.managingUsers', 'Managing {{count}} users', { count: usersByRole[selectedRole]?.length || 0 })}

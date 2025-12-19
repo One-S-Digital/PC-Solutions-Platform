@@ -35,11 +35,7 @@ import {
   CreatePlanDto,
   UpdatePlanDto,
 } from './dto';
-
-// Standard API response wrapper
-function wrapResponse<T>(data: T, message = 'OK') {
-  return { success: true, message, data };
-}
+import { wrapResponse } from '../common/utils/response.util';
 
 @Controller('admin/subscription-management')
 @UseGuards(RolesGuard)

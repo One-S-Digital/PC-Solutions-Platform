@@ -4,31 +4,7 @@ import { AnalyticsService } from './analytics.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
-
-/**
- * Standard API response envelope for analytics endpoints
- */
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-  timestamp: string;
-}
-
-/**
- * Wraps data in a standard API response envelope
- * @param data - The data to wrap
- * @param message - Optional message (defaults to 'OK')
- * @returns Standardized API response object
- */
-function wrapResponse<T>(data: T, message = 'OK'): ApiResponse<T> {
-  return {
-    success: true,
-    message,
-    data,
-    timestamp: new Date().toISOString(),
-  };
-}
+import { wrapResponse } from '../common/utils/response.util';
 
 @Controller('admin/analytics')
 @UseGuards(RolesGuard)
