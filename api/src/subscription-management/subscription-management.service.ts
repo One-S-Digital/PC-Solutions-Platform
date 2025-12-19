@@ -910,7 +910,7 @@ export class SubscriptionManagementService {
         throw new BadRequestException('New plan is not an upgrade - price must be higher than current plan');
       }
 
-      let updateData: any = {
+      const updateData: any = {
         planId: data.newPlanId,
       };
 
@@ -975,7 +975,7 @@ export class SubscriptionManagementService {
         throw new BadRequestException('New plan is not a downgrade - price must be lower than current plan');
       }
 
-      let updateData: any = {
+      const updateData: any = {
         planId: data.newPlanId,
       };
 
