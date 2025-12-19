@@ -31,13 +31,29 @@
     "deleteJob": "Are you sure you want to delete this job listing?"
   },
   "contractTypes": {
-    "cdd": "Cdd",
-    "cdi": "Cdi",
-    "freelance": "freelance",
-    "fullTime": "Full Time",
+    "cdd": "CDD (Fixed-Term)",
+    "cdi": "CDI (Permanent)",
+    "freelance": "Freelance",
+    "fullTime": "Full-Time",
     "internship": "Internship",
-    "partTime": "Part Time",
-    "unknown": "unknown"
+    "partTime": "Part-Time",
+    "replacement": "Replacement/Substitute",
+    "temporary": "Temporary",
+    "unknown": "Unknown"
+  },
+  "employmentTypes": {
+    "FULL_TIME": {
+      "label": "Full-Time",
+      "description": "Permanent position (40h/week)"
+    },
+    "PART_TIME": {
+      "label": "Part-Time",
+      "description": "Flexible hours position"
+    },
+    "REPLACEMENT": {
+      "label": "Replacement/Substitute",
+      "description": "Temporary coverage for absent staff"
+    }
   },
   "errors": {
     "deleteJobFailed": "Unable to delete the job listing.",
@@ -88,7 +104,8 @@
     "contractType": "Contract Type",
     "description": "Job Description",
     "editTitle": "Edit Job Posting",
-    "jobTitle": "Job",
+    "employmentType": "Employment Type",
+    "jobTitle": "Job Title",
     "location": "Location",
     "postJob": "Post Job",
     "qualificationPlaceholder": "Add a qualification",
@@ -99,7 +116,29 @@
     "responsibilityPlaceholder": "Add a responsibility",
     "salaryRange": "Salary Range",
     "salaryRangePlaceholder": "e.g. CHF 60,000 - 80,000",
-    "startDate": "Start Date"
+    "startDate": "Start Date",
+    "workSchedule": {
+      "title": "Work Schedule Preferences",
+      "expectedHours": "Expected Hours",
+      "hoursPerWeek": "hours/week",
+      "preferredTimeSlot": "Preferred Time Slot",
+      "preferredDays": "Preferred Working Days",
+      "timeSlots": {
+        "MORNING": "Morning",
+        "AFTERNOON": "Afternoon",
+        "FULL_DAY": "Full Day",
+        "FLEXIBLE": "Flexible"
+      },
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    }
   },
   "jobStatus": {
     "closed": "Closed",

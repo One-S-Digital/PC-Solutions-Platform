@@ -31,13 +31,29 @@
     "deleteJob": "Möchten Sie dieses Stellenangebot wirklich löschen?"
   },
   "contractTypes": {
-    "cdd": "Befristet",
-    "cdi": "Unbefristet",
-    "freelance": "freelance",
+    "cdd": "Befristet (CDD)",
+    "cdi": "Unbefristet (CDI)",
+    "freelance": "Freiberuflich",
     "fullTime": "Vollzeit",
     "internship": "Praktikum",
     "partTime": "Teilzeit",
-    "unknown": "unknown"
+    "replacement": "Vertretung/Aushilfe",
+    "temporary": "Temporär",
+    "unknown": "Unbekannt"
+  },
+  "employmentTypes": {
+    "FULL_TIME": {
+      "label": "Vollzeit",
+      "description": "Unbefristete Stelle (40 Std./Woche)"
+    },
+    "PART_TIME": {
+      "label": "Teilzeit",
+      "description": "Flexible Arbeitsstunden"
+    },
+    "REPLACEMENT": {
+      "label": "Vertretung/Aushilfe",
+      "description": "Temporäre Vertretung für abwesendes Personal"
+    }
   },
   "errors": {
     "deleteJobFailed": "Stellenangebot konnte nicht gelöscht werden.",
@@ -88,6 +104,7 @@
     "contractType": "Vertragsart",
     "description": "Stellenbeschreibung",
     "editTitle": "Stellenangebot bearbeiten",
+    "employmentType": "Beschäftigungsart",
     "jobTitle": "Stellenbezeichnung",
     "location": "Standort",
     "postJob": "Stelle veröffentlichen",
@@ -99,7 +116,29 @@
     "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
     "salaryRange": "Gehaltsbereich",
     "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
-    "startDate": "Startdatum"
+    "startDate": "Startdatum",
+    "workSchedule": {
+      "title": "Arbeitszeitpräferenzen",
+      "expectedHours": "Erwartete Stunden",
+      "hoursPerWeek": "Stunden/Woche",
+      "preferredTimeSlot": "Bevorzugte Arbeitszeit",
+      "preferredDays": "Bevorzugte Arbeitstage",
+      "timeSlots": {
+        "MORNING": "Vormittag",
+        "AFTERNOON": "Nachmittag",
+        "FULL_DAY": "Ganztags",
+        "FLEXIBLE": "Flexibel"
+      },
+      "days": {
+        "monday": "Montag",
+        "tuesday": "Dienstag",
+        "wednesday": "Mittwoch",
+        "thursday": "Donnerstag",
+        "friday": "Freitag",
+        "saturday": "Samstag",
+        "sunday": "Sonntag"
+      }
+    }
   },
   "jobStatus": {
     "closed": "Geschlossen",

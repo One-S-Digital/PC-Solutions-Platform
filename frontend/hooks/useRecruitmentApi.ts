@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useAuthenticatedApi } from './useAuthenticatedApi';
-import { Application, ApplicationStatus, JobContractType, JobListing, JobStatus, CandidateProfile } from '../types';
+import { Application, ApplicationStatus, JobContractType, JobListing, JobStatus, CandidateProfile, JobEmploymentType, JobWorkSchedule } from '../types';
 
 interface ListJobListingsParams {
   foundationId?: string;
@@ -22,6 +22,8 @@ export interface JobListingInput {
   salary?: string;
   salaryRange?: string;
   contractType: JobContractType;
+  employmentType?: JobEmploymentType;
+  workSchedule?: JobWorkSchedule;
   startDate?: string; // YYYY-MM-DD
   status?: JobStatus;
 }

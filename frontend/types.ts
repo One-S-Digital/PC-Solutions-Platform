@@ -225,7 +225,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, 
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
-export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE';
+export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE' | 'REPLACEMENT' | 'TEMPORARY';
 
 export const JobStatus = {
     DRAFT: 'DRAFT',
@@ -242,7 +242,29 @@ export const JobContractTypeValue = {
     CDD: 'CDD',
     INTERNSHIP: 'INTERNSHIP',
     FREELANCE: 'FREELANCE',
+    REPLACEMENT: 'REPLACEMENT',
+    TEMPORARY: 'TEMPORARY',
 } as const;
+
+// Employment type for job postings (aligned with candidate availability)
+export type JobEmploymentType = 'FULL_TIME' | 'PART_TIME' | 'REPLACEMENT';
+
+export const JobEmploymentTypeValue = {
+    FULL_TIME: 'FULL_TIME',
+    PART_TIME: 'PART_TIME',
+    REPLACEMENT: 'REPLACEMENT',
+} as const;
+
+export const JOB_EMPLOYMENT_TYPES: JobEmploymentType[] = ['FULL_TIME', 'PART_TIME', 'REPLACEMENT'];
+
+// Work schedule preferences for job postings
+export interface JobWorkSchedule {
+    expectedHoursPerWeek?: number;
+    preferredDays?: number[]; // 0-6 for Sunday-Saturday
+    preferredTimeSlot?: 'MORNING' | 'AFTERNOON' | 'FULL_DAY' | 'FLEXIBLE';
+    startTime?: string; // HH:MM format
+    endTime?: string; // HH:MM format
+}
 
 export interface JobListing {
     id: string;
@@ -251,6 +273,8 @@ export interface JobListing {
     foundationName?: string;
     location?: string;
     contractType: JobContractType;
+    employmentType?: JobEmploymentType;
+    workSchedule?: JobWorkSchedule;
     startDate?: string;
     status: JobStatus;
     description?: string;
