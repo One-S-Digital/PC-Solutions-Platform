@@ -385,22 +385,52 @@ CREATE INDEX IF NOT EXISTS "subscriptions_organizationId_idx" ON "subscriptions"
 CREATE UNIQUE INDEX IF NOT EXISTS "subscriptions_stripeSubscriptionId_key" ON "subscriptions"("stripeSubscriptionId");
 
 -- Ensure base subscription_plans table exists (from init migration)
+-- Use snake_case column names to match Prisma schema @map directives
 CREATE TABLE IF NOT EXISTS "subscription_plans" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "currency" TEXT NOT NULL DEFAULT 'CHF',
-    "billingPeriod" TEXT NOT NULL DEFAULT 'monthly',
+    "billing_period" TEXT NOT NULL DEFAULT 'monthly',
     "features" TEXT[],
     "limits" JSONB NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "isPopular" BOOLEAN NOT NULL DEFAULT false,
-    "stripePriceId" TEXT,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "is_popular" BOOLEAN NOT NULL DEFAULT false,
+    "stripe_price_id" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "subscription_plans_pkey" PRIMARY KEY ("id")
 );
+
+-- Fix column names from camelCase to snake_case for existing databases
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscription_plans' AND column_name = 'billingPeriod') THEN
+        ALTER TABLE "subscription_plans" RENAME COLUMN "billingPeriod" TO "billing_period";
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscription_plans' AND column_name = 'isActive') THEN
+        ALTER TABLE "subscription_plans" RENAME COLUMN "isActive" TO "is_active";
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscription_plans' AND column_name = 'isPopular') THEN
+        ALTER TABLE "subscription_plans" RENAME COLUMN "isPopular" TO "is_popular";
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscription_plans' AND column_name = 'stripePriceId') THEN
+        ALTER TABLE "subscription_plans" RENAME COLUMN "stripePriceId" TO "stripe_price_id";
+    END IF;
+END$$;
 
 -- Add new enum values to SubscriptionStatus
 DO $$
