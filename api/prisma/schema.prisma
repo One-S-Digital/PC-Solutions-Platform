@@ -294,6 +294,9 @@ model Organization {
   sentInquiries     Inquiry[] @relation("InquiryBuyer")    // Inquiries this org has sent
   receivedInquiries Inquiry[] @relation("InquirySupplier") // Inquiries this org has received (suppliers)
 
+  // Promo codes for suppliers and service providers
+  promoCodes PromoCode[]
+
   @@map("organizations")
 }
 
@@ -308,6 +311,30 @@ model UserOrganization {
 
   @@id([userId, organizationId])
   @@map("user_organizations")
+}
+
+// Promo Codes for Product Suppliers and Service Providers
+model PromoCode {
+  id             String   @id @default(uuid())
+  code           String
+  discountType   String   // 'Percentage' | 'FixedAmount' | 'FreeMinutes'
+  value          Float
+  expiryDate     DateTime
+  status         String   @default("Active") // 'Active' | 'Expired' | 'Disabled'
+  description    String?
+  usageCount     Int      @default(0)
+  maxUsage       Int?     // Optional max usage limit
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([code, organizationId])
+  @@index([organizationId])
+  @@index([status])
+  @@map("promo_codes")
 }
 
 // Organization Profile Documents (Catalogs, Company Profiles, etc.)
