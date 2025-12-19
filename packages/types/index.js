@@ -22,8 +22,13 @@ exports.SubscriptionTier = {
 exports.SubscriptionStatus = {
     ACTIVE: 'ACTIVE',
     INACTIVE: 'INACTIVE',
+    PAUSED: 'PAUSED',
     CANCELLED: 'CANCELLED',
+    EXPIRED: 'EXPIRED',
+    TRIAL: 'TRIAL',
     PAST_DUE: 'PAST_DUE',
+    PENDING: 'PENDING',
+    GRACE_PERIOD: 'GRACE_PERIOD',
 };
 // Asset Kinds
 exports.AssetKind = {

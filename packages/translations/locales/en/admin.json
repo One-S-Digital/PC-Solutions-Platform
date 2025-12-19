@@ -591,6 +591,7 @@
     "content": "Content",
     "messages": "Messages",
     "support": "Support",
+    "subscriptions": "Subscriptions",
     "systemMonitoring": "System Monitoring",
     "translations": "Translations",
     "designSystem": "Design System",
@@ -1533,5 +1534,135 @@
       "loadFailed": "Failed to load translations",
       "description": "Please check your connection and try again."
     }
+  },
+  "subscriptions": {
+    "title": "Subscription Management",
+    "subtitle": "Manage subscriptions, plans, and billing",
+    "newSubscription": "New Subscription",
+    "stats": {
+      "activeSubscriptions": "Active Subscriptions",
+      "trialSubscriptions": "Trial Subscriptions",
+      "expiringSoon": "Expiring Soon",
+      "monthlyRevenue": "Monthly Revenue"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name or email...",
+      "allStatuses": "All Statuses",
+      "allPlans": "All Plans",
+      "clearFilters": "Clear Filters"
+    },
+    "table": {
+      "subscriber": "Subscriber",
+      "plan": "Plan",
+      "status": "Status",
+      "periodEnd": "Period End",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "paused": "Paused",
+      "cancelled": "Cancelled",
+      "expired": "Expired",
+      "trial": "Trial",
+      "past_due": "Past Due",
+      "pending": "Pending",
+      "grace_period": "Grace Period"
+    },
+    "tier": {
+      "basic": "Basic",
+      "essential": "Essential",
+      "professional": "Professional",
+      "enterprise": "Enterprise"
+    },
+    "actions": {
+      "activate": "Activate",
+      "pause": "Pause",
+      "resume": "Resume",
+      "cancel": "Cancel",
+      "renew": "Renew",
+      "extend": "Extend",
+      "upgrade": "Upgrade",
+      "downgrade": "Downgrade",
+      "delete": "Delete Subscription",
+      "viewHistory": "View History",
+      "addNote": "Add Note"
+    },
+    "details": {
+      "title": "Subscription Details",
+      "subscriber": "Subscriber",
+      "plan": "Plan",
+      "tier": "Tier",
+      "status": "Status",
+      "periodStart": "Period Start",
+      "periodEnd": "Period End",
+      "trialEnd": "Trial End",
+      "type": "Type",
+      "manual": "Manual",
+      "stripeManaged": "Stripe-managed",
+      "notes": "Notes",
+      "selectSubscription": "Select a subscription to view details"
+    },
+    "expiring": {
+      "title": "Expiring Soon",
+      "noSubscriptions": "No subscriptions expiring soon"
+    },
+    "modal": {
+      "pause": {
+        "title": "Pause Subscription",
+        "description": "Pause this subscription. The subscriber will lose access until resumed."
+      },
+      "cancel": {
+        "title": "Cancel Subscription",
+        "description": "Cancel this subscription. This action can be reversed by renewal."
+      },
+      "renew": {
+        "title": "Renew Subscription",
+        "description": "Renew this subscription for another billing period."
+      },
+      "extend": {
+        "title": "Extend Subscription",
+        "description": "Extend the subscription period by additional days.",
+        "additionalDays": "Additional Days"
+      },
+      "upgrade": {
+        "title": "Upgrade Subscription",
+        "description": "Upgrade to a higher plan."
+      },
+      "downgrade": {
+        "title": "Downgrade Subscription",
+        "description": "Downgrade to a lower plan (takes effect at period end)."
+      },
+      "reason": "Reason",
+      "reasonPlaceholder": "Enter reason...",
+      "newPlan": "New Plan",
+      "selectPlan": "Select a plan...",
+      "confirm": "Confirm",
+      "cancelButton": "Cancel"
+    },
+    "create": {
+      "title": "Create New Subscription",
+      "subscriberType": "Subscriber Type",
+      "user": "User",
+      "organization": "Organization",
+      "userId": "User ID",
+      "organizationId": "Organization ID",
+      "userIdPlaceholder": "Enter user ID...",
+      "organizationIdPlaceholder": "Enter organization ID...",
+      "plan": "Plan",
+      "selectPlan": "Select a plan...",
+      "duration": "Duration (months)",
+      "includeTrial": "Include {{days}}-day trial period",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Add notes...",
+      "creating": "Creating...",
+      "createButton": "Create Subscription"
+    },
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "noSubscriptions": "No subscriptions found"
   }
 }

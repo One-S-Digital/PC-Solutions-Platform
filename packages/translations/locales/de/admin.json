@@ -604,6 +604,7 @@
     "content": "Inhalt",
     "messages": "Nachrichten",
     "support": "Support",
+    "subscriptions": "Abonnements",
     "systemMonitoring": "Systemüberwachung",
     "translations": "Übersetzungen",
     "designSystem": "Design-System",
@@ -1541,5 +1542,135 @@
       "loadFailed": "Fehler beim Laden der Übersetzungen",
       "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
     }
+  },
+  "subscriptions": {
+    "title": "Abonnementverwaltung",
+    "subtitle": "Abonnements, Pläne und Abrechnung verwalten",
+    "newSubscription": "Neues Abonnement",
+    "stats": {
+      "activeSubscriptions": "Aktive Abonnements",
+      "trialSubscriptions": "Testabonnements",
+      "expiringSoon": "Bald ablaufend",
+      "monthlyRevenue": "Monatliche Einnahmen"
+    },
+    "filters": {
+      "searchPlaceholder": "Nach Name oder E-Mail suchen...",
+      "allStatuses": "Alle Status",
+      "allPlans": "Alle Pläne",
+      "clearFilters": "Filter löschen"
+    },
+    "table": {
+      "subscriber": "Abonnent",
+      "plan": "Plan",
+      "status": "Status",
+      "periodEnd": "Periodenende",
+      "actions": "Aktionen"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "paused": "Pausiert",
+      "cancelled": "Gekündigt",
+      "expired": "Abgelaufen",
+      "trial": "Testversion",
+      "past_due": "Überfällig",
+      "pending": "Ausstehend",
+      "grace_period": "Karenzzeit"
+    },
+    "tier": {
+      "basic": "Basis",
+      "essential": "Essential",
+      "professional": "Professional",
+      "enterprise": "Enterprise"
+    },
+    "actions": {
+      "activate": "Aktivieren",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "cancel": "Kündigen",
+      "renew": "Verlängern",
+      "extend": "Erweitern",
+      "upgrade": "Upgrade",
+      "downgrade": "Downgrade",
+      "delete": "Abonnement löschen",
+      "viewHistory": "Verlauf anzeigen",
+      "addNote": "Notiz hinzufügen"
+    },
+    "details": {
+      "title": "Abonnementdetails",
+      "subscriber": "Abonnent",
+      "plan": "Plan",
+      "tier": "Stufe",
+      "status": "Status",
+      "periodStart": "Periodenbeginn",
+      "periodEnd": "Periodenende",
+      "trialEnd": "Testende",
+      "type": "Typ",
+      "manual": "Manuell",
+      "stripeManaged": "Stripe-verwaltet",
+      "notes": "Notizen",
+      "selectSubscription": "Wählen Sie ein Abonnement aus, um Details anzuzeigen"
+    },
+    "expiring": {
+      "title": "Bald ablaufend",
+      "noSubscriptions": "Keine Abonnements laufen bald ab"
+    },
+    "modal": {
+      "pause": {
+        "title": "Abonnement pausieren",
+        "description": "Dieses Abonnement pausieren. Der Abonnent verliert den Zugang bis zur Fortsetzung."
+      },
+      "cancel": {
+        "title": "Abonnement kündigen",
+        "description": "Dieses Abonnement kündigen. Diese Aktion kann durch Verlängerung rückgängig gemacht werden."
+      },
+      "renew": {
+        "title": "Abonnement verlängern",
+        "description": "Dieses Abonnement für einen weiteren Abrechnungszeitraum verlängern."
+      },
+      "extend": {
+        "title": "Abonnement erweitern",
+        "description": "Den Abonnementzeitraum um zusätzliche Tage erweitern.",
+        "additionalDays": "Zusätzliche Tage"
+      },
+      "upgrade": {
+        "title": "Abonnement upgraden",
+        "description": "Auf einen höheren Plan upgraden."
+      },
+      "downgrade": {
+        "title": "Abonnement downgraden",
+        "description": "Auf einen niedrigeren Plan downgraden (wird am Periodenende wirksam)."
+      },
+      "reason": "Grund",
+      "reasonPlaceholder": "Grund eingeben...",
+      "newPlan": "Neuer Plan",
+      "selectPlan": "Plan auswählen...",
+      "confirm": "Bestätigen",
+      "cancelButton": "Abbrechen"
+    },
+    "create": {
+      "title": "Neues Abonnement erstellen",
+      "subscriberType": "Abonnententyp",
+      "user": "Benutzer",
+      "organization": "Organisation",
+      "userId": "Benutzer-ID",
+      "organizationId": "Organisations-ID",
+      "userIdPlaceholder": "Benutzer-ID eingeben...",
+      "organizationIdPlaceholder": "Organisations-ID eingeben...",
+      "plan": "Plan",
+      "selectPlan": "Plan auswählen...",
+      "duration": "Dauer (Monate)",
+      "includeTrial": "{{days}}-tägige Testphase einschließen",
+      "notes": "Notizen (optional)",
+      "notesPlaceholder": "Notizen hinzufügen...",
+      "creating": "Wird erstellt...",
+      "createButton": "Abonnement erstellen"
+    },
+    "pagination": {
+      "showing": "Zeige {{from}} bis {{to}} von {{total}}",
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
+    "noSubscriptions": "Keine Abonnements gefunden"
   }
 }

@@ -604,6 +604,7 @@
     "content": "Contenu",
     "messages": "Messages",
     "support": "Support",
+    "subscriptions": "Abonnements",
     "systemMonitoring": "Surveillance du système",
     "translations": "Traductions",
     "designSystem": "Système de design",
@@ -1541,5 +1542,135 @@
       "loadFailed": "Échec du chargement des traductions",
       "description": "Veuillez vérifier votre connexion et réessayer."
     }
+  },
+  "subscriptions": {
+    "title": "Gestion des abonnements",
+    "subtitle": "Gérer les abonnements, forfaits et facturation",
+    "newSubscription": "Nouvel abonnement",
+    "stats": {
+      "activeSubscriptions": "Abonnements actifs",
+      "trialSubscriptions": "Abonnements d'essai",
+      "expiringSoon": "Expirant bientôt",
+      "monthlyRevenue": "Revenus mensuels"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher par nom ou email...",
+      "allStatuses": "Tous les statuts",
+      "allPlans": "Tous les forfaits",
+      "clearFilters": "Effacer les filtres"
+    },
+    "table": {
+      "subscriber": "Abonné",
+      "plan": "Forfait",
+      "status": "Statut",
+      "periodEnd": "Fin de période",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "paused": "En pause",
+      "cancelled": "Annulé",
+      "expired": "Expiré",
+      "trial": "Essai",
+      "past_due": "En retard",
+      "pending": "En attente",
+      "grace_period": "Période de grâce"
+    },
+    "tier": {
+      "basic": "Basique",
+      "essential": "Essentiel",
+      "professional": "Professionnel",
+      "enterprise": "Entreprise"
+    },
+    "actions": {
+      "activate": "Activer",
+      "pause": "Mettre en pause",
+      "resume": "Reprendre",
+      "cancel": "Annuler",
+      "renew": "Renouveler",
+      "extend": "Prolonger",
+      "upgrade": "Mettre à niveau",
+      "downgrade": "Rétrograder",
+      "delete": "Supprimer l'abonnement",
+      "viewHistory": "Voir l'historique",
+      "addNote": "Ajouter une note"
+    },
+    "details": {
+      "title": "Détails de l'abonnement",
+      "subscriber": "Abonné",
+      "plan": "Forfait",
+      "tier": "Niveau",
+      "status": "Statut",
+      "periodStart": "Début de période",
+      "periodEnd": "Fin de période",
+      "trialEnd": "Fin d'essai",
+      "type": "Type",
+      "manual": "Manuel",
+      "stripeManaged": "Géré par Stripe",
+      "notes": "Notes",
+      "selectSubscription": "Sélectionnez un abonnement pour voir les détails"
+    },
+    "expiring": {
+      "title": "Expirant bientôt",
+      "noSubscriptions": "Aucun abonnement n'expire bientôt"
+    },
+    "modal": {
+      "pause": {
+        "title": "Mettre l'abonnement en pause",
+        "description": "Mettre cet abonnement en pause. L'abonné perdra l'accès jusqu'à la reprise."
+      },
+      "cancel": {
+        "title": "Annuler l'abonnement",
+        "description": "Annuler cet abonnement. Cette action peut être annulée par un renouvellement."
+      },
+      "renew": {
+        "title": "Renouveler l'abonnement",
+        "description": "Renouveler cet abonnement pour une autre période de facturation."
+      },
+      "extend": {
+        "title": "Prolonger l'abonnement",
+        "description": "Prolonger la période d'abonnement de jours supplémentaires.",
+        "additionalDays": "Jours supplémentaires"
+      },
+      "upgrade": {
+        "title": "Mettre à niveau l'abonnement",
+        "description": "Passer à un forfait supérieur."
+      },
+      "downgrade": {
+        "title": "Rétrograder l'abonnement",
+        "description": "Passer à un forfait inférieur (prend effet à la fin de la période)."
+      },
+      "reason": "Raison",
+      "reasonPlaceholder": "Entrez la raison...",
+      "newPlan": "Nouveau forfait",
+      "selectPlan": "Sélectionner un forfait...",
+      "confirm": "Confirmer",
+      "cancelButton": "Annuler"
+    },
+    "create": {
+      "title": "Créer un nouvel abonnement",
+      "subscriberType": "Type d'abonné",
+      "user": "Utilisateur",
+      "organization": "Organisation",
+      "userId": "ID utilisateur",
+      "organizationId": "ID organisation",
+      "userIdPlaceholder": "Entrez l'ID utilisateur...",
+      "organizationIdPlaceholder": "Entrez l'ID organisation...",
+      "plan": "Forfait",
+      "selectPlan": "Sélectionner un forfait...",
+      "duration": "Durée (mois)",
+      "includeTrial": "Inclure une période d'essai de {{days}} jours",
+      "notes": "Notes (optionnel)",
+      "notesPlaceholder": "Ajouter des notes...",
+      "creating": "Création...",
+      "createButton": "Créer l'abonnement"
+    },
+    "pagination": {
+      "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "noSubscriptions": "Aucun abonnement trouvé"
   }
 }
