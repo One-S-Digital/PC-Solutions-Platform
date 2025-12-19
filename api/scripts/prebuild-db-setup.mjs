@@ -341,27 +341,43 @@ BEGIN
     END IF;
 END$$;
 
--- Add new columns to subscriptions table
-ALTER TABLE "subscriptions" 
-    ADD COLUMN IF NOT EXISTS "trial_start" TIMESTAMP(3),
-    ADD COLUMN IF NOT EXISTS "trial_end" TIMESTAMP(3),
-    ADD COLUMN IF NOT EXISTS "paused_at" TIMESTAMP(3),
-    ADD COLUMN IF NOT EXISTS "paused_until" TIMESTAMP(3),
-    ADD COLUMN IF NOT EXISTS "is_manual" BOOLEAN NOT NULL DEFAULT true,
-    ADD COLUMN IF NOT EXISTS "activated_by" TEXT,
-    ADD COLUMN IF NOT EXISTS "activated_at" TIMESTAMP(3),
-    ADD COLUMN IF NOT EXISTS "grace_period_end" TIMESTAMP(3),
-    ADD COLUMN IF NOT EXISTS "cancellation_reason" TEXT,
-    ADD COLUMN IF NOT EXISTS "notes" TEXT,
-    ADD COLUMN IF NOT EXISTS "metadata" JSONB;
+-- Add new columns to subscriptions table (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscriptions'
+    ) THEN
+        ALTER TABLE "subscriptions" 
+            ADD COLUMN IF NOT EXISTS "trial_start" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "trial_end" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "paused_at" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "paused_until" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "is_manual" BOOLEAN NOT NULL DEFAULT true,
+            ADD COLUMN IF NOT EXISTS "activated_by" TEXT,
+            ADD COLUMN IF NOT EXISTS "activated_at" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "grace_period_end" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "cancellation_reason" TEXT,
+            ADD COLUMN IF NOT EXISTS "notes" TEXT,
+            ADD COLUMN IF NOT EXISTS "metadata" JSONB;
+    END IF;
+END$$;
 
--- Add new columns to subscription_plans table
-ALTER TABLE "subscription_plans" 
-    ADD COLUMN IF NOT EXISTS "code" TEXT,
-    ADD COLUMN IF NOT EXISTS "allowed_roles" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    ADD COLUMN IF NOT EXISTS "trial_days" INTEGER NOT NULL DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS "display_order" INTEGER NOT NULL DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS "stripe_product_id" TEXT;
+-- Add new columns to subscription_plans table (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscription_plans'
+    ) THEN
+        ALTER TABLE "subscription_plans" 
+            ADD COLUMN IF NOT EXISTS "code" TEXT,
+            ADD COLUMN IF NOT EXISTS "allowed_roles" TEXT[] DEFAULT ARRAY[]::TEXT[],
+            ADD COLUMN IF NOT EXISTS "trial_days" INTEGER NOT NULL DEFAULT 0,
+            ADD COLUMN IF NOT EXISTS "display_order" INTEGER NOT NULL DEFAULT 0,
+            ADD COLUMN IF NOT EXISTS "stripe_product_id" TEXT;
+    END IF;
+END$$;
 
 -- Create unique index on subscription_plans code (only for non-null values)
 CREATE UNIQUE INDEX IF NOT EXISTS "subscription_plans_code_key" ON "subscription_plans"("code") WHERE "code" IS NOT NULL;
@@ -409,61 +425,128 @@ CREATE TABLE IF NOT EXISTS "subscription_notes" (
     CONSTRAINT "subscription_notes_pkey" PRIMARY KEY ("id")
 );
 
--- Add foreign key constraints (safely)
+-- Add foreign key constraints (safely - only if both source and target tables exist)
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints 
-        WHERE constraint_name = 'subscription_actions_subscription_id_fkey'
-        AND table_name = 'subscription_actions'
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscription_actions'
+    ) AND EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscriptions'
     ) THEN
-        ALTER TABLE "subscription_actions" 
-            ADD CONSTRAINT "subscription_actions_subscription_id_fkey" 
-            FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints 
+            WHERE constraint_name = 'subscription_actions_subscription_id_fkey'
+            AND table_name = 'subscription_actions'
+        ) THEN
+            ALTER TABLE "subscription_actions" 
+                ADD CONSTRAINT "subscription_actions_subscription_id_fkey" 
+                FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        END IF;
     END IF;
 END$$;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints 
-        WHERE constraint_name = 'subscription_schedules_subscription_id_fkey'
-        AND table_name = 'subscription_schedules'
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscription_schedules'
+    ) AND EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscriptions'
     ) THEN
-        ALTER TABLE "subscription_schedules" 
-            ADD CONSTRAINT "subscription_schedules_subscription_id_fkey" 
-            FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints 
+            WHERE constraint_name = 'subscription_schedules_subscription_id_fkey'
+            AND table_name = 'subscription_schedules'
+        ) THEN
+            ALTER TABLE "subscription_schedules" 
+                ADD CONSTRAINT "subscription_schedules_subscription_id_fkey" 
+                FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        END IF;
     END IF;
 END$$;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints 
-        WHERE constraint_name = 'subscription_notes_subscription_id_fkey'
-        AND table_name = 'subscription_notes'
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscription_notes'
+    ) AND EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'subscriptions'
     ) THEN
-        ALTER TABLE "subscription_notes" 
-            ADD CONSTRAINT "subscription_notes_subscription_id_fkey" 
-            FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints 
+            WHERE constraint_name = 'subscription_notes_subscription_id_fkey'
+            AND table_name = 'subscription_notes'
+        ) THEN
+            ALTER TABLE "subscription_notes" 
+                ADD CONSTRAINT "subscription_notes_subscription_id_fkey" 
+                FOREIGN KEY ("subscription_id") REFERENCES "subscriptions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        END IF;
     END IF;
 END$$;
 
--- Create indexes for performance
-CREATE INDEX IF NOT EXISTS "subscription_actions_subscription_id_idx" ON "subscription_actions"("subscription_id");
-CREATE INDEX IF NOT EXISTS "subscription_actions_performed_at_idx" ON "subscription_actions"("performed_at");
-CREATE INDEX IF NOT EXISTS "subscription_schedules_scheduled_date_is_processed_idx" ON "subscription_schedules"("scheduled_date", "is_processed");
-CREATE INDEX IF NOT EXISTS "subscription_notes_subscription_id_idx" ON "subscription_notes"("subscription_id");
-
--- Add indexes to subscriptions table for new queries
-CREATE INDEX IF NOT EXISTS "subscriptions_status_idx" ON "subscriptions"("status");
-CREATE INDEX IF NOT EXISTS "subscriptions_current_period_end_idx" ON "subscriptions"("current_period_end");
-CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_manual");
+-- Create indexes for performance (only if tables exist)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'subscription_actions') THEN
+        CREATE INDEX IF NOT EXISTS "subscription_actions_subscription_id_idx" ON "subscription_actions"("subscription_id");
+        CREATE INDEX IF NOT EXISTS "subscription_actions_performed_at_idx" ON "subscription_actions"("performed_at");
+    END IF;
+    
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'subscription_schedules') THEN
+        CREATE INDEX IF NOT EXISTS "subscription_schedules_scheduled_date_is_processed_idx" ON "subscription_schedules"("scheduled_date", "is_processed");
+    END IF;
+    
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'subscription_notes') THEN
+        CREATE INDEX IF NOT EXISTS "subscription_notes_subscription_id_idx" ON "subscription_notes"("subscription_id");
+    END IF;
+    
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'subscriptions') THEN
+        CREATE INDEX IF NOT EXISTS "subscriptions_status_idx" ON "subscriptions"("status");
+        CREATE INDEX IF NOT EXISTS "subscriptions_current_period_end_idx" ON "subscriptions"("current_period_end");
+        CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_manual");
+    END IF;
+END$$;
 `;
 
   log('Ensuring subscription management system schema exists...');
   runSql(sql);
   log('✅ Subscription management system schema verified.');
+};
+
+/**
+ * Ensure job contract type enum has new values.
+ * Matches migration `20251219000000_add_job_contract_types`.
+ * Adds REPLACEMENT, TEMPORARY, FREELANCE to JobContractType enum.
+ */
+const ensureJobContractTypes = () => {
+  const sql = `
+-- Add new enum values to JobContractType
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'JobContractType') THEN
+        IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'REPLACEMENT' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
+            ALTER TYPE "JobContractType" ADD VALUE 'REPLACEMENT';
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'TEMPORARY' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
+            ALTER TYPE "JobContractType" ADD VALUE 'TEMPORARY';
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'FREELANCE' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
+            ALTER TYPE "JobContractType" ADD VALUE 'FREELANCE';
+        END IF;
+    END IF;
+END$$;
+`;
+
+  log('Ensuring JobContractType enum has new values (REPLACEMENT, TEMPORARY, FREELANCE)...');
+  runSql(sql);
+  log('✅ Job contract types verified.');
 };
 
 /**
@@ -725,6 +808,15 @@ const main = async () => {
     await resolveMigration('applied', '20251218000000_subscription_management_system');
   } catch (e) {
     warn(`⚠️  subscription management system handler failed: ${e.message}`);
+  }
+
+  // Job contract types (adds REPLACEMENT, TEMPORARY, FREELANCE enum values)
+  try {
+    ensureJobContractTypes();
+    await resolveMigration('rolled-back', '20251219000000_add_job_contract_types');
+    await resolveMigration('applied', '20251219000000_add_job_contract_types');
+  } catch (e) {
+    warn(`⚠️  job contract types handler failed: ${e.message}`);
   }
 
   log('Done.');
