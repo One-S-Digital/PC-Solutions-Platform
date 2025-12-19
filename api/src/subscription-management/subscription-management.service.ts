@@ -905,18 +905,13 @@ export class SubscriptionManagementService {
         throw new NotFoundException('New plan not found');
       }
 
-      // Determine new tier based on plan
-      const tierOrder = ['BASIC', 'ESSENTIAL', 'PROFESSIONAL', 'ENTERPRISE'];
-      const currentTierIndex = tierOrder.indexOf(subscription.tier);
-      const newTierIndex = tierOrder.indexOf(newPlan.name.toUpperCase());
-
-      if (newTierIndex <= currentTierIndex) {
-        throw new BadRequestException('New plan is not an upgrade');
+      // Validate this is actually an upgrade by comparing prices
+      if (newPlan.price <= subscription.plan.price) {
+        throw new BadRequestException('New plan is not an upgrade - price must be higher than current plan');
       }
 
       let updateData: any = {
         planId: data.newPlanId,
-        tier: newPlan.name.toUpperCase() as SubscriptionTier,
       };
 
       if (data.immediate) {
@@ -973,6 +968,11 @@ export class SubscriptionManagementService {
 
       if (!newPlan) {
         throw new NotFoundException('New plan not found');
+      }
+
+      // Validate this is actually a downgrade by comparing prices
+      if (newPlan.price >= subscription.plan.price) {
+        throw new BadRequestException('New plan is not a downgrade - price must be lower than current plan');
       }
 
       let updateData: any = {
@@ -1143,7 +1143,6 @@ export class SubscriptionManagementService {
     performedBy: string,
   ): Promise<{ success: boolean; count: number }> {
     try {
-      const now = new Date();
       let count = 0;
 
       for (const id of data.subscriptionIds) {
@@ -1411,17 +1410,42 @@ export class SubscriptionManagementService {
     }
   }
 
-  async updateSubscriptionStatus(subscriptionId: string, status: SubscriptionStatus): Promise<Subscription> {
+  async updateSubscriptionStatus(
+    subscriptionId: string,
+    status: SubscriptionStatus,
+    cancelAtPeriodEnd?: boolean,
+    performedBy: string = 'system',
+  ): Promise<Subscription> {
     try {
+      const existing = await this.prisma.subscription.findUnique({
+        where: { id: subscriptionId },
+      });
+
+      if (!existing) {
+        throw new NotFoundException('Subscription not found');
+      }
+
       const subscription = await this.prisma.subscription.update({
         where: { id: subscriptionId },
-        data: { status: status as any },
+        data: {
+          status: status as any,
+          ...(cancelAtPeriodEnd !== undefined && { cancelAtPeriodEnd }),
+        },
         include: {
           user: true,
           organization: true,
           plan: true,
         },
       });
+
+      await this.logAction(
+        subscriptionId,
+        'STATUS_UPDATE',
+        existing.status as string,
+        status,
+        performedBy,
+        'Status updated directly',
+      );
 
       this.logger.log(`Updated subscription ${subscriptionId} status to ${status}`);
       return subscription as unknown as Subscription;

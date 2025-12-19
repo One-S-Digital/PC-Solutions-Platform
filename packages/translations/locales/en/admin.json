@@ -1637,7 +1637,7 @@
       "newPlan": "New Plan",
       "selectPlan": "Select a plan...",
       "confirm": "Confirm",
-      "cancel": "Cancel"
+      "cancelButton": "Cancel"
     },
     "create": {
       "title": "Create New Subscription",

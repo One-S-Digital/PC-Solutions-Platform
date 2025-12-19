@@ -1645,7 +1645,7 @@
       "newPlan": "Nouveau forfait",
       "selectPlan": "Sélectionner un forfait...",
       "confirm": "Confirmer",
-      "cancel": "Annuler"
+      "cancelButton": "Annuler"
     },
     "create": {
       "title": "Créer un nouvel abonnement",

@@ -787,7 +787,7 @@ const Subscriptions: React.FC = () => {
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-900"
               >
-                {t('admin:subscriptions.modal.cancel')}
+                {t('admin:subscriptions.modal.cancelButton')}
               </button>
               <button
                 onClick={handleAction}
@@ -1004,7 +1004,7 @@ const CreateSubscriptionModal: React.FC<{
               onClick={onClose}
               className="px-4 py-2 text-gray-600 hover:text-gray-900"
             >
-              {t('admin:subscriptions.modal.cancel')}
+              {t('admin:subscriptions.modal.cancelButton')}
             </button>
             <button
               type="submit"

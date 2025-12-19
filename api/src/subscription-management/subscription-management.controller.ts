@@ -14,7 +14,7 @@ import { SubscriptionManagementService, SubscriptionPlan, Subscription } from '.
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
-import { SubscriptionTier, UserRole } from '@workspace/types';
+import { SubscriptionTier, SubscriptionStatus, UserRole } from '@workspace/types';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -107,9 +107,11 @@ export class SubscriptionManagementController {
     @Query('createdBefore') createdBefore?: string,
   ) {
     const filters: SubscriptionFiltersDto = {
-      page: page ? parseInt(page) : 1,
-      limit: limit ? parseInt(limit) : 20,
-      status: status as any,
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
+      status: status && Object.values(SubscriptionStatus).includes(status as SubscriptionStatus)
+        ? (status as SubscriptionStatus)
+        : undefined,
       planId,
       userId,
       organizationId,
@@ -247,8 +249,15 @@ export class SubscriptionManagementController {
   async updateSubscriptionStatus(
     @Param('id') id: string,
     @Body() body: { status: Subscription['status']; cancelAtPeriodEnd?: boolean },
+    @Request() req: any,
   ) {
-    return this.subscriptionService.updateSubscriptionStatus(id, body.status);
+    const performedBy = req.user?.clerkId || 'system';
+    return this.subscriptionService.updateSubscriptionStatus(
+      id,
+      body.status,
+      body.cancelAtPeriodEnd,
+      performedBy,
+    );
   }
 
   // =====================================

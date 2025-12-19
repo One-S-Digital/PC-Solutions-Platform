@@ -1645,7 +1645,7 @@
       "newPlan": "Neuer Plan",
       "selectPlan": "Plan auswählen...",
       "confirm": "Bestätigen",
-      "cancel": "Abbrechen"
+      "cancelButton": "Abbrechen"
     },
     "create": {
       "title": "Neues Abonnement erstellen",
