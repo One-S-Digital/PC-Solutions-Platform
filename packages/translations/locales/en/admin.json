@@ -1632,7 +1632,9 @@
       "notesPlaceholder": "Add notes about this subscription...",
       "edit": "Edit",
       "saving": "Saving...",
-      "save": "Save Changes"
+      "save": "Save Changes",
+      "success": "Subscription updated successfully",
+      "error": "Failed to update subscription: "
     },
     "createSubscription": {
       "title": "Create Subscription"

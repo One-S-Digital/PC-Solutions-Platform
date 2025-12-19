@@ -41,6 +41,10 @@ import {
 import { UserRole } from '../types';
 import { User } from '../types/api';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+
+// Locale constant for currency formatting
+const CURRENCY_LOCALE = 'de-CH';
 
 // Role configuration with icons and colors
 const roleConfig: Record<string, { icon: React.ReactNode; color: string; bgColor: string; label: string }> = {
@@ -76,15 +80,15 @@ const roleConfig: Record<string, { icon: React.ReactNode; color: string; bgColor
   },
 };
 
-// Subscription status options
+// Subscription status options - reusing SubscriptionStatusColors for consistency
 const subscriptionStatusOptions = [
-  { value: SubscriptionStatus.ACTIVE, label: 'Active', color: 'bg-green-100 text-green-800' },
-  { value: SubscriptionStatus.INACTIVE, label: 'Inactive', color: 'bg-gray-100 text-gray-800' },
-  { value: SubscriptionStatus.PAUSED, label: 'Paused', color: 'bg-yellow-100 text-yellow-800' },
-  { value: SubscriptionStatus.CANCELLED, label: 'Cancelled', color: 'bg-red-100 text-red-800' },
-  { value: SubscriptionStatus.TRIAL, label: 'Trial', color: 'bg-blue-100 text-blue-800' },
-  { value: SubscriptionStatus.PENDING, label: 'Pending', color: 'bg-gray-100 text-gray-600' },
-  { value: SubscriptionStatus.EXPIRED, label: 'Expired', color: 'bg-red-100 text-red-800' },
+  { value: SubscriptionStatus.ACTIVE, label: 'Active', color: SubscriptionStatusColors[SubscriptionStatus.ACTIVE] },
+  { value: SubscriptionStatus.INACTIVE, label: 'Inactive', color: SubscriptionStatusColors[SubscriptionStatus.INACTIVE] },
+  { value: SubscriptionStatus.PAUSED, label: 'Paused', color: SubscriptionStatusColors[SubscriptionStatus.PAUSED] },
+  { value: SubscriptionStatus.CANCELLED, label: 'Cancelled', color: SubscriptionStatusColors[SubscriptionStatus.CANCELLED] },
+  { value: SubscriptionStatus.TRIAL, label: 'Trial', color: SubscriptionStatusColors[SubscriptionStatus.TRIAL] },
+  { value: SubscriptionStatus.PENDING, label: 'Pending', color: SubscriptionStatusColors[SubscriptionStatus.PENDING] },
+  { value: SubscriptionStatus.EXPIRED, label: 'Expired', color: SubscriptionStatusColors[SubscriptionStatus.EXPIRED] },
 ];
 
 // Edit Subscription Modal Component
@@ -131,14 +135,35 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
     await onSave({ status, planId: selectedPlanId || undefined, notes: notes || undefined });
   };
 
+  // Handle Escape key to close modal
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="subscription-modal-title"
+    >
       <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold">
+          <h3 id="subscription-modal-title" className="text-lg font-semibold">
             {subscription ? t('admin:subscriptions.editSubscription.title', 'Edit Subscription') : t('admin:subscriptions.createSubscription.title', 'Create Subscription')}
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button 
+            onClick={onClose} 
+            className="text-gray-400 hover:text-gray-600"
+            aria-label={t('common:close', 'Close modal')}
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -197,7 +222,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
               <option value="">{t('admin:subscriptions.editSubscription.selectPlan', 'Select a plan...')}</option>
               {plans.filter((p) => p.isActive).map((plan) => (
                 <option key={plan.id} value={plan.id}>
-                  {plan.name} - {new Intl.NumberFormat('de-CH', {
+                  {plan.name} - {new Intl.NumberFormat(CURRENCY_LOCALE, {
                     style: 'currency',
                     currency: plan.currency,
                   }).format(plan.price)}/{plan.billingPeriod}
@@ -342,8 +367,9 @@ const Subscriptions: React.FC = () => {
     mutationFn: async ({ userId, data }: { userId: string; data: { status: SubscriptionStatus; planId?: string; notes?: string } }) => {
       const existingSubscription = userSubscriptionMap.get(userId);
       if (existingSubscription) {
-        // Update existing subscription
+        // Update existing subscription - include planId if changed
         return subscriptionService.updateSubscription(apiClient, existingSubscription.id, {
+          planId: data.planId,
           notes: data.notes,
         }).then(() => {
           // Also update status if changed
@@ -352,7 +378,10 @@ const Subscriptions: React.FC = () => {
           }
         });
       } else {
-        // Create new subscription
+        // Create new subscription - validate plan is available
+        if (!data.planId && !plans[0]?.id) {
+          throw new Error('No plan selected and no plans available');
+        }
         return subscriptionService.createSubscription(apiClient, {
           userId,
           planId: data.planId || plans[0]?.id,
@@ -367,6 +396,11 @@ const Subscriptions: React.FC = () => {
       setIsEditModalOpen(false);
       setSelectedUser(null);
       setSelectedUserSubscription(null);
+      toast.success(t('admin:subscriptions.editSubscription.success', 'Subscription updated successfully'));
+    },
+    onError: (error: Error) => {
+      console.error('Failed to update subscription:', error);
+      toast.error(t('admin:subscriptions.editSubscription.error', 'Failed to update subscription: ') + error.message);
     },
   });
 
@@ -383,7 +417,7 @@ const Subscriptions: React.FC = () => {
   };
 
   const formatCurrency = (amount: number, currency: string = 'CHF') => {
-    return new Intl.NumberFormat('de-CH', {
+    return new Intl.NumberFormat(CURRENCY_LOCALE, {
       style: 'currency',
       currency: currency,
     }).format(amount);
