@@ -81,7 +81,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
             />
           </div>
         </div>
-        <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-5">
+        <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3 xl:space-x-4">
           <LanguageSwitcher />
 
           {currentUser?.role === UserRole.FOUNDATION && (
@@ -107,7 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
               >
                 <BellIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 {totalNotificationsCount > 0 && (
-                    <span className="absolute top-0.5 sm:top-0 right-0.5 sm:right-0 block h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-swiss-coral ring-2 ring-white"></span>
+                    <span className="absolute -top-0.5 sm:-top-1 -right-1 sm:-right-1.5 block h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-swiss-coral ring-2 ring-white"></span>
                 )}
               </button>
                {notificationsOpen && (

@@ -366,7 +366,7 @@ const MarketplacePage: React.FC = () => {
   };
 
   const gridClass = viewMode === 'grid' 
-    ? 'grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' 
+    ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' 
     : 'grid-cols-1';
 
   const tabsConfig = [

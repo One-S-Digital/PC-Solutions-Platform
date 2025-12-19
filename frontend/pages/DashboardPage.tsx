@@ -63,7 +63,7 @@ const DashboardPage: React.FC = () => {
                         </span>
                     )}
                 </div>
-                <h3 className="text-lg sm:text-2xl lg:text-3xl font-semibold text-swiss-charcoal mt-2 sm:mt-3">{stat.value}</h3>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-swiss-charcoal mt-2 sm:mt-3">{stat.value}</h3>
                 <p className="text-xs sm:text-sm text-gray-500 truncate">{stat.name}</p>
             </div>
             <div className={`px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 text-[10px] sm:text-xs text-center ${stat.bgColor}`}>
@@ -109,7 +109,7 @@ const DashboardPage: React.FC = () => {
                         className="flex items-center text-xs sm:text-sm lg:text-base text-swiss-teal hover:text-swiss-mint hover:underline font-medium group transition-colors p-1.5 sm:p-2 -m-1.5 sm:-m-2 rounded-md hover:bg-swiss-mint/5 w-full text-left focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-swiss-mint/70"
                         aria-label={t(link.nameKey)}
                         >
-                        <LinkIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 lg:w-5 lg:h-5 mr-1.5 sm:mr-2 lg:mr-2.5 text-swiss-teal/70 group-hover:text-swiss-mint transition-colors flex-shrink-0"/>
+                        <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 mr-1.5 sm:mr-2 lg:mr-2.5 text-swiss-teal/70 group-hover:text-swiss-mint transition-colors flex-shrink-0"/>
                         <span className="truncate">{t(link.nameKey)}</span>
                         </button>
                     </li>
