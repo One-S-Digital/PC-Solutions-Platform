@@ -1547,6 +1547,14 @@
     "managingUsers": "Managing {{count}} users",
     "searchUsers": "Search users by name or email...",
     "noUsersFound": "No users found",
+    "noSubscription": "No Subscription",
+    "roles": {
+      "foundations": "Foundations",
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers",
+      "educators": "Educators",
+      "parents": "Parents"
+    },
     "stats": {
       "activeSubscriptions": "Active Subscriptions",
       "trialSubscriptions": "Trial Subscriptions",
@@ -1634,7 +1642,10 @@
       "saving": "Saving...",
       "save": "Save Changes",
       "success": "Subscription updated successfully",
-      "error": "Failed to update subscription: "
+      "error": "Failed to update subscription: ",
+      "currentInfo": "Current Subscription Info",
+      "planLabel": "Plan",
+      "periodLabel": "Period"
     },
     "createSubscription": {
       "title": "Create Subscription"

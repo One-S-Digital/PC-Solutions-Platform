@@ -35,6 +35,7 @@ import {
   CreatePlanDto,
   UpdatePlanDto,
 } from './dto';
+import { wrapResponse } from '../common/utils/response.util';
 
 @Controller('admin/subscription-management')
 @UseGuards(RolesGuard)
@@ -53,33 +54,38 @@ export class SubscriptionManagementController {
 
   @Post('plans')
   async createSubscriptionPlan(@Body() planData: CreatePlanDto) {
-    return this.subscriptionService.createSubscriptionPlan(planData);
+    const plan = await this.subscriptionService.createSubscriptionPlan(planData);
+    return wrapResponse(plan, 'Subscription plan created successfully');
   }
 
   @Get('plans')
   async getAllSubscriptionPlans() {
-    return this.subscriptionService.getAllSubscriptionPlans();
+    const plans = await this.subscriptionService.getAllSubscriptionPlans();
+    return wrapResponse(plans);
   }
 
   @Get('plans/active')
   async getActiveSubscriptionPlans() {
-    return this.subscriptionService.getActiveSubscriptionPlans();
+    const plans = await this.subscriptionService.getActiveSubscriptionPlans();
+    return wrapResponse(plans);
   }
 
   @Get('plans/:id')
   async getSubscriptionPlanById(@Param('id') id: string) {
-    return this.subscriptionService.getSubscriptionPlanById(id);
+    const plan = await this.subscriptionService.getSubscriptionPlanById(id);
+    return wrapResponse(plan);
   }
 
   @Put('plans/:id')
   async updateSubscriptionPlan(@Param('id') id: string, @Body() planData: UpdatePlanDto) {
-    return this.subscriptionService.updateSubscriptionPlan(id, planData);
+    const plan = await this.subscriptionService.updateSubscriptionPlan(id, planData);
+    return wrapResponse(plan, 'Subscription plan updated successfully');
   }
 
   @Delete('plans/:id')
   async deleteSubscriptionPlan(@Param('id') id: string) {
     await this.subscriptionService.deleteSubscriptionPlan(id);
-    return { success: true, message: 'Subscription plan deleted successfully' };
+    return wrapResponse(null, 'Subscription plan deleted successfully');
   }
 
   // =====================================
@@ -89,7 +95,8 @@ export class SubscriptionManagementController {
   @Post('subscriptions')
   async createSubscription(@Body() body: CreateSubscriptionDto, @Request() req: any) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.createSubscription(body, performedBy);
+    const subscription = await this.subscriptionService.createSubscription(body, performedBy);
+    return wrapResponse(subscription, 'Subscription created successfully');
   }
 
   @Get('subscriptions')
@@ -121,27 +128,32 @@ export class SubscriptionManagementController {
       createdAfter,
       createdBefore,
     };
-    return this.subscriptionService.getAllSubscriptions(filters);
+    const result = await this.subscriptionService.getAllSubscriptions(filters);
+    return wrapResponse(result);
   }
 
   @Get('subscriptions/expiring')
   async getExpiringSubscriptions(@Query('daysAhead') daysAhead: string = '30') {
-    return this.subscriptionService.getExpiringSubscriptions(parseInt(daysAhead));
+    const subscriptions = await this.subscriptionService.getExpiringSubscriptions(parseInt(daysAhead));
+    return wrapResponse(subscriptions);
   }
 
   @Get('subscriptions/user/:userId')
   async getUserSubscription(@Param('userId') userId: string) {
-    return this.subscriptionService.getUserSubscription(userId);
+    const subscription = await this.subscriptionService.getUserSubscription(userId);
+    return wrapResponse(subscription);
   }
 
   @Get('subscriptions/organization/:organizationId')
   async getOrganizationSubscription(@Param('organizationId') organizationId: string) {
-    return this.subscriptionService.getOrganizationSubscription(organizationId);
+    const subscription = await this.subscriptionService.getOrganizationSubscription(organizationId);
+    return wrapResponse(subscription);
   }
 
   @Get('subscriptions/:id')
   async getSubscriptionById(@Param('id') id: string) {
-    return this.subscriptionService.getSubscriptionById(id);
+    const subscription = await this.subscriptionService.getSubscriptionById(id);
+    return wrapResponse(subscription);
   }
 
   @Put('subscriptions/:id')
@@ -151,14 +163,15 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.updateSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.updateSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription updated successfully');
   }
 
   @Delete('subscriptions/:id')
   async deleteSubscription(@Param('id') id: string, @Request() req: any) {
     const performedBy = req.user?.clerkId || 'system';
     await this.subscriptionService.deleteSubscription(id, performedBy);
-    return { success: true, message: 'Subscription deleted successfully' };
+    return wrapResponse(null, 'Subscription deleted successfully');
   }
 
   // =====================================
@@ -172,7 +185,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.activateSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.activateSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription activated successfully');
   }
 
   @Post('subscriptions/:id/pause')
@@ -182,7 +196,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.pauseSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.pauseSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription paused successfully');
   }
 
   @Post('subscriptions/:id/resume')
@@ -192,7 +207,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.resumeSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.resumeSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription resumed successfully');
   }
 
   @Post('subscriptions/:id/cancel')
@@ -202,7 +218,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.cancelSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.cancelSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription cancelled successfully');
   }
 
   @Post('subscriptions/:id/renew')
@@ -212,7 +229,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.renewSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.renewSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription renewed successfully');
   }
 
   @Post('subscriptions/:id/extend')
@@ -222,7 +240,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.extendSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.extendSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription extended successfully');
   }
 
   @Post('subscriptions/:id/upgrade')
@@ -232,7 +251,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.upgradeSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.upgradeSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription upgraded successfully');
   }
 
   @Post('subscriptions/:id/downgrade')
@@ -242,7 +262,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.downgradeSubscription(id, body, performedBy);
+    const subscription = await this.subscriptionService.downgradeSubscription(id, body, performedBy);
+    return wrapResponse(subscription, 'Subscription downgraded successfully');
   }
 
   @Put('subscriptions/:id/status')
@@ -252,12 +273,13 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.updateSubscriptionStatus(
+    const subscription = await this.subscriptionService.updateSubscriptionStatus(
       id,
       body.status,
       body.cancelAtPeriodEnd,
       performedBy,
     );
+    return wrapResponse(subscription, 'Subscription status updated successfully');
   }
 
   // =====================================
@@ -266,12 +288,14 @@ export class SubscriptionManagementController {
 
   @Get('subscriptions/:id/history')
   async getSubscriptionHistory(@Param('id') id: string) {
-    return this.subscriptionService.getSubscriptionHistory(id);
+    const history = await this.subscriptionService.getSubscriptionHistory(id);
+    return wrapResponse(history);
   }
 
   @Get('subscriptions/:id/notes')
   async getSubscriptionNotes(@Param('id') id: string) {
-    return this.subscriptionService.getSubscriptionNotes(id);
+    const notes = await this.subscriptionService.getSubscriptionNotes(id);
+    return wrapResponse(notes);
   }
 
   @Post('subscriptions/:id/notes')
@@ -281,7 +305,8 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const createdBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.addSubscriptionNote(id, body, createdBy);
+    const note = await this.subscriptionService.addSubscriptionNote(id, body, createdBy);
+    return wrapResponse(note, 'Note added successfully');
   }
 
   // =====================================
@@ -290,7 +315,8 @@ export class SubscriptionManagementController {
 
   @Get('subscriptions/:id/schedules')
   async getSubscriptionSchedules(@Param('id') id: string) {
-    return this.subscriptionService.getSubscriptionSchedules(id);
+    const schedules = await this.subscriptionService.getSubscriptionSchedules(id);
+    return wrapResponse(schedules);
   }
 
   @Post('subscriptions/:id/schedule')
@@ -300,13 +326,14 @@ export class SubscriptionManagementController {
     @Request() req: any,
   ) {
     const createdBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.scheduleAction(id, body, createdBy);
+    const schedule = await this.subscriptionService.scheduleAction(id, body, createdBy);
+    return wrapResponse(schedule, 'Action scheduled successfully');
   }
 
   @Delete('subscriptions/schedules/:scheduleId')
   async cancelScheduledAction(@Param('scheduleId') scheduleId: string) {
     await this.subscriptionService.cancelScheduledAction(scheduleId);
-    return { success: true, message: 'Scheduled action cancelled successfully' };
+    return wrapResponse(null, 'Scheduled action cancelled successfully');
   }
 
   // =====================================
@@ -316,13 +343,15 @@ export class SubscriptionManagementController {
   @Post('subscriptions/bulk/pause')
   async bulkPauseSubscriptions(@Body() body: BulkSubscriptionActionDto, @Request() req: any) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.bulkPauseSubscriptions(body, performedBy);
+    const result = await this.subscriptionService.bulkPauseSubscriptions(body, performedBy);
+    return wrapResponse(result, 'Bulk pause completed');
   }
 
   @Post('subscriptions/bulk/cancel')
   async bulkCancelSubscriptions(@Body() body: BulkSubscriptionActionDto, @Request() req: any) {
     const performedBy = req.user?.clerkId || 'system';
-    return this.subscriptionService.bulkCancelSubscriptions(body, performedBy);
+    const result = await this.subscriptionService.bulkCancelSubscriptions(body, performedBy);
+    return wrapResponse(result, 'Bulk cancel completed');
   }
 
   // =====================================
@@ -331,12 +360,14 @@ export class SubscriptionManagementController {
 
   @Get('analytics')
   async getSubscriptionAnalytics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.subscriptionService.getSubscriptionAnalytics(timeRange);
+    const analytics = await this.subscriptionService.getSubscriptionAnalytics(timeRange);
+    return wrapResponse(analytics);
   }
 
   @Get('stats')
   async getSubscriptionStats() {
-    return this.subscriptionService.getSubscriptionStats();
+    const stats = await this.subscriptionService.getSubscriptionStats();
+    return wrapResponse(stats);
   }
 
   // =====================================
@@ -346,7 +377,7 @@ export class SubscriptionManagementController {
   @Get('feature-access/:userId/:feature')
   async checkFeatureAccess(@Param('userId') userId: string, @Param('feature') feature: string) {
     const hasAccess = await this.subscriptionService.checkFeatureAccess(userId, feature);
-    return { hasAccess };
+    return wrapResponse({ hasAccess });
   }
 
   @Get('feature-flags/:userId')
@@ -357,12 +388,13 @@ export class SubscriptionManagementController {
     @Query('region') region?: string,
     @Query('organizationId') organizationId?: string,
   ) {
-    return this.featureFlagService.getUserFeatureFlags(userId, {
+    const flags = await this.featureFlagService.getUserFeatureFlags(userId, {
       subscriptionPlanId,
       userRole,
       region,
       organizationId,
     });
+    return wrapResponse(flags);
   }
 
   // =====================================
@@ -372,7 +404,7 @@ export class SubscriptionManagementController {
   @Post('billing/process-cycle')
   async processBillingCycle() {
     await this.subscriptionService.processBillingCycle();
-    return { success: true, message: 'Billing cycle processed successfully' };
+    return wrapResponse(null, 'Billing cycle processed successfully');
   }
 
   @Get('billing/transactions')
@@ -385,18 +417,20 @@ export class SubscriptionManagementController {
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
   ) {
-    return this.billingService.getAllTransactions(parseInt(page), parseInt(limit), {
+    const transactions = await this.billingService.getAllTransactions(parseInt(page), parseInt(limit), {
       status,
       subscriptionId,
       userId,
       dateFrom: dateFrom ? new Date(dateFrom) : undefined,
       dateTo: dateTo ? new Date(dateTo) : undefined,
     });
+    return wrapResponse(transactions);
   }
 
   @Get('billing/transactions/:id')
   async getTransactionById(@Param('id') id: string) {
-    return this.billingService.getTransactionById(id);
+    const transaction = await this.billingService.getTransactionById(id);
+    return wrapResponse(transaction);
   }
 
   @Post('billing/transactions/:id/refund')
@@ -404,24 +438,26 @@ export class SubscriptionManagementController {
     @Param('id') id: string,
     @Body() body: { amount?: number; reason?: string },
   ) {
-    return this.billingService.processRefund(id, body.amount, body.reason);
+    const refund = await this.billingService.processRefund(id, body.amount, body.reason);
+    return wrapResponse(refund, 'Refund processed successfully');
   }
 
   @Get('billing/analytics')
   async getBillingAnalytics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-    return this.billingService.getBillingAnalytics(timeRange);
+    const analytics = await this.billingService.getBillingAnalytics(timeRange);
+    return wrapResponse(analytics);
   }
 
   @Post('billing/payment-reminder/:subscriptionId')
   async sendPaymentReminder(@Param('subscriptionId') subscriptionId: string) {
     await this.billingService.sendPaymentReminder(subscriptionId);
-    return { success: true, message: 'Payment reminder sent successfully' };
+    return wrapResponse(null, 'Payment reminder sent successfully');
   }
 
   @Post('billing/process-failed-payments')
   async processFailedPayments() {
     await this.billingService.processFailedPayments();
-    return { success: true, message: 'Failed payments processed successfully' };
+    return wrapResponse(null, 'Failed payments processed successfully');
   }
 
   // =====================================
@@ -430,17 +466,20 @@ export class SubscriptionManagementController {
 
   @Post('pricing/tiers')
   async createPricingTier(@Body() tierData: any) {
-    return this.pricingService.createPricingTier(tierData);
+    const tier = await this.pricingService.createPricingTier(tierData);
+    return wrapResponse(tier, 'Pricing tier created successfully');
   }
 
   @Get('pricing/tiers')
   async getAllPricingTiers() {
-    return this.pricingService.getAllPricingTiers();
+    const tiers = await this.pricingService.getAllPricingTiers();
+    return wrapResponse(tiers);
   }
 
   @Put('pricing/tiers/:id')
   async updatePricingTier(@Param('id') id: string, @Body() tierData: any) {
-    return this.pricingService.updatePricingTier(id, tierData);
+    const tier = await this.pricingService.updatePricingTier(id, tierData);
+    return wrapResponse(tier, 'Pricing tier updated successfully');
   }
 
   @Post('pricing/calculate')
@@ -453,38 +492,43 @@ export class SubscriptionManagementController {
       userContext?: any;
     },
   ) {
-    return this.pricingService.calculatePrice(
+    const price = await this.pricingService.calculatePrice(
       body.tierId,
       body.billingPeriod,
       body.quantity,
       body.userContext,
     );
+    return wrapResponse(price);
   }
 
   @Post('pricing/dynamic-rules')
   async createDynamicPricingRule(@Body() ruleData: any) {
-    return this.pricingService.createDynamicPricingRule(ruleData);
+    const rule = await this.pricingService.createDynamicPricingRule(ruleData);
+    return wrapResponse(rule, 'Dynamic pricing rule created successfully');
   }
 
   @Get('pricing/dynamic-rules')
   async getAllDynamicPricingRules() {
-    return this.pricingService.getAllDynamicPricingRules();
+    const rules = await this.pricingService.getAllDynamicPricingRules();
+    return wrapResponse(rules);
   }
 
   @Put('pricing/dynamic-rules/:id')
   async updateDynamicPricingRule(@Param('id') id: string, @Body() ruleData: any) {
-    return this.pricingService.updateDynamicPricingRule(id, ruleData);
+    const rule = await this.pricingService.updateDynamicPricingRule(id, ruleData);
+    return wrapResponse(rule, 'Dynamic pricing rule updated successfully');
   }
 
   @Delete('pricing/dynamic-rules/:id')
   async deleteDynamicPricingRule(@Param('id') id: string) {
     await this.pricingService.deleteDynamicPricingRule(id);
-    return { success: true, message: 'Dynamic pricing rule deleted successfully' };
+    return wrapResponse(null, 'Dynamic pricing rule deleted successfully');
   }
 
   @Get('pricing/analytics')
   async getPricingAnalytics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' = '30d') {
-    return this.pricingService.getPricingAnalytics(timeRange);
+    const analytics = await this.pricingService.getPricingAnalytics(timeRange);
+    return wrapResponse(analytics);
   }
 
   // =====================================
@@ -493,28 +537,32 @@ export class SubscriptionManagementController {
 
   @Post('feature-flags')
   async createFeatureFlag(@Body() flagData: any) {
-    return this.featureFlagService.createFeatureFlag(flagData);
+    const flag = await this.featureFlagService.createFeatureFlag(flagData);
+    return wrapResponse(flag, 'Feature flag created successfully');
   }
 
   @Get('feature-flags')
   async getAllFeatureFlags() {
-    return this.featureFlagService.getAllFeatureFlags();
+    const flags = await this.featureFlagService.getAllFeatureFlags();
+    return wrapResponse(flags);
   }
 
   @Get('feature-flags/active')
   async getActiveFeatureFlags() {
-    return this.featureFlagService.getActiveFeatureFlags();
+    const flags = await this.featureFlagService.getActiveFeatureFlags();
+    return wrapResponse(flags);
   }
 
   @Put('feature-flags/:id')
   async updateFeatureFlag(@Param('id') id: string, @Body() flagData: any) {
-    return this.featureFlagService.updateFeatureFlag(id, flagData);
+    const flag = await this.featureFlagService.updateFeatureFlag(id, flagData);
+    return wrapResponse(flag, 'Feature flag updated successfully');
   }
 
   @Delete('feature-flags/:id')
   async deleteFeatureFlag(@Param('id') id: string) {
     await this.featureFlagService.deleteFeatureFlag(id);
-    return { success: true, message: 'Feature flag deleted successfully' };
+    return wrapResponse(null, 'Feature flag deleted successfully');
   }
 
   @Put('feature-flags/:id/rollout')
@@ -522,17 +570,20 @@ export class SubscriptionManagementController {
     @Param('id') id: string,
     @Body() body: { rolloutPercentage: number },
   ) {
-    return this.featureFlagService.updateFeatureFlagRollout(id, body.rolloutPercentage);
+    const flag = await this.featureFlagService.updateFeatureFlagRollout(id, body.rolloutPercentage);
+    return wrapResponse(flag, 'Feature flag rollout updated successfully');
   }
 
   @Post('feature-flags/:id/toggle')
   async toggleFeatureFlag(@Param('id') id: string) {
-    return this.featureFlagService.toggleFeatureFlag(id);
+    const flag = await this.featureFlagService.toggleFeatureFlag(id);
+    return wrapResponse(flag, 'Feature flag toggled successfully');
   }
 
   @Get('feature-flags/analytics')
   async getFeatureFlagAnalytics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' = '30d') {
-    return this.featureFlagService.getFeatureFlagAnalytics(timeRange);
+    const analytics = await this.featureFlagService.getFeatureFlagAnalytics(timeRange);
+    return wrapResponse(analytics);
   }
 }
 
@@ -546,11 +597,13 @@ export class SubscriptionController {
 
   @Get('plans')
   async getActivePlans() {
-    return this.subscriptionService.getActiveSubscriptionPlans();
+    const plans = await this.subscriptionService.getActiveSubscriptionPlans();
+    return wrapResponse(plans);
   }
 
   @Get('plans/:id')
   async getPlanById(@Param('id') id: string) {
-    return this.subscriptionService.getSubscriptionPlanById(id);
+    const plan = await this.subscriptionService.getSubscriptionPlanById(id);
+    return wrapResponse(plan);
   }
 }

@@ -1547,6 +1547,22 @@
     "title": "Abonnementverwaltung",
     "subtitle": "Abonnements, Pläne und Abrechnung verwalten",
     "newSubscription": "Neues Abonnement",
+    "selectRoleType": "Benutzertyp zur Abonnementverwaltung auswählen",
+    "totalUsers": "Benutzer insgesamt",
+    "subscribed": "abonniert",
+    "backToRoles": "Zurück zur Rollenauswahl",
+    "subscriptions": "Abonnements",
+    "managingUsers": "{{count}} Benutzer verwalten",
+    "searchUsers": "Benutzer nach Name oder E-Mail suchen...",
+    "noUsersFound": "Keine Benutzer gefunden",
+    "noSubscription": "Kein Abonnement",
+    "roles": {
+      "foundations": "Stiftungen",
+      "productSuppliers": "Produktlieferanten",
+      "serviceProviders": "Dienstleister",
+      "educators": "Pädagogen",
+      "parents": "Eltern"
+    },
     "stats": {
       "activeSubscriptions": "Aktive Abonnements",
       "trialSubscriptions": "Testabonnements",
@@ -1564,6 +1580,14 @@
       "plan": "Plan",
       "status": "Status",
       "periodEnd": "Periodenende",
+      "actions": "Aktionen"
+    },
+    "userTable": {
+      "user": "Benutzer",
+      "email": "E-Mail",
+      "organization": "Organisation",
+      "subscriptionStatus": "Abonnementstatus",
+      "plan": "Plan",
       "actions": "Aktionen"
     },
     "status": {
@@ -1614,6 +1638,25 @@
     "expiring": {
       "title": "Bald ablaufend",
       "noSubscriptions": "Keine Abonnements laufen bald ab"
+    },
+    "editSubscription": {
+      "title": "Abonnement bearbeiten",
+      "status": "Abonnementstatus",
+      "plan": "Abonnementplan",
+      "selectPlan": "Plan auswählen...",
+      "notes": "Notizen (optional)",
+      "notesPlaceholder": "Notizen zu diesem Abonnement hinzufügen...",
+      "edit": "Bearbeiten",
+      "saving": "Speichern...",
+      "save": "Änderungen speichern",
+      "success": "Abonnement erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des Abonnements: ",
+      "currentInfo": "Aktuelle Abonnementinformationen",
+      "planLabel": "Plan",
+      "periodLabel": "Zeitraum"
+    },
+    "createSubscription": {
+      "title": "Abonnement erstellen"
     },
     "modal": {
       "pause": {

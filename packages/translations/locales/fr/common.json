@@ -1094,6 +1094,7 @@
   },
   "next": "Suivant",
   "noData": "no Data",
+  "none": "Aucun",
   "notAvailable": "Non disponible",
   "notificationContext": {
     "useNotificationsError": "[FR] Use Notifications Error"

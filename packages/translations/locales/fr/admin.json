@@ -1547,6 +1547,22 @@
     "title": "Gestion des abonnements",
     "subtitle": "Gérer les abonnements, forfaits et facturation",
     "newSubscription": "Nouvel abonnement",
+    "selectRoleType": "Sélectionner le type d'utilisateur pour gérer les abonnements",
+    "totalUsers": "utilisateurs au total",
+    "subscribed": "abonnés",
+    "backToRoles": "Retour à la sélection des rôles",
+    "subscriptions": "Abonnements",
+    "managingUsers": "Gestion de {{count}} utilisateurs",
+    "searchUsers": "Rechercher des utilisateurs par nom ou email...",
+    "noUsersFound": "Aucun utilisateur trouvé",
+    "noSubscription": "Pas d'abonnement",
+    "roles": {
+      "foundations": "Fondations",
+      "productSuppliers": "Fournisseurs de produits",
+      "serviceProviders": "Prestataires de services",
+      "educators": "Éducateurs",
+      "parents": "Parents"
+    },
     "stats": {
       "activeSubscriptions": "Abonnements actifs",
       "trialSubscriptions": "Abonnements d'essai",
@@ -1564,6 +1580,14 @@
       "plan": "Forfait",
       "status": "Statut",
       "periodEnd": "Fin de période",
+      "actions": "Actions"
+    },
+    "userTable": {
+      "user": "Utilisateur",
+      "email": "Email",
+      "organization": "Organisation",
+      "subscriptionStatus": "Statut d'abonnement",
+      "plan": "Forfait",
       "actions": "Actions"
     },
     "status": {
@@ -1614,6 +1638,25 @@
     "expiring": {
       "title": "Expirant bientôt",
       "noSubscriptions": "Aucun abonnement n'expire bientôt"
+    },
+    "editSubscription": {
+      "title": "Modifier l'abonnement",
+      "status": "Statut d'abonnement",
+      "plan": "Forfait d'abonnement",
+      "selectPlan": "Sélectionner un forfait...",
+      "notes": "Notes (optionnel)",
+      "notesPlaceholder": "Ajouter des notes sur cet abonnement...",
+      "edit": "Modifier",
+      "saving": "Enregistrement...",
+      "save": "Enregistrer les modifications",
+      "success": "Abonnement mis à jour avec succès",
+      "error": "Échec de la mise à jour de l'abonnement : ",
+      "currentInfo": "Informations sur l'abonnement actuel",
+      "planLabel": "Forfait",
+      "periodLabel": "Période"
+    },
+    "createSubscription": {
+      "title": "Créer un abonnement"
     },
     "modal": {
       "pause": {
