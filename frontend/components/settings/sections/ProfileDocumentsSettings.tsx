@@ -42,10 +42,10 @@ interface ProfileDocumentsSettingsProps {
 }
 
 const DOCUMENT_TYPES = [
-  { value: 'CATALOG', label: 'Product Catalog' },
-  { value: 'COMPANY_PROFILE', label: 'Company Profile' },
-  { value: 'BROCHURE', label: 'Brochure' },
-  { value: 'PRICE_LIST', label: 'Price List' },
+  { value: 'CATALOG' },
+  { value: 'COMPANY_PROFILE' },
+  { value: 'BROCHURE' },
+  { value: 'PRICE_LIST' },
 ];
 
 const getDocumentIcon = (mimeType?: string) => {
@@ -56,15 +56,15 @@ const getDocumentIcon = (mimeType?: string) => {
   return DocumentIcon;
 };
 
-const formatFileSize = (bytes?: number): string => {
-  if (!bytes) return 'Unknown size';
+const formatFileSize = (t: (key: string, options?: any) => string, bytes?: number): string => {
+  if (!bytes) return t('settings:profileDocuments.unknownSize');
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
 const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ userRole }) => {
-  const { t } = useTranslation(['settings', 'common']);
+  const { t, i18n } = useTranslation(['settings', 'common']);
   const { request, upload, authenticatedDownload } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
   
@@ -265,7 +265,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
 
   return (
     <SettingsSectionWrapper 
-      title={t('settings:profileDocuments.title', 'Catalogs & Documents')} 
+      title={t('settings:profileDocuments.title')} 
       icon={DocumentIcon}
     >
       <div className="space-y-6">
@@ -280,13 +280,13 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
         {/* Upload Section */}
         <div className="bg-gray-50 rounded-lg p-4 space-y-4">
           <h4 className="text-sm font-medium text-gray-900">
-            {t('settings:profileDocuments.uploadNew', 'Upload New Document')}
+            {t('settings:profileDocuments.uploadNew')}
           </h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('settings:profileDocuments.documentType', 'Document Type')}
+                {t('settings:profileDocuments.documentType')}
               </label>
               <select
                 value={selectedDocType}
@@ -296,7 +296,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               >
                 {DOCUMENT_TYPES.map(type => (
                   <option key={type.value} value={type.value}>
-                    {t(`settings:profileDocuments.types.${type.value.toLowerCase()}`, type.label)}
+                    {t(`settings:profileDocuments.types.${type.value.toLowerCase()}`)}
                   </option>
                 ))}
               </select>
@@ -304,13 +304,13 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('settings:profileDocuments.documentTitle', 'Title (optional)')}
+                {t('settings:profileDocuments.documentTitle')}
               </label>
               <input
                 type="text"
                 value={docTitle}
                 onChange={(e) => setDocTitle(e.target.value)}
-                placeholder={t('settings:profileDocuments.titlePlaceholder', 'e.g., 2024 Product Catalog')}
+                placeholder={t('settings:profileDocuments.titlePlaceholder')}
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-swiss-mint focus:ring-swiss-mint text-sm"
                 disabled={isUploading}
               />
@@ -319,12 +319,12 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settings:profileDocuments.description', 'Description (optional)')}
+              {t('settings:profileDocuments.description')}
             </label>
             <textarea
               value={docDescription}
               onChange={(e) => setDocDescription(e.target.value)}
-              placeholder={t('settings:profileDocuments.descriptionPlaceholder', 'Brief description of the document...')}
+              placeholder={t('settings:profileDocuments.descriptionPlaceholder')}
               className="w-full rounded-md border-gray-300 shadow-sm focus:border-swiss-mint focus:ring-swiss-mint text-sm"
               rows={2}
               disabled={isUploading}
@@ -351,18 +351,18 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               {isUploading ? (
                 <>
                   <ArrowPathIcon className="animate-spin -ml-1 mr-2 h-4 w-4" />
-                  {t('settings:profileDocuments.uploading', 'Uploading...')} ({uploadingProgress}%)
+                  {t('settings:profileDocuments.uploading')} ({uploadingProgress}%)
                 </>
               ) : (
                 <>
                   <ArrowUpTrayIcon className="-ml-1 mr-2 h-4 w-4" />
-                  {t('settings:profileDocuments.selectFile', 'Select File')}
+                  {t('settings:profileDocuments.selectFile')}
                 </>
               )}
             </button>
             
             <p className="mt-2 text-xs text-gray-500">
-              {t('settings:profileDocuments.allowedFormats', 'Allowed: PDF, Word, Excel, PowerPoint. Max size: 50MB')}
+              {t('settings:profileDocuments.allowedFormats')}
             </p>
           </div>
         </div>
@@ -370,31 +370,31 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
         {/* Documents List */}
         <div>
           <h4 className="text-sm font-medium text-gray-900 mb-3">
-            {t('settings:profileDocuments.uploadedDocuments', 'Uploaded Documents')}
+            {t('settings:profileDocuments.uploadedDocuments')}
           </h4>
           
           {isLoading ? (
             <div className="text-center py-8">
               <ArrowPathIcon className="animate-spin h-8 w-8 mx-auto text-gray-400" />
               <p className="mt-2 text-sm text-gray-500">
-                {t('common:loading', 'Loading...')}
+                {t('common:loading')}
               </p>
             </div>
           ) : documents.length === 0 ? (
             <div className="text-center py-8 bg-gray-50 rounded-lg">
               <DocumentIcon className="h-12 w-12 mx-auto text-gray-300" />
               <p className="mt-2 text-sm text-gray-500">
-                {t('settings:profileDocuments.noDocuments', 'No documents uploaded yet.')}
+                {t('settings:profileDocuments.noDocuments')}
               </p>
               <p className="mt-1 text-xs text-gray-400">
-                {t('settings:profileDocuments.uploadHint', 'Upload a catalog or company profile to get started.')}
+                {t('settings:profileDocuments.uploadHint')}
               </p>
             </div>
           ) : (
             <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
               {documents.map((doc) => {
                 const IconComponent = getDocumentIcon(doc.asset?.mimeType);
-                const docTypeLabel = DOCUMENT_TYPES.find(t => t.value === doc.documentType)?.label || doc.documentType;
+                const docTypeKey = `settings:profileDocuments.types.${doc.documentType.toLowerCase()}`;
                 
                 return (
                   <li key={doc.id} className="p-4 hover:bg-gray-50">
@@ -405,14 +405,14 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                         </div>
                         <div className="ml-3 min-w-0 flex-1">
                           <p className="text-sm font-medium text-gray-900 truncate">
-                            {doc.title || doc.asset?.filename || 'Untitled Document'}
+                            {doc.title || doc.asset?.filename || t('settings:profileDocuments.untitledDocument')}
                           </p>
                           <div className="flex items-center text-xs text-gray-500 space-x-2">
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
-                              {t(`settings:profileDocuments.types.${doc.documentType.toLowerCase()}`, docTypeLabel)}
+                              {t(docTypeKey)}
                             </span>
-                            <span>{formatFileSize(doc.asset?.size)}</span>
-                            <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                            <span>{formatFileSize(t, doc.asset?.size)}</span>
+                            <span>{new Date(doc.createdAt).toLocaleDateString(i18n.language || 'en')}</span>
                           </div>
                           {doc.description && (
                             <p className="text-xs text-gray-500 mt-1 truncate">
@@ -427,7 +427,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                           <button
                             onClick={() => handlePreview(doc)}
                             className="p-2 text-gray-400 hover:text-swiss-mint transition-colors"
-                            title={t('settings:profileDocuments.preview', 'Preview')}
+                            title={t('settings:profileDocuments.preview')}
                           >
                             <EyeIcon className="h-5 w-5" />
                           </button>
@@ -435,7 +435,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                         <button
                           onClick={() => handleDownload(doc)}
                           className="p-2 text-gray-400 hover:text-swiss-mint transition-colors"
-                          title={t('settings:profileDocuments.download', 'Download')}
+                          title={t('settings:profileDocuments.download')}
                         >
                           <ArrowDownTrayIcon className="h-5 w-5" />
                         </button>
@@ -443,7 +443,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                           onClick={() => handleDelete(doc.id)}
                           disabled={deletingId === doc.id}
                           className="p-2 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
-                          title={t('settings:profileDocuments.delete', 'Delete')}
+                          title={t('settings:profileDocuments.delete')}
                         >
                           {deletingId === doc.id ? (
                             <ArrowPathIcon className="animate-spin h-5 w-5" />
@@ -474,7 +474,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
             <iframe
               src={previewUrl}
               className="w-full h-full rounded-lg"
-              title="Document Preview"
+              title={t('settings:profileDocuments.previewIframeTitle')}
             />
           </div>
         </div>
