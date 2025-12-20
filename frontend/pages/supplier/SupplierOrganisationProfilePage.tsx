@@ -108,7 +108,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  const notProvidedLabel = t('foundationOrganisationProfilePage.notProvided', 'Not provided');
+  const notProvidedLabel = t('common:foundationOrganisationProfilePage.notProvided');
 
   const formatDate = (value?: string | null) => {
     if (!value) {
@@ -163,7 +163,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
     if (currentUser.role !== UserRole.PRODUCT_SUPPLIER) {
       setSupplierSettings(null);
       setOrganizationDetails(null);
-      setError(t('common:organizationProfileForm.accessDenied', 'Access denied.'));
+      setError(t('common:organizationProfileForm.accessDenied'));
       setIsLoading(false);
       return;
     }
@@ -240,7 +240,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
         console.error('Failed to load supplier organization profile', fetchError);
         setError(fallbackMessage);
         addNotification({
-          title: t('common:notifications.errorTitle', 'Error'),
+          title: t('common:notifications.errorTitle'),
           message: fallbackMessage,
           type: 'error',
         });
@@ -266,7 +266,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
     supplierSettings?.companyName?.trim() ||
     organizationDetails?.name?.trim() ||
     currentUser?.orgName ||
-    t('supplierOrganisationProfilePage.empty.organizationName', 'Organization name not set');
+    t('common:supplierOrganisationProfilePage.empty.organizationName');
 
   const contactEmail = supplierSettings?.contactEmail || currentUser?.email || notProvidedLabel;
   const phoneNumber = supplierSettings?.phoneNumber || organizationDetails?.phoneNumber || notProvidedLabel;
@@ -329,25 +329,25 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             leftIcon={ArrowPathIcon}
             onClick={handleRetry}
             disabled={isLoading}
-            aria-label={t('common:buttons.retry', 'Retry')}
+            aria-label={t('common:buttons.retry')}
           >
-            {t('common:buttons.retry', 'Retry')}
+            {t('common:buttons.retry')}
           </Button>
           <Button
             variant="secondary"
             size="sm"
             leftIcon={Cog6ToothIcon}
             onClick={() => navigate('/settings/profile')}
-            aria-label={t('profile:actions.goToSettings', 'Edit Profile')}
+            aria-label={t('profile:actions.goToSettings')}
           >
-            {t('profile:actions.editProfile', 'Edit Profile')}
+            {t('profile:actions.editProfile')}
           </Button>
         </div>
       </div>
 
       {isLoading ? (
         <Card className="p-6">
-          <LoadingSpinner text={t('common:loading', 'Loading...')} />
+          <LoadingSpinner text={t('common:loading')} />
         </Card>
       ) : error ? (
         <Card className="p-6">
@@ -355,7 +355,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             <InformationCircleIcon className="h-10 w-10 text-swiss-coral" />
             <p className="text-sm text-gray-600">{error}</p>
             <Button variant="primary" size="sm" leftIcon={ArrowPathIcon} onClick={handleRetry}>
-              {t('common:buttons.retry', 'Retry')}
+              {t('common:buttons.retry')}
             </Button>
           </div>
         </Card>
@@ -388,7 +388,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-sm text-gray-600 mt-1">
-                    {t('settings:companyProfile.productSupplier', 'Product Supplier')}
+                    {t('settings:companyProfile.productSupplier')}
                   </p>
                 </div>
               </div>
@@ -403,7 +403,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                {t('settings:companyProfile.productCategory', 'Product Category')}
+                {t('settings:companyProfile.productCategory')}
               </p>
               <div className="mt-2 flex items-center gap-2 text-lg font-semibold text-swiss-charcoal">
                 <ShoppingCartIcon className="h-5 w-5 text-swiss-mint" />
@@ -412,7 +412,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             </Card>
             <Card className="p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                {t('settings:companyProfile.minimumOrderQuantity', 'Min Order Qty')}
+                {t('settings:companyProfile.minimumOrderQuantity')}
               </p>
               <div className="mt-2 text-lg font-semibold text-swiss-charcoal">
                 {minimumOrderQuantity}
@@ -420,7 +420,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             </Card>
             <Card className="p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                {t('supplierOrganisationProfilePage.labels.regionsServed', 'Regions Served')}
+                {t('common:supplierOrganisationProfilePage.labels.regionsServed')}
               </p>
               <div className="mt-2 text-sm text-swiss-charcoal">
                 {regionsServed.length ? regionsServed.length : notProvidedLabel}
@@ -428,7 +428,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             </Card>
             <Card className="p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                {t('foundationOrganisationProfilePage.labels.updatedAt', 'Last updated')}
+                {t('common:foundationOrganisationProfilePage.labels.updatedAt')}
               </p>
               <div className="mt-2 text-sm text-swiss-charcoal">
                 {formatDate(organizationDetails?.updatedAt)}
@@ -441,27 +441,27 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             <Card className="p-6 space-y-5">
               <h3 className="flex items-center gap-2 text-lg font-semibold text-swiss-charcoal">
                 <EnvelopeIcon className="h-5 w-5 text-swiss-mint" />
-                {t('foundationOrganisationProfilePage.sections.contact.title', 'Contact & Location')}
+                {t('common:foundationOrganisationProfilePage.sections.contact.title')}
               </h3>
               <div className="space-y-4">
                 <InfoItem
                   icon={EnvelopeIcon}
-                  label={t('foundationOrganisationProfilePage.labels.contactEmail', 'Primary email')}
+                  label={t('common:foundationOrganisationProfilePage.labels.contactEmail')}
                   value={contactEmail}
                 />
                 <InfoItem
                   icon={PhoneIcon}
-                  label={t('foundationOrganisationProfilePage.labels.phoneNumber', 'Phone number')}
+                  label={t('common:foundationOrganisationProfilePage.labels.phoneNumber')}
                   value={phoneNumber}
                 />
                 <InfoItem
                   icon={UserCircleIcon}
-                  label={t('foundationOrganisationProfilePage.labels.contactPerson', 'Contact person')}
+                  label={t('common:foundationOrganisationProfilePage.labels.contactPerson')}
                   value={contactPerson}
                 />
                 <InfoItem
                   icon={MapPinIcon}
-                  label={t('foundationOrganisationProfilePage.labels.address', 'Location')}
+                  label={t('common:foundationOrganisationProfilePage.labels.address')}
                   value={locationValue}
                 />
               </div>
@@ -471,23 +471,23 @@ const SupplierOrganisationProfilePage: React.FC = () => {
             <Card className="p-6 space-y-5">
               <h3 className="flex items-center gap-2 text-lg font-semibold text-swiss-charcoal">
                 <ShoppingCartIcon className="h-5 w-5 text-swiss-mint" />
-                {t('settings:companyProfile.supplierInfo', 'Supplier Information')}
+                {t('settings:companyProfile.supplierInfo')}
               </h3>
               <div className="space-y-4">
                 <InfoItem
                   icon={GlobeAltIcon}
-                  label={t('supplierOrganisationProfilePage.labels.regionsServed', 'Regions Served')}
+                  label={t('common:supplierOrganisationProfilePage.labels.regionsServed')}
                   value={renderTagList(
                     regionsServed,
-                    t('supplierOrganisationProfilePage.empty.regionsServed', 'No regions specified.'),
+                    t('common:supplierOrganisationProfilePage.empty.regionsServed'),
                   )}
                 />
                 <InfoItem
                   icon={GlobeAltIcon}
-                  label={t('foundationOrganisationProfilePage.labels.languages', 'Languages')}
+                  label={t('common:foundationOrganisationProfilePage.labels.languages')}
                   value={renderTagList(
                     languages,
-                    t('foundationOrganisationProfilePage.empty.languages', 'No languages added yet.'),
+                    t('common:foundationOrganisationProfilePage.empty.languages'),
                   )}
                 />
               </div>
@@ -498,12 +498,12 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           <Card className="p-6 space-y-4">
             <h3 className="flex items-center gap-2 text-lg font-semibold text-swiss-charcoal">
               <InformationCircleIcon className="h-5 w-5 text-swiss-mint" />
-              {t('foundationOrganisationProfilePage.sections.metadata.title', 'Organization metadata')}
+              {t('common:foundationOrganisationProfilePage.sections.metadata.title')}
             </h3>
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('foundationOrganisationProfilePage.labels.organizationId', 'Organization ID')}
+                  {t('common:foundationOrganisationProfilePage.labels.organizationId')}
                 </dt>
                 <dd className="mt-1 break-all font-mono text-sm text-swiss-charcoal">
                   {organizationId || notProvidedLabel}
@@ -511,19 +511,19 @@ const SupplierOrganisationProfilePage: React.FC = () => {
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('foundationOrganisationProfilePage.labels.vatNumber', 'VAT number')}
+                  {t('common:foundationOrganisationProfilePage.labels.vatNumber')}
                 </dt>
                 <dd className="mt-1 text-sm text-swiss-charcoal">{vatNumber}</dd>
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('foundationOrganisationProfilePage.labels.createdAt', 'Created')}
+                  {t('common:foundationOrganisationProfilePage.labels.createdAt')}
                 </dt>
                 <dd className="mt-1 text-sm text-swiss-charcoal">{formatDate(organizationDetails?.createdAt)}</dd>
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-wide text-gray-500">
-                  {t('foundationOrganisationProfilePage.labels.updatedAt', 'Last updated')}
+                  {t('common:foundationOrganisationProfilePage.labels.updatedAt')}
                 </dt>
                 <dd className="mt-1 text-sm text-swiss-charcoal">{formatDate(organizationDetails?.updatedAt)}</dd>
               </div>
@@ -538,7 +538,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
                     leftIcon={LinkIcon}
                     onClick={() => window.open(catalogUrl, '_blank', 'noopener,noreferrer')}
                   >
-                    {t('supplierOrganisationProfilePage.actions.openCatalog', 'View Catalog')}
+                    {t('common:supplierOrganisationProfilePage.actions.openCatalog')}
                   </Button>
                 )}
                 {directOrderLink && (
@@ -548,7 +548,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
                     leftIcon={LinkIcon}
                     onClick={() => window.open(directOrderLink, '_blank', 'noopener,noreferrer')}
                   >
-                    {t('supplierOrganisationProfilePage.actions.openDirectOrderLink', 'Direct Order Link')}
+                    {t('common:supplierOrganisationProfilePage.actions.openDirectOrderLink')}
                   </Button>
                 )}
               </div>
@@ -562,7 +562,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           <Card className="p-6">
             <h3 className="flex items-center gap-2 text-lg font-semibold text-swiss-charcoal mb-4">
               <DocumentIcon className="h-5 w-5 text-swiss-mint" />
-              {t('settings:profileDocuments.title', 'Catalogs & Documents')}
+              {t('settings:profileDocuments.title')}
             </h3>
             <ProfileDocumentsSettings userRole={UserRole.PRODUCT_SUPPLIER} />
           </Card>

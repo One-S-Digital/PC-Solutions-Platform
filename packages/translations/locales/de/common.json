@@ -94,6 +94,8 @@
     "cancel": "Abbrechen",
     "close": "Schließen",
     "confirm": "Bestätigen",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
     "create": "Erstellen",
     "createAccount": "Konto erstellen",
     "delete": "Löschen",
@@ -590,6 +592,7 @@
     "unsupportedRole": "unsupported Role",
     "updateFailed": "update Failed",
     "updateMessageFailed": "update Message Failed",
+    "validationError": "Validierungsfehler",
     "verificationKeyword": "verification"
   },
   "featureLock": {
@@ -1299,6 +1302,9 @@
     "productOutOfStock": "product Out Of Stock",
     "promoCodePlaceholder": "Enter promo code",
     "promoCodeTitle": "Promo code Titel",
+    "promoCodeValid": "Promo-Code angewendet.",
+    "promoCodeInvalid": "Ungültiger Promo-Code.",
+    "promoCodeError": "Promo-Code konnte nicht angewendet werden. Bitte versuchen Sie es erneut.",
     "ratingText": "rating Text.",
     "ratingsReviewsTitle": "Ratings reviews Titel",
     "requestServiceButton": "request Service Button",
@@ -1869,26 +1875,57 @@
   },
   "settingsPromoCodeManager": {
     "addEditModal": {
-      "addTitle": "[DE] Add Promo Code",
-      "editTitle": "[DE] Edit Title",
-      "placeholder": "EinstellungensPromocoDemanager.AddeditModal.PLACEHPLER",
-      "save": "[DE] Save"
+      "addTitle": "Promo-Code hinzufügen",
+      "editTitle": "Promo-Code bearbeiten",
+      "save": "Speichern",
+      "saving": "Speichern..."
     },
-    "addNewCode": "[DE] Add New Code",
-    "confirmDelete": "Einstellungenspromocodemanager.Confirpldelete",
+    "addNewCode": "Neuen Code hinzufügen",
+    "confirmDelete": "Möchten Sie diesen Promo-Code wirklich löschen?",
+    "noCodesYet": "Noch keine Promo-Codes. Fügen Sie Ihren ersten hinzu!",
+    "promoCreated": "Promo-Code erfolgreich erstellt",
+    "promoUpdated": "Promo-Code erfolgreich aktualisiert",
+    "promoDeleted": "Promo-Code erfolgreich gelöscht",
+    "validation": {
+      "required": "Code und Ablaufdatum sind erforderlich"
+    },
+    "form": {
+      "code": "Code",
+      "codePlaceholder": "z. B. SAVE20",
+      "discountType": "Rabattart",
+      "percentage": "Prozentual",
+      "fixedAmount": "Fester Betrag (CHF)",
+      "freeMinutes": "Gratis-Minuten",
+      "value": "Wert",
+      "expiryDate": "Ablaufdatum",
+      "description": "Beschreibung (optional)",
+      "descriptionPlaceholder": "z. B. Rabatt für Neukunden",
+      "maxUsage": "Max. Nutzung (optional)",
+      "maxUsagePlaceholder": "Leer lassen für unbegrenzt",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Aktiv",
+      "disabled": "Deaktiviert",
+      "expired": "Abgelaufen"
+    },
     "discountTypes": {
-      "fixedAmount": "[DE] Fixed Amount",
-      "freeMinutes": "[DE] Free Minutes",
-      "percentage": "[DE] Percentage"
+      "percentage": "{{value}}% Rabatt",
+      "fixedAmount": "CHF {{value}} Rabatt",
+      "freeMinutes": "{{value}} Gratis-Minuten"
     },
-    "noCodesYet": "[DE] No  Codes Yet",
     "table": {
-      "actions": "[DE] Actions",
-      "code": "[DE] Code",
-      "discountOffer": "[DE] Discount Offer",
-      "expiry": "[DE] Expiry",
-      "status": "[DE] Status"
+      "actions": "Aktionen",
+      "code": "Code",
+      "discountOffer": "Rabatt",
+      "expiry": "Ablauf",
+      "status": "Status"
     }
+  },
+  "promoCodesDisplay": {
+    "noActivePromoCodes": "Keine aktiven Promo-Codes verfügbar.",
+    "expiresOn": "Gültig bis",
+    "usageCount": "Verwendet"
   },
   "settingsTeamPermissions": {
     "confirmRemoveMember": "[DE] Confirm Remove Member",
@@ -1941,14 +1978,17 @@
     "viewOnline": "Online ansehen"
   },
   "status": {
+    "accepted": "Angenommen",
     "active": "Aktiv",
     "approved": "Genehmigt",
     "archived": "Archiviert",
     "draft": "Entwurf",
     "inactive": "Inaktiv",
+    "notApplied": "Nicht beworben",
     "pending": "Ausstehend",
     "published": "Veröffentlicht",
-    "rejected": "Abgelehnt"
+    "rejected": "Abgelehnt",
+    "reviewed": "Geprüft"
   },
   "stockStatus": {
     "discontinued": "[DE] Discontinued",

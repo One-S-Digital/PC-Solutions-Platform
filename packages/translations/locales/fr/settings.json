@@ -313,7 +313,10 @@
     "uploadSuccess": "Document uploaded",
     "uploadSuccessMessage": "Your document has been uploaded successfully.",
     "uploadedDocuments": "Uploaded Documents",
-    "uploading": "Uploading..."
+    "uploading": "Uploading...",
+    "unknownSize": "Taille inconnue",
+    "untitledDocument": "Document sans titre",
+    "previewIframeTitle": "Aperçu du document"
   },
   "profileEdit": {
     "documents": "Documents et catalogues",

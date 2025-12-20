@@ -27,7 +27,9 @@ interface PromoCodeManagerSettingsProps {
 }
 
 const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t, i18n } = useTranslation(['dashboard', 'common', 'settings']);
+  // NOTE: un-namespaced keys default to the FIRST namespace passed to useTranslation().
+  // Promo-code strings live in the default `common` namespace, so keep it first.
+  const { t, i18n } = useTranslation(['common', 'settings']);
   const { request } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
   
@@ -106,8 +108,8 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
   const handleSavePromo = async () => {
     if (!formData.code.trim() || !formData.expiryDate) {
       addNotification({
-        title: t('common:errors.validationError', 'Validation Error'),
-        message: t('settingsPromoCodeManager.validation.required', 'Code and expiry date are required'),
+        title: t('common:errors.validationError'),
+        message: t('settingsPromoCodeManager.validation.required'),
         type: 'error',
       });
       return;
@@ -131,8 +133,8 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
           body: JSON.stringify(payload),
         });
         addNotification({
-          title: t('common:notifications.successTitle', 'Success'),
-          message: t('settingsPromoCodeManager.promoUpdated', 'Promo code updated successfully'),
+          title: t('common:notifications.successTitle'),
+          message: t('settingsPromoCodeManager.promoUpdated'),
           type: 'success',
         });
       } else {
@@ -141,8 +143,8 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
           body: JSON.stringify(payload),
         });
         addNotification({
-          title: t('common:notifications.successTitle', 'Success'),
-          message: t('settingsPromoCodeManager.promoCreated', 'Promo code created successfully'),
+          title: t('common:notifications.successTitle'),
+          message: t('settingsPromoCodeManager.promoCreated'),
           type: 'success',
         });
       }
@@ -162,15 +164,15 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
   };
 
   const handleDeletePromo = async (promoId: string) => {
-    if (!window.confirm(t('settingsPromoCodeManager.confirmDelete', 'Are you sure you want to delete this promo code?'))) {
+    if (!window.confirm(t('settingsPromoCodeManager.confirmDelete'))) {
       return;
     }
 
     try {
       await request(`/promo-codes/${promoId}`, { method: 'DELETE' });
       addNotification({
-        title: t('common:notifications.successTitle', 'Success'),
-        message: t('settingsPromoCodeManager.promoDeleted', 'Promo code deleted successfully'),
+        title: t('common:notifications.successTitle'),
+        message: t('settingsPromoCodeManager.promoDeleted'),
         type: 'success',
       });
       loadPromoCodes();
@@ -187,20 +189,33 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
   const getDiscountText = (promo: ApiPromoCode) => {
     switch(promo.discountType) {
       case 'Percentage': 
-        return t('settingsPromoCodeManager.discountTypes.percentage', '{{value}}% off', { value: promo.value });
+        return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
       case 'FixedAmount': 
-        return t('settingsPromoCodeManager.discountTypes.fixedAmount', 'CHF {{value}} off', { value: promo.value });
+        return t('settingsPromoCodeManager.discountTypes.fixedAmount', { value: promo.value });
       case 'FreeMinutes': 
-        return t('settingsPromoCodeManager.discountTypes.freeMinutes', '{{value}} free minutes', { value: promo.value });
+        return t('settingsPromoCodeManager.discountTypes.freeMinutes', { value: promo.value });
       default: 
         return promo.description || `${promo.value}`;
+    }
+  };
+
+  const getStatusLabel = (status: ApiPromoCode['status']) => {
+    switch (status) {
+      case 'Active':
+        return t('settingsPromoCodeManager.status.active');
+      case 'Disabled':
+        return t('settingsPromoCodeManager.status.disabled');
+      case 'Expired':
+        return t('settingsPromoCodeManager.status.expired');
+      default:
+        return status;
     }
   };
 
   if (isLoading) {
     return (
       <SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>
-        <LoadingSpinner text={t('common:loading', 'Loading...')} />
+        <LoadingSpinner text={t('common:loading')} />
       </SettingsSectionWrapper>
     );
   }
@@ -209,25 +224,25 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
     <SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>
       <div className="flex justify-between items-center mb-4">
         <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
-          {t('common:buttons.refresh', 'Refresh')}
+          {t('common:buttons.refresh')}
         </Button>
         <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => handleOpenModal()}>
-          {t('settingsPromoCodeManager.addNewCode', 'Add New Code')}
+          {t('settingsPromoCodeManager.addNewCode')}
         </Button>
       </div>
       
       {promoCodes.length === 0 ? (
-        <p className="text-gray-500 text-center py-4">{t('settingsPromoCodeManager.noCodesYet', 'No promo codes yet. Add your first one!')}</p>
+        <p className="text-gray-500 text-center py-4">{t('settingsPromoCodeManager.noCodesYet')}</p>
       ) : (
         <div className="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.code', 'Code')}</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.discountOffer', 'Discount')}</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.expiry', 'Expiry')}</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.status', 'Status')}</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.actions', 'Actions')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.code')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.discountOffer')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.expiry')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.status')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('settingsPromoCodeManager.table.actions')}</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -245,15 +260,15 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
                         promo.status === 'Active' ? 'bg-green-100 text-green-700' :
                         promo.status === 'Expired' ? 'bg-red-100 text-red-700' :
                         'bg-gray-100 text-gray-700'}`}>
-                        {promo.status}
+                        {getStatusLabel(promo.status)}
                     </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium space-x-2">
                     <Button variant="ghost" size="xs" onClick={() => handleOpenModal(promo)}>
-                        <PencilSquareIcon className="w-4 h-4"/> {t('common:buttons.edit', 'Edit')}
+                        <PencilSquareIcon className="w-4 h-4"/> {t('common:buttons.edit')}
                     </Button>
                     <Button variant="ghost" size="xs" className="text-swiss-coral" onClick={() => handleDeletePromo(promo.id)}>
-                        <TrashIcon className="w-4 h-4"/> {t('common:buttons.delete', 'Delete')}
+                        <TrashIcon className="w-4 h-4"/> {t('common:buttons.delete')}
                     </Button>
                   </td>
                 </tr>
@@ -270,8 +285,8 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">
                 {editingPromo 
-                  ? t('settingsPromoCodeManager.addEditModal.editTitle', 'Edit Promo Code') 
-                  : t('settingsPromoCodeManager.addEditModal.addTitle', 'Add Promo Code')}
+                  ? t('settingsPromoCodeManager.addEditModal.editTitle') 
+                  : t('settingsPromoCodeManager.addEditModal.addTitle')}
               </h3>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
                 <XMarkIcon className="w-5 h-5" />
@@ -281,35 +296,35 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.code', 'Code')} *
+                  {t('settingsPromoCodeManager.form.code')} *
                 </label>
                 <input
                   type="text"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint font-mono"
-                  placeholder="e.g., SAVE20"
+                  placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.discountType', 'Discount Type')} *
+                  {t('settingsPromoCodeManager.form.discountType')} *
                 </label>
                 <select
                   value={formData.discountType}
                   onChange={(e) => setFormData({ ...formData, discountType: e.target.value as any })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
                 >
-                  <option value="Percentage">{t('settingsPromoCodeManager.form.percentage', 'Percentage Off')}</option>
-                  <option value="FixedAmount">{t('settingsPromoCodeManager.form.fixedAmount', 'Fixed Amount Off (CHF)')}</option>
-                  <option value="FreeMinutes">{t('settingsPromoCodeManager.form.freeMinutes', 'Free Minutes')}</option>
+                  <option value="Percentage">{t('settingsPromoCodeManager.form.percentage')}</option>
+                  <option value="FixedAmount">{t('settingsPromoCodeManager.form.fixedAmount')}</option>
+                  <option value="FreeMinutes">{t('settingsPromoCodeManager.form.freeMinutes')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.value', 'Value')} *
+                  {t('settingsPromoCodeManager.form.value')} *
                 </label>
                 <input
                   type="number"
@@ -322,7 +337,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.expiryDate', 'Expiry Date')} *
+                  {t('settingsPromoCodeManager.form.expiryDate')} *
                 </label>
                 <input
                   type="date"
@@ -334,20 +349,20 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.description', 'Description (Optional)')}
+                  {t('settingsPromoCodeManager.form.description')}
                 </label>
                 <input
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                  placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder', 'e.g., First-time customer discount')}
+                  placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.maxUsage', 'Max Usage (Optional)')}
+                  {t('settingsPromoCodeManager.form.maxUsage')}
                 </label>
                 <input
                   type="number"
@@ -355,23 +370,23 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
                   value={formData.maxUsage}
                   onChange={(e) => setFormData({ ...formData, maxUsage: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                  placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder', 'Leave empty for unlimited')}
+                  placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder')}
                 />
               </div>
 
               {editingPromo && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('settingsPromoCodeManager.form.status', 'Status')}
+                    {t('settingsPromoCodeManager.form.status')}
                   </label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
                   >
-                    <option value="Active">{t('settingsPromoCodeManager.status.active', 'Active')}</option>
-                    <option value="Disabled">{t('settingsPromoCodeManager.status.disabled', 'Disabled')}</option>
-                    <option value="Expired">{t('settingsPromoCodeManager.status.expired', 'Expired')}</option>
+                    <option value="Active">{t('settingsPromoCodeManager.status.active')}</option>
+                    <option value="Disabled">{t('settingsPromoCodeManager.status.disabled')}</option>
+                    <option value="Expired">{t('settingsPromoCodeManager.status.expired')}</option>
                   </select>
                 </div>
               )}
@@ -379,10 +394,10 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
 
             <div className="flex justify-end space-x-2 mt-6">
               <Button variant="light" onClick={handleCloseModal} disabled={isSaving}>
-                {t('common:buttons.cancel', 'Cancel')}
+                {t('common:buttons.cancel')}
               </Button>
               <Button variant="primary" onClick={handleSavePromo} disabled={isSaving}>
-                {isSaving ? '...' : t('settingsPromoCodeManager.addEditModal.save', 'Save')}
+                {isSaving ? t('settingsPromoCodeManager.addEditModal.saving') : t('settingsPromoCodeManager.addEditModal.save')}
               </Button>
             </div>
           </div>

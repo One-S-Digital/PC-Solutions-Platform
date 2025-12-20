@@ -320,6 +320,9 @@
     "maxFileSize": "Maximum file size is 50MB.",
     "noFileUrl": "Document URL not available.",
     "downloadFailedMessage": "Failed to download document.",
+    "unknownSize": "Unknown size",
+    "untitledDocument": "Untitled document",
+    "previewIframeTitle": "Document Preview",
     "types": {
       "catalog": "Product Catalog",
       "company_profile": "Company Profile",

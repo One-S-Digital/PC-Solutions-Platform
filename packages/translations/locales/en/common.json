@@ -94,6 +94,8 @@
     "confirm": "confirm",
     "confirmApply": "Confirm Application",
     "continue": "Continue",
+    "copy": "Copy",
+    "copied": "Copied!",
     "create": "Create",
     "createAccount": "Create Account",
     "delete": "Delete",
@@ -1314,6 +1316,9 @@
     "productOutOfStock": "product Out Of Stock",
     "promoCodePlaceholder": "Enter promo code",
     "promoCodeTitle": "promo Code Title",
+    "promoCodeValid": "Promo code applied.",
+    "promoCodeInvalid": "Invalid promo code.",
+    "promoCodeError": "Could not apply promo code. Please try again.",
     "ratingText": "rating Text.",
     "ratingsReviewsTitle": "ratings Reviews Title",
     "requestServiceButton": "request Service Button",
@@ -1877,18 +1882,44 @@
   "settingsPromoCodeManager": {
     "addEditModal": {
       "addTitle": "Add Promo Code",
-      "editTitle": "Edit Title",
-      "placeholder": "Placeholder",
-      "save": "Save"
+      "editTitle": "Edit Promo Code",
+      "save": "Save",
+      "saving": "Saving..."
     },
     "addNewCode": "Add New Code",
-    "confirmDelete": "Confirm Delete",
-    "discountTypes": {
-      "fixedAmount": "Fixed Amount",
-      "freeMinutes": "Free Minutes",
-      "percentage": "Percentage"
+    "confirmDelete": "Are you sure you want to delete this promo code?",
+    "noCodesYet": "No promo codes yet. Add your first one!",
+    "promoCreated": "Promo code created successfully",
+    "promoUpdated": "Promo code updated successfully",
+    "promoDeleted": "Promo code deleted successfully",
+    "validation": {
+      "required": "Code and expiry date are required"
     },
-    "noCodesYet": "No  Codes Yet",
+    "form": {
+      "code": "Code",
+      "codePlaceholder": "e.g., SAVE20",
+      "discountType": "Discount Type",
+      "percentage": "Percentage Off",
+      "fixedAmount": "Fixed Amount Off (CHF)",
+      "freeMinutes": "Free Minutes",
+      "value": "Value",
+      "expiryDate": "Expiry Date",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "e.g., First-time customer discount",
+      "maxUsage": "Max Usage (Optional)",
+      "maxUsagePlaceholder": "Leave empty for unlimited",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "disabled": "Disabled",
+      "expired": "Expired"
+    },
+    "discountTypes": {
+      "percentage": "{{value}}% off",
+      "fixedAmount": "CHF {{value}} off",
+      "freeMinutes": "{{value}} free minutes"
+    },
     "table": {
       "actions": "Actions",
       "code": "Code",
@@ -1896,6 +1927,11 @@
       "expiry": "Expiry",
       "status": "Status"
     }
+  },
+  "promoCodesDisplay": {
+    "noActivePromoCodes": "No active promo codes available.",
+    "expiresOn": "Expires",
+    "usageCount": "Used"
   },
   "settingsTeamPermissions": {
     "confirmRemoveMember": "Confirm Remove Member",
@@ -1946,14 +1982,17 @@
     "viewOnline": "View online"
   },
   "status": {
+    "accepted": "Accepted",
     "active": "Active",
     "approved": "Approved",
     "archived": "Archived",
     "draft": "Draft",
     "inactive": "Inactive",
+    "notApplied": "Not applied",
     "pending": "Pending",
     "published": "Published",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "reviewed": "Reviewed"
   },
   "stockStatus": {
     "discontinued": "Discontinued",

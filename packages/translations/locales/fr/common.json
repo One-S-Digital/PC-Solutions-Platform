@@ -90,6 +90,8 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "confirm": "Confirmer",
+    "copy": "Copier",
+    "copied": "Copié !",
     "create": "Créer",
     "createAccount": "Créer un compte",
     "delete": "Supprimer",
@@ -584,6 +586,7 @@
     "unsupportedRole": "unsupported Role",
     "updateFailed": "update Failed",
     "updateMessageFailed": "update Message Failed",
+    "validationError": "Erreur de validation",
     "verificationKeyword": "verification"
   },
   "featureLock": {
@@ -1282,6 +1285,9 @@
     "productOutOfStock": "product Out Of Stock",
     "promoCodePlaceholder": "Enter promo code",
     "promoCodeTitle": "promo code Titre",
+    "promoCodeValid": "Code promo appliqué.",
+    "promoCodeInvalid": "Code promo invalide.",
+    "promoCodeError": "Impossible d’appliquer le code promo. Veuillez réessayer.",
     "ratingText": "rating Text.",
     "ratingsReviewsTitle": "ratings reviews Titre",
     "requestServiceButton": "request Service Button",
@@ -1846,26 +1852,57 @@
   },
   "settingsPromoCodeManager": {
     "addEditModal": {
-      "addTitle": "[FR] Add Promo Code",
-      "editTitle": "[FR] Edit Title",
-      "placeholder": "[FR] Placeholder",
-      "save": "[FR] Save"
+      "addTitle": "Ajouter un code promo",
+      "editTitle": "Modifier le code promo",
+      "save": "Enregistrer",
+      "saving": "Enregistrement..."
     },
-    "addNewCode": "[FR] Add New Code",
-    "confirmDelete": "[FR] Confirm Delete",
+    "addNewCode": "Ajouter un nouveau code",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce code promo ?",
+    "noCodesYet": "Aucun code promo pour le moment. Ajoutez le premier !",
+    "promoCreated": "Code promo créé avec succès",
+    "promoUpdated": "Code promo mis à jour avec succès",
+    "promoDeleted": "Code promo supprimé avec succès",
+    "validation": {
+      "required": "Le code et la date d’expiration sont obligatoires"
+    },
+    "form": {
+      "code": "Code",
+      "codePlaceholder": "ex. SAVE20",
+      "discountType": "Type de réduction",
+      "percentage": "Pourcentage",
+      "fixedAmount": "Montant fixe (CHF)",
+      "freeMinutes": "Minutes gratuites",
+      "value": "Valeur",
+      "expiryDate": "Date d’expiration",
+      "description": "Description (facultatif)",
+      "descriptionPlaceholder": "ex. Réduction pour les nouveaux clients",
+      "maxUsage": "Utilisation max (facultatif)",
+      "maxUsagePlaceholder": "Laissez vide pour illimité",
+      "status": "Statut"
+    },
+    "status": {
+      "active": "Actif",
+      "disabled": "Désactivé",
+      "expired": "Expiré"
+    },
     "discountTypes": {
-      "fixedAmount": "[FR] Fixed Amount",
-      "freeMinutes": "[FR] Free Minutes",
-      "percentage": "[FR] Percentage"
+      "percentage": "-{{value}} %",
+      "fixedAmount": "-CHF {{value}}",
+      "freeMinutes": "{{value}} minutes gratuites"
     },
-    "noCodesYet": "[FR] No  Codes Yet",
     "table": {
-      "actions": "[FR] Actions",
-      "code": "[FR] Code",
-      "discountOffer": "[FR] Discount Offer",
-      "expiry": "[FR] Expiry",
-      "status": "[FR] Status"
+      "actions": "Actions",
+      "code": "Code",
+      "discountOffer": "Réduction",
+      "expiry": "Expiration",
+      "status": "Statut"
     }
+  },
+  "promoCodesDisplay": {
+    "noActivePromoCodes": "Aucun code promo actif disponible.",
+    "expiresOn": "Expire",
+    "usageCount": "Utilisé"
   },
   "settingsTeamPermissions": {
     "confirmRemoveMember": "[FR] Confirm Remove Member",
@@ -1916,14 +1953,17 @@
     "viewOnline": "Voir en ligne"
   },
   "status": {
+    "accepted": "Accepté",
     "active": "Actif",
     "approved": "Approuvé",
     "archived": "Archivé",
     "draft": "Brouillon",
     "inactive": "Inactif",
+    "notApplied": "Non postulé",
     "pending": "En attente",
     "published": "Publié",
-    "rejected": "Rejeté"
+    "rejected": "Rejeté",
+    "reviewed": "Examiné"
   },
   "stockStatus": {
     "discontinued": "[FR] Discontinued",
