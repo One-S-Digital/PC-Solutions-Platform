@@ -160,6 +160,8 @@ const ProfileEditPage: React.FC = () => {
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
           avatarUrl: data.avatarUrl || '', // Computed from asset relation on backend
+          coverAssetId: data.coverAssetId || '',
+          coverImageUrl: data.coverImageUrl || null,
         } as Partial<SettingsFormData>;
       }
 
@@ -271,6 +273,9 @@ const ProfileEditPage: React.FC = () => {
 
         if (payload.availabilitySettings !== undefined) {
           educatorPayload.availabilitySettings = payload.availabilitySettings;
+        }
+        if (payload.coverAssetId !== undefined) {
+          educatorPayload.coverAssetId = payload.coverAssetId || null;
         }
 
         saveRequest = request('/settings/educator', {

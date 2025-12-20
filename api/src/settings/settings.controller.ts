@@ -282,6 +282,7 @@ export class SettingsController {
     const { clerkUserId } = this.getContext(req);
     const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       avatarAsset: true, // Include avatar asset relation
+      coverAsset: true, // Include cover asset relation
     });
 
     return {
@@ -300,6 +301,8 @@ export class SettingsController {
         shortBio: user.shortBio ?? '',
         avatarAssetId: user.avatarAssetId ?? '',
         avatarUrl: (user as any).avatarAsset?.publicUrl ?? '', // Compute from asset relation
+        coverAssetId: (user as any).coverAssetId ?? '',
+        coverImageUrl: (user as any).coverAsset?.publicUrl ?? null,
       },
     };
   }
@@ -321,6 +324,13 @@ export class SettingsController {
         [AssetKind.AVATAR],
         'Avatar',
       );
+      await this.validateAssetForUsage(
+        tx,
+        settings.coverAssetId,
+        accountId,
+        [AssetKind.COVER_IMAGE],
+        'Cover image',
+      );
 
       await tx.user.update({
         where: { id: profileId },
@@ -337,6 +347,7 @@ export class SettingsController {
         cvUrl: settings.cvUrl,
         shortBio: settings.shortBio,
         ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
+        ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
       },
       });
 
