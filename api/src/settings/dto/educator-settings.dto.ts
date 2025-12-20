@@ -56,4 +56,8 @@ export class UpdateEducatorSettingsDto {
   @IsOptional()
   @IsString()
   avatarAssetId?: string;
+
+  @IsOptional()
+  @IsString()
+  coverAssetId?: string;
 }

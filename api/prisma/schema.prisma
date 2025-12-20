@@ -180,6 +180,10 @@ model User {
   avatarAssetId String?
   avatarAsset   Asset?  @relation("UserAvatar", fields: [avatarAssetId], references: [id])
 
+  // Cover image asset relation (educator profile cover)
+  coverAssetId String?
+  coverAsset   Asset?  @relation("UserCover", fields: [coverAssetId], references: [id])
+
   // Stripe integration
   stripeCustomerId String? @unique
 
@@ -418,6 +422,7 @@ model Asset {
 
   // User asset relations
   userAvatars User[] @relation("UserAvatar")
+  userCovers  User[] @relation("UserCover")
 
   // Product relations
   products Product[]
