@@ -9,8 +9,10 @@
 import fs from 'fs';
 import path from 'path';
 
-const LOCALES_DIR = path.join(__dirname, '../packages/translations/locales/en');
-const OUTPUT_FILE = path.join(__dirname, '../frontend/i18n/types.ts');
+// Resolve paths from project root (works for both CJS and ESM/ts-node)
+const ROOT_DIR = path.resolve(process.cwd());
+const LOCALES_DIR = path.join(ROOT_DIR, 'packages/translations/locales/en');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'frontend/i18n/types.ts');
 
 interface TranslationObject {
   [key: string]: string | TranslationObject;

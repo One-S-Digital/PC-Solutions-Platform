@@ -32,7 +32,8 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   organizationId,
   isOwnProfile = false,
 }) => {
-  const { t, i18n } = useTranslation(['dashboard', 'common', 'settings']);
+  // Keep `common` first so un-namespaced keys resolve correctly.
+  const { t, i18n } = useTranslation(['common', 'settings']);
   const { request } = useAuthenticatedApi();
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,13 +85,26 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const getDiscountText = (promo: PromoCode) => {
     switch (promo.discountType) {
       case 'Percentage':
-        return t('settingsPromoCodeManager.discountTypes.percentage', '{{value}}% off', { value: promo.value });
+        return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
       case 'FixedAmount':
-        return t('settingsPromoCodeManager.discountTypes.fixedAmount', 'CHF {{value}} off', { value: promo.value });
+        return t('settingsPromoCodeManager.discountTypes.fixedAmount', { value: promo.value });
       case 'FreeMinutes':
-        return t('settingsPromoCodeManager.discountTypes.freeMinutes', '{{value}} free minutes', { value: promo.value });
+        return t('settingsPromoCodeManager.discountTypes.freeMinutes', { value: promo.value });
       default:
         return `${promo.value}`;
+    }
+  };
+
+  const getStatusLabel = (status: PromoCode['status']) => {
+    switch (status) {
+      case 'Active':
+        return t('settingsPromoCodeManager.status.active');
+      case 'Disabled':
+        return t('settingsPromoCodeManager.status.disabled');
+      case 'Expired':
+        return t('settingsPromoCodeManager.status.expired');
+      default:
+        return status;
     }
   };
 
@@ -127,10 +141,10 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager', 'Promo Codes')}
+            {t('settings:page.promoCodeManager')}
           </h3>
         </div>
-        <LoadingSpinner text={t('common:loading', 'Loading...')} />
+        <LoadingSpinner text={t('common:loading')} />
       </Card>
     );
   }
@@ -141,13 +155,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager', 'Promo Codes')}
+            {t('settings:page.promoCodeManager')}
           </h3>
         </div>
         <div className="text-center py-4">
           <p className="text-sm text-gray-500 mb-3">{error}</p>
           <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
-            {t('common:buttons.retry', 'Retry')}
+            {t('common:buttons.retry')}
           </Button>
         </div>
       </Card>
@@ -160,13 +174,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager', 'Promo Codes')}
+            {t('settings:page.promoCodeManager')}
           </h3>
         </div>
         <p className="text-sm text-gray-500 text-center py-4">
           {isOwnProfile 
-            ? t('settingsPromoCodeManager.noCodesYet', 'No promo codes yet. Create one in Settings.')
-            : t('promoCodesDisplay.noActivePromoCodes', 'No active promo codes available.')}
+            ? t('settingsPromoCodeManager.noCodesYet')
+            : t('promoCodesDisplay.noActivePromoCodes')}
         </p>
       </Card>
     );
@@ -178,12 +192,12 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager', 'Promo Codes')}
+            {t('settings:page.promoCodeManager')}
           </h3>
         </div>
         {isOwnProfile && (
           <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
-            {t('common:buttons.refresh', 'Refresh')}
+            {t('common:buttons.refresh')}
           </Button>
         )}
       </div>
@@ -200,20 +214,20 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                   {promo.code}
                 </span>
                 <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeClasses(promo.status)}`}>
-                  {promo.status}
+                  {getStatusLabel(promo.status)}
                 </span>
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
                 <span className="font-medium text-swiss-mint">{getDiscountText(promo)}</span>
                 <span>
-                  {t('promoCodesDisplay.expiresOn', 'Expires')}: {formatDate(promo.expiryDate)}
+                  {t('promoCodesDisplay.expiresOn')}: {formatDate(promo.expiryDate)}
                 </span>
                 {promo.description && (
                   <span className="text-gray-500">{promo.description}</span>
                 )}
                 {isOwnProfile && promo.maxUsage && (
                   <span className="text-gray-500">
-                    {t('promoCodesDisplay.usageCount', 'Used')}: {promo.usageCount}/{promo.maxUsage}
+                    {t('promoCodesDisplay.usageCount')}: {promo.usageCount}/{promo.maxUsage}
                   </span>
                 )}
               </div>
@@ -226,8 +240,8 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
               className={copiedCode === promo.code ? 'text-green-600 border-green-600' : ''}
             >
               {copiedCode === promo.code 
-                ? t('common:buttons.copied', 'Copied!')
-                : t('common:buttons.copy', 'Copy')}
+                ? t('common:buttons.copied')
+                : t('common:buttons.copy')}
             </Button>
           </div>
         ))}
