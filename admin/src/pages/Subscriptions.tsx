@@ -131,14 +131,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
     }
   }, [subscription]);
 
-  if (!isOpen || !user) return null;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onSave({ status, planId: selectedPlanId || undefined, notes: notes || undefined });
-  };
-
-  // Handle Escape key to close modal
+  // Handle Escape key to close modal - must be before any early returns to comply with Rules of Hooks
   React.useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -148,6 +141,14 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
+
+  // Early return AFTER all hooks to comply with React's Rules of Hooks
+  if (!isOpen || !user) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await onSave({ status, planId: selectedPlanId || undefined, notes: notes || undefined });
+  };
 
   return (
     <div 
