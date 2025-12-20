@@ -634,6 +634,35 @@ model InvoiceAuditLog {
 }
 
 // ============================================
+// INVOICE SNAPSHOTS (Swiss Compliance)
+// Immutable point-in-time records for audit/legal
+// ============================================
+
+model InvoiceSnapshot {
+  id          String    @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  // Snapshot trigger
+  reason      String    // "finalized", "sent", "status_change", "payment_received"
+  
+  // Complete invoice state at this point
+  snapshot    Json      // Full serialized invoice with all relations
+  
+  // Hash for integrity verification
+  snapshotHash String   // SHA-256 of snapshot JSON
+  
+  // Metadata
+  createdById String?
+  createdBy   User?     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now())
+  
+  @@index([invoiceId, createdAt])
+  @@index([reason])
+  @@map("invoice_snapshots")
+}
+
+// ============================================
 // QUOTES / ESTIMATES
 // ============================================
 
@@ -765,6 +794,12 @@ model RecurringInvoice {
   lastGeneratedDate DateTime?
   nextGenerationDate DateTime?
   occurrenceCount Int               @default(0)
+  
+  // Failure/Retry Tracking (for reliability)
+  lastGenerationError   String?     // Last error message if failed
+  lastGenerationAttempt DateTime?   // When last attempt was made
+  failureCount          Int         @default(0) // Consecutive failures
+  pausedDueToFailure    Boolean     @default(false)
   
   // Invoice template
   category        InvoiceCategory
@@ -1029,7 +1064,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../prisma/prisma.service';
 import { InvoicingService } from '../invoicing.service';
+import { EmailNotificationService } from '../../email-notification/email-notification.service';
 import { RecurringFrequency, RecurringStatus } from '@prisma/client';
+import { DateTime } from 'luxon'; // Add luxon for timezone handling
+
+// Maximum consecutive failures before auto-pausing
+const MAX_FAILURE_COUNT = 3;
 
 @Injectable()
 export class RecurringInvoiceService {
@@ -1038,21 +1078,27 @@ export class RecurringInvoiceService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly invoicingService: InvoicingService,
+    private readonly emailService: EmailNotificationService,
   ) {}
 
   /**
-   * Runs every day at 2:00 AM to generate recurring invoices
+   * Runs every day at 2:00 AM Swiss time (CET/CEST)
+   * Uses explicit timezone to ensure consistency
    */
-  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  @Cron('0 2 * * *', { timeZone: 'Europe/Zurich' })
   async processRecurringInvoices() {
-    this.logger.log('Processing recurring invoices...');
+    this.logger.log('Processing recurring invoices (Swiss timezone)...');
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use explicit Swiss timezone for date comparison
+    const today = DateTime.now()
+      .setZone('Europe/Zurich')
+      .startOf('day')
+      .toJSDate();
     
     const dueTemplates = await this.prisma.recurringInvoice.findMany({
       where: {
         status: RecurringStatus.ACTIVE,
+        pausedDueToFailure: false,
         nextGenerationDate: { lte: today },
         OR: [
           { endDate: null },
@@ -1079,13 +1125,17 @@ export class RecurringInvoiceService {
         // Generate invoice from template
         const invoice = await this.generateInvoiceFromTemplate(template);
         
-        // Update template
+        // Success: Update template and reset failure count
         await this.prisma.recurringInvoice.update({
           where: { id: template.id },
           data: {
             lastGeneratedDate: new Date(),
             nextGenerationDate: this.calculateNextDate(template),
             occurrenceCount: { increment: 1 },
+            // Reset failure tracking on success
+            failureCount: 0,
+            lastGenerationError: null,
+            lastGenerationAttempt: new Date(),
           },
         });
 
@@ -1096,9 +1146,61 @@ export class RecurringInvoiceService {
 
         this.logger.log(`Generated invoice ${invoice.invoiceNumber} from recurring ${template.id}`);
       } catch (error) {
-        this.logger.error(`Failed to process recurring invoice ${template.id}:`, error);
+        // Handle failure with retry tracking
+        await this.handleGenerationFailure(template, error);
       }
     }
+  }
+
+  /**
+   * Handle recurring invoice generation failure
+   * Tracks failures and auto-pauses after MAX_FAILURE_COUNT
+   */
+  private async handleGenerationFailure(template: any, error: Error) {
+    const newFailureCount = (template.failureCount || 0) + 1;
+    const shouldPause = newFailureCount >= MAX_FAILURE_COUNT;
+
+    this.logger.error(
+      `Failed to process recurring invoice ${template.id} (attempt ${newFailureCount}):`,
+      error.message,
+    );
+
+    await this.prisma.recurringInvoice.update({
+      where: { id: template.id },
+      data: {
+        failureCount: newFailureCount,
+        lastGenerationError: error.message,
+        lastGenerationAttempt: new Date(),
+        pausedDueToFailure: shouldPause,
+      },
+    });
+
+    // Notify admin if paused due to failures
+    if (shouldPause) {
+      await this.notifyAdminOfRecurringFailure(template, error);
+    }
+  }
+
+  /**
+   * Notify administrators about recurring invoice failure
+   */
+  private async notifyAdminOfRecurringFailure(template: any, error: Error) {
+    this.logger.warn(
+      `Recurring invoice ${template.id} paused after ${MAX_FAILURE_COUNT} failures`,
+    );
+
+    await this.emailService.sendEmail({
+      to: process.env.ADMIN_EMAIL || 'admin@procreche.ch',
+      template: 'recurring_invoice_failure',
+      data: {
+        templateId: template.id,
+        templateName: template.name,
+        issuerOrg: template.issuerOrg.name,
+        recipientOrg: template.recipientOrg.name,
+        failureCount: MAX_FAILURE_COUNT,
+        lastError: error.message,
+      },
+    });
   }
 
   /**
@@ -2591,13 +2693,48 @@ export class PdfService {
     // Draw QR-bill section (bottom 105mm = ~298 points)
     const qrBillTop = 298; // 105mm from bottom
     
-    // Draw separation line (perforation indicator)
+    // Draw horizontal separation line (perforation indicator)
+    // Swiss QR-bill spec: dashed line with scissors symbol
     page.drawLine({
       start: { x: 0, y: qrBillTop },
       end: { x: 595.28, y: qrBillTop },
       thickness: 0.5,
       dashArray: [3, 3],
       color: rgb(0, 0, 0),
+      opacity: 0.5, // Semi-transparent for proper "fold here" appearance
+    });
+    
+    // Add scissors symbol (✂) at perforation line start
+    page.drawText('✂', {
+      x: 8,
+      y: qrBillTop - 4,
+      size: 10,
+      font: helvetica,
+      color: rgb(0, 0, 0),
+      opacity: 0.5,
+    });
+    
+    // Draw vertical separation line between receipt and payment parts
+    // Receipt: 62mm from left, Payment: remaining 148mm
+    const receiptWidth = 62 * 2.835; // Convert mm to points
+    page.drawLine({
+      start: { x: receiptWidth, y: 0 },
+      end: { x: receiptWidth, y: qrBillTop },
+      thickness: 0.5,
+      dashArray: [3, 3],
+      color: rgb(0, 0, 0),
+      opacity: 0.5,
+    });
+    
+    // Add scissors symbol at vertical perforation
+    page.drawText('✂', {
+      x: receiptWidth - 4,
+      y: 8,
+      size: 10,
+      font: helvetica,
+      color: rgb(0, 0, 0),
+      opacity: 0.5,
+      rotate: degrees(90), // Rotate for vertical line
     });
     
     // Embed QR code
@@ -3177,6 +3314,239 @@ const ClientPortalInvoice: React.FC<ClientPortalInvoiceProps> = ({
     </div>
   );
 };
+```
+
+---
+
+## 10.5 Security Considerations
+
+### Rate Limiting
+
+PDF generation and QR code generation are resource-intensive operations that require rate limiting:
+
+```typescript
+// api/src/invoicing/invoice/invoice.controller.ts
+import { Controller, Post, Get, Param, UseGuards } from '@nestjs/common';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
+import { InvoiceAccessGuard } from '../guards/invoice-access.guard';
+
+@Controller('invoices')
+@UseGuards(InvoiceAccessGuard)
+export class InvoiceController {
+  
+  /**
+   * PDF generation is resource-intensive - rate limit to 10/minute
+   */
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute
+  @Get(':id/pdf')
+  async generatePdf(@Param('id') id: string) {
+    return this.invoiceService.generatePdf(id);
+  }
+
+  /**
+   * QR preview generation - rate limit to 30/minute
+   */
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 30, ttl: 60000 } })
+  @Post('preview-qr')
+  async previewQr(@Body() dto: QrPreviewDto) {
+    return this.qrBillService.generatePreview(dto);
+  }
+}
+```
+
+### Invoice Access Guard
+
+Comprehensive role-based access control for invoice operations:
+
+```typescript
+// api/src/invoicing/guards/invoice-access.guard.ts
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+
+@Injectable()
+export class InvoiceAccessGuard implements CanActivate {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    const invoiceId = request.params.id;
+
+    if (!invoiceId) return true; // No invoice ID in route
+
+    // Platform admins have full access
+    if (user.role === 'PLATFORM_ADMIN') return true;
+
+    const invoice = await this.prisma.invoice.findUnique({
+      where: { id: invoiceId },
+      select: { issuerOrgId: true, recipientOrgId: true },
+    });
+
+    if (!invoice) return true; // Let controller handle 404
+
+    // User must belong to issuer OR recipient organization
+    const userOrgIds = user.organizations?.map(o => o.id) || [];
+    
+    const hasAccess = 
+      userOrgIds.includes(invoice.issuerOrgId) ||
+      userOrgIds.includes(invoice.recipientOrgId);
+
+    if (!hasAccess) {
+      throw new ForbiddenException('You do not have access to this invoice');
+    }
+
+    // Check operation-specific permissions
+    const method = request.method;
+    
+    // Only issuer org can modify invoices
+    if (['POST', 'PATCH', 'DELETE'].includes(method)) {
+      if (!userOrgIds.includes(invoice.issuerOrgId)) {
+        throw new ForbiddenException('Only the issuing organization can modify this invoice');
+      }
+    }
+
+    return true;
+  }
+}
+```
+
+### Enhanced Client Portal Token Security
+
+Portal tokens include additional security measures:
+
+```typescript
+// api/src/invoicing/client-portal/client-portal.service.ts
+import { Injectable } from '@nestjs/common';
+import { randomBytes, createHash, createHmac } from 'crypto';
+import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+export class ClientPortalService {
+  private readonly portalSecret: string;
+
+  constructor(private readonly configService: ConfigService) {
+    this.portalSecret = this.configService.getOrThrow('PORTAL_TOKEN_SECRET');
+  }
+
+  /**
+   * Generate a secure portal access token
+   * Includes HMAC for additional security
+   */
+  async generatePortalToken(invoiceId: string): Promise<string> {
+    const randomPart = randomBytes(32).toString('hex');
+    const timestamp = Date.now().toString(36);
+    
+    // Create HMAC signature including invoice ID
+    const dataToSign = `${randomPart}:${invoiceId}:${timestamp}`;
+    const signature = createHmac('sha256', this.portalSecret)
+      .update(dataToSign)
+      .digest('hex')
+      .substring(0, 16); // First 16 chars of HMAC
+    
+    // Full token: random + timestamp + signature
+    const token = `${randomPart}${timestamp}${signature}`;
+    
+    // Store hashed version in database
+    const hashedToken = createHash('sha256').update(token).digest('hex');
+    
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 90);
+
+    await this.prisma.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        clientPortalToken: hashedToken,
+        clientPortalExpiry: expiry,
+      },
+    });
+
+    return token;
+  }
+
+  /**
+   * Validate portal token with additional checks
+   */
+  async validatePortalAccess(
+    token: string,
+    clientIp?: string,
+    userAgent?: string,
+  ): Promise<Invoice> {
+    const hashedToken = createHash('sha256').update(token).digest('hex');
+
+    const invoice = await this.prisma.invoice.findFirst({
+      where: {
+        clientPortalToken: hashedToken,
+        clientPortalExpiry: { gt: new Date() },
+      },
+      include: { /* relations */ },
+    });
+
+    if (!invoice) {
+      // Log failed access attempt
+      await this.logAccessAttempt(token, clientIp, userAgent, false);
+      throw new UnauthorizedException('Invalid or expired access link');
+    }
+
+    // Log successful access
+    await this.logAccessAttempt(token, clientIp, userAgent, true, invoice.id);
+
+    // Track first view
+    if (!invoice.viewedDate) {
+      await this.prisma.invoice.update({
+        where: { id: invoice.id },
+        data: {
+          viewedDate: new Date(),
+          status: invoice.status === 'SENT' ? 'VIEWED' : invoice.status,
+        },
+      });
+    }
+
+    return invoice;
+  }
+
+  /**
+   * Log portal access attempts for security monitoring
+   */
+  private async logAccessAttempt(
+    tokenHash: string,
+    clientIp?: string,
+    userAgent?: string,
+    success?: boolean,
+    invoiceId?: string,
+  ) {
+    await this.prisma.portalAccessLog.create({
+      data: {
+        tokenHash: tokenHash.substring(0, 16), // Partial hash for privacy
+        clientIp,
+        userAgent,
+        success,
+        invoiceId,
+        timestamp: new Date(),
+      },
+    });
+  }
+}
+```
+
+### Additional Security Measures
+
+```prisma
+// Add to schema for security logging
+model PortalAccessLog {
+  id          String    @id @default(uuid())
+  tokenHash   String    // Partial hash of token attempted
+  clientIp    String?
+  userAgent   String?
+  success     Boolean
+  invoiceId   String?
+  timestamp   DateTime  @default(now())
+  
+  @@index([timestamp])
+  @@index([clientIp])
+  @@map("portal_access_logs")
+}
 ```
 
 ---
