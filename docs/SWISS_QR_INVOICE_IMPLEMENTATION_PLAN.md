@@ -1207,6 +1207,7 @@ export class RecurringInvoiceService {
 
   /**
    * Calculate the next generation date based on frequency
+   * Uses Luxon for timezone-safe date math (avoids DST drift issues)
    */
   calculateNextDate(template: {
     frequency: RecurringFrequency;
@@ -1215,47 +1216,53 @@ export class RecurringInvoiceService {
     dayOfWeek?: number | null;
     nextGenerationDate: Date | null;
   }): Date {
-    const baseDate = template.nextGenerationDate || new Date();
-    const next = new Date(baseDate);
+    // Use Luxon with explicit Swiss timezone for DST-safe calculations
+    const base = template.nextGenerationDate
+      ? DateTime.fromJSDate(template.nextGenerationDate, { zone: 'Europe/Zurich' })
+      : DateTime.now().setZone('Europe/Zurich');
+
+    let next: DateTime;
 
     switch (template.frequency) {
       case 'DAILY':
-        next.setDate(next.getDate() + 1);
+        next = base.plus({ days: 1 });
         break;
       case 'WEEKLY':
-        next.setDate(next.getDate() + 7);
+        next = base.plus({ weeks: 1 });
         break;
       case 'BIWEEKLY':
-        next.setDate(next.getDate() + 14);
+        next = base.plus({ weeks: 2 });
         break;
       case 'MONTHLY':
-        next.setMonth(next.getMonth() + 1);
+        next = base.plus({ months: 1 });
+        // If specific day of month is set, adjust (clamped to month's last day)
         if (template.dayOfMonth) {
-          next.setDate(Math.min(template.dayOfMonth, this.getDaysInMonth(next)));
+          const lastDay = next.daysInMonth;
+          const targetDay = Math.min(template.dayOfMonth, lastDay);
+          next = next.set({ day: targetDay });
         }
         break;
       case 'BIMONTHLY':
-        next.setMonth(next.getMonth() + 2);
+        next = base.plus({ months: 2 });
         break;
       case 'QUARTERLY':
-        next.setMonth(next.getMonth() + 3);
+        next = base.plus({ months: 3 });
         break;
       case 'SEMIANNUALLY':
-        next.setMonth(next.getMonth() + 6);
+        next = base.plus({ months: 6 });
         break;
       case 'ANNUALLY':
-        next.setFullYear(next.getFullYear() + 1);
+        next = base.plus({ years: 1 });
         break;
       case 'CUSTOM':
-        next.setDate(next.getDate() + (template.customDays || 30));
+        next = base.plus({ days: template.customDays || 30 });
         break;
+      default:
+        next = base.plus({ months: 1 }); // Default to monthly
     }
 
-    return next;
-  }
-
-  private getDaysInMonth(date: Date): number {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    // Return as JS Date at start of day (Swiss time)
+    return next.startOf('day').toJSDate();
   }
 
   private async markAsCompleted(templateId: string) {
@@ -2231,14 +2238,18 @@ export class IbanValidator {
   validateSwissIban(iban: string): IbanValidationResult {
     const cleaned = iban.replace(/\s/g, '').toUpperCase();
     
-    // Basic format check
-    if (!/^CH\d{2}\d{5}\w{12}$/.test(cleaned) && !/^LI\d{2}\d{5}\w{12}$/.test(cleaned)) {
+    // Basic format check - use explicit A-Z0-9 (not \w which includes underscores)
+    // Swiss/LI IBAN: 2-letter country + 2 check digits + 5-digit bank code + 12 alphanumeric
+    const swissPattern = /^CH\d{2}\d{5}[A-Z0-9]{12}$/;
+    const liechtensteinPattern = /^LI\d{2}\d{5}[A-Z0-9]{12}$/;
+    
+    if (!swissPattern.test(cleaned) && !liechtensteinPattern.test(cleaned)) {
       return {
         isValid: false,
         isSwiss: false,
         isQrIban: false,
         formattedIban: cleaned,
-        error: 'Invalid Swiss/Liechtenstein IBAN format. Must be 21 characters starting with CH or LI.',
+        error: 'Invalid Swiss/Liechtenstein IBAN format. Must be 21 characters (CH/LI + 2 check + 5 bank + 12 account).',
       };
     }
     
@@ -2553,15 +2564,38 @@ export class PdfService {
 
     // Upload to S3/R2
     const fileName = `invoices/${invoice.issuerOrgId}/${invoice.invoiceNumber}.pdf`;
-    const assetUrl = await this.uploadService.uploadBuffer(
+    const { assetId, publicUrl } = await this.uploadService.uploadBuffer(
       pdfBuffer,
       fileName,
       'application/pdf',
     );
 
+    // IMPORTANT: Persist QR payload and hash to invoice for future validation
+    // This ensures we can verify the PDF matches what was sent
+    await this.prisma.invoice.update({
+      where: { id: invoice.id },
+      data: {
+        qrPayloadRaw: qrPayload.payload,
+        qrPayloadHash: qrPayload.hash,
+        pdfAssetId: assetId,
+      },
+    });
+
+    // Create immutable snapshot for compliance
+    await this.prisma.invoiceSnapshot.create({
+      data: {
+        invoiceId: invoice.id,
+        reason: 'pdf_generated',
+        snapshot: JSON.parse(JSON.stringify(invoice)), // Deep clone
+        snapshotHash: createHash('sha256')
+          .update(JSON.stringify(invoice))
+          .digest('hex'),
+      },
+    });
+
     return {
       pdfBuffer,
-      assetUrl,
+      assetUrl: publicUrl,
       qrPayload: qrPayload.payload,
       qrPayloadHash: qrPayload.hash,
     };
@@ -2627,14 +2661,69 @@ export class PdfService {
 
   /**
    * Add Swiss cross to center of QR code
+   * Swiss spec: 7x7mm cross centered on 46x46mm QR code
+   * At 300 DPI: QR = 543px, Cross = ~83px
    */
   private async addSwissCross(qrBuffer: Buffer): Promise<Buffer> {
-    // Implementation would use 'sharp' library
-    // For now, return as-is (Swiss cross overlay would be added here)
-    // The Swiss cross is 7x7mm with a white background and black cross
-    return qrBuffer;
-  }
+    const sharp = (await import('sharp')).default;
+    const path = await import('node:path');
+    const fs = await import('node:fs/promises');
 
+    const SIZE_QR_PX = 543;   // 46mm @ 300 DPI
+    const CROSS_MM = 7;
+    const CROSS_PX = Math.round(SIZE_QR_PX * (CROSS_MM / 46)); // ~83px
+
+    // Load Swiss cross SVG (should include white background square)
+    const overlaySvgPath = path.resolve(__dirname, 'assets', 'swiss-cross.svg');
+    const overlaySvg = await fs.readFile(overlaySvgPath);
+    
+    // Convert SVG to PNG at correct size
+    const overlayPng = await sharp(overlaySvg)
+      .resize(CROSS_PX, CROSS_PX)
+      .png()
+      .toBuffer();
+
+    // Get QR code dimensions
+    const meta = await sharp(qrBuffer).metadata();
+    const qrWidth = meta.width ?? SIZE_QR_PX;
+    const qrHeight = meta.height ?? SIZE_QR_PX;
+
+    // Calculate center position
+    const left = Math.round((qrWidth - CROSS_PX) / 2);
+    const top = Math.round((qrHeight - CROSS_PX) / 2);
+
+    // Composite Swiss cross onto QR code
+    return sharp(qrBuffer)
+      .composite([{ input: overlayPng, left, top }])
+      .png()
+      .toBuffer();
+  }
+}
+```
+
+### Swiss Cross SVG Asset
+
+The Swiss cross SVG must include an opaque white background to mask the QR code finder modules beneath:
+
+```xml
+<!-- api/src/invoicing/pdf/assets/swiss-cross.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- White background square (required to mask QR modules) -->
+  <rect x="0" y="0" width="100" height="100" fill="white"/>
+  
+  <!-- Swiss cross (official proportions: cross is 1/6 width of total) -->
+  <!-- Red background -->
+  <rect x="10" y="10" width="80" height="80" fill="#FF0000"/>
+  
+  <!-- White cross -->
+  <rect x="39" y="22" width="22" height="56" fill="white"/>
+  <rect x="22" y="39" width="56" height="22" fill="white"/>
+</svg>
+```
+
+**Important:** The outer white rect is essential - without it, the QR finder pattern modules would show through the cross, potentially causing scanning issues.
+
+```typescript
   /**
    * Render complete PDF with A4 invoice and A6 payment slip
    * 
@@ -2657,7 +2746,7 @@ export class PdfService {
     // This is a simplified implementation outline
     // Full implementation would use HTML template + Puppeteer
     
-    const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib');
+    const { PDFDocument, rgb, StandardFonts, degrees } = await import('pdf-lib');
     
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595.28, 841.89]); // A4 in points
@@ -3340,10 +3429,31 @@ const ClientPortalInvoice: React.FC<ClientPortalInvoiceProps> = ({
 
 PDF generation and QR code generation are resource-intensive operations that require rate limiting:
 
+**Module Configuration:**
+
+```typescript
+// api/src/app.module.ts - Configure named throttlers
+import { ThrottlerModule } from '@nestjs/throttler';
+
+@Module({
+  imports: [
+    ThrottlerModule.forRoot([
+      { name: 'pdf', ttl: 60000, limit: 10 },   // 10 PDF requests per minute
+      { name: 'qr', ttl: 60000, limit: 30 },    // 30 QR preview requests per minute
+      { name: 'default', ttl: 60000, limit: 100 }, // Default rate limit
+    ]),
+    // ... other imports
+  ],
+})
+export class AppModule {}
+```
+
+**Controller Usage:**
+
 ```typescript
 // api/src/invoicing/invoice/invoice.controller.ts
-import { Controller, Post, Get, Param, UseGuards } from '@nestjs/common';
-import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
+import { Controller, Post, Get, Param, Body, UseGuards } from '@nestjs/common';
+import { ThrottlerGuard, SkipThrottle, Throttle } from '@nestjs/throttler';
 import { InvoiceAccessGuard } from '../guards/invoice-access.guard';
 
 @Controller('invoices')
@@ -3351,23 +3461,32 @@ import { InvoiceAccessGuard } from '../guards/invoice-access.guard';
 export class InvoiceController {
   
   /**
-   * PDF generation is resource-intensive - rate limit to 10/minute
+   * PDF generation is resource-intensive - use 'pdf' throttler (10/min)
    */
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute
+  @Throttle({ pdf: { limit: 10, ttl: 60000 } })
   @Get(':id/pdf')
   async generatePdf(@Param('id') id: string) {
     return this.invoiceService.generatePdf(id);
   }
 
   /**
-   * QR preview generation - rate limit to 30/minute
+   * QR preview generation - use 'qr' throttler (30/min)
    */
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 30, ttl: 60000 } })
+  @Throttle({ qr: { limit: 30, ttl: 60000 } })
   @Post('preview-qr')
   async previewQr(@Body() dto: QrPreviewDto) {
     return this.qrBillService.generatePreview(dto);
+  }
+
+  /**
+   * Regular endpoints use default throttle from module config
+   */
+  @UseGuards(ThrottlerGuard)
+  @Get(':id')
+  async getInvoice(@Param('id') id: string) {
+    return this.invoiceService.getInvoice(id);
   }
 }
 ```
