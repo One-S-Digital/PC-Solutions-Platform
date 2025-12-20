@@ -27,7 +27,9 @@ This document outlines a comprehensive plan to build a **full-featured invoicing
 8. [PDF Generation Pipeline](#8-pdf-generation-pipeline)
 9. [Payment Management](#9-payment-management)
 10. [Client Portal](#10-client-portal)
+    - [10.5 Security Considerations](#105-security-considerations)
 11. [Admin Dashboard Integration](#11-admin-dashboard-integration)
+    - [11.6 Accountant Export System](#116-accountant-export-system)
 12. [API Endpoints](#12-api-endpoints)
 13. [Email & Notifications](#13-email--notifications)
 14. [Testing Strategy](#14-testing-strategy)
@@ -2768,13 +2770,27 @@ export class PdfService {
     "qrcode": "^1.5.3",
     "pdf-lib": "^1.17.1",
     "sharp": "^0.33.4",
-    "puppeteer": "^22.0.0"
+    "puppeteer": "^22.0.0",
+    "luxon": "^3.4.4",
+    "exceljs": "^4.4.0",
+    "bcrypt": "^5.1.1"
   },
   "devDependencies": {
-    "@types/qrcode": "^1.5.5"
+    "@types/qrcode": "^1.5.5",
+    "@types/luxon": "^3.4.2",
+    "@types/bcrypt": "^5.0.2"
   }
 }
 ```
+
+**Package purposes:**
+- `qrcode` - Swiss QR code generation
+- `pdf-lib` - Low-level PDF manipulation
+- `sharp` - Image processing for Swiss cross overlay
+- `puppeteer` - HTML to PDF conversion
+- `luxon` - Timezone-aware date handling (Swiss time)
+- `exceljs` - Excel workbook generation for accountant exports
+- `bcrypt` - Password hashing for export share links
 
 ---
 
@@ -4009,6 +4025,829 @@ const QrBillPreview: React.FC<QrBillPreviewProps> = ({
 
 ---
 
+## 11.6 Accountant Export System
+
+A comprehensive export system designed for easy sharing with external accountants and integration with Swiss accounting software.
+
+### Export Formats Supported
+
+| Format | Use Case | Description |
+|--------|----------|-------------|
+| **CSV** | Universal | Simple tabular data, works with any spreadsheet |
+| **Excel (XLSX)** | Accountants | Formatted workbook with multiple sheets |
+| **PDF Report** | Presentation | Professional formatted reports |
+| **DATEV** | German/Swiss | Standard format for DATEV accounting software |
+| **Abacus XML** | Swiss | Native format for Abacus ERP (popular in Switzerland) |
+| **JSON** | API Integration | Machine-readable for custom integrations |
+
+### Export Data Types
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     ACCOUNTANT EXPORT OPTIONS                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  📊 INVOICE REGISTER                                             │
+│     Complete list of all invoices with key fields                │
+│     - Invoice #, Date, Customer, Amount, Tax, Status             │
+│                                                                  │
+│  📋 DETAILED TRANSACTIONS                                        │
+│     Line-item level detail for each invoice                      │
+│     - Description, Quantity, Unit Price, Tax Rate                │
+│                                                                  │
+│  💳 PAYMENT JOURNAL                                              │
+│     All payments received with reconciliation data               │
+│     - Date, Amount, Method, Reference, Invoice #                 │
+│                                                                  │
+│  📈 VAT REPORT (Swiss MWST)                                      │
+│     Tax breakdown by rate (8.1%, 2.6%, 3.8%)                     │
+│     - Taxable Amount, Tax Amount per rate                        │
+│                                                                  │
+│  ⏰ ACCOUNTS RECEIVABLE AGING                                    │
+│     Outstanding balances by age bucket                           │
+│     - Current, 1-30, 31-60, 61-90, 90+ days                      │
+│                                                                  │
+│  📁 MONTHLY/QUARTERLY PACKAGE                                    │
+│     Complete bundle for period-end reporting                     │
+│     - All above reports + summary                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Database Schema for Exports
+
+```prisma
+// Export job tracking and secure sharing
+model AccountantExport {
+  id              String    @id @default(uuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  
+  // Export configuration
+  exportType      ExportType
+  format          ExportFormat
+  
+  // Date range
+  periodStart     DateTime
+  periodEnd       DateTime
+  
+  // Filters applied
+  filters         Json?     // { status: [], customers: [], etc. }
+  
+  // Generated file
+  fileAssetId     String?
+  fileAsset       Asset?    @relation(fields: [fileAssetId], references: [id])
+  fileName        String?
+  fileSize        Int?
+  
+  // Secure sharing
+  shareToken      String?   @unique
+  shareExpiry     DateTime?
+  sharePassword   String?   // Hashed password for download
+  downloadCount   Int       @default(0)
+  maxDownloads    Int?      // Optional limit
+  
+  // Tracking
+  status          ExportStatus @default(PENDING)
+  errorMessage    String?
+  
+  createdById     String
+  createdBy       User      @relation(fields: [createdById], references: [id])
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+  
+  // Notification
+  notifyEmail     String?   // Email to notify when ready
+  emailSent       Boolean   @default(false)
+  
+  @@index([organizationId])
+  @@index([shareToken])
+  @@index([createdAt])
+  @@map("accountant_exports")
+}
+
+enum ExportType {
+  INVOICE_REGISTER
+  DETAILED_TRANSACTIONS
+  PAYMENT_JOURNAL
+  VAT_REPORT
+  AGING_REPORT
+  MONTHLY_PACKAGE
+  QUARTERLY_PACKAGE
+  ANNUAL_PACKAGE
+  CUSTOM
+}
+
+enum ExportFormat {
+  CSV
+  XLSX
+  PDF
+  DATEV
+  ABACUS_XML
+  JSON
+}
+
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+// Scheduled exports for accountants
+model ScheduledExport {
+  id              String    @id @default(uuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  
+  name            String    // "Monthly VAT Report for Accountant"
+  
+  // Schedule
+  frequency       ExportFrequency
+  dayOfMonth      Int?      // 1-28 for monthly
+  enabled         Boolean   @default(true)
+  
+  // Export configuration
+  exportType      ExportType
+  format          ExportFormat
+  
+  // Auto-share settings
+  recipientEmail  String    // Accountant's email
+  includePassword Boolean   @default(true)
+  
+  // Tracking
+  lastRunAt       DateTime?
+  nextRunAt       DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([nextRunAt])
+  @@map("scheduled_exports")
+}
+
+enum ExportFrequency {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+```
+
+### Export Service
+
+```typescript
+// api/src/invoicing/export/export.service.ts
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import * as ExcelJS from 'exceljs';
+import { PrismaService } from '../../prisma/prisma.service';
+import { EmailNotificationService } from '../../email-notification/email-notification.service';
+import { UploadService } from '../../upload/upload.service';
+
+@Injectable()
+export class ExportService {
+  private readonly logger = new Logger(ExportService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailNotificationService,
+    private readonly uploadService: UploadService,
+  ) {}
+
+  /**
+   * Generate invoice register export
+   */
+  async generateInvoiceRegister(
+    organizationId: string,
+    options: ExportOptions,
+  ): Promise<Buffer> {
+    const invoices = await this.prisma.invoice.findMany({
+      where: {
+        issuerOrgId: organizationId,
+        issueDate: {
+          gte: options.periodStart,
+          lte: options.periodEnd,
+        },
+        ...(options.status && { status: { in: options.status } }),
+      },
+      include: {
+        recipientOrg: true,
+        lineItems: true,
+        payments: true,
+      },
+      orderBy: { issueDate: 'asc' },
+    });
+
+    switch (options.format) {
+      case 'XLSX':
+        return this.generateExcelInvoiceRegister(invoices, options);
+      case 'CSV':
+        return this.generateCsvInvoiceRegister(invoices);
+      case 'PDF':
+        return this.generatePdfInvoiceRegister(invoices, options);
+      default:
+        throw new Error(`Unsupported format: ${options.format}`);
+    }
+  }
+
+  /**
+   * Generate Excel workbook with multiple sheets
+   */
+  private async generateExcelInvoiceRegister(
+    invoices: InvoiceWithRelations[],
+    options: ExportOptions,
+  ): Promise<Buffer> {
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'ProCrèche Invoicing';
+    workbook.created = new Date();
+
+    // Sheet 1: Invoice Summary
+    const summarySheet = workbook.addWorksheet('Invoice Register', {
+      headerFooter: {
+        firstHeader: `Invoice Register - ${options.periodStart.toLocaleDateString('de-CH')} to ${options.periodEnd.toLocaleDateString('de-CH')}`,
+      },
+    });
+
+    summarySheet.columns = [
+      { header: 'Invoice #', key: 'invoiceNumber', width: 15 },
+      { header: 'Date', key: 'issueDate', width: 12 },
+      { header: 'Due Date', key: 'dueDate', width: 12 },
+      { header: 'Customer', key: 'customer', width: 30 },
+      { header: 'Reference', key: 'reference', width: 30 },
+      { header: 'Net Amount', key: 'netAmount', width: 15 },
+      { header: 'VAT', key: 'taxAmount', width: 12 },
+      { header: 'Total', key: 'totalAmount', width: 15 },
+      { header: 'Paid', key: 'paidAmount', width: 15 },
+      { header: 'Balance', key: 'balanceDue', width: 15 },
+      { header: 'Status', key: 'status', width: 12 },
+      { header: 'Currency', key: 'currency', width: 8 },
+    ];
+
+    // Style header row
+    summarySheet.getRow(1).font = { bold: true };
+    summarySheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' },
+    };
+
+    // Add data rows
+    for (const invoice of invoices) {
+      summarySheet.addRow({
+        invoiceNumber: invoice.invoiceNumber,
+        issueDate: invoice.issueDate,
+        dueDate: invoice.dueDate,
+        customer: invoice.recipientOrg.name,
+        reference: invoice.referenceNumber,
+        netAmount: invoice.netAmount / 100,
+        taxAmount: invoice.taxAmount / 100,
+        totalAmount: invoice.totalAmount / 100,
+        paidAmount: invoice.paidAmount / 100,
+        balanceDue: invoice.balanceDue / 100,
+        status: invoice.status,
+        currency: invoice.currency,
+      });
+    }
+
+    // Format currency columns
+    ['F', 'G', 'H', 'I', 'J'].forEach(col => {
+      summarySheet.getColumn(col).numFmt = '#,##0.00';
+    });
+
+    // Add totals row
+    const lastRow = summarySheet.rowCount + 1;
+    summarySheet.addRow({
+      invoiceNumber: 'TOTALS',
+      netAmount: { formula: `SUM(F2:F${lastRow - 1})` },
+      taxAmount: { formula: `SUM(G2:G${lastRow - 1})` },
+      totalAmount: { formula: `SUM(H2:H${lastRow - 1})` },
+      paidAmount: { formula: `SUM(I2:I${lastRow - 1})` },
+      balanceDue: { formula: `SUM(J2:J${lastRow - 1})` },
+    });
+    summarySheet.getRow(lastRow).font = { bold: true };
+
+    // Sheet 2: VAT Breakdown
+    const vatSheet = workbook.addWorksheet('VAT Summary');
+    await this.addVatSummarySheet(vatSheet, invoices);
+
+    // Sheet 3: Payment Details
+    const paymentSheet = workbook.addWorksheet('Payments');
+    await this.addPaymentSheet(paymentSheet, invoices);
+
+    return Buffer.from(await workbook.xlsx.writeBuffer());
+  }
+
+  /**
+   * Generate Swiss VAT report
+   */
+  async generateVatReport(
+    organizationId: string,
+    options: ExportOptions,
+  ): Promise<Buffer> {
+    const invoices = await this.prisma.invoice.findMany({
+      where: {
+        issuerOrgId: organizationId,
+        issueDate: { gte: options.periodStart, lte: options.periodEnd },
+        status: { notIn: ['DRAFT', 'CANCELLED'] },
+      },
+      include: {
+        lineItems: { include: { taxRate: true } },
+        taxBreakdown: true,
+      },
+    });
+
+    // Swiss VAT rates
+    const vatRates = {
+      'STANDARD': { rate: 8.1, taxable: 0, tax: 0 },
+      'REDUCED': { rate: 2.6, taxable: 0, tax: 0 },
+      'ACCOMMODATION': { rate: 3.8, taxable: 0, tax: 0 },
+      'EXEMPT': { rate: 0, taxable: 0, tax: 0 },
+    };
+
+    // Aggregate by tax rate
+    for (const invoice of invoices) {
+      for (const line of invoice.lineItems) {
+        const rate = Number(line.taxPercent || 0);
+        let category: string;
+        
+        if (rate >= 8) category = 'STANDARD';
+        else if (rate >= 3.5) category = 'ACCOMMODATION';
+        else if (rate > 0) category = 'REDUCED';
+        else category = 'EXEMPT';
+
+        vatRates[category].taxable += line.netPrice;
+        vatRates[category].tax += line.taxAmount;
+      }
+    }
+
+    // Generate report
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('MWST Abrechnung');
+
+    sheet.addRow(['MWST-Abrechnung / Décompte TVA']);
+    sheet.addRow([`Periode: ${options.periodStart.toLocaleDateString('de-CH')} - ${options.periodEnd.toLocaleDateString('de-CH')}`]);
+    sheet.addRow([]);
+    sheet.addRow(['Steuersatz', 'Umsatz (CHF)', 'MWST (CHF)']);
+    
+    sheet.addRow(['Normalsatz (8.1%)', vatRates.STANDARD.taxable / 100, vatRates.STANDARD.tax / 100]);
+    sheet.addRow(['Reduzierter Satz (2.6%)', vatRates.REDUCED.taxable / 100, vatRates.REDUCED.tax / 100]);
+    sheet.addRow(['Beherbergung (3.8%)', vatRates.ACCOMMODATION.taxable / 100, vatRates.ACCOMMODATION.tax / 100]);
+    sheet.addRow(['Steuerbefreit (0%)', vatRates.EXEMPT.taxable / 100, 0]);
+    sheet.addRow([]);
+    
+    const totalTaxable = Object.values(vatRates).reduce((sum, v) => sum + v.taxable, 0);
+    const totalTax = Object.values(vatRates).reduce((sum, v) => sum + v.tax, 0);
+    
+    sheet.addRow(['TOTAL', totalTaxable / 100, totalTax / 100]);
+
+    return Buffer.from(await workbook.xlsx.writeBuffer());
+  }
+
+  /**
+   * Generate accounts receivable aging report
+   */
+  async generateAgingReport(
+    organizationId: string,
+    asOfDate: Date = new Date(),
+  ): Promise<Buffer> {
+    const openInvoices = await this.prisma.invoice.findMany({
+      where: {
+        issuerOrgId: organizationId,
+        status: { in: ['SENT', 'VIEWED', 'PARTIALLY_PAID', 'OVERDUE'] },
+        balanceDue: { gt: 0 },
+      },
+      include: { recipientOrg: true },
+    });
+
+    // Calculate age buckets
+    const buckets = {
+      current: { invoices: [], total: 0 },
+      '1-30': { invoices: [], total: 0 },
+      '31-60': { invoices: [], total: 0 },
+      '61-90': { invoices: [], total: 0 },
+      '90+': { invoices: [], total: 0 },
+    };
+
+    for (const invoice of openInvoices) {
+      const daysPastDue = Math.floor(
+        (asOfDate.getTime() - invoice.dueDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      let bucket: string;
+      if (daysPastDue <= 0) bucket = 'current';
+      else if (daysPastDue <= 30) bucket = '1-30';
+      else if (daysPastDue <= 60) bucket = '31-60';
+      else if (daysPastDue <= 90) bucket = '61-90';
+      else bucket = '90+';
+
+      buckets[bucket].invoices.push(invoice);
+      buckets[bucket].total += invoice.balanceDue;
+    }
+
+    // Generate Excel report
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Aging Report');
+
+    // Summary section
+    sheet.addRow(['Accounts Receivable Aging Report']);
+    sheet.addRow([`As of: ${asOfDate.toLocaleDateString('de-CH')}`]);
+    sheet.addRow([]);
+    sheet.addRow(['Age Bucket', 'Amount (CHF)', '% of Total']);
+    
+    const grandTotal = Object.values(buckets).reduce((sum, b) => sum + b.total, 0);
+    
+    for (const [bucket, data] of Object.entries(buckets)) {
+      const pct = grandTotal > 0 ? (data.total / grandTotal * 100).toFixed(1) : '0.0';
+      sheet.addRow([bucket, data.total / 100, `${pct}%`]);
+    }
+    
+    sheet.addRow([]);
+    sheet.addRow(['TOTAL', grandTotal / 100, '100%']);
+
+    // Detail section
+    sheet.addRow([]);
+    sheet.addRow(['DETAIL BY INVOICE']);
+    sheet.addRow(['Invoice #', 'Customer', 'Invoice Date', 'Due Date', 'Days Overdue', 'Balance']);
+
+    for (const invoice of openInvoices) {
+      const daysOverdue = Math.max(0, Math.floor(
+        (asOfDate.getTime() - invoice.dueDate.getTime()) / (1000 * 60 * 60 * 24)
+      ));
+      
+      sheet.addRow([
+        invoice.invoiceNumber,
+        invoice.recipientOrg.name,
+        invoice.issueDate,
+        invoice.dueDate,
+        daysOverdue,
+        invoice.balanceDue / 100,
+      ]);
+    }
+
+    return Buffer.from(await workbook.xlsx.writeBuffer());
+  }
+
+  /**
+   * Create secure shareable link for export
+   */
+  async createShareableLink(
+    exportId: string,
+    options: ShareOptions,
+  ): Promise<{ url: string; password?: string }> {
+    const token = randomBytes(32).toString('hex');
+    const password = options.requirePassword 
+      ? this.generateReadablePassword() 
+      : null;
+
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + (options.expiryDays || 7));
+
+    await this.prisma.accountantExport.update({
+      where: { id: exportId },
+      data: {
+        shareToken: token,
+        shareExpiry: expiry,
+        sharePassword: password ? await bcrypt.hash(password, 10) : null,
+        maxDownloads: options.maxDownloads,
+      },
+    });
+
+    const url = `${process.env.APP_URL}/exports/download/${token}`;
+
+    return { url, password };
+  }
+
+  /**
+   * Generate human-readable password for exports
+   */
+  private generateReadablePassword(): string {
+    const adjectives = ['Swift', 'Bright', 'Clear', 'Fresh', 'Smart'];
+    const nouns = ['Alpine', 'Summit', 'River', 'Forest', 'Valley'];
+    const numbers = Math.floor(Math.random() * 900) + 100;
+    
+    return `${adjectives[Math.floor(Math.random() * 5)]}${nouns[Math.floor(Math.random() * 5)]}${numbers}`;
+  }
+
+  /**
+   * Process scheduled exports (runs daily at 6 AM)
+   */
+  @Cron('0 6 * * *', { timeZone: 'Europe/Zurich' })
+  async processScheduledExports() {
+    const today = new Date();
+    
+    const dueExports = await this.prisma.scheduledExport.findMany({
+      where: {
+        enabled: true,
+        nextRunAt: { lte: today },
+      },
+      include: { organization: true },
+    });
+
+    for (const scheduled of dueExports) {
+      try {
+        // Calculate period based on frequency
+        const period = this.calculateExportPeriod(scheduled.frequency);
+        
+        // Generate export
+        const exportJob = await this.createExport({
+          organizationId: scheduled.organizationId,
+          exportType: scheduled.exportType,
+          format: scheduled.format,
+          periodStart: period.start,
+          periodEnd: period.end,
+        });
+
+        // Create shareable link
+        const { url, password } = await this.createShareableLink(exportJob.id, {
+          requirePassword: scheduled.includePassword,
+          expiryDays: 30,
+        });
+
+        // Email to accountant
+        await this.emailService.sendEmail({
+          to: scheduled.recipientEmail,
+          template: 'scheduled_export_ready',
+          data: {
+            organizationName: scheduled.organization.name,
+            exportName: scheduled.name,
+            periodStart: period.start.toLocaleDateString('de-CH'),
+            periodEnd: period.end.toLocaleDateString('de-CH'),
+            downloadUrl: url,
+            password: password,
+            expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('de-CH'),
+          },
+        });
+
+        // Update next run
+        await this.prisma.scheduledExport.update({
+          where: { id: scheduled.id },
+          data: {
+            lastRunAt: new Date(),
+            nextRunAt: this.calculateNextRunDate(scheduled.frequency, scheduled.dayOfMonth),
+          },
+        });
+      } catch (error) {
+        this.logger.error(`Failed scheduled export ${scheduled.id}:`, error);
+      }
+    }
+  }
+}
+```
+
+### Admin UI for Exports
+
+```tsx
+// admin/src/pages/invoicing/ExportCenter.tsx
+const ExportCenter: React.FC = () => {
+  const [exportType, setExportType] = useState<ExportType>('INVOICE_REGISTER');
+  const [format, setFormat] = useState<ExportFormat>('XLSX');
+  const [dateRange, setDateRange] = useState<DateRange>({
+    start: startOfMonth(new Date()),
+    end: endOfMonth(new Date()),
+  });
+
+  const generateExport = async () => {
+    const result = await exportService.createExport({
+      exportType,
+      format,
+      periodStart: dateRange.start,
+      periodEnd: dateRange.end,
+    });
+    
+    // Show share dialog
+    setExportResult(result);
+    setShowShareDialog(true);
+  };
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Export Center</h1>
+      
+      {/* Quick export buttons */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <QuickExportCard
+          title="Monthly Package"
+          description="Complete invoice, payment & VAT reports"
+          icon={<Package />}
+          onClick={() => generateQuickExport('MONTHLY_PACKAGE')}
+        />
+        <QuickExportCard
+          title="VAT Report"
+          description="Swiss MWST breakdown by rate"
+          icon={<Receipt />}
+          onClick={() => generateQuickExport('VAT_REPORT')}
+        />
+        <QuickExportCard
+          title="Aging Report"
+          description="Outstanding receivables by age"
+          icon={<Clock />}
+          onClick={() => generateQuickExport('AGING_REPORT')}
+        />
+      </div>
+
+      {/* Custom export builder */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Custom Export</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Export Type</Label>
+              <Select value={exportType} onValueChange={setExportType}>
+                <SelectItem value="INVOICE_REGISTER">Invoice Register</SelectItem>
+                <SelectItem value="DETAILED_TRANSACTIONS">Line Item Details</SelectItem>
+                <SelectItem value="PAYMENT_JOURNAL">Payment Journal</SelectItem>
+                <SelectItem value="VAT_REPORT">VAT Report</SelectItem>
+                <SelectItem value="AGING_REPORT">Aging Report</SelectItem>
+              </Select>
+            </div>
+            
+            <div>
+              <Label>Format</Label>
+              <Select value={format} onValueChange={setFormat}>
+                <SelectItem value="XLSX">Excel (.xlsx)</SelectItem>
+                <SelectItem value="CSV">CSV</SelectItem>
+                <SelectItem value="PDF">PDF Report</SelectItem>
+                <SelectItem value="DATEV">DATEV Format</SelectItem>
+              </Select>
+            </div>
+            
+            <div className="col-span-2">
+              <Label>Period</Label>
+              <DateRangePicker value={dateRange} onChange={setDateRange} />
+            </div>
+          </div>
+          
+          <Button className="mt-4" onClick={generateExport}>
+            <Download className="w-4 h-4 mr-2" />
+            Generate Export
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Scheduled exports */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Scheduled Exports for Accountant</CardTitle>
+          <CardDescription>
+            Automatically generate and email reports to your accountant
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScheduledExportsList />
+          <Button variant="outline" className="mt-4">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Scheduled Export
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Share dialog */}
+      <ShareExportDialog
+        open={showShareDialog}
+        export={exportResult}
+        onClose={() => setShowShareDialog(false)}
+      />
+    </div>
+  );
+};
+
+// Share dialog component
+const ShareExportDialog: React.FC<ShareExportDialogProps> = ({
+  open,
+  export: exportData,
+  onClose,
+}) => {
+  const [shareUrl, setShareUrl] = useState('');
+  const [password, setPassword] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const createLink = async (withPassword: boolean) => {
+    const result = await exportService.createShareableLink(exportData.id, {
+      requirePassword: withPassword,
+      expiryDays: 7,
+    });
+    setShareUrl(result.url);
+    setPassword(result.password || '');
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Share Export with Accountant</DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-4">
+          {/* Direct download */}
+          <Button className="w-full" onClick={() => downloadExport(exportData.id)}>
+            <Download className="w-4 h-4 mr-2" />
+            Download Now
+          </Button>
+
+          <Separator />
+
+          {/* Create shareable link */}
+          <div>
+            <Label>Create Shareable Link</Label>
+            <div className="flex gap-2 mt-2">
+              <Button variant="outline" onClick={() => createLink(false)}>
+                Without Password
+              </Button>
+              <Button variant="outline" onClick={() => createLink(true)}>
+                With Password
+              </Button>
+            </div>
+          </div>
+
+          {shareUrl && (
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <Label>Share Link (expires in 7 days)</Label>
+              <div className="flex gap-2 mt-1">
+                <Input value={shareUrl} readOnly />
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(shareUrl);
+                    setCopied(true);
+                  }}
+                >
+                  {copied ? <Check /> : <Copy />}
+                </Button>
+              </div>
+              
+              {password && (
+                <div className="mt-2">
+                  <Label>Password</Label>
+                  <div className="font-mono bg-white p-2 rounded border">
+                    {password}
+                  </div>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Share this password separately with your accountant
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <Separator />
+
+          {/* Email directly */}
+          <div>
+            <Label>Email to Accountant</Label>
+            <div className="flex gap-2 mt-2">
+              <Input
+                type="email"
+                placeholder="accountant@example.com"
+                value={accountantEmail}
+                onChange={(e) => setAccountantEmail(e.target.value)}
+              />
+              <Button onClick={sendToAccountant}>
+                <Send className="w-4 h-4 mr-2" />
+                Send
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+```
+
+### Export API Endpoints
+
+```
+# Export Generation
+POST   /api/exports                           # Create new export
+GET    /api/exports                           # List exports for organization
+GET    /api/exports/:id                       # Get export status/details
+GET    /api/exports/:id/download              # Download export file
+DELETE /api/exports/:id                       # Delete export
+
+# Sharing
+POST   /api/exports/:id/share                 # Create shareable link
+DELETE /api/exports/:id/share                 # Revoke share link
+POST   /api/exports/:id/email                 # Email export to recipient
+
+# Public download (token-based)
+GET    /api/exports/download/:token           # Download via share token
+POST   /api/exports/download/:token/verify    # Verify password
+
+# Scheduled Exports
+POST   /api/scheduled-exports                 # Create scheduled export
+GET    /api/scheduled-exports                 # List scheduled exports
+PATCH  /api/scheduled-exports/:id             # Update schedule
+DELETE /api/scheduled-exports/:id             # Delete schedule
+POST   /api/scheduled-exports/:id/run         # Force run now
+```
+
+---
+
 ## 12. API Endpoints
 
 ### 12.1 Invoice Endpoints (Full CRUD)
@@ -4875,7 +5714,30 @@ The implementation is divided into 10 phases over approximately 12-14 weeks:
   - [ ] Overdue count
 - [ ] Aging report
 - [ ] Revenue report
-- [ ] Export to CSV/Excel
+
+**Accountant Export System**
+
+- [ ] Export Center page
+  - [ ] Quick export buttons (Monthly, VAT, Aging)
+  - [ ] Custom export builder
+  - [ ] Date range selection
+  - [ ] Format selection (XLSX, CSV, PDF, DATEV)
+- [ ] Export generation
+  - [ ] Invoice register export
+  - [ ] Detailed transactions export
+  - [ ] Payment journal export
+  - [ ] Swiss VAT (MWST) report
+  - [ ] Accounts receivable aging
+  - [ ] Monthly/quarterly package bundles
+- [ ] Secure sharing
+  - [ ] Password-protected download links
+  - [ ] Expiring share URLs
+  - [ ] Download count tracking
+  - [ ] Email directly to accountant
+- [ ] Scheduled exports
+  - [ ] Weekly/monthly/quarterly schedules
+  - [ ] Auto-email to accountant
+  - [ ] Next run date tracking
 
 **Settings**
 
