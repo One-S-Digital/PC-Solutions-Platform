@@ -175,17 +175,20 @@ export class SettingsController {
       });
 
       if (userOrg?.organization) {
+        // PATCH semantics: only update contactEmail when provided.
         // Store contact email separately (does NOT touch auth email).
-        await tx.organizationContactInfo.upsert({
-          where: { organizationId: userOrg.organizationId },
-          create: {
-            organizationId: userOrg.organizationId,
-            contactEmail: settings.contactEmail,
-          },
-          update: {
-            contactEmail: settings.contactEmail,
-          },
-        });
+        if (settings.contactEmail !== undefined) {
+          await tx.organizationContactInfo.upsert({
+            where: { organizationId: userOrg.organizationId },
+            create: {
+              organizationId: userOrg.organizationId,
+              contactEmail: settings.contactEmail || null,
+            },
+            update: {
+              contactEmail: settings.contactEmail || null,
+            },
+          });
+        }
 
         // Update existing organization
         await tx.organization.update({
@@ -481,17 +484,20 @@ export class SettingsController {
       });
 
       if (userOrg?.organization) {
+        // PATCH semantics: only update contactEmail when provided.
         // Store contact email separately (does NOT touch auth email).
-        await tx.organizationContactInfo.upsert({
-          where: { organizationId: userOrg.organizationId },
-          create: {
-            organizationId: userOrg.organizationId,
-            contactEmail: settings.contactEmail,
-          },
-          update: {
-            contactEmail: settings.contactEmail,
-          },
-        });
+        if (settings.contactEmail !== undefined) {
+          await tx.organizationContactInfo.upsert({
+            where: { organizationId: userOrg.organizationId },
+            create: {
+              organizationId: userOrg.organizationId,
+              contactEmail: settings.contactEmail || null,
+            },
+            update: {
+              contactEmail: settings.contactEmail || null,
+            },
+          });
+        }
 
         // Update existing organization
         const updatedOrganization = await tx.organization.update({
@@ -664,17 +670,20 @@ export class SettingsController {
       });
 
       if (userOrg?.organization) {
+        // PATCH semantics: only update contactEmail when provided.
         // Store contact email separately (does NOT touch auth email).
-        await tx.organizationContactInfo.upsert({
-          where: { organizationId: userOrg.organizationId },
-          create: {
-            organizationId: userOrg.organizationId,
-            contactEmail: settings.contactEmail,
-          },
-          update: {
-            contactEmail: settings.contactEmail,
-          },
-        });
+        if (settings.contactEmail !== undefined) {
+          await tx.organizationContactInfo.upsert({
+            where: { organizationId: userOrg.organizationId },
+            create: {
+              organizationId: userOrg.organizationId,
+              contactEmail: settings.contactEmail || null,
+            },
+            update: {
+              contactEmail: settings.contactEmail || null,
+            },
+          });
+        }
 
         await tx.organization.update({
           where: { id: userOrg.organizationId },

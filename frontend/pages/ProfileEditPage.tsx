@@ -261,7 +261,7 @@ const ProfileEditPage: React.FC = () => {
           firstName: payload.firstName || '',
           lastName: payload.lastName || '',
           email: payload.email || currentUser.email,
-          contactEmail: payload.contactEmail || '',
+          contactEmail: payload.contactEmail || currentUser.email,
           phoneNumber: payload.phoneNumber || '',
           workExperience: payload.workExperience || '',
           education: payload.education || '',
