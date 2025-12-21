@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AppLoggerService } from '../common/logger.service';
 import { SubscriptionManagementService } from './subscription-management.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { resolveBillingPeriod } from './billing-period.util';
 
 @Injectable()
 export class ScheduledActionsService implements OnModuleInit {
@@ -170,7 +171,7 @@ export class ScheduledActionsService implements OnModuleInit {
             data: {
               status: 'ACTIVE',
               currentPeriodStart: now,
-              currentPeriodEnd: this.calculatePeriodEnd(now, subscription.plan.billingPeriod),
+              currentPeriodEnd: resolveBillingPeriod(subscription.plan.billingPeriod).addPeriod(now),
             },
           });
 
@@ -273,7 +274,32 @@ export class ScheduledActionsService implements OnModuleInit {
 
       for (const subscription of toRenew) {
         try {
-          const newPeriodEnd = this.calculatePeriodEnd(now, subscription.plan.billingPeriod);
+          const resolved = resolveBillingPeriod(subscription.plan.billingPeriod);
+
+          // Only recurring plans get auto-renewed.
+          // Fixed-term plans ("30 days", "1 year") expire when their end date passes.
+          if (!resolved.isRecurring) {
+            await this.prisma.subscription.update({
+              where: { id: subscription.id },
+              data: {
+                status: 'EXPIRED',
+              },
+            });
+
+            await this.prisma.subscriptionAction.create({
+              data: {
+                subscriptionId: subscription.id,
+                action: 'EXPIRE',
+                previousStatus: 'ACTIVE',
+                newStatus: 'EXPIRED',
+                performedBy: 'system',
+                reason: 'Fixed-term subscription period ended',
+              },
+            });
+            continue;
+          }
+
+          const newPeriodEnd = resolved.addPeriod(now);
 
           await this.prisma.subscription.update({
             where: { id: subscription.id },
@@ -343,29 +369,6 @@ export class ScheduledActionsService implements OnModuleInit {
     } catch (error) {
       this.logger.error(`Failed to process auto-resume: ${(error as Error).message}`);
     }
-  }
-
-  /**
-   * Calculate period end date based on billing period
-   */
-  private calculatePeriodEnd(startDate: Date, billingPeriod: string): Date {
-    const endDate = new Date(startDate);
-    
-    switch (billingPeriod) {
-      case 'monthly':
-        endDate.setMonth(endDate.getMonth() + 1);
-        break;
-      case 'quarterly':
-        endDate.setMonth(endDate.getMonth() + 3);
-        break;
-      case 'yearly':
-        endDate.setFullYear(endDate.getFullYear() + 1);
-        break;
-      default:
-        endDate.setMonth(endDate.getMonth() + 1);
-    }
-    
-    return endDate;
   }
 
   /**
