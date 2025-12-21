@@ -9,6 +9,13 @@ interface MirrorRolePayload {
   role: string;
 }
 
+interface EmailSyncPayload {
+  clerkId: string;
+  newEmail: string;
+  errorMessage?: string;
+  attemptedAt?: string;
+}
+
 @Injectable()
 export class OutboxWorker {
   private readonly logger = new Logger(OutboxWorker.name);
@@ -60,6 +67,8 @@ export class OutboxWorker {
   private async processJob(job: { topic: string; payload: any }) {
     if (job.topic === 'mirror.role') {
       await this.mirrorRoleToClerk(job.payload as MirrorRolePayload);
+    } else if (job.topic === 'clerk.email.sync') {
+      await this.syncEmailToClerk(job.payload as EmailSyncPayload);
     } else {
       this.logger.warn(`Unknown outbox topic: ${job.topic}`);
     }
@@ -87,6 +96,55 @@ export class OutboxWorker {
         return; // Don't throw error for non-existent users
       }
       throw error; // Re-throw other errors
+    }
+  }
+
+  /**
+   * Sync email to Clerk authentication provider (retry handler for outbox).
+   * This is called when the initial sync failed and was queued for retry.
+   */
+  private async syncEmailToClerk(payload: EmailSyncPayload) {
+    const { clerkId, newEmail } = payload;
+    
+    this.logger.log(`📧 [OUTBOX] Retrying email sync to Clerk: ${clerkId} -> ${newEmail}`);
+    
+    try {
+      // First check if user exists in Clerk
+      const clerkUser = await this.clerk.users.getUser(clerkId);
+      
+      // Check if the new email already exists for this user
+      const existingEmailAddress = clerkUser.emailAddresses?.find(
+        (ea: any) => ea.emailAddress.toLowerCase() === newEmail.toLowerCase()
+      );
+      
+      if (existingEmailAddress) {
+        // Email already exists, just make sure it's set as primary
+        if (clerkUser.primaryEmailAddressId !== existingEmailAddress.id) {
+          this.logger.log(`📧 [OUTBOX] Setting existing email as primary for ${clerkId}`);
+          await this.clerk.users.updateUser(clerkId, {
+            primaryEmailAddressId: existingEmailAddress.id,
+          });
+        } else {
+          this.logger.log(`📧 [OUTBOX] Email ${newEmail} is already the primary email for ${clerkId}`);
+        }
+      } else {
+        // Create a new email address for the user
+        this.logger.log(`📧 [OUTBOX] Creating new email address ${newEmail} for ${clerkId}`);
+        await this.clerk.emailAddresses.createEmailAddress({
+          userId: clerkId,
+          emailAddress: newEmail,
+          verified: true, // Admin updates should skip verification
+          primary: true, // Set as primary immediately
+        });
+      }
+      
+      this.logger.log(`✅ [OUTBOX] Successfully synced email for ${clerkId}`);
+    } catch (error: any) {
+      if (error?.status === 404) {
+        this.logger.warn(`User ${clerkId} not found in Clerk, skipping email sync`);
+        return; // Don't throw error for non-existent users
+      }
+      throw error; // Re-throw other errors for retry
     }
   }
 
