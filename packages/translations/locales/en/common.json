@@ -814,13 +814,13 @@
     "notProvided": "not Provided",
     "sections": {
       "contact": {
-        "title": "title"
+        "title": "Contact Information"
       },
       "metadata": {
-        "title": "title"
+        "title": "Organization Metadata"
       },
       "operations": {
-        "title": "title"
+        "title": "Operations"
       }
     },
     "title": "Title"

@@ -1,6 +1,6 @@
 {
   "actions": {
-    "editProfile": "edit Profile",
+    "editProfile": "Edit",
     "goToSettings": "Update Profile",
     "viewFullProfile": "view Full Profile",
     "viewOrganizationProfile": "view Organization Profile",
