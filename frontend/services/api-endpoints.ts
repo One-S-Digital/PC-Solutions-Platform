@@ -181,13 +181,34 @@ export const API_ENDPOINTS = {
     educator: "/settings/educator",
   },
 
-  // Billing & Subscriptions
+  // Billing & Subscriptions (Legacy - keeping for backward compatibility)
   billing: {
     subscriptions: "/billing/subscriptions",
     createSubscription: "/billing/subscriptions/create",
     cancelSubscription: (id: string) => `/billing/subscriptions/${id}/cancel`,
     updateBilling: "/billing/update",
     invoices: "/billing/invoices",
+  },
+
+  // Subscriptions - User facing subscription management
+  // Future-proofed for Stripe integration
+  subscriptions: {
+    /** Get current user's subscription status */
+    me: "/subscriptions/me",
+    /** Request a new subscription (manual flow) */
+    request: "/subscriptions/request",
+    /** Check feature access */
+    checkFeature: (featureKey: string) => `/subscriptions/feature/${featureKey}`,
+    /** Get available subscription plans (public) */
+    plans: "/subscriptions/plans",
+    /** Get specific plan details (public) */
+    plan: (id: string) => `/subscriptions/plans/${id}`,
+    /** 
+     * Future Stripe integration endpoints:
+     * - createCheckoutSession: "/subscriptions/checkout"
+     * - createPortalSession: "/subscriptions/portal"
+     * - webhooks are handled server-side
+     */
   },
 
   // Content Management (Admin) - Refactored System

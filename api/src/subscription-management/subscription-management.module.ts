@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import {
   SubscriptionManagementController,
   SubscriptionController,
+  UserSubscriptionController,
 } from './subscription-management.controller';
 import { SubscriptionManagementService } from './subscription-management.service';
 import { PricingService } from './pricing.service';
@@ -14,7 +15,11 @@ import { EmailNotificationModule } from '../email-notification/email-notificatio
 
 @Module({
   imports: [PrismaModule, EmailNotificationModule, AuthModule],
-  controllers: [SubscriptionManagementController, SubscriptionController],
+  controllers: [
+    SubscriptionManagementController,
+    SubscriptionController,
+    UserSubscriptionController,
+  ],
   providers: [
     SubscriptionManagementService,
     PricingService,

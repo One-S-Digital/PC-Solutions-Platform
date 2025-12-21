@@ -8,7 +8,7 @@ import Button from './components/ui/Button';
 import Card from './components/ui/Card';
 import {
   UsersIcon, LockClosedIcon, BellAlertIcon, WalletIcon, BuildingOfficeIcon,
-  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon
+  PhoneIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from './components/ui/Tabs';
@@ -18,7 +18,6 @@ import CompanyProfileSettings from './components/settings/sections/CompanyProfil
 import ContactBookingSettings from './components/settings/sections/ContactBookingSettings';
 import NotificationPreferencesSettings from './components/settings/sections/NotificationPreferencesSettings';
 import DefaultsSettings from './components/settings/sections/DefaultsSettings';
-import PromoCodeManagerSettings from './components/settings/sections/PromoCodeManagerSettings';
 import BillingSubscriptionSettings from './components/settings/sections/BillingSubscriptionSettings';
 import AnalyticsPreferencesSettings from './components/settings/sections/AnalyticsPreferencesSettings';
 import TeamPermissionsSettings from './components/settings/sections/TeamPermissionsSettings';
@@ -76,7 +75,6 @@ const SettingsPage: React.FC = () => {
     // Supplier Only
     { id: 'companyProfile', nameKey: 'common:settingsPage.companyProfile', icon: BuildingOfficeIcon, component: CompanyProfileSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
     { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
-    { id: 'promoCodes', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
     { id: 'analyticsPreferences', nameKey: 'common:settingsPage.analyticsPreferences', icon: ChartPieIcon, component: AnalyticsPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
   ];
   
