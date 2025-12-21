@@ -172,7 +172,7 @@ const EducatorProfileViewPage: React.FC = () => {
       {/* Social Media Style Header with Cover Image and Avatar */}
       <Card className="overflow-hidden p-0">
         {/* Cover Image Section */}
-        <div className="aspect-[4/1] bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
+        <div className="w-full aspect-[4/1] bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
           <div className="w-full h-full bg-gradient-to-br from-swiss-mint/30 via-swiss-teal/20 to-swiss-mint/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           

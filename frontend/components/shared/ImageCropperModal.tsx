@@ -10,24 +10,28 @@ export const IMAGE_CROP_PRESETS = {
     width: 256,
     height: 256,
     aspectRatio: 1,
+    useAspectRatio: false,
     labelKey: 'settings:imageCropper.presets.profilePhoto',
   },
   LOGO: {
     width: 256,
     height: 256,
     aspectRatio: 1,
+    useAspectRatio: false,
     labelKey: 'settings:imageCropper.presets.logo',
   },
   COVER: {
     width: 1600,
     height: 400,
     aspectRatio: 4,
+    useAspectRatio: true,
     labelKey: 'settings:imageCropper.presets.coverImage',
   },
   BANNER: {
     width: 1200,
     height: 400,
     aspectRatio: 3,
+    useAspectRatio: true,
     labelKey: 'settings:imageCropper.presets.banner',
   },
 } as const;

@@ -348,7 +348,7 @@ const PartnerDetailPage: React.FC = () => {
         </Button>
         
         <Card className="overflow-hidden animate-pulse">
-          <div className="aspect-[4/1] bg-gray-200" />
+          <div className="w-full aspect-[4/1] bg-gray-200" />
           <div className="p-6 pt-28 sm:pt-6 sm:pl-36">
             <div className="h-8 bg-gray-200 rounded w-1/3 mb-2" />
             <div className="h-4 bg-gray-200 rounded w-1/4 mb-4" />
@@ -426,7 +426,7 @@ const PartnerDetailPage: React.FC = () => {
 
       {/* Header Section */}
       <Card className="overflow-hidden">
-        <div className="aspect-[4/1] bg-gray-200 relative">
+        <div className="w-full aspect-[4/1] bg-gray-200 relative">
           <img 
             src={coverImageUrl} 
             alt={`${partner.name} cover`} 

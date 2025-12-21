@@ -40,7 +40,7 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
   };
 
   const presetConfig = IMAGE_CROP_PRESETS[cropPreset];
-  const usePresetAspectRatio = cropPreset === 'COVER' || cropPreset === 'BANNER';
+  const usePresetAspectRatio = presetConfig.useAspectRatio;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
