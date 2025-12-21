@@ -20,6 +20,7 @@ import {
   UpdatePlanDto,
 } from './dto';
 import { Prisma } from '@prisma/client';
+import { resolveBillingPeriod } from './billing-period.util';
 
 export interface SubscriptionPlan {
   id: string;
@@ -269,11 +270,18 @@ export class SubscriptionManagementService {
 
       const now = new Date();
       const startDate = data.startDate ? new Date(data.startDate) : now;
-      const durationMonths = data.durationMonths || (plan.billingPeriod === 'yearly' ? 12 : 1);
+      const resolved = resolveBillingPeriod(plan.billingPeriod);
 
       // Calculate period end
-      const periodEnd = new Date(startDate);
-      periodEnd.setMonth(periodEnd.getMonth() + durationMonths);
+      // - If durationMonths explicitly provided, keep existing behavior (months-based override)
+      // - Otherwise, use plan billingPeriod as real duration logic (days/months/years)
+      const periodEnd = data.durationMonths
+        ? (() => {
+            const d = new Date(startDate);
+            d.setUTCMonth(d.getUTCMonth() + data.durationMonths!);
+            return d;
+          })()
+        : resolved.addPeriod(startDate);
 
       // Calculate trial dates if applicable
       let trialStart: Date | null = null;
@@ -549,10 +557,14 @@ export class SubscriptionManagementService {
 
       const now = new Date();
       const startDate = data.startDate ? new Date(data.startDate) : now;
-      const periodMonths = data.periodMonths || (subscription.plan.billingPeriod === 'yearly' ? 12 : 1);
-
-      const periodEnd = new Date(startDate);
-      periodEnd.setMonth(periodEnd.getMonth() + periodMonths);
+      const resolved = resolveBillingPeriod(subscription.plan.billingPeriod);
+      const periodEnd = data.periodMonths
+        ? (() => {
+            const d = new Date(startDate);
+            d.setUTCMonth(d.getUTCMonth() + data.periodMonths!);
+            return d;
+          })()
+        : resolved.addPeriod(startDate);
 
       const updated = await this.prisma.subscription.update({
         where: { id },
@@ -1271,14 +1283,13 @@ export class SubscriptionManagementService {
       let monthlyRecurringRevenue = 0;
       for (const sub of activePlans) {
         const planPrice = sub.plan.price;
-        const billingPeriod = sub.plan.billingPeriod;
-        if (billingPeriod === 'yearly') {
-          monthlyRecurringRevenue += planPrice / 12;
-        } else if (billingPeriod === 'quarterly') {
-          monthlyRecurringRevenue += planPrice / 3;
-        } else {
-          monthlyRecurringRevenue += planPrice;
-        }
+        const resolved = resolveBillingPeriod(sub.plan.billingPeriod);
+
+        // Only count recurring plans towards MRR/ARR.
+        // Fixed-term plans ("30 days", "1 year") are not treated as recurring revenue.
+        if (!resolved.isRecurring) continue;
+
+        monthlyRecurringRevenue += planPrice / resolved.monthsPerPeriod;
       }
 
       const annualRecurringRevenue = monthlyRecurringRevenue * 12;
@@ -1500,6 +1511,8 @@ export class SubscriptionManagementService {
       });
 
       for (const subscription of subscriptions) {
+        const resolved = resolveBillingPeriod(subscription.plan.billingPeriod);
+
         if (subscription.cancelAtPeriodEnd) {
           await this.prisma.subscription.update({
             where: { id: subscription.id },
@@ -1508,24 +1521,28 @@ export class SubscriptionManagementService {
               canceledAt: now,
             },
           });
-        } else {
-          const newPeriodEnd = new Date(now);
-          if (subscription.plan.billingPeriod === 'monthly') {
-            newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
-          } else if (subscription.plan.billingPeriod === 'quarterly') {
-            newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 3);
-          } else {
-            newPeriodEnd.setFullYear(newPeriodEnd.getFullYear() + 1);
-          }
+          continue;
+        }
 
+        // Non-recurring plans end when their period ends.
+        if (!resolved.isRecurring) {
           await this.prisma.subscription.update({
             where: { id: subscription.id },
             data: {
-              currentPeriodStart: now,
-              currentPeriodEnd: newPeriodEnd,
+              status: 'EXPIRED',
             },
           });
+          continue;
         }
+
+        // Recurring plans: advance one period.
+        await this.prisma.subscription.update({
+          where: { id: subscription.id },
+          data: {
+            currentPeriodStart: now,
+            currentPeriodEnd: resolved.addPeriod(now),
+          },
+        });
       }
 
       this.logger.log(`Processed billing cycle for ${subscriptions.length} subscriptions`);

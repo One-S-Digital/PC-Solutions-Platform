@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T14:20:43.979Z",
+  "timestamp": "2025-12-21T15:34:24.821Z",
   "totalKeys": 1857,
   "byNamespace": {
     "common": 2683,
@@ -3331,169 +3331,169 @@
     {
       "key": "common:errors.genericErrorTitle",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 172,
+      "line": 173,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorTitle",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 172,
+      "line": 173,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 173,
+      "line": 174,
       "context": "message: t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 173,
+      "line": 174,
       "context": "message: t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "notifications.successTitle",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 294,
+      "line": 296,
       "context": "title: t('notifications.successTitle', 'Success'),"
     },
     {
       "key": "notifications.settingsUpdated",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 295,
+      "line": 297,
       "context": "message: t('notifications.settingsUpdated', 'Profile updated successfully'),"
     },
     {
       "key": "common:errors.genericErrorTitle",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 310,
+      "line": 312,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorTitle",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 310,
+      "line": 312,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 311,
+      "line": 313,
       "context": "message: t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 311,
+      "line": 313,
       "context": "message: t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "settings:page.loading",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 329,
+      "line": 331,
       "context": "<p className=\"text-gray-600\">{t('settings:page.loading', 'Loading...')}</p>"
     },
     {
       "key": "settings:page.loading",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 329,
+      "line": 331,
       "context": "<p className=\"text-gray-600\">{t('settings:page.loading', 'Loading...')}</p>"
     },
     {
       "key": "common:settingsPage.profile",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 351,
+      "line": 353,
       "context": "label: t('common:settingsPage.profile', 'Profile'),"
     },
     {
       "key": "common:settingsPage.profile",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 351,
+      "line": 353,
       "context": "label: t('common:settingsPage.profile', 'Profile'),"
     },
     {
       "key": "settings:availability.title",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 355,
+      "line": 357,
       "context": "label: t('settings:availability.title', 'Availability Schedule'),"
     },
     {
       "key": "settings:availability.title",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 355,
+      "line": 357,
       "context": "label: t('settings:availability.title', 'Availability Schedule'),"
     },
     {
       "key": "common:errors.unsupportedRole",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 370,
+      "line": 372,
       "context": "return <div className=\"p-6 text-center text-gray-600\">{t('common:errors.unsupportedRole', 'Unsupported role')}</div>;"
     },
     {
       "key": "common:errors.unsupportedRole",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 370,
+      "line": 372,
       "context": "return <div className=\"p-6 text-center text-gray-600\">{t('common:errors.unsupportedRole', 'Unsupported role')}</div>;"
     },
     {
       "key": "common:buttons.back",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 386,
+      "line": 388,
       "context": "{t('common:buttons.back', 'Back')}"
     },
     {
       "key": "common:buttons.back",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 386,
+      "line": 388,
       "context": "{t('common:buttons.back', 'Back')}"
     },
     {
       "key": "common:settingsPage.profile",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 389,
+      "line": 391,
       "context": "{t('common:settingsPage.profile', 'Edit Profile')}"
     },
     {
       "key": "common:settingsPage.profile",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 389,
+      "line": 391,
       "context": "{t('common:settingsPage.profile', 'Edit Profile')}"
     },
     {
       "key": "common:buttons.profileUpdated",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 396,
+      "line": 398,
       "context": "<span className=\"text-sm font-medium\">{t('common:buttons.profileUpdated', 'Profile updated!')}</span>"
     },
     {
       "key": "common:buttons.profileUpdated",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 396,
+      "line": 398,
       "context": "<span className=\"text-sm font-medium\">{t('common:buttons.profileUpdated', 'Profile updated!')}</span>"
     },
     {
       "key": "common:buttons.saving",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 406,
+      "line": 408,
       "context": "? `${t('common:buttons.saving', 'Saving')}...`"
     },
     {
       "key": "common:buttons.saving",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 406,
+      "line": 408,
       "context": "? `${t('common:buttons.saving', 'Saving')}...`"
     },
     {
       "key": "common:buttons.saveChanges",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 407,
+      "line": 409,
       "context": ": t('common:buttons.saveChanges', 'Save Changes')}"
     },
     {
       "key": "common:buttons.saveChanges",
       "file": "pages/ProfileEditPage.tsx",
-      "line": 407,
+      "line": 409,
       "context": ": t('common:buttons.saveChanges', 'Save Changes')}"
     },
     {
@@ -6989,6 +6989,186 @@
       "context": "{t('common:buttons.goBack')}"
     },
     {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 77,
+      "context": "const priceLabel = t('common:common.perMonth');"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 77,
+      "context": "const priceLabel = t('common:common.perMonth');"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 83,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 83,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 83,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 83,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 95,
+      "context": "const priceLabel = t('common:common.perMonth');"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 95,
+      "context": "const priceLabel = t('common:common.perMonth');"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 101,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 101,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 101,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 101,
+      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 114,
+      "context": "monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 114,
+      "context": "monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 115,
+      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 115,
+      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 115,
+      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 115,
+      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 120,
+      "context": "perMonth: t('common:common.perMonth'),"
+    },
+    {
+      "key": "common:common.perMonth",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 120,
+      "context": "perMonth: t('common:common.perMonth'),"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 121,
+      "context": "perYear: t('common:common.perYear'),"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 121,
+      "context": "perYear: t('common:common.perYear'),"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 122,
+      "context": "save10Percent: t('common:common.save10Percent')"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 122,
+      "context": "save10Percent: t('common:common.save10Percent')"
+    },
+    {
+      "key": "common:errors.noContactAvailable",
+      "file": "hooks/useOrganizationMessaging.ts",
+      "line": 31,
+      "context": "alert(t('common:errors.noContactAvailable', 'No contact available for this organization.'));"
+    },
+    {
+      "key": "common:errors.noContactAvailable",
+      "file": "hooks/useOrganizationMessaging.ts",
+      "line": 31,
+      "context": "alert(t('common:errors.noContactAvailable', 'No contact available for this organization.'));"
+    },
+    {
+      "key": "common:errors.messagingFailed",
+      "file": "hooks/useOrganizationMessaging.ts",
+      "line": 46,
+      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
+    },
+    {
+      "key": "common:errors.messagingFailed",
+      "file": "hooks/useOrganizationMessaging.ts",
+      "line": 46,
+      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
+    },
+    {
+      "key": "common:errors.downloadFailed",
+      "file": "hooks/useAuthenticatedApi.ts",
+      "line": 235,
+      "context": "error instanceof Error ? error.message : t('common:errors.downloadFailed'),"
+    },
+    {
+      "key": "common:errors.downloadFailed",
+      "file": "hooks/useAuthenticatedApi.ts",
+      "line": 235,
+      "context": "error instanceof Error ? error.message : t('common:errors.downloadFailed'),"
+    },
+    {
       "key": "notificationContext.useNotificationsError",
       "file": "contexts/NotificationContext.tsx",
       "line": 48,
@@ -7317,186 +7497,6 @@
       "file": "components/DocumentPreviewModal.tsx",
       "line": 691,
       "context": "<p className=\"text-gray-600 text-sm\">{t('common:loading', 'Loading preview...')}</p>"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 77,
-      "context": "const priceLabel = t('common:common.perMonth');"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 77,
-      "context": "const priceLabel = t('common:common.perMonth');"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 95,
-      "context": "const priceLabel = t('common:common.perMonth');"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 95,
-      "context": "const priceLabel = t('common:common.perMonth');"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 114,
-      "context": "monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 114,
-      "context": "monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
-      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
-      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
-      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
-      "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 120,
-      "context": "perMonth: t('common:common.perMonth'),"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 120,
-      "context": "perMonth: t('common:common.perMonth'),"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 121,
-      "context": "perYear: t('common:common.perYear'),"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 121,
-      "context": "perYear: t('common:common.perYear'),"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 122,
-      "context": "save10Percent: t('common:common.save10Percent')"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 122,
-      "context": "save10Percent: t('common:common.save10Percent')"
-    },
-    {
-      "key": "common:errors.noContactAvailable",
-      "file": "hooks/useOrganizationMessaging.ts",
-      "line": 31,
-      "context": "alert(t('common:errors.noContactAvailable', 'No contact available for this organization.'));"
-    },
-    {
-      "key": "common:errors.noContactAvailable",
-      "file": "hooks/useOrganizationMessaging.ts",
-      "line": 31,
-      "context": "alert(t('common:errors.noContactAvailable', 'No contact available for this organization.'));"
-    },
-    {
-      "key": "common:errors.messagingFailed",
-      "file": "hooks/useOrganizationMessaging.ts",
-      "line": 46,
-      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
-    },
-    {
-      "key": "common:errors.messagingFailed",
-      "file": "hooks/useOrganizationMessaging.ts",
-      "line": 46,
-      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
-    },
-    {
-      "key": "common:errors.downloadFailed",
-      "file": "hooks/useAuthenticatedApi.ts",
-      "line": 235,
-      "context": "error instanceof Error ? error.message : t('common:errors.downloadFailed'),"
-    },
-    {
-      "key": "common:errors.downloadFailed",
-      "file": "hooks/useAuthenticatedApi.ts",
-      "line": 235,
-      "context": "error instanceof Error ? error.message : t('common:errors.downloadFailed'),"
     },
     {
       "key": "common:errors.fetchFailed",
@@ -9197,498 +9197,6 @@
       "context": "<th className=\"px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase\">{t('dashboard:supplierAnalyticsPage.table.estRevenueImpact')}</th>"
     },
     {
-      "key": "common:loading",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 135,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 135,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "profile:organization.notFound",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 146,
-      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
-    },
-    {
-      "key": "profile:organization.notFound",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 146,
-      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 149,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 149,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 152,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 152,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 164,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 164,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 218,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 218,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 111,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 111,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "profile:educator.notFound",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 125,
-      "context": "{t('profile:educator.notFound', 'Educator not found')}"
-    },
-    {
-      "key": "profile:educator.notFound",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 125,
-      "context": "{t('profile:educator.notFound', 'Educator not found')}"
-    },
-    {
-      "key": "profile:educator.notFoundMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 128,
-      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
-    },
-    {
-      "key": "profile:educator.notFoundMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 128,
-      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 133,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 133,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 136,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 136,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 169,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 169,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 223,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 223,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 231,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 231,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "profile:educator.bio",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 242,
-      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
-    },
-    {
-      "key": "profile:educator.bio",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 242,
-      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
-    },
-    {
-      "key": "profile:educator.experience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 247,
-      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
-    },
-    {
-      "key": "profile:educator.experience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 247,
-      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
-    },
-    {
-      "key": "profile:educator.noExperience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 268,
-      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
-    },
-    {
-      "key": "profile:educator.noExperience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 268,
-      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
-    },
-    {
-      "key": "profile:educator.education",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 274,
-      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
-    },
-    {
-      "key": "profile:educator.education",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 274,
-      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
-    },
-    {
-      "key": "profile:educator.graduated",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 282,
-      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
-    },
-    {
-      "key": "profile:educator.graduated",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 282,
-      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
-    },
-    {
-      "key": "profile:educator.noEducation",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 289,
-      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
-    },
-    {
-      "key": "profile:educator.noEducation",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 289,
-      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
-    },
-    {
-      "key": "profile:educator.certifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 295,
-      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.certifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 295,
-      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.issued",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 303,
-      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
-    },
-    {
-      "key": "profile:educator.issued",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 303,
-      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
-    },
-    {
-      "key": "profile:educator.expires",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 304,
-      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
-    },
-    {
-      "key": "profile:educator.expires",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 304,
-      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
-    },
-    {
-      "key": "profile:educator.viewCredential",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 313,
-      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
-    },
-    {
-      "key": "profile:educator.viewCredential",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 313,
-      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
-    },
-    {
-      "key": "profile:educator.noCertifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 320,
-      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
-    },
-    {
-      "key": "profile:educator.noCertifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 320,
-      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
-    },
-    {
-      "key": "profile:educator.skills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 328,
-      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.skills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 328,
-      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.noSkills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 341,
-      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
-    },
-    {
-      "key": "profile:educator.noSkills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 341,
-      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
-    },
-    {
-      "key": "profile:educator.availability",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 348,
-      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
-    },
-    {
-      "key": "profile:educator.availability",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 348,
-      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
-    },
-    {
-      "key": "profile:educator.preferredDays",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 353,
-      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.preferredDays",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 353,
-      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 354,
-      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 354,
-      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.preferredTimes",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 357,
-      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.preferredTimes",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 357,
-      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 358,
-      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 358,
-      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.contractType",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 361,
-      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.contractType",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 361,
-      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 362,
-      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 362,
-      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.preferredAgeGroups",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 365,
-      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.preferredAgeGroups",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 365,
-      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 367,
-      "context": "t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 367,
-      "context": "t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.documents",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 372,
-      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
-    },
-    {
-      "key": "profile:educator.documents",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 372,
-      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
-    },
-    {
-      "key": "profile:educator.noDocuments",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 392,
-      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
-    },
-    {
-      "key": "profile:educator.noDocuments",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 392,
-      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
-    },
-    {
-      "key": "profile:educator.contact",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 399,
-      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
-    },
-    {
-      "key": "profile:educator.contact",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 399,
-      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 428,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 428,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 432,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 432,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
       "key": "common:errors.fetchFailed",
       "file": "pages/service-provider/ServiceProviderSupportPage.tsx",
       "line": 92,
@@ -10887,6 +10395,498 @@
       "file": "pages/service-provider/ServiceProviderAnalyticsPage.tsx",
       "line": 68,
       "context": "<th className=\"px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase\">{t('supplierAnalyticsPage.table.estRevenueImpact')}</th>"
+    },
+    {
+      "key": "common:loading",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 135,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
+    },
+    {
+      "key": "common:loading",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 135,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
+    },
+    {
+      "key": "profile:organization.notFound",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 146,
+      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
+    },
+    {
+      "key": "profile:organization.notFound",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 146,
+      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 149,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 149,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 152,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 152,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 164,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 164,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 218,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 218,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:loading",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 111,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
+    },
+    {
+      "key": "common:loading",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 111,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
+    },
+    {
+      "key": "profile:educator.notFound",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 125,
+      "context": "{t('profile:educator.notFound', 'Educator not found')}"
+    },
+    {
+      "key": "profile:educator.notFound",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 125,
+      "context": "{t('profile:educator.notFound', 'Educator not found')}"
+    },
+    {
+      "key": "profile:educator.notFoundMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 128,
+      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
+    },
+    {
+      "key": "profile:educator.notFoundMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 128,
+      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 133,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 133,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 136,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 136,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 169,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 169,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 223,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 223,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 231,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 231,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "profile:educator.bio",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 242,
+      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
+    },
+    {
+      "key": "profile:educator.bio",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 242,
+      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
+    },
+    {
+      "key": "profile:educator.experience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 247,
+      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
+    },
+    {
+      "key": "profile:educator.experience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 247,
+      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
+    },
+    {
+      "key": "profile:educator.noExperience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 268,
+      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
+    },
+    {
+      "key": "profile:educator.noExperience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 268,
+      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
+    },
+    {
+      "key": "profile:educator.education",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 274,
+      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
+    },
+    {
+      "key": "profile:educator.education",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 274,
+      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
+    },
+    {
+      "key": "profile:educator.graduated",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 282,
+      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
+    },
+    {
+      "key": "profile:educator.graduated",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 282,
+      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
+    },
+    {
+      "key": "profile:educator.noEducation",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 289,
+      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
+    },
+    {
+      "key": "profile:educator.noEducation",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 289,
+      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
+    },
+    {
+      "key": "profile:educator.certifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 295,
+      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.certifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 295,
+      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.issued",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 303,
+      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
+    },
+    {
+      "key": "profile:educator.issued",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 303,
+      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
+    },
+    {
+      "key": "profile:educator.expires",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 304,
+      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
+    },
+    {
+      "key": "profile:educator.expires",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 304,
+      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
+    },
+    {
+      "key": "profile:educator.viewCredential",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 313,
+      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
+    },
+    {
+      "key": "profile:educator.viewCredential",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 313,
+      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
+    },
+    {
+      "key": "profile:educator.noCertifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 320,
+      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
+    },
+    {
+      "key": "profile:educator.noCertifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 320,
+      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
+    },
+    {
+      "key": "profile:educator.skills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 328,
+      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.skills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 328,
+      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.noSkills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 341,
+      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
+    },
+    {
+      "key": "profile:educator.noSkills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 341,
+      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
+    },
+    {
+      "key": "profile:educator.availability",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 348,
+      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
+    },
+    {
+      "key": "profile:educator.availability",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 348,
+      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
+    },
+    {
+      "key": "profile:educator.preferredDays",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 353,
+      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.preferredDays",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 353,
+      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 354,
+      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 354,
+      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.preferredTimes",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 357,
+      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.preferredTimes",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 357,
+      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 358,
+      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 358,
+      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.contractType",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 361,
+      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.contractType",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 361,
+      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 362,
+      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 362,
+      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.preferredAgeGroups",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 365,
+      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.preferredAgeGroups",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 365,
+      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 367,
+      "context": "t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 367,
+      "context": "t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.documents",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 372,
+      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
+    },
+    {
+      "key": "profile:educator.documents",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 372,
+      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
+    },
+    {
+      "key": "profile:educator.noDocuments",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 392,
+      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
+    },
+    {
+      "key": "profile:educator.noDocuments",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 392,
+      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
+    },
+    {
+      "key": "profile:educator.contact",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 399,
+      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
+    },
+    {
+      "key": "profile:educator.contact",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 399,
+      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 428,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 428,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 432,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 432,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
       "key": "stockStatus.instock",
@@ -15767,6 +15767,318 @@
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
     },
     {
+      "key": "renameFileModal.title",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 40,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('renameFileModal.title')}</h2>"
+    },
+    {
+      "key": "renameFileModal.label",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 44,
+      "context": "<label htmlFor=\"fileName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('renameFileModal.label')}</label>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 56,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 56,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 57,
+      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 57,
+      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
+    },
+    {
+      "key": "settings:imageCropper.title",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 430,
+      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
+    },
+    {
+      "key": "settings:imageCropper.title",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 430,
+      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
+    },
+    {
+      "key": "settings:imageCropper.subtitle",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 433,
+      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
+    },
+    {
+      "key": "settings:imageCropper.subtitle",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 433,
+      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
+    },
+    {
+      "key": "settings:imageCropper.targetSize",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 475,
+      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
+    },
+    {
+      "key": "settings:imageCropper.targetSize",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 475,
+      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
+    },
+    {
+      "key": "settings:imageCropper.dragHint",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 482,
+      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
+    },
+    {
+      "key": "settings:imageCropper.dragHint",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 482,
+      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
+    },
+    {
+      "key": "settings:imageCropper.qualityNote",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 490,
+      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
+    },
+    {
+      "key": "settings:imageCropper.qualityNote",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 490,
+      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 498,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 498,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "settings:imageCropper.processing",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 506,
+      "context": "? t('settings:imageCropper.processing', 'Processing...')"
+    },
+    {
+      "key": "settings:imageCropper.processing",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 506,
+      "context": "? t('settings:imageCropper.processing', 'Processing...')"
+    },
+    {
+      "key": "settings:imageCropper.apply",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 507,
+      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
+    },
+    {
+      "key": "settings:imageCropper.apply",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 507,
+      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
+    },
+    {
+      "key": "fileUploadModal.title",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 101,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('fileUploadModal.title')}</h2>"
+    },
+    {
+      "key": "fileUploadModal.uploadFile",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 114,
+      "context": "<span>{t('fileUploadModal.uploadFile')}</span>"
+    },
+    {
+      "key": "fileUploadModal.dragAndDrop",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 117,
+      "context": "<p className=\"pl-1\">{t('fileUploadModal.dragAndDrop')}</p>"
+    },
+    {
+      "key": "fileUploadModal.fileTypes",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 119,
+      "context": "<p className=\"text-xs text-gray-500\">{t('fileUploadModal.fileTypes')}</p>"
+    },
+    {
+      "key": "fileUploadModal.uploadedFiles",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 125,
+      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
+    },
+    {
+      "key": "fileUploadModal.filesToUpload",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 125,
+      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 153,
+      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 153,
+      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "fileUploadModal.uploading",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 155,
+      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
+    },
+    {
+      "key": "fileUploadModal.uploadButton",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 155,
+      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
+    },
+    {
+      "key": "featureLock.title",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 21,
+      "context": "<h2 className=\"text-2xl font-bold text-swiss-charcoal mb-2\">{t('featureLock.title', { featureName })}</h2>"
+    },
+    {
+      "key": "featureLock.message",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 22,
+      "context": "<p className=\"text-gray-600 mb-6\">{t('featureLock.message', { requiredPlan })}</p>"
+    },
+    {
+      "key": "featureLock.upgradeButton",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 24,
+      "context": "{t('featureLock.upgradeButton')}"
+    },
+    {
+      "key": "errorBoundary.somethingWentWrong",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 55,
+      "context": "{t(\"errorBoundary.somethingWentWrong\")}"
+    },
+    {
+      "key": "errorBoundary.sorryMessage",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 58,
+      "context": "{t(\"errorBoundary.sorryMessage\")}"
+    },
+    {
+      "key": "errorBoundary.errorDetails",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 63,
+      "context": "{t(\"errorBoundary.errorDetails\")}"
+    },
+    {
+      "key": "errorBoundary.tryAgain",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 77,
+      "context": "{t(\"errorBoundary.tryAgain\")}"
+    },
+    {
+      "key": "errorBoundary.reloadPage",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 84,
+      "context": "{t(\"errorBoundary.reloadPage\")}"
+    },
+    {
+      "key": "activeClientToggle.confirmSave",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 35,
+      "context": "if (window.confirm(t('activeClientToggle.confirmSave'))) {"
+    },
+    {
+      "key": "activeClientToggle.saveSuccess.title",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 38,
+      "context": "title: t('activeClientToggle.saveSuccess.title'),"
+    },
+    {
+      "key": "activeClientToggle.saveSuccess.message",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 39,
+      "context": "message: t('activeClientToggle.saveSuccess.message'),"
+    },
+    {
+      "key": "activeClientToggle.title",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 49,
+      "context": "<h3 className=\"text-lg font-semibold text-amber-900 mb-2\">{t('activeClientToggle.title')}</h3>"
+    },
+    {
+      "key": "activeClientToggle.label",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 51,
+      "context": "<label htmlFor=\"activeClientToggle\" className=\"font-medium text-amber-800\">{t('activeClientToggle.label')}</label>"
+    },
+    {
+      "key": "activeClientToggle.reasonLabel",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 64,
+      "context": "<label htmlFor=\"clientReason\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.reasonLabel')}</label>"
+    },
+    {
+      "key": "placeholders.select",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 66,
+      "context": "<option value=\"\">{t('placeholders.select')}</option>"
+    },
+    {
+      "key": "activeClientToggle.noteLabel",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 73,
+      "context": "<label htmlFor=\"clientNote\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.noteLabel')}</label>"
+    },
+    {
+      "key": "activeClientToggle.notePlaceholder",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 81,
+      "context": "placeholder={t('activeClientToggle.notePlaceholder')}"
+    },
+    {
+      "key": "activeClientToggle.subtext",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 85,
+      "context": "<p className=\"text-xs text-gray-600 mt-2\">{t('activeClientToggle.subtext')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 87,
+      "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 87,
+      "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
       "key": "dashboard:productUploadModal.editTitle",
       "file": "components/supplier/ProductUploadModal.tsx",
       "line": 185,
@@ -16553,318 +16865,6 @@
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
-      "key": "renameFileModal.title",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 40,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('renameFileModal.title')}</h2>"
-    },
-    {
-      "key": "renameFileModal.label",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 44,
-      "context": "<label htmlFor=\"fileName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('renameFileModal.label')}</label>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 56,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 56,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 57,
-      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 57,
-      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
-    },
-    {
-      "key": "settings:imageCropper.title",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 426,
-      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
-    },
-    {
-      "key": "settings:imageCropper.title",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 426,
-      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
-    },
-    {
-      "key": "settings:imageCropper.subtitle",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 429,
-      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
-    },
-    {
-      "key": "settings:imageCropper.subtitle",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 429,
-      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
-    },
-    {
-      "key": "settings:imageCropper.targetSize",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 471,
-      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
-    },
-    {
-      "key": "settings:imageCropper.targetSize",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 471,
-      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
-    },
-    {
-      "key": "settings:imageCropper.dragHint",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 478,
-      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
-    },
-    {
-      "key": "settings:imageCropper.dragHint",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 478,
-      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
-    },
-    {
-      "key": "settings:imageCropper.qualityNote",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 486,
-      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
-    },
-    {
-      "key": "settings:imageCropper.qualityNote",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 486,
-      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 494,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 494,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "settings:imageCropper.processing",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 502,
-      "context": "? t('settings:imageCropper.processing', 'Processing...')"
-    },
-    {
-      "key": "settings:imageCropper.processing",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 502,
-      "context": "? t('settings:imageCropper.processing', 'Processing...')"
-    },
-    {
-      "key": "settings:imageCropper.apply",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 503,
-      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
-    },
-    {
-      "key": "settings:imageCropper.apply",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 503,
-      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
-    },
-    {
-      "key": "fileUploadModal.title",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 101,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('fileUploadModal.title')}</h2>"
-    },
-    {
-      "key": "fileUploadModal.uploadFile",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 114,
-      "context": "<span>{t('fileUploadModal.uploadFile')}</span>"
-    },
-    {
-      "key": "fileUploadModal.dragAndDrop",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 117,
-      "context": "<p className=\"pl-1\">{t('fileUploadModal.dragAndDrop')}</p>"
-    },
-    {
-      "key": "fileUploadModal.fileTypes",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 119,
-      "context": "<p className=\"text-xs text-gray-500\">{t('fileUploadModal.fileTypes')}</p>"
-    },
-    {
-      "key": "fileUploadModal.uploadedFiles",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 125,
-      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
-    },
-    {
-      "key": "fileUploadModal.filesToUpload",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 125,
-      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 153,
-      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 153,
-      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "fileUploadModal.uploading",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 155,
-      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
-    },
-    {
-      "key": "fileUploadModal.uploadButton",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 155,
-      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
-    },
-    {
-      "key": "featureLock.title",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 21,
-      "context": "<h2 className=\"text-2xl font-bold text-swiss-charcoal mb-2\">{t('featureLock.title', { featureName })}</h2>"
-    },
-    {
-      "key": "featureLock.message",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 22,
-      "context": "<p className=\"text-gray-600 mb-6\">{t('featureLock.message', { requiredPlan })}</p>"
-    },
-    {
-      "key": "featureLock.upgradeButton",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 24,
-      "context": "{t('featureLock.upgradeButton')}"
-    },
-    {
-      "key": "errorBoundary.somethingWentWrong",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 55,
-      "context": "{t(\"errorBoundary.somethingWentWrong\")}"
-    },
-    {
-      "key": "errorBoundary.sorryMessage",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 58,
-      "context": "{t(\"errorBoundary.sorryMessage\")}"
-    },
-    {
-      "key": "errorBoundary.errorDetails",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 63,
-      "context": "{t(\"errorBoundary.errorDetails\")}"
-    },
-    {
-      "key": "errorBoundary.tryAgain",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 77,
-      "context": "{t(\"errorBoundary.tryAgain\")}"
-    },
-    {
-      "key": "errorBoundary.reloadPage",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 84,
-      "context": "{t(\"errorBoundary.reloadPage\")}"
-    },
-    {
-      "key": "activeClientToggle.confirmSave",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 35,
-      "context": "if (window.confirm(t('activeClientToggle.confirmSave'))) {"
-    },
-    {
-      "key": "activeClientToggle.saveSuccess.title",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 38,
-      "context": "title: t('activeClientToggle.saveSuccess.title'),"
-    },
-    {
-      "key": "activeClientToggle.saveSuccess.message",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 39,
-      "context": "message: t('activeClientToggle.saveSuccess.message'),"
-    },
-    {
-      "key": "activeClientToggle.title",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 49,
-      "context": "<h3 className=\"text-lg font-semibold text-amber-900 mb-2\">{t('activeClientToggle.title')}</h3>"
-    },
-    {
-      "key": "activeClientToggle.label",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 51,
-      "context": "<label htmlFor=\"activeClientToggle\" className=\"font-medium text-amber-800\">{t('activeClientToggle.label')}</label>"
-    },
-    {
-      "key": "activeClientToggle.reasonLabel",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 64,
-      "context": "<label htmlFor=\"clientReason\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.reasonLabel')}</label>"
-    },
-    {
-      "key": "placeholders.select",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 66,
-      "context": "<option value=\"\">{t('placeholders.select')}</option>"
-    },
-    {
-      "key": "activeClientToggle.noteLabel",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 73,
-      "context": "<label htmlFor=\"clientNote\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.noteLabel')}</label>"
-    },
-    {
-      "key": "activeClientToggle.notePlaceholder",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 81,
-      "context": "placeholder={t('activeClientToggle.notePlaceholder')}"
-    },
-    {
-      "key": "activeClientToggle.subtext",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 85,
-      "context": "<p className=\"text-xs text-gray-600 mt-2\">{t('activeClientToggle.subtext')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 87,
-      "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 87,
-      "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
       "key": "common:errors.genericErrorTitle",
       "file": "components/settings/OrganizationProfileForm.tsx",
       "line": 80,
@@ -17547,6 +17547,630 @@
       "file": "components/service-provider/ServiceRequestDetailModal.tsx",
       "line": 95,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.title",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 52,
+      "context": "{t('recruitment:jobPostModal.workSchedule.title')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.title",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 52,
+      "context": "{t('recruitment:jobPostModal.workSchedule.title')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.expectedHours",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 58,
+      "context": "{t('recruitment:jobPostModal.workSchedule.expectedHours')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.expectedHours",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 58,
+      "context": "{t('recruitment:jobPostModal.workSchedule.expectedHours')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.hoursPerWeek",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 72,
+      "context": "{t('recruitment:jobPostModal.workSchedule.hoursPerWeek')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.hoursPerWeek",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 72,
+      "context": "{t('recruitment:jobPostModal.workSchedule.hoursPerWeek')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.preferredTimeSlot",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 80,
+      "context": "{t('recruitment:jobPostModal.workSchedule.preferredTimeSlot')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.preferredTimeSlot",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 80,
+      "context": "{t('recruitment:jobPostModal.workSchedule.preferredTimeSlot')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.preferredDays",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 108,
+      "context": "{t('recruitment:jobPostModal.workSchedule.preferredDays')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.workSchedule.preferredDays",
+      "file": "components/recruitment/WorkScheduleSelector.tsx",
+      "line": 108,
+      "context": "{t('recruitment:jobPostModal.workSchedule.preferredDays')}"
+    },
+    {
+      "key": "common:errors.messagingFailed",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 44,
+      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
+    },
+    {
+      "key": "common:errors.messagingFailed",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 44,
+      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.loading",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 50,
+      "context": "return <p className=\"text-gray-500 text-center py-8\">{t('recruitmentPage.viewApplicantsModal.loading', 'Loading applications...')}</p>;"
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.noApplicants",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 58,
+      "context": "return <p className=\"text-gray-500 text-center py-8\">{t('recruitmentPage.viewApplicantsModal.noApplicants')}</p>;"
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.unknownCandidate",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 68,
+      "context": "<p className=\"font-medium text-swiss-charcoal\">{application.candidateName ?? t('recruitmentPage.viewApplicantsModal.unknownCandidate', 'Candidate')}</p>"
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.appliedOn",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 70,
+      "context": "{t('recruitmentPage.viewApplicantsModal.appliedOn', {"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 78,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 78,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "candidateCard.viewProfile",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 81,
+      "context": "{t('candidateCard.viewProfile')}"
+    },
+    {
+      "key": "recruitmentPage.viewApplicantsModal.title",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 95,
+      "context": "{t('recruitmentPage.viewApplicantsModal.title', { jobTitle: job.title })}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 97,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 97,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 108,
+      "context": "{t('common:buttons.close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/ViewApplicantsModal.tsx",
+      "line": 108,
+      "context": "{t('common:buttons.close')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.editTitle",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 150,
+      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.addTitle",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 150,
+      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.editTitle",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 150,
+      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.addTitle",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 150,
+      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 152,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 152,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
+    },
+    {
+      "key": "recruitment:jobPostModal.jobTitle",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 162,
+      "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.jobTitle')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.jobTitle",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 162,
+      "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.jobTitle')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.location",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 166,
+      "context": "<label htmlFor=\"location\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.location')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.location",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 166,
+      "context": "<label htmlFor=\"location\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.location')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.contractType",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 170,
+      "context": "<label htmlFor=\"contractType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.contractType')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.contractType",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 170,
+      "context": "<label htmlFor=\"contractType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.contractType')} *</label>"
+    },
+    {
+      "key": "recruitment:contractTypes.fullTime",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 172,
+      "context": "<option value=\"FULL_TIME\">{t('recruitment:contractTypes.fullTime')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.fullTime",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 172,
+      "context": "<option value=\"FULL_TIME\">{t('recruitment:contractTypes.fullTime')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.partTime",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 173,
+      "context": "<option value=\"PART_TIME\">{t('recruitment:contractTypes.partTime')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.partTime",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 173,
+      "context": "<option value=\"PART_TIME\">{t('recruitment:contractTypes.partTime')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.cdi",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 174,
+      "context": "<option value=\"CDI\">{t('recruitment:contractTypes.cdi')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.cdi",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 174,
+      "context": "<option value=\"CDI\">{t('recruitment:contractTypes.cdi')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.cdd",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 175,
+      "context": "<option value=\"CDD\">{t('recruitment:contractTypes.cdd')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.cdd",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 175,
+      "context": "<option value=\"CDD\">{t('recruitment:contractTypes.cdd')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.internship",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 176,
+      "context": "<option value=\"INTERNSHIP\">{t('recruitment:contractTypes.internship')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.internship",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 176,
+      "context": "<option value=\"INTERNSHIP\">{t('recruitment:contractTypes.internship')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.replacement",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 177,
+      "context": "<option value=\"REPLACEMENT\">{t('recruitment:contractTypes.replacement')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.replacement",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 177,
+      "context": "<option value=\"REPLACEMENT\">{t('recruitment:contractTypes.replacement')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.temporary",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 178,
+      "context": "<option value=\"TEMPORARY\">{t('recruitment:contractTypes.temporary')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.temporary",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 178,
+      "context": "<option value=\"TEMPORARY\">{t('recruitment:contractTypes.temporary')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.freelance",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 179,
+      "context": "<option value=\"FREELANCE\">{t('recruitment:contractTypes.freelance')}</option>"
+    },
+    {
+      "key": "recruitment:contractTypes.freelance",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 179,
+      "context": "<option value=\"FREELANCE\">{t('recruitment:contractTypes.freelance')}</option>"
+    },
+    {
+      "key": "recruitment:jobPostModal.startDate",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 183,
+      "context": "<label htmlFor=\"startDate\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.startDate')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.startDate",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 183,
+      "context": "<label htmlFor=\"startDate\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.startDate')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.salaryRange",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 204,
+      "context": "<label htmlFor=\"salaryRange\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.salaryRange')}</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.salaryRange",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 204,
+      "context": "<label htmlFor=\"salaryRange\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.salaryRange')}</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.salaryRangePlaceholder",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 205,
+      "context": "<input type=\"text\" name=\"salaryRange\" id=\"salaryRange\" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitment:jobPostModal.salaryRangePlaceholder')}/>"
+    },
+    {
+      "key": "recruitment:jobPostModal.salaryRangePlaceholder",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 205,
+      "context": "<input type=\"text\" name=\"salaryRange\" id=\"salaryRange\" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitment:jobPostModal.salaryRangePlaceholder')}/>"
+    },
+    {
+      "key": "recruitment:jobPostModal.description",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 210,
+      "context": "<label htmlFor=\"description\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.description')} *</label>"
+    },
+    {
+      "key": "recruitment:jobPostModal.description",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 210,
+      "context": "<label htmlFor=\"description\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.description')} *</label>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 222,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 222,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 223,
+      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
+    },
+    {
+      "key": "recruitment:jobPostModal.postJob",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 223,
+      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 223,
+      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
+    },
+    {
+      "key": "recruitment:jobPostModal.postJob",
+      "file": "components/recruitment/JobPostModal.tsx",
+      "line": 223,
+      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
+    },
+    {
+      "key": "recruitment:jobPostModal.employmentType",
+      "file": "components/recruitment/JobEmploymentTypeSelector.tsx",
+      "line": 35,
+      "context": "{t('recruitment:jobPostModal.employmentType')}"
+    },
+    {
+      "key": "recruitment:jobPostModal.employmentType",
+      "file": "components/recruitment/JobEmploymentTypeSelector.tsx",
+      "line": 35,
+      "context": "{t('recruitment:jobPostModal.employmentType')}"
+    },
+    {
+      "key": "recruitment:contractTypes.fullTime",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 41,
+      "context": "return t('recruitment:contractTypes.fullTime', 'Full-time');"
+    },
+    {
+      "key": "recruitment:contractTypes.fullTime",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 41,
+      "context": "return t('recruitment:contractTypes.fullTime', 'Full-time');"
+    },
+    {
+      "key": "recruitment:contractTypes.partTime",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 43,
+      "context": "return t('recruitment:contractTypes.partTime', 'Part-time');"
+    },
+    {
+      "key": "recruitment:contractTypes.partTime",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 43,
+      "context": "return t('recruitment:contractTypes.partTime', 'Part-time');"
+    },
+    {
+      "key": "recruitment:contractTypes.cdi",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 45,
+      "context": "return t('recruitment:contractTypes.cdi', 'CDI');"
+    },
+    {
+      "key": "recruitment:contractTypes.cdi",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 45,
+      "context": "return t('recruitment:contractTypes.cdi', 'CDI');"
+    },
+    {
+      "key": "recruitment:contractTypes.cdd",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 47,
+      "context": "return t('recruitment:contractTypes.cdd', 'CDD');"
+    },
+    {
+      "key": "recruitment:contractTypes.cdd",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 47,
+      "context": "return t('recruitment:contractTypes.cdd', 'CDD');"
+    },
+    {
+      "key": "recruitment:contractTypes.internship",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 49,
+      "context": "return t('recruitment:contractTypes.internship', 'Internship');"
+    },
+    {
+      "key": "recruitment:contractTypes.internship",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 49,
+      "context": "return t('recruitment:contractTypes.internship', 'Internship');"
+    },
+    {
+      "key": "recruitment:contractTypes.freelance",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 51,
+      "context": "return t('recruitment:contractTypes.freelance', 'Freelance');"
+    },
+    {
+      "key": "recruitment:contractTypes.freelance",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 51,
+      "context": "return t('recruitment:contractTypes.freelance', 'Freelance');"
+    },
+    {
+      "key": "recruitment:contractTypes.unknown",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 53,
+      "context": "return job.contractType || t('recruitment:contractTypes.unknown', 'Unknown');"
+    },
+    {
+      "key": "recruitment:contractTypes.unknown",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 53,
+      "context": "return job.contractType || t('recruitment:contractTypes.unknown', 'Unknown');"
+    },
+    {
+      "key": "recruitment:labels.startDateTbd",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 59,
+      "context": ": t('recruitment:labels.startDateTbd', 'To be determined');"
+    },
+    {
+      "key": "recruitment:labels.startDateTbd",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 59,
+      "context": ": t('recruitment:labels.startDateTbd', 'To be determined');"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 91,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 91,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
+    },
+    {
+      "key": "recruitment:jobDetailModal.noDescription",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 104,
+      "context": "{job.description ?? t('recruitment:jobDetailModal.noDescription', 'No description provided.')}"
+    },
+    {
+      "key": "recruitment:jobDetailModal.noDescription",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 104,
+      "context": "{job.description ?? t('recruitment:jobDetailModal.noDescription', 'No description provided.')}"
+    },
+    {
+      "key": "recruitmentPage.jobDetailModal.overviewTitle",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 144,
+      "context": "<h3 className=\"text-xl font-semibold text-swiss-charcoal mb-4\">{t('recruitmentPage.jobDetailModal.overviewTitle')}</h3>"
+    },
+    {
+      "key": "recruitmentPage.jobDetailModal.location",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 149,
+      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.location')}</p>"
+    },
+    {
+      "key": "recruitment:labels.locationUnknown",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 150,
+      "context": "<p className=\"text-gray-800 font-semibold\">{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>"
+    },
+    {
+      "key": "recruitment:labels.locationUnknown",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 150,
+      "context": "<p className=\"text-gray-800 font-semibold\">{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>"
+    },
+    {
+      "key": "recruitmentPage.jobDetailModal.contractType",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 156,
+      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.contractType')}</p>"
+    },
+    {
+      "key": "recruitmentPage.jobDetailModal.startDate",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 163,
+      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.startDate')}</p>"
+    },
+    {
+      "key": "recruitmentPage.jobDetailModal.salary",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 171,
+      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.salary')}</p>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 184,
+      "context": "<Button type=\"button\" variant=\"light\" size=\"lg\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 184,
+      "context": "<Button type=\"button\" variant=\"light\" size=\"lg\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "recruitmentPage.jobDetailModal.applyNow",
+      "file": "components/recruitment/JobDetailModal.tsx",
+      "line": 185,
+      "context": "<Button type=\"button\" variant=\"primary\" size=\"lg\" onClick={handleApplyClick}>{t('recruitmentPage.jobDetailModal.applyNow')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/JobApplicationModal.tsx",
+      "line": 86,
+      "context": "aria-label={t('common:buttons.close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/recruitment/JobApplicationModal.tsx",
+      "line": 86,
+      "context": "aria-label={t('common:buttons.close')}"
+    },
+    {
+      "key": "recruitment:application.coverLetterPlaceholder",
+      "file": "components/recruitment/JobApplicationModal.tsx",
+      "line": 144,
+      "context": "placeholder={t('recruitment:application.coverLetterPlaceholder')}"
+    },
+    {
+      "key": "recruitment:application.coverLetterPlaceholder",
+      "file": "components/recruitment/JobApplicationModal.tsx",
+      "line": 144,
+      "context": "placeholder={t('recruitment:application.coverLetterPlaceholder')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/recruitment/JobApplicationModal.tsx",
+      "line": 160,
+      "context": "{t('common:buttons.cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/recruitment/JobApplicationModal.tsx",
+      "line": 160,
+      "context": "{t('common:buttons.cancel')}"
     },
     {
       "key": "common:errors.genericErrorMessage",
@@ -18255,630 +18879,6 @@
       "file": "components/profile/OrganizationDocumentsList.tsx",
       "line": 204,
       "context": "title={t('profile:documents.previewIframeTitle', 'Document preview')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.title",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 52,
-      "context": "{t('recruitment:jobPostModal.workSchedule.title')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.title",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 52,
-      "context": "{t('recruitment:jobPostModal.workSchedule.title')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.expectedHours",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 58,
-      "context": "{t('recruitment:jobPostModal.workSchedule.expectedHours')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.expectedHours",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 58,
-      "context": "{t('recruitment:jobPostModal.workSchedule.expectedHours')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.hoursPerWeek",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 72,
-      "context": "{t('recruitment:jobPostModal.workSchedule.hoursPerWeek')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.hoursPerWeek",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 72,
-      "context": "{t('recruitment:jobPostModal.workSchedule.hoursPerWeek')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.preferredTimeSlot",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 80,
-      "context": "{t('recruitment:jobPostModal.workSchedule.preferredTimeSlot')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.preferredTimeSlot",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 80,
-      "context": "{t('recruitment:jobPostModal.workSchedule.preferredTimeSlot')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.preferredDays",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 108,
-      "context": "{t('recruitment:jobPostModal.workSchedule.preferredDays')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.workSchedule.preferredDays",
-      "file": "components/recruitment/WorkScheduleSelector.tsx",
-      "line": 108,
-      "context": "{t('recruitment:jobPostModal.workSchedule.preferredDays')}"
-    },
-    {
-      "key": "common:errors.messagingFailed",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 44,
-      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
-    },
-    {
-      "key": "common:errors.messagingFailed",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 44,
-      "context": "alert(t('common:errors.messagingFailed', 'Failed to start conversation. Please try again.'));"
-    },
-    {
-      "key": "recruitmentPage.viewApplicantsModal.loading",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 50,
-      "context": "return <p className=\"text-gray-500 text-center py-8\">{t('recruitmentPage.viewApplicantsModal.loading', 'Loading applications...')}</p>;"
-    },
-    {
-      "key": "recruitmentPage.viewApplicantsModal.noApplicants",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 58,
-      "context": "return <p className=\"text-gray-500 text-center py-8\">{t('recruitmentPage.viewApplicantsModal.noApplicants')}</p>;"
-    },
-    {
-      "key": "recruitmentPage.viewApplicantsModal.unknownCandidate",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 68,
-      "context": "<p className=\"font-medium text-swiss-charcoal\">{application.candidateName ?? t('recruitmentPage.viewApplicantsModal.unknownCandidate', 'Candidate')}</p>"
-    },
-    {
-      "key": "recruitmentPage.viewApplicantsModal.appliedOn",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 70,
-      "context": "{t('recruitmentPage.viewApplicantsModal.appliedOn', {"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 78,
-      "context": "{t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 78,
-      "context": "{t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "candidateCard.viewProfile",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 81,
-      "context": "{t('candidateCard.viewProfile')}"
-    },
-    {
-      "key": "recruitmentPage.viewApplicantsModal.title",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 95,
-      "context": "{t('recruitmentPage.viewApplicantsModal.title', { jobTitle: job.title })}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 97,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 97,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 108,
-      "context": "{t('common:buttons.close')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/ViewApplicantsModal.tsx",
-      "line": 108,
-      "context": "{t('common:buttons.close')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.editTitle",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 150,
-      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.addTitle",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 150,
-      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.editTitle",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 150,
-      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.addTitle",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 150,
-      "context": "{existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 152,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 152,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
-    },
-    {
-      "key": "recruitment:jobPostModal.jobTitle",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 162,
-      "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.jobTitle')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.jobTitle",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 162,
-      "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.jobTitle')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.location",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 166,
-      "context": "<label htmlFor=\"location\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.location')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.location",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 166,
-      "context": "<label htmlFor=\"location\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.location')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.contractType",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 170,
-      "context": "<label htmlFor=\"contractType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.contractType')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.contractType",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 170,
-      "context": "<label htmlFor=\"contractType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.contractType')} *</label>"
-    },
-    {
-      "key": "recruitment:contractTypes.fullTime",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 172,
-      "context": "<option value=\"FULL_TIME\">{t('recruitment:contractTypes.fullTime')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.fullTime",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 172,
-      "context": "<option value=\"FULL_TIME\">{t('recruitment:contractTypes.fullTime')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.partTime",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 173,
-      "context": "<option value=\"PART_TIME\">{t('recruitment:contractTypes.partTime')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.partTime",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 173,
-      "context": "<option value=\"PART_TIME\">{t('recruitment:contractTypes.partTime')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.cdi",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 174,
-      "context": "<option value=\"CDI\">{t('recruitment:contractTypes.cdi')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.cdi",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 174,
-      "context": "<option value=\"CDI\">{t('recruitment:contractTypes.cdi')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.cdd",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 175,
-      "context": "<option value=\"CDD\">{t('recruitment:contractTypes.cdd')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.cdd",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 175,
-      "context": "<option value=\"CDD\">{t('recruitment:contractTypes.cdd')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.internship",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 176,
-      "context": "<option value=\"INTERNSHIP\">{t('recruitment:contractTypes.internship')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.internship",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 176,
-      "context": "<option value=\"INTERNSHIP\">{t('recruitment:contractTypes.internship')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.replacement",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 177,
-      "context": "<option value=\"REPLACEMENT\">{t('recruitment:contractTypes.replacement')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.replacement",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 177,
-      "context": "<option value=\"REPLACEMENT\">{t('recruitment:contractTypes.replacement')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.temporary",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 178,
-      "context": "<option value=\"TEMPORARY\">{t('recruitment:contractTypes.temporary')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.temporary",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 178,
-      "context": "<option value=\"TEMPORARY\">{t('recruitment:contractTypes.temporary')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.freelance",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 179,
-      "context": "<option value=\"FREELANCE\">{t('recruitment:contractTypes.freelance')}</option>"
-    },
-    {
-      "key": "recruitment:contractTypes.freelance",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 179,
-      "context": "<option value=\"FREELANCE\">{t('recruitment:contractTypes.freelance')}</option>"
-    },
-    {
-      "key": "recruitment:jobPostModal.startDate",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 183,
-      "context": "<label htmlFor=\"startDate\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.startDate')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.startDate",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 183,
-      "context": "<label htmlFor=\"startDate\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.startDate')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.salaryRange",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 204,
-      "context": "<label htmlFor=\"salaryRange\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.salaryRange')}</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.salaryRange",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 204,
-      "context": "<label htmlFor=\"salaryRange\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.salaryRange')}</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.salaryRangePlaceholder",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 205,
-      "context": "<input type=\"text\" name=\"salaryRange\" id=\"salaryRange\" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitment:jobPostModal.salaryRangePlaceholder')}/>"
-    },
-    {
-      "key": "recruitment:jobPostModal.salaryRangePlaceholder",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 205,
-      "context": "<input type=\"text\" name=\"salaryRange\" id=\"salaryRange\" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitment:jobPostModal.salaryRangePlaceholder')}/>"
-    },
-    {
-      "key": "recruitment:jobPostModal.description",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 210,
-      "context": "<label htmlFor=\"description\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.description')} *</label>"
-    },
-    {
-      "key": "recruitment:jobPostModal.description",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 210,
-      "context": "<label htmlFor=\"description\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('recruitment:jobPostModal.description')} *</label>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 222,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 222,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 223,
-      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
-    },
-    {
-      "key": "recruitment:jobPostModal.postJob",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 223,
-      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 223,
-      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
-    },
-    {
-      "key": "recruitment:jobPostModal.postJob",
-      "file": "components/recruitment/JobPostModal.tsx",
-      "line": 223,
-      "context": "<Button type=\"submit\" variant=\"primary\">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>"
-    },
-    {
-      "key": "recruitment:jobPostModal.employmentType",
-      "file": "components/recruitment/JobEmploymentTypeSelector.tsx",
-      "line": 35,
-      "context": "{t('recruitment:jobPostModal.employmentType')}"
-    },
-    {
-      "key": "recruitment:jobPostModal.employmentType",
-      "file": "components/recruitment/JobEmploymentTypeSelector.tsx",
-      "line": 35,
-      "context": "{t('recruitment:jobPostModal.employmentType')}"
-    },
-    {
-      "key": "recruitment:contractTypes.fullTime",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 41,
-      "context": "return t('recruitment:contractTypes.fullTime', 'Full-time');"
-    },
-    {
-      "key": "recruitment:contractTypes.fullTime",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 41,
-      "context": "return t('recruitment:contractTypes.fullTime', 'Full-time');"
-    },
-    {
-      "key": "recruitment:contractTypes.partTime",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 43,
-      "context": "return t('recruitment:contractTypes.partTime', 'Part-time');"
-    },
-    {
-      "key": "recruitment:contractTypes.partTime",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 43,
-      "context": "return t('recruitment:contractTypes.partTime', 'Part-time');"
-    },
-    {
-      "key": "recruitment:contractTypes.cdi",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 45,
-      "context": "return t('recruitment:contractTypes.cdi', 'CDI');"
-    },
-    {
-      "key": "recruitment:contractTypes.cdi",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 45,
-      "context": "return t('recruitment:contractTypes.cdi', 'CDI');"
-    },
-    {
-      "key": "recruitment:contractTypes.cdd",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 47,
-      "context": "return t('recruitment:contractTypes.cdd', 'CDD');"
-    },
-    {
-      "key": "recruitment:contractTypes.cdd",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 47,
-      "context": "return t('recruitment:contractTypes.cdd', 'CDD');"
-    },
-    {
-      "key": "recruitment:contractTypes.internship",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 49,
-      "context": "return t('recruitment:contractTypes.internship', 'Internship');"
-    },
-    {
-      "key": "recruitment:contractTypes.internship",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 49,
-      "context": "return t('recruitment:contractTypes.internship', 'Internship');"
-    },
-    {
-      "key": "recruitment:contractTypes.freelance",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 51,
-      "context": "return t('recruitment:contractTypes.freelance', 'Freelance');"
-    },
-    {
-      "key": "recruitment:contractTypes.freelance",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 51,
-      "context": "return t('recruitment:contractTypes.freelance', 'Freelance');"
-    },
-    {
-      "key": "recruitment:contractTypes.unknown",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 53,
-      "context": "return job.contractType || t('recruitment:contractTypes.unknown', 'Unknown');"
-    },
-    {
-      "key": "recruitment:contractTypes.unknown",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 53,
-      "context": "return job.contractType || t('recruitment:contractTypes.unknown', 'Unknown');"
-    },
-    {
-      "key": "recruitment:labels.startDateTbd",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 59,
-      "context": ": t('recruitment:labels.startDateTbd', 'To be determined');"
-    },
-    {
-      "key": "recruitment:labels.startDateTbd",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 59,
-      "context": ": t('recruitment:labels.startDateTbd', 'To be determined');"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 91,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 91,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close')}>"
-    },
-    {
-      "key": "recruitment:jobDetailModal.noDescription",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 104,
-      "context": "{job.description ?? t('recruitment:jobDetailModal.noDescription', 'No description provided.')}"
-    },
-    {
-      "key": "recruitment:jobDetailModal.noDescription",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 104,
-      "context": "{job.description ?? t('recruitment:jobDetailModal.noDescription', 'No description provided.')}"
-    },
-    {
-      "key": "recruitmentPage.jobDetailModal.overviewTitle",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 144,
-      "context": "<h3 className=\"text-xl font-semibold text-swiss-charcoal mb-4\">{t('recruitmentPage.jobDetailModal.overviewTitle')}</h3>"
-    },
-    {
-      "key": "recruitmentPage.jobDetailModal.location",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 149,
-      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.location')}</p>"
-    },
-    {
-      "key": "recruitment:labels.locationUnknown",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 150,
-      "context": "<p className=\"text-gray-800 font-semibold\">{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>"
-    },
-    {
-      "key": "recruitment:labels.locationUnknown",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 150,
-      "context": "<p className=\"text-gray-800 font-semibold\">{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>"
-    },
-    {
-      "key": "recruitmentPage.jobDetailModal.contractType",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 156,
-      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.contractType')}</p>"
-    },
-    {
-      "key": "recruitmentPage.jobDetailModal.startDate",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 163,
-      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.startDate')}</p>"
-    },
-    {
-      "key": "recruitmentPage.jobDetailModal.salary",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 171,
-      "context": "<p className=\"font-medium text-gray-500\">{t('recruitmentPage.jobDetailModal.salary')}</p>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 184,
-      "context": "<Button type=\"button\" variant=\"light\" size=\"lg\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 184,
-      "context": "<Button type=\"button\" variant=\"light\" size=\"lg\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "recruitmentPage.jobDetailModal.applyNow",
-      "file": "components/recruitment/JobDetailModal.tsx",
-      "line": 185,
-      "context": "<Button type=\"button\" variant=\"primary\" size=\"lg\" onClick={handleApplyClick}>{t('recruitmentPage.jobDetailModal.applyNow')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/JobApplicationModal.tsx",
-      "line": 86,
-      "context": "aria-label={t('common:buttons.close')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/recruitment/JobApplicationModal.tsx",
-      "line": 86,
-      "context": "aria-label={t('common:buttons.close')}"
-    },
-    {
-      "key": "recruitment:application.coverLetterPlaceholder",
-      "file": "components/recruitment/JobApplicationModal.tsx",
-      "line": 144,
-      "context": "placeholder={t('recruitment:application.coverLetterPlaceholder')}"
-    },
-    {
-      "key": "recruitment:application.coverLetterPlaceholder",
-      "file": "components/recruitment/JobApplicationModal.tsx",
-      "line": 144,
-      "context": "placeholder={t('recruitment:application.coverLetterPlaceholder')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/recruitment/JobApplicationModal.tsx",
-      "line": 160,
-      "context": "{t('common:buttons.cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/recruitment/JobApplicationModal.tsx",
-      "line": 160,
-      "context": "{t('common:buttons.cancel')}"
     },
     {
       "key": "common:errors.updateFailed",
@@ -26053,73 +26053,73 @@
     {
       "key": "settings:coverSection.invalidType",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 53,
+      "line": 54,
       "context": "setUploadError(t('settings:coverSection.invalidType', 'Please select an image file'));"
     },
     {
       "key": "settings:coverSection.invalidType",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 53,
+      "line": 54,
       "context": "setUploadError(t('settings:coverSection.invalidType', 'Please select an image file'));"
     },
     {
       "key": "settings:coverSection.tooLarge",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 59,
+      "line": 60,
       "context": "setUploadError(t('settings:coverSection.tooLarge', 'Image must be less than 15MB'));"
     },
     {
       "key": "settings:coverSection.tooLarge",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 59,
+      "line": 60,
       "context": "setUploadError(t('settings:coverSection.tooLarge', 'Image must be less than 15MB'));"
     },
     {
       "key": "settings:coverSection.uploadFailed",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 100,
+      "line": 101,
       "context": "setUploadError(error.message || t('settings:coverSection.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:coverSection.uploadFailed",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 100,
+      "line": 101,
       "context": "setUploadError(error.message || t('settings:coverSection.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:coverSection.uploading",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 130,
+      "line": 134,
       "context": "{t('settings:coverSection.uploading', 'Uploading...')}"
     },
     {
       "key": "settings:coverSection.uploading",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 130,
+      "line": 134,
       "context": "{t('settings:coverSection.uploading', 'Uploading...')}"
     },
     {
       "key": "settings:coverSection.changeCover",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 143,
+      "line": 147,
       "context": "{t('settings:coverSection.changeCover', 'Change Cover Photo')}"
     },
     {
       "key": "settings:coverSection.changeCover",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 143,
+      "line": 147,
       "context": "{t('settings:coverSection.changeCover', 'Change Cover Photo')}"
     },
     {
       "key": "settings:coverSection.sizeHint",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 162,
+      "line": 166,
       "context": "{t('settings:coverSection.sizeHint', 'Recommended: {{width}}×{{height}}px', {"
     },
     {
       "key": "settings:coverSection.sizeHint",
       "file": "components/profile/edit/shared/CoverImageSection.tsx",
-      "line": 162,
+      "line": 166,
       "context": "{t('settings:coverSection.sizeHint', 'Recommended: {{width}}×{{height}}px', {"
     },
     {

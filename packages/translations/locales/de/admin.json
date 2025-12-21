@@ -1655,6 +1655,28 @@
       "planLabel": "Plan",
       "periodLabel": "Zeitraum"
     },
+    "planEditor": {
+      "open": "Pläne bearbeiten",
+      "title": "Abonnementplan-Editor",
+      "plan": "Plan",
+      "billingPeriod": "Abonnement",
+      "billingPeriodHelp": "Wählen Sie den für diesen Plan angezeigten Abonnementzeitraum aus.",
+      "billingOptions": {
+        "thirtyDays": "30 Tage",
+        "monthlyRecurring": "Monatlich wiederkehrend",
+        "oneYear": "1 Jahr",
+        "monthly": "Monatlich",
+        "quarterly": "Vierteljährlich",
+        "yearly": "Jährlich"
+      },
+      "currentInfo": "Aktuelle Planinfo",
+      "price": "Preis",
+      "currentBillingPeriod": "Aktuelles Abonnement",
+      "saving": "Speichern...",
+      "save": "Änderungen speichern",
+      "success": "Plan erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des Plans: "
+    },
     "createSubscription": {
       "title": "Abonnement erstellen"
     },

@@ -119,6 +119,35 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [selectedPlanId, setSelectedPlanId] = useState<string>(subscription?.planId || '');
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
 
+  const billingPeriodLabel = React.useCallback(
+    (period: string | null | undefined) => {
+      const normalized = (period || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      switch (normalized) {
+        case '30 days':
+        case '30 day':
+        case '30-day':
+          return t('admin:subscriptions.planEditor.billingOptions.thirtyDays', '30 Days');
+        case 'monthly recurring':
+          return t('admin:subscriptions.planEditor.billingOptions.monthlyRecurring', 'Monthly Recurring');
+        case '1 year':
+        case '1 yr':
+        case 'one year':
+          return t('admin:subscriptions.planEditor.billingOptions.oneYear', '1 Year');
+        case 'monthly':
+          return t('admin:subscriptions.planEditor.billingOptions.monthly', 'Monthly');
+        case 'quarterly':
+          return t('admin:subscriptions.planEditor.billingOptions.quarterly', 'Quarterly');
+        case 'yearly':
+        case 'annual':
+        case 'annually':
+          return t('admin:subscriptions.planEditor.billingOptions.yearly', 'Yearly');
+        default:
+          return period || t('common:notAvailable', 'N/A');
+      }
+    },
+    [t]
+  );
+
   React.useEffect(() => {
     if (subscription) {
       setStatus(subscription.status);
@@ -229,7 +258,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                   {plan.name} - {new Intl.NumberFormat(CURRENCY_LOCALE, {
                     style: 'currency',
                     currency: plan.currency,
-                  }).format(plan.price)}/{plan.billingPeriod}
+                  }).format(plan.price)}/{billingPeriodLabel(plan.billingPeriod)}
                 </option>
               ))}
             </select>
@@ -284,12 +313,230 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   );
 };
 
+// Edit Subscription Plan Modal Component (lightweight plan editor)
+interface EditSubscriptionPlanModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  plans: SubscriptionPlan[];
+  onSave: (data: { planId: string; billingPeriod: string }) => Promise<void>;
+  isLoading: boolean;
+}
+
+const EditSubscriptionPlanModal: React.FC<EditSubscriptionPlanModalProps> = ({
+  isOpen,
+  onClose,
+  plans,
+  onSave,
+  isLoading,
+}) => {
+  const { t } = useTranslation(['admin', 'common']);
+  const [selectedPlanId, setSelectedPlanId] = useState<string>('');
+  const [billingPeriod, setBillingPeriod] = useState<string>('');
+
+  const billingPeriodLabel = React.useCallback(
+    (period: string | null | undefined) => {
+      const normalized = (period || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      switch (normalized) {
+        case '30 days':
+        case '30 day':
+        case '30-day':
+          return t('admin:subscriptions.planEditor.billingOptions.thirtyDays', '30 Days');
+        case 'monthly recurring':
+          return t('admin:subscriptions.planEditor.billingOptions.monthlyRecurring', 'Monthly Recurring');
+        case '1 year':
+        case '1 yr':
+        case 'one year':
+          return t('admin:subscriptions.planEditor.billingOptions.oneYear', '1 Year');
+        case 'monthly':
+          return t('admin:subscriptions.planEditor.billingOptions.monthly', 'Monthly');
+        case 'quarterly':
+          return t('admin:subscriptions.planEditor.billingOptions.quarterly', 'Quarterly');
+        case 'yearly':
+        case 'annual':
+        case 'annually':
+          return t('admin:subscriptions.planEditor.billingOptions.yearly', 'Yearly');
+        default:
+          return period || t('common:notAvailable', 'N/A');
+      }
+    },
+    [t]
+  );
+
+  const selectedPlan = React.useMemo(
+    () => plans.find((p) => p.id === selectedPlanId) || null,
+    [plans, selectedPlanId]
+  );
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    // Default to first active plan for convenience
+    const defaultPlan = plans.find((p) => p.isActive) || plans[0];
+    if (defaultPlan && !selectedPlanId) {
+      setSelectedPlanId(defaultPlan.id);
+      setBillingPeriod(defaultPlan.billingPeriod || '');
+    }
+  }, [isOpen, plans, selectedPlanId]);
+
+  React.useEffect(() => {
+    if (selectedPlan) {
+      // Normalize to canonical stored values (lowercase) while displaying translated labels.
+      setBillingPeriod((selectedPlan.billingPeriod || '').trim());
+    }
+  }, [selectedPlan]);
+
+  // Handle Escape key to close modal - must be before any early returns to comply with Rules of Hooks
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  // Early return AFTER all hooks to comply with React's Rules of Hooks
+  if (!isOpen) return null;
+
+  const mergedBillingOptions = React.useMemo(() => {
+    const opts = [
+      { value: '30 days', label: billingPeriodLabel('30 days') },
+      { value: 'monthly recurring', label: billingPeriodLabel('monthly recurring') },
+      { value: '1 year', label: billingPeriodLabel('1 year') },
+      // legacy / existing values we still support
+      { value: 'monthly', label: billingPeriodLabel('monthly') },
+      { value: 'quarterly', label: billingPeriodLabel('quarterly') },
+      { value: 'yearly', label: billingPeriodLabel('yearly') },
+    ];
+
+    const current = billingPeriod?.trim();
+    if (current && !opts.some((o) => o.value === current)) {
+      // Keep current value selectable, but display a nicer label if we know it
+      opts.unshift({ value: current, label: billingPeriodLabel(current) });
+    }
+    return opts;
+  }, [billingPeriod, billingPeriodLabel]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPlanId) return;
+    await onSave({ planId: selectedPlanId, billingPeriod: billingPeriod.trim() });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="subscription-plan-modal-title"
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 id="subscription-plan-modal-title" className="text-lg font-semibold">
+            {t('admin:subscriptions.planEditor.title', 'Subscription Plan Editor')}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+            aria-label={t('common:close', 'Close modal')}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Plan Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.planEditor.plan', 'Plan')}
+            </label>
+            <select
+              value={selectedPlanId}
+              onChange={(e) => setSelectedPlanId(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {plans.map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.name} {!plan.isActive ? `(${t('common:inactive', 'Inactive')})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Billing Period */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.planEditor.billingPeriod', 'Subscription')}
+            </label>
+            <select
+              value={billingPeriod}
+              onChange={(e) => setBillingPeriod(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {mergedBillingOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-2">
+              {t(
+                'admin:subscriptions.planEditor.billingPeriodHelp',
+                'Select the subscription billing period shown for this plan.'
+              )}
+            </p>
+          </div>
+
+          {/* Current plan info */}
+          {selectedPlan && (
+            <div className="p-3 bg-blue-50 rounded-lg text-sm">
+              <p className="text-blue-800 font-medium mb-1">
+                {t('admin:subscriptions.planEditor.currentInfo', 'Current Plan Info')}
+              </p>
+              <p className="text-blue-600">
+                {t('admin:subscriptions.planEditor.price', 'Price')}: {new Intl.NumberFormat(CURRENCY_LOCALE, {
+                  style: 'currency',
+                  currency: selectedPlan.currency,
+                }).format(selectedPlan.price)}
+              </p>
+              <p className="text-blue-600">
+                {t('admin:subscriptions.planEditor.currentBillingPeriod', 'Current Subscription')}: {billingPeriodLabel(selectedPlan.billingPeriod)}
+              </p>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-gray-600 hover:text-gray-900"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading || !selectedPlanId}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isLoading ? t('admin:subscriptions.planEditor.saving', 'Saving...') : t('admin:subscriptions.planEditor.save', 'Save Changes')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const Subscriptions: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedUserSubscription, setSelectedUserSubscription] = useState<Subscription | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPlanEditorOpen, setIsPlanEditorOpen] = useState(false);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
@@ -408,6 +655,21 @@ const Subscriptions: React.FC = () => {
     },
   });
 
+  const updatePlanMutation = useMutation({
+    mutationFn: async ({ planId, billingPeriod }: { planId: string; billingPeriod: string }) => {
+      return subscriptionService.updatePlan(apiClient, planId, { billingPeriod });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
+      toast.success(t('admin:subscriptions.planEditor.success', 'Plan updated successfully'));
+      setIsPlanEditorOpen(false);
+    },
+    onError: (error: Error) => {
+      console.error('Failed to update plan:', error);
+      toast.error(t('admin:subscriptions.planEditor.error', 'Failed to update plan: ') + error.message);
+    },
+  });
+
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setSelectedUserSubscription(userSubscriptionMap.get(user.id) || null);
@@ -479,6 +741,15 @@ const Subscriptions: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t('admin:subscriptions.title')}</h1>
           <p className="text-gray-500 mt-1">{t('admin:subscriptions.subtitle')}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsPlanEditorOpen(true)}
+            className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+          >
+            {t('admin:subscriptions.planEditor.open', 'Edit Plans')}
+          </button>
         </div>
       </div>
 
@@ -690,6 +961,17 @@ const Subscriptions: React.FC = () => {
         plans={plans}
         onSave={handleSaveSubscription}
         isLoading={updateSubscriptionMutation.isPending}
+      />
+
+      {/* Subscription Plan Editor Modal */}
+      <EditSubscriptionPlanModal
+        isOpen={isPlanEditorOpen}
+        onClose={() => setIsPlanEditorOpen(false)}
+        plans={plans}
+        onSave={async ({ planId, billingPeriod }) => {
+          await updatePlanMutation.mutateAsync({ planId, billingPeriod });
+        }}
+        isLoading={updatePlanMutation.isPending}
       />
     </div>
   );

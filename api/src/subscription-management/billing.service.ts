@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { resolveBillingPeriod } from './billing-period.util';
 
 export interface BillingTransaction {
   id: string;
@@ -311,7 +312,10 @@ export class BillingService {
 
     // Calculate MRR (simplified)
     const monthlyRecurringRevenue = successfulTransactions
-      .filter(t => t.subscription.plan.billingPeriod === 'monthly')
+      .filter((t) => {
+        const resolved = resolveBillingPeriod(t.subscription.plan.billingPeriod);
+        return resolved.isRecurring && resolved.monthsPerPeriod === 1;
+      })
       .reduce((sum, t) => sum + t.amount, 0);
 
     // Revenue by month
