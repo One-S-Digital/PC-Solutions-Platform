@@ -751,6 +751,72 @@ END$$;
 };
 
 /**
+ * Ensure email grace period setting exists in system_settings.
+ * Matches migration `20251221000002_add_email_grace_period_setting`.
+ *
+ * Strategy:
+ * - Ensure the base table exists (defensive for drifted prod DBs)
+ * - Insert the setting only if missing
+ * - Uses an extension-free TEXT id generator (md5) to avoid pgcrypto dependency
+ */
+const ensureEmailGracePeriodSetting = () => {
+  const sql = `
+-- Ensure system_settings table exists (from init migration)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'system_settings'
+  ) THEN
+    CREATE TABLE "public"."system_settings" (
+      "id" TEXT NOT NULL,
+      "key" TEXT NOT NULL,
+      "value" JSONB NOT NULL,
+      "description" TEXT NOT NULL,
+      "category" TEXT NOT NULL DEFAULT 'general',
+      "isEncrypted" BOOLEAN NOT NULL DEFAULT false,
+      "isPublic" BOOLEAN NOT NULL DEFAULT false,
+      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" TIMESTAMP(3) NOT NULL,
+      CONSTRAINT "system_settings_pkey" PRIMARY KEY ("id")
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS "system_settings_key_key" ON "public"."system_settings"("key");
+  END IF;
+END $$;
+
+-- Seed email grace period setting if missing
+INSERT INTO "public"."system_settings" (
+  "id",
+  "key",
+  "value",
+  "description",
+  "category",
+  "isEncrypted",
+  "isPublic",
+  "createdAt",
+  "updatedAt"
+)
+SELECT
+  md5(random()::text || clock_timestamp()::text),
+  'email.grace_period_days',
+  to_jsonb(7),
+  'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
+  'email',
+  false,
+  false,
+  NOW(),
+  NOW()
+WHERE NOT EXISTS (
+  SELECT 1 FROM "public"."system_settings" WHERE "key" = 'email.grace_period_days'
+);
+`;
+
+  log('Ensuring email grace period system setting exists (email.grace_period_days)...');
+  runSql(sql);
+  log('✅ Email grace period setting verified.');
+};
+
+/**
  * Ensure all translation infrastructure tables exist.
  * Matches migration `20251114140526_add_i18n_translation_tables`.
  * CRITICAL: Fixes admin translation page 500 error when static_translations table is missing.
@@ -1057,6 +1123,35 @@ const main = async () => {
     log('✅ Job contract types schema prepared.');
   } catch (e) {
     warn(`⚠️  job contract types preparation failed: ${e.message}`);
+  }
+
+  // Email grace period setting (admin-configurable email change grace window)
+  // Strategy:
+  // 1. Clear failed migration state (mark as rolled-back) so Prisma can re-run it
+  // 2. Ensure the table + setting exist so the migration will not fail
+  try {
+    log('🔧 Preparing for email grace period setting migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20251221000002_add_email_grace_period_setting');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20251221000002_add_email_grace_period_setting');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureEmailGracePeriodSetting();
+    log('✅ Email grace period schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  Email grace period setting preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20251221000002_add_email_grace_period_setting');
+      ensureEmailGracePeriodSetting();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
   }
 
   log('Done.');

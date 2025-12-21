@@ -7,7 +7,9 @@
 -- Using "SystemSettings" (quoted) would look for a case-sensitive table that doesn't exist.
 INSERT INTO "public"."system_settings" ("id", "key", "value", "description", "category", "isEncrypted", "isPublic", "createdAt", "updatedAt")
 SELECT 
-    gen_random_uuid(),
+    -- Avoid requiring pgcrypto (gen_random_uuid) in production.
+    -- `id` is TEXT in this table, so a sufficiently-unique hash works fine.
+    md5(random()::text || clock_timestamp()::text),
     'email.grace_period_days',
     to_jsonb(7),
     'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
