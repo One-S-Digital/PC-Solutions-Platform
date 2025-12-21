@@ -74,7 +74,7 @@ export class UsersService {
    * To update the primary email, we need to:
    * 1. Create a new email address for the user
    * 2. Set it as primary
-   * 3. Keep old email as secondary (for grace period / recovery)
+   * 3. Schedule old email for deletion after grace period
    * 
    * @param clerkId - The Clerk user ID
    * @param newEmail - The new email address to set
@@ -91,6 +91,10 @@ export class UsersService {
     
     // Get the current user from Clerk to find existing email addresses
     const clerkUser = await this.clerk.users.getUser(clerkId);
+    const oldPrimaryEmailId = clerkUser.primaryEmailAddressId;
+    const oldPrimaryEmail = clerkUser.emailAddresses?.find(
+      (ea: any) => ea.id === oldPrimaryEmailId
+    )?.emailAddress;
     
     // Check if the new email already exists for this user
     const existingEmailAddress = clerkUser.emailAddresses?.find(
@@ -119,11 +123,71 @@ export class UsersService {
       primary: true, // Set as primary immediately
     });
     
-    // Keep old email as a secondary address for a grace period
-    // This allows users to still recover access if needed
-    // Admins can manually delete it later via Clerk dashboard if needed
-    this.logger.log(`ℹ️ [EMAIL SYNC] Old email retained as secondary address for ${clerkId}`);
+    // Schedule old email for deletion after grace period
+    // This allows users time to verify the new email works and recover if needed
+    if (oldPrimaryEmailId) {
+      await this.scheduleOldEmailDeletion(clerkId, oldPrimaryEmailId, oldPrimaryEmail);
+    }
+    
     this.logger.log(`✅ [EMAIL SYNC] Email sync completed for ${clerkId}`);
+  }
+
+  /**
+   * Schedule the old email address for deletion after a grace period.
+   * Default grace period is 7 days, configurable via System Settings in admin dashboard.
+   * Setting key: email.grace_period_days (category: email)
+   */
+  private async scheduleOldEmailDeletion(
+    clerkId: string, 
+    emailAddressId: string, 
+    emailAddress?: string
+  ): Promise<void> {
+    // Get grace period from system settings, fallback to env var, then default to 7 days
+    let gracePeriodDays = 7;
+    
+    try {
+      const setting = await this.prisma.systemSettings.findUnique({
+        where: { key: 'email.grace_period_days' },
+      });
+      if (setting?.value) {
+        gracePeriodDays = Number(setting.value) || 7;
+      } else {
+        // Fallback to env var for backwards compatibility
+        gracePeriodDays = this.configService.get<number>('EMAIL_GRACE_PERIOD_DAYS') || 7;
+      }
+    } catch {
+      // If system settings table doesn't exist yet, use env var fallback
+      gracePeriodDays = this.configService.get<number>('EMAIL_GRACE_PERIOD_DAYS') || 7;
+    }
+    
+    const deletionDate = new Date(Date.now() + gracePeriodDays * 24 * 60 * 60 * 1000);
+    
+    try {
+      await this.prisma.outbox.create({
+        data: {
+          topic: 'clerk.email.delete',
+          payload: { 
+            clerkId, 
+            emailAddressId,
+            emailAddress: emailAddress || 'unknown',
+            reason: 'Grace period expired after email change',
+            scheduledAt: new Date().toISOString(),
+          },
+          nextRunAt: deletionDate, // Won't be processed until this date
+        },
+      });
+      
+      this.logger.log(
+        `📅 [EMAIL SYNC] Old email ${emailAddress || emailAddressId} scheduled for deletion ` +
+        `after ${gracePeriodDays} days (${deletionDate.toISOString()}) for user ${clerkId}`
+      );
+    } catch (error: any) {
+      // Non-critical error - the new email is already working
+      this.logger.warn(
+        `⚠️ [EMAIL SYNC] Could not schedule old email deletion: ${error.message}. ` +
+        `Manual cleanup may be needed for user ${clerkId}`
+      );
+    }
   }
 
   /**

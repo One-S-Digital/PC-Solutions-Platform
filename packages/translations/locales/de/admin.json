@@ -149,8 +149,13 @@
         },
         "alerts": {
           "createFailed": "Fehler beim Erstellen der Einstellung: {{message}}",
-          "created": "Systemeinstellung erfolgreich erstellt!"
+          "created": "Systemeinstellung erfolgreich erstellt!",
+          "updated": "Einstellung erfolgreich aktualisiert!",
+          "updateFailed": "Fehler beim Aktualisieren der Einstellung: {{message}}"
         },
+        "editTitle": "Einstellung bearbeiten",
+        "description": "Beschreibung",
+        "gracePeriodHint": "Geben Sie die Anzahl der Tage ein (z.B. 7)",
         "badges": {
           "encrypted": "Verschlüsselt",
           "public": "Öffentlich"

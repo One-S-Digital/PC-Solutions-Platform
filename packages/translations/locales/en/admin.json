@@ -149,8 +149,13 @@
         },
         "alerts": {
           "createFailed": "Failed to create setting: {{message}}",
-          "created": "System setting created successfully!"
+          "created": "System setting created successfully!",
+          "updated": "Setting updated successfully!",
+          "updateFailed": "Failed to update setting: {{message}}"
         },
+        "editTitle": "Edit Setting",
+        "description": "Description",
+        "gracePeriodHint": "Enter the number of days (e.g., 7)",
         "badges": {
           "encrypted": "Encrypted",
           "public": "Public"

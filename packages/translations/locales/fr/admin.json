@@ -149,8 +149,13 @@
         },
         "alerts": {
           "createFailed": "Échec de la création du paramètre : {{message}}",
-          "created": "Paramètre système créé avec succès !"
+          "created": "Paramètre système créé avec succès !",
+          "updated": "Paramètre mis à jour avec succès !",
+          "updateFailed": "Échec de la mise à jour du paramètre : {{message}}"
         },
+        "editTitle": "Modifier le paramètre",
+        "description": "Description",
+        "gracePeriodHint": "Entrez le nombre de jours (par ex. 7)",
         "badges": {
           "encrypted": "Chiffré",
           "public": "Public"
