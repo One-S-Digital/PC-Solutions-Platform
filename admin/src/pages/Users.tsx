@@ -753,6 +753,7 @@ const Users: React.FC = () => {
     // - admin.domain.com -> domain.com
     // - admin-staging.domain.com -> staging.domain.com
     // - staging-admin.domain.com -> staging.domain.com
+    // - domain.com -> app.domain.com (common SPA deployment)
     // - localhost:3001 -> localhost:3000
     const currentUrl = new URL(window.location.href)
     const { protocol, hostname, port } = currentUrl
@@ -764,6 +765,15 @@ const Users: React.FC = () => {
       derivedHostname = hostname.replace(/^admin-/, '')
     } else if (hostname.endsWith('-admin')) {
       derivedHostname = hostname.replace(/-admin$/, '')
+    }
+
+    // If admin is hosted on the apex domain but the frontend lives on app.<domain>,
+    // prefer that convention (e.g. procrechesolutions.com -> app.procrechesolutions.com).
+    // This is only applied when we couldn't derive a different hostname via admin-* patterns.
+    const hostnameLabels = derivedHostname.split('.')
+    const isLocalhostLike = derivedHostname === 'localhost' || derivedHostname.endsWith('.localhost')
+    if (!isLocalhostLike && derivedHostname === hostname && hostnameLabels.length === 2) {
+      derivedHostname = `app.${derivedHostname}`
     }
 
     const derivedPort = port === '3001' ? '3000' : port
