@@ -1787,6 +1787,128 @@
       "previous": "Previous",
       "next": "Next"
     },
-    "noSubscriptions": "No subscriptions found"
+    "noSubscriptions": "No subscriptions found",
+    "tabs": {
+      "subscriptions": "Subscriptions",
+      "requests": "Subscription Requests"
+    },
+    "requestStatus": {
+      "pending": "Pending",
+      "under_review": "Under Review",
+      "invoice_sent": "Invoice Sent",
+      "payment_pending": "Payment Pending",
+      "payment_received": "Payment Received",
+      "activated": "Activated",
+      "declined": "Declined",
+      "cancelled": "Cancelled"
+    },
+    "requests": {
+      "noRequests": "No subscription requests found",
+      "filter": {
+        "allStatuses": "All Statuses"
+      },
+      "stats": {
+        "pending": "Pending",
+        "underReview": "Under Review",
+        "invoiceSent": "Invoice Sent",
+        "paymentReceived": "Payment Received",
+        "activated": "Activated"
+      },
+      "table": {
+        "contact": "Contact",
+        "plan": "Plan",
+        "tier": "Tier",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "detail": {
+        "title": "Subscription Request",
+        "submitted": "Submitted on {{date}}",
+        "status": "Status",
+        "contactInfo": "Contact Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "preferredContact": "Preferred Contact",
+        "planDetails": "Plan Details",
+        "plan": "Plan",
+        "tier": "Tier",
+        "billingPeriod": "Billing Period",
+        "message": "Message",
+        "invoiceInfo": "Invoice Information",
+        "invoiceNumber": "Invoice Number",
+        "amount": "Amount",
+        "sentAt": "Sent At",
+        "paymentInfo": "Payment Information",
+        "paymentReference": "Reference",
+        "receivedAt": "Received At",
+        "notes": "Admin Notes",
+        "declineReason": "Decline Reason"
+      },
+      "actions": {
+        "review": "Mark Under Review",
+        "sendInvoice": "Send Invoice",
+        "confirmPayment": "Confirm Payment",
+        "activate": "Activate Subscription",
+        "decline": "Decline"
+      },
+      "reviewSuccess": "Request marked as under review",
+      "reviewError": "Failed to review request: ",
+      "invoiceSentSuccess": "Invoice sent successfully",
+      "invoiceSentError": "Failed to send invoice: ",
+      "paymentConfirmedSuccess": "Payment confirmed successfully",
+      "paymentConfirmedError": "Failed to confirm payment: ",
+      "activatedSuccess": "Subscription activated successfully",
+      "activatedError": "Failed to activate subscription: ",
+      "declinedSuccess": "Request declined",
+      "declinedError": "Failed to decline request: ",
+      "invoiceModal": {
+        "title": "Send Invoice",
+        "sendingTo": "Sending invoice to",
+        "invoiceNumber": "Invoice Number",
+        "amount": "Amount",
+        "currency": "Currency",
+        "notes": "Notes (optional)",
+        "sendEmailNotification": "Send email notification to customer",
+        "send": "Send Invoice"
+      },
+      "paymentModal": {
+        "title": "Confirm Payment",
+        "forInvoice": "For Invoice",
+        "reference": "Payment Reference (optional)",
+        "date": "Payment Date",
+        "notes": "Notes (optional)",
+        "autoActivate": "Automatically activate subscription",
+        "confirm": "Confirm Payment"
+      },
+      "declineModal": {
+        "title": "Decline Request",
+        "warning": "You are about to decline the subscription request from",
+        "reason": "Reason for Declining",
+        "notes": "Internal Notes (optional)",
+        "sendEmailNotification": "Send email notification to customer",
+        "decline": "Decline Request"
+      }
+    },
+    "settings": {
+      "title": "Subscription Settings",
+      "updateSuccess": "Settings updated successfully",
+      "updateError": "Failed to update settings: ",
+      "emailSection": "Email Notifications",
+      "enableNotifications": "Enable Email Notifications",
+      "enableNotificationsHelp": "Receive emails for new subscription requests",
+      "notificationEmail": "Notification Email",
+      "notificationEmailHelp": "Email address to receive subscription request notifications",
+      "invoiceSection": "Invoice Settings",
+      "invoicePrefix": "Invoice Prefix",
+      "nextInvoiceNumber": "Next Invoice Number",
+      "paymentTerms": "Payment Terms (days)",
+      "defaultsSection": "Subscription Defaults",
+      "defaultTrialDays": "Default Trial Days",
+      "gracePeriodDays": "Grace Period Days",
+      "estimatedResponseHours": "Estimated Response Time (hours)",
+      "estimatedResponseHoursHelp": "Shown to users when they submit a request"
+    }
   }
 }

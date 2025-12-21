@@ -25,6 +25,15 @@ import {
   Heart,
   Shield,
   Edit,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Send,
+  MessageSquare,
+  ClipboardList,
+  Settings,
+  Mail,
 } from 'lucide-react';
 import { useApiClient, apiService } from '../services/api';
 import { subscriptionService } from '../services/subscriptionService';
@@ -913,6 +922,797 @@ const EditPricingTierModal: React.FC<EditPricingTierModalProps> = ({ isOpen, onC
   );
 };
 
+// Send Invoice Modal Component
+interface SendInvoiceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  request: {
+    id: string;
+    contactName?: string;
+    contactEmail: string;
+    plan?: { name: string };
+    tier: string;
+  };
+  onSend: (data: {
+    invoiceNumber: string;
+    invoiceAmount: number;
+    invoiceCurrency?: string;
+    sendEmail?: boolean;
+    notes?: string;
+  }) => Promise<void>;
+  isLoading: boolean;
+}
+
+const SendInvoiceModal: React.FC<SendInvoiceModalProps> = ({
+  isOpen,
+  onClose,
+  request,
+  onSend,
+  isLoading,
+}) => {
+  const { t } = useTranslation(['admin', 'common']);
+  const apiClient = useApiClient();
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [invoiceAmount, setInvoiceAmount] = useState('');
+  const [invoiceCurrency, setInvoiceCurrency] = useState('CHF');
+  const [sendEmail, setSendEmail] = useState(true);
+  const [notes, setNotes] = useState('');
+
+  // Fetch next invoice number
+  useQuery({
+    queryKey: ['next-invoice-number'],
+    queryFn: async () => {
+      const res = await subscriptionService.getNextInvoiceNumber(apiClient);
+      setInvoiceNumber(res.data?.data?.invoiceNumber || '');
+      return res;
+    },
+    enabled: isOpen && !invoiceNumber,
+  });
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const amount = parseFloat(invoiceAmount);
+    if (!invoiceNumber || isNaN(amount) || amount <= 0) {
+      return;
+    }
+    await onSend({
+      invoiceNumber,
+      invoiceAmount: amount,
+      invoiceCurrency,
+      sendEmail,
+      notes: notes || undefined,
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold">
+            {t('admin:subscriptions.requests.invoiceModal.title', 'Send Invoice')}
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="p-3 bg-gray-50 rounded-lg text-sm">
+            <p className="text-gray-600">
+              {t('admin:subscriptions.requests.invoiceModal.sendingTo', 'Sending invoice to')}:
+            </p>
+            <p className="font-medium">{request.contactName || request.contactEmail}</p>
+            <p className="text-gray-500">{request.plan?.name} - {request.tier}</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.invoiceModal.invoiceNumber', 'Invoice Number')}
+            </label>
+            <input
+              value={invoiceNumber}
+              onChange={(e) => setInvoiceNumber(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('admin:subscriptions.requests.invoiceModal.amount', 'Amount')}
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={invoiceAmount}
+                onChange={(e) => setInvoiceAmount(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('admin:subscriptions.requests.invoiceModal.currency', 'Currency')}
+              </label>
+              <select
+                value={invoiceCurrency}
+                onChange={(e) => setInvoiceCurrency(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="CHF">CHF</option>
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.invoiceModal.notes', 'Notes (optional)')}
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="sendEmail"
+              checked={sendEmail}
+              onChange={(e) => setSendEmail(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            <label htmlFor="sendEmail" className="text-sm text-gray-700">
+              {t('admin:subscriptions.requests.invoiceModal.sendEmailNotification', 'Send email notification to customer')}
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button type="button" onClick={onClose} disabled={isLoading} className="px-4 py-2 text-gray-600 hover:text-gray-900">
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading || !invoiceNumber || !invoiceAmount}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+            >
+              <Send className="w-4 h-4" />
+              {isLoading ? t('common:sending', 'Sending...') : t('admin:subscriptions.requests.invoiceModal.send', 'Send Invoice')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Confirm Payment Modal Component
+interface ConfirmPaymentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  request: {
+    id: string;
+    contactName?: string;
+    contactEmail: string;
+    invoiceNumber?: string;
+    invoiceAmount?: number;
+    invoiceCurrency?: string;
+  };
+  onConfirm: (data: {
+    paymentReference?: string;
+    paymentDate?: string;
+    autoActivate?: boolean;
+    notes?: string;
+  }) => Promise<void>;
+  isLoading: boolean;
+}
+
+const ConfirmPaymentModal: React.FC<ConfirmPaymentModalProps> = ({
+  isOpen,
+  onClose,
+  request,
+  onConfirm,
+  isLoading,
+}) => {
+  const { t } = useTranslation(['admin', 'common']);
+  const [paymentReference, setPaymentReference] = useState('');
+  const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0]);
+  const [autoActivate, setAutoActivate] = useState(false);
+  const [notes, setNotes] = useState('');
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await onConfirm({
+      paymentReference: paymentReference || undefined,
+      paymentDate: paymentDate || undefined,
+      autoActivate,
+      notes: notes || undefined,
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold">
+            {t('admin:subscriptions.requests.paymentModal.title', 'Confirm Payment')}
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="p-3 bg-teal-50 rounded-lg text-sm">
+            <p className="text-teal-600">
+              {t('admin:subscriptions.requests.paymentModal.forInvoice', 'For Invoice')}:
+            </p>
+            <p className="font-medium text-teal-900">{request.invoiceNumber}</p>
+            <p className="text-teal-700">
+              {request.invoiceAmount
+                ? new Intl.NumberFormat('de-CH', {
+                    style: 'currency',
+                    currency: request.invoiceCurrency || 'CHF',
+                  }).format(request.invoiceAmount)
+                : '-'}
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.paymentModal.reference', 'Payment Reference (optional)')}
+            </label>
+            <input
+              value={paymentReference}
+              onChange={(e) => setPaymentReference(e.target.value)}
+              placeholder="e.g., Bank transfer ID, check number"
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.paymentModal.date', 'Payment Date')}
+            </label>
+            <input
+              type="date"
+              value={paymentDate}
+              onChange={(e) => setPaymentDate(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.paymentModal.notes', 'Notes (optional)')}
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="autoActivate"
+              checked={autoActivate}
+              onChange={(e) => setAutoActivate(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            <label htmlFor="autoActivate" className="text-sm text-gray-700">
+              {t('admin:subscriptions.requests.paymentModal.autoActivate', 'Automatically activate subscription')}
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button type="button" onClick={onClose} disabled={isLoading} className="px-4 py-2 text-gray-600 hover:text-gray-900">
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
+            >
+              <CheckCircle className="w-4 h-4" />
+              {isLoading ? t('common:confirming', 'Confirming...') : t('admin:subscriptions.requests.paymentModal.confirm', 'Confirm Payment')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Decline Request Modal Component
+interface DeclineRequestModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  request: {
+    id: string;
+    contactName?: string;
+    contactEmail: string;
+  };
+  onDecline: (data: {
+    reason: string;
+    sendEmail?: boolean;
+    notes?: string;
+  }) => Promise<void>;
+  isLoading: boolean;
+}
+
+const DeclineRequestModal: React.FC<DeclineRequestModalProps> = ({
+  isOpen,
+  onClose,
+  request,
+  onDecline,
+  isLoading,
+}) => {
+  const { t } = useTranslation(['admin', 'common']);
+  const [reason, setReason] = useState('');
+  const [sendEmail, setSendEmail] = useState(true);
+  const [notes, setNotes] = useState('');
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reason.trim()) return;
+    await onDecline({
+      reason,
+      sendEmail,
+      notes: notes || undefined,
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-red-700">
+            {t('admin:subscriptions.requests.declineModal.title', 'Decline Request')}
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="p-3 bg-red-50 rounded-lg text-sm">
+            <p className="text-red-600">
+              {t('admin:subscriptions.requests.declineModal.warning', 'You are about to decline the subscription request from')}:
+            </p>
+            <p className="font-medium text-red-900">{request.contactName || request.contactEmail}</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.declineModal.reason', 'Reason for Declining')} *
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Please provide a reason for declining this request..."
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+              rows={3}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.requests.declineModal.notes', 'Internal Notes (optional)')}
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="sendDeclineEmail"
+              checked={sendEmail}
+              onChange={(e) => setSendEmail(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            <label htmlFor="sendDeclineEmail" className="text-sm text-gray-700">
+              {t('admin:subscriptions.requests.declineModal.sendEmailNotification', 'Send email notification to customer')}
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button type="button" onClick={onClose} disabled={isLoading} className="px-4 py-2 text-gray-600 hover:text-gray-900">
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading || !reason.trim()}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+            >
+              <XCircle className="w-4 h-4" />
+              {isLoading ? t('common:declining', 'Declining...') : t('admin:subscriptions.requests.declineModal.decline', 'Decline Request')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Subscription Settings Modal Component
+interface SubscriptionSettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  settings: {
+    notificationEmail?: string;
+    enableEmailNotifications?: boolean;
+    defaultTrialDays?: number;
+    defaultGracePeriodDays?: number;
+    invoicePrefix?: string;
+    invoiceNextNumber?: number;
+    paymentTermsDays?: number;
+    estimatedResponseHours?: number;
+  } | null;
+  onSave: (data: {
+    notificationEmail?: string;
+    enableEmailNotifications?: boolean;
+    defaultTrialDays?: number;
+    defaultGracePeriodDays?: number;
+    invoicePrefix?: string;
+    invoiceNextNumber?: number;
+    paymentTermsDays?: number;
+    estimatedResponseHours?: number;
+  }) => Promise<void>;
+  isLoading: boolean;
+}
+
+const SubscriptionSettingsModal: React.FC<SubscriptionSettingsModalProps> = ({
+  isOpen,
+  onClose,
+  settings,
+  onSave,
+  isLoading,
+}) => {
+  const { t } = useTranslation(['admin', 'common']);
+  const [notificationEmail, setNotificationEmail] = useState(settings?.notificationEmail || '');
+  const [enableEmailNotifications, setEnableEmailNotifications] = useState(settings?.enableEmailNotifications ?? true);
+  const [defaultTrialDays, setDefaultTrialDays] = useState(String(settings?.defaultTrialDays ?? 14));
+  const [defaultGracePeriodDays, setDefaultGracePeriodDays] = useState(String(settings?.defaultGracePeriodDays ?? 7));
+  const [invoicePrefix, setInvoicePrefix] = useState(settings?.invoicePrefix || 'INV-');
+  const [invoiceNextNumber, setInvoiceNextNumber] = useState(String(settings?.invoiceNextNumber ?? 1001));
+  const [paymentTermsDays, setPaymentTermsDays] = useState(String(settings?.paymentTermsDays ?? 30));
+  const [estimatedResponseHours, setEstimatedResponseHours] = useState(String(settings?.estimatedResponseHours ?? 48));
+
+  React.useEffect(() => {
+    if (settings) {
+      setNotificationEmail(settings.notificationEmail || '');
+      setEnableEmailNotifications(settings.enableEmailNotifications ?? true);
+      setDefaultTrialDays(String(settings.defaultTrialDays ?? 14));
+      setDefaultGracePeriodDays(String(settings.defaultGracePeriodDays ?? 7));
+      setInvoicePrefix(settings.invoicePrefix || 'INV-');
+      setInvoiceNextNumber(String(settings.invoiceNextNumber ?? 1001));
+      setPaymentTermsDays(String(settings.paymentTermsDays ?? 30));
+      setEstimatedResponseHours(String(settings.estimatedResponseHours ?? 48));
+    }
+  }, [settings]);
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await onSave({
+      notificationEmail: notificationEmail || undefined,
+      enableEmailNotifications,
+      defaultTrialDays: parseInt(defaultTrialDays) || 14,
+      defaultGracePeriodDays: parseInt(defaultGracePeriodDays) || 7,
+      invoicePrefix: invoicePrefix || 'INV-',
+      invoiceNextNumber: parseInt(invoiceNextNumber) || 1001,
+      paymentTermsDays: parseInt(paymentTermsDays) || 30,
+      estimatedResponseHours: parseInt(estimatedResponseHours) || 48,
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold">
+            {t('admin:subscriptions.settings.title', 'Subscription Settings')}
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Email Notifications Section */}
+          <div className="border rounded-lg p-4">
+            <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              {t('admin:subscriptions.settings.emailSection', 'Email Notifications')}
+            </h4>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    {t('admin:subscriptions.settings.enableNotifications', 'Enable Email Notifications')}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {t('admin:subscriptions.settings.enableNotificationsHelp', 'Receive emails for new subscription requests')}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEnableEmailNotifications(!enableEmailNotifications)}
+                  className={`px-3 py-1.5 rounded-lg text-sm ${
+                    enableEmailNotifications ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'
+                  }`}
+                >
+                  {enableEmailNotifications ? t('common:enabled', 'Enabled') : t('common:disabled', 'Disabled')}
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.notificationEmail', 'Notification Email')}
+                </label>
+                <input
+                  type="email"
+                  value={notificationEmail}
+                  onChange={(e) => setNotificationEmail(e.target.value)}
+                  placeholder="admin@example.com"
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('admin:subscriptions.settings.notificationEmailHelp', 'Email address to receive subscription request notifications')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Invoice Settings Section */}
+          <div className="border rounded-lg p-4">
+            <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              {t('admin:subscriptions.settings.invoiceSection', 'Invoice Settings')}
+            </h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.invoicePrefix', 'Invoice Prefix')}
+                </label>
+                <input
+                  value={invoicePrefix}
+                  onChange={(e) => setInvoicePrefix(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.nextInvoiceNumber', 'Next Invoice Number')}
+                </label>
+                <input
+                  type="number"
+                  value={invoiceNextNumber}
+                  onChange={(e) => setInvoiceNextNumber(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.paymentTerms', 'Payment Terms (days)')}
+                </label>
+                <input
+                  type="number"
+                  value={paymentTermsDays}
+                  onChange={(e) => setPaymentTermsDays(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Subscription Defaults Section */}
+          <div className="border rounded-lg p-4">
+            <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              {t('admin:subscriptions.settings.defaultsSection', 'Subscription Defaults')}
+            </h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.defaultTrialDays', 'Default Trial Days')}
+                </label>
+                <input
+                  type="number"
+                  value={defaultTrialDays}
+                  onChange={(e) => setDefaultTrialDays(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.gracePeriodDays', 'Grace Period Days')}
+                </label>
+                <input
+                  type="number"
+                  value={defaultGracePeriodDays}
+                  onChange={(e) => setDefaultGracePeriodDays(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin:subscriptions.settings.estimatedResponseHours', 'Estimated Response Time (hours)')}
+                </label>
+                <input
+                  type="number"
+                  value={estimatedResponseHours}
+                  onChange={(e) => setEstimatedResponseHours(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('admin:subscriptions.settings.estimatedResponseHoursHelp', 'Shown to users when they submit a request')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button type="button" onClick={onClose} disabled={isLoading} className="px-4 py-2 text-gray-600 hover:text-gray-900">
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isLoading ? t('common:saving', 'Saving...') : t('common:save', 'Save Settings')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Subscription Request Status enum (matches backend)
+enum SubscriptionRequestStatus {
+  PENDING = 'PENDING',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  INVOICE_SENT = 'INVOICE_SENT',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
+  PAYMENT_RECEIVED = 'PAYMENT_RECEIVED',
+  ACTIVATED = 'ACTIVATED',
+  DECLINED = 'DECLINED',
+  CANCELLED = 'CANCELLED',
+}
+
+// Request status colors
+const requestStatusColors: Record<string, string> = {
+  [SubscriptionRequestStatus.PENDING]: 'bg-yellow-100 text-yellow-800',
+  [SubscriptionRequestStatus.UNDER_REVIEW]: 'bg-blue-100 text-blue-800',
+  [SubscriptionRequestStatus.INVOICE_SENT]: 'bg-purple-100 text-purple-800',
+  [SubscriptionRequestStatus.PAYMENT_PENDING]: 'bg-orange-100 text-orange-800',
+  [SubscriptionRequestStatus.PAYMENT_RECEIVED]: 'bg-teal-100 text-teal-800',
+  [SubscriptionRequestStatus.ACTIVATED]: 'bg-green-100 text-green-800',
+  [SubscriptionRequestStatus.DECLINED]: 'bg-red-100 text-red-800',
+  [SubscriptionRequestStatus.CANCELLED]: 'bg-gray-100 text-gray-800',
+};
+
+// Subscription Request interface
+interface SubscriptionRequest {
+  id: string;
+  userId?: string;
+  organizationId?: string;
+  planId: string;
+  tier: SubscriptionTier;
+  billingPeriod: string;
+  contactName?: string;
+  contactEmail: string;
+  contactPhone?: string;
+  preferredContact?: string;
+  message?: string;
+  notes?: string;
+  status: SubscriptionRequestStatus;
+  invoiceNumber?: string;
+  invoiceSentAt?: string;
+  invoiceAmount?: number;
+  invoiceCurrency?: string;
+  paymentReceivedAt?: string;
+  paymentReference?: string;
+  subscriptionId?: string;
+  createdAt: string;
+  updatedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  processedAt?: string;
+  processedBy?: string;
+  declinedAt?: string;
+  declinedBy?: string;
+  declineReason?: string;
+  user?: {
+    id: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    role: string;
+  };
+  organization?: {
+    id: string;
+    name: string;
+  };
+  plan?: {
+    id: string;
+    name: string;
+  };
+}
+
+// View mode for main content
+type ViewMode = 'subscriptions' | 'requests' | 'settings';
+
 const Subscriptions: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -922,6 +1722,16 @@ const Subscriptions: React.FC = () => {
   const [isPlanEditorOpen, setIsPlanEditorOpen] = useState(false);
   const [isTierEditorOpen, setIsTierEditorOpen] = useState(false);
   const [editingPricingTier, setEditingPricingTier] = useState<PricingTier | null>(null);
+  
+  // Subscription Requests state
+  const [viewMode, setViewMode] = useState<ViewMode>('subscriptions');
+  const [requestStatusFilter, setRequestStatusFilter] = useState<string>('');
+  const [selectedRequest, setSelectedRequest] = useState<SubscriptionRequest | null>(null);
+  const [isRequestDetailOpen, setIsRequestDetailOpen] = useState(false);
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
@@ -966,11 +1776,39 @@ const Subscriptions: React.FC = () => {
     enabled: !!apiClient && selectedRole === UserRole.FOUNDATION,
   });
 
+  // Fetch subscription requests
+  const { data: requestsResponse, isLoading: requestsLoading } = useQuery({
+    queryKey: ['subscription-requests', requestStatusFilter],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: requestStatusFilter || undefined,
+        limit: 100,
+      }),
+    enabled: !!apiClient && viewMode === 'requests',
+  });
+
+  // Fetch request analytics
+  const { data: requestAnalyticsResponse } = useQuery({
+    queryKey: ['subscription-request-analytics'],
+    queryFn: () => subscriptionService.getSubscriptionRequestAnalytics(apiClient),
+    enabled: !!apiClient && viewMode === 'requests',
+  });
+
+  // Fetch subscription settings
+  const { data: settingsResponse } = useQuery({
+    queryKey: ['subscription-settings'],
+    queryFn: () => subscriptionService.getSubscriptionSettings(apiClient),
+    enabled: !!apiClient,
+  });
+
   const users: User[] = usersResponse?.data?.data || [];
   const plans: SubscriptionPlan[] = plansResponse?.data?.data || [];
   const analytics: SubscriptionAnalytics | null = analyticsResponse?.data?.data || null;
   const subscriptions: Subscription[] = subscriptionsResponse?.data?.data?.subscriptions || [];
   const pricingTiers: PricingTier[] = pricingTiersResponse?.data?.data || [];
+  const requests: SubscriptionRequest[] = requestsResponse?.data?.data?.requests || [];
+  const requestAnalytics = requestAnalyticsResponse?.data?.data || null;
+  const subscriptionSettings = settingsResponse?.data?.data || null;
 
   const foundationAvailableTiers = React.useMemo(() => {
     const order: SubscriptionTier[] = [
@@ -1144,6 +1982,120 @@ const Subscriptions: React.FC = () => {
     },
   });
 
+  // Subscription Request mutations
+  const reviewRequestMutation = useMutation({
+    mutationFn: async ({ id, notes }: { id: string; notes?: string }) =>
+      subscriptionService.reviewSubscriptionRequest(apiClient, id, { notes }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
+      toast.success(t('admin:subscriptions.requests.reviewSuccess', 'Request marked as under review'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.requests.reviewError', 'Failed to review request: ') + error.message);
+    },
+  });
+
+  const sendInvoiceMutation = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { invoiceNumber: string; invoiceAmount: number; invoiceCurrency?: string; sendEmail?: boolean; notes?: string };
+    }) => subscriptionService.sendInvoiceForRequest(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
+      setIsInvoiceModalOpen(false);
+      toast.success(t('admin:subscriptions.requests.invoiceSentSuccess', 'Invoice sent successfully'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.requests.invoiceSentError', 'Failed to send invoice: ') + error.message);
+    },
+  });
+
+  const confirmPaymentMutation = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { paymentReference?: string; paymentDate?: string; autoActivate?: boolean; notes?: string };
+    }) => subscriptionService.confirmPaymentForRequest(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
+      setIsPaymentModalOpen(false);
+      toast.success(t('admin:subscriptions.requests.paymentConfirmedSuccess', 'Payment confirmed successfully'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.requests.paymentConfirmedError', 'Failed to confirm payment: ') + error.message);
+    },
+  });
+
+  const activateRequestMutation = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { startDate?: string; periodMonths?: number; includeTrial?: boolean; sendEmail?: boolean; notes?: string };
+    }) => subscriptionService.activateSubscriptionRequest(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-analytics'] });
+      setIsRequestDetailOpen(false);
+      toast.success(t('admin:subscriptions.requests.activatedSuccess', 'Subscription activated successfully'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.requests.activatedError', 'Failed to activate subscription: ') + error.message);
+    },
+  });
+
+  const declineRequestMutation = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { reason: string; sendEmail?: boolean; notes?: string };
+    }) => subscriptionService.declineSubscriptionRequest(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
+      setIsDeclineModalOpen(false);
+      setIsRequestDetailOpen(false);
+      toast.success(t('admin:subscriptions.requests.declinedSuccess', 'Request declined'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.requests.declinedError', 'Failed to decline request: ') + error.message);
+    },
+  });
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (data: {
+      notificationEmail?: string;
+      enableEmailNotifications?: boolean;
+      defaultTrialDays?: number;
+      defaultGracePeriodDays?: number;
+      invoicePrefix?: string;
+      invoiceNextNumber?: number;
+      paymentTermsDays?: number;
+      estimatedResponseHours?: number;
+    }) => subscriptionService.updateSubscriptionSettings(apiClient, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-settings'] });
+      setIsSettingsModalOpen(false);
+      toast.success(t('admin:subscriptions.settings.updateSuccess', 'Settings updated successfully'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.settings.updateError', 'Failed to update settings: ') + error.message);
+    },
+  });
+
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setSelectedUserSubscription(userSubscriptionMap.get(user.id) || null);
@@ -1178,6 +2130,23 @@ const Subscriptions: React.FC = () => {
       </span>
     );
   };
+
+  const getRequestStatusBadge = (status: SubscriptionRequestStatus) => {
+    return (
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${requestStatusColors[status] || 'bg-gray-100 text-gray-800'}`}>
+        {t(`admin:subscriptions.requestStatus.${status.toLowerCase()}`, status)}
+      </span>
+    );
+  };
+
+  const handleViewRequest = (request: SubscriptionRequest) => {
+    setSelectedRequest(request);
+    setIsRequestDetailOpen(true);
+  };
+
+  const pendingRequestsCount = requests.filter(
+    (r) => r.status === SubscriptionRequestStatus.PENDING || r.status === SubscriptionRequestStatus.UNDER_REVIEW
+  ).length;
 
   // Stats cards
   const statsCards = [
@@ -1219,6 +2188,13 @@ const Subscriptions: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={() => setIsSettingsModalOpen(true)}
+            className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
             onClick={() => setIsPlanEditorOpen(true)}
             className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
           >
@@ -1227,26 +2203,239 @@ const Subscriptions: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsCards.map((stat, index) => (
-          <div
-            key={index}
-            className={`${stat.color} border rounded-lg p-4 flex items-center justify-between`}
-          >
-            <div>
-              <p className="text-sm text-gray-600">{stat.title}</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stat.isText ? stat.value : (stat.value as number).toLocaleString()}
-              </p>
-            </div>
-            {stat.icon}
+      {/* View Mode Tabs */}
+      <div className="flex border-b border-gray-200">
+        <button
+          onClick={() => {
+            setViewMode('subscriptions');
+            setSelectedRole(null);
+          }}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            viewMode === 'subscriptions'
+              ? 'border-swiss-teal text-swiss-teal'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <CreditCard className="w-4 h-4" />
+            {t('admin:subscriptions.tabs.subscriptions', 'Subscriptions')}
           </div>
-        ))}
+        </button>
+        <button
+          onClick={() => setViewMode('requests')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            viewMode === 'requests'
+              ? 'border-swiss-teal text-swiss-teal'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <ClipboardList className="w-4 h-4" />
+            {t('admin:subscriptions.tabs.requests', 'Subscription Requests')}
+            {pendingRequestsCount > 0 && (
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                {pendingRequestsCount}
+              </span>
+            )}
+          </div>
+        </button>
       </div>
 
-      {/* Role Selection or User List */}
-      {!selectedRole ? (
+      {/* Content based on view mode */}
+      {viewMode === 'subscriptions' && (
+        <>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {statsCards.map((stat, index) => (
+              <div
+                key={index}
+                className={`${stat.color} border rounded-lg p-4 flex items-center justify-between`}
+              >
+                <div>
+                  <p className="text-sm text-gray-600">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stat.isText ? stat.value : (stat.value as number).toLocaleString()}
+                  </p>
+                </div>
+                {stat.icon}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {viewMode === 'requests' && (
+        <>
+          {/* Request Analytics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">{t('admin:subscriptions.requests.stats.pending', 'Pending')}</p>
+                  <p className="text-2xl font-bold text-yellow-800">{requestAnalytics?.pending || 0}</p>
+                </div>
+                <Clock className="w-6 h-6 text-yellow-600" />
+              </div>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">{t('admin:subscriptions.requests.stats.underReview', 'Under Review')}</p>
+                  <p className="text-2xl font-bold text-blue-800">{requestAnalytics?.underReview || 0}</p>
+                </div>
+                <Eye className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">{t('admin:subscriptions.requests.stats.invoiceSent', 'Invoice Sent')}</p>
+                  <p className="text-2xl font-bold text-purple-800">{requestAnalytics?.invoiceSent || 0}</p>
+                </div>
+                <FileText className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">{t('admin:subscriptions.requests.stats.paymentReceived', 'Payment Received')}</p>
+                  <p className="text-2xl font-bold text-teal-800">{requestAnalytics?.paymentReceived || 0}</p>
+                </div>
+                <DollarSign className="w-6 h-6 text-teal-600" />
+              </div>
+            </div>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">{t('admin:subscriptions.requests.stats.activated', 'Activated')}</p>
+                  <p className="text-2xl font-bold text-green-800">{requestAnalytics?.activated || 0}</p>
+                </div>
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Request Filters */}
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex-1 min-w-[200px]">
+                <select
+                  value={requestStatusFilter}
+                  onChange={(e) => setRequestStatusFilter(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">{t('admin:subscriptions.requests.filter.allStatuses', 'All Statuses')}</option>
+                  {Object.values(SubscriptionRequestStatus).map((status) => (
+                    <option key={status} value={status}>
+                      {t(`admin:subscriptions.requestStatus.${status.toLowerCase()}`, status)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['subscription-requests'] })}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                {t('common:refresh', 'Refresh')}
+              </button>
+            </div>
+          </div>
+
+          {/* Requests Table */}
+          <div className="bg-white rounded-lg border overflow-hidden">
+            {requestsLoading ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : requests.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <ClipboardList className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p>{t('admin:subscriptions.requests.noRequests', 'No subscription requests found')}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.requests.table.contact', 'Contact')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.requests.table.plan', 'Plan')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.requests.table.tier', 'Tier')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.requests.table.status', 'Status')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.requests.table.date', 'Date')}
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.requests.table.actions', 'Actions')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {requests.map((request) => (
+                      <tr
+                        key={request.id}
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleViewRequest(request)}
+                      >
+                        <td className="px-4 py-4">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {request.contactName || request.user?.firstName
+                                ? `${request.user?.firstName || ''} ${request.user?.lastName || ''}`.trim() || request.contactName
+                                : t('common:unknown', 'Unknown')}
+                            </p>
+                            <p className="text-sm text-gray-500">{request.contactEmail}</p>
+                            {request.organization && (
+                              <p className="text-xs text-gray-400">{request.organization.name}</p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-600">
+                          {request.plan?.name || '-'}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-600">
+                          {t(`admin:subscriptions.tier.${request.tier.toLowerCase()}` as any, request.tier)}
+                        </td>
+                        <td className="px-4 py-4">
+                          {getRequestStatusBadge(request.status)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-600">
+                          {new Date(request.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewRequest(request);
+                              }}
+                              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                            >
+                              <Eye className="w-4 h-4" />
+                              {t('common:view', 'View')}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Role Selection or User List (only in subscriptions mode) */}
+      {viewMode === 'subscriptions' && !selectedRole ? (
         // Role Cards View
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -1278,7 +2467,7 @@ const Subscriptions: React.FC = () => {
             })}
           </div>
         </div>
-      ) : (
+      ) : viewMode === 'subscriptions' && selectedRole ? (
         // User List View
         <div className="space-y-4">
           {/* Back Button & Title */}
@@ -1529,6 +2718,314 @@ const Subscriptions: React.FC = () => {
             )}
           </div>
         </div>
+      ) : null}
+
+      {/* Request Detail Modal */}
+      {isRequestDetailOpen && selectedRequest && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && setIsRequestDetailOpen(false)}
+        >
+          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {t('admin:subscriptions.requests.detail.title', 'Subscription Request')}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {t('admin:subscriptions.requests.detail.submitted', 'Submitted on {{date}}', {
+                      date: new Date(selectedRequest.createdAt).toLocaleString(),
+                    })}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsRequestDetailOpen(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Status Badge */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-gray-500">
+                  {t('admin:subscriptions.requests.detail.status', 'Status')}:
+                </span>
+                {getRequestStatusBadge(selectedRequest.status)}
+              </div>
+
+              {/* Contact Info */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  {t('admin:subscriptions.requests.detail.contactInfo', 'Contact Information')}
+                </h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.name', 'Name')}</p>
+                    <p className="font-medium">{selectedRequest.contactName || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.email', 'Email')}</p>
+                    <p className="font-medium">{selectedRequest.contactEmail}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.phone', 'Phone')}</p>
+                    <p className="font-medium">{selectedRequest.contactPhone || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.preferredContact', 'Preferred Contact')}</p>
+                    <p className="font-medium capitalize">{selectedRequest.preferredContact || 'email'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Plan Details */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  {t('admin:subscriptions.requests.detail.planDetails', 'Plan Details')}
+                </h4>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.plan', 'Plan')}</p>
+                    <p className="font-medium">{selectedRequest.plan?.name || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.tier', 'Tier')}</p>
+                    <p className="font-medium">
+                      {t(`admin:subscriptions.tier.${selectedRequest.tier.toLowerCase()}` as any, selectedRequest.tier)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">{t('admin:subscriptions.requests.detail.billingPeriod', 'Billing Period')}</p>
+                    <p className="font-medium capitalize">{selectedRequest.billingPeriod}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message */}
+              {selectedRequest.message && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    {t('admin:subscriptions.requests.detail.message', 'Message')}
+                  </h4>
+                  <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                    {selectedRequest.message}
+                  </p>
+                </div>
+              )}
+
+              {/* Invoice Info (if sent) */}
+              {selectedRequest.invoiceNumber && (
+                <div className="bg-purple-50 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-purple-900 mb-3">
+                    {t('admin:subscriptions.requests.detail.invoiceInfo', 'Invoice Information')}
+                  </h4>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-purple-600">{t('admin:subscriptions.requests.detail.invoiceNumber', 'Invoice Number')}</p>
+                      <p className="font-medium text-purple-900">{selectedRequest.invoiceNumber}</p>
+                    </div>
+                    <div>
+                      <p className="text-purple-600">{t('admin:subscriptions.requests.detail.amount', 'Amount')}</p>
+                      <p className="font-medium text-purple-900">
+                        {selectedRequest.invoiceAmount
+                          ? formatCurrency(selectedRequest.invoiceAmount, selectedRequest.invoiceCurrency || 'CHF')
+                          : '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-purple-600">{t('admin:subscriptions.requests.detail.sentAt', 'Sent At')}</p>
+                      <p className="font-medium text-purple-900">
+                        {selectedRequest.invoiceSentAt
+                          ? new Date(selectedRequest.invoiceSentAt).toLocaleDateString()
+                          : '-'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Info (if received) */}
+              {selectedRequest.paymentReceivedAt && (
+                <div className="bg-teal-50 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-teal-900 mb-3">
+                    {t('admin:subscriptions.requests.detail.paymentInfo', 'Payment Information')}
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-teal-600">{t('admin:subscriptions.requests.detail.paymentReference', 'Reference')}</p>
+                      <p className="font-medium text-teal-900">{selectedRequest.paymentReference || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-teal-600">{t('admin:subscriptions.requests.detail.receivedAt', 'Received At')}</p>
+                      <p className="font-medium text-teal-900">
+                        {new Date(selectedRequest.paymentReceivedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Notes */}
+              {selectedRequest.notes && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    {t('admin:subscriptions.requests.detail.notes', 'Admin Notes')}
+                  </h4>
+                  <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">
+                    {selectedRequest.notes}
+                  </p>
+                </div>
+              )}
+
+              {/* Decline reason */}
+              {selectedRequest.status === SubscriptionRequestStatus.DECLINED && selectedRequest.declineReason && (
+                <div className="bg-red-50 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-red-900 mb-2">
+                    {t('admin:subscriptions.requests.detail.declineReason', 'Decline Reason')}
+                  </h4>
+                  <p className="text-sm text-red-700">{selectedRequest.declineReason}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="p-6 border-t bg-gray-50">
+              <div className="flex flex-wrap gap-3 justify-end">
+                {selectedRequest.status === SubscriptionRequestStatus.PENDING && (
+                  <button
+                    onClick={() => reviewRequestMutation.mutate({ id: selectedRequest.id })}
+                    disabled={reviewRequestMutation.isPending}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    <Eye className="w-4 h-4" />
+                    {t('admin:subscriptions.requests.actions.review', 'Mark Under Review')}
+                  </button>
+                )}
+                
+                {(selectedRequest.status === SubscriptionRequestStatus.PENDING ||
+                  selectedRequest.status === SubscriptionRequestStatus.UNDER_REVIEW) && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setIsInvoiceModalOpen(true);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                    >
+                      <Send className="w-4 h-4" />
+                      {t('admin:subscriptions.requests.actions.sendInvoice', 'Send Invoice')}
+                    </button>
+                    <button
+                      onClick={() => setIsDeclineModalOpen(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      {t('admin:subscriptions.requests.actions.decline', 'Decline')}
+                    </button>
+                  </>
+                )}
+
+                {(selectedRequest.status === SubscriptionRequestStatus.INVOICE_SENT ||
+                  selectedRequest.status === SubscriptionRequestStatus.PAYMENT_PENDING) && (
+                  <button
+                    onClick={() => setIsPaymentModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                  >
+                    <DollarSign className="w-4 h-4" />
+                    {t('admin:subscriptions.requests.actions.confirmPayment', 'Confirm Payment')}
+                  </button>
+                )}
+
+                {selectedRequest.status === SubscriptionRequestStatus.PAYMENT_RECEIVED && (
+                  <button
+                    onClick={() => {
+                      activateRequestMutation.mutate({
+                        id: selectedRequest.id,
+                        data: { sendEmail: true },
+                      });
+                    }}
+                    disabled={activateRequestMutation.isPending}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    {t('admin:subscriptions.requests.actions.activate', 'Activate Subscription')}
+                  </button>
+                )}
+
+                <button
+                  onClick={() => setIsRequestDetailOpen(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                >
+                  {t('common:close', 'Close')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Send Invoice Modal */}
+      {isInvoiceModalOpen && selectedRequest && (
+        <SendInvoiceModal
+          isOpen={isInvoiceModalOpen}
+          onClose={() => setIsInvoiceModalOpen(false)}
+          request={selectedRequest}
+          onSend={async (data) => {
+            await sendInvoiceMutation.mutateAsync({
+              id: selectedRequest.id,
+              data,
+            });
+          }}
+          isLoading={sendInvoiceMutation.isPending}
+        />
+      )}
+
+      {/* Confirm Payment Modal */}
+      {isPaymentModalOpen && selectedRequest && (
+        <ConfirmPaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          request={selectedRequest}
+          onConfirm={async (data) => {
+            await confirmPaymentMutation.mutateAsync({
+              id: selectedRequest.id,
+              data,
+            });
+          }}
+          isLoading={confirmPaymentMutation.isPending}
+        />
+      )}
+
+      {/* Decline Modal */}
+      {isDeclineModalOpen && selectedRequest && (
+        <DeclineRequestModal
+          isOpen={isDeclineModalOpen}
+          onClose={() => setIsDeclineModalOpen(false)}
+          request={selectedRequest}
+          onDecline={async (data) => {
+            await declineRequestMutation.mutateAsync({
+              id: selectedRequest.id,
+              data,
+            });
+          }}
+          isLoading={declineRequestMutation.isPending}
+        />
+      )}
+
+      {/* Settings Modal */}
+      {isSettingsModalOpen && (
+        <SubscriptionSettingsModal
+          isOpen={isSettingsModalOpen}
+          onClose={() => setIsSettingsModalOpen(false)}
+          settings={subscriptionSettings}
+          onSave={async (data) => {
+            await updateSettingsMutation.mutateAsync(data);
+          }}
+          isLoading={updateSettingsMutation.isPending}
+        />
       )}
 
       {/* Edit Subscription Modal */}

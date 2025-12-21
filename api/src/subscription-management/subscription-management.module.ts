@@ -5,6 +5,7 @@ import {
   UserSubscriptionController,
 } from './subscription-management.controller';
 import { SubscriptionManagementService } from './subscription-management.service';
+import { SubscriptionRequestService } from './subscription-request.service';
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
@@ -22,6 +23,7 @@ import { EmailNotificationModule } from '../email-notification/email-notificatio
   ],
   providers: [
     SubscriptionManagementService,
+    SubscriptionRequestService,
     PricingService,
     FeatureFlagService,
     BillingService,
@@ -29,6 +31,7 @@ import { EmailNotificationModule } from '../email-notification/email-notificatio
   ],
   exports: [
     SubscriptionManagementService,
+    SubscriptionRequestService,
     PricingService,
     FeatureFlagService,
     BillingService,

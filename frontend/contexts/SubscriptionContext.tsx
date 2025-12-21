@@ -137,11 +137,18 @@ export interface UserSubscriptionData {
 }
 
 /**
- * Subscription request payload
+ * Subscription request payload (for manual subscription flow)
  */
 export interface SubscriptionRequestPayload {
   planId: string;
-  billingPeriod?: 'monthly' | 'yearly';
+  tier?: string;
+  billingPeriod?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  preferredContact?: 'email' | 'phone';
+  message?: string;
+  organizationId?: string;
   notes?: string;
 }
 

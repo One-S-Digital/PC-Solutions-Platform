@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { PricingPlan, UserRole } from '../types';
+import { PricingPlan, UserRole, SubscriptionTier } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import PricingToggle from '../components/ui/PricingToggle';
@@ -13,15 +13,21 @@ import { pricingService } from '../services/pricingService';
 import { usePricingTranslations } from '../hooks/usePricingTranslations';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
 import { APP_NAME } from '../constants';
+import SubscriptionRequestModal, { SubscriptionRequestFormData } from '../components/shared/SubscriptionRequestModal';
+import { useSubscription } from '../contexts/SubscriptionContext';
 
 const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
   const location = useLocation();
   const navigate = useNavigate();
-  const { login } = useAppContext();
+  const { login, user } = useAppContext();
+  const { requestSubscription } = useSubscription();
   const { translatePlan } = usePricingTranslations();
   const { settings } = useFrontendSettings();
   const [isAnnual, setIsAnnual] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fromSignup = location.state?.fromSignup || false;
   const userRoleFromSignup = location.state?.role as UserRole | undefined;
@@ -29,13 +35,49 @@ const PricingPage: React.FC = () => {
   const { foundation: daycarePlans, supplier: supplierPlan, serviceProvider: serviceProviderPlan } = pricingService.getPlansByRole();
 
   const handleChoosePlan = (plan: PricingPlan) => {
-      if (fromSignup) {
-          alert(`You've chosen the ${plan.name} plan! You would now be redirected to payment. For this demo, we'll log you in.`);
-          navigate('/login', { state: { fromSubscription: true } });
-      } else {
-          navigate('/signup');
-      }
-  }
+    // If user is logged in, show the request modal
+    if (user) {
+      setSelectedPlan(plan);
+      setIsRequestModalOpen(true);
+    } else if (fromSignup) {
+      // Coming from signup flow - open request modal
+      setSelectedPlan(plan);
+      setIsRequestModalOpen(true);
+    } else {
+      // Not logged in - redirect to signup
+      navigate('/signup', { state: { selectedPlan: plan.name } });
+    }
+  };
+
+  const handleSubmitRequest = async (data: SubscriptionRequestFormData) => {
+    setIsSubmitting(true);
+    try {
+      await requestSubscription({
+        planId: data.planId,
+        tier: data.tier,
+        billingPeriod: data.billingPeriod,
+        contactName: data.contactName,
+        contactEmail: data.contactEmail,
+        contactPhone: data.contactPhone,
+        preferredContact: data.preferredContact,
+        message: data.message,
+        organizationId: data.organizationId,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getPlanTier = (plan: PricingPlan): SubscriptionTier => {
+    // Map plan names to tiers
+    const tierMap: Record<string, SubscriptionTier> = {
+      'Essential': SubscriptionTier.ESSENTIAL,
+      'Professional': SubscriptionTier.PROFESSIONAL,
+      'Enterprise': SubscriptionTier.ENTERPRISE,
+      'Basic': SubscriptionTier.BASIC,
+    };
+    return tierMap[plan.name] || SubscriptionTier.BASIC;
+  };
 
 
   const PlanCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => {
@@ -159,6 +201,22 @@ const PricingPage: React.FC = () => {
         )}
 
       </div>
+
+      {/* Subscription Request Modal */}
+      {selectedPlan && (
+        <SubscriptionRequestModal
+          isOpen={isRequestModalOpen}
+          onClose={() => {
+            setIsRequestModalOpen(false);
+            setSelectedPlan(null);
+          }}
+          plan={selectedPlan}
+          billingPeriod={isAnnual ? 'yearly' : 'monthly'}
+          tier={getPlanTier(selectedPlan)}
+          onSubmit={handleSubmitRequest}
+          isLoading={isSubmitting}
+        />
+      )}
     </div>
   );
 };

@@ -11,6 +11,13 @@ export enum UserRole {
   PARENT = 'PARENT',
 }
 
+export enum SubscriptionTier {
+  BASIC = 'BASIC',
+  ESSENTIAL = 'ESSENTIAL',
+  PROFESSIONAL = 'PROFESSIONAL',
+  ENTERPRISE = 'ENTERPRISE',
+}
+
 export interface User {
   // Core Prisma User fields
   id: string;

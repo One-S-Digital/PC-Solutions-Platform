@@ -156,6 +156,17 @@ enum InquiryStatus {
   CANCELLED
 }
 
+enum SubscriptionRequestStatus {
+  PENDING           // Just submitted, awaiting review
+  UNDER_REVIEW      // Admin is reviewing
+  INVOICE_SENT      // Invoice has been sent to customer
+  PAYMENT_PENDING   // Waiting for payment confirmation
+  PAYMENT_RECEIVED  // Payment confirmed
+  ACTIVATED         // Subscription created and activated
+  DECLINED          // Request was declined
+  CANCELLED         // Customer cancelled the request
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -195,12 +206,13 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  contactInfo       UserContactInfo?
-  organizations     UserOrganization[]
-  applications      JobApplication[]
-  subscriptions     UserSubscription[]
-  mainSubscriptions Subscription[] // Main subscription model
-  licenses          License[]
+  contactInfo            UserContactInfo?
+  organizations          UserOrganization[]
+  applications           JobApplication[]
+  subscriptions          UserSubscription[]
+  mainSubscriptions      Subscription[] // Main subscription model
+  subscriptionRequests   SubscriptionRequest[] // Subscription requests
+  licenses               License[]
 
   // E-Learning relations
   courseEnrollments CourseEnrollment[]
@@ -315,6 +327,9 @@ model Organization {
   // Inquiry relations
   sentInquiries     Inquiry[] @relation("InquiryBuyer")    // Inquiries this org has sent
   receivedInquiries Inquiry[] @relation("InquirySupplier") // Inquiries this org has received (suppliers)
+
+  // Subscription request relations
+  subscriptionRequests SubscriptionRequest[]
 
   // Promo codes for suppliers and service providers
   promoCodes PromoCode[]
@@ -705,13 +720,14 @@ model Subscription {
   updatedAt            DateTime           @updatedAt
 
   // Relations
-  user              User?                 @relation(fields: [userId], references: [id])
-  organization      Organization?         @relation(fields: [organizationId], references: [id])
-  plan              SubscriptionPlan      @relation(fields: [planId], references: [id])
-  transactions      BillingTransaction[]
-  actions           SubscriptionAction[]
-  schedules         SubscriptionSchedule[]
-  subscriptionNotes SubscriptionNote[]
+  user                User?                 @relation(fields: [userId], references: [id])
+  organization        Organization?         @relation(fields: [organizationId], references: [id])
+  plan                SubscriptionPlan      @relation(fields: [planId], references: [id])
+  transactions        BillingTransaction[]
+  actions             SubscriptionAction[]
+  schedules           SubscriptionSchedule[]
+  subscriptionNotes   SubscriptionNote[]
+  subscriptionRequest SubscriptionRequest?  // Link to original request
 
   @@index([userId])
   @@index([organizationId])
@@ -1577,9 +1593,99 @@ model SubscriptionPlan {
   updatedAt     DateTime @updatedAt
 
   // Relations
-  subscriptions Subscription[]
+  subscriptions          Subscription[]
+  subscriptionRequests   SubscriptionRequest[]
 
   @@map("subscription_plans")
+}
+
+// Subscription Request Model - Manages the request lifecycle before subscription activation
+model SubscriptionRequest {
+  id                String   @id @default(uuid())
+  
+  // Requester (one must be set)
+  userId            String?
+  organizationId    String?
+  
+  // Request Details
+  planId            String
+  tier              SubscriptionTier
+  billingPeriod     String   @default("monthly") @map("billing_period") // monthly, quarterly, yearly
+  
+  // Contact Information (for reaching out)
+  contactName       String?  @map("contact_name")
+  contactEmail      String   @map("contact_email")
+  contactPhone      String?  @map("contact_phone")
+  preferredContact  String?  @default("email") @map("preferred_contact") // email, phone
+  
+  // Additional Context
+  message           String?  @db.Text
+  notes             String?  @db.Text  // Admin notes
+  
+  // Status Workflow
+  status            SubscriptionRequestStatus @default(PENDING)
+  
+  // Invoice/Payment Tracking
+  invoiceNumber     String?  @map("invoice_number")
+  invoiceSentAt     DateTime? @map("invoice_sent_at")
+  invoiceAmount     Float?   @map("invoice_amount")
+  invoiceCurrency   String?  @default("CHF") @map("invoice_currency")
+  paymentReceivedAt DateTime? @map("payment_received_at")
+  paymentReference  String?  @map("payment_reference")
+  
+  // Subscription Link (when activated)
+  subscriptionId    String?  @unique @map("subscription_id")
+  
+  // Timestamps
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  reviewedAt        DateTime? @map("reviewed_at")
+  reviewedBy        String?  @map("reviewed_by")
+  processedAt       DateTime? @map("processed_at")
+  processedBy       String?  @map("processed_by")
+  declinedAt        DateTime? @map("declined_at")
+  declinedBy        String?  @map("declined_by")
+  declineReason     String?  @db.Text @map("decline_reason")
+  
+  // Relations
+  user              User?         @relation(fields: [userId], references: [id])
+  organization      Organization? @relation(fields: [organizationId], references: [id])
+  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
+  subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("subscription_requests")
+}
+
+// Subscription Settings - Admin configurable settings for subscription management
+model SubscriptionSettings {
+  id                        String   @id @default(uuid())
+  
+  // Admin Notification Settings
+  notificationEmail         String?  @map("notification_email") // Email to receive new request notifications
+  enableEmailNotifications  Boolean  @default(true) @map("enable_email_notifications")
+  
+  // Default Settings
+  defaultTrialDays          Int      @default(14) @map("default_trial_days")
+  defaultGracePeriodDays    Int      @default(7) @map("default_grace_period_days")
+  
+  // Invoice Settings
+  invoicePrefix             String   @default("INV-") @map("invoice_prefix")
+  invoiceNextNumber         Int      @default(1001) @map("invoice_next_number")
+  
+  // Payment Terms
+  paymentTermsDays          Int      @default(30) @map("payment_terms_days")
+  
+  // Response Time (for user communication)
+  estimatedResponseHours    Int      @default(48) @map("estimated_response_hours")
+  
+  createdAt                 DateTime @default(now()) @map("created_at")
+  updatedAt                 DateTime @updatedAt @map("updated_at")
+
+  @@map("subscription_settings")
 }
 
 // Subscription Action (Audit Log)
