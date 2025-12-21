@@ -19,7 +19,9 @@
     "contactSupport": "Support kontaktieren",
     "manageSubscription": "Ihr Abonnement verwalten",
     "needHelp": "Brauchen Sie Hilfe?",
-    "contactUs": "Kontaktieren Sie uns"
+    "contactUs": "Kontaktieren Sie uns",
+    "featureNotAvailableTitle": "Funktion nicht verfügbar",
+    "featureNotAvailableMessage": "Diese Funktion erfordert einen höheren Plan. Upgraden Sie, um auf {{feature}} zuzugreifen."
   },
   "featureGate": {
     "locked": "Diese Funktion erfordert ein Plan-Upgrade",

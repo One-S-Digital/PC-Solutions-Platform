@@ -399,9 +399,14 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
         return true;
       }
 
-      // No subscription data or no limits - allow
-      if (!subscriptionData?.limits) {
+      // No subscription data - block
+      if (!subscriptionData) {
         return false;
+      }
+
+      // No limits defined in plan - allow (unlimited)
+      if (!subscriptionData.limits) {
+        return true;
       }
 
       const limit = subscriptionData.limits[limitKey];

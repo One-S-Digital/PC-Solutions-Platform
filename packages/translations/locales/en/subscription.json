@@ -19,7 +19,9 @@
     "contactSupport": "Contact Support",
     "manageSubscription": "Manage your subscription",
     "needHelp": "Need help?",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "featureNotAvailableTitle": "Feature Not Available",
+    "featureNotAvailableMessage": "This feature requires a higher tier plan. Upgrade to access {{feature}}."
   },
   "featureGate": {
     "locked": "This feature requires a plan upgrade",

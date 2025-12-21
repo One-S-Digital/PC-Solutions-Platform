@@ -855,16 +855,24 @@ export class UserSubscriptionController {
 
     // Free roles have access to all features
     if (!SUBSCRIPTION_REQUIRED_ROLES.includes(userRole)) {
-      return wrapResponse({ hasAccess: true, reason: 'Free role - full access' });
+      return wrapResponse({ hasAccess: true, reason: 'free_role' });
     }
 
-    // Check feature access
-    const hasAccess = await this.subscriptionService.checkFeatureAccess(userId, featureKey);
+    // Check feature access - first via user subscription
+    let hasAccess = await this.subscriptionService.checkFeatureAccess(userId, featureKey);
+
+    // If no access via user subscription, check organization subscription
+    if (!hasAccess && userContext?.organizationId) {
+      hasAccess = await this.subscriptionService.checkFeatureAccess(
+        userContext.organizationId, 
+        featureKey
+      );
+    }
 
     return wrapResponse({
       hasAccess,
       featureKey,
-      reason: hasAccess ? 'Feature available in current plan' : 'Feature requires plan upgrade',
+      reason: hasAccess ? 'feature_available' : 'feature_requires_upgrade',
     });
   }
 }

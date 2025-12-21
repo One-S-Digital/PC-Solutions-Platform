@@ -369,6 +369,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
   title,
   message,
 }) => {
+  const { t } = useTranslation(['subscription', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -418,8 +419,11 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
           <PaywallContent
             status={status}
             inline={inline}
-            title={title || 'Feature Not Available'}
-            message={message || `This feature requires a higher tier plan. Upgrade to access ${requiredFeature}.`}
+            title={title || t('subscription:paywall.featureNotAvailableTitle', 'Feature Not Available')}
+            message={message || t('subscription:paywall.featureNotAvailableMessage', { 
+              feature: requiredFeature, 
+              defaultValue: `This feature requires a higher tier plan. Upgrade to access ${requiredFeature}.` 
+            })}
             onNavigateToPricing={handleNavigateToPricing}
             onNavigateToBilling={handleNavigateToBilling}
             onContactSupport={handleContactSupport}
