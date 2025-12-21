@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   TagIcon,
@@ -49,6 +49,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPromo, setEditingPromo] = useState<PromoCode | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const lastFocusedElementRef = useRef<HTMLElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
   const [formData, setFormData] = useState({
     code: '',
     discountType: 'Percentage' as 'Percentage' | 'FixedAmount' | 'FreeMinutes',
@@ -96,6 +99,8 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       return;
     }
 
+    lastFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
     if (promo) {
       setEditingPromo(promo);
       setFormData({
@@ -125,6 +130,80 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingPromo(null);
+    window.setTimeout(() => lastFocusedElementRef.current?.focus?.(), 0);
+  };
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      return;
+    }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleCloseModal();
+      }
+    };
+
+    const handleTabTrap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') {
+        return;
+      }
+
+      const root = modalRef.current;
+      if (!root) {
+        return;
+      }
+
+      const focusable = Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter(el => !el.hasAttribute('aria-hidden'));
+
+      if (focusable.length === 0) {
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleTabTrap);
+    window.setTimeout(() => (firstInputRef.current ?? modalRef.current)?.focus?.(), 0);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleTabTrap);
+    };
+  }, [isModalOpen]);
+
+  const getExpiryEndOfDayUtcIso = (dateString: string) => {
+    const parts = dateString.split('-').map(Number);
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const [year, month, day] = parts;
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+      return null;
+    }
+
+    const utcMillis = Date.UTC(year, month - 1, day, 23, 59, 59);
+    if (!Number.isFinite(utcMillis)) {
+      return null;
+    }
+
+    return new Date(utcMillis).toISOString();
   };
 
   const handleSavePromo = async () => {
@@ -141,15 +220,63 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       return;
     }
 
+    const valueNumber = Number(formData.value);
+    if (!Number.isFinite(valueNumber) || valueNumber <= 0) {
+      addNotification({
+        title: t('common:errors.validationError'),
+        message: 'Please enter a value greater than 0.',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (formData.discountType === 'Percentage' && valueNumber > 100) {
+      addNotification({
+        title: t('common:errors.validationError'),
+        message: 'Percentage discounts cannot exceed 100.',
+        type: 'error',
+      });
+      return;
+    }
+
+    const maxUsageTrimmed = formData.maxUsage.trim();
+    if (maxUsageTrimmed && !/^\d+$/.test(maxUsageTrimmed)) {
+      addNotification({
+        title: t('common:errors.validationError'),
+        message: 'Max usage must be a positive whole number.',
+        type: 'error',
+      });
+      return;
+    }
+
+    const expiryIsoUtc = getExpiryEndOfDayUtcIso(formData.expiryDate);
+    if (!expiryIsoUtc) {
+      addNotification({
+        title: t('common:errors.validationError'),
+        message: 'Please provide a valid expiry date.',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (Date.parse(expiryIsoUtc) <= Date.now()) {
+      addNotification({
+        title: t('common:errors.validationError'),
+        message: 'Expiry date must be in the future.',
+        type: 'error',
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const payload = {
         code: formData.code.toUpperCase(),
         discountType: formData.discountType,
-        value: Number(formData.value),
-        expiryDate: new Date(`${formData.expiryDate}T23:59:59`).toISOString(),
+        value: valueNumber,
+        expiryDate: expiryIsoUtc,
         description: formData.description || undefined,
-        maxUsage: formData.maxUsage ? parseInt(formData.maxUsage) : undefined,
+        maxUsage: maxUsageTrimmed ? parseInt(maxUsageTrimmed, 10) : undefined,
         ...(editingPromo && { status: formData.status }),
       };
 
@@ -428,10 +555,21 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
 
       {/* Add/Edit Modal (owners only) */}
       {isOwnProfile && isModalOpen && (
-        <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="promo-code-modal-title"
+          onClick={handleCloseModal}
+        >
+          <div
+            ref={modalRef}
+            className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+            role="document"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg font-semibold" id="promo-code-modal-title">
                 {editingPromo
                   ? t('settingsPromoCodeManager.addEditModal.editTitle')
                   : t('settingsPromoCodeManager.addEditModal.addTitle')}
@@ -448,6 +586,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                 </label>
                 <input
                   type="text"
+                  ref={firstInputRef}
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint font-mono"
@@ -478,7 +617,10 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                   type="number"
                   min="0"
                   value={formData.value}
-                  onChange={(e) => setFormData({ ...formData, value: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    const parsed = parseFloat(e.target.value);
+                    setFormData({ ...formData, value: Number.isNaN(parsed) ? 0 : parsed });
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
                 />
               </div>
