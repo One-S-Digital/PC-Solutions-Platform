@@ -39,6 +39,7 @@ import {
   CreditCardIcon,
   SparklesIcon,
   ArrowRightIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { useSubscription, SubscriptionStatus } from '../../contexts/SubscriptionContext';
 import Card from '../ui/Card';
@@ -101,6 +102,7 @@ interface PaywallContentProps {
   message?: string;
   onNavigateToPricing: () => void;
   onNavigateToBilling: () => void;
+  onNavigateToProfile: () => void;
   onContactSupport: () => void;
 }
 
@@ -154,6 +156,7 @@ const PaywallContent: React.FC<PaywallContentProps> = ({
   message,
   onNavigateToPricing,
   onNavigateToBilling,
+  onNavigateToProfile,
   onContactSupport,
 }) => {
   const { t } = useTranslation(['subscription', 'common']);
@@ -274,6 +277,16 @@ const PaywallContent: React.FC<PaywallContentProps> = ({
           </Button>
         )}
 
+        <Button
+          variant="secondary"
+          size="lg"
+          className="w-full sm:w-auto min-w-[200px]"
+          onClick={onNavigateToProfile}
+          leftIcon={UserCircleIcon}
+        >
+          {t('subscription:paywall.viewProfile', 'View Profile')}
+        </Button>
+
         {showContactButton && (
           <Button
             variant="secondary"
@@ -383,6 +396,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
   // Navigation handlers
   const handleNavigateToPricing = () => navigate('/pricing');
   const handleNavigateToBilling = () => navigate('/settings/billing');
+  const handleNavigateToProfile = () => navigate('/profile');
   const handleContactSupport = () => {
     // Could open support modal or navigate to support page
     window.location.href = 'mailto:support@procreche.ch';
@@ -426,6 +440,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
             })}
             onNavigateToPricing={handleNavigateToPricing}
             onNavigateToBilling={handleNavigateToBilling}
+            onNavigateToProfile={handleNavigateToProfile}
             onContactSupport={handleContactSupport}
           />
         )
@@ -445,6 +460,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
         message={message}
         onNavigateToPricing={handleNavigateToPricing}
         onNavigateToBilling={handleNavigateToBilling}
+        onNavigateToProfile={handleNavigateToProfile}
         onContactSupport={handleContactSupport}
       />
     )
