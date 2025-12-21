@@ -210,25 +210,6 @@ export const PRICING_PLANS: PricingPlan[] = [
     ],
     isPopular: false,
   },
-  {
-    role: UserRole.FOUNDATION,
-    name: 'Enterprise',
-    emoji: '⚡',
-    price: { monthly: 499, annually: 5389, annualEquivalent: 449 },
-    monthlyPriceText: '💰 CHF 499 / month',
-    annualPlanText: 'CHF 5,389 / year (save 10%)',
-    tagline: 'Perfect for: Multi-site operators who need maximum automation and premium support.',
-    description: '✨ Scale across sites while maintaining consistent excellence and zero admin headaches.',
-    features: [
-      'Everything in Professional',
-      'Multi-site management',
-      'Advanced analytics & reporting',
-      'Dedicated account manager',
-      'Custom integrations & API access',
-      'White-label branding options',
-    ],
-    isPopular: false,
-  },
   // Supplier Plans
   {
     role: UserRole.PRODUCT_SUPPLIER,
