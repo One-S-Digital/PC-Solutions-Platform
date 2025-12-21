@@ -106,6 +106,7 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
+              contactInfo: true,
             },
           },
         },
@@ -127,7 +128,9 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        contactEmail: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -169,26 +172,24 @@ export class SettingsController {
         'Cover image',
       );
 
-      await tx.user.update({
-        where: { id: profileId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
-      await tx.appUser.update({
-        where: { id: accountId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
       const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // Store contact email separately (does NOT touch auth email).
+        await tx.organizationContactInfo.upsert({
+          where: { organizationId: userOrg.organizationId },
+          create: {
+            organizationId: userOrg.organizationId,
+            contactEmail: settings.contactEmail,
+          },
+          update: {
+            contactEmail: settings.contactEmail,
+          },
+        });
+
         // Update existing organization
         await tx.organization.update({
           where: { id: userOrg.organizationId },
@@ -227,6 +228,14 @@ export class SettingsController {
             isActive: true,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
             ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+          },
+        });
+
+        // Create contact info record for the new org (does NOT touch auth email).
+        await tx.organizationContactInfo.create({
+          data: {
+            organizationId: newOrganization.id,
+            contactEmail: settings.contactEmail,
           },
         });
 
@@ -382,6 +391,7 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
+              contactInfo: true,
             },
           },
         },
@@ -403,7 +413,9 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        contactEmail: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -448,26 +460,24 @@ export class SettingsController {
         'Cover image',
       );
 
-      await tx.user.update({
-        where: { id: profileId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
-      await tx.appUser.update({
-        where: { id: accountId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
       const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // Store contact email separately (does NOT touch auth email).
+        await tx.organizationContactInfo.upsert({
+          where: { organizationId: userOrg.organizationId },
+          create: {
+            organizationId: userOrg.organizationId,
+            contactEmail: settings.contactEmail,
+          },
+          update: {
+            contactEmail: settings.contactEmail,
+          },
+        });
+
         // Update existing organization
         const updatedOrganization = await tx.organization.update({
           where: { id: userOrg.organizationId },
@@ -512,6 +522,14 @@ export class SettingsController {
             isActive: true,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
             ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+          },
+        });
+
+        // Create contact info record for the new org (does NOT touch auth email).
+        await tx.organizationContactInfo.create({
+          data: {
+            organizationId: newOrganization.id,
+            contactEmail: settings.contactEmail,
           },
         });
 
@@ -569,6 +587,7 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
+              contactInfo: true,
             },
           },
         },
@@ -590,7 +609,9 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        contactEmail: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -680,44 +701,8 @@ export class SettingsController {
             'Cover image',
           );
 
-          // Step 1: Update User
-          this.logger.log('🔍 [DEBUG] Step 1: Updating User', {
-            profileId,
-            email: settings.contactEmail,
-          });
-          
-          const updatedUser = await tx.user.update({
-            where: { id: profileId },
-            data: {
-              email: settings.contactEmail,
-            },
-          });
-          
-          this.logger.log('🔍 [DEBUG] Step 1: User updated successfully', {
-            userId: updatedUser.id,
-            email: updatedUser.email,
-          });
-
-          // Step 2: Update AppUser
-          this.logger.log('🔍 [DEBUG] Step 2: Updating AppUser', {
-            accountId,
-            email: settings.contactEmail,
-          });
-          
-          const updatedAppUser = await tx.appUser.update({
-            where: { id: accountId },
-            data: {
-              email: settings.contactEmail,
-            },
-          });
-          
-          this.logger.log('🔍 [DEBUG] Step 2: AppUser updated successfully', {
-            appUserId: updatedAppUser.id,
-            email: updatedAppUser.email,
-          });
-
-          // Step 3: Find UserOrganization
-          this.logger.log('🔍 [DEBUG] Step 3: Finding UserOrganization', {
+          // Step 1: Find UserOrganization
+          this.logger.log('🔍 [DEBUG] Step 1: Finding UserOrganization', {
             userId: profileId,
           });
           
@@ -726,7 +711,7 @@ export class SettingsController {
             include: { organization: true },
           });
           
-          this.logger.log('🔍 [DEBUG] Step 3: UserOrganization query result', {
+          this.logger.log('🔍 [DEBUG] Step 1: UserOrganization query result', {
             found: !!userOrg,
             hasOrganization: !!userOrg?.organization,
             userId: userOrg?.userId,
@@ -736,6 +721,18 @@ export class SettingsController {
           });
 
           if (userOrg?.organization) {
+            // Store contact email separately (does NOT touch auth email).
+            await tx.organizationContactInfo.upsert({
+              where: { organizationId: userOrg.organizationId },
+              create: {
+                organizationId: userOrg.organizationId,
+                contactEmail: settings.contactEmail,
+              },
+              update: {
+                contactEmail: settings.contactEmail,
+              },
+            });
+
             // Update existing organization
             this.logger.log('🔍 [DEBUG] Step 4: Updating existing organization', {
               organizationId: userOrg.organizationId,
@@ -870,6 +867,14 @@ export class SettingsController {
             this.logger.log('🔍 [DEBUG] Step 4: Organization created successfully', {
               organizationId: newOrganization.id,
               name: newOrganization.name,
+            });
+
+            // Store contact email separately (does NOT touch auth email).
+            await tx.organizationContactInfo.create({
+              data: {
+                organizationId: newOrganization.id,
+                contactEmail: settings.contactEmail,
+              },
             });
 
             // Link user to the new organization
