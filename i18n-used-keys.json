@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T15:31:06.791Z",
+  "timestamp": "2025-12-21T15:34:24.821Z",
   "totalKeys": 1857,
   "byNamespace": {
     "common": 2683,
@@ -10889,6 +10889,258 @@
       "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
+      "key": "stockStatus.instock",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 57,
+      "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
+    },
+    {
+      "key": "partnerDetailPage.productOutOfStock",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 64,
+      "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
+    },
+    {
+      "key": "partnerDetailPage.productAddedToOrder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 68,
+      "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
+    },
+    {
+      "key": "partnerDetailPage.addToOrderButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 110,
+      "context": "{t('partnerDetailPage.addToOrderButton')}"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeValid",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 170,
+      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeInvalid",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 176,
+      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeError",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 183,
+      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 194,
+      "context": "{t('partnerDetailPage.promoCodeTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.promoCodePlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 204,
+      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
+    },
+    {
+      "key": "partnerDetailPage.applyPromoButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 214,
+      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
+    },
+    {
+      "key": "partnerDetailPage.onlyFoundationsRequestService",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 317,
+      "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
+    },
+    {
+      "key": "partnerDetailPage.requestSubmittedAlert",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 339,
+      "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 347,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 347,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 393,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 393,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "partnerDetailPage.invalidPartnerIdMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 398,
+      "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 405,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 405,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:userRoles.Product Supplier",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 413,
+      "context": "? t('common:userRoles.Product Supplier')"
+    },
+    {
+      "key": "common:userRoles.Product Supplier",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 413,
+      "context": "? t('common:userRoles.Product Supplier')"
+    },
+    {
+      "key": "common:userRoles.Service Provider",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 415,
+      "context": "? t('common:userRoles.Service Provider')"
+    },
+    {
+      "key": "common:userRoles.Service Provider",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 415,
+      "context": "? t('common:userRoles.Service Provider')"
+    },
+    {
+      "key": "common:userRoles.Foundation",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 416,
+      "context": ": t('common:userRoles.Foundation');"
+    },
+    {
+      "key": "common:userRoles.Foundation",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 416,
+      "context": ": t('common:userRoles.Foundation');"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 424,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 424,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 466,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 466,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "partnerDetailPage.contactInfoTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 481,
+      "context": "{t('partnerDetailPage.contactInfoTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.directOrderButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 525,
+      "context": "{t('partnerDetailPage.directOrderButton')}"
+    },
+    {
+      "key": "partnerDetailPage.aboutTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 533,
+      "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
+    },
+    {
+      "key": "partnerDetailPage.ratingsReviewsTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 541,
+      "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.ratingText",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 552,
+      "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
+    },
+    {
+      "key": "partnerDetailPage.reviewsPlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 556,
+      "context": "<p className=\"text-sm text-gray-500\">{t('partnerDetailPage.reviewsPlaceholder')}</p>"
+    },
+    {
+      "key": "dashboard:sidebar.products",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.services",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.products",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.services",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "partnerDetailPage.noProductsListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 587,
+      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noProductsListed')}</p>"
+    },
+    {
+      "key": "partnerDetailPage.requestServiceButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 629,
+      "context": "{t('partnerDetailPage.requestServiceButton')}"
+    },
+    {
+      "key": "partnerDetailPage.noServicesListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 638,
+      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noServicesListed')}</p>"
+    },
+    {
       "key": "common:errors.fetchFailed",
       "file": "pages/parent/ParentSupportPage.tsx",
       "line": 62,
@@ -11553,258 +11805,6 @@
       "file": "pages/parent/ParentDashboardPage.tsx",
       "line": 92,
       "context": "<Button variant=\"secondary\" className=\"bg-amber-600 hover:bg-amber-700 text-white\" onClick={() => alert('View Favorites TBD')}>{t('parentDashboard.favorites.button')}</Button>"
-    },
-    {
-      "key": "stockStatus.instock",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 57,
-      "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
-    },
-    {
-      "key": "partnerDetailPage.productOutOfStock",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 64,
-      "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
-    },
-    {
-      "key": "partnerDetailPage.productAddedToOrder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 68,
-      "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
-    },
-    {
-      "key": "partnerDetailPage.addToOrderButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 110,
-      "context": "{t('partnerDetailPage.addToOrderButton')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeValid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 170,
-      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeInvalid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 176,
-      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeError",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 183,
-      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 194,
-      "context": "{t('partnerDetailPage.promoCodeTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodePlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 204,
-      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
-    },
-    {
-      "key": "partnerDetailPage.applyPromoButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 214,
-      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
-    },
-    {
-      "key": "partnerDetailPage.onlyFoundationsRequestService",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 317,
-      "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
-    },
-    {
-      "key": "partnerDetailPage.requestSubmittedAlert",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 339,
-      "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 347,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 347,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 393,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 393,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "partnerDetailPage.invalidPartnerIdMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 398,
-      "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 405,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 405,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:userRoles.Product Supplier",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 413,
-      "context": "? t('common:userRoles.Product Supplier')"
-    },
-    {
-      "key": "common:userRoles.Product Supplier",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 413,
-      "context": "? t('common:userRoles.Product Supplier')"
-    },
-    {
-      "key": "common:userRoles.Service Provider",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 415,
-      "context": "? t('common:userRoles.Service Provider')"
-    },
-    {
-      "key": "common:userRoles.Service Provider",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 415,
-      "context": "? t('common:userRoles.Service Provider')"
-    },
-    {
-      "key": "common:userRoles.Foundation",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
-      "context": ": t('common:userRoles.Foundation');"
-    },
-    {
-      "key": "common:userRoles.Foundation",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
-      "context": ": t('common:userRoles.Foundation');"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 424,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 424,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 466,
-      "context": "{t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 466,
-      "context": "{t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "partnerDetailPage.contactInfoTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 481,
-      "context": "{t('partnerDetailPage.contactInfoTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.directOrderButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 525,
-      "context": "{t('partnerDetailPage.directOrderButton')}"
-    },
-    {
-      "key": "partnerDetailPage.aboutTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 533,
-      "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
-    },
-    {
-      "key": "partnerDetailPage.ratingsReviewsTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 541,
-      "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.ratingText",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 552,
-      "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
-    },
-    {
-      "key": "partnerDetailPage.reviewsPlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 556,
-      "context": "<p className=\"text-sm text-gray-500\">{t('partnerDetailPage.reviewsPlaceholder')}</p>"
-    },
-    {
-      "key": "dashboard:sidebar.products",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:sidebar.services",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:sidebar.products",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:sidebar.services",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "partnerDetailPage.noProductsListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 587,
-      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noProductsListed')}</p>"
-    },
-    {
-      "key": "partnerDetailPage.requestServiceButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 629,
-      "context": "{t('partnerDetailPage.requestServiceButton')}"
-    },
-    {
-      "key": "partnerDetailPage.noServicesListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 638,
-      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noServicesListed')}</p>"
     },
     {
       "key": "common:errors.fetchFailed",
@@ -15767,6 +15767,318 @@
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
     },
     {
+      "key": "renameFileModal.title",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 40,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('renameFileModal.title')}</h2>"
+    },
+    {
+      "key": "renameFileModal.label",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 44,
+      "context": "<label htmlFor=\"fileName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('renameFileModal.label')}</label>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 56,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 56,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 57,
+      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 57,
+      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
+    },
+    {
+      "key": "settings:imageCropper.title",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 430,
+      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
+    },
+    {
+      "key": "settings:imageCropper.title",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 430,
+      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
+    },
+    {
+      "key": "settings:imageCropper.subtitle",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 433,
+      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
+    },
+    {
+      "key": "settings:imageCropper.subtitle",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 433,
+      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
+    },
+    {
+      "key": "settings:imageCropper.targetSize",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 475,
+      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
+    },
+    {
+      "key": "settings:imageCropper.targetSize",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 475,
+      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
+    },
+    {
+      "key": "settings:imageCropper.dragHint",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 482,
+      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
+    },
+    {
+      "key": "settings:imageCropper.dragHint",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 482,
+      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
+    },
+    {
+      "key": "settings:imageCropper.qualityNote",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 490,
+      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
+    },
+    {
+      "key": "settings:imageCropper.qualityNote",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 490,
+      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 498,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 498,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "settings:imageCropper.processing",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 506,
+      "context": "? t('settings:imageCropper.processing', 'Processing...')"
+    },
+    {
+      "key": "settings:imageCropper.processing",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 506,
+      "context": "? t('settings:imageCropper.processing', 'Processing...')"
+    },
+    {
+      "key": "settings:imageCropper.apply",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 507,
+      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
+    },
+    {
+      "key": "settings:imageCropper.apply",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 507,
+      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
+    },
+    {
+      "key": "fileUploadModal.title",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 101,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('fileUploadModal.title')}</h2>"
+    },
+    {
+      "key": "fileUploadModal.uploadFile",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 114,
+      "context": "<span>{t('fileUploadModal.uploadFile')}</span>"
+    },
+    {
+      "key": "fileUploadModal.dragAndDrop",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 117,
+      "context": "<p className=\"pl-1\">{t('fileUploadModal.dragAndDrop')}</p>"
+    },
+    {
+      "key": "fileUploadModal.fileTypes",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 119,
+      "context": "<p className=\"text-xs text-gray-500\">{t('fileUploadModal.fileTypes')}</p>"
+    },
+    {
+      "key": "fileUploadModal.uploadedFiles",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 125,
+      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
+    },
+    {
+      "key": "fileUploadModal.filesToUpload",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 125,
+      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 153,
+      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 153,
+      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "fileUploadModal.uploading",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 155,
+      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
+    },
+    {
+      "key": "fileUploadModal.uploadButton",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 155,
+      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
+    },
+    {
+      "key": "featureLock.title",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 21,
+      "context": "<h2 className=\"text-2xl font-bold text-swiss-charcoal mb-2\">{t('featureLock.title', { featureName })}</h2>"
+    },
+    {
+      "key": "featureLock.message",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 22,
+      "context": "<p className=\"text-gray-600 mb-6\">{t('featureLock.message', { requiredPlan })}</p>"
+    },
+    {
+      "key": "featureLock.upgradeButton",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 24,
+      "context": "{t('featureLock.upgradeButton')}"
+    },
+    {
+      "key": "errorBoundary.somethingWentWrong",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 55,
+      "context": "{t(\"errorBoundary.somethingWentWrong\")}"
+    },
+    {
+      "key": "errorBoundary.sorryMessage",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 58,
+      "context": "{t(\"errorBoundary.sorryMessage\")}"
+    },
+    {
+      "key": "errorBoundary.errorDetails",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 63,
+      "context": "{t(\"errorBoundary.errorDetails\")}"
+    },
+    {
+      "key": "errorBoundary.tryAgain",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 77,
+      "context": "{t(\"errorBoundary.tryAgain\")}"
+    },
+    {
+      "key": "errorBoundary.reloadPage",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 84,
+      "context": "{t(\"errorBoundary.reloadPage\")}"
+    },
+    {
+      "key": "activeClientToggle.confirmSave",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 35,
+      "context": "if (window.confirm(t('activeClientToggle.confirmSave'))) {"
+    },
+    {
+      "key": "activeClientToggle.saveSuccess.title",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 38,
+      "context": "title: t('activeClientToggle.saveSuccess.title'),"
+    },
+    {
+      "key": "activeClientToggle.saveSuccess.message",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 39,
+      "context": "message: t('activeClientToggle.saveSuccess.message'),"
+    },
+    {
+      "key": "activeClientToggle.title",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 49,
+      "context": "<h3 className=\"text-lg font-semibold text-amber-900 mb-2\">{t('activeClientToggle.title')}</h3>"
+    },
+    {
+      "key": "activeClientToggle.label",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 51,
+      "context": "<label htmlFor=\"activeClientToggle\" className=\"font-medium text-amber-800\">{t('activeClientToggle.label')}</label>"
+    },
+    {
+      "key": "activeClientToggle.reasonLabel",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 64,
+      "context": "<label htmlFor=\"clientReason\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.reasonLabel')}</label>"
+    },
+    {
+      "key": "placeholders.select",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 66,
+      "context": "<option value=\"\">{t('placeholders.select')}</option>"
+    },
+    {
+      "key": "activeClientToggle.noteLabel",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 73,
+      "context": "<label htmlFor=\"clientNote\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.noteLabel')}</label>"
+    },
+    {
+      "key": "activeClientToggle.notePlaceholder",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 81,
+      "context": "placeholder={t('activeClientToggle.notePlaceholder')}"
+    },
+    {
+      "key": "activeClientToggle.subtext",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 85,
+      "context": "<p className=\"text-xs text-gray-600 mt-2\">{t('activeClientToggle.subtext')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 87,
+      "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 87,
+      "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
       "key": "dashboard:productUploadModal.editTitle",
       "file": "components/supplier/ProductUploadModal.tsx",
       "line": 185,
@@ -16551,318 +16863,6 @@
       "file": "components/supplier/InquiryDetailModal.tsx",
       "line": 322,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
-    },
-    {
-      "key": "renameFileModal.title",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 40,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('renameFileModal.title')}</h2>"
-    },
-    {
-      "key": "renameFileModal.label",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 44,
-      "context": "<label htmlFor=\"fileName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('renameFileModal.label')}</label>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 56,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 56,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 57,
-      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 57,
-      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
-    },
-    {
-      "key": "settings:imageCropper.title",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 430,
-      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
-    },
-    {
-      "key": "settings:imageCropper.title",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 430,
-      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
-    },
-    {
-      "key": "settings:imageCropper.subtitle",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 433,
-      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
-    },
-    {
-      "key": "settings:imageCropper.subtitle",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 433,
-      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
-    },
-    {
-      "key": "settings:imageCropper.targetSize",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 475,
-      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
-    },
-    {
-      "key": "settings:imageCropper.targetSize",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 475,
-      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
-    },
-    {
-      "key": "settings:imageCropper.dragHint",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 482,
-      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
-    },
-    {
-      "key": "settings:imageCropper.dragHint",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 482,
-      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
-    },
-    {
-      "key": "settings:imageCropper.qualityNote",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 490,
-      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
-    },
-    {
-      "key": "settings:imageCropper.qualityNote",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 490,
-      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 498,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 498,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "settings:imageCropper.processing",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 506,
-      "context": "? t('settings:imageCropper.processing', 'Processing...')"
-    },
-    {
-      "key": "settings:imageCropper.processing",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 506,
-      "context": "? t('settings:imageCropper.processing', 'Processing...')"
-    },
-    {
-      "key": "settings:imageCropper.apply",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 507,
-      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
-    },
-    {
-      "key": "settings:imageCropper.apply",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 507,
-      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
-    },
-    {
-      "key": "fileUploadModal.title",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 101,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('fileUploadModal.title')}</h2>"
-    },
-    {
-      "key": "fileUploadModal.uploadFile",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 114,
-      "context": "<span>{t('fileUploadModal.uploadFile')}</span>"
-    },
-    {
-      "key": "fileUploadModal.dragAndDrop",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 117,
-      "context": "<p className=\"pl-1\">{t('fileUploadModal.dragAndDrop')}</p>"
-    },
-    {
-      "key": "fileUploadModal.fileTypes",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 119,
-      "context": "<p className=\"text-xs text-gray-500\">{t('fileUploadModal.fileTypes')}</p>"
-    },
-    {
-      "key": "fileUploadModal.uploadedFiles",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 125,
-      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
-    },
-    {
-      "key": "fileUploadModal.filesToUpload",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 125,
-      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 153,
-      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 153,
-      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "fileUploadModal.uploading",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 155,
-      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
-    },
-    {
-      "key": "fileUploadModal.uploadButton",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 155,
-      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
-    },
-    {
-      "key": "featureLock.title",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 21,
-      "context": "<h2 className=\"text-2xl font-bold text-swiss-charcoal mb-2\">{t('featureLock.title', { featureName })}</h2>"
-    },
-    {
-      "key": "featureLock.message",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 22,
-      "context": "<p className=\"text-gray-600 mb-6\">{t('featureLock.message', { requiredPlan })}</p>"
-    },
-    {
-      "key": "featureLock.upgradeButton",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 24,
-      "context": "{t('featureLock.upgradeButton')}"
-    },
-    {
-      "key": "errorBoundary.somethingWentWrong",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 55,
-      "context": "{t(\"errorBoundary.somethingWentWrong\")}"
-    },
-    {
-      "key": "errorBoundary.sorryMessage",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 58,
-      "context": "{t(\"errorBoundary.sorryMessage\")}"
-    },
-    {
-      "key": "errorBoundary.errorDetails",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 63,
-      "context": "{t(\"errorBoundary.errorDetails\")}"
-    },
-    {
-      "key": "errorBoundary.tryAgain",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 77,
-      "context": "{t(\"errorBoundary.tryAgain\")}"
-    },
-    {
-      "key": "errorBoundary.reloadPage",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 84,
-      "context": "{t(\"errorBoundary.reloadPage\")}"
-    },
-    {
-      "key": "activeClientToggle.confirmSave",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 35,
-      "context": "if (window.confirm(t('activeClientToggle.confirmSave'))) {"
-    },
-    {
-      "key": "activeClientToggle.saveSuccess.title",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 38,
-      "context": "title: t('activeClientToggle.saveSuccess.title'),"
-    },
-    {
-      "key": "activeClientToggle.saveSuccess.message",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 39,
-      "context": "message: t('activeClientToggle.saveSuccess.message'),"
-    },
-    {
-      "key": "activeClientToggle.title",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 49,
-      "context": "<h3 className=\"text-lg font-semibold text-amber-900 mb-2\">{t('activeClientToggle.title')}</h3>"
-    },
-    {
-      "key": "activeClientToggle.label",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 51,
-      "context": "<label htmlFor=\"activeClientToggle\" className=\"font-medium text-amber-800\">{t('activeClientToggle.label')}</label>"
-    },
-    {
-      "key": "activeClientToggle.reasonLabel",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 64,
-      "context": "<label htmlFor=\"clientReason\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.reasonLabel')}</label>"
-    },
-    {
-      "key": "placeholders.select",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 66,
-      "context": "<option value=\"\">{t('placeholders.select')}</option>"
-    },
-    {
-      "key": "activeClientToggle.noteLabel",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 73,
-      "context": "<label htmlFor=\"clientNote\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.noteLabel')}</label>"
-    },
-    {
-      "key": "activeClientToggle.notePlaceholder",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 81,
-      "context": "placeholder={t('activeClientToggle.notePlaceholder')}"
-    },
-    {
-      "key": "activeClientToggle.subtext",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 85,
-      "context": "<p className=\"text-xs text-gray-600 mt-2\">{t('activeClientToggle.subtext')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 87,
-      "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 87,
-      "context": "{t('common:buttons.saveChanges')}"
     },
     {
       "key": "common:errors.genericErrorTitle",
