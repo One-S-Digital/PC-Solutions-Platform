@@ -74,11 +74,12 @@ export class UsersService {
    * To update the primary email, we need to:
    * 1. Create a new email address for the user
    * 2. Set it as primary
-   * 3. Optionally delete the old email
+   * 3. Keep old email as secondary (for grace period / recovery)
    * 
    * @param clerkId - The Clerk user ID
    * @param newEmail - The new email address to set
    * @param skipVerification - Whether to skip email verification (true for admin updates)
+   * @throws Error if sync fails (caller should handle by creating outbox entry)
    */
   private async syncEmailToClerk(clerkId: string, newEmail: string, skipVerification = true): Promise<void> {
     if (!this.clerk) {
@@ -86,62 +87,77 @@ export class UsersService {
       return;
     }
 
+    this.logger.log(`📧 [EMAIL SYNC] Syncing email to Clerk for user ${clerkId}: ${newEmail}`);
+    
+    // Get the current user from Clerk to find existing email addresses
+    const clerkUser = await this.clerk.users.getUser(clerkId);
+    
+    // Check if the new email already exists for this user
+    const existingEmailAddress = clerkUser.emailAddresses?.find(
+      (ea: any) => ea.emailAddress.toLowerCase() === newEmail.toLowerCase()
+    );
+    
+    if (existingEmailAddress) {
+      // Email already exists, just make sure it's set as primary
+      if (clerkUser.primaryEmailAddressId !== existingEmailAddress.id) {
+        this.logger.log(`📧 [EMAIL SYNC] Setting existing email as primary for ${clerkId}`);
+        await this.clerk.users.updateUser(clerkId, {
+          primaryEmailAddressId: existingEmailAddress.id,
+        });
+      } else {
+        this.logger.log(`📧 [EMAIL SYNC] Email ${newEmail} is already the primary email for ${clerkId}`);
+      }
+      return;
+    }
+    
+    // Create a new email address for the user
+    this.logger.log(`📧 [EMAIL SYNC] Creating new email address ${newEmail} for ${clerkId}`);
+    await this.clerk.emailAddresses.createEmailAddress({
+      userId: clerkId,
+      emailAddress: newEmail,
+      verified: skipVerification, // Admin updates should skip verification
+      primary: true, // Set as primary immediately
+    });
+    
+    // Keep old email as a secondary address for a grace period
+    // This allows users to still recover access if needed
+    // Admins can manually delete it later via Clerk dashboard if needed
+    this.logger.log(`ℹ️ [EMAIL SYNC] Old email retained as secondary address for ${clerkId}`);
+    this.logger.log(`✅ [EMAIL SYNC] Email sync completed for ${clerkId}`);
+  }
+
+  /**
+   * Queue a failed email sync for retry via the outbox pattern.
+   * This ensures eventual consistency between the database and Clerk.
+   */
+  private async queueEmailSyncForRetry(clerkId: string, newEmail: string, errorMessage: string): Promise<void> {
     try {
-      this.logger.log(`📧 [EMAIL SYNC] Syncing email to Clerk for user ${clerkId}: ${newEmail}`);
-      
-      // Get the current user from Clerk to find existing email addresses
-      const clerkUser = await this.clerk.users.getUser(clerkId);
-      
-      // Check if the new email already exists for this user
-      const existingEmailAddress = clerkUser.emailAddresses?.find(
-        (ea: any) => ea.emailAddress.toLowerCase() === newEmail.toLowerCase()
-      );
-      
-      if (existingEmailAddress) {
-        // Email already exists, just make sure it's set as primary
-        if (clerkUser.primaryEmailAddressId !== existingEmailAddress.id) {
-          this.logger.log(`📧 [EMAIL SYNC] Setting existing email as primary for ${clerkId}`);
-          await this.clerk.users.updateUser(clerkId, {
-            primaryEmailAddressId: existingEmailAddress.id,
-          });
-        } else {
-          this.logger.log(`📧 [EMAIL SYNC] Email ${newEmail} is already the primary email for ${clerkId}`);
-        }
-        return;
-      }
-      
-      // Create a new email address for the user
-      this.logger.log(`📧 [EMAIL SYNC] Creating new email address ${newEmail} for ${clerkId}`);
-      const newEmailAddress = await this.clerk.emailAddresses.createEmailAddress({
-        userId: clerkId,
-        emailAddress: newEmail,
-        verified: skipVerification, // Admin updates should skip verification
-        primary: true, // Set as primary immediately
+      await this.prisma.outbox.create({
+        data: {
+          topic: 'clerk.email.sync',
+          payload: { 
+            clerkId, 
+            newEmail, 
+            errorMessage,
+            attemptedAt: new Date().toISOString(),
+          },
+        },
       });
-      
-      this.logger.log(`✅ [EMAIL SYNC] Created new email address ${newEmail} for ${clerkId}, ID: ${newEmailAddress.id}`);
-      
-      // Delete the old primary email address to keep things clean
-      // (unless it's the only one left after making the new one primary)
-      const oldPrimaryEmailId = clerkUser.primaryEmailAddressId;
-      if (oldPrimaryEmailId && oldPrimaryEmailId !== newEmailAddress.id) {
-        try {
-          // Re-fetch to ensure we have the latest state
-          const updatedClerkUser = await this.clerk.users.getUser(clerkId);
-          const emailCount = updatedClerkUser.emailAddresses?.length || 0;
-          
-          if (emailCount > 1) {
-            this.logger.log(`🗑️ [EMAIL SYNC] Deleting old email address ${oldPrimaryEmailId} for ${clerkId}`);
-            await this.clerk.emailAddresses.deleteEmailAddress(oldPrimaryEmailId);
-            this.logger.log(`✅ [EMAIL SYNC] Deleted old email address for ${clerkId}`);
-          }
-        } catch (deleteError: any) {
-          // Non-critical error - the new email is already set as primary
-          this.logger.warn(`⚠️ [EMAIL SYNC] Could not delete old email address: ${deleteError.message}`);
-        }
-      }
-      
-      this.logger.log(`✅ [EMAIL SYNC] Email sync completed for ${clerkId}`);
+      this.logger.log(`📤 [EMAIL SYNC] Queued email sync for retry: ${clerkId} -> ${newEmail}`);
+    } catch (outboxError: any) {
+      // If we can't even create the outbox entry, log it prominently
+      this.logger.error(`🚨 [EMAIL SYNC] CRITICAL: Failed to queue email sync for retry: ${outboxError.message}`);
+      this.logger.error(`🚨 [EMAIL SYNC] Manual intervention required for user ${clerkId} email: ${newEmail}`);
+    }
+  }
+
+  /**
+   * Safely sync email to Clerk with outbox fallback for failures.
+   * This method handles errors gracefully by queuing failed syncs for retry.
+   */
+  private async syncEmailToClerkWithFallback(clerkId: string, newEmail: string): Promise<void> {
+    try {
+      await this.syncEmailToClerk(clerkId, newEmail);
     } catch (error: any) {
       this.logger.error(`❌ [EMAIL SYNC] Failed to sync email to Clerk for ${clerkId}: ${error.message}`);
       
@@ -150,9 +166,8 @@ export class UsersService {
         this.logger.error(`❌ [EMAIL SYNC] Clerk errors: ${JSON.stringify(error.errors)}`);
       }
       
-      // Don't throw - email update in database succeeded, and we don't want to
-      // rollback that. The admin can retry or the discrepancy can be fixed manually.
-      // We'll add this to an audit log or outbox for retry in a production system.
+      // Queue for retry via outbox pattern
+      await this.queueEmailSyncForRetry(clerkId, newEmail, error.message);
     }
   }
 
@@ -378,6 +393,10 @@ export class UsersService {
           where: { clerkId },
           data: { email },
         });
+        
+        // Sync email to Clerk so login email matches database email
+        this.logger.log(`📧 [COMPLETE PROFILE] Syncing email to Clerk for ${clerkId}...`);
+        await this.syncEmailToClerkWithFallback(clerkId, email);
       }
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
@@ -833,7 +852,7 @@ export class UsersService {
         
         // Sync email to Clerk so login email matches database email
         this.logger.log(`📧 [updateByClerkId] Email changed for user ${clerkId}, syncing to Clerk...`);
-        await this.syncEmailToClerk(clerkId, updateUserDto.email!);
+        await this.syncEmailToClerkWithFallback(clerkId, updateUserDto.email!);
       }
 
         // Return full User profile
@@ -854,7 +873,7 @@ export class UsersService {
         
         // Still try to sync email to Clerk even if User table update failed
         this.logger.log(`📧 [updateByClerkId fallback] Email changed for user ${clerkId}, syncing to Clerk...`);
-        await this.syncEmailToClerk(clerkId, updateUserDto.email!);
+        await this.syncEmailToClerkWithFallback(clerkId, updateUserDto.email!);
       }
       
         // Return AppUser data in User format
@@ -1120,7 +1139,7 @@ export class UsersService {
     const isEmailChanging = updateUserDto.email && updateUserDto.email !== appUser.email;
     if (isEmailChanging && updateUserDto.email) {
       this.logger.log(`📧 [UPDATE] Email changed for user ${id}, syncing to Clerk...`);
-      await this.syncEmailToClerk(appUser.clerkId, updateUserDto.email);
+      await this.syncEmailToClerkWithFallback(appUser.clerkId, updateUserDto.email);
     }
 
     // Fetch the latest role (in case it was updated by RoleSyncService)
