@@ -11,6 +11,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { SubscriptionManagementService, SubscriptionPlan, Subscription } from './subscription-management.service';
+import { SubscriptionRequestService } from './subscription-request.service';
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
@@ -36,6 +37,16 @@ import {
   UpdatePlanDto,
   CreatePricingTierDto,
   UpdatePricingTierDto,
+  CreateSubscriptionRequestDto,
+  SubscriptionRequestFiltersDto,
+  SubscriptionRequestStatus,
+  ReviewSubscriptionRequestDto,
+  SendInvoiceDto,
+  ConfirmPaymentDto,
+  ActivateFromRequestDto,
+  DeclineSubscriptionRequestDto,
+  AddRequestNoteDto,
+  UpdateSubscriptionSettingsDto,
 } from './dto';
 import { wrapResponse } from '../common/utils/response.util';
 
@@ -45,6 +56,7 @@ import { wrapResponse } from '../common/utils/response.util';
 export class SubscriptionManagementController {
   constructor(
     private readonly subscriptionService: SubscriptionManagementService,
+    private readonly subscriptionRequestService: SubscriptionRequestService,
     private readonly pricingService: PricingService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingService: BillingService,
@@ -607,6 +619,133 @@ export class SubscriptionManagementController {
     const analytics = await this.featureFlagService.getFeatureFlagAnalytics(timeRange);
     return wrapResponse(analytics);
   }
+
+  // =====================================
+  // SUBSCRIPTION REQUEST MANAGEMENT
+  // =====================================
+
+  @Get('requests')
+  async getAllSubscriptionRequests(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+    @Query('search') search?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+  ) {
+    const filters: SubscriptionRequestFiltersDto = {
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
+      status: status && Object.values(SubscriptionRequestStatus).includes(status as SubscriptionRequestStatus)
+        ? (status as SubscriptionRequestStatus)
+        : undefined,
+      search,
+      dateFrom,
+      dateTo,
+    };
+    const result = await this.subscriptionRequestService.getAllRequests(filters);
+    return wrapResponse(result);
+  }
+
+  @Get('requests/analytics')
+  async getSubscriptionRequestAnalytics() {
+    const analytics = await this.subscriptionRequestService.getRequestAnalytics();
+    return wrapResponse(analytics);
+  }
+
+  @Get('requests/next-invoice-number')
+  async getNextInvoiceNumber() {
+    const invoiceNumber = await this.subscriptionRequestService.getNextInvoiceNumber();
+    return wrapResponse({ invoiceNumber });
+  }
+
+  @Get('requests/:id')
+  async getSubscriptionRequestById(@Param('id') id: string) {
+    const request = await this.subscriptionRequestService.getRequestById(id);
+    return wrapResponse(request);
+  }
+
+  @Post('requests/:id/review')
+  async reviewSubscriptionRequest(
+    @Param('id') id: string,
+    @Body() body: ReviewSubscriptionRequestDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const request = await this.subscriptionRequestService.reviewRequest(id, body, performedBy);
+    return wrapResponse(request, 'Request marked as under review');
+  }
+
+  @Post('requests/:id/send-invoice')
+  async sendInvoiceForRequest(
+    @Param('id') id: string,
+    @Body() body: SendInvoiceDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const request = await this.subscriptionRequestService.sendInvoice(id, body, performedBy);
+    return wrapResponse(request, 'Invoice sent successfully');
+  }
+
+  @Post('requests/:id/confirm-payment')
+  async confirmPaymentForRequest(
+    @Param('id') id: string,
+    @Body() body: ConfirmPaymentDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const request = await this.subscriptionRequestService.confirmPayment(id, body, performedBy);
+    return wrapResponse(request, 'Payment confirmed');
+  }
+
+  @Post('requests/:id/activate')
+  async activateSubscriptionRequest(
+    @Param('id') id: string,
+    @Body() body: ActivateFromRequestDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const request = await this.subscriptionRequestService.activateRequest(id, body, performedBy);
+    return wrapResponse(request, 'Subscription activated successfully');
+  }
+
+  @Post('requests/:id/decline')
+  async declineSubscriptionRequest(
+    @Param('id') id: string,
+    @Body() body: DeclineSubscriptionRequestDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const request = await this.subscriptionRequestService.declineRequest(id, body, performedBy);
+    return wrapResponse(request, 'Request declined');
+  }
+
+  @Post('requests/:id/notes')
+  async addNoteToRequest(
+    @Param('id') id: string,
+    @Body() body: AddRequestNoteDto,
+    @Request() req: any,
+  ) {
+    const createdBy = req.user?.clerkId || 'system';
+    const request = await this.subscriptionRequestService.addNote(id, body, createdBy);
+    return wrapResponse(request, 'Note added successfully');
+  }
+
+  // =====================================
+  // SUBSCRIPTION SETTINGS
+  // =====================================
+
+  @Get('settings')
+  async getSubscriptionSettings() {
+    const settings = await this.subscriptionRequestService.getSettings();
+    return wrapResponse(settings);
+  }
+
+  @Put('settings')
+  async updateSubscriptionSettings(@Body() body: UpdateSubscriptionSettingsDto) {
+    const settings = await this.subscriptionRequestService.updateSettings(body);
+    return wrapResponse(settings, 'Settings updated successfully');
+  }
 }
 
 // =====================================
@@ -688,7 +827,10 @@ const SUBSCRIPTION_REQUIRED_ROLES: UserRole[] = [
 @Controller('subscriptions')
 @UseGuards(RolesGuard)
 export class UserSubscriptionController {
-  constructor(private readonly subscriptionService: SubscriptionManagementService) {}
+  constructor(
+    private readonly subscriptionService: SubscriptionManagementService,
+    private readonly subscriptionRequestService: SubscriptionRequestService,
+  ) {}
 
   /**
    * Get current user's subscription status
@@ -804,53 +946,71 @@ export class UserSubscriptionController {
     UserRole.SERVICE_PROVIDER,
   )
   async requestSubscription(
-    @Body() body: { planId: string; billingPeriod?: 'monthly' | 'yearly'; notes?: string },
+    @Body() body: CreateSubscriptionRequestDto,
     @Request() req: any,
   ) {
     const userContext = req.context;
     const userId = userContext?.userId;
     const organizationId = userContext?.organizationId;
 
-    if (!userId && !organizationId) {
-      return wrapResponse(null, 'User or organization ID required', false);
-    }
-
-    // Check if plan exists
-    const plan = await this.subscriptionService.getSubscriptionPlanById(body.planId);
-    if (!plan) {
-      return wrapResponse(null, 'Plan not found', false);
-    }
-
-    // Check if user/org already has an active or pending subscription
-    const existingSubscription = userId 
-      ? await this.subscriptionService.getUserSubscription(userId)
-      : await this.subscriptionService.getOrganizationSubscription(organizationId);
-
-    if (existingSubscription && ['ACTIVE', 'TRIAL', 'PENDING'].includes(existingSubscription.status)) {
-      return wrapResponse(null, 'You already have an active or pending subscription', false);
-    }
-
-    // Create a pending subscription request
-    // In manual flow, admin will activate this
-    // Future: In Stripe flow, this will redirect to Stripe Checkout
-    const subscription = await this.subscriptionService.createSubscription(
-      {
-        userId: userId || undefined,
-        organizationId: organizationId || undefined,
-        planId: body.planId,
-        tier: (plan.code?.toUpperCase() || 'BASIC') as SubscriptionTier,
-        notes: body.notes || `Subscription request via self-service. Billing: ${body.billingPeriod || 'monthly'}`,
-      },
-      'self-service',
+    // Create the subscription request using the new service
+    const request = await this.subscriptionRequestService.createRequest(
+      body,
+      userId,
+      organizationId,
     );
+
+    // Get estimated response time from settings
+    const settings = await this.subscriptionRequestService.getSettings();
+    const estimatedHours = settings.estimatedResponseHours || 48;
 
     return wrapResponse({
       message: 'Subscription request submitted successfully. Our team will contact you shortly.',
-      subscriptionId: subscription.id,
-      status: subscription.status,
+      requestId: request.id,
+      status: request.status,
+      estimatedResponseTime: `${Math.ceil(estimatedHours / 24)} business days`,
       // Future: Add checkoutUrl for Stripe integration
       checkoutUrl: null,
     });
+  }
+
+  /**
+   * Get current user's subscription requests
+   */
+  @Get('requests')
+  @Roles(
+    UserRole.FOUNDATION,
+    UserRole.PRODUCT_SUPPLIER,
+    UserRole.SERVICE_PROVIDER,
+  )
+  async getMySubscriptionRequests(@Request() req: any) {
+    const userContext = req.context;
+    const userId = userContext?.userId;
+    const organizationId = userContext?.organizationId;
+
+    const requests = await this.subscriptionRequestService.getUserRequests(userId, organizationId);
+    return wrapResponse(requests);
+  }
+
+  /**
+   * Cancel a pending subscription request
+   */
+  @Delete('requests/:id')
+  @Roles(
+    UserRole.FOUNDATION,
+    UserRole.PRODUCT_SUPPLIER,
+    UserRole.SERVICE_PROVIDER,
+  )
+  async cancelMySubscriptionRequest(
+    @Param('id') id: string,
+    @Request() req: any,
+  ) {
+    const userContext = req.context;
+    const userId = userContext?.userId;
+    const organizationId = userContext?.organizationId;
+
+    await this.subscriptionRequestService.cancelRequest(id, userId, organizationId);
+    return wrapResponse(null, 'Request cancelled successfully');
   }
 
   /**

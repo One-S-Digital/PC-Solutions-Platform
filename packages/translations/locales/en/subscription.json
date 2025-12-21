@@ -24,6 +24,48 @@
     "featureNotAvailableTitle": "Feature Not Available",
     "featureNotAvailableMessage": "This feature requires a higher tier plan. Upgrade to access {{feature}}."
   },
+  "tier": {
+    "basic": "Basic",
+    "essential": "Essential",
+    "professional": "Professional",
+    "enterprise": "Enterprise"
+  },
+  "requestForm": {
+    "title": "Request Subscription",
+    "subtitle": "Complete the form below to request your subscription",
+    "selectedPlan": "Selected Plan",
+    "billedMonthly": "Billed monthly",
+    "billedAnnually": "Billed annually",
+    "year": "year",
+    "month": "month",
+    "contactName": "Contact Name",
+    "contactNamePlaceholder": "Your full name",
+    "contactEmail": "Email Address",
+    "contactEmailPlaceholder": "your@email.com",
+    "contactPhone": "Phone Number",
+    "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "preferredContact": "Preferred Contact Method",
+    "message": "Additional Message",
+    "messagePlaceholder": "Any questions or special requirements...",
+    "submitButton": "Submit Request",
+    "submitting": "Submitting...",
+    "validation": {
+      "required": "Please fill in all required fields"
+    },
+    "success": {
+      "title": "Request Submitted!",
+      "description": "Thank you for your interest in the {{planName}} plan. Our team will review your request and send you an invoice within 48 hours.",
+      "estimatedTime": "Estimated response time: 24-48 hours",
+      "emailSent": "A confirmation email has been sent to {{email}}"
+    },
+    "howItWorks": {
+      "title": "How it works:",
+      "step1": "Submit your request",
+      "step2": "Receive an invoice via email",
+      "step3": "Pay the invoice",
+      "step4": "Your subscription is activated"
+    }
+  },
   "featureGate": {
     "locked": "This feature requires a plan upgrade",
     "upgrade": "Upgrade Plan"

@@ -263,6 +263,102 @@ export const subscriptionService = {
   /** Delete a pricing tier */
   deletePricingTier: (apiClient: AxiosInstance, id: string) =>
     apiClient.delete<ApiResponse<null>>(`/admin/subscription-management/pricing/tiers/${id}`),
+
+  // =====================================
+  // SUBSCRIPTION REQUESTS
+  // =====================================
+
+  /** Get all subscription requests */
+  getSubscriptionRequests: (apiClient: AxiosInstance, params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  }) =>
+    apiClient.get<ApiResponse<any>>('/admin/subscription-management/requests', { params }),
+
+  /** Get subscription request analytics */
+  getSubscriptionRequestAnalytics: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/admin/subscription-management/requests/analytics'),
+
+  /** Get next invoice number */
+  getNextInvoiceNumber: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<{ invoiceNumber: string }>>('/admin/subscription-management/requests/next-invoice-number'),
+
+  /** Get single subscription request */
+  getSubscriptionRequestById: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/subscription-management/requests/${id}`),
+
+  /** Mark request as under review */
+  reviewSubscriptionRequest: (apiClient: AxiosInstance, id: string, data: { notes?: string }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/requests/${id}/review`, data),
+
+  /** Send invoice for request */
+  sendInvoiceForRequest: (apiClient: AxiosInstance, id: string, data: {
+    invoiceNumber: string;
+    invoiceAmount: number;
+    invoiceCurrency?: string;
+    sendEmail?: boolean;
+    notes?: string;
+  }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/requests/${id}/send-invoice`, data),
+
+  /** Confirm payment for request */
+  confirmPaymentForRequest: (apiClient: AxiosInstance, id: string, data: {
+    paymentReference?: string;
+    paymentDate?: string;
+    autoActivate?: boolean;
+    notes?: string;
+  }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/requests/${id}/confirm-payment`, data),
+
+  /** Activate subscription from request */
+  activateSubscriptionRequest: (apiClient: AxiosInstance, id: string, data: {
+    startDate?: string;
+    periodMonths?: number;
+    includeTrial?: boolean;
+    sendEmail?: boolean;
+    notes?: string;
+  }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/requests/${id}/activate`, data),
+
+  /** Decline subscription request */
+  declineSubscriptionRequest: (apiClient: AxiosInstance, id: string, data: {
+    reason: string;
+    sendEmail?: boolean;
+    notes?: string;
+  }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/requests/${id}/decline`, data),
+
+  /** Add note to request */
+  addNoteToRequest: (apiClient: AxiosInstance, id: string, data: {
+    note: string;
+    isInternal?: boolean;
+  }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/requests/${id}/notes`, data),
+
+  // =====================================
+  // SUBSCRIPTION SETTINGS
+  // =====================================
+
+  /** Get subscription settings */
+  getSubscriptionSettings: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/admin/subscription-management/settings'),
+
+  /** Update subscription settings */
+  updateSubscriptionSettings: (apiClient: AxiosInstance, data: {
+    notificationEmail?: string;
+    enableEmailNotifications?: boolean;
+    defaultTrialDays?: number;
+    defaultGracePeriodDays?: number;
+    invoicePrefix?: string;
+    invoiceNextNumber?: number;
+    paymentTermsDays?: number;
+    estimatedResponseHours?: number;
+  }) =>
+    apiClient.put<ApiResponse<any>>('/admin/subscription-management/settings', data),
 };
 
 export default subscriptionService;
