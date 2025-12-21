@@ -371,7 +371,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
           {/* Cover Image and Logo Section */}
           <Card className="overflow-hidden">
             <div 
-              className="h-48 bg-cover bg-center"
+              className="w-full aspect-[4/1] bg-cover bg-center"
               style={{ backgroundImage: `url(${coverImageUrl})` }}
             />
             <div className="relative px-6 pb-6">

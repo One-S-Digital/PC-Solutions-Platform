@@ -167,7 +167,7 @@ const OrganizationProfileViewPage: React.FC = () => {
       {/* Social Media Style Header with Cover Image and Avatar */}
       <Card className="overflow-hidden p-0">
         {/* Cover Image Section */}
-        <div className="h-64 bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
+        <div className="aspect-[4/1] bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
           {organization.coverImageUrl ? (
             <img
               src={organization.coverImageUrl}

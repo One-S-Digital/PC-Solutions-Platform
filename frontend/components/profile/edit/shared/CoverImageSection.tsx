@@ -40,6 +40,7 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
   };
 
   const presetConfig = IMAGE_CROP_PRESETS[cropPreset];
+  const usePresetAspectRatio = cropPreset === 'COVER' || cropPreset === 'BANNER';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -114,7 +115,10 @@ const CoverImageSection: React.FC<CoverImageSectionProps> = ({
 
   return (
     <>
-      <div className={`relative w-full ${heightClasses[height]} bg-gray-200 rounded-lg overflow-hidden group`}>
+      <div
+        className={`relative w-full bg-gray-200 rounded-lg overflow-hidden group ${usePresetAspectRatio ? '' : heightClasses[height]}`}
+        style={usePresetAspectRatio ? { aspectRatio: `${presetConfig.width} / ${presetConfig.height}` } : undefined}
+      >
         <img
           src={displayUrl}
           alt="Cover"
